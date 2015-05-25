@@ -120,15 +120,17 @@ public class MainLogger extends Thread {
         }
 
         String str = new SimpleDateFormat("Y-m-d hh:mm:ss").format(now) + " " + cleanMessage + "" + "\r\n";
-        synchronized (this) {
+        /*synchronized (this) {
             this.logStream += str;
             this.notify();
-        }
+        }*/
+        this.logStream += str;
     }
 
     public void run() {
         this.shutdown = false;
         while (!this.shutdown) {
+            this.info("新的循环");
             synchronized (this) {
                 if (this.logStream.length() > 0) {
                     String chunk = this.logStream;
@@ -143,7 +145,7 @@ public class MainLogger extends Thread {
                     }
                 }
                 try {
-                    this.wait(250000);
+                    wait(250000);
                 } catch (InterruptedException e) {
                     this.logException(e);
                 }

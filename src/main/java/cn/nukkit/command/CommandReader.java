@@ -30,15 +30,15 @@ public class CommandReader extends Thread {
         while (true) {
             String line = "";
             try {
-                line = this.reader.readLine("> ");
+                line = this.reader.readLine();
             } catch (IOException e) {
                 logger.logException(e);
             }
             if (!line.equals("")) {
-                logger.info(TextFormat.LIGHT_PURPLE + "使用了指令：" + line);
+                logger.notice(TextFormat.LIGHT_PURPLE + "使用了指令：" + line);
             } else if (System.currentTimeMillis() - lastLine <= 1) {
                 try {
-                    this.sleep(40);
+                    sleep(40);
                 } catch (InterruptedException e) {
                     logger.logException(e);
                 }
@@ -46,4 +46,5 @@ public class CommandReader extends Thread {
             lastLine = System.currentTimeMillis();
         }
     }
+
 }

@@ -1,7 +1,6 @@
 package cn.nukkit;
 
 import cn.nukkit.utils.MainLogger;
-import org.fusesource.jansi.AnsiConsole;
 
 /**
  * author: MagicDroidX
@@ -28,14 +27,13 @@ public class Nukkit {
 
         Server server = new Server(logger, nukkit_PATH, nukkit_DATA, nukkit_PLUGIN_PATH);
 
-        logger.shutdown();
+        /*logger.shutdown();
         try {
             logger.join();
         } catch (InterruptedException e) {
             logger.logException(e);
         }
-        System.exit(0);
-
+        System.exit(0);*/
     }
 
 }
