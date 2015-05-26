@@ -59,8 +59,7 @@ public class TextFormat {
         string = string.replace(TextFormat.LIGHT_PURPLE, (char) 27 + "[35;1m");
         string = string.replace(TextFormat.YELLOW, (char) 27 + "[33;1m");
         string = string.replace(TextFormat.WHITE, (char) 27 + "[37;1m");
-        return string; //todo
+        return string;
     }
-
 
 }

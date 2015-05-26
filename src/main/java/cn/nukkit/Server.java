@@ -17,7 +17,7 @@ public class Server {
     private String dataPath;
     private String pluginPath;
     private CommandReader console;
-    
+
 
     public static Server getInstance() {
         return instance;
@@ -47,7 +47,6 @@ public class Server {
         //todo: VersionString 现在不必要
 
         this.logger.info("加载 nukkit.yml 中...");
-
     }
 
     public MainLogger getLogger() {

@@ -130,7 +130,6 @@ public class MainLogger extends Thread {
     public void run() {
         this.shutdown = false;
         while (!this.shutdown) {
-            this.info("新的循环");
             synchronized (this) {
                 if (this.logStream.length() > 0) {
                     String chunk = this.logStream;
