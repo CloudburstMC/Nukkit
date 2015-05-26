@@ -1,6 +1,8 @@
-# Nukkit - 一枚核弹（雾
-	中国制造 - 前方核能_(:з」∠)_
-## (。・`ω´・) 能用吗？
-客官稍安勿躁。对于本学生党 + 半技术宅(渣)来说，这个项目是个挑战。主要是为了提供一个更高效的服务端，然而Java和Php语言差别较大，边填坑边熟悉两种语言。学习紧张，空余时间尽量保证不弃坑orz。
+# Nukkit - 核能Minecraft: PE 服务端
+	Nukkit - Nuclear Powered Server For Minecraft: PE
+## (。・`ω´・) 可以用吗？Does this work?
+客官稍安勿躁。本学生党学习紧张，尽量每日填一些坑。
+:[ Okay...So i m a student under great study stress. I'll try my best to keep coding everyday...
 ## 吐槽
-由于本人强迫症晚期，为保证长期不弃坑，严格遵守PM的代码进行移植？翻译？╮(╯_╰)╭。PS: 本人建类狂魔一只-w-
+:D I'm a crazy PocketMine code style follower.
+So the codes will mostly have the familiar structure of the PocketMine's.
