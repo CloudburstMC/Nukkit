@@ -27,6 +27,7 @@ public class Nukkit {
 
         Server server = new Server(logger, nukkit_PATH, nukkit_DATA, nukkit_PLUGIN_PATH);
 
+        //logger.info(String.valueOf(Pattern.compile("[a-zA-Z0-9\\-_\\.]*+=+[^\\r\\n]*").matcher("test=测试").matches()));
         /*logger.shutdown();
         try {
             logger.join();

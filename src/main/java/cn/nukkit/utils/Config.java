@@ -1,14 +1,17 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.Server;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * author: MagicDroidX
@@ -82,6 +85,11 @@ public class Config {
         this.type = type;
         this.file = new File(file);
         if (!this.file.exists()) {
+            try {
+                this.file.createNewFile();
+            } catch (IOException e) {
+                MainLogger.getLogger().error("无法创建配置文件 " + this.file.toString());
+            }
             this.config = default_map;
             this.save();
         } else {
@@ -113,11 +121,16 @@ public class Config {
                         break;
                     //todo: case Config.JSON:
                     case Config.YAML:
-                        Yaml yaml = new Yaml();
-                        this.config = (HashMap<String, Object>) yaml.load(content);
+                        //Yaml yaml = new Yaml();
+                        DumperOptions dumperOptions = new DumperOptions();
+                        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                        Yaml yaml = new Yaml(dumperOptions);
+                        this.config = yaml.loadAs(content, HashMap.class);
+                        //this.config = (HashMap<String, Object>) yaml.load(content);
                         break;
                     // case Config.SERIALIZED 也许是不必要的？233
                     case Config.ENUM:
+                        this.parseList(content);
                         break;
                     default:
                         this.correct = false;
@@ -142,18 +155,112 @@ public class Config {
     }
 
     public boolean save(Boolean async) {
-        //todo: 异步储存文件
         if (this.correct) {
-            String content;
+            String content = "";
             switch (this.type) {
                 case Config.PROPERTIES:
-                    //todo 0526最后coding位置
+                    content = this.writeProperties();
+                    break;
+                //todo: case Config.JSON:
+                case Config.YAML:
+                    Yaml yaml = new Yaml();
+                    content = yaml.dump(this.config);
+                    break;
+                case Config.ENUM:
+                    Iterator iterator = this.config.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Map.Entry entry = (Map.Entry) iterator.next();
+                        content += String.valueOf(entry.getKey()) + "\r\n";
+                    }
+                    break;
             }
+            //todo: 异步储存文件
+            try {
+                FileWriter fileWriter = new FileWriter(this.file);
+                fileWriter.write(content);
+                fileWriter.close();
+            } catch (IOException e) {
+                MainLogger logger = Server.getInstance().getLogger();
+                logger.critical("无法保存配置文件 " + this.file.toString() + ": " + e.getMessage());
+                //todo DEBUG>1时 logger.LogException(e);
+            }
+
             return true;
         } else {
             return false;
         }
     }
+
+    public Object __get(String k) {
+        return this.get(k);
+    }
+
+    public void __set(String k, Object v) {
+        this.set(k, v);
+    }
+
+    public boolean __exists(String k) {
+        return this.exists(k);
+    }
+
+    public void __remove(String k) {
+        this.remove(k);
+    }
+
+    public Object get(String k) {
+        return this.get(k, false);
+    }
+
+    public Object get(String k, Object default_value) {
+        return (this.correct && this.config.containsKey(k)) ? this.config.get(k) : default_value;
+    }
+
+    //todo Nested 节点储存
+
+    public void set(String k) {
+        this.set(k, false);
+    }
+
+    public void set(String k, Object v) {
+        this.config.put(k, v);
+    }
+
+    public void setAll(HashMap<String, Object> map) {
+        this.config = map;
+    }
+
+    public boolean exists(String k) {
+        return this.exists(k, false);
+    }
+
+    public boolean exists(String k, boolean lowercase) {
+        if (lowercase) {
+            k = k.toLowerCase();
+            Iterator iterator = this.config.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                if (entry.getKey().toString().toLowerCase().equals(k)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return this.config.containsKey(k);
+        }
+    }
+
+    public void remove(String k) {
+        this.config.remove(k);
+    }
+
+    public HashMap<String, Object> getAll() {
+        return this.config;
+    }
+
+    public void setDefault(HashMap<String, Object> map) {
+        this.fillDefaults(map, this.config);
+    }
+
 
     private int fillDefaults(HashMap<String, Object> default_map, HashMap<String, Object> data) {
         int changed = 0;
@@ -194,6 +301,22 @@ public class Config {
     }
 
     private void parseProperties(String content) {
-
+        for (String line : content.split("\n")) {
+            if (Pattern.compile("[a-zA-Z0-9\\-_\\.]*+=+[^\\r\\n]*").matcher(line).matches()) {
+                String k = line.split("=")[0];
+                String v = line.split("=")[1].trim();
+                String v_lower = v.toLowerCase();
+                if (this.config.containsKey(k)) {
+                    MainLogger.getLogger().debug("[Config] 重复的键值 " + k + " ，位于文件 " + this.file.toString());
+                }
+                if (v_lower.equals("on") || v_lower.equals("true") || v_lower.equals("yes")) {
+                    this.config.put(k, true);
+                } else if (v_lower.equals("off") || v_lower.equals("false") || v_lower.equals("no")) {
+                    this.config.put(k, false);
+                } else {
+                    this.config.put(k, v);
+                }
+            }
+        }
     }
 }
