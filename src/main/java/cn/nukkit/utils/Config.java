@@ -121,12 +121,10 @@ public class Config {
                         break;
                     //todo: case Config.JSON:
                     case Config.YAML:
-                        //Yaml yaml = new Yaml();
                         DumperOptions dumperOptions = new DumperOptions();
                         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                         Yaml yaml = new Yaml(dumperOptions);
                         this.config = yaml.loadAs(content, HashMap.class);
-                        //this.config = (HashMap<String, Object>) yaml.load(content);
                         break;
                     // case Config.SERIALIZED 也许是不必要的？233
                     case Config.ENUM:
@@ -163,7 +161,9 @@ public class Config {
                     break;
                 //todo: case Config.JSON:
                 case Config.YAML:
-                    Yaml yaml = new Yaml();
+                    DumperOptions dumperOptions = new DumperOptions();
+                    dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                    Yaml yaml = new Yaml(dumperOptions);
                     content = yaml.dump(this.config);
                     break;
                 case Config.ENUM:
@@ -215,7 +215,47 @@ public class Config {
         return (this.correct && this.config.containsKey(k)) ? this.config.get(k) : default_value;
     }
 
-    //todo Nested 节点储存
+    public void setNested(final String key, final Object value) {
+        final String[] vars = key.split(".");
+        if (vars.length < 2) {
+            this.set(key, value);
+        }
+        HashMap<String, Object> hashMap = new HashMap<String, Object>() {
+            {
+                put(vars[vars.length - 1], value);
+            }
+        }; //内嵌中心元素
+        for (int i = vars.length - 2; i > 1; i--) {
+            HashMap<String, Object> new_hashMap = new HashMap<String, Object>();
+            new_hashMap.put(vars[i], hashMap);
+            hashMap = new_hashMap;
+        }
+        this.config.put(vars[0], hashMap);
+    }
+
+    public Object getNested(String key) {
+        return this.getNested(key, null);
+    }
+
+    public Object getNested(String key, Object default_value) {
+        String[] vars = key.split(".");
+        if (vars.length < 2) {
+            this.get(key, default_value);
+        }
+        if (!this.config.containsKey(vars[0])) {
+            return default_value;
+        } else {
+            HashMap<String, Object> hashMap = (HashMap<String, Object>) this.config.get(vars[0]);
+            for (int i = 1; i < vars.length - 2; i++) {
+                if (hashMap.containsKey(vars[i])) {
+                    hashMap = (HashMap<String, Object>) hashMap.get(vars[i]);
+                } else {
+                    return default_value;
+                }
+            }
+            return hashMap.get(vars[vars.length - 1]);
+        }
+    }
 
     public void set(String k) {
         this.set(k, false);

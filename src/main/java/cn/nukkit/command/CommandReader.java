@@ -34,8 +34,11 @@ public class CommandReader extends Thread {
             } catch (IOException e) {
                 logger.logException(e);
             }
-            if (!line.equals("")) {
+            if (!line.trim().equals("")) {
                 logger.notice(TextFormat.LIGHT_PURPLE + "使用了指令：" + line);
+                if (line.trim().toLowerCase().equals("stop")) {
+                    System.exit(0);
+                }
             } else if (System.currentTimeMillis() - lastLine <= 1) {
                 try {
                     sleep(40);
