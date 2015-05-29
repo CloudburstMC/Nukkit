@@ -6,7 +6,7 @@ package cn.nukkit.utils;
  */
 public class TextFormat {
 
-    public static final String ESCAPE = "§";
+    public static final String ESCAPE = "\u00a7";
 
     public static final String BLACK = TextFormat.ESCAPE + "0";
     public static final String DARK_BLUE = TextFormat.ESCAPE + "1";
