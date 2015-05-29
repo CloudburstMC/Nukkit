@@ -62,6 +62,9 @@ public class Server {
         //todo: VersionString 现在不必要
 
         this.logger.info("加载 " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + " 中...");
+        if (!new File(this.dataPath + "nukkit.yml").exists()) {
+            this.getClass().getResource("nukkit.yml");
+        }
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
         this.logger.info("加载 " + TextFormat.GREEN + "服务器配置文档" + TextFormat.WHITE + " 中...");

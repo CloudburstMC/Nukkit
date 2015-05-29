@@ -12,8 +12,8 @@ public class Nukkit {
     public final static String VERSION = "1.0dev-1";
     public final static String API_VERSION = "1.0.0";
     public final static String CODENAME = "蘋果(Apple)派(Pie)";
-    public final static String MINECRAFT_VERSION = "v0.11.0 alpha build 13";
-    public final static String MINECRAFT_VERSION_NETWORK = "0.11.0.13";
+    public final static String MINECRAFT_VERSION = "v0.11.0 alpha";
+    public final static String MINECRAFT_VERSION_NETWORK = "0.11.0";
 
     private final static String nukkit_PATH = System.getProperty("user.dir") + "/";
     private final static String nukkit_DATA = System.getProperty("user.dir") + "/";
@@ -27,14 +27,6 @@ public class Nukkit {
 
         Server server = new Server(logger, nukkit_PATH, nukkit_DATA, nukkit_PLUGIN_PATH);
 
-        //logger.info(String.valueOf(Pattern.compile("[a-zA-Z0-9\\-_\\.]*+=+[^\\r\\n]*").matcher("test=测试").matches()));
-        /*logger.shutdown();
-        try {
-            logger.join();
-        } catch (InterruptedException e) {
-            logger.logException(e);
-        }
-        System.exit(0);*/
     }
 
 }

@@ -31,6 +31,7 @@ public class Config {
     public static final int ENUMERATION = Config.ENUM;
 
     private HashMap<String, Object> config = new HashMap<String, Object>();
+    private HashMap<String, Object> nestedCache = new HashMap<String, Object>();
     private File file;
     private boolean correct = false;
     private int type = Config.DETECT;
@@ -67,6 +68,7 @@ public class Config {
 
     public void reload() {
         this.config = new HashMap<String, Object>();
+        this.nestedCache = new HashMap<String, Object>();
         this.correct = false;
         this.load(this.file.toString());
         this.load(this.file.toString(), this.type);
@@ -216,21 +218,23 @@ public class Config {
     }
 
     public void setNested(final String key, final Object value) {
-        final String[] vars = key.split(".");
+        final String[] vars = key.split("\\.");
         if (vars.length < 2) {
             this.set(key, value);
+            return;
         }
         HashMap<String, Object> hashMap = new HashMap<String, Object>() {
             {
                 put(vars[vars.length - 1], value);
             }
         }; //内嵌中心元素
-        for (int i = vars.length - 2; i > 1; i--) {
+        for (int i = vars.length - 2; i > 0; i--) {
             HashMap<String, Object> new_hashMap = new HashMap<String, Object>();
             new_hashMap.put(vars[i], hashMap);
             hashMap = new_hashMap;
         }
         this.config.put(vars[0], hashMap);
+        this.config.put(key, value);
     }
 
     public Object getNested(String key) {
@@ -238,22 +242,32 @@ public class Config {
     }
 
     public Object getNested(String key, Object default_value) {
-        String[] vars = key.split(".");
-        if (vars.length < 2) {
-            this.get(key, default_value);
+        if (this.nestedCache.containsKey(key)) {
+            return this.nestedCache.get(key);
         }
+        String[] vars = key.split("\\.");
+        if (vars.length < 2) {
+            return this.get(key, default_value);
+        }
+
         if (!this.config.containsKey(vars[0])) {
             return default_value;
         } else {
             HashMap<String, Object> hashMap = (HashMap<String, Object>) this.config.get(vars[0]);
-            for (int i = 1; i < vars.length - 2; i++) {
+            for (int i = 1; i < vars.length - 1; i++) {
                 if (hashMap.containsKey(vars[i])) {
                     hashMap = (HashMap<String, Object>) hashMap.get(vars[i]);
                 } else {
                     return default_value;
                 }
             }
-            return hashMap.get(vars[vars.length - 1]);
+            if (hashMap.containsKey(vars[vars.length - 1])) {
+                Object value = hashMap.get(vars[vars.length - 1]);
+                this.nestedCache.put(key, value);
+                return value;
+            } else {
+                return default_value;
+            }
         }
     }
 
