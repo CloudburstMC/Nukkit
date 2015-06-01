@@ -1,6 +1,7 @@
 package cn.nukkit.scheduler;
 
-import cn.nukkit.plugin.Plugin;
+
+import cn.nukkit.plugin.PluginBase;
 
 /**
  * author: MagicDroidX
@@ -8,13 +9,13 @@ import cn.nukkit.plugin.Plugin;
  */
 abstract class PluginTask extends Task {
 
-    protected Plugin owner;
+    protected PluginBase owner;
 
-    public PluginTask(Plugin owner) {
+    public PluginTask(PluginBase owner) {
         this.owner = owner;
     }
 
-    public final Plugin getOwner() {
+    public final PluginBase getOwner() {
         return this.owner;
     }
 

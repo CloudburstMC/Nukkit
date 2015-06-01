@@ -61,13 +61,13 @@ public class Server {
 
         //todo: VersionString 现在不必要
 
-        this.logger.info("加载 " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + " 中...");
+        this.logger.info("正在加载 " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + " 中...");
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             this.getClass().getResource("nukkit.yml");
         }
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
-        this.logger.info("加载 " + TextFormat.GREEN + "服务器配置文档" + TextFormat.WHITE + " 中...");
+        this.logger.info("正在加载 " + TextFormat.GREEN + "服务器配置文档" + TextFormat.WHITE + " 中...");
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new HashMap<String, Object>() {
             {
                 put("motd", "Nukkit Server For Minecraft: PE");
@@ -94,6 +94,7 @@ public class Server {
                 put("auto-save", false);
             }
         });
+        this.logger.info("正在为 Minecraft: PE " + TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE + " 启动服务器");
     }
 
     public MainLogger getLogger() {
