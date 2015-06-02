@@ -1,6 +1,7 @@
 package cn.nukkit;
 
 import cn.nukkit.command.CommandReader;
+import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
@@ -25,6 +26,7 @@ public class Server {
     private CommandReader console;
     private Config config;
     private Config properties;
+    private ServerScheduler scheduler;
 
     public Object getProperty(String variable) {
         return this.getProperty(variable, null);
@@ -96,6 +98,8 @@ public class Server {
             }
         });
         this.logger.info("正在为 Minecraft: PE " + TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE + " 启动服务器");
+        //todo 一些tick配置
+        this.scheduler = new ServerScheduler();
     }
 
     public MainLogger getLogger() {
