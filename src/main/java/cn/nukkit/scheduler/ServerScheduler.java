@@ -61,7 +61,7 @@ public class ServerScheduler {
             long taskId = entry.getKey();
             TaskHandler task = entry.getValue();
             Task ptask = task.getTask();
-            if (ptask instanceof PluginTask && ((PluginTask) ptask).getOwner() == plugin) {
+            if (ptask instanceof PluginTask && ((PluginTask) ptask).getOwner().equals(plugin)) {
                 task.cancel();
                 this.tasks.remove(taskId);
             }

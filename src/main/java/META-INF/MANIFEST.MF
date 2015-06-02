@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: lib\jansi-1.11.jar lib\jline-2.12.1.jar lib\snakeyaml-1.15
- .jar
-Main-Class: cn.nukkit.Nukkit
-

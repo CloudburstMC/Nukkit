@@ -13,89 +13,45 @@ settings:
  query-plugins: true
  #当某插件使用不被推荐的API时，在控制台提醒
  deprecated-verbose: true
- #Enable plugin and core profiling by default
- enable-profiling: false
- #Will only add results when tick measurement is below or equal to given value (default 20)
- profile-report-trigger: 20
- #Number of AsyncTask workers.
- #Used for plugin asynchronous tasks, world generation, compression and web communication.
- #Set this approximately to your number of cores.
- #If set to auto, it'll try to detect the number of cores (or use 2)
- async-workers: auto
 
 memory:
- #Global soft memory limit in megabytes. Set to 0 to disable
- #This will trigger low-memory-triggers and fire an event to free memory when the usage goes over this
- global-limit: 512
-
- #Main thread soft memory limit in megabytes. Set to 0 to disable
- #This will trigger low-memory-triggers and fire an event to free memory when the usage goes over this
- main-limit: 320
-
- #Period in ticks to check memory (default 1 second)
- check-rate: 20
-
- #Continue firing low-memory-triggers and event while on low memory
- continuous-trigger: true
-
- #Only if memory.continuous-trigger is enabled. Specifies the rate in memory.check-rate steps (default 30 seconds)
- continuous-trigger-rate: 30
-
- garbage-collection:
-  #Period in ticks to fire the garbage collector manually (default 30 minutes), set to 0 to disable
-  #This only affect the main thread. Other threads should fire their own collections
-  period: 36000
-
-  #Fire asynchronous tasks to collect garbage from workers
-  collect-async-worker: true
-
-  #Trigger on low memory
-  low-memory-trigger: true
-
  max-chunks:
-  #Limit of chunks to load per player, overrides chunk-sending.max-chunks
+  #每个玩家所能加载的最大区块数量
   trigger-limit: 96
-
-  #Do chunk garbage collection on trigger
-  trigger-chunk-collect: true
-
-  #Trigger on low memory
-  low-memory-trigger: true
 
  world-caches:
   disable-chunk-cache: true
   low-memory-trigger: true
 
-
 network:
- #Threshold for batching packets, in bytes. Only these packets will be compressed
- #Set to 0 to compress everything, -1 to disable.
+ #数据包大小阀值（单位：字节），这些包将被压缩
+ #设为0，压缩全部。设为-1，禁用功能
  batch-threshold: 256
- #Compression level used when sending batched packets. Higher = more CPU, less bandwidth usage
+ #压缩等级，等级越高，CPU占用越高，占用带宽越少
  compression-level: 7
- #Use AsyncTasks for compression. Adds half/one tick delay, less CPU load on main thread
+ #异步压缩，缓解主线程CPU负载
  async-compression: false
- #Experimental, only for Windows. Tries to use UPnP to automatically port forward
+ #实验性功能。UPNP自动转发
  upnp-forwarding: false
 
 debug:
- #If > 1, it will show debug messages in the console
+ #调试级别，＞1时，将在控制台显示调试信息
  level: 1
- #Enables /status, /gc
+ #启动命令 /status /gc
  commands: false
 
 level-settings:
- #The default format that levels will use when created
+ #默认生成的地图格式
  default-format: mcregion
- #If true, converts from a format that is not the default to the default format on load
- #NOTE: This is currently not implemented
+ #格式转换，如果启用则在加载时强行转换
+ #NOTE: 目前未实现此功能
  convert-format: false
- #Automatically change levels tick rate to maintain 20 ticks per second
+ #自动保持Level的tick速度
  auto-tick-rate: true
  auto-tick-rate-limit: 20
- #Sets the base tick rate (1 = 20 ticks per second, 2 = 10 ticks per second, etc.)
+ #tick速率
  base-tick-rate: 1
- #Tick all players each tick even when other settings disallow this.
+ #始终保持玩家Tick
  always-tick-players: false
 
 chunk-sending:

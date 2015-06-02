@@ -136,7 +136,7 @@ public class Config {
                         this.correct = false;
                         return false;
                 }
-                if (this.fillDefaults(default_map, this.config) > 0) {
+                if (this.setDefault(default_map) > 0) {
                     this.save();
                 }
             } else {
@@ -311,22 +311,20 @@ public class Config {
         return this.config;
     }
 
-    public void setDefault(HashMap<String, Object> map) {
-        this.fillDefaults(map, this.config);
+    public int setDefault(HashMap<String, Object> map) {
+        int size = this.config.size();
+        this.config = this.fillDefaults(map, this.config);
+        return this.config.size() - size;
     }
 
 
-    private int fillDefaults(HashMap<String, Object> default_map, HashMap<String, Object> data) {
-        int changed = 0;
-        Iterator iterator = default_map.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
+    private HashMap<String, Object> fillDefaults(HashMap<String, Object> default_map, HashMap<String, Object> data) {
+        for (Map.Entry<String, Object> entry : default_map.entrySet()) {
             if (!data.containsKey(entry.getKey())) {
-                data.put(String.valueOf(entry.getKey()), entry.getValue());
-                changed++;
+                data.put(entry.getKey(), entry.getValue());
             }
         }
-        return changed;
+        return data;
     }
 
     private void parseList(String content) {
