@@ -22,19 +22,19 @@ public class Vector2 {
     }
 
     public double getX() {
-        return x;
+        return this.x;
     }
 
     public double getY() {
-        return y;
+        return this.y;
     }
 
     public int getFloorX() {
-        return (int) x;
+        return (int) this.x;
     }
 
     public int getFloorY() {
-        return (int) y;
+        return (int) this.y;
     }
 
     public Vector2 add(double x) {
@@ -46,10 +46,6 @@ public class Vector2 {
     }
 
     public Vector2 add(Vector2 x) {
-        return this.add(x, 0);
-    }
-
-    public Vector2 add(Vector2 x, double y) {
         return this.add(x.getX(), x.getY());
     }
 
@@ -62,10 +58,6 @@ public class Vector2 {
     }
 
     public Vector2 subtract(Vector2 x) {
-        return this.subtract(x, 0);
-    }
-
-    public Vector2 subtract(Vector2 x, double y) {
         return this.add(-x.getX(), -x.getY());
     }
 
@@ -146,7 +138,7 @@ public class Vector2 {
     }
 
     public String __toString() {
-        return "Vector2(x=" + String.valueOf(this.x) + ",y=" + String.valueOf(this.y) + ")";
+        return "Vector2(x=" + this.x + ",y=" + this.y + ")";
     }
 
 }
