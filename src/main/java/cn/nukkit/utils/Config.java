@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -169,9 +168,8 @@ public class Config {
                     content = yaml.dump(this.config);
                     break;
                 case Config.ENUM:
-                    Iterator iterator = this.config.entrySet().iterator();
-                    while (iterator.hasNext()) {
-                        Map.Entry entry = (Map.Entry) iterator.next();
+                    for (Object o : this.config.entrySet()) {
+                        Map.Entry entry = (Map.Entry) o;
                         content += String.valueOf(entry.getKey()) + "\r\n";
                     }
                     break;
@@ -290,9 +288,8 @@ public class Config {
     public boolean exists(String k, boolean lowercase) {
         if (lowercase) {
             k = k.toLowerCase();
-            Iterator iterator = this.config.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry entry = (Map.Entry) iterator.next();
+            for (Object o : this.config.entrySet()) {
+                Map.Entry entry = (Map.Entry) o;
                 if (entry.getKey().toString().toLowerCase().equals(k)) {
                     return true;
                 }
@@ -339,9 +336,8 @@ public class Config {
 
     private String writeProperties() {
         String content = "";
-        Iterator iterator = this.config.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
+        for (Object o : this.config.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
             Object v = entry.getValue();
             Object k = entry.getKey();
             if (v instanceof Boolean) {

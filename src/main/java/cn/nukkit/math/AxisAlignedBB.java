@@ -191,14 +191,8 @@ public class AxisAlignedBB {
     }
 
     public boolean isVectorInside(Vector3 vector) {
-        if (vector.x <= this.minX || vector.x >= this.maxX) {
-            return false;
-        }
-        if (vector.y <= this.minY || vector.y >= this.maxY) {
-            return false;
-        }
+        return !(vector.x <= this.minX || vector.x >= this.maxX) && !(vector.y <= this.minY || vector.y >= this.maxY) && vector.z > this.minZ && vector.z < this.maxZ;
 
-        return vector.z > this.minZ && vector.z < this.maxZ;
     }
 
     public double getAverageEdgeLength() {
@@ -251,7 +245,8 @@ public class AxisAlignedBB {
 
         Vector3 vector = null;
 
-        if (v1 != null && (vector == null || pos1.distanceSquared(v1) < pos1.distanceSquared(vector))) {
+        //if (v1 != null && (vector == null || pos1.distanceSquared(v1) < pos1.distanceSquared(vector))) {
+        if (v1 != null) {
             vector = v1;
         }
 
@@ -279,23 +274,23 @@ public class AxisAlignedBB {
             return null;
         }
 
-        int f = -1;
+        int face = -1;
 
-        if (vector == v1) {
-            f = 4;
-        } else if (vector == v2) {
-            f = 5;
-        } else if (vector == v3) {
-            f = 0;
-        } else if (vector == v4) {
-            f = 1;
-        } else if (vector == v5) {
-            f = 2;
-        } else if (vector == v6) {
-            f = 3;
+        if (vector.equals(v1)) {
+            face = 4;
+        } else if (vector.equals(v2)) {
+            face = 5;
+        } else if (vector.equals(v3)) {
+            face = 0;
+        } else if (vector.equals(v4)) {
+            face = 1;
+        } else if (vector.equals(v5)) {
+            face = 2;
+        } else if (vector.equals(v6)) {
+            face = 3;
         }
 
-        return MovingObjectPosition.fromBlock(0, 0, 0, f, vector);
+        return MovingObjectPosition.fromBlock(0, 0, 0, face, vector);
     }
 
 
