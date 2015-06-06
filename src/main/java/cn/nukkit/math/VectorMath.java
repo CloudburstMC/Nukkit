@@ -4,6 +4,7 @@ package cn.nukkit.math;
  * author: MagicDroidX
  * Nukkit Project
  */
+
 abstract class VectorMath {
 
     public static Vector2 getDirection2D(double azimuth) {

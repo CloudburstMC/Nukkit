@@ -1,6 +1,6 @@
-package cn.nukkit.entity;
+package cn.nukkit.block;
 
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
@@ -11,13 +11,7 @@ import java.util.List;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Entity extends Location implements Metadatable {
-
-    protected int id;
-
-    public int getId() {
-        return this.id;
-    }
+public class Block extends Position implements Metadatable {
 
     @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
@@ -40,5 +34,4 @@ public abstract class Entity extends Location implements Metadatable {
     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
         //todo
     }
-
 }

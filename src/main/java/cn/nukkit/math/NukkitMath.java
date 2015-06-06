@@ -4,7 +4,7 @@ package cn.nukkit.math;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Math {
+public class NukkitMath {
 
     public static double floorDouble(double n) {
         int i = (int) n;

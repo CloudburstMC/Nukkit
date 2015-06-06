@@ -111,7 +111,7 @@ public class MainLogger extends Thread {
 
     protected void send(String message, int level) {
         Date now = new Date();
-        String cleanMessage = TextFormat.clean(message);
+        String cleanMessage = new SimpleDateFormat("hh:mm:ss").format(now) + " " + TextFormat.clean(message);
         message = TextFormat.toANSI(TextFormat.AQUA + new SimpleDateFormat("hh:mm:ss").format(now) + TextFormat.RESET + " " + message + TextFormat.RESET);
         if (this.enable_Ansi) {
             System.out.println(message);

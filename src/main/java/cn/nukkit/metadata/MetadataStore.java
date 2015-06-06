@@ -10,11 +10,11 @@ import java.util.*;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class MetadataStore<T> {
+public abstract class MetadataStore {
 
     private HashMap<String, Map<Plugin, MetadataValue>> metadataMap = new HashMap<String, Map<Plugin, MetadataValue>>();
 
-    public void setMetadata(T subject, String metadataKey, MetadataValue newMetadataValue) {
+    public void setMetadata(Object subject, String metadataKey, MetadataValue newMetadataValue) throws Exception {
         if (newMetadataValue == null) {
             throw new ServerException("Value cannot be null");
         }
@@ -22,7 +22,7 @@ public abstract class MetadataStore<T> {
         if (owningPlugin == null) {
             throw new PluginException("Plugin cannot be null");
         }
-        String key = this.disambiguate(subject, metadataKey);
+        String key = this.disambiguate((Metadatable) subject, metadataKey);
         Map<Plugin, MetadataValue> entry = this.metadataMap.get(key);
         if (entry == null) {
             entry = new WeakHashMap<Plugin, MetadataValue>(1);
@@ -31,8 +31,8 @@ public abstract class MetadataStore<T> {
         entry.put(owningPlugin, newMetadataValue);
     }
 
-    public List<MetadataValue> getMetadata(T subject, String metadataKey) {
-        String key = this.disambiguate(subject, metadataKey);
+    public List<MetadataValue> getMetadata(Object subject, String metadataKey) throws Exception {
+        String key = this.disambiguate((Metadatable) subject, metadataKey);
         if (this.metadataMap.containsKey(key)) {
             Collection values = ((Map) this.metadataMap.get(key)).values();
             return Collections.unmodifiableList(new ArrayList<MetadataValue>(values));
@@ -40,15 +40,15 @@ public abstract class MetadataStore<T> {
         return Collections.emptyList();
     }
 
-    public boolean hasMetadata(T subject, String metadataKey) {
-        return this.metadataMap.containsKey(this.disambiguate(subject, metadataKey));
+    public boolean hasMetadata(Object subject, String metadataKey) throws Exception {
+        return this.metadataMap.containsKey(this.disambiguate((Metadatable) subject, metadataKey));
     }
 
-    public void removeMetadata(T subject, String metadataKey, Plugin owningPlugin) {
+    public void removeMetadata(Object subject, String metadataKey, Plugin owningPlugin) throws Exception {
         if (owningPlugin == null) {
             throw new PluginException("Plugin cannot be null");
         }
-        String key = this.disambiguate(subject, metadataKey);
+        String key = this.disambiguate((Metadatable) subject, metadataKey);
         Map entry = (Map) this.metadataMap.get(key);
         if (entry == null) {
             return;
@@ -59,7 +59,7 @@ public abstract class MetadataStore<T> {
         }
     }
 
-    public void invalidateAll(Plugin owningPlugin) {
+    public void invalidateAll(Plugin owningPlugin) throws Exception {
         if (owningPlugin == null) {
             throw new PluginException("Plugin cannot be null");
         }
@@ -70,5 +70,5 @@ public abstract class MetadataStore<T> {
         }
     }
 
-    protected abstract String disambiguate(T subject, String metadataKey);
+    protected abstract String disambiguate(Metadatable subject, String metadataKey) throws Exception;
 }

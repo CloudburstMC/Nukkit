@@ -19,11 +19,18 @@ public class Nukkit {
     private final static String nukkit_DATA = System.getProperty("user.dir") + "/";
     private final static String nukkit_PLUGIN_PATH = nukkit_DATA + "plugins";
     private final static Long nukkit_START_TIME = System.currentTimeMillis();
+    public static boolean nukkit_ANSI = true;
 
 
     public static void main(String[] args) {
 
-        MainLogger logger = new MainLogger(nukkit_DATA + "server.log", false, true); //todo: 检查是否启用了ansi，是否开启了调试模式
+        //启动参数
+        for (String arg : args) {
+            if (arg.equals("disable-ansi")) nukkit_ANSI = false;
+        }
+
+        MainLogger logger = new MainLogger(nukkit_DATA + "server.log", false, nukkit_ANSI); //todo: 检查是否启用了ansi，是否开启了调试模式
+
 
         Server server = new Server(logger, nukkit_PATH, nukkit_DATA, nukkit_PLUGIN_PATH);
 
