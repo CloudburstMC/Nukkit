@@ -7,33 +7,33 @@ import cn.nukkit.utils.Config;
  * author: MagicDroidX
  * Nukkit
  */
-interface Plugin {
+public abstract interface Plugin {
     //todo
-    void onLoad();
+    public abstract void onLoad();
 
-    void onEnable();
+    public abstract void onEnable();
 
-    boolean isEnabled();
+    public abstract boolean isEnabled();
 
-    void onDisable();
+    public abstract void onDisable();
 
-    boolean isDisabled();
+    public abstract boolean isDisabled();
 
-    String getDataFolder();
+    public abstract String getDataFolder();
 
     //todo a lot...
 
-    Config getConfig();
+    public abstract Config getConfig();
 
-    void saveConfig();
+    public abstract void saveConfig();
 
-    void saveDefaultConfig();
+    public abstract void saveDefaultConfig();
 
-    void reloadConfig();
+    public abstract void reloadConfig();
 
-    Server getServer();
+    public abstract Server getServer();
 
-    String getName();
+    public abstract String getName();
 
     //todo a lot...
 }
