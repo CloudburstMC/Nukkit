@@ -1,5 +1,7 @@
 package cn.nukkit.level;
 
+import cn.nukkit.math.Vector3;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -40,6 +42,22 @@ public class Location extends Position {
         this.yaw = yaw;
         this.pitch = pitch;
         this.level = level;
+    }
+
+    public static Location fromObject(Vector3 pos) {
+        return fromObject(pos, null, 0.0, 0.0);
+    }
+
+    public static Location fromObject(Vector3 pos, Level level) {
+        return fromObject(pos, level, 0.0, 0.0);
+    }
+
+    public static Location fromObject(Vector3 pos, Level level, double yaw) {
+        return fromObject(pos, level, yaw, 0.0);
+    }
+
+    public static Location fromObject(Vector3 pos, Level level, double yaw, double pitch) {
+        return new Location((int) pos.x, (int) pos.y, (int) pos.z, yaw, pitch, (level == null) ? ((pos instanceof Position) ? ((Position) pos).level : null) : level);
     }
 
     public double getYaw() {
