@@ -11,7 +11,7 @@ abstract class Task {
         return this.taskHandler;
     }
 
-    public final long getTaskId() {
+    public final int getTaskId() {
         return this.taskHandler != null ? this.taskHandler.getTaskId() : -1;
     }
 

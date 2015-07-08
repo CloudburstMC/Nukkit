@@ -9,7 +9,7 @@ import cn.nukkit.Server;
 abstract class AsyncTask extends Thread {
 
     private Object result;
-    private long taskId;
+    private int taskId;
     private boolean finished = false;
     private boolean cancelRun = false;
 
@@ -37,11 +37,11 @@ abstract class AsyncTask extends Thread {
         this.result = result;
     }
 
-    public void setTaskId(long taskId) {
+    public void setTaskId(int taskId) {
         this.taskId = taskId;
     }
 
-    public long getTaskId() {
+    public int getTaskId() {
         return this.taskId;
     }
 

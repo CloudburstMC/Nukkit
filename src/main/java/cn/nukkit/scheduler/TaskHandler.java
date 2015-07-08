@@ -7,7 +7,7 @@ package cn.nukkit.scheduler;
 public class TaskHandler {
 
     protected Task task;
-    protected long taskId;
+    protected int taskId;
     protected int delay;
     protected int period;
     protected long nextRun;
@@ -15,15 +15,15 @@ public class TaskHandler {
     //todo TimingsHandler
     protected String timingName;
 
-    public TaskHandler(String timingName, Task task, long taskId) {
+    public TaskHandler(String timingName, Task task, int taskId) {
         this(timingName, task, taskId, -1, -1);
     }
 
-    public TaskHandler(String timingName, Task task, long taskId, int delay) {
+    public TaskHandler(String timingName, Task task, int taskId, int delay) {
         this(timingName, task, taskId, delay, -1);
     }
 
-    public TaskHandler(String timingName, Task task, long taskId, int delay, int period) {
+    public TaskHandler(String timingName, Task task, int taskId, int delay, int period) {
         this.task = task;
         this.taskId = taskId;
         this.delay = delay;
@@ -44,7 +44,7 @@ public class TaskHandler {
         this.nextRun = ticks;
     }
 
-    public long getTaskId() {
+    public int getTaskId() {
         return this.taskId;
     }
 

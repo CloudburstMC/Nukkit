@@ -100,6 +100,13 @@ public class Server {
         this.logger.info("正在为 Minecraft: PE " + TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE + " 启动服务器");
         //todo 一些tick配置
         this.scheduler = new ServerScheduler();
+
+        this.start();
+    }
+
+    public void start() {
+        //todo a lot
+        this.logger.info("完成 (" + ((double) (System.currentTimeMillis() - Nukkit.START_TIME)) / 1000 + "s)!");
     }
 
     public MainLogger getLogger() {
