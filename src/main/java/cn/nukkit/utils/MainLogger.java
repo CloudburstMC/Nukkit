@@ -52,31 +52,31 @@ public class MainLogger extends Thread {
     }
 
     public void emergency(String message) {
-        this.send(TextFormat.RED + "EMERGENCY " + message);
+        this.send(TextFormat.RED + "[EMERGENCY] " + message);
     }
 
     public void alert(String message) {
-        this.send(TextFormat.RED + "ALERT " + message);
+        this.send(TextFormat.RED + "[ALERT] " + message);
     }
 
     public void critical(String message) {
-        this.send(TextFormat.RED + "CRITICAL " + message);
+        this.send(TextFormat.RED + "[CRITICAL] " + message);
     }
 
     public void error(String message) {
-        this.send(TextFormat.DARK_RED + "ERROR " + message);
+        this.send(TextFormat.DARK_RED + "[ERROR] " + message);
     }
 
     public void warning(String message) {
-        this.send(TextFormat.YELLOW + "WARNING " + message);
+        this.send(TextFormat.YELLOW + "[WARNING] " + message);
     }
 
     public void notice(String message) {
-        this.send(TextFormat.AQUA + "NOTICE " + message);
+        this.send(TextFormat.AQUA + "[NOTICE] " + message);
     }
 
     public void info(String message) {
-        this.send(TextFormat.WHITE + "INFO " + message);
+        this.send(TextFormat.WHITE + "[INFO] " + message);
     }
 
     public void debug(String message) {

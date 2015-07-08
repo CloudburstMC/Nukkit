@@ -11,10 +11,13 @@ abstract class AsyncTask extends Thread {
     private Object result;
     private long taskId;
     private boolean finished = false;
+    private boolean cancelRun = false;
 
     public void run() {
         this.result = null;
-        this.onRun();
+        if (!this.cancelRun) {
+            this.onRun();
+        }
         this.finished = true;
     }
 
