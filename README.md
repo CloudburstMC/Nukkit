@@ -1,4 +1,5 @@
-![image](https://github.com/MagicDroidX/Nukkit/raw/master/images/banner.png) 
+![image](https://github.com/MagicDroidX/Nukkit/raw/master/images/banner.png)
+(。・`ω´・)
 # Nukkit
 	- 核能Minecraft: PE 服务端  
 	- Nuclear-Powered Server For Minecraft: PE
