@@ -52,10 +52,23 @@ public class Utils {
         StringBuilder stringBuilder = new StringBuilder();
         temp = br.readLine();
         while (temp != null) {
-            stringBuilder.append(temp).append(" ");
+            stringBuilder.append(temp).append("\n");
             temp = br.readLine();
         }
         return stringBuilder.toString();
     }
+
+    public static String readFile(InputStream inputStream) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+        String temp = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        temp = br.readLine();
+        while (temp != null) {
+            stringBuilder.append(temp).append("\n");
+            temp = br.readLine();
+        }
+        return stringBuilder.toString();
+    }
+
 
 }

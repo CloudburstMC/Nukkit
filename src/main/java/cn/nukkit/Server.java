@@ -1,6 +1,7 @@
 package cn.nukkit;
 
 import cn.nukkit.command.CommandReader;
+import cn.nukkit.lang.BaseLang;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
@@ -27,6 +28,12 @@ public class Server {
     private Config config;
     private Config properties;
     private ServerScheduler scheduler;
+
+    private BaseLang baseLang;
+
+    public BaseLang getLanguage() {
+        return baseLang;
+    }
 
     public Object getProperty(String variable) {
         return this.getProperty(variable, null);
@@ -64,13 +71,13 @@ public class Server {
 
         //todo: VersionString 现在不必要
 
-        this.logger.info("正在加载 " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + " 中...");
+        this.logger.info("Loading " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + "...");
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             Utils.writeFile(this.dataPath + "nukkit.yml", this.getClass().getClassLoader().getResourceAsStream("resources/nukkit.yml"));
         }
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
-        this.logger.info("正在加载 " + TextFormat.GREEN + "服务器配置文档" + TextFormat.WHITE + " 中...");
+        this.logger.info("Loading " + TextFormat.GREEN + "server properties" + TextFormat.WHITE + "...");
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new HashMap<String, Object>() {
             {
                 put("motd", "Nukkit Server For Minecraft: PE");
@@ -97,7 +104,8 @@ public class Server {
                 put("auto-save", false);
             }
         });
-        this.logger.info("正在为 Minecraft: PE " + TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE + " 启动服务器");
+        this.baseLang = new BaseLang("eng");
+        this.logger.info(getLanguage().translateString("nukkit.server.start", new String[]{TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE}));
         //todo 一些tick配置
         this.scheduler = new ServerScheduler();
 
@@ -106,7 +114,7 @@ public class Server {
 
     public void start() {
         //todo a lot
-        this.logger.info("完成 (" + ((double) (System.currentTimeMillis() - Nukkit.START_TIME)) / 1000 + "s)!");
+        this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", new String[]{String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)}));
     }
 
     public MainLogger getLogger() {
