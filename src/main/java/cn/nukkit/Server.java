@@ -66,7 +66,7 @@ public class Server {
 
         this.logger.info("正在加载 " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + " 中...");
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
-            Utils.WriteFile(this.dataPath + "nukkit.yml", this.getClass().getClassLoader().getResourceAsStream("resources/nukkit.yml"));
+            Utils.writeFile(this.dataPath + "nukkit.yml", this.getClass().getClassLoader().getResourceAsStream("resources/nukkit.yml"));
         }
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 

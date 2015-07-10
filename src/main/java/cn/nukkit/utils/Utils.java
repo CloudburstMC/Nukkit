@@ -2,10 +2,7 @@ package cn.nukkit.utils;
 
 import cn.nukkit.Server;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * author: MagicDroidX
@@ -13,7 +10,7 @@ import java.io.InputStream;
  */
 public class Utils {
 
-    public static File WriteFile(String filename, InputStream inputStream) {
+    public static File writeFile(String filename, InputStream inputStream) {
         if (inputStream == null) {
             Server.getInstance().getLogger().error("无法读取文件 " + filename);
             return null;
@@ -43,6 +40,22 @@ public class Utils {
             return null;
         }
         return file;
+    }
+
+    public static String readFile(String filename) throws IOException {
+        File file = new File(filename);
+        if (!file.exists() || file.isDirectory()) {
+            throw new FileNotFoundException();
+        }
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String temp = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        temp = br.readLine();
+        while (temp != null) {
+            stringBuilder.append(temp).append(" ");
+            temp = br.readLine();
+        }
+        return stringBuilder.toString();
     }
 
 }

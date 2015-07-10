@@ -15,7 +15,7 @@ public class Nukkit {
     public final static String MINECRAFT_VERSION = "v0.11.0 alpha";
     public final static String MINECRAFT_VERSION_NETWORK = "0.11.0";
 
-    public final static String Nukkit_PATH = System.getProperty("user.dir") + "/";
+    public final static String PATH = System.getProperty("user.dir") + "/";
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
     public final static Long START_TIME = System.currentTimeMillis();
@@ -32,7 +32,7 @@ public class Nukkit {
         MainLogger logger = new MainLogger(DATA_PATH + "server.log", false, ANSI); //todo: 检查是否启用了ansi，是否开启了调试模式
 
 
-        Server server = new Server(logger, Nukkit_PATH, DATA_PATH, PLUGIN_PATH);
+        Server server = new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
 
     }
 
