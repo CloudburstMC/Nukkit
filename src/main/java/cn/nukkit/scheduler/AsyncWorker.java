@@ -7,11 +7,11 @@ import java.util.LinkedList;
  * Nukkit Project
  */
 public class AsyncWorker extends Thread {
-    private LinkedList<AsyncTask> stack = new LinkedList<AsyncTask>();
+    private final LinkedList<AsyncTask> stack = new LinkedList<AsyncTask>();
 
     public void stack(AsyncTask task) {
-        stack.add(task);
-        task.run();
+        stack.addFirst(task);
+        this.run();
     }
 
     public void unstack() {
@@ -20,6 +20,16 @@ public class AsyncWorker extends Thread {
 
     public void unstack(AsyncTask task) {
         stack.remove(task);
+    }
+
+    public void run() {
+        synchronized (stack){
+            while (!stack.isEmpty()) {
+                AsyncTask task = stack.getFirst();
+                task.start();
+                stack.removeFirst();
+            }
+        }
     }
 
 }

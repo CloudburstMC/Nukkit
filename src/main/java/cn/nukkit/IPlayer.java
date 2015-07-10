@@ -6,26 +6,26 @@ import cn.nukkit.permission.ServerOperator;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract interface IPlayer extends ServerOperator {
+public interface IPlayer extends ServerOperator {
 
-    public abstract boolean isOnline();
+    boolean isOnline();
 
-    public abstract String getName();
+    String getName();
 
-    public abstract boolean isBanned();
+    boolean isBanned();
 
-    public abstract void setBanned(boolean banned);
+    void setBanned(boolean banned);
 
-    public abstract boolean isWhitelisted();
+    boolean isWhitelisted();
 
-    public abstract void setWhitelisted(boolean value);
+    void setWhitelisted(boolean value);
 
-    public abstract Player getPlayer();
+    Player getPlayer();
 
-    public abstract double getFirstPlayered();
+    double getFirstPlayered();
 
-    public abstract double getLastPlayed();
+    double getLastPlayed();
 
-    public Object hasPlayedBefore();
+    Object hasPlayedBefore();
 
 }

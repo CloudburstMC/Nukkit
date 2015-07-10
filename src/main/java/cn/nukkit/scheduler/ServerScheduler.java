@@ -15,9 +15,9 @@ import java.util.concurrent.PriorityBlockingQueue;
  */
 public class ServerScheduler {
     protected PriorityBlockingQueue<TaskHandler> queue;
-    protected HashMap<Long, TaskHandler> tasks;
+    protected HashMap<Integer, TaskHandler> tasks;
     //todo asyncpool
-    private long ids = 1;
+    private int ids = 1;
     protected long currentTick = 0;
 
     Comparator<TaskHandler> comparator = new Comparator<TaskHandler>() {
@@ -57,7 +57,7 @@ public class ServerScheduler {
     }
 
     public void cancelTask(PluginBase plugin) {
-        for (Map.Entry<Long, TaskHandler> entry : this.tasks.entrySet()) {
+        for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
             long taskId = entry.getKey();
             TaskHandler task = entry.getValue();
             Task ptask = task.getTask();
@@ -69,10 +69,10 @@ public class ServerScheduler {
     }
 
     public void cancelAllTasks() {
-        for (Map.Entry<Long, TaskHandler> entry : this.tasks.entrySet()) {
+        for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
             entry.getValue().cancel();
         }
-        this.tasks = new HashMap<Long, TaskHandler>();
+        this.tasks = new HashMap<Integer, TaskHandler>();
         this.queue = new PriorityBlockingQueue<TaskHandler>(11, comparator);
         this.ids = 1;
     }
@@ -148,7 +148,7 @@ public class ServerScheduler {
         return !this.tasks.isEmpty() && this.queue.peek().getNextRun() <= currentTick;
     }
 
-    private long nextId() {
+    private int nextId() {
         this.ids++;
         return this.ids;
     }

@@ -8,13 +8,13 @@ import java.util.List;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract interface Metadatable {
+public interface Metadatable {
 
-    public abstract void setMetadata(String metadataKey, MetadataValue newMetadataValue);
+    void setMetadata(String metadataKey, MetadataValue newMetadataValue);
 
-    public abstract List<MetadataValue> getMetadata(String metadataKey);
+    List<MetadataValue> getMetadata(String metadataKey);
 
-    public abstract boolean hasMetadata(String metadataKey);
+    boolean hasMetadata(String metadataKey);
 
-    public abstract void removeMetadata(String metadataKey, Plugin owningPlugin);
+    void removeMetadata(String metadataKey, Plugin owningPlugin);
 }
