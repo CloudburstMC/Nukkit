@@ -23,7 +23,7 @@ public class AsyncWorker extends Thread {
     }
 
     public void run() {
-        synchronized (stack){
+        synchronized (stack) {
             while (!stack.isEmpty()) {
                 AsyncTask task = stack.getFirst();
                 task.start();

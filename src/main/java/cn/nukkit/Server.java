@@ -13,7 +13,7 @@ import cn.nukkit.utils.Utils;
 import sun.misc.BASE64Encoder;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
 /**
@@ -73,7 +73,7 @@ public class Server {
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
         this.logger.info("Loading " + TextFormat.GREEN + "server properties" + TextFormat.WHITE + "...");
-        this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new HashMap<String, Object>() {
+        this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new LinkedHashMap<String, Object>() {
             {
                 put("motd", "Nukkit Server For Minecraft: PE");
                 put("server-port", 19132);

@@ -1,8 +1,6 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.command.CommandReader;
-import jline.console.ConsoleReader;
-import jline.console.CursorBuffer;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.*;
