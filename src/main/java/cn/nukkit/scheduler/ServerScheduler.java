@@ -14,9 +14,11 @@ import java.util.concurrent.PriorityBlockingQueue;
  * Nukkit Project
  */
 public class ServerScheduler {
+    public static int WORKERS = 4;
+
     protected PriorityBlockingQueue<TaskHandler> queue;
     protected HashMap<Integer, TaskHandler> tasks;
-    //todo asyncpool
+    protected AsyncPool asyncPool;
     private int ids = 1;
     protected long currentTick = 0;
 
@@ -29,13 +31,17 @@ public class ServerScheduler {
 
     public ServerScheduler() {
         this.queue = new PriorityBlockingQueue<TaskHandler>(11, comparator);
+        this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
 
     public TaskHandler scheduleTask(Task task) {
         return this.addTask(task, -1, -1);
     }
 
-    //todo AsyncTask PS: is this necessary?
+    public void scheduleAsyncTask(AsyncTask task) {
+        task.setTaskId(this.nextId());
+        this.asyncPool.submitTask(task);
+    }
 
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
         return this.addTask(task, delay, -1);
@@ -84,12 +90,12 @@ public class ServerScheduler {
     private TaskHandler addTask(Task task, int delay, int period) {
         if (task instanceof PluginTask) {
             if (((PluginTask) task).getOwner() != null) {
-                throw new PluginException("PluginTask " + task.getClass().getName() + " 的拥有者为NULL");
+                throw new PluginException("Invalid owner of PluginTask " + task.getClass().getName());
             } else if (!((PluginTask) task).getOwner().isEnabled()) {
-                throw new PluginException("插件 " + ((PluginTask) task).getOwner().getName() + " 企图在禁用状态下注册PluginTask");
+                throw new PluginException("Plugin '" + ((PluginTask) task).getOwner().getName() + "' attempted to register a task while disabled");
             }
         }
-        //todo CallBackTask??
+        //todo deprecate CallBackTask??
         if (delay <= 0) {
             delay = -1;
         }

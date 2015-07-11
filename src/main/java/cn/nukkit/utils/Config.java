@@ -1,6 +1,9 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.Server;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -24,7 +27,7 @@ public class Config {
     public static final int DETECT = -1; //Detect by file extension
     public static final int PROPERTIES = 0; // .properties
     public static final int CNF = Config.PROPERTIES; // .cnf
-    //public static final int JSON = 1; // .js, .json
+    public static final int JSON = 1; // .js, .json
     public static final int YAML = 2; // .yml, .yaml
     //public static final int EXPORT = 3; // .export, .xport
     //public static final int SERIALIZED = 4; // .sl
@@ -44,8 +47,8 @@ public class Config {
         format.put("con", Config.PROPERTIES);
         format.put("conf", Config.PROPERTIES);
         format.put("config", Config.PROPERTIES);
-        //format.put("js", Config.JSON);
-        //format.put("json", Config.JSON);
+        format.put("js", Config.JSON);
+        format.put("json", Config.JSON);
         format.put("yml", Config.YAML);
         format.put("yaml", Config.YAML);
         //format.put("sl", Config.SERIALIZED);
@@ -122,7 +125,12 @@ public class Config {
                     case Config.PROPERTIES:
                         this.parseProperties(content);
                         break;
-                    //todo: case Config.JSON:
+                    case Config.JSON:
+                        GsonBuilder builder = new GsonBuilder();
+                        Gson gson = builder.create();
+                        this.config = gson.fromJson(content, new TypeToken<HashMap<String, Object>>() {
+                        }.getType());
+                        break;
                     case Config.YAML:
                         DumperOptions dumperOptions = new DumperOptions();
                         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -162,7 +170,9 @@ public class Config {
                 case Config.PROPERTIES:
                     content = this.writeProperties();
                     break;
-                //todo: case Config.JSON:
+                case Config.JSON:
+                    content = new Gson().toJson(this.config);
+                    break;
                 case Config.YAML:
                     DumperOptions dumperOptions = new DumperOptions();
                     dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -210,7 +220,7 @@ public class Config {
     }
 
     public Object get(String k) {
-        return this.get(k, false);
+        return this.get(k, true);
     }
 
     public Object get(String k, Object default_value) {

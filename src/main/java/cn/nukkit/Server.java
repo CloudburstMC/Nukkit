@@ -27,6 +27,7 @@ public class Server {
     private PlayerMetadataStore playerMetadata;
     private LevelMetadataStore levelMetadata;
 
+    private boolean forceLanguage;
     private MainLogger logger;
     private String filePath;
     private String dataPath;
@@ -34,6 +35,8 @@ public class Server {
     private CommandReader console;
     private Config config;
     private Config properties;
+    private Config operators;
+    private Config whitelist;
     private ServerScheduler scheduler;
 
     private BaseLang baseLang;
@@ -99,7 +102,8 @@ public class Server {
                 put("auto-save", false);
             }
         });
-        //this.baseLang = new BaseLang("zho");
+
+        this.forceLanguage = (Boolean) this.getProperty("settings.force-language", false);
         this.baseLang = new BaseLang((String) this.getProperty("settings.language", BaseLang.FALLBACK_LANGUAGE));
         this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
         this.logger.info(getLanguage().translateString("nukkit.server.start", new String[]{TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE}));
@@ -109,6 +113,11 @@ public class Server {
         this.entityMetadata = new EntityMetadataStore();
         this.playerMetadata = new PlayerMetadataStore();
         this.levelMetadata = new LevelMetadataStore();
+        this.operators = new Config(this.dataPath + "ops.json", Config.JSON);
+        this.operators.set("mdx");
+        this.operators.set("23333");
+        this.operators.save();
+        this.whitelist = new Config(this.dataPath + "white-list.json", Config.JSON);
 
         this.start();
     }
