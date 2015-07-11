@@ -2,6 +2,9 @@ package cn.nukkit;
 
 import cn.nukkit.command.CommandReader;
 import cn.nukkit.lang.BaseLang;
+import cn.nukkit.metadata.EntityMetadataStore;
+import cn.nukkit.metadata.LevelMetadataStore;
+import cn.nukkit.metadata.PlayerMetadataStore;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
@@ -20,6 +23,10 @@ import java.util.UUID;
 public class Server {
     private static Server instance;
 
+    private EntityMetadataStore entityMetadata;
+    private PlayerMetadataStore playerMetadata;
+    private LevelMetadataStore levelMetadata;
+
     private MainLogger logger;
     private String filePath;
     private String dataPath;
@@ -31,18 +38,6 @@ public class Server {
 
     private BaseLang baseLang;
 
-    public BaseLang getLanguage() {
-        return baseLang;
-    }
-
-    public Object getProperty(String variable) {
-        return this.getProperty(variable, null);
-    }
-
-    public Object getProperty(String variable, Object defaultValue) {
-        Object value = this.config.getNested(variable);
-        return value == null ? defaultValue : value;
-    }
 
     public static Server getInstance() {
         return instance;
@@ -111,6 +106,10 @@ public class Server {
         //todo 一些tick配置
         this.scheduler = new ServerScheduler();
 
+        this.entityMetadata = new EntityMetadataStore();
+        this.playerMetadata = new PlayerMetadataStore();
+        this.levelMetadata = new LevelMetadataStore();
+
         this.start();
     }
 
@@ -121,5 +120,34 @@ public class Server {
 
     public MainLogger getLogger() {
         return this.logger;
+    }
+
+    public BaseLang getLanguage() {
+        return baseLang;
+    }
+
+    public Object getProperty(String variable) {
+        return this.getProperty(variable, null);
+    }
+
+    public Object getProperty(String variable, Object defaultValue) {
+        Object value = this.config.getNested(variable);
+        return value == null ? defaultValue : value;
+    }
+
+    public ServerScheduler getScheduler() {
+        return scheduler;
+    }
+
+    public EntityMetadataStore getEntityMetadata() {
+        return entityMetadata;
+    }
+
+    public PlayerMetadataStore getPlayerMetadata() {
+        return playerMetadata;
+    }
+
+    public LevelMetadataStore getLevelMetadata() {
+        return levelMetadata;
     }
 }

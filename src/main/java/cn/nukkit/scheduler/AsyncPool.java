@@ -1,7 +1,6 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,12 +50,12 @@ public class AsyncPool {
         }
     }
 
-    public void submitTaskToWorker(AsyncTask task, int worker) throws InvalidArgumentException {
+    public void submitTaskToWorker(AsyncTask task, int worker) throws IllegalArgumentException {
         if (this.tasks.containsKey(task.getTaskId()) || task.isFinished()) {
             return;
         }
         if (worker < 0 || worker >= this.size) {
-            throw new InvalidArgumentException(new String[]{"不可用的 worker " + worker});
+            throw new IllegalArgumentException("不可用的 worker " + worker);
         }
         this.tasks.put(task.getTaskId(), task);
         this.workers[worker].stack(task);
@@ -78,7 +77,7 @@ public class AsyncPool {
         }
         try {
             this.submitTaskToWorker(task, selectedWorker);
-        } catch (InvalidArgumentException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }

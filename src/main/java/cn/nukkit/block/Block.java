@@ -4,7 +4,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.utils.MainLogger;
 
 import java.util.List;
 
@@ -15,48 +14,31 @@ import java.util.List;
 public class Block extends Position implements Metadatable {
 
     @Override
-    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) throws Exception {
         if (this.getLevel() != null) {
-            try {
-                this.getLevel().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
-            } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
-            }
+            this.getLevel().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
+
         }
     }
 
     @Override
-    public List<MetadataValue> getMetadata(String metadataKey) {
+    public List<MetadataValue> getMetadata(String metadataKey) throws Exception {
         if (this.getLevel() != null) {
-            try {
-                return this.getLevel().getBlockMetadata().getMetadata(this, metadataKey);
-            } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
-            }
+            return this.getLevel().getBlockMetadata().getMetadata(this, metadataKey);
+
         }
         return null;
     }
 
     @Override
-    public boolean hasMetadata(String metadataKey) {
-        if (this.getLevel() != null) {
-            try {
-                return this.getLevel().getBlockMetadata().hasMetadata(this, metadataKey);
-            } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
-            }
-        }
-        return false;
+    public boolean hasMetadata(String metadataKey) throws Exception {
+        return this.getLevel() != null && this.getLevel().getBlockMetadata().hasMetadata(this, metadataKey);
     }
 
     @Override
-    public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+    public void removeMetadata(String metadataKey, Plugin owningPlugin) throws Exception {
         if (this.getLevel() != null) {
-            try {
-                this.getLevel().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
-            } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
-            }
+            this.getLevel().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
         }
     }
 
