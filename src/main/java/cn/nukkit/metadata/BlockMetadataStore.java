@@ -3,7 +3,6 @@ package cn.nukkit.metadata;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.Plugin;
-import sun.plugin.dom.exception.InvalidStateException;
 
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class BlockMetadataStore extends MetadataStore {
         if (((Block) block).getLevel().equals(this.owningLevel)) {
             return super.getMetadata(block, metadataKey);
         } else {
-            throw new InvalidStateException("Block does not belong to world " + this.owningLevel.getName());
+            throw new IllegalStateException("Block does not belong to world " + this.owningLevel.getName());
         }
     }
 
@@ -46,7 +45,7 @@ public class BlockMetadataStore extends MetadataStore {
         if (((Block) block).getLevel().equals(this.owningLevel)) {
             return super.hasMetadata(block, metadataKey);
         } else {
-            throw new InvalidStateException("Block does not belong to world " + this.owningLevel.getName());
+            throw new IllegalStateException("Block does not belong to world " + this.owningLevel.getName());
         }
     }
 
@@ -58,7 +57,7 @@ public class BlockMetadataStore extends MetadataStore {
         if (((Block) block).getLevel().equals(this.owningLevel)) {
             super.removeMetadata(block, metadataKey, owningPlugin);
         } else {
-            throw new InvalidStateException("Block does not belong to world " + this.owningLevel.getName());
+            throw new IllegalStateException("Block does not belong to world " + this.owningLevel.getName());
         }
     }
 
@@ -70,7 +69,7 @@ public class BlockMetadataStore extends MetadataStore {
         if (((Block) block).getLevel().equals(this.owningLevel)) {
             super.setMetadata(block, metadataKey, newMetadataValue);
         } else {
-            throw new InvalidStateException("Block does not belong to world " + this.owningLevel.getName());
+            throw new IllegalStateException("Block does not belong to world " + this.owningLevel.getName());
         }
     }
 }

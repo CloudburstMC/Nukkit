@@ -1,5 +1,8 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.command.CommandReader;
+import jline.console.ConsoleReader;
+import jline.console.CursorBuffer;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.*;
@@ -113,12 +116,13 @@ public class MainLogger extends Thread {
         Date now = new Date();
         String cleanMessage = new SimpleDateFormat("hh:mm:ss").format(now) + " " + TextFormat.clean(message);
         message = TextFormat.toANSI(TextFormat.AQUA + new SimpleDateFormat("hh:mm:ss").format(now) + TextFormat.RESET + " " + message + TextFormat.RESET);
+        CommandReader.getInstance().stashLine();
         if (this.enable_Ansi) {
             System.out.println(message);
         } else {
             System.out.println(cleanMessage);
         }
-
+        CommandReader.getInstance().unstashLine();
         String str = new SimpleDateFormat("Y-m-d hh:mm:ss").format(now) + " " + cleanMessage + "" + "\r\n";
         /*synchronized (this) {
             this.logStream += str;
