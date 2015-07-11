@@ -3,8 +3,8 @@
 # 升级后，新的设置及默认值将不会自动显示在这里，它们将以默认值运行直到你手动更新配置文件
 
 settings:
- #多语言设置 [目前不可用]
- #你可以在 https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes 获得语言标识符（三个字母）
+ #多语言设置
+ #可用：eng, chs, cht
  language: "eng"
  #服务器强制语言
  force-language: false

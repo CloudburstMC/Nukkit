@@ -144,7 +144,7 @@ public class MainLogger extends Thread {
                     }
                 }
                 try {
-                    wait(250000);
+                    wait(25000);
                 } catch (InterruptedException e) {
                     this.logException(e);
                 }

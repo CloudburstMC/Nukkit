@@ -104,7 +104,9 @@ public class Server {
                 put("auto-save", false);
             }
         });
-        this.baseLang = new BaseLang("eng");
+        //this.baseLang = new BaseLang("zho");
+        this.baseLang = new BaseLang((String) this.getProperty("settings.language", BaseLang.FALLBACK_LANGUAGE));
+        this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
         this.logger.info(getLanguage().translateString("nukkit.server.start", new String[]{TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE}));
         //todo 一些tick配置
         this.scheduler = new ServerScheduler();
