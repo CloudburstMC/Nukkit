@@ -1,14 +1,13 @@
 package cn.nukkit.scheduler;
 
 import java.util.LinkedList;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class AsyncWorker extends Thread {
-    private final LinkedList<AsyncTask> stack = new LinkedList<AsyncTask>();
+    private LinkedList<AsyncTask> stack = new LinkedList<AsyncTask>();
 
     synchronized public void stack(AsyncTask task) {
         stack.addFirst(task);
@@ -23,11 +22,17 @@ public class AsyncWorker extends Thread {
     }
 
     public void run() {
+
         while (true) {
-            while (!stack.isEmpty()) {
+            while (!this.stack.isEmpty()) {
                 AsyncTask task = stack.getFirst();
                 task.start();
                 stack.removeFirst();
+            }
+            try {
+                sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
