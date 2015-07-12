@@ -5,5 +5,5 @@ package cn.nukkit.event;
  */
 public class HandlerList {
 
-    
+
 }

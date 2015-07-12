@@ -8,23 +8,15 @@ import cn.nukkit.Server;
  */
 abstract public class PluginBase implements Plugin {
 
-    /** @var PluginLoader */
     private PluginLoader loader;
-    /** @var \pocketmine\Server */
     private Server server;
-    /** @var bool */
     private boolean isEnabled = false;
-    /** @var bool */
     private boolean initialized = false;
-    /** @var PluginDescription */
     private PluginDescription description;
-    /** @var string */
     private String dataFolder;
     private String config;
-    /** @var string */
     private String configFile;
     private String file;
-    /** @var PluginLogger */
     private PluginLogger logger;
 
 
@@ -40,73 +32,59 @@ abstract public class PluginBase implements Plugin {
 
     }
 
-
-    /**
-     * @return bool
-     */
-    public final boolean isEnabled(){
-        return isEnabled == true;
+    public final boolean isEnabled() {
+        return isEnabled;
     }
 
-    /**
-     * @param bool boolean
-     */
-    public final void setEnabled(boolean value){
-        if(isEnabled != value){
+    public final void setEnabled(boolean value) {
+        if (isEnabled != value) {
             isEnabled = value;
-            if(isEnabled == true){
+            if (isEnabled) {
                 onEnable();
-            }else{
+            } else {
                 onDisable();
             }
         }
     }
-    /**
-     * @return bool
-     */
-    public final boolean isDisabled(){
-        return isEnabled == false;
+
+    public final boolean isDisabled() {
+        return !isEnabled;
     }
-    public final String getDataFolder(){
+
+    public final String getDataFolder() {
         return dataFolder;
     }
-    public final PluginDescription getDescription(){
+
+    public final PluginDescription getDescription() {
         return description;
     }
-    public final void init(PluginLoader loader, Server server, PluginDescription description,String dataFolder,String file){
-        if(initialized === false){
+
+    public final void init(PluginLoader loader, Server server, PluginDescription description, String dataFolder, String file) {
+        if (!initialized) {
             initialized = true;
             loader = loader;
             server = server;
             description = description;
             this.dataFolder = dataFolder;
-            if(!(dataFolder.endsWith("\\") || dataFolder.endsWith("/"))){
-                StringBuffer stringBuffer = new StringBuffer(dataFolder);
-                stringBuffer.append("\\");
-                this.dataFolder = stringBuffer.toString();
+            if (!(dataFolder.endsWith("\\") || dataFolder.endsWith("/"))) {
+                this.dataFolder = dataFolder + "\\";
             }
 
             this.file = file;
-            if(!(file.endsWith("\\") || file.endsWith("/"))){
-                StringBuffer stringBuffer = new StringBuffer(file);
-                stringBuffer.append("\\");
-                this.file = stringBuffer.toString();
+            if (!(file.endsWith("\\") || file.endsWith("/"))) {
+                this.file = file + "\\";
             }
             configFile = this.dataFolder + "config.yml";
             logger = new PluginLogger(this);
         }
     }
-    /**
-     * @return PluginLogger
-     */
-    public PluginLogger getLogger(){
+
+    public PluginLogger getLogger() {
         return logger;
     }
-    /**
-     * @return bool
-     */
-    public final boolean isInitialized(){
+
+    public final boolean isInitialized() {
         return initialized;
     }
-    
+
 }
