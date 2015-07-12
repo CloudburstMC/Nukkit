@@ -106,8 +106,8 @@ public class Server {
             }
         });
 
-        this.forceLanguage = (Boolean) this.getProperty("settings.force-language", false);
-        this.baseLang = new BaseLang((String) this.getProperty("settings.language", BaseLang.FALLBACK_LANGUAGE));
+        this.forceLanguage = (Boolean) this.getConfig("settings.force-language", false);
+        this.baseLang = new BaseLang((String) this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
         this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
         this.logger.info(getLanguage().translateString("nukkit.server.start", new String[]{TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE}));
         //todo 一些tick配置
@@ -138,13 +138,60 @@ public class Server {
         return baseLang;
     }
 
+    public Object getConfig(String variable) {
+        return this.getConfig(variable, null);
+    }
+
+    public Object getConfig(String variable, Object defaultValue) {
+        Object value = this.config.getNested(variable);
+        return value == null ? defaultValue : value;
+    }
+
     public Object getProperty(String variable) {
         return this.getProperty(variable, null);
     }
 
     public Object getProperty(String variable, Object defaultValue) {
-        Object value = this.config.getNested(variable);
-        return value == null ? defaultValue : value;
+        return this.properties.exists(variable) ? this.properties.get(variable) : defaultValue;
+    }
+
+    public void setProperty(String variable, String value) {
+        this.properties.set(variable, value);
+    }
+
+    public String getPropertyString(String variable) {
+        return (String) this.getPropertyString(variable, null);
+    }
+
+    public String getPropertyString(String variable, String defaultValue) {
+        return this.properties.exists(variable) ? (String) this.properties.get(variable) : defaultValue;
+    }
+
+    public int getPropertyInt(String variable) {
+        return this.getPropertyInt(variable, null);
+    }
+
+    public int getPropertyInt(String variable, Integer defaultValue) {
+        return this.properties.exists(variable) ? (Integer) this.properties.get(variable) : defaultValue;
+    }
+
+    public boolean getPropertyBoolean(String variable) {
+        return this.getPropertyBoolean(variable, null);
+    }
+
+    public boolean getPropertyBoolean(String variable, Object defaultValue) {
+        Object value = this.properties.exists(variable) ? this.properties.get(variable) : defaultValue;
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        switch (String.valueOf(value)) {
+            case "on":
+            case "true":
+            case "1":
+            case "yes":
+                return true;
+        }
+        return false;
     }
 
     public ServerScheduler getScheduler() {
