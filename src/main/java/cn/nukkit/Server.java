@@ -23,31 +23,40 @@ import java.util.UUID;
  */
 public class Server {
     private static Server instance;
+    private BanList banByName;
+    private BanList banByIP;
+    private Config operators;
+    private Config whitelist;
+    private boolean isRunning = true;
+    private boolean hasStopped = false;
+
+    private ServerScheduler scheduler;
+
+    private MainLogger logger;
+
+    private CommandReader console;
+
+    private int maxPlayers;
+
+    private boolean autoSave;
 
     private EntityMetadataStore entityMetadata;
     private PlayerMetadataStore playerMetadata;
     private LevelMetadataStore levelMetadata;
 
+    private BaseLang baseLang;
+
     private boolean forceLanguage;
-    private MainLogger logger;
+
+    private long serverID;
+
     private String filePath;
     private String dataPath;
     private String pluginPath;
-    private CommandReader console;
-    private Config config;
+
+
     private Config properties;
-    private Config operators;
-    private Config whitelist;
-    private BanList banByName;
-    private BanList banByIP;
-    private ServerScheduler scheduler;
-
-    private BaseLang baseLang;
-
-
-    public static Server getInstance() {
-        return instance;
-    }
+    private Config config;
 
     public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
         instance = this;
@@ -124,14 +133,212 @@ public class Server {
         this.banByIP.load();
         this.start();
     }
+    //todo: public void reload
+
+    public void shutdown() {
+        this.isRunning = false;
+    }
 
     public void start() {
         //todo a lot
+        this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", new String[]{getGamemodeString(this.getGamemode())}));
         this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", new String[]{String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)}));
+    }
+
+    public String getName() {
+        return "Nukkit";
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public String getNukkitVersion() {
+        return Nukkit.VERSION;
+    }
+
+    public String getCodename() {
+        return Nukkit.CODENAME;
+    }
+
+    public String getVersion() {
+        return Nukkit.MINECRAFT_VERSION;
+    }
+
+    public String getApiVersion() {
+        return Nukkit.API_VERSION;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public String getDataPath() {
+        return dataPath;
+    }
+
+    public String getPluginPath() {
+        return pluginPath;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public int getPort() {
+        return this.getPropertyInt("server-port", 19132);
+    }
+
+    public int getViewDistance() {
+        return Math.max(56, (Integer) this.getConfig("chunk-sending.max-chunks", 256));
+    }
+
+    public String getIp() {
+        return this.getPropertyString("server-ip", "0.0.0.0");
+    }
+
+    @Deprecated
+    public String getServerName() {
+        return this.getPropertyString("motd", "Nukkit Server For Minecraft: PE");
+    }
+
+    public long getServerUniqueId() {
+        return this.serverID;
+    }
+
+    public boolean getAutoSave() {
+        return this.autoSave;
+    }
+
+    //todo setAutoSave
+
+    public String getLevelType() {
+        return this.getPropertyString("level-type", "DEFAULT");
+    }
+
+    public boolean getGenerateStructures() {
+        return this.getPropertyBoolean("generate-structures", true);
+    }
+
+    public int getGamemode() {
+        return this.getPropertyInt("gamemode", 0);
+    }
+
+    public boolean getForceGamemode() {
+        return this.getPropertyBoolean("force-gamemode", false);
+    }
+
+    public static String getGamemodeString(int mode) {
+        switch (mode) {
+            case Player.SURVIVAL:
+                return "%gameMode.survival";
+            case Player.CREATIVE:
+                return "%gameMode.creative";
+            case Player.ADVENTURE:
+                return "%gameMode.adventure";
+            case Player.SPECTATOR:
+                return "%gameMode.spectator";
+        }
+        return "UNKNOWN";
+    }
+
+    public static int getGamemodeFromString(String str) {
+        switch (str.trim().toLowerCase()) {
+            case "0":
+            case "survival":
+            case "s":
+                return Player.SURVIVAL;
+
+            case "1":
+            case "creative":
+            case "c":
+                return Player.CREATIVE;
+
+            case "2":
+            case "adventure":
+            case "a":
+                return Player.ADVENTURE;
+
+            case "3":
+            case "spectator":
+            case "view":
+            case "v":
+                return Player.SPECTATOR;
+        }
+        return -1;
+    }
+
+    public static int getDifficultyFromString(String str) {
+        switch (str.trim().toLowerCase()) {
+            case "0":
+            case "peaceful":
+            case "p":
+                return 0;
+
+            case "1":
+            case "easy":
+            case "e":
+                return 1;
+
+            case "2":
+            case "normal":
+            case "n":
+                return 2;
+
+            case "3":
+            case "hard":
+            case "h":
+                return 3;
+        }
+        return -1;
+    }
+
+    public int getDifficulty() {
+        return this.getPropertyInt("difficulty", 1);
+    }
+
+    public boolean hasWhitelist() {
+        return this.getPropertyBoolean("white-list", false);
+    }
+
+    public int getSpawnRadius() {
+        return this.getPropertyInt("spawn-protection", 16);
+    }
+
+    public boolean getAllowFlight() {
+        return this.getPropertyBoolean("allow-flight", false);
+    }
+
+    public boolean isHardcore() {
+        return this.getPropertyBoolean("hardcore", false);
+    }
+
+    public int getDefaultGamemode() {
+        return this.getPropertyInt("gamemode", 0);
+    }
+
+    public String getMotd() {
+        return this.getPropertyString("motd", "Nukkit Server For Minecraft: PE");
     }
 
     public MainLogger getLogger() {
         return this.logger;
+    }
+
+    public EntityMetadataStore getEntityMetadata() {
+        return entityMetadata;
+    }
+
+    public PlayerMetadataStore getPlayerMetadata() {
+        return playerMetadata;
+    }
+
+    public LevelMetadataStore getLevelMetadata() {
+        return levelMetadata;
+    }
+
+    public ServerScheduler getScheduler() {
+        return scheduler;
     }
 
     public BaseLang getLanguage() {
@@ -194,19 +401,50 @@ public class Server {
         return false;
     }
 
-    public ServerScheduler getScheduler() {
-        return scheduler;
+    public BanList getNameBans() {
+        return this.banByName;
     }
 
-    public EntityMetadataStore getEntityMetadata() {
-        return entityMetadata;
+    public BanList getIPBans() {
+        return this.banByIP;
     }
 
-    public PlayerMetadataStore getPlayerMetadata() {
-        return playerMetadata;
+    //todo: addOp removeOp
+
+    public void addWhitelist(String name) {
+        this.whitelist.set(name.toLowerCase(), true);
+        this.whitelist.save(true);
     }
 
-    public LevelMetadataStore getLevelMetadata() {
-        return levelMetadata;
+    public void removeWhitelist(String name) {
+        this.whitelist.remove(name.toLowerCase());
+        this.whitelist.save(true);
     }
+
+    public boolean isWhitelisted(String name) {
+        return !this.hasWhitelist() || this.operators.exists(name, true) || this.whitelist.exists(name, true);
+    }
+
+    public boolean isOp(String name) {
+        return this.operators.exists(name, true);
+    }
+
+    public Config getWhitelist() {
+        return whitelist;
+    }
+
+    public Config getOps() {
+        return operators;
+    }
+
+    public void reloadWhitelist() {
+        this.whitelist.reload();
+    }
+
+
+    public static Server getInstance() {
+        return instance;
+    }
+
+
 }
