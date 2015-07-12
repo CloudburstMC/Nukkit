@@ -116,7 +116,6 @@ public class BanList {
             try {
                 LinkedList<TreeMap<String, String>> list = new Gson().fromJson(Utils.readFile(this.file), new TypeToken<LinkedList<TreeMap<String, String>>>() {
                 }.getType());
-                System.out.println(new Gson().toJson(list));
                 for (TreeMap<String, String> map : list) {
                     this.list.add(BanEntry.fromMap(map));
                 }
