@@ -7,27 +7,37 @@ import java.util.LinkedList;
  * Nukkit Project
  */
 public class AsyncWorker extends Thread {
-    private LinkedList<AsyncTask> stack = new LinkedList<AsyncTask>();
+    private final LinkedList<AsyncTask> stack = new LinkedList<AsyncTask>();
 
-    synchronized public void stack(AsyncTask task) {
-        stack.addFirst(task);
+    public void stack(AsyncTask task) {
+        synchronized (stack) {
+            stack.addFirst(task);
+        }
+
     }
 
-    synchronized public void unstack() {
-        stack.clear();
+    public void unstack() {
+        synchronized (stack) {
+
+            stack.clear();
+        }
     }
 
-    synchronized public void unstack(AsyncTask task) {
-        stack.remove(task);
+    public void unstack(AsyncTask task) {
+        synchronized (stack) {
+            stack.remove(task);
+        }
     }
 
     public void run() {
 
         while (true) {
-            while (!this.stack.isEmpty()) {
-                AsyncTask task = stack.getFirst();
-                task.start();
-                stack.removeFirst();
+            synchronized (stack) {
+                while (!this.stack.isEmpty()) {
+                    AsyncTask task = stack.getFirst();
+                    task.start();
+                    stack.removeFirst();
+                }
             }
             try {
                 sleep(1);

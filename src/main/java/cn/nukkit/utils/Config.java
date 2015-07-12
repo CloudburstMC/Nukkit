@@ -12,9 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -22,7 +20,6 @@ import java.util.regex.Pattern;
  * Nukkit
  */
 public class Config {
-    //todo: JSON支持
 
     public static final int DETECT = -1; //Detect by file extension
     public static final int PROPERTIES = 0; // .properties
@@ -34,13 +31,13 @@ public class Config {
     public static final int ENUM = 5; // .txt, .list, .enum
     public static final int ENUMERATION = Config.ENUM;
 
-    private HashMap<String, Object> config = new HashMap<String, Object>();
-    private HashMap<String, Object> nestedCache = new HashMap<String, Object>();
+    private Map<String, Object> config = new LinkedHashMap<String, Object>();
+    private TreeMap<String, Object> nestedCache = new TreeMap<String, Object>();
     private File file;
     private boolean correct = false;
     private int type = Config.DETECT;
 
-    public static HashMap<String, Integer> format = new HashMap<String, Integer>();
+    public static TreeMap<String, Integer> format = new TreeMap<String, Integer>();
 
     static {
         format.put("properties", Config.PROPERTIES);
@@ -63,16 +60,16 @@ public class Config {
     }
 
     public Config(String file, int type) {
-        this(file, type, new HashMap<String, Object>());
+        this(file, type, new TreeMap<String, Object>());
     }
 
-    public Config(String file, int type, HashMap<String, Object> default_map) {
+    public Config(String file, int type, Map<String, Object> default_map) {
         this.load(file, type, default_map);
     }
 
     public void reload() {
-        this.config = new HashMap<String, Object>();
-        this.nestedCache = new HashMap<String, Object>();
+        this.config.clear();
+        this.nestedCache.clear();
         this.correct = false;
         this.load(this.file.toString());
         this.load(this.file.toString(), this.type);
@@ -83,10 +80,10 @@ public class Config {
     }
 
     public boolean load(String file, int type) {
-        return this.load(file, type, new HashMap<String, Object>());
+        return this.load(file, type, new LinkedHashMap<String, Object>());
     }
 
-    public boolean load(String file, int type, HashMap<String, Object> default_map) {
+    public boolean load(String file, int type, Map<String, Object> default_map) {
         this.correct = true;
         this.type = type;
         this.file = new File(file);
@@ -128,14 +125,14 @@ public class Config {
                     case Config.JSON:
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        this.config = gson.fromJson(content, new TypeToken<HashMap<String, Object>>() {
+                        this.config = gson.fromJson(content, new TypeToken<TreeMap<String, Object>>() {
                         }.getType());
                         break;
                     case Config.YAML:
                         DumperOptions dumperOptions = new DumperOptions();
                         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                         Yaml yaml = new Yaml(dumperOptions);
-                        this.config = yaml.loadAs(content, HashMap.class);
+                        this.config = yaml.loadAs(content, LinkedHashMap.class);
                         break;
                     // case Config.SERIALIZED 也许是不必要的？233
                     case Config.ENUM:
@@ -171,7 +168,7 @@ public class Config {
                     content = this.writeProperties();
                     break;
                 case Config.JSON:
-                    content = new Gson().toJson(this.config);
+                    content = new GsonBuilder().setPrettyPrinting().create().toJson(this.config);
                     break;
                 case Config.YAML:
                     DumperOptions dumperOptions = new DumperOptions();
@@ -233,13 +230,13 @@ public class Config {
             this.set(key, value);
             return;
         }
-        HashMap<String, Object> hashMap = new HashMap<String, Object>() {
+        Map<String, Object> hashMap = new LinkedHashMap<String, Object>() {
             {
                 put(vars[vars.length - 1], value);
             }
         }; //内嵌中心元素
         for (int i = vars.length - 2; i > 0; i--) {
-            HashMap<String, Object> new_hashMap = new HashMap<String, Object>();
+            HashMap<String, Object> new_hashMap = new LinkedHashMap<String, Object>();
             new_hashMap.put(vars[i], hashMap);
             hashMap = new_hashMap;
         }
@@ -263,16 +260,16 @@ public class Config {
         if (!this.config.containsKey(vars[0])) {
             return default_value;
         } else {
-            HashMap<String, Object> hashMap = (HashMap<String, Object>) this.config.get(vars[0]);
+            Map<String, Object> map = (Map<String, Object>) this.config.get(vars[0]);
             for (int i = 1; i < vars.length - 1; i++) {
-                if (hashMap.containsKey(vars[i])) {
-                    hashMap = (HashMap<String, Object>) hashMap.get(vars[i]);
+                if (map.containsKey(vars[i])) {
+                    map = (Map<String, Object>) map.get(vars[i]);
                 } else {
                     return default_value;
                 }
             }
-            if (hashMap.containsKey(vars[vars.length - 1])) {
-                Object value = hashMap.get(vars[vars.length - 1]);
+            if (map.containsKey(vars[vars.length - 1])) {
+                Object value = map.get(vars[vars.length - 1]);
                 this.nestedCache.put(key, value);
                 return value;
             } else {
@@ -289,7 +286,7 @@ public class Config {
         this.config.put(k, v);
     }
 
-    public void setAll(HashMap<String, Object> map) {
+    public void setAll(Map<String, Object> map) {
         this.config = map;
     }
 
@@ -316,18 +313,18 @@ public class Config {
         this.config.remove(k);
     }
 
-    public HashMap<String, Object> getAll() {
+    public Map<String, Object> getAll() {
         return this.config;
     }
 
-    public int setDefault(HashMap<String, Object> map) {
+    public int setDefault(Map<String, Object> map) {
         int size = this.config.size();
         this.config = this.fillDefaults(map, this.config);
         return this.config.size() - size;
     }
 
 
-    private HashMap<String, Object> fillDefaults(HashMap<String, Object> default_map, HashMap<String, Object> data) {
+    private Map<String, Object> fillDefaults(Map<String, Object> default_map, Map<String, Object> data) {
         for (Map.Entry<String, Object> entry : default_map.entrySet()) {
             if (!data.containsKey(entry.getKey())) {
                 data.put(entry.getKey(), entry.getValue());

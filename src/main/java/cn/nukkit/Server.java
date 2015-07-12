@@ -5,6 +5,7 @@ import cn.nukkit.lang.BaseLang;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
+import cn.nukkit.permission.BanList;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
@@ -37,6 +38,8 @@ public class Server {
     private Config properties;
     private Config operators;
     private Config whitelist;
+    private BanList banByName;
+    private BanList banByIP;
     private ServerScheduler scheduler;
 
     private BaseLang baseLang;
@@ -113,12 +116,12 @@ public class Server {
         this.entityMetadata = new EntityMetadataStore();
         this.playerMetadata = new PlayerMetadataStore();
         this.levelMetadata = new LevelMetadataStore();
-        this.operators = new Config(this.dataPath + "ops.json", Config.JSON);
-        this.operators.set("mdx");
-        this.operators.set("23333");
-        this.operators.save();
-        this.whitelist = new Config(this.dataPath + "white-list.json", Config.JSON);
-
+        this.operators = new Config(this.dataPath + "ops.txt", Config.ENUM);
+        this.whitelist = new Config(this.dataPath + "white-list.txt", Config.ENUM);
+        this.banByName = new BanList(this.dataPath + "banned-players.json");
+        this.banByName.load();
+        this.banByIP = new BanList(this.dataPath + "banned-ips.json");
+        this.banByIP.load();
         this.start();
     }
 
