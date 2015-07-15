@@ -18,7 +18,6 @@ public class AsyncWorker extends Thread {
 
     public void unstack() {
         synchronized (stack) {
-
             stack.clear();
         }
     }
@@ -33,14 +32,19 @@ public class AsyncWorker extends Thread {
 
         while (true) {
             synchronized (stack) {
-                while (!this.stack.isEmpty()) {
+                /*while (!this.stack.isEmpty()) {
                     AsyncTask task = stack.getFirst();
                     task.start();
                     stack.removeFirst();
+                }*/
+                for (AsyncTask task : stack) {
+                    if (!task.isFinished()) {
+                        task.run();
+                    }
                 }
             }
             try {
-                sleep(1);
+                sleep(5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

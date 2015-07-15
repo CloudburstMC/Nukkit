@@ -7,10 +7,7 @@ import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.utils.Config;
-import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.TextFormat;
-import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.*;
 import sun.misc.BASE64Encoder;
 
 import java.io.File;
@@ -132,6 +129,8 @@ public class Server {
         this.banByIP = new BanList(this.dataPath + "banned-ips.json");
         this.banByIP.load();
         this.start();
+        this.logger.info(String.valueOf(Binary.readLInt(new byte[]{0x03, 0x00, 0x00, 0x00})));
+        this.logger.info(Binary.bytesToHexString(Binary.writeInt((short) 4)));
     }
     //todo: public void reload
 
@@ -441,10 +440,8 @@ public class Server {
         this.whitelist.reload();
     }
 
-
     public static Server getInstance() {
         return instance;
     }
-
 
 }
