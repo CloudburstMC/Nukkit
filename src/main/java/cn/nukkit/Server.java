@@ -220,7 +220,7 @@ public class Server {
     }
 
     public int getGamemode() {
-        return this.getPropertyInt("gamemode", 0);
+        return this.getPropertyInt("gamemode", 0) & 0b11;
     }
 
     public boolean getForceGamemode() {
