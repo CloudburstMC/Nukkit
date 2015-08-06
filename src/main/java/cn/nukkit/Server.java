@@ -7,7 +7,10 @@ import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.Config;
+import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.TextFormat;
+import cn.nukkit.utils.Utils;
 import sun.misc.BASE64Encoder;
 
 import java.io.File;
@@ -28,6 +31,13 @@ public class Server {
     private boolean hasStopped = false;
 
     private ServerScheduler scheduler;
+
+    private int tickCounter;
+    private long nextTick;
+    private float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
+    private float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    private float maxTick = 20;
+    private float maxUse = 0;
 
     private MainLogger logger;
 
@@ -129,8 +139,6 @@ public class Server {
         this.banByIP = new BanList(this.dataPath + "banned-ips.json");
         this.banByIP.load();
         this.start();
-        this.logger.info(String.valueOf(Binary.readLInt(new byte[]{0x03, 0x00, 0x00, 0x00})));
-        this.logger.info(Binary.bytesToHexString(Binary.writeInt((short) 4)));
     }
     //todo: public void reload
 
@@ -142,6 +150,84 @@ public class Server {
         //todo a lot
         this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", new String[]{getGamemodeString(this.getGamemode())}));
         this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", new String[]{String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)}));
+        this.tickProcessor();
+    }
+
+    public void tickProcessor() {
+        this.nextTick = System.currentTimeMillis();
+        while (this.isRunning) {
+            this.tick();
+            try {
+                Thread.currentThread().sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean tick() {
+        long tickTime = System.currentTimeMillis();
+        if ((tickTime - this.nextTick) < -25) {
+            return false;
+        }
+
+        ++this.tickCounter;
+
+        this.scheduler.mainThreadHeartbeat(this.tickCounter);
+
+        //todo a lot
+
+        if ((this.tickCounter & 0b1111) == 0) {
+            this.titleTick();
+            this.maxTick = 20;
+            this.maxUse = 0;
+
+        }
+
+        //todo a lot
+
+        if (this.tickCounter % 100 == 0) {
+            //todo clearCache
+            if (this.getTicksPerSecondAverage() < 12) {
+                this.logger.warning(this.getLanguage().translateString("nukkit.server.tickOverload"));
+            }
+        }
+
+        long now = System.currentTimeMillis();
+        int tick = (int) Math.min(20, 1000 / Math.max(1, now - tickTime));
+        int use = (int) Math.min(1, (now - tickTime) / 50);
+
+        if (this.maxTick > tick) {
+            this.maxTick = tick;
+        }
+
+        if (this.maxUse < use) {
+            this.maxUse = use;
+        }
+
+        System.arraycopy(this.tickAverage, 1, this.tickAverage, 0, this.tickAverage.length - 1);
+        this.tickAverage[this.tickAverage.length - 1] = tick;
+
+        System.arraycopy(this.useAverage, 1, this.useAverage, 0, this.useAverage.length - 1);
+        this.useAverage[this.useAverage.length - 1] = use;
+
+        if ((this.nextTick - tickTime) < -1000) {
+            this.nextTick = tickTime;
+        } else {
+            this.nextTick += 50;
+        }
+
+        return true;
+    }
+
+    public void titleTick() {
+        if (!Nukkit.ANSI) {
+            return;
+        }
+        System.out.print((char) 0x1b + "]0;" + this.getName() + " " +
+                this.getNukkitVersion() +
+                " | TPS " + this.getTicksPerSecond() +
+                " | Load " + this.getTickUsage() + "%" + (char) 0x07);
     }
 
     public String getName() {
@@ -338,6 +424,36 @@ public class Server {
 
     public ServerScheduler getScheduler() {
         return scheduler;
+    }
+
+    public int getTick() {
+        return tickCounter;
+    }
+
+    public float getTicksPerSecond() {
+        return ((float) Math.round(this.maxTick * 100)) / 100;
+    }
+
+    public float getTicksPerSecondAverage() {
+        float sum = 0;
+        int count = this.tickAverage.length;
+        for (float aTickAverage : this.tickAverage) {
+            sum += aTickAverage;
+        }
+        return ((float) Math.round(sum / count * 100)) / 100;
+    }
+
+    public float getTickUsage() {
+        return ((float) Math.round(this.maxUse * 100 * 100)) / 100;
+    }
+
+    public float getTickUsageAverage() {
+        float sum = 0;
+        int count = this.useAverage.length;
+        for (float aUseAverage : this.useAverage) {
+            sum += aUseAverage;
+        }
+        return ((float) Math.round(sum / count * 100)) / 100;
     }
 
     public BaseLang getLanguage() {

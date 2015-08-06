@@ -38,27 +38,27 @@ public class TextFormat {
 
     public static String toANSI(String string) {
         string = string.replace(TextFormat.BOLD, "");
-        string = string.replace(TextFormat.OBFUSCATED, (char) 27 + "[8m");
-        string = string.replace(TextFormat.ITALIC, (char) 27 + "[3m");
-        string = string.replace(TextFormat.UNDERLINE, (char) 27 + "[4m");
-        string = string.replace(TextFormat.STRIKETHROUGH, (char) 27 + "[9m");
-        string = string.replace(TextFormat.RESET, (char) 27 + "[0m");
-        string = string.replace(TextFormat.BLACK, (char) 27 + "[0;30m");
-        string = string.replace(TextFormat.DARK_BLUE, (char) 27 + "[0;34m");
-        string = string.replace(TextFormat.DARK_GREEN, (char) 27 + "[0;32m");
-        string = string.replace(TextFormat.DARK_AQUA, (char) 27 + "[0;36m");
-        string = string.replace(TextFormat.DARK_RED, (char) 27 + "[0;31m");
-        string = string.replace(TextFormat.DARK_PURPLE, (char) 27 + "[0;35m");
-        string = string.replace(TextFormat.GOLD, (char) 27 + "[0;33m");
-        string = string.replace(TextFormat.GRAY, (char) 27 + "[0;37m");
-        string = string.replace(TextFormat.DARK_GRAY, (char) 27 + "[30;1m");
-        string = string.replace(TextFormat.BLUE, (char) 27 + "[34;1m");
-        string = string.replace(TextFormat.GREEN, (char) 27 + "[32;1m");
-        string = string.replace(TextFormat.AQUA, (char) 27 + "[36;1m");
-        string = string.replace(TextFormat.RED, (char) 27 + "[31;1m");
-        string = string.replace(TextFormat.LIGHT_PURPLE, (char) 27 + "[35;1m");
-        string = string.replace(TextFormat.YELLOW, (char) 27 + "[33;1m");
-        string = string.replace(TextFormat.WHITE, (char) 27 + "[37;1m");
+        string = string.replace(TextFormat.OBFUSCATED, (char) 0x1b + "[8m");
+        string = string.replace(TextFormat.ITALIC, (char) 0x1b + "[3m");
+        string = string.replace(TextFormat.UNDERLINE, (char) 0x1b + "[4m");
+        string = string.replace(TextFormat.STRIKETHROUGH, (char) 0x1b + "[9m");
+        string = string.replace(TextFormat.RESET, (char) 0x1b + "[0m");
+        string = string.replace(TextFormat.BLACK, (char) 0x1b + "[0;30m");
+        string = string.replace(TextFormat.DARK_BLUE, (char) 0x1b + "[0;34m");
+        string = string.replace(TextFormat.DARK_GREEN, (char) 0x1b + "[0;32m");
+        string = string.replace(TextFormat.DARK_AQUA, (char) 0x1b + "[0;36m");
+        string = string.replace(TextFormat.DARK_RED, (char) 0x1b + "[0;31m");
+        string = string.replace(TextFormat.DARK_PURPLE, (char) 0x1b + "[0;35m");
+        string = string.replace(TextFormat.GOLD, (char) 0x1b + "[0;33m");
+        string = string.replace(TextFormat.GRAY, (char) 0x1b + "[0;37m");
+        string = string.replace(TextFormat.DARK_GRAY, (char) 0x1b + "[30;1m");
+        string = string.replace(TextFormat.BLUE, (char) 0x1b + "[34;1m");
+        string = string.replace(TextFormat.GREEN, (char) 0x1b + "[32;1m");
+        string = string.replace(TextFormat.AQUA, (char) 0x1b + "[36;1m");
+        string = string.replace(TextFormat.RED, (char) 0x1b + "[31;1m");
+        string = string.replace(TextFormat.LIGHT_PURPLE, (char) 0x1b + "[35;1m");
+        string = string.replace(TextFormat.YELLOW, (char) 0x1b + "[33;1m");
+        string = string.replace(TextFormat.WHITE, (char) 0x1b + "[37;1m");
         return string;
     }
 

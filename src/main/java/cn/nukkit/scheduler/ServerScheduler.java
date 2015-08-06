@@ -128,6 +128,9 @@ public class ServerScheduler {
         this.currentTick = currentTick;
         while (this.isReady(this.currentTick)) {
             TaskHandler task = this.queue.poll();
+            if (task == null) {
+                continue;
+            }
             if (task.isCancelled()) {
                 this.tasks.remove(task.getTaskId());
                 continue;
@@ -151,7 +154,7 @@ public class ServerScheduler {
     }
 
     private boolean isReady(long currentTick) {
-        return !this.tasks.isEmpty() && this.queue.peek().getNextRun() <= currentTick;
+        return this.queue.peek() != null && !this.tasks.isEmpty() && this.queue.peek().getNextRun() <= currentTick;
     }
 
     private int nextId() {
