@@ -99,7 +99,7 @@ public class MainLogger extends Thread {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         e.printStackTrace(printWriter);
-        this.alert(stringWriter.toString().toUpperCase());
+        this.alert(stringWriter.toString());
     }
 
     public void shutdown() {

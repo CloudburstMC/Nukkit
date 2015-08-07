@@ -9,16 +9,16 @@ import java.lang.reflect.Method;
  */
 public class CallbackTask extends Task {
 
-    protected Class owner;
+    protected Object owner;
     protected Method method;
 
     protected Object[] args = null;
-
+    /*
     public CallbackTask(Class<?> owner, String functionName) {
         try {
             this.method = owner.getMethod(functionName);
-            this.owner = owner;
-        } catch (NoSuchMethodException e) {
+            this.owner = owner.newInstance();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -30,19 +30,34 @@ public class CallbackTask extends Task {
                 argsClass[i] = args[i].getClass();
             }
             this.method = owner.getMethod(functionName, argsClass);
-            this.owner = owner;
+            this.owner = owner.newInstance();
             this.args = args;
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }*/
+
+    public CallbackTask(Object owner, String functionName) {
+        try {
+            this.method = owner.getClass().getMethod(functionName);
+            this.owner = owner;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
 
-    public CallbackTask(Object owner, String functionName) {
-        this(owner.getClass(), functionName);
-    }
-
     public CallbackTask(Object owner, String functionName, Object[] args) {
-        this(owner.getClass(), functionName, args);
+        try {
+            Class[] argsClass = new Class[args.length];
+            for (int i = 0; i < args.length; i++) {
+                argsClass[i] = args[i].getClass();
+            }
+            this.method = owner.getClass().getMethod(functionName, argsClass);
+            this.owner = owner;
+            this.args = args;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -53,14 +68,12 @@ public class CallbackTask extends Task {
             } else {
                 this.method.invoke(owner, args);
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
 
-    public Class getOwner() {
+    public Object getOwner() {
         return owner;
     }
 

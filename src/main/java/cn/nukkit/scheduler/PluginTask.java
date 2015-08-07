@@ -17,7 +17,6 @@ abstract class PluginTask extends Task {
 
     public final Plugin getOwner() {
         return this.owner;
-
     }
 
 }

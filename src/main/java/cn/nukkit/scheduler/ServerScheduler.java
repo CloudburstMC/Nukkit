@@ -22,15 +22,11 @@ public class ServerScheduler {
     private int ids = 1;
     protected long currentTick = 0;
 
-    Comparator<TaskHandler> comparator = new Comparator<TaskHandler>() {
-        @Override
-        public int compare(TaskHandler handler1, TaskHandler handler2) {
-            return handler1.getNextRun() < handler2.getNextRun() ? -1 : (handler1.getNextRun() == handler2.getNextRun() ? 0 : -1);
-        }
-    };
+    Comparator<TaskHandler> comparator = (handler1, handler2) -> handler1.getNextRun() < handler2.getNextRun() ? -1 : (handler1.getNextRun() == handler2.getNextRun() ? 0 : -1);
 
     public ServerScheduler() {
-        this.queue = new PriorityBlockingQueue<TaskHandler>(11, comparator);
+        this.queue = new PriorityBlockingQueue<>(11, comparator);
+        this.tasks = new HashMap<>();
         this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
 
@@ -55,8 +51,8 @@ public class ServerScheduler {
         return this.addTask(task, delay, period);
     }
 
-    public void cancelTask(Long taskId) {
-        if (taskId != null && this.tasks.containsKey(taskId)) {
+    public void cancelTask(int taskId) {
+        if (this.tasks.containsKey(taskId)) {
             this.tasks.get(taskId).cancel();
             this.tasks.remove(taskId);
         }
@@ -64,7 +60,7 @@ public class ServerScheduler {
 
     public void cancelTask(PluginBase plugin) {
         for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
-            long taskId = entry.getKey();
+            int taskId = entry.getKey();
             TaskHandler task = entry.getValue();
             Task ptask = task.getTask();
             if (ptask instanceof PluginTask && ((PluginTask) ptask).getOwner().equals(plugin)) {
@@ -78,12 +74,12 @@ public class ServerScheduler {
         for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
             entry.getValue().cancel();
         }
-        this.tasks = new HashMap<Integer, TaskHandler>();
-        this.queue = new PriorityBlockingQueue<TaskHandler>(11, comparator);
+        this.tasks = new HashMap<>();
+        this.queue = new PriorityBlockingQueue<>(11, comparator);
         this.ids = 1;
     }
 
-    public boolean isQueued(long taskId) {
+    public boolean isQueued(int taskId) {
         return this.tasks.containsKey(taskId);
     }
 
@@ -128,9 +124,7 @@ public class ServerScheduler {
         this.currentTick = currentTick;
         while (this.isReady(this.currentTick)) {
             TaskHandler task = this.queue.poll();
-            if (task == null) {
-                continue;
-            }
+            System.out.println(task.getTaskId());
             if (task.isCancelled()) {
                 this.tasks.remove(task.getTaskId());
                 continue;
@@ -139,7 +133,7 @@ public class ServerScheduler {
                 try {
                     task.run(this.currentTick);
                 } catch (Exception e) {
-                    Server.getInstance().getLogger().critical("无法启动task " + task.getTaskName() + ": " + e.getMessage());
+                    Server.getInstance().getLogger().critical("Could not execute task " + task.getTaskName() + ": " + e.getMessage());
                     Server.getInstance().getLogger().logException(e);
                 }
             }
@@ -151,15 +145,15 @@ public class ServerScheduler {
                 this.tasks.remove(task.getTaskId());
             }
         }
+        this.asyncPool.collectTasks();
     }
 
     private boolean isReady(long currentTick) {
-        return this.queue.peek() != null && !this.tasks.isEmpty() && this.queue.peek().getNextRun() <= currentTick;
+        return this.queue.peek() != null && this.queue.peek().getNextRun() <= currentTick;
     }
 
     private int nextId() {
-        this.ids++;
-        return this.ids;
+        return this.ids++;
     }
 
 }

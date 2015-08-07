@@ -4,7 +4,7 @@ package cn.nukkit.scheduler;
  * author: MagicDroidX
  * Nukkit
  */
-abstract class Task {
+public abstract class Task {
     private TaskHandler taskHandler = null;
 
     public final TaskHandler getHandler() {

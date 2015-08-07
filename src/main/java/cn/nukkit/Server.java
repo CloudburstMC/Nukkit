@@ -125,7 +125,7 @@ public class Server {
         this.forceLanguage = (Boolean) this.getConfig("settings.force-language", false);
         this.baseLang = new BaseLang((String) this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
         this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
-        this.logger.info(getLanguage().translateString("nukkit.server.start", new String[]{TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE}));
+        this.logger.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE));
         //todo 一些tick配置
         this.scheduler = new ServerScheduler();
 
@@ -148,9 +148,13 @@ public class Server {
 
     public void start() {
         //todo a lot
-        this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", new String[]{getGamemodeString(this.getGamemode())}));
-        this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", new String[]{String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)}));
+        this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
+        this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
         this.tickProcessor();
+    }
+
+    public void i() {
+        System.out.println("reflect");
     }
 
     public void tickProcessor() {
@@ -158,7 +162,7 @@ public class Server {
         while (this.isRunning) {
             this.tick();
             try {
-                Thread.currentThread().sleep(1);
+                Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

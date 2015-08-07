@@ -119,8 +119,16 @@ public class BaseLang {
         return this.translateString(str, new String[]{}, null);
     }
 
+    public String translateString(String str, String param) {
+        return this.translateString(str, new String[]{param});
+    }
+
     public String translateString(String str, String[] params) {
         return this.translateString(str, params, null);
+    }
+
+    public String translateString(String str, String param, String onlyPrefix) {
+        return this.translateString(str, new String[]{param}, onlyPrefix);
     }
 
     public String translateString(String str, String[] params, String onlyPrefix) {
