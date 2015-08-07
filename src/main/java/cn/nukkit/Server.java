@@ -152,11 +152,7 @@ public class Server {
         this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
         this.tickProcessor();
     }
-
-    public void i() {
-        System.out.println("reflect");
-    }
-
+    
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
         while (this.isRunning) {
