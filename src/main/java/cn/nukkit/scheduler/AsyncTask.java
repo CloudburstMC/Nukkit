@@ -6,7 +6,7 @@ import cn.nukkit.Server;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class AsyncTask extends Thread {
+abstract class AsyncTask extends Thread {
 
     private Object result;
     private int taskId;

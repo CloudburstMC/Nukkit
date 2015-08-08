@@ -2,68 +2,53 @@ package cn.nukkit.level.format;
 
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.scheduler.AsyncTask;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-abstract public class LevelProvider {
-    public static final byte ORDER_YZX = 0;
-    public static final byte ORDER_ZXY = 1;
-
+public abstract class LevelProvider {
     public LevelProvider(Level level, String path) {
+
     }
 
-    public static String getProviderName() {
-        return null;
-    }
+    public abstract String getProvideName();
 
-    public static int getProviderOrder() {
-        return 0;
-    }
+    public abstract int getProviderOrder();
 
-    public static boolean usesChunkSection() {
-        return false;
-    }
+    public abstract boolean usesChunkSection();
 
-    public abstract AsyncTask requestChunkTask(int x, int z);
+    //todo requestChunkTask(int x, int z)
 
     public abstract String getPath();
 
-    public static boolean isValid(String path) {
-        return true;
-    }
+    public abstract boolean isValid(String path);
 
-    public static void generate(String path, String name, int seed, String generator) {
-        generate(path, name, seed, generator, new String[]{});
-    }
-
-    public static void generate(String path, String name, int seed, String generator, String[] options) {
-
-    }
+    public abstract void generate(String path, String name, int seed, String generator, Object[] options);
 
     public abstract String getGenerator();
 
-    public abstract String[] getGeneratorOptions();
+    public abstract Object[] getGeneratorOptions();
 
-    public abstract FullChunk getChunk(int X, int Z);
+    //todo getChunk
 
-    public abstract FullChunk getChunk(int X, int Z, boolean create);
-
-    public static ChunkSection createChunkSection(int Y) {
-        return null;
-    }
+    //todo createChunkSection
 
     public abstract void saveChunks();
 
     public abstract void saveChunk(int X, int Z);
 
-    public abstract void loadChunk(int X, int Z);
+    public abstract void unloadChunks();
 
-    public abstract void loadChunk(int X, int Z, boolean create);
+    public boolean loadChunk(int X, int Z) {
+        return this.loadChunk(X, Z, false);
+    }
 
-    public abstract boolean unloadChunk(int X, int Z);
+    public abstract boolean loadChunk(int X, int Z, boolean create);
+
+    public boolean unloadChunk(int X, int Z) {
+        return this.unloadChunk(X, Z, false);
+    }
 
     public abstract boolean unloadChunk(int X, int Z, boolean safe);
 
@@ -73,7 +58,7 @@ abstract public class LevelProvider {
 
     public abstract boolean isChunkLoaded(int X, int Z);
 
-    public abstract Object setChunk(int chunkX, int chunkZ, FullChunk chunk);
+    //todo setChunk
 
     public abstract String getName();
 
@@ -89,9 +74,10 @@ abstract public class LevelProvider {
 
     public abstract void setSpawn(Vector3 pos);
 
-    public abstract FullChunk[] getLoadedChunks();
+    //todo getLoadedChunks
 
     public abstract Level getLevel();
 
     public abstract void close();
+
 }

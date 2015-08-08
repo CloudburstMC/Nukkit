@@ -109,7 +109,7 @@ public class CompoundTag extends Tag {
     }
 
     public int getInt(String name) {
-        if (!tags.containsKey(name)) return 0;
+        if (!tags.containsKey(name)) return (int) 0;
         return ((IntTag) tags.get(name)).data;
     }
 
