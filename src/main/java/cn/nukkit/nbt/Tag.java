@@ -43,16 +43,7 @@ public abstract class Tag {
             return false;
         }
         Tag o = (Tag) obj;
-        if (getId() != o.getId()) {
-            return false;
-        }
-        if (name == null && o.name != null || name != null && o.name == null) {
-            return false;
-        }
-        if (name != null && !name.equals(o.name)) {
-            return false;
-        }
-        return true;
+        return getId() == o.getId() && !(name == null && o.name != null || name != null && o.name == null) && !(name != null && !name.equals(o.name));
     }
 
     public void print(PrintStream out) {

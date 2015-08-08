@@ -6,39 +6,27 @@ import java.util.zip.GZIPOutputStream;
 
 public class NbtIo {
     public static CompoundTag readCompressed(InputStream in) throws IOException {
-        DataInputStream dis = new DataInputStream(new BufferedInputStream(new GZIPInputStream(in)));
-        try {
+        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new GZIPInputStream(in)))) {
             return read(dis);
-        } finally {
-            dis.close();
         }
     }
 
     public static void writeCompressed(CompoundTag tag, OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(new GZIPOutputStream(out));
-        try {
+        try (DataOutputStream dos = new DataOutputStream(new GZIPOutputStream(out))) {
             write(tag, dos);
-        } finally {
-            dos.close();
         }
     }
 
     public static CompoundTag decompress(byte[] buffer) throws IOException {
-        DataInputStream dis = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(buffer))));
-        try {
+        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(buffer))))) {
             return read(dis);
-        } finally {
-            dis.close();
         }
     }
 
     public static byte[] compress(CompoundTag tag) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(new GZIPOutputStream(baos));
-        try {
+        try (DataOutputStream dos = new DataOutputStream(new GZIPOutputStream(baos))) {
             write(tag, dos);
-        } finally {
-            dos.close();
         }
         return baos.toByteArray();
     }
@@ -53,21 +41,15 @@ public class NbtIo {
     }
 
     public static void write(CompoundTag tag, File file) throws IOException {
-        DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
-        try {
+        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
             write(tag, dos);
-        } finally {
-            dos.close();
         }
     }
 
     public static CompoundTag read(File file) throws IOException {
         if (!file.exists()) return null;
-        DataInputStream dis = new DataInputStream(new FileInputStream(file));
-        try {
+        try (DataInputStream dis = new DataInputStream(new FileInputStream(file))) {
             return read(dis);
-        } finally {
-            dis.close();
         }
     }
 
