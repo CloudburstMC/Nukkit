@@ -15,9 +15,11 @@ abstract public class LevelProvider {
     public LevelProvider(Level level, String path) {
     }
 
-    public static String getProviderName() {
+    /*public static String getProviderName() {
         return null;
-    }
+    }*/
+
+    public abstract String getProviderName();
 
     public static int getProviderOrder() {
         return 0;
@@ -31,9 +33,11 @@ abstract public class LevelProvider {
 
     public abstract String getPath();
 
-    public static boolean isValid(String path) {
+    public abstract boolean isValid(String path);
+
+    /*public static boolean isValid(String path) {
         return true;
-    }
+    }*/
 
     public static void generate(String path, String name, int seed, String generator) {
         generate(path, name, seed, generator, new String[]{});
