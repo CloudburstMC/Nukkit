@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.level.Position;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
@@ -219,6 +220,40 @@ public class Block extends Position implements Metadatable {
     public static final int STONECUTTER = 245;
     public static final int GLOWING_OBSIDIAN = 246;
     public static final int NETHER_REACTOR = 247;
+
+    protected int id;
+    protected int meta = 0;
+
+    public AxisAlignedBB boundingBox = null;
+
+    public Block(int id) {
+        this(id, 0);
+    }
+
+    public Block(int id, int meta) {
+        this.id = id;
+        this.meta = meta;
+    }
+
+    public static Block get(int id) {
+        return get(id, 0);
+    }
+
+    public static Block get(int id, int meta) {
+        return get(id, meta, null);
+    }
+
+    public static Block get(int id, int meta, Position pos) {
+        //todo: 检测方块是否存在
+        Block block = new Block(id, meta);
+        if (pos != null) {
+            block.x = pos.x;
+            block.y = pos.y;
+            block.z = pos.z;
+            block.level = pos.level;
+        }
+        return block;
+    }
 
     @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) throws Exception {
