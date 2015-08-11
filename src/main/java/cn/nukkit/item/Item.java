@@ -580,8 +580,8 @@ public class Item {
         return false;
     }
 
-    public Object getMaxDurability() {
-        return false;
+    public int getMaxDurability() {
+        return -1;
     }
 
     public boolean isPickaxe() {
