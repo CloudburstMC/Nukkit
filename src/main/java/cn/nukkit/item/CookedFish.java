@@ -15,7 +15,7 @@ public class CookedFish extends Item {
     }
 
     public CookedFish(int meta, int count) {
-        super(RAW_FISH, meta, count, "Cooked Fish");
+        super(COOKED_FISH, meta, count, "Cooked Fish");
         if (this.meta == 1) {
             this.name = "Cooked Salmon";
         }

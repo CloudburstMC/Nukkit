@@ -4,23 +4,23 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class DiamondHoe extends Tool {
+public class GoldHoe extends Tool {
 
-    public DiamondHoe() {
+    public GoldHoe() {
         this(0, 1);
     }
 
-    public DiamondHoe(int meta) {
+    public GoldHoe(int meta) {
         this(meta, 1);
     }
 
-    public DiamondHoe(int meta, int count) {
-        super(DIAMOND_HOE, meta, count, "Diamond Hoe");
+    public GoldHoe(int meta, int count) {
+        super(GOLD_HOE, meta, count, "Gold Hoe");
     }
 
     @Override
     public int getMaxDurability() {
-        return Tool.DURABILITY_DIAMOND;
+        return Tool.DURABILITY_GOLD;
     }
 
     @Override
