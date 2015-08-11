@@ -6,13 +6,14 @@ import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Block extends Position implements Metadatable {
+public class Block extends Position implements Metadatable, Cloneable {
     public static final int AIR = 0;
     public static final int STONE = 1;
     public static final int GRASS = 2;
@@ -221,6 +222,8 @@ public class Block extends Position implements Metadatable {
     public static final int GLOWING_OBSIDIAN = 246;
     public static final int NETHER_REACTOR = 247;
 
+    public static Class[] list = null;
+
     protected int id;
     protected int meta = 0;
 
@@ -235,6 +238,13 @@ public class Block extends Position implements Metadatable {
         this.meta = meta;
     }
 
+    public static void init() {
+        if (list == null) {
+            list = new Class[256];
+            //todo
+        }
+    }
+
     public static Block get(int id) {
         return get(id, 0);
     }
@@ -244,8 +254,20 @@ public class Block extends Position implements Metadatable {
     }
 
     public static Block get(int id, int meta, Position pos) {
-        //todo: 检测方块是否存在
-        Block block = new Block(id, meta);
+        Block block;
+        try {
+            Class c = list[id];
+            if (c != null) {
+                Constructor constructor = c.getDeclaredConstructor(int.class);
+                constructor.setAccessible(true);
+                block = (Block) constructor.newInstance(meta);
+            } else {
+                block = new Block(id, meta);
+            }
+        } catch (Exception e) {
+            block = new Block(id, meta);
+        }
+
         if (pos != null) {
             block.x = pos.x;
             block.y = pos.y;
@@ -253,6 +275,26 @@ public class Block extends Position implements Metadatable {
             block.level = pos.level;
         }
         return block;
+    }
+
+    public boolean canBePlaced() {
+        return true;
+    }
+
+    public String getName() {
+        return "Unknown";
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public final int getDamage() {
+        return this.meta;
+    }
+
+    public final void setDamage(int meta) {
+        this.meta = meta & 0x0f;
     }
 
     @Override
@@ -281,6 +323,15 @@ public class Block extends Position implements Metadatable {
     public void removeMetadata(String metadataKey, Plugin owningPlugin) throws Exception {
         if (this.getLevel() != null) {
             this.getLevel().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
+        }
+    }
+
+    public Block clone() {
+        try {
+            return (Block) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
