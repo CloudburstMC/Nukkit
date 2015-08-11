@@ -32,6 +32,14 @@ public class Level implements Metadatable {
         this.server = server;
     }
 
+    public static String chunkHash(int x, int z) {
+        return x + ":" + z;
+    }
+
+    public static String blockHash(int x, int y, int z) {
+        return x + ":" + y + ":" + z;
+    }
+
     public String getName() {
 
         //todo !!!
