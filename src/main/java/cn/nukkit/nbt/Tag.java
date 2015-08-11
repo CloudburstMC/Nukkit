@@ -126,7 +126,7 @@ public abstract class Tag {
             case TAG_String:
                 return new StringTag(name);
             case TAG_List:
-                return new ListTag<Tag>(name);
+                return new ListTag<>(name);
             case TAG_Compound:
                 return new CompoundTag(name);
         }

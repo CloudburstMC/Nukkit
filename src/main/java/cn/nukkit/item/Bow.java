@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Bow extends Item {
+public class Bow extends Tool {
 
     public Bow() {
         this(0, 1);
@@ -16,5 +16,10 @@ public class Bow extends Item {
 
     public Bow(int meta, int count) {
         super(BOW, meta, count, "Bow");
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return Tool.DURABILITY_BOW;
     }
 }

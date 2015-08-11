@@ -18,8 +18,8 @@ public class BaseLang {
 
     protected String langName;
 
-    protected Map<String, String> lang = new HashMap<String, String>();
-    protected Map<String, String> fallbackLang = new HashMap<String, String>();
+    protected Map<String, String> lang = new HashMap<>();
+    protected Map<String, String> fallbackLang = new HashMap<>();
 
 
     public BaseLang(String lang) {
@@ -56,7 +56,7 @@ public class BaseLang {
     protected HashMap<String, String> loadLang(String path) {
         try {
             String content = Utils.readFile(path);
-            HashMap<String, String> d = new HashMap<String, String>();
+            HashMap<String, String> d = new HashMap<>();
             for (String line : content.split("\n")) {
                 line = line.trim();
                 if (line.equals("") || line.charAt(0) == '#') {
@@ -87,7 +87,7 @@ public class BaseLang {
     protected HashMap<String, String> loadLang(InputStream stream) {
         try {
             String content = Utils.readFile(stream);
-            HashMap<String, String> d = new HashMap<String, String>();
+            HashMap<String, String> d = new HashMap<>();
             for (String line : content.split("\n")) {
                 line = line.trim();
                 if (line.equals("") || line.charAt(0) == '#') {

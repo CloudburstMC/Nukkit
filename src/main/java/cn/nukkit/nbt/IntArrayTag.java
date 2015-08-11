@@ -18,8 +18,8 @@ public class IntArrayTag extends Tag {
 
     void write(DataOutput dos) throws IOException {
         dos.writeInt(data.length);
-        for (int i = 0; i < data.length; i++) {
-            dos.writeInt(data[i]);
+        for (int aData : data) {
+            dos.writeInt(aData);
         }
     }
 

@@ -14,6 +14,7 @@ import cn.nukkit.utils.Utils;
 import sun.misc.BASE64Encoder;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
@@ -90,7 +91,11 @@ public class Server {
 
         this.logger.info("Loading " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + "...");
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
-            Utils.writeFile(this.dataPath + "nukkit.yml", this.getClass().getClassLoader().getResourceAsStream("resources/nukkit.yml"));
+            try {
+                Utils.writeFile(this.dataPath + "nukkit.yml", this.getClass().getClassLoader().getResourceAsStream("resources/nukkit.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
@@ -482,7 +487,7 @@ public class Server {
     }
 
     public String getPropertyString(String variable) {
-        return (String) this.getPropertyString(variable, null);
+        return this.getPropertyString(variable, null);
     }
 
     public String getPropertyString(String variable, String defaultValue) {
@@ -494,7 +499,7 @@ public class Server {
     }
 
     public int getPropertyInt(String variable, Integer defaultValue) {
-        return this.properties.exists(variable) ? (Integer) this.properties.get(variable) : defaultValue;
+        return this.properties.exists(variable) ? Integer.parseInt((String) this.properties.get(variable)) : defaultValue;
     }
 
     public boolean getPropertyBoolean(String variable) {

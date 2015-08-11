@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Shears extends Item {
+public class Shears extends Tool {
 
     public Shears() {
         this(0, 1);
@@ -16,5 +16,10 @@ public class Shears extends Item {
 
     public Shears(int meta, int count) {
         super(SHEARS, meta, count, "Shears");
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return Tool.DURABILITY_SHEARS;
     }
 }

@@ -68,7 +68,7 @@ public class BanEntry {
     }
 
     public TreeMap<String, String> getMap() {
-        TreeMap<String, String> map = new TreeMap<String, String>();
+        TreeMap<String, String> map = new TreeMap<>();
         map.put("name", getName());
         map.put("creationDate", new SimpleDateFormat(format).format(getCreationDate()));
         map.put("source", this.getSource());

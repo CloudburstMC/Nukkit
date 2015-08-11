@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListTag<T extends Tag> extends Tag {
-    private List<T> list = new ArrayList<T>();
+    private List<T> list = new ArrayList<>();
     private byte type;
 
     public ListTag() {
@@ -25,8 +25,7 @@ public class ListTag<T extends Tag> extends Tag {
 
         dos.writeByte(type);
         dos.writeInt(list.size());
-        for (int i = 0; i < list.size(); i++)
-            list.get(i).write(dos);
+        for (T aList : list) aList.write(dos);
     }
 
     @SuppressWarnings("unchecked")
@@ -34,7 +33,7 @@ public class ListTag<T extends Tag> extends Tag {
         type = dis.readByte();
         int size = dis.readInt();
 
-        list = new ArrayList<T>();
+        list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             Tag tag = Tag.newTag(type, null);
             tag.load(dis);
@@ -56,8 +55,7 @@ public class ListTag<T extends Tag> extends Tag {
         out.println(prefix + "{");
         String orgPrefix = prefix;
         prefix += "   ";
-        for (int i = 0; i < list.size(); i++)
-            list.get(i).print(prefix, out);
+        for (T aList : list) aList.print(prefix, out);
         out.println(orgPrefix + "}");
     }
 
@@ -76,7 +74,7 @@ public class ListTag<T extends Tag> extends Tag {
 
     @Override
     public Tag copy() {
-        ListTag<T> res = new ListTag<T>(getName());
+        ListTag<T> res = new ListTag<>(getName());
         res.type = type;
         for (T t : list) {
             @SuppressWarnings("unchecked")

@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * Nukkit Project
  */
 public class AsyncWorker extends Thread {
-    private final LinkedList<AsyncTask> stack = new LinkedList<AsyncTask>();
+    private final LinkedList<AsyncTask> stack = new LinkedList<>();
 
     public void stack(AsyncTask task) {
         synchronized (stack) {
@@ -37,11 +37,7 @@ public class AsyncWorker extends Thread {
                     task.start();
                     stack.removeFirst();
                 }*/
-                for (AsyncTask task : stack) {
-                    if (!task.isFinished()) {
-                        task.run();
-                    }
-                }
+                stack.stream().filter(task -> !task.isFinished()).forEach(cn.nukkit.scheduler.AsyncTask::run);
             }
             try {
                 sleep(5);

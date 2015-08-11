@@ -8,10 +8,10 @@ import com.google.gson.reflect.TypeToken;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * author: MagicDroidX
@@ -19,7 +19,7 @@ import java.util.TreeMap;
  */
 public class BanList {
 
-    private LinkedList<BanEntry> list = new LinkedList<BanEntry>();
+    private LinkedList<BanEntry> list = new LinkedList<>();
 
     private String file;
 
@@ -95,15 +95,11 @@ public class BanList {
 
 
     public void removeExpired() {
-        for (BanEntry entry : list) {
-            if (entry.hasExpired()) {
-                list.remove(entry);
-            }
-        }
+        list.stream().filter(BanEntry::hasExpired).forEach(list::remove);
     }
 
     public void load() {
-        this.list = new LinkedList<BanEntry>();
+        this.list = new LinkedList<>();
         File file = new File(this.file);
         if (!file.exists()) {
             try {
@@ -116,9 +112,7 @@ public class BanList {
             try {
                 LinkedList<TreeMap<String, String>> list = new Gson().fromJson(Utils.readFile(this.file), new TypeToken<LinkedList<TreeMap<String, String>>>() {
                 }.getType());
-                for (TreeMap<String, String> map : list) {
-                    this.list.add(BanEntry.fromMap(map));
-                }
+                this.list.addAll(list.stream().map(BanEntry::fromMap).collect(Collectors.toList()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -136,12 +130,9 @@ public class BanList {
             }
         }
         try {
-            LinkedList<TreeMap<String, String>> list = new LinkedList<TreeMap<String, String>>();
-            for (BanEntry entry : this.list) {
-                list.add(entry.getMap());
-            }
+            LinkedList<TreeMap<String, String>> list = this.list.stream().map(BanEntry::getMap).collect(Collectors.toCollection(LinkedList::new));
             Utils.writeFile(this.file, new ByteArrayInputStream(new GsonBuilder().setPrettyPrinting().create().toJson(list).getBytes("UTF-8")));
-        } catch (UnsupportedEncodingException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

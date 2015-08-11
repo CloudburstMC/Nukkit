@@ -15,9 +15,9 @@ public class AsyncPool {
 
     protected int size;
 
-    private Map<Integer, AsyncTask> tasks = new HashMap<Integer, AsyncTask>();
+    private Map<Integer, AsyncTask> tasks = new HashMap<>();
 
-    private Map<Integer, Integer> taskWorkers = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> taskWorkers = new HashMap<>();
 
     private AsyncWorker[] workers;
 
@@ -114,8 +114,8 @@ public class AsyncPool {
                 }
             }
         } while (this.tasks.size() > 0);
-        this.tasks = new HashMap<Integer, AsyncTask>();
-        this.taskWorkers = new HashMap<Integer, Integer>();
+        this.tasks = new HashMap<>();
+        this.taskWorkers = new HashMap<>();
     }
 
     public void collectTasks() {

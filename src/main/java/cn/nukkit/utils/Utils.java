@@ -1,7 +1,5 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.Server;
-
 import java.io.*;
 
 /**
@@ -10,36 +8,39 @@ import java.io.*;
  */
 public class Utils {
 
-    public static File writeFile(String filename, InputStream inputStream) {
-        if (inputStream == null) {
-            Server.getInstance().getLogger().error("无法读取文件 " + filename);
-            return null;
-        }
-        File file = new File(filename);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                Server.getInstance().getLogger().error("无法创建文件： " + filename);
-                return null;
-            }
+    public static void writeFile(String fileName, String content) throws IOException {
+        writeFile(fileName, new ByteArrayInputStream(content.getBytes("UTF-8")));
+    }
 
+    public static void writeFile(String fileName, InputStream content) throws IOException {
+        writeFile(new File(fileName), content);
+    }
+
+    public static void writeFile(File file, String content) throws IOException {
+        writeFile(file, new ByteArrayInputStream(content.getBytes("UTF-8")));
+    }
+
+    public static void writeFile(File file, InputStream content) throws IOException {
+        if (content == null) {
+            throw new IllegalArgumentException("content must not be null");
         }
-        byte buffer[] = new byte[4 * 1024];
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        FileOutputStream stream = new FileOutputStream(file);
+        byte[] buffer = new byte[1024];
         int length;
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            while ((length = inputStream.read(buffer)) != -1) {
-                fileOutputStream.write(buffer, 0, length);
-            }
-            fileOutputStream.flush();
-            fileOutputStream.close();
-        } catch (IOException e) {
-            Server.getInstance().getLogger().error("对文件 " + filename + " 进行流操作时截取到异常");
-            e.printStackTrace();
-            return null;
+        while ((length = content.read(buffer)) != -1) {
+            stream.write(buffer, 0, length);
         }
-        return file;
+        stream.close();
+    }
+
+    public static String readFile(File file) throws IOException {
+        if (!file.exists() || file.isDirectory()) {
+            throw new FileNotFoundException();
+        }
+        return readFile(new FileInputStream(file));
     }
 
     public static String readFile(String filename) throws IOException {
@@ -47,20 +48,16 @@ public class Utils {
         if (!file.exists() || file.isDirectory()) {
             throw new FileNotFoundException();
         }
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String temp = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        temp = br.readLine();
-        while (temp != null) {
-            stringBuilder.append(temp).append("\n");
-            temp = br.readLine();
-        }
-        return stringBuilder.toString();
+        return readFile(new FileInputStream(file));
     }
 
     public static String readFile(InputStream inputStream) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-        String temp = null;
+        return readFile(new InputStreamReader(inputStream, "UTF-8"));
+    }
+
+    private static String readFile(Reader reader) throws IOException {
+        BufferedReader br = new BufferedReader(reader);
+        String temp;
         StringBuilder stringBuilder = new StringBuilder();
         temp = br.readLine();
         while (temp != null) {

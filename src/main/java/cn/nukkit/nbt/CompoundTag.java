@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CompoundTag extends Tag {
-    private Map<String, Tag> tags = new HashMap<String, Tag>();
+    private Map<String, Tag> tags = new HashMap<>();
 
     public CompoundTag() {
         super("");
@@ -150,7 +150,7 @@ public class CompoundTag extends Tag {
 
     @SuppressWarnings("unchecked")
     public ListTag<? extends Tag> getList(String name) {
-        if (!tags.containsKey(name)) return new ListTag<Tag>(name);
+        if (!tags.containsKey(name)) return new ListTag<>(name);
         return (ListTag<? extends Tag>) tags.get(name);
     }
 

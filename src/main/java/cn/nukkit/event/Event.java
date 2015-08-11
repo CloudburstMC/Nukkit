@@ -27,7 +27,7 @@ public abstract class Event {
         if (!(this instanceof Cancellable)) {
             throw new IllegalArgumentException("Event is not Cancellable");
         }
-        isCancelled = (boolean) value;
+        isCancelled = value;
     }
 
 

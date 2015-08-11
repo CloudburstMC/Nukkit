@@ -1,6 +1,7 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.Server;
+import cn.nukkit.scheduler.FileWriteTask;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -8,9 +9,8 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -31,13 +31,13 @@ public class Config {
     public static final int ENUM = 5; // .txt, .list, .enum
     public static final int ENUMERATION = Config.ENUM;
 
-    private Map<String, Object> config = new LinkedHashMap<String, Object>();
-    private TreeMap<String, Object> nestedCache = new TreeMap<String, Object>();
+    private Map<String, Object> config = new LinkedHashMap<>();
+    private TreeMap<String, Object> nestedCache = new TreeMap<>();
     private File file;
     private boolean correct = false;
     private int type = Config.DETECT;
 
-    public static TreeMap<String, Integer> format = new TreeMap<String, Integer>();
+    public static TreeMap<String, Integer> format = new TreeMap<>();
 
     static {
         format.put("properties", Config.PROPERTIES);
@@ -60,7 +60,7 @@ public class Config {
     }
 
     public Config(String file, int type) {
-        this(file, type, new TreeMap<String, Object>());
+        this(file, type, new TreeMap<>());
     }
 
     public Config(String file, int type, Map<String, Object> default_map) {
@@ -80,7 +80,7 @@ public class Config {
     }
 
     public boolean load(String file, int type) {
-        return this.load(file, type, new LinkedHashMap<String, Object>());
+        return this.load(file, type, new LinkedHashMap<>());
     }
 
     public boolean load(String file, int type, Map<String, Object> default_map) {
@@ -110,11 +110,7 @@ public class Config {
             if (this.correct) {
                 String content = "";
                 try {
-                    FileInputStream fileInputStream = new FileInputStream(this.file);
-                    byte[] buffer = new byte[fileInputStream.available()];
-                    fileInputStream.read(buffer);
-                    fileInputStream.close();
-                    content = new String(buffer);
+                    content = Utils.readFile(this.file);
                 } catch (IOException e) {
                     Server.getInstance().getLogger().logException(e);
                 }
@@ -183,17 +179,19 @@ public class Config {
                     }
                     break;
             }
-            //todo: 异步储存文件
-            try {
-                FileWriter fileWriter = new FileWriter(this.file);
-                fileWriter.write(content);
-                fileWriter.close();
-            } catch (IOException e) {
-                MainLogger logger = Server.getInstance().getLogger();
-                logger.critical("无法保存配置文件 " + this.file.toString() + ": " + e.getMessage());
-                //todo DEBUG>1时 logger.LogException(e);
+            if (async) {
+                try {
+                    Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    Utils.writeFile(this.file, content);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-
             return true;
         } else {
             return false;
@@ -236,7 +234,7 @@ public class Config {
             }
         }; //内嵌中心元素
         for (int i = vars.length - 2; i > 0; i--) {
-            HashMap<String, Object> new_hashMap = new LinkedHashMap<String, Object>();
+            HashMap<String, Object> new_hashMap = new LinkedHashMap<>();
             new_hashMap.put(vars[i], hashMap);
             hashMap = new_hashMap;
         }
@@ -325,11 +323,9 @@ public class Config {
 
 
     private Map<String, Object> fillDefaults(Map<String, Object> default_map, Map<String, Object> data) {
-        for (Map.Entry<String, Object> entry : default_map.entrySet()) {
-            if (!data.containsKey(entry.getKey())) {
-                data.put(entry.getKey(), entry.getValue());
-            }
-        }
+        default_map.entrySet().stream().filter(entry -> !data.containsKey(entry.getKey())).forEach(entry -> {
+            data.put(entry.getKey(), entry.getValue());
+        });
         return data;
     }
 
@@ -360,18 +356,27 @@ public class Config {
     private void parseProperties(String content) {
         for (String line : content.split("\n")) {
             if (Pattern.compile("[a-zA-Z0-9\\-_\\.]*+=+[^\\r\\n]*").matcher(line).matches()) {
-                String k = line.split("=")[0];
-                String v = line.split("=")[1].trim();
+                String[] b = line.split("=", -1);
+                String k = b[0];
+                String v = b[1].trim();
                 String v_lower = v.toLowerCase();
                 if (this.config.containsKey(k)) {
                     MainLogger.getLogger().debug("[Config] 重复的键值 " + k + " ，位于文件 " + this.file.toString());
                 }
-                if (v_lower.equals("on") || v_lower.equals("true") || v_lower.equals("yes")) {
-                    this.config.put(k, true);
-                } else if (v_lower.equals("off") || v_lower.equals("false") || v_lower.equals("no")) {
-                    this.config.put(k, false);
-                } else {
-                    this.config.put(k, v);
+                switch (v_lower) {
+                    case "on":
+                    case "true":
+                    case "yes":
+                        this.config.put(k, true);
+                        break;
+                    case "off":
+                    case "false":
+                    case "no":
+                        this.config.put(k, false);
+                        break;
+                    default:
+                        this.config.put(k, v);
+                        break;
                 }
             }
         }

@@ -7,5 +7,5 @@ import cn.nukkit.event.Listener;
  */
 public interface EventExecutor {
 
-    public void execute(Listener listener);
+    void execute(Listener listener);
 }
