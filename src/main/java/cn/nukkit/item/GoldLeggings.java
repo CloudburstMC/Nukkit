@@ -4,17 +4,17 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class GoldLegging extends Armor {
+public class GoldLeggings extends Armor {
 
-    public GoldLegging() {
+    public GoldLeggings() {
         this(0, 1);
     }
 
-    public GoldLegging(int meta) {
+    public GoldLeggings(int meta) {
         this(meta, 1);
     }
 
-    public GoldLegging(int meta, int count) {
+    public GoldLeggings(int meta, int count) {
         super(GOLD_LEGGINGS, meta, count, "Gold Leggings");
     }
 }

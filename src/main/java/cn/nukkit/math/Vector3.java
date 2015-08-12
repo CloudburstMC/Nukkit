@@ -142,7 +142,7 @@ public class Vector3 {
         return this.getSide(side, 1);
     }
 
-    public Vector3 getSide(int side, double step) {
+    public Vector3 getSide(int side, int step) {
         switch (side) {
             case Vector3.SIDE_DOWN:
                 return new Vector3(this.x, this.y - step, this.z);

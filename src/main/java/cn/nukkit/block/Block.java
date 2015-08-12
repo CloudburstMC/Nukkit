@@ -1,12 +1,18 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.item.Item;
+import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -223,6 +229,12 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int NETHER_REACTOR = 247;
 
     public static Class[] list = null;
+    public static Block[] fullList = null;
+    public static int[] light = null;
+    public static int[] lightFilter = null;
+    public static boolean[] solid = null;
+    public static int[] hardness = null;
+    public static boolean[] transparent = null;
 
     protected int id;
     protected int meta = 0;
@@ -238,10 +250,27 @@ public class Block extends Position implements Metadatable, Cloneable {
         this.meta = meta;
     }
 
-    public static void init() {
+    public static void init() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         if (list == null) {
             list = new Class[256];
-            //todo
+            fullList = new Block[4096];
+            light = new int[256];
+            lightFilter = new int[256];
+            solid = new boolean[256];
+            hardness = new int[256];
+            transparent = new boolean[256];
+            // todo register blocks
+            for (int id = 0; id < 256; id++) {
+                Class c = list[id];
+                if (c != null) {
+                    Block block = (Block) c.newInstance();
+                    Constructor constructor = c.getDeclaredConstructor(int.class);
+                    constructor.setAccessible(true);
+                    for (int data = 0; data < 16; ++data) {
+                        fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
+                    }
+                }
+            }
         }
     }
 
@@ -277,8 +306,79 @@ public class Block extends Position implements Metadatable, Cloneable {
         return block;
     }
 
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
+        return this.place(item, block, target, face, fx, fy, fz, null);
+    }
+
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        return this.getLevel().setBlock(this, this, true, true);
+    }
+
+    public boolean isBreakable(Item item) {
+        return true;
+    }
+
+    public boolean onBreak(Item item) {
+        return this.getLevel().setBlock(this, new Air(), true, true);
+    }
+
+    public void onUpdate(int type) {
+    }
+
+    public boolean onActivate(Item item) {
+        return this.onActivate(item, null);
+    }
+
+    public boolean onActivate(Item item, Player player) {
+        return false;
+    }
+
+    public int getHardness() {
+        return 10;
+    }
+
+    public int getResistance() {
+        return 1;
+    }
+
+    public double getFrictionFactor() {
+        return 0.6;
+    }
+
+    public int getLightLevel() {
+        return 0;
+    }
+
     public boolean canBePlaced() {
         return true;
+    }
+
+    public boolean canBeReplaced() {
+        return false;
+    }
+
+    public boolean isTransparent() {
+        return false;
+    }
+
+    public boolean isSolid() {
+        return true;
+    }
+
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    public boolean canBeActivated() {
+        return false;
+    }
+
+    public boolean hasEntityCollision() {
+        return false;
+    }
+
+    public boolean canPassThrough() {
+        return false;
     }
 
     public String getName() {
@@ -289,12 +389,163 @@ public class Block extends Position implements Metadatable, Cloneable {
         return this.id;
     }
 
+    public void addVelocityToEntity(Entity entity, Vector3 vector) {
+
+    }
+
     public final int getDamage() {
         return this.meta;
     }
 
     public final void setDamage(int meta) {
         this.meta = meta & 0x0f;
+    }
+
+    final public void position(Position v) {
+        this.x = (int) v.x;
+        this.y = (int) v.y;
+        this.z = (int) v.z;
+        this.level = v.level;
+        this.boundingBox = null;
+    }
+
+    public int[][] getDrops(Item item) {
+        if (this.id < 0 || this.id > list.length) { //Unknown blocks
+            return new int[0][0];
+        } else {
+            return new int[][]{
+                    {this.getId(), this.getDamage(), 1}
+            };
+        }
+    }
+
+    public double getBreakTime(Item item) {
+        return 0.20;
+    }
+
+    public Block getSide(int side) {
+        return this.getSide(side, 1);
+    }
+
+    public Block getSide(int side, int step) {
+        if (this.isValid()) {
+            return this.getLevel().getBlock(super.getSide(side, step));
+        }
+        return Block.get(Item.AIR, 0, Position.fromObject(super.getSide(side, step)));
+    }
+
+    public String __toString() {
+        return "Block[" + this.getName() + "] (" + this.getId() + ":" + this.getDamage() + ")";
+    }
+
+    public boolean collidesWithBB(AxisAlignedBB bb) {
+        AxisAlignedBB bb1 = this.getBoundingBox();
+        return bb1 != null && bb.intersectsWith(bb1);
+    }
+
+    public void onEntityCollide(Entity entity) {
+
+    }
+
+    public AxisAlignedBB getBoundingBox() {
+        if (this.boundingBox == null) {
+            this.boundingBox = this.recalculateBoundingBox();
+        }
+        return this.boundingBox;
+    }
+
+    protected AxisAlignedBB recalculateBoundingBox() {
+        return new AxisAlignedBB(
+                this.x,
+                this.y,
+                this.z,
+                this.x + 1,
+                this.y + 1,
+                this.z + 1
+        );
+    }
+
+    public MovingObjectPosition calculateIntercept(Vector3 pos1, Vector3 pos2) {
+        AxisAlignedBB bb = this.getBoundingBox();
+        if (bb == null) {
+            return null;
+        }
+
+        Vector3 v1 = pos1.getIntermediateWithXValue(pos2, bb.minX);
+        Vector3 v2 = pos1.getIntermediateWithXValue(pos2, bb.maxX);
+        Vector3 v3 = pos1.getIntermediateWithYValue(pos2, bb.minY);
+        Vector3 v4 = pos1.getIntermediateWithYValue(pos2, bb.maxY);
+        Vector3 v5 = pos1.getIntermediateWithZValue(pos2, bb.minZ);
+        Vector3 v6 = pos1.getIntermediateWithZValue(pos2, bb.maxZ);
+
+        if (v1 != null && !bb.isVectorInYZ(v1)) {
+            v1 = null;
+        }
+
+        if (v2 != null && !bb.isVectorInYZ(v2)) {
+            v2 = null;
+        }
+
+        if (v3 != null && !bb.isVectorInXZ(v3)) {
+            v3 = null;
+        }
+
+        if (v4 != null && !bb.isVectorInXZ(v4)) {
+            v4 = null;
+        }
+
+        if (v5 != null && !bb.isVectorInXY(v5)) {
+            v5 = null;
+        }
+
+        if (v6 != null && !bb.isVectorInXY(v6)) {
+            v6 = null;
+        }
+
+        Vector3 vector = v1;
+
+        if (v2 != null && (vector == null || pos1.distanceSquared(v2) < pos1.distanceSquared(vector))) {
+            vector = v2;
+        }
+
+        if (v3 != null && (vector == null || pos1.distanceSquared(v3) < pos1.distanceSquared(vector))) {
+            vector = v3;
+        }
+
+        if (v4 != null && (vector == null || pos1.distanceSquared(v4) < pos1.distanceSquared(vector))) {
+            vector = v4;
+        }
+
+        if (v5 != null && (vector == null || pos1.distanceSquared(v5) < pos1.distanceSquared(vector))) {
+            vector = v5;
+        }
+
+        if (v6 != null && (vector == null || pos1.distanceSquared(v6) < pos1.distanceSquared(vector))) {
+            vector = v6;
+        }
+
+        if (vector == null) {
+            return null;
+        }
+
+        int f = -1;
+
+        if (vector == v1) {
+            f = 4;
+        } else if (vector == v2) {
+            f = 5;
+        } else if (vector == v3) {
+            f = 0;
+        } else if (vector == v4) {
+            f = 1;
+        } else if (vector == v5) {
+            f = 2;
+        } else if (vector == v6) {
+            f = 3;
+        }
+
+        return MovingObjectPosition.fromBlock((int) this.x, (int) this.y, (int) this.z, f, vector.add(this.x, this.y, this.z));
+
     }
 
     @Override

@@ -6,17 +6,17 @@ import cn.nukkit.block.Block;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class WheetSeeds extends Item {
+public class WheatSeeds extends Item {
 
-    public WheetSeeds() {
+    public WheatSeeds() {
         this(0, 1);
     }
 
-    public WheetSeeds(int meta) {
+    public WheatSeeds(int meta) {
         this(meta, 1);
     }
 
-    public WheetSeeds(int meta, int count) {
+    public WheatSeeds(int meta, int count) {
         super(WHEAT_SEEDS, 0, count, "Wheat Seeds");
         this.block = Block.get(Item.WHEAT_BLOCK);
     }

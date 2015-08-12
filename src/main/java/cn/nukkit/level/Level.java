@@ -67,6 +67,19 @@ public class Level implements Metadatable {
         return null;
     }
 
+    public boolean setBlock(Vector3 pos, Block block) {
+        return this.setBlock(pos, block, false, true);
+    }
+
+    public boolean setBlock(Vector3 pos, Block block, boolean direct) {
+        return this.setBlock(pos, block, direct, true);
+    }
+
+    public boolean setBlock(Vector3 pos, Block block, boolean direct, boolean update) {
+        //todo!!
+        return false;
+    }
+
     public void addTile(Tile tile) throws LevelException {
         if (tile.getLevel() != this) {
             throw new LevelException("Invalid Tile level");

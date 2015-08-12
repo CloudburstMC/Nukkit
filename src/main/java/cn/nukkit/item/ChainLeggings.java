@@ -4,17 +4,17 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ChainLegging extends Armor {
+public class ChainLeggings extends Armor {
 
-    public ChainLegging() {
+    public ChainLeggings() {
         this(0, 1);
     }
 
-    public ChainLegging(int meta) {
+    public ChainLeggings(int meta) {
         this(meta, 1);
     }
 
-    public ChainLegging(int meta, int count) {
+    public ChainLeggings(int meta, int count) {
         super(CHAIN_LEGGINGS, meta, count, "Chain Leggings");
     }
 }

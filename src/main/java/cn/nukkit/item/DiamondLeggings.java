@@ -4,17 +4,17 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class DiamondLegging extends Armor {
+public class DiamondLeggings extends Armor {
 
-    public DiamondLegging() {
+    public DiamondLeggings() {
         this(0, 1);
     }
 
-    public DiamondLegging(int meta) {
+    public DiamondLeggings(int meta) {
         this(meta, 1);
     }
 
-    public DiamondLegging(int meta, int count) {
+    public DiamondLeggings(int meta, int count) {
         super(DIAMOND_LEGGINGS, meta, count, "Diamond Leggings");
     }
 }

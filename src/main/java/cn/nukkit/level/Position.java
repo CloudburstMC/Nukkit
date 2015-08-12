@@ -68,7 +68,7 @@ public class Position extends Vector3 {
 
     public Position getSide(int side, int step) {
         if (!this.isValid()) {
-            throw new LevelException("未定义的 Level");
+            throw new LevelException("Undefined Level reference");
         }
         return Position.fromObject(super.getSide(side, step), this.level);
     }
