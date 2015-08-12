@@ -32,9 +32,10 @@ public class Nukkit {
 
         MainLogger logger = new MainLogger(DATA_PATH + "server.log", false, ANSI); //todo: 检查是否启用了ansi，是否开启了调试模式
 
-
         Server server = new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
 
+
     }
+
 
 }

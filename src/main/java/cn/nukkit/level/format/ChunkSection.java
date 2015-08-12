@@ -31,13 +31,13 @@ public interface ChunkSection {
 
     void setBlockLight(int x, int y, int z, int level);
 
-    String[] getBlockIdColunm(int x, int z);
+    byte[] getBlockIdColumn(int x, int z);
 
-    String[] getBlockDataColumn(int x, int z);
+    byte[] getBlockDataColumn(int x, int z);
 
-    String[] getBlockSkyLightColunm(int x, int z);
+    byte[] getBlockSkyLightColumn(int x, int z);
 
-    String[] getBlockLightColunm(int x, int z);
+    byte[] getBlockLightColumn(int x, int z);
 
     byte[] getIdArray();
 

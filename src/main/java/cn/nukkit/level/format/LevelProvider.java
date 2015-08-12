@@ -83,7 +83,7 @@ abstract public class LevelProvider {
 
     public abstract long getTime();
 
-    public abstract void setTime(long value);
+    public abstract void setTime(int value);
 
     public abstract long getSeed();
 
@@ -94,6 +94,8 @@ abstract public class LevelProvider {
     public abstract void setSpawn(Vector3 pos);
 
     public abstract FullChunk[] getLoadedChunks();
+
+    public abstract void doGarbageCollection();
 
     public abstract Level getLevel();
 
