@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListTag<T extends Tag> extends Tag {
-    private List<T> list = new ArrayList<>();
-    private byte type;
+    public List<T> list = new ArrayList<>();
+    public byte type;
 
     public ListTag() {
         super("");

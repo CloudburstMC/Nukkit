@@ -19,9 +19,9 @@ public interface ChunkSection {
 
     boolean setBlock(int x, int y, int z);
 
-    boolean setBlock(int x, int y, int z, int blockId);
+    boolean setBlock(int x, int y, int z, Integer blockId);
 
-    boolean setBlock(int x, int y, int z, int blockId, int meta);
+    boolean setBlock(int x, int y, int z, Integer blockId, Integer meta);
 
     int getBlockSkyLight(int x, int y, int z);
 

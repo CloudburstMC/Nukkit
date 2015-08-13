@@ -9,7 +9,7 @@ import java.util.TreeMap;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class FullChunk {
+public interface FullChunk {
     //todo
 
     public abstract int getX();
@@ -26,11 +26,11 @@ public abstract class FullChunk {
 
     public abstract int getFullBlock(int x, int y, int z);
 
-    public abstract void setBlock(int x, int y, int z);
+    public abstract boolean setBlock(int x, int y, int z);
 
-    public abstract void setBlock(int x, int y, int z, int blockId);
+    public abstract boolean setBlock(int x, int y, int z, Integer blockId);
 
-    public abstract void setBlock(int x, int y, int z, int blockId, int meta);
+    public abstract boolean setBlock(int x, int y, int z, Integer blockId, Integer meta);
 
     public abstract int getBlockId(int x, int y, int z);
 
@@ -66,13 +66,13 @@ public abstract class FullChunk {
 
     public abstract int[] getBiomeColor(int x, int z);
 
-    public abstract byte[] getBlockIdColunm(int x, int z);
+    public abstract byte[] getBlockIdColumn(int x, int z);
 
     public abstract byte[] getBlockDataColumn(int x, int z);
 
-    public abstract byte[] getBlockSkyLightColunm(int x, int z);
+    public abstract byte[] getBlockSkyLightColumn(int x, int z);
 
-    public abstract byte[] getBlockLightColunm(int x, int z);
+    public abstract byte[] getBlockLightColumn(int x, int z);
 
     public abstract void setBiomeColor(int x, int z, int R, int G, int B);
 

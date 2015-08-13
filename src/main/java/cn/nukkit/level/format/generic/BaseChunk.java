@@ -3,6 +3,8 @@ package cn.nukkit.level.format.generic;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.format.Chunk;
+import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.generator.biome.Biome;
@@ -11,33 +13,26 @@ import cn.nukkit.nbt.DoubleTag;
 import cn.nukkit.nbt.ListTag;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.ChunkException;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.TreeMap;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BaseFullChunk implements FullChunk {
-    protected TreeMap<Integer, Entity> entities = new TreeMap<>();
 
-    protected TreeMap<Integer, Tile> tiles = new TreeMap<>();
+public abstract class BaseChunk implements Chunk {
 
-    protected TreeMap<Integer, Tile> tileList = new TreeMap<>();
+    public static final int SECTION_COUNT = 8;
 
     protected int[] biomeColors;
 
-    protected byte[] blocks;
-
-    protected byte[] data;
-
-    protected byte[] skyLight;
-
-    protected byte[] blockLight;
-
     protected int[] heightMap;
+
+    protected ChunkSection[] sections = new ChunkSection[SECTION_COUNT];
 
     protected ArrayList<CompoundTag> NBTtiles;
 
@@ -48,20 +43,24 @@ public abstract class BaseFullChunk implements FullChunk {
     protected int x;
     protected int z;
 
+    private boolean isInit = false;
     protected boolean hasChanged = false;
 
-    private boolean isInit = false;
-
-    public BaseFullChunk(LevelProvider provider, double x, double z, byte[] blocks, byte[] data, byte[] skyLight, byte[] blockLight, int[] biomeColors, int[] heightMap, ArrayList<CompoundTag> entities, ArrayList<CompoundTag> tiles) {
+    protected BaseChunk(LevelProvider provider, double x, double z, ChunkSection[] sections, int[] biomeColors, int[] heightMap, ArrayList<CompoundTag> entities, ArrayList<CompoundTag> tiles) throws ChunkException {
         this.provider = provider;
         this.x = (int) x;
         this.z = (int) z;
-
-        this.blocks = blocks;
-        this.data = data;
-        this.skyLight = skyLight;
-        this.blockLight = blockLight;
-
+        for (int Y = 0; Y < sections.length; ++Y) {
+            ChunkSection section = sections[Y];
+            if (section != null) {
+                this.sections[Y] = section;
+            } else {
+                throw new ChunkException("Received invalid ChunkSection instance");
+            }
+            if (Y >= SECTION_COUNT) {
+                throw new ChunkException("Invalid amount of chunks");
+            }
+        }
         if (biomeColors.length != 256) {
             biomeColors = new int[256];
             Arrays.fill(biomeColors, Binary.readInt(new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00}));
@@ -77,6 +76,230 @@ public abstract class BaseFullChunk implements FullChunk {
         this.NBTtiles = tiles;
         this.NBTentities = entities;
     }
+
+    @Override
+    public int getFullBlock(int x, int y, int z) {
+        return this.sections[y >> 4].getFullBlock(x, y & 0x0f, z);
+    }
+
+    @Override
+    public boolean setBlock(int x, int y, int z) {
+        return this.setBlock(x, y, z, null, null);
+    }
+
+    @Override
+    public boolean setBlock(int x, int y, int z, Integer blockId) {
+        return this.setBlock(x, y, z, blockId, null);
+    }
+
+    @Override
+    public boolean setBlock(int x, int y, int z, Integer blockId, Integer meta) {
+        try {
+            this.hasChanged = true;
+            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, blockId & 0xff, meta & 0xff);
+        } catch (ChunkException e) {
+            LevelProvider level = this.getProvider();
+            int Y = y >> 4;
+            this.setInternalSection(Y, level.createChunkSection(Y));
+            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, blockId & 0xff, meta & 0xff);
+        }
+    }
+
+    @Override
+    public int getBlockId(int x, int y, int z) {
+        return this.sections[y >> 4].getBlockId(x, y & 0x0f, z);
+    }
+
+    @Override
+    public void setBlockId(int x, int y, int z, int id) {
+        try {
+            this.sections[y >> 4].setBlockId(x, y & 0x0f, z, id);
+            this.hasChanged = true;
+        } catch (ChunkException e) {
+            LevelProvider level = this.getProvider();
+            int Y = y >> 4;
+            this.setInternalSection(Y, level.createChunkSection(Y));
+            this.setBlockId(x, y, z, id);
+        }
+    }
+
+    @Override
+    public int getBlockData(int x, int y, int z) {
+        return this.sections[y >> 4].getBlockData(x, y & 0x0f, z);
+    }
+
+    @Override
+    public void setBlockData(int x, int y, int z, int data) {
+        try {
+            this.sections[y >> 4].setBlockData(x, y & 0x0f, z, data);
+            this.hasChanged = true;
+        } catch (ChunkException e) {
+            LevelProvider provider = this.getProvider();
+            int Y = y >> 4;
+            this.setInternalSection(Y, provider.createChunkSection(Y));
+            this.setBlockData(x, y, z, data);
+        }
+    }
+
+    @Override
+    public int getBlockSkyLight(int x, int y, int z) {
+        return this.sections[y >> 4].getBlockSkyLight(x, y & 0x0f, z);
+    }
+
+    @Override
+    public void setBlockSkyLight(int x, int y, int z, int level) {
+        try {
+            this.sections[y >> 4].setBlockSkyLight(x, y & 0x0f, z, level);
+            this.hasChanged = true;
+        } catch (ChunkException e) {
+            LevelProvider provider = this.getProvider();
+            int Y = y >> 4;
+            this.setInternalSection(Y, provider.createChunkSection(Y));
+            this.setBlockSkyLight(x, y, z, level);
+        }
+    }
+
+    @Override
+    public int getBlockLight(int x, int y, int z) {
+        return this.sections[y >> 4].getBlockLight(x, y & 0x0f, z);
+    }
+
+    @Override
+    public void setBlockLight(int x, int y, int z, int level) {
+        try {
+            this.sections[y >> 4].setBlockLight(x, y & 0x0f, z, level);
+            this.hasChanged = true;
+        } catch (ChunkException e) {
+            LevelProvider provider = this.getProvider();
+            int Y = y >> 4;
+            this.setInternalSection(Y, provider.createChunkSection(Y));
+            this.setBlockLight(x, y, z, level);
+        }
+    }
+
+    @Override
+    public byte[] getBlockIdColumn(int x, int z) {
+        ByteBuffer buffer = ByteBuffer.allocate(128);
+        for (int y = 0; y < SECTION_COUNT; y++) {
+            buffer.put(this.sections[y].getBlockIdColumn(x, z));
+        }
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes, 0, bytes.length);
+        return bytes;
+    }
+
+    @Override
+    public byte[] getBlockDataColumn(int x, int z) {
+        ByteBuffer buffer = ByteBuffer.allocate(64);
+        for (int y = 0; y < SECTION_COUNT; y++) {
+            buffer.put(this.sections[y].getBlockDataColumn(x, z));
+        }
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes, 0, bytes.length);
+        return bytes;
+    }
+
+    @Override
+    public byte[] getBlockSkyLightColumn(int x, int z) {
+        ByteBuffer buffer = ByteBuffer.allocate(64);
+        for (int y = 0; y < SECTION_COUNT; y++) {
+            buffer.put(this.sections[y].getBlockSkyLightColumn(x, z));
+        }
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes, 0, bytes.length);
+        return bytes;
+    }
+
+    @Override
+    public byte[] getBlockLightColumn(int x, int z) {
+        ByteBuffer buffer = ByteBuffer.allocate(64);
+        for (int y = 0; y < SECTION_COUNT; y++) {
+            buffer.put(this.sections[y].getBlockLightColumn(x, z));
+        }
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes, 0, bytes.length);
+        return bytes;
+    }
+
+    @Override
+    public boolean isSectionEmpty(float fY) {
+        return this.sections[(int) fY] instanceof EmptyChunkSection;
+    }
+
+    @Override
+    public ChunkSection getSection(float fY) {
+        return this.sections[(int) fY];
+    }
+
+    @Override
+    public boolean setSection(float fY, ChunkSection section) {
+        byte[] emptyIdArray = new byte[4096];
+        byte[] emptyDataArray = new byte[2048];
+        Arrays.fill(emptyIdArray, (byte) 0x00);
+        Arrays.fill(emptyDataArray, (byte) 0x00);
+        if (Arrays.equals(emptyIdArray, section.getIdArray()) && Arrays.equals(emptyDataArray, section.getDataArray())) {
+            this.sections[(int) fY] = new EmptyChunkSection((int) fY);
+        } else {
+            this.sections[(int) fY] = section;
+        }
+        this.hasChanged = true;
+        return true;
+    }
+
+    private void setInternalSection(float fY, ChunkSection section) {
+        this.sections[(int) fY] = section;
+        this.hasChanged = true;
+    }
+
+    @Override
+    public byte[] getBlockIdArray() {
+        ByteBuffer buffer = ByteBuffer.allocate(4096);
+        for (int y = 0; y < SECTION_COUNT; y++) {
+            buffer.put(this.sections[y].getBlockIdColumn(x, z));
+        }
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes, 0, bytes.length);
+        return bytes;
+    }
+
+    @Override
+    public byte[] getBlockDataArray() {
+        ByteBuffer buffer = ByteBuffer.allocate(2048);
+        for (int y = 0; y < SECTION_COUNT; y++) {
+            buffer.put(this.sections[y].getBlockDataColumn(x, z));
+        }
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes, 0, bytes.length);
+        return bytes;
+    }
+
+    @Override
+    public byte[] getBlockSkyLightArray() {
+        ByteBuffer buffer = ByteBuffer.allocate(2048);
+        for (int y = 0; y < SECTION_COUNT; y++) {
+            buffer.put(this.sections[y].getBlockSkyLightColumn(x, z));
+        }
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes, 0, bytes.length);
+        return bytes;
+    }
+
+    @Override
+    public byte[] getBlockLightArray() {
+        ByteBuffer buffer = ByteBuffer.allocate(2048);
+        for (int y = 0; y < SECTION_COUNT; y++) {
+            buffer.put(this.sections[y].getBlockLightColumn(x, z));
+        }
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes, 0, bytes.length);
+        return bytes;
+    }
+
+    @Override
+    public ChunkSection[] getSections() {
+        return sections;
+    }
+
 
     protected void checkOldBiomes(byte[] data) {
         if (data.length != 256) {
@@ -252,61 +475,6 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public void addEntity(Entity entity) {
-        this.entities.put(entity.getId(), entity);
-        if (!(entity instanceof Player) && this.isInit) {
-            this.hasChanged = true;
-        }
-    }
-
-    @Override
-    public void removeEntity(Entity entity) {
-        this.entities.remove(entity.getId());
-        if (!(entity instanceof Player) && this.isInit) {
-            this.hasChanged = true;
-        }
-    }
-
-    @Override
-    public void addTile(Tile tile) {
-        this.tiles.put(tile.getId(), tile);
-        int index = ((tile.z) & 0x0f << 12) | ((this.x & 0x0f) << 8) | (tile.y & 0xff);
-        if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(tile)) {
-            this.tileList.get(index).close();
-        }
-        this.tileList.put(index, tile);
-        if (this.isInit) {
-            this.hasChanged = true;
-        }
-    }
-
-    @Override
-    public void removeTile(Tile tile) {
-        this.tiles.remove(tile.getId());
-        int index = ((tile.z) & 0x0f << 12) | ((this.x & 0x0f) << 8) | (tile.y & 0xff);
-        this.tileList.remove(index);
-        if (this.isInit) {
-            this.hasChanged = true;
-        }
-    }
-
-    @Override
-    public TreeMap<Integer, Entity> getEntities() {
-        return entities;
-    }
-
-    @Override
-    public TreeMap<Integer, Tile> getTiles() {
-        return tiles;
-    }
-
-    @Override
-    public Tile getTile(int x, int y, int z) {
-        int index = (z << 12) | (x << 8) | y;
-        return this.tileList.containsKey(index) ? this.tileList.get(index) : null;
-    }
-
-    @Override
     public boolean isLoaded() {
         return this.getProvider() != null && this.getProvider().isChunkLoaded(this.getX(), this.getZ());
     }
@@ -356,26 +524,6 @@ public abstract class BaseFullChunk implements FullChunk {
         this.getTiles().values().forEach(cn.nukkit.tile.Tile::close);
         this.provider = null;
         return true;
-    }
-
-    @Override
-    public byte[] getBlockIdArray() {
-        return this.blocks;
-    }
-
-    @Override
-    public byte[] getBlockDataArray() {
-        return this.data;
-    }
-
-    @Override
-    public byte[] getBlockSkyLightArray() {
-        return this.skyLight;
-    }
-
-    @Override
-    public byte[] getBlockLightArray() {
-        return this.blockLight;
     }
 
     @Override
@@ -442,4 +590,5 @@ public abstract class BaseFullChunk implements FullChunk {
     public void setLightPopulated(boolean value) {
 
     }
+
 }

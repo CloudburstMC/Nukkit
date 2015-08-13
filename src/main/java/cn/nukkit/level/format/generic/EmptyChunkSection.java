@@ -52,12 +52,12 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z, int blockId) throws ChunkException {
+    public boolean setBlock(int x, int y, int z, Integer blockId) throws ChunkException {
         throw new ChunkException("Tried to modify an empty Chunk");
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z, int blockId, int meta) throws ChunkException {
+    public boolean setBlock(int x, int y, int z, Integer blockId, Integer meta) throws ChunkException {
         throw new ChunkException("Tried to modify an empty Chunk");
     }
 
