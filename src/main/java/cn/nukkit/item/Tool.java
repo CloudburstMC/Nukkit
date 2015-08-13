@@ -13,6 +13,14 @@ public abstract class Tool extends Item {
     public static final int TIER_STONE = 3;
     public static final int TIER_IRON = 4;
     public static final int TIER_DIAMOND = 5;
+
+    public static final int TYPE_NONE = 0;
+    public static final int TYPE_SWORD = 1;
+    public static final int TYPE_SHOVEL = 2;
+    public static final int TYPE_PICKAXE = 3;
+    public static final int TYPE_AXE = 4;
+    public static final int TYPE_SHEARS = 5;
+
     public static final int DURABILITY_WOODEN = 60;
     public static final int DURABILITY_GOLD = 33;
     public static final int DURABILITY_STONE = 132;

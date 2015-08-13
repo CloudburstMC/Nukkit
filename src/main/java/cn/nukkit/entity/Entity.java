@@ -1,8 +1,10 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.level.Location;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
+import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.plugin.Plugin;
 
 import java.util.List;
@@ -15,8 +17,21 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected int id;
 
+    public static Entity createEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
+        //todo
+        return null;
+    }
+
     public int getId() {
         return this.id;
+    }
+
+    public void spawnToAll() {
+        //todo
+    }
+
+    public void close() {
+        //todo
     }
 
     @Override

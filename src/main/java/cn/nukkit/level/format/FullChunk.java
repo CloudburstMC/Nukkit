@@ -3,6 +3,8 @@ package cn.nukkit.level.format;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.tile.Tile;
 
+import java.util.TreeMap;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -48,6 +50,8 @@ public abstract class FullChunk {
 
     public abstract int getHighestBlockAt(int x, int z);
 
+    public abstract int getHighestBlockAt(int x, int z, boolean cache);
+
     public abstract int getHeightMap(int x, int z);
 
     public abstract void setHeightMap(int x, int z, int value);
@@ -62,13 +66,13 @@ public abstract class FullChunk {
 
     public abstract int[] getBiomeColor(int x, int z);
 
-    public abstract String[] getBlockIdColunm(int x, int z);
+    public abstract byte[] getBlockIdColunm(int x, int z);
 
-    public abstract String[] getBlockDataColumn(int x, int z);
+    public abstract byte[] getBlockDataColumn(int x, int z);
 
-    public abstract String[] getBlockSkyLightColunm(int x, int z);
+    public abstract byte[] getBlockSkyLightColunm(int x, int z);
 
-    public abstract String[] getBlockLightColunm(int x, int z);
+    public abstract byte[] getBlockLightColunm(int x, int z);
 
     public abstract void setBiomeColor(int x, int z, int R, int G, int B);
 
@@ -98,9 +102,9 @@ public abstract class FullChunk {
 
     public abstract void removeTile(Tile tile);
 
-    public abstract Entity[] getEntities();
+    public abstract TreeMap<Integer, Entity> getEntities();
 
-    public abstract Tile[] getTiles();
+    public abstract TreeMap<Integer, Tile> getTiles();
 
     public abstract Tile getTile(int x, int y, int z);
 
@@ -118,21 +122,21 @@ public abstract class FullChunk {
 
     public abstract void initChunk();
 
-    public abstract String[] getBiomeIdArray();
+    public abstract byte[] getBiomeIdArray();
 
     public abstract int[] getBiomeColorArray();
 
     public abstract int[] getHeightMapArray();
 
-    public abstract String[] getBlockIdArray();
+    public abstract byte[] getBlockIdArray();
 
     public abstract byte[] getBlockDataArray();
 
-    public abstract int[] getBlockSkyLightArray();
+    public abstract byte[] getBlockSkyLightArray();
 
-    public abstract int[] getBlockLightArray();
+    public abstract byte[] getBlockLightArray();
 
-    public abstract void toBinary();
+    public abstract byte[] toBinary();
 
     public abstract byte[] toFastBinary();
 

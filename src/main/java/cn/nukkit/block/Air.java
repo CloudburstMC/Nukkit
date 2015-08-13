@@ -15,6 +15,10 @@ public class Air extends Trasparent {
         super(AIR, 0);
     }
 
+    public Air(int meta) {
+        super(AIR, 0);
+    }
+
     @Override
     public String getName() {
         return "AIR";
@@ -56,12 +60,12 @@ public class Air extends Trasparent {
     }
 
     @Override
-    public int getHardness() {
+    public double getHardness() {
         return -1;
     }
 
     @Override
-    public int getResistance() {
+    public double getResistance() {
         return 0;
     }
 }

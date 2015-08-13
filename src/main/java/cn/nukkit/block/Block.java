@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.Tool;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
@@ -233,7 +234,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static int[] light = null;
     public static int[] lightFilter = null;
     public static boolean[] solid = null;
-    public static int[] hardness = null;
+    public static double[] hardness = null;
     public static boolean[] transparent = null;
 
     protected int id;
@@ -257,7 +258,7 @@ public class Block extends Position implements Metadatable, Cloneable {
             light = new int[256];
             lightFilter = new int[256];
             solid = new boolean[256];
-            hardness = new int[256];
+            hardness = new double[256];
             transparent = new boolean[256];
             // todo register blocks
             for (int id = 0; id < 256; id++) {
@@ -268,6 +269,30 @@ public class Block extends Position implements Metadatable, Cloneable {
                     constructor.setAccessible(true);
                     for (int data = 0; data < 16; ++data) {
                         fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
+                    }
+
+                    solid[id] = block.isSolid();
+                    transparent[id] = block.isTransparent();
+                    hardness[id] = block.getHardness();
+                    light[id] = block.getLightLevel();
+
+                    if (block.isSolid()) {
+                        if (block.isTransparent()) {
+                            if (block instanceof Liquid || block instanceof Ice) {
+                                lightFilter[id] = 2;
+                            } else {
+                                lightFilter[id] = 1;
+                            }
+                        } else {
+                            lightFilter[id] = 15;
+                        }
+                    } else {
+                        lightFilter[id] = 1;
+                    }
+                } else {
+                    lightFilter[id] = 1;
+                    for (int data = 0; data < 16; ++data) {
+                        fullList[(id) << 4 | data] = new Block(id, data);
                     }
                 }
             }
@@ -322,7 +347,8 @@ public class Block extends Position implements Metadatable, Cloneable {
         return this.getLevel().setBlock(this, new Air(), true, true);
     }
 
-    public void onUpdate(int type) {
+    public int onUpdate(int type) {
+        return 0;
     }
 
     public boolean onActivate(Item item) {
@@ -333,12 +359,16 @@ public class Block extends Position implements Metadatable, Cloneable {
         return false;
     }
 
-    public int getHardness() {
+    public double getHardness() {
         return 10;
     }
 
-    public int getResistance() {
+    public double getResistance() {
         return 1;
+    }
+
+    public int getToolType() {
+        return Tool.TYPE_NONE;
     }
 
     public double getFrictionFactor() {
