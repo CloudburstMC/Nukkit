@@ -146,7 +146,7 @@ public interface FullChunk {
 
     public abstract void setChanged(boolean changed);
 
-    public abstract FullChunk fromBinary(byte[] data);
+    /*public abstract FullChunk fromBinary(byte[] data);
 
     public abstract FullChunk fromBinary(byte[] data, LevelProvider provider);
 
@@ -156,5 +156,5 @@ public interface FullChunk {
 
     public abstract FullChunk getEmptyChunk(int chunkX, int chunkZ);
 
-    public abstract FullChunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider);
+    public abstract FullChunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider);*/
 }

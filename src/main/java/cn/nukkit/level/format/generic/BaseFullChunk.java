@@ -414,16 +414,6 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public FullChunk fromFastBinary(byte[] data) {
-        return fromFastBinary(data, null);
-    }
-
-    @Override
-    public FullChunk fromFastBinary(byte[] data, LevelProvider provider) {
-        return fromBinary(data, provider);
-    }
-
-    @Override
     public byte[] toFastBinary() {
         return this.toBinary();
     }

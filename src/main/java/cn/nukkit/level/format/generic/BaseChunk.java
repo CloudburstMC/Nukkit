@@ -5,7 +5,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.nbt.CompoundTag;
@@ -183,9 +182,10 @@ public abstract class BaseChunk implements Chunk {
         for (int y = 0; y < SECTION_COUNT; y++) {
             buffer.put(this.sections[y].getBlockIdColumn(x, z));
         }
-        byte[] bytes = new byte[buffer.capacity()];
+        /*byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes, 0, bytes.length);
-        return bytes;
+        return bytes;*/
+        return buffer.array();
     }
 
     @Override
@@ -194,9 +194,10 @@ public abstract class BaseChunk implements Chunk {
         for (int y = 0; y < SECTION_COUNT; y++) {
             buffer.put(this.sections[y].getBlockDataColumn(x, z));
         }
-        byte[] bytes = new byte[buffer.capacity()];
+        /*byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes, 0, bytes.length);
-        return bytes;
+        return bytes;*/
+        return buffer.array();
     }
 
     @Override
@@ -205,9 +206,10 @@ public abstract class BaseChunk implements Chunk {
         for (int y = 0; y < SECTION_COUNT; y++) {
             buffer.put(this.sections[y].getBlockSkyLightColumn(x, z));
         }
-        byte[] bytes = new byte[buffer.capacity()];
+        /*byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes, 0, bytes.length);
-        return bytes;
+        return bytes;*/
+        return buffer.array();
     }
 
     @Override
@@ -216,9 +218,10 @@ public abstract class BaseChunk implements Chunk {
         for (int y = 0; y < SECTION_COUNT; y++) {
             buffer.put(this.sections[y].getBlockLightColumn(x, z));
         }
-        byte[] bytes = new byte[buffer.capacity()];
+        /*byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes, 0, bytes.length);
-        return bytes;
+        return bytes;*/
+        return buffer.array();
     }
 
     @Override
@@ -257,9 +260,10 @@ public abstract class BaseChunk implements Chunk {
         for (int y = 0; y < SECTION_COUNT; y++) {
             buffer.put(this.sections[y].getBlockIdColumn(x, z));
         }
-        byte[] bytes = new byte[buffer.capacity()];
+        /*byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes, 0, bytes.length);
-        return bytes;
+        return bytes;*/
+        return buffer.array();
     }
 
     @Override
@@ -268,9 +272,10 @@ public abstract class BaseChunk implements Chunk {
         for (int y = 0; y < SECTION_COUNT; y++) {
             buffer.put(this.sections[y].getBlockDataColumn(x, z));
         }
-        byte[] bytes = new byte[buffer.capacity()];
+        /*byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes, 0, bytes.length);
-        return bytes;
+        return bytes;*/
+        return buffer.array();
     }
 
     @Override
@@ -279,9 +284,10 @@ public abstract class BaseChunk implements Chunk {
         for (int y = 0; y < SECTION_COUNT; y++) {
             buffer.put(this.sections[y].getBlockSkyLightColumn(x, z));
         }
-        byte[] bytes = new byte[buffer.capacity()];
+        /*byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes, 0, bytes.length);
-        return bytes;
+        return bytes;*/
+        return buffer.array();
     }
 
     @Override
@@ -290,9 +296,10 @@ public abstract class BaseChunk implements Chunk {
         for (int y = 0; y < SECTION_COUNT; y++) {
             buffer.put(this.sections[y].getBlockLightColumn(x, z));
         }
-        byte[] bytes = new byte[buffer.capacity()];
+        /*byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes, 0, bytes.length);
-        return bytes;
+        return bytes;*/
+        return buffer.array();
     }
 
     @Override
@@ -559,16 +566,6 @@ public abstract class BaseChunk implements Chunk {
     @Override
     public void setChanged(boolean changed) {
         this.hasChanged = changed;
-    }
-
-    @Override
-    public FullChunk fromFastBinary(byte[] data) {
-        return fromFastBinary(data, null);
-    }
-
-    @Override
-    public FullChunk fromFastBinary(byte[] data, LevelProvider provider) {
-        return fromBinary(data, provider);
     }
 
     @Override

@@ -110,8 +110,10 @@ public abstract class Tile extends Position {
         this.level.updateTiles.put(this.id, this);
     }
 
+
     @Override
-    public void finalize() {
+    protected void finalize() throws Throwable {
+        super.finalize();
         this.close();
     }
 
