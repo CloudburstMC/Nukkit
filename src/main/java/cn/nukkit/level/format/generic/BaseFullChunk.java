@@ -12,8 +12,8 @@ import cn.nukkit.nbt.ListTag;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -39,9 +39,9 @@ public abstract class BaseFullChunk implements FullChunk {
 
     protected int[] heightMap;
 
-    protected ArrayList<CompoundTag> NBTtiles;
+    protected List<CompoundTag> NBTtiles;
 
-    protected ArrayList<CompoundTag> NBTentities;
+    protected List<CompoundTag> NBTentities;
 
     protected LevelProvider provider;
 
@@ -52,7 +52,7 @@ public abstract class BaseFullChunk implements FullChunk {
 
     private boolean isInit = false;
 
-    public BaseFullChunk(LevelProvider provider, double x, double z, byte[] blocks, byte[] data, byte[] skyLight, byte[] blockLight, int[] biomeColors, int[] heightMap, ArrayList<CompoundTag> entities, ArrayList<CompoundTag> tiles) {
+    public BaseFullChunk(LevelProvider provider, double x, double z, byte[] blocks, byte[] data, byte[] skyLight, byte[] blockLight, int[] biomeColors, int[] heightMap, List<CompoundTag> entities, List<CompoundTag> tiles) {
         this.provider = provider;
         this.x = (int) x;
         this.z = (int) z;
@@ -414,7 +414,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public byte[] toFastBinary() {
+    public byte[] toFastBinary() throws Exception {
         return this.toBinary();
     }
 

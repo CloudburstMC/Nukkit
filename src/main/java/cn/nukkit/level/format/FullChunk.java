@@ -16,9 +16,9 @@ public interface FullChunk {
 
     public abstract int getZ();
 
-    public abstract void setX();
+    public abstract void setX(int x);
 
-    public abstract void setZ();
+    public abstract void setZ(int z);
 
     public abstract LevelProvider getProvider();
 
@@ -136,9 +136,9 @@ public interface FullChunk {
 
     public abstract byte[] getBlockLightArray();
 
-    public abstract byte[] toBinary();
+    public abstract byte[] toBinary() throws Exception;
 
-    public abstract byte[] toFastBinary();
+    public abstract byte[] toFastBinary() throws Exception;
 
     public abstract boolean hasChanged();
 

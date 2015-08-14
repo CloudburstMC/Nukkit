@@ -82,6 +82,10 @@ public class CompoundTag extends Tag {
         tags.put(name, new IntArrayTag(name, value));
     }
 
+    public void putList(ListTag<? extends Tag> listTag) {
+        tags.put(listTag.getName(), listTag);
+    }
+
     public void putCompound(String name, CompoundTag value) {
         tags.put(name, value.setName(name));
     }
@@ -177,7 +181,7 @@ public class CompoundTag extends Tag {
         return tags.isEmpty();
     }
 
-    public Tag copy() {
+    public CompoundTag copy() {
         CompoundTag tag = new CompoundTag(getName());
         for (String key : tags.keySet()) {
             tag.put(key, tags.get(key).copy());

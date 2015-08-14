@@ -17,9 +17,17 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected int id;
 
+    public CompoundTag namedTag;
+
+    public boolean closed = false;
+
     public static Entity createEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
         //todo
         return null;
+    }
+
+    public void saveNBT() {
+        //todo
     }
 
     public int getId() {
