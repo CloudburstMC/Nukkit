@@ -4,100 +4,94 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.AsyncTask;
 
+import java.io.IOException;
+import java.util.TreeMap;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-abstract public class LevelProvider {
-    public static final byte ORDER_YZX = 0;
-    public static final byte ORDER_ZXY = 1;
+public interface LevelProvider {
+    byte ORDER_YZX = 0;
+    byte ORDER_ZXY = 1;
 
-    public LevelProvider(Level level, String path) {
-    }
-
-    /*public static String getProviderName() {
+    static String getProviderName() {
         return null;
-    }*/
-
-    public abstract String getProviderName();
-
-    public static int getProviderOrder() {
-        return 0;
     }
 
-    public static boolean usesChunkSection() {
+    static int getProviderOrder() {
+        return ORDER_ZXY;
+    }
+
+    static boolean usesChunkSection() {
+        return true;
+    }
+
+    AsyncTask requestChunkTask(int x, int z) throws IOException;
+
+    String getPath();
+
+    /*static boolean isValid(String path) {
         return false;
     }
 
-    public abstract AsyncTask requestChunkTask(int x, int z);
-
-    public abstract String getPath();
-
-    public abstract boolean isValid(String path);
-
-    /*public static boolean isValid(String path) {
-        return true;
-    }*/
-
-    public static void generate(String path, String name, int seed, String generator) {
+    static void generate(String path, String name, int seed, String generator) {
         generate(path, name, seed, generator, new String[]{});
     }
 
-    public static void generate(String path, String name, int seed, String generator, String[] options) {
+    static void generate(String path, String name, int seed, String generator, String[] options) {
 
-    }
+    }*/
 
-    public abstract String getGenerator();
+    String getGenerator();
 
-    public abstract String[] getGeneratorOptions();
+    TreeMap<String, String> getGeneratorOptions();
 
-    public abstract FullChunk getChunk(int X, int Z);
+    FullChunk getChunk(int X, int Z) throws IOException;
 
-    public abstract FullChunk getChunk(int X, int Z, boolean create);
+    FullChunk getChunk(int X, int Z, boolean create) throws IOException;
 
-    public static ChunkSection createChunkSection(int Y) {
-        return null;
-    }
+    void saveChunks() throws Exception;
 
-    public abstract void saveChunks();
+    void saveChunk(int X, int Z) throws Exception;
 
-    public abstract void saveChunk(int X, int Z);
+    public void unloadChunks() throws Exception;
 
-    public abstract void loadChunk(int X, int Z);
+    boolean loadChunk(int X, int Z) throws IOException;
 
-    public abstract void loadChunk(int X, int Z, boolean create);
+    boolean loadChunk(int X, int Z, boolean create) throws IOException;
 
-    public abstract boolean unloadChunk(int X, int Z);
+    boolean unloadChunk(int X, int Z) throws Exception;
 
-    public abstract boolean unloadChunk(int X, int Z, boolean safe);
+    boolean unloadChunk(int X, int Z, boolean safe) throws Exception;
 
-    public abstract boolean isChunkGenerated(int X, int Z);
+    boolean isChunkGenerated(int X, int Z) throws IOException;
 
-    public abstract boolean isChunkPopulated(int X, int Z);
+    boolean isChunkPopulated(int X, int Z) throws IOException;
 
-    public abstract boolean isChunkLoaded(int X, int Z);
+    boolean isChunkLoaded(int X, int Z);
 
-    public abstract Object setChunk(int chunkX, int chunkZ, FullChunk chunk);
+    void setChunk(int chunkX, int chunkZ, FullChunk chunk) throws Exception;
 
-    public abstract String getName();
+    String getName();
 
-    public abstract long getTime();
+    long getTime();
 
-    public abstract void setTime(int value);
+    void setTime(int value);
 
-    public abstract long getSeed();
+    long getSeed();
 
-    public abstract void setSeed(long value);
+    void setSeed(long value);
 
-    public abstract Vector3 getSpawn();
+    Vector3 getSpawn();
 
-    public abstract void setSpawn(Vector3 pos);
+    void setSpawn(Vector3 pos);
 
-    public abstract FullChunk[] getLoadedChunks();
+    TreeMap<String, ? extends FullChunk> getLoadedChunks();
 
-    public abstract void doGarbageCollection();
+    void doGarbageCollection() throws IOException;
 
-    public abstract Level getLevel();
+    Level getLevel();
 
-    public abstract void close();
+    void close() throws Exception;
 }

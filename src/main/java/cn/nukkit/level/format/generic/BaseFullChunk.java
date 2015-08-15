@@ -12,6 +12,7 @@ import cn.nukkit.nbt.ListTag;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
@@ -312,27 +313,27 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public boolean load() {
+    public boolean load() throws IOException {
         return this.load(true);
     }
 
     @Override
-    public boolean load(boolean generate) {
+    public boolean load(boolean generate) throws IOException {
         return this.getProvider() != null && this.getProvider().getChunk(this.getX(), this.getZ(), true) != null;
     }
 
     @Override
-    public boolean unload() {
+    public boolean unload() throws Exception {
         return this.unload(true, true);
     }
 
     @Override
-    public boolean unload(boolean save) {
+    public boolean unload(boolean save) throws Exception {
         return this.unload(save, true);
     }
 
     @Override
-    public boolean unload(boolean save, boolean safe) {
+    public boolean unload(boolean save, boolean safe) throws Exception {
         LevelProvider level = this.getProvider();
         if (level == null) {
             return true;
@@ -432,4 +433,5 @@ public abstract class BaseFullChunk implements FullChunk {
     public void setLightPopulated(boolean value) {
 
     }
+
 }

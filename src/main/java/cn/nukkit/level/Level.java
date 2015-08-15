@@ -80,6 +80,10 @@ public class Level implements Metadatable {
         return false;
     }
 
+    public void chunkRequestCallback(int x, int z, byte[] payload) {
+        //todo
+    }
+
     public void addTile(Tile tile) throws LevelException {
         if (tile.getLevel() != this) {
             throw new LevelException("Invalid Tile level");

@@ -2,6 +2,7 @@ package cn.nukkit.level.format;
 
 import cn.nukkit.Server;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -12,14 +13,14 @@ import java.util.TreeMap;
 public abstract class LevelProviderManager {
     protected static TreeMap<String, LevelProvider> providers = new TreeMap<>();
 
-    public static void addProvider(Server server, LevelProvider provider) {
-        providers.put(provider.getProviderName(), provider);
+    public static void addProvider(Server server, LevelProvider provider) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        providers.put((String) provider.getClass().getMethod("getProviderName").invoke(provider.getClass()), provider);
     }
 
-    public static LevelProvider getProvider(String path) {
+    public static LevelProvider getProvider(String path) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         for (Map.Entry entry : providers.entrySet()) {
             LevelProvider provider = (LevelProvider) entry.getValue();
-            if (provider.isValid(path)) {
+            if ((boolean) provider.getClass().getMethod("isValid", String.class).invoke(provider.getClass(), path)) {
                 return provider;
             }
         }

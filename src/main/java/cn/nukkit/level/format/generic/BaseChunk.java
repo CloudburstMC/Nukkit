@@ -14,16 +14,18 @@ import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.ChunkException;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 
-public abstract class BaseChunk implements Chunk {
+public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     public static final int SECTION_COUNT = 8;
 
@@ -33,9 +35,9 @@ public abstract class BaseChunk implements Chunk {
 
     protected ChunkSection[] sections = new ChunkSection[SECTION_COUNT];
 
-    protected ArrayList<CompoundTag> NBTtiles;
+    protected List<CompoundTag> NBTtiles;
 
-    protected ArrayList<CompoundTag> NBTentities;
+    protected List<CompoundTag> NBTentities;
 
     protected LevelProvider provider;
 
@@ -45,7 +47,8 @@ public abstract class BaseChunk implements Chunk {
     private boolean isInit = false;
     protected boolean hasChanged = false;
 
-    protected BaseChunk(LevelProvider provider, double x, double z, ChunkSection[] sections, int[] biomeColors, int[] heightMap, ArrayList<CompoundTag> entities, ArrayList<CompoundTag> tiles) throws ChunkException {
+    protected BaseChunk(LevelProvider provider, double x, double z, ChunkSection[] sections, int[] biomeColors, int[] heightMap, List<CompoundTag> entities, List<CompoundTag> tiles) throws ChunkException {
+        super(provider, x, z, new byte[]{}, new byte[]{}, new byte[]{}, new byte[]{}, biomeColors, heightMap, entities, tiles);
         this.provider = provider;
         this.x = (int) x;
         this.z = (int) z;
@@ -99,7 +102,12 @@ public abstract class BaseChunk implements Chunk {
         } catch (ChunkException e) {
             LevelProvider level = this.getProvider();
             int Y = y >> 4;
-            this.setInternalSection(Y, level.createChunkSection(Y));
+            try {
+                this.setInternalSection(Y, (ChunkSection) provider.getClass().getMethod("createChunkSection", int.class).invoke(provider.getClass(), Y));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
+                e1.printStackTrace();
+            }
+            //this.setInternalSection(Y, level.createChunkSection(Y));
             return this.sections[y >> 4].setBlock(x, y & 0x0f, z, blockId & 0xff, meta & 0xff);
         }
     }
@@ -117,7 +125,12 @@ public abstract class BaseChunk implements Chunk {
         } catch (ChunkException e) {
             LevelProvider level = this.getProvider();
             int Y = y >> 4;
-            this.setInternalSection(Y, level.createChunkSection(Y));
+            try {
+                this.setInternalSection(Y, (ChunkSection) provider.getClass().getMethod("createChunkSection", int.class).invoke(provider.getClass(), Y));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
+                e1.printStackTrace();
+            }
+            //this.setInternalSection(Y, level.createChunkSection(Y));
             this.setBlockId(x, y, z, id);
         }
     }
@@ -135,7 +148,11 @@ public abstract class BaseChunk implements Chunk {
         } catch (ChunkException e) {
             LevelProvider provider = this.getProvider();
             int Y = y >> 4;
-            this.setInternalSection(Y, provider.createChunkSection(Y));
+            try {
+                this.setInternalSection(Y, (ChunkSection) provider.getClass().getMethod("createChunkSection", int.class).invoke(provider.getClass(), Y));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
+                e1.printStackTrace();
+            }
             this.setBlockData(x, y, z, data);
         }
     }
@@ -153,7 +170,11 @@ public abstract class BaseChunk implements Chunk {
         } catch (ChunkException e) {
             LevelProvider provider = this.getProvider();
             int Y = y >> 4;
-            this.setInternalSection(Y, provider.createChunkSection(Y));
+            try {
+                this.setInternalSection(Y, (ChunkSection) provider.getClass().getMethod("createChunkSection", int.class).invoke(provider.getClass(), Y));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
+                e1.printStackTrace();
+            }
             this.setBlockSkyLight(x, y, z, level);
         }
     }
@@ -171,7 +192,11 @@ public abstract class BaseChunk implements Chunk {
         } catch (ChunkException e) {
             LevelProvider provider = this.getProvider();
             int Y = y >> 4;
-            this.setInternalSection(Y, provider.createChunkSection(Y));
+            try {
+                this.setInternalSection(Y, (ChunkSection) provider.getClass().getMethod("createChunkSection", int.class).invoke(provider.getClass(), Y));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
+                e1.printStackTrace();
+            }
             this.setBlockLight(x, y, z, level);
         }
     }
@@ -487,27 +512,27 @@ public abstract class BaseChunk implements Chunk {
     }
 
     @Override
-    public boolean load() {
+    public boolean load() throws IOException {
         return this.load(true);
     }
 
     @Override
-    public boolean load(boolean generate) {
+    public boolean load(boolean generate) throws IOException {
         return this.getProvider() != null && this.getProvider().getChunk(this.getX(), this.getZ(), true) != null;
     }
 
     @Override
-    public boolean unload() {
+    public boolean unload() throws Exception {
         return this.unload(true, true);
     }
 
     @Override
-    public boolean unload(boolean save) {
+    public boolean unload(boolean save) throws Exception {
         return this.unload(save, true);
     }
 
     @Override
-    public boolean unload(boolean save, boolean safe) {
+    public boolean unload(boolean save, boolean safe) throws Exception {
         LevelProvider level = this.getProvider();
         if (level == null) {
             return true;
@@ -569,7 +594,7 @@ public abstract class BaseChunk implements Chunk {
     }
 
     @Override
-    public byte[] toFastBinary() {
+    public byte[] toFastBinary() throws Exception {
         return this.toBinary();
     }
 

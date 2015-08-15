@@ -3,6 +3,7 @@ package cn.nukkit.level.format;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.tile.Tile;
 
+import java.io.IOException;
 import java.util.TreeMap;
 
 /**
@@ -10,151 +11,139 @@ import java.util.TreeMap;
  * Nukkit Project
  */
 public interface FullChunk {
-    //todo
 
-    public abstract int getX();
+    int getX();
 
-    public abstract int getZ();
+    int getZ();
 
-    public abstract void setX(int x);
+    void setX(int x);
 
-    public abstract void setZ(int z);
+    void setZ(int z);
 
-    public abstract LevelProvider getProvider();
+    LevelProvider getProvider();
 
-    public abstract void setProvider(LevelProvider provider);
+    void setProvider(LevelProvider provider);
 
-    public abstract int getFullBlock(int x, int y, int z);
+    int getFullBlock(int x, int y, int z);
 
-    public abstract boolean setBlock(int x, int y, int z);
+    boolean setBlock(int x, int y, int z);
 
-    public abstract boolean setBlock(int x, int y, int z, Integer blockId);
+    boolean setBlock(int x, int y, int z, Integer blockId);
 
-    public abstract boolean setBlock(int x, int y, int z, Integer blockId, Integer meta);
+    boolean setBlock(int x, int y, int z, Integer blockId, Integer meta);
 
-    public abstract int getBlockId(int x, int y, int z);
+    int getBlockId(int x, int y, int z);
 
-    public abstract void setBlockId(int x, int y, int z, int id);
+    void setBlockId(int x, int y, int z, int id);
 
-    public abstract int getBlockData(int x, int y, int z);
+    int getBlockData(int x, int y, int z);
 
-    public abstract void setBlockData(int x, int y, int z, int data);
+    void setBlockData(int x, int y, int z, int data);
 
-    public abstract int getBlockSkyLight(int x, int y, int z);
+    int getBlockSkyLight(int x, int y, int z);
 
-    public abstract void setBlockSkyLight(int x, int y, int z, int level);
+    void setBlockSkyLight(int x, int y, int z, int level);
 
-    public abstract int getBlockLight(int x, int y, int z);
+    int getBlockLight(int x, int y, int z);
 
-    public abstract void setBlockLight(int x, int y, int z, int level);
+    void setBlockLight(int x, int y, int z, int level);
 
-    public abstract int getHighestBlockAt(int x, int z);
+    int getHighestBlockAt(int x, int z);
 
-    public abstract int getHighestBlockAt(int x, int z, boolean cache);
+    int getHighestBlockAt(int x, int z, boolean cache);
 
-    public abstract int getHeightMap(int x, int z);
+    int getHeightMap(int x, int z);
 
-    public abstract void setHeightMap(int x, int z, int value);
+    void setHeightMap(int x, int z, int value);
 
-    public abstract void recalculateHeightMap();
+    void recalculateHeightMap();
 
-    public abstract void populateSkyLight();
+    void populateSkyLight();
 
-    public abstract int getBiomeId(int x, int z);
+    int getBiomeId(int x, int z);
 
-    public abstract void setBiomeId(int x, int z, int biomeId);
+    void setBiomeId(int x, int z, int biomeId);
 
-    public abstract int[] getBiomeColor(int x, int z);
+    int[] getBiomeColor(int x, int z);
 
-    public abstract byte[] getBlockIdColumn(int x, int z);
+    byte[] getBlockIdColumn(int x, int z);
 
-    public abstract byte[] getBlockDataColumn(int x, int z);
+    byte[] getBlockDataColumn(int x, int z);
 
-    public abstract byte[] getBlockSkyLightColumn(int x, int z);
+    byte[] getBlockSkyLightColumn(int x, int z);
 
-    public abstract byte[] getBlockLightColumn(int x, int z);
+    byte[] getBlockLightColumn(int x, int z);
 
-    public abstract void setBiomeColor(int x, int z, int R, int G, int B);
+    void setBiomeColor(int x, int z, int R, int G, int B);
 
-    public abstract boolean isLightPopulated();
+    boolean isLightPopulated();
 
-    public abstract void setLightPopulated();
+    void setLightPopulated();
 
-    public abstract void setLightPopulated(boolean value);
+    void setLightPopulated(boolean value);
 
-    public abstract boolean isPopulated();
+    boolean isPopulated();
 
-    public abstract void setPopulated();
+    void setPopulated();
 
-    public abstract void setPopulated(boolean value);
+    void setPopulated(boolean value);
 
-    public abstract boolean isGenerated();
+    boolean isGenerated();
 
-    public abstract void setGenerated();
+    void setGenerated();
 
-    public abstract void setGenerated(boolean value);
+    void setGenerated(boolean value);
 
-    public abstract void addEntity(Entity entity);
+    void addEntity(Entity entity);
 
-    public abstract void removeEntity(Entity entity);
+    void removeEntity(Entity entity);
 
-    public abstract void addTile(Tile tile);
+    void addTile(Tile tile);
 
-    public abstract void removeTile(Tile tile);
+    void removeTile(Tile tile);
 
-    public abstract TreeMap<Integer, Entity> getEntities();
+    TreeMap<Integer, Entity> getEntities();
 
-    public abstract TreeMap<Integer, Tile> getTiles();
+    TreeMap<Integer, Tile> getTiles();
 
-    public abstract Tile getTile(int x, int y, int z);
+    Tile getTile(int x, int y, int z);
 
-    public abstract boolean isLoaded();
+    boolean isLoaded();
 
-    public abstract boolean load();
+    boolean load() throws IOException;
 
-    public abstract boolean load(boolean generate);
+    boolean load(boolean generate) throws IOException;
 
-    public abstract boolean unload();
+    boolean unload() throws Exception;
 
-    public abstract boolean unload(boolean save);
+    boolean unload(boolean save) throws Exception;
 
-    public abstract boolean unload(boolean save, boolean safe);
+    boolean unload(boolean save, boolean safe) throws Exception;
 
-    public abstract void initChunk();
+    void initChunk();
 
-    public abstract byte[] getBiomeIdArray();
+    byte[] getBiomeIdArray();
 
-    public abstract int[] getBiomeColorArray();
+    int[] getBiomeColorArray();
 
-    public abstract int[] getHeightMapArray();
+    int[] getHeightMapArray();
 
-    public abstract byte[] getBlockIdArray();
+    byte[] getBlockIdArray();
 
-    public abstract byte[] getBlockDataArray();
+    byte[] getBlockDataArray();
 
-    public abstract byte[] getBlockSkyLightArray();
+    byte[] getBlockSkyLightArray();
 
-    public abstract byte[] getBlockLightArray();
+    byte[] getBlockLightArray();
 
-    public abstract byte[] toBinary() throws Exception;
+    byte[] toBinary() throws Exception;
 
-    public abstract byte[] toFastBinary() throws Exception;
+    byte[] toFastBinary() throws Exception;
 
-    public abstract boolean hasChanged();
+    boolean hasChanged();
 
-    public abstract void setChanged();
+    void setChanged();
 
-    public abstract void setChanged(boolean changed);
+    void setChanged(boolean changed);
 
-    /*public abstract FullChunk fromBinary(byte[] data);
-
-    public abstract FullChunk fromBinary(byte[] data, LevelProvider provider);
-
-    public abstract FullChunk fromFastBinary(byte[] data);
-
-    public abstract FullChunk fromFastBinary(byte[] data, LevelProvider provider);
-
-    public abstract FullChunk getEmptyChunk(int chunkX, int chunkZ);
-
-    public abstract FullChunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider);*/
 }

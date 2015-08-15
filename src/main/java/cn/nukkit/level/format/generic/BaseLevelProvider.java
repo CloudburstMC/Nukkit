@@ -18,7 +18,7 @@ import java.io.IOException;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BaseLevelProvider extends LevelProvider {
+public abstract class BaseLevelProvider implements LevelProvider {
     protected Level level;
 
     protected String path;
@@ -26,7 +26,6 @@ public abstract class BaseLevelProvider extends LevelProvider {
     protected CompoundTag levelData;
 
     public BaseLevelProvider(Level level, String path) throws IOException {
-        super(level, path);
         this.level = level;
         this.path = path;
         File file_path = new File(this.path);
@@ -100,7 +99,7 @@ public abstract class BaseLevelProvider extends LevelProvider {
     }
 
     @Override
-    public void doGarbageCollection() {
+    public void doGarbageCollection() throws IOException {
 
     }
 
@@ -115,6 +114,5 @@ public abstract class BaseLevelProvider extends LevelProvider {
             e.printStackTrace();
         }
     }
-
 
 }

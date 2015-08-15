@@ -71,7 +71,7 @@ public class RegionLoader {
         return !(array[0] == 0 || array[1] == 0);
     }
 
-    public FullChunk readChunk(int x, int z) throws IOException {
+    public Chunk readChunk(int x, int z) throws IOException {
         int index = getChunkOffset(x, z);
         if (index < 0 || index >= 4096) {
             return null;
@@ -161,7 +161,7 @@ public class RegionLoader {
         this.locationTable.put(index, table);
     }
 
-    public void writeChunk(FullChunk chunk) throws IOException {
+    public void writeChunk(FullChunk chunk) throws Exception {
         this.lastUsed = System.currentTimeMillis();
         byte[] chunkData = chunk.toBinary();
         this.saveChunk(chunk.getX() - (this.getX() * 32), chunk.getZ() - (this.getZ() * 32), chunkData);
