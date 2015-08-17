@@ -10,10 +10,8 @@ import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.nbt.DoubleTag;
 import cn.nukkit.nbt.ListTag;
 import cn.nukkit.tile.Tile;
-import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -52,32 +50,6 @@ public abstract class BaseFullChunk implements FullChunk {
     protected boolean hasChanged = false;
 
     private boolean isInit = false;
-
-    public BaseFullChunk(LevelProvider provider, double x, double z, byte[] blocks, byte[] data, byte[] skyLight, byte[] blockLight, int[] biomeColors, int[] heightMap, List<CompoundTag> entities, List<CompoundTag> tiles) {
-        this.provider = provider;
-        this.x = (int) x;
-        this.z = (int) z;
-
-        this.blocks = blocks;
-        this.data = data;
-        this.skyLight = skyLight;
-        this.blockLight = blockLight;
-
-        if (biomeColors.length != 256) {
-            biomeColors = new int[256];
-            Arrays.fill(biomeColors, Binary.readInt(new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00}));
-        }
-        this.biomeColors = biomeColors;
-
-        if (heightMap.length != 256) {
-            heightMap = new int[256];
-            Arrays.fill(heightMap, 127);
-        }
-        this.heightMap = heightMap;
-
-        this.NBTtiles = tiles;
-        this.NBTentities = entities;
-    }
 
     protected void checkOldBiomes(byte[] data) {
         if (data.length != 256) {

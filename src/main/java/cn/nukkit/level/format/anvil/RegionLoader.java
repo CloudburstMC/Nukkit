@@ -1,4 +1,4 @@
-package cn.nukkit.level.format.mcregion;
+package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
@@ -18,11 +18,9 @@ import java.util.TreeMap;
  * author: MagicDroidX
  * Nukkit Project
  */
-
 public class RegionLoader extends BaseRegionLoader {
-
-    public RegionLoader(LevelProvider level, int regionX, int regionZ, String ext) throws IOException {
-        super(level, regionX, regionZ, "mcr");
+    public RegionLoader(LevelProvider level, int regionX, int regionZ) throws IOException {
+        super(level, regionX, regionZ, "mca");
     }
 
     @Override
@@ -40,6 +38,7 @@ public class RegionLoader extends BaseRegionLoader {
         return !(array[0] == 0 || array[1] == 0);
     }
 
+    @Override
     public Chunk readChunk(int x, int z) throws IOException {
         int index = getChunkOffset(x, z);
         if (index < 0 || index >= 4096) {
@@ -304,5 +303,4 @@ public class RegionLoader extends BaseRegionLoader {
     public int getZ() {
         return z;
     }
-
 }

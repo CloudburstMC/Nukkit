@@ -102,6 +102,10 @@ public class CompoundTag extends Tag {
         return tags.containsKey(name);
     }
 
+    public void remove(String name) {
+        tags.remove(name);
+    }
+
     public byte getByte(String name) {
         if (!tags.containsKey(name)) return (byte) 0;
         return ((ByteTag) tags.get(name)).data;

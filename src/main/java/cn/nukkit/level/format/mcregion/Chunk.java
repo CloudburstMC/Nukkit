@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.nbt.CompoundTag;
+import cn.nukkit.nbt.IntArrayTag;
 import cn.nukkit.nbt.ListTag;
 import cn.nukkit.nbt.NbtIo;
 import cn.nukkit.tile.Tile;
@@ -31,58 +32,78 @@ public class Chunk extends BaseFullChunk {
     }
 
     public Chunk(LevelProvider level, CompoundTag nbt) {
-        super(level, 0.0, 0.0, new byte[256], new byte[256], new byte[256], new byte[256], new int[256], new int[256], null, null);
         if (nbt == null) {
             this.provider = level;
             this.nbt = new CompoundTag("Level");
             return;
         }
-
-        if (!(nbt.contains("Entities") && (nbt.getList("Entities") != null))) {
-            nbt.putList(new ListTag<CompoundTag>("Entities"));
-        }
-
-        if (!(nbt.contains("TileEntities") && (nbt.getList("TileEntities") != null))) {
-            nbt.putList(new ListTag<CompoundTag>("Entities"));
-        }
-
-        if (!(nbt.contains("TileTicks") && (nbt.getList("TileTicks") != null))) {
-            nbt.putList(new ListTag<CompoundTag>("Entities"));
-        }
-
-        if (!(nbt.contains("BiomeColors") && (nbt.getIntArray("BiomeColors") != null))) {
-            nbt.putIntArray("BiomeColors", new int[256]);
-        }
-
-        if (!(nbt.contains("HeightMap") && (nbt.getIntArray("HeightMap") != null))) {
-            nbt.putIntArray("HeightMap", new int[256]);
-        }
-
-        if (!(nbt.contains("Blocks"))) {
-            nbt.putByteArray("Blocks", new byte[32768]);
-        }
-
-        if (!(nbt.contains("Data"))) {
-            nbt.putByteArray("Data", new byte[16384]);
-            nbt.putByteArray("SkyLight", new byte[16384]);
-            nbt.putByteArray("BlockLight", new byte[16384]);
-        }
-
         this.nbt = nbt;
-        this.x = nbt.getInt("xPos");
-        this.z = nbt.getInt("zPos");
-        this.blocks = nbt.getByteArray("Blocks");
-        this.data = nbt.getByteArray("Data");
-        this.skyLight = nbt.getByteArray("SkyLight");
-        this.blockLight = nbt.getByteArray("BlockLight");
-        this.biomeColors = nbt.getIntArray("BiomeColors");
-        this.heightMap = nbt.getIntArray("HeightMap");
-        this.NBTentities = ((ListTag<CompoundTag>) nbt.getList("Entities")).list;
-        this.NBTtiles = ((ListTag<CompoundTag>) nbt.getList("TileEntities")).list;
+
+        if (!(this.nbt.contains("Entities") && (this.nbt.get("Entities") instanceof ListTag))) {
+            this.nbt.putList(new ListTag<CompoundTag>("Entities"));
+        }
+
+        if (!(this.nbt.contains("TileEntities") && (this.nbt.get("TileEntities") instanceof ListTag))) {
+            this.nbt.putList(new ListTag<CompoundTag>("TileEntities"));
+        }
+
+        if (!(this.nbt.contains("TileTicks") && (this.nbt.get("TileTicks") instanceof ListTag))) {
+            this.nbt.putList(new ListTag<CompoundTag>("TileTicks"));
+        }
+
+        if (!(this.nbt.contains("BiomeColors") && (this.nbt.get("BiomeColors") instanceof IntArrayTag))) {
+            this.nbt.putIntArray("BiomeColors", new int[256]);
+        }
+
+        if (!(this.nbt.contains("HeightMap") && (this.nbt.get("HeightMap") instanceof IntArrayTag))) {
+            this.nbt.putIntArray("HeightMap", new int[256]);
+        }
+
+        if (!(this.nbt.contains("Blocks"))) {
+            this.nbt.putByteArray("Blocks", new byte[32768]);
+        }
+
+        if (!(this.nbt.contains("Data"))) {
+            this.nbt.putByteArray("Data", new byte[16384]);
+            this.nbt.putByteArray("SkyLight", new byte[16384]);
+            this.nbt.putByteArray("BlockLight", new byte[16384]);
+        }
+
+        this.provider = level;
+        this.x = this.nbt.getInt("xPos");
+        this.z = this.nbt.getInt("zPos");
+        this.blocks = this.nbt.getByteArray("Blocks");
+        this.data = this.nbt.getByteArray("Data");
+        this.skyLight = this.nbt.getByteArray("SkyLight");
+        this.blockLight = this.nbt.getByteArray("BlockLight");
+        int[] biomeColors = this.nbt.getIntArray("BiomeColors");
+        if (biomeColors.length != 256) {
+            biomeColors = new int[256];
+            Arrays.fill(biomeColors, Binary.readInt(new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00}));
+        }
+        this.biomeColors = biomeColors;
+        int[] heightMap = this.nbt.getIntArray("HeightMap");
+        if (heightMap.length != 256) {
+            heightMap = new int[256];
+            Arrays.fill(heightMap, 127);
+        }
+        this.heightMap = heightMap;
+
+        this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).list;
+        this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).list;
 
         if (this.nbt.contains("Biomes")) {
             this.checkOldBiomes(this.nbt.getByteArray("Biomes"));
+            this.nbt.remove("Biomes");
         }
+
+        this.nbt.remove("Blocks");
+        this.nbt.remove("Data");
+        this.nbt.remove("SkyLight");
+        this.nbt.remove("BlockLight");
+        this.nbt.remove("BiomeColors");
+        this.nbt.remove("HeightMap");
+        this.nbt.remove("Biomes");
     }
 
     @Override
@@ -383,7 +404,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public byte[] toBinary() throws Exception {
-        CompoundTag nbt = this.getNbt().copy();
+        CompoundTag nbt = this.getNBT().copy();
         nbt.putInt("xPos", this.x);
         nbt.putInt("zPos", this.z);
         if (this.isGenerated()) {
@@ -422,7 +443,7 @@ public class Chunk extends BaseFullChunk {
 
     }
 
-    public CompoundTag getNbt() {
+    public CompoundTag getNBT() {
         return nbt;
     }
 

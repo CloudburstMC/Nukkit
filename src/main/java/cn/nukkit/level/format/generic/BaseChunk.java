@@ -11,7 +11,6 @@ import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.nbt.DoubleTag;
 import cn.nukkit.nbt.ListTag;
 import cn.nukkit.tile.Tile;
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.ChunkException;
 
 import java.io.IOException;
@@ -44,38 +43,6 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     private boolean isInit = false;
     protected boolean hasChanged = false;
-
-    protected BaseChunk(LevelProvider provider, double x, double z, ChunkSection[] sections, int[] biomeColors, int[] heightMap, List<CompoundTag> entities, List<CompoundTag> tiles) throws ChunkException {
-        super(provider, x, z, new byte[]{}, new byte[]{}, new byte[]{}, new byte[]{}, biomeColors, heightMap, entities, tiles);
-        this.provider = provider;
-        this.x = (int) x;
-        this.z = (int) z;
-        for (int Y = 0; Y < sections.length; ++Y) {
-            ChunkSection section = sections[Y];
-            if (section != null) {
-                this.sections[Y] = section;
-            } else {
-                throw new ChunkException("Received invalid ChunkSection instance");
-            }
-            if (Y >= SECTION_COUNT) {
-                throw new ChunkException("Invalid amount of chunks");
-            }
-        }
-        if (biomeColors.length != 256) {
-            biomeColors = new int[256];
-            Arrays.fill(biomeColors, Binary.readInt(new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00}));
-        }
-        this.biomeColors = biomeColors;
-
-        if (heightMap.length != 256) {
-            heightMap = new int[256];
-            Arrays.fill(heightMap, 127);
-        }
-        this.heightMap = heightMap;
-
-        this.NBTtiles = tiles;
-        this.NBTentities = entities;
-    }
 
     @Override
     public int getFullBlock(int x, int y, int z) {
