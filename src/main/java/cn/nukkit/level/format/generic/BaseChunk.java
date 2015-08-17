@@ -27,8 +27,6 @@ import java.util.List;
 
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
-    public static final int SECTION_COUNT = 8;
-
     protected int[] biomeColors;
 
     protected int[] heightMap;

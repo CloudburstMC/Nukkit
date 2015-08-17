@@ -15,33 +15,9 @@ public interface LevelProvider {
     byte ORDER_YZX = 0;
     byte ORDER_ZXY = 1;
 
-    static String getProviderName() {
-        return null;
-    }
-
-    static int getProviderOrder() {
-        return ORDER_ZXY;
-    }
-
-    static boolean usesChunkSection() {
-        return true;
-    }
-
     AsyncTask requestChunkTask(int x, int z) throws IOException;
 
     String getPath();
-
-    /*static boolean isValid(String path) {
-        return false;
-    }
-
-    static void generate(String path, String name, int seed, String generator) {
-        generate(path, name, seed, generator, new String[]{});
-    }
-
-    static void generate(String path, String name, int seed, String generator, String[] options) {
-
-    }*/
 
     String getGenerator();
 
