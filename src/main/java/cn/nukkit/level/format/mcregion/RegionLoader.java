@@ -21,7 +21,7 @@ import java.util.TreeMap;
 
 public class RegionLoader extends BaseRegionLoader {
 
-    public RegionLoader(LevelProvider level, int regionX, int regionZ, String ext) throws IOException {
+    public RegionLoader(LevelProvider level, int regionX, int regionZ) throws IOException {
         super(level, regionX, regionZ, "mcr");
     }
 
