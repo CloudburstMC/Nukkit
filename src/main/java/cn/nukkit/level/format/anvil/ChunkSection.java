@@ -1,6 +1,7 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.nbt.CompoundTag;
+import cn.nukkit.level.format.ChunkSection;
 
 import java.nio.ByteBuffer;
 
@@ -8,7 +9,7 @@ import java.nio.ByteBuffer;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
+public class ChunkSection implements ChunkSection {
 
     private int y;
     private byte[] blocks;
