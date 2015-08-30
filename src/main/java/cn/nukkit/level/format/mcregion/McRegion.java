@@ -37,7 +37,7 @@ public class McRegion extends BaseLevelProvider {
         return "mcregion";
     }
 
-    public static int getProviderOrder() {
+    public static byte getProviderOrder() {
         return ORDER_ZXY;
     }
 
@@ -289,7 +289,7 @@ public class McRegion extends BaseLevelProvider {
         this.chunks.put(index, (Chunk) chunk);
     }
 
-    public static ChunkSection createChunkSection(int Y) {
+    public static ChunkSection createChunkSection(byte Y) {
         return null;
     }
 

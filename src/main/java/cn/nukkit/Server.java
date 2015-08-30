@@ -2,6 +2,7 @@ package cn.nukkit;
 
 import cn.nukkit.command.CommandReader;
 import cn.nukkit.lang.BaseLang;
+import cn.nukkit.level.Level;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
@@ -459,6 +460,11 @@ public class Server {
             sum += aUseAverage;
         }
         return ((float) Math.round(sum / count * 100)) / 100;
+    }
+
+    public Level getLevel(int levelId) {
+        //todo
+        return null;
     }
 
     public BaseLang getLanguage() {

@@ -24,8 +24,13 @@ public class Level implements Metadatable {
 
     public TreeMap<Integer, Tile> updateTiles = new TreeMap<>();
 
-    private BlockMetadataStore blockMetadata;
     private Server server;
+
+    private int levelId;
+
+    private LevelProvider provider;
+
+    private BlockMetadataStore blockMetadata;
 
     public Level(Server server, String name, String path, LevelProvider provider) {
         this.blockMetadata = new BlockMetadataStore(this);
@@ -52,6 +57,14 @@ public class Level implements Metadatable {
 
     public Server getServer() {
         return server;
+    }
+
+    final public LevelProvider getProvider() {
+        return this.provider;
+    }
+
+    final public int getId() {
+        return this.levelId;
     }
 
     public void clearChunkCache(int chunkX, int chunkZ) {

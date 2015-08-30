@@ -172,10 +172,26 @@ public class Binary {
             if (hv.length() < 2) {
                 stringBuilder.append(0);
             }
-            stringBuilder.append(hv).append(" ");
+            stringBuilder.append(hv);
+            //stringBuilder.append(hv).append(" ");
         }
-        return stringBuilder.toString();
+        return stringBuilder.toString().toUpperCase();
     }
 
+    public static byte[] hexStringToBytes(String hexString) {
+        if (hexString == null || hexString.equals("")) {
+            return null;
+        }
+        String str = "0123456789ABCDEF";
+        hexString = hexString.toUpperCase();
+        int length = hexString.length() / 2;
+        char[] hexChars = hexString.toCharArray();
+        byte[] d = new byte[length];
+        for (int i = 0; i < length; i++) {
+            int pos = i * 2;
+            d[i] = (byte) (((byte) str.indexOf(hexChars[pos]) << 4) | ((byte) str.indexOf(hexChars[pos + 1])));
+        }
+        return d;
+    }
 
 }
