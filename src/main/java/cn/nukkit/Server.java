@@ -130,7 +130,7 @@ public class Server {
         this.forceLanguage = (Boolean) this.getConfig("settings.force-language", false);
         this.baseLang = new BaseLang((String) this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
         this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
-        this.logger.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE));
+        this.logger.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.WHITE));
         //todo 一些tick配置
         Object poolSize = this.getConfig("settings.async-workers", "auto");
         if (!(poolSize instanceof Integer)) {
