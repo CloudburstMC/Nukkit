@@ -1,6 +1,8 @@
 package cn.nukkit;
 
+import cn.nukkit.command.CommandReader;
 import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.ServerKiller;
 
 /**
  * author: MagicDroidX
@@ -21,9 +23,9 @@ public class Nukkit {
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
     public final static Long START_TIME = System.currentTimeMillis();
     public static boolean ANSI = true;
+    public static int DEBUG = 1;
 
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         //启动参数
         for (String arg : args) {
@@ -32,9 +34,28 @@ public class Nukkit {
 
         MainLogger logger = new MainLogger(DATA_PATH + "server.log", false, ANSI); //todo: 检查是否启用了ansi，是否开启了调试模式
 
-        Server server = new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
+        ThreadManager.init();
+        try {
+            Server server = new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        logger.info("Stopping other threads");
 
+        for (Thread thread : ThreadManager.getInstance().getAll()) {
+            logger.debug("Stopping " + thread.getClass().getSimpleName() + " thread");
+            thread.quit();
+        }
+
+        ServerKiller killer = new ServerKiller(8);
+        killer.start();
+
+        logger.shutdown();
+        logger.interrupt();
+        CommandReader.getInstance().removePromptLine();
+
+        System.exit(0);
     }
 
 

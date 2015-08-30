@@ -6,14 +6,17 @@ import java.util.LinkedList;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class AsyncWorker extends Thread {
+public class AsyncWorker extends cn.nukkit.Thread {
     private final LinkedList<AsyncTask> stack = new LinkedList<>();
+
+    public AsyncWorker() {
+        this.setName("Asynchronous Worker");
+    }
 
     public void stack(AsyncTask task) {
         synchronized (stack) {
             stack.addFirst(task);
         }
-
     }
 
     public void unstack() {
@@ -29,7 +32,6 @@ public class AsyncWorker extends Thread {
     }
 
     public void run() {
-
         while (true) {
             synchronized (stack) {
                 /*while (!this.stack.isEmpty()) {
@@ -42,7 +44,7 @@ public class AsyncWorker extends Thread {
             try {
                 sleep(5);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                //igonre
             }
         }
     }

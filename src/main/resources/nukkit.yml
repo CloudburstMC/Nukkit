@@ -13,6 +13,8 @@ settings:
  query-plugins: true
  #当某插件使用不被推荐的API时，在控制台提醒
  deprecated-verbose: true
+ #异步线程数量，如果设置为auto，则自动识别CPU核心数量（最少4线程）
+ async-workers: auto
 
 memory:
  max-chunks:

@@ -148,11 +148,10 @@ public class MainLogger extends Thread {
                 try {
                     wait(25000);
                 } catch (InterruptedException e) {
-                    this.logException(e);
+                    //igonre
                 }
             }
         }
-
         if (this.logStream.length() > 0) {
             String chunk = this.logStream;
             this.logStream = "";

@@ -1,6 +1,8 @@
 package cn.nukkit;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandReader;
+import cn.nukkit.item.Item;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Level;
 import cn.nukkit.metadata.EntityMetadataStore;
@@ -8,10 +10,7 @@ import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.utils.Config;
-import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.TextFormat;
-import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.*;
 import sun.misc.BASE64Encoder;
 
 import java.io.File;
@@ -67,7 +66,7 @@ public class Server {
     private Config properties;
     private Config config;
 
-    public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
+    public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) throws Exception {
         instance = this;
         this.logger = logger;
         this.filePath = filePath;
@@ -133,22 +132,58 @@ public class Server {
         this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
         this.logger.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + Nukkit.MINECRAFT_VERSION + TextFormat.WHITE));
         //todo 一些tick配置
+        Object poolSize = this.getConfig("settings.async-workers", "auto");
+        if (!(poolSize instanceof Integer)) {
+            try {
+                poolSize = Integer.valueOf((String) this.getConfig("settings.async-workers", "auto"));
+            } catch (Exception e) {
+                poolSize = Math.max(Runtime.getRuntime().availableProcessors() * 2, 4);
+            }
+        }
+
+        ServerScheduler.WORKERS = (int) poolSize;
+
         this.scheduler = new ServerScheduler();
 
         this.entityMetadata = new EntityMetadataStore();
         this.playerMetadata = new PlayerMetadataStore();
         this.levelMetadata = new LevelMetadataStore();
+
         this.operators = new Config(this.dataPath + "ops.txt", Config.ENUM);
         this.whitelist = new Config(this.dataPath + "white-list.txt", Config.ENUM);
         this.banByName = new BanList(this.dataPath + "banned-players.json");
         this.banByName.load();
         this.banByIP = new BanList(this.dataPath + "banned-ips.json");
         this.banByIP.load();
+
+        this.maxPlayers = this.getPropertyInt("max-players", 20);
+
+        if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
+            this.setPropertyInt("difficulty", 3);
+        }
+
+        Nukkit.DEBUG = (int) this.getConfig("debug.level", 1);
+        if (this.logger != null) {
+            this.logger.setLogDebug(Nukkit.DEBUG > 1);
+        }
+
+        //todo NETWORK PART ***
+
+        this.logger.info(this.getLanguage().translateString("nukkit.server.info", new String[]{this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, this.getCodename(), this.getApiVersion()}));
+        this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
+
+        Block.init();
+        Item.init();
+
         this.start();
     }
     //todo: public void reload
 
     public void shutdown() {
+        if (this.isRunning) {
+            ServerKiller killer = new ServerKiller(90);
+            killer.start();
+        }
         this.isRunning = false;
     }
 
@@ -488,7 +523,7 @@ public class Server {
         return this.properties.exists(variable) ? this.properties.get(variable) : defaultValue;
     }
 
-    public void setProperty(String variable, String value) {
+    public void setPropertyString(String variable, String value) {
         this.properties.set(variable, value);
     }
 
@@ -508,6 +543,10 @@ public class Server {
         return this.properties.exists(variable) ? Integer.parseInt((String) this.properties.get(variable)) : defaultValue;
     }
 
+    public void setPropertyInt(String variable, int value) {
+        this.properties.set(variable, value);
+    }
+
     public boolean getPropertyBoolean(String variable) {
         return this.getPropertyBoolean(variable, null);
     }
@@ -525,6 +564,10 @@ public class Server {
                 return true;
         }
         return false;
+    }
+
+    public void setPropertyBoolean(String variable, boolean value) {
+        this.properties.set(variable, value ? "1" : "0");
     }
 
     public BanList getNameBans() {
