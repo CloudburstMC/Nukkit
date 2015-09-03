@@ -1,12 +1,16 @@
 package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
+import cn.nukkit.utils.JarClassLoader;
 import cn.nukkit.utils.PluginException;
+import cn.nukkit.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 /**
@@ -20,56 +24,57 @@ public class JarPluginLoader implements PluginLoader {
         this.server = server;
     }
 
-    private class JarClassLoader extends URLClassLoader {
-
-        public JarClassLoader(URL[] urls, ClassLoader parent) {
-            super(urls, parent);
-        }
-
-        public void addURL(URL url) {
-            super.addURL(url);
-        }
-    }
-
     @Override
-    public Plugin loadPlugin(String file) throws IllegalAccessException, MalformedURLException {
-        if (!file.endsWith(".jar")) {
-            throw new IllegalAccessException("Plugin file must end with .jar not " + file);
-        }
-        PluginDescription pluginDescription = null;
-        if ((pluginDescription = getPluginDescription(file)) != null) {
-            server.getLogger().info(server.getLanguage().translateString("nukkit.plugin.load", pluginDescription.getFullName()));
-            File f = new File(file);
-            if (f.getParentFile().exists() && !f.getParentFile().isDirectory()) {
-                throw new IllegalAccessException("Plugin " + pluginDescription.getName() + "data folder exists and it's not a directory!");
+    public Plugin loadPlugin(String filename) throws MalformedURLException {
+        PluginDescription description = this.getPluginDescription(filename);
+        if (description != null) {
+            this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.load", description.getFullName()));
+            File file = new File(filename);
+            File dataFolder = new File(file.getParentFile(), description.getName());
+            if (dataFolder.exists() && !dataFolder.isDirectory()) {
+                throw new IllegalStateException("Projected dataFolder '" + dataFolder.toString() + "' for " + description.getName() + " exists and is not a directory");
             }
-
-            URL[] url = new URL[]{};
-            JarClassLoader classLoader = new JarClassLoader(url, null);
-
-            classLoader.addURL(f.toURI().toURL());
-            Class<?> claz;
+            String className = description.getMain();
+            JarClassLoader loader = new JarClassLoader(this.getClass().getClassLoader(), file);
             try {
-                claz = classLoader.loadClass(pluginDescription.getMain());
-                initPlugin(claz, pluginDescription, f.getParent(), f);
-            } catch (ClassNotFoundException e) {
-                throw new PluginException("Cound not load plugin " + pluginDescription.getName() + ": Main class can not found!");
-            }
 
-            if (!PluginBase.class.isAssignableFrom(claz)) {
-                throw new PluginException("Cound not load plugin " + pluginDescription.getName() + ": Main class is not assignable from PluginBase!");
+                Class javaClass = loader.loadClass(className);
+
+                try {
+                    Class<? extends PluginBase> pluginClass = javaClass.asSubclass(PluginBase.class);
+
+                    PluginBase plugin = pluginClass.newInstance();
+                    this.initPlugin(plugin, description, dataFolder, file);
+
+                } catch (ClassCastException e) {
+                    throw new PluginException("main class `" + description.getMain() + "' does not extend PluginBase");
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+            } catch (ClassNotFoundException e) {
+                throw new PluginException("Couldn't load plugin " + description.getName() + ": main class not found");
             }
         }
+
         return null;
-    }
-
-    private void initPlugin(Class<?> claz, PluginDescription pluginDescription, String parent, File f) {
-
     }
 
     @Override
-    public PluginDescription getPluginDescription(String file) {
-        return null;
+    public PluginDescription getPluginDescription(String filename) {
+        try {
+            JarFile jar = new JarFile(filename);
+            JarEntry entry = jar.getJarEntry("plugin.yml");
+            if (entry == null) {
+                return null;
+            }
+            InputStream stream = jar.getInputStream(entry);
+            return new PluginDescription(Utils.readFile(stream));
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Override
@@ -77,14 +82,31 @@ public class JarPluginLoader implements PluginLoader {
         return new Pattern[]{Pattern.compile("\\.jar$")};
     }
 
+    private void initPlugin(PluginBase plugin, PluginDescription description, File dataFolder, File file) {
+        plugin.init(this, this.server, description, dataFolder, file);
+        plugin.onLoad();
+    }
+
     @Override
     public void enablePlugin(Plugin plugin) {
+        if (plugin instanceof PluginBase && !plugin.isEnabled()) {
+            this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.enable", plugin.getDescription().getFullName()));
 
+            ((PluginBase) plugin).setEnabled(true);
+
+            //todo PluginEnableEvent
+        }
     }
 
     @Override
     public void disablePlugin(Plugin plugin) {
+        if (plugin instanceof PluginBase && plugin.isEnabled()) {
+            this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.disable", plugin.getDescription().getFullName()));
 
+            //todo PluginDisableEvent
+
+            ((PluginBase) plugin).setEnabled(false);
+        }
     }
 
 }

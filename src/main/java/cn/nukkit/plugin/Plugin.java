@@ -3,6 +3,7 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.utils.Config;
 
+import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -21,7 +22,7 @@ public interface Plugin {
 
     boolean isDisabled();
 
-    String getDataFolder();
+    File getDataFolder();
 
     PluginDescription getDescription();
 

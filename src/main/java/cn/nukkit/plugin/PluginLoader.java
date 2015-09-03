@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
  */
 public interface PluginLoader {
 
-    Plugin loadPlugin(String file) throws Exception;
+    Plugin loadPlugin(String filename) throws Exception;
 
-    PluginDescription getPluginDescription(String file);
+    PluginDescription getPluginDescription(String filename);
 
     Pattern[] getPluginFilters();
 

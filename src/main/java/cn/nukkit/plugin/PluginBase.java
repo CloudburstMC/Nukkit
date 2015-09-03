@@ -2,6 +2,8 @@ package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
 
+import java.io.File;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -13,10 +15,10 @@ abstract public class PluginBase implements Plugin {
     private boolean isEnabled = false;
     private boolean initialized = false;
     private PluginDescription description;
-    private String dataFolder;
+    private File dataFolder;
     private String config;
-    private String configFile;
-    private String file;
+    private File configFile;
+    private File file;
     private PluginLogger logger;
 
 
@@ -51,7 +53,7 @@ abstract public class PluginBase implements Plugin {
         return !isEnabled;
     }
 
-    public final String getDataFolder() {
+    public final File getDataFolder() {
         return dataFolder;
     }
 
@@ -59,22 +61,22 @@ abstract public class PluginBase implements Plugin {
         return description;
     }
 
-    public final void init(PluginLoader loader, Server server, PluginDescription description, String dataFolder, String file) {
+    public final void init(PluginLoader loader, Server server, PluginDescription description, File dataFolder, File file) {
         if (!initialized) {
             initialized = true;
             loader = loader;
             server = server;
             description = description;
             this.dataFolder = dataFolder;
-            if (!(dataFolder.endsWith("\\") || dataFolder.endsWith("/"))) {
+            /*if (!(dataFolder.endsWith("\\") || dataFolder.endsWith("/"))) {
                 this.dataFolder = dataFolder + "\\";
-            }
+            }*/
 
             this.file = file;
-            if (!(file.endsWith("\\") || file.endsWith("/"))) {
+            /*if (!(file.endsWith("\\") || file.endsWith("/"))) {
                 this.file = file + "\\";
-            }
-            configFile = this.dataFolder + "config.yml";
+            }*/
+            configFile = new File(this.dataFolder, "config.yml");
             logger = new PluginLogger(this);
         }
     }
