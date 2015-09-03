@@ -9,9 +9,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * author: MagicDroidX
@@ -95,7 +95,12 @@ public class BanList {
 
 
     public void removeExpired() {
-        list.stream().filter(BanEntry::hasExpired).forEach(list::remove);
+        for (BanEntry entry : list) {
+            if (entry.hasExpired()) {
+                list.remove(entry);
+            }
+        }
+        //list.stream().filter(BanEntry::hasExpired).forEach(list::remove);
     }
 
     public void load() {
@@ -112,7 +117,10 @@ public class BanList {
             try {
                 LinkedList<TreeMap<String, String>> list = new Gson().fromJson(Utils.readFile(this.file), new TypeToken<LinkedList<TreeMap<String, String>>>() {
                 }.getType());
-                this.list.addAll(list.stream().map(BanEntry::fromMap).collect(Collectors.toList()));
+                for (TreeMap<String, String> map : list) {
+                    this.list.add(BanEntry.fromMap(map));
+                }
+                //this.list.addAll(list.stream().map(BanEntry::fromMap).collect(Collectors.toList()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -130,7 +138,10 @@ public class BanList {
             }
         }
         try {
-            LinkedList<TreeMap<String, String>> list = this.list.stream().map(BanEntry::getMap).collect(Collectors.toCollection(LinkedList::new));
+            LinkedList<LinkedHashMap<String, String>> list = new LinkedList<>();
+            for (BanEntry entry : this.list) {
+                list.add(entry.getMap());
+            }
             Utils.writeFile(this.file, new ByteArrayInputStream(new GsonBuilder().setPrettyPrinting().create().toJson(list).getBytes("UTF-8")));
         } catch (IOException e) {
             e.printStackTrace();

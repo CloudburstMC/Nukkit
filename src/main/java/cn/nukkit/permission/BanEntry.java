@@ -6,6 +6,8 @@ import com.google.gson.reflect.TypeToken;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -67,8 +69,8 @@ public class BanEntry {
         this.reason = reason;
     }
 
-    public TreeMap<String, String> getMap() {
-        TreeMap<String, String> map = new TreeMap<>();
+    public LinkedHashMap<String, String> getMap() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("name", getName());
         map.put("creationDate", new SimpleDateFormat(format).format(getCreationDate()));
         map.put("source", this.getSource());
@@ -77,7 +79,7 @@ public class BanEntry {
         return map;
     }
 
-    public static BanEntry fromMap(TreeMap<String, String> map) {
+    public static BanEntry fromMap(Map<String, String> map) {
         BanEntry banEntry = new BanEntry(map.get("name"));
         try {
             banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
@@ -95,7 +97,7 @@ public class BanEntry {
     }
 
     public static BanEntry fromString(String str) {
-        TreeMap<String, String> map = new Gson().fromJson(str, new TypeToken<TreeMap<String, String>>() {
+        Map<String, String> map = new Gson().fromJson(str, new TypeToken<TreeMap<String, String>>() {
         }.getType());
         BanEntry banEntry = new BanEntry(map.get("name"));
         try {

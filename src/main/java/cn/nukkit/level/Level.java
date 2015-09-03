@@ -11,8 +11,9 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.LevelException;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -20,9 +21,9 @@ import java.util.TreeMap;
  */
 public class Level implements Metadatable {
 
-    private TreeMap<Integer, Tile> tiles = new TreeMap<>();
+    private Map<Integer, Tile> tiles = new HashMap<>();
 
-    public TreeMap<Integer, Tile> updateTiles = new TreeMap<>();
+    public Map<Integer, Tile> updateTiles = new HashMap<>();
 
     private Server server;
 

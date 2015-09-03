@@ -6,7 +6,8 @@ import cn.nukkit.level.format.LevelProvider;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -26,7 +27,7 @@ abstract public class BaseRegionLoader {
     protected RandomAccessFile randomAccessFile;
     protected int lastSector;
     protected LevelProvider levelProvider;
-    protected TreeMap<Integer, Integer[]> locationTable = new TreeMap<>();
+    protected Map<Integer, Integer[]> locationTable = new HashMap<>();
 
     public long lastUsed;
 

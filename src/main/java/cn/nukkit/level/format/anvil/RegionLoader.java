@@ -11,8 +11,8 @@ import cn.nukkit.utils.ZLibUtils;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * author: MagicDroidX
@@ -226,7 +226,7 @@ public class RegionLoader extends BaseRegionLoader {
     }
 
     private int cleanGarbage() throws IOException {
-        TreeMap<Integer, Integer> sectors = new TreeMap<>();
+        Map<Integer, Integer> sectors = new HashMap<>();
         for (Map.Entry entry : this.locationTable.entrySet()) {
             Integer index = (Integer) entry.getKey();
             Integer[] data = (Integer[]) entry.getValue();

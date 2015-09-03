@@ -53,10 +53,10 @@ public class BaseLang {
         return langName;
     }
 
-    protected HashMap<String, String> loadLang(String path) {
+    protected Map<String, String> loadLang(String path) {
         try {
             String content = Utils.readFile(path);
-            HashMap<String, String> d = new HashMap<>();
+            Map<String, String> d = new HashMap<>();
             for (String line : content.split("\n")) {
                 line = line.trim();
                 if (line.equals("") || line.charAt(0) == '#') {
@@ -84,10 +84,10 @@ public class BaseLang {
         }
     }
 
-    protected HashMap<String, String> loadLang(InputStream stream) {
+    protected Map<String, String> loadLang(InputStream stream) {
         try {
             String content = Utils.readFile(stream);
-            HashMap<String, String> d = new HashMap<>();
+            Map<String, String> d = new HashMap<>();
             for (String line : content.split("\n")) {
                 line = line.trim();
                 if (line.equals("") || line.charAt(0) == '#') {

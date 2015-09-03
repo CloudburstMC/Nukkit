@@ -5,7 +5,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.AsyncTask;
 
 import java.io.IOException;
-import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -21,7 +22,7 @@ public interface LevelProvider {
 
     String getGenerator();
 
-    TreeMap<String, String> getGeneratorOptions();
+    Map<String, String> getGeneratorOptions();
 
     FullChunk getChunk(int X, int Z) throws IOException;
 
@@ -63,7 +64,7 @@ public interface LevelProvider {
 
     void setSpawn(Vector3 pos);
 
-    TreeMap<String, ? extends FullChunk> getLoadedChunks();
+    Map<String, ? extends FullChunk> getLoadedChunks();
 
     void doGarbageCollection() throws IOException;
 

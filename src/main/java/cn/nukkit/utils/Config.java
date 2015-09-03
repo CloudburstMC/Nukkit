@@ -32,12 +32,12 @@ public class Config {
     public static final int ENUMERATION = Config.ENUM;
 
     private Map<String, Object> config = new LinkedHashMap<>();
-    private TreeMap<String, Object> nestedCache = new TreeMap<>();
+    private Map<String, Object> nestedCache = new HashMap<>();
     private File file;
     private boolean correct = false;
     private int type = Config.DETECT;
 
-    public static TreeMap<String, Integer> format = new TreeMap<>();
+    public static Map<String, Integer> format = new TreeMap<>();
 
     static {
         format.put("properties", Config.PROPERTIES);
@@ -64,11 +64,11 @@ public class Config {
     }
 
     public Config(String file, int type) {
-        this(file, type, new TreeMap<>());
+        this(file, type, new LinkedHashMap<>());
     }
 
     public Config(File file, int type) {
-        this(file.toString(), type, new TreeMap<>());
+        this(file.toString(), type, new LinkedHashMap<>());
     }
 
     public Config(String file, int type, Map<String, Object> default_map) {
@@ -133,7 +133,7 @@ public class Config {
                     case Config.JSON:
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        this.config = gson.fromJson(content, new TypeToken<TreeMap<String, Object>>() {
+                        this.config = gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
                         }.getType());
                         break;
                     case Config.YAML:
@@ -246,7 +246,7 @@ public class Config {
             }
         }; //内嵌中心元素
         for (int i = vars.length - 2; i > 0; i--) {
-            HashMap<String, Object> new_hashMap = new LinkedHashMap<>();
+            Map<String, Object> new_hashMap = new LinkedHashMap<>();
             new_hashMap.put(vars[i], hashMap);
             hashMap = new_hashMap;
         }

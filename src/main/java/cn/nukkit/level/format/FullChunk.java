@@ -4,7 +4,8 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.tile.Tile;
 
 import java.io.IOException;
-import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -102,9 +103,9 @@ public interface FullChunk {
 
     void removeTile(Tile tile);
 
-    TreeMap<Integer, Entity> getEntities();
+    Map<Integer, Entity> getEntities();
 
-    TreeMap<Integer, Tile> getTiles();
+    Map<Integer, Tile> getTiles();
 
     Tile getTile(int x, int y, int z);
 

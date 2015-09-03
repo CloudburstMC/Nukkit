@@ -3,9 +3,9 @@ package cn.nukkit.permission;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * author: MagicDroidX
@@ -15,7 +15,7 @@ public class PermissionAttachment {
 
     private PermissionRemovedExecutor removed = null;
 
-    private TreeMap<String, Boolean> permissions = new TreeMap<>();
+    private Map<String, Boolean> permissions = new HashMap<>();
 
     private Permissible permissible;
 
@@ -41,7 +41,7 @@ public class PermissionAttachment {
         return removed;
     }
 
-    public TreeMap<String, Boolean> getPermissions() {
+    public Map<String, Boolean> getPermissions() {
         return permissions;
     }
 
@@ -50,7 +50,7 @@ public class PermissionAttachment {
         this.permissible.recalculatePermissions();
     }
 
-    public void setPermissions(TreeMap<String, Boolean> permissions) {
+    public void setPermissions(Map<String, Boolean> permissions) {
         for (Map.Entry<String, Boolean> entry : permissions.entrySet()) {
             String key = entry.getKey();
             Boolean value = entry.getValue();

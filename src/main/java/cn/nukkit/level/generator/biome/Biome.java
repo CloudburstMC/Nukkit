@@ -5,8 +5,9 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.populator.Populator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
-import java.util.TreeMap;
 
 /**
  * author: MagicDroidX
@@ -35,7 +36,7 @@ public abstract class Biome {
 
     public static final int MAX_BIOMES = 256;
 
-    private static TreeMap<Integer, Biome> biomes = new TreeMap<>();
+    private static Map<Integer, Biome> biomes = new HashMap<>();
 
     private int id;
     private boolean registered = false;

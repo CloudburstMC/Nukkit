@@ -9,7 +9,8 @@ import cn.nukkit.utils.ChunkException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -22,8 +23,8 @@ public abstract class Tile extends Position {
 
     public static int tileCount = 1;
 
-    private static TreeMap<String, Class> knownTiles = new TreeMap<>();
-    private static TreeMap<String, String> shortNames = new TreeMap<>();
+    private static Map<String, Class> knownTiles = new HashMap<>();
+    private static Map<String, String> shortNames = new HashMap<>();
 
     public FullChunk chunk;
     public String name;

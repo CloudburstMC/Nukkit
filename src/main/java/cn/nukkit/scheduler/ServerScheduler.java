@@ -17,7 +17,7 @@ public class ServerScheduler {
     public static int WORKERS = 4;
 
     protected PriorityBlockingQueue<TaskHandler> queue;
-    protected HashMap<Integer, TaskHandler> tasks;
+    protected Map<Integer, TaskHandler> tasks;
     protected AsyncPool asyncPool;
     private int ids = 1;
     protected long currentTick = 0;

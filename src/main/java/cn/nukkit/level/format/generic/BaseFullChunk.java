@@ -12,19 +12,20 @@ import cn.nukkit.nbt.ListTag;
 import cn.nukkit.tile.Tile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class BaseFullChunk implements FullChunk {
-    protected TreeMap<Integer, Entity> entities = new TreeMap<>();
+    protected Map<Integer, Entity> entities = new HashMap<>();
 
-    protected TreeMap<Integer, Tile> tiles = new TreeMap<>();
+    protected Map<Integer, Tile> tiles = new HashMap<>();
 
-    protected TreeMap<Integer, Tile> tileList = new TreeMap<>();
+    protected Map<Integer, Tile> tileList = new HashMap<>();
 
     protected int[] biomeColors;
 
@@ -264,12 +265,12 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public TreeMap<Integer, Entity> getEntities() {
+    public Map<Integer, Entity> getEntities() {
         return entities;
     }
 
     @Override
-    public TreeMap<Integer, Tile> getTiles() {
+    public Map<Integer, Tile> getTiles() {
         return tiles;
     }
 

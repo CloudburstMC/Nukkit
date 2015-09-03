@@ -5,16 +5,16 @@ import cn.nukkit.level.generator.noise.Noise;
 import cn.nukkit.level.generator.normal.Normal;
 import cn.nukkit.math.Vector3;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.TreeMap;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class Generator {
-    private static TreeMap<String, Class> list = new TreeMap<>();
+    private static Map<String, Class> list = new HashMap<>();
 
     public Generator(Object[] settings) {
     }

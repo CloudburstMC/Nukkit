@@ -11,7 +11,7 @@ import java.util.TreeMap;
  * Nukkit Project
  */
 public abstract class LevelProviderManager {
-    protected static TreeMap<String, LevelProvider> providers = new TreeMap<>();
+    protected static Map<String, LevelProvider> providers = new TreeMap<>();
 
     public static void addProvider(Server server, LevelProvider provider) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         providers.put((String) provider.getClass().getMethod("getProviderName").invoke(provider.getClass()), provider);

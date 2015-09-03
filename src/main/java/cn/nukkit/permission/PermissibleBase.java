@@ -4,8 +4,8 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.ServerException;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * author: MagicDroidX
@@ -17,9 +17,9 @@ public class PermissibleBase implements Permissible {
 
     private Permissible parent = null;
 
-    private Map<PermissionAttachment, PermissionAttachment> attachments = new TreeMap<>();
+    private Map<PermissionAttachment, PermissionAttachment> attachments = new HashMap<>();
 
-    private Map<String, PermissionAttachmentInfo> permissions = new TreeMap<>();
+    private Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
 
     public PermissibleBase(ServerOperator opable) {
         this.opable = opable;

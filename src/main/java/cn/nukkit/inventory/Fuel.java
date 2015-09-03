@@ -2,6 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -9,7 +10,7 @@ import java.util.TreeMap;
  * Nukkit Project
  */
 public abstract class Fuel {
-    public static TreeMap<Integer, Integer> duration = new TreeMap<>();
+    public static Map<Integer, Integer> duration = new TreeMap<>();
 
     static {
         duration.put(Item.COAL, 1600);

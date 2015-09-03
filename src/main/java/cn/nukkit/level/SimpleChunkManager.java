@@ -2,14 +2,15 @@ package cn.nukkit.level;
 
 import cn.nukkit.level.format.FullChunk;
 
-import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class SimpleChunkManager implements ChunkManager {
-    protected TreeMap<String, FullChunk> chunks = new TreeMap<>();
+    protected Map<String, FullChunk> chunks = new HashMap<>();
 
     protected int seed;
 

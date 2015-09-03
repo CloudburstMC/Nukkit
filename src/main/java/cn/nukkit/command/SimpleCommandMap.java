@@ -14,7 +14,7 @@ import java.util.*;
  * Nukkit Project
  */
 public class SimpleCommandMap implements CommandMap {
-    protected TreeMap<String, Command> knownCommands = new TreeMap<>();
+    protected Map<String, Command> knownCommands = new HashMap<>();
 
     private Server server;
 
@@ -132,7 +132,7 @@ public class SimpleCommandMap implements CommandMap {
         return null;
     }
 
-    public TreeMap<String, Command> getCommands() {
+    public Map<String, Command> getCommands() {
         return knownCommands;
     }
 

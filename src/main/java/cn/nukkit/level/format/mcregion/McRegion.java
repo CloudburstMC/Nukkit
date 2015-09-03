@@ -15,8 +15,8 @@ import cn.nukkit.utils.ChunkException;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 /**
@@ -25,9 +25,9 @@ import java.util.regex.Pattern;
  */
 public class McRegion extends BaseLevelProvider {
 
-    protected TreeMap<String, RegionLoader> regions = new TreeMap<>();
+    protected Map<String, RegionLoader> regions = new HashMap<>();
 
-    protected TreeMap<String, Chunk> chunks = new TreeMap<>();
+    protected Map<String, Chunk> chunks = new HashMap<>();
 
     public McRegion(Level level, String path) throws IOException {
         super(level, path);
@@ -61,10 +61,10 @@ public class McRegion extends BaseLevelProvider {
     }
 
     public static void generate(String path, String name, int seed, Class generator) throws IOException {
-        generate(path, name, seed, generator, new TreeMap<>());
+        generate(path, name, seed, generator, new HashMap<>());
     }
 
-    public static void generate(String path, String name, int seed, Class generator, TreeMap<String, String> options) throws IOException {
+    public static void generate(String path, String name, int seed, Class generator, Map<String, String> options) throws IOException {
         if (!new File(path + "/region").exists()) {
             new File(path + "/region").mkdirs();
         }
@@ -151,7 +151,7 @@ public class McRegion extends BaseLevelProvider {
         for (Chunk chunk : this.chunks.values()) {
             this.unloadChunk(chunk.getX(), chunk.getZ(), false);
         }
-        this.chunks = new TreeMap<>();
+        this.chunks = new HashMap<>();
     }
 
     @Override
@@ -160,8 +160,8 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public TreeMap<String, String> getGeneratorOptions() {
-        return new TreeMap<String, String>() {
+    public Map<String, String> getGeneratorOptions() {
+        return new HashMap<String, String>() {
             {
                 put("preset", levelData.getString("generatorOptions"));
             }
@@ -169,7 +169,7 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public TreeMap<String, Chunk> getLoadedChunks() {
+    public Map<String, Chunk> getLoadedChunks() {
         return this.chunks;
     }
 
