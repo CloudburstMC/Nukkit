@@ -75,7 +75,7 @@ public abstract class Tile extends Position {
         return null;
     }
 
-    public static boolean registerTile(Class c) {
+    public static boolean registerTile(Class<? extends Tile> c) {
         if (Tile.class.isAssignableFrom(c)) {
             knownTiles.put(c.getSimpleName(), c);
             shortNames.put(c.getName(), c.getSimpleName());
