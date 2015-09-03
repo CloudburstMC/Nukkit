@@ -15,8 +15,7 @@ import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -93,6 +92,7 @@ public class Server {
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             try {
                 Utils.writeFile(this.dataPath + "nukkit.yml", this.getClass().getClassLoader().getResourceAsStream("resources/nukkit.yml"));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -174,6 +174,8 @@ public class Server {
 
         Block.init();
         Item.init();
+
+        //this.pluinManager = new PluginManager()
 
         this.start();
     }
@@ -608,6 +610,30 @@ public class Server {
 
     public void reloadWhitelist() {
         this.whitelist.reload();
+    }
+
+    public Map<String, List<String>> getCommandAliases() {
+        Object section = this.getConfig("aliases");
+        Map<String, List<String>> result = new LinkedHashMap<>();
+        if (section instanceof Map) {
+            for (Map.Entry entry : (Set<Map.Entry>) ((Map) section).entrySet()) {
+                List<String> commands = new ArrayList<>();
+                String key = (String) entry.getKey();
+                Object value = entry.getValue();
+                if (value instanceof List) {
+                    for (String string : (List<String>) value) {
+                        commands.add(string);
+                    }
+                } else {
+                    commands.add((String) value);
+                }
+
+                result.put(key, commands);
+            }
+        }
+
+        return result;
+
     }
 
     public static Server getInstance() {

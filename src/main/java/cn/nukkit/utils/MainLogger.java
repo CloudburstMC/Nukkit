@@ -1,9 +1,13 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.command.CommandReader;
 import org.fusesource.jansi.AnsiConsole;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -12,23 +16,27 @@ import java.util.Date;
  * Nukkit
  */
 public class MainLogger extends Thread {
+    public static final String EMERGENCY = "emergency";
+    public static final String ALERT = "alert";
+    public static final String CRITICAL = "critical";
+    public static final String ERROR = "error";
+    public static final String WARNING = "warning";
+    public static final String NOTICE = "notice";
+    public static final String INFO = "info";
+    public static final String DEBUG = "debug";
+
     protected File logFile;
     protected String logStream = "";
     protected boolean shutdown;
     protected boolean logDebug = false;
-    protected boolean enable_Ansi = false;
 
     protected static MainLogger logger;
 
     public MainLogger(String logFile) {
-        this(logFile, false, false);
+        this(logFile, false);
     }
 
     public MainLogger(String logFile, Boolean logDebug) {
-        this(logFile, logDebug, false);
-    }
-
-    public MainLogger(String logFile, Boolean logDebug, Boolean enable_Ansi) {
         AnsiConsole.systemInstall();
 
         if (logger != null) {
@@ -44,7 +52,6 @@ public class MainLogger extends Thread {
             }
         }
         this.logDebug = logDebug;
-        this.enable_Ansi = enable_Ansi;
         this.start();
     }
 
@@ -96,10 +103,36 @@ public class MainLogger extends Thread {
     }
 
     public void logException(Exception e, StackTraceElement[] trace) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        e.printStackTrace(printWriter);
-        this.alert(stringWriter.toString());
+        this.alert(Utils.getExceptionMessage(e));
+    }
+
+    public void log(String level, String message) {
+        switch (level) {
+            case EMERGENCY:
+                this.emergency(message);
+                break;
+            case ALERT:
+                this.alert(message);
+                break;
+            case CRITICAL:
+                this.critical(message);
+                break;
+            case ERROR:
+                this.error(message);
+                break;
+            case WARNING:
+                this.warning(message);
+                break;
+            case NOTICE:
+                this.notice(message);
+                break;
+            case INFO:
+                this.info(message);
+                break;
+            case DEBUG:
+                this.debug(message);
+                break;
+        }
     }
 
     public void shutdown() {
@@ -115,7 +148,7 @@ public class MainLogger extends Thread {
         String cleanMessage = new SimpleDateFormat("hh:mm:ss").format(now) + " " + TextFormat.clean(message);
         message = TextFormat.toANSI(TextFormat.AQUA + new SimpleDateFormat("hh:mm:ss").format(now) + TextFormat.RESET + " " + message + TextFormat.RESET);
         CommandReader.getInstance().stashLine();
-        if (this.enable_Ansi) {
+        if (Nukkit.ANSI) {
             System.out.println(message);
         } else {
             System.out.println(cleanMessage);

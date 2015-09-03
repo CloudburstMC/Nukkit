@@ -4,7 +4,7 @@ package cn.nukkit.event;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class TextContainer {
+public class TextContainer implements Cloneable {
     protected String text;
 
     public TextContainer(String text) {
@@ -19,7 +19,18 @@ public class TextContainer {
         return text;
     }
 
-    public String __toString() {
+    @Override
+    public String toString() {
         return this.getText();
+    }
+
+    @Override
+    public TextContainer clone() {
+        try {
+            return (TextContainer) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -1,16 +1,21 @@
 package cn.nukkit.plugin;
 
+import java.util.regex.Pattern;
+
 /**
- * Created by Nukkit Team.
+ * author: iNevet
+ * Nukkit Project
  */
-public abstract class PluginLoader {
+public interface PluginLoader {
 
-    public abstract Plugin loadPlugin(String file) throws Exception;
+    Plugin loadPlugin(String file) throws Exception;
 
-    public abstract PluginDescription getPluginDescription(String file);
+    PluginDescription getPluginDescription(String file);
 
-    public abstract void enablePlugin(Plugin plugin);
+    Pattern[] getPluginFilters();
 
-    public abstract void disablePlugin(Plugin plugin);
+    void enablePlugin(Plugin plugin);
+
+    void disablePlugin(Plugin plugin);
 
 }

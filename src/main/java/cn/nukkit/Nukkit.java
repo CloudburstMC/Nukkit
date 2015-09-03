@@ -16,7 +16,6 @@ public class Nukkit {
     public final static String CODENAME = "蘋果(Apple)派(Pie)";
     public final static String MINECRAFT_VERSION = "v0.12.1 alpha";
     public final static String MINECRAFT_VERSION_NETWORK = "0.12.1";
-    public final static byte MINECRAFT_PROTOCOL_VERISON = 120;
 
     public final static String PATH = System.getProperty("user.dir") + "/";
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
@@ -32,7 +31,7 @@ public class Nukkit {
             if (arg.equals("disable-ansi")) ANSI = false;
         }
 
-        MainLogger logger = new MainLogger(DATA_PATH + "server.log", false, ANSI); //todo: 检查是否启用了ansi，是否开启了调试模式
+        MainLogger logger = new MainLogger(DATA_PATH + "server.log");
 
         ThreadManager.init();
         try {

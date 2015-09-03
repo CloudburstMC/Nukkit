@@ -130,7 +130,7 @@ public class Config {
                         Yaml yaml = new Yaml(dumperOptions);
                         this.config = yaml.loadAs(content, LinkedHashMap.class);
                         break;
-                    // case Config.SERIALIZED 也许是不必要的？233
+                    // case Config.SERIALIZED
                     case Config.ENUM:
                         this.parseList(content);
                         break;
@@ -361,7 +361,7 @@ public class Config {
                 String v = b[1].trim();
                 String v_lower = v.toLowerCase();
                 if (this.config.containsKey(k)) {
-                    MainLogger.getLogger().debug("[Config] 重复的键值 " + k + " ，位于文件 " + this.file.toString());
+                    MainLogger.getLogger().debug("[Config] Repeated property " + k + " on file " + this.file.toString());
                 }
                 switch (v_lower) {
                     case "on":

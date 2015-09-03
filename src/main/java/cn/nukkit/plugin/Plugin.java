@@ -3,12 +3,14 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.utils.Config;
 
+import java.io.InputStream;
+
 /**
  * author: MagicDroidX
  * Nukkit
  */
 public interface Plugin {
-    //todo
+
     void onLoad();
 
     void onEnable();
@@ -21,7 +23,13 @@ public interface Plugin {
 
     String getDataFolder();
 
-    //todo a lot...
+    PluginDescription getDescription();
+
+    InputStream getResource(String filename);
+
+    void saveResource(String filename);
+
+    void saveResource(String filename, boolean replace);
 
     Config getConfig();
 
@@ -35,5 +43,8 @@ public interface Plugin {
 
     String getName();
 
-    //todo a lot...
+    PluginLogger getLogger();
+
+    PluginLoader getPluginLoader();
+
 }

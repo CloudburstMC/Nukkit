@@ -6,7 +6,7 @@ import cn.nukkit.level.MovingObjectPosition;
  * auth||: MagicDroidX
  * Nukkit Project
  */
-public class AxisAlignedBB {
+public class AxisAlignedBB implements Cloneable {
 
     public double minX;
     public double minY;
@@ -293,8 +293,18 @@ public class AxisAlignedBB {
         return MovingObjectPosition.fromBlock(0, 0, 0, face, vector);
     }
 
-
-    public String __toString() {
+    @Override
+    public String toString() {
         return "AxisAlignedBB(" + this.minX + ", " + this.minY + ", " + this.minZ + ", " + this.maxX + ", " + this.maxY + ", " + this.maxZ + ")";
+    }
+
+    @Override
+    public AxisAlignedBB clone() {
+        try {
+            return (AxisAlignedBB) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -18,11 +18,11 @@ public class PluginDescription {
     private String[] authors;
     private String website;
     private String prefix;
-    private PluginLoadOrder order = PluginLoadOrder.POSTWORLD;
+    private byte order = PluginLoadOrder.POSTWORLD;
 
     private String[] permissions;
 
-    public PluginDescription(String yamlString){
+    public PluginDescription(String yamlString) {
 
     }
 
@@ -34,7 +34,7 @@ public class PluginDescription {
         return depend;
     }
 
-    public String getFullName(){
+    public String getFullName() {
         return name + "v" + this.version;
     }
 
@@ -70,7 +70,7 @@ public class PluginDescription {
         return prefix;
     }
 
-    public PluginLoadOrder getOrder() {
+    public byte getOrder() {
         return order;
     }
 

@@ -68,7 +68,8 @@ public class Location extends Position {
         return this.pitch;
     }
 
-    public String __toString() {
+    @Override
+    public String toString() {
         return "Location (level=" + (this.isValid() ? this.getLevel().getName() : "null") + ", x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", yaw=" + this.yaw + ", pitch=" + this.pitch + ")";
     }
 }

@@ -684,7 +684,8 @@ public class Item {
         return false;
     }
 
-    final public String __toString() {
+    @Override
+    final public String toString() {
         return "Item " + this.name + " (" + this.id + ":" + this.meta + ")x" + this.count;
     }
 

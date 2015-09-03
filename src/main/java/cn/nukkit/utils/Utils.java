@@ -67,5 +67,11 @@ public class Utils {
         return stringBuilder.toString();
     }
 
+    public static String getExceptionMessage(Exception e) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        e.printStackTrace(printWriter);
+        return stringWriter.toString();
+    }
 
 }

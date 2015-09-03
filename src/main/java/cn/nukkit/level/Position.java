@@ -73,7 +73,8 @@ public class Position extends Vector3 {
         return Position.fromObject(super.getSide(side, step), this.level);
     }
 
-    public String __toString() {
+    @Override
+    public String toString() {
         return "Position(level=" + (this.isValid() ? this.getLevel().getName() : "null") + ",x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
     }
 

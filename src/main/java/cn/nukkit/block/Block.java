@@ -464,7 +464,8 @@ public class Block extends Position implements Metadatable, Cloneable {
         return Block.get(Item.AIR, 0, Position.fromObject(super.getSide(side, step)));
     }
 
-    public String __toString() {
+    @Override
+    public String toString() {
         return "Block[" + this.getName() + "] (" + this.getId() + ":" + this.getDamage() + ")";
     }
 
@@ -609,7 +610,9 @@ public class Block extends Position implements Metadatable, Cloneable {
 
     public Block clone() {
         try {
-            return (Block) super.clone();
+            Block block = (Block) super.clone();
+            block.boundingBox = this.boundingBox.clone();
+            return block;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
             return null;
