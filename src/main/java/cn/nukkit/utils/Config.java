@@ -59,12 +59,24 @@ public class Config {
         this(file, Config.DETECT);
     }
 
+    public Config(File file) {
+        this(file.toString(), Config.DETECT);
+    }
+
     public Config(String file, int type) {
         this(file, type, new TreeMap<>());
     }
 
+    public Config(File file, int type) {
+        this(file.toString(), type, new TreeMap<>());
+    }
+
     public Config(String file, int type, Map<String, Object> default_map) {
         this.load(file, type, default_map);
+    }
+
+    public Config(File file, int type, Map<String, Object> default_map) {
+        this(file.toString(), type, default_map);
     }
 
     public void reload() {

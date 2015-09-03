@@ -1,7 +1,7 @@
 package cn.nukkit;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.command.CommandReader;
+import cn.nukkit.command.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Level;
@@ -42,6 +42,10 @@ public class Server {
     private MainLogger logger;
 
     private CommandReader console;
+
+    private SimpleCommandMap commandMap;
+
+    private ConsoleCommandSender consoleSender;
 
     private int maxPlayers;
 
@@ -171,6 +175,9 @@ public class Server {
 
         this.logger.info(this.getLanguage().translateString("nukkit.server.info", new String[]{this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, this.getCodename(), this.getApiVersion()}));
         this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
+
+        this.consoleSender = new ConsoleCommandSender();
+        this.commandMap = new SimpleCommandMap(this);
 
         Block.init();
         Item.init();
@@ -570,6 +577,15 @@ public class Server {
 
     public void setPropertyBoolean(String variable, boolean value) {
         this.properties.set(variable, value ? "1" : "0");
+    }
+
+    public PluginIdentifiableCommand getPluginCommand(String name) {
+        Command command = this.commandMap.getCommand(name);
+        if (command instanceof PluginIdentifiableCommand) {
+            return (PluginIdentifiableCommand) command;
+        } else {
+            return null;
+        }
     }
 
     public BanList getNameBans() {

@@ -1,6 +1,7 @@
 package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.CommandExecutor;
 import cn.nukkit.utils.Config;
 
 import java.io.File;
@@ -10,7 +11,7 @@ import java.io.InputStream;
  * author: MagicDroidX
  * Nukkit
  */
-public interface Plugin {
+public interface Plugin extends CommandExecutor {
 
     void onLoad();
 
@@ -28,9 +29,9 @@ public interface Plugin {
 
     InputStream getResource(String filename);
 
-    void saveResource(String filename);
+    boolean saveResource(String filename);
 
-    void saveResource(String filename, boolean replace);
+    boolean saveResource(String filename, boolean replace);
 
     Config getConfig();
 
