@@ -261,7 +261,7 @@ public class PluginManager {
                         }
                     }
 
-                    if ((!dependencies.containsKey(name)) && !softDependencies.containsKey(name)) {
+                    if (!dependencies.containsKey(name) && !softDependencies.containsKey(name)) {
                         plugins.remove(name);
                         missingDependency = false;
                         Plugin plugin = this.loadPlugin(file, loaders);
@@ -426,6 +426,7 @@ public class PluginManager {
                 for (Permission permission : plugin.getDescription().getPermissions()) {
                     this.addPermission(permission);
                 }
+                plugin.getPluginLoader().enablePlugin(plugin);
             } catch (Exception e) {
                 MainLogger logger = Server.getInstance().getLogger();
                 if (logger != null) {

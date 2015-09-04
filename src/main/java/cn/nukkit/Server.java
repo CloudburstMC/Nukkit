@@ -213,6 +213,10 @@ public class Server {
 
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
+        //do a lot thing
+
+        this.enablePlugins(PluginLoadOrder.POSTWORLD);
+
         this.start();
     }
 

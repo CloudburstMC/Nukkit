@@ -27,7 +27,7 @@ public class PluginDescription {
     private String prefix;
     private byte order = PluginLoadOrder.POSTWORLD;
 
-    private List<Permission> permissions;
+    private List<Permission> permissions = new ArrayList<>();
 
     public PluginDescription(Map<String, Object> yamlMap) {
         this.loadMap(yamlMap);

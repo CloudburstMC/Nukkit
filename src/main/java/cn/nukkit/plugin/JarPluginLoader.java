@@ -19,6 +19,8 @@ public class JarPluginLoader implements PluginLoader {
 
     private Server server;
 
+    private JarClassLoader classLoader;
+
     public JarPluginLoader(Server server) {
         this.server = server;
     }
@@ -33,17 +35,17 @@ public class JarPluginLoader implements PluginLoader {
                 throw new IllegalStateException("Projected dataFolder '" + dataFolder.toString() + "' for " + description.getName() + " exists and is not a directory");
             }
             String className = description.getMain();
-            JarClassLoader loader = new JarClassLoader(this.getClass().getClassLoader(), file);
+            classLoader = new JarClassLoader(this.getClass().getClassLoader(), file);
             try {
 
-                Class javaClass = loader.loadClass(className);
+                Class javaClass = classLoader.loadClass(className);
 
                 try {
                     Class<? extends PluginBase> pluginClass = javaClass.asSubclass(PluginBase.class);
 
                     PluginBase plugin = pluginClass.newInstance();
                     this.initPlugin(plugin, description, dataFolder, file);
-
+                    return plugin;
                 } catch (ClassCastException e) {
                     throw new PluginException("main class `" + description.getMain() + "' does not extend PluginBase");
                 } catch (InstantiationException e) {
@@ -87,7 +89,7 @@ public class JarPluginLoader implements PluginLoader {
 
     @Override
     public Pattern[] getPluginFilters() {
-        return new Pattern[]{Pattern.compile("\\.jar$")};
+        return new Pattern[]{Pattern.compile("^.+\\.jar$")};
     }
 
     private void initPlugin(PluginBase plugin, PluginDescription description, File dataFolder, File file) {
@@ -101,7 +103,6 @@ public class JarPluginLoader implements PluginLoader {
             this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.enable", plugin.getDescription().getFullName()));
 
             ((PluginBase) plugin).setEnabled(true);
-
             //todo PluginEnableEvent
         }
     }
