@@ -106,7 +106,7 @@ public class PluginDescription {
         }
 
         if (plugin.containsKey("permissions")) {
-            this.permissions = Permission.loadPermissions((Map<String, Object>) plugin.get("permission"));
+            this.permissions = Permission.loadPermissions((Map<String, Object>) plugin.get("permissions"));
         }
     }
 
