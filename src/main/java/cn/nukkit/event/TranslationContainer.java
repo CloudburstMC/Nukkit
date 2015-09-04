@@ -12,6 +12,11 @@ public class TranslationContainer extends TextContainer {
         this(text, new String[]{});
     }
 
+    public TranslationContainer(String text, String params) {
+        super(text);
+        this.setParameters(new String[]{params});
+    }
+
     public TranslationContainer(String text, String[] params) {
         super(text);
         this.setParameters(params);

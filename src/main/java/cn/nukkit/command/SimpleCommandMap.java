@@ -28,7 +28,7 @@ public class SimpleCommandMap implements CommandMap {
     }
 
     @Override
-    public void registerAll(String fallbackPrefix, Command[] commands) {
+    public void registerAll(String fallbackPrefix, List<? extends Command> commands) {
         for (Command command : commands) {
             this.register(fallbackPrefix, command);
         }

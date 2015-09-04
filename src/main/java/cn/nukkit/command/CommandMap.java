@@ -1,12 +1,14 @@
 package cn.nukkit.command;
 
+import java.util.List;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public interface CommandMap {
 
-    void registerAll(String fallbackPrefix, Command[] commands);
+    void registerAll(String fallbackPrefix, List<? extends Command> commands);
 
     boolean register(String fallbackPrefix, Command command);
 

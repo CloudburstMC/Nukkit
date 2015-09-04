@@ -1,6 +1,8 @@
 package cn.nukkit.permission;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -101,6 +103,16 @@ public class Permission {
 
     public void recalculatePermissibles() {
         //todo
+    }
+
+    //todo addParent
+
+    public static List<Permission> loadPermissions(Map<String, Object> data) {
+        return loadPermissions(data, DEFAULT_OP);
+    }
+
+    public static List<Permission> loadPermissions(Map<String, Object> data, String defaultValue) {
+        return null;
     }
 
     //todo alot

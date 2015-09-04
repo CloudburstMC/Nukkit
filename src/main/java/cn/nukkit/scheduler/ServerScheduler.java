@@ -1,7 +1,7 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
-import cn.nukkit.plugin.PluginBase;
+import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 
 import java.util.Comparator;
@@ -58,7 +58,7 @@ public class ServerScheduler {
         }
     }
 
-    public void cancelTask(PluginBase plugin) {
+    public void cancelTask(Plugin plugin) {
         for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
             int taskId = entry.getKey();
             TaskHandler task = entry.getValue();

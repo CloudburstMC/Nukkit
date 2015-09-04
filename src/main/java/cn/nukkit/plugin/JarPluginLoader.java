@@ -8,7 +8,6 @@ import cn.nukkit.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -25,11 +24,10 @@ public class JarPluginLoader implements PluginLoader {
     }
 
     @Override
-    public Plugin loadPlugin(String filename) throws MalformedURLException {
-        PluginDescription description = this.getPluginDescription(filename);
+    public Plugin loadPlugin(File file) throws Exception {
+        PluginDescription description = this.getPluginDescription(file);
         if (description != null) {
             this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.load", description.getFullName()));
-            File file = new File(filename);
             File dataFolder = new File(file.getParentFile(), description.getName());
             if (dataFolder.exists() && !dataFolder.isDirectory()) {
                 throw new IllegalStateException("Projected dataFolder '" + dataFolder.toString() + "' for " + description.getName() + " exists and is not a directory");
@@ -63,9 +61,14 @@ public class JarPluginLoader implements PluginLoader {
     }
 
     @Override
-    public PluginDescription getPluginDescription(String filename) {
+    public Plugin loadPlugin(String filename) throws Exception {
+        return this.loadPlugin(new File(filename));
+    }
+
+    @Override
+    public PluginDescription getPluginDescription(File file) {
         try {
-            JarFile jar = new JarFile(filename);
+            JarFile jar = new JarFile(file);
             JarEntry entry = jar.getJarEntry("plugin.yml");
             if (entry == null) {
                 return null;
@@ -75,6 +78,11 @@ public class JarPluginLoader implements PluginLoader {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    @Override
+    public PluginDescription getPluginDescription(String filename) {
+        return this.getPluginDescription(new File(filename));
     }
 
     @Override

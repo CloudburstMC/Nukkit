@@ -9,6 +9,11 @@ import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
 import cn.nukkit.permission.BanList;
+import cn.nukkit.permission.DefaultPermissions;
+import cn.nukkit.plugin.JarPluginLoader;
+import cn.nukkit.plugin.Plugin;
+import cn.nukkit.plugin.PluginLoadOrder;
+import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.*;
 import sun.misc.BASE64Encoder;
@@ -22,21 +27,38 @@ import java.util.*;
  * Nukkit
  */
 public class Server {
+
+    public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "nukkit.broadcast.admin";
+    public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
+
     private static Server instance;
+
     private BanList banByName;
+
     private BanList banByIP;
+
     private Config operators;
+
     private Config whitelist;
+
     private boolean isRunning = true;
+
     private boolean hasStopped = false;
+
+    private PluginManager pluginManager;
 
     private ServerScheduler scheduler;
 
     private int tickCounter;
+
     private long nextTick;
+
     private float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
+
     private float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
     private float maxTick = 20;
+
     private float maxUse = 0;
 
     private MainLogger logger;
@@ -182,10 +204,39 @@ public class Server {
         Block.init();
         Item.init();
 
-        //this.pluinManager = new PluginManager()
+        this.pluginManager = new PluginManager(this, this.commandMap);
+        this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
+
+        this.pluginManager.registerInterface(JarPluginLoader.class);
+
+        this.pluginManager.loadPlugins(this.pluginPath);
+
+        this.enablePlugins(PluginLoadOrder.STARTUP);
 
         this.start();
     }
+
+    public void enablePlugins(byte type) {
+        for (Plugin plugin : this.pluginManager.getPlugins().values()) {
+            if (!plugin.isEnabled() && plugin.getDescription().getOrder() == type) {
+                this.enablePlugin(plugin);
+            }
+        }
+
+        if (type == PluginLoadOrder.POSTWORLD) {
+            this.commandMap.registerServerAliases();
+            DefaultPermissions.registerCorePermissions();
+        }
+    }
+
+    public void enablePlugin(Plugin plugin) {
+        this.pluginManager.enablePlugin(plugin);
+    }
+
+    public void disablePlugins() {
+        this.pluginManager.disablePlugins();
+    }
+
     //todo: public void reload
 
     public void shutdown() {

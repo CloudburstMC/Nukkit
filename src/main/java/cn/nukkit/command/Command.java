@@ -24,9 +24,9 @@ public abstract class Command {
 
     private CommandMap commandMap = null;
 
-    private String description = "";
+    protected String description = "";
 
-    private String usageMessage = "";
+    protected String usageMessage = "";
 
     private String permission = null;
 
@@ -157,6 +157,10 @@ public abstract class Command {
         if (!this.isRegistered()) {
             this.activeAliases = aliases;
         }
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setPermissionMessage(String permissionMessage) {
