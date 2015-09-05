@@ -216,6 +216,8 @@ public class Server {
 
         //do a lot thing
 
+        this.properties.save(true);
+
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
         this.start();
@@ -272,11 +274,48 @@ public class Server {
         this.isRunning = false;
     }
 
+    public void forceShutdown() {
+        if (this.hasStopped) {
+            return;
+        }
+
+        try {
+            if (!this.isRunning) {
+                //todo sendUsage
+            }
+
+            this.hasStopped = true;
+
+            this.shutdown();
+
+            this.getLogger().debug("Disabling all plugins");
+            this.pluginManager.disablePlugins();
+
+            //todo alot
+
+            this.getLogger().debug("Stopping all tasks");
+            this.scheduler.cancelAllTasks();
+            this.scheduler.mainThreadHeartbeat(Long.MAX_VALUE);
+
+            this.getLogger().debug("Saving properties");
+            this.properties.save();
+
+            this.getLogger().debug("Closing console");
+            this.console.stop();
+
+            //todo other things
+        }catch (Exception e){
+            this.logger.emergency("Exception happened while shutting down, exit the process");
+            System.exit(1);
+        }
+    }
+
     public void start() {
         //todo a lot
         this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
         this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
         this.tickProcessor();
+        this.forceShutdown();
     }
 
     public void tickProcessor() {
