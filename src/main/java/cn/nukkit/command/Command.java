@@ -48,6 +48,20 @@ public abstract class Command {
         this(name, description, usageMessage, new ArrayList<>());
     }
 
+    public Command(String name, String description, String usageMessage, String[] aliases) {
+        List<String> list = new ArrayList<>();
+        for (String alias : aliases) {
+            list.add(alias);
+        }
+        this.name = name;
+        this.nextLabel = name;
+        this.label = name;
+        this.description = description;
+        this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
+        this.aliases = list;
+        this.activeAliases = list;
+    }
+
     public Command(String name, String description, String usageMessage, List<String> aliases) {
         this.name = name;
         this.nextLabel = name;

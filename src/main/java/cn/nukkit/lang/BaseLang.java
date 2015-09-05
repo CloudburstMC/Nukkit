@@ -147,7 +147,7 @@ public class BaseLang {
             baseText = this.internalGet(c.getText());
             baseText = this.parseTranslation(baseText != null ? baseText : c.getText());
             for (int i = 0; i < ((TranslationContainer) c).getParameters().length; i++) {
-                baseText = baseText.replace("{$" + i + "}", this.parseTranslation(((TranslationContainer) c).getParameters()[i]));
+                baseText = baseText.replace("{%" + i + "}", this.parseTranslation(((TranslationContainer) c).getParameters()[i]));
             }
         }
         return baseText;

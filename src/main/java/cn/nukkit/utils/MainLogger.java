@@ -145,8 +145,8 @@ public class MainLogger extends Thread {
 
     protected void send(String message, int level) {
         Date now = new Date();
-        String cleanMessage = new SimpleDateFormat("hh:mm:ss").format(now) + " " + TextFormat.clean(message);
-        message = TextFormat.toANSI(TextFormat.AQUA + new SimpleDateFormat("hh:mm:ss").format(now) + TextFormat.RESET + " " + message + TextFormat.RESET);
+        String cleanMessage = new SimpleDateFormat("HH:mm:ss").format(now) + " " + TextFormat.clean(message);
+        message = TextFormat.toANSI(TextFormat.AQUA + new SimpleDateFormat("HH:mm:ss").format(now) + TextFormat.RESET + " " + message + TextFormat.RESET);
         CommandReader.getInstance().stashLine();
         if (Nukkit.ANSI) {
             System.out.println(message);
@@ -154,7 +154,7 @@ public class MainLogger extends Thread {
             System.out.println(cleanMessage);
         }
         CommandReader.getInstance().unstashLine();
-        String str = new SimpleDateFormat("Y-m-d hh:mm:ss").format(now) + " " + cleanMessage + "" + "\r\n";
+        String str = new SimpleDateFormat("Y-m-d HH:mm:ss").format(now) + " " + cleanMessage + "" + "\r\n";
         /*synchronized (this) {
             this.logStream += str;
             this.notify();

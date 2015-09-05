@@ -635,6 +635,10 @@ public class Server {
         return ((float) Math.round(sum / count * 100)) / 100;
     }
 
+    public SimpleCommandMap getCommandMap() {
+        return commandMap;
+    }
+
     public Level getLevel(int levelId) {
         //todo
         return null;

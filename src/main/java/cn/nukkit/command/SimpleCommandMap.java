@@ -1,6 +1,7 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.defaults.HelpCommand;
 import cn.nukkit.command.defaults.StopCommand;
 import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.event.TranslationContainer;
@@ -8,7 +9,10 @@ import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -26,6 +30,7 @@ public class SimpleCommandMap implements CommandMap {
 
     private void setDefaultCommands() {
         //todo register commands
+        this.register("nukkit", new HelpCommand("help"));
         this.register("nukkit", new StopCommand("stop"));
     }
 
@@ -96,11 +101,15 @@ public class SimpleCommandMap implements CommandMap {
         }
 
         String sentCommandLabel = args[0].toLowerCase();
-        try {
+        String[] newargs = new String[args.length - 1];
+        System.arraycopy(args, 1, newargs, 0, newargs.length);
+        args = newargs;
+        /*try {
             args = Arrays.copyOfRange(args, 1, args.length - 1);
+            System.out.println(args.length);
         } catch (Exception e) {
             args = new String[0];
-        }
+        }*/
 
         Command target = this.getCommand(sentCommandLabel);
 
