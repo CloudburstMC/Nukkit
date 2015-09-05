@@ -2,7 +2,6 @@ package cn.nukkit.command;
 
 import cn.nukkit.Server;
 import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.TextFormat;
 import jline.console.ConsoleReader;
 import jline.console.CursorBuffer;
 
@@ -51,18 +50,16 @@ public class CommandReader extends cn.nukkit.Thread {
                 logger.logException(e);
             }
             if (!line.trim().equals("")) {
-                //todo
-                logger.notice(TextFormat.LIGHT_PURPLE + "Using command: " + line);
+                //todo 将即时执行指令改为每tick执行
+                try {
+                    Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), line);
+                } catch (Exception e) {
+                    Server.getInstance().getLogger().logException(e);
+                }
+                /*logger.notice(TextFormat.LIGHT_PURPLE + "Using command: " + line);
                 if (line.trim().toLowerCase().equals("stop")) {
                     Server.getInstance().shutdown();
-                    /*logger.info(TextFormat.YELLOW + "NUKKIT EXITING...");
-                    try {
-                        reader.resetPromptLine("", "", 0);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    System.exit(0);*/
-                }
+                }*/
 
             } else if (System.currentTimeMillis() - lastLine <= 1) {
                 try {

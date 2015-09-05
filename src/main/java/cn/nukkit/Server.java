@@ -2,6 +2,7 @@ package cn.nukkit;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.command.*;
+import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Level;
@@ -220,9 +221,9 @@ public class Server {
         this.start();
     }
 
-    public void enablePlugins(byte type) {
+    public void enablePlugins(PluginLoadOrder type) {
         for (Plugin plugin : this.pluginManager.getPlugins().values()) {
-            if (!plugin.isEnabled() && plugin.getDescription().getOrder() == type) {
+            if (!plugin.isEnabled() && type == plugin.getDescription().getOrder()) {
                 this.enablePlugin(plugin);
             }
         }
@@ -239,6 +240,26 @@ public class Server {
 
     public void disablePlugins() {
         this.pluginManager.disablePlugins();
+    }
+
+    public boolean dispatchCommand(CommandSender sender, String commandLine) throws Exception {
+        if (sender == null) {
+            throw new ServerException("CommandSender is not valid");
+        }
+
+        if (this.commandMap.dispatch(sender, commandLine)) {
+            return true;
+        }
+
+        sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.notFound"));
+
+        return false;
+    }
+
+    //todo: remove this 测试用
+    @Deprecated
+    public ConsoleCommandSender getConsoleSender() {
+        return consoleSender;
     }
 
     //todo: public void reload
@@ -525,6 +546,10 @@ public class Server {
 
     public LevelMetadataStore getLevelMetadata() {
         return levelMetadata;
+    }
+
+    public PluginManager getPluginManager() {
+        return this.pluginManager;
     }
 
     public ServerScheduler getScheduler() {

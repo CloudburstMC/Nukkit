@@ -4,7 +4,7 @@ package cn.nukkit.event;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class TranslationContainer extends TextContainer {
+public class TranslationContainer extends TextContainer implements Cloneable {
 
     protected String[] params;
 
@@ -38,5 +38,10 @@ public class TranslationContainer extends TextContainer {
         if (i >= 0 && i < this.params.length) {
             this.params[i] = str;
         }
+    }
+
+    @Override
+    public TranslationContainer clone() {
+        return new TranslationContainer(this.text, this.params.clone());
     }
 }

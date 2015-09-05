@@ -25,7 +25,7 @@ public class PluginDescription {
     private List<String> authors = new ArrayList<>();
     private String website;
     private String prefix;
-    private byte order = PluginLoadOrder.POSTWORLD;
+    private PluginLoadOrder order = PluginLoadOrder.POSTWORLD;
 
     private List<Permission> permissions = new ArrayList<>();
 
@@ -90,9 +90,9 @@ public class PluginDescription {
 
         if (plugin.containsKey("load")) {
             String order = (String) plugin.get("load");
-            if (PluginLoadOrder.isValid(order)) {
-                this.order = PluginLoadOrder.getOrder(order);
-            } else {
+            try {
+                this.order = PluginLoadOrder.valueOf(order);
+            } catch (Exception e) {
                 throw new PluginException("Invalid PluginDescription load");
             }
         }
@@ -150,7 +150,7 @@ public class PluginDescription {
         return name;
     }
 
-    public byte getOrder() {
+    public PluginLoadOrder getOrder() {
         return order;
     }
 

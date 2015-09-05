@@ -1,6 +1,7 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.defaults.StopCommand;
 import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.utils.MainLogger;
@@ -25,6 +26,7 @@ public class SimpleCommandMap implements CommandMap {
 
     private void setDefaultCommands() {
         //todo register commands
+        this.register("nukkit", new StopCommand("stop"));
     }
 
     @Override
@@ -94,7 +96,12 @@ public class SimpleCommandMap implements CommandMap {
         }
 
         String sentCommandLabel = args[0].toLowerCase();
-        args = Arrays.copyOfRange(args, 1, args.length - 1);
+        try {
+            args = Arrays.copyOfRange(args, 1, args.length - 1);
+        } catch (Exception e) {
+            args = new String[0];
+        }
+
         Command target = this.getCommand(sentCommandLabel);
 
         if (target == null) {

@@ -1,10 +1,14 @@
 package cn.nukkit.command;
 
+import cn.nukkit.Server;
+import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.permission.Permissible;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -176,7 +180,50 @@ public abstract class Command {
     }
 
     public static void broadcastCommandMessage(CommandSender source, String message, boolean sendToSource) {
-        //todo
+        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
+        TranslationContainer result = new TranslationContainer("chat.type.admin", new String[]{source.getName(), message});
+        TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + TextFormat.ITALIC + "%chat.type.admin", new String[]{source.getName(), message});
+
+        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+            source.sendMessage(message);
+        }
+
+        for (Permissible user : users) {
+            if (user instanceof CommandSender) {
+                if (user instanceof ConsoleCommandSender) {
+                    ((ConsoleCommandSender) user).sendMessage(result);
+                } else if (!user.equals(source)) {
+                    ((CommandSender) user).sendMessage(colored);
+                }
+            }
+        }
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, TextContainer message) {
+        broadcastCommandMessage(source, message, true);
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, TextContainer message, boolean sendToSource) {
+        TextContainer m = message.clone();
+        String resultStr = "[" + source.getName() + ": " + (!m.getText().equals(source.getServer().getLanguage().get(m.getText())) ? "%" : "") + m.getText() + "]";
+
+        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
+        String coloredStr = TextFormat.GRAY + TextFormat.ITALIC + resultStr;
+
+        m.setText(resultStr);
+        TextContainer result = m.clone();
+        m.setText(coloredStr);
+        TextContainer colored = m.clone();
+
+        for (Permissible user : users) {
+            if (user instanceof CommandSender) {
+                if (user instanceof ConsoleCommandSender) {
+                    ((ConsoleCommandSender) user).sendMessage(result);
+                } else if (!user.equals(source)) {
+                    ((CommandSender) user).sendMessage(colored);
+                }
+            }
+        }
     }
 
     @Override
