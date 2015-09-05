@@ -92,6 +92,8 @@ public class Server {
     private Config properties;
     private Config config;
 
+    private Map<String, Player> players = new HashMap<>();
+
     public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) throws Exception {
         instance = this;
         this.logger = logger;
@@ -304,7 +306,7 @@ public class Server {
             this.console.stop();
 
             //todo other things
-        }catch (Exception e){
+        } catch (Exception e) {
             this.logger.emergency("Exception happened while shutting down, exit the process");
             System.exit(1);
         }
@@ -389,8 +391,16 @@ public class Server {
         if (!Nukkit.ANSI) {
             return;
         }
+
+        Runtime runtime = Runtime.getRuntime();
+        float used = ((float) Math.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024 * 100)) / 100;
+        float totol = ((float) Math.round(((double) runtime.totalMemory()) / 1024 / 1024 * 100)) / 100;
+        float max = ((float) Math.round(((double) runtime.maxMemory()) / 1024 / 1024 * 100)) / 100;
+        String usage = used + "/" + totol + "/" + max + " MB";
         System.out.print((char) 0x1b + "]0;" + this.getName() + " " +
                 this.getNukkitVersion() +
+                " | Online " + this.players.size() + "/" + this.getMaxPlayers() +
+                " | Memory " + usage +
                 " | TPS " + this.getTicksPerSecond() +
                 " | Load " + this.getTickUsage() + "%" + (char) 0x07);
     }
