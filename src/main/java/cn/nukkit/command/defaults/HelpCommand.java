@@ -72,7 +72,7 @@ public class HelpCommand extends VanillaCommand {
                 }
             }
             int totalPage = commands.size() % pageHeight == 0 ? commands.size() / pageHeight : commands.size() / pageHeight + 1;
-            pageNumber = Math.max(pageNumber, totalPage);
+            pageNumber = Math.min(pageNumber, totalPage);
             if (pageNumber < 1) {
                 pageNumber = 1;
             }

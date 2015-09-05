@@ -2,7 +2,6 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
