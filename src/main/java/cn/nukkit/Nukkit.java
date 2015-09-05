@@ -33,7 +33,6 @@ public class Nukkit {
 
         MainLogger logger = new MainLogger(DATA_PATH + "server.log");
 
-        ThreadManager.init();
         try {
             Server server = new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
         } catch (Exception e) {
@@ -42,9 +41,14 @@ public class Nukkit {
 
         logger.info("Stopping other threads");
 
-        for (Thread thread : ThreadManager.getInstance().getAll()) {
+        for (Thread thread : java.lang.Thread.getAllStackTraces().keySet()) {
+            if (!(thread instanceof InterruptibleThread)) {
+                continue;
+            }
             logger.debug("Stopping " + thread.getClass().getSimpleName() + " thread");
-            thread.quit();
+            if (thread.isAlive()) {
+                thread.interrupt();
+            }
         }
 
         ServerKiller killer = new ServerKiller(8);

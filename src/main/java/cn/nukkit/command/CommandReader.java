@@ -1,5 +1,6 @@
 package cn.nukkit.command;
 
+import cn.nukkit.InterruptibleThread;
 import cn.nukkit.Server;
 import cn.nukkit.utils.MainLogger;
 import jline.console.ConsoleReader;
@@ -11,7 +12,7 @@ import java.io.IOException;
  * author: MagicDroidX
  * Nukkit
  */
-public class CommandReader extends cn.nukkit.Thread {
+public class CommandReader extends Thread implements InterruptibleThread {
 
     private ConsoleReader reader;
 
