@@ -7,7 +7,7 @@ public interface Cancellable {
 
     boolean isCancelled();
 
-    void setCancelled() throws IllegalAccessException;
+    void setCancelled();
 
-    void setCancelled(boolean forceCancel) throws IllegalAccessException;
+    void setCancelled(boolean forceCancel);
 }

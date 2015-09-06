@@ -1,5 +1,7 @@
 package cn.nukkit.event;
 
+import cn.nukkit.utils.EventException;
+
 /**
  * Created by Nukkit Team.
  */
@@ -19,13 +21,13 @@ public abstract class Event {
         return isCancelled;
     }
 
-    public void setCancelled() throws IllegalAccessException {
+    public void setCancelled() {
         setCancelled(true);
     }
 
-    public void setCancelled(boolean value) throws IllegalAccessException {
+    public void setCancelled(boolean value) {
         if (!(this instanceof Cancellable)) {
-            throw new IllegalArgumentException("Event is not Cancellable");
+            throw new EventException("Event is not Cancellable");
         }
         isCancelled = value;
     }
