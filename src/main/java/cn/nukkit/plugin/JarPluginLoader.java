@@ -1,6 +1,8 @@
 package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
+import cn.nukkit.event.plugin.PluginDisableEvent;
+import cn.nukkit.event.plugin.PluginEnableEvent;
 import cn.nukkit.utils.JarClassLoader;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
@@ -103,7 +105,8 @@ public class JarPluginLoader implements PluginLoader {
             this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.enable", plugin.getDescription().getFullName()));
 
             ((PluginBase) plugin).setEnabled(true);
-            //todo PluginEnableEvent
+
+            this.server.getPluginManager().callEvent(new PluginEnableEvent(plugin));
         }
     }
 
@@ -112,7 +115,7 @@ public class JarPluginLoader implements PluginLoader {
         if (plugin instanceof PluginBase && plugin.isEnabled()) {
             this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.disable", plugin.getDescription().getFullName()));
 
-            //todo PluginDisableEvent
+            this.server.getPluginManager().callEvent(new PluginDisableEvent(plugin));
 
             ((PluginBase) plugin).setEnabled(false);
         }

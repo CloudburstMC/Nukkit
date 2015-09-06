@@ -2,6 +2,7 @@ package cn.nukkit.command;
 
 import cn.nukkit.InterruptibleThread;
 import cn.nukkit.Server;
+import cn.nukkit.event.server.ServerCommandEvent;
 import cn.nukkit.utils.MainLogger;
 import jline.console.ConsoleReader;
 import jline.console.CursorBuffer;
@@ -53,7 +54,12 @@ public class CommandReader extends Thread implements InterruptibleThread {
             if (!line.trim().equals("")) {
                 //todo 将即时执行指令改为每tick执行
                 try {
-                    Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), line);
+                    ServerCommandEvent event = new ServerCommandEvent(Server.getInstance().getConsoleSender(), line);
+                    Server.getInstance().getPluginManager().callEvent(event);
+                    if (!event.isCancelled()) {
+                        Server.getInstance().dispatchCommand(event.getSender(), event.getCommand());
+                    }
+
                 } catch (Exception e) {
                     Server.getInstance().getLogger().logException(e);
                 }

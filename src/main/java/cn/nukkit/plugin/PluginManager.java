@@ -3,14 +3,16 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.command.SimpleCommandMap;
-import cn.nukkit.event.HandlerList;
+import cn.nukkit.event.*;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -523,5 +525,119 @@ public class PluginManager {
         this.defaultPermsOp.clear();
     }
 
-    //todo Event Part
+    public void callEvent(Event event) {
+        try {
+            for (RegisteredListener registration : getEventListeners(event.getClass()).getRegisteredListeners()) {
+                if (!registration.getPlugin().isEnabled()) {
+                    continue;
+                }
+
+                try {
+                    registration.callEvent(event);
+                } catch (Exception e) {
+                    this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.eventError", new String[]{event.getEventName(), registration.getPlugin().getDescription().getFullName(), e.getMessage(), registration.getListener().getClass().getName()}));
+                    MainLogger logger = this.server.getLogger();
+                    if (logger != null) {
+                        logger.logException(e);
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void registerEvents(Listener listener, Plugin plugin) {
+        if (!plugin.isEnabled()) {
+            throw new PluginException("Plugin attempted to register " + listener.getClass().getName() + " while not enabled");
+        }
+
+        Map<Class<? extends Event>, Set<RegisteredListener>> ret = new HashMap<>();
+        Set<Method> methods;
+        try {
+            Method[] publicMethods = listener.getClass().getMethods();
+            Method[] privateMethods = listener.getClass().getDeclaredMethods();
+            methods = new HashSet<>(publicMethods.length + privateMethods.length, 1.0f);
+            Collections.addAll(methods, publicMethods);
+            Collections.addAll(methods, privateMethods);
+        } catch (NoClassDefFoundError e) {
+            plugin.getLogger().error("Plugin " + plugin.getDescription().getFullName() + " has failed to register events for " + listener.getClass() + " because " + e.getMessage() + " does not exist.");
+            return;
+        }
+
+        for (final Method method : methods) {
+            final EventHandler eh = method.getAnnotation(EventHandler.class);
+            if (eh == null) continue;
+            if (method.isBridge() || method.isSynthetic()) {
+                continue;
+            }
+            final Class<?> checkClass;
+
+            if (method.getParameterTypes().length != 1 || !Event.class.isAssignableFrom(checkClass = method.getParameterTypes()[0])) {
+                plugin.getLogger().error(plugin.getDescription().getFullName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
+                continue;
+            }
+
+            final Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
+            method.setAccessible(true);
+            Set<RegisteredListener> eventSet = ret.get(eventClass);
+            if (eventSet == null) {
+                eventSet = new HashSet<>();
+                ret.put(eventClass, eventSet);
+            }
+
+            for (Class<?> clazz = eventClass; Event.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) {
+                // This loop checks for extending deprecated events
+                if (clazz.getAnnotation(Deprecated.class) != null) {
+                    if (Boolean.valueOf(String.valueOf(this.server.getConfig("settings.deprecated-verbpse", true)))) {
+                        this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.plugin.deprecatedEvent", new String[]{plugin.getName(), clazz.getName(), listener.getClass().getName() + "." + method.getName() + "()"}));
+                    }
+                    break;
+                }
+            }
+            this.registerEvent(eventClass, listener, eh.priority(), new MethodEventExecutor(method), plugin, eh.ignoreCancelled());
+        }
+    }
+
+    public void registerEvent(Class<? extends Event> event, Listener listener, EventPriority priority, EventExecutor executor, Plugin plugin) throws PluginException {
+        this.registerEvent(event, listener, priority, executor, plugin, false);
+    }
+
+    public void registerEvent(Class<? extends Event> event, Listener listener, EventPriority priority, EventExecutor executor, Plugin plugin, boolean ignoreCancelled) throws PluginException {
+        if (!plugin.isEnabled()) {
+            throw new PluginException("Plugin attempted to register " + event + " while not enabled");
+        }
+
+        try {
+            this.getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private HandlerList getEventListeners(Class<? extends Event> type) throws IllegalAccessException {
+        try {
+            Method method = getRegistrationClass(type).getDeclaredMethod("getHandlers");
+            method.setAccessible(true);
+            return (HandlerList) method.invoke(null);
+        } catch (Exception e) {
+            throw new IllegalAccessException(e.toString());
+        }
+    }
+
+    private Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) throws IllegalAccessException {
+        try {
+            clazz.getDeclaredMethod("getHandlers");
+            return clazz;
+        } catch (NoSuchMethodException e) {
+            if (clazz.getSuperclass() != null
+                    && !clazz.getSuperclass().equals(Event.class)
+                    && Event.class.isAssignableFrom(clazz.getSuperclass())) {
+                return getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
+            } else {
+                throw new IllegalAccessException("Unable to find handler list for event " + clazz.getName() + ". Static getHandlers method required!");
+            }
+        }
+    }
+
 }
