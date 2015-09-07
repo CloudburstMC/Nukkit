@@ -65,7 +65,7 @@ public abstract class Generator {
 
         for (int xx = 0; xx < xSize; ++xx) {
             if (xx % samplingRate != 0) {
-                int nx = (int) (xx / samplingRate) * samplingRate;
+                int nx = xx / samplingRate * samplingRate;
                 noiseArray[nx] = Noise.linearLerp(xx, nx, nx + samplingRate, noiseArray[nx], noiseArray[nx + samplingRate]);
             }
         }
@@ -100,8 +100,8 @@ public abstract class Generator {
 
             for (int zz = 0; zz < zSize; ++zz) {
                 if (xx % samplingRate != 0 || zz % samplingRate != 0) {
-                    int nx = (int) (xx / samplingRate) * samplingRate;
-                    int nz = (int) (zz / samplingRate) * samplingRate;
+                    int nx = xx / samplingRate * samplingRate;
+                    int nz = zz / samplingRate * samplingRate;
                     noiseArray[xx][zz] = Noise.bilinearLerp(
                             xx, zz, noiseArray[nx][nz], noiseArray[nx][nz + samplingRate],
                             noiseArray[nx + samplingRate][nz], noiseArray[nx + samplingRate][nz + samplingRate],
@@ -146,9 +146,9 @@ public abstract class Generator {
             for (int zz = 0; zz < zSize; ++zz) {
                 for (int yy = 0; yy < ySize; ++yy) {
                     if (xx % xSamplingRate != 0 || zz % zSamplingRate != 0 || yy % ySamplingRate != 0) {
-                        int nx = (int) (xx / xSamplingRate) * xSamplingRate;
-                        int ny = (int) (yy / ySamplingRate) * ySamplingRate;
-                        int nz = (int) (zz / zSamplingRate) * zSamplingRate;
+                        int nx = xx / xSamplingRate * xSamplingRate;
+                        int ny = yy / ySamplingRate * ySamplingRate;
+                        int nz = zz / zSamplingRate * zSamplingRate;
 
                         int nnx = nx + xSamplingRate;
                         int nny = ny + ySamplingRate;

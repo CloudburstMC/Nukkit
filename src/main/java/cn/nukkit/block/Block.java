@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
@@ -11,9 +12,9 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.utils.MainLogger;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -251,7 +252,7 @@ public class Block extends Position implements Metadatable, Cloneable {
         this.meta = meta;
     }
 
-    public static void init() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public static void init() {
         if (list == null) {
             list = new Class[256];
             fullList = new Block[4096];
@@ -264,11 +265,20 @@ public class Block extends Position implements Metadatable, Cloneable {
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];
                 if (c != null) {
-                    Block block = (Block) c.newInstance();
-                    Constructor constructor = c.getDeclaredConstructor(int.class);
-                    constructor.setAccessible(true);
-                    for (int data = 0; data < 16; ++data) {
-                        fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
+                    Block block;
+                    try {
+                        block = (Block) c.newInstance();
+                        Constructor constructor = c.getDeclaredConstructor(int.class);
+                        constructor.setAccessible(true);
+                        for (int data = 0; data < 16; ++data) {
+                            fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
+                        }
+                    } catch (Exception e) {
+                        MainLogger logger = Server.getInstance().getLogger();
+                        if (logger != null) {
+                            logger.error("Error while registering " + c.getName());
+                        }
+                        return;
                     }
 
                     solid[id] = block.isSolid();
@@ -583,7 +593,6 @@ public class Block extends Position implements Metadatable, Cloneable {
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) throws Exception {
         if (this.getLevel() != null) {
             this.getLevel().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
-
         }
     }
 

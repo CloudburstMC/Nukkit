@@ -17,16 +17,14 @@ public abstract class ZLibUtils {
         compresser.reset();
         compresser.setInput(data);
         compresser.finish();
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length)) {
-            byte[] buf = new byte[1024];
-            while (!compresser.finished()) {
-                int i = compresser.deflate(buf);
-                bos.write(buf, 0, i);
-            }
-            output = bos.toByteArray();
-        } catch (Exception e) {
-            throw e;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length);
+        byte[] buf = new byte[1024];
+        while (!compresser.finished()) {
+            int i = compresser.deflate(buf);
+            bos.write(buf, 0, i);
         }
+        output = bos.toByteArray();
+
         compresser.end();
         return output;
     }

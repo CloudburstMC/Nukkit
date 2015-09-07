@@ -104,13 +104,6 @@ public class SimpleCommandMap implements CommandMap {
         String[] newargs = new String[args.length - 1];
         System.arraycopy(args, 1, newargs, 0, newargs.length);
         args = newargs;
-        /*try {
-            args = Arrays.copyOfRange(args, 1, args.length - 1);
-            System.out.println(args.length);
-        } catch (Exception e) {
-            args = new String[0];
-        }*/
-
         Command target = this.getCommand(sentCommandLabel);
 
         if (target == null) {
@@ -185,7 +178,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (targets.size() > 0) {
-                this.knownCommands.put(alias.toLowerCase(), new FormattedCommandAlias(alias.toLowerCase(), targets));
+                this.knownCommands.put(alias.toLowerCase(), new FormattedCommandAlias(alias.toLowerCase(), (String[]) targets.toArray()));
             } else {
                 this.knownCommands.remove(alias.toLowerCase());
             }

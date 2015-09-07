@@ -36,12 +36,11 @@ public class AsyncWorker extends Thread implements InterruptibleThread {
     public void run() {
         while (true) {
             synchronized (stack) {
-                /*while (!this.stack.isEmpty()) {
-                    AsyncTask task = stack.getFirst();
-                    task.start();
-                    stack.removeFirst();
-                }*/
-                stack.stream().filter(task -> !task.isFinished()).forEach(cn.nukkit.scheduler.AsyncTask::run);
+                for (AsyncTask task : stack) {
+                    if (!task.isFinished()) {
+                        task.run();
+                    }
+                }
             }
             try {
                 sleep(5);

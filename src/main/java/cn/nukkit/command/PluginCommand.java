@@ -7,13 +7,13 @@ import cn.nukkit.plugin.Plugin;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PluginCommand extends Command implements PluginIdentifiableCommand {
+public class PluginCommand<T extends Plugin> extends Command implements PluginIdentifiableCommand {
 
-    private Plugin owningPlugin;
+    private T owningPlugin;
 
     private CommandExecutor executor;
 
-    public PluginCommand(String name, Plugin owner) {
+    public PluginCommand(String name, T owner) {
         super(name);
         this.owningPlugin = owner;
         this.executor = owner;
@@ -48,7 +48,7 @@ public class PluginCommand extends Command implements PluginIdentifiableCommand 
     }
 
     @Override
-    public Plugin getPlugin() {
+    public T getPlugin() {
         return this.owningPlugin;
     }
 }

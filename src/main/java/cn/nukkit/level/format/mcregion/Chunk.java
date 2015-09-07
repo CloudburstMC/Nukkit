@@ -1,6 +1,7 @@
 package cn.nukkit.level.format.mcregion;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.nbt.CompoundTag;
@@ -419,10 +420,12 @@ public class Chunk extends BaseFullChunk {
         }
 
         ArrayList<CompoundTag> entities = new ArrayList<>();
-        this.getEntities().values().stream().filter(entity -> !(entity instanceof Player) && !entity.closed).forEach(entity -> {
-            entity.saveNBT();
-            entities.add(entity.namedTag);
-        });
+        for (Entity entity : this.getEntities().values()) {
+            if (!(entity instanceof Player) && !entity.closed) {
+                entity.saveNBT();
+                entities.add(entity.namedTag);
+            }
+        }
         ListTag<CompoundTag> listTag = new ListTag<>("Entities");
         listTag.list = entities;
         nbt.putList(listTag);

@@ -11,6 +11,7 @@ import cn.nukkit.utils.ChunkException;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,8 +47,11 @@ public class Anvil extends BaseLevelProvider {
     public static boolean isValid(String path) {
         boolean isValid = (new File(path + "/level.dat").exists()) && new File(path + "/region/").isDirectory();
         if (isValid) {
-            for (File file : new File(path + "/region/").listFiles((dir, name) -> {
-                return Pattern.matches("^.+\\.mc[r|a]$", name);
+            for (File file : new File(path + "/region/").listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return Pattern.matches("^.+\\.mc[r|a]$", name);
+                }
             })) {
                 if (!file.getName().endsWith(".mcr")) {
                     isValid = false;

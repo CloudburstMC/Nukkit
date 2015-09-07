@@ -24,7 +24,7 @@ public class Nukkit {
     public static boolean ANSI = true;
     public static int DEBUG = 1;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 
         //启动参数
         for (String arg : args) {

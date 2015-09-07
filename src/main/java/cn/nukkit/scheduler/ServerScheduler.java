@@ -22,7 +22,12 @@ public class ServerScheduler {
     private int ids = 1;
     protected long currentTick = 0;
 
-    Comparator<TaskHandler> comparator = (handler1, handler2) -> handler1.getNextRun() < handler2.getNextRun() ? -1 : (handler1.getNextRun() == handler2.getNextRun() ? 0 : -1);
+    Comparator<TaskHandler> comparator = new Comparator<TaskHandler>() {
+        @Override
+        public int compare(TaskHandler handler1, TaskHandler handler2) {
+            return handler1.getNextRun() < handler2.getNextRun() ? -1 : (handler1.getNextRun() == handler2.getNextRun() ? 0 : -1);
+        }
+    };
 
     public ServerScheduler() {
         this.queue = new PriorityBlockingQueue<>(11, comparator);

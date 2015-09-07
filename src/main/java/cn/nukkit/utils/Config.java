@@ -10,7 +10,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -192,11 +191,8 @@ public class Config {
                     break;
             }
             if (async) {
-                try {
-                    Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content));
+
             } else {
                 try {
                     Utils.writeFile(this.file, content);
@@ -335,9 +331,11 @@ public class Config {
 
 
     private Map<String, Object> fillDefaults(Map<String, Object> default_map, Map<String, Object> data) {
-        default_map.entrySet().stream().filter(entry -> !data.containsKey(entry.getKey())).forEach(entry -> {
-            data.put(entry.getKey(), entry.getValue());
-        });
+        for (Map.Entry<String, Object> entry : default_map.entrySet()) {
+            if (!data.containsKey(entry.getKey())) {
+                data.put(entry.getKey(), entry.getValue());
+            }
+        }
         return data;
     }
 

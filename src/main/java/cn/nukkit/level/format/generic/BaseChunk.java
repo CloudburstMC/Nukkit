@@ -518,7 +518,10 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             }
             entity.close();
         }
-        this.getTiles().values().forEach(cn.nukkit.tile.Tile::close);
+
+        for (Tile tile : this.getTiles().values()) {
+            tile.close();
+        }
         this.provider = null;
         return true;
     }

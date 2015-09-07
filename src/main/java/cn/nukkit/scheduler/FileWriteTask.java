@@ -12,8 +12,8 @@ public class FileWriteTask extends AsyncTask {
     private File file;
     private InputStream contents;
 
-    public FileWriteTask(String path, String contents) throws UnsupportedEncodingException {
-        this(path, new ByteArrayInputStream(contents.getBytes("UTF-8")));
+    public FileWriteTask(String path, String contents) {
+        this(new File(path), contents);
     }
 
     public FileWriteTask(String path, InputStream contents) {
@@ -21,8 +21,13 @@ public class FileWriteTask extends AsyncTask {
         this.contents = contents;
     }
 
-    public FileWriteTask(File file, String contents) throws UnsupportedEncodingException {
-        this(file, new ByteArrayInputStream(contents.getBytes("UTF-8")));
+    public FileWriteTask(File file, String contents) {
+        this.file = file;
+        try {
+            this.contents = new ByteArrayInputStream(contents.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            //ignore
+        }
     }
 
     public FileWriteTask(File file, InputStream contents) {

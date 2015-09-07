@@ -43,7 +43,7 @@ public class RegisteredListener {
 
     public void callEvent(Event event) {
         if (event instanceof Cancellable) {
-            if (((Cancellable) event).isCancelled() && isIgnoringCancelled()) {
+            if (event.isCancelled() && isIgnoringCancelled()) {
                 return;
             }
         }

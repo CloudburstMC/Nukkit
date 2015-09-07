@@ -14,9 +14,9 @@ public abstract class Event {
         return eventName == null ? getClass().getName() : eventName;
     }
 
-    public boolean isCancelled() throws IllegalArgumentException {
+    public boolean isCancelled() {
         if (!(this instanceof Cancellable)) {
-            throw new IllegalArgumentException("Event is not Cancellable");
+            throw new EventException("Event is not Cancellable");
         }
         return isCancelled;
     }

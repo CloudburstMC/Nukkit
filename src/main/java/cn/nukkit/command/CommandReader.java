@@ -63,10 +63,6 @@ public class CommandReader extends Thread implements InterruptibleThread {
                 } catch (Exception e) {
                     Server.getInstance().getLogger().logException(e);
                 }
-                /*logger.notice(TextFormat.LIGHT_PURPLE + "Using command: " + line);
-                if (line.trim().toLowerCase().equals("stop")) {
-                    Server.getInstance().shutdown();
-                }*/
 
             } else if (System.currentTimeMillis() - lastLine <= 1) {
                 try {

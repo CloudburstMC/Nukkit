@@ -7,6 +7,7 @@ import cn.nukkit.permission.Permissible;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -50,9 +51,7 @@ public abstract class Command {
 
     public Command(String name, String description, String usageMessage, String[] aliases) {
         List<String> list = new ArrayList<>();
-        for (String alias : aliases) {
-            list.add(alias);
-        }
+        Collections.addAll(list, aliases);
         this.name = name;
         this.nextLabel = name;
         this.label = name;

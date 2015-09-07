@@ -11,6 +11,7 @@ import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -143,14 +144,17 @@ public class PluginManager {
                 loaders = this.fileAssociations;
             }
 
-            for (PluginLoader loader : loaders.values()) {
-                for (File file : dictionary.listFiles((dir, name) -> {
-                    for (Pattern pattern : loader.getPluginFilters()) {
-                        if (pattern.matcher(name).matches()) {
-                            return true;
+            for (final PluginLoader loader : loaders.values()) {
+                for (File file : dictionary.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        for (Pattern pattern : loader.getPluginFilters()) {
+                            if (pattern.matcher(name).matches()) {
+                                return true;
+                            }
                         }
+                        return false;
                     }
-                    return false;
                 })) {
                     if (file.isDirectory()) {
                         continue;

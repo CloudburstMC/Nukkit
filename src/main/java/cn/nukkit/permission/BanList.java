@@ -100,7 +100,6 @@ public class BanList {
                 list.remove(entry);
             }
         }
-        //list.stream().filter(BanEntry::hasExpired).forEach(list::remove);
     }
 
     public void load() {
@@ -120,7 +119,6 @@ public class BanList {
                 for (TreeMap<String, String> map : list) {
                     this.list.add(BanEntry.fromMap(map));
                 }
-                //this.list.addAll(list.stream().map(BanEntry::fromMap).collect(Collectors.toList()));
             } catch (IOException e) {
                 e.printStackTrace();
             }

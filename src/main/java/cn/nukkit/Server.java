@@ -94,7 +94,7 @@ public class Server {
 
     private Map<String, Player> players = new HashMap<>();
 
-    public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) throws Exception {
+    public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
         instance = this;
         this.logger = logger;
         this.filePath = filePath;
@@ -246,7 +246,7 @@ public class Server {
         this.pluginManager.disablePlugins();
     }
 
-    public boolean dispatchCommand(CommandSender sender, String commandLine) throws Exception {
+    public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
         if (sender == null) {
             throw new ServerException("CommandSender is not valid");
         }

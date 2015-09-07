@@ -63,9 +63,11 @@ public abstract class MetadataStore {
         if (owningPlugin == null) {
             throw new PluginException("Plugin cannot be null");
         }
-        this.metadataMap.values().stream().filter(value -> value.containsKey(owningPlugin)).forEach(value -> {
-            ((MetadataValue) value.get(owningPlugin)).invalidate();
-        });
+        for (Map value : this.metadataMap.values()) {
+            if (value.containsKey(owningPlugin)) {
+                ((MetadataValue) value.get(owningPlugin)).invalidate();
+            }
+        }
     }
 
     protected abstract String disambiguate(Metadatable subject, String metadataKey) throws Exception;
