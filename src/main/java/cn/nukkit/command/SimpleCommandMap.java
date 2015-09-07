@@ -178,7 +178,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (targets.size() > 0) {
-                this.knownCommands.put(alias.toLowerCase(), new FormattedCommandAlias(alias.toLowerCase(), (String[]) targets.toArray()));
+                this.knownCommands.put(alias.toLowerCase(), new FormattedCommandAlias(alias.toLowerCase(), targets));
             } else {
                 this.knownCommands.remove(alias.toLowerCase());
             }

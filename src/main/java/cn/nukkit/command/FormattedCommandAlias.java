@@ -6,6 +6,7 @@ import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * author: MagicDroidX
@@ -18,6 +19,11 @@ public class FormattedCommandAlias extends Command {
     public FormattedCommandAlias(String alias, String[] formatStrings) {
         super(alias);
         this.formatStrings = formatStrings;
+    }
+
+    public FormattedCommandAlias(String alias, List<String> formatStrings) {
+        super(alias);
+        this.formatStrings = formatStrings.toArray(new String[formatStrings.size()]);
     }
 
     @Override
