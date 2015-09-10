@@ -97,6 +97,7 @@ public class Server {
     public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
         instance = this;
         this.logger = logger;
+
         this.filePath = filePath;
         if (!new File(dataPath + "worlds/").exists()) {
             new File(dataPath + "worlds/").mkdirs();
@@ -192,7 +193,7 @@ public class Server {
         }
 
         Nukkit.DEBUG = (int) this.getConfig("debug.level", 1);
-        if (this.logger != null) {
+        if (this.logger instanceof MainLogger) {
             this.logger.setLogDebug(Nukkit.DEBUG > 1);
         }
 
@@ -223,6 +224,14 @@ public class Server {
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
         this.start();
+    }
+
+    public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
+        this.broadcastPacketsCallback(data, identifiers, 0);
+    }
+
+    public void broadcastPacketsCallback(byte[] data, List<String> identifiers, int channel) {
+        //todo
     }
 
     public void enablePlugins(PluginLoadOrder type) {

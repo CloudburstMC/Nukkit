@@ -434,7 +434,7 @@ public class PluginManager {
                 }
                 plugin.getPluginLoader().enablePlugin(plugin);
             } catch (Exception e) {
-                MainLogger logger = Server.getInstance().getLogger();
+                MainLogger logger = this.server.getLogger();
                 if (logger != null) {
                     logger.logException(e);
                 }
@@ -506,7 +506,7 @@ public class PluginManager {
             try {
                 plugin.getPluginLoader().disablePlugin(plugin);
             } catch (Exception e) {
-                MainLogger logger = Server.getInstance().getLogger();
+                MainLogger logger = this.server.getLogger();
                 if (logger != null) {
                     logger.logException(e);
                 }

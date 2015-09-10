@@ -34,11 +34,17 @@ public class Nukkit {
         MainLogger logger = new MainLogger(DATA_PATH + "server.log");
 
         try {
+            if (ANSI) {
+                System.out.print((char) 0x1b + "]0;Starting Nukkit Server For Minecraft: PE" + (char) 0x07);
+            }
             Server server = new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        if (ANSI) {
+            System.out.print((char) 0x1b + "]0;Stopping Server..." + (char) 0x07);
+        }
         logger.info("Stopping other threads");
 
         for (Thread thread : java.lang.Thread.getAllStackTraces().keySet()) {
@@ -58,6 +64,9 @@ public class Nukkit {
         logger.interrupt();
         CommandReader.getInstance().removePromptLine();
 
+        if (ANSI) {
+            System.out.print((char) 0x1b + "]0;Server Stopped" + (char) 0x07);
+        }
         System.exit(0);
     }
 

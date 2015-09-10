@@ -15,15 +15,7 @@ import java.util.Date;
  * author: MagicDroidX
  * Nukkit
  */
-public class MainLogger extends Thread {
-    public static final String EMERGENCY = "emergency";
-    public static final String ALERT = "alert";
-    public static final String CRITICAL = "critical";
-    public static final String ERROR = "error";
-    public static final String WARNING = "warning";
-    public static final String NOTICE = "notice";
-    public static final String INFO = "info";
-    public static final String DEBUG = "debug";
+public class MainLogger extends ThreadedLogger {
 
     protected File logFile;
     protected String logStream = "";
@@ -59,34 +51,42 @@ public class MainLogger extends Thread {
         return logger;
     }
 
+    @Override
     public void emergency(String message) {
         this.send(TextFormat.RED + "[EMERGENCY] " + message);
     }
 
+    @Override
     public void alert(String message) {
         this.send(TextFormat.RED + "[ALERT] " + message);
     }
 
+    @Override
     public void critical(String message) {
         this.send(TextFormat.RED + "[CRITICAL] " + message);
     }
 
+    @Override
     public void error(String message) {
         this.send(TextFormat.DARK_RED + "[ERROR] " + message);
     }
 
+    @Override
     public void warning(String message) {
         this.send(TextFormat.YELLOW + "[WARNING] " + message);
     }
 
+    @Override
     public void notice(String message) {
         this.send(TextFormat.AQUA + "[NOTICE] " + message);
     }
 
+    @Override
     public void info(String message) {
         this.send(TextFormat.WHITE + "[INFO] " + message);
     }
 
+    @Override
     public void debug(String message) {
         if (!this.logDebug) {
             return;
@@ -106,7 +106,8 @@ public class MainLogger extends Thread {
         this.alert(Utils.getExceptionMessage(e));
     }
 
-    public void log(String level, String message) {
+    @Override
+    public void log(LogLevel level, String message) {
         switch (level) {
             case EMERGENCY:
                 this.emergency(message);
@@ -162,6 +163,7 @@ public class MainLogger extends Thread {
         this.logStream += str;
     }
 
+    @Override
     public void run() {
         this.shutdown = false;
         while (!this.shutdown) {

@@ -6,7 +6,7 @@ import cn.nukkit.level.format.generic.BaseRegionLoader;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.ZLibUtils;
+import cn.nukkit.utils.Zlib;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -166,12 +166,12 @@ public class RegionLoader extends BaseRegionLoader {
                 this.locationTable.put(i, (table = new Integer[]{0, 0, 0}));
             }
             try {
-                chunk = ZLibUtils.decompress(Arrays.copyOf(chunk, 5));
+                chunk = Zlib.inflate(Arrays.copyOf(chunk, 5));
             } catch (Exception e) {
                 this.locationTable.put(i, (table = new Integer[]{0, 0, 0}));
                 continue;
             }
-            chunk = ZLibUtils.compress(chunk);
+            chunk = Zlib.deflate(chunk);
             ByteBuffer buffer = ByteBuffer.allocate(4 + 1 + chunk.length);
             buffer.put(Binary.writeInt(chunk.length + 1));
             buffer.put(COMPRESSION_ZLIB);

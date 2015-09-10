@@ -10,7 +10,7 @@ import cn.nukkit.nbt.ListTag;
 import cn.nukkit.nbt.NbtIo;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.ZLibUtils;
+import cn.nukkit.utils.Zlib;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -325,7 +325,7 @@ public class Chunk extends BaseFullChunk {
 
     public static Chunk fromBinary(byte[] data, LevelProvider provider) {
         try {
-            CompoundTag chunk = NbtIo.read(new DataInputStream(new ByteArrayInputStream(ZLibUtils.decompress(data))));
+            CompoundTag chunk = NbtIo.read(new DataInputStream(new ByteArrayInputStream(Zlib.inflate(data))));
             if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
                 return null;
             }
@@ -444,7 +444,7 @@ public class Chunk extends BaseFullChunk {
 
         NbtIo.write(chunk, outputStream);
 
-        return ZLibUtils.compress(byteArrayOutputStream.toByteArray());
+        return Zlib.deflate(byteArrayOutputStream.toByteArray());
 
     }
 
