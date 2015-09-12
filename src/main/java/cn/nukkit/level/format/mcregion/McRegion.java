@@ -136,7 +136,7 @@ public class McRegion extends BaseLevelProvider {
         buffer.put(blockSkyLightArray);
         buffer.put(blockLightArray);
         for (int aHeightMapArray : heightMapArray) {
-            buffer.put((byte) ((aHeightMapArray >> 24) & 0xff));
+            buffer.put((byte) (aHeightMapArray & 0xff));
         }
         for (int aBiomeColorArray : biomeColorArray) {
             buffer.put(Binary.writeInt(aBiomeColorArray));

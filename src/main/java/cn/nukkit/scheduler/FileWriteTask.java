@@ -2,7 +2,11 @@ package cn.nukkit.scheduler;
 
 import cn.nukkit.utils.Utils;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * author: MagicDroidX
@@ -23,11 +27,7 @@ public class FileWriteTask extends AsyncTask {
 
     public FileWriteTask(File file, String contents) {
         this.file = file;
-        try {
-            this.contents = new ByteArrayInputStream(contents.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            //ignore
-        }
+        this.contents = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
     }
 
     public FileWriteTask(File file, InputStream contents) {

@@ -11,6 +11,7 @@ import cn.nukkit.utils.Binary;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * author: MagicDroidX
@@ -31,16 +32,18 @@ public class ChunkRequestTask extends AsyncTask {
         this.chunkX = chunk.getX();
         this.chunkZ = chunk.getZ();
 
-        String hex = "";
+        byte[] buffer = new byte[0];
+
         for (Tile tile : chunk.getTiles().values()) {
             if (tile instanceof Spawnable) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 DataOutputStream outputStream = new DataOutputStream(baos);
-                NbtIo.writeCompressed(((Spawnable) tile).getSpawnCompound(), outputStream);
-                hex += Binary.bytesToHexString(baos.toByteArray());
+                NbtIo.write(((Spawnable) tile).getSpawnCompound(), outputStream);
+                buffer = Binary.appendBytes(buffer, baos.toByteArray());
             }
         }
-        this.tiles = Binary.hexStringToBytes(hex);
+
+        this.tiles = buffer;
     }
 
     @Override
@@ -50,34 +53,49 @@ public class ChunkRequestTask extends AsyncTask {
         byte[] meta = chunk.getBlockDataArray();
         byte[] blockLight = chunk.getBlockLightArray();
         byte[] skyLight = chunk.getBlockSkyLightArray();
+        int[] heightMap = chunk.getHeightMapArray();
+        int[] biomeColors = chunk.getBiomeColorArray();
+        ByteBuffer buffer = ByteBuffer.allocate(
+                16 * 16 * (128 + 64 + 64 + 64)
+                        + 256
+                        + 256
+                        + this.tiles.length
+        );
 
-        StringBuilder orderedIds = new StringBuilder();
-        StringBuilder orderedData = new StringBuilder();
-        StringBuilder orderedSkyLight = new StringBuilder();
-        StringBuilder orderedLight = new StringBuilder();
+        ByteBuffer orderedIds = ByteBuffer.allocate(16 * 16 * 128);
+        ByteBuffer orderedData = ByteBuffer.allocate(16 * 16 * 64);
+        ByteBuffer orderedSkyLight = ByteBuffer.allocate(16 * 16 * 64);
+        ByteBuffer orderedLight = ByteBuffer.allocate(16 * 16 * 64);
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
-                orderedIds.append(Binary.bytesToHexString(this.getColumn(ids, x, z)));
-                orderedData.append(Binary.bytesToHexString(this.getHalfColumn(meta, x, z)));
-                orderedSkyLight.append(Binary.bytesToHexString(this.getHalfColumn(skyLight, x, z)));
-                orderedLight.append(Binary.bytesToHexString(this.getHalfColumn(blockLight, x, z)));
+                orderedIds.put(this.getColumn(ids, x, z));
+                orderedData.put(this.getHalfColumn(meta, x, z));
+                orderedSkyLight.put(this.getHalfColumn(skyLight, x, z));
+                orderedLight.put(this.getHalfColumn(blockLight, x, z));
             }
         }
 
-        StringBuilder heightMap = new StringBuilder();
-        for (int i : chunk.getHeightMapArray()) {
-            String hex = Integer.toHexString(i & 0xFF);
-            if (hex.length() == 1) {
-                hex = '0' + hex;
-            }
-            heightMap.append(hex);
+        ByteBuffer orderedHeightMap = ByteBuffer.allocate(heightMap.length);
+        for (int i : heightMap) {
+            orderedHeightMap.put((byte) (i & 0xff));
         }
-        StringBuilder biomeColors = new StringBuilder();
-        for (int i : chunk.getBiomeColorArray()) {
-            biomeColors.append(Binary.bytesToHexString(Binary.writeInt(i)));
+        ByteBuffer orderedBiomeColors = ByteBuffer.allocate(biomeColors.length * 4);
+        for (int i : biomeColors) {
+            orderedBiomeColors.put(Binary.writeInt(i));
         }
-        this.setResult(Binary.hexStringToBytes(orderedIds.toString() + orderedData.toString() + orderedSkyLight.toString() + orderedLight.toString() + heightMap.toString() + biomeColors.toString() + Binary.bytesToHexString(this.tiles)));
+
+        this.setResult(
+                buffer
+                        .put(orderedIds)
+                        .put(orderedData)
+                        .put(orderedSkyLight)
+                        .put(orderedLight)
+                        .put(orderedHeightMap)
+                        .put(orderedBiomeColors)
+                        .put(this.tiles)
+                        .array()
+        );
     }
 
     public byte[] getColumn(byte[] data, int x, int z) {
@@ -94,11 +112,11 @@ public class ChunkRequestTask extends AsyncTask {
         int i = (z << 3) + (x >> 1);
         if ((x & 1) == 0) {
             for (int y = 0; y < 128; y += 2) {
-                column[(y / 2)] = (byte) ((byte) (data[(y << 7) + i] & 0x0f) | (byte) ((((data[((y + 1) << 7) + i] & 0x0f) >> 24) & 0xff) << 4));
+                column[(y / 2)] = (byte) ((byte) (data[(y << 7) + i] & 0x0f) | (byte) (((data[((y + 1) << 7) + i] & 0x0f) & 0xff) << 4));
             }
         } else {
             for (int y = 0; y < 128; y += 2) {
-                column[(y / 2)] = (byte) ((byte) ((((data[(y << 7) + i] & 0xf0) >> 24) & 0xff) >> 4) | (byte) (data[((y + 1) << 7) + i] & 0xf0));
+                column[(y / 2)] = (byte) ((byte) (((data[(y << 7) + i] & 0xf0) & 0xff) >> 4) | (byte) (data[((y + 1) << 7) + i] & 0xf0));
             }
         }
         return column;

@@ -1,9 +1,8 @@
 package cn.nukkit.raknet.server;
 
-import cn.nukkit.raknet.UDPServerSocket;
 import cn.nukkit.utils.ThreadedLogger;
 
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * author: MagicDroidX
@@ -15,9 +14,8 @@ public class RakNetServer extends Thread {
 
     protected ThreadedLogger logger;
 
-    protected final LinkedList<byte[]> externalQueue;
-    protected final LinkedList<byte[]> internalQueue;
-
+    protected ConcurrentLinkedQueue<byte[]> externalQueue;
+    protected ConcurrentLinkedQueue<byte[]> internalQueue;
 
     protected boolean shutdown;
 
@@ -35,8 +33,8 @@ public class RakNetServer extends Thread {
         this.interfaz = interfaz;
         this.logger = logger;
 
-        this.externalQueue = new LinkedList<>();
-        this.internalQueue = new LinkedList<>();
+        this.externalQueue = new ConcurrentLinkedQueue<>();
+        this.internalQueue = new ConcurrentLinkedQueue<>();
 
         this.start();
     }
@@ -61,38 +59,28 @@ public class RakNetServer extends Thread {
         return logger;
     }
 
-    public LinkedList<byte[]> getExternalQueue() {
+    public ConcurrentLinkedQueue<byte[]> getExternalQueue() {
         return externalQueue;
     }
 
-    public LinkedList<byte[]> getInternalQueue() {
+    public ConcurrentLinkedQueue<byte[]> getInternalQueue() {
         return internalQueue;
     }
 
     public void pushMainToThreadPacket(byte[] data) {
-        synchronized (this.internalQueue) {
-            this.internalQueue.add(data);
-        }
-
+        this.internalQueue.add(data);
     }
 
     public byte[] readMainToThreadPacket() {
-        synchronized (this.internalQueue) {
-            return this.internalQueue.poll();
-        }
+        return this.internalQueue.poll();
     }
 
     public void pushThreadToMainPacket(byte[] data) {
-        synchronized (this.externalQueue) {
-            this.externalQueue.add(data);
-        }
-
+        this.externalQueue.add(data);
     }
 
     public byte[] readThreadToMainPacket() {
-        synchronized (this.externalQueue) {
-            return this.externalQueue.poll();
-        }
+        return this.externalQueue.poll();
     }
 
     private class ShutdownHandler extends Thread {
@@ -108,6 +96,6 @@ public class RakNetServer extends Thread {
         this.setName("RakNet Thread #" + Thread.currentThread().getId());
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler());
         UDPServerSocket socket = new UDPServerSocket(this.getLogger(), port, this.interfaz);
-        
+
     }
 }

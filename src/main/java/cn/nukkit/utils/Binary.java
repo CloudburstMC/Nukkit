@@ -1,6 +1,7 @@
 package cn.nukkit.utils;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * author: MagicDroidX
@@ -54,8 +55,8 @@ public class Binary {
         return b;
     }
 
-    public static int readShort(byte[] bytes) {
-        return ((bytes[0] << 8) & 0x0000ff00) | (bytes[1] & 0x000000ff);
+    public static short readShort(byte[] bytes) {
+        return (short) (((bytes[0] << 8) & 0x0000ff00) | (bytes[1] & 0x000000ff));
     }
 
     public static short readSignedShort(byte[] bytes) {
@@ -192,6 +193,42 @@ public class Binary {
             d[i] = (byte) (((byte) str.indexOf(hexChars[pos]) << 4) | ((byte) str.indexOf(hexChars[pos + 1])));
         }
         return d;
+    }
+
+    public static byte[] subBytes(byte[] bytes, int start, int length) {
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        bb.position(start);
+        byte[] bytes2 = new byte[length];
+        bb.get(bytes2);
+        return bytes2;
+    }
+
+    public static byte[] subBytes(byte[] bytes, int start) {
+        return subBytes(bytes, start, bytes.length - start);
+    }
+
+    public static byte[][] splitBytes(byte[] bytes, int chunkSize) {
+        byte[][] splits = new byte[1024][chunkSize];
+        int chunks = 0;
+        for (int i = 0; i < bytes.length; i += chunkSize) {
+            if ((bytes.length - i) > chunkSize) {
+                splits[chunks] = Arrays.copyOfRange(bytes, i, i + chunkSize);
+            } else {
+                splits[chunks] = Arrays.copyOfRange(bytes, i, bytes.length);
+            }
+            chunks++;
+        }
+
+        splits = Arrays.copyOf(splits, chunks);
+
+        return splits;
+    }
+
+    public static byte[] appendBytes(byte[] bytes1, byte[] bytes2) {
+        byte[] newBytes = new byte[bytes1.length + bytes2.length];
+        System.arraycopy(bytes1, 0, newBytes, 0, bytes1.length);
+        System.arraycopy(bytes2, 0, newBytes, bytes1.length, bytes2.length);
+        return newBytes;
     }
 
 }

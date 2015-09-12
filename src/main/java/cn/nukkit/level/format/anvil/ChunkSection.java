@@ -36,7 +36,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public void setBlockId(int x, int y, int z, int id) {
-        this.blocks[(y << 8) + (z << 4) + x] = (byte) ((id >> 24) & 0xFF);
+        this.blocks[(y << 8) + (z << 4) + x] = (byte) (id & 0xFF);
     }
 
     @Override
@@ -53,9 +53,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         int i = (y << 7) + (z << 3) + (x >> 1);
         int old = this.data[i];
         if ((x & 1) == 0) {
-            this.data[i] = (byte) ((((((old & 0xf0) | (data & 0x0f)) >> 24) & 0xff) >> 24) & 0xff);
+            this.data[i] = (byte) (((((old & 0xf0) | data & 0x0f)) & 0xff) & 0xff);
         } else {
-            this.data[i] = (byte) (((((((data & 0x0f) << 4) | (old & 0x0f)) >> 24) & 0xff) >> 24) & 0xff);
+            this.data[i] = (byte) (((((data & 0x0f) << 4) | (old & 0x0f)) & 0xff) & 0xff);
         }
     }
 
@@ -83,7 +83,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         int i = (y << 8) + (z << 4) + x;
         boolean changed = false;
         if (blockId != null) {
-            byte id = (byte) ((blockId >> 24) & 0xff);
+            byte id = (byte) (blockId & 0xff);
             if (this.blocks[i] != id) {
                 this.blocks[i] = id;
                 changed = true;
@@ -94,12 +94,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             i >>= 1;
             int old = this.data[i];
             if ((x & 1) == 0) {
-                this.data[i] = (byte) ((((old & 0xf0) | (meta & 0x0f)) >> 24) & 0xff);
+                this.data[i] = (byte) ((((old & 0xf0) | meta & 0x0f)) & 0xff);
                 if (!meta.equals(old & 0x0f)) {
                     changed = true;
                 }
             } else {
-                this.data[i] = (byte) (((((meta & 0x0f) << 4) | (old & 0x0f)) >> 24) & 0xff);
+                this.data[i] = (byte) ((((meta & 0x0f) << 4) | (old & 0x0f)) & 0xff);
                 if (!meta.equals((old & 0xf0) >> 4)) {
                     changed = true;
                 }
@@ -123,9 +123,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         int i = (y << 7) + (z << 3) + (x >> 1);
         int old = this.skyLight[i];
         if ((x & 1) == 0) {
-            this.skyLight[i] = (byte) ((((old & 0xf0) | (level & 0x0f)) >> 24) & 0xff);
+            this.skyLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
         } else {
-            this.skyLight[i] = (byte) (((((level & 0x0f) << 4) | (old & 0x0f)) >> 24) & 0xff);
+            this.skyLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
         }
     }
 
@@ -143,9 +143,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         int i = (y << 7) + (z << 3) + (x >> 1);
         int old = this.blockLight[i];
         if ((x & 1) == 0) {
-            this.blockLight[i] = (byte) ((((old & 0xf0) | (level & 0x0f)) >> 24) & 0xff);
+            this.blockLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
         } else {
-            this.blockLight[i] = (byte) (((((level & 0x0f) << 4) | (old & 0x0f)) >> 24) & 0xff);
+            this.blockLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
         }
     }
 
@@ -165,11 +165,11 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         ByteBuffer column = ByteBuffer.allocate(8);
         if ((x & 1) == 0) {
             for (int y = 0; y < 16; y += 2) {
-                column.put((byte) ((this.data[(y << 7) + i] & 0x0f) | ((((this.data[((y + 1) << 7) + i] & 0x0f) << 4) >> 24) & 0xff)));
+                column.put((byte) ((this.data[(y << 7) + i] & 0x0f) | (((this.data[((y + 1) << 7) + i] & 0x0f) << 4) & 0xff)));
             }
         } else {
             for (int y = 0; y < 16; y += 2) {
-                column.put((byte) (((((this.data[(y << 7) + i] & 0xf0) >> 4) >> 24) & 0xff) | (this.data[((y + 1) << 7) + i] & 0xf0)));
+                column.put((byte) ((((this.data[(y << 7) + i] & 0xf0) >> 4) & 0xff) | (this.data[((y + 1) << 7) + i] & 0xf0)));
             }
         }
         return column.array();
@@ -181,11 +181,11 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         ByteBuffer column = ByteBuffer.allocate(8);
         if ((x & 1) == 0) {
             for (int y = 0; y < 16; y += 2) {
-                column.put((byte) ((this.skyLight[(y << 7) + i] & 0x0f) | ((((this.skyLight[((y + 1) << 7) + i] & 0x0f) << 4) >> 24) & 0xff)));
+                column.put((byte) ((this.skyLight[(y << 7) + i] & 0x0f) | (((this.skyLight[((y + 1) << 7) + i] & 0x0f) << 4) & 0xff)));
             }
         } else {
             for (int y = 0; y < 16; y += 2) {
-                column.put((byte) (((((this.skyLight[(y << 7) + i] & 0xf0) >> 4) >> 24) & 0xff) | (this.skyLight[((y + 1) << 7) + i] & 0xf0)));
+                column.put((byte) ((((this.skyLight[(y << 7) + i] & 0xf0) >> 4) & 0xff) | (this.skyLight[((y + 1) << 7) + i] & 0xf0)));
             }
         }
         return column.array();
@@ -197,11 +197,11 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         ByteBuffer column = ByteBuffer.allocate(8);
         if ((x & 1) == 0) {
             for (int y = 0; y < 16; y += 2) {
-                column.put((byte) ((this.blockLight[(y << 7) + i] & 0x0f) | ((((this.blockLight[((y + 1) << 7) + i] & 0x0f) << 4) >> 24) & 0xff)));
+                column.put((byte) ((this.blockLight[(y << 7) + i] & 0x0f) | (((this.blockLight[((y + 1) << 7) + i] & 0x0f) << 4) & 0xff)));
             }
         } else {
             for (int y = 0; y < 16; y += 2) {
-                column.put((byte) (((((this.blockLight[(y << 7) + i] & 0xf0) >> 4) >> 24) & 0xff) | (this.blockLight[((y + 1) << 7) + i] & 0xf0)));
+                column.put((byte) ((((this.blockLight[(y << 7) + i] & 0xf0) >> 4) & 0xff) | (this.blockLight[((y + 1) << 7) + i] & 0xf0)));
             }
         }
         return column.array();

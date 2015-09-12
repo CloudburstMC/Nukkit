@@ -1,6 +1,7 @@
 package cn.nukkit.utils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * author: MagicDroidX
@@ -9,7 +10,7 @@ import java.io.*;
 public class Utils {
 
     public static void writeFile(String fileName, String content) throws IOException {
-        writeFile(fileName, new ByteArrayInputStream(content.getBytes("UTF-8")));
+        writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     }
 
     public static void writeFile(String fileName, InputStream content) throws IOException {
@@ -17,7 +18,7 @@ public class Utils {
     }
 
     public static void writeFile(File file, String content) throws IOException {
-        writeFile(file, new ByteArrayInputStream(content.getBytes("UTF-8")));
+        writeFile(file, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     }
 
     public static void writeFile(File file, InputStream content) throws IOException {
@@ -52,7 +53,7 @@ public class Utils {
     }
 
     public static String readFile(InputStream inputStream) throws IOException {
-        return readFile(new InputStreamReader(inputStream, "UTF-8"));
+        return readFile(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
     }
 
     private static String readFile(Reader reader) throws IOException {

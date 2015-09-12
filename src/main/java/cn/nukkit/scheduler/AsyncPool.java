@@ -29,7 +29,6 @@ public class AsyncPool {
         this.workerUsage = new int[size];
         this.workers = new AsyncWorker[size];
         for (int i = 0; i < this.size; ++i) {
-            this.workerUsage[i] = 0;
             this.workers[i] = new AsyncWorker();
             this.workers[i].start();
         }
@@ -41,12 +40,15 @@ public class AsyncPool {
 
     public void increaseSize(int newSize) {
         if (newSize > this.size) {
+            this.workerUsage = new int[newSize];
+            AsyncWorker[] newWorkers = new AsyncWorker[newSize];
+            System.arraycopy(this.workers, 0, newWorkers, 0, this.size);
             for (int i = this.size; i < newSize; ++i) {
-                this.workerUsage[i] = 0;
-                this.workers[i] = new AsyncWorker();
-                this.workers[i].start();
+                newWorkers[i] = new AsyncWorker();
+                newWorkers[i].start();
             }
             this.size = newSize;
+            this.workers = newWorkers;
         }
     }
 

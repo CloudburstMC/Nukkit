@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -140,7 +141,7 @@ public class BanList {
             for (BanEntry entry : this.list) {
                 list.add(entry.getMap());
             }
-            Utils.writeFile(this.file, new ByteArrayInputStream(new GsonBuilder().setPrettyPrinting().create().toJson(list).getBytes("UTF-8")));
+            Utils.writeFile(this.file, new ByteArrayInputStream(new GsonBuilder().setPrettyPrinting().create().toJson(list).getBytes(StandardCharsets.UTF_8)));
         } catch (IOException e) {
             e.printStackTrace();
         }

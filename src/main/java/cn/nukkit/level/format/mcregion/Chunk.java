@@ -114,7 +114,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public void setBlockId(int x, int y, int z, int id) {
-        this.blocks[(x << 11) | (z << 7) | y] = (byte) ((id >> 24) & 0xff);
+        this.blocks[(x << 11) | (z << 7) | y] = (byte) (id & 0xff);
         this.hasChanged = true;
     }
 
@@ -133,9 +133,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.data[i];
         if ((y & 1) == 0) {
-            this.data[i] = (byte) ((((old & 0xf0) | (old & 0x0f)) >> 24) & 0xff);
+            this.data[i] = (byte) (((old & 0xf0) | (old & 0x0f)) & 0xff);
         } else {
-            this.data[i] = (byte) (((((data & 0x0f) << 4) | (old & 0x0f)) >> 24) & 0xff);
+            this.data[i] = (byte) ((((data & 0x0f) << 4) | (old & 0x0f)) & 0xff);
         }
         this.hasChanged = true;
     }
@@ -165,7 +165,7 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 11) | (z << 7) | y;
         boolean changed = false;
         if (blockId != null) {
-            byte id = (byte) ((blockId >> 24) & 0xff);
+            byte id = (byte) (blockId & 0xff);
             if (this.blocks[i] != id) {
                 this.blocks[i] = id;
                 changed = true;
@@ -176,12 +176,12 @@ public class Chunk extends BaseFullChunk {
             i >>= 1;
             int old = this.data[i];
             if ((y & 1) == 0) {
-                this.data[i] = (byte) ((((old & 0xf0) | (meta & 0x0f)) >> 24) & 0xff);
+                this.data[i] = (byte) (((old & 0xf0) | (meta & 0x0f)) & 0xff);
                 if ((old & 0x0f) != meta) {
                     changed = true;
                 }
             } else {
-                this.data[i] = (byte) (((((meta & 0x0f) << 4) | (old & 0x0f)) >> 24) & 0xff);
+                this.data[i] = (byte) ((((meta & 0x0f) << 4) | (old & 0x0f)) & 0xff);
                 if (!meta.equals((old & 0xf0) >> 4)) {
                     changed = true;
                 }
@@ -209,9 +209,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.skyLight[i];
         if ((y & 1) == 0) {
-            this.skyLight[i] = (byte) ((((old & 0xf0) | (level & 0x0f)) >> 24) & 0xff);
+            this.skyLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
         } else {
-            this.skyLight[i] = (byte) (((((level & 0x0f) << 4) | (old & 0x0f)) >> 24) & 0xff);
+            this.skyLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
         }
         this.hasChanged = true;
     }
@@ -231,9 +231,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         byte old = this.blockLight[i];
         if ((y & 1) == 0) {
-            this.blockLight[i] = (byte) ((((old & 0xf0) | (level & 0x0f)) >> 24) & 0xff);
+            this.blockLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
         } else {
-            this.blockLight[i] = (byte) (((((level & 0x0f) << 4) | (old & 0x0f)) >> 24) & 0xff);
+            this.blockLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
         }
         this.hasChanged = true;
     }
@@ -388,7 +388,17 @@ public class Chunk extends BaseFullChunk {
         int[] heightMapArray = this.getHeightMapArray();
         int[] biomeColorArray = this.getBiomeColorArray();
         byte booleans = (byte) ((this.isLightPopulated() ? 1 << 2 : 0) + (this.isPopulated() ? 1 << 2 : 0) + (this.isGenerated() ? 1 : 0));
-        ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + blockIdArray.length + blockDataArray.length + blockSkyLightArray.length + blockLightArray.length + heightMapArray.length + biomeColorArray.length * 4 + 1);
+        ByteBuffer buffer = ByteBuffer.allocate(
+                4
+                        + 4
+                        + blockIdArray.length
+                        + blockDataArray.length
+                        + blockSkyLightArray.length
+                        + blockLightArray.length
+                        + heightMapArray.length
+                        + biomeColorArray.length * 4
+                        + 1);
+
         buffer.put(xArray);
         buffer.put(zArray);
         buffer.put(blockIdArray);
@@ -396,7 +406,7 @@ public class Chunk extends BaseFullChunk {
         buffer.put(blockSkyLightArray);
         buffer.put(blockLightArray);
         for (int aHeightMapArray : heightMapArray) {
-            buffer.put((byte) ((aHeightMapArray >> 24) & 0xff));
+            buffer.put((byte) (aHeightMapArray & 0xff));
         }
         for (int aBiomeColorArray : biomeColorArray) {
             buffer.put(Binary.writeInt(aBiomeColorArray));

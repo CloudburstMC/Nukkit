@@ -1,4 +1,4 @@
-package cn.nukkit.raknet;
+package cn.nukkit.raknet.server;
 
 import cn.nukkit.utils.ThreadedLogger;
 
