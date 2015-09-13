@@ -110,7 +110,7 @@ public class McRegion extends BaseLevelProvider {
         byte[][] tiles = new byte[0][];
         int tilesLength = 0;
         int i = 0;
-        if (chunk.getTiles().size() > 0) {
+        if (!chunk.getTiles().isEmpty()) {
             int length = chunk.getTiles().size();
             tiles = new byte[length][];
             for (Tile tile : chunk.getTiles().values()) {

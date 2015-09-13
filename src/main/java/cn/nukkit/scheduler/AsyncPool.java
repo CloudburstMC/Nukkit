@@ -108,14 +108,14 @@ public class AsyncPool {
             for (Map.Entry entry : this.tasks.entrySet()) {
                 this.removeTask((AsyncTask) entry.getValue());
             }
-            if (this.tasks.size() > 0) {
+            if (!this.tasks.isEmpty()) {
                 try {
                     Thread.sleep(25);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        } while (this.tasks.size() > 0);
+        } while (!this.tasks.isEmpty());
         this.tasks = new HashMap<>();
         this.taskWorkers = new HashMap<>();
     }

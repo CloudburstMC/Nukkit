@@ -2,8 +2,7 @@ package cn.nukkit.raknet.protocol;
 
 import cn.nukkit.utils.Binary;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -12,11 +11,12 @@ import java.util.Arrays;
  * Nukkit Project
  */
 public abstract class Packet {
-    public static byte ID = -1;
 
     protected int offset = 0;
     public byte[] buffer;
     public Long sendTime;
+
+    public abstract byte getID();
 
     protected byte[] get(int len) {
         if (len < 0) {
@@ -32,6 +32,10 @@ public abstract class Packet {
     }
 
     protected byte[] getAll() {
+        return this.get();
+    }
+
+    protected byte[] get() {
         return Arrays.copyOfRange(this.buffer, this.offset, this.buffer.length - 1);
     }
 
@@ -67,17 +71,12 @@ public abstract class Packet {
         return new String(this.get(this.getShort()), StandardCharsets.UTF_8);
     }
 
-    protected InetAddress getAddress() {
+    protected InetSocketAddress getAddress() {
         byte version = this.getByte();
         if (version == 4) {
             String addr = ((~this.getByte()) & 0xff) + "." + ((~this.getByte()) & 0xff) + "." + ((~this.getByte()) & 0xff) + "." + ((~this.getByte()) & 0xff);
             short port = this.getShort();
-            try {
-                InetAddress address = InetAddress.getByName(addr);
-                return address;
-            } catch (UnknownHostException e) {
-                return null;
-            }
+            return new InetSocketAddress(addr, port);
         } else {
             //todo IPV6 SUPPORT
             return null;
@@ -89,10 +88,7 @@ public abstract class Packet {
     }
 
     protected void put(byte[] b) {
-        byte[] newBytes = new byte[this.buffer.length + b.length];
-        System.arraycopy(this.buffer, 0, newBytes, 0, this.buffer.length);
-        System.arraycopy(b, 0, newBytes, this.buffer.length, b.length);
-        this.buffer = newBytes;
+        this.buffer = Binary.appendBytes(this.buffer, b);
     }
 
     protected void putLong(long v) {
@@ -127,24 +123,28 @@ public abstract class Packet {
         this.put(str.getBytes(StandardCharsets.UTF_8));
     }
 
-    protected void putAddress(String addr, short port) {
+    protected void putAddress(String addr, int port) {
         this.putAddress(addr, port, (byte) 4);
     }
 
-    protected void putAddress(String addr, short port, byte version) {
+    protected void putAddress(String addr, int port, byte version) {
         this.putByte(version);
         if (version == 4) {
             for (String b : addr.split("\\.")) {
                 this.putByte((byte) ((~Integer.valueOf(b)) & 0xff));
             }
-            this.putShort(port);
+            this.putShort((short) port);
         } else {
             //todo ipv6
         }
     }
 
+    protected void putAddress(InetSocketAddress address) {
+        this.putAddress(address.getHostString(), address.getPort());
+    }
+
     public void encode() {
-        this.buffer = new byte[]{ID};
+        this.buffer = new byte[]{getID()};
     }
 
     public void decode() {

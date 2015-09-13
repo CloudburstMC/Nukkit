@@ -13,29 +13,6 @@ public class CallbackTask extends Task {
     protected Method method;
 
     protected Object[] args = null;
-    /*
-    public CallbackTask(Class<?> owner, String functionName) {
-        try {
-            this.method = owner.getMethod(functionName);
-            this.owner = owner.newInstance();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public CallbackTask(Class<?> owner, String functionName, Object[] args) {
-        try {
-            Class[] argsClass = new Class[args.length];
-            for (int i = 0; i < args.length; i++) {
-                argsClass[i] = args[i].getClass();
-            }
-            this.method = owner.getMethod(functionName, argsClass);
-            this.owner = owner.newInstance();
-            this.args = args;
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     public CallbackTask(Object owner, String functionName) {
         try {

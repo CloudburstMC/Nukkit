@@ -98,7 +98,7 @@ public class PluginManager {
 
                                 List<PluginCommand> pluginCommands = this.parseYamlCommands(plugin);
 
-                                if (pluginCommands.size() > 0) {
+                                if (!pluginCommands.isEmpty()) {
                                     this.commandMap.registerAll(plugin.getDescription().getName(), pluginCommands);
                                 }
 
@@ -234,7 +234,7 @@ public class PluginManager {
                 }
             }
 
-            while (plugins.size() > 0) {
+            while (!plugins.isEmpty()) {
                 boolean missingDependency = true;
                 for (Map.Entry entry : plugins.entrySet()) {
                     String name = (String) entry.getKey();
