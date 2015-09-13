@@ -97,4 +97,11 @@ public abstract class AcknowledgePacket extends Packet {
         this.packets = new Integer[0];
         return super.clean();
     }
+
+    @Override
+    public AcknowledgePacket clone() throws CloneNotSupportedException {
+        AcknowledgePacket packet = (AcknowledgePacket) super.clone();
+        packet.packets = this.packets.clone();
+        return packet;
+    }
 }

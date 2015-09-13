@@ -11,7 +11,7 @@ import java.util.List;
  */
 public abstract class DataPacket extends Packet {
 
-    public List<EncapsulatedPacket> packets = new ArrayList<>();
+    public List<Object> packets = new ArrayList<>();
 
     public Integer seqNumber;
 
@@ -19,15 +19,16 @@ public abstract class DataPacket extends Packet {
     public void encode() {
         super.encode();
         this.putLTriad(this.seqNumber);
-        for (EncapsulatedPacket packet : this.packets) {
-            this.put(packet.toBinary());
+        for (Object packet : this.packets) {
+            this.put(packet instanceof EncapsulatedPacket ? ((EncapsulatedPacket) packet).toBinary() : (byte[]) packet);
         }
     }
 
     public int length() {
+        int len = 4;
         int length = 4;
-        for (EncapsulatedPacket packet : this.packets) {
-            length += packet.getTotalLength();
+        for (Object packet : this.packets) {
+            length += packet instanceof EncapsulatedPacket ? ((EncapsulatedPacket) packet).getTotalLength() : ((byte[]) packet).length;
         }
 
         return length;
@@ -54,6 +55,17 @@ public abstract class DataPacket extends Packet {
         this.packets.clear();
         this.seqNumber = null;
         return super.clean();
+    }
+
+    @Override
+    public DataPacket clone() throws CloneNotSupportedException {
+        DataPacket packet = (DataPacket) super.clone();
+        List<Object> packets = new ArrayList<>();
+        for (Object object : this.packets) {
+            packets.add(object);
+        }
+        packet.packets = packets;
+        return packet;
     }
 
 }

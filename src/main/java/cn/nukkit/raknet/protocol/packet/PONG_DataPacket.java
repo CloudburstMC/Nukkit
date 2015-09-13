@@ -14,17 +14,17 @@ public class PONG_DataPacket extends Packet {
         return ID;
     }
 
-    public long pongID;
+    public long pingID;
 
     @Override
     public void encode() {
         super.encode();
-        this.putLong(this.pongID);
+        this.putLong(this.pingID);
     }
 
     @Override
     public void decode() {
         super.decode();
-        this.pongID = this.getLong();
+        this.pingID = this.getLong();
     }
 }

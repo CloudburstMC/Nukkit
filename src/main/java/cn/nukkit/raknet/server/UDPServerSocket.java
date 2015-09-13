@@ -48,20 +48,21 @@ public class UDPServerSocket {
     }
 
     public DatagramPacket readPacket() throws IOException {
-        DatagramPacket packet = new DatagramPacket(new byte[65535], 65535);
+        DatagramPacket packet = new DatagramPacket(new byte[65536], 65536);
 
         this.socket.receive(packet);
         packet.setData(Arrays.copyOf(packet.getData(), packet.getLength()));
         return packet;
     }
 
-    public void writePacket(byte[] data, String dest, int port) throws IOException {
-        this.writePacket(data, new InetSocketAddress(dest, port));
+    public int writePacket(byte[] data, String dest, int port) throws IOException {
+        return this.writePacket(data, new InetSocketAddress(dest, port));
     }
 
-    public void writePacket(byte[] data, InetSocketAddress dest) throws IOException {
+    public int writePacket(byte[] data, InetSocketAddress dest) throws IOException {
         DatagramPacket packet = new DatagramPacket(data, data.length, dest);
         this.socket.send(packet);
+        return packet.getLength();
     }
 
     public UDPServerSocket setSendBuffer(int size) throws SocketException {

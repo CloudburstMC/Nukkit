@@ -10,7 +10,7 @@ import java.util.Arrays;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Packet {
+public abstract class Packet implements Cloneable {
 
     protected int offset = 0;
     public byte[] buffer;
@@ -158,4 +158,10 @@ public abstract class Packet {
         return this;
     }
 
+    @Override
+    public Packet clone() throws CloneNotSupportedException {
+        Packet packet = (Packet) super.clone();
+        packet.buffer = this.buffer.clone();
+        return packet;
+    }
 }

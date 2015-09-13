@@ -224,11 +224,30 @@ public class Binary {
         return splits;
     }
 
-    public static byte[] appendBytes(byte[] bytes1, byte[] bytes2) {
-        byte[] newBytes = new byte[bytes1.length + bytes2.length];
-        System.arraycopy(bytes1, 0, newBytes, 0, bytes1.length);
-        System.arraycopy(bytes2, 0, newBytes, bytes1.length, bytes2.length);
-        return newBytes;
+    public static byte[] appendBytes(byte byte1, byte[]... bytes2) {
+        int length = 1;
+        for (byte[] bytes : bytes2) {
+            length += bytes.length;
+        }
+        ByteBuffer buffer = ByteBuffer.allocate(length);
+        buffer.put(byte1);
+        for (byte[] bytes : bytes2) {
+            buffer.put(bytes);
+        }
+        return buffer.array();
+    }
+
+    public static byte[] appendBytes(byte[] bytes1, byte[]... bytes2) {
+        int length = bytes1.length;
+        for (byte[] bytes : bytes2) {
+            length += bytes.length;
+        }
+        ByteBuffer buffer = ByteBuffer.allocate(length);
+        buffer.put(bytes1);
+        for (byte[] bytes : bytes2) {
+            buffer.put(bytes);
+        }
+        return buffer.array();
     }
 
 }

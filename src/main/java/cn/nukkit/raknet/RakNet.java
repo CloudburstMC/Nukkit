@@ -3,6 +3,8 @@ package cn.nukkit.raknet;
 /**
  * author: MagicDroidX
  * Nukkit Project
+ * UDP network library that follows the RakNet protocol for Nukkit Project
+ * This is not affiliated with Jenkins Software LLC nor RakNet.
  */
 public abstract class RakNet {
 

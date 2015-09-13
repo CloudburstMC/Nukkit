@@ -9,7 +9,7 @@ import java.util.Arrays;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class EncapsulatedPacket {
+public class EncapsulatedPacket implements Cloneable {
 
     public byte reliability;
     public boolean hasSplit = false;
@@ -122,5 +122,12 @@ public class EncapsulatedPacket {
     @Override
     public String toString() {
         return Binary.bytesToHexString(this.toBinary());
+    }
+
+    @Override
+    public EncapsulatedPacket clone() throws CloneNotSupportedException {
+        EncapsulatedPacket packet = (EncapsulatedPacket) super.clone();
+        packet.buffer = this.buffer.clone();
+        return packet;
     }
 }
