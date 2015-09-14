@@ -74,7 +74,7 @@ public class SessionManager {
         while (!this.shutdown) {
             long start = System.currentTimeMillis();
             int max = 5000;
-            while (this.receivePacket()) {
+            while (max > 0 && this.receivePacket()) {
                 --max;
             }
             while (this.receiveStream()) ;
@@ -180,13 +180,13 @@ public class SessionManager {
         this.streamEncapsulated(session, packet, RakNet.PRIORITY_NORMAL);
     }
 
-    public void streamEncapsulated(Session session, EncapsulatedPacket packet, byte flags) {
+    public void streamEncapsulated(Session session, EncapsulatedPacket packet, int flags) {
         String id = session.getAddress() + ":" + session.getPort();
         byte[] buffer = Binary.appendBytes(
                 RakNet.PACKET_ENCAPSULATED,
-                new byte[]{
-                        (byte) (id.length() & 0xff),
-                        flags},
+                new byte[]{(byte) (id.length() & 0xff)},
+                id.getBytes(StandardCharsets.UTF_8),
+                new byte[]{(byte) (flags & 0xff)},
                 packet.toBinary(true)
         );
         this.server.pushThreadToMainPacket(buffer);
