@@ -108,7 +108,7 @@ public class SessionManager {
 
         if ((this.ticks & 0b1111) == 0) {
             double diff = Math.max(50d, (double) time - this.lastMeasure);
-            this.streamOption("bandwidth", "up:" + this.sendBytes / diff + ",down:" + this.receiveBytes / diff);
+            this.streamOption("bandwidth", this.sendBytes / diff + ";" + this.receiveBytes / diff);
             this.lastMeasure = time;
             this.sendBytes = 0;
             this.receiveBytes = 0;

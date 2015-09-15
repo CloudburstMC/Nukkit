@@ -16,7 +16,7 @@ public class EncapsulatedPacket implements Cloneable {
     public int length = 0;
     public Integer messageIndex = null;
     public Integer orderIndex = null;
-    public Byte orderChannel = null;
+    public Integer orderChannel = null;
     public Integer splitCount = null;
     public Short splitID = null;
     public Integer splitIndex = null;
@@ -61,7 +61,7 @@ public class EncapsulatedPacket implements Cloneable {
             if (packet.reliability <= 4 && packet.reliability != 2) {
                 packet.orderIndex = Binary.readLTriad(Binary.subBytes(binary, offset, 3));
                 offset = offset + 3;
-                packet.orderChannel = binary[offset++];
+                packet.orderChannel = (int) binary[offset++];
             }
         }
 
@@ -105,7 +105,7 @@ public class EncapsulatedPacket implements Cloneable {
             }
             if (reliability <= 4 && reliability != 2) {
                 bb.put(Binary.writeLTriad(orderIndex));
-                bb.put(Binary.writeByte(orderChannel));
+                bb.put(Binary.writeByte((byte) (orderChannel & 0xff)));
             }
         }
 

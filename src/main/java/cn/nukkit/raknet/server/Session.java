@@ -26,7 +26,7 @@ public class Session {
     public static int WINDOW_SIZE = 2048;
 
     private int messageIndex = 0;
-    private Map<Byte, Integer> channelIndex = new ConcurrentHashMap<>();
+    private Map<Integer, Integer> channelIndex = new ConcurrentHashMap<>();
 
     private SessionManager sessionManager;
     private String address;
@@ -81,7 +81,7 @@ public class Session {
         this.reliableWindowStart = 0;
         this.reliableWindowEnd = WINDOW_SIZE;
 
-        for (byte i = 0; i < 32; i++) {
+        for (int i = 0; i < 32; i++) {
             this.channelIndex.put(i, 0);
         }
     }

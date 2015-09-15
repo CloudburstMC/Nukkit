@@ -119,8 +119,9 @@ public abstract class Packet implements Cloneable {
     }
 
     protected void putString(String str) {
-        this.putShort((short) str.length());
-        this.put(str.getBytes(StandardCharsets.UTF_8));
+        byte[] b = str.getBytes(StandardCharsets.UTF_8);
+        this.putShort((short) b.length);
+        this.put(b);
     }
 
     protected void putAddress(String addr, int port) {

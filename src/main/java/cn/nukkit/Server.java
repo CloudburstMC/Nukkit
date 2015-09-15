@@ -3,12 +3,14 @@ package cn.nukkit;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.*;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Level;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
+import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.permission.DefaultPermissions;
 import cn.nukkit.plugin.JarPluginLoader;
@@ -88,11 +90,13 @@ public class Server {
     private String dataPath;
     private String pluginPath;
 
+    private QueryRegenerateEvent queryRegenerateEvent;
 
     private Config properties;
     private Config config;
 
     private Map<String, Player> players = new HashMap<>();
+    private Map<Player, String> identifier = new HashMap<>();
 
     public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
         instance = this;
@@ -213,6 +217,8 @@ public class Server {
 
         this.pluginManager.registerInterface(JarPluginLoader.class);
 
+        this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
+
         this.pluginManager.loadPlugins(this.pluginPath);
 
         this.enablePlugins(PluginLoadOrder.STARTUP);
@@ -224,6 +230,38 @@ public class Server {
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
         this.start();
+    }
+
+    public void batchPackets(Player[] players, DataPacket[] packets) {
+        this.batchPackets(players, packets, false);
+    }
+
+    public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
+        this.batchPackets(players, packets, forceSync, 0);
+    }
+
+    public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync, int channel) {
+        byte[][] payload = new byte[packets.length][];
+        for (int i = 0; i < packets.length; i++) {
+            DataPacket p = packets[i];
+            if (!p.isEncoded) {
+                p.encode();
+            }
+            payload[i] = p.buffer;
+        }
+        this.batchPackets(players, payload, forceSync, channel);
+    }
+
+    public void batchPackets(Player[] players, byte[][] payload) {
+        this.batchPackets(players, payload, false);
+    }
+
+    public void batchPackets(Player[] players, byte[][] payload, boolean forceSync) {
+        this.batchPackets(players, payload, forceSync, 0);
+    }
+
+    public void batchPackets(Player[] players, byte[][] payload, boolean forceSync, int channel) {
+        //todo
     }
 
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
@@ -329,6 +367,15 @@ public class Server {
         this.forceShutdown();
     }
 
+    public void addPlayer(String identifier, Player player) {
+        this.players.put(identifier, player);
+        this.identifier.put(player, identifier);
+    }
+
+    public void handlePacket(String address, int port, byte[] payload) {
+        //todo
+    }
+
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
         while (this.isRunning) {
@@ -412,6 +459,10 @@ public class Server {
                 " | Memory " + usage + Thread.getAllStackTraces().keySet().size() + " threads" +
                 " | TPS " + this.getTicksPerSecond() +
                 " | Load " + this.getTickUsage() + "%" + (char) 0x07);
+    }
+
+    public QueryRegenerateEvent getQueryInformation() {
+        return this.queryRegenerateEvent;
     }
 
     public String getName() {
