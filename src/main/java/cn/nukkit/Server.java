@@ -10,7 +10,10 @@ import cn.nukkit.level.Level;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
+import cn.nukkit.network.Network;
+import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.permission.DefaultPermissions;
 import cn.nukkit.plugin.JarPluginLoader;
@@ -77,14 +80,21 @@ public class Server {
     private boolean autoSave;
 
     private EntityMetadataStore entityMetadata;
+
     private PlayerMetadataStore playerMetadata;
+
     private LevelMetadataStore levelMetadata;
+
+    private Network network;
+
+    private boolean networkCompressionAsync = true;
+    public int networkCompressionLevel = 7;
 
     private BaseLang baseLang;
 
     private boolean forceLanguage;
 
-    private long serverID;
+    private String serverID;
 
     private String filePath;
     private String dataPath;
@@ -165,11 +175,11 @@ public class Server {
         this.baseLang = new BaseLang((String) this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
         this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
         this.logger.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.WHITE));
-        //todo 一些tick配置
+
         Object poolSize = this.getConfig("settings.async-workers", "auto");
         if (!(poolSize instanceof Integer)) {
             try {
-                poolSize = Integer.valueOf((String) this.getConfig("settings.async-workers", "auto"));
+                poolSize = Integer.valueOf((String) poolSize);
             } catch (Exception e) {
                 poolSize = Math.max(Runtime.getRuntime().availableProcessors() * 2, 4);
             }
@@ -177,6 +187,21 @@ public class Server {
 
         ServerScheduler.WORKERS = (int) poolSize;
 
+        Object threshold = this.getConfig("network.batch-threshold", 256);
+        if (!(threshold instanceof Integer)) {
+            try {
+                threshold = Integer.valueOf((String) threshold);
+            } catch (Exception e) {
+                threshold = 256;
+            }
+        }
+        if ((int) threshold < 0) {
+            threshold = -1;
+        }
+        Network.BATCH_THRESHOLD = (int) threshold;
+        this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
+        this.networkCompressionAsync = (boolean) this.getConfig("network.async-compression", true);
+        //todo Tick配置
         this.scheduler = new ServerScheduler();
 
         this.entityMetadata = new EntityMetadataStore();
@@ -201,7 +226,11 @@ public class Server {
             this.logger.setLogDebug(Nukkit.DEBUG > 1);
         }
 
+        this.logger.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[]{this.getIp().equals("") ? "*" : this.getIp(), String.valueOf(this.getPort())}));
+        this.serverID = UUID.randomUUID().toString();
         //todo NETWORK PART ***
+        this.network = new Network(this);
+        this.network.setName(this.getMotd());
 
         this.logger.info(this.getLanguage().translateString("nukkit.server.info", new String[]{this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, this.getCodename(), this.getApiVersion()}));
         this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
@@ -218,6 +247,8 @@ public class Server {
         this.pluginManager.registerInterface(JarPluginLoader.class);
 
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
+
+        this.network.registerInterface(new RakNetInterface(this));
 
         this.pluginManager.loadPlugins(this.pluginPath);
 
@@ -361,6 +392,12 @@ public class Server {
 
     public void start() {
         //todo a lot
+        for (BanEntry entry : this.getIPBans().getEntires()) {
+            this.network.blockAddress(entry.getName(), -1);
+        }
+
+        //todo alot
+
         this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
         this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
         this.tickProcessor();
@@ -522,7 +559,7 @@ public class Server {
         return this.getPropertyString("motd", "Nukkit Server For Minecraft: PE");
     }
 
-    public long getServerUniqueId() {
+    public String getServerUniqueId() {
         return this.serverID;
     }
 

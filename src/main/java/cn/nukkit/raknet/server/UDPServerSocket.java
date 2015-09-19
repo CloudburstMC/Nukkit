@@ -7,6 +7,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
 import java.util.Arrays;
 
 /**
@@ -15,6 +17,7 @@ import java.util.Arrays;
  */
 public class UDPServerSocket {
 
+    protected DatagramChannel channel;
     protected ThreadedLogger logger;
     protected DatagramSocket socket;
 
@@ -29,10 +32,14 @@ public class UDPServerSocket {
     public UDPServerSocket(ThreadedLogger logger, int port, String interfaz) {
         this.logger = logger;
         try {
-            this.socket = new DatagramSocket(new InetSocketAddress(interfaz, port));
+            this.channel = DatagramChannel.open();
+            this.channel.configureBlocking(false);
+            this.socket = this.channel.socket();
+            this.socket.bind(new InetSocketAddress(interfaz, port));
+            //this.socket = new DatagramSocket(new InetSocketAddress(interfaz, port));
             this.socket.setReuseAddress(true);
             this.setSendBuffer(1024 * 1024 * 8).setRecvBuffer(1024 * 1024 * 8);
-        } catch (SocketException e) {
+        } catch (IOException e) {
             this.logger.critical("**** FAILED TO BIND TO " + interfaz + ":" + port + "!");
             this.logger.critical("Perhaps a server is already running on that port?");
             System.exit(1);
@@ -48,11 +55,22 @@ public class UDPServerSocket {
     }
 
     public DatagramPacket readPacket() throws IOException {
-        DatagramPacket packet = new DatagramPacket(new byte[65536], 65536);
+        ByteBuffer buffer = ByteBuffer.allocate(65536);
+        InetSocketAddress socketAddress = (InetSocketAddress) this.channel.receive(buffer);
+        if (socketAddress == null) {
+            return null;
+        }
+        DatagramPacket packet = new DatagramPacket(new byte[buffer.position() + 1], buffer.position() + 1);
+        packet.setAddress(socketAddress.getAddress());
+        packet.setPort(socketAddress.getPort());
+        packet.setLength(buffer.position() + 1);
+        packet.setData(Arrays.copyOf(buffer.array(), packet.getLength()));
+        return packet;
+        /*DatagramPacket packet = new DatagramPacket(new byte[65536], 65536);
 
         this.socket.receive(packet);
         packet.setData(Arrays.copyOf(packet.getData(), packet.getLength()));
-        return packet;
+        return packet;*/
     }
 
     public int writePacket(byte[] data, String dest, int port) throws IOException {
@@ -60,9 +78,11 @@ public class UDPServerSocket {
     }
 
     public int writePacket(byte[] data, InetSocketAddress dest) throws IOException {
-        DatagramPacket packet = new DatagramPacket(data, data.length, dest);
+        return this.channel.send(ByteBuffer.wrap(data), dest);
+
+        /*DatagramPacket packet = new DatagramPacket(data, data.length, dest);
         this.socket.send(packet);
-        return packet.getLength();
+        return packet.getLength();*/
     }
 
     public UDPServerSocket setSendBuffer(int size) throws SocketException {

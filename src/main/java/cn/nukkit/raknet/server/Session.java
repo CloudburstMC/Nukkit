@@ -429,7 +429,7 @@ public class Session {
         this.isActive = true;
         this.lastUpdate = System.currentTimeMillis();
         if (this.state == STATE_CONNECTED || this.state == STATE_CONNECTING_2) {
-            if (packet.buffer[0] >= (byte) 0x80 || packet.buffer[0] <= (byte) 0x8f && packet instanceof DataPacket) {
+            if ((packet.buffer[0] >= (byte) 0x80 || packet.buffer[0] <= (byte) 0x8f) && packet instanceof DataPacket) {
                 packet.decode();
 
                 DataPacket dp = (DataPacket) packet;

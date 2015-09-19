@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Nukkit Project
  */
 public class SessionManager {
-    protected Map<Byte, Packet> packetPool = new ConcurrentHashMap<>();
+    protected Map<Byte, Class<? extends Packet>> packetPool = new ConcurrentHashMap<>();
 
     protected RakNetServer server;
 
@@ -82,7 +82,7 @@ public class SessionManager {
             long time = System.currentTimeMillis() - start;
             if (time < 50) {
                 try {
-                    Thread.sleep(System.currentTimeMillis() + 50 - time);
+                    Thread.sleep(50 - time);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -402,21 +402,17 @@ public class SessionManager {
     }
 
     private void registerPacket(byte id, Class<? extends Packet> clazz) {
-        try {
-            this.packetPool.put(id, clazz.newInstance());
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        this.packetPool.put(id, clazz);
     }
 
     public Packet getPacketFromPool(byte id) {
         if (this.packetPool.containsKey(id)) {
             try {
-                return this.packetPool.get(id).clone();
-            } catch (CloneNotSupportedException e) {
-                //ignore
+                return this.packetPool.get(id).newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
         }
         return null;

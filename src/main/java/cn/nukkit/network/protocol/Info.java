@@ -6,7 +6,7 @@ package cn.nukkit.network.protocol;
  */
 public interface Info {
 
-    byte CURRENT_PROTOCOL = 27;
+    byte CURRENT_PROTOCOL = 34;
 
     byte LOGIN_PACKET = (byte) 0x82;
     byte PLAY_STATUS_PACKET = (byte) 0x83;

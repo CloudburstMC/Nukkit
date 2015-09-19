@@ -96,6 +96,10 @@ public class RakNetServer extends Thread {
         this.setName("RakNet Thread #" + Thread.currentThread().getId());
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler());
         UDPServerSocket socket = new UDPServerSocket(this.getLogger(), port, this.interfaz);
-
+        try {
+            new SessionManager(this, socket);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

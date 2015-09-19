@@ -46,5 +46,9 @@ public abstract class Zlib {
         return output;
     }
 
+    public static byte[] inflate(byte[] data, int maxSize) throws DataFormatException, IOException {
+        return inflate(Binary.subBytes(data, 0, maxSize));
+    }
+
 }
 
