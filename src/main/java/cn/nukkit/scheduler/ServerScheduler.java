@@ -90,7 +90,7 @@ public class ServerScheduler {
 
     private TaskHandler addTask(Task task, int delay, int period) {
         if (task instanceof PluginTask) {
-            if (((PluginTask) task).getOwner() != null) {
+            if (((PluginTask) task).getOwner() == null) {
                 throw new PluginException("Invalid owner of PluginTask " + task.getClass().getName());
             } else if (!((PluginTask) task).getOwner().isEnabled()) {
                 throw new PluginException("Plugin '" + ((PluginTask) task).getOwner().getName() + "' attempted to register a task while disabled");
@@ -129,7 +129,6 @@ public class ServerScheduler {
         this.currentTick = currentTick;
         while (this.isReady(this.currentTick)) {
             TaskHandler task = this.queue.poll();
-            System.out.println(task.getTaskId());
             if (task.isCancelled()) {
                 this.tasks.remove(task.getTaskId());
                 continue;

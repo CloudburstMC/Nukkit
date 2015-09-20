@@ -7,11 +7,11 @@ import cn.nukkit.plugin.Plugin;
  * author: MagicDroidX
  * Nukkit
  */
-abstract class PluginTask extends Task {
+public abstract class PluginTask<T extends Plugin> extends Task {
 
-    protected Plugin owner;
+    protected T owner;
 
-    public PluginTask(Plugin owner) {
+    public PluginTask(T owner) {
         this.owner = owner;
     }
 
