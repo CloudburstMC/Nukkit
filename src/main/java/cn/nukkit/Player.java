@@ -31,14 +31,29 @@ public class Player extends Human {
 
     protected String ip;
 
+    protected String username;
+    protected String iusername;
     protected String displayName;
 
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
     }
 
+    public String getName() {
+        return this.username;
+    }
+
     public String getDisplayName() {
         return this.displayName;
+    }
+
+    public Player getPlayer() {
+        return this;
+    }
+
+    public boolean isOnline() {
+        //todo !!!
+        return false;
     }
 
     public String getAddress() {

@@ -108,6 +108,8 @@ public class Server {
     private Map<String, Player> players = new HashMap<>();
     private Map<Player, String> identifier = new HashMap<>();
 
+    private Level defaultLevel = null;
+
     public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
         instance = this;
         this.logger = logger;
@@ -433,6 +435,8 @@ public class Server {
 
         ++this.tickCounter;
 
+        this.network.processInterfaces();
+
         this.scheduler.mainThreadHeartbeat(this.tickCounter);
 
         //todo a lot
@@ -736,6 +740,10 @@ public class Server {
         return commandMap;
     }
 
+    public Map<String, Player> getOnlinePlayers() {
+        return players;
+    }
+
     public Level getLevel(int levelId) {
         //todo
         return null;
@@ -743,6 +751,18 @@ public class Server {
 
     public BaseLang getLanguage() {
         return baseLang;
+    }
+
+    public boolean isLanguageForced() {
+        return forceLanguage;
+    }
+
+    public Network getNetwork() {
+        return network;
+    }
+
+    public Level getDefaultLevel() {
+        return defaultLevel;
     }
 
     public Object getConfig(String variable) {

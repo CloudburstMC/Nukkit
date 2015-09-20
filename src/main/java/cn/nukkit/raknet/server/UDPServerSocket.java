@@ -60,10 +60,10 @@ public class UDPServerSocket {
         if (socketAddress == null) {
             return null;
         }
-        DatagramPacket packet = new DatagramPacket(new byte[buffer.position() + 1], buffer.position() + 1);
+        DatagramPacket packet = new DatagramPacket(new byte[buffer.position()], buffer.position());
         packet.setAddress(socketAddress.getAddress());
         packet.setPort(socketAddress.getPort());
-        packet.setLength(buffer.position() + 1);
+        packet.setLength(buffer.position());
         packet.setData(Arrays.copyOf(buffer.array(), packet.getLength()));
         return packet;
         /*DatagramPacket packet = new DatagramPacket(new byte[65536], 65536);
