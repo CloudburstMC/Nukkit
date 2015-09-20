@@ -345,7 +345,7 @@ public class PluginManager {
         }
 
         if (permission.getDefault().equals(Permission.DEFAULT_NOT_OP) || permission.getDefault().equals(Permission.DEFAULT_TRUE)) {
-            this.defaultPermsOp.put(permission.getName(), permission);
+            this.defaultPerms.put(permission.getName(), permission);
             this.dirtyPermissibles(false);
         }
     }
