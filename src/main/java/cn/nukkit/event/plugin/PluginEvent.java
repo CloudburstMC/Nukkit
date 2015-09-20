@@ -8,13 +8,13 @@ import cn.nukkit.plugin.Plugin;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PluginEvent<T extends Plugin> extends Event {
+public class PluginEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private T plugin;
+    private Plugin plugin;
 
-    public PluginEvent(T plugin) {
+    public PluginEvent(Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -22,7 +22,7 @@ public class PluginEvent<T extends Plugin> extends Event {
         return handlers;
     }
 
-    public T getPlugin() {
+    public Plugin getPlugin() {
         return plugin;
     }
 }
