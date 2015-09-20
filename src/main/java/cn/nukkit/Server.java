@@ -2,6 +2,7 @@ package cn.nukkit;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.command.*;
+import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.item.Item;
@@ -12,7 +13,9 @@ import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
+import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.permission.DefaultPermissions;
@@ -99,6 +102,8 @@ public class Server {
     private String filePath;
     private String dataPath;
     private String pluginPath;
+
+    private QueryHandler queryHandler;
 
     private QueryRegenerateEvent queryRegenerateEvent;
 
@@ -375,6 +380,9 @@ public class Server {
 
             //todo alot
 
+            this.getLogger().debug("Removing event handlers");
+            HandlerList.unregisterAll();
+
             this.getLogger().debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
             this.scheduler.mainThreadHeartbeat(Long.MAX_VALUE);
@@ -383,7 +391,13 @@ public class Server {
             this.properties.save();
 
             this.getLogger().debug("Closing console");
-            this.console.stop();
+            this.console.interrupt();
+
+            this.getLogger().debug("Stopping network interfaces");
+            for (SourceInterface interfaz : this.network.getInterfaces().values()) {
+                interfaz.shutdown();
+                this.network.unregisterInterface(interfaz);
+            }
 
             //todo other things
         } catch (Exception e) {
@@ -393,6 +407,9 @@ public class Server {
     }
 
     public void start() {
+        if (this.getPropertyBoolean("enable-query", true)) {
+            this.queryHandler = new QueryHandler();
+        }
         //todo a lot
         for (BanEntry entry : this.getIPBans().getEntires()) {
             this.network.blockAddress(entry.getName(), -1);
@@ -412,7 +429,15 @@ public class Server {
     }
 
     public void handlePacket(String address, int port, byte[] payload) {
-        //todo
+        try {
+            if (payload.length > 2 && Arrays.equals(Binary.subBytes(payload, 0, 2), new byte[]{(byte) 0xfe, (byte) 0xfd}) && this.queryHandler != null) {
+                this.queryHandler.handle(address, port, payload);
+            }
+        } catch (Exception e) {
+            this.logger.logException(e);
+
+            this.getNetwork().blockAddress(address, 600);
+        }
     }
 
     public void tickProcessor() {
@@ -446,6 +471,18 @@ public class Server {
             this.maxTick = 20;
             this.maxUse = 0;
 
+            if ((this.tickCounter & 0b111111111) == 0) {
+                try {
+                    this.getPluginManager().callEvent(this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5));
+                    if (this.queryHandler != null) {
+                        this.queryHandler.regenerateInfo();
+                    }
+                } catch (Exception e) {
+                    this.logger.logException(e);
+                }
+            }
+
+            this.getNetwork().updateName();
         }
 
         //todo a lot

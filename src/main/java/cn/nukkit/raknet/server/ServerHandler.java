@@ -79,11 +79,14 @@ public class ServerHandler {
     }
 
     public void shutdown() {
+        this.server.shutdown();
         this.server.pushMainToThreadPacket(new byte[]{RakNet.PACKET_SHUTDOWN});
-        try {
-            this.server.wait(20);
-        } catch (InterruptedException e) {
-            //ignore
+        synchronized (this) {
+            try {
+                this.wait(20);
+            } catch (InterruptedException e) {
+                //ignore
+            }
         }
         this.server.interrupt();
     }
