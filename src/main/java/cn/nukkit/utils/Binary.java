@@ -56,7 +56,7 @@ public class Binary {
     }
 
     public static short readShort(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getShort();
+        return (short) (((bytes[0] << 8) & 0x0000ff00) | (bytes[1] & 0x000000ff));
     }
 
     public static short readSignedShort(byte[] bytes) {
