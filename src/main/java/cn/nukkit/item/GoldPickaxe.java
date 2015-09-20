@@ -27,4 +27,9 @@ public class GoldPickaxe extends Tool {
     public boolean isPickaxe() {
         return true;
     }
+
+    @Override
+    public int getTier() {
+        return Tool.TIER_GOLD;
+    }
 }

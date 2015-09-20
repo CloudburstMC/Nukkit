@@ -27,4 +27,9 @@ public class IronAxe extends Tool {
     public boolean isAxe() {
         return true;
     }
+
+    @Override
+    public int getTier() {
+        return Tool.TIER_IRON;
+    }
 }

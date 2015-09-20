@@ -27,4 +27,9 @@ public class IronShovel extends Tool {
     public boolean isShovel() {
         return true;
     }
+
+    @Override
+    public int getTier() {
+        return Tool.TIER_IRON;
+    }
 }

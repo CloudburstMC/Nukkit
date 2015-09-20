@@ -660,6 +660,10 @@ public class Item {
         return -1;
     }
 
+    public int getTier() {
+        return 0;
+    }
+
     public boolean isPickaxe() {
         return false;
     }

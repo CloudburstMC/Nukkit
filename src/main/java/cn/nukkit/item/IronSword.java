@@ -27,4 +27,9 @@ public class IronSword extends Tool {
     public boolean isSword() {
         return true;
     }
+
+    @Override
+    public int getTier() {
+        return Tool.TIER_IRON;
+    }
 }

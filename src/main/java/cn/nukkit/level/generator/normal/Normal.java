@@ -4,6 +4,8 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.Vector3;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -11,12 +13,24 @@ import java.util.Random;
  * Nukkit Project
  */
 public class Normal extends Generator {
+
     public Normal() {
-        this(new Object[]{});
+        this(new HashMap<>());
     }
 
-    public Normal(Object[] options) {
-        super(options);
+    public Normal(Map<String, String> options) {
+        //todo
+    }
+
+
+    @Override
+    public String getName() {
+        return "normal";
+    }
+
+    @Override
+    public Map<String, String> getSettings() {
+        return new HashMap<>();
     }
 
     @Override
@@ -32,16 +46,6 @@ public class Normal extends Generator {
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
         //todo
-    }
-
-    @Override
-    public Object[] getSettings() {
-        return new Object[0];
-    }
-
-    @Override
-    public String getName() {
-        return "normal";
     }
 
     @Override

@@ -27,4 +27,9 @@ public class DiamondSword extends Tool {
     public boolean isSword() {
         return true;
     }
+
+    @Override
+    public int getTier() {
+        return Tool.TIER_DIAMOND;
+    }
 }

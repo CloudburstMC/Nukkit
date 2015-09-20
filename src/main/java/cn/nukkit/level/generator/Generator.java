@@ -16,9 +16,6 @@ import java.util.Random;
 public abstract class Generator {
     private static Map<String, Class> list = new HashMap<>();
 
-    public Generator(Object[] settings) {
-    }
-
     public static boolean addGenerator(Class<? extends Generator> clazz, String name) {
         name = name.toLowerCase();
         if (Generator.class.isAssignableFrom(clazz) && !Generator.list.containsKey(name)) {
@@ -186,7 +183,7 @@ public abstract class Generator {
 
     public abstract void populateChunk(int chunkX, int chunkZ);
 
-    public abstract Object[] getSettings();
+    public abstract Map<String, String> getSettings();
 
     public abstract String getName();
 

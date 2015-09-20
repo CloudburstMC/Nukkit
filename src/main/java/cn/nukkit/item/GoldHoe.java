@@ -27,4 +27,9 @@ public class GoldHoe extends Tool {
     public boolean isHoe() {
         return true;
     }
+
+    @Override
+    public int getTier() {
+        return Tool.TIER_GOLD;
+    }
 }
