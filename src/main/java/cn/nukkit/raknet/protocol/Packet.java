@@ -75,7 +75,7 @@ public abstract class Packet implements Cloneable {
         byte version = this.getByte();
         if (version == 4) {
             String addr = ((~this.getByte()) & 0xff) + "." + ((~this.getByte()) & 0xff) + "." + ((~this.getByte()) & 0xff) + "." + ((~this.getByte()) & 0xff);
-            short port = this.getShort();
+            int port = this.getShort() & 0xffff;
             return new InetSocketAddress(addr, port);
         } else {
             //todo IPV6 SUPPORT

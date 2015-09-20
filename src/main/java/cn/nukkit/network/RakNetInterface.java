@@ -60,7 +60,9 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
         boolean work = false;
         if (this.handler.handlePacket()) {
             work = true;
-            while (this.handler.handlePacket()) ;
+            while (this.handler.handlePacket()) {
+
+            }
         }
 
         return work;

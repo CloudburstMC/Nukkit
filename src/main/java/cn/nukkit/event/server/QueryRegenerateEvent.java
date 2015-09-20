@@ -166,7 +166,7 @@ public class QueryRegenerateEvent extends ServerEvent {
         KVdata.put("plugins", plist);
         KVdata.put("map", this.map);
         KVdata.put("numplayers", String.valueOf(this.numPlayers));
-        KVdata.put("maxplaers", String.valueOf(this.maxPlayers));
+        KVdata.put("maxplayers", String.valueOf(this.maxPlayers));
         KVdata.put("whitelist", this.whitelist);
         KVdata.put("hostip", this.ip);
         KVdata.put("hostport", String.valueOf(this.port));

@@ -121,7 +121,7 @@ public class ServerHandler {
                 int len = packet[offset++];
                 String address = new String(Binary.subBytes(packet, offset, len), StandardCharsets.UTF_8);
                 offset += len;
-                short port = Binary.readShort(Binary.subBytes(packet, offset, 2));
+                int port = Binary.readShort(Binary.subBytes(packet, offset, 2)) & 0xffff;
                 offset += 2;
                 byte[] payload = Binary.subBytes(packet, offset);
                 this.instance.handleRaw(address, port, payload);
@@ -138,7 +138,7 @@ public class ServerHandler {
                 len = packet[offset++];
                 String address = new String(Binary.subBytes(packet, offset, len), StandardCharsets.UTF_8);
                 offset += len;
-                short port = Binary.readShort(Binary.subBytes(packet, offset, 2));
+                int port = Binary.readShort(Binary.subBytes(packet, offset, 2)) & 0xffff;
                 offset += 2;
                 long clientID = Binary.readLong(Binary.subBytes(packet, offset, 8));
                 this.instance.openSession(identifier, address, port, clientID);

@@ -154,7 +154,7 @@ public class SessionManager {
                     packet.buffer = buffer;
                     this.getSession(source, port).handlePacket(packet);
                     return true;
-                } else if (buffer.length == 0) {
+                } else if (buffer.length != 0) {
                     this.streamRAW(source, port, buffer);
                     return true;
                 } else {
@@ -279,7 +279,7 @@ public class SessionManager {
                     len = packet[offset++];
                     String address = new String(Binary.subBytes(packet, offset, len), StandardCharsets.UTF_8);
                     offset += len;
-                    short port = Binary.readShort(Binary.subBytes(packet, offset, 2));
+                    int port = Binary.readShort(Binary.subBytes(packet, offset, 2)) & 0xffff;
                     offset += 2;
                     byte[] payload = Binary.subBytes(packet, offset);
                     this.socket.writePacket(payload, address, port);
