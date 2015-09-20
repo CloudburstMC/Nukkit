@@ -17,23 +17,22 @@
 
 __Nukkit: A Nuclear-Powered Server Software For Minecraft: PE__
 
-#### (。・`ω´・) 进度如何！？
+#### 进度报告！
 ##### What's the process?
-* 客官稍安勿躁。项目目前已完成大部分底层构建，正在编写核心网络层部分。
-* This project is still building the basic structure, NETWORK part is not done yet.
- 
+* 项目目前已完成大部分底层构建，正在编写核心网络层部分及地图生成器部分。
+* We have finished most of the basic Classes, and now we are programming the NETWORK and the GENERATORs.
 
-#### ( -ω-) 关于 Nukkit
+
+#### 关于 Nukkit
 ##### About Nukkit
-* 中国制造 - 严格遵守PocketMine代码风格，保持相似结构，全速开发中。(°ー°〃)
-* Following PocketMine's code style and structure, Nukkit is still under heavy programming.
- 
+* 中国制造 与 PocketMine 拥有相似结构，便于 PocketMine 使用者快速使用上 Nukkit，正在全速开发中。
+* Following PocketMine's structure, Nukkit is still under heavy programming.
 
-#### 关于插件
+
+#### 关于插件API
 ##### About Plugin API
-* Nukkit有插件API吗？有的，支持包括事件系统在内的API
-* Does Nukkit have a Plugin API?  Yeah! We've finished the plugin part, including the EVENT API and SCHEDULER API and so on!
-
+* Nukkit有插件API吗？我们已经完成了！你可以使用事件系统，计时器系统等等！
+* Does Nukkit have a Plugin API? Yes! We have ALREADY finish the Plugin part!
 
 #### 与我们交流
-* __[欢迎加入百度 Nukkit 吧](http://tieba.baidu.com/f?kw=nukkit)__
+* __欢迎加入[百度 Nukkit 吧](http://tieba.baidu.com/f?kw=nukkit)__
