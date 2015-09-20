@@ -156,7 +156,7 @@ public class Permission {
         String desc = null;
         Map<String, Boolean> children = new HashMap<>();
         if (data.containsKey("default")) {
-            String value = Permission.getByName((String) data.get("default"));
+            String value = Permission.getByName(String.valueOf(data.get("default")));
             if (value != null) {
                 defaultValue = value;
             } else {

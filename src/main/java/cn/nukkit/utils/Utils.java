@@ -62,7 +62,10 @@ public class Utils {
         StringBuilder stringBuilder = new StringBuilder();
         temp = br.readLine();
         while (temp != null) {
-            stringBuilder.append(temp).append("\n");
+            if (stringBuilder.length() != 0) {
+                stringBuilder.append("\n");
+            }
+            stringBuilder.append(temp);
             temp = br.readLine();
         }
         return stringBuilder.toString();

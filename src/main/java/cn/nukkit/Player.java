@@ -3,6 +3,7 @@ package cn.nukkit;
 import cn.nukkit.entity.Human;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.utils.TextFormat;
 
@@ -18,6 +19,16 @@ public class Player extends Human {
     public static final int SPECTATOR = 3;
     public static final int VIEW = SPECTATOR;
 
+    public static final int SURVIVAL_SLOTS = 36;
+    public static final int CREATIVE_SLOTS = 112;
+
+    protected SourceInterface interfaz;
+
+    public boolean spawned = false;
+    public boolean loggedIn = false;
+    public byte gamemode;
+    public long lastBreak;
+
     protected String ip;
 
     protected String displayName;
@@ -32,6 +43,22 @@ public class Player extends Human {
 
     public String getAddress() {
         return this.ip;
+    }
+
+    public boolean isSurvival() {
+        return (this.gamemode & 0x01) == 0;
+    }
+
+    public boolean isCreative() {
+        return (this.gamemode & 0x01) > 0;
+    }
+
+    public boolean isSpectator() {
+        return this.gamemode == 3;
+    }
+
+    public boolean isAdventure() {
+        return (this.gamemode & 0x02) > 0;
     }
 
     public void handleDataPacket(DataPacket packet) {

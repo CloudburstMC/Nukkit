@@ -1,7 +1,9 @@
 package cn.nukkit.level;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.BlockMetadataStore;
@@ -20,6 +22,19 @@ import java.util.Map;
  * Nukkit Project
  */
 public class Level implements Metadatable {
+
+    public static final int BLOCK_UPDATE_NORMAL = 1;
+    public static final int BLOCK_UPDATE_RANDOM = 2;
+    public static final int BLOCK_UPDATE_SCHEDULED = 3;
+    public static final int BLOCK_UPDATE_WEAK = 4;
+    public static final int BLOCK_UPDATE_TOUCH = 5;
+
+    public static final int TIME_DAY = 0;
+    public static final int TIME_SUNSET = 12000;
+    public static final int TIME_NIGHT = 14000;
+    public static final int TIME_SUNRISE = 23000;
+
+    public static final int TIME_FULL = 24000;
 
     private Map<Integer, Tile> tiles = new HashMap<>();
 
@@ -92,6 +107,19 @@ public class Level implements Metadatable {
     public boolean setBlock(Vector3 pos, Block block, boolean direct, boolean update) {
         //todo!!
         return false;
+    }
+
+    public Item useBreakOn(Vector3 vector) {
+        return this.useBreakOn(vector, null, false);
+    }
+
+    public Item useBreakOn(Vector3 vector, Player player) {
+        return this.useBreakOn(vector, player, false);
+    }
+
+    public Item useBreakOn(Vector3 vector, Player player, boolean createParticles) {
+        //todo
+        return null;
     }
 
     public void chunkRequestCallback(int x, int z, byte[] payload) {

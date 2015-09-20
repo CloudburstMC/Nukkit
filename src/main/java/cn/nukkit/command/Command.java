@@ -87,6 +87,7 @@ public abstract class Command {
 
     public boolean testPermission(CommandSender target) {
         if (this.testPermissionSilent(target)) {
+            System.out.println("wtf");
             return true;
         }
 
