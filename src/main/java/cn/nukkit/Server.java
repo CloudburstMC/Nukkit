@@ -531,12 +531,14 @@ public class Server {
         float totol = ((float) Math.round(((double) runtime.totalMemory()) / 1024 / 1024 * 100)) / 100;
         float max = ((float) Math.round(((double) runtime.maxMemory()) / 1024 / 1024 * 100)) / 100;
         //String usage = used + "/" + totol + "/" + max + " MB @ ";
-        String usage = used + "/" + max + " MB @ ";
+        String usage = used + "/" + max + " MB";
         System.out.print((char) 0x1b + "]0;" + this.getName() + " " +
                 this.getNukkitVersion() +
                 " | Online " + this.players.size() + "/" + this.getMaxPlayers() +
-                " | Memory " + usage + Thread.getAllStackTraces().keySet().size() + " threads" +
-                " | TPS " + this.getTicksPerSecond() +
+                " | Memory " + usage +
+                " | U " + ((float) Math.round((this.network.getUpload()) / 1024 * 100)) / 100
+                + " D " + ((float) Math.round((this.network.getDownload()) / 1024 * 100)) / 100 +
+                " kB/s | TPS " + this.getTicksPerSecond() +
                 " | Load " + this.getTickUsage() + "%" + (char) 0x07);
 
         this.network.resetStatistics();
