@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Item {
+public class Item implements Cloneable {
 
     //All Block IDs are here too
     public static final int AIR = 0;

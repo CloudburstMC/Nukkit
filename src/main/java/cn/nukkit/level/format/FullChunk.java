@@ -10,7 +10,7 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public interface FullChunk {
+public interface FullChunk extends Cloneable {
 
     int getX();
 

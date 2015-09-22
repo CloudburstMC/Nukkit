@@ -3,7 +3,6 @@ package cn.nukkit.raknet.protocol;
 import cn.nukkit.utils.Binary;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * author: MagicDroidX
@@ -11,7 +10,7 @@ import java.util.List;
  */
 public abstract class DataPacket extends Packet {
 
-    public List<Object> packets = new ArrayList<>();
+    public ArrayList<Object> packets = new ArrayList<>();
 
     public Integer seqNumber;
 
@@ -60,11 +59,7 @@ public abstract class DataPacket extends Packet {
     @Override
     public DataPacket clone() throws CloneNotSupportedException {
         DataPacket packet = (DataPacket) super.clone();
-        List<Object> packets = new ArrayList<>();
-        for (Object object : this.packets) {
-            packets.add(object);
-        }
-        packet.packets = packets;
+        packet.packets = (ArrayList<Object>) this.packets.clone();
         return packet;
     }
 

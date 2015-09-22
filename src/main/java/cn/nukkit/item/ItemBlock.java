@@ -25,8 +25,16 @@ public class ItemBlock extends Item {
         this.block.setDamage(meta);
     }
 
-    public void __clone() {
-        this.block = this.block.clone();
+    @Override
+    public ItemBlock clone() {
+        try {
+            ItemBlock block = (ItemBlock) super.clone();
+            block.block = this.block.clone();
+            return block;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Block getBlock() {

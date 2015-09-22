@@ -42,10 +42,4 @@ public class CLIENT_HANDSHAKE_DataPacket extends Packet {
         this.sendPong = this.getLong();
     }
 
-    @Override
-    public CLIENT_HANDSHAKE_DataPacket clone() throws CloneNotSupportedException {
-        CLIENT_HANDSHAKE_DataPacket packet = (CLIENT_HANDSHAKE_DataPacket) super.clone();
-        packet.systemAddresses = this.systemAddresses.clone();
-        return packet;
-    }
 }

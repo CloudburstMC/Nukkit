@@ -52,10 +52,4 @@ public class SERVER_HANDSHAKE_DataPacket extends Packet {
         super.decode();
     }
 
-    @Override
-    public SERVER_HANDSHAKE_DataPacket clone() throws CloneNotSupportedException {
-        SERVER_HANDSHAKE_DataPacket packet = (SERVER_HANDSHAKE_DataPacket) super.clone();
-        packet.systemAddresses = this.systemAddresses.clone();
-        return packet;
-    }
 }
