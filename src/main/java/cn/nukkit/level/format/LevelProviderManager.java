@@ -2,32 +2,38 @@ package cn.nukkit.level.format;
 
 import cn.nukkit.Server;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class LevelProviderManager {
-    protected static Map<String, LevelProvider> providers = new TreeMap<>();
+    protected static Map<String, Class<? extends LevelProvider>> providers = new HashMap<>();
 
-    public static void addProvider(Server server, LevelProvider provider) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        providers.put((String) provider.getClass().getMethod("getProviderName").invoke(provider.getClass()), provider);
+    public static void addProvider(Server server, Class<? extends LevelProvider> clazz) {
+        try {
+            providers.put((String) clazz.getMethod("getProviderName").invoke(null), clazz);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static LevelProvider getProvider(String path) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        for (Map.Entry entry : providers.entrySet()) {
-            LevelProvider provider = (LevelProvider) entry.getValue();
-            if ((boolean) provider.getClass().getMethod("isValid", String.class).invoke(provider.getClass(), path)) {
-                return provider;
+    public static Class<? extends LevelProvider> getProvider(String path) {
+        for (Class<? extends LevelProvider> provider : providers.values()) {
+            try {
+                if ((boolean) provider.getClass().getMethod("isValid", String.class).invoke(null, path)) {
+                    return provider;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return null;
     }
 
-    public static LevelProvider getProviderByName(String name) {
+    public static Class<? extends LevelProvider> getProviderByName(String name) {
         name = name.trim().toLowerCase();
         return providers.containsKey(name) ? providers.get(name) : null;
     }

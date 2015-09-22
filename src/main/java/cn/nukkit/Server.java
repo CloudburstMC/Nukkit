@@ -7,7 +7,12 @@ import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.BaseLang;
+import cn.nukkit.level.Flat;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.format.LevelProviderManager;
+import cn.nukkit.level.format.anvil.Anvil;
+import cn.nukkit.level.format.mcregion.McRegion;
+import cn.nukkit.level.generator.Generator;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
@@ -40,23 +45,25 @@ public class Server {
     public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "nukkit.broadcast.admin";
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
 
-    private static Server instance;
+    private static Server instance = null;
 
-    private BanList banByName;
+    private BanList banByName = null;
 
-    private BanList banByIP;
+    private BanList banByIP = null;
 
-    private Config operators;
+    private Config operators = null;
 
-    private Config whitelist;
+    private Config whitelist = null;
 
     private boolean isRunning = true;
 
     private boolean hasStopped = false;
 
-    private PluginManager pluginManager;
+    private PluginManager pluginManager = null;
 
-    private ServerScheduler scheduler;
+    private int profilingTickrate = 20;
+
+    private ServerScheduler scheduler = null;
 
     private int tickCounter;
 
@@ -95,7 +102,7 @@ public class Server {
 
     private BaseLang baseLang;
 
-    private boolean forceLanguage;
+    private boolean forceLanguage = false;
 
     private String serverID;
 
@@ -111,7 +118,10 @@ public class Server {
     private Config config;
 
     private Map<String, Player> players = new HashMap<>();
+
     private Map<Player, String> identifier = new HashMap<>();
+
+    private Map<Integer, Level> levels = new HashMap<>();
 
     private Level defaultLevel = null;
 
@@ -260,6 +270,23 @@ public class Server {
         this.pluginManager.loadPlugins(this.pluginPath);
 
         this.enablePlugins(PluginLoadOrder.STARTUP);
+
+        LevelProviderManager.addProvider(this, Anvil.class);
+        LevelProviderManager.addProvider(this, McRegion.class);
+        //todo LevelDB provider
+
+        Generator.addGenerator(Flat.class, "flat");
+        //todo normal generator
+
+        /*try {
+            for (Map.Entry<String, Object> entry : ((Map<String, Object>) this.getConfig("worlds", new HashMap<>())).entrySet()) {
+                String name = entry.getKey();
+                Object worldSetting = entry.getValue();
+                if ()
+            }
+        } catch (ClassCastException e) {
+            //ignore
+        }*/
 
         //do a lot thing
 
@@ -600,11 +627,6 @@ public class Server {
         return this.getPropertyString("server-ip", "0.0.0.0");
     }
 
-    @Deprecated
-    public String getServerName() {
-        return this.getPropertyString("motd", "Nukkit Server For Minecraft: PE");
-    }
-
     public String getServerUniqueId() {
         return this.serverID;
     }
@@ -786,8 +808,100 @@ public class Server {
         return players;
     }
 
+    public Player getPlayer(String name) {
+        Player found = null;
+        name = name.toLowerCase();
+        int delta = Integer.MAX_VALUE;
+        for (Player player : this.getOnlinePlayers().values()) {
+            if (player.getName().startsWith(name)) {
+                int curDelta = player.getName().length() - name.length();
+                if (curDelta < delta) {
+                    found = player;
+                    delta = curDelta;
+                }
+                if (curDelta == 0) {
+                    break;
+                }
+            }
+        }
+
+        return found;
+    }
+
+    public Player getPlayerExact(String name) {
+        name = name.toLowerCase();
+        for (Player player : this.getOnlinePlayers().values()) {
+            if (player.getName().toLowerCase().equals(name)) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
+    public Player[] matchPlayer(String partialName) {
+        partialName = partialName.toLowerCase();
+        List<Player> matchedPlayer = new ArrayList<>();
+        for (Player player : this.getOnlinePlayers().values()) {
+            if (player.getName().toLowerCase().equals(partialName)) {
+                return new Player[]{player};
+            } else if (player.getName().toLowerCase().contains(partialName)) {
+                matchedPlayer.add(player);
+            }
+        }
+
+        return matchedPlayer.toArray(new Player[matchedPlayer.size()]);
+    }
+
+    public void removePlayer(Player player) {
+        if (this.identifier.containsKey(player)) {
+            String identifier = this.identifier.get(player);
+            this.players.remove(identifier);
+            this.identifier.remove(player);
+            return;
+        }
+
+        for (Map.Entry<String, Player> entry : this.players.entrySet()) {
+            if (player.equals(entry.getValue())) {
+                this.players.remove(entry.getKey());
+                this.identifier.remove(player);
+                break;
+            }
+        }
+    }
+
+    public Map<Integer, Level> getLevels() {
+        return levels;
+    }
+
+    public Level getDefaultLevel() {
+        return defaultLevel;
+    }
+
+    public void setDefaultLevel(Level defaultLevel) {
+        if (defaultLevel == null || (this.isLevelLoaded(defaultLevel.getFolderName()) && !defaultLevel.equals(this.defaultLevel))) {
+            this.defaultLevel = defaultLevel;
+        }
+    }
+
+    public boolean isLevelLoaded(String name) {
+        return this.getLevelByName(name) != null;
+    }
+
     public Level getLevel(int levelId) {
-        //todo
+        if (this.levels.containsKey(levelId)) {
+            return this.levels.get(levelId);
+        }
+        return null;
+    }
+
+    public Level getLevelByName(String name) {
+        for (Level level : this.getLevels().values()) {
+            if (level.getFolderName().equals(name)) {
+                return level;
+            }
+        }
+
         return null;
     }
 
@@ -801,10 +915,6 @@ public class Server {
 
     public Network getNetwork() {
         return network;
-    }
-
-    public Level getDefaultLevel() {
-        return defaultLevel;
     }
 
     public Object getConfig(String variable) {
