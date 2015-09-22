@@ -52,6 +52,18 @@ public abstract class BaseFullChunk implements FullChunk {
 
     private boolean isInit = false;
 
+    @Override
+    public BaseFullChunk clone() throws CloneNotSupportedException {
+        BaseFullChunk chunk = (BaseFullChunk) super.clone();
+        chunk.biomeColors = biomeColors.clone();
+        chunk.blocks = blocks.clone();
+        chunk.data = data.clone();
+        chunk.skyLight = skyLight.clone();
+        chunk.blockLight = blockLight.clone();
+        chunk.heightMap = heightMap.clone();
+        return chunk;
+    }
+
     protected void checkOldBiomes(byte[] data) {
         if (data.length != 256) {
             return;

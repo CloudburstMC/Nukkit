@@ -38,6 +38,14 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     protected boolean hasChanged = false;
 
     @Override
+    public BaseChunk clone() throws CloneNotSupportedException {
+        BaseChunk chunk = (BaseChunk) super.clone();
+        chunk.biomeColors = biomeColors.clone();
+        chunk.heightMap = heightMap.clone();
+        return chunk;
+    }
+
+    @Override
     public int getFullBlock(int x, int y, int z) {
         return this.sections[y >> 4].getFullBlock(x, y & 0x0f, z);
     }

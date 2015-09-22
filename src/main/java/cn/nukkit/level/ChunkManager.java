@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 
 /**
  * author: MagicDroidX
@@ -16,7 +17,7 @@ public interface ChunkManager {
 
     void setBlockDataAt(int x, int y, int z, int data);
 
-    FullChunk getChunk(int chunkX, int chunkZ);
+    BaseFullChunk getChunk(int chunkX, int chunkZ);
 
     void setChunk(int chunkX, int chunkZ);
 

@@ -18,7 +18,7 @@ public class Normal extends Generator {
         this(new HashMap<>());
     }
 
-    public Normal(Map<String, String> options) {
+    public Normal(Map<String, Object> options) {
         //todo
     }
 
@@ -29,7 +29,7 @@ public class Normal extends Generator {
     }
 
     @Override
-    public Map<String, String> getSettings() {
+    public Map<String, Object> getSettings() {
         return new HashMap<>();
     }
 

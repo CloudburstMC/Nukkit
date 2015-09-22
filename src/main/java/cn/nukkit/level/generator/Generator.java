@@ -183,7 +183,7 @@ public abstract class Generator {
 
     public abstract void populateChunk(int chunkX, int chunkZ);
 
-    public abstract Map<String, String> getSettings();
+    public abstract Map<String, Object> getSettings();
 
     public abstract String getName();
 

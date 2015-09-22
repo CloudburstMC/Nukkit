@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,9 +54,9 @@ public class SimpleChunkManager implements ChunkManager {
     }
 
     @Override
-    public FullChunk getChunk(int chunkX, int chunkZ) {
+    public BaseFullChunk getChunk(int chunkX, int chunkZ) {
         String index = Level.chunkHash(chunkX, chunkZ);
-        return this.chunks.containsKey(index) ? this.chunks.get(index) : null;
+        return this.chunks.containsKey(index) ? (BaseFullChunk) this.chunks.get(index) : null;
     }
 
     @Override
@@ -69,7 +70,7 @@ public class SimpleChunkManager implements ChunkManager {
             this.chunks.remove(Level.chunkHash(chunkX, chunkZ));
             return;
         }
-        this.chunks.put(Level.chunkHash(chunkX, chunkZ), chunk);
+        this.chunks.put(Level.chunkHash(chunkX, chunkZ), (BaseFullChunk) chunk);
     }
 
     @Override

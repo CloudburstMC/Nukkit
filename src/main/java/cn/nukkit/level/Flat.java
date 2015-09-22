@@ -2,8 +2,9 @@ package cn.nukkit.level;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.object.OreType;
 import cn.nukkit.level.generator.populator.Ore;
 import cn.nukkit.level.generator.populator.Populator;
@@ -20,7 +21,7 @@ public class Flat extends Generator {
 
     private ChunkManager level;
 
-    private FullChunk chunk;
+    private BaseFullChunk chunk;
 
     private Random random;
 
@@ -28,7 +29,7 @@ public class Flat extends Generator {
 
     private int[][] structure;
 
-    private Map<String, String> options;
+    private Map<String, Object> options;
 
     private int floorLevel;
 
@@ -36,7 +37,7 @@ public class Flat extends Generator {
 
 
     @Override
-    public Map<String, String> getSettings() {
+    public Map<String, Object> getSettings() {
         return this.options;
     }
 
@@ -49,7 +50,7 @@ public class Flat extends Generator {
         this(new HashMap<>());
     }
 
-    public Flat(Map<String, String> options) {
+    public Flat(Map<String, Object> options) {
         this.preset = "2;7,2x3,2;1;";
         this.options = options;
         this.chunk = null;
@@ -78,11 +79,10 @@ public class Flat extends Generator {
             String blocks = presetArray.length > 1 ? presetArray[1] : "";
             int biome = presetArray.length > 2 ? Integer.valueOf(presetArray[2]) : 1;
             String options = presetArray.length > 3 ? presetArray[1] : "";
-            String[] blockArray = blocks.split(",");
             this.structure = new int[256][];
             int y = 0;
-            for (String block : blockArray) {
-                int id = 0, meta = 0, cnt = 1;
+            for (String block : blocks.split(",")) {
+                int id, meta = 0, cnt = 1;
                 if (Pattern.matches("^[0-9]{1,3}x[0-9]$", block)) {
                     //AxB
                     String[] s = block.split("x");
@@ -114,30 +114,79 @@ public class Flat extends Generator {
                 this.structure[y] = new int[]{0, 0};
             }
 
+            this.chunk = this.level.getChunk(chunkX, chunkZ).clone();
+            this.chunk.setGenerated();
+            int c = Biome.getBiome(biome).getColor();
+            int R = c >> 16;
+            int G = (c >> 8) & 0xff;
+            int B = c & 0xff;
+
+            for (int Z = 0; Z < 16; ++Z) {
+                for (int X = 0; X < 16; ++X) {
+                    this.chunk.setBiomeId(X, Z, biome);
+                    this.chunk.setBiomeColor(X, Z, R, G, B);
+                    for (y = 0; y < 128; ++y) {
+                        this.chunk.setBlock(X, y, Z, this.structure[y][0], this.structure[y][1]);
+                    }
+                }
+            }
+
+            for (String option : options.split(",")) {
+                if (Pattern.matches("^[0-9a-z_]+$", option)) {
+                    this.options.put(option, true);
+                } else if (Pattern.matches("^[0-9a-z_]+\\([0-9a-z_ =]+\\)$", option)) {
+                    String name = option.substring(0, option.indexOf("("));
+                    String extra = option.substring(option.indexOf("(") + 1, option.indexOf(")"));
+                    Map<String, Float> map = new HashMap<>();
+                    for (String kv : extra.split(" ")) {
+                        String[] data = kv.split("=");
+                        map.put(data[0], Float.valueOf(data[1]));
+                    }
+                    this.options.put(name, map);
+                }
+            }
 
         } catch (Exception e) {
             Server.getInstance().getLogger().error("error while parsing the preset: " + e.getMessage());
         }
     }
 
-
     @Override
     public void init(ChunkManager level, Random random) {
-
+        this.level = level;
+        this.random = random;
     }
 
     @Override
     public void generateChunk(int chunkX, int chunkZ) {
-
+        if (this.chunk == null) {
+            if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
+                this.parsePreset((String) this.options.get("preset"), chunkX, chunkZ);
+            } else {
+                this.parsePreset(this.preset, chunkX, chunkZ);
+            }
+        }
+        try {
+            BaseFullChunk chunk = this.chunk.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return;
+        }
+        chunk.setX(chunkX);
+        chunk.setZ(chunkZ);
+        this.level.setChunk(chunkX, chunkZ, chunk);
     }
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
-
+        this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
+        for (Populator populator : this.populators) {
+            populator.populate(this.level, chunkX, chunkZ, this.random);
+        }
     }
 
     @Override
     public Vector3 getSpawn() {
-        return null;
+        return new Vector3(128, this.floorLevel, 128);
     }
 }
