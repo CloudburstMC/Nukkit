@@ -119,8 +119,8 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public Map<String, String> getGeneratorOptions() {
-        return new HashMap<String, String>() {
+    public Map<String, Object> getGeneratorOptions() {
+        return new HashMap<String, Object>() {
             {
                 put("preset", levelData.getString("generatorOptions"));
             }

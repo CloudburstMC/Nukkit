@@ -1,6 +1,7 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
+import cn.nukkit.utils.ThreadStore;
 
 /**
  * author: MagicDroidX
@@ -43,6 +44,20 @@ public abstract class AsyncTask extends Thread {
 
     public int getTaskId() {
         return this.taskId;
+    }
+
+    public Object getFromThreadStore(String identifier) {
+        return this.isFinished() ? null : ThreadStore.store.get(identifier);
+    }
+
+    public void saveToThreadStore(String identifier, Object value) {
+        if (!this.isFinished()) {
+            if (value == null) {
+                ThreadStore.store.remove(identifier);
+            } else {
+                ThreadStore.store.put(identifier, value);
+            }
+        }
     }
 
     public abstract void onRun();

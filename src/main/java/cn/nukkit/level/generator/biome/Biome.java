@@ -58,6 +58,10 @@ public abstract class Biome {
         biomes.put(id, biome);
     }
 
+    public static void init() {
+        //todo alot register
+    }
+
     public static Biome getBiome(int id) {
         return biomes.containsKey(id) ? biomes.get(id) : biomes.get(OCEAN);
     }

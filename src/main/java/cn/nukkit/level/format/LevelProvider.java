@@ -21,7 +21,7 @@ public interface LevelProvider {
 
     String getGenerator();
 
-    Map<String, String> getGeneratorOptions();
+    Map<String, Object> getGeneratorOptions();
 
     FullChunk getChunk(int X, int Z) throws IOException;
 

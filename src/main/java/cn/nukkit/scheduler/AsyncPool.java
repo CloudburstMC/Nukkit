@@ -57,7 +57,7 @@ public class AsyncPool {
             return;
         }
         if (worker < 0 || worker >= this.size) {
-            throw new IllegalArgumentException("不可用的 worker " + worker);
+            throw new IllegalArgumentException("Invalid worker " + worker);
         }
         this.tasks.put(task.getTaskId(), task);
         this.workers[worker].stack(task);

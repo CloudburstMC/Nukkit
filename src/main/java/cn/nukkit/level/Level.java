@@ -9,6 +9,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.GeneratorRegisterTask;
+import cn.nukkit.level.generator.GeneratorUnregisterTask;
+import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.BlockMetadataStore;
 import cn.nukkit.metadata.MetadataValue;
@@ -17,11 +20,9 @@ import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.LevelException;
+import cn.nukkit.utils.PriorityObject;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -95,7 +96,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<String, Map<String, Vector3>> changedBlocks = new HashMap<>();
 
-    private PriorityQueue updateQueue;
+    private PriorityQueue<PriorityObject> updateQueue;
     private Map<String, Integer> updateQueueIndex = new HashMap<>();
 
     private Map<String, Map<String, Player>> chunkSendQueue = new HashMap<>();
@@ -134,12 +135,52 @@ public class Level implements ChunkManager, Metadatable {
     public int tickRateTime = 0;
     public int tickRateCounter = 0;
 
-    private Generator generator;
+    private Class<? extends Generator> generator;
     private Generator generatorInstance;
 
-    public Level(Server server, String name, String path, LevelProvider provider) {
+    public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
+        this.blockStates = Block.fullList;
+        this.levelId = levelIdCounter++;
         this.blockMetadata = new BlockMetadataStore(this);
         this.server = server;
+        this.autoSave = server.getAutoSave();
+
+        try {
+            this.provider = provider.getConstructor(Level.class, String.class).newInstance(this, path);
+        } catch (Exception e) {
+            throw new LevelException("Wrong constructor in class " + provider.getName());
+        }
+
+        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.preparing", this.provider.getName()));
+        this.generator = Generator.getGenerator(this.provider.getGenerator());
+
+        try {
+            this.blockOrder = (byte) provider.getMethod("getProviderOrder").invoke(null);
+            this.useSections = (boolean) provider.getMethod("usesChunkSection").invoke(null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        this.folderName = name;
+        this.updateQueue = new PriorityQueue<>(11, new Comparator<PriorityObject>() {
+            @Override
+            public int compare(PriorityObject o1, PriorityObject o2) {
+                return o1.priority < o2.priority ? 1 : (o1.priority == o2.priority ? 0 : -1);
+            }
+        });
+        this.time = this.provider.getTime();
+
+        this.chunkTickRadius = Math.min(this.server.getViewDistance(), Math.max(1, (Integer) this.server.getConfig("chunk-ticking.tick-radius", 4)));
+        this.chunksPerTicks = (int) this.server.getConfig("chunk-ticking.per-tick", 40);
+        this.chunkGenerationQueueSize = (int) this.server.getConfig("chunk-generation.queue-size", 8);
+        this.chunkPopulationQueueSize = (int) this.server.getConfig("chunk-generation.population-queue-size", 2);
+        this.chunkTickList.clear();
+        this.clearChunksOnTick = (boolean) this.server.getConfig("chunk-ticking.clear-tick-list", true);
+        this.cacheChunks = (boolean) this.server.getConfig("chunk-sending.cache-chunks", false);
+
+        this.temporalPosition = new Position(0, 0, 0, this);
+        this.temporalVector = new Vector3(0, 0, 0);
+        this.tickRate = 1;
     }
 
     public static String chunkHash(int x, int z) {
@@ -150,14 +191,59 @@ public class Level implements ChunkManager, Metadatable {
         return x + ":" + y + ":" + z;
     }
 
-    public String getName() {
-
-        //todo !!!
-        return "TODO！！！！！！！！";
+    public static Vector3 getBlockVector3(String hash) {
+        String[] h = hash.split(":");
+        return new Vector3(Integer.valueOf(h[0]), Integer.valueOf(h[1]), Integer.valueOf(h[2]);
     }
 
-    public String getFolderName() {
-        return "todo";
+    public static Vector2 getBlockVector2(String hash) {
+        String[] h = hash.split(":");
+        return new Vector2(Integer.valueOf(h[0]), Integer.valueOf(h[1]));
+    }
+
+    public static int generateChunkLoaderId(ChunkLoader loader) {
+        if (loader.getLoaderId() == 0) {
+            return chunkLoaderCounter++;
+        } else {
+            throw new IllegalStateException("ChunkLoader has a loader id already assigned: " + loader.getLoaderId());
+        }
+    }
+
+    public int getTickRate() {
+        return tickRate;
+    }
+
+    public int getTickRateTime() {
+        return tickRateTime;
+    }
+
+    public void setTickRate(int tickRate) {
+        this.tickRate = tickRate;
+    }
+
+    public void initLevel() {
+        try {
+            this.generatorInstance = generator.getConstructor(Map.class).newInstance(this.provider.getGeneratorOptions());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        this.generatorInstance.init(this, new Random(this.getSeed()));
+
+        this.registerGenerator();
+    }
+
+    public void registerGenerator() {
+        int size = this.server.getScheduler().getAsyncTaskPoolSize();
+        for (int i = 0; i < size; ++i) {
+            this.server.getScheduler().scheduleAsyncTaskToWorker(new GeneratorRegisterTask(this, this.generatorInstance), i);
+        }
+    }
+
+    public void unregisterGenerator() {
+        int size = this.server.getScheduler().getAsyncTaskPoolSize();
+        for (int i = 0; i < size; ++i) {
+            this.server.getScheduler().scheduleAsyncTaskToWorker(new GeneratorUnregisterTask(this), i);
+        }
     }
 
     public BlockMetadataStore getBlockMetadata() {
@@ -176,6 +262,16 @@ public class Level implements ChunkManager, Metadatable {
         return this.levelId;
     }
 
+    public String getName() {
+
+        //todo !!!
+        return "TODO！！！！！！！！";
+    }
+
+    public String getFolderName() {
+        return "todo";
+    }
+    
     public void clearChunkCache(int chunkX, int chunkZ) {
         //todo !!!!
     }

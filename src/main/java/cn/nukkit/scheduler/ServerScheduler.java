@@ -44,6 +44,19 @@ public class ServerScheduler {
         this.asyncPool.submitTask(task);
     }
 
+    public void scheduleAsyncTaskToWorker(AsyncTask task, int worker) {
+        task.setTaskId(this.nextId());
+        this.asyncPool.submitTaskToWorker(task, worker);
+    }
+
+    public int getAsyncTaskPoolSize() {
+        return this.asyncPool.getSize();
+    }
+
+    public void increaseAsyncTaskPoolSize(int newSize){
+        this.asyncPool.increaseSize(newSize);
+    }
+
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
         return this.addTask(task, delay, -1);
     }

@@ -14,7 +14,7 @@ import java.util.Random;
  * Nukkit Project
  */
 public abstract class Generator {
-    private static Map<String, Class> list = new HashMap<>();
+    private static Map<String, Class<? extends Generator>> list = new HashMap<>();
 
     public static boolean addGenerator(Class<? extends Generator> clazz, String name) {
         name = name.toLowerCase();
@@ -30,7 +30,7 @@ public abstract class Generator {
         return Generator.list.keySet().toArray(keys);
     }
 
-    public static Class getGenerator(String name) {
+    public static Class<? extends Generator> getGenerator(String name) {
         name = name.toLowerCase();
         if (Generator.list.containsKey(name)) {
             return Generator.list.get(name);
@@ -38,7 +38,7 @@ public abstract class Generator {
         return Normal.class;
     }
 
-    public static String getGeneratorName(Class c) {
+    public static String getGeneratorName(Class<? extends Generator> c) {
         for (Map.Entry entry : Generator.list.entrySet()) {
             if (entry.getValue().equals(c)) {
                 return (String) entry.getKey();
