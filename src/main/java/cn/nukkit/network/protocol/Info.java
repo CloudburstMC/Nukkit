@@ -66,6 +66,6 @@ public interface Info {
     //public static final byte PLAYER_INPUT_PACKET = (byte) 0xae;
     byte FULL_CHUNK_DATA_PACKET = (byte) 0xaf;
     byte SET_DIFFICULTY_PACKET = (byte) 0xb0;
-    byte BATCH_PACKET = (byte) 0xb1;
+    byte BATCH_PACKET = (byte) 0x92;
 
 }
