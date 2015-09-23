@@ -7,7 +7,7 @@ import cn.nukkit.math.AxisAlignedBB;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Air extends Trasparent {
+public class Air extends Transparent {
     protected int id = AIR;
     protected int meta = 0;
 

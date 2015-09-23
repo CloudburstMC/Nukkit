@@ -30,6 +30,24 @@ public abstract class Entity extends Location implements Metadatable {
         //todo
     }
 
+    public Integer getDirection() {
+        double rotation = (this.yaw - 90) % 360;
+        if (rotation < 0) {
+            rotation += 360.0;
+        }
+        if ((0 <= rotation && rotation < 45) || (315 <= rotation && rotation < 360)) {
+            return 2; //North
+        } else if (45 <= rotation && rotation < 135) {
+            return 3; //East
+        } else if (135 <= rotation && rotation < 225) {
+            return 0; //South
+        } else if (225 <= rotation && rotation < 315) {
+            return 1; //West
+        } else {
+            return null;
+        }
+    }
+
     public int getId() {
         return this.id;
     }
@@ -40,6 +58,12 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void close() {
         //todo
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        this.close();
     }
 
     @Override

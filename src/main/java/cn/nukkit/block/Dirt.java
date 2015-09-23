@@ -16,6 +16,10 @@ public class Dirt extends Solid {
         super(DIRT);
     }
 
+    public Dirt(int meta) {
+        super(DIRT, 0);
+    }
+
     @Override
     public boolean canBeActivated() {
         return true;

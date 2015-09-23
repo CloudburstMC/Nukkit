@@ -4,13 +4,13 @@ package cn.nukkit.block;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Trasparent extends Block {
+public abstract class Transparent extends Block {
 
-    public Trasparent(int id) {
+    public Transparent(int id) {
         super(id);
     }
 
-    public Trasparent(int id, int meta) {
+    public Transparent(int id, int meta) {
         super(id, meta);
     }
 

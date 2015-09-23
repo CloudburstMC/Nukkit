@@ -15,6 +15,10 @@ public class GoldOre extends Solid {
         super(GOLD_ORE);
     }
 
+    public GoldOre(int meta) {
+        super(GOLD_ORE, 0);
+    }
+
     @Override
     public double getHardness() {
         return 3;

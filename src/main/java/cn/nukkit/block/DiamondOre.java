@@ -15,6 +15,10 @@ public class DiamondOre extends Solid {
         super(DIAMOND_ORE);
     }
 
+    public DiamondOre(int meta) {
+        super(DIAMOND_ORE, 0);
+    }
+
     @Override
     public double getHardness() {
         return 3;

@@ -7,7 +7,7 @@ import cn.nukkit.item.Tool;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Ice extends Trasparent {
+public class Ice extends Transparent {
     protected int id = ICE;
 
     public Ice() {

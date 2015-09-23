@@ -7,7 +7,7 @@ import cn.nukkit.math.Vector3;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Liquid extends Trasparent {
+public abstract class Liquid extends Transparent {
     private Vector3 temporalVector = null;
 
     public Liquid(int id) {

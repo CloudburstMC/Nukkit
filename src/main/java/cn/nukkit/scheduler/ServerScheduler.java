@@ -7,7 +7,7 @@ import cn.nukkit.utils.PluginException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.PriorityQueue;
 
 /**
  * author: MagicDroidX
@@ -16,7 +16,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class ServerScheduler {
     public static int WORKERS = 4;
 
-    protected PriorityBlockingQueue<TaskHandler> queue;
+    protected PriorityQueue<TaskHandler> queue;
     protected Map<Integer, TaskHandler> tasks;
     protected AsyncPool asyncPool;
     private int ids = 1;
@@ -25,12 +25,12 @@ public class ServerScheduler {
     Comparator<TaskHandler> comparator = new Comparator<TaskHandler>() {
         @Override
         public int compare(TaskHandler handler1, TaskHandler handler2) {
-            return handler1.getNextRun() < handler2.getNextRun() ? -1 : (handler1.getNextRun() == handler2.getNextRun() ? 0 : -1);
+            return handler1.getNextRun() < handler2.getNextRun() ? 1 : (handler1.getNextRun() == handler2.getNextRun() ? 0 : -1);
         }
     };
 
     public ServerScheduler() {
-        this.queue = new PriorityBlockingQueue<>(11, comparator);
+        this.queue = new PriorityQueue<>(11, comparator);
         this.tasks = new HashMap<>();
         this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
@@ -80,7 +80,7 @@ public class ServerScheduler {
             entry.getValue().cancel();
         }
         this.tasks = new HashMap<>();
-        this.queue = new PriorityBlockingQueue<>(11, comparator);
+        this.queue = new PriorityQueue<>(11, comparator);
         this.ids = 1;
     }
 

@@ -18,6 +18,10 @@ public class RedstoneOre extends Solid {
         super(REDSTONE_ORE);
     }
 
+    public RedstoneOre(int meta) {
+        super(REDSTONE_ORE, 0);
+    }
+
     @Override
     public double getHardness() {
         return 3;

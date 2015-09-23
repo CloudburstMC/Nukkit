@@ -15,6 +15,10 @@ public class IronOre extends Solid {
         super(IRON_ORE);
     }
 
+    public IronOre(int meta) {
+        super(IRON_ORE, 0);
+    }
+
     @Override
     public double getHardness() {
         return 3;

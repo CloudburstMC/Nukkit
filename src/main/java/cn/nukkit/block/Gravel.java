@@ -17,6 +17,10 @@ public class Gravel extends Solid {
         super(GRAVEL);
     }
 
+    public Gravel(int meta) {
+        super(GRAVEL, 0);
+    }
+
     @Override
     public double getHardness() {
         return 0.6;

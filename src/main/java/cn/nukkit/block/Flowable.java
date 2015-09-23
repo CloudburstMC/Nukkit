@@ -6,7 +6,7 @@ import cn.nukkit.math.AxisAlignedBB;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Flowable extends Trasparent {
+public abstract class Flowable extends Transparent {
 
     public Flowable(int id) {
         super(id);
