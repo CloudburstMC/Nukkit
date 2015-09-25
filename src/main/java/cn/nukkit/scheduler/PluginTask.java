@@ -15,7 +15,7 @@ public abstract class PluginTask<T extends Plugin> extends Task {
         this.owner = owner;
     }
 
-    public final Plugin getOwner() {
+    public final T getOwner() {
         return this.owner;
     }
 
