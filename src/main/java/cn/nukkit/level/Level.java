@@ -5,9 +5,11 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Ice;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.level.LevelUnloadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.GeneratorRegisterTask;
 import cn.nukkit.level.generator.GeneratorUnregisterTask;
@@ -16,7 +18,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.BlockMetadataStore;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
-import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.Network;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.LevelException;
@@ -50,8 +53,8 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<Integer, Tile> tiles = new HashMap<>();
 
-    private Map<Integer, Map<Integer, int[]>> motionToSend = new HashMap<>();
-    private Map<Integer, Map<Integer, int[]>> moveToSend = new HashMap<>();
+    private Map<String, Map<Integer, double[][]>> motionToSend = new HashMap<>();
+    private Map<String, Map<Integer, double[][]>> moveToSend = new HashMap<>();
 
     private Map<Integer, Player> players = new HashMap<>();
 
@@ -75,13 +78,13 @@ public class Level implements ChunkManager, Metadatable {
 
     private LevelProvider provider;
 
-    private Map<String, ChunkLoader> loaders = new HashMap<>();
+    private Map<Integer, ChunkLoader> loaders = new HashMap<>();
 
-    private Map<String, Integer> loaderCounter = new HashMap<>();
+    private Map<Integer, Integer> loaderCounter = new HashMap<>();
 
     private Map<String, Map<Integer, ChunkLoader>> chunkLoaders = new HashMap<>();
 
-    private Map<String, Map<Integer, Player>> playerPloaders = new HashMap<>();
+    private Map<String, Map<Integer, Player>> playerLoaders = new HashMap<>();
 
     private Map<String, List<DataPacket>> chunkPackets = new HashMap<>();
 
@@ -262,19 +265,367 @@ public class Level implements ChunkManager, Metadatable {
         return this.levelId;
     }
 
-    public String getName() {
+    public void close() {
+        if (this.getAutoSave()) {
+            this.save();
+        }
 
-        //todo !!!
-        return "TODO！！！！！！！！";
+        for (FullChunk chunk : this.chunks.values()) {
+            this.unloadChunk(chunk.getX(), chunk.getZ(), false);
+        }
+
+        this.unregisterGenerator();
+
+        this.provider.close();
+        this.provider = null;
+        this.blockMetadata = null;
+        this.blockCache.clear();
+        this.temporalPosition = null;
     }
 
-    public String getFolderName() {
-        return "todo";
+    public void addSound() {
+        //todo
     }
-    
+
+    public void addParticle() {
+        //todo
+    }
+
+    public boolean getAutoSave() {
+        return this.autoSave;
+    }
+
+    public void setAutoSave(boolean autoSave) {
+        this.autoSave = autoSave;
+    }
+
+    public boolean unload() {
+        return this.unload(false);
+    }
+
+    public boolean unload(boolean force) {
+        LevelUnloadEvent ev = new LevelUnloadEvent(this);
+
+        if (this.equals(this.server.getDefaultLevel()) && !force) {
+            ev.setCancelled();
+        }
+
+        this.server.getPluginManager().callEvent(ev);
+
+        if (!force && ev.isCancelled()) {
+            return false;
+        }
+
+        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading", this.getName()));
+        Level defaultLevel = this.server.getDefaultLevel();
+
+        for (Player player : this.getPlayers().values()) {
+            if (this.equals(defaultLevel) || defaultLevel == null) {
+                player.close(player.getLeaveMessage(), "Forced default level unload");
+            } else if (defaultLevel != null) {
+                player.teleport(this.server.getDefaultLevel().getSafeSpawn());
+            }
+        }
+
+        if (this.equals(defaultLevel)) {
+            this.server.setDefaultLevel(null);
+        }
+
+        this.close();
+
+        return true;
+    }
+
+    public Player[] getChunkPlayers(int chunkX, int chunkZ) {
+        String index = Level.chunkHash(chunkX, chunkZ);
+        if (this.playerLoaders.containsKey(index)) {
+            return this.playerLoaders.get(index).values().stream().toArray(Player[]::new);
+        } else {
+            return new Player[0];
+        }
+    }
+
+    public ChunkLoader[] getChunkLoaders(int chunkX, int chunkZ) {
+        String index = Level.chunkHash(chunkX, chunkZ);
+        if (this.chunkLoaders.containsKey(index)) {
+            return this.chunkLoaders.get(index).values().stream().toArray(ChunkLoader[]::new);
+        } else {
+            return new ChunkLoader[0];
+        }
+    }
+
+    public void addChunkPacket(int chunkX, int chunkZ, DataPacket packet) {
+        String index = Level.chunkHash(chunkX, chunkZ);
+        if (!this.chunkPackets.containsKey(index)) {
+            this.chunkPackets.put(index, new ArrayList<>());
+        }
+        this.chunkPackets.get(index).add(packet);
+    }
+
+    public void registerChunkLoader(ChunkLoader loader, int chunkX, int chunkZ) {
+        this.registerChunkLoader(loader, chunkX, chunkZ, true);
+    }
+
+    public void registerChunkLoader(ChunkLoader loader, int chunkX, int chunkZ, boolean autoLoad) {
+        int hash = loader.getLoaderId();
+        String index = Level.chunkHash(chunkX, chunkZ);
+        if (!this.chunkLoaders.containsKey(index)) {
+            this.chunkLoaders.put(index, new HashMap<>());
+            this.playerLoaders.put(index, new HashMap<>());
+        } else if (this.chunkLoaders.get(index).containsKey(hash)) {
+            return;
+        }
+
+        this.chunkLoaders.get(index).put(hash, loader);
+        if (loader instanceof Player) {
+            this.playerLoaders.get(index).put(hash, (Player) loader);
+        }
+
+        if (!this.loaders.containsKey(hash)) {
+            this.loaderCounter.put(hash, 1);
+            this.loaders.put(hash, loader);
+        } else {
+            this.loaderCounter.put(hash, this.loaderCounter.get(hash) + 1);
+        }
+
+        this.cancelUnloadChunkRequest(chunkX, chunkZ);
+
+        if (autoLoad) {
+            this.loadChunk(chunkX, chunkZ);
+        }
+    }
+
+    public void unregisterChunkLoader(ChunkLoader loader, int chunkX, int chunkZ) {
+        int hash = loader.getLoaderId();
+        String index = Level.chunkHash(chunkX, chunkZ);
+        if (this.chunkLoaders.containsKey(index) && this.chunkLoaders.get(index).containsKey(hash)) {
+            this.chunkLoaders.get(index).remove(hash);
+            this.playerLoaders.get(index).remove(hash);
+            if (this.chunkLoaders.get(index).isEmpty()) {
+                this.chunkLoaders.remove(index);
+                this.playerLoaders.remove(index);
+                this.unloadChunkRequest(chunkX, chunkZ, true);
+            }
+
+            int count = this.loaderCounter.get(hash);
+            if (--count == 0) {
+                this.loaderCounter.remove(hash);
+                this.loaders.remove(hash);
+            } else {
+                this.loaderCounter.put(hash, count);
+            }
+        }
+    }
+
+    public void checkTime() {
+        if (!this.stopTime) {
+            this.time += 1.25;
+        }
+    }
+
+    public void sendTime() {
+        SetTimePacket pk = new SetTimePacket();
+        pk.time = (int) this.time;
+        pk.started = !this.stopTime;
+
+        Server.broadcastPacket(this.players, pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+    }
+
+    public void doTick(long currentTick) {
+        this.checkTime();
+
+        if (++this.sendTimeTicker == 200) {
+            this.sendTime();
+            this.sendTimeTicker = 0;
+        }
+
+        this.unloadChunks();
+
+        while (this.updateQueue.peek() != null && this.updateQueue.peek().priority <= currentTick) {
+            Block block = this.getBlock((Vector3) this.updateQueue.poll().data);
+            this.updateQueueIndex.remove(Level.blockHash((int) block.x, (int) block.y, (int) block.z));
+            block.onUpdate(BLOCK_UPDATE_SCHEDULED);
+        }
+
+        for (Map.Entry<Integer, Entity> entry : this.updateEntities.entrySet()) {
+            int id = entry.getKey();
+            Entity entity = entry.getValue();
+            if (entity.closed || !entity.onUpdate(currentTick)) {
+                this.updateEntities.remove(id);
+            }
+        }
+
+        if (!this.updateTiles.isEmpty()) {
+            for (Map.Entry<Integer, Tile> entry : this.updateTiles.entrySet()) {
+                if (!entry.getValue().onUpdate()) {
+                    this.updateTiles.remove(entry.getKey());
+                }
+            }
+        }
+
+        this.tickChunks();
+
+        if (!this.changedBlocks.isEmpty()) {
+            if (!this.players.isEmpty()) {
+                for (Map.Entry<String, Map<String, Vector3>> entry : this.changedBlocks.entrySet()) {
+                    String index = entry.getKey();
+                    Map<String, Vector3> blocks = entry.getValue();
+                    Vector2 chunkVector = Level.getBlockVector2(index);
+                    int chunkX = (int) chunkVector.getX();
+                    int chunkZ = (int) chunkVector.getY();
+                    if (blocks.size() > 512) {
+                        BaseFullChunk chunk = this.getChunk(chunkX, chunkZ);
+                        for (Player p : this.getChunkPlayers(chunkX, chunkZ)) {
+                            p.onChunkChanged(chunk);
+                        }
+                    } else {
+                        this.sendBlocks(this.getChunkPlayers(chunkX, chunkZ), blocks, UpdateBlockPacket.FLAG_ALL);
+                    }
+                }
+            } else {
+                this.chunkCache = new HashMap<>();
+            }
+
+            this.changedBlocks = new HashMap<>();
+        }
+
+        this.processChunkRequest();
+
+        if (this.sleepTicks > 0 && --this.sleepTicks <= 0) {
+            this.checkSleep();
+        }
+
+        for (Map.Entry<String, Map<Integer, double[][]>> entry : this.moveToSend.entrySet()) {
+            Vector2 v = Level.getBlockVector2(entry.getKey());
+            int chunkX = (int) v.getX();
+            int chunkZ = (int) v.getY();
+            MoveEntityPacket pk = new MoveEntityPacket();
+            pk.entities = entry.getValue().values().stream().toArray(double[][]::new);
+            this.addChunkPacket(chunkX, chunkZ, pk.setChannel(Network.CHANNEL_MOVEMENT));
+        }
+        this.moveToSend = new HashMap<>();
+
+        for (Map.Entry<String, Map<Integer, double[][]>> entry : this.motionToSend.entrySet()) {
+            Vector2 v = Level.getBlockVector2(entry.getKey());
+            int chunkX = (int) v.getX();
+            int chunkZ = (int) v.getY();
+            SetEntityMotionPacket pk = new SetEntityMotionPacket();
+            pk.entities = entry.getValue().values().stream().toArray(double[][]::new);
+            this.addChunkPacket(chunkX, chunkZ, pk.setChannel(Network.CHANNEL_MOVEMENT));
+        }
+        this.motionToSend = new HashMap<>();
+
+        for (Map.Entry<String, List<DataPacket>> entry : this.chunkPackets.entrySet()) {
+            Vector2 v = Level.getBlockVector2(entry.getKey());
+            int chunkX = (int) v.getX();
+            int chunkZ = (int) v.getY();
+            Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ);
+            if (chunkPlayers.length > 0) {
+                for (DataPacket pk : entry.getValue()) {
+                    Server.broadcastPacket(chunkPlayers, pk);
+                }
+            }
+        }
+
+        this.chunkPackets = new HashMap<>();
+    }
+
+    public void checkSleep() {
+        if (this.players.isEmpty()) {
+            return;
+        }
+
+        boolean resetTime = true;
+        for (Player p : this.getPlayers()) {
+            if (!p.isSleeping()) {
+                resetTime = false;
+                break;
+            }
+        }
+
+        if (resetTime) {
+            int time = this.getTime() % Level.TIME_FULL;
+
+            if (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE) {
+                this.setTime(this.getTime() + Level.TIME_FULL - time);
+
+                for (Player p : this.getPlayers()) {
+                    p.stopSleep();
+                }
+            }
+        }
+    }
+
+    public void sendBlocks(Player[] target, Block[] blocks) {
+        this.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_NONE);
+    }
+
+    public void sendBlocks(Player[] target, Block[] blocks, int flags) {
+        this.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_NONE, false);
+    }
+
+    public void sendBlocks(Player[] target, Block[] blocks, int flags, boolean optimizeRebuilds) {
+        UpdateBlockPacket pk = new UpdateBlockPacket();
+
+        if (optimizeRebuilds) {
+            Map<String, Boolean> chunks = new HashMap<>();
+            for (Block b : blocks) {
+                if (b == null) {
+                    continue;
+                }
+
+                boolean first = false;
+
+                String index = Level.chunkHash((int) b.x >> 4, (int) b.z >> 4);
+                if (!chunks.containsKey(index)) {
+                    chunks.put(index, true);
+                    first = true;
+                }
+
+                List<int[]> list = new ArrayList<>();
+                Collections.addAll(list, pk.records);
+                list.add(new int[]{(int) b.x, (int) b.z, (int) b.y, b.getId(), b.getDamage(), first ? flags : UpdateBlockPacket.FLAG_NONE});
+                pk.records = list.stream().toArray(int[][]::new);
+            }
+        } else {
+            for (Block b : blocks) {
+                if (b == null) {
+                    continue;
+                }
+
+                List<int[]> list = new ArrayList<>();
+                Collections.addAll(list, pk.records);
+                list.add(new int[]{(int) b.x, (int) b.z, (int) b.y, b.getId(), b.getDamage(), flags});
+                pk.records = list.stream().toArray(int[][]::new);
+            }
+        }
+
+        Server.broadcastPacket(target, pk.setChannel(Network.CHANNEL_BLOCKS));
+    }
+
+    public void clearCache() {
+        this.clearCache(false);
+    }
+
+    public void clearCache(boolean full) {
+        if (full) {
+            this.chunkCache = new HashMap<>();
+            this.blockCache = new HashMap<>();
+        } else {
+            if (this.chunkCache.size() > 768) {
+                this.chunkCache = new HashMap<>();
+            }
+
+            if (this.blockCache.size() > 2048) {
+                this.blockCache = new HashMap<>();
+            }
+        }
+    }
+
     public void clearChunkCache(int chunkX, int chunkZ) {
-        //todo !!!!
+        this.chunkCache.remove(Level.chunkHash(chunkX, chunkZ));
     }
+
 
     public Block getBlock(Vector3 pos) {
         return this.getBlock(pos, true);
@@ -330,6 +681,15 @@ public class Level implements ChunkManager, Metadatable {
         tiles.remove(tile.getId());
         updateTiles.remove(tile.getId());
         this.clearChunkCache((int) tile.getX() >> 4, (int) tile.getZ() >> 4);
+    }
+
+
+    public String getName() {
+        return this.provider.getName();
+    }
+
+    public String getFolderName() {
+        return this.folderName;
     }
 
     @Override
