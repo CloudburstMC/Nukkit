@@ -53,7 +53,7 @@ public class ServerScheduler {
         return this.asyncPool.getSize();
     }
 
-    public void increaseAsyncTaskPoolSize(int newSize){
+    public void increaseAsyncTaskPoolSize(int newSize) {
         this.asyncPool.increaseSize(newSize);
     }
 
