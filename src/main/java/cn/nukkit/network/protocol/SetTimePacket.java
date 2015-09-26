@@ -26,7 +26,7 @@ public class SetTimePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putInt((this.time / Level.TIME_FULL) * 19200);
-        this.putByte((byte) (this.started ? 0x80 : 0x00));
+        this.putByte((byte) (this.started ? 1 : 0));
     }
 
 }
