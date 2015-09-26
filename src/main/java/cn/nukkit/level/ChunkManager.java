@@ -19,6 +19,8 @@ public interface ChunkManager {
 
     BaseFullChunk getChunk(int chunkX, int chunkZ);
 
+    BaseFullChunk getChunk(int chunkX, int chunkZ, boolean create);
+
     void setChunk(int chunkX, int chunkZ);
 
     void setChunk(int chunkX, int chunkZ, FullChunk chunk);
