@@ -1,5 +1,6 @@
-# ![image](https://github.com/MagicDroidX/Nukkit/raw/master/images/banner.png)
-
+Nukkit
+===================
+![nukkit](https://github.com/MagicDroidX/Nukkit/raw/master/images/banner.png)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by
@@ -17,19 +18,30 @@
 
 __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
-#### 进度报告！
-##### What's the process?
-* 项目目前已完成大部分底层构建，正在编写核心网络层部分及地图生成器部分。
-* We have finished most of the basic Classes, and now we are programming the NETWORK and the GENERATORs.
+-------------
 
-#### 关于 Nukkit
-##### About Nukkit
-* 中国制造 与 PocketMine 拥有相似结构，便于 PocketMine 使用者快速使用上 Nukkit，正在全速开发中。
-* Following PocketMine's structure, Nukkit is still under heavy programming.
+Introduction
+-------------
+Nukkit is a nuclear-powered server software for Minecraft: Pocket Edtion.
+It has a few key advantages over PocketMine-MP:
 
-#### 插件API示例
-##### Example Plugin
+* Written in Java, Nukkit is faster and more stable.
+* Having a similar structure with PocketMine-MP.
+* Because of it, it's easy to contribute to Nukkit's development. And it is also easy to rewrite the PocketMine-MP plugins into Nukkit plugins.
+
+However, Nukkit is **not finished** yet. We are welcome to your contribution.
+
+Running
+-------------
+Simply run `start.sh` or `start.cmd`. Or execute `java -jar Nukkit.jar`.
+
+Plugin API
+-------------
+####**Example Plugin**
+Example Plugin which shows the API of Nukkit.
+
 * __[Example Plugin](http://github.com/Nukkit/ExamplePlugin)__
 
-#### 与我们交流
+一起来讨论Nukkit！
+-------------
 * __欢迎加入[百度 Nukkit 吧](http://tieba.baidu.com/f?kw=nukkit)__
