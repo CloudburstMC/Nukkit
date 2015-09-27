@@ -2,12 +2,16 @@ package cn.nukkit.level;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Ice;
+import cn.nukkit.entity.EffectInfo;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.level.LevelSaveEvent;
 import cn.nukkit.event.level.LevelUnloadEvent;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
@@ -26,9 +30,14 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.BlockMetadataStore;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
+import cn.nukkit.nbt.CompoundTag;
+import cn.nukkit.nbt.DoubleTag;
+import cn.nukkit.nbt.FloatTag;
+import cn.nukkit.nbt.ListTag;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.tile.Chest;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.LevelException;
 import cn.nukkit.utils.PriorityObject;
@@ -62,8 +71,8 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<Integer, Tile> tiles = new HashMap<>();
 
-    private Map<String, Map<Integer, double[][]>> motionToSend = new HashMap<>();
-    private Map<String, Map<Integer, double[][]>> moveToSend = new HashMap<>();
+    private Map<String, Map<Integer, double[]>> motionToSend = new HashMap<>();
+    private Map<String, Map<Integer, double[]>> moveToSend = new HashMap<>();
 
     private Map<Integer, Player> players = new HashMap<>();
 
@@ -504,7 +513,7 @@ public class Level implements ChunkManager, Metadatable {
             this.checkSleep();
         }
 
-        for (Map.Entry<String, Map<Integer, double[][]>> entry : this.moveToSend.entrySet()) {
+        for (Map.Entry<String, Map<Integer, double[]>> entry : this.moveToSend.entrySet()) {
             Vector2 v = Level.getBlockVector2(entry.getKey());
             int chunkX = (int) v.getX();
             int chunkZ = (int) v.getY();
@@ -514,7 +523,7 @@ public class Level implements ChunkManager, Metadatable {
         }
         this.moveToSend = new HashMap<>();
 
-        for (Map.Entry<String, Map<Integer, double[][]>> entry : this.motionToSend.entrySet()) {
+        for (Map.Entry<String, Map<Integer, double[]>> entry : this.motionToSend.entrySet()) {
             Vector2 v = Level.getBlockVector2(entry.getKey());
             int chunkX = (int) v.getX();
             int chunkZ = (int) v.getY();
@@ -1030,21 +1039,222 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public boolean setBlock(Vector3 pos, Block block, boolean direct, boolean update) {
-        //todo!!
+        if (pos.y < 0 || pos.y >= 128) {
+            return false;
+        }
+
+        if (this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, true).setBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f, (int) pos.z & 0x0f, block.getId(), block.getDamage())) {
+            Position position;
+            if (!(pos instanceof Position)) {
+                position = this.temporalPosition.setComponents(pos.x, pos.y, pos.z);
+            } else {
+                position = (Position) pos;
+            }
+
+            block.position(position);
+            this.blockCache.remove(Level.blockHash((int) pos.x, (int) pos.y, (int) pos.z));
+
+            String index = Level.chunkHash((int) pos.x >> 4, (int) pos.z >> 4);
+
+            if (direct) {
+                this.sendBlocks(this.getChunkPlayers((int) pos.x >> 4, (int) pos.z >> 4), new Block[]{block}, UpdateBlockPacket.FLAG_PRIORITY);
+                this.chunkCache.remove(index);
+            } else {
+                if (!this.changedBlocks.containsKey(index)) {
+                    this.changedBlocks.put(index, new HashMap<>());
+                }
+
+                this.changedBlocks.get(index).put(Level.blockHash((int) block.x, (int) block.y, (int) block.z), block.clone());
+            }
+
+            for (ChunkLoader loader : this.getChunkLoaders((int) pos.x >> 4, (int) pos.z >> 4)) {
+                loader.onBlockChanged(block);
+            }
+
+            if (update) {
+                this.updateAllLight(block);
+
+                BlockUpdateEvent ev = new BlockUpdateEvent(block);
+                this.server.getPluginManager().callEvent(ev);
+                if (!ev.isCancelled()) {
+                    for (Entity entity : this.getNearbyEntities(new AxisAlignedBB(block.x - 1, block.y - 1, block.z - 1, block.x + 1, block.y + 1, block.z + 1))) {
+                        entity.scheduleUpdate();
+                    }
+                    ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+                }
+
+                this.updateAround(pos);
+            }
+
+            return true;
+        }
+
         return false;
     }
 
-    public Item useBreakOn(Vector3 vector) {
-        return this.useBreakOn(vector, null, false);
+    public void dropItem(Vector3 source, Item item) {
+        this.dropItem(source, item, null);
     }
 
-    public Item useBreakOn(Vector3 vector, Player player) {
-        return this.useBreakOn(vector, player, false);
+    public void dropItem(Vector3 source, Item item, Vector3 motion) {
+        this.dropItem(source, item, motion, 10);
     }
 
-    public Item useBreakOn(Vector3 vector, Player player, boolean createParticles) {
-        //todo
-        return null;
+    public void dropItem(Vector3 source, Item item, Vector3 motion, int delay) {
+        motion = motion == null ? new Vector3(new Random().nextDouble() * 0.2 - 0.1, 0.2, new Random().nextDouble() * 0.2 - 0.1) : motion;
+
+        if (item.getId() > 0 && item.getCount() > 0) {
+            Entity itemEntity = Entity.createEntity("Item", this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true), new CompoundTag()
+                            .putList(new ListTag<DoubleTag>("Pos")
+                                    .add(new DoubleTag("", source.getX()))
+                                    .add(new DoubleTag("", source.getY()))
+                                    .add(new DoubleTag("", source.getZ())))
+
+                            .putList(new ListTag<DoubleTag>("Motion")
+                                    .add(new DoubleTag("", motion.x))
+                                    .add(new DoubleTag("", motion.y))
+                                    .add(new DoubleTag("", motion.z)))
+
+                            .putList(new ListTag<FloatTag>("Rotation")
+                                    .add(new FloatTag("", new Random().nextFloat() * 360))
+                                    .add(new FloatTag("", 0)))
+
+                            .putShort("Health", (short) 5)
+                            .putCompound("Item", new CompoundTag()
+                                    .putShort("id", (short) item.getId())
+                                    .putShort("Damage", (short) item.getDamage())
+                                    .putByte("Count", (byte) (item.getCount() & 0xff)))
+                            .putShort("PickupDelay", (short) delay)
+            );
+
+            itemEntity.spawnToAll();
+        }
+    }
+
+    public boolean useBreakOn(Vector3 vector) {
+        return this.useBreakOn(vector, null);
+    }
+
+    public boolean useBreakOn(Vector3 vector, Item item) {
+        return this.useBreakOn(vector, item, null);
+    }
+
+    public boolean useBreakOn(Vector3 vector, Item item, Player player) {
+        return this.useBreakOn(vector, item, player, false);
+    }
+
+    public boolean useBreakOn(Vector3 vector, Item item, Player player, boolean createParticles) {
+        Block target = this.getBlock(vector);
+        Item[] drops;
+        if (item == null) {
+            item = Item.get(Item.AIR, 0, 0);
+        }
+
+        if (player != null) {
+            BlockBreakEvent ev = new BlockBreakEvent(player, target, item, player.isCreative());
+            double distance;
+            if (player.isSurvival() && item != null && !target.isBreakable(item)) {
+                ev.setCancelled();
+            } else if (!player.isOp() && (distance = this.server.getSpawnRadius()) > -1) {
+                Vector2 t = new Vector2(target.x, target.z);
+                Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
+                if (!this.server.getOps().getAll().isEmpty() && t.distance(s) <= distance) {
+                    ev.setCancelled();
+                }
+            }
+            this.server.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return false;
+            }
+
+            double breakTime = player.isCreative() ? 0.15 : target.getBreakTime(item);
+
+            if (player.hasEffect(EffectInfo.SWIFTNESS)) {
+                breakTime *= 1 - (0.2 * (player.getEffect(EffectInfo.SWIFTNESS).getAmplifier() + 1));
+            }
+
+            if (player.hasEffect(EffectInfo.MINING_FATIGUE)) {
+                breakTime *= 1 - (0.3 * (player.getEffect(EffectInfo.MINING_FATIGUE).getAmplifier() + 1));
+            }
+
+            breakTime -= 0.05;
+
+            if (!ev.getInstaBreak() && (player.lastBreak + breakTime) > System.currentTimeMillis()) {
+                return false;
+            }
+
+            player.lastBreak = Long.MAX_VALUE;
+
+            drops = ev.getDrops();
+        } else if (item != null && !target.isBreakable(item)) {
+            return false;
+        } else {
+            int[][] d = target.getDrops(item);
+            drops = new Item[d.length];
+            for (int i = 0; i < d.length; i++) {
+                drops[i] = Item.get(d[i][0], d[i][1], d[i][2]);
+            }
+        }
+
+        Block above = this.getBlock(new Vector3(target.x, target.y + 1, target.z));
+        if (above != null) {
+            if (above.getId() == Item.FIRE) {
+                this.setBlock(above, new Air(), true);
+            }
+        }
+
+        if (createParticles) {
+            Player[] players = this.getChunkPlayers((int) target.x >> 4, (int) target.z >> 4);
+
+            if (player != null) {
+                List<Player> playerList = new ArrayList<>();
+                Collections.addAll(playerList, players);
+                playerList.remove(player.getLoaderId());
+                players = playerList.stream().toArray(Player[]::new);
+            }
+
+            LevelEventPacket pk = new LevelEventPacket();
+            pk.evid = 2001;
+            pk.x = (float) (target.x + 0.5);
+            pk.y = (float) (target.y + 0.5);
+            pk.z = (float) (target.z + 0.5);
+            pk.data = target.getId() + (target.getDamage() << 12);
+            Server.broadcastPacket(players, pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+        }
+
+        target.onBreak(item);
+
+        Tile tile = this.getTile(target);
+        if (tile != null) {
+            if (tile instanceof InventoryHolder) {
+                if (tile instanceof Chest) {
+                    ((Chest) tile).unphar();
+                }
+
+                for (Item chestItem : tile.getInventory().getContents().values) {
+                    this.dropItem(target, chestItem);
+                }
+            }
+
+            tile.close();
+        }
+
+        if (item != null) {
+            item.useOn(target);
+            if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
+                item = Item.get(Item.AIR, 0, 0);
+            }
+        }
+
+        if (player == null || player.isSurvival()) {
+            for (Item drop : drops) {
+                if (drop.getCount() > 0) {
+                    this.dropItem(vector.add(0.5, 0.5, 0.5), drop);
+                }
+            }
+        }
+
+        return true;
     }
 
     public void chunkRequestCallback(int x, int z, byte[] payload) {
@@ -1097,5 +1307,26 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getLevelMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 
+    public void addEntityMotion(int chunkX, int chunkZ, int entityId, double x, double y, double z) {
+        String index = Level.chunkHash(chunkX, chunkZ);
+        if (!this.motionToSend.containsKey(index)) {
+            this.motionToSend.put(index, new HashMap<>());
+        }
+
+        this.motionToSend.get(index).put(entityId, new double[]{entityId, x, y, z});
+    }
+
+    public void addEntityMovement(int chunkX, int chunkZ, int entityId, double x, double y, double z, double yaw, double pitch) {
+        this.addEntityMovement(chunkX, chunkZ, entityId, x, y, z, yaw, pitch, yaw);
+    }
+
+    public void addEntityMovement(int chunkX, int chunkZ, int entityId, double x, double y, double z, double yaw, double pitch, double headYaw) {
+        String index = Level.chunkHash(chunkX, chunkZ);
+        if (!this.moveToSend.containsKey(index)) {
+            this.moveToSend.put(index, new HashMap<>());
+        }
+
+        this.moveToSend.get(index).put(entityId, new double[]{entityId, x, y, z, yaw, headYaw, pitch});
+    }
 
 }

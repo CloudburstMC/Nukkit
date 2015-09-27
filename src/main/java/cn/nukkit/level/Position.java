@@ -78,10 +78,12 @@ public class Position extends Vector3 {
         return "Position(level=" + (this.isValid() ? this.getLevel().getName() : "null") + ",x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
     }
 
-    public Position setComponents(int x, int y, int z) {
+    @Override
+    public Position setComponents(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
         return this;
     }
+
 }

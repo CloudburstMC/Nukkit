@@ -52,12 +52,20 @@ public abstract class Tool extends Item {
     }
 
     @Override
-    public boolean useOn(Object object) {
+    public boolean useOn(Block block) {
         if (this.isHoe()) {
-            if ((object instanceof Block) && (((Block) object).getId() == GRASS || ((Block) object).getId() == DIRT)) {
+            if ((block != null) && (((Block) block).getId() == GRASS || ((Block) block).getId() == DIRT)) {
                 this.meta++;
             }
-        } else if ((object instanceof Entity) && !this.isSword()) {
+        } else {
+            this.meta++;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean useOn(Entity entity) {
+        if ((entity != null) && !this.isSword()) {
             this.meta += 2;
         } else {
             this.meta++;

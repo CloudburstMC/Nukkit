@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.level.Level;
 
@@ -648,7 +649,11 @@ public class Item implements Cloneable {
         return null;
     }
 
-    public boolean useOn(Object object) {
+    public boolean useOn(Entity entity) {
+        return false;
+    }
+
+    public boolean useOn(Block block) {
         return false;
     }
 

@@ -42,56 +42,69 @@ public class CompoundTag extends Tag {
         return TAG_Compound;
     }
 
-    public void put(String name, Tag tag) {
+    public CompoundTag put(String name, Tag tag) {
         tags.put(name, tag.setName(name));
+        return this;
     }
 
-    public void putByte(String name, byte value) {
+    public CompoundTag putByte(String name, byte value) {
         tags.put(name, new ByteTag(name, value));
+        return this;
     }
 
-    public void putShort(String name, short value) {
+    public CompoundTag putShort(String name, short value) {
         tags.put(name, new ShortTag(name, value));
+        return this;
     }
 
-    public void putInt(String name, int value) {
+    public CompoundTag putInt(String name, int value) {
         tags.put(name, new IntTag(name, value));
+        return this;
     }
 
-    public void putLong(String name, long value) {
+    public CompoundTag putLong(String name, long value) {
         tags.put(name, new LongTag(name, value));
+        return this;
     }
 
-    public void putFloat(String name, float value) {
+    public CompoundTag putFloat(String name, float value) {
         tags.put(name, new FloatTag(name, value));
+        return this;
     }
 
-    public void putDouble(String name, double value) {
+    public CompoundTag putDouble(String name, double value) {
         tags.put(name, new DoubleTag(name, value));
+        return this;
     }
 
-    public void putString(String name, String value) {
+    public CompoundTag putString(String name, String value) {
         tags.put(name, new StringTag(name, value));
+        return this;
     }
 
-    public void putByteArray(String name, byte[] value) {
+    public CompoundTag putByteArray(String name, byte[] value) {
         tags.put(name, new ByteArrayTag(name, value));
+        return this;
     }
 
-    public void putIntArray(String name, int[] value) {
+    public CompoundTag putIntArray(String name, int[] value) {
         tags.put(name, new IntArrayTag(name, value));
+        return this;
     }
 
-    public void putList(ListTag<? extends Tag> listTag) {
+    public CompoundTag putList(ListTag<? extends Tag> listTag) {
         tags.put(listTag.getName(), listTag);
+        return this;
     }
 
-    public void putCompound(String name, CompoundTag value) {
+    public CompoundTag putCompound(String name, CompoundTag value) {
         tags.put(name, value.setName(name));
+        return this;
     }
 
-    public void putBoolean(String string, boolean val) {
+    public CompoundTag putBoolean(String string, boolean val) {
         putByte(string, val ? (byte) 1 : 0);
+        return this;
     }
 
     public Tag get(String name) {
@@ -102,8 +115,9 @@ public class CompoundTag extends Tag {
         return tags.containsKey(name);
     }
 
-    public void remove(String name) {
+    public CompoundTag remove(String name) {
         tags.remove(name);
+        return this;
     }
 
     public byte getByte(String name) {
