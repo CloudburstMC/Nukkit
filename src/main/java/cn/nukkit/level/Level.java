@@ -5,12 +5,16 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Ice;
+import cn.nukkit.entity.Arrow;
 import cn.nukkit.entity.EffectInfo;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockBreakEvent;
+import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
+import cn.nukkit.event.level.ChunkPopulateEvent;
 import cn.nukkit.event.level.LevelSaveEvent;
 import cn.nukkit.event.level.LevelUnloadEvent;
+import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.Chunk;
@@ -41,6 +45,7 @@ import cn.nukkit.tile.Chest;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.LevelException;
 import cn.nukkit.utils.PriorityObject;
+import javafx.geometry.BoundingBox;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -113,7 +118,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private String folderName;
 
-    private Map<String, FullChunk> chunks = new HashMap<>();
+    private Map<String, BaseFullChunk> chunks = new HashMap<>();
 
     private Map<String, Map<String, Vector3>> changedBlocks = new HashMap<>();
 
@@ -1131,19 +1136,19 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public boolean useBreakOn(Vector3 vector) {
+    public Item useBreakOn(Vector3 vector) {
         return this.useBreakOn(vector, null);
     }
 
-    public boolean useBreakOn(Vector3 vector, Item item) {
+    public Item useBreakOn(Vector3 vector, Item item) {
         return this.useBreakOn(vector, item, null);
     }
 
-    public boolean useBreakOn(Vector3 vector, Item item, Player player) {
+    public Item useBreakOn(Vector3 vector, Item item, Player player) {
         return this.useBreakOn(vector, item, player, false);
     }
 
-    public boolean useBreakOn(Vector3 vector, Item item, Player player, boolean createParticles) {
+    public Item useBreakOn(Vector3 vector, Item item, Player player, boolean createParticles) {
         Block target = this.getBlock(vector);
         Item[] drops;
         if (item == null) {
@@ -1164,7 +1169,7 @@ public class Level implements ChunkManager, Metadatable {
             }
             this.server.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
-                return false;
+                return null;
             }
 
             double breakTime = player.isCreative() ? 0.15 : target.getBreakTime(item);
@@ -1180,14 +1185,14 @@ public class Level implements ChunkManager, Metadatable {
             breakTime -= 0.05;
 
             if (!ev.getInstaBreak() && (player.lastBreak + breakTime) > System.currentTimeMillis()) {
-                return false;
+                return null;
             }
 
             player.lastBreak = Long.MAX_VALUE;
 
             drops = ev.getDrops();
         } else if (item != null && !target.isBreakable(item)) {
-            return false;
+            return null;
         } else {
             int[][] d = target.getDrops(item);
             drops = new Item[d.length];
@@ -1254,7 +1259,368 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        return true;
+        return item;
+    }
+
+    public Item useItemOn(Vector3 vector, Item item, int face, float fx, float fy, float fz) {
+        return this.useItemOn(vector, item, face, fx, fy, fz, null);
+    }
+
+    public Item useItemOn(Vector3 vector, Item item, int face, float fx, float fy, float fz, Player player) {
+        Block target = this.getBlock(vector);
+        Block block = target.getSide(face);
+
+        if (block.y > 127 || block.y < 0) {
+            return null;
+        }
+
+        if (target.getId() == Item.AIR) {
+            return null;
+        }
+
+        if (player != null) {
+            PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face, target.getId() == 0 ? PlayerInteractEvent.RIGHT_CLICK_AIR : PlayerInteractEvent.RIGHT_CLICK_BLOCK);
+            int distance = this.server.getSpawnRadius();
+            if (!player.isOp() && distance > -1) {
+                Vector2 t = new Vector2(target.x, target.z);
+                Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
+                if (!this.server.getOps().getAll().isEmpty() && t.distance(s) <= distance) {
+                    ev.setCancelled();
+                }
+            }
+
+            this.server.getPluginManager().callEvent(ev);
+            if (!ev.isCancelled()) {
+                target.onUpdate(BLOCK_UPDATE_TOUCH);
+                if (target.canBeActivated() && target.onActivate(item, player)) {
+                    return item;
+                }
+
+                if (item.canBeActivated() && item.onActivate(this, player, block, target, face, fx, fy, fz)) {
+                    if (item.getCount() <= 0) {
+                        item = Item.get(Item.AIR, 0, 0);
+                        return item;
+                    }
+                }
+            } else {
+                return null;
+            }
+        } else if (target.canBeActivated() && target.onActivate(item, player)) {
+            return item;
+        }
+        Block hand;
+        if (item.isPlaceable()) {
+            hand = item.getBlock();
+            hand.position(block);
+        } else if (block.getId() == Item.FIRE) {
+            this.setBlock(block, new Air(), true);
+
+            return null;
+        } else {
+            return null;
+        }
+
+        if (!(block.canBePlaced() || (hand.getId() == Item.SLAB))) {
+            target = block;
+            hand.position(block);
+        }
+
+        if (hand.isSolid() && this.getBoundingBox() != null) {
+            Entity[] entities = this.getCollidingEntities(this.getBoundingBox());
+            int realCount = 0;
+            for (Entity e : entities) {
+                if (e instanceof Arrow || e instanceof cn.nukkit.entity.Item) {
+                    continue;
+                }
+                ++realCount;
+            }
+
+            if (player != null) {
+                Vector3 diff;
+                if ((diff = player.getNextPosition().subtract(player.getPosition())) && diff.lengthSquared() > 0.00001) {
+                    BoundingBox bb = player.getBoundingBox().getOffsetBoundingBox(diff.x, diff.y, diff.z);
+                    if (hand.getBoundingBox().intersectsWith(bb)) {
+                        ++realCount;
+                    }
+                }
+            }
+
+            if (realCount > 0) {
+                return null; //Entity in block
+            }
+        }
+
+        if (player != null) {
+            BlockPlaceEvent event = new BlockPlaceEvent(player, hand, block, target, item);
+            int distance = this.server.getSpawnRadius();
+            if (!player.isOp() && distance > -1) {
+                Vector2 t = new Vector2(target.x, target.z);
+                Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
+                if (!this.server.getOps().getAll().isEmpty() && t.distance(s) <= distance) {
+                    event.setCancelled();
+                }
+            }
+
+            this.server.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return null;
+            }
+        }
+
+        if (!hand.place(item, block, target, face, fx, fy, fz, player)) {
+            return null;
+        }
+
+        if (hand.getId() == Item.SIGN_POST || hand.getId() == Item.WALL_SIGN) {
+            Tile tile = Tile.createTile("Sign", this.getChunk((int) block.x >> 4, (int) block.z >> 4), new CompoundTag()
+                            .putString("id", Tile.SIGN)
+                            .putInt("x", (int) block.x)
+                            .putInt("y", (int) block.y)
+                            .putInt("z", (int) block.z)
+                            .putString("Text1", "")
+                            .putString("Text2", "")
+                            .putString("Text3", "")
+                            .putString("Text4", "")
+            );
+
+            if (player != null) {
+                tile.namedTag.putString("Creator", player.getUniqueId());
+            }
+        }
+
+        item.setCount(item.getCount() - 1);
+        if (item.getCount() <= 0) {
+            item = Item.get(Item.AIR, 0, 0);
+        }
+        return item;
+    }
+
+    public Entity getEntity(int entityId) {
+        return this.entities.containsKey(entityId) ? this.entities.get(entityId) : null;
+    }
+
+    public Entity[] getEntities() {
+        return entities.values().stream().toArray(Entity[]::new);
+    }
+
+    public Entity[] getCollidingEntities(AxisAlignedBB bb) {
+        return this.getCollidingEntities(bb, null);
+    }
+
+    public Entity[] getCollidingEntities(AxisAlignedBB bb, Entity entity) {
+        List<Entity> nearby = new ArrayList<>();
+
+        if (entity == null || entity.canCollide) {
+            double minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
+            double maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
+            double minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);
+            double maxZ = NukkitMath.ceilDouble((bb.maxZ + 2) / 16);
+
+            for (double x = minX; x <= maxX; ++x) {
+                for (double z = minZ; z <= maxZ; ++z) {
+                    for (Entity ent : this.getChunkEntities((int) x, (int) z)) {
+                        if ((entity == null || (!ent.equals(entity) && entity.canCollideWith(ent))) && ent.boundingBox.intersectsWith(bb)) {
+                            nearby.add(ent);
+                        }
+                    }
+                }
+            }
+        }
+
+        return nearby.stream().toArray(Entity[]::new);
+    }
+
+    public Entity[] getNearbyEntities(AxisAlignedBB bb) {
+        return this.getNearbyEntities(bb, null);
+    }
+
+    public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
+        List<Entity> nearby = new ArrayList<>();
+
+        if (entity == null || entity.canCollide) {
+            double minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
+            double maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
+            double minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);
+            double maxZ = NukkitMath.ceilDouble((bb.maxZ + 2) / 16);
+
+            for (double x = minX; x <= maxX; ++x) {
+                for (double z = minZ; z <= maxZ; ++z) {
+                    for (Entity ent : this.getChunkEntities((int) x, (int) z)) {
+                        if (!ent.equals(entity) && ent.boundingBox.intersectsWith(bb)) {
+                            nearby.add(ent);
+                        }
+                    }
+                }
+            }
+        }
+
+        return nearby.stream().toArray(Entity[]::new);
+    }
+
+    public Map<Integer, Tile> getTiles() {
+        return tiles;
+    }
+
+    public Tile getTileById(int tileId) {
+        return this.tiles.containsKey(tileId) ? this.tiles.get(tileId) : null;
+    }
+
+    public Map<Integer, Player> getPlayers() {
+        return players;
+    }
+
+    public Map<Integer, ChunkLoader> getLoaders() {
+        return loaders;
+    }
+
+    public Tile getTile(Vector3 pos) {
+        BaseFullChunk chunk = this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, false);
+
+        if (chunk != null) {
+            return chunk.getTile((int) pos.x & 0x0f, (int) pos.y & 0xff, (int) pos.z & 0x0f);
+        }
+
+        return null;
+    }
+
+    public Map<Integer, Entity> getChunkEntities(int X, int Z) {
+        FullChunk chunk;
+        return (chunk = this.getChunk(X, Z)) != null ? chunk.getEntities() : new HashMap<>();
+    }
+
+    public Map<Integer, Tile> getChunkTiless(int X, int Z) {
+        FullChunk chunk;
+        return (chunk = this.getChunk(X, Z)) != null ? chunk.getTiles() : new HashMap<>();
+    }
+
+    @Override
+    public int getBlockIdAt(int x, int y, int z) {
+        return this.getChunk(x >> 4, z >> 4, true).getBlockId(x & 0x0f, y & 0x7f, z & 0x0f);
+    }
+
+    @Override
+    public void setBlockIdAt(int x, int y, int z, int id) {
+        this.blockCache.remove(Level.blockHash(x, y, z));
+        this.getChunk(x >> 4, z >> 4, true).setBlockId(x & 0x0f, y & 0x7f, z & 0x0f, id & 0xff);
+
+        String index = Level.chunkHash(x >> 4, z >> 4);
+        if (!this.changedBlocks.containsKey(index)) {
+            this.changedBlocks.put(index, new HashMap<>());
+        }
+        Vector3 v;
+        this.changedBlocks.get(index).put(Level.blockHash(x, y, z), v = new Vector3(x, y, z));
+        for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {
+            loader.onBlockChanged(v);
+        }
+    }
+
+    @Override
+    public int getBlockDataAt(int x, int y, int z) {
+        return this.getChunk(x >> 4, z >> 4, true).getBlockId(x & 0x0f, y & 0x7f, z & 0x0f);
+    }
+
+    @Override
+    public void setBlockDataAt(int x, int y, int z, int data) {
+        this.blockCache.remove(Level.blockHash(x, y, z));
+        this.getChunk(x >> 4, z >> 4, true).setBlockData(x & 0x0f, y & 0x7f, z & 0x0f, data & 0x0f);
+
+        String index = Level.chunkHash(x >> 4, z >> 4);
+        if (!this.changedBlocks.containsKey(index)) {
+            this.changedBlocks.put(index, new HashMap<>());
+        }
+        Vector3 v;
+        this.changedBlocks.get(index).put(Level.blockHash(x, y, z), v = new Vector3(x, y, z));
+        for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {
+            loader.onBlockChanged(v);
+        }
+    }
+
+    public int getBlockSkyLightAt(int x, int y, int z) {
+        return this.getChunk(x >> 4, z >> 4, true).getBlockSkyLight(x & 0x0f, y & 0x7f, z & 0x0f);
+    }
+
+    public void setBlockSkyLightAt(int x, int y, int z, int level) {
+        this.getChunk(x >> 4, z >> 4, true).setBlockSkyLight(x & 0x0f, y & 0x7f, z & 0x0f, level & 0x0f);
+    }
+
+    public int getBlockLightAt(int x, int y, int z) {
+        return this.getChunk(x >> 4, z >> 4, true).getBlockLight(x & 0x0f, y & 0x7f, z & 0x0f);
+    }
+
+    public void setBlockLightAt(int x, int y, int z, int level) {
+        this.getChunk(x >> 4, z >> 4, true).setBlockLight(x & 0x0f, y & 0x7f, z & 0x0f, level & 0x0f);
+    }
+
+    public int getBiomeId(int x, int z) {
+        return this.getChunk(x >> 4, z >> 4, true).getBiomeId(x & 0x0f, z & 0x0f);
+    }
+
+    public void setBiomeId(int x, int z, int biomeId) {
+        this.getChunk(x >> 4, z >> 4, true).setBiomeId(x & 0x0f, z & 0x0f, biomeId & 0x0f);
+    }
+
+    public int getHeightMap(int x, int z) {
+        return this.getChunk(x >> 4, z >> 4, true).getHeightMap(x & 0x0f, z & 0x0f);
+    }
+
+    public void setHeightMap(int x, int z, int value) {
+        this.getChunk(x >> 4, z >> 4, true).setHeightMap(x & 0x0f, z & 0x0f, value & 0x0f);
+    }
+
+    public int[] getBiomeColor(int x, int z) {
+        return this.getChunk(x >> 4, z >> 4, true).getBiomeColor(x & 0x0f, z & 0x0f);
+    }
+
+    public void setBiomeColor(int x, int z, int R, int G, int B) {
+        this.getChunk(x >> 4, z >> 4, true).setBiomeColor(x & 0x0f, z & 0x0f, R, G, B);
+    }
+
+    @Override
+    public BaseFullChunk getChunk(int chunkX, int chunkZ) {
+        return this.getChunk(chunkX, chunkZ, false);
+    }
+
+    @Override
+    public BaseFullChunk getChunk(int chunkX, int chunkZ, boolean create) {
+        String index = Level.chunkHash(chunkX, chunkZ);
+        if (this.chunks.containsKey(index)) {
+            return this.chunks.get(index);
+        } else if (this.loadChunk(x, z, create)) {
+            return this.chunks.get(index);
+        }
+
+        return null;
+    }
+
+    public void generateChunkCallback(int x, int z, BaseFullChunk chunk) {
+        String index = Level.chunkHash(x, z);
+        if (this.chunkPopulationQueue.containsKey(index)) {
+            BaseFullChunk oldChunk = this.getChunk(x, z, false);
+            for (int xx = -1; xx <= 1; ++xx) {
+                for (int zz = -1; zz <= 1; ++zz) {
+                    this.chunkPopulationLock.remove(Level.chunkHash(x + xx, z + zz));
+                }
+            }
+            this.chunkPopulationQueue.remove(index);
+            chunk.setProvider(this.provider);
+            this.setChunk(x, z, chunk, false);
+            BaseFullChunk chunk = this.getChunk(x, z, false);
+            if (chunk != null && (oldChunk == null || !oldChunk.isPopulated()) && chunk.isPopulated() && chunk.getProvider() != null) {
+                this.server.getPluginManager().callEvent(new ChunkPopulateEvent(chunk));
+
+                for (ChunkLoader loader : this.getChunkLoaders(x, z)) {
+                    loader.onChunkPopulated(chunk);
+                }
+            }
+        } else if (this.chunkGenerationQueue.containsKey(index) || this.chunkPopulationLock.containsKey(index)) {
+            this.chunkGenerationQueue.remove(index);
+            this.chunkPopulationLock.remove(index);
+            chunk.setProvider(this.provider);
+            this.setChunk(x, z, chunk, false);
+        } else {
+            chunk.setProvider(this.provider);
+            this.setChunk(x, z, chunk, false);
+        }
     }
 
     public void chunkRequestCallback(int x, int z, byte[] payload) {
