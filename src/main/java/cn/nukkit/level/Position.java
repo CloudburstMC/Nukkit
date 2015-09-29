@@ -14,19 +14,19 @@ public class Position extends Vector3 {
         this(0, 0, 0, null);
     }
 
-    public Position(int x) {
+    public Position(double x) {
         this(x, 0, 0, null);
     }
 
-    public Position(int x, int y) {
+    public Position(double x, double y) {
         this(x, y, 0, null);
     }
 
-    public Position(int x, int y, int z) {
+    public Position(double x, double y, double z) {
         this(x, y, z, null);
     }
 
-    public Position(int x, int y, int z, Level level) {
+    public Position(double x, double y, double z, Level level) {
         this.x = x;
         this.y = y;
         this.z = z;

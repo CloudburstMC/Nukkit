@@ -7,7 +7,7 @@ import cn.nukkit.level.format.FullChunk;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ChunkPopulateEvent extends ChunkEvent {
+public class ChunkLoadEvent extends ChunkEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -15,8 +15,14 @@ public class ChunkPopulateEvent extends ChunkEvent {
         return handlers;
     }
 
-    public ChunkPopulateEvent(FullChunk chunk) {
+    private boolean newChunk;
+
+    public ChunkLoadEvent(FullChunk chunk, boolean newChunk) {
         super(chunk);
+        this.newChunk = newChunk;
     }
 
+    public boolean isNewChunk() {
+        return newChunk;
+    }
 }

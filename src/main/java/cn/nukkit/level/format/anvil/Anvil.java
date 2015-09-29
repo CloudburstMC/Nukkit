@@ -203,9 +203,13 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public void saveChunk(int X, int Z) throws Exception {
+    public void saveChunk(int X, int Z) {
         if (this.isChunkLoaded(X, Z)) {
-            this.getRegion(X >> 5, Z >> 5).writeChunk(this.getChunk(X, Z));
+            try {
+                this.getRegion(X >> 5, Z >> 5).writeChunk(this.getChunk(X, Z));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -231,7 +235,7 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public void setChunk(int chunkX, int chunkZ, FullChunk chunk) throws Exception {
+    public void setChunk(int chunkX, int chunkZ, FullChunk chunk) {
         if (!(chunk instanceof Chunk)) {
             throw new ChunkException("Invalid Chunk class");
         }
@@ -270,10 +274,14 @@ public class Anvil extends BaseLevelProvider {
         return chunk != null && chunk.isPopulated();
     }
 
-    protected void loadRegion(int x, int z) throws IOException {
+    protected void loadRegion(int x, int z) {
         String index = Level.chunkHash(x, z);
         if (!this.regions.containsKey(index)) {
-            this.regions.put(index, new RegionLoader(this, x, z));
+            try {
+                this.regions.put(index, new RegionLoader(this, x, z));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

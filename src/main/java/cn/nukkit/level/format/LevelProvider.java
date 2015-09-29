@@ -4,7 +4,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.AsyncTask;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -15,7 +14,7 @@ public interface LevelProvider {
     byte ORDER_YZX = 0;
     byte ORDER_ZXY = 1;
 
-    AsyncTask requestChunkTask(int x, int z) throws IOException;
+    AsyncTask requestChunkTask(int x, int z);
 
     String getPath();
 
@@ -23,31 +22,31 @@ public interface LevelProvider {
 
     Map<String, Object> getGeneratorOptions();
 
-    FullChunk getChunk(int X, int Z) throws IOException;
+    FullChunk getChunk(int X, int Z);
 
-    FullChunk getChunk(int X, int Z, boolean create) throws IOException;
+    FullChunk getChunk(int X, int Z, boolean create);
 
-    void saveChunks() throws Exception;
+    void saveChunks();
 
-    void saveChunk(int X, int Z) throws Exception;
+    void saveChunk(int X, int Z);
 
-    void unloadChunks() throws Exception;
+    void unloadChunks();
 
-    boolean loadChunk(int X, int Z) throws IOException;
+    boolean loadChunk(int X, int Z);
 
-    boolean loadChunk(int X, int Z, boolean create) throws IOException;
+    boolean loadChunk(int X, int Z, boolean create);
 
-    boolean unloadChunk(int X, int Z) throws Exception;
+    boolean unloadChunk(int X, int Z);
 
-    boolean unloadChunk(int X, int Z, boolean safe) throws Exception;
+    boolean unloadChunk(int X, int Z, boolean safe);
 
-    boolean isChunkGenerated(int X, int Z) throws IOException;
+    boolean isChunkGenerated(int X, int Z);
 
-    boolean isChunkPopulated(int X, int Z) throws IOException;
+    boolean isChunkPopulated(int X, int Z);
 
     boolean isChunkLoaded(int X, int Z);
 
-    void setChunk(int chunkX, int chunkZ, FullChunk chunk) throws Exception;
+    void setChunk(int chunkX, int chunkZ, FullChunk chunk);
 
     String getName();
 
@@ -55,9 +54,9 @@ public interface LevelProvider {
 
     void setTime(int value);
 
-    long getSeed();
+    int getSeed();
 
-    void setSeed(long value);
+    void setSeed(int value);
 
     Vector3 getSpawn();
 
@@ -65,9 +64,9 @@ public interface LevelProvider {
 
     Map<String, ? extends FullChunk> getLoadedChunks();
 
-    void doGarbageCollection() throws IOException;
+    void doGarbageCollection();
 
     Level getLevel();
 
-    void close() throws Exception;
+    void close();
 }

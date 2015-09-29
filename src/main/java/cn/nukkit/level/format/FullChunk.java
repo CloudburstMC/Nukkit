@@ -138,7 +138,7 @@ public interface FullChunk extends Cloneable {
 
     byte[] toBinary() throws Exception;
 
-    byte[] toFastBinary() throws Exception;
+    byte[] toFastBinary();
 
     boolean hasChanged();
 

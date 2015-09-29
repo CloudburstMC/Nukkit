@@ -236,7 +236,7 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public boolean unloadChunk(int X, int Z, boolean safe) throws Exception {
+    public boolean unloadChunk(int X, int Z, boolean safe) {
         String index = Level.chunkHash(X, Z);
         Chunk chunk = this.chunks.containsKey(index) ? this.chunks.get(index) : null;
         if (chunk != null && chunk.unload(false, safe)) {
@@ -275,7 +275,7 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public void setChunk(int chunkX, int chunkZ, FullChunk chunk) throws Exception {
+    public void setChunk(int chunkX, int chunkZ, FullChunk chunk) {
         if (!(chunk instanceof Chunk)) {
             throw new ChunkException("Invalid Chunk class");
         }

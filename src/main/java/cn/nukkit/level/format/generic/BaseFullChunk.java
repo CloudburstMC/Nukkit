@@ -318,7 +318,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public boolean unload(boolean save, boolean safe) throws Exception {
+    public boolean unload(boolean save, boolean safe) {
         LevelProvider level = this.getProvider();
         if (level == null) {
             return true;
