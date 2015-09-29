@@ -1,14 +1,14 @@
 package cn.nukkit.network.protocol;
 
 /**
- * author: MagicDroidX
+ * author: MagicDroidX & iNevet
  * Nukkit Project
  */
 public interface Info {
 
     byte CURRENT_PROTOCOL = 34;
 
-    byte LOGIN_PACKET = (byte) 0x82;
+    byte LOGIN_PACKET = (byte) 0x8f;
     byte PLAY_STATUS_PACKET = (byte) 0x83;
 
     byte DISCONNECT_PACKET = (byte) 0x84;
