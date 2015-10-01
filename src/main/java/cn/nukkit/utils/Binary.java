@@ -5,6 +5,7 @@ import cn.nukkit.entity.Entity;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -83,6 +84,75 @@ public class Binary {
         }
 
         appendBytes(m, new byte[]{0x7f});
+        return m;
+    }
+
+    public Map<Integer, Object[]> readMetadata(byte[] payload) {
+        int offset = 0;
+        Map<Integer, Object[]> m = new HashMap<>();
+        byte b = payload[offset];
+        ++offset;
+        while (b != 0x7f && offset < payload.length) {
+            int bottom = b & 0x1f;
+            int type = b >> 5;
+            Object r = null;
+            Object[] rr = null;
+            switch (type) {
+                case Entity.DATA_TYPE_BYTE:
+                    r = payload[offset];
+                    ++offset;
+                    break;
+                case Entity.DATA_TYPE_SHORT:
+                    r = readLShort(subBytes(payload, offset, 2));
+                    offset += 2;
+                    break;
+                case Entity.DATA_TYPE_INT:
+                    r = readLInt(subBytes(payload, offset, 4));
+                    offset += 4;
+                    break;
+                case Entity.DATA_TYPE_FLOAT:
+                    r = readLFloat(subBytes(payload, offset, 4));
+                    offset += 4;
+                    break;
+                case Entity.DATA_TYPE_STRING:
+                    int len = readLShort(subBytes(payload, offset, 2));
+                    offset += 2;
+                    r = subBytes(payload, offset, len);
+                    offset += len;
+                    break;
+                case Entity.DATA_TYPE_SLOT:
+                    rr = new Object[3];
+                    rr[0] = readLShort(subBytes(payload, offset, 2));
+                    offset += 2;
+                    rr[1] = payload[offset];
+                    ++offset;
+                    rr[2] = readLShort(subBytes(payload, offset, 2));
+                    offset += 2;
+                    break;
+                case Entity.DATA_TYPE_POS:
+                    rr = new Object[3];
+                    for (int i = 0; i < 3; ++i) {
+                        rr[i] = readLInt(subBytes(payload, offset, 4));
+                        offset += 4;
+                    }
+                    break;
+                case Entity.DATA_TYPE_LONG:
+                    r = readLLong(subBytes(payload, offset, 4));
+                    offset += 8;
+                    break;
+                default:
+                    return new HashMap<>();
+            }
+
+            if (r != null) {
+                m.put(bottom, new Object[]{type, r});
+            } else if (rr != null) {
+                m.put(bottom, new Object[]{type, rr});
+            }
+            b = payload[offset];
+            ++offset;
+        }
+
         return m;
     }
 
