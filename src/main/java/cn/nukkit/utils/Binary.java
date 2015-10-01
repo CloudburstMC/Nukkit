@@ -1,7 +1,11 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.entity.Entity;
+
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -33,7 +37,54 @@ public class Binary {
                 (byte) ((value >> 16) & 0xFF)};
     }
 
-    //todo MetaData
+    public static byte[] writeMetadata(Map<Integer, Object[]> data) {
+        byte[] m = new byte[0];
+        for (Map.Entry<Integer, Object[]> entry : data.entrySet()) {
+            int bottom = entry.getKey();
+            Object[] d = entry.getValue();
+            appendBytes(m, new byte[]{(byte) ((((int) d[0] << 5) | (bottom & 0x1F)) & 0xff)});
+            switch ((int) d[0]) {
+                case Entity.DATA_TYPE_BYTE:
+                    appendBytes(m, new byte[]{(byte) d[1]});
+                    break;
+                case Entity.DATA_TYPE_SHORT:
+                    appendBytes(m, writeLShort((short) d[1]));
+                    break;
+                case Entity.DATA_TYPE_INT:
+                    appendBytes(m, writeLInt((int) d[1]));
+                    break;
+                case Entity.DATA_TYPE_FLOAT:
+                    appendBytes(m, writeLFloat((float) d[1]));
+                    break;
+                case Entity.DATA_TYPE_STRING:
+                    String s = (String) d[1];
+                    appendBytes(m, writeLShort((short) (s.getBytes(StandardCharsets.UTF_8).length)), s.getBytes(StandardCharsets.UTF_8));
+                    break;
+                case Entity.DATA_TYPE_SLOT:
+                    Object[] o = (Object[]) d[1];
+                    appendBytes(m,
+                            writeLShort((short) o[0]),
+                            new byte[]{(byte) o[1]},
+                            writeLShort((short) o[2])
+                    );
+                    break;
+                case Entity.DATA_TYPE_POS:
+                    o = (Object[]) d[1];
+                    appendBytes(m,
+                            writeLInt((int) o[0]),
+                            writeLInt((int) o[1]),
+                            writeLInt((int) o[2])
+                    );
+                    break;
+                case Entity.DATA_TYPE_LONG:
+                    appendBytes(m, writeLLong((long) d[1]));
+                    break;
+            }
+        }
+
+        appendBytes(m, new byte[]{0x7f});
+        return m;
+    }
 
     public static boolean readBool(byte b) {
         return b == 0;

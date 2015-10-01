@@ -56,7 +56,7 @@ public class PluginManager {
     }
 
     public boolean registerInterface(Class<? extends PluginLoader> loaderClass) {
-        if (PluginLoader.class.isAssignableFrom(loaderClass)) {
+        if (loaderClass != null) {
             try {
                 Constructor constructor = loaderClass.getDeclaredConstructor(Server.class);
                 constructor.setAccessible(true);

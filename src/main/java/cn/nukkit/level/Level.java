@@ -6,7 +6,6 @@ import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Ice;
 import cn.nukkit.entity.Arrow;
-import cn.nukkit.entity.EffectInfo;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
@@ -217,7 +216,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public static Vector3 getBlockVector3(String hash) {
         String[] h = hash.split(":");
-        return new Vector3(Integer.valueOf(h[0]), Integer.valueOf(h[1]), Integer.valueOf(h[2]);
+        return new Vector3(Integer.valueOf(h[0]), Integer.valueOf(h[1]), Integer.valueOf(h[2]));
     }
 
     public static Vector2 getBlockVector2(String hash) {

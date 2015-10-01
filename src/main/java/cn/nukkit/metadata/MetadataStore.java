@@ -14,7 +14,7 @@ public abstract class MetadataStore {
 
     private Map<String, Map<Plugin, MetadataValue>> metadataMap = new HashMap<>();
 
-    public void setMetadata(Object subject, String metadataKey, MetadataValue newMetadataValue) throws Exception {
+    public void setMetadata(Object subject, String metadataKey, MetadataValue newMetadataValue) {
         if (newMetadataValue == null) {
             throw new ServerException("Value cannot be null");
         }
@@ -31,7 +31,7 @@ public abstract class MetadataStore {
         entry.put(owningPlugin, newMetadataValue);
     }
 
-    public List<MetadataValue> getMetadata(Object subject, String metadataKey) throws Exception {
+    public List<MetadataValue> getMetadata(Object subject, String metadataKey) {
         String key = this.disambiguate((Metadatable) subject, metadataKey);
         if (this.metadataMap.containsKey(key)) {
             Collection values = ((Map) this.metadataMap.get(key)).values();
@@ -40,11 +40,11 @@ public abstract class MetadataStore {
         return Collections.emptyList();
     }
 
-    public boolean hasMetadata(Object subject, String metadataKey) throws Exception {
+    public boolean hasMetadata(Object subject, String metadataKey) {
         return this.metadataMap.containsKey(this.disambiguate((Metadatable) subject, metadataKey));
     }
 
-    public void removeMetadata(Object subject, String metadataKey, Plugin owningPlugin) throws Exception {
+    public void removeMetadata(Object subject, String metadataKey, Plugin owningPlugin) {
         if (owningPlugin == null) {
             throw new PluginException("Plugin cannot be null");
         }
@@ -59,7 +59,7 @@ public abstract class MetadataStore {
         }
     }
 
-    public void invalidateAll(Plugin owningPlugin) throws Exception {
+    public void invalidateAll(Plugin owningPlugin) {
         if (owningPlugin == null) {
             throw new PluginException("Plugin cannot be null");
         }
@@ -70,5 +70,5 @@ public abstract class MetadataStore {
         }
     }
 
-    protected abstract String disambiguate(Metadatable subject, String metadataKey) throws Exception;
+    protected abstract String disambiguate(Metadatable subject, String metadataKey);
 }

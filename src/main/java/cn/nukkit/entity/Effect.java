@@ -10,37 +10,65 @@ import cn.nukkit.event.entity.EntityRegainHealthEvent;
  */
 public class Effect implements Cloneable {
 
+    public static final byte SPEED = 1;
+    public static final byte SLOWNESS = 2;
+    public static final byte HASTE = 3;
+    public static final byte SWIFTNESS = 3;
+    public static final byte FATIGUE = 4;
+    public static final byte MINING_FATIGUE = 4;
+    public static final byte STRENGTH = 5;
+    //TODO: public static final byte HEALING = 6;
+    //TODO: public static final byte HARMING = 7;
+    public static final byte JUMP = 8;
+    public static final byte NAUSEA = 9;
+    public static final byte CONFUSION = 9;
+    public static final byte REGENERATION = 10;
+    public static final byte DAMAGE_RESISTANCE = 11;
+    public static final byte FIRE_RESISTANCE = 12;
+    public static final byte WATER_BREATHING = 13;
+    public static final byte INVISIBILITY = 14;
+    //public static final byte BLINDNESS = 15;
+    //public static final byte NIGHT_VISION = 16;
+    //public static final byte HUNGER = 17;
+    public static final byte WEAKNESS = 18;
+    public static final byte POISON = 19;
+    public static final byte WITHER = 20;
+    public static final byte HEALTH_BOOST = 21;
+    //public static final byte ABSORPTION = 22;
+    //public static final byte SATURATION = 23;
+
     protected static Effect[] effects;
 
     public static void init() {
         effects = new Effect[256];
 
-        effects[EffectInfo.SPEED.getId()] = new Effect(EffectInfo.SPEED.getId(), "%potion.moveSpeed", 124, 175, 198);
-        effects[EffectInfo.SLOWNESS.getId()] = new Effect(EffectInfo.SLOWNESS.getId(), "%potion.moveSlowdown", 90, 108, 129, true);
-        effects[EffectInfo.SWIFTNESS.getId()] = new Effect(EffectInfo.SWIFTNESS.getId(), "%potion.digSpeed", 217, 192, 67);
-        effects[EffectInfo.FATIGUE.getId()] = new Effect(EffectInfo.FATIGUE.getId(), "%potion.digSlowDown", 74, 66, 23, true);
-        effects[EffectInfo.STRENGTH.getId()] = new Effect(EffectInfo.STRENGTH.getId(), "%potion.damageBoost", 147, 36, 35);
-        //effects[EffectInfo.HEALING.getId()] = new InstantEffect(EffectInfo.HEALING.getId(), "%potion.heal", 248, 36, 35);
-        //effects[EffectInfo.HARMING.getId()] = new InstantEffect(EffectInfo.HARMING.getId(), "%potion.harm", 67, 10, 9, true);
-        effects[EffectInfo.JUMP.getId()] = new Effect(EffectInfo.JUMP.getId(), "%potion.jump", 34, 255, 76);
-        effects[EffectInfo.NAUSEA.getId()] = new Effect(EffectInfo.NAUSEA.getId(), "%potion.confusion", 85, 29, 74, true);
-        effects[EffectInfo.REGENERATION.getId()] = new Effect(EffectInfo.REGENERATION.getId(), "%potion.regeneration", 205, 92, 171);
-        effects[EffectInfo.DAMAGE_RESISTANCE.getId()] = new Effect(EffectInfo.DAMAGE_RESISTANCE.getId(), "%potion.resistance", 153, 69, 58);
-        effects[EffectInfo.FIRE_RESISTANCE.getId()] = new Effect(EffectInfo.FIRE_RESISTANCE.getId(), "%potion.fireResistance", 228, 154, 58);
-        effects[EffectInfo.WATER_BREATHING.getId()] = new Effect(EffectInfo.WATER_BREATHING.getId(), "%potion.waterBreathing", 46, 82, 153);
-        effects[EffectInfo.INVISIBILITY.getId()] = new Effect(EffectInfo.INVISIBILITY.getId(), "%potion.invisibility", 127, 131, 146);
+        effects[Effect.SPEED] = new Effect(Effect.SPEED, "%potion.moveSpeed", 124, 175, 198);
+        effects[Effect.SLOWNESS] = new Effect(Effect.SLOWNESS, "%potion.moveSlowdown", 90, 108, 129, true);
+        effects[Effect.SWIFTNESS] = new Effect(Effect.SWIFTNESS, "%potion.digSpeed", 217, 192, 67);
+        effects[Effect.FATIGUE] = new Effect(Effect.FATIGUE, "%potion.digSlowDown", 74, 66, 23, true);
+        effects[Effect.STRENGTH] = new Effect(Effect.STRENGTH, "%potion.damageBoost", 147, 36, 35);
+        //effects[Effect.HEALING] = new InstantEffect(Effect.HEALING, "%potion.heal", 248, 36, 35);
+        //effects[Effect.HARMING] = new InstantEffect(Effect.HARMING, "%potion.harm", 67, 10, 9, true);
+        effects[Effect.JUMP] = new Effect(Effect.JUMP, "%potion.jump", 34, 255, 76);
+        effects[Effect.NAUSEA] = new Effect(Effect.NAUSEA, "%potion.confusion", 85, 29, 74, true);
+        effects[Effect.REGENERATION] = new Effect(Effect.REGENERATION, "%potion.regeneration", 205, 92, 171);
+        effects[Effect.DAMAGE_RESISTANCE] = new Effect(Effect.DAMAGE_RESISTANCE, "%potion.resistance", 153, 69, 58);
+        effects[Effect.FIRE_RESISTANCE] = new Effect(Effect.FIRE_RESISTANCE, "%potion.fireResistance", 228, 154, 58);
+        effects[Effect.WATER_BREATHING] = new Effect(Effect.WATER_BREATHING, "%potion.waterBreathing", 46, 82, 153);
+        effects[Effect.INVISIBILITY] = new Effect(Effect.INVISIBILITY, "%potion.invisibility", 127, 131, 146);
         //Hunger
-        effects[EffectInfo.WEAKNESS.getId()] = new Effect(EffectInfo.WEAKNESS.getId(), "%potion.weakness", 72, 77, 72, true);
-        effects[EffectInfo.POISON.getId()] = new Effect(EffectInfo.POISON.getId(), "%potion.poison", 78, 147, 49, true);
-        effects[EffectInfo.WITHER.getId()] = new Effect(EffectInfo.WITHER.getId(), "%potion.wither", 53, 42, 39, true);
-        effects[EffectInfo.HEALTH_BOOST.getId()] = new Effect(EffectInfo.HEALTH_BOOST.getId(), "%potion.healthBoost", 248, 125, 35);
+        effects[Effect.WEAKNESS] = new Effect(Effect.WEAKNESS, "%potion.weakness", 72, 77, 72, true);
+        effects[Effect.POISON] = new Effect(Effect.POISON, "%potion.poison", 78, 147, 49, true);
+        effects[Effect.WITHER] = new Effect(Effect.WITHER, "%potion.wither", 53, 42, 39, true);
+        effects[Effect.HEALTH_BOOST] = new Effect(Effect.HEALTH_BOOST, "%potion.healthBoost", 248, 125, 35);
         //Absorption
         //Saturation
     }
 
-    public static Effect getEffect(int id) {
-        if (id >= 0 && id < 256 && effects[id] != null) {
-            return effects[id].clone();
+    public static Effect getEffect(byte id) {
+        int i = id & 0xff;
+        if (i >= 0 && i < effects.length && effects[i] != null) {
+            return effects[i].clone();
         } else {
             return null;
         }
@@ -48,20 +76,20 @@ public class Effect implements Cloneable {
 
     public static Effect getEffectByName(String name) {
         try {
-            int id = EffectInfo.valueOf(name.toUpperCase()).getId();
+            byte id = Effect.class.getField(name.toUpperCase()).getByte(null);
             return getEffect(id);
         } catch (Exception e) {
             return null;
         }
     }
 
-    protected int id;
+    protected byte id;
 
     protected String name;
 
     protected int duration;
 
-    protected int amplifier;
+    protected byte amplifier;
 
     protected int color;
 
@@ -71,11 +99,11 @@ public class Effect implements Cloneable {
 
     protected boolean bad;
 
-    public Effect(int id, String name, int r, int g, int b) {
+    public Effect(byte id, String name, int r, int g, int b) {
         this(id, name, r, g, b, false);
     }
 
-    public Effect(int id, String name, int r, int g, int b, boolean isBad) {
+    public Effect(byte id, String name, int r, int g, int b, boolean isBad) {
         this.id = id;
         this.name = name;
         this.bad = isBad;
@@ -86,13 +114,17 @@ public class Effect implements Cloneable {
         return name;
     }
 
-    public int getId() {
+    public byte getId() {
         return id;
     }
 
     public Effect setDuration(int ticks) {
         this.duration = ticks;
         return this;
+    }
+
+    public int getDuration() {
+        return duration;
     }
 
     public boolean isVisible() {
@@ -104,11 +136,11 @@ public class Effect implements Cloneable {
         return this;
     }
 
-    public int getAmplifier() {
+    public byte getAmplifier() {
         return amplifier;
     }
 
-    public Effect setAmplifier(int amplifier) {
+    public Effect setAmplifier(byte amplifier) {
         this.amplifier = amplifier;
         return this;
     }
@@ -129,19 +161,19 @@ public class Effect implements Cloneable {
     public boolean canTick() {
         int interval;
         switch (this.id) {
-            case 19: //POISON
+            case Effect.POISON: //POISON
                 if ((interval = (25 >> this.amplifier)) > 0) {
-                    return (this.duration % interval) == = 0;
+                    return (this.duration % interval) == 0;
                 }
                 return true;
-            case 20: //WITHER
+            case Effect.WITHER: //WITHER
                 if ((interval = (50 >> this.amplifier)) > 0) {
-                    return (this.duration % interval) == = 0;
+                    return (this.duration % interval) == 0;
                 }
                 return true;
-            case 10: //REGENERATION
+            case Effect.REGENERATION: //REGENERATION
                 if ((interval = (40 >> this.amplifier)) > 0) {
-                    return (this.duration % interval) == = 0;
+                    return (this.duration % interval) == 0;
                 }
                 return true;
         }
@@ -150,17 +182,17 @@ public class Effect implements Cloneable {
     public void applyEffect(Entity entity) {
         EntityEvent ev;
         switch (this.id) {
-            case 19: //POISON
+            case Effect.POISON: //POISON
                 if (entity.getHealth() > 1) {
                     ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 1);
                     entity.attack(((EntityDamageEvent) ev).getFinalDamage(), ev);
                 }
                 break;
-            case 20: //WITHER
+            case Effect.WITHER: //WITHER
                 ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 1);
                 entity.attack(((EntityDamageEvent) ev).getFinalDamage(), ev);
                 break;
-            case 10: //REGENERATION
+            case Effect.REGENERATION: //REGENERATION
                 if (entity.getHealth() < entity.getMaxHealth()) {
                     ev = new EntityRegainHealthEvent(entity, 1, EntityRegainHealthEvent.CAUSE_MAGIC);
                     entity.heal(((EntityRegainHealthEvent) ev).getAmount(), ev);
@@ -185,7 +217,7 @@ public class Effect implements Cloneable {
         //todo
     }
 
-    public void remove(Entity) {
+    public void remove(Entity entity) {
         //todo
     }
 
