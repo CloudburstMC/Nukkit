@@ -1,8 +1,11 @@
 package cn.nukkit;
 
+import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Human;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.inventory.InventoryHolder;
+import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.utils.TextFormat;
@@ -11,7 +14,7 @@ import cn.nukkit.utils.TextFormat;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Player extends Human {
+public class Player extends Human implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {
 
     public static final int SURVIVAL = 0;
     public static final int CREATIVE = 1;

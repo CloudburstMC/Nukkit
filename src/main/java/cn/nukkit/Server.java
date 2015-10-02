@@ -412,7 +412,7 @@ public class Server {
 
             this.getLogger().debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
-            this.scheduler.mainThreadHeartbeat(Long.MAX_VALUE);
+            this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
 
             this.getLogger().debug("Saving properties");
             this.properties.save();

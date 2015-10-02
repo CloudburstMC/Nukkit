@@ -8,22 +8,22 @@ import java.util.Random;
  */
 public class NukkitMath {
 
-    public static double floorDouble(double n) {
+    public static int floorDouble(double n) {
         int i = (int) n;
         return n >= i ? i : i - 1;
     }
 
-    public static double ceilDouble(double n) {
+    public static int ceilDouble(double n) {
         int i = (int) (n + 1);
         return n >= i ? i : i - 1;
     }
 
-    public static float floorFloat(float n) {
+    public static int floorFloat(float n) {
         int i = (int) n;
         return n >= i ? i : i - 1;
     }
 
-    public static float ceilFloat(float n) {
+    public static int ceilFloat(float n) {
         int i = (int) (n + 1);
         return n >= i ? i : i - 1;
     }

@@ -3,12 +3,15 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntitySpawnEvent;
+import cn.nukkit.block.Water;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
@@ -18,14 +21,13 @@ import cn.nukkit.nbt.FloatTag;
 import cn.nukkit.nbt.ListTag;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.MobEffectPacket;
+import cn.nukkit.network.protocol.RemoveEntityPacket;
+import cn.nukkit.network.protocol.SetEntityDataPacket;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.ChunkException;
 import com.sun.istack.internal.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -253,6 +255,10 @@ public abstract class Entity extends Location implements Metadatable {
         this.setNameTagVisible(true);
     }
 
+    public void setNameTagVisible(boolean visible) {
+        this.setDataProperty(DATA_SHOW_NAMETAG, DATA_TYPE_BYTE, visible ? (byte) 1 : (byte) 0);
+    }
+
     public Map<Integer, Effect> getEffects() {
         return effects;
     }
@@ -295,7 +301,7 @@ public abstract class Entity extends Location implements Metadatable {
             effect.add(this, false);
         }
 
-        this.effects.put(effect.getId(), effect);
+        this.effects.put((int) effect.getId(), effect);
 
         this.recalculateEffectColor();
 
@@ -489,7 +495,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void sendData(Player player, Map<Integer, Object[]> data) {
+        SetEntityDataPacket pk = new SetEntityDataPacket();
+        pk.eid = (player.equals(this) ? 0 : this.getId());
+        pk.metadata = data == null ? this.dataProerties : data;
 
+        player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
     }
 
     public void sendData(Player[] players) {
@@ -497,11 +507,346 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void sendData(Player[] players, Map<Integer, Object[]> data) {
+        SetEntityDataPacket pk = new SetEntityDataPacket();
+        pk.eid = this.getId();
+        pk.metadata = data == null ? this.dataProerties : data;
 
+        Server.broadcastPacket(players, pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
     }
 
-    public void setNameTagVisible(boolean visible) {
-        this.setDataProperty(DATA_SHOW_NAMETAG, DATA_TYPE_BYTE, visible ? (byte) 1 : (byte) 0);
+    public void despawnFrom(Player player) {
+        if (this.hasSpawned.containsKey(player.getLoaderId())) {
+            RemoveEntityPacket pk = new RemoveEntityPacket();
+            pk.eid = this.getId();
+            player.dataPacket(pk.setChannel(Network.CHANNEL_ENTITY_SPAWNING));
+            this.hasSpawned.remove(player.getLoaderId());
+        }
+    }
+
+    public void attack(float damage, EntityDamageEvent source) {
+        if (this.hasEffect(Effect.FIRE_RESISTANCE)
+                && (source.getCause() == EntityDamageEvent.CAUSE_FIRE
+                || source.getCause() == EntityDamageEvent.CAUSE_FIRE_TICK
+                || source.getCause() == EntityDamageEvent.CAUSE_LAVA)) {
+            source.setCancelled();
+        }
+
+        this.server.getPluginManager().callEvent(source);
+        if (source.isCancelled()) {
+            return;
+        }
+        this.setLastDamageCause(source);
+
+        this.setHealth(this.getHealth() - source.getFinalDamage());
+    }
+
+    public void heal(float amount, EntityRegainHealthEvent source) {
+        this.server.getPluginManager().callEvent(source);
+        if (source.isCancelled()) {
+            return;
+        }
+
+        this.setHealth(this.getHealth() + source.getAmount());
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public boolean isAlive() {
+        return this.health > 0;
+    }
+
+    public void setHealth(float health) {
+        this.setHealth((int) health);
+    }
+
+    public void setHealth(int health) {
+        if (this.health == health) {
+            return;
+        }
+
+        if (health <= 0) {
+            if (this.isAlive()) {
+                this.kill();
+            }
+        } else if (health <= this.getMaxHealth() || health < this.health) {
+            this.health = health;
+        } else {
+            this.health = this.getMaxHealth();
+        }
+    }
+
+    public void setLastDamageCause(EntityDamageEvent type) {
+        this.lastDamageCause = type;
+    }
+
+    public EntityDamageEvent getLastDamageCause() {
+        return lastDamageCause;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth + (this.hasEffect(Effect.HEALTH_BOOST) ? 4 * (this.getEffect(Effect.HEALTH_BOOST).getAmplifier() + 1) : 0);
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public boolean canCollideWith(Entity entity) {
+        return !this.justCreated && !this.equals(entity);
+    }
+
+    protected boolean checkObstruction(float x, float y, float z) {
+        int i = NukkitMath.floorFloat(x);
+        int j = NukkitMath.floorFloat(y);
+        int k = NukkitMath.floorFloat(z);
+
+        float diffX = x - i;
+        float diffY = y - j;
+        float diffZ = z - k;
+
+        if (Block.solid[this.level.getBlockIdAt(i, j, k)]) {
+            boolean flag = !Block.solid[this.level.getBlockIdAt(i - 1, j, k)];
+            boolean flag1 = !Block.solid[this.level.getBlockIdAt(i + 1, j, k)];
+            boolean flag2 = !Block.solid[this.level.getBlockIdAt(i, j - 1, k)];
+            boolean flag3 = !Block.solid[this.level.getBlockIdAt(i, j + 1, k)];
+            boolean flag4 = !Block.solid[this.level.getBlockIdAt(i, j, k - 1)];
+            boolean flag5 = !Block.solid[this.level.getBlockIdAt(i, j, k + 1)];
+
+            int direction = -1;
+            float limit = 9999;
+
+            if (flag) {
+                limit = diffX;
+                direction = 0;
+            }
+
+            if (flag1 && 1 - diffX < limit) {
+                limit = 1 - diffX;
+                direction = 1;
+            }
+
+            if (flag2 && diffY < limit) {
+                limit = diffY;
+                direction = 2;
+            }
+
+            if (flag3 && 1 - diffY < limit) {
+                limit = 1 - diffY;
+                direction = 3;
+            }
+
+            if (flag4 && diffZ < limit) {
+                limit = diffZ;
+                direction = 4;
+            }
+
+            if (flag5 && 1 - diffZ < limit) {
+                direction = 5;
+            }
+
+            double force = new Random().nextDouble() * 0.2 + 0.1;
+
+            if (direction == 0) {
+                this.motionX = -force;
+
+                return true;
+            }
+
+            if (direction == 1) {
+                this.motionX = force;
+
+                return true;
+            }
+
+            if (direction == 2) {
+                this.motionY = -force;
+
+                return true;
+            }
+
+            if (direction == 3) {
+                this.motionY = force;
+
+                return true;
+            }
+
+            if (direction == 4) {
+                this.motionZ = -force;
+
+                return true;
+            }
+
+            if (direction == 5) {
+                this.motionY = force;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean entityBaseTick() {
+        return this.entityBaseTick(1);
+    }
+
+    public boolean entityBaseTick(int tickDiff) {
+        this.blocksAround = null;
+        this.justCreated = false;
+
+        if (!this.isAlive()) {
+            this.removeAllEffects();
+            this.despawnFromAll();
+            if (!this.isPlayer) {
+                this.close();
+            }
+
+            return false;
+        }
+
+        if (!this.effects.isEmpty()) {
+            for (Effect effect : this.effects.values()) {
+                if (effect.canTick()) {
+                    effect.applyEffect(this);
+                }
+                effect.setDuration(effect.getDuration() - tickDiff);
+
+                if (effect.getDuration() <= 0) {
+                    this.removeEffect(effect.getId());
+                }
+            }
+        }
+
+        boolean hasUpdate = false;
+
+        this.checkBlockCollision();
+
+        if (this.y <= -16 && this.isAlive()) {
+            EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, 10);
+            this.attack(ev.getFinalDamage(), ev);
+            hasUpdate = true;
+        }
+
+        if (this.fireTicks > 0) {
+            if (this.fireProof) {
+                this.fireTicks -= 4 * tickDiff;
+                if (this.fireTicks < 0) {
+                    this.fireTicks = 0;
+                }
+            } else {
+                if (!this.hasEffect(Effect.FIRE_RESISTANCE) && (this.fireTicks % 20) == 0 || tickDiff > 20) {
+                    EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FIRE_TICK, 1);
+                    this.attack(ev.getFinalDamage(), ev);
+                }
+                this.fireTicks -= tickDiff;
+            }
+
+            if (this.fireTicks <= 0) {
+                this.extinguish();
+            } else {
+                this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, true);
+                hasUpdate = true;
+            }
+        }
+
+        if (this.noDamageTicks > 0) {
+            this.noDamageTicks -= tickDiff;
+            if (this.noDamageTicks < 0) {
+                this.noDamageTicks = 0;
+            }
+        }
+
+        this.age += tickDiff;
+        this.ticksLived += tickDiff;
+
+        return hasUpdate;
+    }
+
+    protected void updateMovement() {
+        double diffPosition = (this.x - this.lastX) * (this.x - this.lastX) + (this.y - this.lastY) * (this.y - this.lastY) + (this.z - this.lastZ) * (this.z - this.lastZ);
+        double diffRotation = (this.yaw - this.lastYaw) * (this.yaw - this.lastYaw) + (this.pitch - this.lastPitch) * (this.pitch - this.lastPitch);
+
+        double diffMotion = (this.motionX - this.lastMotionX) * (this.motionX - this.lastMotionX) + (this.motionY - this.lastMotionY) * (this.motionY - this.lastMotionY) + (this.motionZ - this.lastMotionZ) * (this.motionZ - this.lastMotionZ);
+
+        if (diffPosition > 0.04 || diffRotation > 2.25 && (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.00001)) { //0.2 ** 2, 1.5 ** 2
+            this.lastX = (double) this.x;
+            this.lastY = (double) this.y;
+            this.lastZ = (double) this.z;
+
+            this.lastYaw = this.yaw;
+            this.lastPitch = this.pitch;
+
+            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+        }
+
+        if (diffMotion > 0.0025 || (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.0001)) { //0.05 ** 2
+            this.lastMotionX = this.motionX;
+            this.lastMotionY = this.motionY;
+            this.lastMotionZ = this.motionZ;
+
+            this.level.addEntityMotion(this.chunk.getX(), this.chunk.getZ(), this.id, this.motionX, this.motionY, this.motionZ);
+        }
+    }
+
+    public Vector3 getDirectionVector() {
+        float y = (float) -Math.sin(Math.toRadians(this.pitch));
+        float xz = (float) Math.sin(Math.toRadians(this.pitch));
+        float x = -xz * (float) Math.sin(Math.toRadians(this.yaw));
+        float z = xz * (float) Math.cos(Math.toRadians(this.yaw));
+
+        return this.temporalVector.setComponents(x, y, z).normalize();
+    }
+
+    public Vector2 getDirectionPlane() {
+        return (new Vector2((float) (-Math.cos(Math.toRadians(this.yaw) - Math.PI / 2)), (float) (-Math.sin(Math.toRadians(this.yaw) - Math.PI / 2)))).normalize();
+    }
+
+    public boolean onUpdate(int currentTick) {
+        if (this.closed) {
+            return false;
+        }
+
+        if (!this.isAlive()) {
+            ++this.deadTicks;
+            if (this.deadTicks >= 10) {
+                this.despawnFromAll();
+                if (!this.isPlayer) {
+                    this.close();
+                }
+            }
+            return this.deadTicks < 10;
+        }
+
+        int tickDiff = currentTick - this.lastUpdate;
+
+        if (tickDiff <= 0) {
+            return false;
+        }
+
+        this.lastUpdate = currentTick;
+
+        boolean hasUpdate = this.entityBaseTick(tickDiff);
+
+        this.updateMovement();
+
+        return hasUpdate;
+    }
+
+    public final void scheduleUpdate() {
+        this.level.updateEntities.put(this.id, this);
+    }
+
+    public boolean isOnFire() {
+        return this.fireTicks > 0;
+    }
+
+    public void setOnFire(int seconds) {
+        int ticks = seconds * 20;
+        if (ticks > this.fireTicks) {
+            this.fireTicks = (short) ticks;
+        }
     }
 
     public Integer getDirection() {
@@ -522,25 +867,512 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public void extinguish() {
+        this.fireTicks = 0;
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, false);
+    }
+
+    public boolean canTriggerWalking() {
+        return true;
+    }
+
+    public void resetFallDistance() {
+        this.fallDistance = 0;
+    }
+
+    protected void updateFallState(float distanceThisTick, boolean onGround) {
+        if (onGround) {
+            if (this.fallDistance > 0) {
+                if (this instanceof Living) {
+                    this.fall(this.fallDistance);
+                }
+                this.resetFallDistance();
+            }
+        } else if (distanceThisTick < 0) {
+            this.fallDistance -= distanceThisTick;
+        }
+    }
+
+    public AxisAlignedBB getBoundingBox() {
+        return boundingBox;
+    }
+
+    public void fall(float fallDistance) {
+        float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
+        if (damage > 0) {
+            EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FALL, damage);
+            this.attack(ev.getFinalDamage(), ev);
+        }
+    }
+
+    public void handleLavaMovement() {
+        //todo
+    }
+
+    public Float getEyeHeight() {
+        return eyeHeight;
+    }
+
+    public void moveFlying() {
+        //todo
+    }
+
+    public void onCollideWithPlayer(Human entityPlayer) {
+
+    }
+
+    protected boolean switchLevel(Level targetLevel) {
+        if (this.closed) {
+            return false;
+        }
+
+        if (this.isValid()) {
+            EntityLevelChangeEvent ev = new EntityLevelChangeEvent(this, this.level, targetLevel);
+            this.server.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return false;
+            }
+
+            this.level.removeEntity(this);
+            if (this.chunk != null) {
+                this.chunk.removeEntity(this);
+            }
+            this.despawnFromAll();
+        }
+
+        this.setLevel(targetLevel);
+        this.level.addEntity(this);
+        this.chunk = null;
+
+        return true;
+    }
+
+    public Position getPosition() {
+        return new Position(this.x, this.y, this.z, this.level);
+    }
+
+    public Location getLocation() {
+        return new Location(this.x, this.y, this.z, this.yaw, this.pitch, this.level);
+    }
+
+    public boolean isInsideOfWater() {
+        double y = this.y + this.getEyeHeight();
+        Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
+
+        if (block instanceof Water) {
+            double f = (((Water) block).y + 1) - (((Water) block).getFluidHeightPercent() - 0.1111111);
+            return y < f;
+        }
+
+        return false;
+    }
+
+    public boolean isInsideOfSolid() {
+        double y = this.y + this.getEyeHeight();
+        Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
+
+        AxisAlignedBB bb = block.getBoundingBox();
+
+        if (bb != null && block.isSolid() && !block.isTransparent() && bb.intersectsWith(this.getBoundingBox())) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public boolean fastMove(double dx, double dy, double dz) {
+        if (dx == 0 && dy == 0 && dz == 0) {
+            return true;
+        }
+
+        AxisAlignedBB newBB = this.boundingBox.getOffsetBoundingBox(dx, dy, dz);
+
+        AxisAlignedBB[] list = this.level.getCollisionCubes(this, newBB, false);
+
+        if (list.length == 0) {
+            this.boundingBox = newBB;
+        }
+
+        this.x = (this.boundingBox.minX + this.boundingBox.maxX) / 2;
+        this.y = this.boundingBox.minY - this.ySize;
+        this.z = (this.boundingBox.minZ + this.boundingBox.maxZ) / 2;
+
+        this.checkChunks();
+
+        if (!this.onGround || dy != 0) {
+            AxisAlignedBB bb = this.boundingBox.clone();
+            bb.minY -= 0.75;
+
+            this.onGround = this.level.getCollisionBlocks(bb).length > 0;
+        }
+        this.isCollided = this.onGround;
+        this.updateFallState((float) dy, this.onGround);
+
+        return true;
+    }
+
+    public boolean move(double dx, double dy, double dz) {
+
+        if (dx == 0 && dz == 0 && dy == 0) {
+            return true;
+        }
+
+        if (this.keepMovement) {
+            this.boundingBox.offset(dx, dy, dz);
+            this.setPosition(this.temporalVector.setComponents((this.boundingBox.minX + this.boundingBox.maxX) / 2, this.boundingBox.minY, (this.boundingBox.minZ + this.boundingBox.maxZ) / 2));
+            this.onGround = this.isPlayer;
+            return true;
+        } else {
+
+            this.ySize *= 0.4;
+
+            double movX = dx;
+            double movY = dy;
+            double movZ = dz;
+
+            AxisAlignedBB axisalignedbb = this.boundingBox.clone();
+
+            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz), false);
+
+            for (AxisAlignedBB bb : list) {
+                dy = bb.calculateYOffset(this.boundingBox, dy);
+            }
+
+            this.boundingBox.offset(0, dy, 0);
+
+            boolean fallingFlag = (this.onGround || (dy != movY && movY < 0));
+
+            for (AxisAlignedBB bb : list) {
+                dx = bb.calculateXOffset(this.boundingBox, dx);
+            }
+
+            this.boundingBox.offset(dx, 0, 0);
+
+            for (AxisAlignedBB bb : list) {
+                dz = bb.calculateZOffset(this.boundingBox, dz);
+            }
+
+            this.boundingBox.offset(0, 0, dz);
+
+
+            if (this.stepHeight > 0 && fallingFlag && this.ySize < 0.05 && (movX != dx || movZ != dz)) {
+                double cx = dx;
+                double cy = dy;
+                double cz = dz;
+                dx = movX;
+                dy = this.stepHeight;
+                dz = movZ;
+
+                AxisAlignedBB axisalignedbb1 = this.boundingBox.clone();
+
+                this.boundingBox.setBB(axisalignedbb);
+
+                list = this.level.getCollisionCubes(this, this.boundingBox.addCoord(dx, dy, dz), false);
+
+                for (AxisAlignedBB bb : list) {
+                    dy = bb.calculateYOffset(this.boundingBox, dy);
+                }
+
+                this.boundingBox.offset(0, dy, 0);
+
+                for (AxisAlignedBB bb : list) {
+                    dx = bb.calculateXOffset(this.boundingBox, dx);
+                }
+
+                this.boundingBox.offset(dx, 0, 0);
+
+                for (AxisAlignedBB bb : list) {
+                    dz = bb.calculateZOffset(this.boundingBox, dz);
+                }
+
+                this.boundingBox.offset(0, 0, dz);
+
+                this.boundingBox.offset(0, 0, dz);
+
+                if ((cx * cx + cz * cz) >= (dx * dx + dz * dz)) {
+                    dx = cx;
+                    dy = cy;
+                    dz = cz;
+                    this.boundingBox.setBB(axisalignedbb1);
+                } else {
+                    this.ySize += 0.5;
+                }
+
+            }
+
+            this.x = (this.boundingBox.minX + this.boundingBox.maxX) / 2;
+            this.y = this.boundingBox.minY - this.ySize;
+            this.z = (this.boundingBox.minZ + this.boundingBox.maxZ) / 2;
+
+            this.checkChunks();
+
+            this.checkGroundState(movX, movY, movZ, dx, dy, dz);
+            this.updateFallState((float) dy, this.onGround);
+
+            if (movX != dx) {
+                this.motionX = 0;
+            }
+
+            if (movY != dy) {
+                this.motionY = 0;
+            }
+
+            if (movZ != dz) {
+                this.motionZ = 0;
+            }
+
+
+            //TODO: vehicle collision events (first we need to spawn them!)
+
+            return true;
+        }
+    }
+
+    public void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
+        this.isCollidedVertically = movY != dy;
+        this.isCollidedHorizontally = (movX != dx || movZ != dz);
+        this.isCollided = (this.isCollidedHorizontally || this.isCollidedVertically);
+        this.onGround = (movY != dy && movY < 0);
+    }
+
+    public List<Block> getBlocksAround() {
+        if (this.blocksAround == null) {
+            int minX = NukkitMath.floorDouble(this.boundingBox.minX);
+            int minY = NukkitMath.floorDouble(this.boundingBox.minY);
+            int minZ = NukkitMath.floorDouble(this.boundingBox.minZ);
+            int maxX = NukkitMath.ceilDouble(this.boundingBox.maxX);
+            int maxY = NukkitMath.ceilDouble(this.boundingBox.maxY);
+            int maxZ = NukkitMath.ceilDouble(this.boundingBox.maxZ);
+
+            this.blocksAround = new ArrayList<>();
+
+            for (int z = minZ; z <= maxZ; ++z) {
+                for (int x = minX; x <= maxX; ++x) {
+                    for (int y = minY; y <= maxY; ++y) {
+                        Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
+                        if (block.hasEntityCollision()) {
+                            this.blocksAround.add(block);
+                        }
+                    }
+                }
+            }
+        }
+
+        return this.blocksAround;
+    }
+
+    protected void checkBlockCollision() {
+        Vector3 vector = new Vector3(0, 0, 0);
+
+        for (Block block : this.getBlocksAround()) {
+            block.onEntityCollide(this);
+            block.addVelocityToEntity(this, vector);
+        }
+
+        if (vector.lengthSquared() > 0) {
+            vector = vector.normalize();
+            double d = 0.014d;
+            this.motionX += vector.x * d;
+            this.motionY += vector.y * d;
+            this.motionZ += vector.z * d;
+        }
+    }
+
+    public boolean setPositionAndRotation(Vector3 pos, float yaw, float pitch) {
+        if (this.setPosition(pos)) {
+            this.setRotation(yaw, pitch);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void setRotation(float yaw, float pitch) {
+        this.yaw = yaw;
+        this.pitch = pitch;
+        this.scheduleUpdate();
+    }
+
+    protected void checkChunks() {
+        if (this.chunk == null || (this.chunk.getX() != ((int) this.x >> 4)) || this.chunk.getZ() != ((int) this.z >> 4)) {
+            if (this.chunk != null) {
+                this.chunk.removeEntity(this);
+            }
+            this.chunk = this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true);
+
+            if (!this.justCreated) {
+                Map<Integer, Player> newChunk = this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
+                for (Player player : this.hasSpawned.values()) {
+                    if (!newChunk.containsKey(player.getLoaderId())) {
+                        this.despawnFrom(player);
+                    } else {
+                        newChunk.remove(player.getLoaderId());
+                    }
+                }
+
+                for (Player player : newChunk.values()) {
+                    this.spawnTo(player);
+                }
+            }
+
+            if (this.chunk == null) {
+                return;
+            }
+
+            this.chunk.addEntity(this);
+        }
+    }
+
+    public boolean setPosition(Vector3 pos) {
+        if (this.closed) {
+            return false;
+        }
+
+        if (pos instanceof Position && ((Position) pos).level != null && !((Position) pos).level.equals(this.level)) {
+            if (!this.switchLevel(((Position) pos).getLevel())) {
+                return false;
+            }
+        }
+
+        this.x = pos.x;
+        this.y = pos.y;
+        this.z = pos.z;
+
+        float radius = this.width / 2;
+
+        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + this.height, pos.z + radius);
+
+        this.checkChunks();
+
+        return true;
+    }
+
+    public Vector3 getMotion() {
+        return new Vector3(this.motionX, this.motionY, this.motionZ);
+    }
+
+    public boolean setMotion(Vector3 motion) {
+        if (!this.justCreated) {
+            EntityMotionEvent ev = new EntityMotionEvent(this, motion);
+            this.server.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return false;
+            }
+        }
+
+        this.motionX = motion.x;
+        this.motionY = motion.y;
+        this.motionZ = motion.z;
+
+        if (!this.justCreated) {
+            this.updateMovement();
+        }
+
+        return true;
+    }
+
+    public boolean isOnGround() {
+        return onGround;
+    }
+
+    public void kill() {
+        this.health = 0;
+        this.scheduleUpdate();
+    }
+
+    public boolean teleport(Vector3 pos) {
+        if (pos instanceof Location) {
+            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
+        } else {
+            return this.teleport(pos, this.yaw, this.pitch);
+        }
+    }
+
+    public boolean teleport(Vector3 pos, float yaw, float pitch) {
+        Position from = Position.fromObject(this, this.level);
+        Position to = Position.fromObject(pos, pos instanceof Position ? ((Position) pos).getLevel() : this.level);
+        EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to);
+        this.server.getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return false;
+        }
+
+        this.ySize = 0;
+        pos = ev.getTo();
+
+        this.setMotion(this.temporalVector.setComponents(0, 0, 0));
+
+        if (!this.setPositionAndRotation(pos, yaw, pitch)) {
+            this.resetFallDistance();
+            this.onGround = true;
+
+            this.lastX = this.x;
+            this.lastY = this.y;
+            this.lastZ = this.z;
+
+            this.lastYaw = this.yaw;
+            this.lastPitch = this.pitch;
+
+            this.updateMovement();
+
+            return true;
+        }
+
+        return false;
+    }
+
     public int getId() {
         return this.id;
     }
 
+    public void respawnToAll() {
+        for (Player player : this.hasSpawned.values()) {
+            this.spawnTo(player);
+        }
+        this.hasSpawned = new HashMap<>();
+    }
+
     public void spawnToAll() {
-        //todo
+        if (this.chunk == null) {
+            return;
+        }
+
+        for (Player player : this.level.getChunkPlayers(this.chunk.getX(), this.chunk.getZ()).values()) {
+            if (player.isOnline()) {
+                this.spawnTo(player);
+            }
+        }
+    }
+
+    public void despawnFromAll() {
+        for (Player player : this.hasSpawned.values()) {
+            this.despawnFrom(player);
+        }
     }
 
     public void close() {
-        //todo
+        if (!this.closed) {
+            this.server.getPluginManager().callEvent(new EntityDespawnEvent(this));
+            this.closed = true;
+            this.despawnFromAll();
+            if (this.chunk != null) {
+                this.chunk.removeEntity(this);
+            }
+
+            if (this.level != null) {
+                this.level.removeEntity(this);
+            }
+        }
     }
 
     public boolean setDataProperty(int id, int type, @NotNull Object value) {
         if (!value.equals(this.getDataProperty(id))) {
             this.dataProerties.put(id, new Object[]{type, value});
 
-            this.sendData(this.hasSpawned, new ArrayList<Object>() {
+            this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new HashMap<Integer, Object[]>() {
                 {
-                    add(id, dataProerties.get(id));
+                    put(id, dataProerties.get(id));
                 }
             });
 

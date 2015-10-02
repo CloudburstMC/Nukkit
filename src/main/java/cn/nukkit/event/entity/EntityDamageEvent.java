@@ -1,5 +1,6 @@
 package cn.nukkit.event.entity;
 
+import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
@@ -65,8 +66,8 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
             throw new EventException("BASE Damage modifier missing");
         }
 
-        if (entity.hasEffect(EffectInfo.DAMAGE_RESISTANCE)) {
-            this.setDamage(-(this.getDamage(MODIFIER_BASE) * 0.20 * (entity.getEffet(EffectInfo.DAMAGE_RESISTANCE).getAmplifier() + 1)), MODIFIER_RESISTANCE);
+        if (entity.hasEffect(Effect.DAMAGE_RESISTANCE)) {
+            this.setDamage((float) -(this.getDamage(MODIFIER_BASE) * 0.20 * (entity.getEffect(Effect.DAMAGE_RESISTANCE).getAmplifier() + 1)), MODIFIER_RESISTANCE);
         }
     }
 

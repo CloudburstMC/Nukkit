@@ -38,7 +38,7 @@ public class Position extends Vector3 {
     }
 
     public static Position fromObject(Vector3 pos, Level level) {
-        return new Position((int) pos.x, (int) pos.y, (int) pos.z, level);
+        return new Position(pos.x, pos.y, pos.z, level);
     }
 
     public Level getLevel() {
@@ -70,6 +70,7 @@ public class Position extends Vector3 {
         if (!this.isValid()) {
             throw new LevelException("Undefined Level reference");
         }
+
         return Position.fromObject(super.getSide(side, step), this.level);
     }
 

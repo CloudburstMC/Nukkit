@@ -21,7 +21,7 @@ public abstract class Task {
         }
     }
 
-    public abstract void onRun(long currentTick);
+    public abstract void onRun(int currentTick);
 
     public void onCancel() {
 

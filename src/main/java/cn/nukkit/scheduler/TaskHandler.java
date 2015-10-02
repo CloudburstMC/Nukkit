@@ -10,7 +10,7 @@ public class TaskHandler {
     protected int taskId;
     protected int delay;
     protected int period;
-    protected long nextRun;
+    protected int nextRun;
     protected boolean cancelled = false;
     //todo TimingsHandler
     protected String timingName;
@@ -36,11 +36,11 @@ public class TaskHandler {
         return this.cancelled;
     }
 
-    public long getNextRun() {
+    public int getNextRun() {
         return this.nextRun;
     }
 
-    public void setNextRun(long ticks) {
+    public void setNextRun(int ticks) {
         this.nextRun = ticks;
     }
 
@@ -84,7 +84,7 @@ public class TaskHandler {
         this.task.setHandler(null);
     }
 
-    public void run(long currentTick) {
+    public void run(int currentTick) {
         this.task.onRun(currentTick);
     }
 

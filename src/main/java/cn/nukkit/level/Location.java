@@ -15,27 +15,27 @@ public class Location extends Position {
         this(0);
     }
 
-    public Location(int x) {
+    public Location(double x) {
         this(x, 0);
     }
 
-    public Location(int x, int y) {
+    public Location(double x, double y) {
         this(x, y, 0);
     }
 
-    public Location(int x, int y, int z) {
-        this(x, y, z, 0.0f);
+    public Location(double x, double y, double z) {
+        this(x, y, z, 0);
     }
 
-    public Location(int x, int y, int z, float yaw) {
-        this(x, y, z, yaw, 0.0f);
+    public Location(double x, double y, double z, float yaw) {
+        this(x, y, z, yaw, 0);
     }
 
-    public Location(int x, int y, int z, float yaw, float pitch) {
+    public Location(double x, double y, double z, float yaw, float pitch) {
         this(x, y, z, yaw, pitch, null);
     }
 
-    public Location(int x, int y, int z, float yaw, float pitch, Level level) {
+    public Location(double x, double y, double z, float yaw, float pitch, Level level) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -60,11 +60,11 @@ public class Location extends Position {
         return new Location((int) pos.x, (int) pos.y, (int) pos.z, yaw, pitch, (level == null) ? ((pos instanceof Position) ? ((Position) pos).level : null) : level);
     }
 
-    public double getYaw() {
+    public float getYaw() {
         return this.yaw;
     }
 
-    public double getPitch() {
+    public float getPitch() {
         return this.pitch;
     }
 

@@ -93,12 +93,8 @@ public class Vector2 {
         return Math.sqrt(this.distanceSquared(x, y));
     }
 
-    public double distance(Vector2 x) {
-        return this.distance(x, 0);
-    }
-
-    public double distance(Vector2 x, double y) {
-        return Math.sqrt(this.distanceSquared(x.getX(), x.getY()));
+    public double distance(Vector2 vector) {
+        return Math.sqrt(this.distanceSquared(vector.getX(), vector.getY()));
     }
 
     public double distanceSquared(double x) {
@@ -109,12 +105,8 @@ public class Vector2 {
         return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2);
     }
 
-    public double distanceSquared(Vector2 x) {
-        return this.distanceSquared(x, 0);
-    }
-
-    public double distanceSquared(Vector2 x, double y) {
-        return this.distanceSquared(x.getX(), x.getY());
+    public double distanceSquared(Vector2 vector) {
+        return this.distanceSquared(vector.getX(), vector.getY());
     }
 
     public double length() {

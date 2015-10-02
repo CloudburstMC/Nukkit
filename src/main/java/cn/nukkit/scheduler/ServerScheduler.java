@@ -20,7 +20,7 @@ public class ServerScheduler {
     protected Map<Integer, TaskHandler> tasks;
     protected AsyncPool asyncPool;
     private int ids = 1;
-    protected long currentTick = 0;
+    protected int currentTick = 0;
 
     Comparator<TaskHandler> comparator = new Comparator<TaskHandler>() {
         @Override
@@ -126,7 +126,7 @@ public class ServerScheduler {
     }
 
     private TaskHandler handle(TaskHandler handler) {
-        long nextRun;
+        int nextRun;
         if (handler.isDelayed()) {
             nextRun = this.currentTick + handler.getDelay();
         } else {
@@ -138,7 +138,7 @@ public class ServerScheduler {
         return handler;
     }
 
-    public void mainThreadHeartbeat(long currentTick) {
+    public void mainThreadHeartbeat(int currentTick) {
         this.currentTick = currentTick;
         while (this.isReady(this.currentTick)) {
             TaskHandler task = this.queue.poll();
@@ -165,7 +165,7 @@ public class ServerScheduler {
         this.asyncPool.collectTasks();
     }
 
-    private boolean isReady(long currentTick) {
+    private boolean isReady(int currentTick) {
         return this.queue.peek() != null && this.queue.peek().getNextRun() <= currentTick;
     }
 
