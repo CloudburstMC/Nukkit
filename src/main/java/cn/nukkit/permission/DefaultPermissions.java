@@ -32,7 +32,7 @@ public abstract class DefaultPermissions {
 
         broadcasts.recalculatePermissibles();
 
-        Permission commands = registerPermission(new Permission(ROOT + ".command", "Allows using all PocketMine commands"), parent);
+        Permission commands = registerPermission(new Permission(ROOT + ".command", "Allows using all Nukkit commands"), parent);
 
         Permission whitelist = registerPermission(new Permission(ROOT + ".command.whitelist", "Allows the user to modify the server whitelist", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.whitelist.add", "Allows the user to add a player to the server whitelist"), whitelist);
