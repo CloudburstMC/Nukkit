@@ -11,6 +11,13 @@ public class NbtIo {
         }
     }
 
+    public static byte[] writeCompressed(CompoundTag tag) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream stream = new DataOutputStream(baos);
+        writeCompressed(tag, stream);
+        return baos.toByteArray();
+    }
+
     public static void writeCompressed(CompoundTag tag, OutputStream out) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(new GZIPOutputStream(out))) {
             write(tag, dos);
@@ -38,6 +45,13 @@ public class NbtIo {
         if (file.exists()) file.delete();
         if (file.exists()) throw new IOException("Failed to delete " + file);
         file2.renameTo(file);
+    }
+
+    public static byte[] write(CompoundTag tag) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream stream = new DataOutputStream(baos);
+        Tag.writeNamedTag(tag, stream);
+        return baos.toByteArray();
     }
 
     public static void write(CompoundTag tag, File file) throws IOException {

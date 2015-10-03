@@ -447,10 +447,10 @@ public class Level implements ChunkManager, Metadatable {
         pk.time = (int) this.time;
         pk.started = !this.stopTime;
 
-        Server.broadcastPacket(this.players, pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+        Server.broadcastPacket(this.players.values().stream().toArray(Player[]::new), pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
     }
 
-    public void doTick(long currentTick) {
+    public void doTick(int currentTick) {
         this.checkTime();
 
         if (++this.sendTimeTicker == 200) {
@@ -555,7 +555,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         boolean resetTime = true;
-        for (Player p : this.getPlayers()) {
+        for (Player p : this.getPlayers().values()) {
             if (!p.isSleeping()) {
                 resetTime = false;
                 break;
@@ -568,7 +568,7 @@ public class Level implements ChunkManager, Metadatable {
             if (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE) {
                 this.setTime(this.getTime() + Level.TIME_FULL - time);
 
-                for (Player p : this.getPlayers()) {
+                for (Player p : this.getPlayers().values()) {
                     p.stopSleep();
                 }
             }

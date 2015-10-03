@@ -2,6 +2,7 @@ package cn.nukkit.utils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  * author: MagicDroidX
@@ -78,4 +79,11 @@ public class Utils {
         return stringWriter.toString();
     }
 
+    public static UUID dataToUUID(String... params) {
+        StringBuilder builder = new StringBuilder();
+        for (String param : params) {
+            builder.append(param);
+        }
+        return UUID.nameUUIDFromBytes(builder.toString().getBytes(StandardCharsets.UTF_8));
+    }
 }
