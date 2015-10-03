@@ -25,7 +25,7 @@ public abstract class DefaultPermissions {
     public static void registerCorePermissions() {
         Permission parent = registerPermission(new Permission(ROOT, "Allows using all Nukkit commands and utilities"));
 
-        Permission broadcasts = registerPermission(new Permission(ROOT + ".broadcase", "Allows the user to receive all broadcast messages"), parent);
+        Permission broadcasts = registerPermission(new Permission(ROOT + ".broadcast", "Allows the user to receive all broadcast messages"), parent);
 
         registerPermission(new Permission(ROOT + ".broadcast.admin", "Allows the user to receive administrative broadcasts", Permission.DEFAULT_OP), broadcasts);
         registerPermission(new Permission(ROOT + ".broadcast.user", "Allows the user to receive user broadcasts", Permission.DEFAULT_TRUE), broadcasts);
