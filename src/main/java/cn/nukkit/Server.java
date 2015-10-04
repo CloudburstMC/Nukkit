@@ -16,9 +16,11 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
+import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
+import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.permission.BanEntry;
@@ -31,6 +33,7 @@ import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.*;
 import sun.misc.BASE64Encoder;
+import sun.nio.ch.Net;
 
 import java.io.File;
 import java.io.IOException;
@@ -297,6 +300,23 @@ public class Server {
         this.start();
     }
 
+    public static void broadcastPacket(Player[] players, DataPacket packet) {
+        packet.encode();
+        packet.isEncoded = true;
+        if (Network.BATCH_THRESHOLD >= 0 && packet.buffer.length >= Network.BATCH_THRESHOLD) {
+            Server.getInstance().batchPackets(players, new byte[][]{packet.buffer}, false, packet.getChannel());
+            return;
+        }
+
+        for (Player player : players) {
+            player.dataPacket(packet);
+        }
+
+        if (packet.encapsulatedPacket != null) {
+            packet.encapsulatedPacket = null;
+        }
+    }
+
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
@@ -326,7 +346,24 @@ public class Server {
     }
 
     public void batchPackets(Player[] players, byte[][] payload, boolean forceSync, int channel) {
-        //todo
+        byte[] data = new byte[0];
+        data = Binary.appendBytes(data, payload);
+        List<String> targets = new ArrayList<>();
+        for (Player p : players) {
+            if (p.isConnected()) {
+                targets.add(this.identifier.get(p));
+            }
+        }
+
+        if (!forceSync && this.networkCompressionAsync) {
+            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel, channel));
+        } else {
+            try {
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets, channel);
+            } catch (Exception e) {
+                //ignore
+            }
+        }
     }
 
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
@@ -334,7 +371,17 @@ public class Server {
     }
 
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers, int channel) {
-        //todo
+        BatchPacket pk = new BatchPacket();
+        pk.setChannel(channel);
+        pk.payload = data;
+        pk.encode();
+        pk.isEncoded = true;
+
+        for (String i : identifiers) {
+            if (this.players.containsKey(i)) {
+                this.players.get(i).dataPacket(pk);
+            }
+        }
     }
 
     public void enablePlugins(PluginLoadOrder type) {

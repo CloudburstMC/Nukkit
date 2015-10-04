@@ -54,6 +54,7 @@ public class Bed extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        int time = this.getLevel().getT
+        //todo
+        return false;
     }
 }

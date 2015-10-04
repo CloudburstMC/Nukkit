@@ -215,9 +215,9 @@ public class AxisAlignedBB implements Cloneable {
         Vector3 v1 = pos1.getIntermediateWithXValue(pos2, this.minX);
         Vector3 v2 = pos1.getIntermediateWithXValue(pos2, this.maxX);
         Vector3 v3 = pos1.getIntermediateWithYValue(pos2, this.minY);
-        Vector3 v4 = pos1.getIntermediateWithYValue(pos2,this.maxY);
+        Vector3 v4 = pos1.getIntermediateWithYValue(pos2, this.maxY);
         Vector3 v5 = pos1.getIntermediateWithZValue(pos2, this.minZ);
-        Vector3 v6 = pos1.getIntermediateWithZValue(pos2,this.maxZ);
+        Vector3 v6 = pos1.getIntermediateWithZValue(pos2, this.maxZ);
 
         if (v1 != null && !this.isVectorInYZ(v1)) {
             v1 = null;
