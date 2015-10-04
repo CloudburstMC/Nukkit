@@ -14,7 +14,7 @@ public interface IPlayer extends ServerOperator {
 
     boolean isBanned();
 
-    void setBanned(boolean banned);
+    void setBanned(boolean value);
 
     boolean isWhitelisted();
 
@@ -22,9 +22,9 @@ public interface IPlayer extends ServerOperator {
 
     Player getPlayer();
 
-    double getFirstPlayered();
+    Long getFirstPlayed();
 
-    double getLastPlayed();
+    Long getLastPlayed();
 
     Object hasPlayedBefore();
 
