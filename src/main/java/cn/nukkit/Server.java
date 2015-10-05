@@ -16,11 +16,7 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
-<<<<<<< HEAD
-import cn.nukkit.network.CompressBatchedPacket;
-=======
 import cn.nukkit.network.CompressBatchedTask;
->>>>>>> origin/master
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
@@ -37,11 +33,9 @@ import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.*;
 import sun.misc.BASE64Encoder;
-import sun.nio.ch.Net;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
@@ -305,6 +299,10 @@ public class Server {
         this.start();
     }
 
+    public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
+        broadcastPacket(players.stream().toArray(Player[]::new), packet);
+    }
+
     public static void broadcastPacket(Player[] players, DataPacket packet) {
         packet.encode();
         packet.isEncoded = true;
@@ -351,19 +349,8 @@ public class Server {
     }
 
     public void batchPackets(Player[] players, byte[][] payload, boolean forceSync, int channel) {
-<<<<<<< HEAD
-        ByteBuffer buffer = ByteBuffer.allocate(64 * 64 * 64);
-        for (byte[] p : payload) {
-            buffer.put(p);
-        }
-
-        byte[] data = new byte[buffer.position()];
-        System.arraycopy(buffer.array(), 0, data, 0, buffer.position());
-
-=======
         byte[] data = new byte[0];
         data = Binary.appendBytes(data, payload);
->>>>>>> origin/master
         List<String> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
@@ -372,11 +359,7 @@ public class Server {
         }
 
         if (!forceSync && this.networkCompressionAsync) {
-<<<<<<< HEAD
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedPacket(data, targets, this.networkCompressionLevel, channel));
-=======
             this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel, channel));
->>>>>>> origin/master
         } else {
             try {
                 this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets, channel);
@@ -712,8 +695,8 @@ public class Server {
         return this.getPropertyBoolean("generate-structures", true);
     }
 
-    public int getGamemode() {
-        return this.getPropertyInt("gamemode", 0) & 0b11;
+    public byte getGamemode() {
+        return (byte) (this.getPropertyInt("gamemode", 0) & 0b11);
     }
 
     public boolean getForceGamemode() {
@@ -1065,7 +1048,23 @@ public class Server {
         return this.banByIP;
     }
 
-    //todo: addOp removeOp
+    public void addOp(String name) {
+        this.operators.set(name.toLowerCase(), true);
+        Player player = this.getPlayerExact(name);
+        if (player != null) {
+            player.recalculatePermissions();
+        }
+        this.operators.save(true);
+    }
+
+    public void removeOp(String name) {
+        this.operators.remove(name.toLowerCase());
+        Player player = this.getPlayerExact(name);
+        if (player != null) {
+            player.recalculatePermissions();
+        }
+        this.operators.save();
+    }
 
     public void addWhitelist(String name) {
         this.whitelist.set(name.toLowerCase(), true);

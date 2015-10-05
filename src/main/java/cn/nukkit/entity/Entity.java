@@ -70,7 +70,7 @@ public abstract class Entity extends Location implements Metadatable {
     private static Map<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
     private static Map<Class<? extends Entity>, String> shortNames = new HashMap<>();
 
-    private Map<Integer, Player> hasSpawned = new HashMap<>();
+    protected Map<Integer, Player> hasSpawned = new HashMap<>();
 
     protected Map<Integer, Effect> effects = new HashMap<>();
 
@@ -164,7 +164,7 @@ public abstract class Entity extends Location implements Metadatable {
     protected boolean isPlayer = false;
 
     public Entity(FullChunk chunk, CompoundTag nbt) {
-        if (chunk == null || chunk.getProvider() == null) {
+        if ((chunk == null || chunk.getProvider() == null) && !(this instanceof Player)) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
         }
 

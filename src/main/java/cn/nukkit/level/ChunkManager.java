@@ -1,7 +1,6 @@
 package cn.nukkit.level;
 
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.format.generic.BaseFullChunk;
 
 /**
  * author: MagicDroidX
