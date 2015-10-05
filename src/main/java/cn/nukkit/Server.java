@@ -16,7 +16,11 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
+<<<<<<< HEAD
 import cn.nukkit.network.CompressBatchedPacket;
+=======
+import cn.nukkit.network.CompressBatchedTask;
+>>>>>>> origin/master
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
@@ -33,6 +37,7 @@ import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.*;
 import sun.misc.BASE64Encoder;
+import sun.nio.ch.Net;
 
 import java.io.File;
 import java.io.IOException;
@@ -346,6 +351,7 @@ public class Server {
     }
 
     public void batchPackets(Player[] players, byte[][] payload, boolean forceSync, int channel) {
+<<<<<<< HEAD
         ByteBuffer buffer = ByteBuffer.allocate(64 * 64 * 64);
         for (byte[] p : payload) {
             buffer.put(p);
@@ -354,6 +360,10 @@ public class Server {
         byte[] data = new byte[buffer.position()];
         System.arraycopy(buffer.array(), 0, data, 0, buffer.position());
 
+=======
+        byte[] data = new byte[0];
+        data = Binary.appendBytes(data, payload);
+>>>>>>> origin/master
         List<String> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
@@ -362,7 +372,11 @@ public class Server {
         }
 
         if (!forceSync && this.networkCompressionAsync) {
+<<<<<<< HEAD
             this.getScheduler().scheduleAsyncTask(new CompressBatchedPacket(data, targets, this.networkCompressionLevel, channel));
+=======
+            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel, channel));
+>>>>>>> origin/master
         } else {
             try {
                 this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets, channel);

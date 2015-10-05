@@ -185,17 +185,17 @@ public class Effect implements Cloneable {
             case Effect.POISON: //POISON
                 if (entity.getHealth() > 1) {
                     ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 1);
-                    entity.attack(((EntityDamageEvent) ev).getFinalDamage(), ev);
+                    entity.attack(((EntityDamageEvent) ev).getFinalDamage(), (EntityDamageEvent) ev);
                 }
                 break;
             case Effect.WITHER: //WITHER
                 ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 1);
-                entity.attack(((EntityDamageEvent) ev).getFinalDamage(), ev);
+                entity.attack(((EntityDamageEvent) ev).getFinalDamage(), (EntityDamageEvent) ev);
                 break;
             case Effect.REGENERATION: //REGENERATION
                 if (entity.getHealth() < entity.getMaxHealth()) {
                     ev = new EntityRegainHealthEvent(entity, 1, EntityRegainHealthEvent.CAUSE_MAGIC);
-                    entity.heal(((EntityRegainHealthEvent) ev).getAmount(), ev);
+                    entity.heal(((EntityRegainHealthEvent) ev).getAmount(), (EntityRegainHealthEvent) ev);
                 }
                 break;
         }
