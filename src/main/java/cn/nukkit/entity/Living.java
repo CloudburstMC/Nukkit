@@ -1,15 +1,21 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Server;
-import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityRegainHealthEvent;
+import cn.nukkit.block.Block;
+import cn.nukkit.event.entity.*;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.nbt.ShortTag;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.utils.BlockIterator;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -121,5 +127,151 @@ public abstract class Living extends Entity implements Damageable {
         this.attackTime = 10;
     }
 
-    //todo more
+    public void knockBack(Entity attacker, float damage, double x, double z) {
+        this.knockBack(attacker, damage, x, z, 0.4f);
+    }
+
+    public void knockBack(Entity attacker, float damage, double x, double z, float base) {
+        double f = Math.sqrt(x * x + z * z);
+        if (f <= 0) {
+            return;
+        }
+
+        f = 1 / f;
+
+        Vector3 motion = new Vector3(this.motionX, this.motionY, this.motionZ);
+
+        motion.x /= 2;
+        motion.y /= 2;
+        motion.z /= 2;
+        motion.x += x * f * base;
+        motion.y += base;
+        motion.z += z * f * base;
+
+        if (motion.y > base) {
+            motion.y = base;
+        }
+
+        this.setMotion(motion);
+    }
+
+    @Override
+    public void kill() {
+        if (!this.isAlive()) {
+            return;
+        }
+        super.kill();
+        EntityDeathEvent ev = new EntityDeathEvent(this, this.getDrops());
+        this.server.getPluginManager().callEvent(ev);
+        for (cn.nukkit.item.Item item : ev.getDrops()) {
+            this.getLevel().dropItem(this, item);
+        }
+    }
+
+    @Override
+    public boolean entityBaseTick() {
+        return this.entityBaseTick(1);
+    }
+
+    @Override
+    public boolean entityBaseTick(int tickDiff) {
+        boolean hasUpdate = super.entityBaseTick(tickDiff);
+
+        if (this.isAlive()) {
+            if (this.isInsideOfSolid()) {
+                hasUpdate = true;
+                EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1);
+                this.attack(ev.getFinalDamage(), ev);
+            }
+
+            if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
+                if (this instanceof WaterAnimal) {
+                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, 300);
+                } else {
+                    hasUpdate = true;
+                    int airTicks = (int) this.getDataProperty(DATA_AIR) - tickDiff;
+
+                    if (airTicks <= -20) {
+                        airTicks = 0;
+                        EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2);
+                        this.attack(ev.getFinalDamage(), ev);
+                    }
+
+                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, airTicks);
+                }
+            } else {
+                if (this instanceof WaterAnimal) {
+                    hasUpdate = true;
+                    int airTicks = (int) this.getDataProperty(DATA_AIR) - tickDiff;
+
+                    if (airTicks <= -20) {
+                        airTicks = 0;
+                        EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 2);
+                        this.attack(ev.getFinalDamage(), ev);
+                    }
+
+                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, airTicks);
+                } else {
+                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, 300);
+                }
+            }
+        }
+
+        if (this.attackTime > 0) {
+            this.attackTime -= tickDiff;
+        }
+
+        return hasUpdate;
+    }
+
+    public cn.nukkit.item.Item[] getDrops() {
+        return new Item[0];
+    }
+
+    public Block[] getLineOfSight(int maxDistance) {
+        return this.getLineOfSight(maxDistance, 0);
+    }
+
+    public Block[] getLineOfSight(int maxDistance, int maxLength) {
+        return this.getLineOfSight(maxDistance, maxLength, new HashMap<>());
+    }
+
+    public Block[] getLineOfSight(int maxDistance, int maxLength, Map<Integer, Object> transparent) {
+        if (maxDistance > 120) {
+            maxDistance = 120;
+        }
+
+        if (transparent != null && transparent.isEmpty()) {
+            transparent = null;
+        }
+
+        List<Block> blocks = new ArrayList<>();
+        int nextIndex = 0;
+
+        BlockIterator itr = new BlockIterator(this.level, this.getPosition(), this.getDirectionVector(), this.getEyeHeight(), maxDistance);
+
+        while (itr.hasNext()) {
+            Block block = itr.next();
+            blocks.add(nextIndex++, block);
+
+            if (maxLength != 0 && blocks.size() > maxLength) {
+                blocks.remove(0);
+                --nextIndex;
+            }
+
+            int id = block.getId();
+
+            if (transparent == null) {
+                if (id != 0) {
+                    break;
+                }
+            } else {
+                if (!transparent.containsKey(id)) {
+                    break;
+                }
+            }
+        }
+
+        return blocks.stream().toArray(Block[]::new);
+    }
 }

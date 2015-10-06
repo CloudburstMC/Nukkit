@@ -120,7 +120,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     protected boolean allowFlight = false;
 
-    private Map<String, Boolean> needACK = new HashMap<>();
+    private Map<Integer, Boolean> needACK = new HashMap<>();
 
     private Map<Integer, List<DataPacket>> batchedPackets = new HashMap<>();
 
@@ -402,7 +402,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
      * other is identifer
      */
     public boolean dataPacket(DataPacket packet) {
-        return this.dataPacket(packet, false) == 0;
+        return this.dataPacket(packet, false) != -1;
     }
 
     public int dataPacket(DataPacket packet, boolean needACK) {
