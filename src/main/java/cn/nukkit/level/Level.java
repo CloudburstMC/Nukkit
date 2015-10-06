@@ -72,14 +72,14 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<Integer, Tile> tiles = new HashMap<>();
 
-    private Map<String, Map<Integer, double[]>> motionToSend = new HashMap<>();
-    private Map<String, Map<Integer, double[]>> moveToSend = new HashMap<>();
+    private Map<String, Map<Long, double[]>> motionToSend = new HashMap<>();
+    private Map<String, Map<Long, double[]>> moveToSend = new HashMap<>();
 
-    private Map<Integer, Player> players = new HashMap<>();
+    private Map<Long, Player> players = new HashMap<>();
 
-    private Map<Integer, Entity> entities = new HashMap<>();
+    private Map<Long, Entity> entities = new HashMap<>();
 
-    public Map<Integer, Entity> updateEntities = new HashMap<>();
+    public Map<Long, Entity> updateEntities = new HashMap<>();
 
     public Map<Integer, Tile> updateTiles = new HashMap<>();
 
@@ -466,8 +466,8 @@ public class Level implements ChunkManager, Metadatable {
             block.onUpdate(BLOCK_UPDATE_SCHEDULED);
         }
 
-        for (Map.Entry<Integer, Entity> entry : this.updateEntities.entrySet()) {
-            int id = entry.getKey();
+        for (Map.Entry<Long, Entity> entry : this.updateEntities.entrySet()) {
+            long id = entry.getKey();
             Entity entity = entry.getValue();
             if (entity.closed || !entity.onUpdate(currentTick)) {
                 this.updateEntities.remove(id);
@@ -514,7 +514,7 @@ public class Level implements ChunkManager, Metadatable {
             this.checkSleep();
         }
 
-        for (Map.Entry<String, Map<Integer, double[]>> entry : this.moveToSend.entrySet()) {
+        for (Map.Entry<String, Map<Long, double[]>> entry : this.moveToSend.entrySet()) {
             Vector2 v = Level.getBlockVector2(entry.getKey());
             int chunkX = (int) v.getX();
             int chunkZ = (int) v.getY();
@@ -524,7 +524,7 @@ public class Level implements ChunkManager, Metadatable {
         }
         this.moveToSend = new HashMap<>();
 
-        for (Map.Entry<String, Map<Integer, double[]>> entry : this.motionToSend.entrySet()) {
+        for (Map.Entry<String, Map<Long, double[]>> entry : this.motionToSend.entrySet()) {
             Vector2 v = Level.getBlockVector2(entry.getKey());
             int chunkX = (int) v.getX();
             int chunkZ = (int) v.getY();
@@ -1380,7 +1380,7 @@ public class Level implements ChunkManager, Metadatable {
             );
 
             if (player != null && tile != null) {
-                tile.namedTag.putString("Creator", player.getUniqueId());
+                tile.namedTag.putString("Creator", player.getUniqueId().toString());
             }
         }
 
@@ -1725,9 +1725,9 @@ public class Level implements ChunkManager, Metadatable {
         if (!this.chunkSendQueue.isEmpty()) {
             Integer x = null;
             Integer z = null;
-            for (Map.Entry<String, Map<String, Player>> entry : this.chunkSendQueue.entrySet()) {
+            for (Map.Entry<String, Map<Integer, Player>> entry : this.chunkSendQueue.entrySet()) {
                 String index = entry.getKey();
-                Map<String, Player> players = entry.getValue();
+                Map<Integer, Player> players = entry.getValue();
                 if (this.chunkSendTasks.containsKey(index)) {
                     continue;
                 }
@@ -2188,7 +2188,7 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getLevelMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 
-    public void addEntityMotion(int chunkX, int chunkZ, int entityId, double x, double y, double z) {
+    public void addEntityMotion(int chunkX, int chunkZ, long entityId, double x, double y, double z) {
         String index = Level.chunkHash(chunkX, chunkZ);
         if (!this.motionToSend.containsKey(index)) {
             this.motionToSend.put(index, new HashMap<>());
@@ -2197,11 +2197,11 @@ public class Level implements ChunkManager, Metadatable {
         this.motionToSend.get(index).put(entityId, new double[]{entityId, x, y, z});
     }
 
-    public void addEntityMovement(int chunkX, int chunkZ, int entityId, double x, double y, double z, double yaw, double pitch) {
+    public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch) {
         this.addEntityMovement(chunkX, chunkZ, entityId, x, y, z, yaw, pitch, yaw);
     }
 
-    public void addEntityMovement(int chunkX, int chunkZ, int entityId, double x, double y, double z, double yaw, double pitch, double headYaw) {
+    public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch, double headYaw) {
         String index = Level.chunkHash(chunkX, chunkZ);
         if (!this.moveToSend.containsKey(index)) {
             this.moveToSend.put(index, new HashMap<>());

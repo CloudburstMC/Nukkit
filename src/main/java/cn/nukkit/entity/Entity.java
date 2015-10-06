@@ -65,7 +65,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_ACTION = 4;
     public static final int DATA_FLAG_INVISIBLE = 5;
 
-    public static int entityCount = 1;
+    public static long entityCount = 1;
 
     private static Map<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
     private static Map<Class<? extends Entity>, String> shortNames = new HashMap<>();
@@ -74,7 +74,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected Map<Integer, Effect> effects = new HashMap<>();
 
-    protected int id;
+    protected long id;
 
     protected int dataFlags = 0;
 
@@ -1322,7 +1322,7 @@ public abstract class Entity extends Location implements Metadatable {
         return false;
     }
 
-    public int getId() {
+    public long getId() {
         return this.id;
     }
 
