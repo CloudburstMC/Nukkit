@@ -571,17 +571,17 @@ public class Block extends Position implements Metadatable, Cloneable {
 
         int f = -1;
 
-        if (vector == v1) {
+        if (vector.equals(v1)) {
             f = 4;
-        } else if (vector == v2) {
+        } else if (vector.equals(v2)) {
             f = 5;
-        } else if (vector == v3) {
+        } else if (vector.equals(v3)) {
             f = 0;
-        } else if (vector == v4) {
+        } else if (vector.equals(v4)) {
             f = 1;
-        } else if (vector == v5) {
+        } else if (vector.equals(v5)) {
             f = 2;
-        } else if (vector == v6) {
+        } else if (vector.equals(v6)) {
             f = 3;
         }
 
