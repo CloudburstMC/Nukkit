@@ -27,14 +27,9 @@ public class ItemBlock extends Item {
 
     @Override
     public ItemBlock clone() {
-        try {
-            ItemBlock block = (ItemBlock) super.clone();
-            block.block = this.block.clone();
-            return block;
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
-        }
+        ItemBlock block = (ItemBlock) super.clone();
+        block.block = this.block.clone();
+        return block;
     }
 
     public Block getBlock() {
