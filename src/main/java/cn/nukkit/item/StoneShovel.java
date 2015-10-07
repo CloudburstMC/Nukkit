@@ -10,11 +10,11 @@ public class StoneShovel extends Tool {
         this(0, 1);
     }
 
-    public StoneShovel(int meta) {
+    public StoneShovel(Integer meta) {
         this(meta, 1);
     }
 
-    public StoneShovel(int meta, int count) {
+    public StoneShovel(Integer meta, int count) {
         super(STONE_SHOVEL, meta, count, "Stone Shovel");
     }
 

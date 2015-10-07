@@ -10,11 +10,11 @@ public class GoldChestplate extends Armor {
         this(0, 1);
     }
 
-    public GoldChestplate(int meta) {
+    public GoldChestplate(Integer meta) {
         this(meta, 1);
     }
 
-    public GoldChestplate(int meta, int count) {
+    public GoldChestplate(Integer meta, int count) {
         super(GOLD_CHESTPLATE, meta, count, "Gold Chestplate");
     }
 }

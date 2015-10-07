@@ -10,11 +10,11 @@ public class Feather extends Item {
         this(0, 1);
     }
 
-    public Feather(int meta) {
+    public Feather(Integer meta) {
         this(meta, 1);
     }
 
-    public Feather(int meta, int count) {
+    public Feather(Integer meta, int count) {
         super(FEATHER, 0, count, "Feather");
     }
 }

@@ -10,11 +10,11 @@ public class Fish extends Item {
         this(0, 1);
     }
 
-    public Fish(int meta) {
+    public Fish(Integer meta) {
         this(meta, 1);
     }
 
-    public Fish(int meta, int count) {
+    public Fish(Integer meta, int count) {
         super(RAW_FISH, meta, count, "Raw Fish");
         if (this.meta == 1) {
             this.name = "Raw Salmon";

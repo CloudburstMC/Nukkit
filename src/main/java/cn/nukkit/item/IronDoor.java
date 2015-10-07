@@ -12,11 +12,11 @@ public class IronDoor extends Item {
         this(0, 1);
     }
 
-    public IronDoor(int meta) {
+    public IronDoor(Integer meta) {
         this(meta, 1);
     }
 
-    public IronDoor(int meta, int count) {
+    public IronDoor(Integer meta, int count) {
         super(IRON_DOOR, 0, count, "Iron Door");
         this.block = Block.get(Item.IRON_DOOR_BLOCK);
     }

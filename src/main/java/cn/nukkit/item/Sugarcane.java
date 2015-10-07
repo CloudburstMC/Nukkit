@@ -12,11 +12,11 @@ public class Sugarcane extends Item {
         this(0, 1);
     }
 
-    public Sugarcane(int meta) {
+    public Sugarcane(Integer meta) {
         this(meta, 1);
     }
 
-    public Sugarcane(int meta, int count) {
+    public Sugarcane(Integer meta, int count) {
         super(SUGARCANE, 0, count, "Sugar Cane");
         this.block = Block.get(Item.SUGARCANE_BLOCK);
     }

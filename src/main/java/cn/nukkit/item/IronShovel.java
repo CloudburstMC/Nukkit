@@ -10,11 +10,11 @@ public class IronShovel extends Tool {
         this(0, 1);
     }
 
-    public IronShovel(int meta) {
+    public IronShovel(Integer meta) {
         this(meta, 1);
     }
 
-    public IronShovel(int meta, int count) {
+    public IronShovel(Integer meta, int count) {
         super(IRON_SHOVEL, meta, count, "Gold Shovel");
     }
 

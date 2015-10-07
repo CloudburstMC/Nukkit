@@ -14,11 +14,11 @@ public class FlintSteel extends Tool {
         this(0, 1);
     }
 
-    public FlintSteel(int meta) {
+    public FlintSteel(Integer meta) {
         this(meta, 1);
     }
 
-    public FlintSteel(int meta, int count) {
+    public FlintSteel(Integer meta, int count) {
         super(FLINT_STEEL, meta, count, "Flint and Steel");
     }
 

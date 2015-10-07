@@ -14,11 +14,11 @@ public class Bucket extends Item {
         this(0, 1);
     }
 
-    public Bucket(int meta) {
+    public Bucket(Integer meta) {
         this(meta, 1);
     }
 
-    public Bucket(int meta, int count) {
+    public Bucket(Integer meta, int count) {
         super(BUCKET, meta, count, "Bucket");
     }
 

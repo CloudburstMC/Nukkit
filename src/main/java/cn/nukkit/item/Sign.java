@@ -12,11 +12,11 @@ public class Sign extends Item {
         this(0, 1);
     }
 
-    public Sign(int meta) {
+    public Sign(Integer meta) {
         this(meta, 1);
     }
 
-    public Sign(int meta, int count) {
+    public Sign(Integer meta, int count) {
         super(SIGN, 0, count, "Sign");
         this.block = Block.get(Item.SIGN_POST);
     }

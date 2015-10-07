@@ -10,11 +10,11 @@ public class DiamondChestplate extends Armor {
         this(0, 1);
     }
 
-    public DiamondChestplate(int meta) {
+    public DiamondChestplate(Integer meta) {
         this(meta, 1);
     }
 
-    public DiamondChestplate(int meta, int count) {
+    public DiamondChestplate(Integer meta, int count) {
         super(DIAMOND_CHESTPLATE, meta, count, "Diamond Chestplate");
     }
 }

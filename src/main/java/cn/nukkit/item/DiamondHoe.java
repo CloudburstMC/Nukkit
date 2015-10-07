@@ -10,11 +10,11 @@ public class DiamondHoe extends Tool {
         this(0, 1);
     }
 
-    public DiamondHoe(int meta) {
+    public DiamondHoe(Integer meta) {
         this(meta, 1);
     }
 
-    public DiamondHoe(int meta, int count) {
+    public DiamondHoe(Integer meta, int count) {
         super(DIAMOND_HOE, meta, count, "Diamond Hoe");
     }
 

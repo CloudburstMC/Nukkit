@@ -10,11 +10,11 @@ public class GoldHoe extends Tool {
         this(0, 1);
     }
 
-    public GoldHoe(int meta) {
+    public GoldHoe(Integer meta) {
         this(meta, 1);
     }
 
-    public GoldHoe(int meta, int count) {
+    public GoldHoe(Integer meta, int count) {
         super(GOLD_HOE, meta, count, "Gold Hoe");
     }
 

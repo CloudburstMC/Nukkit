@@ -10,11 +10,11 @@ public class Brick extends Item {
         this(0, 1);
     }
 
-    public Brick(int meta) {
+    public Brick(Integer meta) {
         this(meta, 1);
     }
 
-    public Brick(int meta, int count) {
+    public Brick(Integer meta, int count) {
         super(BRICK, 0, count, "Brick");
     }
 }

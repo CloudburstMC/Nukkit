@@ -10,11 +10,11 @@ public class GoldShovel extends Tool {
         this(0, 1);
     }
 
-    public GoldShovel(int meta) {
+    public GoldShovel(Integer meta) {
         this(meta, 1);
     }
 
-    public GoldShovel(int meta, int count) {
+    public GoldShovel(Integer meta, int count) {
         super(GOLD_SHOVEL, meta, count, "Gold Shovel");
     }
 

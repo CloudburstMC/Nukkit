@@ -10,11 +10,11 @@ public class LeatherCap extends Armor {
         this(0, 1);
     }
 
-    public LeatherCap(int meta) {
+    public LeatherCap(Integer meta) {
         this(meta, 1);
     }
 
-    public LeatherCap(int meta, int count) {
+    public LeatherCap(Integer meta, int count) {
         super(LEATHER_CAP, meta, count, "Leather Cap");
     }
 }

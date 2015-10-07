@@ -10,11 +10,11 @@ public class BeetrootSoup extends Item {
         this(0, 1);
     }
 
-    public BeetrootSoup(int meta) {
+    public BeetrootSoup(Integer meta) {
         this(meta, 1);
     }
 
-    public BeetrootSoup(int meta, int count) {
+    public BeetrootSoup(Integer meta, int count) {
         super(BEETROOT_SOUP, 0, count, "Beetroot Soup");
     }
 

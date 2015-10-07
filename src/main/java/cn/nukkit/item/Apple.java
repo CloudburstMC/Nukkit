@@ -10,11 +10,11 @@ public class Apple extends Item {
         this(0, 1);
     }
 
-    public Apple(int meta) {
+    public Apple(Integer meta) {
         this(meta, 1);
     }
 
-    public Apple(int meta, int count) {
+    public Apple(Integer meta, int count) {
         super(APPLE, 0, count, "Apple");
     }
 }

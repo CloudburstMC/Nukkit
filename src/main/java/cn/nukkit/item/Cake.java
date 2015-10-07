@@ -10,11 +10,11 @@ public class Cake extends Item {
         this(0, 1);
     }
 
-    public Cake(int meta) {
+    public Cake(Integer meta) {
         this(meta, 1);
     }
 
-    public Cake(int meta, int count) {
+    public Cake(Integer meta, int count) {
         super(CAKE, 0, count, "Cake");
     }
 

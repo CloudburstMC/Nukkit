@@ -10,11 +10,11 @@ public class Bow extends Tool {
         this(0, 1);
     }
 
-    public Bow(int meta) {
+    public Bow(Integer meta) {
         this(meta, 1);
     }
 
-    public Bow(int meta, int count) {
+    public Bow(Integer meta, int count) {
         super(BOW, meta, count, "Bow");
     }
 

@@ -10,11 +10,11 @@ public class MushroomStew extends Item {
         this(0, 1);
     }
 
-    public MushroomStew(int meta) {
+    public MushroomStew(Integer meta) {
         this(meta, 1);
     }
 
-    public MushroomStew(int meta, int count) {
+    public MushroomStew(Integer meta, int count) {
         super(MUSHROOM_STEW, 0, count, "Mushroom Stew");
     }
 

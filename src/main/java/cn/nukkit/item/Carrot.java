@@ -12,11 +12,11 @@ public class Carrot extends Item {
         this(0, 1);
     }
 
-    public Carrot(int meta) {
+    public Carrot(Integer meta) {
         this(meta, 1);
     }
 
-    public Carrot(int meta, int count) {
+    public Carrot(Integer meta, int count) {
         super(CARROT, 0, count, "Carrot");
         this.block = Block.get(Item.CARROT_BLOCK);
     }

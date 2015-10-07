@@ -10,11 +10,11 @@ public class WoodenSword extends Tool {
         this(0, 1);
     }
 
-    public WoodenSword(int meta) {
+    public WoodenSword(Integer meta) {
         this(meta, 1);
     }
 
-    public WoodenSword(int meta, int count) {
+    public WoodenSword(Integer meta, int count) {
         super(WOODEN_SWORD, meta, count, "Wooden Sword");
     }
 

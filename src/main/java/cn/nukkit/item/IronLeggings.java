@@ -10,11 +10,11 @@ public class IronLeggings extends Armor {
         this(0, 1);
     }
 
-    public IronLeggings(int meta) {
+    public IronLeggings(Integer meta) {
         this(meta, 1);
     }
 
-    public IronLeggings(int meta, int count) {
+    public IronLeggings(Integer meta, int count) {
         super(IRON_LEGGINGS, meta, count, "Iron Leggings");
     }
 }

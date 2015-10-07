@@ -10,11 +10,11 @@ public class CookedFish extends Item {
         this(0, 1);
     }
 
-    public CookedFish(int meta) {
+    public CookedFish(Integer meta) {
         this(meta, 1);
     }
 
-    public CookedFish(int meta, int count) {
+    public CookedFish(Integer meta, int count) {
         super(COOKED_FISH, meta, count, "Cooked Fish");
         if (this.meta == 1) {
             this.name = "Cooked Salmon";

@@ -10,11 +10,11 @@ public class ChainHelmet extends Armor {
         this(0, 1);
     }
 
-    public ChainHelmet(int meta) {
+    public ChainHelmet(Integer meta) {
         this(meta, 1);
     }
 
-    public ChainHelmet(int meta, int count) {
+    public ChainHelmet(Integer meta, int count) {
         super(CHAIN_HELMET, meta, count, "Chainmail Helmet");
     }
 }

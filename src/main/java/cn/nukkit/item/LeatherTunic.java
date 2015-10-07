@@ -10,11 +10,11 @@ public class LeatherTunic extends Armor {
         this(0, 1);
     }
 
-    public LeatherTunic(int meta) {
+    public LeatherTunic(Integer meta) {
         this(meta, 1);
     }
 
-    public LeatherTunic(int meta, int count) {
+    public LeatherTunic(Integer meta, int count) {
         super(LEATHER_TUNIC, meta, count, "Leather Tunic");
     }
 }
