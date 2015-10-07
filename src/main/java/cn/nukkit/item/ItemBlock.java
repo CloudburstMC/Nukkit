@@ -11,17 +11,17 @@ public class ItemBlock extends Item {
         this(block, 0, 1);
     }
 
-    public ItemBlock(Block block, int meta) {
+    public ItemBlock(Block block, Integer meta) {
         this(block, meta, 1);
     }
 
-    public ItemBlock(Block block, int meta, int count) {
+    public ItemBlock(Block block, Integer meta, int count) {
         super(block.getId(), meta, count);
         this.block = block;
     }
 
-    public void setDamage(int meta) {
-        this.meta = meta & 0xf;
+    public void setDamage(Integer meta) {
+        this.meta = meta != null ? meta & 0xf : null;
         this.block.setDamage(meta);
     }
 

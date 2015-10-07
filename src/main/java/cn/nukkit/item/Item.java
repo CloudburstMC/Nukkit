@@ -6,7 +6,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.level.Level;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 /**
@@ -380,7 +379,7 @@ public class Item implements Cloneable {
 
     protected Block block = null;
     protected int id;
-    protected int meta;
+    protected Integer meta;
     public int count;
     protected int durability = 0;
     protected String name;
@@ -389,17 +388,17 @@ public class Item implements Cloneable {
         this(id, 0, 1, "Unknown");
     }
 
-    public Item(int id, int meta) {
+    public Item(int id, Integer meta) {
         this(id, meta, 1, "Unknown");
     }
 
-    public Item(int id, int meta, int count) {
+    public Item(int id, Integer meta, int count) {
         this(id, meta, count, "Unknown");
     }
 
-    public Item(int id, int meta, int count, String name) {
+    public Item(int id, Integer meta, int count, String name) {
         this.id = id & 0xffff;
-        this.meta = meta & 0xffff;
+        this.meta = meta != null ? meta & 0xffff : null;
         this.count = count;
         this.name = name;
         if (!(this.block == null && this.id <= 0xff && Block.list[id] != null)) {
@@ -556,23 +555,19 @@ public class Item implements Cloneable {
         return get(id, 0);
     }
 
-    public static Item get(int id, int meta) {
+    public static Item get(int id, Integer meta) {
         return get(id, meta, 1);
     }
 
-    public static Item get(int id, int meta, int count) {
+    public static Item get(int id, Integer meta, int count) {
         try {
             Class c = list[id];
             if (c == null) {
                 return new Item(id, meta, count);
             } else if (id < 256) {
-                Constructor constructor = c.getDeclaredConstructor(int.class);
-                constructor.setAccessible(true);
-                return new ItemBlock((Block) constructor.newInstance(meta), meta, count);
+                return new ItemBlock((Block) c.getConstructor(Integer.class).newInstance(meta), meta, count);
             } else {
-                Constructor constructor = c.getDeclaredConstructor(int.class, int.class);
-                constructor.setAccessible(true);
-                return (Item) constructor.newInstance(meta, count);
+                return (Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count);
             }
         } catch (Exception e) {
             return new Item(id, meta, count);
@@ -627,12 +622,12 @@ public class Item implements Cloneable {
         return id;
     }
 
-    public int getDamage() {
+    public Integer getDamage() {
         return meta;
     }
 
-    public void setDamage(int meta) {
-        this.meta = meta & 0xFFFF;
+    public void setDamage(Integer meta) {
+        this.meta = meta != null ? meta & 0xFFFF : null;
     }
 
     public int getMaxStackSize() {
@@ -713,5 +708,14 @@ public class Item implements Cloneable {
 
     public final boolean equals(Item item, boolean checkDamage) {
         return this.id == item.getId() && ((!checkDamage) || this.getDamage() == item.getDamage());
+    }
+
+    @Override
+    public Item clone() {
+        try {
+            return (Item) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 }

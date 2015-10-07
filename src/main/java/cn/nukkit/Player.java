@@ -481,4 +481,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public String getName() {
         return this.username;
     }
+
+    public int getWindowId(Inventory inventory) {
+        if (this.windows.containsKey(inventory)) {
+            return this.windows.get(inventory);
+        }
+
+        return -1;
+    }
 }

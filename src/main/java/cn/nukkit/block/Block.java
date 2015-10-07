@@ -247,9 +247,9 @@ public class Block extends Position implements Metadatable, Cloneable {
         this(id, 0);
     }
 
-    public Block(int id, int meta) {
+    public Block(int id, Integer meta) {
         this.id = id;
-        this.meta = meta;
+        this.meta = meta != null ? meta : 0;
     }
 
     public static void init() {
@@ -313,11 +313,11 @@ public class Block extends Position implements Metadatable, Cloneable {
         return get(id, 0);
     }
 
-    public static Block get(int id, int meta) {
+    public static Block get(int id, Integer meta) {
         return get(id, meta, null);
     }
 
-    public static Block get(int id, int meta, Position pos) {
+    public static Block get(int id, Integer meta, Position pos) {
         Block block;
         try {
             Class c = list[id];
@@ -437,8 +437,8 @@ public class Block extends Position implements Metadatable, Cloneable {
         return this.meta;
     }
 
-    public final void setDamage(int meta) {
-        this.meta = meta & 0x0f;
+    public final void setDamage(Integer meta) {
+        this.meta = meta == null ? 0 : meta & 0x0f;
     }
 
     final public void position(Position v) {
@@ -619,11 +619,9 @@ public class Block extends Position implements Metadatable, Cloneable {
 
     public Block clone() {
         try {
-            Block block = (Block) super.clone();
             //block.boundingBox = this.boundingBox.clone();
-            return block;
+            return (Block) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
             return null;
         }
     }

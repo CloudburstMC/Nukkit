@@ -54,7 +54,7 @@ public abstract class Tool extends Item {
     @Override
     public boolean useOn(Block block) {
         if (this.isHoe()) {
-            if ((block != null) && (((Block) block).getId() == GRASS || ((Block) block).getId() == DIRT)) {
+            if ((block != null) && (block.getId() == GRASS || block.getId() == DIRT)) {
                 this.meta++;
             }
         } else {
