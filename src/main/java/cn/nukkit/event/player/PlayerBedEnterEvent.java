@@ -7,6 +7,10 @@ import cn.nukkit.Player;
 public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable{
 	private static final HandlerList handlers = new HandlerList();
 	
+	public static HandlerList getHandlers() {
+        	return handlers;
+    	}
+	
 	private Block bed;
 	
 	public PlayerBedEnterEvent(Player player, Block bed){
