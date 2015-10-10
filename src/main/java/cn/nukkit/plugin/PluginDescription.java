@@ -8,8 +8,15 @@ import org.yaml.snakeyaml.Yaml;
 import java.util.*;
 
 /**
- * Author: iNevet & MagicDroidX
- * Nukkit Project
+ * 描述一个Nukkit插件的类。<br />
+ * Describes a Nukkit plugin.
+ *
+ * TODO plugin.yml中关于Nukkit插件的一些定义，各种键值的填写，都放这里
+ *
+ * @author MagicDroidX(code) @ Nukkit Project
+ * @author iNevet(code) @ Nukkit Project
+ * @author 粉鞋大妈(javadoc) @ Nukkit Project
+ * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 public class PluginDescription {
 
@@ -110,62 +117,177 @@ public class PluginDescription {
         }
     }
 
+    /**
+     * 返回这个插件完整的名字。<br />
+     * Returns the full name of this plugin.
+     *
+     * <p>一个插件完整的名字由{@code 名字+" v"+版本号}组成。比如：<br />
+     * A full name of a plugin is composed by {@code name+" v"+version}.for example:</p>
+     * <p>{@code HelloWorld v1.0.0}</p>
+     *
+     * @return 这个插件完整的名字。<br />The full name of this plugin.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public String getFullName() {
         return this.name + " v" + this.version;
     }
 
+    /**
+     * 返回这个插件支持的Nukkit API版本列表。<br />
+     * Returns all Nukkit API versions this plugin supports.
+     *
+     * @return 这个插件支持的Nukkit API版本列表。<br />A list of all Nukkit API versions String this plugin supports.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public List<String> getCompatibleApis() {
         return api;
     }
 
+    /**
+     * 返回这个插件的作者列表。<br />
+     * Returns all the authors of this plugin.
+     *
+     * @return 这个插件的作者列表。<br />A list of all authors of this plugin.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public List<String> getAuthors() {
         return authors;
     }
 
+    /**
+     * 返回这个插件的信息前缀。<br />
+     * Returns the prefix of this plugin.
+     *
+     * <p>插件的信息前缀在记录器记录信息时，会作为信息头衔使用。如果没有定义记录器，会使用插件的名字作为信息头衔。<br />
+     * When a PluginLogger logs, the prefix is used as the prefix of message. If prefix is undefined,
+     * the plugin name will be used instead. </p>
+     *
+     * @return 这个插件的作信息前缀。如果没定义，返回{@code null}。<br />
+     * The prefix of this plugin, or{@code null} if undefined.
+     * @see cn.nukkit.plugin.PluginLogger
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public String getPrefix() {
         return prefix;
     }
 
+    /**
+     * 返回这个插件定义的命令列表。<br />
+     * Returns all the defined commands of this plugin.
+     *
+     * @return 这个插件定义的命令列表。<br />A map of all defined commands of this plugin.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public Map<String, Object> getCommands() {
         return commands;
     }
 
+    /** TODO finish javadoc */
     public List<String> getDepend() {
         return depend;
     }
 
+    /**
+     * 返回这个插件的描述文字。<br />
+     * Returns the description text of this plugin.
+     *
+     * @return 这个插件的描述文字。<br />The description text of this plugin.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public String getDescription() {
         return description;
     }
 
+    /** TODO finish javadoc */
     public List<String> getLoadBefore() {
         return loadBefore;
     }
 
+    /**
+     * 返回这个插件的主类名。<br />
+     * Returns the main class name of this plugin.
+     *
+     * <p>一个插件的加载都是从主类开始的。主类的名字在插件的配置文件中定义后可以通过这个函数返回。一个返回值例子：<br />
+     * The load action of a Nukkit plugin begins from main class. The name of main class should be defined
+     * in the plugin configuration, and it can be returned by this function. An example for return value: <br />
+     * {@code "com.example.ExamplePlugin"}</p>
+     *
+     * @return 这个插件的主类名。<br />The main class name of this plugin.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public String getMain() {
         return main;
     }
 
+    /**
+     * 返回这个插件的名字。<br />
+     * Returns the name of this plugin.
+     *
+     * @return 这个插件的名字。<br />The name of this plugin.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 返回这个插件加载的顺序，即插件应该在什么时候加载。<br />
+     * Returns the order the plugin loads, or when the plugin is loaded.
+     *
+     * @return 这个插件加载的顺序。<br />The order the plugin loads.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @see cn.nukkit.plugin.PluginLoadOrder
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public PluginLoadOrder getOrder() {
         return order;
     }
 
+    /**
+     * 返回这个插件定义的权限列表。<br />
+     * Returns all the defined permissions of this plugin.
+     *
+     * @return 这个插件定义的权限列表。<br />A map of all defined permissions of this plugin.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public List<Permission> getPermissions() {
         return permissions;
     }
 
+    /** TODO finish javadoc */
     public List<String> getSoftDepend() {
         return softDepend;
     }
 
+    /**
+     * 返回这个插件的版本号。<br />
+     * Returns the version string of this plugin.
+     *
+     * @return 这个插件的版本号。<br />The version string od this plugin.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * 返回这个插件的网站。<br />
+     * Returns the website of this plugin.
+     *
+     * @return 这个插件的网站。<br />The website of this plugin.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public String getWebsite() {
         return website;
     }
