@@ -476,6 +476,10 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public Map<Integer, Player> getViewers() {
+        return hasSpawned;
+    }
+
     public void sendPotionEffects(Player player) {
         for (Effect effect : this.effects.values()) {
             MobEffectPacket pk = new MobEffectPacket();

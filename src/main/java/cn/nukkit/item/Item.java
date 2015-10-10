@@ -379,7 +379,7 @@ public class Item implements Cloneable {
 
     protected Block block = null;
     protected int id;
-    protected Integer meta;
+    protected Short meta;
     public int count;
     protected int durability = 0;
     protected String name;
@@ -398,11 +398,11 @@ public class Item implements Cloneable {
 
     public Item(int id, Integer meta, int count, String name) {
         this.id = id & 0xffff;
-        this.meta = meta != null ? meta & 0xffff : null;
+        this.meta = meta != null ? (short) (meta & 0xffff) : null;
         this.count = count;
         this.name = name;
         if (!(this.block == null && this.id <= 0xff && Block.list[id] != null)) {
-            this.block = Block.get(this.id, this.meta);
+            this.block = Block.get(this.id, Integer.valueOf(this.meta));
             this.name = this.block.getName();
         }
     }
@@ -519,7 +519,7 @@ public class Item implements Cloneable {
     }
 
     public static void addCreativeItem(Item item) {
-        Item.creative.add(Item.get(item.getId(), item.getDamage()));
+        Item.creative.add(Item.get(item.getId(), Integer.valueOf(item.getDamage())));
     }
 
     public static void removeCreativeItem(Item item) {
@@ -622,12 +622,12 @@ public class Item implements Cloneable {
         return id;
     }
 
-    public Integer getDamage() {
+    public Short getDamage() {
         return meta;
     }
 
     public void setDamage(Integer meta) {
-        this.meta = meta != null ? meta & 0xFFFF : null;
+        this.meta = meta != null ? (short) (meta & 0xFFFF) : null;
     }
 
     public int getMaxStackSize() {

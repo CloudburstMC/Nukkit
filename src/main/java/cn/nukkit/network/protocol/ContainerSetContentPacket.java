@@ -67,4 +67,15 @@ public class ContainerSetContentPacket extends DataPacket {
             this.putShort((short) 0);
         }
     }
+
+    @Override
+    public ContainerSetContentPacket clone() {
+        try {
+            ContainerSetContentPacket pk = (ContainerSetContentPacket) super.clone();
+            pk.slots = this.slots.clone();
+            return pk;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
 }

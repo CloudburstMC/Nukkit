@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class DataPacket {
+public abstract class DataPacket implements Cloneable {
 
     public int offset = 0;
     public byte[] buffer = new byte[0];
@@ -193,5 +193,14 @@ public abstract class DataPacket {
         this.isEncoded = false;
         this.offset = 0;
         return this;
+    }
+
+    @Override
+    public DataPacket clone() {
+        try {
+            return (DataPacket) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 }
