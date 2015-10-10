@@ -15,8 +15,12 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * 一般的Nukkit插件需要继承的类。<br />
+ * A class to be extended by a normal Nukkit plugin.
+ *
+ * @author MagicDroidX(code) @ Nukkit Project
+ * @author 粉鞋大妈(javadoc) @ Nukkit Project
+ * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 abstract public class PluginBase implements Plugin {
 
@@ -53,10 +57,29 @@ abstract public class PluginBase implements Plugin {
         return isEnabled;
     }
 
+    /**
+     * 加载这个插件。<br />
+     * Enables this plugin.
+     *
+     * <p>如果你需要卸载这个插件，建议使用{@link #setEnabled(boolean)}<br />
+     * If you need to disable this plugin, it's recommended to use {@link #setEnabled(boolean)}</p>
+     *
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public final void setEnabled() {
         this.setEnabled(true);
     }
 
+    /**
+     * 加载或卸载这个插件。<br />
+     * Enables or disables this plugin.
+     *
+     * <p>插件管理器插件常常使用这个方法。<br />
+     * It's normally used by a plugin manager plugin to manage plugins.</p>
+     *
+     * @param value {@code true}为加载，{@code false}为卸载。<br />{@code true} for enable, {@code false} for disable.
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public final void setEnabled(boolean value) {
         if (isEnabled != value) {
             isEnabled = value;
@@ -80,6 +103,25 @@ abstract public class PluginBase implements Plugin {
         return description;
     }
 
+    /**
+     * 初始化这个插件。<br />
+     * Initialize the plugin.
+     *
+     * <p>这个方法会在加载(load)之前被插件加载器调用，初始化关于插件的一些事项，不能被重写。<br />
+     * Called by plugin loader before load, and initialize the plugin. Can't be overridden.</p>
+     *
+     * @param loader 加载这个插件的插件加载器的{@code PluginLoader}对象。<br />
+     *               The plugin loader ,which loads this plugin, as a {@code PluginLoader} object.
+     * @param server 运行这个插件的服务器的{@code Server}对象。<br />
+     *               The server running this plugin, as a {@code Server} object.
+     * @param description 描述这个插件的{@code PluginDescription}对象。<br />
+     *                    A {@code PluginDescription} object that describes this plugin.
+     * @param dataFolder 这个插件的数据的文件夹。<br />
+     *                   The data folder of this plugin.
+     * @param file 这个插件的文件{@code File}对象。对于jar格式的插件，就是jar文件本身。<br />
+     *             The {@code File} object of this plugin itself. For jar-packed plugins, it is the jar file itself.
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public final void init(PluginLoader loader, Server server, PluginDescription description, File dataFolder, File file) {
         if (!initialized) {
             initialized = true;
@@ -97,10 +139,18 @@ abstract public class PluginBase implements Plugin {
         return logger;
     }
 
+    /**
+     * 返回这个插件是否已经初始化。<br />
+     * Returns if this plugin is initialized.
+     *
+     * @return 这个插件是否已初始化。<br />if this plugin is initialized.
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public final boolean isInitialized() {
         return initialized;
     }
 
+    /** TODO: FINISH JAVADOC */
     public PluginIdentifiableCommand getCommand(String name) {
         PluginIdentifiableCommand command = this.getServer().getPluginCommand(name);
         if (command == null || !command.getPlugin().equals(this)) {
@@ -205,10 +255,29 @@ abstract public class PluginBase implements Plugin {
         return this.description.getName();
     }
 
+    /**
+     * 返回这个插件完整的名字。<br />
+     * Returns the full name of this plugin.
+     *
+     * <p>一个插件完整的名字由{@code 名字+" v"+版本号}组成。比如：<br />
+     * A full name of a plugin is composed by {@code name+" v"+version}.for example:</p>
+     * <p>{@code HelloWorld v1.0.0}</p>
+     *
+     * @return 这个插件完整的名字。<br />The full name of this plugin.
+     * @see cn.nukkit.plugin.PluginDescription#getFullName
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     public final String getFullName() {
         return this.description.getFullName();
     }
 
+    /**
+     * 返回这个插件的文件{@code File}对象。对于jar格式的插件，就是jar文件本身。<br />
+     * Returns the {@code File} object of this plugin itself. For jar-packed plugins, it is the jar file itself.
+     *
+     * @return 这个插件的文件{@code File}对象。<br />The {@code File} object of this plugin itself.
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
     protected File getFile() {
         return file;
     }
