@@ -79,6 +79,6 @@ public class ShapedRecipe implements Recipe {
 
     @Override
     public void registerToCraftingManager() {
-        Server.getInstance().getCraftingManager().registerShapdRecipe(this);
+        Server.getInstance().getCraftingManager().registerShapedRecipe(this);
     }
 }

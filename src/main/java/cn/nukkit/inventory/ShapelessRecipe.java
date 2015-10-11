@@ -56,13 +56,13 @@ public class ShapelessRecipe implements Recipe {
         return this;
     }
 
-    public Item[] getIngredientList() {
+    public List<Item> getIngredientList() {
         List<Item> ingredients = new ArrayList<>();
         for (Item ingredient : this.ingredients) {
             ingredients.add(ingredient.clone());
         }
 
-        return ingredients.stream().toArray(Item[]::new);
+        return ingredients;
     }
 
     public int getIngredientCount() {
