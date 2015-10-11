@@ -102,7 +102,7 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public AsyncTask requestChunkTask(int x, int z) throws ChunkException, IOException {
+    public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
         Chunk chunk = this.getChunk(x, z, false);
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk Sent");
@@ -117,7 +117,11 @@ public class McRegion extends BaseLevelProvider {
                 if (tile instanceof Spawnable) {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     DataOutputStream outputStream = new DataOutputStream(baos);
-                    NbtIo.write(((Spawnable) tile).getSpawnCompound(), outputStream);
+                    try {
+                        NbtIo.write(((Spawnable) tile).getSpawnCompound(), outputStream);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     tiles[i] = baos.toByteArray();
                     tilesLength += tiles[i].length;
                     i++;
@@ -150,7 +154,7 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public void unloadChunks() throws Exception {
+    public void unloadChunks() {
         for (Chunk chunk : this.chunks.values()) {
             this.unloadChunk(chunk.getX(), chunk.getZ(), false);
         }
@@ -182,32 +186,36 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public void saveChunks() throws Exception {
+    public void saveChunks() {
         for (Chunk chunk : this.chunks.values()) {
             this.saveChunk(chunk.getX(), chunk.getZ());
         }
     }
 
     @Override
-    public void doGarbageCollection() throws IOException {
+    public void doGarbageCollection() {
         int limit = (int) (System.currentTimeMillis() - 300);
         for (Map.Entry entry : this.regions.entrySet()) {
             String index = (String) entry.getKey();
             RegionLoader region = (RegionLoader) entry.getValue();
             if (region.lastUsed <= limit) {
-                region.close();
+                try {
+                    region.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 this.regions.remove(index);
             }
         }
     }
 
     @Override
-    public boolean loadChunk(int chunkX, int chunkZ) throws IOException {
+    public boolean loadChunk(int chunkX, int chunkZ) {
         return this.loadChunk(chunkX, chunkZ, false);
     }
 
     @Override
-    public boolean loadChunk(int chunkX, int chunkZ, boolean create) throws IOException {
+    public boolean loadChunk(int chunkX, int chunkZ, boolean create) {
         String index = Level.chunkHash(chunkX, chunkZ);
         if (this.chunks.containsKey(index)) {
             return true;
@@ -215,7 +223,12 @@ public class McRegion extends BaseLevelProvider {
         int regionX = getRegionIndexX(chunkX);
         int regionZ = getRegionIndexZ(chunkZ);
         this.loadRegion(regionX, regionZ);
-        Chunk chunk = this.getRegion(regionX, regionZ).readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
+        Chunk chunk;
+        try {
+            chunk = this.getRegion(regionX, regionZ).readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (chunk == null && create) {
             chunk = this.getEmptyChunk(chunkX, chunkZ);
         }
@@ -231,7 +244,7 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public boolean unloadChunk(int X, int Z) throws Exception {
+    public boolean unloadChunk(int X, int Z) {
         return this.unloadChunk(X, Z, true);
     }
 
@@ -247,9 +260,13 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public void saveChunk(int X, int Z) throws Exception {
+    public void saveChunk(int X, int Z) {
         if (this.isChunkLoaded(X, Z)) {
-            this.getRegion(X >> 5, Z >> 5).writeChunk(this.getChunk(X, Z));
+            try {
+                this.getRegion(X >> 5, Z >> 5).writeChunk(this.getChunk(X, Z));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -259,12 +276,12 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkZ) throws IOException {
+    public Chunk getChunk(int chunkX, int chunkZ) {
         return this.getChunk(chunkX, chunkZ, false);
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkZ, boolean create) throws IOException {
+    public Chunk getChunk(int chunkX, int chunkZ, boolean create) {
         String index = Level.chunkHash(chunkX, chunkZ);
         if (this.chunks.containsKey(index)) {
             return this.chunks.get(index);
@@ -297,18 +314,18 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public boolean isChunkGenerated(int chunkX, int chunkZ) throws IOException {
+    public boolean isChunkGenerated(int chunkX, int chunkZ) {
         RegionLoader region = this.getRegion(chunkX >> 5, chunkZ >> 5);
         return region != null && region.chunkExists(chunkX - region.getX() * 32, chunkZ - region.getZ() * 32) && this.getChunk(chunkX - region.getX() * 32, chunkZ - region.getZ() * 32, true).isGenerated();
     }
 
     @Override
-    public boolean isChunkPopulated(int chunkX, int chunkZ) throws IOException {
+    public boolean isChunkPopulated(int chunkX, int chunkZ) {
         Chunk chunk = this.getChunk(chunkX, chunkZ);
         return chunk != null && chunk.isPopulated();
     }
 
-    protected void loadRegion(int x, int z) throws IOException {
+    protected void loadRegion(int x, int z) {
         String index = Level.chunkHash(x, z);
         if (!this.regions.containsKey(index)) {
             this.regions.put(index, new RegionLoader(this, x, z));
@@ -316,12 +333,16 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         this.unloadChunks();
         for (Map.Entry entry : this.regions.entrySet()) {
             String index = (String) entry.getKey();
             RegionLoader region = (RegionLoader) entry.getValue();
-            region.close();
+            try {
+                region.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             this.regions.remove(index);
         }
         this.level = null;

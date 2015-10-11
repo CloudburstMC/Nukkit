@@ -14,7 +14,6 @@ public class Water extends Liquid {
 
     public Water(int meta) {
         super(WATER, meta);
-        this.meta = meta;
     }
 
     @Override

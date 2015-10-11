@@ -70,7 +70,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public static final int TIME_FULL = 24000;
 
-    private Map<Integer, Tile> tiles = new HashMap<>();
+    private Map<Long, Tile> tiles = new HashMap<>();
 
     private Map<String, Map<Long, double[]>> motionToSend = new HashMap<>();
     private Map<String, Map<Long, double[]>> moveToSend = new HashMap<>();
@@ -81,7 +81,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public Map<Long, Entity> updateEntities = new HashMap<>();
 
-    public Map<Integer, Tile> updateTiles = new HashMap<>();
+    public Map<Long, Tile> updateTiles = new HashMap<>();
 
     private Map<String, Block> blockCache = new HashMap<>();
 
@@ -475,7 +475,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (!this.updateTiles.isEmpty()) {
-            for (Map.Entry<Integer, Tile> entry : this.updateTiles.entrySet()) {
+            for (Map.Entry<Long, Tile> entry : this.updateTiles.entrySet()) {
                 if (!entry.getValue().onUpdate()) {
                     this.updateTiles.remove(entry.getKey());
                 }
@@ -1045,7 +1045,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
 
-        if (this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, true).setBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f, (int) pos.z & 0x0f, block.getId(), block.getDamage())) {
+        if (this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, true).setBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f, (int) pos.z & 0x0f, block.getId(), (int) block.getDamage())) {
             Position position;
             if (!(pos instanceof Position)) {
                 position = this.temporalPosition.setComponents(pos.x, pos.y, pos.z);
@@ -1453,7 +1453,7 @@ public class Level implements ChunkManager, Metadatable {
         return nearby.stream().toArray(Entity[]::new);
     }
 
-    public Map<Integer, Tile> getTiles() {
+    public Map<Long, Tile> getTiles() {
         return tiles;
     }
 
@@ -1461,7 +1461,7 @@ public class Level implements ChunkManager, Metadatable {
         return this.tiles.containsKey(tileId) ? this.tiles.get(tileId) : null;
     }
 
-    public Map<Integer, Player> getPlayers() {
+    public Map<Long, Player> getPlayers() {
         return players;
     }
 
@@ -1479,12 +1479,12 @@ public class Level implements ChunkManager, Metadatable {
         return null;
     }
 
-    public Map<Integer, Entity> getChunkEntities(int X, int Z) {
+    public Map<Long, Entity> getChunkEntities(int X, int Z) {
         FullChunk chunk;
         return (chunk = this.getChunk(X, Z)) != null ? chunk.getEntities() : new HashMap<>();
     }
 
-    public Map<Integer, Tile> getChunkTiles(int X, int Z) {
+    public Map<Long, Tile> getChunkTiles(int X, int Z) {
         FullChunk chunk;
         return (chunk = this.getChunk(X, Z)) != null ? chunk.getTiles() : new HashMap<>();
     }
@@ -1640,9 +1640,9 @@ public class Level implements ChunkManager, Metadatable {
             this.provider.setChunk(chunkX, chunkZ, chunk);
             this.chunks.put(index, chunk);
         } else {
-            Map<Integer, Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : new HashMap<>();
+            Map<Long, Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : new HashMap<>();
 
-            Map<Integer, Tile> oldTiles = oldChunk != null ? oldChunk.getTiles() : new HashMap<>();
+            Map<Long, Tile> oldTiles = oldChunk != null ? oldChunk.getTiles() : new HashMap<>();
 
             this.provider.setChunk(chunkX, chunkZ, chunk);
             this.chunks.put(index, chunk);

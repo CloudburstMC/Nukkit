@@ -114,7 +114,7 @@ public class Flat extends Generator {
                 this.structure[y] = new int[]{0, 0};
             }
 
-            this.chunk = this.level.getChunk(chunkX, chunkZ).clone();
+            this.chunk = ((BaseFullChunk) (this.level.getChunk(chunkX, chunkZ))).clone();
             this.chunk.setGenerated();
             int c = Biome.getBiome(biome).getColor();
             int R = c >> 16;
@@ -166,12 +166,7 @@ public class Flat extends Generator {
                 this.parsePreset(this.preset, chunkX, chunkZ);
             }
         }
-        try {
-            BaseFullChunk chunk = this.chunk.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return;
-        }
+        BaseFullChunk chunk = this.chunk.clone();
         chunk.setX(chunkX);
         chunk.setZ(chunkZ);
         this.level.setChunk(chunkX, chunkZ, chunk);

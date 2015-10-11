@@ -102,9 +102,9 @@ public interface FullChunk extends Cloneable {
 
     void removeTile(Tile tile);
 
-    Map<Integer, Entity> getEntities();
+    Map<Long, Entity> getEntities();
 
-    Map<Integer, Tile> getTiles();
+    Map<Long, Tile> getTiles();
 
     Tile getTile(int x, int y, int z);
 
@@ -136,7 +136,7 @@ public interface FullChunk extends Cloneable {
 
     byte[] getBlockLightArray();
 
-    byte[] toBinary() throws Exception;
+    byte[] toBinary();
 
     byte[] toFastBinary();
 

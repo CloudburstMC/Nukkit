@@ -77,12 +77,12 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public long getSeed() {
-        return this.levelData.getLong("RandomSeed");
+    public int getSeed() {
+        return this.levelData.getInt("RandomSeed");
     }
 
     @Override
-    public void setSeed(long value) {
+    public void setSeed(int value) {
         this.levelData.putLong("RandomSeed", value);
     }
 
@@ -99,7 +99,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public void doGarbageCollection() throws IOException {
+    public void doGarbageCollection() {
 
     }
 

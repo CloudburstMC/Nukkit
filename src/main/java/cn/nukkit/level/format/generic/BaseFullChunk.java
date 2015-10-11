@@ -21,9 +21,9 @@ import java.util.Map;
  * Nukkit Project
  */
 public abstract class BaseFullChunk implements FullChunk {
-    protected Map<Integer, Entity> entities = new HashMap<>();
+    protected Map<Long, Entity> entities = new HashMap<>();
 
-    protected Map<Integer, Tile> tiles = new HashMap<>();
+    protected Map<Long, Tile> tiles = new HashMap<>();
 
     protected Map<Integer, Tile> tileList = new HashMap<>();
 
@@ -53,8 +53,13 @@ public abstract class BaseFullChunk implements FullChunk {
     private boolean isInit = false;
 
     @Override
-    public BaseFullChunk clone() throws CloneNotSupportedException {
-        BaseFullChunk chunk = (BaseFullChunk) super.clone();
+    public BaseFullChunk clone() {
+        BaseFullChunk chunk = null;
+        try {
+            chunk = (BaseFullChunk) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
         chunk.biomeColors = biomeColors.clone();
         chunk.blocks = blocks.clone();
         chunk.data = data.clone();
@@ -277,12 +282,12 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public Map<Integer, Entity> getEntities() {
+    public Map<Long, Entity> getEntities() {
         return entities;
     }
 
     @Override
-    public Map<Integer, Tile> getTiles() {
+    public Map<Long, Tile> getTiles() {
         return tiles;
     }
 
@@ -403,7 +408,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public byte[] toFastBinary() throws Exception {
+    public byte[] toFastBinary() {
         return this.toBinary();
     }
 

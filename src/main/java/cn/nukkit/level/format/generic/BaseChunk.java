@@ -38,7 +38,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     protected boolean hasChanged = false;
 
     @Override
-    public BaseChunk clone() throws CloneNotSupportedException {
+    public BaseChunk clone() {
         BaseChunk chunk = (BaseChunk) super.clone();
         chunk.biomeColors = biomeColors.clone();
         chunk.heightMap = heightMap.clone();
