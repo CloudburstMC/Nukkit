@@ -70,12 +70,8 @@ public class ContainerSetContentPacket extends DataPacket {
 
     @Override
     public ContainerSetContentPacket clone() {
-        try {
-            ContainerSetContentPacket pk = (ContainerSetContentPacket) super.clone();
-            pk.slots = this.slots.clone();
-            return pk;
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
+        ContainerSetContentPacket pk = (ContainerSetContentPacket) super.clone();
+        pk.slots = this.slots.clone();
+        return pk;
     }
 }

@@ -8,21 +8,21 @@ import java.util.Map;
  * Nukkit Project
  */
 public class InventoryType {
-    public static final int CHEST = 0;
-    public static final int DOUBLE_CHEST = 1;
-    public static final int PLAYER = 2;
-    public static final int FURNACE = 3;
-    public static final int CRAFTING = 4;
-    public static final int WORKBENCH = 5;
-    public static final int STONECUTTER = 6;
+    public static final byte CHEST = 0;
+    public static final byte DOUBLE_CHEST = 1;
+    public static final byte PLAYER = 2;
+    public static final byte FURNACE = 3;
+    public static final byte CRAFTING = 4;
+    public static final byte WORKBENCH = 5;
+    public static final byte STONECUTTER = 6;
 
-    private static Map<Integer, InventoryType> defaults = new HashMap<>();
+    private static Map<Byte, InventoryType> defaults = new HashMap<>();
 
     private int size;
     private String title;
-    private int typeId;
+    private byte typeId;
 
-    public static InventoryType get(int index) {
+    public static InventoryType get(byte index) {
         return defaults.containsKey(index) ? defaults.get(index) : null;
     }
 
@@ -31,16 +31,16 @@ public class InventoryType {
             return;
         }
 
-        defaults.put(CHEST, new InventoryType(27, "Chest", 0));
-        defaults.put(DOUBLE_CHEST, new InventoryType(27 + 27, "Double Chest", 0));
-        defaults.put(PLAYER, new InventoryType(40, "Player", 0)); //27 CONTAINER, 4 ARMOR (9 reference HOTBAR slots)
-        defaults.put(FURNACE, new InventoryType(3, "Furnace", 2));
-        defaults.put(CRAFTING, new InventoryType(5, "Crafting", 1)); //4 CRAFTING slots, 1 RESULT
-        defaults.put(WORKBENCH, new InventoryType(10, "Crafting", 1)); //9 CRAFTING slots, 1 RESULT
-        defaults.put(STONECUTTER, new InventoryType(10, "Crafting", 3)); //9 CRAFTING slots, 1 RESULT
+        defaults.put(CHEST, new InventoryType((byte) 27, "Chest", (byte) 0));
+        defaults.put(DOUBLE_CHEST, new InventoryType((byte) (27 + 27), "Double Chest", (byte) 0));
+        defaults.put(PLAYER, new InventoryType((byte) 40, "Player", (byte) 0)); //27 CONTAINER, 4 ARMOR (9 reference HOTBAR slots)
+        defaults.put(FURNACE, new InventoryType((byte) 3, "Furnace", (byte) 2));
+        defaults.put(CRAFTING, new InventoryType((byte) 5, "Crafting", (byte) 1)); //4 CRAFTING slots, 1 RESULT
+        defaults.put(WORKBENCH, new InventoryType((byte) 10, "Crafting", (byte) 1)); //9 CRAFTING slots, 1 RESULT
+        defaults.put(STONECUTTER, new InventoryType((byte) 10, "Crafting", (byte) 3)); //9 CRAFTING slots, 1 RESULT
     }
 
-    public InventoryType(int defaultSize, String defaultTile, int typeId) {
+    public InventoryType(byte defaultSize, String defaultTile, byte typeId) {
         this.size = defaultSize;
         this.title = defaultTile;
         this.typeId = typeId;
@@ -54,7 +54,7 @@ public class InventoryType {
         return title;
     }
 
-    public int getNetworkType() {
+    public byte getNetworkType() {
         return typeId;
     }
 }
