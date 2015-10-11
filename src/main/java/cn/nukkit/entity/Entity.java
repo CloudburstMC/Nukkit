@@ -601,14 +601,14 @@ public abstract class Entity extends Location implements Metadatable {
         return !this.justCreated && !this.equals(entity);
     }
 
-    protected boolean checkObstruction(float x, float y, float z) {
-        int i = NukkitMath.floorFloat(x);
-        int j = NukkitMath.floorFloat(y);
-        int k = NukkitMath.floorFloat(z);
+    protected boolean checkObstruction(double x, double y, double z) {
+        int i = NukkitMath.floorDouble(x);
+        int j = NukkitMath.floorDouble(y);
+        int k = NukkitMath.floorDouble(z);
 
-        float diffX = x - i;
-        float diffY = y - j;
-        float diffZ = z - k;
+        double diffX = x - i;
+        double diffY = y - j;
+        double diffZ = z - k;
 
         if (Block.solid[this.level.getBlockIdAt(i, j, k)]) {
             boolean flag = !Block.solid[this.level.getBlockIdAt(i - 1, j, k)];
@@ -619,7 +619,7 @@ public abstract class Entity extends Location implements Metadatable {
             boolean flag5 = !Block.solid[this.level.getBlockIdAt(i, j, k + 1)];
 
             int direction = -1;
-            float limit = 9999;
+            double limit = 9999;
 
             if (flag) {
                 limit = diffX;
