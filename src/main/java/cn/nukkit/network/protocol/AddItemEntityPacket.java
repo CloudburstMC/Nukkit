@@ -1,9 +1,6 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.Binary;
-
-import java.util.Map;
 
 /**
  * author: MagicDroidX

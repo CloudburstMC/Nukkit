@@ -80,6 +80,10 @@ public class Server {
 
     private float maxUse = 0;
 
+    private int sendUsageTicker = 0;
+
+    private boolean dispatchSignals = false;
+
     private MainLogger logger;
 
     private CommandReader console;
@@ -114,6 +118,8 @@ public class Server {
     private String filePath;
     private String dataPath;
     private String pluginPath;
+
+    private Map<String, String> uniquePlayers = new HashMap<>();
 
     private QueryHandler queryHandler;
 
@@ -502,57 +508,6 @@ public class Server {
         this.tickProcessor();
         this.forceShutdown();
     }
-    
-    public void onPlayerLogin(Player player){
-		if(this.sendUsageTicker > 0){
-			this.uniquePlayers.put(player.getRawUniqueId(), player.getRawUniqueId());
-		}
-		this.sendFullPlayerListData(player);
-		//this.sendRecipeList(player);
-	}
-
-    public void addPlayer(String identifier, Player player) {
-        this.players.put(identifier, player);
-        this.identifier.put(player, identifier);
-    }
-    
-    public void addOnlinePlayer(Player player){
-		this.playerList.put(player.getRawUniqueId(), player);
-		this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.isSkinSlim(), player.getSkinData());
-	}
-	
-	public void removeOnlinePlayer(Player player){
-		if(this.playerList.get(player.getRawUniqueId()) != null){
-			this.playerList.remove(player.getRawUniqueId());
-			PlayerListPacket pk = new PlayerListPacket();
-			pk.type = PlayerListPacket.TYPE_REMOVE;
-			pk.entries[][player.getUniqueId()];
-			Server.broadcastPacket(this.playerList, pk);
-		}
-	}
-	
-	public void updatePlayerListData(UUID uuid, entityId, name, isSlim, skinData, Player[] players = null){
-		PlayerListPacket pk = new PlayerListPacket();
-		pk.type = PlayerListPacket.TYPE_ADD;
-		pk.entries[][uuid, entityId, name, isSlim, skinData];
-		Server.broadcastPacket(players === null ? this.playerList : players, pk);
-	}
-	
-	public void removePlayerListData(UUID uuid, Player[] players = null){
-		PlayerListPacket pk = new PlayerListPacket();
-		pk.type = PlayerListPacket.TYPE_REMOVE;
-		pk.entries[][uuid];
-		Server::broadcastPacket(players === null ? this.playerList : players, pk);
-	}
-	
-	public void sendFullPlayerListData(Player p){
-		PlayerListPacket pk = new PlayerListPacket();
-		pk.type = PlayerListPacket.TYPE_ADD;
-		for(player : this.playerList){
-			pk.entries[][player.getUniqueId(), player.getId(), player.getDisplayName(), player.isSkinSlim(), player.getSkinData()];
-		}
-		p.dataPacket(pk);
-	}
 
     public void handlePacket(String address, int port, byte[] payload) {
         try {
@@ -576,6 +531,17 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void onPlayerLogin(Player player) {
+        if (this.sendUsageTicker > 0) {
+            this.uniquePlayers.put(player.getUniqueId().toString(), player.getUniqueId().toString());
+        }
+    }
+
+    public void addPlayer(String identifier, Player player) {
+        this.players.put(identifier, player);
+        this.identifier.put(player, identifier);
     }
 
     private boolean tick() {
