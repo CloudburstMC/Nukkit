@@ -165,7 +165,7 @@ public abstract class DataPacket implements Cloneable {
     protected Item getSlot() {
         short id = this.getShort();
         byte cnt = this.getByte();
-        return Item.get(id, this.getShort(), cnt);
+        return Item.get(id, (int) this.getShort(), cnt);
     }
 
     protected void putSlot(Item item) {
