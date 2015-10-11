@@ -281,7 +281,7 @@ public abstract class BaseInventory implements Inventory {
                         item.setCount(item.getCount() + amount);
                         this.setItem(i, item);
                         if (slot.getCount() <= 0) {
-                            itemSlots.remove(0);
+                            itemSlots.remove(slot);
                         }
                     }
                 }
@@ -301,7 +301,7 @@ public abstract class BaseInventory implements Inventory {
                 item.setCount(amount);
                 this.setItem(slotIndex, item);
                 if (slot.getCount() <= 0) {
-                    itemSlots.remove(0);
+                    itemSlots.remove(slot);
                 }
             }
         }
@@ -333,7 +333,7 @@ public abstract class BaseInventory implements Inventory {
                     item.setCount(item.getCount() - amount);
                     this.setItem(i, item);
                     if (slot.getCount() <= 0) {
-                        itemSlots.remove(0);
+                        itemSlots.remove(slot);
                     }
 
                 }

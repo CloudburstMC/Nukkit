@@ -95,10 +95,10 @@ public class SimpleTransactionGroup implements TransactionGroup {
                     needItem.setCount(needItem.getCount() - amount);
                     haveItem.setCount(haveItem.getCount() - amount);
                     if (haveItem.getCount() == 0) {
-                        haveItems.remove(0);
+                        haveItems.remove(haveItem);
                     }
                     if (needItem.getCount() == 0) {
-                        needItems.remove(0);
+                        needItems.remove(needItem);
                         break;
                     }
                 }

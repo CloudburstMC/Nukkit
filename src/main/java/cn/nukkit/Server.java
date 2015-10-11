@@ -5,6 +5,7 @@ import cn.nukkit.command.*;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.server.QueryRegenerateEvent;
+import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Flat;
@@ -84,6 +85,8 @@ public class Server {
     private CommandReader console;
 
     private SimpleCommandMap commandMap;
+
+    private CraftingManager craftingManager;
 
     private ConsoleCommandSender consoleSender;
 
@@ -814,6 +817,10 @@ public class Server {
 
     public PluginManager getPluginManager() {
         return this.pluginManager;
+    }
+
+    public CraftingManager getCraftingManager() {
+        return craftingManager;
     }
 
     public ServerScheduler getScheduler() {
