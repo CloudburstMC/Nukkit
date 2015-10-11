@@ -6,7 +6,7 @@ import cn.nukkit.entity.Arrow;
 import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.Human;
-import cn.nukkit.entity.Item as DroppedItem;
+//import cn.nukkit.entity.Item;
 import cn.nukkit.entity.Living;
 import cn.nukkit.entity.Projectile;
 import cn.nukkit.event.block.SignChangeEvent;
@@ -83,7 +83,7 @@ import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.DisconnectPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.FullChunkDataPacket;
-import cn.nukkit.network.protocol.Info as ProtocolInfo;
+import cn.nukkit.network.protocol.Info;
 import cn.nukkit.network.protocol.PlayStatusPacket;
 import cn.nukkit.network.protocol.RespawnPacket;
 import cn.nukkit.network.protocol.TextPacket;
@@ -139,6 +139,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     protected Map<Inventory, Integer> windows;
 
     protected Map<Integer, Inventory> windowIndex = new HashMap<>();
+    
+    public Map<String, Integer> loginData = new HashMap<>();
 
     protected int messageCounter = 2;
 
@@ -531,8 +533,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if(connected === false){
 			return;
 		}
-		if(packet.pid() === ProtocolInfo.BATCH_PACKET){
-			/** @var BatchPacket $packet */
+		if(packet.pid() === Info.BATCH_PACKET){
+			/** @var BatchPacket packet */
 			this.server.getNetwork().processBatch(packet, this);
 			return;
 		}
@@ -544,7 +546,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 			return;
 		}
 		switch(packet.pid){
-			case ProtocolInfo.LOGIN_PACKET:
+			case Info.LOGIN_PACKET:
 				if(this.loggedIn){
 					break;
 				}
@@ -552,16 +554,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 				this.displayName = this.username;
 				this.setNameTag(this.username);
 				this.iusername = this.username.toLowerCase();
-				this.randomClientId = packet.clientId;
-				this.loginData = new HashMap<String, Integer>();
-				this.loginData.put("clientId", packet.clientId);
-				this.loginData.put("loginData", null);
-				this.uuid = Utils.dataToUUID(this.randomClientId, this.iusername, this.getAddress());
-				if(this.server.getOnlinePlayers().lenght > this->server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)){
+				
+				if(this.server.getOnlinePlayers().lenght > this.server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)){
 					break;
 				}
-				if(packet.protocol1 !== ProtocolInfo.CURRENT_PROTOCOL){
-					if(packet.protocol1 < ProtocolInfo.CURRENT_PROTOCOL){
+				if(packet.protocol1 !== Info.CURRENT_PROTOCOL){
+					if(packet.protocol1 < Info.CURRENT_PROTOCOL){
 						String message = "disconnectionScreen.outdatedClient";
 						PlayStatusPacket pk = new PlayStatusPacket();
 						pk.status = PlayStatusPacket.LOGIN_FAILED_CLIENT;
@@ -575,8 +573,16 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					this.close("", message, false);
 					break;
 				}
+				
+				this.randomClientId = packet->clientId;
+				this.loginData.put("clientId", packet.clientId);
+				this.loginData.put("loginData", null);
+				this.uuid = packet.clientUUID;
+				this.rawUUID = this.uuid.toBinary();
+				this.clientSecret = packet.clientSecret;
+				
 				Boolean valid = true;
-				Integer len = packet->username.lenght();
+				Integer len = packet.username.lenght();
 				if(len > 16 || len < 3){
 					valid = false;
 				}
@@ -606,135 +612,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					this.close("", ev.getKickMessage());
 					break;
 				}
-				if(!this.server.isWhitelisted(this.getName().toLowerCase())){
-					this.close($this->getLeaveMessage(), "Server is white-listed");
-					break;
-				}else if(this.server.getNameBans().isBanned(this.getName().toLowerCase()) || this.server.getIPBans().isBanned(this.getAddress())){
-					this.close(this.getLeaveMessage(), "You are banned");
-					break;
-				}
-				if(this.hasPermission(Server.BROADCAST_CHANNEL_USERS)){
-					this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_USERS, this);
-				}
-				if(this.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE)){
-					this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this);
-				}
-				for(Player p : this.server.getOnlinePlayers()){
-					if(p !== this and p.getName().toLowerCase() === this.getName().toLowerCase()){
-						if(p.kick("logged in from another location") === false){
-							this.close($this.getLeaveMessage(), "Logged in from another location");
-							timings.stopTiming();
-							return;
-						}
-					}
-				}
-				HashMap nbt = this.server.getOfflinePlayerData(this.username); //needs some solution
-				if(!isset(nbt.NameTag)){
-					nbt.put("NameTag", this->username);
-				}else{
-					nbt.put("NameTag", this.username;);
-				}
-				this.gamemode = nbt.get("playerGameType") & 0x03;
-				if(this.server.getForceGamemode()){
-					this.gamemode = this.server.getGamemode();
-					Int nbt.playerGameType = new Int("playerGameType", this.gamemode);
-				}
-				this->allowFlight = this.isCreative();
-				if((Level level = this.server.getLevelByName(nbt.get("Level"))) === null){
-					this.setLevel(this.server.getDefaultLevel());
-					nbt.get("Level") = this.level.getName();
-					nbt.get("Pos").get(0) = this.level.getSpawnLocation().x;
-					nbt.get("Pos").get(1) = this.level.getSpawnLocation().y;
-					nbt.get("Pos").get(2) = this.level.getSpawnLocation().z;
-				}else{
-					this.setLevel(level);
-				}
-				if(!(nbt instanceof Compound)){
-					this.close(this.getLeaveMessage(), "Invalid data");
-					break;
-				}
-				Achievement this.achievements[];
-				/** @var Byte $achievement */
-				for(achievement : nbt.get("Achievements")){
-					this.achievements[achievement.getName()] = achievement.getValue() > 0 ? true : false;
-				}
-				nbt.put("lastPlayed", new Long("lastPlayed", Math.floor(System.currentTimeMillis() * 1000000)));
-				if(this.server.getAutoSave()){
-					this.server.saveOfflinePlayerData(this.username, nbt, true);
-				}
-				super(this.level.getChunk(nbt.get("Pos").get(0) >> 4, nbt.get("Pos").get(2) >> 4, true), nbt);
-				this.loggedIn = true;
-				this.server.getPluginManager().callEvent(PlayerLoginEvent ev = new PlayerLoginEvent(this, "Plugin reason"));
-				if(ev.isCancelled()){
-					this.close(this.getLeaveMessage(), ev.getKickMessage());
-					break;
-				}
-				if(this.isCreative()){
-					this.inventory.setHeldItemSlot(0);
-				}else{
-					this.inventory.setHeldItemSlot(this.inventory.getHotbarSlotIndex(0));
-				}
-				PlayStatusPacket pk = new PlayStatusPacket();
-				pk.status = PlayStatusPacket.LOGIN_SUCCESS;
-				this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
-				if(this.spawnPosition === null && isset(this.namedtag.get("SpawnLevel")) && (Level level = this.server.getLevelByName(this.namedtag.get("SpawnLevel"))) instanceof Level){
-					this.spawnPosition = new Position(this.namedtag.get("SpawnX"), this->namedtag.get("SpawnY"), this.namedtag.get("SpawnZ"), level);
-				}
-				Position spawnPosition = this->getSpawn();
-				StartGamePacket pk = new StartGamePacket();
-				pk.seed = -1;
-				pk.x = this->x;
-				pk.y = this->y;
-				pk.z = this->z;
-				pk.spawnX = spawnPosition.x;
-				pk.spawnY = spawnPosition.y;
-				pk.spawnZ = spawnPosition.z;
-				pk.generator = 1; //0 old, 1 infinite, 2 flat
-				pk.gamemode = this.gamemode & 0x01;
-				pk.eid = 0; //Always use EntityID as zero for the actual player
-				this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
-				SetTimePacket pk = new SetTimePacket();
-				pk.time = this.level.getTime();
-				pk.started = this.level.stopTime == false;
-				this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
-				pk = new SetSpawnPositionPacket();
-				pk.x = spawnPosition.x;
-				pk.y = spawnPosition.y;
-				pk.z = spawnPosition.z;
-				this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
-				SetHealthPacket pk = new SetHealthPacket();
-				pk.health = this.getHealth();
-				this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
-				SetDifficultyPacket pk = new SetDifficultyPacket();
-				pk.difficulty = this->server.getDifficulty();
-				this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
-				this.server.getLogger().info(this.getServer().getLanguage().translateString("pocketmine.player.logIn", [
-					TextFormat.AQUA + this.username + TextFormat.WHITE,
-					this.ip,
-					this.port,
-					this.id,
-					this.level.getName(),
-					Math.round(this.x, 4),
-					Math.round(this.y, 4),
-					Math.round(this.z, 4)
-				]));
-				if(this.isOp()){
-					this.setRemoveFormat(false);
-				}
-				if(this.gamemode === Player.SPECTATOR){
-					ContainerSetContentPacket pk = new ContainerSetContentPacket();
-					pk.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
-					this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
-				}else{
-					ContainerSetContentPacket pk = new ContainerSetContentPacket();
-					pk.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
-					pk.slots = Item.getCreativeItems();
-					this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
-				}
-				this.forceMovement = this.teleportPosition = this.getPosition();
-				this.server->onPlayerLogin(this);
+				
+				this.onPlayerPreLogin();
 				break;
-			case ProtocolInfo::MOVE_PLAYER_PACKET:
+			case Info.MOVE_PLAYER_PACKET:
 				$newPos = new Vector3($packet->x, $packet->y - $this->getEyeHeight(), $packet->z);
 				$revert = false;
 				if(!$this->isAlive() or $this->spawned !== true){
@@ -754,7 +635,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					$this->forceMovement = null;
 				}
 				break;
-			case ProtocolInfo::PLAYER_EQUIPMENT_PACKET:
+			case Info::PLAYER_EQUIPMENT_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
 					break;
 				}
@@ -812,7 +693,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 				$this->inventory->sendHeldItem($this->hasSpawned);
 				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
 				break;
-			case ProtocolInfo::USE_ITEM_PACKET:
+			case Info::USE_ITEM_PACKET:
 				if($this->spawned === false or !$this->isAlive() or $this->blocked){
 					break;
 				}
@@ -905,7 +786,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					$this->startAction = $this->server->getTick();
 				}
 				break;
-			case ProtocolInfo::PLAYER_ACTION_PACKET:
+			case Info::PLAYER_ACTION_PACKET:
 				if($this->spawned === false or $this->blocked === true or (!$this->isAlive() and $packet->action !== 7)){
 					break;
 				}
@@ -1041,7 +922,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 				$this->startAction = -1;
 				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
 				break;
-			case ProtocolInfo::REMOVE_BLOCK_PACKET:
+			case Info::REMOVE_BLOCK_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
 				}
@@ -1071,9 +952,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					$tile->spawnTo($this);
 				}
 				break;
-			case ProtocolInfo::PLAYER_ARMOR_EQUIPMENT_PACKET:
+			case Info::PLAYER_ARMOR_EQUIPMENT_PACKET:
 				break;
-			case ProtocolInfo::INTERACT_PACKET:
+			case Info::INTERACT_PACKET:
 				if($this->spawned === false or !$this->isAlive() or $this->blocked){
 					break;
 				}
@@ -1176,7 +1057,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					}
 				}
 				break;
-			case ProtocolInfo::ANIMATE_PACKET:
+			case Info::ANIMATE_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
 					break;
 				}
@@ -1189,9 +1070,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 				$pk->action = $ev->getAnimationType();
 				Server::broadcastPacket($this->getViewers(), $pk->setChannel(Network::CHANNEL_WORLD_EVENTS));
 				break;
-			case ProtocolInfo::SET_HEALTH_PACKET: //Not used
+			case Info::SET_HEALTH_PACKET: //Not used
 				break;
-			case ProtocolInfo::ENTITY_EVENT_PACKET:
+			case Info::ENTITY_EVENT_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
 				}
@@ -1260,7 +1141,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 						break;
 				}
 				break;
-			case ProtocolInfo::DROP_ITEM_PACKET:
+			case Info::DROP_ITEM_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
 				}
@@ -1277,7 +1158,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 				$this->level->dropItem($this->add(0, 1.3, 0), $item, $motion, 40);
 				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
 				break;
-			case ProtocolInfo::TEXT_PACKET:
+			case Info::TEXT_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
 					break;
 				}
@@ -1308,7 +1189,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					}
 				}
 				break;
-			case ProtocolInfo::CONTAINER_CLOSE_PACKET:
+			case Info::CONTAINER_CLOSE_PACKET:
 				if($this->spawned === false or $packet->windowid === 0){
 					break;
 				}
@@ -1321,7 +1202,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					unset($this->windowIndex[$packet->windowid]);
 				}
 				break;
-			case ProtocolInfo::CONTAINER_SET_CONTENT_PACKET:
+			case Info::CONTAINER_SET_CONTENT_PACKET:
 				if($packet->windowid === ContainerSetContentPacket::SPECIAL_CRAFTING){
 					if(count($packet->slots) < 9){
 						$this->inventory->sendContents($this);
@@ -1435,7 +1316,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					}
 				}
 				break;
-			case ProtocolInfo::CONTAINER_SET_SLOT_PACKET:
+			case Info::CONTAINER_SET_SLOT_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
 				}
@@ -1503,7 +1384,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 					$this->currentTransaction = null;
 				}
 				break;
-			case ProtocolInfo::TILE_ENTITY_DATA_PACKET:
+			case Info.TILE_ENTITY_DATA_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
 				}
@@ -1587,5 +1468,149 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         return -1;
+    }
+    
+    public void onPlayerPreLogin(){
+	//TODO: implement auth
+	this.tryAuthenticate();
+    }
+    
+    public void authenticateCallback($valid){
+	//TODO add more stuff after authentication is available
+	if(!valid){
+		this.close("", "disconnectionScreen.invalidSession");
+		return;
+	}
+	this.processLogin();
+    }
+    
+    protected function processLogin(){
+    	if(!this.server.isWhitelisted(this.getName().toLowerCase())){
+		this.close(this.getLeaveMessage(), "Server is white-listed");
+		break;
+	}else if(this.server.getNameBans().isBanned(this.getName().toLowerCase()) || this.server.getIPBans().isBanned(this.getAddress())){
+		this.close(this.getLeaveMessage(), "You are banned");
+		break;
+	}
+	if(this.hasPermission(Server.BROADCAST_CHANNEL_USERS)){
+		this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_USERS, this);
+	}
+	if(this.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE)){
+		this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this);
+	}
+	for(Player p : this.server.getOnlinePlayers()){
+		if(p !== this and p.getName().toLowerCase() === this.getName().toLowerCase()){
+			if(p.kick("logged in from another location") === false){
+				this.close(this.getLeaveMessage(), "Logged in from another location");
+				timings.stopTiming();
+				return;
+			}
+		}
+	}
+	Map nbt = this.server.getOfflinePlayerData(this.username);
+	if(nbt.get("NameTag") == null){
+		nbt.putString("NameTag", this.username);
+	}else{
+		nbt.putString("NameTag", this.username;);
+	}
+	this.gamemode = nbt.get("playerGameType") & 0x03;
+	if(this.server.getForceGamemode()){
+		this.gamemode = this.server.getGamemode();
+		nbt.putByte("playerGameType", this.gamemode);
+	}
+	this.allowFlight = this.isCreative();
+	if((Level level = this.server.getLevelByName(nbt.get("Level"))) === null){
+		this.setLevel(this.server.getDefaultLevel());
+		nbt.get("Level") = this.level.getName();
+		nbt.get("Pos").get("x") = this.level.getSpawnLocation().x;
+		nbt.get("Pos").get("y") = this.level.getSpawnLocation().y;
+		nbt.get("Pos").get("z") = this.level.getSpawnLocation().z;
+	}else{
+		this.setLevel(level);
+	}
+	if(!(nbt instanceof Compound)){
+		this.close(this.getLeaveMessage(), "Invalid data");
+		break;
+	}
+	Achievement this.achievements[];
+	/** @var Byte achievement */
+	for(achievement : nbt.get("Achievements")){
+		this.achievements[achievement.getName()] = achievement.getValue() > 0 ? true : false;
+	}
+	nbt.putLong("lastPlayed", Math.floor(System.currentTimeMillis() * 1000000));
+	if(this.server.getAutoSave()){
+		this.server.saveOfflinePlayerData(this.username, nbt, true);
+	}
+	super(this.level.getChunk(nbt.get("Pos").get("x") >> 4, nbt.get("Pos").get("z") >> 4, true), nbt);
+	this.loggedIn = true;
+	this.server.getPluginManager().callEvent(PlayerLoginEvent ev = new PlayerLoginEvent(this, "Plugin reason"));
+	if(ev.isCancelled()){
+		this.close(this.getLeaveMessage(), ev.getKickMessage());
+		break;
+	}
+	if(this.isCreative()){
+		this.inventory.setHeldItemSlot(0);
+	}else{
+		this.inventory.setHeldItemSlot(this.inventory.getHotbarSlotIndex(0));
+	}
+	PlayStatusPacket pk = new PlayStatusPacket();
+	pk.status = PlayStatusPacket.LOGIN_SUCCESS;
+	this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
+	if(this.spawnPosition === null && isset(this.namedtag.get("SpawnLevel")) && (Level level = this.server.getLevelByName(this.namedtag.get("SpawnLevel"))) instanceof Level){
+		this.spawnPosition = new Position(this.namedtag.get("SpawnX"), this->namedtag.get("SpawnY"), this.namedtag.get("SpawnZ"), level);
+	}
+	Position spawnPosition = this->getSpawn();
+	StartGamePacket pk = new StartGamePacket();
+	pk.seed = -1;
+	pk.x = this.x;
+	pk.y = this.y;
+	pk.z = this.z;
+	pk.spawnX = spawnPosition.x;
+	pk.spawnY = spawnPosition.y;
+	pk.spawnZ = spawnPosition.z;
+	pk.generator = 1; //0 old, 1 infinite, 2 flat
+	pk.gamemode = this.gamemode & 0x01;
+	pk.eid = 0; //Always use EntityID as zero for the actual player
+	this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
+	SetTimePacket pk = new SetTimePacket();
+	pk.time = this.level.getTime();
+	pk.started = this.level.stopTime == false;
+	this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
+	pk = new SetSpawnPositionPacket();
+	pk.x = spawnPosition.x;
+	pk.y = spawnPosition.y;
+	pk.z = spawnPosition.z;
+	this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
+	SetHealthPacket pk = new SetHealthPacket();
+	pk.health = this.getHealth();
+	this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
+	SetDifficultyPacket pk = new SetDifficultyPacket();
+	pk.difficulty = this.server.getDifficulty();
+	this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
+	this.server.getLogger().info(this.getServer().getLanguage().translateString("pocketmine.player.logIn", [
+		TextFormat.AQUA + this.username + TextFormat.WHITE,
+		this.ip,
+		this.port,
+		this.id,
+		this.level.getName(),
+		Math.round(this.x, 4),
+		Math.round(this.y, 4),
+		Math.round(this.z, 4)
+	]));
+	if(this.isOp()){
+		this.setRemoveFormat(false);
+	}
+	if(this.gamemode === Player.SPECTATOR){
+		ContainerSetContentPacket pk = new ContainerSetContentPacket();
+		pk.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+		this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
+	}else{
+		ContainerSetContentPacket pk = new ContainerSetContentPacket();
+		pk.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+		pk.slots = Item.getCreativeItems();
+		this.dataPacket(pk.setChannel(Network.CHANNEL_PRIORITY));
+	}
+	this.forceMovement = this.teleportPosition = this.getPosition();
+	this.server.onPlayerLogin(this);
     }
 }
