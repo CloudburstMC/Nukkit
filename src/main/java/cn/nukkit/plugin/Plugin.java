@@ -11,8 +11,8 @@ import java.io.InputStream;
  * 所有Nukkit插件必须实现的接口。<br />
  * An interface what must be implemented by all Nukkit plugins.
  *
- * <p>对于插件作者，我们建议让插件主类继承{@code PluginBase}类，而不是实现这个接口。<br />
- * For plugin developers: it's recommended to use {@code PluginBase} for an actual plugin
+ * <p>对于插件作者，我们建议让插件主类继承{@link cn.nukkit.plugin.PluginBase}类，而不是实现这个接口。<br />
+ * For plugin developers: it's recommended to use {@link cn.nukkit.plugin.PluginBase} for an actual plugin
  * instead of implement this interface.</p>
  *
  * @author MagicDroidX(code) @ Nukkit Project
