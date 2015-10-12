@@ -23,8 +23,8 @@ import java.io.InputStream;
  */
 public interface Plugin extends CommandExecutor {
     /**
-     * 在一个Nukkit插件被加载时调用的方法。这个方法会在{@code onEnable()}之前调用。<br>
-     * Called when a Nukkit plugin is loaded, before {@code onEnable()} .
+     * 在一个Nukkit插件被加载时调用的方法。这个方法会在{@link Plugin#onEnable()}之前调用。<br>
+     * Called when a Nukkit plugin is loaded, before {@link Plugin#onEnable()} .
      *
      * <p>应该填写加载插件时需要作出的动作。例如：初始化数组、初始化数据库连接。<br>
      * Use this to init a Nukkit plugin, such as init arrays or init database connections.</p>
@@ -96,8 +96,8 @@ public interface Plugin extends CommandExecutor {
     File getDataFolder();
 
     /**
-     * 返回描述这个Nukkit插件的{@code PluginDescription}对象。<br>
-     * The description this Nukkit plugin as a {@code PluginDescription} object.
+     * 返回描述这个Nukkit插件的{@link PluginDescription}对象。<br>
+     * The description this Nukkit plugin as a {@link PluginDescription} object.
      *
      * <p>对于jar格式的Nukkit插件，插件的描述在plugin.yml文件内定义。<br>
      * For jar-packed Nukkit plugins, the description is defined in the 'plugin.yml' file.</p>
@@ -177,8 +177,8 @@ public interface Plugin extends CommandExecutor {
     boolean saveResource(String filename, boolean replace);
 
     /**
-     * 返回这个Nukkit插件配置文件的{@code Config}对象。<br>
-     * The config file this Nukkit plugin as a {@code Config} object.
+     * 返回这个Nukkit插件配置文件的{@link cn.nukkit.utils.Config}对象。<br>
+     * The config file this Nukkit plugin as a {@link cn.nukkit.utils.Config} object.
      *
      * <p>一般地，插件的配置保存在数据文件夹下的config.yml文件。<br>
      * Normally, the plugin config is saved in the 'config.yml' file in its data folder.</p>
@@ -234,8 +234,8 @@ public interface Plugin extends CommandExecutor {
     void reloadConfig();
 
     /**
-     * 返回运行这个插件的服务器的{@code Server}对象。<br>
-     * Gets the server which is running this plugin, and returns as a {@code Server} object.
+     * 返回运行这个插件的服务器的{@link cn.nukkit.Server}对象。<br>
+     * Gets the server which is running this plugin, and returns as a {@link cn.nukkit.Server} object.
      *
      * @see cn.nukkit.Server
      * @since Nukkit 1.0 | Nukkit API 1.0.0
@@ -255,8 +255,8 @@ public interface Plugin extends CommandExecutor {
     String getName();
 
     /**
-     * 返回这个插件的日志记录器为{@code PluginLogger}对象。<br>
-     * Returns the logger of this plugin as a {@code PluginLogger} object.
+     * 返回这个插件的日志记录器为{@link cn.nukkit.plugin.PluginLogger}对象。<br>
+     * Returns the logger of this plugin as a {@link cn.nukkit.plugin.PluginLogger} object.
      *
      * <p>使用日志记录器，你可以在控制台和日志文件输出信息。<br>
      * You can use a plugin logger to output messages to the console and log file.</p>
@@ -267,8 +267,8 @@ public interface Plugin extends CommandExecutor {
     PluginLogger getLogger();
 
     /**
-     * 返回这个插件的加载器为{@code PluginLoader}对象。<br>
-     * Returns the loader of this plugin as a {@code PluginLoader} object.
+     * 返回这个插件的加载器为{@link cn.nukkit.plugin.PluginLoader}对象。<br>
+     * Returns the loader of this plugin as a {@link cn.nukkit.plugin.PluginLoader} object.
      *
      * @see cn.nukkit.plugin.PluginLoader
      * @since Nukkit 1.0 | Nukkit API 1.0.0
