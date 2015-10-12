@@ -57,10 +57,6 @@ public interface CommandSender extends Permissible {
      * <p>当你需要判断命令的执行者是不是控制台时，可以用这个：<br>
      *     When you need to determine if the sender is a console, use this:<br>
      *     {@code if(sender instanceof ConsoleCommandSender) .....;}</p>
-     * <p>如果你需要让一个指令只有控制台能够使用，你可以把命令对应的权限组的{@code default}项设置为{@code false}.
-     * 参见：{@link cn.nukkit.plugin.PluginDescription}<br>
-     *     If you only want to allow consoles to use your command, you can change the {@code default} item
-     *     of the command's permission group to {@code false}. See: {@link cn.nukkit.plugin.PluginDescription}</p>
      *
      * @return 命令发送者的名称。<br>the name of the command sender.
      * @see cn.nukkit.Player#getName()
