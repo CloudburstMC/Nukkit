@@ -101,12 +101,12 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public AsyncTask requestChunkTask(int x, int z) throws ChunkException, IOException {
+    public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
         return new ChunkRequestTask(this.getLevel(), this.getChunk(x, z, true));
     }
 
     @Override
-    public void unloadChunks() throws Exception {
+    public void unloadChunks() {
         for (Chunk chunk : this.chunks.values()) {
             this.unloadChunk(chunk.getX(), chunk.getZ(), false);
         }
@@ -138,32 +138,36 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public void saveChunks() throws Exception {
+    public void saveChunks() {
         for (Chunk chunk : this.chunks.values()) {
             this.saveChunk(chunk.getX(), chunk.getZ());
         }
     }
 
     @Override
-    public void doGarbageCollection() throws IOException {
+    public void doGarbageCollection() {
         int limit = (int) (System.currentTimeMillis() - 300);
         for (Map.Entry entry : this.regions.entrySet()) {
             String index = (String) entry.getKey();
             RegionLoader region = (RegionLoader) entry.getValue();
             if (region.lastUsed <= limit) {
-                region.close();
+                try {
+                    region.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 this.regions.remove(index);
             }
         }
     }
 
     @Override
-    public boolean loadChunk(int chunkX, int chunkZ) throws IOException {
+    public boolean loadChunk(int chunkX, int chunkZ) {
         return this.loadChunk(chunkX, chunkZ, false);
     }
 
     @Override
-    public boolean loadChunk(int chunkX, int chunkZ, boolean create) throws IOException {
+    public boolean loadChunk(int chunkX, int chunkZ, boolean create) {
         String index = Level.chunkHash(chunkX, chunkZ);
         if (this.chunks.containsKey(index)) {
             return true;
@@ -171,7 +175,12 @@ public class Anvil extends BaseLevelProvider {
         int regionX = getRegionIndexX(chunkX);
         int regionZ = getRegionIndexZ(chunkZ);
         this.loadRegion(regionX, regionZ);
-        Chunk chunk = this.getRegion(regionX, regionZ).readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
+        Chunk chunk;
+        try {
+            chunk = this.getRegion(regionX, regionZ).readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (chunk == null && create) {
             chunk = this.getEmptyChunk(chunkX, chunkZ);
         }
@@ -187,12 +196,12 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public boolean unloadChunk(int X, int Z) throws Exception {
+    public boolean unloadChunk(int X, int Z) {
         return this.unloadChunk(X, Z, true);
     }
 
     @Override
-    public boolean unloadChunk(int X, int Z, boolean safe) throws Exception {
+    public boolean unloadChunk(int X, int Z, boolean safe) {
         String index = Level.chunkHash(X, Z);
         Chunk chunk = this.chunks.containsKey(index) ? this.chunks.get(index) : null;
         if (chunk != null && chunk.unload(false, safe)) {
@@ -219,12 +228,12 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkZ) throws IOException {
+    public Chunk getChunk(int chunkX, int chunkZ) {
         return this.getChunk(chunkX, chunkZ, false);
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkZ, boolean create) throws IOException {
+    public Chunk getChunk(int chunkX, int chunkZ, boolean create) {
         String index = Level.chunkHash(chunkX, chunkZ);
         if (this.chunks.containsKey(index)) {
             return this.chunks.get(index);
@@ -263,13 +272,13 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public boolean isChunkGenerated(int chunkX, int chunkZ) throws IOException {
+    public boolean isChunkGenerated(int chunkX, int chunkZ) {
         RegionLoader region = this.getRegion(chunkX >> 5, chunkZ >> 5);
         return region != null && region.chunkExists(chunkX - region.getX() * 32, chunkZ - region.getZ() * 32) && this.getChunk(chunkX - region.getX() * 32, chunkZ - region.getZ() * 32, true).isGenerated();
     }
 
     @Override
-    public boolean isChunkPopulated(int chunkX, int chunkZ) throws IOException {
+    public boolean isChunkPopulated(int chunkX, int chunkZ) {
         Chunk chunk = this.getChunk(chunkX, chunkZ);
         return chunk != null && chunk.isPopulated();
     }
@@ -286,12 +295,16 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         this.unloadChunks();
         for (Map.Entry entry : this.regions.entrySet()) {
             String index = (String) entry.getKey();
             RegionLoader region = (RegionLoader) entry.getValue();
-            region.close();
+            try {
+                region.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             this.regions.remove(index);
         }
         this.level = null;

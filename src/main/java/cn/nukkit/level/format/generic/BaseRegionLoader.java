@@ -31,23 +31,28 @@ abstract public class BaseRegionLoader {
 
     public long lastUsed;
 
-    public BaseRegionLoader(LevelProvider level, int regionX, int regionZ, String ext) throws IOException {
-        this.x = regionX;
-        this.z = regionZ;
-        this.levelProvider = level;
-        this.filePath = this.levelProvider.getPath() + "region/r." + regionX + "." + regionZ + "." + ext;
-        this.file = new File(this.filePath);
-        boolean exists = this.file.exists();
-        if (!exists) {
-            file.createNewFile();
+    public BaseRegionLoader(LevelProvider level, int regionX, int regionZ, String ext) {
+        try {
+            this.x = regionX;
+            this.z = regionZ;
+            this.levelProvider = level;
+            this.filePath = this.levelProvider.getPath() + "region/r." + regionX + "." + regionZ + "." + ext;
+            this.file = new File(this.filePath);
+            boolean exists = this.file.exists();
+            if (!exists) {
+                file.createNewFile();
+            }
+            this.randomAccessFile = new RandomAccessFile(this.filePath, "r");
+            if (!exists) {
+                this.createBlank();
+            } else {
+                this.loadLocationTable();
+            }
+            this.lastUsed = System.currentTimeMillis();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        this.randomAccessFile = new RandomAccessFile(this.filePath, "r");
-        if (!exists) {
-            this.createBlank();
-        } else {
-            this.loadLocationTable();
-        }
-        this.lastUsed = System.currentTimeMillis();
+
     }
 
 

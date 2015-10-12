@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class RegionLoader extends BaseRegionLoader {
 
-    public RegionLoader(LevelProvider level, int regionX, int regionZ) throws IOException {
+    public RegionLoader(LevelProvider level, int regionX, int regionZ) {
         super(level, regionX, regionZ, "mcr");
     }
 

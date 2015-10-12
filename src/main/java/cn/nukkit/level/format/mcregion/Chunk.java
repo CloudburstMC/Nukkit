@@ -416,7 +416,7 @@ public class Chunk extends BaseFullChunk {
     }
 
     @Override
-    public byte[] toBinary() throws Exception {
+    public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
         nbt.putInt("xPos", this.x);
         nbt.putInt("zPos", this.z);
@@ -452,10 +452,13 @@ public class Chunk extends BaseFullChunk {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream);
 
-        NbtIo.write(chunk, outputStream);
+        try {
+            NbtIo.write(chunk, outputStream);
 
-        return Zlib.deflate(byteArrayOutputStream.toByteArray());
-
+            return Zlib.deflate(byteArrayOutputStream.toByteArray());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public CompoundTag getNBT() {

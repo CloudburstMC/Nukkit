@@ -5,6 +5,7 @@ import cn.nukkit.command.*;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.server.QueryRegenerateEvent;
+import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Flat;
@@ -79,11 +80,17 @@ public class Server {
 
     private float maxUse = 0;
 
+    private int sendUsageTicker = 0;
+
+    private boolean dispatchSignals = false;
+
     private MainLogger logger;
 
     private CommandReader console;
 
     private SimpleCommandMap commandMap;
+
+    private CraftingManager craftingManager;
 
     private ConsoleCommandSender consoleSender;
 
@@ -111,6 +118,8 @@ public class Server {
     private String filePath;
     private String dataPath;
     private String pluginPath;
+
+    private Map<String, String> uniquePlayers = new HashMap<>();
 
     private QueryHandler queryHandler;
 
@@ -500,11 +509,6 @@ public class Server {
         this.forceShutdown();
     }
 
-    public void addPlayer(String identifier, Player player) {
-        this.players.put(identifier, player);
-        this.identifier.put(player, identifier);
-    }
-
     public void handlePacket(String address, int port, byte[] payload) {
         try {
             if (payload.length > 2 && Arrays.equals(Binary.subBytes(payload, 0, 2), new byte[]{(byte) 0xfe, (byte) 0xfd}) && this.queryHandler != null) {
@@ -527,6 +531,17 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void onPlayerLogin(Player player) {
+        if (this.sendUsageTicker > 0) {
+            this.uniquePlayers.put(player.getUniqueId().toString(), player.getUniqueId().toString());
+        }
+    }
+
+    public void addPlayer(String identifier, Player player) {
+        this.players.put(identifier, player);
+        this.identifier.put(player, identifier);
     }
 
     private boolean tick() {
@@ -814,6 +829,10 @@ public class Server {
 
     public PluginManager getPluginManager() {
         return this.pluginManager;
+    }
+
+    public CraftingManager getCraftingManager() {
+        return craftingManager;
     }
 
     public ServerScheduler getScheduler() {

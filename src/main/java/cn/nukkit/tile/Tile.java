@@ -20,14 +20,14 @@ public abstract class Tile extends Position {
     public static final String CHEST = "Chest";
     public static final String FURNACE = "Furnace";
 
-    public static int tileCount = 1;
+    public static long tileCount = 1;
 
     private static Map<String, Class<? extends Tile>> knownTiles = new HashMap<>();
     private static Map<String, String> shortNames = new HashMap<>();
 
     public FullChunk chunk;
     public String name;
-    public int id;
+    public long id;
     public int x;
     public int y;
     public int z;
@@ -85,7 +85,7 @@ public abstract class Tile extends Position {
         return shortNames.get(this.getClass().getName());
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

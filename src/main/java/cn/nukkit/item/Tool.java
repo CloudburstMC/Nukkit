@@ -66,7 +66,7 @@ public abstract class Tool extends Item {
     @Override
     public boolean useOn(Entity entity) {
         if ((entity != null) && !this.isSword()) {
-            this.meta += 2;
+            this.meta = (short) (this.meta + 2);
         } else {
             this.meta++;
         }

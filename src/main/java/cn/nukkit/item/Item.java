@@ -634,7 +634,7 @@ public class Item implements Cloneable {
         return 64;
     }
 
-    final public Integer getFuelTime() {
+    final public Short getFuelTime() {
         if (!Fuel.duration.containsKey(id)) {
             return null;
         }

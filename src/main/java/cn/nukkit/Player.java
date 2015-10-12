@@ -5,6 +5,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.Human;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
@@ -15,7 +16,9 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.network.SourceInterface;
+import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.Info;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
@@ -28,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+//import cn.nukkit.entity.Item;
 
 
 /**
@@ -446,7 +451,26 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void handleDataPacket(DataPacket packet) {
-        //todo
+        if (!connected) {
+            return;
+        }
+        if (packet.pid() == Info.BATCH_PACKET) {
+            /** @var BatchPacket packet */
+            this.server.getNetwork().processBatch((BatchPacket) packet, this);
+            return;
+        }
+        DataPacketReceiveEvent ev = new DataPacketReceiveEvent(this, packet);
+        this.server.getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+
+        switch (packet.pid()) {
+            //todo alot
+            default:
+                break;
+        }
+
     }
 
     @Override

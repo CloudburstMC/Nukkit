@@ -18,6 +18,8 @@ Nukkit
 
 __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Nukkit/Nukkit)
+
 -------------
 
 Introduction

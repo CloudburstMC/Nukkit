@@ -189,7 +189,7 @@ public class Chunk extends BaseChunk {
 
 
     @Override
-    public byte[] toFastBinary() throws IOException {
+    public byte[] toFastBinary() {
         CompoundTag nbt = this.getNBT().copy();
         nbt.putInt("xPos", this.x);
         nbt.putInt("zPos", this.z);
@@ -233,13 +233,17 @@ public class Chunk extends BaseChunk {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream);
 
-        NbtIo.write(chunk, outputStream);
+        try {
+            NbtIo.write(chunk, outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return byteArrayOutputStream.toByteArray();
     }
 
     @Override
-    public byte[] toBinary() throws Exception {
+    public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
         nbt.putInt("xPos", this.x);
         nbt.putInt("zPos", this.z);
@@ -282,11 +286,13 @@ public class Chunk extends BaseChunk {
         chunk.putCompound("Level", nbt);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream);
+        try {
+            NbtIo.write(chunk, outputStream);
 
-        NbtIo.write(chunk, outputStream);
-
-        return Zlib.deflate(byteArrayOutputStream.toByteArray());
-
+            return Zlib.deflate(byteArrayOutputStream.toByteArray());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ) {
