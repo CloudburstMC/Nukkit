@@ -12,12 +12,16 @@ import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.nbt.CompoundTag;
+import cn.nukkit.network.Network;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.FullChunkDataPacket;
 import cn.nukkit.network.protocol.Info;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
@@ -26,6 +30,7 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.Zlib;
 
 import java.util.HashMap;
 import java.util.List;
@@ -512,5 +517,113 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         return -1;
+    }
+
+    public int addWindow(Inventory inventory) {
+        return this.addWindow(inventory, null);
+    }
+
+    public int addWindow(Inventory inventory, Integer forceId) {
+        if (this.windows.containsKey(inventory)) {
+            return this.windows.get(inventory);
+        }
+        int cnt;
+        if (forceId == null) {
+            this.windowCnt = cnt = Math.max(2, ++this.windowCnt % 99);
+        } else {
+            cnt = forceId;
+        }
+        this.windowIndex.put(cnt, inventory);
+        this.windows.put(inventory, cnt);
+        if (inventory.open(this)) {
+            return cnt;
+        } else {
+            this.removeWindow(inventory);
+
+            return -1;
+        }
+    }
+
+    public void removeWindow(Inventory inventory) {
+        inventory.close(this);
+        if (this.windows.containsKey(inventory)) {
+            int id = this.windows.get(inventory);
+            this.windows.remove(this.windowIndex.get(id));
+            this.windowIndex.remove(id);
+        }
+    }
+
+    @Override
+    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+        this.server.getPlayerMetadata().setMetadata(this, metadataKey, newMetadataValue);
+    }
+
+    @Override
+    public List<MetadataValue> getMetadata(String metadataKey) {
+        return this.server.getPlayerMetadata().getMetadata(this, metadataKey);
+    }
+
+    @Override
+    public boolean hasMetadata(String metadataKey) {
+        return this.server.getPlayerMetadata().hasMetadata(this, metadataKey);
+    }
+
+    @Override
+    public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+        this.server.getPlayerMetadata().removeMetadata(this, metadataKey, owningPlugin);
+    }
+
+    @Override
+    public void onChunkChanged(FullChunk chunk) {
+        this.loadQueue.put(Level.chunkHash(chunk.getX(), chunk.getZ()), Math.abs(((int) this.x >> 4) - chunk.getX()) + Math.abs(((int) this.z >> 4) - chunk.getZ()));
+    }
+
+    @Override
+    public void onChunkLoaded(FullChunk chunk) {
+
+    }
+
+    @Override
+    public void onChunkPopulated(FullChunk chunk) {
+
+    }
+
+    @Override
+    public void onChunkUnloaded(FullChunk chunk) {
+
+    }
+
+    @Override
+    public void onBlockChanged(Vector3 block) {
+
+    }
+
+    @Override
+    public Integer getLoaderId() {
+        return this.loaderId;
+    }
+
+    @Override
+    public boolean isLoaderActive() {
+        return this.isConnected();
+    }
+
+    public static BatchPacket getChunkCacheFromData(int chunkX, int chunkZ, byte[] payload) {
+        FullChunkDataPacket pk = new FullChunkDataPacket();
+        pk.chunkX = chunkX;
+        pk.chunkZ = chunkZ;
+        pk.data = payload;
+        pk.encode();
+
+        BatchPacket batch = new BatchPacket();
+        try {
+            batch.payload = Zlib.deflate(pk.getBuffer(), Server.getInstance().networkCompressionLevel);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        batch.setChannel(Network.CHANNEL_WORLD_CHUNKS);
+        batch.encode();
+        batch.isEncoded = true;
+        return batch;
     }
 }
