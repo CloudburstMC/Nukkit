@@ -226,7 +226,7 @@ public class PluginDescription {
      * @see cn.nukkit.plugin.PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
-    public List<String> getCompatibleApis() {
+    public List<String> getCompatibleAPIs() {
         return api;
     }
 

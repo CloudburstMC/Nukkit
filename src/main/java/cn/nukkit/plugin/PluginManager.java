@@ -177,7 +177,7 @@ public class PluginManager {
 
                             boolean compatible = false;
 
-                            for (String version : description.getCompatibleApis()) {
+                            for (String version : description.getCompatibleAPIs()) {
 
                                 //Check the format: majorVersion.minorVersion.patch
                                 if (!Pattern.matches("[0-9]\\.[0-9]\\.[0-9]", version)) {
