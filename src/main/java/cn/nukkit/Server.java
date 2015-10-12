@@ -33,7 +33,6 @@ import cn.nukkit.plugin.PluginLoadOrder;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.*;
-import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -194,7 +193,7 @@ public class Server {
                 put("level-type", "DEFAULT");
                 put("enable-query", true);
                 put("enable-rcon", false);
-                put("rcon.password", new BASE64Encoder().encode(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
+                put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
                 put("auto-save", false);
             }
         });

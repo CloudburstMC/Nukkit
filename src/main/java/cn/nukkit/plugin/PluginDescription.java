@@ -18,12 +18,13 @@ import java.util.*;
  *     <br>
  *     </li>
  */
+
 /**
  * 描述一个Nukkit插件的类。<br>
  * Describes a Nukkit plugin.
- *
+ * <p>
  * <p>在jar格式的插件中，插件的描述内容可以在plugin.yml中定义。比如这个：<br>
- *     The description of a jar-packed plugin can be defined in the 'plugin.yml' file. For example:
+ * The description of a jar-packed plugin can be defined in the 'plugin.yml' file. For example:
  * <blockquote><pre>
  * <b>name:</b> HelloWorldPlugin
  * <b>main:</b> com.cnblogs.xtypr.helloworldplugin.HelloWorldPlugin
@@ -49,51 +50,51 @@ import java.util.*;
  * {@code name},{@code main},{@code version} and {@code api}.You are supposed to fill these items to make sure
  * your plugin can be normally loaded by Nukkit.<br>
  * </p>
- *
+ * <p>
  * <p>接下来对所有的字段做一些说明，<b>加粗</b>的字段表示必需，<i>斜体</i>表示可选：（来自
  * <a href="http://www.cnblogs.com/xtypr/p/nukkit_plugin_start_from_0_about_config.html">粉鞋大妈的博客文章</a>）<br>
- *     Here are some instructions for there items, <b>bold</b> means required, <i>italic</i> means optional: (From
+ * Here are some instructions for there items, <b>bold</b> means required, <i>italic</i> means optional: (From
  * <a href="http://www.cnblogs.com/xtypr/p/nukkit_plugin_start_from_0_about_config.html">a blog article of @粉鞋大妈</a>)
  * <ul>
- *     <li><b>name</b><br>
- *     字符串，表示这个插件的名字，名字是区分不同插件的标准之一。
- *     插件的名字<i>不能包含“nukkit”“minecraft”“mojang”</i>这几个字符串，而且不应该包含空格。<br>
- *     String, the plugin name. Name is one of the ways to distinguish different plugins.
- *     A plugin name <i>can't contain 'nukkit' 'minecraft' 'mojang'</i>, and shouldn't contain spaces.</li>
- *     <li><b>version</b><br>
- *     字符串，表示这个插件的版本号。使用类似于1.0.0这样的版本号时，应该使用引号包围来防止误识别。<br>
- *     String, the version string of plugin. When using the version string like "1.0.0",
- *     quotation marks are required to add, or there will be an exception.</li>
- *     <li><b>api</b><br>
- *     字符串序列，表示这个插件支持的Nukkit API版本号列表。插件作者应该调试能支持的API，然后把版本号添加到这个列表。<br>
- *     A set of String, the Nukkit API versions that the plugin supports. Plugin developers should debug in different
- *     Nukkit APIs and try out the versions supported, and add them to this list. </li>
- *     <li><b>main</b><br>
- *     字符串，表示这个插件的主类。插件的主类<i>不能放在“cn.nukkit”包下</i>。<br>
- *     String, the main class of plugin. The main class<i> can't be placed at 'cn.nukkit' package</i>.</li>
- *     <li><i>author</i> or <i>authors</i><br>
- *     字符串/字符串序列，两个任选一个，表示这个插件的作者/作者列表。<br>
- *     String or A set of String. One of two is chosen, to describe the author or the list of authors.</li>
- *     <li><i>website</i><br>
- *     字符串，表示这个插件的网站。插件使用者或者开发者可以访问这个网站来获取插件更多的信息。
- *     这个网站可以是插件发布帖子或者插件官网等。<br>
- *     String, the website of plugin. More information can be found by visiting this website. The website
- *     can be a forum post or the official website.</li>
- *     <li><i>description</i><br>
- *     字符串，表示这个插件的一些描述。<br>
- *     String, some description of plugin.</li>
- *     <li><i>prefix</i><br>
- *     字符串，表示这个插件的消息头衔。参见：{@link cn.nukkit.plugin.PluginDescription#getPrefix()}<br>
- *     String, the message title of the plugin. See: {@link cn.nukkit.plugin.PluginDescription#getPrefix()}</li>
- *     <li><i>load</i><br>
- *     字符串，表示这个插件的加载顺序，或者说在什么时候加载。参见：{@link cn.nukkit.plugin.PluginLoadOrder}<br>
- *     String, the load order of plugin, or when the plugin loads. See: {@link cn.nukkit.plugin.PluginLoadOrder}</li>
- *     <li><i>commands</i><br>
- *     序列，表示这个插件的命令列表。<br>
- *     List, the command list.</li>
- *     <li><i>permissions</i><br>
- *     序列，表示这个插件的权限组列表。<br>
- *     List, the list of permission groups defined.</li>
+ * <li><b>name</b><br>
+ * 字符串，表示这个插件的名字，名字是区分不同插件的标准之一。
+ * 插件的名字<i>不能包含“nukkit”“minecraft”“mojang”</i>这几个字符串，而且不应该包含空格。<br>
+ * String, the plugin name. Name is one of the ways to distinguish different plugins.
+ * A plugin name <i>can't contain 'nukkit' 'minecraft' 'mojang'</i>, and shouldn't contain spaces.</li>
+ * <li><b>version</b><br>
+ * 字符串，表示这个插件的版本号。使用类似于1.0.0这样的版本号时，应该使用引号包围来防止误识别。<br>
+ * String, the version string of plugin. When using the version string like "1.0.0",
+ * quotation marks are required to add, or there will be an exception.</li>
+ * <li><b>api</b><br>
+ * 字符串序列，表示这个插件支持的Nukkit API版本号列表。插件作者应该调试能支持的API，然后把版本号添加到这个列表。<br>
+ * A set of String, the Nukkit API versions that the plugin supports. Plugin developers should debug in different
+ * Nukkit APIs and try out the versions supported, and add them to this list. </li>
+ * <li><b>main</b><br>
+ * 字符串，表示这个插件的主类。插件的主类<i>不能放在“cn.nukkit”包下</i>。<br>
+ * String, the main class of plugin. The main class<i> can't be placed at 'cn.nukkit' package</i>.</li>
+ * <li><i>author</i> or <i>authors</i><br>
+ * 字符串/字符串序列，两个任选一个，表示这个插件的作者/作者列表。<br>
+ * String or A set of String. One of two is chosen, to describe the author or the list of authors.</li>
+ * <li><i>website</i><br>
+ * 字符串，表示这个插件的网站。插件使用者或者开发者可以访问这个网站来获取插件更多的信息。
+ * 这个网站可以是插件发布帖子或者插件官网等。<br>
+ * String, the website of plugin. More information can be found by visiting this website. The website
+ * can be a forum post or the official website.</li>
+ * <li><i>description</i><br>
+ * 字符串，表示这个插件的一些描述。<br>
+ * String, some description of plugin.</li>
+ * <li><i>prefix</i><br>
+ * 字符串，表示这个插件的消息头衔。参见：{@link cn.nukkit.plugin.PluginDescription#getPrefix()}<br>
+ * String, the message title of the plugin. See: {@link cn.nukkit.plugin.PluginDescription#getPrefix()}</li>
+ * <li><i>load</i><br>
+ * 字符串，表示这个插件的加载顺序，或者说在什么时候加载。参见：{@link cn.nukkit.plugin.PluginLoadOrder}<br>
+ * String, the load order of plugin, or when the plugin loads. See: {@link cn.nukkit.plugin.PluginLoadOrder}</li>
+ * <li><i>commands</i><br>
+ * 序列，表示这个插件的命令列表。<br>
+ * List, the command list.</li>
+ * <li><i>permissions</i><br>
+ * 序列，表示这个插件的权限组列表。<br>
+ * List, the list of permission groups defined.</li>
  * </ul></p>
  *
  * @author MagicDroidX(code) @ Nukkit Project
@@ -205,9 +206,9 @@ public class PluginDescription {
     /**
      * 返回这个插件完整的名字。<br>
      * Returns the full name of this plugin.
-     *
+     * <p>
      * <p>一个插件完整的名字由{@code 名字+" v"+版本号}组成。比如：<br>
-     *     A full name of a plugin is composed by {@code name+" v"+version}.for example:</p>
+     * A full name of a plugin is composed by {@code name+" v"+version}.for example:</p>
      * <p>{@code HelloWorld v1.0.0}</p>
      *
      * @return 这个插件完整的名字。<br>The full name of this plugin.
@@ -245,7 +246,7 @@ public class PluginDescription {
     /**
      * 返回这个插件的信息前缀。<br>
      * Returns the message title of this plugin.
-     *
+     * <p>
      * <p>插件的信息前缀在记录器记录信息时，会作为信息头衔使用。如果没有定义记录器，会使用插件的名字作为信息头衔。<br>
      * When a PluginLogger logs, the message title is used as the prefix of message. If prefix is undefined,
      * the plugin name will be used instead. </p>
@@ -272,7 +273,9 @@ public class PluginDescription {
         return commands;
     }
 
-    /** TODO finish javadoc */
+    /**
+     * TODO finish javadoc
+     */
     public List<String> getDepend() {
         return depend;
     }
@@ -289,7 +292,9 @@ public class PluginDescription {
         return description;
     }
 
-    /** TODO finish javadoc */
+    /**
+     * TODO finish javadoc
+     */
     public List<String> getLoadBefore() {
         return loadBefore;
     }
@@ -297,7 +302,7 @@ public class PluginDescription {
     /**
      * 返回这个插件的主类名。<br>
      * Returns the main class name of this plugin.
-     *
+     * <p>
      * <p>一个插件的加载都是从主类开始的。主类的名字在插件的配置文件中定义后可以通过这个函数返回。一个返回值例子：<br>
      * The load action of a Nukkit plugin begins from main class. The name of main class should be defined
      * in the plugin configuration, and it can be returned by this function. An example for return value: <br>
@@ -348,7 +353,9 @@ public class PluginDescription {
         return permissions;
     }
 
-    /** TODO finish javadoc */
+    /**
+     * TODO finish javadoc
+     */
     public List<String> getSoftDepend() {
         return softDepend;
     }

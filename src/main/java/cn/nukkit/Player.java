@@ -18,7 +18,6 @@ import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.DisconnectPacket;
 import cn.nukkit.network.protocol.Info;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
@@ -158,10 +157,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         } else {
             this.server.getNameBans().remove(this.getName());
         }
-    }
-
-    public void kick(String s) {
-        handleDataPacket(new DisconnectPacket(s));
     }
 
     @Override

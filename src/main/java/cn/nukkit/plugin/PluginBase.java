@@ -61,7 +61,7 @@ abstract public class PluginBase implements Plugin {
     /**
      * 加载这个插件。<br>
      * Enables this plugin.
-     *
+     * <p>
      * <p>如果你需要卸载这个插件，建议使用{@link #setEnabled(boolean)}<br>
      * If you need to disable this plugin, it's recommended to use {@link #setEnabled(boolean)}</p>
      *
@@ -74,7 +74,7 @@ abstract public class PluginBase implements Plugin {
     /**
      * 加载或卸载这个插件。<br>
      * Enables or disables this plugin.
-     *
+     * <p>
      * <p>插件管理器插件常常使用这个方法。<br>
      * It's normally used by a plugin manager plugin to manage plugins.</p>
      *
@@ -107,20 +107,20 @@ abstract public class PluginBase implements Plugin {
     /**
      * 初始化这个插件。<br>
      * Initialize the plugin.
-     *
+     * <p>
      * <p>这个方法会在加载(load)之前被插件加载器调用，初始化关于插件的一些事项，不能被重写。<br>
      * Called by plugin loader before load, and initialize the plugin. Can't be overridden.</p>
      *
-     * @param loader 加载这个插件的插件加载器的{@code PluginLoader}对象。<br>
-     *               The plugin loader ,which loads this plugin, as a {@code PluginLoader} object.
-     * @param server 运行这个插件的服务器的{@code Server}对象。<br>
-     *               The server running this plugin, as a {@code Server} object.
+     * @param loader      加载这个插件的插件加载器的{@code PluginLoader}对象。<br>
+     *                    The plugin loader ,which loads this plugin, as a {@code PluginLoader} object.
+     * @param server      运行这个插件的服务器的{@code Server}对象。<br>
+     *                    The server running this plugin, as a {@code Server} object.
      * @param description 描述这个插件的{@code PluginDescription}对象。<br>
      *                    A {@code PluginDescription} object that describes this plugin.
-     * @param dataFolder 这个插件的数据的文件夹。<br>
-     *                   The data folder of this plugin.
-     * @param file 这个插件的文件{@code File}对象。对于jar格式的插件，就是jar文件本身。<br>
-     *             The {@code File} object of this plugin itself. For jar-packed plugins, it is the jar file itself.
+     * @param dataFolder  这个插件的数据的文件夹。<br>
+     *                    The data folder of this plugin.
+     * @param file        这个插件的文件{@code File}对象。对于jar格式的插件，就是jar文件本身。<br>
+     *                    The {@code File} object of this plugin itself. For jar-packed plugins, it is the jar file itself.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public final void init(PluginLoader loader, Server server, PluginDescription description, File dataFolder, File file) {
@@ -151,7 +151,9 @@ abstract public class PluginBase implements Plugin {
         return initialized;
     }
 
-    /** TODO: FINISH JAVADOC */
+    /**
+     * TODO: FINISH JAVADOC
+     */
     public PluginIdentifiableCommand getCommand(String name) {
         PluginIdentifiableCommand command = this.getServer().getPluginCommand(name);
         if (command == null || !command.getPlugin().equals(this)) {
@@ -259,7 +261,7 @@ abstract public class PluginBase implements Plugin {
     /**
      * 返回这个插件完整的名字。<br>
      * Returns the full name of this plugin.
-     *
+     * <p>
      * <p>一个插件完整的名字由{@code 名字+" v"+版本号}组成。比如：<br>
      * A full name of a plugin is composed by {@code name+" v"+version}.for example:</p>
      * <p>{@code HelloWorld v1.0.0}</p>

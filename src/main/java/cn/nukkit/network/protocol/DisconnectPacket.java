@@ -4,27 +4,25 @@ package cn.nukkit.network.protocol;
  * Created by on 15-10-12.
  */
 public class DisconnectPacket extends DataPacket {
+    public static final byte NETWORK_ID = Info.DISCONNECT_PACKET;
 
-    private String message;
-
-    public DisconnectPacket(String message) {
-        this.message = message;
-    }
+    public String message;
 
     @Override
     public byte pid() {
-        return Info.DISCONNECT_PACKET;
-    }
-
-    @Override
-    public void encode() {
-        reset();
-        putString(message);
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-        message = getString();
+        this.message = this.getString();
     }
+
+    @Override
+    public void encode() {
+        this.reset();
+        this.putString(this.message);
+    }
+
 
 }
