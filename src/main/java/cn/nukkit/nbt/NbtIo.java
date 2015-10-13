@@ -1,10 +1,46 @@
 package cn.nukkit.nbt;
 
+import cn.nukkit.item.Item;
+
 import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class NbtIo {
+    public static CompoundTag putItemHelper(Item item) {
+        return putItemHelper(item, null);
+    }
+
+    public static CompoundTag putItemHelper(Item item, Integer slot) {
+        CompoundTag tag = new CompoundTag(null)
+                .putShort("id", (short) item.getId())
+                .putByte("Count", (byte) item.getCount())
+                .putShort("Damage", item.getDamage());
+        if (slot != null) {
+            tag.putByte("Slot", (byte) (int) slot);
+        }
+
+        if (item.hasCompoundTag()) {
+            tag.putCompound("tag", item.getNamedTag());
+        }
+
+        return tag;
+    }
+
+    public static Item getItemHelper(CompoundTag tag) {
+        if (!tag.contains("id") || !tag.contains("Count")) {
+            return Item.get(0);
+        }
+
+        Item item = Item.get(tag.getShort("id"), (int) (!tag.contains("Damage") ? 0 : tag.getShort("Damage")), tag.getByte("Count"));
+
+        if (tag.contains("tag") && tag.get("tag") instanceof CompoundTag) {
+            item.setNamedTag(tag.getCompound("tag"));
+        }
+
+        return item;
+    }
+
     public static CompoundTag readCompressed(InputStream in) throws IOException {
         try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new GZIPInputStream(in)))) {
             return read(dis);

@@ -9,10 +9,10 @@ public class LoginPacket extends DataPacket {
 
     public static final byte NETWORK_ID = Info.LOGIN_PACKET;
 
-    public String userName;
+    public String username;
 
-    public byte protocolVersion;
-    public byte protocol;
+    public int protocol1;
+    public int protocol2;
 
     public long clientId;
     public UUID clientUUID;
@@ -20,8 +20,8 @@ public class LoginPacket extends DataPacket {
     public String serverAddress;
     public String clientSecret;
 
-    public boolean slim;
-    public String skin;
+    public boolean slim = false;
+    public String skin = null;
 
     @Override
     public byte pid() {
@@ -29,28 +29,27 @@ public class LoginPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        userName = getString();
-        protocolVersion = getByte();
-        protocol = getByte();
-        if (protocolVersion < Info.CURRENT_PROTOCOL) try {
-            throw new RuntimeException("Outdated protocol version, current is " + Info.CURRENT_PROTOCOL + " but get " + protocolVersion + '!');
-        } finally {
-            setBuffer(null, 0);
+    public void decode() {
+        this.username = this.getString();
+        this.protocol1 = this.getInt();
+        this.protocol2 = this.getInt();
+        if (protocol1 < Info.CURRENT_PROTOCOL) {
+            this.setBuffer(null, 0);
+            return;
         }
-        clientId = getLong();
-        clientUUID = getUUID();
-        serverAddress = getString();
-        clientSecret = getString();
+        this.clientId = this.getLong();
+        this.clientUUID = this.getUUID();
+        this.serverAddress = this.getString();
+        this.clientSecret = this.getString();
 
-        slim = getByte() > 0;
-        skin = getString();
+        this.slim = this.getByte() > 0;
+        this.skin = this.getString();
     }
 
 
     @Override
-    public void decode() {
-        ;
+    public void encode() {
+
     }
 
 }
