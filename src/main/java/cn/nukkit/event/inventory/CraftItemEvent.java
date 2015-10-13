@@ -1,10 +1,11 @@
 package cn.nukkit.event.inventory;
 
+import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.inventory.CraftingTransactionGroup;
 import cn.nukkit.inventory.Recipe;
+import cn.nukkit.item.Item;
 
 /**
  * author: MagicDroidX
@@ -18,17 +19,32 @@ public class CraftItemEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    private CraftingTransactionGroup ts;
+    private Item[] input = new Item[0];
 
     private Recipe recipe;
 
-    public CraftItemEvent(CraftingTransactionGroup ts, Recipe recipe) {
-        this.ts = ts;
+    private Player player;
+
+    public CraftItemEvent(Player player, Item[] input, Recipe recipe) {
+        this.player = player;
+        this.input = input;
         this.recipe = recipe;
     }
 
-    public CraftingTransactionGroup getTransaction() {
-        return this.ts;
+    public Item[] getInput() {
+        Item[] items = new Item[this.input.length];
+        for (int i = 0; i < this.input.length; i++) {
+            items[i] = this.input[i].clone();
+        }
+
+        return items;
     }
 
+    public Recipe getRecipe() {
+        return recipe;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
 }
