@@ -5,12 +5,13 @@ import cn.nukkit.raknet.protocol.EncapsulatedPacket;
 import cn.nukkit.utils.Binary;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class DataPacket implements Cloneable {
+public abstract class DataPacket {
 
     public int offset = 0;
     public byte[] buffer = new byte[0];
@@ -186,6 +187,17 @@ public abstract class DataPacket implements Cloneable {
 
     protected boolean feof() {
         return this.offset < 0 || this.offset >= this.buffer.length;
+    }
+
+    protected UUID getUUID() {
+        byte[] data = get(16);
+        long msb = 0;
+        long lsb = 0;
+        for (int i = 0; i < 8; i++)
+            msb = (msb << 8) | (data[i] & 0xff);
+        for (int i = 8; i < 16; i++)
+            lsb = (lsb << 8) | (data[i] & 0xff);
+        return new UUID(msb, lsb);
     }
 
     public DataPacket clean() {
