@@ -12,7 +12,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.utils.MainLogger;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -160,8 +159,12 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int LILY_PAD = 111;
     public static final int NETHER_BRICKS = 112;
     public static final int NETHER_BRICK_BLOCK = 112;
-
+    public static final int NETHER_BRICK_FENCE = 113;
     public static final int NETHER_BRICKS_STAIRS = 114;
+
+    public static final int ENCHANTING_TABLE = 116;
+    public static final int ENCHANT_TABLE = 116;
+    public static final int ENCHANTMENT_TABLE = 116;
 
     public static final int END_PORTAL_FRAME = 120;
     public static final int END_STONE = 121;
@@ -183,6 +186,8 @@ public class Block extends Position implements Metadatable, Cloneable {
 
     public static final int CARROT_BLOCK = 141;
     public static final int POTATO_BLOCK = 142;
+
+    public static final int ANVIL = 145;
 
     public static final int REDSTONE_BLOCK = 152;
 
@@ -274,10 +279,7 @@ public class Block extends Position implements Metadatable, Cloneable {
                             fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
                         }
                     } catch (Exception e) {
-                        MainLogger logger = Server.getInstance().getLogger();
-                        if (logger != null) {
-                            logger.error("Error while registering " + c.getName());
-                        }
+                        Server.getInstance().getLogger().error("Error while registering " + c.getName());
                         return;
                     }
 
@@ -460,7 +462,47 @@ public class Block extends Position implements Metadatable, Cloneable {
     }
 
     public double getBreakTime(Item item) {
-        return 0.20;
+        double base = this.getHardness() * 1.5;
+        if (this.canBeBrokenWith(item)) {
+            if (this.getToolType() == Tool.TYPE_SHEARS && item.isShears()) {
+                base /= 15;
+            } else if (
+                    (this.getToolType() == Tool.TYPE_PICKAXE && item.isPickaxe()) ||
+                            (this.getToolType() == Tool.TYPE_AXE && item.isAxe()) ||
+                            (this.getToolType() == Tool.TYPE_SHOVEL && item.isShovel())
+                    ) {
+                int tier = item.getTier();
+                switch (tier) {
+                    case Tool.TIER_WOODEN:
+                        base /= 2;
+                        break;
+                    case Tool.TIER_STONE:
+                        base /= 4;
+                        break;
+                    case Tool.TIER_IRON:
+                        base /= 6;
+                        break;
+                    case Tool.TIER_DIAMOND:
+                        base /= 8;
+                        break;
+                    case Tool.TIER_GOLD:
+                        base /= 12;
+                        break;
+                }
+            }
+        } else {
+            base *= 3.33;
+        }
+
+        if (item.isSword()) {
+            base *= 0.5;
+        }
+
+        return base;
+    }
+
+    public boolean canBeBrokenWith(Item item) {
+        return this.getHardness() != -1;
     }
 
     public Block getSide(int side) {
