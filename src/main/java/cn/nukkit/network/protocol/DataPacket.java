@@ -167,10 +167,10 @@ public abstract class DataPacket implements Cloneable {
     protected void putUUID(UUID uuid) {
         long msb = uuid.getMostSignificantBits();
         int[] parts = new int[4];
-        parts[0] = (int) (msb >> 8);
-        parts[1] = (int) ((msb >> 4) & 0x00000000FFFF);
-        parts[2] = (int) ((msb >> 3) & 0x000000000000F);
-        parts[3] = (int) (msb & 0x0000000000000FFF);
+        parts[0] = (int) (msb >> 32);
+        parts[1] = (int) ((msb >> 16) & 0xFFFF);
+        parts[2] = (int) ((msb >> 12) & 0xF);
+        parts[3] = (int) (msb & 0xFFF);
         for (int i = 0; i < 4; i++) {
             this.putInt(parts[i]);
         }
@@ -181,7 +181,7 @@ public abstract class DataPacket implements Cloneable {
         for (int i = 0; i < 4; i++) {
             parts[i] = this.getInt();
         }
-        long msb = (parts[0] << 8) | ((parts[1] & 0x00000000FFFF) << 4) | ((parts[2] & 0x000000000000F) << 3) | (parts[3] & 0x0000000000000FFF);
+        long msb = (parts[0] << 32) | ((parts[1] & 0xFFFF) << 16) | ((parts[2] & 0xF) << 12) | (parts[3] & 0xFFF);
         return new UUID(msb, new Random().nextLong());
     }
 
