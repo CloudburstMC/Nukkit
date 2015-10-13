@@ -17,8 +17,8 @@ public class Effect implements Cloneable {
     public static final byte FATIGUE = 4;
     public static final byte MINING_FATIGUE = 4;
     public static final byte STRENGTH = 5;
-    //TODO: public static final byte HEALING = 6;
-    //TODO: public static final byte HARMING = 7;
+    public static final byte HEALING = 6;
+    public static final byte HARMING = 7;
     public static final byte JUMP = 8;
     public static final byte NAUSEA = 9;
     public static final byte CONFUSION = 9;
@@ -27,15 +27,15 @@ public class Effect implements Cloneable {
     public static final byte FIRE_RESISTANCE = 12;
     public static final byte WATER_BREATHING = 13;
     public static final byte INVISIBILITY = 14;
-    //public static final byte BLINDNESS = 15;
-    //public static final byte NIGHT_VISION = 16;
-    //public static final byte HUNGER = 17;
+    public static final byte BLINDNESS = 15;
+    public static final byte NIGHT_VISION = 16;
+    public static final byte HUNGER = 17;
     public static final byte WEAKNESS = 18;
     public static final byte POISON = 19;
     public static final byte WITHER = 20;
     public static final byte HEALTH_BOOST = 21;
-    //public static final byte ABSORPTION = 22;
-    //public static final byte SATURATION = 23;
+    public static final byte ABSORPTION = 22;
+    public static final byte SATURATION = 23;
 
     protected static Effect[] effects;
 
@@ -47,8 +47,8 @@ public class Effect implements Cloneable {
         effects[Effect.SWIFTNESS] = new Effect(Effect.SWIFTNESS, "%potion.digSpeed", 217, 192, 67);
         effects[Effect.FATIGUE] = new Effect(Effect.FATIGUE, "%potion.digSlowDown", 74, 66, 23, true);
         effects[Effect.STRENGTH] = new Effect(Effect.STRENGTH, "%potion.damageBoost", 147, 36, 35);
-        //effects[Effect.HEALING] = new InstantEffect(Effect.HEALING, "%potion.heal", 248, 36, 35);
-        //effects[Effect.HARMING] = new InstantEffect(Effect.HARMING, "%potion.harm", 67, 10, 9, true);
+        effects[Effect.HEALING] = new InstantEffect(Effect.HEALING, "%potion.heal", 248, 36, 35);
+        effects[Effect.HARMING] = new InstantEffect(Effect.HARMING, "%potion.harm", 67, 10, 9, true);
         effects[Effect.JUMP] = new Effect(Effect.JUMP, "%potion.jump", 34, 255, 76);
         effects[Effect.NAUSEA] = new Effect(Effect.NAUSEA, "%potion.confusion", 85, 29, 74, true);
         effects[Effect.REGENERATION] = new Effect(Effect.REGENERATION, "%potion.regeneration", 205, 92, 171);
@@ -56,13 +56,18 @@ public class Effect implements Cloneable {
         effects[Effect.FIRE_RESISTANCE] = new Effect(Effect.FIRE_RESISTANCE, "%potion.fireResistance", 228, 154, 58);
         effects[Effect.WATER_BREATHING] = new Effect(Effect.WATER_BREATHING, "%potion.waterBreathing", 46, 82, 153);
         effects[Effect.INVISIBILITY] = new Effect(Effect.INVISIBILITY, "%potion.invisibility", 127, 131, 146);
-        //Hunger
+        
+        effects[Effect.BLINDNESS] = new Effect(Effect.BLINDNESS, "%potion.blindness", 191, 192, 192);
+		effects[Effect.NIGHT_VISION] = new Effect(Effect.NIGHT_VISION, "%potion.nightVision", 0, 0, 139);
+        effects[Effect.HUNGER] = new Effect(Effect.HUNGER, "%potion.hunger", 46, 139, 87);
+        
         effects[Effect.WEAKNESS] = new Effect(Effect.WEAKNESS, "%potion.weakness", 72, 77, 72, true);
         effects[Effect.POISON] = new Effect(Effect.POISON, "%potion.poison", 78, 147, 49, true);
         effects[Effect.WITHER] = new Effect(Effect.WITHER, "%potion.wither", 53, 42, 39, true);
         effects[Effect.HEALTH_BOOST] = new Effect(Effect.HEALTH_BOOST, "%potion.healthBoost", 248, 125, 35);
-        //Absorption
-        //Saturation
+        
+        effects[Effect.ABSORPTION] = new Effect(Effect.ABSORPTION, "%potion.absorption", 36, 107, 251);
+		effects[Effect.SATURATION] = new Effect(Effect.SATURATION, "%potion.saturation", 255, 0, 255);
     }
 
     public static Effect getEffect(byte id) {
