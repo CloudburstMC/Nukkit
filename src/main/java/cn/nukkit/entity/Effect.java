@@ -1,8 +1,10 @@
 package cn.nukkit.entity;
 
+import cn.nukkit.Player;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
+import cn.nukkit.network.protocol.MobEffectPacket;
 
 /**
  * author: MagicDroidX
@@ -220,11 +222,42 @@ public class Effect implements Cloneable {
     }
 
     public void add(Entity entity, boolean modify) {
-        //todo
+        if (entity instanceof Player) {
+            MobEffectPacket pk = new MobEffectPacket();
+            pk.eid = 0;
+            pk.effectId = this.getId();
+            pk.amplifier = this.getAmplifier();
+            pk.particles = this.isVisible();
+            pk.duration = this.getDuration();
+            if (modify) {
+                pk.eventId = MobEffectPacket.EVENT_MODIFY;
+            } else {
+                pk.eventId = MobEffectPacket.EVENT_ADD;
+            }
+
+            ((Player) entity).dataPacket(pk);
+        }
+
+        if (this.id == Effect.INVISIBILITY) {
+            entity.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_INVISIBLE, true);
+            entity.setDataProperty(Entity.DATA_SHOW_NAMETAG, Entity.DATA_TYPE_BYTE, 0);
+        }
     }
 
     public void remove(Entity entity) {
-        //todo
+        if (entity instanceof Player) {
+            MobEffectPacket pk = new MobEffectPacket();
+            pk.eid = 0;
+            pk.effectId = this.getId();
+            pk.eventId = MobEffectPacket.EVENT_REMOVE;
+
+            ((Player) entity).dataPacket(pk);
+        }
+
+        if (this.id == Effect.INVISIBILITY) {
+            entity.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_INVISIBLE, false);
+            entity.setDataProperty(Entity.DATA_SHOW_NAMETAG, Entity.DATA_TYPE_BYTE, 1);
+        }
     }
 
     @Override
