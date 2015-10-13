@@ -79,8 +79,8 @@ public class ServerHandler {
     }
 
     public void shutdown() {
-        this.server.shutdown();
         this.server.pushMainToThreadPacket(new byte[]{RakNet.PACKET_SHUTDOWN});
+        this.server.shutdown();
         synchronized (this) {
             try {
                 this.wait(20);
@@ -88,7 +88,11 @@ public class ServerHandler {
                 //ignore
             }
         }
-        this.server.interrupt();
+        try {
+            this.server.join();
+        } catch (InterruptedException e) {
+            //ignore
+        }
     }
 
     public void emergencyShutdown() {

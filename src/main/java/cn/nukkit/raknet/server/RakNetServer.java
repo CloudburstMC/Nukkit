@@ -86,7 +86,7 @@ public class RakNetServer extends Thread {
     private class ShutdownHandler extends Thread {
         public void run() {
             if (!shutdown) {
-                logger.emergency("[RakNet Thread #" + Thread.currentThread().getId() + "] RakNet crashed!");
+                logger.emergency("RakNet crashed!");
             }
         }
     }

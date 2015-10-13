@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,7 +45,7 @@ public class SessionManager {
     protected Map<String, Long> block = new ConcurrentHashMap<>();
     protected Map<String, Integer> ipSec = new ConcurrentHashMap<>();
 
-    public boolean portChecking = false;
+    public boolean portChecking = true;
 
     public long serverId;
 
@@ -149,11 +151,22 @@ public class SessionManager {
                     this.ipSec.put(source, 1);
                 }
 
-                Packet packet = this.getPacketFromPool(buffer[0]);
+                byte pid = buffer[0];
+                Packet packet = this.getPacketFromPool(pid);
                 if (packet != null) {
                     packet.buffer = buffer;
                     this.getSession(source, port).handlePacket(packet);
                     return true;
+                } else if (pid == UNCONNECTED_PING.ID) {
+                    packet = new UNCONNECTED_PING();
+                    packet.buffer = buffer;
+                    packet.decode();
+
+                    UNCONNECTED_PONG pk = new UNCONNECTED_PONG();
+                    pk.serverID = this.getID();
+                    pk.pingID = ((UNCONNECTED_PING) packet).pingID;
+                    pk.serverName = this.getName();
+                    this.sendPacket(pk, source, port);
                 } else if (buffer.length != 0) {
                     this.streamRAW(source, port, buffer);
                     return true;
@@ -257,6 +270,27 @@ public class SessionManager {
         this.server.pushThreadToMainPacket(buffer);
     }
 
+    private void checkSessions() {
+        int size = this.sessions.size();
+        if (size > 4096) {
+            List<String> keyToRemove = new ArrayList<>();
+            for (String i : this.sessions.keySet()) {
+                Session s = this.sessions.get(i);
+                if (s.isTemporal()) {
+                    keyToRemove.add(i);
+                    size--;
+                    if (size <= 4096) {
+                        break;
+                    }
+                }
+            }
+
+            for (String i : keyToRemove) {
+                this.sessions.remove(i);
+            }
+        }
+    }
+
     public boolean receiveStream() throws Exception {
         byte[] packet = this.server.readMainToThreadPacket();
         if (packet != null && packet.length > 0) {
@@ -353,7 +387,7 @@ public class SessionManager {
             if (timeout == -1) {
                 finalTime = Long.MAX_VALUE;
             } else {
-                this.getLogger().notice("[RakNet Thread #" + Thread.currentThread().getId() + "] Blocked " + address + " for " + timeout + " seconds");
+                this.getLogger().notice("Blocked " + address + " for " + timeout + " seconds");
             }
             this.block.put(address, finalTime);
         } else if (this.block.get(address) < finalTime) {
@@ -364,8 +398,10 @@ public class SessionManager {
     public Session getSession(String ip, int port) {
         String id = ip + ":" + port;
         if (!this.sessions.containsKey(id)) {
+            this.checkSessions();
             Session session = new Session(this, ip, port);
             this.sessions.put(id, session);
+
             return session;
         }
 
@@ -419,7 +455,7 @@ public class SessionManager {
     }
 
     private void registerPackets() {
-        this.registerPacket(UNCONNECTED_PING.ID, UNCONNECTED_PING.class);
+        //this.registerPacket(UNCONNECTED_PING.ID, UNCONNECTED_PING.class);
         this.registerPacket(UNCONNECTED_PING_OPEN_CONNECTIONS.ID, UNCONNECTED_PING_OPEN_CONNECTIONS.class);
         this.registerPacket(OPEN_CONNECTION_REQUEST_1.ID, OPEN_CONNECTION_REQUEST_1.class);
         this.registerPacket(OPEN_CONNECTION_REPLY_1.ID, OPEN_CONNECTION_REPLY_1.class);

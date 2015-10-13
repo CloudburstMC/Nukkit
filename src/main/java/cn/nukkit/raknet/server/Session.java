@@ -23,6 +23,9 @@ public class Session {
     public final static int STATE_CONNECTING_2 = 2;
     public final static int STATE_CONNECTED = 3;
 
+    public final static int MAX_SPLIT_SIZE = 128;
+    public final static int MAX_SPLIT_COUNT = 4;
+
     public static int WINDOW_SIZE = 2048;
 
     private int messageIndex = 0;
@@ -32,7 +35,7 @@ public class Session {
     private String address;
     private int port;
     private int state = STATE_UNCONNECTED;
-    private List<EncapsulatedPacket> preJoinQueue = new ArrayList<>();
+    //private List<EncapsulatedPacket> preJoinQueue = new ArrayList<>();
     private int mtuSize = 548; //Min size
     private long id = 0;
     private int splitID = 0;
@@ -42,6 +45,8 @@ public class Session {
 
     private long lastUpdate;
     private long startTime;
+
+    private boolean isTemporal = true;
 
     private List<DataPacket> packetToSend = new ArrayList<>();
 
@@ -293,11 +298,14 @@ public class Session {
     }
 
     private void handleSplit(EncapsulatedPacket packet) throws Exception {
-        if (packet.splitCount >= 128) {
+        if (packet.splitCount >= MAX_SPLIT_SIZE || packet.splitIndex >= MAX_SPLIT_SIZE || packet.splitIndex < 0) {
             return;
         }
 
         if (!this.splitPackets.containsKey(packet.splitID)) {
+            if (this.splitPackets.size() >= MAX_SPLIT_COUNT) {
+                return;
+            }
             Map<Integer, EncapsulatedPacket> map = new ConcurrentHashMap<>();
             map.put(packet.splitIndex, packet);
             this.splitPackets.put(packet.splitID, map);
@@ -356,6 +364,14 @@ public class Session {
         }
     }
 
+    public int getState() {
+        return state;
+    }
+
+    public boolean isTemporal() {
+        return isTemporal;
+    }
+
     private void handleEncapsulatedPacketRoute(EncapsulatedPacket packet) throws Exception {
         if (this.sessionManager == null) {
             return;
@@ -393,11 +409,12 @@ public class Session {
 
                     if (dataPacket.port == this.sessionManager.getPort() || !this.sessionManager.portChecking) {
                         this.state = STATE_CONNECTED; //FINALLY!
+                        this.isTemporal = false;
                         this.sessionManager.openSession(this);
-                        for (EncapsulatedPacket p : this.preJoinQueue) {
+                        /*for (EncapsulatedPacket p : this.preJoinQueue) {
                             this.sessionManager.streamEncapsulated(this, p);
                         }
-                        this.preJoinQueue.clear();
+                        this.preJoinQueue.clear();*/
                     }
                 }
             } else if (id == CLIENT_DISCONNECT_DataPacket.ID) {
@@ -419,9 +436,9 @@ public class Session {
             } else if (state == STATE_CONNECTED) {
                 this.sessionManager.streamEncapsulated(this, packet);
                 //TODO: stream channels
+            } else {
+                //this.sessionManager.getLogger().notice("Received packet before connection: "+Binary.bytesToHexString(packet.buffer));
             }
-        } else {
-            this.preJoinQueue.add(packet);
         }
     }
 
@@ -493,13 +510,14 @@ public class Session {
             }
         } else if (packet.buffer[0] > (byte) 0x00 || packet.buffer[0] < (byte) 0x80) { //Not Data packet :)
             packet.decode();
-            if (packet instanceof UNCONNECTED_PING) {
+            /*if (packet instanceof UNCONNECTED_PING) {
                 UNCONNECTED_PONG pk = new UNCONNECTED_PONG();
                 pk.serverID = this.sessionManager.getID();
                 pk.pingID = ((UNCONNECTED_PING) packet).pingID;
                 pk.serverName = this.sessionManager.getName();
                 this.sendPacket(pk);
-            } else if (packet instanceof OPEN_CONNECTION_REQUEST_1) {
+            } else*/
+            if (packet instanceof OPEN_CONNECTION_REQUEST_1) {
                 //TODO: check protocol number and refuse connections
                 OPEN_CONNECTION_REPLY_1 pk = new OPEN_CONNECTION_REPLY_1();
                 pk.mtuSize = ((OPEN_CONNECTION_REQUEST_1) packet).mtuSize;
