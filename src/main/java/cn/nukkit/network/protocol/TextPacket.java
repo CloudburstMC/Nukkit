@@ -7,6 +7,11 @@ public class TextPacket extends DataPacket {
 
     public static final byte NETWORK_ID = Info.TEXT_PACKET;
 
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
+
     public static final byte TYPE_RAW = 0;
     public static final byte TYPE_CHAT = 1;
     public static final byte TYPE_TRANSLATION = 2;
@@ -21,20 +26,20 @@ public class TextPacket extends DataPacket {
 
     @Override
     public void decode() {
-        type = getByte();
+        this.type = getByte();
         switch (type) {
             case TYPE_POPUP:
             case TYPE_CHAT:
-                source = getString();
+                this.source = this.getString();
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
-                message = getString();
+                this.message = this.getString();
                 break;
 
             case TYPE_TRANSLATION:
-                message = getString();
-                byte count = getByte();
+                this.message = this.getString();
+                byte count = this.getByte();
                 parameters = new String[count];
                 for (int i = 0; i < count; i++) {
                     parameters[i] = getString();
@@ -44,30 +49,25 @@ public class TextPacket extends DataPacket {
 
     @Override
     public void encode() {
-        reset();
-        putByte(type);
-        switch (type) {
+        this.reset();
+        this.putByte(this.type);
+        switch (this.type) {
             case TYPE_POPUP:
             case TYPE_CHAT:
-                putString(source);
+                this.putString(this.source);
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
-                putString(message);
+                this.putString(this.message);
                 break;
 
             case TYPE_TRANSLATION:
-                putString(message);
-                putByte((byte) parameters.length);
-                for (String parameter : parameters) {
-                    putString(parameter);
+                this.putString(this.message);
+                this.putByte((byte) this.parameters.length);
+                for (String parameter : this.parameters) {
+                    this.putString(parameter);
                 }
         }
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
 }

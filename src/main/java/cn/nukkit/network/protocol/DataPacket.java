@@ -5,13 +5,14 @@ import cn.nukkit.raknet.protocol.EncapsulatedPacket;
 import cn.nukkit.utils.Binary;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 import java.util.UUID;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class DataPacket {
+public abstract class DataPacket implements Cloneable {
 
     public int offset = 0;
     public byte[] buffer = new byte[0];
@@ -163,6 +164,27 @@ public abstract class DataPacket {
         }
     }
 
+    protected void putUUID(UUID uuid) {
+        long msb = uuid.getMostSignificantBits();
+        int[] parts = new int[4];
+        parts[0] = (int) (msb >> 8);
+        parts[1] = (int) ((msb >> 4) & 0x00000000FFFF);
+        parts[2] = (int) ((msb >> 3) & 0x000000000000F);
+        parts[3] = (int) (msb & 0x0000000000000FFF);
+        for (int i = 0; i < 4; i++) {
+            this.putInt(parts[i]);
+        }
+    }
+
+    protected UUID getUUID() {
+        int[] parts = new int[4];
+        for (int i = 0; i < 4; i++) {
+            parts[i] = this.getInt();
+        }
+        long msb = (parts[0] << 8) | ((parts[1] & 0x00000000FFFF) << 4) | ((parts[2] & 0x000000000000F) << 3) | (parts[3] & 0x0000000000000FFF);
+        return new UUID(msb, new Random().nextLong());
+    }
+
     protected Item getSlot() {
         short id = this.getShort();
         byte cnt = this.getByte();
@@ -187,17 +209,6 @@ public abstract class DataPacket {
 
     protected boolean feof() {
         return this.offset < 0 || this.offset >= this.buffer.length;
-    }
-
-    protected UUID getUUID() {
-        byte[] data = get(16);
-        long msb = 0;
-        long lsb = 0;
-        for (int i = 0; i < 8; i++)
-            msb = (msb << 8) | (data[i] & 0xff);
-        for (int i = 8; i < 16; i++)
-            lsb = (lsb << 8) | (data[i] & 0xff);
-        return new UUID(msb, lsb);
     }
 
     public DataPacket clean() {

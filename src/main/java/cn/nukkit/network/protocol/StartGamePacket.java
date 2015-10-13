@@ -7,13 +7,18 @@ public class StartGamePacket extends DataPacket {
 
     public static final byte NETWORK_ID = Info.START_GAME_PACKET;
 
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
+
     private int seed;
 
     private byte dimension;
     private int generator;
-    private int gameMode;
+    private int gamemode;
 
-    private long entityId;
+    private long eid;
 
     private int spawnX;
     private int spawnY;
@@ -25,29 +30,24 @@ public class StartGamePacket extends DataPacket {
 
     @Override
     public void decode() {
-        ;
+
     }
 
     @Override
     public void encode() {
-        reset();
-        putInt(seed);
-        putByte(dimension);
-        putInt(generator);
-        putInt(gameMode);
-        putLong(entityId);
-        putInt(spawnX);
-        putInt(spawnY);
-        putInt(spawnZ);
-        putFloat(x);
-        putFloat(y);
-        putFloat(z);
-        putByte((byte) 0);
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
+        this.reset();
+        this.putInt(seed);
+        this.putByte(dimension);
+        this.putInt(generator);
+        this.putInt(gamemode);
+        this.putLong(eid);
+        this.putInt(spawnX);
+        this.putInt(spawnY);
+        this.putInt(spawnZ);
+        this.putFloat(x);
+        this.putFloat(y);
+        this.putFloat(z);
+        this.putByte((byte) 0);
     }
 
 }
