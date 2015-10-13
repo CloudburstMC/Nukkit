@@ -19,7 +19,6 @@ import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.nbt.DoubleTag;
 import cn.nukkit.nbt.FloatTag;
 import cn.nukkit.nbt.ListTag;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.MobEffectPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
@@ -62,6 +61,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_ONFIRE = 0;
     public static final int DATA_FLAG_SNEAKING = 1;
     public static final int DATA_FLAG_RIDING = 2;
+    public static final int DATA_FLAG_SPRINTING = 3;
     public static final int DATA_FLAG_ACTION = 4;
     public static final int DATA_FLAG_INVISIBLE = 5;
 
@@ -259,6 +259,30 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataProperty(DATA_SHOW_NAMETAG, DATA_TYPE_BYTE, visible ? (byte) 1 : (byte) 0);
     }
 
+    public boolean isSneaking() {
+        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SNEAKING);
+    }
+
+    public void setSneaking() {
+        this.setSneaking(true);
+    }
+
+    public void setSneaking(boolean value) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SNEAKING, value);
+    }
+
+    public boolean isSprinting() {
+        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SPRINTING);
+    }
+
+    public void setSprinting() {
+        this.setSprinting(true);
+    }
+
+    public void setSprinting(boolean value) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SPRINTING, value);
+    }
+
     public Map<Integer, Effect> getEffects() {
         return effects;
     }
@@ -401,9 +425,14 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void saveNBT() {
         if (!(this instanceof Player)) {
-            this.namedTag.putString("id", this.getSaveId());
-            this.namedTag.putString("CustomName", this.getNameTag());
-            this.namedTag.putString("CustomeNameVisible", String.valueOf(this.isNameTagVisible()));
+            if (!this.getNameTag().equals("")) {
+                this.namedTag.putString("id", this.getSaveId());
+                this.namedTag.putString("CustomName", this.getNameTag());
+                this.namedTag.putString("CustomeNameVisible", String.valueOf(this.isNameTagVisible()));
+            } else {
+                this.namedTag.remove("CustomName");
+                this.namedTag.remove("CustomeNameVisible");
+            }
         }
 
         this.namedTag.putList(new ListTag<DoubleTag>("Pos")
@@ -464,7 +493,9 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (this.namedTag.contains("CustomName")) {
             this.setNameTag(this.namedTag.getString("CustomName"));
-            this.setNameTagVisible(this.namedTag.getBoolean("CustomNameVisible"));
+            if (this.namedTag.contains("CustomNameVisible")) {
+                this.setNameTagVisible(this.namedTag.getBoolean("CustomNameVisible"));
+            }
         }
 
         this.scheduleUpdate();
@@ -490,7 +521,7 @@ public abstract class Entity extends Location implements Metadatable {
             pk.duration = effect.getDuration();
             pk.eventId = MobEffectPacket.EVENT_ADD;
 
-            player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+            player.dataPacket(pk);
         }
     }
 
@@ -503,7 +534,7 @@ public abstract class Entity extends Location implements Metadatable {
         pk.eid = (player.equals(this) ? 0 : this.getId());
         pk.metadata = data == null ? this.dataProerties : data;
 
-        player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+        player.dataPacket(pk);
     }
 
     public void sendData(Player[] players) {
@@ -515,14 +546,14 @@ public abstract class Entity extends Location implements Metadatable {
         pk.eid = this.getId();
         pk.metadata = data == null ? this.dataProerties : data;
 
-        Server.broadcastPacket(players, pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+        Server.broadcastPacket(players, pk);
     }
 
     public void despawnFrom(Player player) {
         if (this.hasSpawned.containsKey(player.getLoaderId())) {
             RemoveEntityPacket pk = new RemoveEntityPacket();
             pk.eid = this.getId();
-            player.dataPacket(pk.setChannel(Network.CHANNEL_ENTITY_SPAWNING));
+            player.dataPacket(pk);
             this.hasSpawned.remove(player.getLoaderId());
         }
     }
@@ -1338,7 +1369,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void spawnToAll() {
-        if (this.chunk == null) {
+        if (this.chunk == null || this.closed) {
             return;
         }
 
