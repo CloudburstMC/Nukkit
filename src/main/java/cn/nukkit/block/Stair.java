@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
 
 /**
@@ -59,7 +60,7 @@ public abstract class Stair extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= 1) {
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
             return new int[][]{new int[]{this.getId(), 0, 1}};
         } else {
             return new int[0][];

@@ -36,7 +36,7 @@ public class IronOre extends Solid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= 3) {
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_STONE) {
             return new int[][]{new int[]{Item.IRON_ORE, 0, 1}};
         } else {
             return new int[0][];

@@ -39,7 +39,7 @@ public class RedstoneOre extends Solid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= 2) {
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_GOLD) {
             return new int[][]{new int[]{Item.REDSTONE_DUST, 0, new Random().nextInt(1) + 4}};
         } else {
             return new int[0][];

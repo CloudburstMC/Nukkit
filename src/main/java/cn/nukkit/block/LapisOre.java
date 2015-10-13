@@ -38,7 +38,7 @@ public class LapisOre extends Solid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= 3) {
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_STONE) {
             return new int[][]{new int[]{Item.DYE, 0, new Random().nextInt(4) + 4}};
         } else {
             return new int[0][];
