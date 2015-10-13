@@ -62,7 +62,7 @@ public abstract class Living extends Entity implements Damageable {
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getId();
             pk.eid = EntityEventPacket.RESPAWN;
-            Server.broadcastPacket(this.hasSpawned.values(), pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+            Server.broadcastPacket(this.hasSpawned.values(), pk);
         }
     }
 
@@ -122,7 +122,7 @@ public abstract class Living extends Entity implements Damageable {
         EntityEventPacket pk = new EntityEventPacket();
         pk.eid = this.getId();
         pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
-        Server.broadcastPacket(this.hasSpawned.values(), pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+        Server.broadcastPacket(this.hasSpawned.values(), pk);
 
         this.attackTime = 10;
     }

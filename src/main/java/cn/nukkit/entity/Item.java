@@ -6,6 +6,7 @@ import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.CompoundTag;
+import cn.nukkit.nbt.NbtIo;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 
@@ -63,7 +64,12 @@ public class Item extends Entity {
             this.thrower = this.namedTag.getString("Thrower");
         }
 
-        this.item = cn.nukkit.item.Item.get(this.namedTag.getShort("id"), (int) this.namedTag.getShort("Damage"), this.namedTag.getByte("Count"));
+        if (!this.namedTag.contains("Item")) {
+            this.close();
+            return;
+        }
+
+        this.item = NbtIo.getItemHelper(this.namedTag.getCompound("Item"));
 
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }
