@@ -27,4 +27,13 @@ public abstract class Task {
 
     }
 
+    public static Task of(Runnable task) {
+        return new Task() {
+            @Override
+            public void onRun(int currentTick) {
+                task.run();
+            }
+        };
+    }
+
 }

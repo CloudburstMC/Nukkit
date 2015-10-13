@@ -39,6 +39,10 @@ public class ServerScheduler {
         return this.addTask(task, -1, -1);
     }
 
+    public TaskHandler scheduleTask(Runnable task) {
+        return this.addTask(Task.of(task), -1, -1);
+    }
+
     public void scheduleAsyncTask(AsyncTask task) {
         task.setTaskId(this.nextId());
         this.asyncPool.submitTask(task);
@@ -61,12 +65,24 @@ public class ServerScheduler {
         return this.addTask(task, delay, -1);
     }
 
+    public TaskHandler scheduleDelayedTask(Runnable task, int delay) {
+        return this.addTask(Task.of(task), delay, -1);
+    }
+
+    public TaskHandler scheduleReaptingTask(Runnable task, int period) {
+        return this.addTask(Task.of(task), -1, period);
+    }
+
     public TaskHandler scheduleReaptingTask(Task task, int period) {
         return this.addTask(task, -1, period);
     }
 
     public TaskHandler scheduleDelayedRepeatingTask(Task task, int delay, int period) {
         return this.addTask(task, delay, period);
+    }
+
+    public TaskHandler scheduleDelayedRepeatingTask(Runnable task, int delay, int period) {
+        return this.addTask(Task.of(task), delay, period);
     }
 
     public void cancelTask(int taskId) {
