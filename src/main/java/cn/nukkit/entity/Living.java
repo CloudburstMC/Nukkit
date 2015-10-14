@@ -8,7 +8,6 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.nbt.ShortTag;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.utils.BlockIterator;
 

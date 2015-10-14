@@ -1305,7 +1305,7 @@ public class Level implements ChunkManager, Metadatable {
             return item;
         }
         Block hand;
-        if (item.isPlaceable()) {
+        if (item.canBePlaced()) {
             hand = item.getBlock();
             hand.position(block);
         } else if (block.getId() == Item.FIRE) {

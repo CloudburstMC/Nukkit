@@ -109,6 +109,12 @@ public class NbtIo {
         throw new IOException("Root tag must be a named compound tag");
     }
 
+    public static CompoundTag read(byte[] data) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        DataInputStream stream = new DataInputStream(bais);
+        return read(stream);
+    }
+
     public static void write(CompoundTag tag, DataOutput dos) throws IOException {
         Tag.writeNamedTag(tag, dos);
     }

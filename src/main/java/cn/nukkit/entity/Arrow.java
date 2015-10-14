@@ -3,7 +3,6 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
