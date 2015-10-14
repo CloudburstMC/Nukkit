@@ -7,11 +7,11 @@ public class MovePlayerPacket extends DataPacket {
 
     public static final byte NETWORK_ID = Info.MOVE_PLAYER_PACKET;
 
-    public static final byte  MODE_NORMAL = 0;
-    public static final byte  MODE_RESET = 1;
-    public static final byte  MODE_ROTATION = 2;
-    
-    public long entityId;
+    public static final byte MODE_NORMAL = 0;
+    public static final byte MODE_RESET = 1;
+    public static final byte MODE_ROTATION = 2;
+
+    public long eid;
     public float x;
     public float y;
     public float z;
@@ -23,7 +23,7 @@ public class MovePlayerPacket extends DataPacket {
 
     @Override
     public void decode() {
-        entityId = getLong();
+        eid = getLong();
         x = getFloat();
         y = getFloat();
         z = getFloat();
@@ -37,7 +37,7 @@ public class MovePlayerPacket extends DataPacket {
     @Override
     public void encode() {
         reset();
-        putLong(entityId);
+        putLong(eid);
         putFloat(x);
         putFloat(y);
         putFloat(z);
