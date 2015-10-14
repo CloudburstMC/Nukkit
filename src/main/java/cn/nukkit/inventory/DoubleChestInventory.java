@@ -3,7 +3,6 @@ package cn.nukkit.inventory;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.TileEventPacket;
 import cn.nukkit.tile.Chest;
 
@@ -112,7 +111,7 @@ public class DoubleChestInventory extends BaseInventory implements InventoryHold
 
             Level level = this.right.getHolder().getLevel();
             if (level != null) {
-                level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+                level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk);
             }
         }
     }
@@ -129,7 +128,7 @@ public class DoubleChestInventory extends BaseInventory implements InventoryHold
 
             Level level = this.right.getHolder().getLevel();
             if (level != null) {
-                level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+                level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk);
             }
         }
 

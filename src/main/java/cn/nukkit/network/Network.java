@@ -208,8 +208,8 @@ public class Network {
         this.registerPacket(Info.LEVEL_EVENT_PACKET, LevelEventPacket.class);
         this.registerPacket(Info.TILE_EVENT_PACKET, TileEventPacket.class);
         this.registerPacket(Info.ENTITY_EVENT_PACKET, EntityEventPacket.class);
-        this.registerPacket(Info.PLAYER_EQUIPMENT_PACKET, PlayerEquipmentPacket.class);
-        this.registerPacket(Info.PLAYER_ARMOR_EQUIPMENT_PACKET, PlayerArmorEquipmentPacket.class);
+        this.registerPacket(Info.PLAYER_EQUIPMENT_PACKET, MobEquipmentPacket.class);
+        this.registerPacket(Info.PLAYER_ARMOR_EQUIPMENT_PACKET, MobArmorEquipmentPacket.class);
         this.registerPacket(Info.INTERACT_PACKET, InteractPacket.class);
         this.registerPacket(Info.USE_ITEM_PACKET, UseItemPacket.class);
         this.registerPacket(Info.PLAYER_ACTION_PACKET, PlayerActionPacket.class);

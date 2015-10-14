@@ -3,7 +3,6 @@ package cn.nukkit.inventory;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
 
@@ -46,14 +45,14 @@ public abstract class ContainerInventory extends BaseInventory {
             pk.x = pk.y = pk.z = 0;
         }
 
-        who.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+        who.dataPacket(pk);
     }
 
     @Override
     public void onClose(Player who) {
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowid = (byte) who.getWindowId(this);
-        who.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+        who.dataPacket(pk);
         super.onClose(who);
     }
 }

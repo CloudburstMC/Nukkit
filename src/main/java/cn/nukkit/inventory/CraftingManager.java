@@ -41,37 +41,37 @@ public class CraftingManager {
     }
 
     protected void registerStonecutter() {
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.QUARTZ_BLOCK, 0, 1))).addIngredient(Item.get(Item.QUARTZ, 0, 4)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.BRICK_STAIRS, 0, 4))).addIngredient(Item.get(Item.BRICKS_BLOCK, 0, 6)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.BRICKS_BLOCK, 0, 1))).addIngredient(Item.get(Item.BRICK, 0, 4)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SLAB, 4, 6))).addIngredient(Item.get(Item.BRICKS_BLOCK, 0, 3)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.QUARTZ_BLOCK, 1, 1))).addIngredient(Item.get(Item.SLAB, 6, 2)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SLAB, 3, 6))).addIngredient(Item.get(Item.COBBLESTONE, 0, 3)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.COBBLESTONE_WALL, 0, 6))).addIngredient(Item.get(Item.COBBLESTONE, 0, 6)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.COBBLESTONE_WALL, 1, 6))).addIngredient(Item.get(Item.MOSS_STONE, 0, 6)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.NETHER_BRICKS, 0, 1))).addIngredient(Item.get(Item.NETHER_BRICK, 0, 4)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.NETHER_BRICKS_STAIRS, 0, 4))).addIngredient(Item.get(Item.NETHER_BRICKS, 0, 6)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.QUARTZ_BLOCK, 2, 2))).addIngredient(Item.get(Item.QUARTZ_BLOCK, 0, 2)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SLAB, 6, 6))).addIngredient(Item.get(Item.QUARTZ_BLOCK, 0, 3)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SANDSTONE_STAIRS, 0, 4))).addIngredient(Item.get(Item.SANDSTONE, 0, 6)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SANDSTONE, 0, 1))).addIngredient(Item.get(Item.SAND, 0, 4)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SANDSTONE, 2, 4))).addIngredient(Item.get(Item.SANDSTONE, 0, 4)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SANDSTONE, 1, 1))).addIngredient(Item.get(Item.SLAB, 1, 2)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SLAB, 1, 6))).addIngredient(Item.get(Item.SANDSTONE, 0, 3)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE_BRICK_STAIRS, 0, 4))).addIngredient(Item.get(Item.STONE_BRICK, null, 6)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE_BRICK, 0, 4))).addIngredient(Item.get(Item.STONE, null, 4)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE_BRICK, 3, 1))).addIngredient(Item.get(Item.SLAB, 5, 2)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE_BRICK, 1, 1))).addIngredient(Item.get(Item.STONE_BRICK, 0, 1)).addIngredient(Item.get(Item.VINES, 0, 1)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SLAB, 5, 6))).addIngredient(Item.get(Item.STONE_BRICK, null, 3)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.SLAB, 0, 6))).addIngredient(Item.get(Item.STONE, null, 3)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.COBBLESTONE_STAIRS, 0, 4))).addIngredient(Item.get(Item.COBBLESTONE, 0, 6)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.QUARTZ_BLOCK, 0, 1))).addIngredient(Item.get(Item.QUARTZ, 0, 4)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.BRICK_STAIRS, 0, 4))).addIngredient(Item.get(Item.BRICKS_BLOCK, 0, 6)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.BRICKS_BLOCK, 0, 1))).addIngredient(Item.get(Item.BRICK, 0, 4)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SLAB, 4, 6))).addIngredient(Item.get(Item.BRICKS_BLOCK, 0, 3)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.QUARTZ_BLOCK, 1, 1))).addIngredient(Item.get(Item.SLAB, 6, 2)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SLAB, 3, 6))).addIngredient(Item.get(Item.COBBLESTONE, 0, 3)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.COBBLESTONE_WALL, 0, 6))).addIngredient(Item.get(Item.COBBLESTONE, 0, 6)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.COBBLESTONE_WALL, 1, 6))).addIngredient(Item.get(Item.MOSS_STONE, 0, 6)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.NETHER_BRICKS, 0, 1))).addIngredient(Item.get(Item.NETHER_BRICK, 0, 4)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.NETHER_BRICKS_STAIRS, 0, 4))).addIngredient(Item.get(Item.NETHER_BRICKS, 0, 6)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.QUARTZ_BLOCK, 2, 2))).addIngredient(Item.get(Item.QUARTZ_BLOCK, 0, 2)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SLAB, 6, 6))).addIngredient(Item.get(Item.QUARTZ_BLOCK, 0, 3)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SANDSTONE_STAIRS, 0, 4))).addIngredient(Item.get(Item.SANDSTONE, 0, 6)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SANDSTONE, 0, 1))).addIngredient(Item.get(Item.SAND, 0, 4)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SANDSTONE, 2, 4))).addIngredient(Item.get(Item.SANDSTONE, 0, 4)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SANDSTONE, 1, 1))).addIngredient(Item.get(Item.SLAB, 1, 2)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SLAB, 1, 6))).addIngredient(Item.get(Item.SANDSTONE, 0, 3)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE_BRICK_STAIRS, 0, 4))).addIngredient(Item.get(Item.STONE_BRICK, null, 6)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE_BRICK, 0, 4))).addIngredient(Item.get(Item.STONE, null, 4)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE_BRICK, 3, 1))).addIngredient(Item.get(Item.SLAB, 5, 2)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE_BRICK, 1, 1))).addIngredient(Item.get(Item.STONE_BRICK, 0, 1)).addIngredient(Item.get(Item.VINES, 0, 1)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SLAB, 5, 6))).addIngredient(Item.get(Item.STONE_BRICK, null, 3)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.SLAB, 0, 6))).addIngredient(Item.get(Item.STONE, null, 3)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.COBBLESTONE_STAIRS, 0, 4))).addIngredient(Item.get(Item.COBBLESTONE, 0, 6)));
 
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE, Stone.POLISHED_GRANITE, 4))).addIngredient(Item.get(Item.STONE, Stone.GRANITE, 4)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE, Stone.POLISHED_DIORITE, 4))).addIngredient(Item.get(Item.STONE, Stone.DIORITE, 4)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE, Stone.POLISHED_ANDESITE, 4))).addIngredient(Item.get(Item.STONE, Stone.ANDESITE, 4)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE, Stone.GRANITE, 1))).addIngredient(Item.get(Item.STONE, Stone.DIORITE, 1)).addIngredient(Item.get(Item.QUARTZ, 0, 1)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE, Stone.DIORITE, 2))).addIngredient(Item.get(Item.COBBLESTONE, 0, 2)).addIngredient(Item.get(Item.QUARTZ, 0, 2)));
-        this.registerRecipe((new StonecutterShapelessRecipe(Item.get(Item.STONE, Stone.ANDESITE, 2))).addIngredient(Item.get(Item.COBBLESTONE, 0, 1)).addIngredient(Item.get(Item.STONE, Stone.DIORITE, 1)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE, Stone.POLISHED_GRANITE, 4))).addIngredient(Item.get(Item.STONE, Stone.GRANITE, 4)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE, Stone.POLISHED_DIORITE, 4))).addIngredient(Item.get(Item.STONE, Stone.DIORITE, 4)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE, Stone.POLISHED_ANDESITE, 4))).addIngredient(Item.get(Item.STONE, Stone.ANDESITE, 4)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE, Stone.GRANITE, 1))).addIngredient(Item.get(Item.STONE, Stone.DIORITE, 1)).addIngredient(Item.get(Item.QUARTZ, 0, 1)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE, Stone.DIORITE, 2))).addIngredient(Item.get(Item.COBBLESTONE, 0, 2)).addIngredient(Item.get(Item.QUARTZ, 0, 2)));
+        this.registerRecipe((new StonecutterShapedRecipe(Item.get(Item.STONE, Stone.ANDESITE, 2))).addIngredient(Item.get(Item.COBBLESTONE, 0, 1)).addIngredient(Item.get(Item.STONE, Stone.DIORITE, 1)));
     }
 
     protected void registerFood() {

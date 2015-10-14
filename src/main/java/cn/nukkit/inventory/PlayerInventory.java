@@ -7,11 +7,10 @@ import cn.nukkit.event.entity.EntityArmorChangeEvent;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.ContainerSetContentPacket;
 import cn.nukkit.network.protocol.ContainerSetSlotPacket;
-import cn.nukkit.network.protocol.PlayerArmorEquipmentPacket;
-import cn.nukkit.network.protocol.PlayerEquipmentPacket;
+import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
+import cn.nukkit.network.protocol.MobEquipmentPacket;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -108,15 +107,14 @@ public class PlayerInventory extends BaseInventory {
     public void sendHeldItem(Player player) {
         Item item = this.getItemInHand();
 
-        PlayerEquipmentPacket pk = new PlayerEquipmentPacket();
+        MobEquipmentPacket pk = new MobEquipmentPacket();
         pk.eid = player.equals(this.getHolder()) ? 0 : this.getHolder().getId();
-        pk.item = (short) item.getId();
+        pk.item = item;
         int damage = item.getDamage();
-        pk.meta = (short) damage;
         pk.slot = (byte) this.getHeldItemSlot();
         pk.selectedSlot = (byte) this.getHeldItemIndex();
 
-        player.dataPacket(pk.setChannel(Network.CHANNEL_ENTITY_SPAWNING));
+        player.dataPacket(pk);
         if (player.equals(this.getHolder())) {
             this.sendSlot(this.getHeldItemSlot(), player);
         }
@@ -125,15 +123,14 @@ public class PlayerInventory extends BaseInventory {
     public void sendHeldItem(Player[] players) {
         Item item = this.getItemInHand();
 
-        PlayerEquipmentPacket pk = new PlayerEquipmentPacket();
+        MobEquipmentPacket pk = new MobEquipmentPacket();
         pk.eid = 0;
-        pk.item = (short) item.getId();
+        pk.item = item;
         int damage = item.getDamage();
-        pk.meta = (short) damage;
         pk.slot = (byte) this.getHeldItemSlot();
         pk.selectedSlot = (byte) this.getHeldItemIndex();
 
-        Server.broadcastPacket(players, pk.setChannel(Network.CHANNEL_ENTITY_SPAWNING));
+        Server.broadcastPacket(players, pk);
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
                 this.sendSlot(this.getHeldItemSlot(), player);
@@ -305,21 +302,11 @@ public class PlayerInventory extends BaseInventory {
 
     public void sendArmorContents(Player[] players) {
         Item[] armor = this.getArmorContents();
-        byte[] slots = new byte[4];
-        for (int i = 0; i < 4; i++) {
-            Item slot = armor[i];
-            if (slot.getId() == Item.AIR) {
-                slots[i] = (byte) 255;
-            } else {
-                slots[i] = (byte) slot.getId();
-            }
-        }
 
-        PlayerArmorEquipmentPacket pk = new PlayerArmorEquipmentPacket();
+        MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
         pk.eid = this.getHolder().getId();
-        pk.slots = slots;
+        pk.slots = armor;
         pk.encode();
-        pk.setChannel(Network.CHANNEL_ENTITY_SPAWNING);
         pk.isEncoded = true;
 
         for (Player player : players) {
@@ -364,19 +351,10 @@ public class PlayerInventory extends BaseInventory {
 
     public void sendArmorSlot(int index, Player[] players) {
         Item[] armor = this.getArmorContents();
-        byte[] slots = new byte[4];
-        for (int i = 0; i < 4; i++) {
-            Item slot = armor[i];
-            if (slot.getId() == Item.AIR) {
-                slots[i] = (byte) 255;
-            } else {
-                slots[i] = (byte) slot.getId();
-            }
-        }
 
-        PlayerArmorEquipmentPacket pk = new PlayerArmorEquipmentPacket();
+        MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
         pk.eid = this.getHolder().getId();
-        pk.slots = slots;
+        pk.slots = armor;
         pk.encode();
         pk.isEncoded = true;
 
@@ -388,7 +366,7 @@ public class PlayerInventory extends BaseInventory {
                 pk2.item = this.getItem(index);
                 player.dataPacket(pk2);
             } else {
-                player.dataPacket(pk.setChannel(Network.CHANNEL_ENTITY_SPAWNING));
+                player.dataPacket(pk);
             }
         }
     }
@@ -410,11 +388,19 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public void sendContents(Player[] players) {
         ContainerSetContentPacket pk = new ContainerSetContentPacket();
-        pk.setChannel(Network.CHANNEL_WORLD_EVENTS);
-        pk.slots = new Item[this.getSize()];
-        for (int i = 0; i < this.getSize(); ++i) {
-            pk.slots[i] = this.getItem(i);
+        InventoryHolder holder = this.getHolder();
+        if (holder instanceof Player && ((Player) holder).isCreative()) {
+            pk.slots = new Item[Item.getCreativeItems().size()];
+            for (int i = 0; i < Item.getCreativeItems().size(); ++i) {
+                pk.slots[i] = Item.getCreativeItem(i);
+            }
+        } else {
+            pk.slots = new Item[this.getSize()];
+            for (int i = 0; i < this.getSize(); ++i) {
+                pk.slots[i] = this.getItem(i);
+            }
         }
+
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
@@ -447,7 +433,6 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public void sendSlot(int index, Player[] players) {
         ContainerSetSlotPacket pk = new ContainerSetSlotPacket();
-        pk.setChannel(Network.CHANNEL_WORLD_EVENTS);
         pk.slot = (short) index;
         pk.item = this.getItem(index).clone();
 

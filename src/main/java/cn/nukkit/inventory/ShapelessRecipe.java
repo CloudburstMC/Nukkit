@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * author: MagicDroidX
@@ -13,6 +14,8 @@ import java.util.List;
 public class ShapelessRecipe implements Recipe {
 
     private Item output;
+
+    private UUID uuid = null;
 
     private List<Item> ingredients = new ArrayList<>();
 
@@ -23,6 +26,18 @@ public class ShapelessRecipe implements Recipe {
     @Override
     public Item getResult() {
         return this.output.clone();
+    }
+
+    @Override
+    public UUID getId() {
+        return this.uuid;
+    }
+
+    public void setId(UUID uuid) {
+        if (this.uuid != null) {
+            throw new IllegalStateException("Id is already set");
+        }
+        this.uuid = uuid;
     }
 
     public ShapelessRecipe addIngredient(Item item) {
@@ -47,7 +62,7 @@ public class ShapelessRecipe implements Recipe {
                 break;
             }
 
-            if (ingredient.equals(item, item.getDamage() != null)) {
+            if (ingredient.equals(item, item.getDamage() != null, item.getCompoundTag() != null)) {
                 this.ingredients.remove(ingredient);
                 item.setCount(item.getCount() - 1);
             }

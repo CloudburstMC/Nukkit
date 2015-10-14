@@ -3,11 +3,15 @@ package cn.nukkit.inventory;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 
+import java.util.UUID;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class FurnaceRecipe implements Recipe {
+
+    private UUID uuid = null;
 
     private Item output;
 
@@ -24,6 +28,18 @@ public class FurnaceRecipe implements Recipe {
 
     public Item getInput() {
         return this.ingredient.clone();
+    }
+
+    @Override
+    public UUID getId() {
+        return uuid;
+    }
+
+    public void setId(UUID uuid) {
+        if (this.uuid != null) {
+            throw new IllegalStateException("Id is already set");
+        }
+        this.uuid = uuid;
     }
 
     @Override

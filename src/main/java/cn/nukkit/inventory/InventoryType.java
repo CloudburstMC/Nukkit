@@ -15,6 +15,10 @@ public class InventoryType {
     public static final byte CRAFTING = 4;
     public static final byte WORKBENCH = 5;
     public static final byte STONECUTTER = 6;
+    public static final byte BREWING_STAND = 7;
+    public static final byte ANVIL = 8;
+    public static final byte ENCHANT_TABLE = 9;
+
 
     private static Map<Byte, InventoryType> defaults = new HashMap<>();
 
@@ -37,7 +41,10 @@ public class InventoryType {
         defaults.put(FURNACE, new InventoryType((byte) 3, "Furnace", (byte) 2));
         defaults.put(CRAFTING, new InventoryType((byte) 5, "Crafting", (byte) 1)); //4 CRAFTING slots, 1 RESULT
         defaults.put(WORKBENCH, new InventoryType((byte) 10, "Crafting", (byte) 1)); //9 CRAFTING slots, 1 RESULT
-        defaults.put(STONECUTTER, new InventoryType((byte) 10, "Crafting", (byte) 3)); //9 CRAFTING slots, 1 RESULT
+        defaults.put(STONECUTTER, new InventoryType((byte) 10, "Crafting", (byte) 1)); //9 CRAFTING slots, 1 RESULT
+        defaults.put(ENCHANT_TABLE, new InventoryType((byte) 2, "Enchant", (byte) 4)); //1 INPUT/OUTPUT, 1 LAPIS
+        defaults.put(BREWING_STAND, new InventoryType((byte) 4, "Brewing", (byte) 5)); //1 INPUT, 3 POTION
+        defaults.put(ANVIL, new InventoryType((byte) 3, "Anvil", (byte) 6)); //2 INPUT, 1 OUTPUT
     }
 
     public InventoryType(byte defaultSize, String defaultTile, byte typeId) {

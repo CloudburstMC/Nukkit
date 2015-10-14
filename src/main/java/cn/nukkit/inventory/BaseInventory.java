@@ -5,7 +5,6 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.ContainerSetContentPacket;
 import cn.nukkit.network.protocol.ContainerSetSlotPacket;
 
@@ -173,8 +172,9 @@ public abstract class BaseInventory implements Inventory {
     public boolean contains(Item item) {
         int count = Math.max(1, item.getCount());
         boolean checkDamage = item.getDamage() != null;
+        boolean checkTag = item.getCompoundTag() != null;
         for (Item i : this.getContents().values()) {
-            if (item.equals(i, checkDamage)) {
+            if (item.equals(i, checkDamage, checkTag)) {
                 count -= i.getCount();
                 if (count <= 0) {
                     return true;
@@ -189,8 +189,9 @@ public abstract class BaseInventory implements Inventory {
     public Map<Integer, Item> all(Item item) {
         Map<Integer, Item> slots = new HashMap<>();
         boolean checkDamage = item.getDamage() != null;
+        boolean checkTag = item.getCompoundTag() != null;
         for (Map.Entry<Integer, Item> entry : this.getContents().entrySet()) {
-            if (item.equals(entry.getValue(), checkDamage)) {
+            if (item.equals(entry.getValue(), checkDamage, checkTag)) {
                 slots.put(entry.getKey(), entry.getValue());
             }
         }
@@ -201,8 +202,9 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public void remove(Item item) {
         boolean checkDamage = item.getDamage() != null;
+        boolean checkTag = item.getCompoundTag() != null;
         for (Map.Entry<Integer, Item> entry : this.getContents().entrySet()) {
-            if (item.equals(entry.getValue(), checkDamage)) {
+            if (item.equals(entry.getValue(), checkDamage, checkTag)) {
                 this.clear(entry.getKey());
             }
         }
@@ -212,8 +214,9 @@ public abstract class BaseInventory implements Inventory {
     public int first(Item item) {
         int count = Math.max(1, item.getCount());
         boolean checkDamage = item.getDamage() != null;
+        boolean checkTag = item.getCompoundTag() != null;
         for (Map.Entry<Integer, Item> entry : this.getContents().entrySet()) {
-            if (item.equals(entry.getValue(), checkDamage) && entry.getValue().getCount() >= count) {
+            if (item.equals(entry.getValue(), checkDamage, checkTag) && entry.getValue().getCount() >= count) {
                 return entry.getKey();
             }
         }
@@ -236,9 +239,10 @@ public abstract class BaseInventory implements Inventory {
     public boolean canAddItem(Item item) {
         item = item.clone();
         boolean checkDamage = item.getDamage() != null;
+        boolean checkTag = item.getCompoundTag() != null;
         for (int i = 0; i < this.size; ++i) {
             Item slot = this.getItem(i);
-            if (item.equals(slot, checkDamage)) {
+            if (item.equals(slot, checkDamage, checkTag)) {
                 int diff;
                 if ((diff = slot.getMaxStackSize() - slot.getCount()) > 0) {
                     item.setCount(item.getCount() - diff);
@@ -273,7 +277,7 @@ public abstract class BaseInventory implements Inventory {
             }
 
             for (Item slot : itemSlots) {
-                if (slot.equals(item, true) && item.getCount() < item.getMaxStackSize()) {
+                if (slot.equals(item) && item.getCount() < item.getMaxStackSize()) {
                     int amount = Math.min(item.getMaxStackSize() - item.getCount(), slot.getCount());
                     amount = Math.min(amount, this.getMaxStackSize());
                     if (amount > 0) {
@@ -327,7 +331,7 @@ public abstract class BaseInventory implements Inventory {
             }
 
             for (Item slot : itemSlots) {
-                if (slot.equals(item, slot.getDamage() != null)) {
+                if (slot.equals(item, slot.getDamage() != null, item.getCompoundTag() != null)) {
                     int amount = Math.min(item.getCount(), slot.getCount());
                     slot.setCount(slot.getCount() - amount);
                     item.setCount(item.getCount() - amount);
@@ -442,7 +446,7 @@ public abstract class BaseInventory implements Inventory {
                 continue;
             }
             pk.windowid = (byte) id;
-            player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+            player.dataPacket(pk);
         }
     }
 
@@ -469,7 +473,7 @@ public abstract class BaseInventory implements Inventory {
                 continue;
             }
             pk.windowid = (byte) id;
-            player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+            player.dataPacket(pk);
         }
     }
 

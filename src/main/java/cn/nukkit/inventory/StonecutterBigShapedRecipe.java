@@ -6,8 +6,8 @@ import cn.nukkit.item.Item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class StonecutterShapelessRecipe extends ShapelessRecipe {
-    public StonecutterShapelessRecipe(Item result) {
+public class StonecutterBigShapedRecipe extends ShapedRecipe {
+    public StonecutterBigShapedRecipe(Item result) {
         super(result);
     }
 }

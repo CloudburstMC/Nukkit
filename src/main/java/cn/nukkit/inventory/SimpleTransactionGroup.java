@@ -80,7 +80,7 @@ public class SimpleTransactionGroup implements TransactionGroup {
             }
             Item checkSourceItem = ts.getInventory().getItem(ts.getSlot());
             Item sourceItem = ts.getSourceItem();
-            if (!checkSourceItem.equals(sourceItem, true) || sourceItem.getCount() != checkSourceItem.getCount()) {
+            if (!checkSourceItem.deepEquals(sourceItem) || sourceItem.getCount() != checkSourceItem.getCount()) {
                 return false;
             }
             if (sourceItem.getId() != Item.AIR) {
@@ -90,7 +90,7 @@ public class SimpleTransactionGroup implements TransactionGroup {
 
         for (Item needItem : needItems) {
             for (Item haveItem : haveItems) {
-                if (needItem.equals(haveItem, true)) {
+                if (needItem.deepEquals(haveItem)) {
                     int amount = Math.min(haveItem.getCount(), needItem.getCount());
                     needItem.setCount(needItem.getCount() - amount);
                     haveItem.setCount(haveItem.getCount() - amount);
