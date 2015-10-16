@@ -15,4 +15,6 @@ public interface Recipe {
     void registerToCraftingManager();
 
     UUID getId();
+
+    void setId(UUID id);
 }

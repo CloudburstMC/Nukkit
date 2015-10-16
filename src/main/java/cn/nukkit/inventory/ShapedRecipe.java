@@ -68,11 +68,22 @@ public class ShapedRecipe implements Recipe {
         return uuid;
     }
 
+    @Override
     public void setId(UUID id) {
         if (this.uuid != null) {
             throw new IllegalStateException("Id is already set");
         }
         this.uuid = id;
+    }
+
+    public ShapedRecipe setIngredient(String key, Item item) {
+        if (!this.shapes.containsKey(key.charAt(0))) {
+            throw new RuntimeException("Symbol does not appear in the shape: " + key);
+        }
+
+        this.fixRecipe(key.charAt(0), item);
+
+        return this;
     }
 
     public ShapedRecipe setIngredient(char key, Item item) {

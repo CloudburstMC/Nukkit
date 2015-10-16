@@ -7,7 +7,8 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class StonecutterBigShapedRecipe extends ShapedRecipe {
-    public StonecutterBigShapedRecipe(Item result) {
-        super(result);
+
+    public StonecutterBigShapedRecipe(Item result, String... shape) {
+        super(result, shape);
     }
 }

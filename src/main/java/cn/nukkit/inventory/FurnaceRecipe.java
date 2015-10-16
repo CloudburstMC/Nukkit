@@ -35,6 +35,7 @@ public class FurnaceRecipe implements Recipe {
         return uuid;
     }
 
+    @Override
     public void setId(UUID uuid) {
         if (this.uuid != null) {
             throw new IllegalStateException("Id is already set");

@@ -86,4 +86,17 @@ public class Utils {
         }
         return UUID.nameUUIDFromBytes(builder.toString().getBytes(StandardCharsets.UTF_8));
     }
+
+    public static UUID dataToUUID(byte[]... params) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        for (byte[] param : params) {
+            try {
+                stream.write(param);
+            } catch (IOException e) {
+                break;
+            }
+        }
+        return UUID.nameUUIDFromBytes(stream.toByteArray());
+    }
+
 }

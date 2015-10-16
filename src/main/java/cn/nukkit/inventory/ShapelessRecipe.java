@@ -33,6 +33,7 @@ public class ShapelessRecipe implements Recipe {
         return this.uuid;
     }
 
+    @Override
     public void setId(UUID uuid) {
         if (this.uuid != null) {
             throw new IllegalStateException("Id is already set");

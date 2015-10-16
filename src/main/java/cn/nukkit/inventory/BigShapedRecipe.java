@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class BigShapedRecipe extends ShapedRecipe {
-    public BigShapedRecipe(Item result, String[] shape) {
+    public BigShapedRecipe(Item result, String... shape) {
         super(result, shape);
     }
 }
