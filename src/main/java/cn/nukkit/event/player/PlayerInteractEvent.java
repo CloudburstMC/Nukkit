@@ -42,7 +42,7 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
 
     public PlayerInteractEvent(Player player, Item item, Vector3 block, int face, int action) {
         if (block instanceof Block) {
-            this.blockTouched = blockTouched;
+            this.blockTouched = (Block) block;
             this.touchVector = new Vector3(0, 0, 0);
         } else {
             this.touchVector = block;
