@@ -4,7 +4,6 @@ import cn.nukkit.item.Item;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -93,16 +92,52 @@ public class BinaryStream {
         this.put(Binary.writeInt(i));
     }
 
-    public short getShort() {
-        return this.getShort(true);
+    public long getLLong() {
+        return Binary.readLLong(this.get(8));
     }
 
-    public short getShort(boolean signed) {
-        return signed ? Binary.readSignedShort(this.get(2)) : Binary.readShort(this.get(2));
+    public void putLLong(long l) {
+        this.put(Binary.writeLLong(l));
     }
 
-    public void putShort(short s) {
+    public int getLInt() {
+        return Binary.readLInt(this.get(4));
+    }
+
+    public void putLInt(int i) {
+        this.put(Binary.writeLInt(i));
+    }
+
+    public int getShort() {
+        return Binary.readShort(this.get(2));
+    }
+
+    public void putShort(int s) {
         this.put(Binary.writeShort(s));
+    }
+
+    public short getSignedShort() {
+        return Binary.readSignedShort(this.get(2));
+    }
+
+    public void putSignedShort(short s) {
+        this.put(Binary.writeShort(s));
+    }
+
+    public int getLShort() {
+        return Binary.readLShort(this.get(2));
+    }
+
+    public void putLShort(int s) {
+        this.put(Binary.writeLShort(s));
+    }
+
+    public short getSignedLShort() {
+        return Binary.readSignedLShort(this.get(2));
+    }
+
+    public void putSignedLShort(short s) {
+        this.put(Binary.writeLShort(s));
     }
 
     public float getFloat() {
@@ -111,6 +146,14 @@ public class BinaryStream {
 
     public void putFloat(float v) {
         this.put(Binary.writeFloat(v));
+    }
+
+    public float getLFloat() {
+        return Binary.readLFloat(this.get(4));
+    }
+
+    public void putLFloat(float v) {
+        this.put(Binary.writeLFloat(v));
     }
 
     public int getTriad() {
@@ -129,12 +172,12 @@ public class BinaryStream {
         this.put(Binary.writeLTriad(triad));
     }
 
-    public byte getByte() {
-        return this.buffer[this.offset++];
+    public int getByte() {
+        return this.buffer[this.offset++] & 0xff;
     }
 
-    public void putByte(byte b) {
-        this.put(new byte[]{b});
+    public void putByte(int b) {
+        this.put(new byte[]{(byte) (b & 0xff)});
     }
 
     public byte[][] getDataArray() {
@@ -149,10 +192,6 @@ public class BinaryStream {
         return data;
     }
 
-    public void putDataArray() {
-        this.putDataArray(new byte[0][]);
-    }
-
     public void putDataArray(byte[][] data) {
         for (byte[] v : data) {
             this.putTriad(v.length);
@@ -161,36 +200,48 @@ public class BinaryStream {
     }
 
     public void putUUID(UUID uuid) {
-        long msb = uuid.getMostSignificantBits();
-        int[] parts = new int[4];
-        parts[0] = (int) (msb >> 32);
-        parts[1] = (int) ((msb >> 16) & 0xFFFF);
-        parts[2] = (int) ((msb >> 12) & 0xF);
-        parts[3] = (int) (msb & 0xFFF);
-        for (int i = 0; i < 4; i++) {
-            this.putInt(parts[i]);
-        }
+        this.put(Binary.writeUUID(uuid));
     }
 
     public UUID getUUID() {
-        int[] parts = new int[4];
-        for (int i = 0; i < 4; i++) {
-            parts[i] = this.getInt();
-        }
-        long msb = (parts[0] << 32) | ((parts[1] & 0xFFFF) << 16) | ((parts[2] & 0xF) << 12) | (parts[3] & 0xFFF);
-        return new UUID(msb, new Random().nextLong());
+        return Binary.readUUID(this.get(16));
     }
 
     public Item getSlot() {
-        short id = this.getShort();
-        byte cnt = this.getByte();
-        return Item.get(id, (int) this.getShort(), cnt);
+        short id = this.getSignedShort();
+
+        if (id <= 0) {
+            return Item.get(0, 0, 0);
+        }
+        int cnt = this.getByte();
+
+        int data = this.getShort();
+
+        int nbtLen = this.getShort();
+
+        byte[] nbt = new byte[0];
+        if (nbtLen > 0) {
+            nbt = this.get(nbtLen);
+        }
+
+        return Item.get(
+                id, data, cnt, nbt
+        );
     }
 
     public void putSlot(Item item) {
-        this.putShort((short) item.getId());
-        this.putByte((byte) (item.getCount() & 0xff));
-        this.putShort(item.getDamage());
+        if (item.getId() == 0) {
+            this.putShort(0);
+            return;
+        }
+
+        this.putShort(item.getId());
+        this.putByte(item.getCount());
+        this.putShort(item.getDamage() == null ? -1 : item.getDamage());
+
+        byte[] nbt = item.getCompoundTag();
+        this.putShort(nbt.length);
+        this.put(nbt);
     }
 
     public String getString() {
@@ -199,7 +250,7 @@ public class BinaryStream {
 
     public void putString(String string) {
         byte[] b = string.getBytes(StandardCharsets.UTF_8);
-        this.putShort((short) b.length);
+        this.putShort(b.length);
         this.put(b);
     }
 

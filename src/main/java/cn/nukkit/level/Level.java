@@ -213,6 +213,10 @@ public class Level implements ChunkManager, Metadatable {
         return x + ":" + y + ":" + z;
     }
 
+    public static int chunkBlockHash(int x, int y, int z) {
+        return (x << 11) | (z << 7) | y;
+    }
+
     public static Vector3 getBlockVector3(String hash) {
         String[] h = hash.split(":");
         return new Vector3(Integer.valueOf(h[0]), Integer.valueOf(h[1]), Integer.valueOf(h[2]));
