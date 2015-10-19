@@ -11,7 +11,7 @@ package cn.nukkit.scheduler;
  * 建议让任务继承{@link cn.nukkit.scheduler.PluginTask}类而不是这个类。<br>
  *     For plugin developers: To make sure your task will only be executed in the case of safety
  *     (such as: prevent this task from running if its owner plugin is disabled),
- *     it's suggested to use {@link cn.nukkit.scheduler.PluginTask} instance of extend this class.</p>
+ *     it's suggested to use {@link cn.nukkit.scheduler.PluginTask} instead of extend this class.</p>
  *
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
