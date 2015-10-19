@@ -69,11 +69,11 @@ public class ServerScheduler {
         return this.addTask(Task.of(task), delay, -1);
     }
 
-    public TaskHandler scheduleReaptingTask(Runnable task, int period) {
+    public TaskHandler scheduleRepeatingTask(Runnable task, int period) {
         return this.addTask(Task.of(task), -1, period);
     }
 
-    public TaskHandler scheduleReaptingTask(Task task, int period) {
+    public TaskHandler scheduleRepeatingTask(Task task, int period) {
         return this.addTask(task, -1, period);
     }
 
