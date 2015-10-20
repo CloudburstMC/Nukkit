@@ -6,33 +6,33 @@ package cn.nukkit.item;
  */
 public class Enchantment implements Cloneable {
 
-    public static final short TYPE_INVALID = -1;
+    public static final int TYPE_INVALID = -1;
 
-    public static final short TYPE_ARMOR_PROTECTION = 0;
-    public static final short TYPE_ARMOR_FIRE_PROTECTION = 1;
-    public static final short TYPE_ARMOR_FALL_PROTECTION = 2;
-    public static final short TYPE_ARMOR_EXPLOSION_PROTECTION = 3;
-    public static final short TYPE_ARMOR_PROJECTILE_PROTECTION = 4;
-    public static final short TYPE_ARMOR_THORNS = 5;
-    public static final short TYPE_WATER_BREATHING = 6;
-    public static final short TYPE_WATER_SPEED = 7;
-    public static final short TYPE_WATER_AFFINITY = 8;
-    public static final short TYPE_WEAPON_SHARPNESS = 9;
-    public static final short TYPE_WEAPON_SMITE = 10;
-    public static final short TYPE_WEAPON_ARTHROPODS = 11;
-    public static final short TYPE_WEAPON_KNOCKBACK = 12;
-    public static final short TYPE_WEAPON_FIRE_ASPECT = 13;
-    public static final short TYPE_WEAPON_LOOTING = 14;
-    public static final short TYPE_MINING_EFFICIENCY = 15;
-    public static final short TYPE_MINING_SILK_TOUCH = 16;
-    public static final short TYPE_MINING_DURABILITY = 17;
-    public static final short TYPE_MINING_FORTUNE = 18;
-    public static final short TYPE_BOW_POWER = 19;
-    public static final short TYPE_BOW_KNOCKBACK = 20;
-    public static final short TYPE_BOW_FLAME = 21;
-    public static final short TYPE_BOW_INFINITY = 22;
-    public static final short TYPE_FISHING_FORTUNE = 23;
-    public static final short TYPE_FISHING_LURE = 24;
+    public static final int TYPE_ARMOR_PROTECTION = 0;
+    public static final int TYPE_ARMOR_FIRE_PROTECTION = 1;
+    public static final int TYPE_ARMOR_FALL_PROTECTION = 2;
+    public static final int TYPE_ARMOR_EXPLOSION_PROTECTION = 3;
+    public static final int TYPE_ARMOR_PROJECTILE_PROTECTION = 4;
+    public static final int TYPE_ARMOR_THORNS = 5;
+    public static final int TYPE_WATER_BREATHING = 6;
+    public static final int TYPE_WATER_SPEED = 7;
+    public static final int TYPE_WATER_AFFINITY = 8;
+    public static final int TYPE_WEAPON_SHARPNESS = 9;
+    public static final int TYPE_WEAPON_SMITE = 10;
+    public static final int TYPE_WEAPON_ARTHROPODS = 11;
+    public static final int TYPE_WEAPON_KNOCKBACK = 12;
+    public static final int TYPE_WEAPON_FIRE_ASPECT = 13;
+    public static final int TYPE_WEAPON_LOOTING = 14;
+    public static final int TYPE_MINING_EFFICIENCY = 15;
+    public static final int TYPE_MINING_SILK_TOUCH = 16;
+    public static final int TYPE_MINING_DURABILITY = 17;
+    public static final int TYPE_MINING_FORTUNE = 18;
+    public static final int TYPE_BOW_POWER = 19;
+    public static final int TYPE_BOW_KNOCKBACK = 20;
+    public static final int TYPE_BOW_FLAME = 21;
+    public static final int TYPE_BOW_INFINITY = 22;
+    public static final int TYPE_FISHING_FORTUNE = 23;
+    public static final int TYPE_FISHING_LURE = 24;
 
     public static final int RARITY_COMMON = 0;
     public static final int RARITY_UNCOMMON = 1;
@@ -73,7 +73,7 @@ public class Enchantment implements Cloneable {
 
     }
 
-    public static Enchantment getEnchantment(short id) {
+    public static Enchantment getEnchantment(int id) {
         try {
             if (enchantments[id] != null) {
                 return enchantments[id].clone();
@@ -93,14 +93,14 @@ public class Enchantment implements Cloneable {
         }
     }
 
-    private short id;
-    private short level = 1;
+    private int id;
+    private int level = 1;
     private String name;
     private int rarity;
     private int activationType;
     private int slot;
 
-    private Enchantment(short id, String name, int rarity, int activationType, int slot) {
+    private Enchantment(int id, String name, int rarity, int activationType, int slot) {
         this.id = id;
         this.name = name;
         this.rarity = rarity;
@@ -108,7 +108,7 @@ public class Enchantment implements Cloneable {
         this.slot = slot;
     }
 
-    public short getId() {
+    public int getId() {
         return id;
     }
 
@@ -132,11 +132,11 @@ public class Enchantment implements Cloneable {
         return (this.slot & slot) > 0;
     }
 
-    public short getLevel() {
+    public int getLevel() {
         return level;
     }
 
-    public Enchantment setLevel(short level) {
+    public Enchantment setLevel(int level) {
         this.level = level;
         return this;
     }

@@ -877,7 +877,7 @@ public class Item implements Cloneable {
     public Tag getNamedTagEntry(String name) {
         CompoundTag tag = this.getNamedTag();
         if (tag != null) {
-            return tag.contains("name") ? tag.get("name") : null;
+            return tag.contains(name) ? tag.get(name) : null;
         }
 
         return null;

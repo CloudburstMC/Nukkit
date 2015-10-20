@@ -6,16 +6,19 @@ import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.nbt.NbtIo;
+import cn.nukkit.network.protocol.FullChunkDataPacket;
 import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.tile.Spawnable;
+import cn.nukkit.tile.Tile;
+import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -102,7 +105,53 @@ public class Anvil extends BaseLevelProvider {
 
     @Override
     public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
-        return new ChunkRequestTask(this.getLevel(), this.getChunk(x, z, true));
+        FullChunk chunk = this.getChunk(x, z, false);
+        if (chunk == null) {
+            throw new ChunkException("Invalid Chunk Set");
+        }
+
+        byte[] tiles = new byte[0];
+
+        if (!chunk.getTiles().isEmpty()) {
+            List<CompoundTag> tagList = new ArrayList<>();
+
+            for (Tile tile : chunk.getTiles().values()) {
+                if (tile instanceof Spawnable) {
+                    tagList.add(((Spawnable) tile).getSpawnCompound());
+                }
+            }
+
+            try {
+                tiles = NbtIo.write(tagList);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        BinaryStream extraData = new BinaryStream();
+        extraData.putLInt(chunk.getBlockExtraDataArray().size());
+        for (Integer key : chunk.getBlockExtraDataArray().values()) {
+            extraData.putLInt(key);
+            extraData.putLShort(chunk.getBlockExtraDataArray().get(key));
+        }
+
+        BinaryStream stream = new BinaryStream(new byte[65536]);
+        stream.put(chunk.getBlockIdArray());
+        stream.put(chunk.getBlockDataArray());
+        stream.put(chunk.getBlockSkyLightArray());
+        stream.put(chunk.getBlockLightArray());
+        for (int height : chunk.getHeightMapArray()) {
+            stream.putByte((byte) (height & 0xff));
+        }
+        for (int color : chunk.getBiomeColorArray()) {
+            stream.put(Binary.writeInt(color));
+        }
+        stream.put(extraData.getBuffer());
+        stream.put(tiles);
+
+        this.getLevel().chunkRequestCallback(x, z, stream.getBuffer(), FullChunkDataPacket.ORDER_LAYERED);
+
+        return null;
     }
 
     @Override

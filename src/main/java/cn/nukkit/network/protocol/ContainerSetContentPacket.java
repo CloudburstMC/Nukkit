@@ -19,7 +19,7 @@ public class ContainerSetContentPacket extends DataPacket {
     public static final byte SPECIAL_CREATIVE = 0x79;
     public static final byte SPECIAL_CRAFTING = 0x7a;
 
-    public byte windowid;
+    public int windowid;
     public Item[] slots = new Item[0];
     public int[] hotbar = new int[0];
 

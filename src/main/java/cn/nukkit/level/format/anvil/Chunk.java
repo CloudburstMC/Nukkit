@@ -8,13 +8,14 @@ import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.*;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Zlib;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -75,6 +76,18 @@ public class Chunk extends BaseChunk {
             }
         }
 
+        Map<Integer, Integer> extraData = new HashMap<>();
+
+        if (!this.nbt.contains("ExtraData") || !(this.nbt.get("ExtraData") instanceof ByteArrayTag)) {
+            this.nbt.putByteArray("ExtraData", Binary.writeInt(0));
+        } else {
+            BinaryStream stream = new BinaryStream(this.nbt.getByteArray("ExtraData"));
+            for (int i = 0; i < stream.getInt(); i++) {
+                int key = stream.getInt();
+                extraData.put(key, stream.getShort());
+            }
+        }
+
         this.provider = level;
         this.x = this.nbt.getInt("xPos");
         this.z = this.nbt.getInt("zPos");
@@ -102,6 +115,8 @@ public class Chunk extends BaseChunk {
         }
         this.heightMap = heightMap;
 
+        this.extraData = extraData;
+
         this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).list;
         this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).list;
 
@@ -111,6 +126,7 @@ public class Chunk extends BaseChunk {
         }
 
         this.nbt.remove("Sections");
+        this.nbt.remove("ExtraData");
     }
 
     @Override
@@ -217,29 +233,38 @@ public class Chunk extends BaseChunk {
                 entities.add(entity.namedTag);
             }
         }
-        ListTag<CompoundTag> listTag = new ListTag<>("Entities");
-        listTag.list = entities;
-        nbt.putList(listTag);
+        ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
+        entityListTag.list = entities;
+        nbt.putList(entityListTag);
+
         ArrayList<CompoundTag> tiles = new ArrayList<>();
         for (Tile tile : this.getTiles().values()) {
             tile.saveNBT();
             tiles.add(tile.namedTag);
         }
-        ListTag<CompoundTag> listTag1 = new ListTag<>("TileEntities");
-        listTag1.list = tiles;
-        nbt.putList(listTag1);
+        ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
+        tileListTag.list = tiles;
+        nbt.putList(tileListTag);
+
+        BinaryStream extraData = new BinaryStream();
+        Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();
+        extraData.putInt(extraDataArray.size());
+        for (Integer key : extraDataArray.keySet()) {
+            extraData.putInt(key);
+            extraData.putShort(extraDataArray.get(key));
+        }
+
+        nbt.putByteArray("ExtraData", extraData.getBuffer());
+
         CompoundTag chunk = new CompoundTag("");
         chunk.putCompound("Level", nbt);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream);
 
         try {
-            NbtIo.write(chunk, outputStream);
+            return NbtIo.write(chunk);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return byteArrayOutputStream.toByteArray();
     }
 
     @Override
@@ -271,25 +296,34 @@ public class Chunk extends BaseChunk {
                 entities.add(entity.namedTag);
             }
         }
-        ListTag<CompoundTag> listTag = new ListTag<>("Entities");
-        listTag.list = entities;
-        nbt.putList(listTag);
+        ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
+        entityListTag.list = entities;
+        nbt.putList(entityListTag);
+
         ArrayList<CompoundTag> tiles = new ArrayList<>();
         for (Tile tile : this.getTiles().values()) {
             tile.saveNBT();
             tiles.add(tile.namedTag);
         }
-        ListTag<CompoundTag> listTag1 = new ListTag<>("TileEntities");
-        listTag1.list = tiles;
-        nbt.putList(listTag1);
+        ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
+        tileListTag.list = tiles;
+        nbt.putList(tileListTag);
+
+        BinaryStream extraData = new BinaryStream();
+        Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();
+        extraData.putInt(extraDataArray.size());
+        for (Integer key : extraDataArray.keySet()) {
+            extraData.putInt(key);
+            extraData.putShort(extraDataArray.get(key));
+        }
+
+        nbt.putByteArray("ExtraData", extraData.getBuffer());
+
         CompoundTag chunk = new CompoundTag("");
         chunk.putCompound("Level", nbt);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream);
-        try {
-            NbtIo.write(chunk, outputStream);
 
-            return Zlib.deflate(byteArrayOutputStream.toByteArray());
+        try {
+            return Zlib.deflate(NbtIo.write(chunk), RegionLoader.COMPRESSION_LEVEL);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
