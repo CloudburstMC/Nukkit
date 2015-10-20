@@ -4,14 +4,12 @@ import cn.nukkit.raknet.protocol.EncapsulatedPacket;
 import cn.nukkit.utils.BinaryStream;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author Nukkit Project Team
  */
 public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     public boolean isEncoded = false;
     private int channel = 0;
-
     public EncapsulatedPacket encapsulatedPacket;
     public byte reliability;
     public Integer orderIndex = null;
@@ -26,7 +24,7 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     @Override
     public void reset() {
         super.reset();
-        this.putByte(this.pid());
+        putByte(pid());
     }
 
     @Deprecated
@@ -55,4 +53,5 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
             return null;
         }
     }
+
 }

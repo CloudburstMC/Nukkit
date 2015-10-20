@@ -139,7 +139,8 @@ public class Network {
                     if (pk.pid() == Info.BATCH_PACKET) {
                         throw new IllegalStateException("Invalid BatchPacket inside BatchPacket");
                     }
-                    pk.setBuffer(data, offset);
+                    pk.setBuffer(data);
+                    pk.setOffset(offset);
                     pk.decode();
                     p.handleDataPacket(pk);
                     offset += pk.getOffset();

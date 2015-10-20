@@ -7,8 +7,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author Nukkit Project Team
  */
 public class BinaryStream {
 
@@ -51,6 +50,10 @@ public class BinaryStream {
 
     public int getOffset() {
         return offset;
+    }
+
+    public int getCount() {
+        return count;
     }
 
     public byte[] getBuffer() {
