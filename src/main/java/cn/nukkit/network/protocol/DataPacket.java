@@ -1,20 +1,13 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.raknet.protocol.EncapsulatedPacket;
-import cn.nukkit.utils.Binary;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Random;
-import java.util.UUID;
+import cn.nukkit.utils.BinaryStream;
 
 /**
  * @author Nukkit Project Team
  */
-public abstract class DataPacket implements Cloneable {
+public abstract class DataPacket extends BinaryStream implements Cloneable {
 
-    public int offset = 0;
-    public byte[] buffer = new byte[0];
     public boolean isEncoded = false;
     private int channel = 0;
     public EncapsulatedPacket encapsulatedPacket;
@@ -28,9 +21,10 @@ public abstract class DataPacket implements Cloneable {
 
     public abstract void decode();
 
-    protected void reset() {
-        this.buffer = new byte[]{this.pid()};
-        this.offset = 0;
+    @Override
+    public void reset() {
+        super.reset();
+        putByte(pid());
     }
 
     @Deprecated
@@ -59,4 +53,5 @@ public abstract class DataPacket implements Cloneable {
             return null;
         }
     }
+
 }
