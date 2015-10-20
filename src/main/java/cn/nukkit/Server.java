@@ -314,8 +314,8 @@ public class Server {
     public static void broadcastPacket(Player[] players, DataPacket packet) {
         packet.encode();
         packet.isEncoded = true;
-        if (Network.BATCH_THRESHOLD >= 0 && packet.buffer.length >= Network.BATCH_THRESHOLD) {
-            Server.getInstance().batchPackets(players, new byte[][]{packet.buffer}, false, packet.getChannel());
+        if (Network.BATCH_THRESHOLD >= 0 && packet.getCount() >= Network.BATCH_THRESHOLD) {
+            Server.getInstance().batchPackets(players, new byte[][]{packet.getBuffer()}, false, packet.getChannel());
             return;
         }
 
@@ -343,7 +343,7 @@ public class Server {
             if (!p.isEncoded) {
                 p.encode();
             }
-            payload[i] = p.buffer;
+            payload[i] = p.getBuffer();
         }
         this.batchPackets(players, payload, forceSync, channel);
     }
