@@ -3,6 +3,7 @@ package cn.nukkit.nbt;
 import cn.nukkit.item.Item;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -87,6 +88,15 @@ public class NbtIo {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream stream = new DataOutputStream(baos);
         Tag.writeNamedTag(tag, stream);
+        return baos.toByteArray();
+    }
+
+    public static byte[] write(Collection<CompoundTag> tags) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream stream = new DataOutputStream(baos);
+        for (CompoundTag tag : tags) {
+            Tag.writeNamedTag(tag, stream);
+        }
         return baos.toByteArray();
     }
 

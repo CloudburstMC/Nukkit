@@ -17,7 +17,6 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
@@ -608,10 +607,16 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.isConnected();
     }
 
+
     public static BatchPacket getChunkCacheFromData(int chunkX, int chunkZ, byte[] payload) {
+        return getChunkCacheFromData(chunkX, chunkZ, payload, FullChunkDataPacket.ORDER_COLUMNS);
+    }
+
+    public static BatchPacket getChunkCacheFromData(int chunkX, int chunkZ, byte[] payload, byte ordering) {
         FullChunkDataPacket pk = new FullChunkDataPacket();
         pk.chunkX = chunkX;
         pk.chunkZ = chunkZ;
+        pk.order = ordering;
         pk.data = payload;
         pk.encode();
 
@@ -621,7 +626,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        batch.setChannel(Network.CHANNEL_WORLD_CHUNKS);
+
         batch.encode();
         batch.isEncoded = true;
         return batch;

@@ -52,7 +52,7 @@ public class CompoundTag extends Tag {
         return this;
     }
 
-    public CompoundTag putShort(String name, short value) {
+    public CompoundTag putShort(String name, int value) {
         tags.put(name, new ShortTag(name, value));
         return this;
     }
@@ -125,7 +125,7 @@ public class CompoundTag extends Tag {
         return ((ByteTag) tags.get(name)).data;
     }
 
-    public short getShort(String name) {
+    public int getShort(String name) {
         if (!tags.containsKey(name)) return (short) 0;
         return ((ShortTag) tags.get(name)).data;
     }

@@ -42,7 +42,7 @@ public class BinaryStream {
 
     public void setBuffer(byte[] buffer) {
         this.buffer = buffer;
-        this.count = buffer.length;
+        this.count = buffer == null ? -1 : buffer.length;
     }
 
     public void setOffset(int offset) {
