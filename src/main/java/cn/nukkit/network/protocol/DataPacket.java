@@ -1,13 +1,7 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.raknet.protocol.EncapsulatedPacket;
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Random;
-import java.util.UUID;
 
 /**
  * @author Nukkit Project Team
