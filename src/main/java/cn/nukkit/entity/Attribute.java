@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-class Attribute implements Cloneable {
+public class Attribute implements Cloneable {
+
     public static final int MAX_HEALTH = 0;
     public static final int EXPERIENCE = 1;
     public static final int EXPERIENCE_LEVEL = 2;
