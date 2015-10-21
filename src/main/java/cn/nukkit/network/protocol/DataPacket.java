@@ -15,11 +15,11 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     public Integer orderIndex = null;
     public Integer orderChannel = null;
 
-    public abstract byte pid();
+    public abstract void decode();
 
     public abstract void encode();
 
-    public abstract void decode();
+    public abstract byte pid();
 
     @Override
     public void reset() {
