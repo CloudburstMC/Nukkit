@@ -209,13 +209,13 @@ public class Furnace extends Tile implements InventoryHolder, Container {
             int windowId = player.getWindowId(this.getInventory());
             if (windowId > 0) {
                 ContainerSetDataPacket pk = new ContainerSetDataPacket();
-                pk.windowid = (byte) windowId;
+                pk.windowId = (byte) windowId;
                 pk.property = 0;
                 pk.value = this.namedTag.getShort("CookTime");
                 player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
 
                 pk = new ContainerSetDataPacket();
-                pk.windowid = (byte) windowId;
+                pk.windowId = (byte) windowId;
                 pk.property = 1;
                 pk.value = this.namedTag.getShort("BurnTicks");
                 player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));

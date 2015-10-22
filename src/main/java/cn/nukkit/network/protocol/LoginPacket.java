@@ -3,7 +3,7 @@ package cn.nukkit.network.protocol;
 import java.util.UUID;
 
 /**
- * Created by on 15-10-13.
+ * @author Nukkit Project Team
  */
 public class LoginPacket extends DataPacket {
 
@@ -30,20 +30,21 @@ public class LoginPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.username = this.getString();
-        this.protocol1 = this.getInt();
-        this.protocol2 = this.getInt();
+        username = getString();
+        protocol1 = getInt();
+        protocol2 = getInt();
         if (protocol1 < Info.CURRENT_PROTOCOL) {
-            this.setBuffer(null, 0);
+            setBuffer(null);
+            setOffset(0);
             return;
         }
-        this.clientId = this.getLong();
-        this.clientUUID = this.getUUID();
-        this.serverAddress = this.getString();
-        this.clientSecret = this.getString();
+        clientId = getLong();
+        clientUUID = getUUID();
+        serverAddress = getString();
+        clientSecret = getString();
 
-        this.slim = this.getByte() > 0;
-        this.skin = this.getString();
+        slim = getByte() > 0;
+        skin = getString();
     }
 
 

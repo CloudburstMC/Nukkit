@@ -16,8 +16,8 @@ public class MobEquipmentPacket extends DataPacket {
 
     public long eid;
     public Item item;
-    public byte slot;
-    public byte selectedSlot;
+    public int slot;
+    public int selectedSlot;
 
     @Override
     public void decode() {

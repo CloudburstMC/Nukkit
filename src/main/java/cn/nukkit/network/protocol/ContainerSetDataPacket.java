@@ -1,8 +1,7 @@
 package cn.nukkit.network.protocol;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author Nukkit Project Team
  */
 public class ContainerSetDataPacket extends DataPacket {
     public static final byte NETWORK_ID = Info.CONTAINER_SET_DATA_PACKET;
@@ -12,9 +11,9 @@ public class ContainerSetDataPacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    public byte windowid;
-    public short property;
-    public short value;
+    public byte windowId;
+    public int property;
+    public int value;
 
     @Override
     public void decode() {
@@ -24,8 +23,9 @@ public class ContainerSetDataPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.windowid);
+        this.putByte(this.windowId);
         this.putShort(this.property);
         this.putShort(this.value);
     }
+
 }
