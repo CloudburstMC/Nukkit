@@ -3,7 +3,7 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.item.Item;
 
 /**
- * Created on 15-10-21.
+ * @author Nukkit Project Team
  */
 public class UseItemPacket extends DataPacket {
 

@@ -3,9 +3,7 @@ package cn.nukkit.network;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.network.protocol.BatchPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.Info;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Zlib;
 
@@ -13,8 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author Nukkit Project Team
  */
 public class Network {
     public static int BATCH_THRESHOLD = 512;
@@ -186,8 +183,6 @@ public class Network {
     }
 
     private void registerPackets() {
-        this.packetPool = new Class[256];
-        /*
         this.registerPacket(Info.LOGIN_PACKET, LoginPacket.class);
         this.registerPacket(Info.PLAY_STATUS_PACKET, PlayStatusPacket.class);
         this.registerPacket(Info.DISCONNECT_PACKET, DisconnectPacket.class);
@@ -209,8 +204,8 @@ public class Network {
         this.registerPacket(Info.LEVEL_EVENT_PACKET, LevelEventPacket.class);
         this.registerPacket(Info.TILE_EVENT_PACKET, TileEventPacket.class);
         this.registerPacket(Info.ENTITY_EVENT_PACKET, EntityEventPacket.class);
-        this.registerPacket(Info.PLAYER_EQUIPMENT_PACKET, MobEquipmentPacket.class);
-        this.registerPacket(Info.PLAYER_ARMOR_EQUIPMENT_PACKET, MobArmorEquipmentPacket.class);
+        this.registerPacket(Info.MOB_EQUIPMENT_PACKET, MobEquipmentPacket.class);
+        this.registerPacket(Info.MOB_ARMOR_EQUIPMENT_PACKET, MobArmorEquipmentPacket.class);
         this.registerPacket(Info.INTERACT_PACKET, InteractPacket.class);
         this.registerPacket(Info.USE_ITEM_PACKET, UseItemPacket.class);
         this.registerPacket(Info.PLAYER_ACTION_PACKET, PlayerActionPacket.class);
@@ -232,7 +227,7 @@ public class Network {
         this.registerPacket(Info.TILE_ENTITY_DATA_PACKET, TileEntityDataPacket.class);
         this.registerPacket(Info.FULL_CHUNK_DATA_PACKET, FullChunkDataPacket.class);
         this.registerPacket(Info.SET_DIFFICULTY_PACKET, SetDifficultyPacket.class);
-        */
         this.registerPacket(Info.BATCH_PACKET, BatchPacket.class);
     }
+
 }

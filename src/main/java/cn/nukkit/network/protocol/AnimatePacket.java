@@ -1,27 +1,26 @@
 package cn.nukkit.network.protocol;
 
 /**
- * Created on 15-10-15.
+ * @author Nukkit Project Team
  */
-public class InteractPacket extends DataPacket {
+public class AnimatePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.INTERACT_PACKET;
+    public static final byte NETWORK_ID = Info.ANIMATE_PACKET;
 
-    public long eid;
+    public long entityId;
     public int action;
-    public long target;
 
     @Override
     public void decode() {
         action = getByte();
-        target = getLong();
+        entityId = getLong();
     }
 
     @Override
     public void encode() {
         reset();
         putByte(action);
-        putLong(target);
+        putLong(entityId);
     }
 
     @Override

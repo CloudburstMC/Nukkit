@@ -8,7 +8,7 @@ public class TileEntityDataPacket extends DataPacket {
     public static final byte NETWORK_ID = Info.TILE_ENTITY_DATA_PACKET;
 
     public int x;
-    public byte y;
+    public int y;
     public int z;
     public byte[] namedTag;
 
@@ -33,4 +33,5 @@ public class TileEntityDataPacket extends DataPacket {
         this.putInt(this.z);
         this.put(this.namedTag);
     }
+
 }

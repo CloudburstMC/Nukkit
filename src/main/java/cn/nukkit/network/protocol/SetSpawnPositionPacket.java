@@ -3,31 +3,30 @@ package cn.nukkit.network.protocol;
 /**
  * @author Nukkit Project Team
  */
-public class RemoveBlockPacket extends DataPacket {
+public class SetSpawnPositionPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.REMOVE_BLOCK_PACKET;
+    public static final byte NETWORK_ID = Info.SET_SPAWN_POSITION_PACKET;
 
-    public long eid;
-    public int x;
     public int y;
     public int z;
+    public int x;
 
     @Override
     public void decode() {
-        eid = getLong();
-        x = getInt();
-        y = getInt();
-        z = getByte();
+
     }
 
     @Override
     public void encode() {
-        ;
+        reset();
+        putInt(x);
+        putInt(y);
+        putInt(z);
     }
 
     @Override
     public byte pid() {
         return NETWORK_ID;
     }
-
+    
 }
