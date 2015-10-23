@@ -12,11 +12,11 @@ public class WheatSeeds extends Item {
         this(0, 1);
     }
 
-    public WheatSeeds(int meta) {
+    public WheatSeeds(Integer meta) {
         this(meta, 1);
     }
 
-    public WheatSeeds(int meta, int count) {
+    public WheatSeeds(Integer meta, int count) {
         super(WHEAT_SEEDS, 0, count, "Wheat Seeds");
         this.block = Block.get(Item.WHEAT_BLOCK);
     }

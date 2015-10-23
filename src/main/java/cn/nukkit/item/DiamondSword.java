@@ -10,11 +10,11 @@ public class DiamondSword extends Tool {
         this(0, 1);
     }
 
-    public DiamondSword(int meta) {
+    public DiamondSword(Integer meta) {
         this(meta, 1);
     }
 
-    public DiamondSword(int meta, int count) {
+    public DiamondSword(Integer meta, int count) {
         super(DIAMOND_SWORD, meta, count, "Diamond Sword");
     }
 

@@ -10,11 +10,11 @@ public class DiamondPickaxe extends Tool {
         this(0, 1);
     }
 
-    public DiamondPickaxe(int meta) {
+    public DiamondPickaxe(Integer meta) {
         this(meta, 1);
     }
 
-    public DiamondPickaxe(int meta, int count) {
+    public DiamondPickaxe(Integer meta, int count) {
         super(DIAMOND_PICKAXE, meta, count, "Diamond Pickaxe");
     }
 

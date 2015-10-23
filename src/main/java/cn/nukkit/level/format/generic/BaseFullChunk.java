@@ -3,6 +3,7 @@ package cn.nukkit.level.format.generic;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.generator.biome.Biome;
@@ -21,9 +22,9 @@ import java.util.Map;
  * Nukkit Project
  */
 public abstract class BaseFullChunk implements FullChunk {
-    protected Map<Integer, Entity> entities = new HashMap<>();
+    protected Map<Long, Entity> entities = new HashMap<>();
 
-    protected Map<Integer, Tile> tiles = new HashMap<>();
+    protected Map<Long, Tile> tiles = new HashMap<>();
 
     protected Map<Integer, Tile> tileList = new HashMap<>();
 
@@ -43,6 +44,8 @@ public abstract class BaseFullChunk implements FullChunk {
 
     protected List<CompoundTag> NBTentities;
 
+    protected Map<Integer, Integer> extraData = new HashMap<>();
+
     protected LevelProvider provider;
 
     protected int x;
@@ -53,8 +56,13 @@ public abstract class BaseFullChunk implements FullChunk {
     private boolean isInit = false;
 
     @Override
-    public BaseFullChunk clone() throws CloneNotSupportedException {
-        BaseFullChunk chunk = (BaseFullChunk) super.clone();
+    public BaseFullChunk clone() {
+        BaseFullChunk chunk = null;
+        try {
+            chunk = (BaseFullChunk) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
         chunk.biomeColors = biomeColors.clone();
         chunk.blocks = blocks.clone();
         chunk.data = data.clone();
@@ -196,6 +204,27 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
+    public int getBlockExtraData(int x, int y, int z) {
+        int index = Level.chunkBlockHash(x, y, z);
+        if (this.extraData.containsKey(index)) {
+            return this.extraData.get(index);
+        }
+
+        return 0;
+    }
+
+    @Override
+    public void setBlockExtraData(int x, int y, int z, int data) {
+        if (data == 0) {
+            this.extraData.remove(Level.chunkBlockHash(x, y, z));
+        } else {
+            this.extraData.put(Level.chunkBlockHash(x, y, z), data);
+        }
+
+        this.setChanged(true);
+    }
+
+    @Override
     public void populateSkyLight() {
         for (int z = 0; z < 16; ++z) {
             for (int x = 0; x < 16; ++x) {
@@ -277,13 +306,18 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public Map<Integer, Entity> getEntities() {
+    public Map<Long, Entity> getEntities() {
         return entities;
     }
 
     @Override
-    public Map<Integer, Tile> getTiles() {
+    public Map<Long, Tile> getTiles() {
         return tiles;
+    }
+
+    @Override
+    public Map<Integer, Integer> getBlockExtraDataArray() {
+        return this.extraData;
     }
 
     @Override
@@ -318,7 +352,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public boolean unload(boolean save, boolean safe) throws Exception {
+    public boolean unload(boolean save, boolean safe) {
         LevelProvider level = this.getProvider();
         if (level == null) {
             return true;
@@ -403,7 +437,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public byte[] toFastBinary() throws Exception {
+    public byte[] toFastBinary() {
         return this.toBinary();
     }
 

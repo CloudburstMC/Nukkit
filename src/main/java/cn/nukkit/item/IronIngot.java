@@ -10,11 +10,11 @@ public class IronIngot extends Item {
         this(0, 1);
     }
 
-    public IronIngot(int meta) {
+    public IronIngot(Integer meta) {
         this(meta, 1);
     }
 
-    public IronIngot(int meta, int count) {
+    public IronIngot(Integer meta, int count) {
         super(IRON_INGOT, 0, count, "Iron Ingot");
     }
 }

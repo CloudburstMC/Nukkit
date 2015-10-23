@@ -5,6 +5,7 @@ import cn.nukkit.command.*;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.server.QueryRegenerateEvent;
+import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Flat;
@@ -16,9 +17,11 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
+import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
+import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.permission.BanEntry;
@@ -30,7 +33,6 @@ import cn.nukkit.plugin.PluginLoadOrder;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.*;
-import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,11 +79,17 @@ public class Server {
 
     private float maxUse = 0;
 
+    private int sendUsageTicker = 0;
+
+    private boolean dispatchSignals = false;
+
     private MainLogger logger;
 
     private CommandReader console;
 
     private SimpleCommandMap commandMap;
+
+    private CraftingManager craftingManager;
 
     private ConsoleCommandSender consoleSender;
 
@@ -109,6 +117,8 @@ public class Server {
     private String filePath;
     private String dataPath;
     private String pluginPath;
+
+    private Map<String, String> uniquePlayers = new HashMap<>();
 
     private QueryHandler queryHandler;
 
@@ -183,7 +193,7 @@ public class Server {
                 put("level-type", "DEFAULT");
                 put("enable-query", true);
                 put("enable-rcon", false);
-                put("rcon.password", new BASE64Encoder().encode(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
+                put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
                 put("auto-save", false);
             }
         });
@@ -297,6 +307,27 @@ public class Server {
         this.start();
     }
 
+    public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
+        broadcastPacket(players.stream().toArray(Player[]::new), packet);
+    }
+
+    public static void broadcastPacket(Player[] players, DataPacket packet) {
+        packet.encode();
+        packet.isEncoded = true;
+        if (Network.BATCH_THRESHOLD >= 0 && packet.getCount() >= Network.BATCH_THRESHOLD) {
+            Server.getInstance().batchPackets(players, new byte[][]{packet.getBuffer()}, false, packet.getChannel());
+            return;
+        }
+
+        for (Player player : players) {
+            player.dataPacket(packet);
+        }
+
+        if (packet.encapsulatedPacket != null) {
+            packet.encapsulatedPacket = null;
+        }
+    }
+
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
@@ -312,7 +343,7 @@ public class Server {
             if (!p.isEncoded) {
                 p.encode();
             }
-            payload[i] = p.buffer;
+            payload[i] = p.getBuffer();
         }
         this.batchPackets(players, payload, forceSync, channel);
     }
@@ -326,7 +357,24 @@ public class Server {
     }
 
     public void batchPackets(Player[] players, byte[][] payload, boolean forceSync, int channel) {
-        //todo
+        byte[] data = new byte[0];
+        data = Binary.appendBytes(data, payload);
+        List<String> targets = new ArrayList<>();
+        for (Player p : players) {
+            if (p.isConnected()) {
+                targets.add(this.identifier.get(p));
+            }
+        }
+
+        if (!forceSync && this.networkCompressionAsync) {
+            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel, channel));
+        } else {
+            try {
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets, channel);
+            } catch (Exception e) {
+                //ignore
+            }
+        }
     }
 
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
@@ -334,7 +382,17 @@ public class Server {
     }
 
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers, int channel) {
-        //todo
+        BatchPacket pk = new BatchPacket();
+        pk.setChannel(channel);
+        pk.payload = data;
+        pk.encode();
+        pk.isEncoded = true;
+
+        for (String i : identifiers) {
+            if (this.players.containsKey(i)) {
+                this.players.get(i).dataPacket(pk);
+            }
+        }
     }
 
     public void enablePlugins(PluginLoadOrder type) {
@@ -412,7 +470,7 @@ public class Server {
 
             this.getLogger().debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
-            this.scheduler.mainThreadHeartbeat(Long.MAX_VALUE);
+            this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
 
             this.getLogger().debug("Saving properties");
             this.properties.save();
@@ -450,11 +508,6 @@ public class Server {
         this.forceShutdown();
     }
 
-    public void addPlayer(String identifier, Player player) {
-        this.players.put(identifier, player);
-        this.identifier.put(player, identifier);
-    }
-
     public void handlePacket(String address, int port, byte[] payload) {
         try {
             if (payload.length > 2 && Arrays.equals(Binary.subBytes(payload, 0, 2), new byte[]{(byte) 0xfe, (byte) 0xfd}) && this.queryHandler != null) {
@@ -477,6 +530,17 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void onPlayerLogin(Player player) {
+        if (this.sendUsageTicker > 0) {
+            this.uniquePlayers.put(player.getUniqueId().toString(), player.getUniqueId().toString());
+        }
+    }
+
+    public void addPlayer(String identifier, Player player) {
+        this.players.put(identifier, player);
+        this.identifier.put(player, identifier);
     }
 
     private boolean tick() {
@@ -645,8 +709,8 @@ public class Server {
         return this.getPropertyBoolean("generate-structures", true);
     }
 
-    public int getGamemode() {
-        return this.getPropertyInt("gamemode", 0) & 0b11;
+    public byte getGamemode() {
+        return (byte) (this.getPropertyInt("gamemode", 0) & 0b11);
     }
 
     public boolean getForceGamemode() {
@@ -764,6 +828,10 @@ public class Server {
 
     public PluginManager getPluginManager() {
         return this.pluginManager;
+    }
+
+    public CraftingManager getCraftingManager() {
+        return craftingManager;
     }
 
     public ServerScheduler getScheduler() {
@@ -998,7 +1066,23 @@ public class Server {
         return this.banByIP;
     }
 
-    //todo: addOp removeOp
+    public void addOp(String name) {
+        this.operators.set(name.toLowerCase(), true);
+        Player player = this.getPlayerExact(name);
+        if (player != null) {
+            player.recalculatePermissions();
+        }
+        this.operators.save(true);
+    }
+
+    public void removeOp(String name) {
+        this.operators.remove(name.toLowerCase());
+        Player player = this.getPlayerExact(name);
+        if (player != null) {
+            player.recalculatePermissions();
+        }
+        this.operators.save();
+    }
 
     public void addWhitelist(String name) {
         this.whitelist.set(name.toLowerCase(), true);

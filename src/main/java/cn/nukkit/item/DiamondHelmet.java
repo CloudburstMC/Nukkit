@@ -10,11 +10,11 @@ public class DiamondHelmet extends Armor {
         this(0, 1);
     }
 
-    public DiamondHelmet(int meta) {
+    public DiamondHelmet(Integer meta) {
         this(meta, 1);
     }
 
-    public DiamondHelmet(int meta, int count) {
+    public DiamondHelmet(Integer meta, int count) {
         super(DIAMOND_HELMET, meta, count, "Diamond Helmet");
     }
 }

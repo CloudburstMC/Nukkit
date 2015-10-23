@@ -8,7 +8,6 @@ import cn.nukkit.nbt.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,14 +20,14 @@ public abstract class Tile extends Position {
     public static final String CHEST = "Chest";
     public static final String FURNACE = "Furnace";
 
-    public static int tileCount = 1;
+    public static long tileCount = 1;
 
-    private static Map<String, Class> knownTiles = new HashMap<>();
+    private static Map<String, Class<? extends Tile>> knownTiles = new HashMap<>();
     private static Map<String, String> shortNames = new HashMap<>();
 
     public FullChunk chunk;
     public String name;
-    public int id;
+    public long id;
     public int x;
     public int y;
     public int z;
@@ -57,38 +56,36 @@ public abstract class Tile extends Position {
         this.getLevel().addTile(this);
     }
 
-    public static Tile createTile(String type, FullChunk chunk, CompoundTag nbt) {
-        return createTile(type, chunk, nbt, null);
-    }
-
-    public static Tile createTile(String type, FullChunk chunk, CompoundTag nbt, Object[] args) {
+    public static Tile createTile(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
         if (knownTiles.containsKey(type)) {
             try {
-                Class c = knownTiles.get(type);
-                Constructor constructor = c.getDeclaredConstructor(String.class, FullChunk.class, CompoundTag.class, Object[].class);
+                Class<? extends Tile> c = knownTiles.get(type);
+                Constructor constructor = c.getConstructor(String.class, FullChunk.class, CompoundTag.class, Object[].class);
                 constructor.setAccessible(true);
                 return (Tile) constructor.newInstance(type, chunk, nbt, args);
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                return null;
             }
         }
         return null;
     }
 
     public static boolean registerTile(Class<? extends Tile> c) {
-        if (Tile.class.isAssignableFrom(c)) {
-            knownTiles.put(c.getSimpleName(), c);
-            shortNames.put(c.getName(), c.getSimpleName());
-            return true;
+        if (c == null) {
+            return false;
         }
-        return false;
+
+
+        knownTiles.put(c.getSimpleName(), c);
+        shortNames.put(c.getName(), c.getSimpleName());
+        return true;
     }
 
     public String getSaveId() {
         return shortNames.get(this.getClass().getName());
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

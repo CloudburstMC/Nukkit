@@ -10,11 +10,11 @@ public class Snowball extends Item {
         this(0, 1);
     }
 
-    public Snowball(int meta) {
+    public Snowball(Integer meta) {
         this(meta, 1);
     }
 
-    public Snowball(int meta, int count) {
+    public Snowball(Integer meta, int count) {
         super(SNOWBALL, 0, count, "Snowball");
     }
 

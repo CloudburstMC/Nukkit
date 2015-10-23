@@ -12,11 +12,11 @@ public class MelonSeeds extends Item {
         this(0, 1);
     }
 
-    public MelonSeeds(int meta) {
+    public MelonSeeds(Integer meta) {
         this(meta, 1);
     }
 
-    public MelonSeeds(int meta, int count) {
+    public MelonSeeds(Integer meta, int count) {
         super(MELON_SEEDS, 0, count, "Melon Seeds");
         this.block = Block.get(Item.MELON_STEM);
     }

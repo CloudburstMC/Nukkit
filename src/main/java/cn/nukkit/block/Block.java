@@ -12,7 +12,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.utils.MainLogger;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -160,8 +159,12 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int LILY_PAD = 111;
     public static final int NETHER_BRICKS = 112;
     public static final int NETHER_BRICK_BLOCK = 112;
-
+    public static final int NETHER_BRICK_FENCE = 113;
     public static final int NETHER_BRICKS_STAIRS = 114;
+
+    public static final int ENCHANTING_TABLE = 116;
+    public static final int ENCHANT_TABLE = 116;
+    public static final int ENCHANTMENT_TABLE = 116;
 
     public static final int END_PORTAL_FRAME = 120;
     public static final int END_STONE = 121;
@@ -183,6 +186,8 @@ public class Block extends Position implements Metadatable, Cloneable {
 
     public static final int CARROT_BLOCK = 141;
     public static final int POTATO_BLOCK = 142;
+
+    public static final int ANVIL = 145;
 
     public static final int REDSTONE_BLOCK = 152;
 
@@ -239,7 +244,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static boolean[] transparent = null;
 
     protected int id;
-    protected int meta = 0;
+    protected short meta = 0;
 
     public AxisAlignedBB boundingBox = null;
 
@@ -247,9 +252,9 @@ public class Block extends Position implements Metadatable, Cloneable {
         this(id, 0);
     }
 
-    public Block(int id, int meta) {
+    public Block(int id, Integer meta) {
         this.id = id;
-        this.meta = meta;
+        this.meta = (short) (meta != null ? meta : 0);
     }
 
     public static void init() {
@@ -274,10 +279,7 @@ public class Block extends Position implements Metadatable, Cloneable {
                             fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
                         }
                     } catch (Exception e) {
-                        MainLogger logger = Server.getInstance().getLogger();
-                        if (logger != null) {
-                            logger.error("Error while registering " + c.getName());
-                        }
+                        Server.getInstance().getLogger().error("Error while registering " + c.getName());
                         return;
                     }
 
@@ -313,11 +315,11 @@ public class Block extends Position implements Metadatable, Cloneable {
         return get(id, 0);
     }
 
-    public static Block get(int id, int meta) {
+    public static Block get(int id, Integer meta) {
         return get(id, meta, null);
     }
 
-    public static Block get(int id, int meta, Position pos) {
+    public static Block get(int id, Integer meta, Position pos) {
         Block block;
         try {
             Class c = list[id];
@@ -433,12 +435,12 @@ public class Block extends Position implements Metadatable, Cloneable {
 
     }
 
-    public final int getDamage() {
+    public final short getDamage() {
         return this.meta;
     }
 
-    public final void setDamage(int meta) {
-        this.meta = meta & 0x0f;
+    public final void setDamage(Integer meta) {
+        this.meta = (short) (meta == null ? 0 : meta & 0x0f);
     }
 
     final public void position(Position v) {
@@ -460,7 +462,47 @@ public class Block extends Position implements Metadatable, Cloneable {
     }
 
     public double getBreakTime(Item item) {
-        return 0.20;
+        double base = this.getHardness() * 1.5;
+        if (this.canBeBrokenWith(item)) {
+            if (this.getToolType() == Tool.TYPE_SHEARS && item.isShears()) {
+                base /= 15;
+            } else if (
+                    (this.getToolType() == Tool.TYPE_PICKAXE && item.isPickaxe()) ||
+                            (this.getToolType() == Tool.TYPE_AXE && item.isAxe()) ||
+                            (this.getToolType() == Tool.TYPE_SHOVEL && item.isShovel())
+                    ) {
+                int tier = item.getTier();
+                switch (tier) {
+                    case Tool.TIER_WOODEN:
+                        base /= 2;
+                        break;
+                    case Tool.TIER_STONE:
+                        base /= 4;
+                        break;
+                    case Tool.TIER_IRON:
+                        base /= 6;
+                        break;
+                    case Tool.TIER_DIAMOND:
+                        base /= 8;
+                        break;
+                    case Tool.TIER_GOLD:
+                        base /= 12;
+                        break;
+                }
+            }
+        } else {
+            base *= 3.33;
+        }
+
+        if (item.isSword()) {
+            base *= 0.5;
+        }
+
+        return base;
+    }
+
+    public boolean canBeBrokenWith(Item item) {
+        return this.getHardness() != -1;
     }
 
     public Block getSide(int side) {
@@ -571,17 +613,17 @@ public class Block extends Position implements Metadatable, Cloneable {
 
         int f = -1;
 
-        if (vector == v1) {
+        if (vector.equals(v1)) {
             f = 4;
-        } else if (vector == v2) {
+        } else if (vector.equals(v2)) {
             f = 5;
-        } else if (vector == v3) {
+        } else if (vector.equals(v3)) {
             f = 0;
-        } else if (vector == v4) {
+        } else if (vector.equals(v4)) {
             f = 1;
-        } else if (vector == v5) {
+        } else if (vector.equals(v5)) {
             f = 2;
-        } else if (vector == v6) {
+        } else if (vector.equals(v6)) {
             f = 3;
         }
 
@@ -619,11 +661,9 @@ public class Block extends Position implements Metadatable, Cloneable {
 
     public Block clone() {
         try {
-            Block block = (Block) super.clone();
             //block.boundingBox = this.boundingBox.clone();
-            return block;
+            return (Block) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
             return null;
         }
     }

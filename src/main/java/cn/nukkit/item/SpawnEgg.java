@@ -14,11 +14,11 @@ public class SpawnEgg extends Item {
         this(0, 1);
     }
 
-    public SpawnEgg(int meta) {
+    public SpawnEgg(Integer meta) {
         this(meta, 1);
     }
 
-    public SpawnEgg(int meta, int count) {
+    public SpawnEgg(Integer meta, int count) {
         super(SPAWN_EGG, meta, count, "Spawn Egg");
     }
 

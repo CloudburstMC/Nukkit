@@ -10,11 +10,11 @@ public class WoodenPickaxe extends Tool {
         this(0, 1);
     }
 
-    public WoodenPickaxe(int meta) {
+    public WoodenPickaxe(Integer meta) {
         this(meta, 1);
     }
 
-    public WoodenPickaxe(int meta, int count) {
+    public WoodenPickaxe(Integer meta, int count) {
         super(WOODEN_PICKAXE, meta, count, "Wooden Pickaxe");
     }
 

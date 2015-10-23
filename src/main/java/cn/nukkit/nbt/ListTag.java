@@ -59,9 +59,10 @@ public class ListTag<T extends Tag> extends Tag {
         out.println(orgPrefix + "}");
     }
 
-    public void add(T tag) {
+    public ListTag<T> add(T tag) {
         type = tag.getId();
         list.add(tag);
+        return this;
     }
 
     public T get(int index) {

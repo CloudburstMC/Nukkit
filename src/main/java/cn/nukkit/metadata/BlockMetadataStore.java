@@ -18,7 +18,7 @@ public class BlockMetadataStore extends MetadataStore {
     }
 
     @Override
-    protected String disambiguate(Metadatable block, String metadataKey) throws Exception {
+    protected String disambiguate(Metadatable block, String metadataKey) {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Argument must be a Block instance");
         }
@@ -26,7 +26,7 @@ public class BlockMetadataStore extends MetadataStore {
     }
 
     @Override
-    public List<MetadataValue> getMetadata(Object block, String metadataKey) throws Exception {
+    public List<MetadataValue> getMetadata(Object block, String metadataKey) {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Object must be a Block");
         }
@@ -38,7 +38,7 @@ public class BlockMetadataStore extends MetadataStore {
     }
 
     @Override
-    public boolean hasMetadata(Object block, String metadataKey) throws Exception {
+    public boolean hasMetadata(Object block, String metadataKey) {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Object must be a Block");
         }
@@ -50,7 +50,7 @@ public class BlockMetadataStore extends MetadataStore {
     }
 
     @Override
-    public void removeMetadata(Object block, String metadataKey, Plugin owningPlugin) throws Exception {
+    public void removeMetadata(Object block, String metadataKey, Plugin owningPlugin) {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Object must be a Block");
         }
@@ -62,7 +62,7 @@ public class BlockMetadataStore extends MetadataStore {
     }
 
     @Override
-    public void setMetadata(Object block, String metadataKey, MetadataValue newMetadataValue) throws Exception {
+    public void setMetadata(Object block, String metadataKey, MetadataValue newMetadataValue) {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Object must be a Block");
         }

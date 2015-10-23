@@ -54,6 +54,42 @@ public class Bed extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        int time = this.getLevel().getT
+        /*int time = this.getLevel().getTime() % Level.TIME_FULL;
+
+        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
+
+        if (player != null && !isNight) {
+            player.sendMessage(TextFormat.GRAY + "You can only sleep at night");
+            return true;
+        }
+
+        Block blockNorth = this.getSide(2);
+        Block blockSouth = this.getSide(3);
+        Block blockEast = this.getSide(5);
+        Block blockWest = this.getSide(4);
+
+        Block b;
+        if ((this.meta & 0x08) == 0x08) {
+            b = this;
+        } else {
+            if (blockNorth.getId() == this.id && (blockNorth.meta & 0x08) == 0x08) {
+                b = blockNorth;
+            } else if (blockSouth.getId() == this.id && (blockSouth.meta & 0x08) == 0x08) {
+                b = blockSouth;
+            } else if (blockEast.getId() == this.id && (blockEast.meta & 0x08) == 0x08) {
+                b = blockEast;
+            } else if (blockWest.getId() == this.id && (blockWest.meta & 0x08) == 0x08) {
+                b = blockWest;
+            } else {
+                if (player != null) {
+                    player.sendMessage(TextFormat.GRAY + "This bed is incomplete");
+                }
+
+                return true;
+            }
+        }
+*/
+        //todo
+        return false;
     }
 }

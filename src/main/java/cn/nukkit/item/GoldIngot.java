@@ -10,11 +10,11 @@ public class GoldIngot extends Item {
         this(0, 1);
     }
 
-    public GoldIngot(int meta) {
+    public GoldIngot(Integer meta) {
         this(meta, 1);
     }
 
-    public GoldIngot(int meta, int count) {
+    public GoldIngot(Integer meta, int count) {
         super(GOLD_INGOT, 0, count, "Gold Ingot");
     }
 }

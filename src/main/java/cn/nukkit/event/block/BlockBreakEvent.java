@@ -57,7 +57,7 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
         return this.instaBreak;
     }
 
-    public Item[] getBlockDrops() {
+    public Item[] getDrops() {
         return blockDrops;
     }
 

@@ -10,11 +10,11 @@ public class GoldBoots extends Armor {
         this(0, 1);
     }
 
-    public GoldBoots(int meta) {
+    public GoldBoots(Integer meta) {
         this(meta, 1);
     }
 
-    public GoldBoots(int meta, int count) {
+    public GoldBoots(Integer meta, int count) {
         super(GOLD_BOOTS, meta, count, "Gold Boots");
     }
 }

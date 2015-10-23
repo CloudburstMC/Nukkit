@@ -155,7 +155,7 @@ public class MainLogger extends ThreadedLogger {
             System.out.println(cleanMessage);
         }
         CommandReader.getInstance().unstashLine();
-        String str = new SimpleDateFormat("Y-m-d HH:mm:ss").format(now) + " " + cleanMessage + "" + "\r\n";
+        String str = new SimpleDateFormat("Y-M-d").format(now) + " " + cleanMessage + "" + "\r\n";
         /*synchronized (this) {
             this.logStream += str;
             this.notify();

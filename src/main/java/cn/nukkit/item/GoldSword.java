@@ -10,11 +10,11 @@ public class GoldSword extends Tool {
         this(0, 1);
     }
 
-    public GoldSword(int meta) {
+    public GoldSword(Integer meta) {
         this(meta, 1);
     }
 
-    public GoldSword(int meta, int count) {
+    public GoldSword(Integer meta, int count) {
         super(GOLD_SWORD, meta, count, "Gold Sword");
     }
 

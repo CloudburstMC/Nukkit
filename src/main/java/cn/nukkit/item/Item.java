@@ -2,17 +2,39 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.level.Level;
+import cn.nukkit.nbt.*;
+import cn.nukkit.utils.Binary;
 
-import java.lang.reflect.Constructor;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class Item implements Cloneable {
+
+    private static CompoundTag parseCompoundTag(byte[] tag) {
+        try {
+            return NbtIo.read(tag);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private byte[] writeCompoundTag(CompoundTag tag) {
+        try {
+            return NbtIo.write(tag);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     //All Block IDs are here too
     public static final int AIR = 0;
@@ -153,8 +175,12 @@ public class Item implements Cloneable {
     public static final int LILY_PAD = 111;
     public static final int NETHER_BRICKS = 112;
     public static final int NETHER_BRICK_BLOCK = 112;
-
+    public static final int NETHER_BRICK_FENCE = 113;
     public static final int NETHER_BRICKS_STAIRS = 114;
+
+    public static final int ENCHANTING_TABLE = 116;
+    public static final int ENCHANT_TABLE = 116;
+    public static final int ENCHANTMENT_TABLE = 116;
 
     public static final int END_PORTAL = 120;
     public static final int END_STONE = 121;
@@ -176,6 +202,8 @@ public class Item implements Cloneable {
 
     public static final int CARROT_BLOCK = 141;
     public static final int POTATO_BLOCK = 142;
+
+    public static final int ANVIL = 145;
 
     public static final int REDSTONE_BLOCK = 152;
 
@@ -352,6 +380,9 @@ public class Item implements Cloneable {
     public static final int RAW_CHICKEN = 365;
     public static final int COOKED_CHICKEN = 366;
 
+    public static final int GOLD_NUGGET = 371;
+    public static final int GOLDEN_NUGGET = 371;
+
     public static final int SPAWN_EGG = 383;
 
     public static final int EMERALD = 388;
@@ -379,7 +410,9 @@ public class Item implements Cloneable {
 
     protected Block block = null;
     protected int id;
-    protected int meta;
+    protected Integer meta;
+    private byte[] tags = new byte[0];
+    private CompoundTag cachedNBT = null;
     public int count;
     protected int durability = 0;
     protected String name;
@@ -388,17 +421,17 @@ public class Item implements Cloneable {
         this(id, 0, 1, "Unknown");
     }
 
-    public Item(int id, int meta) {
+    public Item(int id, Integer meta) {
         this(id, meta, 1, "Unknown");
     }
 
-    public Item(int id, int meta, int count) {
+    public Item(int id, Integer meta, int count) {
         this(id, meta, count, "Unknown");
     }
 
-    public Item(int id, int meta, int count, String name) {
+    public Item(int id, Integer meta, int count, String name) {
         this.id = id & 0xffff;
-        this.meta = meta & 0xffff;
+        this.meta = meta != null ? (meta & 0xffff) : null;
         this.count = count;
         this.name = name;
         if (!(this.block == null && this.id <= 0xff && Block.list[id] != null)) {
@@ -519,7 +552,7 @@ public class Item implements Cloneable {
     }
 
     public static void addCreativeItem(Item item) {
-        Item.creative.add(Item.get(item.getId(), item.getDamage()));
+        Item.creative.add(Item.get(item.getId(), Integer.valueOf(item.getDamage())));
     }
 
     public static void removeCreativeItem(Item item) {
@@ -555,31 +588,32 @@ public class Item implements Cloneable {
         return get(id, 0);
     }
 
-    public static Item get(int id, int meta) {
+    public static Item get(int id, Integer meta) {
         return get(id, meta, 1);
     }
 
-    public static Item get(int id, int meta, int count) {
+    public static Item get(int id, Integer meta, int count) {
+        return get(id, meta, count, new byte[0]);
+    }
+
+    public static Item get(int id, Integer meta, int count, byte[] tags) {
         try {
             Class c = list[id];
             if (c == null) {
-                return new Item(id, meta, count);
+                return new Item(id, meta, count).setCompoundTag(tags);
             } else if (id < 256) {
-                Constructor constructor = c.getDeclaredConstructor(int.class);
-                constructor.setAccessible(true);
-                return new ItemBlock((Block) constructor.newInstance(meta), meta, count);
+                return new ItemBlock((Block) c.getConstructor(Integer.class).newInstance(meta), meta, count).setCompoundTag(tags);
             } else {
-                Constructor constructor = c.getDeclaredConstructor(int.class, int.class);
-                constructor.setAccessible(true);
-                return (Item) constructor.newInstance(meta, count);
+                return ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count)).setCompoundTag(tags);
             }
         } catch (Exception e) {
-            return new Item(id, meta, count);
+            return new Item(id, meta, count).setCompoundTag(tags);
         }
     }
 
     public static Item fromString(String str) {
-        String[] b = str.trim().replace(' ', '_').split(":");
+        String[] b = str.trim().replace(' ', '_').replace("minecraft:", "").split(":");
+
         int meta;
         if (b.length == 1) {
             meta = 0;
@@ -598,6 +632,281 @@ public class Item implements Cloneable {
         return items;
     }
 
+    public Item setCompoundTag(CompoundTag tag) {
+        this.setNamedTag(tag);
+        return this;
+    }
+
+    public Item setCompoundTag(byte[] tags) {
+        this.tags = tags;
+        this.cachedNBT = null;
+        return this;
+    }
+
+    public byte[] getCompoundTag() {
+        return tags;
+    }
+
+    public boolean hasCompoundTag() {
+        return this.tags != null && this.tags.length > 0;
+    }
+
+    public boolean hasCustomBlockData() {
+        if (!this.hasCompoundTag()) {
+            return false;
+        }
+
+        CompoundTag tag = this.getNamedTag();
+        if (tag.contains("BlockEntityTag") && tag.get("BlockEntityTag") instanceof CompoundTag) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public Item clearCustomBlockData() {
+        if (!this.hasCompoundTag()) {
+            return this;
+        }
+        CompoundTag tag = this.getNamedTag();
+
+        if (tag.contains("BlockEntityTag") && tag.get("BlockEntityTag") instanceof CompoundTag) {
+            tag.remove("BlockEntityTag");
+            this.setNamedTag(tag);
+        }
+
+        return this;
+    }
+
+    public Item setCustomBlockData(CompoundTag compoundTag) {
+        CompoundTag tags = compoundTag.copy();
+        tags.setName("BlockEntityTag");
+
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+
+        tag.putCompound("BlockEntityTag", tags);
+        this.setNamedTag(tag);
+
+        return this;
+    }
+
+    public CompoundTag getCustomBlockData() {
+        if (!this.hasCompoundTag()) {
+            return null;
+        }
+
+        CompoundTag tag = this.getNamedTag();
+
+        if (tag.contains("BlockEntityTag")) {
+            Tag bet = tag.get("BlockEntityTag");
+            if (bet instanceof CompoundTag) {
+                return (CompoundTag) bet;
+            }
+        }
+
+        return null;
+    }
+
+    public boolean hasEnchantments() {
+        if (!this.hasCompoundTag()) {
+            return false;
+        }
+
+        CompoundTag tag = this.getNamedTag();
+
+        if (tag.contains("ench")) {
+            Tag enchTag = tag.get("ench");
+            if (enchTag instanceof ListTag) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public Enchantment getEnchantment(short id) {
+        if (!this.hasEnchantments()) {
+            return null;
+        }
+
+        for (CompoundTag entry : ((ListTag<CompoundTag>) this.getNamedTag().getList("ench")).list) {
+            if (entry.getShort("id") == id) {
+                Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
+                e.setLevel(entry.getShort("lvl"));
+                return e;
+            }
+        }
+
+        return null;
+    }
+
+    public void addEnchantment(Enchantment enchantment) {
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+
+        ListTag<CompoundTag> ench;
+        if (!tag.contains("ench")) {
+            ench = new ListTag<>("ench");
+            tag.putList(ench);
+        }
+
+        boolean found = false;
+
+        ench = (ListTag<CompoundTag>) tag.getList("ench");
+        for (int k = 0; k < ench.list.size(); k++) {
+            CompoundTag entry = ench.list.get(k);
+            if (entry.getShort("id") == enchantment.getId()) {
+                ench.list.add(k, new CompoundTag()
+                                .putShort("id", enchantment.getId())
+                                .putShort("lvl", enchantment.getLevel())
+                );
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            ench.add(new CompoundTag()
+                            .putShort("id", enchantment.getId())
+                            .putShort("lvl", enchantment.getLevel())
+            );
+        }
+
+        this.setNamedTag(tag);
+    }
+
+    public Enchantment[] getEnchantments() {
+        if (!this.hasEnchantments()) {
+            return new Enchantment[0];
+        }
+
+        List<Enchantment> enchantments = new ArrayList<>();
+
+        ListTag<CompoundTag> ench = (ListTag<CompoundTag>) this.getNamedTag().getList("ench");
+        for (CompoundTag entry : ench.list) {
+            Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
+            e.setLevel(entry.getShort("lvl"));
+            enchantments.add(e);
+        }
+
+        return enchantments.stream().toArray(Enchantment[]::new);
+    }
+
+    public boolean hasCustomeName() {
+        if (!this.hasCompoundTag()) {
+            return false;
+        }
+
+        CompoundTag tag = this.getNamedTag();
+        if (tag.contains("display")) {
+            Tag tag1 = tag.get("display");
+            if (tag1 instanceof CompoundTag && ((CompoundTag) tag1).contains("Name") && ((CompoundTag) tag1).get("Name") instanceof StringTag) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public String getCustomName() {
+        if (!this.hasCompoundTag()) {
+            return "";
+        }
+
+        CompoundTag tag = this.getNamedTag();
+        if (tag.contains("display")) {
+            Tag tag1 = tag.get("display");
+            if (tag1 instanceof CompoundTag && ((CompoundTag) tag1).contains("Name") && ((CompoundTag) tag1).get("Name") instanceof StringTag) {
+                return ((CompoundTag) tag1).getString("Name");
+            }
+        }
+
+        return "";
+    }
+
+    public Item setCustomName(String name) {
+        if (name == null || name.equals("")) {
+            this.clearCustomName();
+        }
+
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+        if (tag.contains("display") && tag.get("display") instanceof CompoundTag) {
+            tag.getCompound("display").putString("Name", name);
+        } else {
+            tag.putCompound("display", new CompoundTag("display")
+                            .putString("Name", name)
+            );
+        }
+
+        return this;
+    }
+
+    public Item clearCustomName() {
+        if (!this.hasCompoundTag()) {
+            return this;
+        }
+
+        CompoundTag tag = this.getNamedTag();
+
+        if (tag.contains("display") && tag.get("display") instanceof CompoundTag) {
+            tag.getCompound("display").remove("Name");
+            if (tag.getCompound("display").isEmpty()) {
+                tag.remove("display");
+            }
+
+            this.setNamedTag(tag);
+        }
+
+        return this;
+    }
+
+    public Tag getNamedTagEntry(String name) {
+        CompoundTag tag = this.getNamedTag();
+        if (tag != null) {
+            return tag.contains(name) ? tag.get(name) : null;
+        }
+
+        return null;
+    }
+
+    public CompoundTag getNamedTag() {
+        if (!this.hasCompoundTag()) {
+            return null;
+        } else if (this.cachedNBT != null) {
+            return this.cachedNBT;
+        }
+        return this.cachedNBT = parseCompoundTag(this.tags);
+    }
+
+    public Item setNamedTag(CompoundTag tag) {
+        if (tag.isEmpty()) {
+            return this.clearNamedTag();
+        }
+
+        this.cachedNBT = tag;
+        this.tags = writeCompoundTag(tag);
+
+        return this;
+    }
+
+    public Item clearNamedTag() {
+        return this.setCompoundTag(new byte[0]);
+    }
+
     public int getCount() {
         return count;
     }
@@ -607,10 +916,10 @@ public class Item implements Cloneable {
     }
 
     final public String getName() {
-        return name;
+        return this.hasCustomeName() ? this.getCustomName() : this.name;
     }
 
-    final public boolean isPlaceable() {
+    final public boolean canBePlaced() {
         return ((this.block != null) && this.block.canBePlaced());
     }
 
@@ -626,19 +935,19 @@ public class Item implements Cloneable {
         return id;
     }
 
-    public int getDamage() {
+    public Integer getDamage() {
         return meta;
     }
 
-    public void setDamage(int meta) {
-        this.meta = meta & 0xFFFF;
+    public void setDamage(Integer meta) {
+        this.meta = meta != null ? (meta & 0xFFFF) : null;
     }
 
     public int getMaxStackSize() {
         return 64;
     }
 
-    final public Integer getFuelTime() {
+    final public Short getFuelTime() {
         if (!Fuel.duration.containsKey(id)) {
             return null;
         }
@@ -648,7 +957,11 @@ public class Item implements Cloneable {
         return null;
     }
 
-    public boolean useOn(Object object) {
+    public boolean useOn(Entity entity) {
+        return false;
+    }
+
+    public boolean useOn(Block block) {
         return false;
     }
 
@@ -690,7 +1003,7 @@ public class Item implements Cloneable {
 
     @Override
     final public String toString() {
-        return "Item " + this.name + " (" + this.id + ":" + this.meta + ")x" + this.count;
+        return "Item " + this.name + " (" + this.id + ":" + (this.meta == null ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
     }
 
     public int getDestroySpeed(Block block, Player player) {
@@ -703,10 +1016,43 @@ public class Item implements Cloneable {
 
 
     public final boolean equals(Item item) {
-        return equals(item, false);
+        return equals(item, true);
     }
 
     public final boolean equals(Item item, boolean checkDamage) {
-        return this.id == item.getId() && ((!checkDamage) || this.getDamage() == item.getDamage());
+        return equals(item, checkDamage, true);
+    }
+
+    public final boolean equals(Item item, boolean checkDamage, boolean checkCompound) {
+        return this.id == item.getId() && ((!checkDamage) || Objects.equals(this.getDamage(), item.getDamage())) && ((!checkCompound) || Arrays.equals(this.getCompoundTag(), item.getCompoundTag()));
+    }
+
+    public final boolean deepEquals(Item item) {
+        return equals(item, true);
+    }
+
+    public final boolean deepEquals(Item item, boolean checkDamage) {
+        return deepEquals(item, checkDamage, true);
+    }
+
+    public final boolean deepEquals(Item item, boolean checkDamage, boolean checkCompound) {
+        if (this.equals(item, checkDamage, checkCompound)) {
+            return true;
+        } else if (item.hasCompoundTag()) {
+            return item.getNamedTag().equals(this.getNamedTag());
+        } else if (this.hasCompoundTag()) {
+            return this.getNamedTag().equals(item.getNamedTag());
+        }
+
+        return false;
+    }
+
+    @Override
+    public Item clone() {
+        try {
+            return (Item) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 }

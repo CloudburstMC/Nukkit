@@ -20,7 +20,7 @@ public class ServerScheduler {
     protected Map<Integer, TaskHandler> tasks;
     protected AsyncPool asyncPool;
     private int ids = 1;
-    protected long currentTick = 0;
+    protected int currentTick = 0;
 
     Comparator<TaskHandler> comparator = new Comparator<TaskHandler>() {
         @Override
@@ -37,6 +37,10 @@ public class ServerScheduler {
 
     public TaskHandler scheduleTask(Task task) {
         return this.addTask(task, -1, -1);
+    }
+
+    public TaskHandler scheduleTask(Runnable task) {
+        return this.addTask(Task.of(task), -1, -1);
     }
 
     public void scheduleAsyncTask(AsyncTask task) {
@@ -61,12 +65,24 @@ public class ServerScheduler {
         return this.addTask(task, delay, -1);
     }
 
-    public TaskHandler scheduleReaptingTask(Task task, int period) {
+    public TaskHandler scheduleDelayedTask(Runnable task, int delay) {
+        return this.addTask(Task.of(task), delay, -1);
+    }
+
+    public TaskHandler scheduleRepeatingTask(Runnable task, int period) {
+        return this.addTask(Task.of(task), -1, period);
+    }
+
+    public TaskHandler scheduleRepeatingTask(Task task, int period) {
         return this.addTask(task, -1, period);
     }
 
     public TaskHandler scheduleDelayedRepeatingTask(Task task, int delay, int period) {
         return this.addTask(task, delay, period);
+    }
+
+    public TaskHandler scheduleDelayedRepeatingTask(Runnable task, int delay, int period) {
+        return this.addTask(Task.of(task), delay, period);
     }
 
     public void cancelTask(int taskId) {
@@ -126,7 +142,7 @@ public class ServerScheduler {
     }
 
     private TaskHandler handle(TaskHandler handler) {
-        long nextRun;
+        int nextRun;
         if (handler.isDelayed()) {
             nextRun = this.currentTick + handler.getDelay();
         } else {
@@ -138,7 +154,7 @@ public class ServerScheduler {
         return handler;
     }
 
-    public void mainThreadHeartbeat(long currentTick) {
+    public void mainThreadHeartbeat(int currentTick) {
         this.currentTick = currentTick;
         while (this.isReady(this.currentTick)) {
             TaskHandler task = this.queue.poll();
@@ -165,7 +181,7 @@ public class ServerScheduler {
         this.asyncPool.collectTasks();
     }
 
-    private boolean isReady(long currentTick) {
+    private boolean isReady(int currentTick) {
         return this.queue.peek() != null && this.queue.peek().getNextRun() <= currentTick;
     }
 

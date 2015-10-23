@@ -38,5 +38,14 @@ public abstract class Liquid extends Transparent {
         return false;
     }
 
+    public float getFluidHeightPercent() {
+        float d = (float) this.meta;
+        if (d >= 8) {
+            d = 0;
+        }
+
+        return (d + 1) / 9f;
+    }
+
     //todo !
 }

@@ -12,11 +12,11 @@ public class Bed extends Item {
         this(0, 1);
     }
 
-    public Bed(int meta) {
+    public Bed(Integer meta) {
         this(meta, 1);
     }
 
-    public Bed(int meta, int count) {
+    public Bed(Integer meta, int count) {
         super(BED, 0, count, "Bed");
         this.block = Block.get(Item.BED_BLOCK);
     }

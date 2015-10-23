@@ -10,11 +10,11 @@ public class Bowl extends Item {
         this(0, 1);
     }
 
-    public Bowl(int meta) {
+    public Bowl(Integer meta) {
         this(meta, 1);
     }
 
-    public Bowl(int meta, int count) {
+    public Bowl(Integer meta, int count) {
         super(BOWL, 0, count, "Bowl");
     }
 }

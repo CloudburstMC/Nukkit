@@ -14,11 +14,11 @@ public class Painting extends Item {
         this(0, 1);
     }
 
-    public Painting(int meta) {
+    public Painting(Integer meta) {
         this(meta, 1);
     }
 
-    public Painting(int meta, int count) {
+    public Painting(Integer meta, int count) {
         super(PAINTING, 0, count, "Painting");
     }
 

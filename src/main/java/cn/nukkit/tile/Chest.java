@@ -1,0 +1,221 @@
+package cn.nukkit.tile;
+
+import cn.nukkit.Player;
+import cn.nukkit.inventory.BaseInventory;
+import cn.nukkit.inventory.ChestInventory;
+import cn.nukkit.inventory.DoubleChestInventory;
+import cn.nukkit.inventory.InventoryHolder;
+import cn.nukkit.item.Item;
+import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.CompoundTag;
+import cn.nukkit.nbt.ListTag;
+
+/**
+ * author: MagicDroidX
+ * Nukkit Project
+ */
+public class Chest extends Spawnable implements InventoryHolder, Container {
+
+    protected ChestInventory inventory;
+
+    protected DoubleChestInventory doubleInventory = null;
+
+    public Chest(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+        this.inventory = new ChestInventory(this);
+
+        if (!this.namedTag.contains("Items") || !(this.namedTag.get("Items") instanceof ListTag)) {
+            this.namedTag.putList(new ListTag<CompoundTag>("Items"));
+        }
+
+        for (int i = 0; i < this.getSize(); i++) {
+            this.inventory.setItem(i, this.getItem(i));
+        }
+    }
+
+    @Override
+    public void close() {
+        if (!this.closed) {
+            for (Player player : this.getInventory().getViewers()) {
+                player.removeWindow(this.getInventory());
+            }
+
+            for (Player player : this.getInventory().getViewers()) {
+                player.removeWindow(this.getRealInventory());
+            }
+            super.close();
+        }
+    }
+
+    @Override
+    public void saveNBT() {
+        this.namedTag.putList(new ListTag<CompoundTag>("Items"));
+        for (int index = 0; index < this.getSize(); index++) {
+            this.setItem(index, this.inventory.getItem(index));
+        }
+    }
+
+    @Override
+    public int getSize() {
+        return 27;
+    }
+
+    protected int getSlotIndex(int index) {
+        ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
+        for (int i = 0; i < list.size(); i++) {
+            if (list.list.get(i).getByte("Slot") == index) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    public Item getItem(int index) {
+        int i = this.getSlotIndex(index);
+        if (i < 0) {
+            return Item.get(Item.AIR, 0, 0);
+        } else {
+            CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
+            return Item.get(data.getShort("id"), (int) data.getShort("Damage"), data.getByte("Count"));
+        }
+    }
+
+    @Override
+    public void setItem(int index, Item item) {
+        int i = this.getSlotIndex(index);
+
+        CompoundTag d = new CompoundTag()
+                .putByte("Count", (byte) item.getCount())
+                .putByte("Slot", (byte) index)
+                .putShort("id", (short) item.getId())
+                .putShort("Damage", item.getDamage());
+
+        if (item.getId() == Item.AIR || item.getCount() <= 0) {
+            if (i >= 0) {
+                this.namedTag.getList("Items").list.remove(i);
+            }
+        } else if (i < 0) {
+            i = this.namedTag.getList("Items").list.size();
+            i = Math.max(i, this.getSize());
+            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+        } else {
+            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+        }
+    }
+
+    @Override
+    public BaseInventory getInventory() {
+        if (this.isPaired() && this.doubleInventory == null) {
+            this.checkPairing();
+        }
+
+        return this.doubleInventory instanceof DoubleChestInventory ? this.doubleInventory : this.inventory;
+    }
+
+    public ChestInventory getRealInventory() {
+        return inventory;
+    }
+
+    protected void checkPairing() {
+        Chest pair = this.getPair();
+        if (pair != null) {
+            if (!pair.isPaired()) {
+                pair.createPair(this);
+                pair.checkPairing();
+            }
+
+            if (this.doubleInventory == null) {
+                if ((pair.x + (pair.z << 15)) > (this.x + (this.z << 15))) { //Order them correctly
+                    this.doubleInventory = new DoubleChestInventory(pair, this);
+                } else {
+                    this.doubleInventory = new DoubleChestInventory(this, pair);
+                }
+            }
+        } else {
+            this.doubleInventory = null;
+            this.namedTag.remove("pairx");
+            this.namedTag.remove("pairz");
+        }
+    }
+
+    public boolean isPaired() {
+        return this.namedTag.contains("pairx") && this.namedTag.contains("pairz");
+    }
+
+    public Chest getPair() {
+        if (this.isPaired()) {
+            Tile tile = this.getLevel().getTile(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
+            if (tile instanceof Chest) {
+                return (Chest) tile;
+            }
+        }
+
+        return null;
+    }
+
+    public boolean pairWith(Chest tile) {
+        if (this.isPaired() || tile.isPaired()) {
+            return false;
+        }
+
+        this.createPair(tile);
+
+        tile.spawnToAll();
+        this.spawnToAll();
+        this.checkPairing();
+
+        return true;
+    }
+
+    public void createPair(Chest tile) {
+        this.namedTag.putInt("pairx", tile.x);
+        this.namedTag.putInt("pairz", tile.z);
+        tile.namedTag.putInt("pairx", this.x);
+        tile.namedTag.putInt("pairz", this.z);
+    }
+
+    public boolean unpair() {
+        if (!this.isPaired()) {
+            return false;
+        }
+
+        Chest tile = this.getPair();
+
+        this.namedTag.remove("pairx");
+        this.namedTag.remove("pairz");
+
+        this.spawnToAll();
+
+        if (tile != null) {
+            tile.namedTag.remove("pairx");
+            tile.namedTag.remove("pairz");
+            tile.checkPairing();
+            tile.spawnToAll();
+        }
+        this.checkPairing();
+
+        return true;
+    }
+
+    @Override
+    public CompoundTag getSpawnCompound() {
+        if (this.isPaired()) {
+            return new CompoundTag()
+                    .putString("id", Tile.CHEST)
+                    .putInt("x", this.x)
+                    .putInt("y", this.y)
+                    .putInt("z", this.z)
+                    .putInt("pairx", this.namedTag.getInt("pairx"))
+                    .putInt("pairz", this.namedTag.getInt("pairz"));
+        } else {
+            return new CompoundTag()
+                    .putString("id", Tile.CHEST)
+                    .putInt("x", this.x)
+                    .putInt("y", this.y)
+                    .putInt("z", this.z);
+        }
+    }
+}

@@ -5,10 +5,13 @@ import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.ServerKiller;
 
 /**
- * author: MagicDroidX
- * Nukkit
+ * Nukkit启动类，包含{@code main}函数。<br>
+ * The launcher class of Nukkit, including the {@code main} function.
+ *
+ * @author MagicDroidX(code) @ Nukkit Project
+ * @author 粉鞋大妈(javadoc) @ Nukkit Project
+ * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
-
 public class Nukkit {
 
     public final static String VERSION = "1.0dev";

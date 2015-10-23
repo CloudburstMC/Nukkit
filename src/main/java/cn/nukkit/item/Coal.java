@@ -10,11 +10,11 @@ public class Coal extends Item {
         this(0, 1);
     }
 
-    public Coal(int meta) {
+    public Coal(Integer meta) {
         this(meta, 1);
     }
 
-    public Coal(int meta, int count) {
+    public Coal(Integer meta, int count) {
         super(COAL, meta, count, "Coal");
         if (this.meta == 1) {
             this.name = "Charcoal";

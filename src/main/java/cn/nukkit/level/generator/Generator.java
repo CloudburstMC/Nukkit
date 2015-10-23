@@ -18,7 +18,7 @@ public abstract class Generator {
 
     public static boolean addGenerator(Class<? extends Generator> clazz, String name) {
         name = name.toLowerCase();
-        if (Generator.class.isAssignableFrom(clazz) && !Generator.list.containsKey(name)) {
+        if (clazz != null && !Generator.list.containsKey(name)) {
             Generator.list.put(name, clazz);
             return true;
         }

@@ -10,11 +10,11 @@ public class GoldPickaxe extends Tool {
         this(0, 1);
     }
 
-    public GoldPickaxe(int meta) {
+    public GoldPickaxe(Integer meta) {
         this(meta, 1);
     }
 
-    public GoldPickaxe(int meta, int count) {
+    public GoldPickaxe(Integer meta, int count) {
         super(GOLD_PICKAXE, meta, count, "Gold Pickaxe");
     }
 

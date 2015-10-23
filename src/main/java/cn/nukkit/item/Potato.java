@@ -12,11 +12,11 @@ public class Potato extends Item {
         this(0, 1);
     }
 
-    public Potato(int meta) {
+    public Potato(Integer meta) {
         this(meta, 1);
     }
 
-    public Potato(int meta, int count) {
+    public Potato(Integer meta, int count) {
         super(POTATO, 0, count, "Potato");
         this.block = Block.get(Item.POTATO_BLOCK);
     }

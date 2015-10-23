@@ -10,11 +10,11 @@ public class ChainBoots extends Armor {
         this(0, 1);
     }
 
-    public ChainBoots(int meta) {
+    public ChainBoots(Integer meta) {
         this(meta, 1);
     }
 
-    public ChainBoots(int meta, int count) {
+    public ChainBoots(Integer meta, int count) {
         super(CHAIN_BOOTS, meta, count, "Chainmail Boots");
     }
 }

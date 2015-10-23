@@ -6,7 +6,9 @@ import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.ServerException;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -18,7 +20,7 @@ public class PermissibleBase implements Permissible {
 
     private Permissible parent = null;
 
-    private Map<Integer, PermissionAttachment> attachments = new HashMap<>();
+    private Set<PermissionAttachment> attachments = new HashSet<>();
 
     private Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
 
@@ -101,7 +103,7 @@ public class PermissibleBase implements Permissible {
         }
 
         PermissionAttachment result = new PermissionAttachment(plugin, this.parent != null ? this.parent : this);
-        this.attachments.put(result.hashCode(), result);
+        this.attachments.add(result);
         if (name != null && value != null) {
             result.setPermission(name, value);
         }
@@ -116,8 +118,8 @@ public class PermissibleBase implements Permissible {
             throw new IllegalStateException("Attachment cannot be null");
         }
 
-        if (this.attachments.containsKey(attachment.hashCode())) {
-            this.attachments.remove(attachment.hashCode());
+        if (this.attachments.contains(attachment)) {
+            this.attachments.remove(attachment);
             PermissionRemovedExecutor ex = attachment.getRemovalCallback();
             if (ex != null) {
                 ex.attachmentRemoved(attachment);
@@ -140,7 +142,7 @@ public class PermissibleBase implements Permissible {
             this.calculateChildPermissions(perm.getChildren(), false, null);
         }
 
-        for (PermissionAttachment attachment : this.attachments.values()) {
+        for (PermissionAttachment attachment : this.attachments) {
             this.calculateChildPermissions(attachment.getPermissions(), false, attachment);
         }
     }

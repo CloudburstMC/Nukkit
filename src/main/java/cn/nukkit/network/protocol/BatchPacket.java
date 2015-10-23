@@ -15,12 +15,12 @@ public class BatchPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
+    public void decode() {
         this.payload = this.get(this.getInt());
     }
 
     @Override
-    public void decode() {
+    public void encode() {
         this.reset();
         this.putInt(this.payload.length);
         this.put(this.payload);

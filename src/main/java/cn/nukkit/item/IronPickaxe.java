@@ -10,11 +10,11 @@ public class IronPickaxe extends Tool {
         this(0, 1);
     }
 
-    public IronPickaxe(int meta) {
+    public IronPickaxe(Integer meta) {
         this(meta, 1);
     }
 
-    public IronPickaxe(int meta, int count) {
+    public IronPickaxe(Integer meta, int count) {
         super(IRON_PICKAXE, meta, count, "Iron Pickaxe");
     }
 

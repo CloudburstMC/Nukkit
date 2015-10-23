@@ -10,11 +10,11 @@ public class Diamond extends Item {
         this(0, 1);
     }
 
-    public Diamond(int meta) {
+    public Diamond(Integer meta) {
         this(meta, 1);
     }
 
-    public Diamond(int meta, int count) {
+    public Diamond(Integer meta, int count) {
         super(DIAMOND, 0, count, "Diamond");
     }
 }

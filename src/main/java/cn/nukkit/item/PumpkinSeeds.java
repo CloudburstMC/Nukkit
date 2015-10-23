@@ -12,11 +12,11 @@ public class PumpkinSeeds extends Item {
         this(0, 1);
     }
 
-    public PumpkinSeeds(int meta) {
+    public PumpkinSeeds(Integer meta) {
         this(meta, 1);
     }
 
-    public PumpkinSeeds(int meta, int count) {
+    public PumpkinSeeds(Integer meta, int count) {
         super(PUMPKIN_SEEDS, 0, count, "Pumpkin Seeds");
         this.block = Block.get(Item.PUMPKIN_STEM);
     }

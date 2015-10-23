@@ -10,11 +10,11 @@ public class ChainChestplate extends Armor {
         this(0, 1);
     }
 
-    public ChainChestplate(int meta) {
+    public ChainChestplate(Integer meta) {
         this(meta, 1);
     }
 
-    public ChainChestplate(int meta, int count) {
+    public ChainChestplate(Integer meta, int count) {
         super(CHAIN_CHESTPLATE, meta, count, "Chain Chestplate");
     }
 }

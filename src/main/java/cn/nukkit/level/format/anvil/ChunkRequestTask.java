@@ -26,7 +26,7 @@ public class ChunkRequestTask extends AsyncTask {
 
     protected byte[] tiles;
 
-    public ChunkRequestTask(Level level, Chunk chunk) throws IOException {
+    public ChunkRequestTask(Level level, Chunk chunk) {
         this.levelId = level.getId();
         this.chunk = chunk.toFastBinary();
         this.chunkX = chunk.getX();
@@ -38,7 +38,11 @@ public class ChunkRequestTask extends AsyncTask {
             if (tile instanceof Spawnable) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 DataOutputStream outputStream = new DataOutputStream(baos);
-                NbtIo.write(((Spawnable) tile).getSpawnCompound(), outputStream);
+                try {
+                    NbtIo.write(((Spawnable) tile).getSpawnCompound(), outputStream);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 buffer = Binary.appendBytes(buffer, baos.toByteArray());
             }
         }

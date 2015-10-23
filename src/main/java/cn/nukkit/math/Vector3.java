@@ -131,7 +131,7 @@ public class Vector3 {
     }
 
     public Vector3 round() {
-        return new Vector3((int) Math.round(this.x), (int) Math.round(this.y), (int) Math.round(this.z));
+        return new Vector3(Math.round(this.x), Math.round(this.y), Math.round(this.z));
     }
 
     public Vector3 abs() {
@@ -200,8 +200,8 @@ public class Vector3 {
         return Math.max(Math.abs(this.x - x), Math.abs(this.z - z));
     }
 
-    public double maxPlainDistance(Vector2 x) {
-        return this.maxPlainDistance(x.x, x.y);
+    public double maxPlainDistance(Vector2 vector) {
+        return this.maxPlainDistance(vector.x, vector.y);
     }
 
     public double maxPlainDistance(Vector3 x) {

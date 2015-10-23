@@ -10,11 +10,11 @@ public class Shears extends Tool {
         this(0, 1);
     }
 
-    public Shears(int meta) {
+    public Shears(Integer meta) {
         this(meta, 1);
     }
 
-    public Shears(int meta, int count) {
+    public Shears(Integer meta, int count) {
         super(SHEARS, meta, count, "Shears");
     }
 

@@ -8,34 +8,34 @@ import cn.nukkit.math.Vector3;
  */
 public class Location extends Position {
 
-    public double yaw;
-    public double pitch;
+    public float yaw;
+    public float pitch;
 
     public Location() {
         this(0);
     }
 
-    public Location(int x) {
+    public Location(double x) {
         this(x, 0);
     }
 
-    public Location(int x, int y) {
+    public Location(double x, double y) {
         this(x, y, 0);
     }
 
-    public Location(int x, int y, int z) {
-        this(x, y, z, 0.0);
+    public Location(double x, double y, double z) {
+        this(x, y, z, 0);
     }
 
-    public Location(int x, int y, int z, double yaw) {
-        this(x, y, z, yaw, 0.0);
+    public Location(double x, double y, double z, float yaw) {
+        this(x, y, z, yaw, 0);
     }
 
-    public Location(int x, int y, int z, double yaw, double pitch) {
+    public Location(double x, double y, double z, float yaw, float pitch) {
         this(x, y, z, yaw, pitch, null);
     }
 
-    public Location(int x, int y, int z, double yaw, double pitch, Level level) {
+    public Location(double x, double y, double z, float yaw, float pitch, Level level) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -45,26 +45,26 @@ public class Location extends Position {
     }
 
     public static Location fromObject(Vector3 pos) {
-        return fromObject(pos, null, 0.0, 0.0);
+        return fromObject(pos, null, 0.0f, 0.0f);
     }
 
     public static Location fromObject(Vector3 pos, Level level) {
-        return fromObject(pos, level, 0.0, 0.0);
+        return fromObject(pos, level, 0.0f, 0.0f);
     }
 
-    public static Location fromObject(Vector3 pos, Level level, double yaw) {
-        return fromObject(pos, level, yaw, 0.0);
+    public static Location fromObject(Vector3 pos, Level level, float yaw) {
+        return fromObject(pos, level, yaw, 0.0f);
     }
 
-    public static Location fromObject(Vector3 pos, Level level, double yaw, double pitch) {
+    public static Location fromObject(Vector3 pos, Level level, float yaw, float pitch) {
         return new Location((int) pos.x, (int) pos.y, (int) pos.z, yaw, pitch, (level == null) ? ((pos instanceof Position) ? ((Position) pos).level : null) : level);
     }
 
-    public double getYaw() {
+    public float getYaw() {
         return this.yaw;
     }
 
-    public double getPitch() {
+    public float getPitch() {
         return this.pitch;
     }
 

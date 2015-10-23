@@ -10,11 +10,11 @@ public class DiamondLeggings extends Armor {
         this(0, 1);
     }
 
-    public DiamondLeggings(int meta) {
+    public DiamondLeggings(Integer meta) {
         this(meta, 1);
     }
 
-    public DiamondLeggings(int meta, int count) {
+    public DiamondLeggings(Integer meta, int count) {
         super(DIAMOND_LEGGINGS, meta, count, "Diamond Leggings");
     }
 }

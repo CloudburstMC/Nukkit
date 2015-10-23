@@ -10,11 +10,11 @@ public class Stick extends Item {
         this(0, 1);
     }
 
-    public Stick(int meta) {
+    public Stick(Integer meta) {
         this(meta, 1);
     }
 
-    public Stick(int meta, int count) {
+    public Stick(Integer meta, int count) {
         super(STICK, 0, count, "Stick");
     }
 }

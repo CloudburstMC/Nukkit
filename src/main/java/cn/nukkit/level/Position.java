@@ -14,19 +14,19 @@ public class Position extends Vector3 {
         this(0, 0, 0, null);
     }
 
-    public Position(int x) {
+    public Position(double x) {
         this(x, 0, 0, null);
     }
 
-    public Position(int x, int y) {
+    public Position(double x, double y) {
         this(x, y, 0, null);
     }
 
-    public Position(int x, int y, int z) {
+    public Position(double x, double y, double z) {
         this(x, y, z, null);
     }
 
-    public Position(int x, int y, int z, Level level) {
+    public Position(double x, double y, double z, Level level) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -38,7 +38,7 @@ public class Position extends Vector3 {
     }
 
     public static Position fromObject(Vector3 pos, Level level) {
-        return new Position((int) pos.x, (int) pos.y, (int) pos.z, level);
+        return new Position(pos.x, pos.y, pos.z, level);
     }
 
     public Level getLevel() {
@@ -70,6 +70,7 @@ public class Position extends Vector3 {
         if (!this.isValid()) {
             throw new LevelException("Undefined Level reference");
         }
+
         return Position.fromObject(super.getSide(side, step), this.level);
     }
 
@@ -78,10 +79,12 @@ public class Position extends Vector3 {
         return "Position(level=" + (this.isValid() ? this.getLevel().getName() : "null") + ",x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
     }
 
-    public Position setComponents(int x, int y, int z) {
+    @Override
+    public Position setComponents(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
         return this;
     }
+
 }

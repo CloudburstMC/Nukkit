@@ -56,7 +56,7 @@ public class PluginManager {
     }
 
     public boolean registerInterface(Class<? extends PluginLoader> loaderClass) {
-        if (PluginLoader.class.isAssignableFrom(loaderClass)) {
+        if (loaderClass != null) {
             try {
                 Constructor constructor = loaderClass.getDeclaredConstructor(Server.class);
                 constructor.setAccessible(true);
@@ -177,7 +177,7 @@ public class PluginManager {
 
                             boolean compatible = false;
 
-                            for (String version : description.getCompatibleApis()) {
+                            for (String version : description.getCompatibleAPIs()) {
 
                                 //Check the format: majorVersion.minorVersion.patch
                                 if (!Pattern.matches("[0-9]\\.[0-9]\\.[0-9]", version)) {

@@ -4,21 +4,18 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
-import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.nbt.IntArrayTag;
-import cn.nukkit.nbt.ListTag;
-import cn.nukkit.nbt.NbtIo;
+import cn.nukkit.nbt.*;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Zlib;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -70,6 +67,18 @@ public class Chunk extends BaseFullChunk {
             this.nbt.putByteArray("BlockLight", new byte[16384]);
         }
 
+        Map<Integer, Integer> extraData = new HashMap<>();
+
+        if (!this.nbt.contains("ExtraData") || !(this.nbt.get("ExtraData") instanceof ByteArrayTag)) {
+            this.nbt.putByteArray("ExtraData", Binary.writeInt(0));
+        } else {
+            BinaryStream stream = new BinaryStream(this.nbt.getByteArray("ExtraData"));
+            for (int i = 0; i < stream.getInt(); i++) {
+                int key = stream.getInt();
+                extraData.put(key, stream.getShort());
+            }
+        }
+
         this.provider = level;
         this.x = this.nbt.getInt("xPos");
         this.z = this.nbt.getInt("zPos");
@@ -89,6 +98,8 @@ public class Chunk extends BaseFullChunk {
             Arrays.fill(heightMap, 127);
         }
         this.heightMap = heightMap;
+
+        this.extraData = extraData;
 
         this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).list;
         this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).list;
@@ -379,44 +390,25 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public byte[] toFastBinary() {
-        byte[] xArray = Binary.writeInt(this.x);
-        byte[] zArray = Binary.writeInt(this.z);
-        byte[] blockIdArray = this.getBlockIdArray();
-        byte[] blockDataArray = this.getBlockDataArray();
-        byte[] blockSkyLightArray = this.getBlockSkyLightArray();
-        byte[] blockLightArray = this.getBlockLightArray();
-        int[] heightMapArray = this.getHeightMapArray();
-        int[] biomeColorArray = this.getBiomeColorArray();
-        byte booleans = (byte) ((this.isLightPopulated() ? 1 << 2 : 0) + (this.isPopulated() ? 1 << 2 : 0) + (this.isGenerated() ? 1 : 0));
-        ByteBuffer buffer = ByteBuffer.allocate(
-                4
-                        + 4
-                        + blockIdArray.length
-                        + blockDataArray.length
-                        + blockSkyLightArray.length
-                        + blockLightArray.length
-                        + heightMapArray.length
-                        + biomeColorArray.length * 4
-                        + 1);
-
-        buffer.put(xArray);
-        buffer.put(zArray);
-        buffer.put(blockIdArray);
-        buffer.put(blockDataArray);
-        buffer.put(blockSkyLightArray);
-        buffer.put(blockLightArray);
-        for (int aHeightMapArray : heightMapArray) {
-            buffer.put((byte) (aHeightMapArray & 0xff));
+        BinaryStream stream = new BinaryStream(new byte[65536]);
+        stream.put(Binary.writeInt(this.x));
+        stream.put(Binary.writeInt(this.z));
+        stream.put(this.getBlockIdArray());
+        stream.put(this.getBlockDataArray());
+        stream.put(this.getBlockSkyLightArray());
+        stream.put(this.getBlockLightArray());
+        for (int height : this.getHeightMapArray()) {
+            stream.putByte((byte) (height & 0xff));
         }
-        for (int aBiomeColorArray : biomeColorArray) {
-            buffer.put(Binary.writeInt(aBiomeColorArray));
+        for (int color : this.getBiomeColorArray()) {
+            stream.put(Binary.writeInt(color));
         }
-        buffer.put(booleans);
-        return buffer.array();
+        stream.putByte((byte) ((this.isLightPopulated() ? 1 << 2 : 0) + (this.isPopulated() ? 1 << 2 : 0) + (this.isGenerated() ? 1 : 0)));
+        return stream.getBuffer();
     }
 
     @Override
-    public byte[] toBinary() throws Exception {
+    public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
         nbt.putInt("xPos", this.x);
         nbt.putInt("zPos", this.z);
@@ -429,6 +421,7 @@ public class Chunk extends BaseFullChunk {
             nbt.putIntArray("HeightMap", this.getHeightMapArray());
         }
 
+
         ArrayList<CompoundTag> entities = new ArrayList<>();
         for (Entity entity : this.getEntities().values()) {
             if (!(entity instanceof Player) && !entity.closed) {
@@ -436,26 +429,37 @@ public class Chunk extends BaseFullChunk {
                 entities.add(entity.namedTag);
             }
         }
-        ListTag<CompoundTag> listTag = new ListTag<>("Entities");
-        listTag.list = entities;
-        nbt.putList(listTag);
+        ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
+        entityListTag.list = entities;
+        nbt.putList(entityListTag);
+
         ArrayList<CompoundTag> tiles = new ArrayList<>();
         for (Tile tile : this.getTiles().values()) {
             tile.saveNBT();
             tiles.add(tile.namedTag);
         }
-        ListTag<CompoundTag> listTag1 = new ListTag<>("TileEntities");
-        listTag1.list = tiles;
-        nbt.putList(listTag1);
+        ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
+        tileListTag.list = tiles;
+        nbt.putList(tileListTag);
+
+        BinaryStream extraData = new BinaryStream();
+        Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();
+        extraData.putInt(extraDataArray.size());
+        for (Integer key : extraDataArray.keySet()) {
+            extraData.putInt(key);
+            extraData.putShort(extraDataArray.get(key));
+        }
+
+        nbt.putByteArray("ExtraData", extraData.getBuffer());
+
         CompoundTag chunk = new CompoundTag("");
         chunk.putCompound("Level", nbt);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream);
 
-        NbtIo.write(chunk, outputStream);
-
-        return Zlib.deflate(byteArrayOutputStream.toByteArray());
-
+        try {
+            return Zlib.deflate(NbtIo.write(chunk), RegionLoader.COMPRESSION_LEVEL);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public CompoundTag getNBT() {

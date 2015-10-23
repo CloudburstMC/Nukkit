@@ -38,7 +38,7 @@ public class CallbackTask extends Task {
     }
 
     @Override
-    public void onRun(long currentTick) {
+    public void onRun(int currentTick) {
         try {
             if (args == null) {
                 this.method.invoke(owner);

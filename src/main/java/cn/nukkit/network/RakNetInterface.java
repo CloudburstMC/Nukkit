@@ -221,7 +221,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                 if (packet.encapsulatedPacket == null) {
                     packet.encapsulatedPacket = new CacheEncapsulatedPacket();
                     packet.encapsulatedPacket.identifierACK = null;
-                    packet.encapsulatedPacket.buffer = packet.buffer;
+                    packet.encapsulatedPacket.buffer = packet.getBuffer();
                     if (packet.getChannel() != 0) {
                         packet.encapsulatedPacket.reliability = 3;
                         packet.encapsulatedPacket.orderChannel = packet.getChannel();
@@ -233,14 +233,14 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                 pk = packet.encapsulatedPacket;
             }
 
-            if (!immediate && !needACK && packet.pid() != Info.BATCH_PACKET && Network.BATCH_THRESHOLD >= 0 && packet.buffer != null && packet.buffer.length >= Network.BATCH_THRESHOLD) {
+            if (!immediate && !needACK && packet.pid() != Info.BATCH_PACKET && Network.BATCH_THRESHOLD >= 0 && packet.getCount() >= Network.BATCH_THRESHOLD) {
                 this.server.batchPackets(new Player[]{player}, new DataPacket[]{packet}, true, packet.getChannel());
                 return null;
             }
 
             if (pk == null) {
                 pk = new EncapsulatedPacket();
-                pk.buffer = packet.buffer;
+                pk.buffer = packet.getBuffer();
                 if (packet.getChannel() != 0) {
                     packet.reliability = 3;
                     packet.orderChannel = packet.getChannel();
@@ -274,7 +274,8 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
             return null;
         }
 
-        data.setBuffer(buffer, 1);
+        data.setBuffer(buffer);
+        data.setOffset(1);
 
         return data;
     }

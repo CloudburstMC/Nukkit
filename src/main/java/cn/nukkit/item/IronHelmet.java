@@ -10,11 +10,11 @@ public class IronHelmet extends Armor {
         this(0, 1);
     }
 
-    public IronHelmet(int meta) {
+    public IronHelmet(Integer meta) {
         this(meta, 1);
     }
 
-    public IronHelmet(int meta, int count) {
+    public IronHelmet(Integer meta, int count) {
         super(IRON_HELMET, meta, count, "Iron Helmet");
     }
 }

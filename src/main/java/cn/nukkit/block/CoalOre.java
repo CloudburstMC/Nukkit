@@ -36,7 +36,7 @@ public class CoalOre extends Solid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= 1) {
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
             return new int[][]{new int[]{Item.COAL, 0, 1}};
         } else {
             return new int[0][];

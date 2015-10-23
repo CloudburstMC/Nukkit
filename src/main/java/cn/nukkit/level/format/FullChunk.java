@@ -40,6 +40,10 @@ public interface FullChunk extends Cloneable {
 
     void setBlockData(int x, int y, int z, int data);
 
+    int getBlockExtraData(int x, int y, int z);
+
+    void setBlockExtraData(int x, int y, int z, int data);
+
     int getBlockSkyLight(int x, int y, int z);
 
     void setBlockSkyLight(int x, int y, int z, int level);
@@ -102,9 +106,9 @@ public interface FullChunk extends Cloneable {
 
     void removeTile(Tile tile);
 
-    Map<Integer, Entity> getEntities();
+    Map<Long, Entity> getEntities();
 
-    Map<Integer, Tile> getTiles();
+    Map<Long, Tile> getTiles();
 
     Tile getTile(int x, int y, int z);
 
@@ -132,13 +136,15 @@ public interface FullChunk extends Cloneable {
 
     byte[] getBlockDataArray();
 
+    Map<Integer, Integer> getBlockExtraDataArray();
+
     byte[] getBlockSkyLightArray();
 
     byte[] getBlockLightArray();
 
-    byte[] toBinary() throws Exception;
+    byte[] toBinary();
 
-    byte[] toFastBinary() throws Exception;
+    byte[] toFastBinary();
 
     boolean hasChanged();
 

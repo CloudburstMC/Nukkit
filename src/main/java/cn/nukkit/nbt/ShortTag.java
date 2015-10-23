@@ -5,13 +5,13 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class ShortTag extends Tag {
-    public short data;
+    public int data;
 
     public ShortTag(String name) {
         super(name);
     }
 
-    public ShortTag(String name, short data) {
+    public ShortTag(String name, int data) {
         super(name);
         this.data = data;
     }
@@ -21,7 +21,7 @@ public class ShortTag extends Tag {
     }
 
     void load(DataInput dis) throws IOException {
-        data = dis.readShort();
+        data = dis.readUnsignedShort();
     }
 
     public byte getId() {

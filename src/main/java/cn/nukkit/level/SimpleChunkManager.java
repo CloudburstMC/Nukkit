@@ -54,7 +54,7 @@ public class SimpleChunkManager implements ChunkManager {
     }
 
     @Override
-    public BaseFullChunk getChunk(int chunkX, int chunkZ) {
+    public FullChunk getChunk(int chunkX, int chunkZ) {
         String index = Level.chunkHash(chunkX, chunkZ);
         return this.chunks.containsKey(index) ? (BaseFullChunk) this.chunks.get(index) : null;
     }

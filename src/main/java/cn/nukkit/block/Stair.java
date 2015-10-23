@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
 
 /**
@@ -48,7 +49,7 @@ public abstract class Stair extends Transparent {
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         int[] faces = new int[]{0, 2, 1, 3};
-        this.meta = faces[player.getDirection()] & 0x03;
+        this.meta = (short) (faces[player.getDirection()] & 0x03);
         if ((fy > 0.5 && face != 1) || face == 0) {
             this.meta |= 0x04; //Upside-down stairs
         }
@@ -59,7 +60,7 @@ public abstract class Stair extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= 1) {
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
             return new int[][]{new int[]{this.getId(), 0, 1}};
         } else {
             return new int[0][];
