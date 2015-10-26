@@ -575,7 +575,7 @@ public class Item implements Cloneable {
                 }
             }
         }
-        
+
         initCreativeItems();
     }
 
@@ -704,12 +704,12 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.GLASS_PANE, 0));
         addCreativeItem(Item.get(Item.WOODEN_DOOR, 0));
         addCreativeItem(Item.get(Item.TRAPDOOR, 0));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_OAK));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_SPRUCE));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_BIRCH));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_JUNGLE));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_ACACIA));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_DARKOAK));
+        //addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_OAK));
+        //addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_SPRUCE));
+        //addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_BIRCH));
+        //addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_JUNGLE));
+        //addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_ACACIA));
+        //addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_DARKOAK));
         addCreativeItem(Item.get(Item.NETHER_BRICK_FENCE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_BIRCH, 0));
@@ -727,15 +727,15 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.FURNACE, 0));
         addCreativeItem(Item.get(Item.END_PORTAL, 0));
         addCreativeItem(Item.get(Item.DANDELION, 0));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_POPPY));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_BLUE_ORCHID));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ALLIUM));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_AZURE_BLUET));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_RED_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ORANGE_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_WHITE_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_PINK_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_OXEYE_DAISY));
+        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_POPPY));
+        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_BLUE_ORCHID));
+        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ALLIUM));
+        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_AZURE_BLUET));
+        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_RED_TULIP));
+        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ORANGE_TULIP));
+        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_WHITE_TULIP));
+        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_PINK_TULIP));
+        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_OXEYE_DAISY));
         //TODO: Lilac
         //TODO: Double Tallgrass
         //TODO: Large Fern
@@ -827,7 +827,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CLOCK, 0));
         addCreativeItem(Item.get(Item.COMPASS, 0));
         addCreativeItem(Item.get(Item.MINECART, 0));
-        addCreativeItem(Item.get(Item.SPAWN_EGG, Villager.NETWORK_ID));
+        //addCreativeItem(Item.get(Item.SPAWN_EGG, Villager.NETWORK_ID));
         //addCreativeItem(Item.get(Item.SPAWN_EGG, 10)); //Chicken
         //addCreativeItem(Item.get(Item.SPAWN_EGG, 11)); //Cow
         //addCreativeItem(Item.get(Item.SPAWN_EGG, 12)); //Pig
@@ -839,9 +839,9 @@ public class Item implements Cloneable {
         //TODO: Silverfish
         //TODO: Skeleton
         //TODO: Slime
-        addCreativeItem(Item.get(Item.SPAWN_EGG, Zombie.NETWORK_ID));
+        //addCreativeItem(Item.get(Item.SPAWN_EGG, Zombie.NETWORK_ID));
         //TODO: PigZombie
-        addCreativeItem(Item.get(Item.SPAWN_EGG, Squid.NETWORK_ID));
+        //addCreativeItem(Item.get(Item.SPAWN_EGG, Squid.NETWORK_ID));
 
         addCreativeItem(Item.get(Item.SNOWBALL));
 
