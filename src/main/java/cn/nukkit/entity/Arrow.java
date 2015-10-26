@@ -74,7 +74,7 @@ public class Arrow extends Projectile {
         pk.speedX = (float) this.motionX;
         pk.speedY = (float) this.motionY;
         pk.speedZ = (float) this.motionZ;
-        pk.metadata = this.dataProerties;
+        pk.metadata = this.dataProperties;
         player.dataPacket(pk);
         super.spawnTo(player);
     }

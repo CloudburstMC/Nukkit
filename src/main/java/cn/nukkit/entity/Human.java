@@ -202,7 +202,7 @@ public class Human extends Creature implements InventoryHolder {
             pk.yaw = this.yaw;
             pk.pitch = this.pitch;
             pk.item = this.getInventory().getItemInHand();
-            pk.metadata = this.dataProerties;
+            pk.metadata = this.dataProperties;
             player.dataPacket(pk);
 
             this.inventory.sendArmorContents(player);

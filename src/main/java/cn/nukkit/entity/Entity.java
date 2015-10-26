@@ -78,7 +78,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected int dataFlags = 0;
 
-    protected Map<Integer, Object[]> dataProerties = new HashMap<Integer, Object[]>() {{
+    protected Map<Integer, Object[]> dataProperties = new HashMap<Integer, Object[]>() {{
         put(DATA_FLAGS, new Object[]{DATA_TYPE_BYTE, 0});
         put(DATA_AIR, new Object[]{DATA_TYPE_SHORT, 300});
         put(DATA_NAMETAG, new Object[]{DATA_TYPE_STRING, ""});
@@ -532,7 +532,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void sendData(Player player, Map<Integer, Object[]> data) {
         SetEntityDataPacket pk = new SetEntityDataPacket();
         pk.eid = (player.equals(this) ? 0 : this.getId());
-        pk.metadata = data == null ? this.dataProerties : data;
+        pk.metadata = data == null ? this.dataProperties : data;
 
         player.dataPacket(pk);
     }
@@ -544,7 +544,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void sendData(Player[] players, Map<Integer, Object[]> data) {
         SetEntityDataPacket pk = new SetEntityDataPacket();
         pk.eid = this.getId();
-        pk.metadata = data == null ? this.dataProerties : data;
+        pk.metadata = data == null ? this.dataProperties : data;
 
         Server.broadcastPacket(players, pk);
     }
@@ -1403,11 +1403,11 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean setDataProperty(int id, int type, @NotNull Object value) {
         if (!value.equals(this.getDataProperty(id))) {
-            this.dataProerties.put(id, new Object[]{type, value});
+            this.dataProperties.put(id, new Object[]{type, value});
 
             this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new HashMap<Integer, Object[]>() {
                 {
-                    put(id, dataProerties.get(id));
+                    put(id, dataProperties.get(id));
                 }
             });
 
@@ -1418,11 +1418,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public Object getDataProperty(int id) {
-        return this.dataProerties.containsKey(id) ? this.dataProerties.get(id)[1] : null;
+        return this.dataProperties.containsKey(id) ? this.dataProperties.get(id)[1] : null;
     }
 
     public int getDataPropertyType(int id) {
-        return (int) (this.dataProerties.containsKey(id) ? this.dataProerties.get(id)[0] : null);
+        return (int) (this.dataProperties.containsKey(id) ? this.dataProperties.get(id)[0] : null);
     }
 
     public void setDataFlag(int propertyId, int id) {
