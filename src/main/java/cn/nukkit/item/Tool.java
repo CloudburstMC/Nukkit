@@ -2,6 +2,8 @@ package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.nbt.tag.ByteTag;
+import cn.nukkit.nbt.tag.Tag;
 
 /**
  * author: MagicDroidX
@@ -53,8 +55,21 @@ public abstract class Tool extends Item {
 
     @Override
     public boolean useOn(Block block) {
-        if (this.isHoe()) {
-            if ((block != null) && (block.getId() == GRASS || block.getId() == DIRT)) {
+        if (this.isUnbreakable()) {
+            return true;
+        }
+
+        if (block.getToolType() == Tool.TYPE_PICKAXE && this.isPickaxe() ||
+                block.getToolType() == Tool.TYPE_SHOVEL && this.isShovel() ||
+                block.getToolType() == Tool.TYPE_AXE && this.isAxe() ||
+                block.getToolType() == Tool.TYPE_SWORD && this.isSword() ||
+                block.getToolType() == Tool.SHEARS && this.isShears()
+                ) {
+            this.meta++;
+        } else if (!this.isShears() && block.getBreakTime(this) > 0) {
+            this.meta += 2;
+        } else if (this.isHoe()) {
+            if (block.getId() == GRASS || block.getId() == DIRT) {
                 this.meta++;
             }
         } else {
@@ -65,12 +80,21 @@ public abstract class Tool extends Item {
 
     @Override
     public boolean useOn(Entity entity) {
+        if (this.isUnbreakable()) {
+            return true;
+        }
+
         if ((entity != null) && !this.isSword()) {
-            this.meta = (short) (this.meta + 2);
+            this.meta += 2;
         } else {
             this.meta++;
         }
         return true;
+    }
+
+    public boolean isUnbreakable() {
+        Tag tag = this.getNamedTagEntry("Unbreakable");
+        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
     }
 
     @Override

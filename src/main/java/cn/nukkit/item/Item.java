@@ -453,31 +453,48 @@ public class Item implements Cloneable {
     public static void init() {
         if (list == null) {
             list = new Class[65535];
-            list[SUGARCANE] = Sugarcane.class;
-            list[WHEAT_SEEDS] = WheatSeeds.class;
-            list[PUMPKIN_SEEDS] = PumpkinSeeds.class;
-            list[MELON_SEEDS] = MelonSeeds.class;
-            list[MUSHROOM_STEW] = MushroomStew.class;
-            list[BEETROOT_SOUP] = BeetrootSoup.class;
-            list[CARROT] = Carrot.class;
-            list[POTATO] = Potato.class;
-            list[BEETROOT_SEEDS] = BeetrootSeeds.class;
-            list[SIGN] = Sign.class;
-            list[WOODEN_DOOR] = WoodenDoor.class;
-            list[BUCKET] = Bucket.class;
-            list[IRON_DOOR] = IronDoor.class;
-            list[CAKE] = Cake.class;
-            list[BED] = Bed.class;
-            list[PAINTING] = Painting.class;
-            list[COAL] = Coal.class;
+            list[IRON_SHOVEL] = IronShovel.class;
+            list[IRON_PICKAXE] = IronPickaxe.class;
+            list[IRON_AXE] = IronAxe.class;
+            list[FLINT_STEEL] = FlintSteel.class;
             list[APPLE] = Apple.class;
-            list[SPAWN_EGG] = SpawnEgg.class;
+            list[BOW] = Bow.class;
+            list[ARROW] = Arrow.class;
+            list[COAL] = Coal.class;
             list[DIAMOND] = Diamond.class;
+            list[IRON_INGOT] = IronIngot.class;
+            list[GOLD_INGOT] = GoldIngot.class;
+            list[IRON_SWORD] = IronSword.class;
+            list[WOODEN_SWORD] = WoodenSword.class;
+            list[WOODEN_SHOVEL] = WoodenShovel.class;
+            list[WOODEN_PICKAXE] = WoodenPickaxe.class;
+            list[WOODEN_AXE] = WoodenAxe.class;
+            list[STONE_SWORD] = StoneSword.class;
+            list[STONE_SHOVEL] = StoneShovel.class;
+            list[STONE_PICKAXE] = StonePickaxe.class;
+            list[STONE_AXE] = StoneAxe.class;
+            list[DIAMOND_SWORD] = DiamondSword.class;
+            list[DIAMOND_SHOVEL] = DiamondShovel.class;
+            list[DIAMOND_PICKAXE] = DiamondPickaxe.class;
+            list[DIAMOND_AXE] = DiamondAxe.class;
             list[STICK] = Stick.class;
-            list[SNOWBALL] = Snowball.class;
             list[BOWL] = Bowl.class;
+            list[MUSHROOM_STEW] = MushroomStew.class;
+            list[GOLD_SWORD] = GoldSword.class;
+            list[GOLD_SHOVEL] = GoldShovel.class;
+            list[GOLD_PICKAXE] = GoldPickaxe.class;
+            list[GOLD_AXE] = GoldAxe.class;
+            list[STRING] = StringItem.class;
             list[FEATHER] = Feather.class;
-            list[BRICK] = Brick.class;
+            list[GUNPOWDER] = Gunpowder.class;
+            list[WOODEN_HOE] = WoodenHoe.class;
+            list[STONE_HOE] = StoneHoe.class;
+            list[IRON_HOE] = IronHoe.class;
+            list[DIAMOND_HOE] = DiamondHoe.class;
+            list[GOLD_HOE] = GoldHoe.class;
+            list[WHEAT_SEEDS] = WheatSeeds.class;
+            list[WHEAT] = Wheat.class;
+            list[BREAD] = Bread.class;
             list[LEATHER_CAP] = LeatherCap.class;
             list[LEATHER_TUNIC] = LeatherTunic.class;
             list[LEATHER_PANTS] = LeatherPants.class;
@@ -490,47 +507,67 @@ public class Item implements Cloneable {
             list[IRON_CHESTPLATE] = IronChestplate.class;
             list[IRON_LEGGINGS] = IronLeggings.class;
             list[IRON_BOOTS] = IronBoots.class;
-            list[GOLD_HELMET] = GoldHelmet.class;
-            list[GOLD_CHESTPLATE] = GoldChestplate.class;
-            list[GOLD_LEGGINGS] = GoldLeggings.class;
-            list[GOLD_BOOTS] = GoldBoots.class;
             list[DIAMOND_HELMET] = DiamondHelmet.class;
             list[DIAMOND_CHESTPLATE] = DiamondChestplate.class;
             list[DIAMOND_LEGGINGS] = DiamondLeggings.class;
             list[DIAMOND_BOOTS] = DiamondBoots.class;
-            list[IRON_SWORD] = IronSword.class;
-            list[IRON_INGOT] = IronIngot.class;
-            list[GOLD_INGOT] = GoldIngot.class;
-            list[IRON_SHOVEL] = IronShovel.class;
-            list[IRON_PICKAXE] = IronPickaxe.class;
-            list[IRON_AXE] = IronAxe.class;
-            list[IRON_HOE] = IronHoe.class;
-            list[DIAMOND_SWORD] = DiamondSword.class;
-            list[DIAMOND_SHOVEL] = DiamondShovel.class;
-            list[DIAMOND_PICKAXE] = DiamondPickaxe.class;
-            list[DIAMOND_AXE] = DiamondAxe.class;
-            list[DIAMOND_HOE] = DiamondHoe.class;
-            list[GOLD_SWORD] = GoldSword.class;
-            list[GOLD_SHOVEL] = GoldShovel.class;
-            list[GOLD_PICKAXE] = GoldPickaxe.class;
-            list[GOLD_AXE] = GoldAxe.class;
-            list[GOLD_HOE] = GoldHoe.class;
-            list[STONE_SWORD] = StoneSword.class;
-            list[STONE_SHOVEL] = StoneShovel.class;
-            list[STONE_PICKAXE] = StonePickaxe.class;
-            list[STONE_AXE] = StoneAxe.class;
-            list[STONE_HOE] = StoneHoe.class;
-            list[WOODEN_SWORD] = WoodenSword.class;
-            list[WOODEN_SHOVEL] = WoodenShovel.class;
-            list[WOODEN_PICKAXE] = WoodenPickaxe.class;
-            list[WOODEN_AXE] = WoodenAxe.class;
-            list[WOODEN_HOE] = WoodenHoe.class;
-            list[FLINT_STEEL] = FlintSteel.class;
-            list[SHEARS] = Shears.class;
-            list[BOW] = Bow.class;
-
+            list[GOLD_HELMET] = GoldHelmet.class;
+            list[GOLD_CHESTPLATE] = GoldChestplate.class;
+            list[GOLD_LEGGINGS] = GoldLeggings.class;
+            list[GOLD_BOOTS] = GoldBoots.class;
+            list[FLINT] = Flint.class;
+            list[RAW_PORKCHOP] = RawPorkchop.class;
+            list[COOKED_PORKCHOP] = CookedPorkchop.class;
+            list[PAINTING] = Painting.class;
+            list[GOLDEN_APPLE] = GoldenApple.class;
+            list[SIGN] = Sign.class;
+            list[WOODEN_DOOR] = WoodenDoor.class;
+            list[BUCKET] = Bucket.class;
+            list[MINECART] = Minecart.class;
+            list[IRON_DOOR] = IronDoor.class;
+            list[REDSTONE] = Redstone.class;
+            list[SNOWBALL] = Snowball.class;
+            list[LEATHER] = Leather.class;
+            list[BRICK] = Brick.class;
+            list[CLAY] = Clay.class;
+            list[SUGARCANE] = Sugarcane.class;
+            list[PAPER] = Paper.class;
+            list[BOOK] = Book.class;
+            list[SLIMEBALL] = Slimeball.class;
+            list[EGG] = Egg.class;
+            list[COMPASS] = Compass.class;
+            list[CLOCK] = Clock.class;
+            list[GLOWSTONE_DUST] = GlowstoneDust.class;
             list[RAW_FISH] = Fish.class;
             list[COOKED_FISH] = CookedFish.class;
+            list[DYE] = Dye.class;
+            list[BONE] = Bone.class;
+            list[SUGAR] = Sugar.class;
+            list[CAKE] = Cake.class;
+            list[BED] = Bed.class;
+            list[COOKIE] = Cookie.class;
+            list[SHEARS] = Shears.class;
+            list[MELON] = Melon.class;
+            list[PUMPKIN_SEEDS] = PumpkinSeeds.class;
+            list[MELON_SEEDS] = MelonSeeds.class;
+            list[RAW_BEEF] = RawBeef.class;
+            list[STEAK] = Steak.class;
+            list[RAW_CHICKEN] = RawChicken.class;
+            list[COOKED_CHICKEN] = CookedChicken.class;
+            list[GOLD_NUGGET] = GoldNugget.class;
+            list[SPAWN_EGG] = SpawnEgg.class;
+            list[EMERALD] = Emerald.class;
+            list[CARROT] = Carrot.class;
+            list[POTATO] = Potato.class;
+            list[BAKED_POTATO] = BakedPotato.class;
+            list[PUMPKIN_PIE] = PumpkinPie.class;
+            list[NETHER_BRICK] = NetherBrick.class;
+            list[QUARTZ] = Quartz.class;
+            list[QUARTZ] = NetherQuartz.class;
+            // list[CAMERA] = Camera.class;
+            list[BEETROOT] = Beetroot.class;
+            list[BEETROOT_SEEDS] = BeetrootSeeds.class;
+            list[BEETROOT_SOUP] = BeetrootSoup.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -538,6 +575,7 @@ public class Item implements Cloneable {
                 }
             }
         }
+        
         initCreativeItems();
     }
 
@@ -546,7 +584,300 @@ public class Item implements Cloneable {
     private static void initCreativeItems() {
         clearCreativeItems();
 
-        //todo addCreativeItem
+        //Building
+        addCreativeItem(Item.get(Item.COBBLESTONE, 0));
+        addCreativeItem(Item.get(Item.STONE_BRICKS, 0));
+        addCreativeItem(Item.get(Item.STONE_BRICKS, 1));
+        addCreativeItem(Item.get(Item.STONE_BRICKS, 2));
+        addCreativeItem(Item.get(Item.STONE_BRICKS, 3));
+        addCreativeItem(Item.get(Item.MOSS_STONE, 0));
+        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 0));
+        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 1));
+        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 2));
+        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 3));
+        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 4));
+        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 5));
+        addCreativeItem(Item.get(Item.BRICKS, 0));
+
+        addCreativeItem(Item.get(Item.STONE, 0));
+        addCreativeItem(Item.get(Item.STONE, 1));
+        addCreativeItem(Item.get(Item.STONE, 2));
+        addCreativeItem(Item.get(Item.STONE, 3));
+        addCreativeItem(Item.get(Item.STONE, 4));
+        addCreativeItem(Item.get(Item.STONE, 5));
+        addCreativeItem(Item.get(Item.STONE, 6));
+        addCreativeItem(Item.get(Item.DIRT, 0));
+        addCreativeItem(Item.get(Item.PODZOL, 0));
+        addCreativeItem(Item.get(Item.GRASS, 0));
+        addCreativeItem(Item.get(Item.MYCELIUM, 0));
+        addCreativeItem(Item.get(Item.CLAY_BLOCK, 0));
+        addCreativeItem(Item.get(Item.HARDENED_CLAY, 0));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 0));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 7));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 6));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 5));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 4));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 3));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 2));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 1));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 15));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 14));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 13));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 12));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 11));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 10));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 9));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 8));
+        addCreativeItem(Item.get(Item.SANDSTONE, 0));
+        addCreativeItem(Item.get(Item.SANDSTONE, 1));
+        addCreativeItem(Item.get(Item.SANDSTONE, 2));
+        addCreativeItem(Item.get(Item.SAND, 0));
+        addCreativeItem(Item.get(Item.SAND, 1));
+        addCreativeItem(Item.get(Item.GRAVEL, 0));
+        addCreativeItem(Item.get(Item.TRUNK, 0));
+        addCreativeItem(Item.get(Item.TRUNK, 1));
+        addCreativeItem(Item.get(Item.TRUNK, 2));
+        addCreativeItem(Item.get(Item.TRUNK, 3));
+        addCreativeItem(Item.get(Item.TRUNK2, 0));
+        addCreativeItem(Item.get(Item.TRUNK2, 1));
+        addCreativeItem(Item.get(Item.NETHER_BRICKS, 0));
+        addCreativeItem(Item.get(Item.NETHERRACK, 0));
+        addCreativeItem(Item.get(Item.BEDROCK, 0));
+        addCreativeItem(Item.get(Item.COBBLESTONE_STAIRS, 0));
+        addCreativeItem(Item.get(Item.OAK_WOODEN_STAIRS, 0));
+        addCreativeItem(Item.get(Item.SPRUCE_WOODEN_STAIRS, 0));
+        addCreativeItem(Item.get(Item.BIRCH_WOODEN_STAIRS, 0));
+        addCreativeItem(Item.get(Item.JUNGLE_WOODEN_STAIRS, 0));
+        addCreativeItem(Item.get(Item.ACACIA_WOODEN_STAIRS, 0));
+        addCreativeItem(Item.get(Item.DARK_OAK_WOODEN_STAIRS, 0));
+        addCreativeItem(Item.get(Item.BRICK_STAIRS, 0));
+        addCreativeItem(Item.get(Item.SANDSTONE_STAIRS, 0));
+        addCreativeItem(Item.get(Item.STONE_BRICK_STAIRS, 0));
+        addCreativeItem(Item.get(Item.NETHER_BRICKS_STAIRS, 0));
+        addCreativeItem(Item.get(Item.QUARTZ_STAIRS, 0));
+        addCreativeItem(Item.get(Item.SLAB, 0));
+        addCreativeItem(Item.get(Item.SLAB, 1));
+        addCreativeItem(Item.get(Item.WOODEN_SLAB, 0));
+        addCreativeItem(Item.get(Item.WOODEN_SLAB, 1));
+        addCreativeItem(Item.get(Item.WOODEN_SLAB, 2));
+        addCreativeItem(Item.get(Item.WOODEN_SLAB, 3));
+        addCreativeItem(Item.get(Item.WOODEN_SLAB, 4));
+        addCreativeItem(Item.get(Item.WOODEN_SLAB, 5));
+        addCreativeItem(Item.get(Item.SLAB, 3));
+        addCreativeItem(Item.get(Item.SLAB, 4));
+        addCreativeItem(Item.get(Item.SLAB, 5));
+        addCreativeItem(Item.get(Item.SLAB, 6));
+        addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 0));
+        addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 1));
+        addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 2));
+        addCreativeItem(Item.get(Item.COAL_ORE, 0));
+        addCreativeItem(Item.get(Item.IRON_ORE, 0));
+        addCreativeItem(Item.get(Item.GOLD_ORE, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_ORE, 0));
+        addCreativeItem(Item.get(Item.LAPIS_ORE, 0));
+        addCreativeItem(Item.get(Item.REDSTONE_ORE, 0));
+        addCreativeItem(Item.get(Item.EMERALD_ORE, 0));
+        addCreativeItem(Item.get(Item.OBSIDIAN, 0));
+        addCreativeItem(Item.get(Item.ICE, 0));
+        addCreativeItem(Item.get(Item.SNOW_BLOCK, 0));
+        addCreativeItem(Item.get(Item.END_STONE, 0));
+        addCreativeItem(Item.get(Item.QUARTZ, 0));
+
+        //Decoration
+        addCreativeItem(Item.get(Item.COBBLESTONE_WALL, 0));
+        addCreativeItem(Item.get(Item.COBBLESTONE_WALL, 1));
+        addCreativeItem(Item.get(Item.WATER_LILY, 0));
+        addCreativeItem(Item.get(Item.GOLD_BLOCK, 0));
+        addCreativeItem(Item.get(Item.IRON_BLOCK, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_BLOCK, 0));
+        addCreativeItem(Item.get(Item.LAPIS_BLOCK, 0));
+        addCreativeItem(Item.get(Item.COAL_BLOCK, 0));
+        addCreativeItem(Item.get(Item.EMERALD_BLOCK, 0));
+        addCreativeItem(Item.get(Item.REDSTONE_BLOCK, 0));
+        addCreativeItem(Item.get(Item.SNOW_LAYER, 0));
+        addCreativeItem(Item.get(Item.GLASS, 0));
+        addCreativeItem(Item.get(Item.GLOWSTONE_BLOCK, 0));
+        addCreativeItem(Item.get(Item.VINES, 0));
+        addCreativeItem(Item.get(Item.NETHER_REACTOR, 0));
+        addCreativeItem(Item.get(Item.LADDER, 0));
+        addCreativeItem(Item.get(Item.SPONGE, 0));
+        addCreativeItem(Item.get(Item.GLASS_PANE, 0));
+        addCreativeItem(Item.get(Item.WOODEN_DOOR, 0));
+        addCreativeItem(Item.get(Item.TRAPDOOR, 0));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_OAK));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_SPRUCE));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_BIRCH));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_JUNGLE));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_ACACIA));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_DARKOAK));
+        addCreativeItem(Item.get(Item.NETHER_BRICK_FENCE, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE_BIRCH, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE_SPRUCE, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE_DARK_OAK, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE_JUNGLE, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE_ACACIA, 0));
+        addCreativeItem(Item.get(Item.IRON_BARS, 0));
+        addCreativeItem(Item.get(Item.BED, 0));
+        addCreativeItem(Item.get(Item.BOOKSHELF, 0));
+        addCreativeItem(Item.get(Item.PAINTING, 0));
+        addCreativeItem(Item.get(Item.WORKBENCH, 0));
+        addCreativeItem(Item.get(Item.STONECUTTER, 0));
+        addCreativeItem(Item.get(Item.CHEST, 0));
+        addCreativeItem(Item.get(Item.FURNACE, 0));
+        addCreativeItem(Item.get(Item.END_PORTAL, 0));
+        addCreativeItem(Item.get(Item.DANDELION, 0));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_POPPY));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_BLUE_ORCHID));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ALLIUM));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_AZURE_BLUET));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_RED_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ORANGE_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_WHITE_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_PINK_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_OXEYE_DAISY));
+        //TODO: Lilac
+        //TODO: Double Tallgrass
+        //TODO: Large Fern
+        //TODO: Rose Bush
+        //TODO: Peony
+        addCreativeItem(Item.get(Item.BROWN_MUSHROOM, 0));
+        addCreativeItem(Item.get(Item.RED_MUSHROOM, 0));
+        //TODO: Mushroom block (brown, cover)
+        //TODO: Mushroom block (red, cover)
+        //TODO: Mushroom block (brown, stem)
+        //TODO: Mushroom block (red, stem)
+        addCreativeItem(Item.get(Item.CACTUS, 0));
+        addCreativeItem(Item.get(Item.MELON_BLOCK, 0));
+        addCreativeItem(Item.get(Item.PUMPKIN, 0));
+        addCreativeItem(Item.get(Item.LIT_PUMPKIN, 0));
+        addCreativeItem(Item.get(Item.COBWEB, 0));
+        addCreativeItem(Item.get(Item.HAY_BALE, 0));
+        addCreativeItem(Item.get(Item.TALL_GRASS, 1));
+        addCreativeItem(Item.get(Item.TALL_GRASS, 2));
+        addCreativeItem(Item.get(Item.DEAD_BUSH, 0));
+        addCreativeItem(Item.get(Item.SAPLING, 0));
+        addCreativeItem(Item.get(Item.SAPLING, 1));
+        addCreativeItem(Item.get(Item.SAPLING, 2));
+        addCreativeItem(Item.get(Item.SAPLING, 3));
+        addCreativeItem(Item.get(Item.SAPLING, 4));
+        addCreativeItem(Item.get(Item.SAPLING, 5));
+        addCreativeItem(Item.get(Item.LEAVES, 0));
+        addCreativeItem(Item.get(Item.LEAVES, 1));
+        addCreativeItem(Item.get(Item.LEAVES, 2));
+        addCreativeItem(Item.get(Item.LEAVES, 3));
+        addCreativeItem(Item.get(Item.LEAVES2, 0));
+        addCreativeItem(Item.get(Item.LEAVES2, 1));
+        addCreativeItem(Item.get(Item.CAKE, 0));
+        addCreativeItem(Item.get(Item.SIGN, 0));
+        addCreativeItem(Item.get(Item.MONSTER_SPAWNER, 0));
+        addCreativeItem(Item.get(Item.WOOL, 0));
+        addCreativeItem(Item.get(Item.WOOL, 7));
+        addCreativeItem(Item.get(Item.WOOL, 6));
+        addCreativeItem(Item.get(Item.WOOL, 5));
+        addCreativeItem(Item.get(Item.WOOL, 4));
+        addCreativeItem(Item.get(Item.WOOL, 3));
+        addCreativeItem(Item.get(Item.WOOL, 2));
+        addCreativeItem(Item.get(Item.WOOL, 1));
+        addCreativeItem(Item.get(Item.WOOL, 15));
+        addCreativeItem(Item.get(Item.WOOL, 14));
+        addCreativeItem(Item.get(Item.WOOL, 13));
+        addCreativeItem(Item.get(Item.WOOL, 12));
+        addCreativeItem(Item.get(Item.WOOL, 11));
+        addCreativeItem(Item.get(Item.WOOL, 10));
+        addCreativeItem(Item.get(Item.WOOL, 9));
+        addCreativeItem(Item.get(Item.WOOL, 8));
+        addCreativeItem(Item.get(Item.CARPET, 0));
+        addCreativeItem(Item.get(Item.CARPET, 7));
+        addCreativeItem(Item.get(Item.CARPET, 6));
+        addCreativeItem(Item.get(Item.CARPET, 5));
+        addCreativeItem(Item.get(Item.CARPET, 4));
+        addCreativeItem(Item.get(Item.CARPET, 3));
+        addCreativeItem(Item.get(Item.CARPET, 2));
+        addCreativeItem(Item.get(Item.CARPET, 1));
+        addCreativeItem(Item.get(Item.CARPET, 15));
+        addCreativeItem(Item.get(Item.CARPET, 14));
+        addCreativeItem(Item.get(Item.CARPET, 13));
+        addCreativeItem(Item.get(Item.CARPET, 12));
+        addCreativeItem(Item.get(Item.CARPET, 11));
+        addCreativeItem(Item.get(Item.CARPET, 10));
+        addCreativeItem(Item.get(Item.CARPET, 9));
+        addCreativeItem(Item.get(Item.CARPET, 8));
+
+
+        addCreativeItem(Item.get(Item.ANVIL, 0));
+        addCreativeItem(Item.get(Item.ANVIL, 4));
+        addCreativeItem(Item.get(Item.ANVIL, 8));
+
+        //Tools
+        //TODO addCreativeItem(Item.get(Item.RAILS, 0));
+        //TODO addCreativeItem(Item.get(Item.POWERED_RAILS, 0));
+        addCreativeItem(Item.get(Item.TORCH, 0));
+        addCreativeItem(Item.get(Item.BUCKET, 0));
+        addCreativeItem(Item.get(Item.BUCKET, 1));
+        addCreativeItem(Item.get(Item.BUCKET, 8));
+        addCreativeItem(Item.get(Item.BUCKET, 10));
+        addCreativeItem(Item.get(Item.TNT, 0));
+        addCreativeItem(Item.get(Item.IRON_HOE, 0));
+        addCreativeItem(Item.get(Item.IRON_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.IRON_SWORD, 0));
+        addCreativeItem(Item.get(Item.BOW, 0));
+        addCreativeItem(Item.get(Item.SHEARS, 0));
+        addCreativeItem(Item.get(Item.FLINT_AND_STEEL, 0));
+        addCreativeItem(Item.get(Item.CLOCK, 0));
+        addCreativeItem(Item.get(Item.COMPASS, 0));
+        addCreativeItem(Item.get(Item.MINECART, 0));
+        addCreativeItem(Item.get(Item.SPAWN_EGG, Villager.NETWORK_ID));
+        //addCreativeItem(Item.get(Item.SPAWN_EGG, 10)); //Chicken
+        //addCreativeItem(Item.get(Item.SPAWN_EGG, 11)); //Cow
+        //addCreativeItem(Item.get(Item.SPAWN_EGG, 12)); //Pig
+        //addCreativeItem(Item.get(Item.SPAWN_EGG, 13)); //Sheep
+        //TODO: Wolf
+        //TODO: Mooshroom
+        //TODO: Creeper
+        //TODO: Enderman
+        //TODO: Silverfish
+        //TODO: Skeleton
+        //TODO: Slime
+        addCreativeItem(Item.get(Item.SPAWN_EGG, Zombie.NETWORK_ID));
+        //TODO: PigZombie
+        addCreativeItem(Item.get(Item.SPAWN_EGG, Squid.NETWORK_ID));
+
+        addCreativeItem(Item.get(Item.SNOWBALL));
+
+
+        //Seeds
+        addCreativeItem(Item.get(Item.SUGARCANE, 0));
+        addCreativeItem(Item.get(Item.WHEAT, 0));
+        addCreativeItem(Item.get(Item.SEEDS, 0));
+        addCreativeItem(Item.get(Item.MELON_SEEDS, 0));
+        addCreativeItem(Item.get(Item.PUMPKIN_SEEDS, 0));
+        addCreativeItem(Item.get(Item.CARROT, 0));
+        addCreativeItem(Item.get(Item.POTATO, 0));
+        addCreativeItem(Item.get(Item.BEETROOT_SEEDS, 0));
+        addCreativeItem(Item.get(Item.EGG, 0));
+        addCreativeItem(Item.get(Item.RAW_FISH, 0));
+        addCreativeItem(Item.get(Item.RAW_FISH, 1));
+        addCreativeItem(Item.get(Item.RAW_FISH, 2));
+        addCreativeItem(Item.get(Item.RAW_FISH, 3));
+        addCreativeItem(Item.get(Item.COOKED_FISH, 0));
+        addCreativeItem(Item.get(Item.COOKED_FISH, 1));
+        addCreativeItem(Item.get(Item.DYE, 0));
+        addCreativeItem(Item.get(Item.DYE, 7));
+        addCreativeItem(Item.get(Item.DYE, 6));
+        addCreativeItem(Item.get(Item.DYE, 5));
+        addCreativeItem(Item.get(Item.DYE, 4));
+        addCreativeItem(Item.get(Item.DYE, 3));
+        addCreativeItem(Item.get(Item.DYE, 2));
+        addCreativeItem(Item.get(Item.DYE, 1));
+        addCreativeItem(Item.get(Item.DYE, 15));
+        addCreativeItem(Item.get(Item.DYE, 14));
+        addCreativeItem(Item.get(Item.DYE, 13));
+        addCreativeItem(Item.get(Item.DYE, 12));
+        addCreativeItem(Item.get(Item.DYE, 11));
+        addCreativeItem(Item.get(Item.DYE, 10));
+        addCreativeItem(Item.get(Item.DYE, 9));
+        addCreativeItem(Item.get(Item.DYE, 8));
     }
 
     public static void clearCreativeItems() {
@@ -807,7 +1138,7 @@ public class Item implements Cloneable {
         return enchantments.stream().toArray(Enchantment[]::new);
     }
 
-    public boolean hasCustomeName() {
+    public boolean hasCustomName() {
         if (!this.hasCompoundTag()) {
             return false;
         }
@@ -922,7 +1253,7 @@ public class Item implements Cloneable {
     }
 
     final public String getName() {
-        return this.hasCustomeName() ? this.getCustomName() : this.name;
+        return this.hasCustomName() ? this.getCustomName() : this.name;
     }
 
     final public boolean canBePlaced() {
