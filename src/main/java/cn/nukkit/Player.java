@@ -9,6 +9,7 @@ import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
+import cn.nukkit.inventory.SimpleTransactionGroup;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
@@ -28,7 +29,6 @@ import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.TextFormat;
-import cn.nukkit.utils.Utils;
 import cn.nukkit.utils.Zlib;
 
 import java.util.HashMap;
@@ -71,11 +71,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     protected int sendIndex = 0;
 
+    private String clientSecret;
+
     public Vector3 speed = null;
 
     public boolean blocked = false;
 
-    //todo achievement and crafting
+    //todo: achievements
+
+    protected SimpleTransactionGroup currentTransaction = null;
+
+    public int craftingType = 0;
+
+    protected boolean isCrafting = false;
 
     public long creationTime = 0;
 
@@ -112,7 +120,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     protected Map<String, Integer> loadQueue = new HashMap<>();
     protected int nextChunkOrderRun = 5;
 
-    protected Map<String, Player> hiddenPlayers = new HashMap<>();
+    protected Map<UUID, Player> hiddenPlayers = new HashMap<>();
 
     protected Vector3 newPosition;
 
@@ -142,10 +150,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     @Deprecated
     public long getClientId() {
         return randomClientId;
-    }
-
-    public UUID getUniqueId() {
-        return this.uuid;
     }
 
     @Override
@@ -240,14 +244,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public boolean canSee(Player player) {
-        return !this.hiddenPlayers.containsKey(player.getUniqueId().toString());
+        return !this.hiddenPlayers.containsKey(player.getRawUniqueId());
     }
 
     public void hidePlayer(Player player) {
         if (this.equals(player)) {
             return;
         }
-        this.hiddenPlayers.put(player.getUniqueId().toString(), player);
+        this.hiddenPlayers.put(player.getRawUniqueId(), player);
         player.despawnFrom(this);
     }
 
@@ -255,7 +259,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (this.equals(player)) {
             return;
         }
-        this.hiddenPlayers.remove(player.getUniqueId().toString());
+        this.hiddenPlayers.remove(player.getRawUniqueId());
         if (player.isOnline()) {
             player.spawnTo(this);
         }
@@ -385,7 +389,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.newPosition = new Vector3(0, 0, 0);
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        this.uuid = Utils.dataToUUID(ip, String.valueOf(port), String.valueOf(clientID));
+        this.uuid = null;
+        this.rawUUID = null;
 
         this.creationTime = System.currentTimeMillis();
     }
