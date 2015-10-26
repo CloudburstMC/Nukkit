@@ -1,8 +1,10 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
+import java.util.Arrays;
 
 public class IntArrayTag extends Tag {
     public int[] data;
@@ -16,14 +18,16 @@ public class IntArrayTag extends Tag {
         this.data = data;
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeInt(data.length);
         for (int aData : data) {
             dos.writeInt(aData);
         }
     }
 
-    void load(DataInput dis) throws IOException {
+    @Override
+    void load(NBTInputStream dis) throws IOException {
         int length = dis.readInt();
         data = new int[length];
         for (int i = 0; i < length; i++) {
@@ -31,19 +35,21 @@ public class IntArrayTag extends Tag {
         }
     }
 
+    @Override
     public byte getId() {
         return TAG_Int_Array;
     }
 
+    @Override
     public String toString() {
-        return "[" + data.length + " bytes]";
+        return "IntArrayTag " + this.getName() + " [" + data.length + " bytes]";
     }
 
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
-            IntArrayTag o = (IntArrayTag) obj;
-            return ((data == null && o.data == null) || (data != null && data.equals(o.data)));
+            IntArrayTag intArrayTag = (IntArrayTag) obj;
+            return ((data == null && intArrayTag.data == null) || (data != null && Arrays.equals(data, intArrayTag.data)));
         }
         return false;
     }

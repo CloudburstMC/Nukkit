@@ -1,7 +1,8 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -21,9 +22,9 @@ public abstract class Tag {
 
     private String name;
 
-    abstract void write(DataOutput dos) throws IOException;
+    abstract void write(NBTOutputStream dos) throws IOException;
 
-    abstract void load(DataInput dis) throws IOException;
+    abstract void load(NBTInputStream dis) throws IOException;
 
     public abstract String toString();
 
@@ -76,28 +77,21 @@ public abstract class Tag {
         return name;
     }
 
-    public static Tag readNamedTag(DataInput dis) throws IOException {
+    public static Tag readNamedTag(NBTInputStream dis) throws IOException {
         byte type = dis.readByte();
         if (type == 0) return new EndTag();
 
-        String name = dis.readUTF();// new String(bytes, "UTF-8");
+        String name = dis.readUTF();
 
         Tag tag = newTag(type, name);
-//        short length = dis.readShort();
-//        byte[] bytes = new byte[length];
-//        dis.readFully(bytes);
 
         tag.load(dis);
         return tag;
     }
 
-    public static void writeNamedTag(Tag tag, DataOutput dos) throws IOException {
+    public static void writeNamedTag(Tag tag, NBTOutputStream dos) throws IOException {
         dos.writeByte(tag.getId());
         if (tag.getId() == Tag.TAG_End) return;
-
-//        byte[] bytes = tag.getName().getBytes("UTF-8");
-//        dos.writeShort(bytes.length);
-//        dos.write(bytes);
         dos.writeUTF(tag.getName());
 
         tag.write(dos);
@@ -130,7 +124,7 @@ public abstract class Tag {
             case TAG_Compound:
                 return new CompoundTag(name);
         }
-        return null;
+        return new EndTag();
     }
 
     public static String getTagName(byte type) {

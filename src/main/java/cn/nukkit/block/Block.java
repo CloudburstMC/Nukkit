@@ -244,7 +244,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static boolean[] transparent = null;
 
     protected int id;
-    protected short meta = 0;
+    protected int meta = 0;
 
     public AxisAlignedBB boundingBox = null;
 
@@ -254,7 +254,7 @@ public class Block extends Position implements Metadatable, Cloneable {
 
     public Block(int id, Integer meta) {
         this.id = id;
-        this.meta = (short) (meta != null ? meta : 0);
+        this.meta = (meta != null ? meta : 0);
     }
 
     public static void init() {
@@ -435,12 +435,12 @@ public class Block extends Position implements Metadatable, Cloneable {
 
     }
 
-    public final short getDamage() {
+    public final int getDamage() {
         return this.meta;
     }
 
     public final void setDamage(Integer meta) {
-        this.meta = (short) (meta == null ? 0 : meta & 0x0f);
+        this.meta = (meta == null ? 0 : meta & 0x0f);
     }
 
     final public void position(Position v) {

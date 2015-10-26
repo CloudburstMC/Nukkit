@@ -6,8 +6,8 @@ import cn.nukkit.event.entity.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.nbt.ShortTag;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ShortTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.utils.BlockIterator;
 
@@ -42,7 +42,7 @@ public abstract class Living extends Entity implements Damageable {
         }
 
         if (!this.namedTag.contains("Health") || !(this.namedTag.get("Health") instanceof ShortTag)) {
-            this.namedTag.putShort("Health", (short) this.getMaxHealth());
+            this.namedTag.putShort("Health", this.getMaxHealth());
         }
 
         this.setHealth(this.namedTag.getShort("Health"));
@@ -59,8 +59,8 @@ public abstract class Living extends Entity implements Damageable {
         super.setHealth(health);
         if (this.isAlive() && !wasAlive) {
             EntityEventPacket pk = new EntityEventPacket();
-            pk.entityId = this.getId();
-            pk.event    = EntityEventPacket.RESPAWN;
+            pk.eid = this.getId();
+            pk.eid = EntityEventPacket.RESPAWN;
             Server.broadcastPacket(this.hasSpawned.values(), pk);
         }
     }
@@ -68,7 +68,7 @@ public abstract class Living extends Entity implements Damageable {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putShort("Health", (short) this.getHealth());
+        this.namedTag.putShort("Health", this.getHealth());
     }
 
     public abstract String getName();
@@ -119,7 +119,7 @@ public abstract class Living extends Entity implements Damageable {
         }
 
         EntityEventPacket pk = new EntityEventPacket();
-        pk.entityId = this.getId();
+        pk.eid = this.getId();
         pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
         Server.broadcastPacket(this.hasSpawned.values(), pk);
 

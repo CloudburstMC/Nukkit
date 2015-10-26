@@ -4,8 +4,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.nbt.NbtIo;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.FullChunkDataPacket;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.tile.Spawnable;
@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -65,11 +66,11 @@ public class Anvil extends BaseLevelProvider {
         return isValid;
     }
 
-    public static void generate(String path, String name, int seed, Class generator) throws IOException {
+    public static void generate(String path, String name, int seed, Class<? extends Generator> generator) throws IOException {
         generate(path, name, seed, generator, new HashMap<>());
     }
 
-    public static void generate(String path, String name, int seed, Class generator, Map<String, String> options) throws IOException {
+    public static void generate(String path, String name, int seed, Class<? extends Generator> generator, Map<String, String> options) throws IOException {
         if (!new File(path + "/region").exists()) {
             new File(path + "/region").mkdirs();
         }
@@ -92,7 +93,7 @@ public class Anvil extends BaseLevelProvider {
         levelData.putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "");
         levelData.putString("LevelName", name);
         levelData.putCompound("GameRules", new CompoundTag());
-        NbtIo.writeCompressed(levelData, new FileOutputStream(path + "level.dat"));
+        NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
     }
 
     public static int getRegionIndexX(int chunkX) {
@@ -122,7 +123,7 @@ public class Anvil extends BaseLevelProvider {
             }
 
             try {
-                tiles = NbtIo.write(tagList);
+                tiles = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

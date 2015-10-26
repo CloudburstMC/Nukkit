@@ -29,19 +29,19 @@ public class EntityEventPacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    public long entityId;
-    public int event;
+    public long eid;
+    public byte event;
 
     @Override
     public void decode() {
-        this.entityId = this.getLong();
-        this.event = this.getByte();
+        this.eid = this.getLong();
+        this.event = (byte) this.getByte();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putLong(this.entityId);
+        this.putLong(this.eid);
         this.putByte(event);
     }
 }

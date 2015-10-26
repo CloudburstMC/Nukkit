@@ -9,7 +9,7 @@ public class DropItemPacket extends DataPacket {
 
     public static final byte NETWORK_ID = Info.DROP_ITEM_PACKET;
 
-    public int  type;
+    public int type;
     public Item item;
 
     @Override
@@ -27,5 +27,5 @@ public class DropItemPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
-    
+
 }

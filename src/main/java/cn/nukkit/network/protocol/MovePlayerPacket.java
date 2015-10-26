@@ -18,7 +18,7 @@ public class MovePlayerPacket extends DataPacket {
     public float yaw;
     public float bodyYaw;
     public float pitch;
-    public int mode = MODE_NORMAL;
+    public byte mode = MODE_NORMAL;
     public boolean onGround;
 
     @Override
@@ -30,7 +30,7 @@ public class MovePlayerPacket extends DataPacket {
         yaw = getFloat();
         bodyYaw = getFloat();
         pitch = getFloat();
-        mode = getByte();
+        mode = (byte) getByte();
         onGround = getByte() > 0;
     }
 

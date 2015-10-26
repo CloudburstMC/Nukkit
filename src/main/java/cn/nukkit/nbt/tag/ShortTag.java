@@ -1,7 +1,8 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
 
 public class ShortTag extends Tag {
@@ -16,18 +17,22 @@ public class ShortTag extends Tag {
         this.data = data;
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeShort(data);
     }
 
-    void load(DataInput dis) throws IOException {
+    @Override
+    void load(NBTInputStream dis) throws IOException {
         data = dis.readUnsignedShort();
     }
 
+    @Override
     public byte getId() {
         return TAG_Short;
     }
 
+    @Override
     public String toString() {
         return "" + data;
     }

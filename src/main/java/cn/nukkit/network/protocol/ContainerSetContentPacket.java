@@ -19,20 +19,20 @@ public class ContainerSetContentPacket extends DataPacket {
     public static final byte SPECIAL_CREATIVE = 0x79;
     public static final byte SPECIAL_CRAFTING = 0x7a;
 
-    public int windowId;
+    public int windowid;
     public Item[] slots = new Item[0];
-    public int[] hotBar = new int[0];
+    public int[] hotbar = new int[0];
 
     @Override
     public DataPacket clean() {
         this.slots = new Item[0];
-        this.hotBar = new int[0];
+        this.hotbar = new int[0];
         return super.clean();
     }
 
     @Override
     public void decode() {
-        this.windowId = this.getByte();
+        this.windowid = this.getByte();
         int count = this.getShort();
         this.slots = new Item[count];
 
@@ -40,11 +40,11 @@ public class ContainerSetContentPacket extends DataPacket {
             this.slots[s] = this.getSlot();
         }
 
-        if (this.windowId == SPECIAL_INVENTORY) {
+        if (this.windowid == SPECIAL_INVENTORY) {
             count = this.getShort();
-            this.hotBar = new int[count];
+            this.hotbar = new int[count];
             for (int s = 0; s < count && !this.feof(); ++s) {
-                this.hotBar[s] = this.getInt();
+                this.hotbar[s] = this.getInt();
             }
         }
     }
@@ -52,19 +52,19 @@ public class ContainerSetContentPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.windowId);
+        this.putByte((byte) this.windowid);
         this.putShort((short) this.slots.length);
         for (Item slot : this.slots) {
             this.putSlot(slot);
         }
 
-        if (this.windowId == SPECIAL_INVENTORY && this.hotBar.length > 0) {
-            this.putShort((short) this.hotBar.length);
-            for (int slot : this.hotBar) {
+        if (this.windowid == SPECIAL_INVENTORY && this.hotbar.length > 0) {
+            this.putShort(this.hotbar.length);
+            for (int slot : this.hotbar) {
                 this.putInt(slot);
             }
         } else {
-            this.putShort((short) 0);
+            this.putShort(0);
         }
     }
 

@@ -1,13 +1,24 @@
 package cn.nukkit.nbt;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.Tag;
 
 import java.io.*;
+import java.nio.ByteOrder;
 import java.util.Collection;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class NbtIo {
+public class NBTIO {
+    /**
+     * A Named Binary Tag library for Nukkit Project
+     */
+
     public static CompoundTag putItemHelper(Item item) {
         return putItemHelper(item, null);
     }
@@ -42,58 +53,61 @@ public class NbtIo {
         return item;
     }
 
+    public static CompoundTag read(File file) throws IOException {
+        return read(file, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static CompoundTag read(File file, ByteOrder endianness) throws IOException {
+        if (!file.exists()) return null;
+        return read(new FileInputStream(file), endianness);
+    }
+
+    public static CompoundTag read(InputStream inputStream) throws IOException {
+        return read(inputStream, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static CompoundTag read(InputStream inputStream, ByteOrder endianness) throws IOException {
+        Tag tag = Tag.readNamedTag(new NBTInputStream(inputStream, endianness));
+        if (tag instanceof CompoundTag) {
+            return (CompoundTag) tag;
+        }
+        throw new IOException("Root tag must be a named compound tag");
+    }
+
+    public static CompoundTag read(byte[] data) throws IOException {
+        return read(data, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static CompoundTag read(byte[] data, ByteOrder endianness) throws IOException {
+        return read(new ByteArrayInputStream(data), endianness);
+    }
+
     public static CompoundTag readCompressed(InputStream in) throws IOException {
-        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new GZIPInputStream(in)))) {
-            return read(dis);
-        }
+        return readCompressed(in, ByteOrder.BIG_ENDIAN);
     }
 
-    public static byte[] writeCompressed(CompoundTag tag) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream stream = new DataOutputStream(baos);
-        writeCompressed(tag, stream);
-        return baos.toByteArray();
-    }
-
-    public static void writeCompressed(CompoundTag tag, OutputStream out) throws IOException {
-        try (DataOutputStream dos = new DataOutputStream(new GZIPOutputStream(out))) {
-            write(tag, dos);
-        }
-    }
-
-    public static CompoundTag decompress(byte[] buffer) throws IOException {
-        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(buffer))))) {
-            return read(dis);
-        }
-    }
-
-    public static byte[] compress(CompoundTag tag) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (DataOutputStream dos = new DataOutputStream(new GZIPOutputStream(baos))) {
-            write(tag, dos);
-        }
-        return baos.toByteArray();
-    }
-
-    public static void safeWrite(CompoundTag tag, File file) throws IOException {
-        File file2 = new File(file.getAbsolutePath() + "_tmp");
-        if (file2.exists()) file2.delete();
-        write(tag, file2);
-        if (file.exists()) file.delete();
-        if (file.exists()) throw new IOException("Failed to delete " + file);
-        file2.renameTo(file);
+    public static CompoundTag readCompressed(InputStream in, ByteOrder endianness) throws IOException {
+        return read(new BufferedInputStream(new GZIPInputStream(in)), endianness);
     }
 
     public static byte[] write(CompoundTag tag) throws IOException {
+        return write(tag, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static byte[] write(CompoundTag tag, ByteOrder endianness) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream stream = new DataOutputStream(baos);
+        NBTOutputStream stream = new NBTOutputStream(baos, endianness);
         Tag.writeNamedTag(tag, stream);
         return baos.toByteArray();
     }
 
     public static byte[] write(Collection<CompoundTag> tags) throws IOException {
+        return write(tags, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static byte[] write(Collection<CompoundTag> tags, ByteOrder endianness) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream stream = new DataOutputStream(baos);
+        NBTOutputStream stream = new NBTOutputStream(baos, endianness);
         for (CompoundTag tag : tags) {
             Tag.writeNamedTag(tag, stream);
         }
@@ -101,31 +115,66 @@ public class NbtIo {
     }
 
     public static void write(CompoundTag tag, File file) throws IOException {
-        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
-            write(tag, dos);
+        write(tag, file, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static void write(CompoundTag tag, File file, ByteOrder endianness) throws IOException {
+        write(tag, new FileOutputStream(file), endianness);
+    }
+
+    public static void write(CompoundTag tag, OutputStream outputStream) throws IOException {
+        write(tag, outputStream, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static void write(CompoundTag tag, OutputStream outputStream, ByteOrder endianness) throws IOException {
+        Tag.writeNamedTag(tag, new NBTOutputStream(outputStream, endianness));
+    }
+
+    public static byte[] writeGZIPCompressed(CompoundTag tag) throws IOException {
+        return writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static byte[] writeGZIPCompressed(CompoundTag tag, ByteOrder endianness) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        writeGZIPCompressed(tag, baos, endianness);
+        return baos.toByteArray();
+    }
+
+    public static void writeGZIPCompressed(CompoundTag tag, OutputStream out) throws IOException {
+        writeGZIPCompressed(tag, out, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static void writeGZIPCompressed(CompoundTag tag, OutputStream out, ByteOrder endianness) throws IOException {
+        write(tag, new GZIPOutputStream(out), endianness);
+    }
+
+    public static void writeZLIBCompressed(CompoundTag tag, OutputStream out) throws IOException {
+        writeZLIBCompressed(tag, out, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static void writeZLIBCompressed(CompoundTag tag, OutputStream out, ByteOrder endianness) throws IOException {
+        writeZLIBCompressed(tag, out, Deflater.DEFAULT_COMPRESSION, endianness);
+    }
+
+    public static void writeZLIBCompressed(CompoundTag tag, OutputStream out, int level) throws IOException {
+        writeZLIBCompressed(tag, out, level, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static void writeZLIBCompressed(CompoundTag tag, OutputStream out, int level, ByteOrder endianness) throws IOException {
+        write(tag, new DeflaterOutputStream(out, new Deflater(level)), endianness);
+    }
+
+    public static void safeWrite(CompoundTag tag, File file) throws IOException {
+        File tmpFile = new File(file.getAbsolutePath() + "_tmp");
+        if (tmpFile.exists()) {
+            tmpFile.delete();
         }
-    }
-
-    public static CompoundTag read(File file) throws IOException {
-        if (!file.exists()) return null;
-        try (DataInputStream dis = new DataInputStream(new FileInputStream(file))) {
-            return read(dis);
+        write(tag, tmpFile);
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new IOException("Failed to delete " + file);
+            }
         }
-    }
-
-    public static CompoundTag read(DataInput dis) throws IOException {
-        Tag tag = Tag.readNamedTag(dis);
-        if (tag instanceof CompoundTag) return (CompoundTag) tag;
-        throw new IOException("Root tag must be a named compound tag");
-    }
-
-    public static CompoundTag read(byte[] data) throws IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        DataInputStream stream = new DataInputStream(bais);
-        return read(stream);
-    }
-
-    public static void write(CompoundTag tag, DataOutput dos) throws IOException {
-        Tag.writeNamedTag(tag, dos);
+        tmpFile.renameTo(file);
     }
 }

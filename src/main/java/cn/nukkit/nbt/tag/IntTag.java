@@ -1,7 +1,8 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
 
 public class IntTag extends Tag {
@@ -16,20 +17,24 @@ public class IntTag extends Tag {
         this.data = data;
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeInt(data);
     }
 
-    void load(DataInput dis) throws IOException {
+    @Override
+    void load(NBTInputStream dis) throws IOException {
         data = dis.readInt();
     }
 
+    @Override
     public byte getId() {
         return TAG_Int;
     }
 
+    @Override
     public String toString() {
-        return "" + data;
+        return "IntTag" + this.getName() + "(data: " + data + ")";
     }
 
     @Override

@@ -29,9 +29,8 @@ public class TileEntityDataPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putInt(this.x);
-        this.putByte(this.y);
+        this.putByte((byte) this.y);
         this.putInt(this.z);
         this.put(this.namedTag);
     }
-
 }

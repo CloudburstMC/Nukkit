@@ -1,7 +1,8 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
 
 public class DoubleTag extends Tag {
@@ -16,20 +17,24 @@ public class DoubleTag extends Tag {
         this.data = data;
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeDouble(data);
     }
 
-    void load(DataInput dis) throws IOException {
+    @Override
+    void load(NBTInputStream dis) throws IOException {
         data = dis.readDouble();
     }
 
+    @Override
     public byte getId() {
         return TAG_Double;
     }
 
+    @Override
     public String toString() {
-        return "" + data;
+        return "DoubleTag " + this.getName() + " (data: " + data + ")";
     }
 
     @Override

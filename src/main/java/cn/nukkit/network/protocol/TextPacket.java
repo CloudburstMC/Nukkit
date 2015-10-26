@@ -7,36 +7,39 @@ public class TextPacket extends DataPacket {
 
     public static final byte NETWORK_ID = Info.TEXT_PACKET;
 
-    public static final byte TYPE_RAW = 0;
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
+    public static final byte TYPE_RAW = 0;
     public static final byte TYPE_CHAT = 1;
     public static final byte TYPE_TRANSLATION = 2;
     public static final byte TYPE_POPUP = 3;
     public static final byte TYPE_TIP = 4;
     public static final byte TYPE_SYSTEM = 5;
 
-    public int type;
-
+    public byte type;
     public String source;
     public String message;
     public String[] parameters;
 
     @Override
     public void decode() {
-        type = getByte();
+        this.type = (byte) getByte();
         switch (type) {
             case TYPE_POPUP:
             case TYPE_CHAT:
-                source = getString();
+                this.source = this.getString();
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
-                message = getString();
+                this.message = this.getString();
                 break;
 
             case TYPE_TRANSLATION:
-                message = getString();
-                int count = getByte();
+                this.message = this.getString();
+                int count = this.getByte();
                 parameters = new String[count];
                 for (int i = 0; i < count; i++) {
                     parameters[i] = getString();
@@ -46,30 +49,25 @@ public class TextPacket extends DataPacket {
 
     @Override
     public void encode() {
-        reset();
-        putByte(type);
-        switch (type) {
+        this.reset();
+        this.putByte(this.type);
+        switch (this.type) {
             case TYPE_POPUP:
             case TYPE_CHAT:
-                putString(source);
+                this.putString(this.source);
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
-                putString(message);
+                this.putString(this.message);
                 break;
 
             case TYPE_TRANSLATION:
-                putString(message);
-                putByte((byte) parameters.length);
-                for (String parameter : parameters) {
-                    putString(parameter);
+                this.putString(this.message);
+                this.putByte((byte) this.parameters.length);
+                for (String parameter : this.parameters) {
+                    this.putString(parameter);
                 }
         }
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
 }

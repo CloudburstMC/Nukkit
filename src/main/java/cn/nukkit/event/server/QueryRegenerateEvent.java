@@ -201,7 +201,7 @@ public class QueryRegenerateEvent extends ServerEvent {
         query.put((byte) 0x00);
         query.put(String.valueOf(this.maxPlayers).getBytes(StandardCharsets.UTF_8));
         query.put((byte) 0x00);
-        query.put(Binary.writeLShort((short) this.port));
+        query.put(Binary.writeLShort(this.port));
         query.put(this.ip.getBytes(StandardCharsets.UTF_8));
         query.put((byte) 0x00);
         return Arrays.copyOf(query.array(), query.position());

@@ -1,7 +1,8 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
 
 public class ByteTag extends Tag {
@@ -16,27 +17,35 @@ public class ByteTag extends Tag {
         this.data = data;
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeByte(data);
     }
 
-    void load(DataInput dis) throws IOException {
+    @Override
+    void load(NBTInputStream dis) throws IOException {
         data = dis.readByte();
     }
 
+    @Override
     public byte getId() {
         return TAG_Byte;
     }
 
+    @Override
     public String toString() {
-        return "" + data;
+        String hex = Integer.toHexString(this.data & 0xff);
+        if (hex.length() < 2) {
+            hex = "0" + hex;
+        }
+        return "ByteTag " + this.getName() + " (data: 0x" + hex + ")";
     }
 
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
-            ByteTag o = (ByteTag) obj;
-            return data == o.data;
+            ByteTag byteTag = (ByteTag) obj;
+            return data == byteTag.data;
         }
         return false;
     }

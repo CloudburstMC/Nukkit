@@ -1,7 +1,8 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
 
 public class EndTag extends Tag {
@@ -10,18 +11,22 @@ public class EndTag extends Tag {
         super(null);
     }
 
-    void load(DataInput dis) throws IOException {
+    @Override
+    void load(NBTInputStream dis) throws IOException {
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
     }
 
+    @Override
     public byte getId() {
         return TAG_End;
     }
 
+    @Override
     public String toString() {
-        return "END";
+        return "EndTag";
     }
 
     @Override

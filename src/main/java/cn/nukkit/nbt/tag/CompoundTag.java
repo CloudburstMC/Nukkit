@@ -1,7 +1,8 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -19,14 +20,16 @@ public class CompoundTag extends Tag {
         super(name);
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
         for (Tag tag : tags.values()) {
             Tag.writeNamedTag(tag, dos);
         }
         dos.writeByte(Tag.TAG_End);
     }
 
-    void load(DataInput dis) throws IOException {
+    @Override
+    void load(NBTInputStream dis) throws IOException {
         tags.clear();
         Tag tag;
         while ((tag = Tag.readNamedTag(dis)).getId() != Tag.TAG_End) {
@@ -38,6 +41,7 @@ public class CompoundTag extends Tag {
         return tags.values();
     }
 
+    @Override
     public byte getId() {
         return TAG_Compound;
     }
@@ -176,12 +180,22 @@ public class CompoundTag extends Tag {
         return (ListTag<? extends Tag>) tags.get(name);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T extends Tag> ListTag<T> getList(ListTag<T> tag, String name) {
+        if (!tags.containsKey(name)) return (ListTag<T>) tag.setName(name);
+        try {
+            return (ListTag<T>) tags.get(name);
+        } catch (ClassCastException e) {
+            return (ListTag<T>) tag.setName(name);
+        }
+    }
+
     public boolean getBoolean(String string) {
         return getByte(string) != 0;
     }
 
     public String toString() {
-        return "" + tags.size() + " entries";
+        return "CompoundTag " + this.getName() + " (" + tags.size() + " entries)";
     }
 
     public void print(String prefix, PrintStream out) {

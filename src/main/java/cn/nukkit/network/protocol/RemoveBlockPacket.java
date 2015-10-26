@@ -22,7 +22,6 @@ public class RemoveBlockPacket extends DataPacket {
 
     @Override
     public void encode() {
-        ;
     }
 
     @Override

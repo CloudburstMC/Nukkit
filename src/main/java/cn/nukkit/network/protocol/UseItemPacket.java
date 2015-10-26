@@ -26,18 +26,24 @@ public class UseItemPacket extends DataPacket {
     public Item item;
 
     @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
+
+    @Override
     public void decode() {
-        x = getInt();
-        y = getInt();
-        z = getInt();
-        face = (byte) getByte();
-        fx = getFloat();
-        fy = getFloat();
-        fz = getFloat();
-        posX = getFloat();
-        posY = getFloat();
-        posZ = getFloat();
-        item = getSlot();
+        this.x = this.getInt();
+        this.y = this.getInt();
+        this.z = this.getInt();
+        this.face = (byte) getByte();
+        this.fx = this.getFloat();
+        this.fy = this.getFloat();
+        this.fz = this.getFloat();
+        this.posX = this.getFloat();
+        this.posY = this.getFloat();
+        this.posZ = this.getFloat();
+
+        this.item = this.getSlot();
     }
 
     @Override
@@ -45,9 +51,4 @@ public class UseItemPacket extends DataPacket {
 
     }
 
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-    
 }

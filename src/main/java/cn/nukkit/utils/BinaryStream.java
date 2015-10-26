@@ -7,7 +7,8 @@ import java.util.Arrays;
 import java.util.UUID;
 
 /**
- * @author Nukkit Project Team
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public class BinaryStream {
 
@@ -52,12 +53,12 @@ public class BinaryStream {
         return offset;
     }
 
-    public int getCount() {
-        return count;
-    }
-
     public byte[] getBuffer() {
         return Arrays.copyOf(buffer, count);
+    }
+
+    public int getCount() {
+        return count;
     }
 
     public byte[] get() {
@@ -175,12 +176,16 @@ public class BinaryStream {
         this.put(Binary.writeLTriad(triad));
     }
 
+    public byte getSignedByte() {
+        return this.buffer[this.offset++];
+    }
+
     public int getByte() {
         return this.buffer[this.offset++] & 0xff;
     }
 
-    public void putByte(int b) {
-        this.put(new byte[]{(byte) (b & 0xff)});
+    public void putByte(byte b) {
+        this.put(new byte[]{b});
     }
 
     public byte[][] getDataArray() {
@@ -239,7 +244,7 @@ public class BinaryStream {
         }
 
         this.putShort(item.getId());
-        this.putByte(item.getCount());
+        this.putByte((byte) (item.getCount() & 0xff));
         this.putShort(item.getDamage() == null ? -1 : item.getDamage());
 
         byte[] nbt = item.getCompoundTag();

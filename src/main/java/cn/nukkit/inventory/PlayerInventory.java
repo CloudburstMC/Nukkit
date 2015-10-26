@@ -312,7 +312,7 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
                 ContainerSetContentPacket pk2 = new ContainerSetContentPacket();
-                pk2.windowId = ContainerSetContentPacket.SPECIAL_ARMOR;
+                pk2.windowid = ContainerSetContentPacket.SPECIAL_ARMOR;
                 pk2.slots = armor;
                 player.dataPacket(pk2);
             } else {
@@ -361,7 +361,7 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
                 ContainerSetSlotPacket pk2 = new ContainerSetSlotPacket();
-                pk2.windowId = ContainerSetContentPacket.SPECIAL_ARMOR;
+                pk2.windowid = ContainerSetContentPacket.SPECIAL_ARMOR;
                 pk2.slot = (short) (index - this.getSize());
                 pk2.item = this.getItem(index);
                 player.dataPacket(pk2);
@@ -404,10 +404,10 @@ public class PlayerInventory extends BaseInventory {
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
-                pk.hotBar = new int[this.getHotbarSize()];
+                pk.hotbar = new int[this.getHotbarSize()];
                 for (int i = 0; i < this.getHotbarSize(); ++i) {
                     int index = this.getHotBarSlotIndex(i);
-                    pk.hotBar[i] = index <= -1 ? -1 : index + 9;
+                    pk.hotbar[i] = index <= -1 ? -1 : index + 9;
                 }
             }
             int id = player.getWindowId(this);
@@ -415,7 +415,7 @@ public class PlayerInventory extends BaseInventory {
                 this.close(player);
                 continue;
             }
-            pk.windowId = (byte) id;
+            pk.windowid = (byte) id;
             player.dataPacket(pk.clone());
         }
     }
@@ -438,7 +438,7 @@ public class PlayerInventory extends BaseInventory {
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
-                pk.windowId = 0;
+                pk.windowid = 0;
                 player.dataPacket(pk);
             } else {
                 int id = player.getWindowId(this);
@@ -446,7 +446,7 @@ public class PlayerInventory extends BaseInventory {
                     this.close(player);
                     continue;
                 }
-                pk.windowId = (byte) id;
+                pk.windowid = (byte) id;
                 player.dataPacket(pk.clone());
             }
         }

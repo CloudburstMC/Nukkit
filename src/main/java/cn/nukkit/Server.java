@@ -314,7 +314,7 @@ public class Server {
     public static void broadcastPacket(Player[] players, DataPacket packet) {
         packet.encode();
         packet.isEncoded = true;
-        if (Network.BATCH_THRESHOLD >= 0 && packet.getCount() >= Network.BATCH_THRESHOLD) {
+        if (Network.BATCH_THRESHOLD >= 0 && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
             Server.getInstance().batchPackets(players, new byte[][]{packet.getBuffer()}, false, packet.getChannel());
             return;
         }

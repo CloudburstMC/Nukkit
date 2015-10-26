@@ -16,7 +16,7 @@ public class StartGamePacket extends DataPacket {
 
     private byte dimension;
     private int generator;
-    private int gameMode;
+    private int gamemode;
 
     private long eid;
 
@@ -39,7 +39,7 @@ public class StartGamePacket extends DataPacket {
         this.putInt(seed);
         this.putByte(dimension);
         this.putInt(generator);
-        this.putInt(gameMode);
+        this.putInt(gamemode);
         this.putLong(eid);
         this.putInt(spawnX);
         this.putInt(spawnY);

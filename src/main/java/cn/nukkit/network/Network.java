@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Nukkit Project Team
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public class Network {
     public static int BATCH_THRESHOLD = 512;
@@ -183,9 +184,12 @@ public class Network {
     }
 
     private void registerPackets() {
+        this.packetPool = new Class[256];
+
         this.registerPacket(Info.LOGIN_PACKET, LoginPacket.class);
         this.registerPacket(Info.PLAY_STATUS_PACKET, PlayStatusPacket.class);
         this.registerPacket(Info.DISCONNECT_PACKET, DisconnectPacket.class);
+        this.registerPacket(Info.BATCH_PACKET, BatchPacket.class);
         this.registerPacket(Info.TEXT_PACKET, TextPacket.class);
         this.registerPacket(Info.SET_TIME_PACKET, SetTimePacket.class);
         this.registerPacket(Info.START_GAME_PACKET, StartGamePacket.class);
@@ -213,7 +217,7 @@ public class Network {
         this.registerPacket(Info.SET_ENTITY_DATA_PACKET, SetEntityDataPacket.class);
         this.registerPacket(Info.SET_ENTITY_MOTION_PACKET, SetEntityMotionPacket.class);
         this.registerPacket(Info.SET_ENTITY_LINK_PACKET, SetEntityLinkPacket.class);
-        this.registerPacket(Info.SET_HEALTH_PACKET, SetHealthPacket.class);
+        //this.registerPacket(Info.SET_HEALTH_PACKET, SetHealthPacket.class);
         this.registerPacket(Info.SET_SPAWN_POSITION_PACKET, SetSpawnPositionPacket.class);
         this.registerPacket(Info.ANIMATE_PACKET, AnimatePacket.class);
         this.registerPacket(Info.RESPAWN_PACKET, RespawnPacket.class);
@@ -223,11 +227,12 @@ public class Network {
         this.registerPacket(Info.CONTAINER_SET_SLOT_PACKET, ContainerSetSlotPacket.class);
         this.registerPacket(Info.CONTAINER_SET_DATA_PACKET, ContainerSetDataPacket.class);
         this.registerPacket(Info.CONTAINER_SET_CONTENT_PACKET, ContainerSetContentPacket.class);
+        this.registerPacket(Info.CRAFTING_DATA_PACKET, CraftingDataPacket.class);
+        this.registerPacket(Info.CRAFTING_EVENT_PACKET, CraftingEventPacket.class);
         this.registerPacket(Info.ADVENTURE_SETTINGS_PACKET, AdventureSettingsPacket.class);
         this.registerPacket(Info.TILE_ENTITY_DATA_PACKET, TileEntityDataPacket.class);
         this.registerPacket(Info.FULL_CHUNK_DATA_PACKET, FullChunkDataPacket.class);
         this.registerPacket(Info.SET_DIFFICULTY_PACKET, SetDifficultyPacket.class);
-        this.registerPacket(Info.BATCH_PACKET, BatchPacket.class);
+        this.registerPacket(Info.PLAYER_LIST_PACKET, PlayerListPacket.class);
     }
-
 }

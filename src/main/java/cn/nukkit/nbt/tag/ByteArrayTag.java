@@ -1,8 +1,11 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+import cn.nukkit.utils.Binary;
+
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ByteArrayTag extends Tag {
     public byte[] data;
@@ -16,30 +19,34 @@ public class ByteArrayTag extends Tag {
         this.data = data;
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeInt(data.length);
         dos.write(data);
     }
 
-    void load(DataInput dis) throws IOException {
+    @Override
+    void load(NBTInputStream dis) throws IOException {
         int length = dis.readInt();
         data = new byte[length];
         dis.readFully(data);
     }
 
+    @Override
     public byte getId() {
         return TAG_Byte_Array;
     }
 
+    @Override
     public String toString() {
-        return "[" + data.length + " bytes]";
+        return "ByteArrayTag " + this.getName() + " (data: 0x" + Binary.bytesToHexString(data, true) + " [" + data.length + " bytes])";
     }
 
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
-            ByteArrayTag o = (ByteArrayTag) obj;
-            return ((data == null && o.data == null) || (data != null && data.equals(o.data)));
+            ByteArrayTag byteArrayTag = (ByteArrayTag) obj;
+            return ((data == null && byteArrayTag.data == null) || (data != null && Arrays.equals(data, byteArrayTag.data)));
         }
         return false;
     }

@@ -1,7 +1,8 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
 
 public class StringTag extends Tag {
@@ -17,20 +18,24 @@ public class StringTag extends Tag {
         if (data == null) throw new IllegalArgumentException("Empty string not allowed");
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeUTF(data);
     }
 
-    void load(DataInput dis) throws IOException {
+    @Override
+    void load(NBTInputStream dis) throws IOException {
         data = dis.readUTF();
     }
 
+    @Override
     public byte getId() {
         return TAG_String;
     }
 
+    @Override
     public String toString() {
-        return "" + data;
+        return "StringTag " + this.getName() + " (data: " + data + ")";
     }
 
     @Override

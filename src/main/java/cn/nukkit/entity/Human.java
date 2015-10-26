@@ -5,9 +5,9 @@ import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.nbt.ListTag;
-import cn.nukkit.nbt.NbtIo;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemovePlayerPacket;
 import cn.nukkit.utils.Binary;
@@ -108,9 +108,9 @@ public class Human extends Creature implements InventoryHolder {
                 if (item.getShort("Slot") >= 0 && item.getShort("Slot") < 9) {
                     this.inventory.setHotbarSlotIndex(item.getShort("Slot"), item.contains("TrueSlot") ? item.getShort("TrueSlot") : -1);
                 } else if (item.getShort("Slot") >= 100 && item.getShort("Slot") < 104) {
-                    this.inventory.setItem(this.inventory.getSize() + item.getShort("Slot") - 100, NbtIo.getItemHelper(item));
+                    this.inventory.setItem(this.inventory.getSize() + item.getShort("Slot") - 100, NBTIO.getItemHelper(item));
                 } else {
-                    this.inventory.setItem(item.getShort("Slot") - 9, NbtIo.getItemHelper(item));
+                    this.inventory.setItem(item.getShort("Slot") - 9, NBTIO.getItemHelper(item));
                 }
             }
         }
@@ -141,29 +141,29 @@ public class Human extends Creature implements InventoryHolder {
                 if (hotbarSlot != -1) {
                     Item item = this.inventory.getItem(hotbarSlot);
                     if (item.getId() != 0 && item.getCount() > 0) {
-                        ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, NbtIo.putItemHelper(item, (int) slot).putByte("TrueSlot", (byte) hotbarSlot));
+                        ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, NBTIO.putItemHelper(item, (int) slot).putByte("TrueSlot", (byte) hotbarSlot));
                         continue;
                     }
                 }
                 ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, new CompoundTag()
                                 .putByte("Count", (byte) 0)
-                                .putShort("Damage", (short) 0)
+                                .putShort("Damage", 0)
                                 .putByte("Slot", slot)
                                 .putByte("TrueSlot", (byte) -1)
-                                .putShort("id", (short) 0)
+                                .putShort("id", 0)
                 );
             }
 
             int slotCount = Player.SURVIVAL_SLOTS + 9;
             for (byte slot = 9; slot < slotCount; ++slot) {
                 Item item = this.inventory.getItem(slot - 9);
-                ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, NbtIo.putItemHelper(item, (int) slot));
+                ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, NBTIO.putItemHelper(item, (int) slot));
             }
 
             for (byte slot = 100; slot < 104; ++slot) {
                 Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
                 if (item != null && item.getId() != Item.AIR) {
-                    ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, NbtIo.putItemHelper(item, (int) slot));
+                    ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, NBTIO.putItemHelper(item, (int) slot));
                 }
             }
         }

@@ -2,12 +2,12 @@ package cn.nukkit.tile;
 
 import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.nbt.NbtIo;
-import cn.nukkit.network.Network;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.TileEntityDataPacket;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 /**
  * author: MagicDroidX
@@ -32,11 +32,11 @@ public abstract class Spawnable extends Tile {
         pk.y = (byte) this.y;
         pk.z = this.z;
         try {
-            pk.namedTag = NbtIo.write(tag);
+            pk.namedTag = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {
             //ignore
         }
-        player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+        player.dataPacket(pk);
     }
 
     public void spawnToAll() {

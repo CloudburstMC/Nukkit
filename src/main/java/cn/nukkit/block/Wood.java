@@ -59,7 +59,7 @@ public class Wood extends Solid {
                 0b0100
         };
 
-        this.meta = (short) ((this.meta & 0x03) | faces[face]);
+        this.meta = ((this.meta & 0x03) | faces[face]);
         this.getLevel().setBlock(block, this, true, true);
 
         return true;

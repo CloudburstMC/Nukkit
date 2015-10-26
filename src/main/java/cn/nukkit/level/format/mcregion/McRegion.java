@@ -5,17 +5,23 @@ import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.nbt.NbtIo;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 
-import java.io.*;
-import java.nio.ByteBuffer;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -63,11 +69,11 @@ public class McRegion extends BaseLevelProvider {
         return isValid;
     }
 
-    public static void generate(String path, String name, int seed, Class generator) throws IOException {
+    public static void generate(String path, String name, int seed, Class<? extends Generator> generator) throws IOException {
         generate(path, name, seed, generator, new HashMap<>());
     }
 
-    public static void generate(String path, String name, int seed, Class generator, Map<String, String> options) throws IOException {
+    public static void generate(String path, String name, int seed, Class<? extends Generator> generator, Map<String, String> options) throws IOException {
         if (!new File(path + "/region").exists()) {
             new File(path + "/region").mkdirs();
         }
@@ -90,7 +96,7 @@ public class McRegion extends BaseLevelProvider {
         levelData.putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "");
         levelData.putString("LevelName", name);
         levelData.putCompound("GameRules", new CompoundTag());
-        NbtIo.writeCompressed(levelData, new FileOutputStream(path + "level.dat"));
+        NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
     }
 
     public static int getRegionIndexX(int chunkX) {
@@ -107,49 +113,48 @@ public class McRegion extends BaseLevelProvider {
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk Sent");
         }
-        byte[][] tiles = new byte[0][];
-        int tilesLength = 0;
-        int i = 0;
+
+        byte[] tiles = new byte[0];
+
         if (!chunk.getTiles().isEmpty()) {
-            int length = chunk.getTiles().size();
-            tiles = new byte[length][];
+            List<CompoundTag> tagList = new ArrayList<>();
+
             for (Tile tile : chunk.getTiles().values()) {
                 if (tile instanceof Spawnable) {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    DataOutputStream outputStream = new DataOutputStream(baos);
-                    try {
-                        NbtIo.write(((Spawnable) tile).getSpawnCompound(), outputStream);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    tiles[i] = baos.toByteArray();
-                    tilesLength += tiles[i].length;
-                    i++;
+                    tagList.add(((Spawnable) tile).getSpawnCompound());
                 }
             }
-        }
-        byte[] blockIdArray = chunk.getBlockIdArray();
-        byte[] blockDataArray = chunk.getBlockDataArray();
-        byte[] blockSkyLightArray = chunk.getBlockSkyLightArray();
-        byte[] blockLightArray = chunk.getBlockLightArray();
-        int[] heightMapArray = chunk.getHeightMapArray();
-        int[] biomeColorArray = chunk.getBiomeColorArray();
-        ByteBuffer buffer = ByteBuffer.allocate(blockIdArray.length + blockDataArray.length + blockSkyLightArray.length + blockLightArray.length + heightMapArray.length + biomeColorArray.length * 4 + tilesLength);
-        buffer.put(blockIdArray);
-        buffer.put(blockDataArray);
-        buffer.put(blockSkyLightArray);
-        buffer.put(blockLightArray);
-        for (int aHeightMapArray : heightMapArray) {
-            buffer.put((byte) (aHeightMapArray & 0xff));
-        }
-        for (int aBiomeColorArray : biomeColorArray) {
-            buffer.put(Binary.writeInt(aBiomeColorArray));
-        }
-        for (int j = 0; j < i; j++) {
-            buffer.put(tiles[j]);
+
+            try {
+                tiles = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-        this.getLevel().chunkRequestCallback(x, z, buffer.array());
+        BinaryStream extraData = new BinaryStream();
+        extraData.putLInt(chunk.getBlockExtraDataArray().size());
+        for (Integer key : chunk.getBlockExtraDataArray().values()) {
+            extraData.putLInt(key);
+            extraData.putLShort(chunk.getBlockExtraDataArray().get(key));
+        }
+
+        BinaryStream stream = new BinaryStream(new byte[65536]);
+        stream.put(chunk.getBlockIdArray());
+        stream.put(chunk.getBlockDataArray());
+        stream.put(chunk.getBlockSkyLightArray());
+        stream.put(chunk.getBlockLightArray());
+        for (int height : chunk.getHeightMapArray()) {
+            stream.putByte((byte) (height & 0xff));
+        }
+        for (int color : chunk.getBiomeColorArray()) {
+            stream.put(Binary.writeInt(color));
+        }
+        stream.put(extraData.getBuffer());
+        stream.put(tiles);
+
+        this.getLevel().chunkRequestCallback(x, z, stream.getBuffer());
+
         return null;
     }
 

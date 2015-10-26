@@ -445,7 +445,7 @@ public abstract class BaseInventory implements Inventory {
                 this.close(player);
                 continue;
             }
-            pk.windowId = (byte) id;
+            pk.windowid = (byte) id;
             player.dataPacket(pk);
         }
     }
@@ -472,7 +472,7 @@ public abstract class BaseInventory implements Inventory {
                 this.close(player);
                 continue;
             }
-            pk.windowId = (byte) id;
+            pk.windowid = (byte) id;
             player.dataPacket(pk);
         }
     }

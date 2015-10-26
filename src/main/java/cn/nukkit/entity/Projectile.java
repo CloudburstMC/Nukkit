@@ -5,7 +5,7 @@ import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.CompoundTag;
+import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.Random;
 
@@ -61,7 +61,7 @@ public abstract class Projectile extends Entity {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putShort("Age", (short) this.age);
+        this.namedTag.putShort("Age", this.age);
     }
 
     @Override

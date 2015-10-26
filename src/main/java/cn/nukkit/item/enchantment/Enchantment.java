@@ -1,4 +1,4 @@
-package cn.nukkit.item;
+package cn.nukkit.item.enchantment;
 
 /**
  * author: MagicDroidX

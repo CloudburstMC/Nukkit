@@ -5,14 +5,15 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.nbt.NbtIo;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.LevelException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 /**
  * author: MagicDroidX
@@ -32,9 +33,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
         if (!file_path.exists()) {
             file_path.mkdirs();
         }
-        CompoundTag levelData = NbtIo.readCompressed(new FileInputStream(new File(this.getPath() + "level.dat")));
-        if (levelData != null) {
-            this.levelData = levelData;
+        CompoundTag levelData = NBTIO.readCompressed(new FileInputStream(new File(this.getPath() + "level.dat")), ByteOrder.BIG_ENDIAN);
+        if (levelData.get("Data") instanceof CompoundTag) {
+            this.levelData = levelData.getCompound("Data");
         } else {
             throw new LevelException("Invalid level.dat");
         }
@@ -109,9 +110,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     public void saveLevelData() {
         try {
-            NbtIo.writeCompressed(this.levelData, new FileOutputStream(this.getPath() + "level.dat"));
+            NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", this.levelData), new FileOutputStream(this.getPath() + "level.dat"));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

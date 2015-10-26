@@ -1,6 +1,6 @@
 package cn.nukkit.level.format.anvil;
 
-import cn.nukkit.nbt.CompoundTag;
+import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.nio.ByteBuffer;
 

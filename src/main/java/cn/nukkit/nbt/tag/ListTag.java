@@ -1,14 +1,17 @@
-package cn.nukkit.nbt;
+package cn.nukkit.nbt.tag;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListTag<T extends Tag> extends Tag {
+
     public List<T> list = new ArrayList<>();
+
     public byte type;
 
     public ListTag() {
@@ -19,7 +22,8 @@ public class ListTag<T extends Tag> extends Tag {
         super(name);
     }
 
-    void write(DataOutput dos) throws IOException {
+    @Override
+    void write(NBTOutputStream dos) throws IOException {
         if (list.size() > 0) type = list.get(0).getId();
         else type = 1;
 
@@ -28,8 +32,9 @@ public class ListTag<T extends Tag> extends Tag {
         for (T aList : list) aList.write(dos);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    void load(DataInput dis) throws IOException {
+    void load(NBTInputStream dis) throws IOException {
         type = dis.readByte();
         int size = dis.readInt();
 
@@ -41,12 +46,14 @@ public class ListTag<T extends Tag> extends Tag {
         }
     }
 
+    @Override
     public byte getId() {
         return TAG_List;
     }
 
+    @Override
     public String toString() {
-        return "" + list.size() + " entries of type " + Tag.getTagName(type);
+        return "ListTag " + this.getName() + " [" + list.size() + " entries of type " + Tag.getTagName(type) + "]";
     }
 
     public void print(String prefix, PrintStream out) {

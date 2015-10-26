@@ -9,8 +9,8 @@ import cn.nukkit.inventory.FurnaceRecipe;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.nbt.ListTag;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
 
@@ -209,13 +209,13 @@ public class Furnace extends Tile implements InventoryHolder, Container {
             int windowId = player.getWindowId(this.getInventory());
             if (windowId > 0) {
                 ContainerSetDataPacket pk = new ContainerSetDataPacket();
-                pk.windowId = (byte) windowId;
+                pk.windowid = (byte) windowId;
                 pk.property = 0;
                 pk.value = this.namedTag.getShort("CookTime");
                 player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
 
                 pk = new ContainerSetDataPacket();
-                pk.windowId = (byte) windowId;
+                pk.windowid = (byte) windowId;
                 pk.property = 1;
                 pk.value = this.namedTag.getShort("BurnTicks");
                 player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));

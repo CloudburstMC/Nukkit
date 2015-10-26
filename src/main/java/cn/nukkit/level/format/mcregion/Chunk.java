@@ -4,14 +4,18 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
-import cn.nukkit.nbt.*;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.ByteArrayTag;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.IntArrayTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Zlib;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -336,7 +340,7 @@ public class Chunk extends BaseFullChunk {
 
     public static Chunk fromBinary(byte[] data, LevelProvider provider) {
         try {
-            CompoundTag chunk = NbtIo.read(new DataInputStream(new ByteArrayInputStream(Zlib.inflate(data))));
+            CompoundTag chunk = NBTIO.read(new ByteArrayInputStream(Zlib.inflate(data)), ByteOrder.BIG_ENDIAN);
             if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
                 return null;
             }
@@ -456,7 +460,7 @@ public class Chunk extends BaseFullChunk {
         chunk.putCompound("Level", nbt);
 
         try {
-            return Zlib.deflate(NbtIo.write(chunk), RegionLoader.COMPRESSION_LEVEL);
+            return Zlib.deflate(NBTIO.write(chunk, ByteOrder.BIG_ENDIAN), RegionLoader.COMPRESSION_LEVEL);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

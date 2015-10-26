@@ -4,11 +4,17 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
-import cn.nukkit.nbt.*;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.StringTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +28,7 @@ public class Item implements Cloneable {
 
     private static CompoundTag parseCompoundTag(byte[] tag) {
         try {
-            return NbtIo.read(tag);
+            return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -30,7 +36,7 @@ public class Item implements Cloneable {
 
     private byte[] writeCompoundTag(CompoundTag tag) {
         try {
-            return NbtIo.write(tag);
+            return NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
