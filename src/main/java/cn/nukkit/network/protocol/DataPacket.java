@@ -29,12 +29,6 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
         this.putByte(this.pid());
     }
 
-    @Deprecated
-    public DataPacket setChannel(int channel) {
-        this.channel = channel;
-        return this;
-    }
-
     public int getChannel() {
         return channel;
     }

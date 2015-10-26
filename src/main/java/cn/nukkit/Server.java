@@ -118,7 +118,7 @@ public class Server {
     private String dataPath;
     private String pluginPath;
 
-    private Map<String, String> uniquePlayers = new HashMap<>();
+    private Map<UUID, String> uniquePlayers = new HashMap<>();
 
     private QueryHandler queryHandler;
 
@@ -315,7 +315,7 @@ public class Server {
         packet.encode();
         packet.isEncoded = true;
         if (Network.BATCH_THRESHOLD >= 0 && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
-            Server.getInstance().batchPackets(players, new byte[][]{packet.getBuffer()}, false, packet.getChannel());
+            Server.getInstance().batchPackets(players, new byte[][]{packet.getBuffer()}, false);
             return;
         }
 
@@ -333,19 +333,18 @@ public class Server {
     }
 
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
-        this.batchPackets(players, packets, forceSync, 0);
-    }
-
-    public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync, int channel) {
-        byte[][] payload = new byte[packets.length][];
-        for (int i = 0; i < packets.length; i++) {
+        byte[][] payload = new byte[packets.length * 2][];
+        for (int i = 0; i < packets.length * 2; i += 2) {
             DataPacket p = packets[i];
             if (!p.isEncoded) {
                 p.encode();
             }
-            payload[i] = p.getBuffer();
+            byte[] buf = p.getBuffer();
+            payload[i] = Binary.writeInt(buf.length);
+            payload[i + 1] = buf;
+
         }
-        this.batchPackets(players, payload, forceSync, channel);
+        this.batchPackets(players, payload, forceSync);
     }
 
     public void batchPackets(Player[] players, byte[][] payload) {
@@ -353,10 +352,6 @@ public class Server {
     }
 
     public void batchPackets(Player[] players, byte[][] payload, boolean forceSync) {
-        this.batchPackets(players, payload, forceSync, 0);
-    }
-
-    public void batchPackets(Player[] players, byte[][] payload, boolean forceSync, int channel) {
         byte[] data = new byte[0];
         data = Binary.appendBytes(data, payload);
         List<String> targets = new ArrayList<>();
@@ -367,10 +362,10 @@ public class Server {
         }
 
         if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel, channel));
+            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel));
         } else {
             try {
-                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets, channel);
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 //ignore
             }
@@ -378,12 +373,7 @@ public class Server {
     }
 
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
-        this.broadcastPacketsCallback(data, identifiers, 0);
-    }
-
-    public void broadcastPacketsCallback(byte[] data, List<String> identifiers, int channel) {
         BatchPacket pk = new BatchPacket();
-        pk.setChannel(channel);
         pk.payload = data;
         pk.encode();
         pk.isEncoded = true;
@@ -529,12 +519,6 @@ public class Server {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public void onPlayerLogin(Player player) {
-        if (this.sendUsageTicker > 0) {
-            this.uniquePlayers.put(player.getUniqueId().toString(), player.getUniqueId().toString());
         }
     }
 

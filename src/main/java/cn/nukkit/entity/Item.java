@@ -7,7 +7,6 @@ import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 
 /**
@@ -31,7 +30,7 @@ public class Item extends Entity {
 
     protected cn.nukkit.item.Item item;
 
-    protected short pickupDelay = 0;
+    protected int pickupDelay = 0;
 
     public float width = 0.25f;
     public float length = 0.25f;
@@ -179,11 +178,11 @@ public class Item extends Entity {
         return false;
     }
 
-    public short getPickupDelay() {
+    public int getPickupDelay() {
         return pickupDelay;
     }
 
-    public void setPickupDelay(short pickupDelay) {
+    public void setPickupDelay(int pickupDelay) {
         this.pickupDelay = pickupDelay;
     }
 
@@ -214,7 +213,7 @@ public class Item extends Entity {
         pk.speedY = (float) this.motionY;
         pk.speedZ = (float) this.motionZ;
         pk.item = this.getItem();
-        player.dataPacket(pk.setChannel(Network.CHANNEL_ENTITY_SPAWNING));
+        player.dataPacket(pk);
 
         this.sendData(player);
 
