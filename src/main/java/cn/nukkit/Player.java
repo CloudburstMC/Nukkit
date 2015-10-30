@@ -1152,7 +1152,80 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             default:
                 break;
         }
+    }
 
+    public boolean kick() {
+        return this.kick("");
+    }
+
+    public boolean kick(String reason) {
+        return this.kick(reason, true);
+    }
+
+    public boolean kick(String reason, boolean isAdmin) {
+        PlayerKickEvent ev;
+        this.server.getPluginManager().callEvent(ev = new PlayerKickEvent(this, reason, this.getLeaveMessage()));
+        if (!ev.isCancelled()) {
+            String message;
+            if (isAdmin) {
+                message = "Kicked by admin." + (!"".equals(reason) ? " Reason: " + reason : "");
+            } else {
+                if ("".equals(reason)) {
+                    message = "disconnectionScreen.noReason";
+                } else {
+                    message = reason;
+                }
+            }
+
+            this.close(ev.getQuitMessage(), message);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        String[] mes = this.server.getLanguage().translateString(message).split("\\n");
+        for (String m : mes) {
+            if (!"".equals(m)) {
+                TextPacket pk = new TextPacket();
+                pk.type = TextPacket.TYPE_RAW;
+                pk.message = m;
+                this.dataPacket(pk);
+            }
+        }
+    }
+
+    @Override
+    public void sendMessage(TextContainer message) {
+        if (message instanceof TranslationContainer) {
+            this.sendTranslation(message.getText(), ((TranslationContainer) message).getParameters());
+            return;
+        }
+        this.sendMessage(message.getText());
+    }
+
+    public void sendTranslation(String message) {
+        this.sendTranslation(message, new String[0]);
+    }
+
+    public void sendTranslation(String message, String[] parameters) {
+        TextPacket pk = new TextPacket();
+        if (!this.server.isLanguageForced()) {
+            pk.type = TextPacket.TYPE_TRANSLATION;
+            pk.message = this.server.getLanguage().translateString(message, parameters, "nukkit.");
+            for (int i = 0; i < parameters.length; i++) {
+                parameters[i] = this.server.getLanguage().translateString(parameters[i], parameters, "nukkit.");
+
+            }
+            pk.parameters = parameters;
+        } else {
+            pk.type = TextPacket.TYPE_RAW;
+            pk.message = this.server.getLanguage().translateString(message, parameters);
+        }
+        this.dataPacket(pk);
     }
 
     @Override

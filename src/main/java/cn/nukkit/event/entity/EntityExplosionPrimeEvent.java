@@ -8,12 +8,12 @@ import cn.nukkit.event.Cancellable;
  */
 public class EntityExplosionPrimeEvent extends EntityEvent implements Cancellable {
 
-    private float   force;
+    private float force;
     private boolean blockBreaking;
 
     public EntityExplosionPrimeEvent(Entity entity, float force) {
         this.entity = entity;
-        this.force  = force;
+        this.force = force;
     }
 
     public float getForce() {

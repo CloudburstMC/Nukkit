@@ -4,8 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.event.Event;
 import cn.nukkit.inventory.Inventory;
 
-import java.util.Set;
-
 /**
  * author: MagicDroidX
  * Nukkit Project

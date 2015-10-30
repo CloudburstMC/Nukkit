@@ -24,7 +24,6 @@ import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.ChunkException;
-import com.sun.istack.internal.NotNull;
 
 import java.util.*;
 
