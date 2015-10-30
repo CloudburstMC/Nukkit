@@ -10,8 +10,6 @@ import cn.nukkit.math.AxisAlignedBB;
  */
 public class Bed extends Transparent {
 
-    protected int id = BED_BLOCK;
-
     public Bed() {
         super(BED_BLOCK);
     }

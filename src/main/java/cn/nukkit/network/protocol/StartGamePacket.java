@@ -12,21 +12,21 @@ public class StartGamePacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    private int seed;
+    public int seed;
 
-    private byte dimension;
-    private int generator;
-    private int gamemode;
+    public byte dimension;
+    public int generator;
+    public int gamemode;
 
-    private long eid;
+    public long eid;
 
-    private int spawnX;
-    private int spawnY;
-    private int spawnZ;
+    public int spawnX;
+    public int spawnY;
+    public int spawnZ;
 
-    private float x;
-    private float y;
-    private float z;
+    public float x;
+    public float y;
+    public float z;
 
     @Override
     public void decode() {

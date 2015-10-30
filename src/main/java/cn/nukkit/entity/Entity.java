@@ -1164,7 +1164,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
+    protected void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
         this.isCollidedVertically = movY != dy;
         this.isCollidedHorizontally = (movX != dx || movZ != dz);
         this.isCollided = (this.isCollidedHorizontally || this.isCollidedVertically);
@@ -1401,7 +1401,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public boolean setDataProperty(int id, int type, @NotNull Object value) {
+    public boolean setDataProperty(int id, int type, Object value) {
         if (!value.equals(this.getDataProperty(id))) {
             this.dataProperties.put(id, new Object[]{type, value});
 

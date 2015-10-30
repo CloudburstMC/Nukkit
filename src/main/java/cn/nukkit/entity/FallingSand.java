@@ -12,8 +12,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
-import static cn.nukkit.item.Item.get;
-
 /**
  * Created on 15-10-26.
  */
@@ -29,7 +27,7 @@ public class FallingSand extends Entity {
     protected float gravity = 0.04F;
     protected float drag = 0.02F;
     protected int blockId;
-    protected byte damage;
+    protected int damage;
 
     public boolean canCollide;
 
@@ -45,10 +43,10 @@ public class FallingSand extends Entity {
                 blockId = namedTag.getInt("TileID");
             } else if (namedTag.contains("Tile")) {
                 blockId = namedTag.getInt("Tile");
-                namedTag.put("TileID", new IntTag("TileID", blockId));
+                namedTag.putInt("TileID", blockId);
             }
             if (namedTag.contains("Data")) {
-                damage = namedTag.getByte("Data");
+                damage = namedTag.getByte("Data") & 0xff;
             }
         }
 
@@ -57,7 +55,7 @@ public class FallingSand extends Entity {
             return;
         }
 
-        setDataProperty(DATA_BLOCK_INFO, DATA_TYPE_INT, blockId | damage << 8);
+        setDataProperty(DATA_BLOCK_INFO, DATA_TYPE_INT, this.getBlock() | this.getDamage() << 8);
     }
 
     public boolean canCollideWith(Entity entity) {
@@ -115,7 +113,7 @@ public class FallingSand extends Entity {
                 kill();
                 Block block = level.getBlock(pos);
                 if (block.getId() > 0 && !block.isSolid() && !(block instanceof Liquid)) {
-                    getLevel().dropItem(this, get(blockId, (int) damage, 1));
+                    getLevel().dropItem(this, cn.nukkit.item.Item.get(this.getBlock(), this.getDamage(), 1));
                 } else {
                     EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, Block.get(getBlock(), getDamage()));
                     server.getPluginManager().callEvent(event);
@@ -125,6 +123,7 @@ public class FallingSand extends Entity {
                 }
                 hasUpdate = true;
             }
+
             updateMovement();
         }
         return hasUpdate || !onGround || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
@@ -144,8 +143,8 @@ public class FallingSand extends Entity {
     }
 
     public void saveNBT() {
-        namedTag.put("TileID", new IntTag("TileID", blockId));
-        namedTag.put("Data", new ByteTag("Data", damage));
+        namedTag.putInt("TileID", blockId);
+        namedTag.putByte("Data", (byte) damage);
     }
 
     public void spawnTo(Player player) {

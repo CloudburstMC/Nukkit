@@ -3,6 +3,7 @@ package cn.nukkit;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.*;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.inventory.CraftingManager;
@@ -23,10 +24,12 @@ import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.PlayerListPacket;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.permission.DefaultPermissions;
+import cn.nukkit.permission.Permissible;
 import cn.nukkit.plugin.JarPluginLoader;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginLoadOrder;
@@ -128,6 +131,8 @@ public class Server {
     private Config config;
 
     private Map<String, Player> players = new HashMap<>();
+
+    private Map<UUID, Player> playerList = new HashMap<>();
 
     private Map<Player, String> identifier = new HashMap<>();
 
@@ -306,6 +311,75 @@ public class Server {
 
         this.start();
     }
+
+    public int broadcastMessage(String message) {
+        return this.broadcast(message, BROADCAST_CHANNEL_USERS);
+    }
+
+    public int broadcastMessage(TextContainer message) {
+        return this.broadcast(message, BROADCAST_CHANNEL_USERS);
+    }
+
+    public int broadcastMessage(String message, Player[] recipients) {
+        for (Player recipient : recipients) {
+            recipient.sendMessage(message);
+        }
+
+        return recipients.length;
+    }
+
+    public int broadcastMessage(String message, Collection<Player> recipients) {
+        for (Player recipient : recipients) {
+            recipient.sendMessage(message);
+        }
+
+        return recipients.size();
+    }
+
+    public int broadcastMessage(TextContainer message, Collection<Player> recipients) {
+        for (Player recipient : recipients) {
+            recipient.sendMessage(message);
+        }
+
+        return recipients.size();
+    }
+
+    public int broadcast(String message, String permissions) {
+        Set<CommandSender> recipients = new HashSet<>();
+
+        for (String permission : permissions.split(";")) {
+            for (Permissible permissible : this.pluginManager.getPermissionSubscriptions(permission)) {
+                if (permissible instanceof CommandSender && permissible.hasPermission(permission)) {
+                    recipients.add((CommandSender) permissible);
+                }
+            }
+        }
+
+        for (CommandSender recipient : recipients) {
+            recipient.sendMessage(message);
+        }
+
+        return recipients.size();
+    }
+
+    public int broadcast(TextContainer message, String permissions) {
+        Set<CommandSender> recipients = new HashSet<>();
+
+        for (String permission : permissions.split(";")) {
+            for (Permissible permissible : this.pluginManager.getPermissionSubscriptions(permission)) {
+                if (permissible instanceof CommandSender && permissible.hasPermission(permission)) {
+                    recipients.add((CommandSender) permissible);
+                }
+            }
+        }
+
+        for (CommandSender recipient : recipients) {
+            recipient.sendMessage(message);
+        }
+
+        return recipients.size();
+    }
+
 
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
         broadcastPacket(players.stream().toArray(Player[]::new), packet);
@@ -525,6 +599,21 @@ public class Server {
     public void addPlayer(String identifier, Player player) {
         this.players.put(identifier, player);
         this.identifier.put(player, identifier);
+    }
+
+    public void updatePlayerListData(UUID uuid, long entityId, String name, boolean isSlim, byte[] skinData) {
+        this.updatePlayerListData(uuid, entityId, name, isSlim, skinData, this.playerList.values());
+    }
+
+    public void updatePlayerListData(UUID uuid, long entityId, String name, boolean isSlim, byte[] skinData, Player[] players) {
+        PlayerListPacket pk = new PlayerListPacket();
+        pk.type = PlayerListPacket.TYPE_ADD;
+        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid, entityId, name, isSlim, skinData)};
+        Server.broadcastPacket(players, pk);
+    }
+
+    public void updatePlayerListData(UUID uuid, long entityId, String name, boolean isSlim, byte[] skinData, Collection<Player> players) {
+        this.updatePlayerListData(uuid, entityId, name, isSlim, skinData, players.stream().toArray(Player[]::new));
     }
 
     private boolean tick() {

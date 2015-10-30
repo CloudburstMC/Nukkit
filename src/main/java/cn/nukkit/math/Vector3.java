@@ -4,7 +4,7 @@ package cn.nukkit.math;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Vector3 {
+public class Vector3 implements Cloneable{
     public static final int SIDE_DOWN = 0;
     public static final int SIDE_UP = 1;
     public static final int SIDE_NORTH = 2;
@@ -309,4 +309,12 @@ public class Vector3 {
         return "Vector3(x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
     }
 
+    @Override
+    public Vector3 clone() {
+        try {
+            return (Vector3) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
 }

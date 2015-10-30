@@ -8,8 +8,6 @@ import cn.nukkit.math.AxisAlignedBB;
  * Nukkit Project
  */
 public class Air extends Transparent {
-    protected int id = AIR;
-    protected int meta = 0;
 
     public Air() {
         super(AIR, 0);

@@ -15,6 +15,10 @@ public class SignPost extends Transparent {
         super(Block.SIGN_POST, 0);
     }
 
+    public SignPost(int meta) {
+        super(Block.SIGN_POST, meta);
+    }
+
     public double getHardness() {
         return 1;
     }
@@ -33,8 +37,8 @@ public class SignPost extends Transparent {
 
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (face != 0) {
-            if (face > 5) { // TODO Please review this code.
-                meta = (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5);
+            if (face < 2 || face > 5) {
+                meta = (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f;
                 getLevel().setBlock(block, Block.get(Item.SIGN_POST, meta), true);
 
                 return true;
@@ -57,6 +61,7 @@ public class SignPost extends Transparent {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }
+
         return 0;
     }
 
@@ -68,7 +73,7 @@ public class SignPost extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{id, 0, 1}};
+        return new int[][]{{Item.SIGN, 0, 1}};
     }
 
     public int getToolType() {

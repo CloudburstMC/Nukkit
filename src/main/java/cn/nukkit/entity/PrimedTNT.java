@@ -22,7 +22,7 @@ class PrimedTNT extends Entity implements Explosive {
     protected float gravity = 0.04F;
     protected float drag = 0.02F;
 
-    protected byte fuse;
+    protected int fuse;
 
     private boolean canCollide;
 
@@ -43,8 +43,9 @@ class PrimedTNT extends Entity implements Explosive {
 
     protected void initEntity() {
         super.initEntity();
+
         if (namedTag.contains("Fuse")) {
-            fuse = namedTag.getByte("Fuse");
+            fuse = namedTag.getByte("Fuse") & 0xff;
         } else {
             fuse = 80;
         }
@@ -57,7 +58,7 @@ class PrimedTNT extends Entity implements Explosive {
 
     public void saveNBT() {
         super.saveNBT();
-        namedTag.putByte("Fuse", fuse);
+        namedTag.putByte("Fuse", (byte) fuse);
     }
 
     public boolean onUpdate(int currentTick) {

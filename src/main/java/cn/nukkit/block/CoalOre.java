@@ -9,8 +9,6 @@ import cn.nukkit.item.Tool;
  */
 public class CoalOre extends Solid {
 
-    protected int id = COAL_ORE;
-
     public CoalOre() {
         super(COAL_ORE);
     }

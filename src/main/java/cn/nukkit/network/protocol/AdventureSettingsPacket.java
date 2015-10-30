@@ -7,7 +7,7 @@ public class AdventureSettingsPacket extends DataPacket {
 
     public static final byte NETWORK_ID = Info.ADVENTURE_SETTINGS_PACKET;
 
-    public int flag;
+    public int flags;
 
     @Override
     public void decode() {
@@ -17,7 +17,7 @@ public class AdventureSettingsPacket extends DataPacket {
     @Override
     public void encode() {
         reset();
-        putInt(flag);
+        putInt(flags);
     }
 
     @Override

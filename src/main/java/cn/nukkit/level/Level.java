@@ -214,14 +214,14 @@ public class Level implements ChunkManager, Metadatable {
         return (x << 11) | (z << 7) | y;
     }
 
-    public static Vector3 getBlockVector3(String hash) {
+    public static Vector3 getBlockXYZ(String hash) {
         String[] h = hash.split(":");
         return new Vector3(Integer.valueOf(h[0]), Integer.valueOf(h[1]), Integer.valueOf(h[2]));
     }
 
-    public static Vector2 getBlockVector2(String hash) {
+    public static Chunk.Entry getChunkXZ(String hash) {
         String[] h = hash.split(":");
-        return new Vector2(Integer.valueOf(h[0]), Integer.valueOf(h[1]));
+        return new Chunk.Entry(Integer.valueOf(h[0]), Integer.valueOf(h[1]));
     }
 
     public static int generateChunkLoaderId(ChunkLoader loader) {
@@ -490,9 +490,9 @@ public class Level implements ChunkManager, Metadatable {
                 for (Map.Entry<String, Map<String, Vector3>> entry : this.changedBlocks.entrySet()) {
                     String index = entry.getKey();
                     Map<String, Vector3> blocks = entry.getValue();
-                    Vector2 chunkVector = Level.getBlockVector2(index);
-                    int chunkX = (int) chunkVector.getX();
-                    int chunkZ = (int) chunkVector.getY();
+                    Chunk.Entry chunkEntry = Level.getChunkXZ(index);
+                    int chunkX = chunkEntry.chunkX;
+                    int chunkZ = chunkEntry.chunkZ;
                     if (blocks.size() > 512) {
                         FullChunk chunk = this.getChunk(chunkX, chunkZ);
                         for (Player p : this.getChunkPlayers(chunkX, chunkZ).values()) {
@@ -516,9 +516,9 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         for (Map.Entry<String, Map<Long, double[]>> entry : this.moveToSend.entrySet()) {
-            Vector2 v = Level.getBlockVector2(entry.getKey());
-            int chunkX = (int) v.getX();
-            int chunkZ = (int) v.getY();
+            Chunk.Entry chunkEntry = Level.getChunkXZ(entry.getKey());
+            int chunkX = chunkEntry.chunkX;
+            int chunkZ = chunkEntry.chunkZ;
             MoveEntityPacket pk = new MoveEntityPacket();
             pk.entities = entry.getValue().values().stream().toArray(double[][]::new);
             this.addChunkPacket(chunkX, chunkZ, pk);
@@ -526,9 +526,9 @@ public class Level implements ChunkManager, Metadatable {
         this.moveToSend = new HashMap<>();
 
         for (Map.Entry<String, Map<Long, double[]>> entry : this.motionToSend.entrySet()) {
-            Vector2 v = Level.getBlockVector2(entry.getKey());
-            int chunkX = (int) v.getX();
-            int chunkZ = (int) v.getY();
+            Chunk.Entry chunkEntry = Level.getChunkXZ(entry.getKey());
+            int chunkX = chunkEntry.chunkX;
+            int chunkZ = chunkEntry.chunkZ;
             SetEntityMotionPacket pk = new SetEntityMotionPacket();
             pk.entities = entry.getValue().values().stream().toArray(double[][]::new);
             this.addChunkPacket(chunkX, chunkZ, pk);
@@ -536,9 +536,9 @@ public class Level implements ChunkManager, Metadatable {
         this.motionToSend = new HashMap<>();
 
         for (Map.Entry<String, List<DataPacket>> entry : this.chunkPackets.entrySet()) {
-            Vector2 v = Level.getBlockVector2(entry.getKey());
-            int chunkX = (int) v.getX();
-            int chunkZ = (int) v.getY();
+            Chunk.Entry chunkEntry = Level.getChunkXZ(entry.getKey());
+            int chunkX = chunkEntry.chunkX;
+            int chunkZ = chunkEntry.chunkZ;
             Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().stream().toArray(Player[]::new);
             if (chunkPlayers.length > 0) {
                 for (DataPacket pk : entry.getValue()) {
@@ -705,10 +705,9 @@ public class Level implements ChunkManager, Metadatable {
             String index = entry.getKey();
             int loaders = entry.getValue();
 
-            Vector2 v = Level.getBlockVector2(index);
-
-            int chunkX = (int) v.getX();
-            int chunkZ = (int) v.getY();
+            Chunk.Entry chunkEntry = Level.getChunkXZ(entry.getKey());
+            int chunkX = chunkEntry.chunkX;
+            int chunkZ = chunkEntry.chunkZ;
 
             FullChunk chunk;
             if (!this.chunks.containsKey(index) || (chunk = this.getChunk(chunkX, chunkZ, false)) == null) {
@@ -1275,7 +1274,7 @@ public class Level implements ChunkManager, Metadatable {
                     ((Chest) tile).unpair();
                 }
 
-                for (Item chestItem : tile.getInventory().getContents().values) {
+                for (Item chestItem : ((InventoryHolder) tile).getInventory().getContents().values()) {
                     this.dropItem(target, chestItem);
                 }
             }
@@ -1375,8 +1374,8 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             if (player != null) {
-                Vector3 diff;
-                if ((diff = player.getNextPosition().subtract(player.getPosition())) && diff.lengthSquared() > 0.00001) {
+                Vector3 diff = player.getNextPosition().subtract(player.getPosition());
+                if (diff.lengthSquared() > 0.00001) {
                     AxisAlignedBB bb = player.getBoundingBox().getOffsetBoundingBox(diff.x, diff.y, diff.z);
                     if (hand.getBoundingBox().intersectsWith(bb)) {
                         ++realCount;
@@ -1805,9 +1804,9 @@ public class Level implements ChunkManager, Metadatable {
                 if (this.chunkSendTasks.containsKey(index)) {
                     continue;
                 }
-                Vector2 v2 = Level.getBlockVector2(index);
-                x = (int) v2.x;
-                z = (int) v2.y;
+                Chunk.Entry chunkEntry = Level.getChunkXZ(index);
+                x = chunkEntry.chunkX;
+                z = chunkEntry.chunkZ;
                 if (this.chunkCache.containsKey(index)) {
                     this.sendChunkFromCache(x, z);
                     continue;
@@ -2193,16 +2192,14 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void doChunkGarbageCollection() {
-        Integer X = null;
-        Integer Z = null;
 
         for (Map.Entry<String, FullChunk> entry : this.chunks.entrySet()) {
             String index = entry.getKey();
             FullChunk chunk = entry.getValue();
             if (!this.unloadQueue.containsKey(index)) {
-                Vector2 v2 = Level.getBlockVector2(index);
-                X = (int) v2.x;
-                Z = (int) v2.y;
+                Chunk.Entry chunkEntry = Level.getChunkXZ(index);
+                int X = chunkEntry.chunkX;
+                int Z = chunkEntry.chunkZ;
                 if (!this.isSpawnChunk(X, Z)) {
                     this.unloadChunkRequest(X, Z, true);
                 }
@@ -2231,9 +2228,9 @@ public class Level implements ChunkManager, Metadatable {
                 String index = entry.getKey();
                 long time = entry.getValue();
 
-                Vector2 v2 = Level.getBlockVector2(index);
-                int X = (int) v2.x;
-                int Z = (int) v2.y;
+                Chunk.Entry chunkEntry = Level.getChunkXZ(index);
+                int X = chunkEntry.chunkX;
+                int Z = chunkEntry.chunkZ;
 
                 if (!force) {
                     if (maxUnload <= 0) {
