@@ -41,7 +41,7 @@ import java.util.*;
 
 
 /**
- * author: MagicDroidX
+ * author: MagicDroidX & Box
  * Nukkit Project
  */
 public class Player extends Human implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {

@@ -42,7 +42,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * author: MagicDroidX
+ * author: MagicDroidX & Box
  * Nukkit
  */
 public class Server {
