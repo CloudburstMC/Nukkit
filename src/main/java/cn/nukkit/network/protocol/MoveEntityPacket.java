@@ -8,7 +8,7 @@ public class MoveEntityPacket extends DataPacket {
     public static final byte NETWORK_ID = Info.MOVE_ENTITY_PACKET;
 
     // eid, x, y, z, yaw, pitch
-    public double[][] entities = new double[0][];
+    public Entry[] entities = new Entry[0];
 
     @Override
     public byte pid() {
@@ -17,7 +17,7 @@ public class MoveEntityPacket extends DataPacket {
 
     @Override
     public DataPacket clean() {
-        this.entities = new double[0][];
+        this.entities = new Entry[0];
         return super.clean();
     }
 
@@ -30,15 +30,34 @@ public class MoveEntityPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putInt(this.entities.length);
-        for (double[] d : this.entities) {
-            this.putLong((long) d[0]);
-            this.putFloat((float) d[1]);
-            this.putFloat((float) d[2]);
-            this.putFloat((float) d[3]);
-            this.putFloat((float) d[4]);
-            this.putFloat((float) d[5]);
-            this.putFloat((float) d[6]);
+        for (Entry entry : this.entities) {
+            this.putLong(entry.eid);
+            this.putFloat((float) entry.x);
+            this.putFloat((float) entry.y);
+            this.putFloat((float) entry.z);
+            this.putFloat((float) entry.yaw);
+            this.putFloat((float) entry.headyaw);
+            this.putFloat((float) entry.pitch);
         }
     }
 
+    public static class Entry {
+        public long eid;
+        public double x;
+        public double y;
+        public double z;
+        public double yaw;
+        public double headyaw;
+        public double pitch;
+
+        public Entry(long eid, double x, double y, double z, double yaw, double headyaw, double pitch) {
+            this.eid = eid;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.yaw = yaw;
+            this.headyaw = headyaw;
+            this.pitch = pitch;
+        }
+    }
 }

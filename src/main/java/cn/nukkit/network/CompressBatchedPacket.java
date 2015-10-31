@@ -46,6 +46,6 @@ public class CompressBatchedPacket extends AsyncTask {
 
     @Override
     public void onCompletion(Server server) {
-        server.broadcastPacketsCallback(this.finalData, this.targets, this.channel);
+        server.broadcastPacketsCallback(this.finalData, this.targets);
     }
 }

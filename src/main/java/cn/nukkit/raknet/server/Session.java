@@ -1,5 +1,6 @@
 package cn.nukkit.raknet.server;
 
+import cn.nukkit.inventory.Inventory;
 import cn.nukkit.raknet.RakNet;
 import cn.nukkit.raknet.protocol.DataPacket;
 import cn.nukkit.raknet.protocol.EncapsulatedPacket;
@@ -57,7 +58,7 @@ public class Session {
 
     private Map<Integer, DataPacket> recoveryQueue = new ConcurrentHashMap<>();
 
-    private Map<Short, Map<Integer, EncapsulatedPacket>> splitPackets = new ConcurrentHashMap<>();
+    private Map<Integer, Map<Integer, EncapsulatedPacket>> splitPackets = new ConcurrentHashMap<>();
 
     private Map<Integer, Map<Integer, Integer>> needACK = new ConcurrentHashMap<>();
 
@@ -275,7 +276,7 @@ public class Session {
             for (int count = 0; count < buffers.length; count++) {
                 byte[] buffer = buffers[count];
                 EncapsulatedPacket pk = new EncapsulatedPacket();
-                pk.splitID = (short) splitID;
+                pk.splitID = splitID;
                 pk.hasSplit = true;
                 pk.splitCount = buffers.length;
                 pk.reliability = packet.reliability;

@@ -6,11 +6,12 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.server.QueryRegenerateEvent;
-import cn.nukkit.inventory.CraftingManager;
+import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Flat;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.format.mcregion.McRegion;
@@ -18,11 +19,17 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.BatchPacket;
+import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.PlayerListPacket;
 import cn.nukkit.network.query.QueryHandler;
@@ -34,11 +41,15 @@ import cn.nukkit.plugin.JarPluginLoader;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginLoadOrder;
 import cn.nukkit.plugin.PluginManager;
+import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.*;
 
 /**
@@ -121,7 +132,7 @@ public class Server {
     private String dataPath;
     private String pluginPath;
 
-    private Map<UUID, String> uniquePlayers = new HashMap<>();
+    private Set<UUID> uniquePlayers = new HashSet<>();
 
     private QueryHandler queryHandler;
 
@@ -596,9 +607,36 @@ public class Server {
         }
     }
 
+    public void onPlayerLogin(Player player) {
+        if (this.sendUsageTicker > 0) {
+            this.uniquePlayers.add(player.getRawUniqueId());
+        }
+
+        this.sendFullPlayerListData(player);
+        this.sendRecipeList(player);
+    }
+
     public void addPlayer(String identifier, Player player) {
         this.players.put(identifier, player);
         this.identifier.put(player, identifier);
+    }
+
+    public void addOnlinePlayer(Player player) {
+        this.playerList.put(player.getRawUniqueId(), player);
+
+        this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.isSkinSlim(), player.getSkinData());
+    }
+
+    public void removeOnlinePlayer(Player player) {
+        if (this.playerList.containsKey(player.getRawUniqueId())) {
+            this.playerList.remove(player.getRawUniqueId());
+
+            PlayerListPacket pk = new PlayerListPacket();
+            pk.type = PlayerListPacket.TYPE_REMOVE;
+            pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(player.getUniqueId())};
+
+            Server.broadcastPacket(this.playerList.values(), pk);
+        }
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, boolean isSlim, byte[] skinData) {
@@ -614,6 +652,53 @@ public class Server {
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, boolean isSlim, byte[] skinData, Collection<Player> players) {
         this.updatePlayerListData(uuid, entityId, name, isSlim, skinData, players.stream().toArray(Player[]::new));
+    }
+
+    public void removePlayerListData(UUID uuid) {
+        this.removePlayerListData(uuid, this.playerList.values());
+    }
+
+    public void removePlayerListData(UUID uuid, Player[] players) {
+        PlayerListPacket pk = new PlayerListPacket();
+        pk.type = PlayerListPacket.TYPE_REMOVE;
+        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid)};
+        Server.broadcastPacket(players, pk);
+    }
+
+    public void removePlayerListData(UUID uuid, Collection<Player> players) {
+        this.removePlayerListData(uuid, players.stream().toArray(Player[]::new));
+    }
+
+    public void sendFullPlayerListData(Player player) {
+        PlayerListPacket pk = new PlayerListPacket();
+        pk.type = PlayerListPacket.TYPE_ADD;
+        List<PlayerListPacket.Entry> entries = new ArrayList<>();
+        for (Player p : this.playerList.values()) {
+            entries.add(new PlayerListPacket.Entry(p.getUniqueId(), p.getId(), p.getDisplayName(), p.isSkinSlim(), p.getSkinData()));
+        }
+
+        pk.entries = entries.stream().toArray(PlayerListPacket.Entry[]::new);
+
+        player.dataPacket(pk);
+    }
+
+    public void sendRecipeList(Player player) {
+        CraftingDataPacket pk = new CraftingDataPacket();
+        pk.cleanRecipes = true;
+
+        for (Recipe recipe : this.getCraftingManager().getRecipes().values()) {
+            if (recipe instanceof ShapedRecipe) {
+                pk.addShapedRecipe((ShapedRecipe) recipe);
+            } else if (recipe instanceof ShapelessRecipe) {
+                pk.addShapelessRecipe((ShapelessRecipe) recipe);
+            }
+        }
+
+        for (FurnaceRecipe recipe : this.getCraftingManager().getFurnaceRecipes().values()) {
+            pk.addFurnaceRecipe(recipe);
+        }
+
+        player.dataPacket(pk);
     }
 
     private boolean tick() {
@@ -947,6 +1032,84 @@ public class Server {
 
     public Map<String, Player> getOnlinePlayers() {
         return players;
+    }
+
+    public void addRecipe(Recipe recipe) {
+        this.craftingManager.registerRecipe(recipe);
+    }
+
+    public IPlayer getOfflinePlayer(String name) {
+        IPlayer result = this.getPlayerExact(name.toLowerCase());
+        if (result == null) {
+            return new OfflinePlayer(this, name);
+        }
+
+        return result;
+    }
+
+    public CompoundTag getOfflinePlayerData(String name) {
+        name = name.toLowerCase();
+        String path = this.getDataPath() + "players/";
+        File file = new File(path + name + ".dat");
+
+        if (file.exists()) {
+            try {
+                return NBTIO.readCompressed(new FileInputStream(file));
+            } catch (Exception e) {
+                file.renameTo(new File(path + name + ".dat.bak"));
+                this.logger.notice(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
+            }
+        } else {
+            this.logger.notice(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
+        }
+
+        Position spawn = this.getDefaultLevel().getSafeSpawn();
+        CompoundTag nbt = new CompoundTag()
+                .putLong("firstPlayed", System.currentTimeMillis())
+                .putLong("lastPlayed", System.currentTimeMillis())
+                .putList(new ListTag<DoubleTag>("Pos")
+                        .add(new DoubleTag("0", spawn.x))
+                        .add(new DoubleTag("1", spawn.y))
+                        .add(new DoubleTag("2", spawn.z)))
+                .putString("Level", this.getDefaultLevel().getName())
+                .putList(new ListTag<>("Inventory"))
+                .putCompound("Achievements", new CompoundTag())
+                .putInt("playerGameType", this.getGamemode())
+                .putList(new ListTag<DoubleTag>("Motion")
+                        .add(new DoubleTag("0", 0))
+                        .add(new DoubleTag("1", 0))
+                        .add(new DoubleTag("2", 0)))
+                .putList(new ListTag<FloatTag>("Rotation")
+                        .add(new FloatTag("0", 0))
+                        .add(new FloatTag("1", 0)))
+                .putFloat("FallDistance", 0)
+                .putShort("Fire", 0)
+                .putShort("Air", 300)
+                .putBoolean("OnGround", true)
+                .putBoolean("Invulnerable", false)
+                .putString("NameTag", name);
+
+        this.saveOfflinePlayerData(name, nbt);
+        return nbt;
+    }
+
+    public void saveOfflinePlayerData(String name, CompoundTag tag) {
+        this.saveOfflinePlayerData(name, tag, false);
+    }
+
+    public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
+        try {
+            if (async) {
+                this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
+            } else {
+                Utils.writeFile(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", new ByteArrayInputStream(NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
+            }
+        } catch (Exception e) {
+            this.logger.critical(this.getLanguage().translateString("nukkit.data.saveError", new String[]{name, e.getMessage()}));
+            if (Nukkit.DEBUG > 1 && this.logger != null) {
+                this.logger.logException(e);
+            }
+        }
     }
 
     public Player getPlayer(String name) {

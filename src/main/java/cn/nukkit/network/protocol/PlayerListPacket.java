@@ -46,11 +46,15 @@ public class PlayerListPacket extends DataPacket {
 
     public static class Entry {
 
-        private final UUID uuid;
-        private final long entityId;
-        private final String name;
-        private final boolean slim;
-        private final byte[] skin;
+        public UUID uuid;
+        public long entityId = 0;
+        public String name = "";
+        public boolean slim = false;
+        public byte[] skin = new byte[0];
+
+        public Entry(UUID uuid) {
+            this.uuid = uuid;
+        }
 
         public Entry(UUID uuid, long entityId, String name, boolean slim, byte[] skin) {
             this.uuid = uuid;

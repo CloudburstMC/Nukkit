@@ -32,19 +32,19 @@ public class SetEntityMotionPacket extends DataPacket {
         this.putInt(this.entities.length);
         for (Entry entry : this.entities) {
             this.putLong(entry.entityId);
-            this.putFloat(entry.motionX);
-            this.putFloat(entry.motionY);
-            this.putFloat(entry.motionZ);
+            this.putFloat((float) entry.motionX);
+            this.putFloat((float) entry.motionY);
+            this.putFloat((float) entry.motionZ);
         }
     }
 
     public static class Entry {
         public long entityId;
-        public float motionX;
-        public float motionY;
-        public float motionZ;
+        public double motionX;
+        public double motionY;
+        public double motionZ;
 
-        public Entry(long entityId, float motionX, float motionY, float motionZ) {
+        public Entry(long entityId, double motionX, double motionY, double motionZ) {
             this.entityId = entityId;
             this.motionX = motionX;
             this.motionY = motionY;

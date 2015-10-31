@@ -69,8 +69,8 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<Long, Tile> tiles = new HashMap<>();
 
-    private Map<String, Map<Long, double[]>> motionToSend = new HashMap<>();
-    private Map<String, Map<Long, double[]>> moveToSend = new HashMap<>();
+    private Map<String, Map<Long, SetEntityMotionPacket.Entry>> motionToSend = new HashMap<>();
+    private Map<String, Map<Long, MoveEntityPacket.Entry>> moveToSend = new HashMap<>();
 
     private Map<Long, Player> players = new HashMap<>();
 
@@ -515,22 +515,22 @@ public class Level implements ChunkManager, Metadatable {
             this.checkSleep();
         }
 
-        for (Map.Entry<String, Map<Long, double[]>> entry : this.moveToSend.entrySet()) {
+        for (Map.Entry<String, Map<Long, MoveEntityPacket.Entry>> entry : this.moveToSend.entrySet()) {
             Chunk.Entry chunkEntry = Level.getChunkXZ(entry.getKey());
             int chunkX = chunkEntry.chunkX;
             int chunkZ = chunkEntry.chunkZ;
             MoveEntityPacket pk = new MoveEntityPacket();
-            pk.entities = entry.getValue().values().stream().toArray(double[][]::new);
+            pk.entities = entry.getValue().values().stream().toArray(MoveEntityPacket.Entry[]::new);
             this.addChunkPacket(chunkX, chunkZ, pk);
         }
         this.moveToSend = new HashMap<>();
 
-        for (Map.Entry<String, Map<Long, double[]>> entry : this.motionToSend.entrySet()) {
+        for (Map.Entry<String, Map<Long, SetEntityMotionPacket.Entry>> entry : this.motionToSend.entrySet()) {
             Chunk.Entry chunkEntry = Level.getChunkXZ(entry.getKey());
             int chunkX = chunkEntry.chunkX;
             int chunkZ = chunkEntry.chunkZ;
             SetEntityMotionPacket pk = new SetEntityMotionPacket();
-            pk.entities = entry.getValue().values().stream().toArray(double[][]::new);
+            pk.entities = entry.getValue().values().stream().toArray(SetEntityMotionPacket.Entry[]::new);
             this.addChunkPacket(chunkX, chunkZ, pk);
         }
         this.motionToSend = new HashMap<>();
@@ -2274,7 +2274,7 @@ public class Level implements ChunkManager, Metadatable {
             this.motionToSend.put(index, new HashMap<>());
         }
 
-        this.motionToSend.get(index).put(entityId, new double[]{entityId, x, y, z});
+        this.motionToSend.get(index).put(entityId, new SetEntityMotionPacket.Entry(entityId, x, y, z));
     }
 
     public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch) {
@@ -2287,7 +2287,7 @@ public class Level implements ChunkManager, Metadatable {
             this.moveToSend.put(index, new HashMap<>());
         }
 
-        this.moveToSend.get(index).put(entityId, new double[]{entityId, x, y, z, yaw, headYaw, pitch});
+        this.moveToSend.get(index).put(entityId, new MoveEntityPacket.Entry(entityId, x, y, z, yaw, headYaw, pitch));
     }
 
 }

@@ -660,12 +660,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     }
 
     public Block clone() {
-        try {
-            //block.boundingBox = this.boundingBox.clone();
-            return (Block) super.clone();
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
+        return (Block) super.clone();
     }
 
 }

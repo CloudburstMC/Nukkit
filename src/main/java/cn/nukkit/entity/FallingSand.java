@@ -155,8 +155,8 @@ public class FallingSand extends Entity {
         packet.speedX = (float) motionX;
         packet.speedY = (float) motionY;
         packet.speedZ = (float) motionZ;
-        packet.yaw = yaw;
-        packet.pitch = pitch;
+        packet.yaw = (float) yaw;
+        packet.pitch = (float) pitch;
         packet.metadata = dataProperties;
         player.dataPacket(packet);
         super.spawnTo(player);

@@ -11,7 +11,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
 
 /**
@@ -212,13 +211,13 @@ public class Furnace extends Tile implements InventoryHolder, Container {
                 pk.windowid = (byte) windowId;
                 pk.property = 0;
                 pk.value = this.namedTag.getShort("CookTime");
-                player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+                player.dataPacket(pk);
 
                 pk = new ContainerSetDataPacket();
                 pk.windowid = (byte) windowId;
                 pk.property = 1;
                 pk.value = this.namedTag.getShort("BurnTicks");
-                player.dataPacket(pk.setChannel(Network.CHANNEL_WORLD_EVENTS));
+                player.dataPacket(pk);
             }
         }
 

@@ -21,7 +21,7 @@ public class ItemBlock extends Item {
     }
 
     public void setDamage(Integer meta) {
-        this.meta = meta != null ? (short) (meta & 0xf) : null;
+        this.meta = meta != null ? (meta & 0xf) : null;
         this.block.setDamage(meta);
     }
 

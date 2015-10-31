@@ -48,10 +48,10 @@ public abstract class Packet implements Cloneable {
     }
 
     protected short getShort() {
-        return this.getShort(true);
+        return (short) this.getShort(true);
     }
 
-    protected short getShort(boolean signed) {
+    protected int getShort(boolean signed) {
         return signed ? Binary.readSignedShort(this.get(2)) : Binary.readShort(this.get(2));
     }
 
