@@ -871,11 +871,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    public byte getGamemode() {
+    public int getGamemode() {
         return gamemode;
     }
 
-    public boolean setGamemode(byte gamemode) {
+    public boolean setGamemode(int gamemode) {
         if (gamemode < 0 || gamemode > 3 || this.gamemode == gamemode) {
             return false;
         }
