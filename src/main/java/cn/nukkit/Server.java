@@ -16,6 +16,7 @@ import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
@@ -776,17 +777,15 @@ public class Server {
         }
 
         Runtime runtime = Runtime.getRuntime();
-        float used = ((float) Math.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024 * 100)) / 100;
-        float totol = ((float) Math.round(((double) runtime.totalMemory()) / 1024 / 1024 * 100)) / 100;
-        float max = ((float) Math.round(((double) runtime.maxMemory()) / 1024 / 1024 * 100)) / 100;
-        //String usage = used + "/" + totol + "/" + max + " MB @ ";
-        String usage = used + "/" + max + " MB";
+        double used = NukkitMath.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024, 2);
+        double max = NukkitMath.round(((double) runtime.maxMemory()) / 1024 / 1024, 2);
+        String usage = Math.round(used / max * 100) + "%";
         System.out.print((char) 0x1b + "]0;" + this.getName() + " " +
                 this.getNukkitVersion() +
                 " | Online " + this.players.size() + "/" + this.getMaxPlayers() +
                 " | Memory " + usage +
-                " | U " + ((float) Math.round((this.network.getUpload()) / 1024 * 100)) / 100
-                + " D " + ((float) Math.round((this.network.getDownload()) / 1024 * 100)) / 100 +
+                " | U " + NukkitMath.round((this.network.getUpload()) / 1024, 2)
+                + " D " + NukkitMath.round((this.network.getDownload()) / 1024, 2) +
                 " kB/s | TPS " + this.getTicksPerSecond() +
                 " | Load " + this.getTickUsage() + "%" + (char) 0x07);
 
@@ -1010,11 +1009,11 @@ public class Server {
         for (float aTickAverage : this.tickAverage) {
             sum += aTickAverage;
         }
-        return ((float) Math.round(sum / count * 100)) / 100;
+        return (float) NukkitMath.round(sum / count, 2);
     }
 
     public float getTickUsage() {
-        return ((float) Math.round(this.maxUse * 100 * 100)) / 100;
+        return (float) NukkitMath.round(this.maxUse * 100, 2);
     }
 
     public float getTickUsageAverage() {
