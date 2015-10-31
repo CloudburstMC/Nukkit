@@ -1,6 +1,5 @@
 package cn.nukkit.raknet.server;
 
-import cn.nukkit.inventory.Inventory;
 import cn.nukkit.raknet.RakNet;
 import cn.nukkit.raknet.protocol.DataPacket;
 import cn.nukkit.raknet.protocol.EncapsulatedPacket;

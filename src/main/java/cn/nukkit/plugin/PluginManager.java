@@ -240,9 +240,10 @@ public class PluginManager {
                     String name = (String) entry.getKey();
                     File file = (File) entry.getValue();
                     if (dependencies.containsKey(name)) {
+                        List<String> keys = new ArrayList<>();
                         for (String dependency : dependencies.get(name)) {
                             if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
-                                dependencies.get(name).remove(dependency);
+                                keys.add(dependency);
                             } else if (!plugins.containsKey(dependency)) {
                                 this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit" +
                                         ".plugin.loadError", new String[]{name, "%nukkit.plugin.unknownDependency"}));
@@ -250,7 +251,11 @@ public class PluginManager {
                             }
                         }
 
-                        if (dependencies.get(name).size() == 0) {
+                        for (String dependency : keys) {
+                            dependencies.get(name).remove(dependency);
+                        }
+
+                        if (dependencies.get(name).isEmpty()) {
                             dependencies.remove(name);
                         }
                     }

@@ -174,7 +174,7 @@ abstract public class PluginBase implements Plugin {
 
     @Override
     public InputStream getResource(String filename) {
-        return this.getClass().getClassLoader().getResourceAsStream("resources/" + filename);
+        return this.getClass().getClassLoader().getResourceAsStream(filename);
     }
 
     @Override
