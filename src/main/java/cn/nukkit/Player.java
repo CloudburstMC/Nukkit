@@ -910,19 +910,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.dataPacket(pk);
         this.sendSettings();
 
-        if (this.gamemode == Player::SPECTATOR) {
-            ContainerSetContentPacket pk = new ContainerSetContentPacket();
-            pk.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
-            this.dataPacket(pk);
+        if (this.gamemode == Player.SPECTATOR) {
+            ContainerSetContentPacket pk1 = new ContainerSetContentPacket();
+            pk1.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+            this.dataPacket(pk1);
         } else {
-            ContainerSetContentPacket pk = new ContainerSetContentPacket();
-            pk.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+            ContainerSetContentPacket pk1 = new ContainerSetContentPacket();
+            pk1.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
             List<Item> slots = new ArrayList<>();
             for (Item item : Item.getCreativeItems()) {
                 slots.add(item.clone());
             }
-            pk.slots = slots.stream().toArray(Item[]::new);
-            this.dataPacket(pk);
+            pk1.slots = slots.stream().toArray(Item[]::new);
+            this.dataPacket(pk1);
         }
 
         this.inventory.sendContents(this);
