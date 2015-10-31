@@ -38,7 +38,7 @@ public class SetEntityMotionPacket extends DataPacket {
         }
     }
 
-   public static class Entry {
+    public static class Entry {
         public long entityId;
         public float motionX;
         public float motionY;

@@ -3,7 +3,6 @@ package cn.nukkit.event.player;
 import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.event.TextContainer;
 import cn.nukkit.level.Location;
 
 public class PlayerMoveEvent extends PlayerEvent implements Cancellable {
@@ -16,10 +15,10 @@ public class PlayerMoveEvent extends PlayerEvent implements Cancellable {
     private Location from;
     private Location to;
 
-    public PlayerMoveEvent(Player player,  Location from,Location to) {
+    public PlayerMoveEvent(Player player, Location from, Location to) {
         this.player = player;
-        this.from=from;
-        this.to=to;
+        this.from = from;
+        this.to = to;
     }
 
     public Location getFrom() {

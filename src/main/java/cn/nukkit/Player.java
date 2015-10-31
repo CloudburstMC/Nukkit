@@ -5,6 +5,9 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.*;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.event.entity.EntityDamageByBlockEvent;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntitySpawnEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
@@ -1249,7 +1252,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.lastYaw = from.yaw;
             this.lastPitch = from.pitch;
 
-            this.sendPosition(from, from.yaw, from.pitch, 1);
+            this.sendPosition(from, from.yaw, from.pitch, MovePlayerPacket.MODE_RESET);
             this.forceMovement = new Vector3(from.x, from.y, from.z);
         } else {
             this.forceMovement = null;
@@ -1457,9 +1460,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
             nbt.getList(new ListTag<>(), "Pos")
-                    .add(0, new DoubleTag("", this.level.getSpawnLocation().x))
-                    .add(1, new DoubleTag("", this.level.getSpawnLocation().y))
-                    .add(2, new DoubleTag("", this.level.getSpawnLocation().z));
+                    .add(0, new DoubleTag("0", this.level.getSpawnLocation().x))
+                    .add(1, new DoubleTag("1", this.level.getSpawnLocation().y))
+                    .add(2, new DoubleTag("2", this.level.getSpawnLocation().z));
         } else {
             this.setLevel(level);
         }
@@ -1746,7 +1749,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void close(String message, String reason, boolean notify) {
-        this.close(new TextContainer(message), reason, notify));
+        this.close(new TextContainer(message), reason, notify);
     }
 
     public void close(TextContainer message) {
@@ -1760,7 +1763,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void close(TextContainer message, String reason, boolean notify) {
         if (this.connected && !this.closed) {
             if (notify && reason.length() > 0) {
-                DisconnectPacket pk = new DisconnectPacket;
+                DisconnectPacket pk = new DisconnectPacket();
                 pk.message = reason;
                 this.directDataPacket(pk);
             }
@@ -1837,8 +1840,408 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.server.removePlayer(this);
     }
 
+    public void save() {
+        this.save(false);
+    }
+
+    public void save(boolean async) {
+        if (this.closed) {
+            throw new IllegalStateException("Tried to save closed player");
+        }
+
+        super.saveNBT();
+
+        if (this.level != null) {
+            this.namedTag.putString("Level", this.level.getName());
+            if (this.spawnPosition != null && this.spawnPosition.getLevel() != null) {
+                this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getName());
+                this.namedTag.putInt("SpawnX", (int) this.spawnPosition.x);
+                this.namedTag.putInt("SpawnY", (int) this.spawnPosition.y);
+                this.namedTag.putInt("SpawnZ", (int) this.spawnPosition.z);
+            }
+
+            //todo save achievement
+
+            this.namedTag.putInt("playerGameType", this.gamemode);
+            this.namedTag.putLong("lastPlayed", System.currentTimeMillis());
+
+            if (!"".equals(this.username) && this.namedTag != null) {
+                this.server.saveOfflinePlayerData(this.username, this.namedTag, async);
+            }
+        }
+    }
+
     public String getName() {
         return this.username;
+    }
+
+    @Override
+    public void kill() {
+        if (!this.spawned) {
+            return;
+        }
+
+        String message = "death.attack.generic";
+
+        List<String> params = new ArrayList<>();
+        params.add(this.getDisplayName());
+
+        EntityDamageEvent cause = this.getLastDamageCause();
+
+        switch (cause == null ? EntityDamageEvent.CAUSE_CUSTOM : cause.getCause()) {
+            case EntityDamageEvent.CAUSE_ENTITY_ATTACK:
+                if (cause instanceof EntityDamageByEntityEvent) {
+                    Entity e = ((EntityDamageByEntityEvent) cause).getDamager();
+                    if (e instanceof Player) {
+                        message = "death.attack.player";
+                        params.add(((Player) e).getDisplayName());
+                        break;
+                    } else if (e instanceof Living) {
+                        message = "death.attack.mob";
+                        params.add(e.getNameTag() != "" ? e.getNameTag() : ((Living) e).getName());
+                        break;
+                    } else {
+                        params.add("Unknown");
+                    }
+                }
+                break;
+            case EntityDamageEvent.CAUSE_PROJECTILE:
+                if (cause instanceof EntityDamageByEntityEvent) {
+                    Entity e = ((EntityDamageByEntityEvent) cause).getDamager();
+                    if (e instanceof Player) {
+                        message = "death.attack.arrow";
+                        params.add(((Player) e).getDisplayName());
+                    } else if (e instanceof Living) {
+                        message = "death.attack.arrow";
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((Living) e).getName());
+                        break;
+                    } else {
+                        params.add("Unknown");
+                    }
+                }
+                break;
+            case EntityDamageEvent.CAUSE_SUICIDE:
+                message = "death.attack.generic";
+                break;
+            case EntityDamageEvent.CAUSE_VOID:
+                message = "death.attack.outOfWorld";
+                break;
+            case EntityDamageEvent.CAUSE_FALL:
+                if (cause != null) {
+                    if (cause.getFinalDamage() > 2) {
+                        message = "death.fell.accident.generic";
+                        break;
+                    }
+                }
+                message = "death.attack.fall";
+                break;
+
+            case EntityDamageEvent.CAUSE_SUFFOCATION:
+                message = "death.attack.inWall";
+                break;
+
+            case EntityDamageEvent.CAUSE_LAVA:
+                message = "death.attack.lava";
+                break;
+
+            case EntityDamageEvent.CAUSE_FIRE:
+                message = "death.attack.onFire";
+                break;
+
+            case EntityDamageEvent.CAUSE_FIRE_TICK:
+                message = "death.attack.inFire";
+                break;
+
+            case EntityDamageEvent.CAUSE_DROWNING:
+                message = "death.attack.drown";
+                break;
+
+            case EntityDamageEvent.CAUSE_CONTACT:
+                if (cause instanceof EntityDamageByBlockEvent) {
+                    if (((EntityDamageByBlockEvent) cause).getDamager().getId() == Block.CACTUS) {
+                        message = "death.attack.cactus";
+                    }
+                }
+                break;
+
+            case EntityDamageEvent.CAUSE_BLOCK_EXPLOSION:
+            case EntityDamageEvent.CAUSE_ENTITY_EXPLOSION:
+                if (cause instanceof EntityDamageByEntityEvent) {
+                    Entity e = ((EntityDamageByEntityEvent) cause).getDamager();
+                    if (e instanceof Player) {
+                        message = "death.attack.explosion.player";
+                        params.add(((Player) e).getDisplayName());
+                    } else if (e instanceof Living) {
+                        message = "death.attack.explosion.player";
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((Living) e).getName());
+                        break;
+                    }
+                } else {
+                    message = "death.attack.explosion";
+                }
+                break;
+
+            case EntityDamageEvent.CAUSE_MAGIC:
+                message = "death.attack.magic";
+                break;
+
+            case EntityDamageEvent.CAUSE_CUSTOM:
+                break;
+
+            default:
+
+        }
+
+        this.health = 0;
+        this.scheduleUpdate();
+
+        PlayerDeathEvent ev;
+        this.server.getPluginManager().callEvent(ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.stream().toArray(String[]::new))));
+
+        if (!ev.getKeepInventory()) {
+            for (Item item : ev.getDrops()) {
+                this.level.dropItem(this, item);
+            }
+
+            if (this.inventory != null) {
+                this.inventory.clearAll();
+            }
+        }
+
+        if (!Objects.equals(ev.getDeathMessage().toString(), "")) {
+            this.server.broadcast(ev.getDeathMessage(), Server.BROADCAST_CHANNEL_USERS);
+        }
+
+
+        RespawnPacket pk = new RespawnPacket();
+        Position pos = this.getSpawn();
+        pk.x = (float) pos.x;
+        pk.y = (float) pos.y;
+        pk.z = (float) pos.z;
+        this.dataPacket(pk);
+    }
+
+    @Override
+    public void setHealth(float health) {
+        super.setHealth(health);
+        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setValue(health);
+        if (this.spawned) {
+            UpdateAttributesPacket pk = new UpdateAttributesPacket();
+            pk.entries = new Attribute[]{attr};
+            pk.entityId = 0;
+            this.dataPacket(pk);
+        }
+    }
+
+    @Override
+    public void attack(float damage, EntityDamageEvent source) {
+        if (!this.isAlive()) {
+            return;
+        }
+
+        if (this.isCreative()
+                && source.getCause() != EntityDamageEvent.CAUSE_MAGIC
+                && source.getCause() != EntityDamageEvent.CAUSE_SUICIDE
+                && source.getCause() != EntityDamageEvent.CAUSE_VOID
+                ) {
+            source.setCancelled();
+        } else if (this.allowFlight && source.getCause() == EntityDamageEvent.CAUSE_FALL) {
+            source.setCancelled();
+        }
+
+        super.attack(damage, source);
+
+        if (!source.isCancelled() && this.getLastDamageCause() == source && this.spawned) {
+            EntityEventPacket pk = new EntityEventPacket();
+            pk.eid = 0;
+            pk.event = EntityEventPacket.HURT_ANIMATION;
+            this.dataPacket(pk);
+        }
+    }
+
+    public void sendPosition(Vector3 pos) {
+        this.sendPosition(pos, this.yaw);
+    }
+
+    public void sendPosition(Vector3 pos, double yaw) {
+        this.sendPosition(pos, yaw, this.pitch);
+    }
+
+    public void sendPosition(Vector3 pos, double yaw, double pitch) {
+        this.sendPosition(pos, yaw, pitch, MovePlayerPacket.MODE_NORMAL);
+    }
+
+    public void sendPosition(Vector3 pos, double yaw, double pitch, byte mode) {
+        MovePlayerPacket pk = new MovePlayerPacket();
+        pk.eid = 0;
+        pk.x = (float) pos.x;
+        pk.y = (float) (pos.y + this.getEyeHeight());
+        pk.z = (float) pos.z;
+        pk.bodyYaw = (float) yaw;
+        pk.pitch = (float) pitch;
+        pk.yaw = (float) yaw;
+        pk.mode = mode;
+        this.dataPacket(pk);
+    }
+
+    public void sendPosition(Vector3 pos, double yaw, double pitch, byte mode, Player[] targets) {
+        MovePlayerPacket pk = new MovePlayerPacket();
+        pk.eid = this.getId();
+        pk.x = (float) pos.x;
+        pk.y = (float) (pos.y + this.getEyeHeight());
+        pk.z = (float) pos.z;
+        pk.bodyYaw = (float) yaw;
+        pk.pitch = (float) pitch;
+        pk.yaw = (float) yaw;
+        pk.mode = mode;
+
+        if (targets != null) {
+            Server.broadcastPacket(targets, pk);
+        } else {
+            pk.eid = 0;
+            this.dataPacket(pk);
+        }
+    }
+
+    @Override
+    protected void checkChunks() {
+        if (this.chunk == null || (this.chunk.getX() != ((int) this.x >> 4) || this.chunk.getZ() != ((int) this.z >> 4))) {
+            if (this.chunk != null) {
+                this.chunk.removeEntity(this);
+            }
+            this.chunk = this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true);
+
+            if (!this.justCreated) {
+                Map<Integer, Player> newChunk = this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
+                newChunk.remove(this.getLoaderId());
+
+                //List<Player> reload = new ArrayList<>();
+                for (Player player : this.hasSpawned.values()) {
+                    if (!newChunk.containsKey(player.getLoaderId())) {
+                        this.despawnFrom(player);
+                    } else {
+                        newChunk.remove(player.getLoaderId());
+                        //reload.add(player);
+                    }
+                }
+
+                for (Player player : newChunk.values()) {
+                    this.spawnTo(player);
+                }
+            }
+
+            if (this.chunk == null) {
+                return;
+            }
+
+            this.chunk.addEntity(this);
+        }
+    }
+
+    protected boolean checkTeleportPosition() {
+        if (this.teleportPosition != null) {
+            int chunkX = (int) this.teleportPosition.x >> 4;
+            int chunkZ = (int) this.teleportPosition.z >> 4;
+
+            for (int X = -1; X <= 1; ++X) {
+                for (int Z = -1; Z <= 1; ++Z) {
+                    String index = Level.chunkHash(chunkX + X, chunkZ + Z);
+                    if (!this.usedChunks.containsKey(index) || !this.usedChunks.get(index)) {
+                        return false;
+                    }
+                }
+            }
+
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+            this.spawnToAll();
+            this.forceMovement = this.teleportPosition;
+            this.teleportPosition = null;
+
+            return true;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean teleport(Vector3 pos) {
+        if (pos instanceof Location) {
+            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
+        } else {
+            return this.teleport(pos, this.yaw);
+        }
+    }
+
+    @Override
+    public boolean teleport(Vector3 pos, double yaw) {
+        if (pos instanceof Location) {
+            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
+        } else {
+            return this.teleport(pos, yaw, this.pitch);
+        }
+    }
+
+    @Override
+    public boolean teleport(Vector3 pos, double yaw, double pitch) {
+        if (!this.isOnline()) {
+            return false;
+        }
+
+        Position oldPos = this.getPosition();
+        if (super.teleport(pos, yaw, pitch)) {
+
+            for (Inventory window : this.windowIndex.values()) {
+                if (Objects.equals(window, this.inventory)) {
+                    continue;
+                }
+                this.removeWindow(window);
+            }
+
+            this.teleportPosition = new Vector3(this.x, this.y, this.z);
+
+            if (!this.checkTeleportPosition()) {
+                this.forceMovement = oldPos;
+            } else {
+                this.spawnToAll();
+            }
+
+
+            this.resetFallDistance();
+            this.nextChunkOrderRun = 0;
+            this.newPosition = null;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public void teleportImmediate(Vector3 pos) {
+        this.teleportImmediate(pos, this.yaw);
+    }
+
+    public void teleportImmediate(Vector3 pos, double yaw) {
+        this.teleportImmediate(pos, yaw, this.pitch);
+    }
+
+    public void teleportImmediate(Vector3 pos, double yaw, double pitch) {
+        if (super.teleport(pos, yaw, pitch)) {
+
+            for (Inventory window : this.windowIndex.values()) {
+                if (Objects.equals(window, this.inventory)) {
+                    continue;
+                }
+                this.removeWindow(window);
+            }
+
+            this.forceMovement = new Vector3(this.x, this.y, this.z);
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+
+            this.resetFallDistance();
+            this.orderChunks();
+            this.nextChunkOrderRun = 0;
+            this.newPosition = null;
+        }
     }
 
     public int getWindowId(Inventory inventory) {
