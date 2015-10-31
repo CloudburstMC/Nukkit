@@ -72,6 +72,12 @@ public class ListTag<T extends Tag> extends Tag {
         return this;
     }
 
+    public ListTag<T> add(int index, T tag) {
+        type = tag.getId();
+        list.add(index, tag);
+        return this;
+    }
+
     public T get(int index) {
         return list.get(index);
     }

@@ -2,11 +2,10 @@ package cn.nukkit;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.entity.Arrow;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.Human;
+import cn.nukkit.entity.*;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.event.entity.EntitySpawnEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
@@ -18,13 +17,19 @@ import cn.nukkit.inventory.SimpleTransactionGroup;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.permission.PermissibleBase;
@@ -59,7 +64,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public boolean spawned = false;
     public boolean loggedIn = false;
-    public byte gamemode;
+    public int gamemode;
     public long lastBreak;
 
     protected int windowCnt = 2;
@@ -910,19 +915,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.dataPacket(pk);
         this.sendSettings();
 
-        if (this.gamemode == Player::SPECTATOR) {
-            ContainerSetContentPacket pk = new ContainerSetContentPacket();
-            pk.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
-            this.dataPacket(pk);
+        if (this.gamemode == Player.SPECTATOR) {
+            ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
+            containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+            this.dataPacket(containerSetContentPacket);
         } else {
-            ContainerSetContentPacket pk = new ContainerSetContentPacket();
-            pk.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+            ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
+            containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
             List<Item> slots = new ArrayList<>();
             for (Item item : Item.getCreativeItems()) {
                 slots.add(item.clone());
             }
-            pk.slots = slots.stream().toArray(Item[]::new);
-            this.dataPacket(pk);
+            containerSetContentPacket.slots = slots.stream().toArray(Item[]::new);
+            this.dataPacket(containerSetContentPacket);
         }
 
         this.inventory.sendContents(this);
@@ -1132,6 +1137,505 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
+    protected void processMovement(int tickDiff) {
+        if (!this.isAlive() || !this.spawned || this.newPosition == null || this.teleportPosition != null) {
+            return;
+        }
+
+        Vector3 newPos = this.newPosition;
+        double distanceSquared = newPos.distanceSquared(this);
+
+        boolean revert = false;
+
+        if ((distanceSquared / (tickDiff * tickDiff)) > 100) {
+            revert = true;
+        } else {
+            if (this.chunk == null || !this.chunk.isGenerated()) {
+                FullChunk chunk = this.level.getChunk((int) newPos.x >> 4, (int) newPos.z >> 4, false);
+                if (chunk == null || !chunk.isGenerated()) {
+                    revert = true;
+                    this.nextChunkOrderRun = 0;
+                } else {
+                    if (this.chunk != null) {
+                        this.chunk.removeEntity(this);
+                    }
+                    this.chunk = chunk;
+                }
+            }
+        }
+
+        if (!revert && distanceSquared != 0) {
+            double dx = newPos.x - this.x;
+            double dy = newPos.y - this.y;
+            double dz = newPos.z - this.z;
+
+            this.move(dx, dy, dz);
+
+            double diffX = this.x - newPos.x;
+            double diffY = this.y - newPos.y;
+            double diffZ = this.z - newPos.z;
+
+            double yS = 0.5 + this.ySize;
+            if (diffY >= -yS || diffY <= yS) {
+                diffY = 0;
+            }
+
+            double diff = (diffX * diffX + diffY * diffY + diffZ * diffZ) / (tickDiff * tickDiff);
+
+            if (this.isSurvival()) {
+                if (!this.isSleeping()) {
+                    if (diff > 0.0625) {
+                        revert = true;
+                        this.server.getLogger().warning(this.getServer().getLanguage().translateString("pocketmine.player.invalidMove", this.getName()));
+                    }
+                }
+            }
+
+            if (diff > 0) {
+                this.x = newPos.x;
+                this.y = newPos.y;
+                this.z = newPos.z;
+                double radius = this.width / 2;
+                this.boundingBox.setBounds(this.x - radius, this.y, this.z - radius, this.x + radius, this.y + this.height, this.z + radius);
+            }
+        }
+
+        Location from = new Location(this.lastX, this.lastY, this.lastZ, this.lastYaw, this.lastPitch, this.level);
+        Location to = this.getLocation();
+
+        double delta = Math.pow(this.lastX - to.x, 2) + Math.pow(this.lastY - to.y, 2) + Math.pow(this.lastZ - to.z, 2);
+        double deltaAngle = Math.abs(this.lastYaw - to.yaw) + Math.abs(this.lastPitch - to.pitch);
+
+        if (!revert && (delta > (1 / 16) || deltaAngle > 10)) {
+
+            boolean isFirst = (this.lastX == null || this.lastY == null || this.lastZ == null);
+
+            this.lastX = to.x;
+            this.lastY = to.y;
+            this.lastZ = to.z;
+
+            this.lastYaw = to.yaw;
+            this.lastPitch = to.pitch;
+
+            if (!isFirst) {
+                PlayerMoveEvent ev = new PlayerMoveEvent(this, from, to);
+
+                this.server.getPluginManager().callEvent(ev);
+
+                if (!(revert = ev.isCancelled())) { //Yes, this is intended
+                    if (to.distanceSquared(ev.getTo()) > 0.01) { //If plugins modify the destination
+                        this.teleport(ev.getTo());
+                    } else {
+                        this.level.addEntityMovement((int) this.x >> 4, (int) this.z >> 4, this.getId(), this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+                    }
+                }
+            }
+
+            if (!this.isSpectator()) {
+                this.checkNearEntities();
+            }
+
+            this.speed = from.subtract(to);
+        } else if (distanceSquared == 0) {
+            this.speed = new Vector3(0, 0, 0);
+        }
+
+        if (revert) {
+
+            this.lastX = from.x;
+            this.lastY = from.y;
+            this.lastZ = from.z;
+
+            this.lastYaw = from.yaw;
+            this.lastPitch = from.pitch;
+
+            this.sendPosition(from, from.yaw, from.pitch, 1);
+            this.forceMovement = new Vector3(from.x, from.y, from.z);
+        } else {
+            this.forceMovement = null;
+            if (distanceSquared != 0 && this.nextChunkOrderRun > 20) {
+                this.nextChunkOrderRun = 20;
+            }
+        }
+
+        this.newPosition = null;
+    }
+
+    @Override
+    public boolean setMotion(Vector3 motion) {
+        if (super.setMotion(motion)) {
+            if (this.chunk != null) {
+                this.level.addEntityMotion(this.chunk.getX(), this.chunk.getZ(), this.getId(), this.motionX, this.motionY, this.motionZ);
+                SetEntityMotionPacket pk = new SetEntityMotionPacket();
+                pk.entities = new SetEntityMotionPacket.Entry[]{new SetEntityMotionPacket.Entry(0, (float) motion.x, (float) motion.y, (float) motion.z)};
+                this.dataPacket(pk);
+            }
+
+            if (this.motionY > 0) {
+                //todo: check this
+                this.startAirTicks = (int) ((-(Math.log(this.gravity / (this.gravity + this.drag * this.motionY))) / this.drag) * 2 + 5);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    protected void updateMovement() {
+
+    }
+
+    @Override
+    public boolean onUpdate(int currentTick) {
+        if (!this.loggedIn) {
+            return false;
+        }
+
+        int tickDiff = currentTick - this.lastUpdate;
+
+        if (tickDiff <= 0) {
+            return true;
+        }
+
+        this.messageCounter = 2;
+
+        this.lastUpdate = currentTick;
+
+        if (!this.isAlive() && this.spawned) {
+            ++this.deadTicks;
+            if (this.deadTicks >= 10) {
+                this.despawnFromAll();
+            }
+            return true;
+        }
+
+        if (this.spawned) {
+            this.processMovement(tickDiff);
+
+            this.entityBaseTick(tickDiff);
+
+            if (!this.isSpectator() && this.speed != null) {
+                if (this.onGround) {
+                    if (this.inAirTicks != 0) {
+                        this.startAirTicks = 5;
+                    }
+                    this.inAirTicks = 0;
+                } else {
+                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && (byte) this.getDataProperty(DATA_NO_AI) != 1) {
+                        double expectedVelocity = (-this.gravity) / this.drag - ((-this.gravity) / this.drag) * Math.exp(-this.drag * (this.inAirTicks - this.startAirTicks));
+                        double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
+
+                        if (!this.hasEffect(Effect.JUMP) && diff > 0.6 && expectedVelocity < this.speed.y && !this.server.getAllowFlight()) {
+                            if (this.inAirTicks < 100) {
+                                this.setMotion(new Vector3(0, expectedVelocity, 0));
+                            } else if (this.kick("Flying is not enabled on this server")) {
+                                return false;
+                            }
+                        }
+                    }
+
+                    ++this.inAirTicks;
+                }
+            }
+        }
+
+        this.checkTeleportPosition();
+
+        return true;
+    }
+
+    public void checkNetwork() {
+        if (!this.isOnline()) {
+            return;
+        }
+
+        if (this.nextChunkOrderRun-- <= 0 || this.chunk == null) {
+            this.orderChunks();
+        }
+
+        if (!this.loadQueue.isEmpty() || !this.spawned) {
+            this.sendNextChunk();
+        }
+
+        if (!this.batchedPackets.isEmpty()) {
+            for (int channel : this.batchedPackets.keySet()) {
+                this.server.batchPackets(new Player[]{this}, batchedPackets.get(channel).stream().toArray(DataPacket[]::new), false);
+            }
+            this.batchedPackets = new HashMap<>();
+        }
+
+    }
+
+    public boolean canInteract(Vector3 pos, double maxDistance) {
+        return this.canInteract(pos, maxDistance, 0.5);
+    }
+
+    public boolean canInteract(Vector3 pos, double maxDistance, double maxDiff) {
+        if (this.distanceSquared(pos) > maxDistance * maxDistance) {
+            return false;
+        }
+
+        Vector2 dV = this.getDirectionPlane();
+        double dot = dV.dot(new Vector2(this.x, this.z));
+        double dot1 = dV.dot(new Vector2(pos.x, pos.z));
+        return (dot1 - dot) >= -maxDiff;
+    }
+
+    public void onPlayerPreLogin() {
+        //TODO: AUTHENTICATE
+        this.tryAuthenticate();
+    }
+
+    public void tryAuthenticate() {
+        this.authenticateCallback(true);
+    }
+
+    public void authenticateCallback(boolean valid) {
+        //TODO add more stuff after authentication is available
+
+        if (!valid) {
+            this.close("", "disconnectionScreen.invalidSession");
+            return;
+        }
+
+        this.processLogin();
+    }
+
+    protected void processLogin() {
+        if (!this.server.isWhitelisted((this.getName()).toLowerCase())) {
+            this.close(this.getLeaveMessage(), "Server is white-listed");
+
+            return;
+        } else if (this.server.getNameBans().isBanned((this.getName()).toLowerCase()) || this.server.getIPBans().isBanned(this.getAddress())) {
+            this.close(this.getLeaveMessage(), "You are banned");
+
+            return;
+        }
+
+        if (this.hasPermission(Server.BROADCAST_CHANNEL_USERS)) {
+            this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_USERS, this);
+        }
+        if (this.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE)) {
+            this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this);
+        }
+
+        for (Player p : this.server.getOnlinePlayers().values()) {
+            if (p != this && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
+                if (!p.kick("logged in from another location")) {
+                    this.close(this.getLeaveMessage(), "Logged in from another location");
+                    return;
+                }
+            } else if (p.loggedIn && this.getUniqueId().equals(p.getUniqueId())) {
+                if (!p.kick("logged in from another location")) {
+                    this.close(this.getLeaveMessage(), "Logged in from another location");
+                    return;
+                }
+            }
+        }
+
+        CompoundTag nbt = this.server.getOfflinePlayerData(this.username);
+        if (nbt == null) {
+            this.close(this.getLeaveMessage(), "Invalid data");
+
+            return;
+        }
+
+        nbt.putString("NameTag", this.username);
+
+        this.gamemode = nbt.getInt("playerGameType") & 0x03;
+        if (this.server.getForceGamemode()) {
+            this.gamemode = this.server.getGamemode();
+            nbt.putInt("playerGameType", this.gamemode);
+        }
+
+        this.allowFlight = this.isCreative();
+
+        Level level;
+        if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
+            this.setLevel(this.server.getDefaultLevel());
+            nbt.putString("Level", this.level.getName());
+            nbt.getList(new ListTag<>(), "Pos")
+                    .add(0, new DoubleTag("", this.level.getSpawnLocation().x))
+                    .add(1, new DoubleTag("", this.level.getSpawnLocation().y))
+                    .add(2, new DoubleTag("", this.level.getSpawnLocation().z));
+        } else {
+            this.setLevel(level);
+        }
+
+        //todo achievement
+        nbt.putLong("lastPlayed", System.currentTimeMillis());
+
+        if (this.server.getAutoSave()) {
+            this.server.saveOfflinePlayerData(this.username, nbt, true);
+        }
+
+        ListTag<DoubleTag> posList = nbt.getList(new ListTag<>(), "Pos");
+        FullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
+
+        this.isPlayer = true;
+
+        this.temporalVector = new Vector3();
+
+        this.id = Entity.entityCount++;
+        this.justCreated = true;
+        this.namedTag = nbt;
+
+        this.chunk = chunk;
+        this.setLevel(chunk.getProvider().getLevel());
+        this.server = chunk.getProvider().getLevel().getServer();
+
+        this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
+
+        ListTag<FloatTag> rotationList = this.namedTag.getList(new ListTag<>(), "Rotation");
+        ListTag<DoubleTag> motionList = this.namedTag.getList(new ListTag<>(), "Motion");
+        this.setPositionAndRotation(
+                this.temporalVector.setComponents(
+                        posList.get(0).data,
+                        posList.get(1).data,
+                        posList.get(2).data
+                ),
+                rotationList.get(0).data,
+                rotationList.get(1).data
+        );
+
+        this.setMotion(this.temporalVector.setComponents(
+                motionList.get(0).data,
+                motionList.get(1).data,
+                motionList.get(2).data
+        ));
+
+        if (!this.namedTag.contains("FallDistance")) {
+            this.namedTag.putFloat("FallDistance", 0);
+        }
+        this.fallDistance = this.namedTag.getFloat("FallDistance");
+
+        if (!this.namedTag.contains("Fire")) {
+            this.namedTag.putShort("Fire", 0);
+        }
+        this.fireTicks = this.namedTag.getShort("Fire");
+
+        if (!this.namedTag.contains("Air")) {
+            this.namedTag.putShort("Air", (short) 300);
+        }
+        this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, this.namedTag.getShort("Air"));
+
+        if (!this.namedTag.contains("OnGround")) {
+            this.namedTag.putBoolean("OnGround", false);
+        }
+        this.onGround = this.namedTag.getBoolean("OnGround");
+
+        if (!this.namedTag.contains("Invulnerable")) {
+            this.namedTag.putBoolean("Invulnerable", false);
+        }
+        this.invulnerable = this.namedTag.getBoolean("Invulnerable");
+
+        this.chunk.addEntity(this);
+        this.level.addEntity(this);
+        this.initEntity();
+        this.lastUpdate = this.server.getTick();
+        this.server.getPluginManager().callEvent(new EntitySpawnEvent(this));
+
+        this.scheduleUpdate();
+
+        this.loggedIn = true;
+        this.server.addOnlinePlayer(this);
+
+        PlayerLoginEvent ev;
+        this.server.getPluginManager().callEvent(ev = new PlayerLoginEvent(this, "Plugin reason"));
+        if (ev.isCancelled()) {
+            this.close(this.getLeaveMessage(), ev.getKickMessage());
+
+            return;
+        }
+
+        if (this.isCreative()) {
+            this.inventory.setHeldItemSlot(0);
+        } else {
+            this.inventory.setHeldItemSlot(this.inventory.getHotbarSlotIndex(0));
+        }
+
+        PlayStatusPacket statusPacket = new PlayStatusPacket();
+        statusPacket.status = PlayStatusPacket.LOGIN_SUCCESS;
+        this.dataPacket(statusPacket);
+
+        if (this.spawnPosition == null && this.namedTag.contains("SpawnLevel") && (level = this.server.getLevelByName(this.namedTag.getString("SpawnLevel"))) != null) {
+            this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
+        }
+
+        spawnPosition = this.getSpawn();
+
+        StartGamePacket startGamePacket = new StartGamePacket();
+        startGamePacket.seed = -1;
+        startGamePacket.dimension = 0;
+        startGamePacket.x = (float) this.x;
+        startGamePacket.y = (float) this.y;
+        startGamePacket.z = (float) this.z;
+        startGamePacket.spawnX = (int) spawnPosition.x;
+        startGamePacket.spawnY = (int) spawnPosition.y;
+        startGamePacket.spawnZ = (int) spawnPosition.z;
+        startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
+        startGamePacket.gamemode = this.gamemode & 0x01;
+        startGamePacket.eid = 0; //Always use EntityID as zero for the actual player
+        this.dataPacket(startGamePacket);
+
+        SetTimePacket setTimePacket = new SetTimePacket();
+        setTimePacket.time = this.level.getTime();
+        setTimePacket.started = !this.level.stopTime;
+        this.dataPacket(setTimePacket);
+
+        SetSpawnPositionPacket setSpawnPositionPacket = new SetSpawnPositionPacket();
+        setSpawnPositionPacket.x = (int) spawnPosition.x;
+        setSpawnPositionPacket.y = (int) spawnPosition.y;
+        setSpawnPositionPacket.z = (int) spawnPosition.z;
+        this.dataPacket(setSpawnPositionPacket);
+
+        /*pk = new SetHealthPacket();
+        pk.health = this.getHealth();
+        this.dataPacket(pk);*/
+        UpdateAttributesPacket updateAttributesPacket = new UpdateAttributesPacket();
+        updateAttributesPacket.entityId = 0;
+        updateAttributesPacket.entries = new Attribute[]{
+                Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(this.getHealth())
+        };
+        this.dataPacket(updateAttributesPacket);
+
+        SetDifficultyPacket setDifficultyPacket = new SetDifficultyPacket();
+        setDifficultyPacket.difficulty = this.server.getDifficulty();
+        this.dataPacket(setDifficultyPacket);
+
+        this.server.getLogger().info(this.getServer().getLanguage().translateString("pocketmine.player.logIn", new String[]{
+                TextFormat.AQUA + this.username + TextFormat.WHITE,
+                this.ip,
+                String.valueOf(this.port),
+                String.valueOf(this.id),
+                this.level.getName(),
+                String.valueOf(NukkitMath.round(this.x, 4)),
+                String.valueOf(NukkitMath.round(this.y, 4)),
+                String.valueOf(NukkitMath.round(this.z, 4))
+        }));
+
+        if (this.isOp()) {
+            this.setRemoveFormat(false);
+        }
+
+        if (this.gamemode == Player.SPECTATOR) {
+            ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
+            containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+            this.dataPacket(containerSetContentPacket);
+        } else {
+            ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
+            containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+            containerSetContentPacket.slots = Item.getCreativeItems().stream().toArray(Item[]::new);
+            this.dataPacket(containerSetContentPacket);
+        }
+
+        this.forceMovement = this.teleportPosition = this.getPosition();
+
+        this.server.onPlayerLogin(this);
+    }
+
     public void handleDataPacket(DataPacket packet) {
         if (!connected) {
             return;
@@ -1242,7 +1746,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void close(String message, String reason, boolean notify) {
-
+        this.close(new TextContainer(message), reason, notify));
     }
 
     public void close(TextContainer message) {
@@ -1254,7 +1758,83 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void close(TextContainer message, String reason, boolean notify) {
+        if (this.connected && !this.closed) {
+            if (notify && reason.length() > 0) {
+                DisconnectPacket pk = new DisconnectPacket;
+                pk.message = reason;
+                this.directDataPacket(pk);
+            }
 
+            this.connected = false;
+            PlayerQuitEvent ev = null;
+            if (this.getName().length() > 0) {
+                this.server.getPluginManager().callEvent(ev = new PlayerQuitEvent(this, message, true));
+                if (this.loggedIn && ev.getAutoSave()) {
+                    this.save();
+                }
+            }
+
+            for (Player player : this.server.getOnlinePlayers().values()) {
+                if (!player.canSee(this)) {
+                    player.showPlayer(this);
+                }
+            }
+
+            this.hiddenPlayers = new HashMap<>();
+
+            for (Inventory window : this.windowIndex.values()) {
+                this.removeWindow(window);
+            }
+
+            for (String index : this.usedChunks.keySet()) {
+                Chunk.Entry entry = Level.getChunkXZ(index);
+                this.level.unregisterChunkLoader(this, entry.chunkX, entry.chunkZ);
+                this.usedChunks.remove(index);
+            }
+
+            super.close();
+
+            this.interfaz.close(this, notify ? reason : "");
+
+            if (this.loggedIn) {
+                this.server.removeOnlinePlayer(this);
+            }
+
+            this.loggedIn = false;
+
+            if (ev != null && !Objects.equals(this.username, "") && this.spawned && !Objects.equals(ev.getQuitMessage().toString(), "")) {
+                this.server.broadcastMessage(ev.getQuitMessage());
+            }
+
+            this.server.getPluginManager().unsubscribeFromPermission(Server.BROADCAST_CHANNEL_USERS, this);
+            this.spawned = false;
+            this.server.getLogger().info(this.getServer().getLanguage().translateString("pocketmine.player.logOut", new String[]{
+                    TextFormat.AQUA + this.getName() + TextFormat.WHITE,
+                    this.ip,
+                    String.valueOf(this.port),
+                    this.getServer().getLanguage().translateString(reason)
+            }));
+            this.windows = new HashMap<>();
+            this.windowIndex = new HashMap<>();
+            this.usedChunks = new HashMap<>();
+            this.loadQueue = new HashMap<>();
+            this.hasSpawned = new HashMap<>();
+            this.spawnPosition = null;
+        }
+
+        if (this.perm != null) {
+            this.perm.clearPermissions();
+            this.perm = null;
+        }
+
+        if (this.inventory != null) {
+            this.inventory = null;
+            this.currentTransaction = null;
+        }
+
+        this.chunk = null;
+
+        this.server.removePlayer(this);
     }
 
     public String getName() {

@@ -137,7 +137,7 @@ public class Human extends Creature implements InventoryHolder {
         this.namedTag.putList(new ListTag<CompoundTag>("Inventory"));
         if (this.inventory != null) {
             for (byte slot = 0; slot < 9; ++slot) {
-                int hotbarSlot = this.inventory.getHotBarSlotIndex(slot);
+                int hotbarSlot = this.inventory.getHotbarSlotIndex(slot);
                 if (hotbarSlot != -1) {
                     Item item = this.inventory.getItem(hotbarSlot);
                     if (item.getId() != 0 && item.getCount() > 0) {
@@ -199,8 +199,8 @@ public class Human extends Creature implements InventoryHolder {
             pk.speedX = (float) this.motionX;
             pk.speedY = (float) this.motionY;
             pk.speedZ = (float) this.motionZ;
-            pk.yaw = this.yaw;
-            pk.pitch = this.pitch;
+            pk.yaw = (float) this.yaw;
+            pk.pitch = (float) this.pitch;
             pk.item = this.getInventory().getItemInHand();
             pk.metadata = this.dataProperties;
             player.dataPacket(pk);

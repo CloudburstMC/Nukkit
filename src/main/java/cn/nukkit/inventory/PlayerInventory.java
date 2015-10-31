@@ -42,7 +42,7 @@ public class PlayerInventory extends BaseInventory {
         this.sendContents(this.getViewers());
     }
 
-    public int getHotBarSlotIndex(int index) {
+    public int getHotbarSlotIndex(int index) {
         return (index >= 0 && index < this.getHotbarSize()) ? this.hotbar[index] : -1;
     }
 
@@ -82,7 +82,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public int getHeldItemSlot() {
-        return this.getHotBarSlotIndex(this.itemInHandIndex);
+        return this.getHotbarSlotIndex(this.itemInHandIndex);
     }
 
     public void setHeldItemSlot(int slot) {
@@ -406,7 +406,7 @@ public class PlayerInventory extends BaseInventory {
             if (player.equals(this.getHolder())) {
                 pk.hotbar = new int[this.getHotbarSize()];
                 for (int i = 0; i < this.getHotbarSize(); ++i) {
-                    int index = this.getHotBarSlotIndex(i);
+                    int index = this.getHotbarSlotIndex(i);
                     pk.hotbar[i] = index <= -1 ? -1 : index + 9;
                 }
             }

@@ -8,8 +8,8 @@ import cn.nukkit.math.Vector3;
  */
 public class Location extends Position {
 
-    public float yaw;
-    public float pitch;
+    public double yaw;
+    public double pitch;
 
     public Location() {
         this(0);
@@ -27,15 +27,15 @@ public class Location extends Position {
         this(x, y, z, 0);
     }
 
-    public Location(double x, double y, double z, float yaw) {
+    public Location(double x, double y, double z, double yaw) {
         this(x, y, z, yaw, 0);
     }
 
-    public Location(double x, double y, double z, float yaw, float pitch) {
+    public Location(double x, double y, double z, double yaw, double pitch) {
         this(x, y, z, yaw, pitch, null);
     }
 
-    public Location(double x, double y, double z, float yaw, float pitch, Level level) {
+    public Location(double x, double y, double z, double yaw, double pitch, Level level) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -60,11 +60,11 @@ public class Location extends Position {
         return new Location((int) pos.x, (int) pos.y, (int) pos.z, yaw, pitch, (level == null) ? ((pos instanceof Position) ? ((Position) pos).level : null) : level);
     }
 
-    public float getYaw() {
+    public double getYaw() {
         return this.yaw;
     }
 
-    public float getPitch() {
+    public double getPitch() {
         return this.pitch;
     }
 
