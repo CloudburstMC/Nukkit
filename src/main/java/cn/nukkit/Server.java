@@ -136,6 +136,9 @@ public class Server {
     private boolean alwaysTickPlayers = false;
     private int baseTickRate = 1;
 
+    private int autoSaveTicker = 0;
+    private int autoSaveTicks = 6000;
+
     private BaseLang baseLang;
 
     private boolean forceLanguage = false;
@@ -576,13 +579,46 @@ public class Server {
         return false;
     }
 
-    //todo: remove this 测试用
-    @Deprecated
+    //todo: use ticker to check console
     public ConsoleCommandSender getConsoleSender() {
         return consoleSender;
     }
 
-    //todo: public void reload
+    public void reload() {
+        this.logger.info("Reloading...");
+
+        this.logger.info("Saving levels...");
+
+        for (Level level : this.levels.values()) {
+            level.save();
+        }
+
+        this.pluginManager.disablePlugins();
+        this.pluginManager.clearPlugins();
+        this.commandMap.clearCommands();
+
+        this.logger.info("Reloading properties...");
+        this.properties.reload();
+        this.maxPlayers = this.getPropertyInt("max-players", 20);
+
+        if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
+            this.setPropertyInt("difficulty", 3);
+        }
+
+        this.banByIP.load();
+        this.banByName.load();
+        this.reloadWhitelist();
+        this.operators.reload();
+
+        for (BanEntry entry : this.getIPBans().getEntires()) {
+            this.getNetwork().blockAddress(entry.getName(), -1);
+        }
+
+        this.pluginManager.registerInterface(JarPluginLoader.class);
+        this.pluginManager.loadPlugins(this.pluginPath);
+        this.enablePlugins(PluginLoadOrder.STARTUP);
+        this.enablePlugins(PluginLoadOrder.POSTWORLD);
+    }
 
     public void shutdown() {
         if (this.isRunning) {
@@ -654,7 +690,7 @@ public class Server {
             this.network.blockAddress(entry.getName(), -1);
         }
 
-        //todo alot
+        //todo send usage setting
 
         this.tickCounter = 0;
 
@@ -785,6 +821,70 @@ public class Server {
         player.dataPacket(pk);
     }
 
+    private void checkTickUpdates(int currentTick, long tickTime) {
+        for (Player p : this.players.values()) {
+            if (!p.loggedIn && (tickTime - p.creationTime) >= 10) {
+                p.close("", "Login timeout");
+            } else if (this.alwaysTickPlayers) {
+                p.onUpdate(currentTick);
+            }
+        }
+
+        //Do level ticks
+        for (Level level : this.getLevels().values()) {
+            if (level.getTickRate() > this.baseTickRate && --level.tickRateCounter > 0) {
+                continue;
+            }
+            try {
+                long levelTime = System.currentTimeMillis();
+                level.doTick(currentTick);
+                int tickMs = (int) (System.currentTimeMillis() - levelTime);
+                level.tickRateTime = tickMs;
+
+                if (this.autoTickRate) {
+                    if (tickMs < 50 && level.getTickRate() > this.baseTickRate) {
+                        int r;
+                        level.setTickRate(r = level.getTickRate() - 1);
+                        if (r > this.baseTickRate) {
+                            level.tickRateCounter = level.getTickRate();
+                        }
+                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + level.getTickRate() + " ticks");
+                    } else if (tickMs >= 50) {
+                        if (level.getTickRate() == this.baseTickRate) {
+                            level.setTickRate((int) Math.max(this.baseTickRate + 1, Math.min(this.autoTickRateLimit, Math.floor(tickMs / 50))));
+                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                        } else if ((tickMs / level.getTickRate()) >= 50 && level.getTickRate() < this.autoTickRateLimit) {
+                            level.setTickRate(level.getTickRate() + 1);
+                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                        }
+                        level.tickRateCounter = level.getTickRate();
+                    }
+                }
+            } catch (Exception e) {
+                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.getMessage()}));
+                if (Nukkit.DEBUG > 1 && this.logger != null) {
+                    this.logger.logException(e);
+                }
+            }
+        }
+    }
+
+    public void doAutoSave() {
+        if (this.getAutoSave()) {
+            for (Player player : new ArrayList<>(this.players.values())) {
+                if (player.isOnline()) {
+                    player.save(true);
+                } else if (!player.isConnected()) {
+                    this.removePlayer(player);
+                }
+            }
+
+            for (Level level : this.getLevels().values()) {
+                level.save();
+            }
+        }
+    }
+
     private boolean tick() {
         long tickTime = System.currentTimeMillis();
         if ((tickTime - this.nextTick) < -25) {
@@ -797,7 +897,11 @@ public class Server {
 
         this.scheduler.mainThreadHeartbeat(this.tickCounter);
 
-        //todo a lot
+        this.checkTickUpdates(this.tickCounter, tickTime);
+
+        for (Player player : this.players.values()) {
+            player.checkNetwork();
+        }
 
         if ((this.tickCounter & 0b1111) == 0) {
             this.titleTick();
@@ -818,10 +922,21 @@ public class Server {
             this.getNetwork().updateName();
         }
 
-        //todo a lot
+        if (this.autoSave && ++this.autoSaveTicker >= this.autoSaveTicks) {
+            this.autoSaveTicker = 0;
+            this.doAutoSave();
+        }
+
+        if (this.sendUsageTicker > 0 && --this.sendUsageTicker == 0) {
+            this.sendUsageTicker = 6000;
+            //todo sendUsage
+        }
 
         if (this.tickCounter % 100 == 0) {
-            //todo clearCache
+            for (Level level : this.levels.values()) {
+                level.clearCache();
+            }
+
             if (this.getTicksPerSecondAverage() < 12) {
                 this.logger.warning(this.getLanguage().translateString("nukkit.server.tickOverload"));
             }

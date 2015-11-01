@@ -31,6 +31,7 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
         this.force = force;
     }
 
+    @Override
     public Living getEntity() {
         return (Living) this.entity;
     }
