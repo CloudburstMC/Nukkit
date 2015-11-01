@@ -36,10 +36,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.tile.Chest;
 import cn.nukkit.tile.Tile;
-import cn.nukkit.utils.LevelException;
-import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.PriorityObject;
-import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -171,7 +168,7 @@ public class Level implements ChunkManager, Metadatable {
             throw new LevelException("Caused by " + Utils.getExceptionMessage(e));
         }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.preparing", this.provider.getName()));
+        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.preparing", TextFormat.GREEN + this.provider.getName() + TextFormat.WHITE));
         this.generator = Generator.getGenerator(this.provider.getGenerator());
 
         try {
@@ -337,7 +334,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading", this.getName()));
+        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading", TextFormat.GREEN + this.getName() + TextFormat.WHITE));
         Level defaultLevel = this.server.getDefaultLevel();
 
         for (Player player : this.getPlayers().values()) {

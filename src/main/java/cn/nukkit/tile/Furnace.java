@@ -17,7 +17,7 @@ import cn.nukkit.network.protocol.ContainerSetDataPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Furnace extends Tile implements InventoryHolder, Container,Nameable {
+public class Furnace extends Tile implements InventoryHolder, Container, Nameable {
 
     protected FurnaceInventory inventory;
 

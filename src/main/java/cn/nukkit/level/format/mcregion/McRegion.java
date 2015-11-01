@@ -87,10 +87,11 @@ public class McRegion extends BaseLevelProvider {
         levelData.putInt("SpawnY", 70);
         levelData.putInt("SpawnZ", 128);
         levelData.putInt("version", 19133);
-        levelData.putLong("Time", 0);
+        levelData.putLong("DayTime", 0);
         levelData.putLong("LastPlayed", System.currentTimeMillis());
         levelData.putLong("RandomSeed", seed);
         levelData.putLong("SizeOnDisk", 0);
+        levelData.putLong("Time", 0);
         levelData.putString("generatorName", Generator.getGeneratorName(generator));
         levelData.putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "");
         levelData.putString("LevelName", name);
