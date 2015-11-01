@@ -1189,7 +1189,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 if (!this.isSleeping()) {
                     if (diff > 0.0625) {
                         revert = true;
-                        this.server.getLogger().warning(this.getServer().getLanguage().translateString("pocketmine.player.invalidMove", this.getName()));
+                        this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
                     }
                 }
             }
@@ -1608,7 +1608,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         setDifficultyPacket.difficulty = this.server.getDifficulty();
         this.dataPacket(setDifficultyPacket);
 
-        this.server.getLogger().info(this.getServer().getLanguage().translateString("pocketmine.player.logIn", new String[]{
+        this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logIn", new String[]{
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
                 this.ip,
                 String.valueOf(this.port),
@@ -1811,7 +1811,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.server.getPluginManager().unsubscribeFromPermission(Server.BROADCAST_CHANNEL_USERS, this);
             this.spawned = false;
-            this.server.getLogger().info(this.getServer().getLanguage().translateString("pocketmine.player.logOut", new String[]{
+            this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logOut", new String[]{
                     TextFormat.AQUA + this.getName() + TextFormat.WHITE,
                     this.ip,
                     String.valueOf(this.port),

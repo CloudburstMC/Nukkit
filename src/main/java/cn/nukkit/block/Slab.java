@@ -10,14 +10,14 @@ import cn.nukkit.math.AxisAlignedBB;
  * Nukkit Project
  */
 public class Slab extends Transparent {
-    public static final short STONE = 0;
-    public static final short SANDSTONE = 1;
-    public static final short WOODEN = 2;
-    public static final short COBBLESTONE = 3;
-    public static final short BRICK = 4;
-    public static final short STONE_BRICK = 5;
-    public static final short QUARTZ = 6;
-    public static final short NETHER_BRICK = 7;
+    public static final int STONE = 0;
+    public static final int SANDSTONE = 1;
+    public static final int WOODEN = 2;
+    public static final int COBBLESTONE = 3;
+    public static final int BRICK = 4;
+    public static final int STONE_BRICK = 5;
+    public static final int QUARTZ = 6;
+    public static final int NETHER_BRICK = 7;
 
     protected int id = SLAB;
 

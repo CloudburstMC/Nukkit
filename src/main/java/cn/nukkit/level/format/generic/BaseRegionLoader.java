@@ -42,7 +42,7 @@ abstract public class BaseRegionLoader {
             if (!exists) {
                 file.createNewFile();
             }
-            this.randomAccessFile = new RandomAccessFile(this.filePath, "r");
+            this.randomAccessFile = new RandomAccessFile(this.filePath, "rw");
             if (!exists) {
                 this.createBlank();
             } else {

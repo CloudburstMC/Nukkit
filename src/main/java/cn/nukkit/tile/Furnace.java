@@ -17,7 +17,7 @@ import cn.nukkit.network.protocol.ContainerSetDataPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Furnace extends Tile implements InventoryHolder, Container {
+public class Furnace extends Tile implements InventoryHolder, Container,Nameable {
 
     protected FurnaceInventory inventory;
 
@@ -49,6 +49,26 @@ public class Furnace extends Tile implements InventoryHolder, Container {
         if (this.namedTag.getShort("BurnTime") > 0) {
             this.scheduleUpdate();
         }
+    }
+
+    @Override
+    public String getName() {
+        return this.hasName() ? this.namedTag.getString("CustomName") : "Furnace";
+    }
+
+    @Override
+    public boolean hasName() {
+        return this.namedTag.contains("CustomName");
+    }
+
+    @Override
+    public void setName(String name) {
+        if (name == null || name.equals("")) {
+            this.namedTag.remove("CustomName");
+            return;
+        }
+
+        this.namedTag.putString("CustomName", name);
     }
 
     @Override

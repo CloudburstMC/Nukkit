@@ -476,7 +476,8 @@ public class Chunk extends BaseFullChunk {
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
         try {
-            Chunk chunk = new Chunk(provider != null ? provider : McRegion.class.newInstance(), null);
+            //Chunk chunk = new Chunk(provider != null ? provider : McRegion.class.newInstance(), null);
+            Chunk chunk = new Chunk(provider, null);
             chunk.x = chunkX;
             chunk.z = chunkZ;
             chunk.data = new byte[16384];
@@ -493,7 +494,7 @@ public class Chunk extends BaseFullChunk {
             chunk.nbt.putBoolean("LightPopulated", false);
             return chunk;
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }

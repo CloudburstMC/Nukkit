@@ -52,11 +52,11 @@ public interface LevelProvider {
 
     long getTime();
 
-    void setTime(int value);
+    void setTime(long value);
 
-    int getSeed();
+    long getSeed();
 
-    void setSeed(int value);
+    void setSeed(long value);
 
     Vector3 getSpawn();
 

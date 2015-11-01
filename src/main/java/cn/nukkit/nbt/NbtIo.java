@@ -59,7 +59,9 @@ public class NBTIO {
 
     public static CompoundTag read(File file, ByteOrder endianness) throws IOException {
         if (!file.exists()) return null;
-        return read(new FileInputStream(file), endianness);
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            return read(fileInputStream, endianness);
+        }
     }
 
     public static CompoundTag read(InputStream inputStream) throws IOException {
@@ -67,11 +69,13 @@ public class NBTIO {
     }
 
     public static CompoundTag read(InputStream inputStream, ByteOrder endianness) throws IOException {
-        Tag tag = Tag.readNamedTag(new NBTInputStream(inputStream, endianness));
-        if (tag instanceof CompoundTag) {
-            return (CompoundTag) tag;
+        try (NBTInputStream nbtInputStream = new NBTInputStream(inputStream, endianness)) {
+            Tag tag = Tag.readNamedTag(nbtInputStream);
+            if (tag instanceof CompoundTag) {
+                return (CompoundTag) tag;
+            }
+            throw new IOException("Root tag must be a named compound tag");
         }
-        throw new IOException("Root tag must be a named compound tag");
     }
 
     public static CompoundTag read(byte[] data) throws IOException {
@@ -87,7 +91,9 @@ public class NBTIO {
     }
 
     public static CompoundTag readCompressed(InputStream in, ByteOrder endianness) throws IOException {
-        return read(new BufferedInputStream(new GZIPInputStream(in)), endianness);
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(in)) {
+            return read(gzipInputStream, endianness);
+        }
     }
 
     public static byte[] write(CompoundTag tag) throws IOException {
@@ -96,9 +102,10 @@ public class NBTIO {
 
     public static byte[] write(CompoundTag tag, ByteOrder endianness) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        NBTOutputStream stream = new NBTOutputStream(baos, endianness);
-        Tag.writeNamedTag(tag, stream);
-        return baos.toByteArray();
+        try (NBTOutputStream stream = new NBTOutputStream(baos, endianness)) {
+            Tag.writeNamedTag(tag, stream);
+            return baos.toByteArray();
+        }
     }
 
     public static byte[] write(Collection<CompoundTag> tags) throws IOException {
@@ -107,11 +114,12 @@ public class NBTIO {
 
     public static byte[] write(Collection<CompoundTag> tags, ByteOrder endianness) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        NBTOutputStream stream = new NBTOutputStream(baos, endianness);
-        for (CompoundTag tag : tags) {
-            Tag.writeNamedTag(tag, stream);
+        try (NBTOutputStream stream = new NBTOutputStream(baos, endianness)) {
+            for (CompoundTag tag : tags) {
+                Tag.writeNamedTag(tag, stream);
+            }
+            return baos.toByteArray();
         }
-        return baos.toByteArray();
     }
 
     public static void write(CompoundTag tag, File file) throws IOException {
@@ -119,7 +127,9 @@ public class NBTIO {
     }
 
     public static void write(CompoundTag tag, File file, ByteOrder endianness) throws IOException {
-        write(tag, new FileOutputStream(file), endianness);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            write(tag, fileOutputStream, endianness);
+        }
     }
 
     public static void write(CompoundTag tag, OutputStream outputStream) throws IOException {
@@ -127,7 +137,9 @@ public class NBTIO {
     }
 
     public static void write(CompoundTag tag, OutputStream outputStream, ByteOrder endianness) throws IOException {
-        Tag.writeNamedTag(tag, new NBTOutputStream(outputStream, endianness));
+        try (NBTOutputStream nbtOutputStream = new NBTOutputStream(outputStream, endianness)) {
+            Tag.writeNamedTag(tag, nbtOutputStream);
+        }
     }
 
     public static byte[] writeGZIPCompressed(CompoundTag tag) throws IOException {
@@ -145,7 +157,9 @@ public class NBTIO {
     }
 
     public static void writeGZIPCompressed(CompoundTag tag, OutputStream out, ByteOrder endianness) throws IOException {
-        write(tag, new GZIPOutputStream(out), endianness);
+        try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
+            write(tag, gzip, endianness);
+        }
     }
 
     public static void writeZLIBCompressed(CompoundTag tag, OutputStream out) throws IOException {
@@ -161,7 +175,9 @@ public class NBTIO {
     }
 
     public static void writeZLIBCompressed(CompoundTag tag, OutputStream out, int level, ByteOrder endianness) throws IOException {
-        write(tag, new DeflaterOutputStream(out, new Deflater(level)), endianness);
+        try (DeflaterOutputStream outputStream = new DeflaterOutputStream(out, new Deflater(level))) {
+            write(tag, outputStream, endianness);
+        }
     }
 
     public static void safeWrite(CompoundTag tag, File file) throws IOException {

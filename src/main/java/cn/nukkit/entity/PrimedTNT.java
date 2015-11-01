@@ -11,7 +11,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 /**
  * Created on 15-10-27.
  */
-class PrimedTNT extends Entity implements Explosive {
+public class PrimedTNT extends Entity implements Explosive {
 
     public static final int NETWORK_ID = 65;
 

@@ -8,10 +8,10 @@ import cn.nukkit.item.Tool;
  * Nukkit Project
  */
 public class Quartz extends Solid {
-    public static final short QUARTZ_NORMAL = 0;
-    public static final short QUARTZ_CHISELED = 1;
-    public static final short QUARTZ_PILLAR = 2;
-    public static final short QUARTZ_PILLAR2 = 3;
+    public static final int QUARTZ_NORMAL = 0;
+    public static final int QUARTZ_CHISELED = 1;
+    public static final int QUARTZ_PILLAR = 2;
+    public static final int QUARTZ_PILLAR2 = 3;
 
     protected int id = QUARTZ_BLOCK;
 

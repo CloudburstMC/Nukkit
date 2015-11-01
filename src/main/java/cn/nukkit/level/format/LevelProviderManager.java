@@ -23,7 +23,7 @@ public abstract class LevelProviderManager {
     public static Class<? extends LevelProvider> getProvider(String path) {
         for (Class<? extends LevelProvider> provider : providers.values()) {
             try {
-                if ((boolean) provider.getClass().getMethod("isValid", String.class).invoke(null, path)) {
+                if ((boolean) provider.getMethod("isValid", String.class).invoke(null, path)) {
                     return provider;
                 }
             } catch (Exception e) {

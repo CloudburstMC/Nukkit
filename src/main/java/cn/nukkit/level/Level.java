@@ -39,6 +39,7 @@ import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.LevelException;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.PriorityObject;
+import cn.nukkit.utils.Utils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -104,7 +105,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<String, List<DataPacket>> chunkPackets = new HashMap<>();
 
-    private Map<String, Long> unloadQueue;
+    private Map<String, Long> unloadQueue = new HashMap<>();
 
     private float time;
     public boolean stopTime;
@@ -167,7 +168,7 @@ public class Level implements ChunkManager, Metadatable {
         try {
             this.provider = provider.getConstructor(Level.class, String.class).newInstance(this, path);
         } catch (Exception e) {
-            throw new LevelException("Wrong constructor in class " + provider.getName());
+            throw new LevelException("Caused by " + Utils.getExceptionMessage(e));
         }
 
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.preparing", this.provider.getName()));
@@ -290,7 +291,7 @@ public class Level implements ChunkManager, Metadatable {
             this.save();
         }
 
-        for (FullChunk chunk : this.chunks.values()) {
+        for (FullChunk chunk : new ArrayList<>(this.chunks.values())) {
             this.unloadChunk(chunk.getX(), chunk.getZ(), false);
         }
 
@@ -1910,7 +1911,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (chunk == null) {
             if (generate) {
-                throw new LevelException("Could not create new Chunk");
+                throw new IllegalStateException("Could not create new Chunk");
             }
             return false;
         }
@@ -2114,7 +2115,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Override
-    public int getSeed() {
+    public long getSeed() {
         return this.provider.getSeed();
     }
 

@@ -9,8 +9,8 @@ import cn.nukkit.math.Vector3;
  * Nukkit Project
  */
 public class StoneWall extends Transparent {
-    public static final short NONE_MOSSY_WALL = 0;
-    public static final short MOSSY_WALL = 1;
+    public static final int NONE_MOSSY_WALL = 0;
+    public static final int MOSSY_WALL = 1;
 
     protected int id = STONE_WALL;
 

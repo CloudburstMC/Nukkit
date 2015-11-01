@@ -30,23 +30,26 @@ public class ShapedRecipe implements Recipe {
             throw new IllegalStateException("Crafting recipes should be 1, 2, 3 rows, not " + shape.length);
         }
 
-        for (int y = 0; y < 3; y++) {
+
+        for (int y = 0; y < shape.length; y++) {
             String row = shape[y];
             if (row.length() == 0 || row.length() > 3) {
                 throw new IllegalStateException("Crafting rows should be 1, 2, 3 characters, not " + row.length());
             }
 
-            this.ingredients.add(Arrays.asList(new Item[row.length()]));
+            this.ingredients.add(new ArrayList<>(Arrays.asList(new Item[row.length()])));
             int len = row.length();
             for (int i = 0; i < len; i++) {
                 this.shapes.put(row.charAt(i), null);
+
                 if (!this.shapeItems.containsKey(row.charAt(i))) {
-                    this.shapeItems.put(row.charAt(i), Arrays.asList(new int[][]{new int[]{i, y}}));
+                    this.shapeItems.put(row.charAt(i), new ArrayList<>(Arrays.asList(new int[][]{new int[]{i, y}})));
                 } else {
                     this.shapeItems.get(row.charAt(i)).add(new int[]{i, y});
                 }
             }
         }
+
         this.output = result.clone();
     }
 
@@ -77,13 +80,7 @@ public class ShapedRecipe implements Recipe {
     }
 
     public ShapedRecipe setIngredient(String key, Item item) {
-        if (!this.shapes.containsKey(key.charAt(0))) {
-            throw new RuntimeException("Symbol does not appear in the shape: " + key);
-        }
-
-        this.fixRecipe(key.charAt(0), item);
-
-        return this;
+        return this.setIngredient(key.charAt(0), item);
     }
 
     public ShapedRecipe setIngredient(char key, Item item) {
@@ -98,7 +95,7 @@ public class ShapedRecipe implements Recipe {
 
     protected void fixRecipe(char key, Item item) {
         for (int[] entry : this.shapeItems.get(key)) {
-            this.ingredients.get(entry[2]).add(entry[1], item.clone());
+            this.ingredients.get(entry[1]).add(entry[0], item.clone());
         }
     }
 
@@ -109,9 +106,14 @@ public class ShapedRecipe implements Recipe {
             for (int x = 0; x < row.size(); x++) {
                 Item ingredient = row.get(x);
                 if (ingredient != null) {
+                    if (!ingredients.containsKey(y)) {
+                        ingredients.put(y, new HashMap<>());
+                    }
                     ingredients.get(y).put(x, ingredient.clone());
                 } else {
-                    //todo: check this
+                    if (!ingredients.containsKey(y)) {
+                        ingredients.put(y, new HashMap<>());
+                    }
                     ingredients.get(y).put(x, Item.get(Item.AIR));
                 }
             }

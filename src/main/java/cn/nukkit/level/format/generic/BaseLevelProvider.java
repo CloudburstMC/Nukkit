@@ -69,21 +69,21 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public long getTime() {
-        return this.levelData.getInt("Time");
+        return this.levelData.getLong("Time");
     }
 
     @Override
-    public void setTime(int value) {
-        this.levelData.putInt("Time", value);
+    public void setTime(long value) {
+        this.levelData.putLong("Time", value);
     }
 
     @Override
-    public int getSeed() {
-        return this.levelData.getInt("RandomSeed");
+    public long getSeed() {
+        return this.levelData.getLong("RandomSeed");
     }
 
     @Override
-    public void setSeed(int value) {
+    public void setSeed(long value) {
         this.levelData.putLong("RandomSeed", value);
     }
 

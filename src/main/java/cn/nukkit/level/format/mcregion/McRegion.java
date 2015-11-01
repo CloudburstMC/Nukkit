@@ -60,7 +60,7 @@ public class McRegion extends BaseLevelProvider {
                     return Pattern.matches("^.+\\.mc[r|a]$", name);
                 }
             })) {
-                if (!file.getName().endsWith(".mca")) {
+                if (!file.getName().endsWith(".mcr")) {
                     isValid = false;
                     break;
                 }
@@ -69,11 +69,11 @@ public class McRegion extends BaseLevelProvider {
         return isValid;
     }
 
-    public static void generate(String path, String name, int seed, Class<? extends Generator> generator) throws IOException {
+    public static void generate(String path, String name, long seed, Class<? extends Generator> generator) throws IOException {
         generate(path, name, seed, generator, new HashMap<>());
     }
 
-    public static void generate(String path, String name, int seed, Class<? extends Generator> generator, Map<String, String> options) throws IOException {
+    public static void generate(String path, String name, long seed, Class<? extends Generator> generator, Map<String, String> options) throws IOException {
         if (!new File(path + "/region").exists()) {
             new File(path + "/region").mkdirs();
         }
@@ -91,11 +91,11 @@ public class McRegion extends BaseLevelProvider {
         levelData.putLong("LastPlayed", System.currentTimeMillis());
         levelData.putLong("RandomSeed", seed);
         levelData.putLong("SizeOnDisk", 0);
-        levelData.putLong("Time", 0);
         levelData.putString("generatorName", Generator.getGeneratorName(generator));
         levelData.putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "");
         levelData.putString("LevelName", name);
         levelData.putCompound("GameRules", new CompoundTag());
+
         NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
     }
 
@@ -234,9 +234,11 @@ public class McRegion extends BaseLevelProvider {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         if (chunk == null && create) {
             chunk = this.getEmptyChunk(chunkX, chunkZ);
         }
+
         if (chunk != null) {
             this.chunks.put(index, chunk);
             return true;
@@ -245,7 +247,7 @@ public class McRegion extends BaseLevelProvider {
     }
 
     public Chunk getEmptyChunk(int chunkX, int chunkZ) {
-        return Chunk.getEmptyChunk(chunkX, chunkZ);
+        return Chunk.getEmptyChunk(chunkX, chunkZ, this);
     }
 
     @Override

@@ -22,5 +22,5 @@ public interface ChunkManager {
 
     void setChunk(int chunkX, int chunkZ, FullChunk chunk);
 
-    int getSeed();
+    long getSeed();
 }

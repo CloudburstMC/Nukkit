@@ -2,9 +2,7 @@ package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -121,8 +119,8 @@ public class AsyncPool {
     }
 
     public void collectTasks() {
-        for (Map.Entry entry : this.tasks.entrySet()) {
-            AsyncTask task = (AsyncTask) entry.getValue();
+        List<AsyncTask> list = new ArrayList<>(this.tasks.values());
+        for (AsyncTask task : list) {
             if (task.isFinished() && !task.isAlive()) {
                 task.onCompletion(this.server);
                 this.removeTask(task);

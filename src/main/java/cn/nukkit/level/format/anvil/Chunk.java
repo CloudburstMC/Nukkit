@@ -337,7 +337,8 @@ public class Chunk extends BaseChunk {
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
         try {
-            Chunk chunk = new Chunk(provider != null ? provider : Anvil.class.newInstance(), null);
+            //Chunk chunk = new Chunk(provider != null ? provider : Anvil.class.newInstance(), null);
+            Chunk chunk = new Chunk(provider, null);
             chunk.x = chunkX;
             chunk.z = chunkZ;
             chunk.sections = new cn.nukkit.level.format.ChunkSection[8];

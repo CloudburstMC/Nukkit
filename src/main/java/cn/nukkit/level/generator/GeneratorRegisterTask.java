@@ -17,7 +17,7 @@ public class GeneratorRegisterTask extends AsyncTask {
 
     public Class<? extends Generator> generator;
     public Map<String, Object> settings;
-    public int seed;
+    public long seed;
     public int levelId;
 
     public GeneratorRegisterTask(Level level, Generator generator) {

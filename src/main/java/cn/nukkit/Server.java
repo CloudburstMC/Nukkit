@@ -2,20 +2,27 @@ package cn.nukkit;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.command.*;
+import cn.nukkit.entity.*;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.event.level.LevelInitEvent;
+import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Flat;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.format.Chunk;
+import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
@@ -44,6 +51,7 @@ import cn.nukkit.plugin.PluginLoadOrder;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
+import cn.nukkit.tile.*;
 import cn.nukkit.utils.*;
 
 import java.io.ByteArrayInputStream;
@@ -123,11 +131,16 @@ public class Server {
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
 
+    private boolean autoTickRate = true;
+    private int autoTickRateLimit = 20;
+    private boolean alwaysTickPlayers = false;
+    private int baseTickRate = 1;
+
     private BaseLang baseLang;
 
     private boolean forceLanguage = false;
 
-    private String serverID;
+    private UUID serverID;
 
     private String filePath;
     private String dataPath;
@@ -245,7 +258,15 @@ public class Server {
         Network.BATCH_THRESHOLD = (int) threshold;
         this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
         this.networkCompressionAsync = (boolean) this.getConfig("network.async-compression", true);
-        //todo Tick配置
+
+        this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
+        this.networkCompressionAsync = (boolean) this.getConfig("network.async-compression", true);
+
+        this.autoTickRate = (boolean) this.getConfig("level-settings.auto-tick-rate", true);
+        this.autoTickRateLimit = (int) this.getConfig("level-settings.auto-tick-rate-limit", 20);
+        this.alwaysTickPlayers = (boolean) this.getConfig("level-settings.always-tick-players", false);
+        this.baseTickRate = (int) this.getConfig("level-settings.base-tick-rate", 1);
+
         this.scheduler = new ServerScheduler();
 
         this.entityMetadata = new EntityMetadataStore();
@@ -260,6 +281,7 @@ public class Server {
         this.banByIP.load();
 
         this.maxPlayers = this.getPropertyInt("max-players", 20);
+        this.setAutoSave(this.getPropertyBoolean("auto-save", true));
 
         if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
             this.setPropertyInt("difficulty", 3);
@@ -271,8 +293,8 @@ public class Server {
         }
 
         this.logger.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[]{this.getIp().equals("") ? "*" : this.getIp(), String.valueOf(this.getPort())}));
-        this.serverID = UUID.randomUUID().toString();
-        //todo NETWORK PART ***
+        this.serverID = UUID.randomUUID();
+
         this.network = new Network(this);
         this.network.setName(this.getMotd());
 
@@ -282,8 +304,18 @@ public class Server {
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
 
+        this.registerEntities();
+        this.registerTiles();
+
+        InventoryType.init();
         Block.init();
         Item.init();
+        Biome.init();
+        Effect.init();
+        Enchantment.init();
+        Attribute.init();
+
+        this.craftingManager = new CraftingManager();
 
         this.pluginManager = new PluginManager(this, this.commandMap);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
@@ -305,19 +337,57 @@ public class Server {
         Generator.addGenerator(Flat.class, "flat");
         //todo normal generator
 
-        /*try {
-            for (Map.Entry<String, Object> entry : ((Map<String, Object>) this.getConfig("worlds", new HashMap<>())).entrySet()) {
-                String name = entry.getKey();
-                Object worldSetting = entry.getValue();
-                if ()
-            }
-        } catch (ClassCastException e) {
-            //ignore
-        }*/
 
-        //do a lot thing
+        for (String name : ((Map<String, Object>) this.getConfig("worlds", new HashMap<>())).keySet()) {
+            if (!this.loadLevel(name)) {
+                int seed = (int) this.getConfig("worlds." + name + ".seed", System.currentTimeMillis());
+
+                Map<String, Object> options = new HashMap<>();
+                String[] opts = ((String) this.getConfig("worlds." + name + ".generator", Generator.getGenerator("default").getSimpleName())).split(":");
+                Class<? extends Generator> generator = Generator.getGenerator(opts[1]);
+                if (opts.length > 1) {
+                    String preset = "";
+                    for (int i = 1; i < opts.length; i++) {
+                        preset += opts[i] + ":";
+                    }
+                    preset = preset.substring(0, preset.length() - 2);
+
+                    options.put("preset", preset);
+                }
+
+                this.generateLevel(name, seed, generator, options);
+            }
+        }
+
+        if (this.getDefaultLevel() == null) {
+            String defaultName = this.getPropertyString("level-name", "world");
+            if (defaultName == null || "".equals(defaultName.trim())) {
+                this.getLogger().warning("level-name cannot be null, using default");
+                defaultName = "world";
+                this.setPropertyString("level-name", defaultName);
+            }
+
+            if (!this.loadLevel(defaultName)) {
+                long seed;
+                try {
+                    seed = Long.valueOf((String) this.getProperty("level-seed", System.currentTimeMillis()));
+                } catch (NumberFormatException e) {
+                    seed = System.currentTimeMillis();
+                }
+                this.generateLevel(defaultName, seed == 0 ? System.currentTimeMillis() : seed);
+            }
+
+            this.setDefaultLevel(this.getLevelByName(defaultName));
+        }
 
         this.properties.save(true);
+
+        if (this.getDefaultLevel() == null) {
+            this.getLogger().emergency(this.getLanguage().translateString("nukkit.level.defaultError"));
+            this.forceShutdown();
+
+            return;
+        }
 
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
@@ -539,7 +609,14 @@ public class Server {
             this.getLogger().debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
-            //todo alot
+            for (Player player : this.players.values()) {
+                player.close(player.getLeaveMessage(), (String) this.getConfig("settings.shutdown-message", "Server closed"));
+            }
+
+            this.getLogger().debug("Unloading all levels");
+            for (Level level : new ArrayList<>(this.getLevels().values())) {
+                this.unloadLevel(level, true);
+            }
 
             this.getLogger().debug("Removing event handlers");
             HandlerList.unregisterAll();
@@ -562,6 +639,7 @@ public class Server {
 
             //todo other things
         } catch (Exception e) {
+            this.logger.logException(e); //todo remove this?
             this.logger.emergency("Exception happened while shutting down, exit the process");
             System.exit(1);
         }
@@ -571,15 +649,20 @@ public class Server {
         if (this.getPropertyBoolean("enable-query", true)) {
             this.queryHandler = new QueryHandler();
         }
-        //todo a lot
+
         for (BanEntry entry : this.getIPBans().getEntires()) {
             this.network.blockAddress(entry.getName(), -1);
         }
 
         //todo alot
 
+        this.tickCounter = 0;
+
         this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
+
         this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
+
+
         this.tickProcessor();
         this.forceShutdown();
     }
@@ -848,7 +931,7 @@ public class Server {
         return this.getPropertyString("server-ip", "0.0.0.0");
     }
 
-    public String getServerUniqueId() {
+    public UUID getServerUniqueId() {
         return this.serverID;
     }
 
@@ -856,7 +939,12 @@ public class Server {
         return this.autoSave;
     }
 
-    //todo setAutoSave
+    public void setAutoSave(boolean autoSave) {
+        this.autoSave = autoSave;
+        for (Level level : this.getLevels().values()) {
+            level.setAutoSave(this.autoSave);
+        }
+    }
 
     public String getLevelType() {
         return this.getPropertyString("level-type", "DEFAULT");
@@ -1208,6 +1296,169 @@ public class Server {
         return null;
     }
 
+    public boolean unloadLevel(Level level) {
+        return this.unloadLevel(level, false);
+    }
+
+    public boolean unloadLevel(Level level, boolean forceUnload) {
+        if (Objects.equals(level, this.getDefaultLevel()) && !forceUnload) {
+            throw new IllegalStateException("The default level cannot be unloaded while running, please switch levels.");
+        }
+
+        return level.unload(forceUnload);
+
+    }
+
+    public boolean loadLevel(String name) {
+        if (Objects.equals(name.trim(), "")) {
+            throw new LevelException("Invalid empty level name");
+        }
+        if (this.isLevelLoaded(name)) {
+            return true;
+        } else if (!this.isLevelGenerated(name)) {
+            this.logger.notice(this.getLanguage().translateString("nukkit.level.notFound", name));
+
+            return false;
+        }
+
+        String path = this.getDataPath() + "worlds/" + name + "/";
+
+        Class<? extends LevelProvider> provider = LevelProviderManager.getProvider(path);
+
+        if (provider == null) {
+            this.logger.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, "Unknown provider"}));
+
+            return false;
+        }
+
+        Level level;
+        try {
+            level = new Level(this, name, path, provider);
+        } catch (Exception e) {
+
+            this.logger.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
+            if (this.logger instanceof MainLogger) {
+                this.logger.logException(e);
+            }
+            return false;
+        }
+
+        this.levels.put(level.getId(), level);
+
+        level.initLevel();
+
+        this.getPluginManager().callEvent(new LevelLoadEvent(level));
+
+        level.setTickRate(this.baseTickRate);
+
+        return true;
+    }
+
+    public boolean generateLevel(String name) {
+        return this.generateLevel(name, (int) new Random().nextLong());
+    }
+
+    public boolean generateLevel(String name, long seed) {
+        return this.generateLevel(name, seed, null);
+    }
+
+    public boolean generateLevel(String name, long seed, Class<? extends Generator> generator) {
+        return this.generateLevel(name, seed, generator, new HashMap<>());
+    }
+
+    public boolean generateLevel(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options) {
+        if (Objects.equals(name.trim(), "") || this.isLevelGenerated(name)) {
+            return false;
+        }
+
+        if (!options.containsKey("preset")) {
+            options.put("preset", this.getPropertyString("generator-settings", ""));
+        }
+
+        if (generator == null) {
+            generator = Generator.getGenerator(this.getLevelType());
+        }
+
+        Class<? extends LevelProvider> provider;
+        String providerName;
+        if ((provider = LevelProviderManager.getProviderByName
+                (providerName = (String) this.getConfig("level-settings.default-format", "mcregion"))) == null) {
+            provider = LevelProviderManager.getProviderByName(providerName = "mcregion");
+        }
+
+        Level level;
+        try {
+            String path = this.getDataPath() + "worlds/" + name + "/";
+
+            provider.getMethod("generate", String.class, String.class, long.class, Class.class, Map.class).invoke(null, path, name, seed, generator, options);
+
+            level = new Level(this, name, path, provider);
+            this.levels.put(level.getId(), level);
+
+            level.initLevel();
+
+            level.setTickRate(this.baseTickRate);
+        } catch (Exception e) {
+            this.logger.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
+            if (this.logger instanceof MainLogger) {
+                this.logger.logException(e);
+            }
+            return false;
+        }
+
+        this.getPluginManager().callEvent(new LevelInitEvent(level));
+
+        this.getPluginManager().callEvent(new LevelLoadEvent(level));
+
+        this.getLogger().notice(this.getLanguage().translateString("nukkit.level.backgroundGeneration", name));
+
+        int centerX = (int) level.getSpawnLocation().getX() >> 4;
+        int centerZ = (int) level.getSpawnLocation().getZ() >> 4;
+
+        TreeMap<String, Integer> order = new TreeMap<>();
+
+        for (int X = -3; X <= 3; ++X) {
+            for (int Z = -3; Z <= 3; ++Z) {
+                int distance = X * X + Z * Z;
+                int chunkX = X + centerX;
+                int chunkZ = Z + centerZ;
+                order.put(Level.chunkHash(chunkX, chunkZ), distance);
+            }
+        }
+
+        List<Map.Entry<String, Integer>> sortList = new ArrayList<>(order.entrySet());
+
+        Collections.sort(sortList, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o2.getValue() - o1.getValue();
+            }
+        });
+
+        for (String index : order.keySet()) {
+            Chunk.Entry entry = Level.getChunkXZ(index);
+            level.populateChunk(entry.chunkX, entry.chunkZ, true);
+        }
+
+        return true;
+    }
+
+    public boolean isLevelGenerated(String name) {
+        if (Objects.equals(name.trim(), "")) {
+            return false;
+        }
+
+        String path = this.getDataPath() + "worlds/" + name + "/";
+        if (this.getLevelByName(name) == null) {
+
+            if (LevelProviderManager.getProvider(path) == null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public BaseLang getLanguage() {
         return baseLang;
     }
@@ -1254,7 +1505,7 @@ public class Server {
     }
 
     public int getPropertyInt(String variable, Integer defaultValue) {
-        return this.properties.exists(variable) ? Integer.parseInt((String) this.properties.get(variable)) : defaultValue;
+        return this.properties.exists(variable) ? (!this.properties.get(variable).equals("") ? Integer.parseInt((String) this.properties.get(variable)) : defaultValue) : defaultValue;
     }
 
     public void setPropertyInt(String variable, int value) {
@@ -1371,6 +1622,24 @@ public class Server {
 
         return result;
 
+    }
+
+    private void registerEntities() {
+        Entity.registerEntity(Arrow.class);
+        Entity.registerEntity(cn.nukkit.entity.Item.class);
+        Entity.registerEntity(FallingSand.class);
+        Entity.registerEntity(PrimedTNT.class);
+
+        //todo alot
+
+        Entity.registerEntity(Human.class, true);
+    }
+
+    private void registerTiles() {
+        Tile.registerTile(Chest.class);
+        Tile.registerTile(Furnace.class);
+        Tile.registerTile(Sign.class);
+        Tile.registerTile(EnchantTable.class);
     }
 
     public static Server getInstance() {

@@ -398,53 +398,46 @@ public class CraftingManager {
 
         List<Recipe> buildRecipes = new ArrayList<>();
 
-        int RESULT_ITEMID = 0;
-        int RESULT_META = 1;
-        int INGREDIENT_ITEMID = 2;
-        int INGREDIENT_META = 3;
-        int RECIPE_SHAPE = 4;
-        int RESULT_AMOUNT = 5;
-
-        Object[][] recipes = new Object[][]{
-                new Object[]{Item.SLAB, Slab.STONE, Item.STONE, Stone.NORMAL, "slab", 6},
-                new Object[]{Item.SLAB, Slab.COBBLESTONE, Item.COBBLESTONE, 0, "slab", 6},
-                new Object[]{Item.SLAB, Slab.SANDSTONE, Item.SANDSTONE, 0, "slab", 6},
-                new Object[]{Item.SLAB, Slab.BRICK, Item.BRICK, 0, "slab", 6},
-                new Object[]{Item.SLAB, Slab.STONE_BRICK, Item.STONE_BRICK, StoneBricks.NORMAL, "slab", 6},
-                new Object[]{Item.SLAB, Slab.NETHER_BRICK, Item.NETHER_BRICK_BLOCK, 0, "slab", 6},
-                new Object[]{Item.SLAB, Slab.QUARTZ, Item.QUARTZ_BLOCK, 0, "slab", 6},
-                new Object[]{Item.COBBLESTONE_STAIRS, 0, Item.COBBLESTONE, 0, "stairs", 4},
-                new Object[]{Item.SANDSTONE_STAIRS, 0, Item.SANDSTONE, 0, "stairs", 4},
-                new Object[]{Item.STONE_BRICK_STAIRS, 0, Item.STONE_BRICK, StoneBricks.NORMAL, "stairs", 4},
-                new Object[]{Item.BRICK_STAIRS, 0, Item.BRICKS_BLOCK, 0, "stairs", 4},
-                new Object[]{Item.NETHER_BRICKS_STAIRS, 0, Item.NETHER_BRICK_BLOCK, 0, "stairs", 4},
-                new Object[]{Item.COBBLESTONE_WALL, StoneWall.NONE_MOSSY_WALL, Item.COBBLESTONE, 0, "wall/fence", 6},
-                new Object[]{Item.COBBLESTONE_WALL, StoneWall.MOSSY_WALL, Item.MOSSY_STONE, 0, "wall/fence", 6},
-                new Object[]{Item.NETHER_BRICK_FENCE, 0, Item.NETHER_BRICK_BLOCK, 0, "wall/fence", 6},
-                new Object[]{Item.NETHER_BRICKS, 0, Item.NETHER_BRICK, 0, "blockrecipe1", 1},
-                new Object[]{Item.SANDSTONE, SandStone.NORMAL, Item.SAND, 0, "blockrecipe1", 1},
-                new Object[]{Item.SANDSTONE, SandStone.CHISELED, Item.SANDSTONE, SandStone.NORMAL, "blockrecipe1", 4},
-                new Object[]{Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.NORMAL, "blockrecipe1", 4},
-                new Object[]{Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.POLISHED_GRANITE, "blockrecipe1", 4},
-                new Object[]{Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.POLISHED_DIORITE, "blockrecipe1", 4},
-                new Object[]{Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.POLISHED_ANDESITE, "blockrecipe1", 4},
-                new Object[]{Item.STONE, Stone.POLISHED_GRANITE, Item.STONE, Stone.GRANITE, "blockrecipe1", 4},
-                new Object[]{Item.STONE, Stone.POLISHED_DIORITE, Item.STONE, Stone.DIORITE, "blockrecipe1", 4},
-                new Object[]{Item.STONE, Stone.POLISHED_ANDESITE, Item.STONE, Stone.ANDESITE, "blockrecipe1", 4},
-                new Object[]{Item.QUARTZ_BLOCK, Quartz.QUARTZ_NORMAL, Item.QUARTZ, Stone.ANDESITE, "blockrecipe1", 4},
-                new Object[]{Item.QUARTZ_BLOCK, Quartz.QUARTZ_CHISELED, Item.SLAB, Slab.QUARTZ, "blockrecipe2X1", 1},
-                new Object[]{Item.SANDSTONE, SandStone.CHISELED, Item.SLAB, Slab.SANDSTONE, "blockrecipe2X1", 1},
-                new Object[]{Item.STONE_BRICK, StoneBricks.CHISELED, Item.SLAB, Slab.STONE_BRICK, "blockrecipe2X1", 1},
+        Entry[] recipes = new Entry[]{
+                new Entry(Item.SLAB, Slab.STONE, Item.STONE, Stone.NORMAL, "slab", 6),
+                new Entry(Item.SLAB, Slab.COBBLESTONE, Item.COBBLESTONE, 0, "slab", 6),
+                new Entry(Item.SLAB, Slab.SANDSTONE, Item.SANDSTONE, 0, "slab", 6),
+                new Entry(Item.SLAB, Slab.BRICK, Item.BRICK, 0, "slab", 6),
+                new Entry(Item.SLAB, Slab.STONE_BRICK, Item.STONE_BRICK, StoneBricks.NORMAL, "slab", 6),
+                new Entry(Item.SLAB, Slab.NETHER_BRICK, Item.NETHER_BRICK_BLOCK, 0, "slab", 6),
+                new Entry(Item.SLAB, Slab.QUARTZ, Item.QUARTZ_BLOCK, 0, "slab", 6),
+                new Entry(Item.COBBLESTONE_STAIRS, 0, Item.COBBLESTONE, 0, "stairs", 4),
+                new Entry(Item.SANDSTONE_STAIRS, 0, Item.SANDSTONE, 0, "stairs", 4),
+                new Entry(Item.STONE_BRICK_STAIRS, 0, Item.STONE_BRICK, StoneBricks.NORMAL, "stairs", 4),
+                new Entry(Item.BRICK_STAIRS, 0, Item.BRICKS_BLOCK, 0, "stairs", 4),
+                new Entry(Item.NETHER_BRICKS_STAIRS, 0, Item.NETHER_BRICK_BLOCK, 0, "stairs", 4),
+                new Entry(Item.COBBLESTONE_WALL, StoneWall.NONE_MOSSY_WALL, Item.COBBLESTONE, 0, "wall/fence", 6),
+                new Entry(Item.COBBLESTONE_WALL, StoneWall.MOSSY_WALL, Item.MOSSY_STONE, 0, "wall/fence", 6),
+                new Entry(Item.NETHER_BRICK_FENCE, 0, Item.NETHER_BRICK_BLOCK, 0, "wall/fence", 6),
+                new Entry(Item.NETHER_BRICKS, 0, Item.NETHER_BRICK, 0, "blockrecipe1", 1),
+                new Entry(Item.SANDSTONE, SandStone.NORMAL, Item.SAND, 0, "blockrecipe1", 1),
+                new Entry(Item.SANDSTONE, SandStone.CHISELED, Item.SANDSTONE, SandStone.NORMAL, "blockrecipe1", 4),
+                new Entry(Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.NORMAL, "blockrecipe1", 4),
+                new Entry(Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.POLISHED_GRANITE, "blockrecipe1", 4),
+                new Entry(Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.POLISHED_DIORITE, "blockrecipe1", 4),
+                new Entry(Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.POLISHED_ANDESITE, "blockrecipe1", 4),
+                new Entry(Item.STONE, Stone.POLISHED_GRANITE, Item.STONE, Stone.GRANITE, "blockrecipe1", 4),
+                new Entry(Item.STONE, Stone.POLISHED_DIORITE, Item.STONE, Stone.DIORITE, "blockrecipe1", 4),
+                new Entry(Item.STONE, Stone.POLISHED_ANDESITE, Item.STONE, Stone.ANDESITE, "blockrecipe1", 4),
+                new Entry(Item.QUARTZ_BLOCK, Quartz.QUARTZ_NORMAL, Item.QUARTZ, Stone.ANDESITE, "blockrecipe1", 4),
+                new Entry(Item.QUARTZ_BLOCK, Quartz.QUARTZ_CHISELED, Item.SLAB, Slab.QUARTZ, "blockrecipe2X1", 1),
+                new Entry(Item.SANDSTONE, SandStone.CHISELED, Item.SLAB, Slab.SANDSTONE, "blockrecipe2X1", 1),
+                new Entry(Item.STONE_BRICK, StoneBricks.CHISELED, Item.SLAB, Slab.STONE_BRICK, "blockrecipe2X1", 1)
         };
 
-        for (Object[] recipe : recipes) {
+        for (Entry recipe : recipes) {
             buildRecipes.add(this.createOneIngredientStonecutterRecipe(
-                    shapes.get(recipe[RECIPE_SHAPE]),
-                    (int) recipe[RESULT_ITEMID],
-                    (int) recipe[RESULT_META],
-                    (int) recipe[RESULT_AMOUNT],
-                    (int) recipe[INGREDIENT_ITEMID],
-                    (int) recipe[INGREDIENT_META],
+                    shapes.get(recipe.recipeShape),
+                    recipe.resultItemId,
+                    recipe.resultMeta,
+                    recipe.resultAmount,
+                    recipe.ingredientItemId,
+                    recipe.ingredientMeta,
                     'X'));
         }
 
@@ -822,6 +815,24 @@ public class CraftingManager {
             this.registerShapelessRecipe((ShapelessRecipe) recipe);
         } else if (recipe instanceof FurnaceRecipe) {
             this.registerFurnaceRecipe((FurnaceRecipe) recipe);
+        }
+    }
+
+    public static class Entry {
+        int resultItemId;
+        int resultMeta;
+        int ingredientItemId;
+        int ingredientMeta;
+        String recipeShape;
+        int resultAmount;
+
+        public Entry(int resultItemId, int resultMeta, int ingredientItemId, int ingredientMeta, String recipeShape, int resultAmount) {
+            this.resultItemId = resultItemId;
+            this.resultMeta = resultMeta;
+            this.ingredientItemId = ingredientItemId;
+            this.ingredientMeta = ingredientMeta;
+            this.recipeShape = recipeShape;
+            this.resultAmount = resultAmount;
         }
     }
 }
