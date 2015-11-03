@@ -416,7 +416,8 @@ public class Item implements Cloneable {
 
     protected Block block = null;
     protected int id;
-    protected Integer meta;
+    protected int meta;
+    protected boolean hasMeta = true;
     private byte[] tags = new byte[0];
     private CompoundTag cachedNBT = null;
     public int count;
@@ -437,13 +438,21 @@ public class Item implements Cloneable {
 
     public Item(int id, Integer meta, int count, String name) {
         this.id = id & 0xffff;
-        this.meta = meta != null ? (meta & 0xffff) : null;
+        if (meta != null) {
+            this.meta = meta & 0xffff;
+        } else {
+            this.hasMeta = false;
+        }
         this.count = count;
         this.name = name;
         if (!(this.block == null && this.id <= 0xff && Block.list[id] != null)) {
             this.block = Block.get(this.id, this.meta);
             this.name = this.block.getName();
         }
+    }
+
+    public boolean hasMeta() {
+        return hasMeta;
     }
 
     public boolean canBeActivated() {
@@ -889,7 +898,7 @@ public class Item implements Cloneable {
     }
 
     public static void addCreativeItem(Item item) {
-        Item.creative.add(Item.get(item.getId(), Integer.valueOf(item.getDamage())));
+        Item.creative.add(Item.get(item.getId(), item.hasMeta ? item.getDamage() : null));
     }
 
     public static void removeCreativeItem(Item item) {
@@ -994,11 +1003,8 @@ public class Item implements Cloneable {
         }
 
         CompoundTag tag = this.getNamedTag();
-        if (tag.contains("BlockEntityTag") && tag.get("BlockEntityTag") instanceof CompoundTag) {
-            return true;
-        }
+        return tag.contains("BlockEntityTag") && tag.get("BlockEntityTag") instanceof CompoundTag;
 
-        return false;
     }
 
     public Item clearCustomBlockData() {
@@ -1272,12 +1278,16 @@ public class Item implements Cloneable {
         return id;
     }
 
-    public Integer getDamage() {
+    public int getDamage() {
         return meta;
     }
 
     public void setDamage(Integer meta) {
-        this.meta = meta != null ? (meta & 0xFFFF) : null;
+        if (meta != null) {
+            this.meta = meta & 0xffff;
+        } else {
+            this.hasMeta = false;
+        }
     }
 
     public int getMaxStackSize() {
@@ -1340,7 +1350,7 @@ public class Item implements Cloneable {
 
     @Override
     final public String toString() {
-        return "Item " + this.name + " (" + this.id + ":" + (this.meta == null ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
+        return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
     }
 
     public int getDestroySpeed(Block block, Player player) {
@@ -1365,7 +1375,7 @@ public class Item implements Cloneable {
     }
 
     public final boolean deepEquals(Item item) {
-        return equals(item, true);
+        return deepEquals(item, true);
     }
 
     public final boolean deepEquals(Item item, boolean checkDamage) {

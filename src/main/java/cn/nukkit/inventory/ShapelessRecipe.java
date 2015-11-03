@@ -63,7 +63,7 @@ public class ShapelessRecipe implements Recipe {
                 break;
             }
 
-            if (ingredient.equals(item, item.getDamage() != null, item.getCompoundTag() != null)) {
+            if (ingredient.equals(item, item.hasMeta(), item.getCompoundTag() != null)) {
                 this.ingredients.remove(ingredient);
                 item.setCount(item.getCount() - 1);
             }

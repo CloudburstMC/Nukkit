@@ -245,7 +245,7 @@ public class BinaryStream {
 
         this.putShort(item.getId());
         this.putByte((byte) (item.getCount() & 0xff));
-        this.putShort(item.getDamage() == null ? -1 : item.getDamage());
+        this.putShort(item.hasMeta() ? -1 : item.getDamage());
 
         byte[] nbt = item.getCompoundTag();
         this.putShort(nbt.length);
