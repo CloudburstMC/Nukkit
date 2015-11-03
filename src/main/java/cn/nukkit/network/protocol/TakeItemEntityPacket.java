@@ -12,7 +12,6 @@ public class TakeItemEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
-        ;
     }
 
     @Override

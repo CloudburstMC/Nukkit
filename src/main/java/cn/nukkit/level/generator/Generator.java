@@ -39,9 +39,9 @@ public abstract class Generator {
     }
 
     public static String getGeneratorName(Class<? extends Generator> c) {
-        for (Map.Entry entry : Generator.list.entrySet()) {
-            if (entry.getValue().equals(c)) {
-                return (String) entry.getKey();
+        for (String key : Generator.list.keySet()) {
+            if (Generator.list.get(key).equals(c)) {
+                return key;
             }
         }
         return "unknown";

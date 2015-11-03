@@ -99,7 +99,7 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public Item getItem(int index) {
-        return this.slots.containsKey(index) ? ((Item) this.slots.get(index)).clone() : Item.get(Item.AIR, null, 0);
+        return this.slots.containsKey(index) ? this.slots.get(index).clone() : Item.get(Item.AIR, null, 0);
     }
 
     @Override
@@ -321,8 +321,6 @@ public abstract class BaseInventory implements Inventory {
                 itemSlots.add(slot.clone());
             }
         }
-
-        List<Integer> emptySlots = new ArrayList<>();
 
         for (int i = 0; i < this.getSize(); ++i) {
             Item item = this.getItem(i);

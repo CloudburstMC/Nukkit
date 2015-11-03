@@ -857,8 +857,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public void stopSleep() {
         if (this.sleeping != null) {
-            PlayerBedLeaveEvent ev;
-            this.server.getPluginManager().callEvent(ev = new PlayerBedLeaveEvent(this, this.level.getBlock(this.sleeping)));
+            this.server.getPluginManager().callEvent(new PlayerBedLeaveEvent(this, this.level.getBlock(this.sleeping)));
 
             this.sleeping = null;
             this.setDataProperty(DATA_PLAYER_BED_POSITION, DATA_TYPE_POS, new Object[]{0, 0, 0});
@@ -1048,11 +1047,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             bb.maxY = bb.minY + 0.5;
             bb.minY -= 1;
 
-            if (this.level.getCollisionBlocks(bb, true).length > 0) {
-                this.onGround = true;
-            } else {
-                this.onGround = false;
-            }
+            this.onGround = this.level.getCollisionBlocks(bb, true).length > 0;
         }
         this.isCollided = this.onGround;
     }
@@ -1898,7 +1893,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         break;
                     } else if (e instanceof Living) {
                         message = "death.attack.mob";
-                        params.add(e.getNameTag() != "" ? e.getNameTag() : ((Living) e).getName());
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((Living) e).getName());
                         break;
                     } else {
                         params.add("Unknown");

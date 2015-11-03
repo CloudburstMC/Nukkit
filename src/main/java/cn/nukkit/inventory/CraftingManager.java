@@ -475,7 +475,7 @@ public class CraftingManager {
             }
         }
 
-        ShapedRecipe recipe = null;
+        ShapedRecipe recipe;
 
         if (height < 3) {
             recipe = ((new StonecutterShapedRecipe(Item.get(resultItemId, resultItemMeta, resultItemAmount), recipeShape)).setIngredient(ingredient, Item.get(ingredientId, ingredientMeta, ingredientAmount)));
@@ -726,12 +726,19 @@ public class CraftingManager {
         for (Map<Integer, Item> v : ingredients.values()) {
             for (Item item : v.values()) {
                 if (item != null) {
-                    hash += item.getId() + ":" + (item.hasMeta() ? "?" : item.getDamage()) + "x" + item.getCount() + ",";
+                    hash += item.getId() + ":" + (!item.hasMeta() ? "?" : item.getDamage()) + "x" + item.getCount() + ",";
                 }
             }
 
             hash += ";";
         }
+
+        String index = result.getId() + ":" + (result.hasMeta() ? result.getDamage() : "");
+        if (!this.recipeLookup.containsKey(index)) {
+            this.recipeLookup.put(index, new HashMap<>());
+        }
+
+        this.recipeLookup.get(index).put(hash, recipe);
     }
 
     public void registerShapelessRecipe(ShapelessRecipe recipe) {
@@ -741,7 +748,7 @@ public class CraftingManager {
         List<Item> ingredients = recipe.getIngredientList();
         Collections.sort(ingredients, this.comparator);
         for (Item item : ingredients) {
-            hash += item.getId() + ":" + (item.hasMeta() ? "?" : item.getDamage()) + "x" + item.getCount() + ",";
+            hash += item.getId() + ":" + (!item.hasMeta() ? "?" : item.getDamage()) + "x" + item.getCount() + ",";
         }
 
         if (!this.recipeLookup.containsKey(result.getId() + ":" + result.getDamage())) {

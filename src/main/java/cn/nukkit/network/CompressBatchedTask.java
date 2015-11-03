@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by WuFanXiang on 2015-10-04.
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public class CompressBatchedTask extends AsyncTask {
 

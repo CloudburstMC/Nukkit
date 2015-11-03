@@ -11,14 +11,10 @@ public class Explosion {
     private Level level;
     private Position source;
     private float size;
-    /**
-     * @var Block[]
-     */
+
     private Block[] affectedBlocks;
     private float stepLen = 0.3F;
-    /**
-     * @var Entity|Block
-     */
+
     private Object what;
 
     public Explosion(Position center, float size, Object what) {

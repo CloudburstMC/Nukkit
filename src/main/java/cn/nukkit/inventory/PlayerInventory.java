@@ -110,7 +110,6 @@ public class PlayerInventory extends BaseInventory {
         MobEquipmentPacket pk = new MobEquipmentPacket();
         pk.eid = player.equals(this.getHolder()) ? 0 : this.getHolder().getId();
         pk.item = item;
-        int damage = item.getDamage();
         pk.slot = (byte) this.getHeldItemSlot();
         pk.selectedSlot = (byte) this.getHeldItemIndex();
 
@@ -126,7 +125,6 @@ public class PlayerInventory extends BaseInventory {
         MobEquipmentPacket pk = new MobEquipmentPacket();
         pk.eid = 0;
         pk.item = item;
-        int damage = item.getDamage();
         pk.slot = (byte) this.getHeldItemSlot();
         pk.selectedSlot = (byte) this.getHeldItemIndex();
 

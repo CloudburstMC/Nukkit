@@ -24,7 +24,6 @@ public abstract class DataPacket extends Packet {
     }
 
     public int length() {
-        int len = 4;
         int length = 4;
         for (Object packet : this.packets) {
             length += packet instanceof EncapsulatedPacket ? ((EncapsulatedPacket) packet).getTotalLength() : ((byte[]) packet).length;

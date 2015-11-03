@@ -57,7 +57,7 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public BaseFullChunk clone() {
-        BaseFullChunk chunk = null;
+        BaseFullChunk chunk;
         try {
             chunk = (BaseFullChunk) super.clone();
         } catch (CloneNotSupportedException e) {

@@ -719,6 +719,7 @@ public class Level implements ChunkManager, Metadatable {
                 entity.scheduleUpdate();
             }
 
+            int blockId;
             if (this.useSections) {
                 for (ChunkSection section : ((Chunk) chunk).getSections()) {
                     if (!(section instanceof EmptyChunkSection)) {
@@ -729,7 +730,7 @@ public class Level implements ChunkManager, Metadatable {
                             int y = (k >> 8) & 0x0f;
                             int z = (k >> 16) & 0x0f;
 
-                            int blockId = section.getBlockId(x, y, z);
+                            blockId = section.getBlockId(x, y, z);
                             if (this.randomTickBlocks.containsKey(blockId)) {
                                 Class<? extends Block> clazz = this.randomTickBlocks.get(blockId);
                                 try {
@@ -743,6 +744,33 @@ public class Level implements ChunkManager, Metadatable {
                                     throw new RuntimeException(e);
                                 }
                             }
+                        }
+                    }
+                }
+            } else {
+                for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
+                    blockTest = 0;
+                    int k = new Random().nextInt();
+                    for (int i = 0; i < 3; ++i, k >>= 10) {
+                        int x = k & 0x0f;
+                        int y = (k >> 8) & 0x0f;
+                        int z = (k >> 16) & 0x0f;
+
+                        blockTest |= blockId = chunk.getBlockId(x, y + (Y << 4), z);
+                        if (this.randomTickBlocks.containsKey(blockId)) {
+                            Class<? extends Block> clazz = this.randomTickBlocks.get(blockId);
+
+                            Block block;
+                            try {
+                                block = clazz.getConstructor(int.class).newInstance(chunk.getBlockData(x, y + (Y << 4), z));
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                            block.x = chunkX * 16 + x;
+                            block.y = (Y << 4) + y;
+                            block.z = chunkZ * 16 + z;
+                            block.level = this;
+                            block.onUpdate(BLOCK_UPDATE_RANDOM);
                         }
                     }
                 }
@@ -1069,7 +1097,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
 
-        if (this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, true).setBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f, (int) pos.z & 0x0f, block.getId(), (int) block.getDamage())) {
+        if (this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, true).setBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f, (int) pos.z & 0x0f, block.getId(), block.getDamage())) {
             Position position;
             if (!(pos instanceof Position)) {
                 position = this.temporalPosition.setComponents(pos.x, pos.y, pos.z);
@@ -1315,7 +1343,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
-            PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face, target.getId() == 0 ? PlayerInteractEvent.RIGHT_CLICK_AIR : PlayerInteractEvent.RIGHT_CLICK_BLOCK);
+            PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face, PlayerInteractEvent.RIGHT_CLICK_BLOCK);
             int distance = this.server.getSpawnRadius();
             if (!player.isOp() && distance > -1) {
                 Vector2 t = new Vector2(target.x, target.z);
@@ -1794,17 +1822,13 @@ public class Level implements ChunkManager, Metadatable {
 
     private void processChunkRequest() {
         if (!this.chunkSendQueue.isEmpty()) {
-            Integer x = null;
-            Integer z = null;
-            for (Map.Entry<String, Map<Integer, Player>> entry : this.chunkSendQueue.entrySet()) {
-                String index = entry.getKey();
-                Map<Integer, Player> players = entry.getValue();
+            for (String index : this.chunkSendQueue.keySet()) {
                 if (this.chunkSendTasks.containsKey(index)) {
                     continue;
                 }
                 Chunk.Entry chunkEntry = Level.getChunkXZ(index);
-                x = chunkEntry.chunkX;
-                z = chunkEntry.chunkZ;
+                int x = chunkEntry.chunkX;
+                int z = chunkEntry.chunkZ;
                 if (this.chunkCache.containsKey(index)) {
                     this.sendChunkFromCache(x, z);
                     continue;
@@ -2191,9 +2215,8 @@ public class Level implements ChunkManager, Metadatable {
 
     public void doChunkGarbageCollection() {
 
-        for (Map.Entry<String, FullChunk> entry : this.chunks.entrySet()) {
-            String index = entry.getKey();
-            FullChunk chunk = entry.getValue();
+        for (String index : this.chunks.keySet()) {
+
             if (!this.unloadQueue.containsKey(index)) {
                 Chunk.Entry chunkEntry = Level.getChunkXZ(index);
                 int X = chunkEntry.chunkX;

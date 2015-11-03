@@ -176,7 +176,7 @@ public class Binary {
 
             if (r != null) {
                 m.put(bottom, new Object[]{type, r});
-            } else if (rr != null) {
+            } else {
                 m.put(bottom, new Object[]{type, rr});
             }
             b = payload[offset];

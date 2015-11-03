@@ -16,7 +16,6 @@ public class AddPaintingPacket extends DataPacket {
 
     @Override
     public void decode() {
-        ;
     }
 
     @Override

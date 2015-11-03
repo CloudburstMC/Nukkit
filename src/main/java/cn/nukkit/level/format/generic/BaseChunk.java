@@ -69,7 +69,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             LevelProvider level = this.getProvider();
             int Y = y >> 4;
             try {
-                this.setInternalSection(Y, (ChunkSection) provider.getClass().getMethod("createChunkSection", int.class).invoke(provider.getClass(), Y));
+                this.setInternalSection(Y, (ChunkSection) level.getClass().getMethod("createChunkSection", int.class).invoke(level.getClass(), Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
                 e1.printStackTrace();
             }

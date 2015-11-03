@@ -112,7 +112,7 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
             return Item.get(Item.AIR, 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
-            return Item.get(data.getShort("id"), (int) data.getShort("Damage"), data.getByte("Count"));
+            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count"));
         }
     }
 
@@ -156,7 +156,7 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
         this.namedTag.putShort("BurnTime", ev.getBurnTime());
         this.namedTag.putShort("BurnTicks", (short) 0);
         if (this.getBlock().getId() == Item.FURNACE) {
-            this.getLevel().setBlock(this, Block.get(Item.BURNING_FURNACE, (int) this.getBlock().getDamage()), true);
+            this.getLevel().setBlock(this, Block.get(Item.BURNING_FURNACE, this.getBlock().getDamage()), true);
         }
 
         if (this.namedTag.getShort("BurnTime") > 0 && ev.isBurning()) {
@@ -192,7 +192,7 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
             if (smelt != null && canSmelt) {
                 this.namedTag.putShort("CookTime", (short) (this.namedTag.getShort("CookTime") + 1));
                 if (this.namedTag.getShort("CookTime") >= 200) {
-                    product = Item.get(smelt.getResult().getId(), Integer.valueOf(smelt.getResult().getDamage()), product.getCount() + 1);
+                    product = Item.get(smelt.getResult().getId(), smelt.getResult().getDamage(), product.getCount() + 1);
 
                     FurnaceSmeltEvent ev = new FurnaceSmeltEvent(this, raw, product);
                     this.server.getPluginManager().callEvent(ev);
@@ -217,7 +217,7 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
             ret = true;
         } else {
             if (this.getBlock().getId() == Item.BURNING_FURNACE) {
-                this.getLevel().setBlock(this, Block.get(Item.FURNACE, (int) this.getBlock().getDamage()), true);
+                this.getLevel().setBlock(this, Block.get(Item.FURNACE, this.getBlock().getDamage()), true);
             }
             this.namedTag.putShort("BurnTime", (short) 0);
             this.namedTag.putShort("CookTime", (short) 0);

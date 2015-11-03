@@ -311,8 +311,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addEffect(Effect effect) {
-        if (this.effects.containsKey(effect.getId())) {
-            Effect oldEffect = this.effects.get(effect.getId());
+        if (this.effects.containsKey((int)effect.getId())) {
+            Effect oldEffect = this.effects.get((int)effect.getId());
             if (Math.abs(effect.getAmplifier()) <= (oldEffect.getAmplifier())
                     || (Math.abs(effect.getAmplifier())) == Math.abs(oldEffect.getAmplifier())
                     && effect.getDuration() < oldEffect.getDuration()) {
@@ -461,8 +461,8 @@ public abstract class Entity extends Location implements Metadatable {
             ListTag<CompoundTag> list = new ListTag<>("ActiveEffects");
             for (Effect effect : this.effects.values()) {
                 list.add(new CompoundTag(String.valueOf(effect.getId()))
-                                .putByte("Id", (byte) effect.getId())
-                                .putByte("Amplifier", (byte) effect.getAmplifier())
+                                .putByte("Id", effect.getId())
+                                .putByte("Amplifier", effect.getAmplifier())
                                 .putInt("Duration", effect.getDuration())
                                 .putBoolean("Ambient", false)
                                 .putBoolean("ShowParticles", effect.isVisible())
@@ -805,9 +805,9 @@ public abstract class Entity extends Location implements Metadatable {
         double diffMotion = (this.motionX - this.lastMotionX) * (this.motionX - this.lastMotionX) + (this.motionY - this.lastMotionY) * (this.motionY - this.lastMotionY) + (this.motionZ - this.lastMotionZ) * (this.motionZ - this.lastMotionZ);
 
         if (diffPosition > 0.04 || diffRotation > 2.25 && (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.00001)) { //0.2 ** 2, 1.5 ** 2
-            this.lastX = (double) this.x;
-            this.lastY = (double) this.y;
-            this.lastZ = (double) this.z;
+            this.lastX = this.x;
+            this.lastY = this.y;
+            this.lastZ = this.z;
 
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
@@ -1007,11 +1007,8 @@ public abstract class Entity extends Location implements Metadatable {
 
         AxisAlignedBB bb = block.getBoundingBox();
 
-        if (bb != null && block.isSolid() && !block.isTransparent() && bb.intersectsWith(this.getBoundingBox())) {
-            return true;
-        }
+        return bb != null && block.isSolid() && !block.isTransparent() && bb.intersectsWith(this.getBoundingBox());
 
-        return false;
     }
 
 

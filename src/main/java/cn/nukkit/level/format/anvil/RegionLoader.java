@@ -168,7 +168,7 @@ public class RegionLoader extends BaseRegionLoader {
             try {
                 chunk = Zlib.inflate(Arrays.copyOf(chunk, 5));
             } catch (Exception e) {
-                this.locationTable.put(i, (table = new Integer[]{0, 0, 0}));
+                this.locationTable.put(i, new Integer[]{0, 0, 0});
                 continue;
             }
             chunk = Zlib.deflate(chunk);

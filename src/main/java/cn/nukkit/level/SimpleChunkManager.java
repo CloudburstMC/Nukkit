@@ -70,7 +70,7 @@ public class SimpleChunkManager implements ChunkManager {
             this.chunks.remove(Level.chunkHash(chunkX, chunkZ));
             return;
         }
-        this.chunks.put(Level.chunkHash(chunkX, chunkZ), (BaseFullChunk) chunk);
+        this.chunks.put(Level.chunkHash(chunkX, chunkZ), chunk);
     }
 
     @Override
