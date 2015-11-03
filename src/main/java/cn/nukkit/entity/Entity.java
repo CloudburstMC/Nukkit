@@ -215,7 +215,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.fireTicks = this.namedTag.getShort("Fire");
 
         if (!this.namedTag.contains("Air")) {
-            this.namedTag.putShort("Air", (short) 300);
+            this.namedTag.putShort("Air", 300);
         }
         this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, this.namedTag.getShort("Air"));
 
@@ -311,8 +311,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addEffect(Effect effect) {
-        if (this.effects.containsKey((int)effect.getId())) {
-            Effect oldEffect = this.effects.get((int)effect.getId());
+        if (this.effects.containsKey((int) effect.getId())) {
+            Effect oldEffect = this.effects.get((int) effect.getId());
             if (Math.abs(effect.getAmplifier()) <= (oldEffect.getAmplifier())
                     || (Math.abs(effect.getAmplifier())) == Math.abs(oldEffect.getAmplifier())
                     && effect.getDuration() < oldEffect.getDuration()) {

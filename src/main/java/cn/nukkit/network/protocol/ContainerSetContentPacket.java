@@ -53,7 +53,7 @@ public class ContainerSetContentPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte((byte) this.windowid);
-        this.putShort((short) this.slots.length);
+        this.putShort(this.slots.length);
         for (Item slot : this.slots) {
             this.putSlot(slot);
         }

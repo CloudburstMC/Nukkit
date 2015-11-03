@@ -14,7 +14,7 @@ public class ContainerOpenPacket extends DataPacket {
 
     public byte windowid;
     public byte type;
-    public short slots;
+    public int slots;
     public int x;
     public int y;
     public int z;

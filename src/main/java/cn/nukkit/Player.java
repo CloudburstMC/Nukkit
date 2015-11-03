@@ -1515,7 +1515,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.fireTicks = this.namedTag.getShort("Fire");
 
         if (!this.namedTag.contains("Air")) {
-            this.namedTag.putShort("Air", (short) 300);
+            this.namedTag.putShort("Air", 300);
         }
         this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, this.namedTag.getShort("Air"));
 

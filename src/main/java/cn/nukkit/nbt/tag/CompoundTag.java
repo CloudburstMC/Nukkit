@@ -130,7 +130,7 @@ public class CompoundTag extends Tag {
     }
 
     public int getShort(String name) {
-        if (!tags.containsKey(name)) return (short) 0;
+        if (!tags.containsKey(name)) return 0;
         return ((ShortTag) tags.get(name)).data;
     }
 

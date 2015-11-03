@@ -96,7 +96,7 @@ public class EncapsulatedPacket implements Cloneable {
             bb.put(Binary.writeInt(buffer.length));
             bb.put(Binary.writeInt(identifierACK));
         } else {
-            bb.put(Binary.writeShort((short) (buffer.length << 3)));
+            bb.put(Binary.writeShort(buffer.length << 3));
         }
 
         if (reliability > 0) {

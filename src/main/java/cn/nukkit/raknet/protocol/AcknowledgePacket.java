@@ -69,7 +69,7 @@ public abstract class AcknowledgePacket extends Packet {
     @Override
     public void decode() {
         super.decode();
-        short count = this.getShort();
+        short count = this.getSignedShort();
         List<Integer> packets = new ArrayList<>();
         int cnt = 0;
         for (int i = 0; i < count && !this.feof() && cnt < 4096; ++i) {

@@ -33,6 +33,6 @@ public class OPEN_CONNECTION_REPLY_1 extends Packet {
         this.offset += 16; //skip magic bytes
         this.serverID = this.getLong();
         this.getByte(); //skip security
-        this.mtuSize = this.getShort();
+        this.mtuSize = this.getSignedShort();
     }
 }

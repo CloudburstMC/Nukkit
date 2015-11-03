@@ -38,7 +38,7 @@ public class OPEN_CONNECTION_REQUEST_2 extends Packet {
         InetSocketAddress address = this.getAddress();
         this.serverAddress = address.getHostString();
         this.serverPort = address.getPort();
-        this.mtuSize = this.getShort();
+        this.mtuSize = this.getSignedShort();
         this.clientID = this.getLong();
     }
 }

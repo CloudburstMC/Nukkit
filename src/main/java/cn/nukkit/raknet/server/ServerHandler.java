@@ -41,7 +41,7 @@ public class ServerHandler {
                 RakNet.PACKET_RAW,
                 new byte[]{(byte) (address.length() & 0xff)},
                 address.getBytes(StandardCharsets.UTF_8),
-                Binary.writeShort((short) port),
+                Binary.writeShort(port),
                 payload
         );
         this.server.pushMainToThreadPacket(buffer);

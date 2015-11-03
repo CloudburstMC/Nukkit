@@ -1176,9 +1176,9 @@ public class Level implements ChunkManager, Metadatable {
                                     .add(new FloatTag("", new Random().nextFloat() * 360))
                                     .add(new FloatTag("", 0)))
 
-                            .putShort("Health", (short) 5)
+                            .putShort("Health", 5)
                             .putCompound("Item", itemTag)
-                            .putShort("PickupDelay", (short) delay)
+                            .putShort("PickupDelay", delay)
             );
 
             if (itemEntity != null) {

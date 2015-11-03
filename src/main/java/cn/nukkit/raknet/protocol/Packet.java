@@ -47,12 +47,12 @@ public abstract class Packet implements Cloneable {
         return Binary.readInt(this.get(4));
     }
 
-    protected short getShort() {
-        return (short) this.getShort(true);
+    protected short getSignedShort() {
+        return (short) this.getShort();
     }
 
-    protected int getShort(boolean signed) {
-        return signed ? Binary.readSignedShort(this.get(2)) : Binary.readShort(this.get(2));
+    protected int getShort() {
+        return Binary.readShort(this.get(2));
     }
 
     protected int getTriad() {
@@ -68,14 +68,14 @@ public abstract class Packet implements Cloneable {
     }
 
     protected String getString() {
-        return new String(this.get(this.getShort()), StandardCharsets.UTF_8);
+        return new String(this.get(this.getSignedShort()), StandardCharsets.UTF_8);
     }
 
     protected InetSocketAddress getAddress() {
         byte version = this.getByte();
         if (version == 4) {
             String addr = ((~this.getByte()) & 0xff) + "." + ((~this.getByte()) & 0xff) + "." + ((~this.getByte()) & 0xff) + "." + ((~this.getByte()) & 0xff);
-            int port = this.getShort() & 0xffff;
+            int port = this.getSignedShort() & 0xffff;
             return new InetSocketAddress(addr, port);
         } else {
             //todo IPV6 SUPPORT
@@ -99,8 +99,12 @@ public abstract class Packet implements Cloneable {
         this.put(Binary.writeInt(v));
     }
 
-    protected void putShort(short v) {
+    protected void putShort(int v) {
         this.put(Binary.writeShort(v));
+    }
+
+    protected void putSignedShort(short v) {
+        this.put(Binary.writeShort(v & 0xffff));
     }
 
     protected void putTriad(int v) {
@@ -120,7 +124,7 @@ public abstract class Packet implements Cloneable {
 
     protected void putString(String str) {
         byte[] b = str.getBytes(StandardCharsets.UTF_8);
-        this.putShort((short) b.length);
+        this.putShort(b.length);
         this.put(b);
     }
 
@@ -134,7 +138,7 @@ public abstract class Packet implements Cloneable {
             for (String b : addr.split("\\.")) {
                 this.putByte((byte) ((~Integer.valueOf(b)) & 0xff));
             }
-            this.putShort((short) port);
+            this.putShort(port);
         } else {
             //todo ipv6
         }

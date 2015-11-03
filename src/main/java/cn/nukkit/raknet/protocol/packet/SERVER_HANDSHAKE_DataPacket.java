@@ -38,7 +38,7 @@ public class SERVER_HANDSHAKE_DataPacket extends Packet {
     public void encode() {
         super.encode();
         this.putAddress(new InetSocketAddress(this.address, this.port));
-        this.putShort((short) 0);
+        this.putShort(0);
         for (int i = 0; i < 10; ++i) {
             this.putAddress(this.systemAddresses[i]);
         }

@@ -90,7 +90,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
         CompoundTag d = new CompoundTag()
                 .putByte("Count", (byte) item.getCount())
                 .putByte("Slot", (byte) index)
-                .putShort("id", (short) item.getId())
+                .putShort("id", item.getId())
                 .putShort("Damage", item.getDamage());
 
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
