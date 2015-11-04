@@ -156,8 +156,12 @@ public class QueryRegenerateEvent extends ServerEvent {
             plist = plist.substring(0, plist.length() - 2);
         }
 
+        query.put("splitnum".getBytes());
+        query.put((byte) 0x00);
+        query.put((byte) 128);
+        query.put((byte) 0x00);
+
         LinkedHashMap<String, String> KVdata = new LinkedHashMap<>();
-        KVdata.put("splitnum", String.valueOf((char) 128));
         KVdata.put("hostname", this.serverName);
         KVdata.put("gametype", this.gameType);
         KVdata.put("game_id", GAME_ID);

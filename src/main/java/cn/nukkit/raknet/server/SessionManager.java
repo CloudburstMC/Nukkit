@@ -313,7 +313,7 @@ public class SessionManager {
                     len = packet[offset++];
                     String address = new String(Binary.subBytes(packet, offset, len), StandardCharsets.UTF_8);
                     offset += len;
-                    int port = Binary.readShort(Binary.subBytes(packet, offset, 2)) & 0xffff;
+                    int port = Binary.readShort(Binary.subBytes(packet, offset, 2));
                     offset += 2;
                     byte[] payload = Binary.subBytes(packet, offset);
                     this.socket.writePacket(payload, address, port);

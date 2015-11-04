@@ -203,7 +203,7 @@ public class Binary {
     }
 
     public static int readShort(byte[] bytes) {
-        return (bytes[0] & 0xFF << 8) + (bytes[1] & 0xFF);
+        return ((bytes[0] & 0xFF) << 8) + (bytes[1] & 0xFF);
     }
 
     public static short readSignedShort(byte[] bytes) {

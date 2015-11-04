@@ -82,6 +82,7 @@ public class QueryHandler {
                         getTokenString(this.token, address).getBytes(),
                         new byte[]{0x00}
                 );
+
                 this.server.getNetwork().sendPacket(address, port, reply);
                 break;
             case STATISTICS:
@@ -89,16 +90,16 @@ public class QueryHandler {
                 if (!token.equals(getTokenString(this.token, address)) && !token.equals(getTokenString(this.lastToken, address))) {
                     break;
                 }
-                reply = Binary.appendBytes(
-                        STATISTICS,
-                        Binary.writeInt(sessionID)
-                );
 
                 if (this.timeout < System.currentTimeMillis()) {
                     this.regenerateInfo();
                 }
+                reply = Binary.appendBytes(
+                        STATISTICS,
+                        Binary.writeInt(sessionID),
+                        payload.length == 8 ? this.longData : this.shortData
+                );
 
-                reply = Binary.appendBytes(reply, payload.length == 8 ? this.longData : this.shortData);
                 this.server.getNetwork().sendPacket(address, port, reply);
                 break;
         }
