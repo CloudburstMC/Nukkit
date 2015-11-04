@@ -12,7 +12,6 @@ public class SandStone extends Solid {
     public static final int CHISELED = 1;
     public static final int SMOOTH = 2;
 
-    protected int id = SANDSTONE;
 
     public SandStone() {
         this(0);

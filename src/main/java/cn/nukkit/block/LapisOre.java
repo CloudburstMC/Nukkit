@@ -11,10 +11,9 @@ import java.util.Random;
  */
 public class LapisOre extends Solid {
 
-    protected int id = LAPIS_ORE;
 
     public LapisOre() {
-        super(LAPIS_ORE);
+        this(0);
     }
 
     public LapisOre(int meta) {

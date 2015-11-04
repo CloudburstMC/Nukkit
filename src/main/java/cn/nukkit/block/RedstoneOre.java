@@ -12,10 +12,9 @@ import java.util.Random;
  */
 public class RedstoneOre extends Solid {
 
-    protected int id = REDSTONE_ORE;
 
     public RedstoneOre() {
-        super(REDSTONE_ORE);
+        this(0);
     }
 
     public RedstoneOre(int meta) {

@@ -12,7 +12,7 @@ import cn.nukkit.math.AxisAlignedBB;
 public class SignPost extends Transparent {
 
     public SignPost() {
-        super(Block.SIGN_POST, 0);
+        this(0);
     }
 
     public SignPost(int meta) {

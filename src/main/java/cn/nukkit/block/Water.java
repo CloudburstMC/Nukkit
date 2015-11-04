@@ -6,7 +6,6 @@ package cn.nukkit.block;
  */
 public class Water extends Liquid {
 
-    protected int id = WATER;
 
     public Water() {
         this(0);

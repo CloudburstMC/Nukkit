@@ -13,7 +13,7 @@ import cn.nukkit.utils.TextFormat;
 public class Bed extends Transparent {
 
     public Bed() {
-        super(BED_BLOCK);
+        this(0);
     }
 
     public Bed(int meta) {

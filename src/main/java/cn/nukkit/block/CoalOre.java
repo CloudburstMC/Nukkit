@@ -10,7 +10,7 @@ import cn.nukkit.item.Tool;
 public class CoalOre extends Solid {
 
     public CoalOre() {
-        super(COAL_ORE);
+        this(0);
     }
 
     public CoalOre(int meta) {

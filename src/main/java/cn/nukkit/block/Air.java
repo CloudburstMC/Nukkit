@@ -10,7 +10,7 @@ import cn.nukkit.math.AxisAlignedBB;
 public class Air extends Transparent {
 
     public Air() {
-        super(AIR, 0);
+        this(0);
     }
 
     public Air(int meta) {

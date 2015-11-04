@@ -9,10 +9,9 @@ import cn.nukkit.item.Tool;
  */
 public class GoldOre extends Solid {
 
-    protected int id = GOLD_ORE;
 
     public GoldOre() {
-        super(GOLD_ORE);
+        this(0);
     }
 
     public GoldOre(int meta) {

@@ -16,7 +16,6 @@ public class Wood extends Solid {
     //public static final short ACACIA = 4;
     //public static final short DARK_OAK = 5;
 
-    protected int id = WOOD;
 
     public Wood() {
         this(0);

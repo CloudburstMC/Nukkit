@@ -16,10 +16,9 @@ public class Stone extends Solid {
     public static final int ANDESITE = 5;
     public static final int POLISHED_ANDESITE = 6;
 
-    protected int id = DIRT;
 
     public Stone() {
-        super(STONE);
+        this(0);
     }
 
     public Stone(int meta) {

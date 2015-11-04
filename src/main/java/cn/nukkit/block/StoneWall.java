@@ -12,7 +12,6 @@ public class StoneWall extends Transparent {
     public static final int NONE_MOSSY_WALL = 0;
     public static final int MOSSY_WALL = 1;
 
-    protected int id = STONE_WALL;
 
     public StoneWall() {
         this(0);

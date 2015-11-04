@@ -10,7 +10,7 @@ import cn.nukkit.item.Tool;
 public class AcaciaWoodStairs extends Stair {
 
     public AcaciaWoodStairs() {
-        super(ACACIA_WOOD_STAIRS);
+        this(0);
     }
 
     public AcaciaWoodStairs(int meta) {

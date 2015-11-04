@@ -11,10 +11,9 @@ import java.util.Random;
  */
 public class Gravel extends Solid {
 
-    protected int id = GRAVEL;
 
     public Gravel() {
-        super(GRAVEL);
+        this(0);
     }
 
     public Gravel(int meta) {

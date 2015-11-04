@@ -19,7 +19,6 @@ public class Slab extends Transparent {
     public static final int QUARTZ = 6;
     public static final int NETHER_BRICK = 7;
 
-    protected int id = SLAB;
 
     public Slab() {
         this(0);

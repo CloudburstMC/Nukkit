@@ -13,7 +13,6 @@ public class Quartz extends Solid {
     public static final int QUARTZ_PILLAR = 2;
     public static final int QUARTZ_PILLAR2 = 3;
 
-    protected int id = QUARTZ_BLOCK;
 
     public Quartz() {
         this(0);

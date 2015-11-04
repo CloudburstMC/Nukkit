@@ -9,10 +9,9 @@ import cn.nukkit.item.Tool;
  */
 public class DiamondOre extends Solid {
 
-    protected int id = DIAMOND_ORE;
 
     public DiamondOre() {
-        super(DIAMOND_ORE);
+        this(0);
     }
 
     public DiamondOre(int meta) {

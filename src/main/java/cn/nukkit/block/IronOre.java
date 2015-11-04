@@ -9,10 +9,9 @@ import cn.nukkit.item.Tool;
  */
 public class IronOre extends Solid {
 
-    protected int id = IRON_ORE;
 
     public IronOre() {
-        super(IRON_ORE);
+        this(0);
     }
 
     public IronOre(int meta) {

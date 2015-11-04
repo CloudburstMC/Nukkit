@@ -14,7 +14,6 @@ public class Planks extends Solid {
     public static final int ACACIA = 4;
     public static final int DARK_OAK = 5;
 
-    protected int id = WOODEN_PLANKS;
 
     public Planks() {
         this(0);

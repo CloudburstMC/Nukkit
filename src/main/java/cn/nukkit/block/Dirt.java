@@ -10,10 +10,9 @@ import cn.nukkit.item.Tool;
  */
 public class Dirt extends Solid {
 
-    protected int id = DIRT;
 
     public Dirt() {
-        super(DIRT);
+        this(0);
     }
 
     public Dirt(int meta) {

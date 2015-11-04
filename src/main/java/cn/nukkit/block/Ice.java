@@ -8,10 +8,10 @@ import cn.nukkit.item.Tool;
  * Nukkit Project
  */
 public class Ice extends Transparent {
-    protected int id = ICE;
+
 
     public Ice() {
-        super(ICE, 0);
+        this(0);
     }
 
     public Ice(int meta) {
