@@ -980,14 +980,18 @@ public class Server {
         double used = NukkitMath.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024, 2);
         double max = NukkitMath.round(((double) runtime.maxMemory()) / 1024 / 1024, 2);
         String usage = Math.round(used / max * 100) + "%";
-        System.out.print((char) 0x1b + "]0;" + this.getName() + " " +
+        String title = (char) 0x1b + "]0;" + this.getName() + " " +
                 this.getNukkitVersion() +
                 " | Online " + this.players.size() + "/" + this.getMaxPlayers() +
-                " | Memory " + usage +
-                " | U " + NukkitMath.round((this.network.getUpload()) / 1024, 2)
-                + " D " + NukkitMath.round((this.network.getDownload()) / 1024, 2) +
-                " kB/s | TPS " + this.getTicksPerSecond() +
-                " | Load " + this.getTickUsage() + "%" + (char) 0x07);
+                " | Memory " + usage;
+        if (!Nukkit.shortTitle) {
+            title += " | U " + NukkitMath.round((this.network.getUpload()) / 1024, 2)
+                    + " D " + NukkitMath.round((this.network.getDownload()) / 1024, 2) + " kB/s";
+        }
+        title += " |TPS " + this.getTicksPerSecond() +
+                " | Load " + this.getTickUsage() + "%" + (char) 0x07;
+
+        System.out.print(title);
 
         this.network.resetStatistics();
     }
