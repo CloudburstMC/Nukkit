@@ -12,7 +12,7 @@ public class PlayerBucketFillEvent extends PlayerBucketEvent {
         return handlers;
     }
 
-    public PlayerBucketFillEvent(Player who, Block blockClicked, Integer blockFace, Item bucket, Item itemInHand) {
+    public PlayerBucketFillEvent(Player who, Block blockClicked, int blockFace, Item bucket, Item itemInHand) {
         super(who, blockClicked, blockFace, bucket, itemInHand);
     }
 

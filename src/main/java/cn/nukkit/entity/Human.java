@@ -238,5 +238,4 @@ public class Human extends Creature implements InventoryHolder {
         }
     }
 
-    //todo alot alot alot !!! :\
 }

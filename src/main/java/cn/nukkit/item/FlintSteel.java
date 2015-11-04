@@ -2,6 +2,8 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.Fire;
+import cn.nukkit.block.Solid;
 import cn.nukkit.level.Level;
 
 /**
@@ -28,9 +30,18 @@ public class FlintSteel extends Tool {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, double face, double fx, double fy, double fz) {
-        //todo
-        return super.onActivate(level, player, block, target, face, fx, fy, fz);
+    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
+        if ((player.gamemode & 0x01) == 0 && this.useOn(block) && this.getDamage() >= this.getMaxDurability()) {
+            player.getInventory().setItemInHand(new Item(Item.AIR, 0, 0));
+        }
+
+        if (block.getId() == AIR && (target instanceof Solid)) {
+            level.setBlock(block, new Fire(), true);
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override

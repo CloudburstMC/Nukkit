@@ -36,7 +36,7 @@ public class SpawnEgg extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, double face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
         FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
 
         if (chunk == null) {
