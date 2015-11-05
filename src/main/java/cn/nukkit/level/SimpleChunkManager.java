@@ -73,6 +73,10 @@ public class SimpleChunkManager implements ChunkManager {
         this.chunks.put(Level.chunkHash(chunkX, chunkZ), chunk);
     }
 
+    public void cleanChunks() {
+        this.chunks = new HashMap<>();
+    }
+
     @Override
     public long getSeed() {
         return seed;
