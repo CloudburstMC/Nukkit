@@ -30,9 +30,12 @@ public class Nukkit {
 
     public static void main(String[] args) {
 
-        //Shorter title for windows 8
-        if (System.getProperty("os.name").toLowerCase().contains("windows 8")) {
-            shortTitle = true;
+        //Shorter title for windows 8/2012
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("windows")) {
+            if (osName.contains("windows 8") || osName.contains("2012")) {
+                shortTitle = true;
+            }
         }
 
         //启动参数
