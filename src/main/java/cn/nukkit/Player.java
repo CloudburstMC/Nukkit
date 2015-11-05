@@ -1730,6 +1730,25 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.dataPacket(pk);
     }
 
+    public void sendPopup(String message) {
+        this.sendPopup(message, "");
+    }
+
+    public void sendPopup(String message, String subtitle) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_POPUP;
+        pk.source = message;
+        pk.message = subtitle;
+        this.dataPacket(pk);
+    }
+
+    public void sendTip(String message) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_TIP;
+        pk.source = message;
+        this.dataPacket(pk);
+    }
+
     @Override
     public void close() {
         this.close("");
