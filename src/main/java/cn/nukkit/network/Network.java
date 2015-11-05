@@ -7,8 +7,8 @@ import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Zlib;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -31,9 +31,9 @@ public class Network {
 
     private Server server;
 
-    private Map<Integer, SourceInterface> interfaces = new HashMap<>();
+    private Set<SourceInterface> interfaces = new HashSet<>();
 
-    private Map<Integer, AdvancedSourceInterface> advancedInterfaces = new HashMap<>();
+    private Set<AdvancedSourceInterface> advancedInterfaces = new HashSet<>();
 
     private double upload = 0;
     private double download = 0;
@@ -63,12 +63,12 @@ public class Network {
         this.download = 0;
     }
 
-    public Map<Integer, SourceInterface> getInterfaces() {
+    public Set<SourceInterface> getInterfaces() {
         return interfaces;
     }
 
     public void processInterfaces() {
-        for (SourceInterface interfaz : this.interfaces.values()) {
+        for (SourceInterface interfaz : this.interfaces) {
             try {
                 interfaz.process();
             } catch (Exception e) {
@@ -84,17 +84,17 @@ public class Network {
     }
 
     public void registerInterface(SourceInterface interfaz) {
-        this.interfaces.put(interfaz.hashCode(), interfaz);
+        this.interfaces.add(interfaz);
         if (interfaz instanceof AdvancedSourceInterface) {
-            this.advancedInterfaces.put(interfaz.hashCode(), (AdvancedSourceInterface) interfaz);
+            this.advancedInterfaces.add((AdvancedSourceInterface) interfaz);
             ((AdvancedSourceInterface) interfaz).setNetwork(this);
         }
         interfaz.setName(this.name);
     }
 
     public void unregisterInterface(SourceInterface interfaz) {
-        this.interfaces.remove(interfaz.hashCode());
-        this.advancedInterfaces.remove(interfaz.hashCode());
+        this.interfaces.remove(interfaz);
+        this.advancedInterfaces.remove(interfaz);
     }
 
     public void setName(String name) {
@@ -107,7 +107,7 @@ public class Network {
     }
 
     public void updateName() {
-        for (SourceInterface interfaz : this.interfaces.values()) {
+        for (SourceInterface interfaz : this.interfaces) {
             interfaz.setName(this.name);
         }
     }
@@ -168,7 +168,7 @@ public class Network {
     }
 
     public void sendPacket(String address, int port, byte[] payload) {
-        for (AdvancedSourceInterface interfaz : this.advancedInterfaces.values()) {
+        for (AdvancedSourceInterface interfaz : this.advancedInterfaces) {
             interfaz.sendRawPacket(address, port, payload);
         }
     }
@@ -178,7 +178,7 @@ public class Network {
     }
 
     public void blockAddress(String address, int timeout) {
-        for (AdvancedSourceInterface interfaz : this.advancedInterfaces.values()) {
+        for (AdvancedSourceInterface interfaz : this.advancedInterfaces) {
             interfaz.blockAddress(address, timeout);
         }
     }
