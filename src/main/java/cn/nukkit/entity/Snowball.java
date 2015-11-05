@@ -9,36 +9,27 @@ import cn.nukkit.network.protocol.AddEntityPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Arrow extends Projectile {
-    public static final int NETWORK_ID = 80;
+public class Snowball extends Projectile {
+    public static final int NETWORK_ID = 81;
 
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
     }
 
-    public float width = 0.5f;
-    public float length = 0.5f;
-    public float height = 0.5f;
+    public float width = 0.25f;
+    public float length = 0.25f;
+    public float height = 0.25f;
 
-    protected float gravity = 0.05f;
+    protected float gravity = 0.03f;
     protected float drag = 0.01f;
 
-    protected double damage = 2;
-
-    protected boolean isCritical;
-
-    public Arrow(FullChunk chunk, CompoundTag nbt) {
+    public Snowball(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public Arrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
-        this(chunk, nbt, shootingEntity, false);
-    }
-
-    public Arrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
+    public Snowball(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
-        this.isCritical = critical;
     }
 
     @Override
@@ -49,13 +40,7 @@ public class Arrow extends Projectile {
 
         boolean hasUpdate = super.onUpdate(currentTick);
 
-        if (!this.hadCollision && this.isCritical) {
-            //todo particle
-        } else if (this.onGround) {
-            this.isCritical = false;
-        }
-
-        if (this.age > 1200) {
+        if (this.age > 1200 || this.isCollided) {
             this.kill();
             hasUpdate = true;
         }
@@ -66,7 +51,7 @@ public class Arrow extends Projectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = Arrow.NETWORK_ID;
+        pk.type = Snowball.NETWORK_ID;
         pk.eid = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;

@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.generator.normal.biome.DesertBiome;
 import cn.nukkit.level.generator.populator.Populator;
 
 import java.util.ArrayList;
@@ -60,6 +61,17 @@ public abstract class Biome {
 
     public static void init() {
         //todo alot register
+        //register(OCEAN, new OceanBiome());
+        //register(PLAINS, new PlainBiome());
+        register(DESERT, new DesertBiome());
+        //register(MOUNTAINS, new MountainsBiome());
+        //register(FOREST, new ForestBiome());
+        //register(TAIGA, new TaigaBiome());
+        //register(SWAMP, new SwampBiome());
+        //register(RIVER, new RiverBiome());
+        //register(ICE_PLAINS, new IcePlainsBiome());
+        //register(SMALL_MOUNTAINS, new SmallMountainsBiome());
+        //register(BIRCH_FOREST, new ForestBiome(ForestBiome.TYPE_BIRCH));
     }
 
     public static Biome getBiome(int id) {

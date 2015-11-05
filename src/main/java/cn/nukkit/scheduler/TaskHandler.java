@@ -12,7 +12,6 @@ public class TaskHandler {
     protected int period;
     protected int nextRun;
     protected boolean cancelled = false;
-    //todo TimingsHandler
     protected String timingName;
 
     public TaskHandler(String timingName, Task task, int taskId) {
@@ -29,7 +28,6 @@ public class TaskHandler {
         this.delay = delay;
         this.period = period;
         this.timingName = timingName == null ? "Unknown" : timingName;
-        //todo getPluginTaskTimings
     }
 
     public boolean isCancelled() {

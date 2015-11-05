@@ -162,7 +162,6 @@ public class ServerScheduler {
                 this.tasks.remove(task.getTaskId());
                 continue;
             } else {
-                //todo: Timing
                 try {
                     task.run(this.currentTick);
                 } catch (Exception e) {

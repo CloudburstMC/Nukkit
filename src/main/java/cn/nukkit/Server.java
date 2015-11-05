@@ -1749,8 +1749,9 @@ public class Server {
         Entity.registerEntity(cn.nukkit.entity.Item.class);
         Entity.registerEntity(FallingSand.class);
         Entity.registerEntity(PrimedTNT.class);
+        Entity.registerEntity(Snowball.class);
 
-        //todo alot
+        //todo mobs
 
         Entity.registerEntity(Human.class, true);
     }
