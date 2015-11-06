@@ -82,7 +82,7 @@ public class Config {
         this.config.clear();
         this.nestedCache.clear();
         this.correct = false;
-        this.load(this.file.toString());
+        //this.load(this.file.toString());
         this.load(this.file.toString(), this.type);
     }
 
