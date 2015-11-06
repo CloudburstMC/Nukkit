@@ -612,7 +612,7 @@ public class Server {
         this.reloadWhitelist();
         this.operators.reload();
 
-        for (BanEntry entry : this.getIPBans().getEntires()) {
+        for (BanEntry entry : this.getIPBans().getEntires().values()) {
             this.getNetwork().blockAddress(entry.getName(), -1);
         }
 
@@ -688,7 +688,7 @@ public class Server {
             this.queryHandler = new QueryHandler();
         }
 
-        for (BanEntry entry : this.getIPBans().getEntires()) {
+        for (BanEntry entry : this.getIPBans().getEntires().values()) {
             this.network.blockAddress(entry.getName(), -1);
         }
 

@@ -1,5 +1,6 @@
 package cn.nukkit.permission;
 
+import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,10 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -20,7 +18,7 @@ import java.util.TreeMap;
  */
 public class BanList {
 
-    private LinkedList<BanEntry> list = new LinkedList<>();
+    private LinkedHashMap<String, BanEntry> list = new LinkedHashMap<>();
 
     private String file;
 
@@ -38,7 +36,7 @@ public class BanList {
         this.enable = enable;
     }
 
-    public LinkedList<BanEntry> getEntires() {
+    public LinkedHashMap<String, BanEntry> getEntires() {
         removeExpired();
         return this.list;
     }
@@ -49,17 +47,13 @@ public class BanList {
             return false;
         } else {
             this.removeExpired();
-            for (BanEntry entry : list) {
-                if (entry.getName().equals(name)) {
-                    return true;
-                }
-            }
-            return false;
+
+            return this.list.containsKey(name);
         }
     }
 
     public void add(BanEntry entry) {
-        this.list.add(entry);
+        this.list.put(entry.getName(), entry);
         this.save();
     }
 
@@ -68,11 +62,11 @@ public class BanList {
     }
 
     public BanEntry addBan(String target, String reason) {
-        return this.addBan(target, null, null);
+        return this.addBan(target, reason, null);
     }
 
     public BanEntry addBan(String target, String reason, Date expireDate) {
-        return this.addBan(target, null, null, null);
+        return this.addBan(target, reason, expireDate, null);
     }
 
     public BanEntry addBan(String target, String reason, Date expireDate, String source) {
@@ -80,70 +74,68 @@ public class BanList {
         entry.setSource(source != null ? source : entry.getSource());
         entry.setExpirationDate(expireDate);
         entry.setReason(reason != null ? reason : entry.getReason());
+
         this.add(entry);
+
         return entry;
     }
 
     public void remove(String name) {
         name = name.toLowerCase();
-        for (BanEntry entry : list) {
-            if (entry.getName().equals(name)) {
-                list.remove(entry);
-                this.save();
-            }
+        if (this.list.containsKey(name)) {
+            this.list.remove(name);
+            this.save();
         }
     }
 
 
     public void removeExpired() {
-        for (BanEntry entry : list) {
+        for (String name : new ArrayList<>(this.list.keySet())) {
+            BanEntry entry = this.list.get(name);
             if (entry.hasExpired()) {
-                list.remove(entry);
+                list.remove(name);
             }
         }
     }
 
     public void load() {
-        this.list = new LinkedList<>();
+        this.list = new LinkedHashMap<>();
         File file = new File(this.file);
-        if (!file.exists()) {
-            try {
+        try {
+            if (!file.exists()) {
                 file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            this.save();
-        } else {
-            try {
+                this.save();
+            } else {
+
                 LinkedList<TreeMap<String, String>> list = new Gson().fromJson(Utils.readFile(this.file), new TypeToken<LinkedList<TreeMap<String, String>>>() {
                 }.getType());
                 for (TreeMap<String, String> map : list) {
-                    this.list.add(BanEntry.fromMap(map));
+                    BanEntry entry = BanEntry.fromMap(map);
+                    this.list.put(entry.getName(), entry);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            MainLogger.getLogger().error("Could not load ban list: " + e.getMessage());
         }
 
     }
 
     public void save() {
-        File file = new File(this.file);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        this.removeExpired();
+
         try {
+            File file = new File(this.file);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
             LinkedList<LinkedHashMap<String, String>> list = new LinkedList<>();
-            for (BanEntry entry : this.list) {
+            for (BanEntry entry : this.list.values()) {
                 list.add(entry.getMap());
             }
             Utils.writeFile(this.file, new ByteArrayInputStream(new GsonBuilder().setPrettyPrinting().create().toJson(list).getBytes(StandardCharsets.UTF_8)));
         } catch (IOException e) {
-            e.printStackTrace();
+            MainLogger.getLogger().error("Could not save ban list: " + e.getMessage());
         }
     }
 }
