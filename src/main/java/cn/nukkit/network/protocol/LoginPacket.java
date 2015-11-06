@@ -21,7 +21,7 @@ public class LoginPacket extends DataPacket {
     public String clientSecret;
 
     public boolean slim = false;
-    public String skin = null;
+    public byte[] skin;
 
     @Override
     public byte pid() {
@@ -44,7 +44,7 @@ public class LoginPacket extends DataPacket {
         this.clientSecret = this.getString();
 
         this.slim = this.getByte() > 0;
-        this.skin = this.getString();
+        this.skin = this.get(this.getShort());
     }
 
 
