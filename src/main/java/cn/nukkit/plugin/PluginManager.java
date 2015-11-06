@@ -35,11 +35,11 @@ public class PluginManager {
 
     protected Map<String, Permission> defaultPermsOp = new HashMap<>();
 
-    protected Map<String, WeakHashMap<Integer, Permissible>> permSubs = new HashMap<>();
+    protected Map<String, WeakHashMap<Permissible, Permissible>> permSubs = new HashMap<>();
 
-    protected Map<Integer, Permissible> defSubs = new WeakHashMap<>();
+    protected Map<Permissible, Permissible> defSubs = new WeakHashMap<>();
 
-    protected Map<Integer, Permissible> defSubsOp = new WeakHashMap<>();
+    protected Map<Permissible, Permissible> defSubsOp = new WeakHashMap<>();
 
     protected Map<String, PluginLoader> fileAssociations = new HashMap<>();
 
@@ -360,12 +360,12 @@ public class PluginManager {
         if (!this.permSubs.containsKey(permission)) {
             this.permSubs.put(permission, new WeakHashMap<>());
         }
-        this.permSubs.get(permission).put(permissible.hashCode(), permissible);
+        this.permSubs.get(permission).put(permissible, permissible);
     }
 
     public void unsubscribeFromPermission(String permission, Permissible permissible) {
         if (this.permSubs.containsKey(permission)) {
-            this.permSubs.get(permission).remove(permissible.hashCode());
+            this.permSubs.get(permission).remove(permissible);
             if (this.permSubs.get(permission).size() == 0) {
                 this.permSubs.remove(permission);
             }
@@ -386,17 +386,17 @@ public class PluginManager {
 
     public void subscribeToDefaultPerms(boolean op, Permissible permissible) {
         if (op) {
-            this.defSubsOp.put(permissible.hashCode(), permissible);
+            this.defSubsOp.put(permissible, permissible);
         } else {
-            this.defSubs.put(permissible.hashCode(), permissible);
+            this.defSubs.put(permissible, permissible);
         }
     }
 
     public void unsubscribeFromDefaultPerms(boolean op, Permissible permissible) {
         if (op) {
-            this.defSubsOp.remove(permissible.hashCode());
+            this.defSubsOp.remove(permissible);
         } else {
-            this.defSubs.remove(permissible.hashCode());
+            this.defSubs.remove(permissible);
         }
     }
 
@@ -454,7 +454,7 @@ public class PluginManager {
                 continue;
             }
             if (data instanceof Map) {
-                PluginCommand newCmd = new PluginCommand(key, plugin);
+                PluginCommand newCmd = new PluginCommand<>(key, plugin);
 
                 if (((Map) data).containsKey("description")) {
                     newCmd.setDescription((String) ((Map) data).get("description"));
@@ -476,7 +476,7 @@ public class PluginManager {
                             aliasList.add(alias);
                         }
 
-                        newCmd.setAliases(aliasList);
+                        newCmd.setAliases(aliasList.stream().toArray(String[]::new));
                     }
                 }
 

@@ -1,6 +1,7 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.defaults.BanCommand;
 import cn.nukkit.command.defaults.HelpCommand;
 import cn.nukkit.command.defaults.StopCommand;
 import cn.nukkit.command.defaults.VanillaCommand;
@@ -9,10 +10,7 @@ import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -29,9 +27,47 @@ public class SimpleCommandMap implements CommandMap {
     }
 
     private void setDefaultCommands() {
-        //todo register commands
+        //this.register("nukkit", new VersionCommand("version"));
+        //this.register("nukkit", new PluginsCommand("plugins"));
+        //this.register("nukkit", new SeedCommand("seed"));
         this.register("nukkit", new HelpCommand("help"));
         this.register("nukkit", new StopCommand("stop"));
+        //this.register("nukkit", new TellCommand("tell"));
+        //this.register("nukkit", new DefaultGamemodeCommand("defaultgamemode"));
+        this.register("nukkit", new BanCommand("ban"));
+        //this.register("nukkit", new BanIpCommand("ban-ip"));
+        //this.register("nukkit", new BanListCommand("banlist"));
+        //this.register("nukkit", new PardonCommand("pardon"));
+        //this.register("nukkit", new PardonIpCommand("pardon-ip"));
+        //this.register("nukkit", new SayCommand("say"));
+        //this.register("nukkit", new MeCommand("me"));
+        //this.register("nukkit", new ListCommand("list"));
+        //this.register("nukkit", new DifficultyCommand("difficulty"));
+        //this.register("nukkit", new KickCommand("kick"));
+        //this.register("nukkit", new OpCommand("op"));
+        //this.register("nukkit", new DeopCommand("deop"));
+        //this.register("nukkit", new WhitelistCommand("whitelist"));
+        //this.register("nukkit", new SaveOnCommand("save-on"));
+        //this.register("nukkit", new SaveOffCommand("save-off"));
+        //this.register("nukkit", new SaveCommand("save-all"));
+        //this.register("nukkit", new GiveCommand("give"));
+        //this.register("nukkit", new EffectCommand("effect"));
+        //this.register("nukkit", new EnchantCommand("enchant"));
+        //this.register("nukkit", new ParticleCommand("particle"));
+        //this.register("nukkit", new GamemodeCommand("gamemode"));
+        //this.register("nukkit", new KillCommand("kill"));
+        //this.register("nukkit", new SpawnpointCommand("spawnpoint"));
+        //this.register("nukkit", new SetWorldSpawnCommand("setworldspawn"));
+        //this.register("nukkit", new TeleportCommand("tp"));
+        //this.register("nukkit", new TimeCommand("time"));
+        //this.register("nukkit", new TimingsCommand("timings"));
+        //this.register("nukkit", new ReloadCommand("reload"));
+
+        if ((boolean) this.server.getConfig("debug.commands", false)) {
+            //this.register("nukkit", new StatusCommand("status"));
+            //this.register("nukkit", new GarbageCollectorCommand("gc"));
+            //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
+        }
     }
 
     @Override
@@ -56,13 +92,13 @@ public class SimpleCommandMap implements CommandMap {
 
         boolean registered = this.registerAlias(command, false, fallbackPrefix, label);
 
-        List<String> aliases = command.getAliases();
+        List<String> aliases = new ArrayList<>(Arrays.asList(command.getAliases()));
         for (String alias : aliases) {
             if (!this.registerAlias(command, true, fallbackPrefix, alias)) {
                 aliases.remove(alias);
             }
         }
-        command.setAliases(aliases);
+        command.setAliases(aliases.stream().toArray(String[]::new));
 
         if (!registered) {
             command.setLabel(fallbackPrefix + ":" + label);

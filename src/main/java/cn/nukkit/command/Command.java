@@ -6,9 +6,6 @@ import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.utils.TextFormat;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,9 +20,9 @@ public abstract class Command {
 
     private String label;
 
-    private List<String> aliases = new ArrayList<>();
+    private String[] aliases = new String[0];
 
-    private List<String> activeAliases = new ArrayList<>();
+    private String[] activeAliases = new String[0];
 
     private CommandMap commandMap = null;
 
@@ -38,30 +35,18 @@ public abstract class Command {
     private String permissionMessage = null;
 
     public Command(String name) {
-        this(name, "", null, new ArrayList<>());
+        this(name, "", null, new String[0]);
     }
 
     public Command(String name, String description) {
-        this(name, description, null, new ArrayList<>());
+        this(name, description, null, new String[0]);
     }
 
     public Command(String name, String description, String usageMessage) {
-        this(name, description, usageMessage, new ArrayList<>());
+        this(name, description, usageMessage, new String[0]);
     }
 
     public Command(String name, String description, String usageMessage, String[] aliases) {
-        List<String> list = new ArrayList<>();
-        Collections.addAll(list, aliases);
-        this.name = name;
-        this.nextLabel = name;
-        this.label = name;
-        this.description = description;
-        this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
-        this.aliases = list;
-        this.activeAliases = list;
-    }
-
-    public Command(String name, String description, String usageMessage, List<String> aliases) {
         this.name = name;
         this.nextLabel = name;
         this.label = name;
@@ -153,7 +138,7 @@ public abstract class Command {
         return this.commandMap != null;
     }
 
-    public List<String> getAliases() {
+    public String[] getAliases() {
         return this.activeAliases;
     }
 
@@ -169,7 +154,7 @@ public abstract class Command {
         return usageMessage;
     }
 
-    public void setAliases(List<String> aliases) {
+    public void setAliases(String[] aliases) {
         this.aliases = aliases;
         if (!this.isRegistered()) {
             this.activeAliases = aliases;
@@ -194,7 +179,9 @@ public abstract class Command {
 
     public static void broadcastCommandMessage(CommandSender source, String message, boolean sendToSource) {
         Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
+
         TranslationContainer result = new TranslationContainer("chat.type.admin", new String[]{source.getName(), message});
+
         TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + TextFormat.ITALIC + "%chat.type.admin", new String[]{source.getName(), message});
 
         if (sendToSource && !(source instanceof ConsoleCommandSender)) {
@@ -221,12 +208,17 @@ public abstract class Command {
         String resultStr = "[" + source.getName() + ": " + (!m.getText().equals(source.getServer().getLanguage().get(m.getText())) ? "%" : "") + m.getText() + "]";
 
         Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
+
         String coloredStr = TextFormat.GRAY + TextFormat.ITALIC + resultStr;
 
         m.setText(resultStr);
         TextContainer result = m.clone();
         m.setText(coloredStr);
         TextContainer colored = m.clone();
+
+        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+            source.sendMessage(message);
+        }
 
         for (Permissible user : users) {
             if (user instanceof CommandSender) {
