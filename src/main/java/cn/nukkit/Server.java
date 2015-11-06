@@ -889,6 +889,7 @@ public class Server {
 
     private boolean tick() {
         long tickTime = System.currentTimeMillis();
+        long tickTimeNano = System.nanoTime();
         if ((tickTime - this.nextTick) < -25) {
             return false;
         }
@@ -944,9 +945,13 @@ public class Server {
             }
         }
 
-        long now = System.currentTimeMillis();
-        int tick = (int) Math.min(20, 1000 / Math.max(1, now - tickTime));
-        int use = (int) Math.min(1, (now - tickTime) / 50);
+        //long now = System.currentTimeMillis();
+        long nowNano = System.nanoTime();
+        //float tick = Math.min(20, 1000 / Math.max(1, now - tickTime));
+        //float use = Math.min(1, (now - tickTime) / 50);
+
+        float tick = (float) Math.min(20, 1000000000 / Math.max(1000000, ((double) nowNano - tickTimeNano)));
+        float use = (float) Math.min(1, ((double) (nowNano - tickTimeNano)) / 50000000);
 
         if (this.maxTick > tick) {
             this.maxTick = tick;
