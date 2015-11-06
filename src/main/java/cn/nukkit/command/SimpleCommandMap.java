@@ -1,10 +1,7 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
-import cn.nukkit.command.defaults.BanCommand;
-import cn.nukkit.command.defaults.HelpCommand;
-import cn.nukkit.command.defaults.StopCommand;
-import cn.nukkit.command.defaults.VanillaCommand;
+import cn.nukkit.command.defaults.*;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
@@ -37,7 +34,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new BanCommand("ban"));
         //this.register("nukkit", new BanIpCommand("ban-ip"));
         //this.register("nukkit", new BanListCommand("banlist"));
-        //this.register("nukkit", new PardonCommand("pardon"));
+        this.register("nukkit", new PardonCommand("pardon"));
         //this.register("nukkit", new PardonIpCommand("pardon-ip"));
         //this.register("nukkit", new SayCommand("say"));
         //this.register("nukkit", new MeCommand("me"));
