@@ -863,10 +863,11 @@ public class Server {
                     }
                 }
             } catch (Exception e) {
-                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.getMessage()}));
                 if (Nukkit.DEBUG > 1 && this.logger != null) {
                     this.logger.logException(e);
                 }
+
+                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.getMessage()}));
             }
         }
     }

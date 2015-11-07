@@ -24,6 +24,7 @@ import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
@@ -1149,7 +1150,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             revert = true;
         } else {
             if (this.chunk == null || !this.chunk.isGenerated()) {
-                FullChunk chunk = this.level.getChunk((int) newPos.x >> 4, (int) newPos.z >> 4, false);
+                BaseFullChunk chunk = this.level.getChunk((int) newPos.x >> 4, (int) newPos.z >> 4, false);
                 if (chunk == null || !chunk.isGenerated()) {
                     revert = true;
                     this.nextChunkOrderRun = 0;
@@ -1470,7 +1471,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         ListTag<DoubleTag> posList = nbt.getList(new ListTag<>(), "Pos");
-        FullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
+        BaseFullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
 
         this.isPlayer = true;
 
@@ -1878,6 +1879,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.namedTag.putInt("playerGameType", this.gamemode);
             this.namedTag.putLong("lastPlayed", System.currentTimeMillis());
+
+            this.namedTag.putString("lastIP", this.getAddress());
 
             if (!"".equals(this.username) && this.namedTag != null) {
                 this.server.saveOfflinePlayerData(this.username, this.namedTag, async);

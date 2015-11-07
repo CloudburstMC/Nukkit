@@ -3,7 +3,6 @@ package cn.nukkit.level.generator;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.SimpleChunkManager;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.scheduler.AsyncTask;
 
@@ -14,13 +13,13 @@ import cn.nukkit.scheduler.AsyncTask;
 public class GenerationTask extends AsyncTask {
     public boolean state;
     public int levelId;
-    public FullChunk chunk;
+    public BaseFullChunk chunk;
 
     /*public byte[] chunk;
     public Class<? extends FullChunk> chunkClass;*/
 
 
-    public GenerationTask(Level level, FullChunk chunk) {
+    public GenerationTask(Level level, BaseFullChunk chunk) {
         this.state = true;
         this.levelId = level.getId();
 
@@ -48,7 +47,7 @@ public class GenerationTask extends AsyncTask {
             throw new RuntimeException(e);
         }*/
 
-        FullChunk chunk = ((BaseFullChunk) this.chunk).clone();
+        BaseFullChunk chunk = this.chunk.clone();
 
         if (chunk == null) {
             return;
@@ -81,7 +80,7 @@ public class GenerationTask extends AsyncTask {
                 throw new RuntimeException(e);
             }*/
 
-            FullChunk chunk = ((BaseFullChunk) this.chunk).clone();
+            BaseFullChunk chunk = this.chunk.clone();
 
             if (chunk == null) {
                 return;

@@ -3,7 +3,6 @@ package cn.nukkit.level.generator;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.SimpleChunkManager;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.scheduler.AsyncTask;
 
@@ -14,11 +13,11 @@ import cn.nukkit.scheduler.AsyncTask;
 public class PopulationTask extends AsyncTask {
     public boolean state;
     public int levelId;
-    public FullChunk chunk;
+    public BaseFullChunk chunk;
 
-    public FullChunk[] chunks = new FullChunk[9];
+    public BaseFullChunk[] chunks = new BaseFullChunk[9];
 
-    public PopulationTask(Level level, FullChunk chunk) {
+    public PopulationTask(Level level, BaseFullChunk chunk) {
         this.state = true;
         this.levelId = level.getId();
         this.chunk = chunk;
@@ -29,7 +28,7 @@ public class PopulationTask extends AsyncTask {
             }
             int xx = -1 + i % 3;
             int zz = -1 + (i / 3);
-            FullChunk ck = level.getChunk(chunk.getX() + xx, chunk.getZ() + zz, false);
+            BaseFullChunk ck = level.getChunk(chunk.getX() + xx, chunk.getZ() + zz, false);
             this.chunks[i] = ck;
         }
     }
@@ -45,9 +44,9 @@ public class PopulationTask extends AsyncTask {
             return;
         }
 
-        FullChunk[] chunks = new FullChunk[9];
+        BaseFullChunk[] chunks = new BaseFullChunk[9];
 
-        FullChunk chunk = ((BaseFullChunk) this.chunk).clone();
+        BaseFullChunk chunk = this.chunk.clone();
 
         if (chunk == null) {
             return;
@@ -60,11 +59,11 @@ public class PopulationTask extends AsyncTask {
 
             int xx = -1 + i % 3;
             int zz = -1 + (i / 3);
-            FullChunk ck = this.chunks[i];
+            BaseFullChunk ck = this.chunks[i];
 
             if (ck == null) {
                 try {
-                    chunks[i] = (FullChunk) this.chunk.getClass().getMethod("getEmptyChunk").invoke(chunk.getX() + xx, chunk.getZ() + zz);
+                    chunks[i] = (BaseFullChunk) this.chunk.getClass().getMethod("getEmptyChunk", int.class, int.class).invoke(null, chunk.getX() + xx, chunk.getZ() + zz);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -79,7 +78,7 @@ public class PopulationTask extends AsyncTask {
             chunk.setGenerated();
         }
 
-        for (FullChunk c : chunks) {
+        for (BaseFullChunk c : chunks) {
             if (c != null) {
                 manager.setChunk(c.getX(), c.getZ(), c);
                 if (!c.isGenerated()) {
@@ -102,9 +101,9 @@ public class PopulationTask extends AsyncTask {
         manager.setChunk(chunk.getX(), chunk.getZ(), null);
 
         for (int i = 0; i < chunks.length; i++) {
-            FullChunk c = chunks[i];
+            BaseFullChunk c = chunks[i];
             if (c != null) {
-                c = chunks[i] = manager.getChunk(c.getX(), c.getZ());
+                //c = chunks[i] = manager.getChunk(c.getX(), c.getZ());
                 if (!c.hasChanged()) {
                     chunks[i] = null;
                 }
@@ -131,7 +130,7 @@ public class PopulationTask extends AsyncTask {
                 return;
             }
 
-            FullChunk chunk = ((BaseFullChunk) this.chunk).clone();
+            BaseFullChunk chunk = this.chunk.clone();
             if (chunk == null) {
                 return;
             }
@@ -141,7 +140,7 @@ public class PopulationTask extends AsyncTask {
                     continue;
                 }
 
-                FullChunk c = this.chunks[i];
+                BaseFullChunk c = this.chunks[i];
                 if (c != null) {
                     level.generateChunkCallback(c.getX(), c.getZ(), c);
                 }

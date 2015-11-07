@@ -1,11 +1,9 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -44,17 +42,5 @@ public class PardonIpCommand extends VanillaCommand {
         }
 
         return true;
-    }
-
-    private void processIPBan(String ip, CommandSender sender, String reason) {
-        sender.getServer().getIPBans().addBan(ip, reason, null, sender.getName());
-
-        for (Player player : sender.getServer().getOnlinePlayers().values()) {
-            if (player.getAddress().equals(ip)) {
-                player.kick(!Objects.equals(reason, "") ? reason : "IP banned.");
-            }
-        }
-
-        sender.getServer().getNetwork().blockAddress(ip, -1);
     }
 }

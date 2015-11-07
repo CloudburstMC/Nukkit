@@ -63,12 +63,30 @@ public abstract class BaseFullChunk implements FullChunk {
         } catch (CloneNotSupportedException e) {
             return null;
         }
-        chunk.biomeColors = biomeColors.clone();
-        chunk.blocks = blocks.clone();
-        chunk.data = data.clone();
-        chunk.skyLight = skyLight.clone();
-        chunk.blockLight = blockLight.clone();
-        chunk.heightMap = heightMap.clone();
+        if (this.biomeColors != null) {
+            chunk.biomeColors = this.biomeColors.clone();
+        }
+
+        if (this.blocks != null) {
+            chunk.blocks = this.blocks.clone();
+        }
+
+        if (this.data != null) {
+            chunk.data = this.data.clone();
+        }
+
+        if (this.skyLight != null) {
+            chunk.skyLight = this.skyLight.clone();
+        }
+
+        if (this.blockLight != null) {
+            chunk.blockLight = this.blockLight.clone();
+        }
+
+        if (this.heightMap != null) {
+            chunk.heightMap = this.heightMap.clone();
+        }
+
         return chunk;
     }
 

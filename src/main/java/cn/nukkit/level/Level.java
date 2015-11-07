@@ -19,6 +19,7 @@ import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.level.generator.*;
@@ -109,7 +110,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private String folderName;
 
-    private Map<String, FullChunk> chunks = new HashMap<>();
+    private Map<String, BaseFullChunk> chunks = new HashMap<>();
 
     private Map<String, Map<String, Vector3>> changedBlocks = new HashMap<>();
 
@@ -1671,11 +1672,11 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Override
-    public FullChunk getChunk(int chunkX, int chunkZ) {
+    public BaseFullChunk getChunk(int chunkX, int chunkZ) {
         return this.getChunk(chunkX, chunkZ, false);
     }
 
-    public FullChunk getChunk(int chunkX, int chunkZ, boolean create) {
+    public BaseFullChunk getChunk(int chunkX, int chunkZ, boolean create) {
         String index = Level.chunkHash(chunkX, chunkZ);
         if (this.chunks.containsKey(index)) {
             return this.chunks.get(index);
@@ -1686,7 +1687,7 @@ public class Level implements ChunkManager, Metadatable {
         return null;
     }
 
-    public void generateChunkCallback(int x, int z, FullChunk chunk) {
+    public void generateChunkCallback(int x, int z, BaseFullChunk chunk) {
         String index = Level.chunkHash(x, z);
         if (this.chunkPopulationQueue.containsKey(index)) {
             FullChunk oldChunk = this.getChunk(x, z, false);
@@ -1723,11 +1724,11 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Override
-    public void setChunk(int chunkX, int chunkZ, FullChunk chunk) {
+    public void setChunk(int chunkX, int chunkZ, BaseFullChunk chunk) {
         this.setChunk(chunkX, chunkZ, chunk, true);
     }
 
-    public void setChunk(int chunkX, int chunkZ, FullChunk chunk, boolean unload) {
+    public void setChunk(int chunkX, int chunkZ, BaseFullChunk chunk, boolean unload) {
         if (chunk == null) {
             return;
         }
@@ -1928,7 +1929,7 @@ public class Level implements ChunkManager, Metadatable {
 
         this.cancelUnloadChunkRequest(x, z);
 
-        FullChunk chunk = this.provider.getChunk(x, z, generate);
+        BaseFullChunk chunk = this.provider.getChunk(x, z, generate);
 
         if (chunk == null) {
             if (generate) {
@@ -2154,7 +2155,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
 
-        FullChunk chunk = this.getChunk(x, z, true);
+        BaseFullChunk chunk = this.getChunk(x, z, true);
         boolean populate;
         if (!chunk.isPopulated()) {
             populate = true;
@@ -2245,9 +2246,8 @@ public class Level implements ChunkManager, Metadatable {
             int maxUnload = 96;
             long now = System.currentTimeMillis();
 
-            for (Map.Entry<String, Long> entry : this.unloadQueue.entrySet()) {
-                String index = entry.getKey();
-                long time = entry.getValue();
+            for (String index : new ArrayList<>(this.unloadQueue.keySet())) {
+                long time = this.unloadQueue.get(index);
 
                 Chunk.Entry chunkEntry = Level.getChunkXZ(index);
                 int X = chunkEntry.chunkX;

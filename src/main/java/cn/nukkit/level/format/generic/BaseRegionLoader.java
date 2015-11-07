@@ -49,7 +49,7 @@ abstract public class BaseRegionLoader {
                 this.loadLocationTable();
             }
             this.lastUsed = System.currentTimeMillis();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 

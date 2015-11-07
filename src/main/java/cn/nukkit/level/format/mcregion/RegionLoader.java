@@ -205,8 +205,8 @@ public class RegionLoader extends BaseRegionLoader {
             data[i] = this.randomAccessFile.readInt();
         }
         for (int i = 0; i < 1024; ++i) {
-            int index = data[i + 1];
-            this.locationTable.put(i, new Integer[]{index >> 8, index & 0xff, data[1024 + i + 1]});
+            int index = data[i];
+            this.locationTable.put(i, new Integer[]{index >> 8, index & 0xff, data[1024 + i]});
             int value = this.locationTable.get(i)[0] + this.locationTable.get(i)[1] - 1;
             if (value > this.lastSector) {
                 this.lastSector = value;

@@ -1,6 +1,7 @@
 package cn.nukkit.level.format;
 
 import cn.nukkit.level.Level;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.AsyncTask;
 
@@ -22,9 +23,9 @@ public interface LevelProvider {
 
     Map<String, Object> getGeneratorOptions();
 
-    FullChunk getChunk(int X, int Z);
+    BaseFullChunk getChunk(int X, int Z);
 
-    FullChunk getChunk(int X, int Z, boolean create);
+    BaseFullChunk getChunk(int X, int Z, boolean create);
 
     void saveChunks();
 

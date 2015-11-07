@@ -2,7 +2,6 @@ package cn.nukkit.level.generator;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.scheduler.AsyncTask;
 
@@ -13,9 +12,9 @@ import cn.nukkit.scheduler.AsyncTask;
 public class LightPopulationTask extends AsyncTask {
 
     public int levelId;
-    public FullChunk chunk;
+    public BaseFullChunk chunk;
 
-    public LightPopulationTask(Level level, FullChunk chunk) {
+    public LightPopulationTask(Level level, BaseFullChunk chunk) {
         this.levelId = level.getId();
         this.chunk = chunk;
         /*this.chunk = chunk.toFastBinary();
@@ -24,7 +23,7 @@ public class LightPopulationTask extends AsyncTask {
 
     @Override
     public void onRun() {
-        FullChunk chunk = ((BaseFullChunk) this.chunk).clone();
+        BaseFullChunk chunk = this.chunk.clone();
         if (chunk == null) {
             return;
         }
@@ -40,7 +39,7 @@ public class LightPopulationTask extends AsyncTask {
     public void onCompletion(Server server) {
         Level level = server.getLevel(this.levelId);
 
-        FullChunk chunk = ((BaseFullChunk) this.chunk).clone();
+        BaseFullChunk chunk = this.chunk.clone();
         if (level != null) {
             if (chunk == null) {
                 return;

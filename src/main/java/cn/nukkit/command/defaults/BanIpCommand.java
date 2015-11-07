@@ -4,7 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -53,9 +58,30 @@ public class BanIpCommand extends VanillaCommand {
 
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success.players", new String[]{player.getAddress(), player.getName()}));
             } else {
+                String name = value.toLowerCase();
+                String path = sender.getServer().getDataPath() + "players/";
+                File file = new File(path + name + ".dat");
+                CompoundTag nbt = null;
+                if (file.exists()) {
+                    try {
+                        nbt = NBTIO.readCompressed(new FileInputStream(file));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                if (nbt != null && nbt.contains("lastIP") && Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", (value = nbt.getString("lastIP")))) {
+                    this.processIPBan(value, sender, reason);
+
+                    Command.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success", value));
+                } else {
+                    sender.sendMessage(new TranslationContainer("commands.banip.offline.invalid"));
+                    return true;
+                }
+
                 sender.sendMessage(new TranslationContainer("commands.banip.invalid"));
 
-                return true;
+                return false;
             }
         }
 
