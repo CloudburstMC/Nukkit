@@ -115,8 +115,6 @@ public class RegionLoader extends BaseRegionLoader {
 
         this.locationTable.put(index, table);
 
-        System.out.println(new ArrayList<>(Arrays.asList(table)).toString());
-
         this.randomAccessFile.seek(table[0] << 12);
 
         BinaryStream stream = new BinaryStream();
