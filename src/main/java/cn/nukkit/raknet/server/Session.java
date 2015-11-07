@@ -447,9 +447,9 @@ public class Session {
         this.lastUpdate = System.currentTimeMillis();
         if (this.state == STATE_CONNECTED || this.state == STATE_CONNECTING_2) {
             if ((packet.buffer[0] >= (byte) 0x80 || packet.buffer[0] <= (byte) 0x8f) && packet instanceof DataPacket) {
-                packet.decode();
 
                 DataPacket dp = (DataPacket) packet;
+                dp.decode();
                 if (dp.seqNumber < this.windowStart || dp.seqNumber > this.windowEnd || this.receivedWindow.containsKey(dp.seqNumber)) {
                     return;
                 }

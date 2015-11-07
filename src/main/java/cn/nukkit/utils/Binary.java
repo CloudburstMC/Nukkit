@@ -394,7 +394,8 @@ public class Binary {
     }
 
     public static byte[] subBytes(byte[] bytes, int start, int length) {
-        return Arrays.copyOfRange(bytes, start, start + length);
+        int len = Math.min(bytes.length, start + length);
+        return Arrays.copyOfRange(bytes, start, len);
     }
 
     public static byte[] subBytes(byte[] bytes, int start) {

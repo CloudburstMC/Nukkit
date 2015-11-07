@@ -84,7 +84,7 @@ public abstract class Packet implements Cloneable {
     }
 
     protected boolean feof() {
-        return this.offset >= 0 && this.offset + 1 <= this.buffer.length;
+        return !(this.offset >= 0 && this.offset + 1 <= this.buffer.length);
     }
 
     protected void put(byte[] b) {

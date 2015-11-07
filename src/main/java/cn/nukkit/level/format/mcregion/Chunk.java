@@ -414,8 +414,10 @@ public class Chunk extends BaseFullChunk {
     @Override
     public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
+
         nbt.putInt("xPos", this.x);
         nbt.putInt("zPos", this.z);
+
         if (this.isGenerated()) {
             nbt.putByteArray("Blocks", this.getBlockIdArray());
             nbt.putByteArray("Data", this.getBlockDataArray());
@@ -433,6 +435,7 @@ public class Chunk extends BaseFullChunk {
                 entities.add(entity.namedTag);
             }
         }
+
         ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
         entityListTag.list = entities;
         nbt.putList(entityListTag);

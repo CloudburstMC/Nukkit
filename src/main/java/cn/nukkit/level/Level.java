@@ -245,7 +245,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void initLevel() {
         try {
-            this.generatorInstance = generator.getConstructor(Map.class).newInstance(this.provider.getGeneratorOptions());
+            this.generatorInstance = this.generator.getConstructor(Map.class).newInstance(this.provider.getGeneratorOptions());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -289,7 +289,7 @@ public class Level implements ChunkManager, Metadatable {
             this.save();
         }
 
-        for (FullChunk chunk : new ArrayList<>(this.chunks.values())) {
+        for (BaseFullChunk chunk : new ArrayList<>(this.chunks.values())) {
             this.unloadChunk(chunk.getX(), chunk.getZ(), false);
         }
 
@@ -809,6 +809,7 @@ public class Level implements ChunkManager, Metadatable {
                 try {
                     this.provider.setChunk(chunk.getX(), chunk.getZ(), chunk);
                     this.provider.saveChunk(chunk.getX(), chunk.getZ());
+
                     chunk.setChanged(false);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -2001,12 +2002,11 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (!this.isChunkLoaded(x, z)) {
-            return false;
+            return true;
         }
-
         String index = Level.chunkHash(x, z);
 
-        FullChunk chunk = this.getChunk(x, z);
+        BaseFullChunk chunk = this.getChunk(x, z);
 
         if (chunk != null && chunk.getProvider() != null) {
             ChunkUnloadEvent ev = new ChunkUnloadEvent(chunk);
@@ -2029,10 +2029,10 @@ public class Level implements ChunkManager, Metadatable {
 
                     if (chunk.hasChanged() || !chunk.getTiles().isEmpty() || entities > 0) {
                         this.provider.setChunk(x, z, chunk);
+                        System.out.println("try saving");
                         this.provider.saveChunk(x, z);
                     }
                 }
-
                 for (ChunkLoader loader : this.getChunkLoaders(x, z)) {
                     loader.onChunkUnloaded(chunk);
                 }
@@ -2261,6 +2261,7 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
 
+                System.out.println("unloading 2333");
                 if (this.unloadChunk(X, Z, true)) {
                     this.unloadQueue.remove(index);
                     --maxUnload;

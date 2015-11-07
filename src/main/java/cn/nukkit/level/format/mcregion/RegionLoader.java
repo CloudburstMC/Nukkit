@@ -3,16 +3,14 @@ package cn.nukkit.level.format.mcregion;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseRegionLoader;
-import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.Zlib;
+import cn.nukkit.utils.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * author: MagicDroidX
@@ -98,10 +96,11 @@ public class RegionLoader extends BaseRegionLoader {
         if (length + 4 > MAX_SECTOR_LENGTH) {
             throw new ChunkException("Chunk is too big! " + (length + 4) + " > " + MAX_SECTOR_LENGTH);
         }
-        int sectors = (int) Math.ceil((length + 4) / 4096);
+        int sectors = (int) Math.ceil(((double) (length + 4)) / 4096);
         int index = getChunkOffset(x, z);
         boolean indexChanged = false;
         Integer[] table = this.locationTable.get(index);
+
         if (table[1] < sectors) {
             table[0] = this.lastSector + 1;
             this.locationTable.put(index, table);
@@ -110,19 +109,36 @@ public class RegionLoader extends BaseRegionLoader {
         } else if (table[1] != sectors) {
             indexChanged = true;
         }
+
         table[1] = sectors;
-        table[2] = (int) System.currentTimeMillis();
+        table[2] = (int) System.currentTimeMillis() / 1000;
+
         this.locationTable.put(index, table);
+
+        System.out.println(new ArrayList<>(Arrays.asList(table)).toString());
+
         this.randomAccessFile.seek(table[0] << 12);
-        byte[] data = new byte[sectors << 12];
-        ByteBuffer buffer = ByteBuffer.wrap(data);
-        buffer.put(Binary.writeInt(length));
-        buffer.put(COMPRESSION_ZLIB);
-        buffer.put(chunkData);
-        this.randomAccessFile.write(buffer.array());
-        if (indexChanged) {
-            this.writeLocationIndex(index);
+
+        BinaryStream stream = new BinaryStream();
+        stream.put(Binary.writeInt(length));
+        stream.putByte(COMPRESSION_ZLIB);
+        stream.put(chunkData);
+        byte[] data = stream.getBuffer();
+        if (data.length < sectors << 12) {
+            byte[] newData = new byte[sectors << 12];
+            System.arraycopy(data, 0, newData, 0, data.length);
+            data = newData;
         }
+        System.out.println("1:" + this.randomAccessFile.getFilePointer());
+        this.randomAccessFile.write(data);
+
+        if (indexChanged) {
+            System.out.println("2:" + this.randomAccessFile.getFilePointer());
+            this.writeLocationIndex(index);
+            System.out.println("3:" + this.randomAccessFile.getFilePointer());
+        }
+
+        System.out.println("4:" + this.randomAccessFile.getFilePointer());
     }
 
     @Override
@@ -147,6 +163,7 @@ public class RegionLoader extends BaseRegionLoader {
 
     @Override
     public void close() throws IOException {
+        System.out.println("closing");
         this.writeLocationTable();
         this.randomAccessFile.close();
         this.levelProvider = null;
@@ -227,16 +244,15 @@ public class RegionLoader extends BaseRegionLoader {
     }
 
     private int cleanGarbage() throws IOException {
-        Map<Integer, Integer> sectors = new HashMap<>();
-        for (Map.Entry entry : this.locationTable.entrySet()) {
-            Integer index = (Integer) entry.getKey();
-            Integer[] data = (Integer[]) entry.getValue();
+        Map<Integer, Integer> sectors = new TreeMap<>();
+        for (int index : new ArrayList<>(this.locationTable.keySet())) {
+            Integer[] data = this.locationTable.get(index);
             if (data[0] == 0 || data[1] == 0) {
                 this.locationTable.put(index, new Integer[]{0, 0, 0});
                 continue;
             }
             sectors.put(data[0], index);
-            /*for (int i = 0; i < data[1]; i++) {
+           /* for (int i = 0; i < data[1]; i++) {
                 sectors.put(data[0], index);
             }*/
         }
@@ -244,14 +260,15 @@ public class RegionLoader extends BaseRegionLoader {
         if (sectors.size() == (this.lastSector - 2)) {
             return 0;
         }
+
         int shift = 0;
         int lastSector = 1;
 
         this.randomAccessFile.seek(8192);
-        int sector = 2;
-        for (Map.Entry entry : sectors.entrySet()) {
-            sector = (int) entry.getKey();
-            int index = (int) entry.getValue();
+        int s = 2;
+        for (int sector : sectors.keySet()) {
+            s = sector;
+            int index = sectors.get(sector);
             if ((sector - lastSector) > 1) {
                 shift += sector - lastSector - 1;
             }
@@ -267,7 +284,7 @@ public class RegionLoader extends BaseRegionLoader {
             this.locationTable.put(index, v);
             this.lastSector = sector;
         }
-        this.randomAccessFile.setLength((sector + 1) << 12);
+        this.randomAccessFile.setLength((s + 1) << 12);
         return shift;
     }
 
@@ -285,7 +302,7 @@ public class RegionLoader extends BaseRegionLoader {
         this.randomAccessFile.seek(0);
         this.randomAccessFile.setLength(0);
         this.lastSector = 1;
-        long time = System.currentTimeMillis();
+        long time = System.currentTimeMillis() / 1000;
         for (int i = 0; i < 1024; ++i) {
             this.locationTable.put(i, new Integer[]{0, 0, (int) time});
             this.randomAccessFile.writeInt(0);

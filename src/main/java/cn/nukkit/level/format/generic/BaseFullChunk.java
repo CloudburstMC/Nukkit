@@ -128,25 +128,29 @@ public abstract class BaseFullChunk implements FullChunk {
                 }
 
                 for (CompoundTag nbt : NBTtiles) {
-                    if (!nbt.contains("id")) {
-                        this.setChanged();
-                        continue;
-                    }
-                    if (((int) nbt.getDouble("x") >> 4) != this.x || (((int) nbt.getDouble("z") >> 4) != this.z)) {
-                        changed = true;
-                        continue;
-                    }
-                    Tile tile = Tile.createTile(nbt.getString("id"), this, nbt);
-                    if (tile == null) {
-                        changed = true;
-                        continue;
+                    if (nbt != null) {
+                        if (!nbt.contains("id")) {
+                            changed = true;
+                            continue;
+                        }
+                        if (((int) nbt.getDouble("x") >> 4) != this.x || (((int) nbt.getDouble("z") >> 4) != this.z)) {
+                            changed = true;
+                            continue;
+                        }
+                        Tile tile = Tile.createTile(nbt.getString("id"), this, nbt);
+                        if (tile == null) {
+                            changed = true;
+                            continue;
+                        }
                     }
                 }
+
                 this.NBTentities = null;
                 this.NBTtiles = null;
             }
 
             this.setChanged(changed);
+
             this.isInit = true;
         }
     }

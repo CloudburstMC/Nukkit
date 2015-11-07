@@ -21,6 +21,10 @@ public class ByteArrayTag extends Tag {
 
     @Override
     void write(NBTOutputStream dos) throws IOException {
+        if (data == null) {
+            dos.writeInt(0);
+            return;
+        }
         dos.writeInt(data.length);
         dos.write(data);
     }

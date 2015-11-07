@@ -76,7 +76,8 @@ public class BinaryStream {
 
     public void put(byte[] bytes) {
         this.ensureCapacity(this.count + bytes.length);
-        System.arraycopy(bytes, 0, this.buffer, this.offset, bytes.length);
+
+        System.arraycopy(bytes, 0, this.buffer, this.count, bytes.length);
         this.count += bytes.length;
     }
 
@@ -277,13 +278,15 @@ public class BinaryStream {
         // overflow-conscious code
         int oldCapacity = buffer.length;
         int newCapacity = oldCapacity << 1;
+
         if (newCapacity - minCapacity < 0) {
             newCapacity = minCapacity;
         }
+
         if (newCapacity - MAX_ARRAY_SIZE > 0) {
             newCapacity = hugeCapacity(minCapacity);
-            buffer = Arrays.copyOf(buffer, newCapacity);
         }
+        this.buffer = Arrays.copyOf(buffer, newCapacity);
     }
 
     private static int hugeCapacity(int minCapacity) {

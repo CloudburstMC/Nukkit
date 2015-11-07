@@ -227,7 +227,7 @@ public class Server {
                 put("enable-query", true);
                 put("enable-rcon", false);
                 put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
-                put("auto-save", false);
+                put("auto-save", true);
             }
         });
 

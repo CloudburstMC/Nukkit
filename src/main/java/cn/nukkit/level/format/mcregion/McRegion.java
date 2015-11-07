@@ -78,24 +78,24 @@ public class McRegion extends BaseLevelProvider {
             new File(path + "/region").mkdirs();
         }
 
-        CompoundTag levelData = new CompoundTag("Data");
-        levelData.putBoolean("hardcore", false);
-        levelData.putBoolean("initialized", true);
-        levelData.putInt("GameType", 0);
-        levelData.putInt("generatorVersion", 1);
-        levelData.putInt("SpawnX", 128);
-        levelData.putInt("SpawnY", 70);
-        levelData.putInt("SpawnZ", 128);
-        levelData.putInt("version", 19133);
-        levelData.putLong("DayTime", 0);
-        levelData.putLong("LastPlayed", System.currentTimeMillis());
-        levelData.putLong("RandomSeed", seed);
-        levelData.putLong("SizeOnDisk", 0);
-        levelData.putLong("Time", 0);
-        levelData.putString("generatorName", Generator.getGeneratorName(generator));
-        levelData.putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "");
-        levelData.putString("LevelName", name);
-        levelData.putCompound("GameRules", new CompoundTag());
+        CompoundTag levelData = new CompoundTag("Data")
+                .putBoolean("hardcore", false)
+                .putBoolean("initialized", true)
+                .putInt("GameType", 0)
+                .putInt("generatorVersion", 1)
+                .putInt("SpawnX", 128)
+                .putInt("SpawnY", 70)
+                .putInt("SpawnZ", 128)
+                .putInt("version", 19133)
+                .putLong("DayTime", 0)
+                .putLong("LastPlayed", System.currentTimeMillis())
+                .putLong("RandomSeed", seed)
+                .putLong("SizeOnDisk", 0)
+                .putLong("Time", 0)
+                .putString("generatorName", Generator.getGeneratorName(generator))
+                .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
+                .putString("LevelName", name)
+                .putCompound("GameRules", new CompoundTag());
 
         NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
     }
@@ -343,9 +343,8 @@ public class McRegion extends BaseLevelProvider {
     @Override
     public void close() {
         this.unloadChunks();
-        for (Map.Entry entry : this.regions.entrySet()) {
-            String index = (String) entry.getKey();
-            RegionLoader region = (RegionLoader) entry.getValue();
+        for (String index : new ArrayList<>(this.regions.keySet())) {
+            RegionLoader region = this.regions.get(index);
             try {
                 region.close();
             } catch (IOException e) {

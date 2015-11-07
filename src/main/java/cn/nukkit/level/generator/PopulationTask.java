@@ -68,7 +68,7 @@ public class PopulationTask extends AsyncTask {
                     throw new RuntimeException(e);
                 }
             } else {
-                chunks[i] = ck;
+                chunks[i] = ck.clone();
             }
         }
 

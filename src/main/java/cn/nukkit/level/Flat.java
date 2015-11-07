@@ -114,7 +114,7 @@ public class Flat extends Generator {
                 this.structure[y] = new int[]{0, 0};
             }
 
-            this.chunk = ((BaseFullChunk) (this.level.getChunk(chunkX, chunkZ))).clone();
+            this.chunk = this.level.getChunk(chunkX, chunkZ).clone();
             this.chunk.setGenerated();
             int c = Biome.getBiome(biome).getColor();
             int R = c >> 16;
@@ -170,6 +170,7 @@ public class Flat extends Generator {
         chunk.setX(chunkX);
         chunk.setZ(chunkZ);
         this.level.setChunk(chunkX, chunkZ, chunk);
+        System.out.println("generated " + chunkX + ":" + chunkZ);
     }
 
     @Override
