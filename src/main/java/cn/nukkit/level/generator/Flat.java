@@ -1,7 +1,8 @@
-package cn.nukkit.level;
+package cn.nukkit.level.generator;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
+import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.biome.Biome;
@@ -170,7 +171,6 @@ public class Flat extends Generator {
         chunk.setX(chunkX);
         chunk.setZ(chunkZ);
         this.level.setChunk(chunkX, chunkZ, chunk);
-        System.out.println("generated " + chunkX + ":" + chunkZ);
     }
 
     @Override

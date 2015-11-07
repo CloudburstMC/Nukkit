@@ -2029,7 +2029,6 @@ public class Level implements ChunkManager, Metadatable {
 
                     if (chunk.hasChanged() || !chunk.getTiles().isEmpty() || entities > 0) {
                         this.provider.setChunk(x, z, chunk);
-                        System.out.println("try saving");
                         this.provider.saveChunk(x, z);
                     }
                 }
@@ -2261,7 +2260,6 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
 
-                System.out.println("unloading 2333");
                 if (this.unloadChunk(X, Z, true)) {
                     this.unloadQueue.remove(index);
                     --maxUnload;

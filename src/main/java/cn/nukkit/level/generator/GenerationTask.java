@@ -40,8 +40,6 @@ public class GenerationTask extends AsyncTask {
             return;
         }
 
-        System.out.println("generating " + this.chunk.getX() + ":" + this.chunk.getZ());
-
         /*FullChunk chunk;
         try {
             chunk = (FullChunk) this.chunkClass.getMethod("fromFastBinary").invoke(null, this.chunk);

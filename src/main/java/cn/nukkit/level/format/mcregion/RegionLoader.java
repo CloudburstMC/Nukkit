@@ -129,16 +129,13 @@ public class RegionLoader extends BaseRegionLoader {
             System.arraycopy(data, 0, newData, 0, data.length);
             data = newData;
         }
-        System.out.println("1:" + this.randomAccessFile.getFilePointer());
+
         this.randomAccessFile.write(data);
 
         if (indexChanged) {
-            System.out.println("2:" + this.randomAccessFile.getFilePointer());
             this.writeLocationIndex(index);
-            System.out.println("3:" + this.randomAccessFile.getFilePointer());
         }
 
-        System.out.println("4:" + this.randomAccessFile.getFilePointer());
     }
 
     @Override
@@ -163,7 +160,6 @@ public class RegionLoader extends BaseRegionLoader {
 
     @Override
     public void close() throws IOException {
-        System.out.println("closing");
         this.writeLocationTable();
         this.randomAccessFile.close();
         this.levelProvider = null;
@@ -252,7 +248,7 @@ public class RegionLoader extends BaseRegionLoader {
                 continue;
             }
             sectors.put(data[0], index);
-           /* for (int i = 0; i < data[1]; i++) {
+            /*for (int i = 0; i < data[1]; i++) {
                 sectors.put(data[0], index);
             }*/
         }

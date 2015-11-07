@@ -13,7 +13,7 @@ import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
-import cn.nukkit.level.Flat;
+import cn.nukkit.level.generator.Flat;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
