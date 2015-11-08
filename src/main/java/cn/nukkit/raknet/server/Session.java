@@ -433,12 +433,12 @@ public class Session {
                 sendPacket.buffer = pk.buffer;
                 this.addToQueue(sendPacket);
                 //TODO: add PING/PONG (0x00/0x03) automatic latency measure
-            } else if (state == STATE_CONNECTED) {
-                this.sessionManager.streamEncapsulated(this, packet);
-                //TODO: stream channels
-            } else {
-                //this.sessionManager.getLogger().notice("Received packet before connection: "+Binary.bytesToHexString(packet.buffer));
             }
+        } else if (state == STATE_CONNECTED) {
+            this.sessionManager.streamEncapsulated(this, packet);
+            //TODO: stream channels
+        } else {
+            //this.sessionManager.getLogger().notice("Received packet before connection: "+Binary.bytesToHexString(packet.buffer));
         }
     }
 
@@ -446,7 +446,7 @@ public class Session {
         this.isActive = true;
         this.lastUpdate = System.currentTimeMillis();
         if (this.state == STATE_CONNECTED || this.state == STATE_CONNECTING_2) {
-            if ((packet.buffer[0] >= (byte) 0x80 || packet.buffer[0] <= (byte) 0x8f) && packet instanceof DataPacket) {
+            if (((packet.buffer[0] & 0xff) >= 0x80 || (packet.buffer[0] & 0xff) <= 0x8f) && packet instanceof DataPacket) {
 
                 DataPacket dp = (DataPacket) packet;
                 dp.decode();
@@ -508,7 +508,7 @@ public class Session {
                     }
                 }
             }
-        } else if (packet.buffer[0] > (byte) 0x00 || packet.buffer[0] < (byte) 0x80) { //Not Data packet :)
+        } else if ((packet.buffer[0] & 0xff) > 0x00 || (packet.buffer[0] & 0xff) < (byte) 0x80) { //Not Data packet :)
             packet.decode();
             /*if (packet instanceof UNCONNECTED_PING) {
                 UNCONNECTED_PONG pk = new UNCONNECTED_PONG();
