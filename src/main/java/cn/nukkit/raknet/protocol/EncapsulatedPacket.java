@@ -47,7 +47,7 @@ public class EncapsulatedPacket implements Cloneable {
             packet.identifierACK = Binary.readInt(Binary.subBytes(binary, 5, 4));
             offset = 9;
         } else {
-            length = Binary.readShort(Binary.subBytes(binary, 1, 2)) / 8;
+            length = (int) Math.ceil(((double) Binary.readShort(Binary.subBytes(binary, 1, 2)) / 8));
             offset = 3;
             packet.identifierACK = null;
         }
@@ -55,13 +55,13 @@ public class EncapsulatedPacket implements Cloneable {
         if (packet.reliability > 0) {
             if (packet.reliability >= 2 && packet.reliability != 5) {
                 packet.messageIndex = Binary.readLTriad(Binary.subBytes(binary, offset, 3));
-                offset = offset + 3;
+                offset += 3;
             }
 
             if (packet.reliability <= 4 && packet.reliability != 2) {
                 packet.orderIndex = Binary.readLTriad(Binary.subBytes(binary, offset, 3));
-                offset = offset + 3;
-                packet.orderChannel = (int) binary[offset++];
+                offset += 3;
+                packet.orderChannel = binary[offset++] & 0xff;
             }
         }
 
@@ -94,7 +94,7 @@ public class EncapsulatedPacket implements Cloneable {
         bb.put((byte) ((byte) (reliability << 5) | (hasSplit ? 0b00010000 : 0)));
         if (internal) {
             bb.put(Binary.writeInt(buffer.length));
-            bb.put(Binary.writeInt(identifierACK));
+            bb.put(Binary.writeInt(identifierACK == null ? 0 : identifierACK));
         } else {
             bb.put(Binary.writeShort(buffer.length << 3));
         }

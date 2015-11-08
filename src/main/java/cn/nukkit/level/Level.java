@@ -224,7 +224,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public static int generateChunkLoaderId(ChunkLoader loader) {
-        if (loader.getLoaderId() == 0) {
+        if (loader.getLoaderId() == null || loader.getLoaderId() == 0) {
             return chunkLoaderCounter++;
         } else {
             throw new IllegalStateException("ChunkLoader has a loader id already assigned: " + loader.getLoaderId());

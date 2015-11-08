@@ -385,7 +385,7 @@ public class Session {
         }
 
         byte id = packet.buffer[0];
-        if (id < (byte) 0x80) { //internal data packet
+        if ((id & 0xff) < 0x80) { //internal data packet
             if (state == STATE_CONNECTING_2) {
                 if (id == CLIENT_CONNECT_DataPacket.ID) {
                     CLIENT_CONNECT_DataPacket dataPacket = new CLIENT_CONNECT_DataPacket();

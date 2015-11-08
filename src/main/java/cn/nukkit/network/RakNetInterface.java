@@ -112,7 +112,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
         Class<? extends Player> clazz = ev.getPlayerClass();
 
         try {
-            Constructor constructor = clazz.getConstructor(SourceInterface.class, Long.class, String.class, Integer.class);
+            Constructor constructor = clazz.getConstructor(SourceInterface.class, Long.class, String.class, int.class);
             Player player = (Player) constructor.newInstance(this, ev.getClientId(), ev.getAddress(), ev.getPort());
             this.players.put(identifier, player);
             this.identifiersACK.put(identifier, 0);
@@ -136,6 +136,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 if (Nukkit.DEBUG > 1 && pk != null) {
                     MainLogger logger = this.server.getLogger();
                     if (logger != null) {

@@ -163,12 +163,15 @@ public abstract class Entity extends Location implements Metadatable {
     protected boolean isPlayer = false;
 
     public Entity(FullChunk chunk, CompoundTag nbt) {
-        if ((chunk == null || chunk.getProvider() == null) && !(this instanceof Player)) {
+        if (this instanceof Player) {
+            return;
+        }
+
+        if ((chunk == null || chunk.getProvider() == null)) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
         }
 
         this.isPlayer = this instanceof Player;
-
         this.temporalVector = new Vector3();
 
         if (this.eyeHeight == null) {
@@ -236,6 +239,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.server.getPluginManager().callEvent(new EntitySpawnEvent(this));
 
         this.scheduleUpdate();
+
     }
 
     public String getNameTag() {

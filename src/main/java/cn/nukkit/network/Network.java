@@ -132,16 +132,24 @@ public class Network {
         int offset = 0;
         try {
             while (offset < len) {
+                int pkLen = Binary.readInt(Binary.subBytes(data, offset, 4));
+                offset += 4;
+
+                byte[] buf = Binary.subBytes(data, offset, 4);
+                offset += pkLen;
+
                 DataPacket pk;
-                if ((pk = this.getPacket(data[offset++])) != null) {
+                if ((pk = this.getPacket(buf[0])) != null) {
                     if (pk.pid() == Info.BATCH_PACKET) {
                         throw new IllegalStateException("Invalid BatchPacket inside BatchPacket");
                     }
-                    pk.setBuffer(data);
-                    pk.setOffset(offset);
+
+                    pk.setBuffer(buf);
+                    pk.setOffset(1);
+
                     pk.decode();
                     p.handleDataPacket(pk);
-                    offset += pk.getOffset();
+
                     if (pk.getOffset() <= 0) {
                         return;
                     }
@@ -156,7 +164,7 @@ public class Network {
     }
 
     public DataPacket getPacket(byte id) {
-        Class<? extends DataPacket> clazz = this.packetPool[id];
+        Class<? extends DataPacket> clazz = this.packetPool[id & 0xff];
         if (clazz != null) {
             try {
                 return clazz.newInstance();

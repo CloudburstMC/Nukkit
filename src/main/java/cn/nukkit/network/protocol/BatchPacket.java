@@ -17,6 +17,8 @@ public class BatchPacket extends DataPacket {
     @Override
     public void decode() {
         this.payload = this.get(this.getInt());
+        /*int length = this.getInt();
+        this.payload = this.get(length);*/
     }
 
     @Override

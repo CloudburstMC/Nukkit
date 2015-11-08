@@ -236,7 +236,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     @Override
     public Server getServer() {
-        return null;
+        return this.server;
     }
 
     public boolean getRemoveFormat() {
@@ -1639,11 +1639,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (!connected) {
             return;
         }
+
         if (packet.pid() == Info.BATCH_PACKET) {
-            /** @var BatchPacket packet */
             this.server.getNetwork().processBatch((BatchPacket) packet, this);
             return;
         }
+
         DataPacketReceiveEvent ev = new DataPacketReceiveEvent(this, packet);
         this.server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -1785,7 +1786,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.connected = false;
             PlayerQuitEvent ev = null;
-            if (this.getName().length() > 0) {
+            if (this.getName() != null && this.getName().length() > 0) {
                 this.server.getPluginManager().callEvent(ev = new PlayerQuitEvent(this, message, true));
                 if (this.loggedIn && ev.getAutoSave()) {
                     this.save();
@@ -1827,7 +1828,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.getPluginManager().unsubscribeFromPermission(Server.BROADCAST_CHANNEL_USERS, this);
             this.spawned = false;
             this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logOut", new String[]{
-                    TextFormat.AQUA + this.getName() + TextFormat.WHITE,
+                    TextFormat.AQUA + (this.getName() == null ? "" : this.getName()) + TextFormat.WHITE,
                     this.ip,
                     String.valueOf(this.port),
                     this.getServer().getLanguage().translateString(reason)

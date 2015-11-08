@@ -30,7 +30,6 @@ public abstract class Zlib {
 
     public static byte[] inflate(byte[] data) throws DataFormatException, IOException {
         Inflater inflater = new Inflater();
-        inflater.reset();
         inflater.setInput(data);
         ByteArrayOutputStream o = new ByteArrayOutputStream(data.length);
         byte[] buf = new byte[1024];
@@ -43,17 +42,7 @@ public abstract class Zlib {
     }
 
     public static byte[] inflate(byte[] data, int maxSize) throws DataFormatException, IOException {
-        Inflater inflater = new Inflater();
-        inflater.reset();
-        inflater.setInput(data, 0, maxSize);
-        ByteArrayOutputStream o = new ByteArrayOutputStream(data.length);
-        byte[] buf = new byte[1024];
-        while (!inflater.finished()) {
-            int i = inflater.inflate(buf);
-            o.write(buf, 0, i);
-        }
-        inflater.end();
-        return o.toByteArray();
+        return Binary.subBytes(data, 0, maxSize);
     }
 
 }
