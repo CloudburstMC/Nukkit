@@ -24,7 +24,7 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
 
     private double force;
 
-    public void __construct(Living shooter, Item bow, Projectile projectile, double force) {
+    public void EntityShootBowEvent(Living shooter, Item bow, Projectile projectile, double force) {
         this.entity = shooter;
         this.bow = bow;
         this.projectile = projectile;
