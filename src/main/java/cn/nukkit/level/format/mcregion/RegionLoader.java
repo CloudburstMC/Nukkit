@@ -296,13 +296,13 @@ public class RegionLoader extends BaseRegionLoader {
         this.randomAccessFile.seek(0);
         this.randomAccessFile.setLength(0);
         this.lastSector = 1;
-        long time = System.currentTimeMillis() / 1000;
+        int time = (int) (System.currentTimeMillis() / 1000);
         for (int i = 0; i < 1024; ++i) {
-            this.locationTable.put(i, new Integer[]{0, 0, (int) time});
+            this.locationTable.put(i, new Integer[]{0, 0, time});
             this.randomAccessFile.writeInt(0);
         }
         for (int i = 0; i < 1024; ++i) {
-            this.randomAccessFile.writeInt((int) time);
+            this.randomAccessFile.writeInt(time);
         }
     }
 

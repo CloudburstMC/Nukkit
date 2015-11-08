@@ -4,7 +4,6 @@ import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.generic.BaseFullChunk;
-import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.object.OreType;
 import cn.nukkit.level.generator.populator.Ore;

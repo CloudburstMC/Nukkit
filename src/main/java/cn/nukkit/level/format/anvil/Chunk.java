@@ -272,6 +272,7 @@ public class Chunk extends BaseChunk {
     @Override
     public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
+
         nbt.putInt("xPos", this.x);
         nbt.putInt("zPos", this.z);
 

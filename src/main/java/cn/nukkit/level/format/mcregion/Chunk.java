@@ -435,7 +435,6 @@ public class Chunk extends BaseFullChunk {
                 entities.add(entity.namedTag);
             }
         }
-
         ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
         entityListTag.list = entities;
         nbt.putList(entityListTag);
