@@ -2,7 +2,7 @@ package cn.nukkit.entity;
 /**
  * Attribute
  *
- * @author Box, MagicDroidX(code) @ Nukkit Project
+ * @author Box, MagicDroidX(code), PeratX @ Nukkit Project
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 
@@ -14,6 +14,8 @@ public class Attribute implements Cloneable {
     public static final int MAX_HEALTH = 0;
     public static final int EXPERIENCE = 1;
     public static final int EXPERIENCE_LEVEL = 2;
+    public static final int MAX_HUNGER = 3;
+    public static final int MOVEMENTSPEED = 4;
 
     private int id;
     protected float minValue;
@@ -30,6 +32,8 @@ public class Attribute implements Cloneable {
         addAttribute(MAX_HEALTH, "generic.health", 0, 0x7fffffff, 20, true);
         addAttribute(EXPERIENCE, "player.experience", 0, 1, 0, true);
         addAttribute(EXPERIENCE_LEVEL, "player.level", 0, 24791, 0, true);
+        addAttribute(MAX_HUNGER, "player.hunger", 0, 20, 20, true);
+        addAttribute(MOVEMENTSPEED, "generic.movementSpeed", 0, 24791, 0.1, true);
     }
 
     public static Attribute addAttribute(int id, String name, float minValue, float maxValue, float defaultValue, boolean shouldSend) {
