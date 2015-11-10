@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class PlayStatusPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.PLAY_STATUS_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.PLAY_STATUS_PACKET;
 
     @Override
     public byte pid() {

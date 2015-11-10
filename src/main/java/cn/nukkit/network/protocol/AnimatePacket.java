@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class AnimatePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.ANIMATE_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ANIMATE_PACKET;
 
     public long eid;
     public int action;

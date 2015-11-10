@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class TileEventPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.TILE_EVENT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.TILE_EVENT_PACKET;
 
     @Override
     public byte pid() {

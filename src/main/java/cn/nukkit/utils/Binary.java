@@ -1,6 +1,7 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.entries.*;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -68,118 +69,112 @@ public class Binary {
         return appendBytes(writeLong(uuid.getMostSignificantBits()), writeLong(uuid.getLeastSignificantBits()));
     }
 
-    public static byte[] writeMetadata(Map<Integer, Object[]> data) {
-        byte[] m = new byte[0];
-        for (Map.Entry<Integer, Object[]> entry : data.entrySet()) {
-            int bottom = entry.getKey();
-            Object[] d = entry.getValue();
-            appendBytes(m, new byte[]{(byte) ((((int) d[0] << 5) | (bottom & 0x1F)) & 0xff)});
-            switch ((int) d[0]) {
+    public static byte[] writeMetadata(Map<Integer, EntityDataEntry> data) {
+        BinaryStream stream = new BinaryStream();
+        for (int bottom : data.keySet()) {
+            EntityDataEntry d = data.get(bottom);
+            stream.putByte((byte) (((d.getType() << 5) | (bottom & 0x1F)) & 0xff));
+            switch (d.getType()) {
                 case Entity.DATA_TYPE_BYTE:
-                    appendBytes(m, new byte[]{(byte) d[1]});
+                    stream.putByte(((ByteEntityDataEntry) d).getData());
                     break;
                 case Entity.DATA_TYPE_SHORT:
-                    appendBytes(m, writeLShort((short) d[1]));
+                    stream.putLShort(((ShortEntityDataEntry) d).getData());
                     break;
                 case Entity.DATA_TYPE_INT:
-                    appendBytes(m, writeLInt((int) d[1]));
+                    stream.putLInt(((IntEntityDataEntry) d).getData());
                     break;
                 case Entity.DATA_TYPE_FLOAT:
-                    appendBytes(m, writeLFloat((float) d[1]));
+                    stream.putLFloat(((FloatEntityDataEntry) d).getData());
                     break;
                 case Entity.DATA_TYPE_STRING:
-                    String s = (String) d[1];
-                    appendBytes(m, writeLShort((short) (s.getBytes(StandardCharsets.UTF_8).length)), s.getBytes(StandardCharsets.UTF_8));
+                    String s = ((StringEntityDataEntry) d).getData();
+                    stream.putLShort(s.getBytes(StandardCharsets.UTF_8).length);
+                    stream.put(s.getBytes(StandardCharsets.UTF_8));
                     break;
                 case Entity.DATA_TYPE_SLOT:
-                    Object[] o = (Object[]) d[1];
-                    appendBytes(m,
-                            writeLShort((short) o[0]),
-                            new byte[]{(byte) o[1]},
-                            writeLShort((short) o[2])
-                    );
+                    SlotEntityDataEntry slot = (SlotEntityDataEntry) d;
+                    stream.putLShort(slot.id);
+                    stream.putByte(slot.meta);
+                    stream.putLShort(slot.count);
                     break;
                 case Entity.DATA_TYPE_POS:
-                    o = (Object[]) d[1];
-                    appendBytes(m,
-                            writeLInt((int) o[0]),
-                            writeLInt((int) o[1]),
-                            writeLInt((int) o[2])
-                    );
+                    PositionEntityDataEntry pos = (PositionEntityDataEntry) d;
+                    stream.putLInt(pos.x);
+                    stream.putLInt(pos.y);
+                    stream.putLInt(pos.z);
                     break;
                 case Entity.DATA_TYPE_LONG:
-                    appendBytes(m, writeLLong((long) d[1]));
+                    stream.putLLong(((LongEntityDataEntry) d).getData());
                     break;
             }
         }
 
-        appendBytes(m, new byte[]{0x7f});
-        return m;
+        stream.putByte((byte) 0x7f);
+        return stream.getBuffer();
     }
 
-    public static Map<Integer, Object[]> readMetadata(byte[] payload) {
+    public static Map<Integer, EntityDataEntry> readMetadata(byte[] payload) {
         int offset = 0;
-        Map<Integer, Object[]> m = new HashMap<>();
-        byte b = payload[offset];
+        Map<Integer, EntityDataEntry> m = new HashMap<>();
+        int b = payload[offset] & 0xff;
         ++offset;
         while (b != 0x7f && offset < payload.length) {
             int bottom = b & 0x1f;
             int type = b >> 5;
-            Object r = null;
-            Object[] rr = null;
+
+            EntityDataEntry entry;
             switch (type) {
                 case Entity.DATA_TYPE_BYTE:
-                    r = payload[offset];
+                    entry = new ByteEntityDataEntry(payload[offset]);
                     ++offset;
                     break;
                 case Entity.DATA_TYPE_SHORT:
-                    r = readLShort(subBytes(payload, offset, 2));
+                    entry = new ShortEntityDataEntry(readLShort(subBytes(payload, offset, 2)));
                     offset += 2;
                     break;
                 case Entity.DATA_TYPE_INT:
-                    r = readLInt(subBytes(payload, offset, 4));
+                    entry = new IntEntityDataEntry(readLInt(subBytes(payload, offset, 4)));
                     offset += 4;
                     break;
                 case Entity.DATA_TYPE_FLOAT:
-                    r = readLFloat(subBytes(payload, offset, 4));
+                    entry = new FloatEntityDataEntry(readLFloat(subBytes(payload, offset, 4)));
                     offset += 4;
                     break;
                 case Entity.DATA_TYPE_STRING:
                     int len = readLShort(subBytes(payload, offset, 2));
                     offset += 2;
-                    r = subBytes(payload, offset, len);
+                    String str = new String(subBytes(payload, offset, len));
                     offset += len;
+                    entry = new StringEntityDataEntry(str);
                     break;
                 case Entity.DATA_TYPE_SLOT:
-                    rr = new Object[3];
-                    rr[0] = readLShort(subBytes(payload, offset, 2));
+                    int id = readLShort(subBytes(payload, offset, 2));
                     offset += 2;
-                    rr[1] = payload[offset];
+                    byte meta = payload[offset];
                     ++offset;
-                    rr[2] = readLShort(subBytes(payload, offset, 2));
+                    int count = readLShort(subBytes(payload, offset, 2));
                     offset += 2;
+                    entry = new SlotEntityDataEntry(id, meta, count);
                     break;
                 case Entity.DATA_TYPE_POS:
-                    rr = new Object[3];
+                    int[] intArray = new int[3];
                     for (int i = 0; i < 3; ++i) {
-                        rr[i] = readLInt(subBytes(payload, offset, 4));
+                        intArray[i] = readLInt(subBytes(payload, offset, 4));
                         offset += 4;
                     }
+                    entry = new PositionEntityDataEntry(intArray[0], intArray[1], intArray[2]);
                     break;
                 case Entity.DATA_TYPE_LONG:
-                    r = readLLong(subBytes(payload, offset, 4));
+                    entry = new LongEntityDataEntry(readLLong(subBytes(payload, offset, 4)));
                     offset += 8;
                     break;
                 default:
                     return new HashMap<>();
             }
 
-            if (r != null) {
-                m.put(bottom, new Object[]{type, r});
-            } else {
-                m.put(bottom, new Object[]{type, rr});
-            }
-            b = payload[offset];
+            m.put(bottom, entry);
+            b = payload[offset] & 0xff;
             ++offset;
         }
 

@@ -3,6 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Liquid;
+import cn.nukkit.entity.data.entries.IntEntityDataEntry;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
@@ -53,7 +54,7 @@ public class FallingSand extends Entity {
             return;
         }
 
-        setDataProperty(DATA_BLOCK_INFO, DATA_TYPE_INT, this.getBlock() | this.getDamage() << 8);
+        setDataProperty(DATA_BLOCK_INFO, new IntEntityDataEntry(this.getBlock() | this.getDamage() << 8));
     }
 
     public boolean canCollideWith(Entity entity) {

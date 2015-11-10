@@ -75,6 +75,9 @@ public class BinaryStream {
     }
 
     public void put(byte[] bytes) {
+        if (bytes == null) {
+            return;
+        }
         this.ensureCapacity(this.count + bytes.length);
 
         System.arraycopy(bytes, 0, this.buffer, this.count, bytes.length);
@@ -239,7 +242,7 @@ public class BinaryStream {
     }
 
     public void putSlot(Item item) {
-        if (item.getId() == 0) {
+        if (item == null || item.getId() == 0) {
             this.putShort(0);
             return;
         }

@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class CraftingDataPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.CRAFTING_DATA_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_DATA_PACKET;
 
     public static final int ENTRY_SHAPELESS = 0;
     public static final int ENTRY_SHAPED = 1;
@@ -26,7 +26,7 @@ public class CraftingDataPacket extends DataPacket {
     public static final int ENTRY_FURNACE_DATA = 3;
     public static final int ENTRY_ENCHANT_LIST = 4;
 
-    public List<Object> entries;
+    public List<Object> entries = new ArrayList<>();
     public boolean cleanRecipes;
 
     private static int writeEntry(Object entry, BinaryStream stream) {
@@ -132,19 +132,19 @@ public class CraftingDataPacket extends DataPacket {
     }
 
     public void addShapelessRecipe(ShapelessRecipe... recipe) {
-        Collections.addAll(entries, (Object[]) recipe);
+        Collections.addAll(entries, (ShapelessRecipe[]) recipe);
     }
 
     public void addShapedRecipe(ShapedRecipe... recipe) {
-        Collections.addAll(entries, (Object[]) recipe);
+        Collections.addAll(entries, (ShapedRecipe[]) recipe);
     }
 
     public void addFurnaceRecipe(FurnaceRecipe... recipe) {
-        Collections.addAll(entries, (Object[]) recipe);
+        Collections.addAll(entries, (FurnaceRecipe[]) recipe);
     }
 
     public void addEnchantList(EnchantmentList... list) {
-        Collections.addAll(entries, (Object[]) list);
+        Collections.addAll(entries, (EnchantmentList[]) list);
     }
 
     @Override

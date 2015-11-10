@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class ContainerSetSlotPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.CONTAINER_SET_SLOT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_SET_SLOT_PACKET;
 
     @Override
     public byte pid() {

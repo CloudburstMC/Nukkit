@@ -7,7 +7,7 @@ import java.util.UUID;
  */
 public class PlayerListPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.PLAYER_LIST_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_LIST_PACKET;
 
     public static final int TYPE_ADD = 0;
     public static final int TYPE_REMOVE = 1;

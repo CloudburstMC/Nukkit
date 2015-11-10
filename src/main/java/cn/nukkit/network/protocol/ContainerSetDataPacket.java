@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class ContainerSetDataPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.CONTAINER_SET_DATA_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_SET_DATA_PACKET;
 
     @Override
     public byte pid() {

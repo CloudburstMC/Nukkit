@@ -4,7 +4,7 @@ package cn.nukkit.network.protocol;
  * author: MagicDroidX & iNevet
  * Nukkit Project
  */
-public interface Info {
+public interface ProtocolInfo {
 
     /**
      * Actual Minecraft: PE protocol version

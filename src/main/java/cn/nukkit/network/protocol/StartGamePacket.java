@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class StartGamePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.START_GAME_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.START_GAME_PACKET;
 
     @Override
     public byte pid() {

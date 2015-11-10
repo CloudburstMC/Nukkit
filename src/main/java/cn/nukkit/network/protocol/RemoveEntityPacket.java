@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class RemoveEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.REMOVE_ENTITY_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.REMOVE_ENTITY_PACKET;
 
     public long eid;
 

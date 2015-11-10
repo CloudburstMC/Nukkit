@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  */
 public class DropItemPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.DROP_ITEM_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.DROP_ITEM_PACKET;
 
     public int type;
     public Item item;

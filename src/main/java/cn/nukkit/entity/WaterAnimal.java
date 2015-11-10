@@ -1,5 +1,6 @@
 package cn.nukkit.entity;
 
+import cn.nukkit.entity.data.entries.ByteEntityDataEntry;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -16,7 +17,7 @@ public abstract class WaterAnimal extends Creature implements Ageable {
     protected void initEntity() {
         super.initEntity();
         if (this.getDataProperty(DATA_AGEABLE_FLAGS) == null) {
-            this.setDataProperty(DATA_AGEABLE_FLAGS, DATA_TYPE_BYTE, 0);
+            this.setDataProperty(DATA_AGEABLE_FLAGS, new ByteEntityDataEntry((byte) 0));
         }
     }
 

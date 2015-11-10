@@ -2,6 +2,7 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.data.entries.ShortEntityDataEntry;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -185,10 +186,10 @@ public abstract class Living extends Entity implements Damageable {
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
                 if (this instanceof WaterAnimal) {
-                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, 300);
+                    this.setDataProperty(DATA_AIR, new ShortEntityDataEntry(300));
                 } else {
                     hasUpdate = true;
-                    int airTicks = (int) this.getDataProperty(DATA_AIR) - tickDiff;
+                    int airTicks = this.getDataPropertyInt(DATA_AIR).data - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
@@ -196,12 +197,12 @@ public abstract class Living extends Entity implements Damageable {
                         this.attack(ev.getFinalDamage(), ev);
                     }
 
-                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, airTicks);
+                    this.setDataProperty(DATA_AIR, new ShortEntityDataEntry(airTicks));
                 }
             } else {
                 if (this instanceof WaterAnimal) {
                     hasUpdate = true;
-                    int airTicks = (int) this.getDataProperty(DATA_AIR) - tickDiff;
+                    int airTicks = this.getDataPropertyInt(DATA_AIR).data - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
@@ -209,9 +210,9 @@ public abstract class Living extends Entity implements Damageable {
                         this.attack(ev.getFinalDamage(), ev);
                     }
 
-                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, airTicks);
+                    this.setDataProperty(DATA_AIR, new ShortEntityDataEntry(airTicks));
                 } else {
-                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, 300);
+                    this.setDataProperty(DATA_AIR, new ShortEntityDataEntry(300));
                 }
             }
         }

@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class TileEntityDataPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.TILE_ENTITY_DATA_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.TILE_ENTITY_DATA_PACKET;
 
     public int x;
     public int y;

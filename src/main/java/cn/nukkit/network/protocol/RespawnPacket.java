@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class RespawnPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.RESPAWN_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.RESPAWN_PACKET;
 
     public float x;
     public float y;

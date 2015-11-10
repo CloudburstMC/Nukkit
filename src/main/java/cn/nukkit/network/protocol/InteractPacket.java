@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class InteractPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.INTERACT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.INTERACT_PACKET;
 
     public long eid;
     public byte action;

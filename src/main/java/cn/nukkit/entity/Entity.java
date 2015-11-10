@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Water;
+import cn.nukkit.entity.data.entries.*;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -77,13 +78,13 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected int dataFlags = 0;
 
-    protected Map<Integer, Object[]> dataProperties = new HashMap<Integer, Object[]>() {{
-        put(DATA_FLAGS, new Object[]{DATA_TYPE_BYTE, 0});
-        put(DATA_AIR, new Object[]{DATA_TYPE_SHORT, 300});
-        put(DATA_NAMETAG, new Object[]{DATA_TYPE_STRING, ""});
-        put(DATA_SHOW_NAMETAG, new Object[]{DATA_TYPE_BYTE, 1});
-        put(DATA_SILENT, new Object[]{DATA_TYPE_BYTE, 0});
-        put(DATA_NO_AI, new Object[]{DATA_TYPE_BYTE, 0});
+    protected Map<Integer, EntityDataEntry> dataProperties = new HashMap<Integer, EntityDataEntry>() {{
+        put(DATA_FLAGS, new ByteEntityDataEntry((byte) 0));
+        put(DATA_AIR, new ShortEntityDataEntry(300));
+        put(DATA_NAMETAG, new StringEntityDataEntry(""));
+        put(DATA_SHOW_NAMETAG, new ByteEntityDataEntry((byte) 1));
+        put(DATA_SILENT, new ByteEntityDataEntry((byte) 0));
+        put(DATA_NO_AI, new ByteEntityDataEntry((byte) 0));
     }};
 
     public Entity passenger = null;
@@ -220,7 +221,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (!this.namedTag.contains("Air")) {
             this.namedTag.putShort("Air", 300);
         }
-        this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, this.namedTag.getShort("Air"));
+        this.setDataProperty(DATA_AIR, new ShortEntityDataEntry(this.namedTag.getShort("Air")));
 
         if (!this.namedTag.contains("OnGround")) {
             this.namedTag.putBoolean("OnGround", false);
@@ -247,11 +248,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean isNameTagVisible() {
-        return (int) this.getDataProperty(DATA_SHOW_NAMETAG) > 0;
+        return this.getDataPropertyByte(DATA_SHOW_NAMETAG).data > 0;
     }
 
     public void setNameTag(String name) {
-        this.setDataProperty(DATA_NAMETAG, DATA_TYPE_STRING, name);
+        this.setDataProperty(DATA_NAMETAG, new StringEntityDataEntry(name));
     }
 
     public void setNameTagVisible() {
@@ -259,7 +260,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setNameTagVisible(boolean visible) {
-        this.setDataProperty(DATA_SHOW_NAMETAG, DATA_TYPE_BYTE, visible ? (byte) 1 : (byte) 0);
+        this.setDataProperty(DATA_SHOW_NAMETAG, new ByteEntityDataEntry(visible ? (byte) 1 : (byte) 0));
     }
 
     public boolean isSneaking() {
@@ -359,11 +360,11 @@ public abstract class Entity extends Location implements Metadatable {
             int g = (color[1] / count) & 0xff;
             int b = (color[2] / count) & 0xff;
 
-            this.setDataProperty(Entity.DATA_POTION_COLOR, Entity.DATA_TYPE_INT, (r << 16) + (g << 8) + b);
-            this.setDataProperty(Entity.DATA_POTION_AMBIENT, Entity.DATA_TYPE_BYTE, ambient ? 1 : 0);
+            this.setDataProperty(Entity.DATA_POTION_COLOR, new IntEntityDataEntry((r << 16) + (g << 8) + b));
+            this.setDataProperty(Entity.DATA_POTION_AMBIENT, new ByteEntityDataEntry((byte) (ambient ? 1 : 0)));
         } else {
-            this.setDataProperty(Entity.DATA_POTION_COLOR, Entity.DATA_TYPE_INT, 0);
-            this.setDataProperty(Entity.DATA_POTION_AMBIENT, Entity.DATA_TYPE_BYTE, 0);
+            this.setDataProperty(Entity.DATA_POTION_COLOR, new IntEntityDataEntry(0));
+            this.setDataProperty(Entity.DATA_POTION_AMBIENT, new ByteEntityDataEntry((byte) 0));
         }
     }
 
@@ -457,7 +458,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.namedTag.putFloat("FallDistance", this.fallDistance);
         this.namedTag.putShort("Fire", this.fireTicks);
-        this.namedTag.putShort("Air", (Integer) this.getDataProperty(DATA_AIR));
+        this.namedTag.putShort("Air", this.getDataPropertyShort(DATA_AIR).data);
         this.namedTag.putBoolean("OnGround", this.onGround);
         this.namedTag.putBoolean("Invulnerable", this.invulnerable);
 
@@ -532,7 +533,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.sendData(player, null);
     }
 
-    public void sendData(Player player, Map<Integer, Object[]> data) {
+    public void sendData(Player player, Map<Integer, EntityDataEntry> data) {
         SetEntityDataPacket pk = new SetEntityDataPacket();
         pk.eid = (player.equals(this) ? 0 : this.getId());
         pk.metadata = data == null ? this.dataProperties : data;
@@ -544,7 +545,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.sendData(players, null);
     }
 
-    public void sendData(Player[] players, Map<Integer, Object[]> data) {
+    public void sendData(Player[] players, Map<Integer, EntityDataEntry> data) {
         SetEntityDataPacket pk = new SetEntityDataPacket();
         pk.eid = this.getId();
         pk.metadata = data == null ? this.dataProperties : data;
@@ -948,7 +949,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public Float getEyeHeight() {
-        return eyeHeight;
+        return this.eyeHeight == null ? 0 : this.eyeHeight;
     }
 
     public void moveFlying() {
@@ -1409,11 +1410,11 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public boolean setDataProperty(int id, int type, Object value) {
-        if (!value.equals(this.getDataProperty(id))) {
-            this.dataProperties.put(id, new Object[]{type, value});
+    public boolean setDataProperty(int id, EntityDataEntry dataEntry) {
+        if (!dataEntry.equals(this.getDataProperty(id))) {
+            this.dataProperties.put(id, dataEntry);
 
-            this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new HashMap<Integer, Object[]>() {
+            this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new HashMap<Integer, EntityDataEntry>() {
                 {
                     put(id, dataProperties.get(id));
                 }
@@ -1425,12 +1426,44 @@ public abstract class Entity extends Location implements Metadatable {
         return false;
     }
 
-    public Object getDataProperty(int id) {
-        return this.dataProperties.containsKey(id) ? this.dataProperties.get(id)[1] : null;
+    public EntityDataEntry getDataProperty(int id) {
+        return this.dataProperties.containsKey(id) ? this.dataProperties.get(id) : null;
+    }
+
+    public IntEntityDataEntry getDataPropertyInt(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof IntEntityDataEntry) ? (IntEntityDataEntry) this.dataProperties.get(id) : null;
+    }
+
+    public ShortEntityDataEntry getDataPropertyShort(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof ShortEntityDataEntry) ? (ShortEntityDataEntry) this.dataProperties.get(id) : null;
+    }
+
+    public ByteEntityDataEntry getDataPropertyByte(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof ByteEntityDataEntry) ? (ByteEntityDataEntry) this.dataProperties.get(id) : null;
+    }
+
+    public LongEntityDataEntry getDataPropertyLong(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof LongEntityDataEntry) ? (LongEntityDataEntry) this.dataProperties.get(id) : null;
+    }
+
+    public StringEntityDataEntry getDataPropertyString(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof StringEntityDataEntry) ? (StringEntityDataEntry) this.dataProperties.get(id) : null;
+    }
+
+    public FloatEntityDataEntry getDataPropertyFloat(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof FloatEntityDataEntry) ? (FloatEntityDataEntry) this.dataProperties.get(id) : null;
+    }
+
+    public SlotEntityDataEntry getDataPropertySlot(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof SlotEntityDataEntry) ? (SlotEntityDataEntry) this.dataProperties.get(id) : null;
+    }
+
+    public PositionEntityDataEntry getDataPropertyPos(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof PositionEntityDataEntry) ? (PositionEntityDataEntry) this.dataProperties.get(id) : null;
     }
 
     public int getDataPropertyType(int id) {
-        return (int) (this.dataProperties.containsKey(id) ? this.dataProperties.get(id)[0] : null);
+        return (this.dataProperties.containsKey(id) ? this.dataProperties.get(id).getType() : -1);
     }
 
     public void setDataFlag(int propertyId, int id) {
@@ -1438,19 +1471,15 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setDataFlag(int propertyId, int id, boolean value) {
-        this.setDataFlag(propertyId, id, value, DATA_TYPE_BYTE);
-    }
-
-    public void setDataFlag(int propertyId, int id, boolean value, int type) {
         if (this.getDataFlag(propertyId, id) != value) {
-            int flags = (int) this.getDataProperty(propertyId);
+            int flags = this.getDataPropertyInt(propertyId).data;
             flags ^= 1 << id;
-            this.setDataProperty(propertyId, type, flags);
+            this.setDataProperty(propertyId, new ByteEntityDataEntry((byte) flags));
         }
     }
 
     public boolean getDataFlag(int propertyId, int id) {
-        return (((int) this.getDataProperty(propertyId)) & (1 << id)) > 0;
+        return ((this.getDataPropertyByte(propertyId) == null ? 0 : this.getDataPropertyByte(propertyId).data & 0xff) & (1 << id)) > 0;
     }
 
     @Override

@@ -486,9 +486,9 @@ public class Level implements ChunkManager, Metadatable {
 
         if (!this.changedBlocks.isEmpty()) {
             if (!this.players.isEmpty()) {
-                for (Map.Entry<String, Map<String, Vector3>> entry : this.changedBlocks.entrySet()) {
-                    String index = entry.getKey();
-                    Map<String, Vector3> blocks = entry.getValue();
+                for (String index : new ArrayList<>(this.changedBlocks.keySet())) {
+                    this.chunkCache.remove(index);
+                    Map<String, Vector3> blocks = this.changedBlocks.get(index);
                     Chunk.Entry chunkEntry = Level.getChunkXZ(index);
                     int chunkX = chunkEntry.chunkX;
                     int chunkZ = chunkEntry.chunkZ;
@@ -700,11 +700,10 @@ public class Level implements ChunkManager, Metadatable {
 
         int blockTest = 0;
 
-        for (Map.Entry<String, Integer> entry : this.chunkTickList.entrySet()) {
-            String index = entry.getKey();
-            int loaders = entry.getValue();
+        for (String index : new ArrayList<>(this.chunkTickList.keySet())) {
+            int loaders = this.chunkTickList.get(index);
 
-            Chunk.Entry chunkEntry = Level.getChunkXZ(entry.getKey());
+            Chunk.Entry chunkEntry = Level.getChunkXZ(index);
             int chunkX = chunkEntry.chunkX;
             int chunkZ = chunkEntry.chunkZ;
 
@@ -1824,13 +1823,14 @@ public class Level implements ChunkManager, Metadatable {
 
     private void processChunkRequest() {
         if (!this.chunkSendQueue.isEmpty()) {
-            for (String index : this.chunkSendQueue.keySet()) {
+            for (String index : new ArrayList<>(this.chunkSendQueue.keySet())) {
                 if (this.chunkSendTasks.containsKey(index)) {
                     continue;
                 }
                 Chunk.Entry chunkEntry = Level.getChunkXZ(index);
                 int x = chunkEntry.chunkX;
                 int z = chunkEntry.chunkZ;
+                this.chunkSendTasks.put(index, true);
                 if (this.chunkCache.containsKey(index)) {
                     this.sendChunkFromCache(x, z);
                     continue;

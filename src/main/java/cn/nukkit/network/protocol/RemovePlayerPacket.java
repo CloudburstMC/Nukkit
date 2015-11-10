@@ -7,7 +7,7 @@ import java.util.UUID;
  * Nukkit Project
  */
 public class RemovePlayerPacket extends DataPacket {
-    public final static byte NETWORK_ID = Info.REMOVE_PLAYER_PACKET;
+    public final static byte NETWORK_ID = ProtocolInfo.REMOVE_PLAYER_PACKET;
 
     public long eid;
     public UUID uuid;

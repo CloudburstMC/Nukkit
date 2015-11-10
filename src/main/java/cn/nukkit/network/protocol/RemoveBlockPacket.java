@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class RemoveBlockPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.REMOVE_BLOCK_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.REMOVE_BLOCK_PACKET;
 
     public long eid;
     public int x;

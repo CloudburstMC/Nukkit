@@ -496,7 +496,7 @@ public class Server {
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
         byte[][] payload = new byte[packets.length * 2][];
         for (int i = 0; i < packets.length * 2; i += 2) {
-            DataPacket p = packets[i];
+            DataPacket p = packets[i / 2];
             if (!p.isEncoded) {
                 p.encode();
             }
@@ -825,7 +825,7 @@ public class Server {
 
     private void checkTickUpdates(int currentTick, long tickTime) {
         for (Player p : this.players.values()) {
-            if (!p.loggedIn && (tickTime - p.creationTime) >= 10) {
+            if (!p.loggedIn && (tickTime - p.creationTime) >= 10000) {
                 p.close("", "Login timeout");
             } else if (this.alwaysTickPlayers) {
                 p.onUpdate(currentTick);

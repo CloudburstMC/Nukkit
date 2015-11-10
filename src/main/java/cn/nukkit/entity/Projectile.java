@@ -1,5 +1,6 @@
 package cn.nukkit.entity;
 
+import cn.nukkit.entity.data.entries.LongEntityDataEntry;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
@@ -31,7 +32,7 @@ public abstract class Projectile extends Entity {
         super(chunk, nbt);
         this.shootingEntity = shootingEntity;
         if (shootingEntity != null) {
-            this.setDataProperty(DATA_SHOOTER_ID, DATA_TYPE_LONG, shootingEntity.getId());
+            this.setDataProperty(DATA_SHOOTER_ID, new LongEntityDataEntry(shootingEntity.getId()));
         }
     }
 

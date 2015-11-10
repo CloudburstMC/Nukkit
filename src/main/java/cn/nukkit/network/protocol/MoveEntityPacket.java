@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class MoveEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.MOVE_ENTITY_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.MOVE_ENTITY_PACKET;
 
     // eid, x, y, z, yaw, pitch
     public Entry[] entities = new Entry[0];

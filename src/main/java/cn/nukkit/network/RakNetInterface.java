@@ -6,7 +6,7 @@ import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.Info;
+import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.raknet.RakNet;
 import cn.nukkit.raknet.protocol.EncapsulatedPacket;
 import cn.nukkit.raknet.server.RakNetServer;
@@ -183,7 +183,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
         this.handler.sendOption("name",
                 "MCPE;" + name.replace(";", "\\;") + ";" +
-                        Info.CURRENT_PROTOCOL + ";" +
+                        ProtocolInfo.CURRENT_PROTOCOL + ";" +
                         Nukkit.MINECRAFT_VERSION_NETWORK + ";" +
                         info.getPlayerCount() + ";" +
                         info.getMaxPlayerCount());
@@ -234,7 +234,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                 pk = packet.encapsulatedPacket;
             }
 
-            if (!immediate && !needACK && packet.pid() != Info.BATCH_PACKET && Network.BATCH_THRESHOLD >= 0 && packet.getBuffer() != null && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
+            if (!immediate && !needACK && packet.pid() != ProtocolInfo.BATCH_PACKET && Network.BATCH_THRESHOLD >= 0 && packet.getBuffer() != null && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
                 this.server.batchPackets(new Player[]{player}, new DataPacket[]{packet}, true);
                 return null;
             }

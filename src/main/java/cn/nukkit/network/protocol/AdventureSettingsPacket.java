@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class AdventureSettingsPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.ADVENTURE_SETTINGS_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
 
     public int flags;
 

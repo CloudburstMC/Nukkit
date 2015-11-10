@@ -1,6 +1,7 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.data.entries.PositionEntityDataEntry;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
@@ -35,7 +36,7 @@ public class Human extends Creature implements InventoryHolder {
     public float width = 0.6f;
     public float length = 0.6f;
     public float height = 0.6f;
-    public float eyeHeight = 1.62f;
+    public Float eyeHeight = 1.62f;
 
     protected byte[] skin;
     protected boolean isSlim = false;
@@ -83,7 +84,7 @@ public class Human extends Creature implements InventoryHolder {
     protected void initEntity() {
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
 
-        this.setDataProperty(DATA_PLAYER_BED_POSITION, DATA_TYPE_POS, new int[]{0, 0, 0});
+        this.setDataProperty(DATA_PLAYER_BED_POSITION,new PositionEntityDataEntry(0,0,0));
 
         this.inventory = new PlayerInventory(this);
         if (this instanceof Player) {
@@ -105,12 +106,12 @@ public class Human extends Creature implements InventoryHolder {
         if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
             ListTag<CompoundTag> inventoryList = (ListTag<CompoundTag>) this.namedTag.getList("Inventory");
             for (CompoundTag item : inventoryList.list) {
-                if (item.getShort("Slot") >= 0 && item.getShort("Slot") < 9) {
-                    this.inventory.setHotbarSlotIndex(item.getShort("Slot"), item.contains("TrueSlot") ? item.getShort("TrueSlot") : -1);
-                } else if (item.getShort("Slot") >= 100 && item.getShort("Slot") < 104) {
-                    this.inventory.setItem(this.inventory.getSize() + item.getShort("Slot") - 100, NBTIO.getItemHelper(item));
+                if ((item.getByte("Slot") & 0xff) >= 0 && (item.getByte("Slot") & 0xff) < 9) {
+                    this.inventory.setHotbarSlotIndex((item.getByte("Slot") & 0xff), item.contains("TrueSlot") ? (item.getByte("TrueSlot") & 0xff) : -1);
+                } else if ((item.getByte("Slot") & 0xff) >= 100 && (item.getByte("Slot") & 0xff) < 104) {
+                    this.inventory.setItem(this.inventory.getSize() + (item.getByte("Slot") & 0xff) - 100, NBTIO.getItemHelper(item));
                 } else {
-                    this.inventory.setItem(item.getShort("Slot") - 9, NBTIO.getItemHelper(item));
+                    this.inventory.setItem((item.getByte("Slot") & 0xff) - 9, NBTIO.getItemHelper(item));
                 }
             }
         }

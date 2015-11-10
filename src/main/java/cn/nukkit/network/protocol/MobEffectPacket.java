@@ -6,7 +6,7 @@ package cn.nukkit.network.protocol;
  */
 public class MobEffectPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.MOB_EFFECT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.MOB_EFFECT_PACKET;
 
     @Override
     public byte pid() {
