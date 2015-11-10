@@ -645,6 +645,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.spawnToAll();
 
+
         /*if (this.server.getUpdater().hasUpdate() and this.hasPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE)){
             this.server.getUpdater().showPlayerUpdate(this);
         }*/
@@ -658,6 +659,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             respawnPacket1.z = (float) pos.z;
             this.dataPacket(respawnPacket1);
         }
+
+        //Weather
+        this.getLevel().enableWeather(this);
+        this.getLevel().enableThunder(this);
     }
 
     protected boolean orderChunks() {
@@ -2893,6 +2898,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.resetFallDistance();
             this.nextChunkOrderRun = 0;
             this.newPosition = null;
+
+            //Weather
+            this.getLevel().enableWeather(this);
+            this.getLevel().enableThunder(this);
 
             return true;
         }
