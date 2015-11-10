@@ -15,7 +15,7 @@ public class Attribute implements Cloneable {
     public static final int EXPERIENCE = 1;
     public static final int EXPERIENCE_LEVEL = 2;
     public static final int MAX_HUNGER = 3;
-    public static final int MOVEMENTSPEED = 4;
+    public static final int MOVEMENT_SPEED = 4;
 
     private int id;
     protected float minValue;
@@ -33,7 +33,7 @@ public class Attribute implements Cloneable {
         addAttribute(EXPERIENCE, "player.experience", 0, 1, 0, true);
         addAttribute(EXPERIENCE_LEVEL, "player.level", 0, 24791, 0, true);
         addAttribute(MAX_HUNGER, "player.hunger", 0, 20, 20, true);
-        addAttribute(MOVEMENTSPEED, "generic.movementSpeed", 0, 24791, 0.1, true);
+        addAttribute(MOVEMENT_SPEED, "generic.movementSpeed", 0, 24791, 0.1f, true);
     }
 
     public static Attribute addAttribute(int id, String name, float minValue, float maxValue, float defaultValue, boolean shouldSend) {
