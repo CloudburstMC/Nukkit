@@ -154,6 +154,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     private PermissibleBase perm = null;
 
+    private PlayerFood foodData = null;
+
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
     }
@@ -663,6 +665,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         //Weather
         this.getLevel().enableWeather(this);
         this.getLevel().enableThunder(this);
+
+        //FoodLevel
+        this.getFoodData().sendFoodLevel();
     }
 
     protected boolean orderChunks() {
@@ -1546,6 +1551,16 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.namedTag.putBoolean("Invulnerable", false);
         }
         this.invulnerable = this.namedTag.getBoolean("Invulnerable");
+
+        if (!this.namedTag.contains("FoodLevel")) {
+            this.namedTag.putShort("FoodLevel", 20);
+        }
+        int foodLevel = this.namedTag.getShort("FoodLevel");
+        if (!this.namedTag.contains("FoodSaturationLevel")) {
+            this.namedTag.putShort("FoodSaturationLevel", 20);
+        }
+        int foodSaturationLevel = this.namedTag.getShort("FoodSaturationLevel");
+        this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
         this.chunk.addEntity(this);
         this.level.addEntity(this);
@@ -2554,6 +2569,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.namedTag.putString("lastIP", this.getAddress());
 
+            this.namedTag.putInt("FoodLevel", this.getFoodData().getFoodLevel());
+            this.namedTag.putInt("FoodSaturationLevel", this.getFoodData().getFoodSaturationLevel());
+
             if (!"".equals(this.username) && this.namedTag != null) {
                 this.server.saveOfflinePlayerData(this.username, this.namedTag, async);
             }
@@ -3058,4 +3076,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         batch.isEncoded = true;
         return batch;
     }
+
+    private  boolean foodEnabled = true;
+
+    public boolean isFoodEnabled() {
+        return this.isCreative() || this.isSpectator() ? false : this.foodEnabled;
+    }
+
+    public void setFoodEnabled(boolean foodEnabled) {
+        this.foodEnabled = foodEnabled;
+    }
+
+    public PlayerFood getFoodData() {
+        return this.foodData;
+    }
+
 }
