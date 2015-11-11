@@ -407,6 +407,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.creationTime = System.currentTimeMillis();
     }
 
+    public boolean isPlayer(){
+        return true;
+    }
+
     public boolean isConnected() {
         return connected;
     }
