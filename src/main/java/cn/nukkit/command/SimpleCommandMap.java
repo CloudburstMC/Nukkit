@@ -62,7 +62,7 @@ public class SimpleCommandMap implements CommandMap {
 
         if ((boolean) this.server.getConfig("debug.commands", false)) {
             this.register("nukkit", new StatusCommand("status"));
-            //this.register("nukkit", new GarbageCollectorCommand("gc"));
+            this.register("nukkit", new GarbageCollectorCommand("gc"));
             //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
         }
     }

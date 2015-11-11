@@ -72,6 +72,7 @@ public class StatusCommand extends VanillaCommand {
         server.getLevels().forEach((i, level)->
             sender.sendMessage(
                     TextFormat.GOLD +"World \""+level.getFolderName()+"\""+(!Objects.equals(level.getFolderName(), level.getName()) ? " ("+level.getName()+")" : "")+": "+
+                    //todo finish this after getChunks added
                     //TextFormat.RED + level.getChunks().size() + TextFormat.GREEN +" chunks, "+  //getChunks没有？
                     TextFormat.RED + level.getEntities().length + TextFormat.GREEN +" entities, "+
                     TextFormat.RED + level.getTiles().size() + TextFormat.GREEN +" tiles."+
