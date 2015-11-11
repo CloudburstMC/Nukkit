@@ -40,7 +40,7 @@ public class SimpleCommandMap implements CommandMap {
         //this.register("nukkit", new MeCommand("me"));
         //this.register("nukkit", new ListCommand("list"));
         //this.register("nukkit", new DifficultyCommand("difficulty"));
-        //this.register("nukkit", new KickCommand("kick"));
+        this.register("nukkit", new KickCommand("kick"));
         //this.register("nukkit", new OpCommand("op"));
         //this.register("nukkit", new DeopCommand("deop"));
         //this.register("nukkit", new WhitelistCommand("whitelist"));
