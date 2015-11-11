@@ -156,7 +156,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     private PlayerFood foodData = null;
 
-    private float movementSpeed = 0.1;
+    private float movementSpeed = 0.1f;
 
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
@@ -2132,7 +2132,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.removeAllEffects();
                         this.sendData(this);
 
-                        this.setMovementSpeed(0.1);
+                        this.setMovementSpeed(0.1f);
 
                         this.sendSettings();
                         this.inventory.sendContents(this);
@@ -2749,7 +2749,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    @Override
+    //@Override
     public void setMovementSpeed(float speed) {
         this.movementSpeed = speed;
         Attribute attr = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
@@ -2761,8 +2761,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    @Override
-    public void getMovementSpeed(){
+    //@Override
+    public float getMovementSpeed(){
         return this.movementSpeed;
     }
 
