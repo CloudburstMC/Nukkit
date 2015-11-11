@@ -156,6 +156,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     private PlayerFood foodData = null;
 
+    private float movementSpeed = 0.1;
+
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
     }
@@ -1632,7 +1634,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         UpdateAttributesPacket updateAttributesPacket = new UpdateAttributesPacket();
         updateAttributesPacket.entityId = 0;
         updateAttributesPacket.entries = new Attribute[]{
-                Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(this.getHealth())
+                Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(this.getHealth()),
+                Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(this.getMovementSpeed())
         };
         this.dataPacket(updateAttributesPacket);
 
@@ -2128,6 +2131,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                         this.removeAllEffects();
                         this.sendData(this);
+
+                        this.setMovementSpeed(0.1);
 
                         this.sendSettings();
                         this.inventory.sendContents(this);
@@ -2742,6 +2747,23 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             pk.entityId = 0;
             this.dataPacket(pk);
         }
+    }
+
+    @Override
+    public void setMovementSpeed(float speed) {
+        this.movementSpeed = speed;
+        Attribute attr = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
+        if (this.spawned) {
+            UpdateAttributesPacket pk = new UpdateAttributesPacket();
+            pk.entries = new Attribute[]{attr};
+            pk.entityId = 0;
+            this.dataPacket(pk);
+        }
+    }
+
+    @Override
+    public void getMovementSpeed(){
+        return this.movementSpeed;
     }
 
     @Override
