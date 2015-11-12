@@ -24,8 +24,8 @@ public class SimpleCommandMap implements CommandMap {
     }
 
     private void setDefaultCommands() {
-        //this.register("nukkit", new VersionCommand("version"));
-        //this.register("nukkit", new PluginsCommand("plugins"));
+        this.register("nukkit", new VersionCommand("version"));
+        this.register("nukkit", new PluginsCommand("plugins"));
         this.register("nukkit", new SeedCommand("seed"));
         this.register("nukkit", new HelpCommand("help"));
         this.register("nukkit", new StopCommand("stop"));
