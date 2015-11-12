@@ -2376,6 +2376,41 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
 
                 break;
+            case ProtocolInfo.TEXT_PACKET:
+                if(this.spawned == false || !this.isAlive()){
+                break;
+            }
+            this.craftingType = 0;
+                TextPacket packet0 = (TextPacket) packet;
+            if(packet0.type == TextPacket.TYPE_CHAT){
+                packet0.message = this.removeFormat ? TextFormat.clean(packet0.message) : packet0.message;
+                 for (String message0: packet0.message.split("\n")){
+                    if(message0.trim() != "" && message0.length() <= 255 && this.messageCounter-- > 0){
+                        PlayerCommandPreprocessEvent ev0 = new PlayerCommandPreprocessEvent(this, message0);
+
+                        if(ev0.getMessage().length() > 320){
+                            ev.setCancelled();
+                        }
+                        this.server.getPluginManager().callEvent(ev0);
+
+                        if(ev0.isCancelled()){
+                            break;
+                        }
+                        if(ev0.getMessage().startsWith("/")){ //Command
+                            //Timings::playerCommandTimer.startTiming();
+                            this.server.dispatchCommand(ev0.getPlayer(), ev0.getMessage().substring(1));
+                            //Timings::playerCommandTimer.stopTiming();
+                        }else{
+                            PlayerChatEvent ev1 = new PlayerChatEvent(this, ev0.getMessage());
+                            this.server.getPluginManager().callEvent(ev1);
+                            if(!ev1.isCancelled()){
+                                this.server.broadcastMessage(this.getServer().getLanguage().translateString(ev1.getFormat(), new String[]{ev1.getPlayer().getDisplayName(), ev1.getMessage()}/*, ev1.getRecipients()*/));
+                            }
+                        }
+                    }
+                }
+            }
+            break;
             //todo alot
             default:
                 break;
