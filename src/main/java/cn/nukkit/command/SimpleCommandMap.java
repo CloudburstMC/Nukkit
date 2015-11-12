@@ -43,7 +43,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new KickCommand("kick"));
         this.register("nukkit", new OpCommand("op"));
         this.register("nukkit", new DeopCommand("deop"));
-        //this.register("nukkit", new WhitelistCommand("whitelist"));
+        this.register("nukkit", new WhitelistCommand("whitelist"));
         //this.register("nukkit", new SaveOnCommand("save-on"));
         //this.register("nukkit", new SaveOffCommand("save-off"));
         //this.register("nukkit", new SaveCommand("save-all"));
