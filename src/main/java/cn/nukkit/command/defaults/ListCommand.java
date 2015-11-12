@@ -23,8 +23,8 @@ public class ListCommand extends VanillaCommand {
         final String[] online = {""};
         final int[] onlineCount = {0};
         sender.getServer().getOnlinePlayers().forEach((s, player) -> {
-            if (player.isOnline() && (!(sender instanceof Player) /*todo || sender.canSee(player)*/)) {
-                online[0] += player.getDisplayName() + ", ";
+            if (player.isOnline() && (!(sender instanceof Player) || ((Player)sender).canSee(player))) {
+                    online[0] += player.getDisplayName() + ", ";
                 ++onlineCount[0];
             }
         });
