@@ -83,11 +83,11 @@ public class PlayerFood {
     public void useHunger(int amount) {
         int sfl = this.getFoodSaturationLevel();
         int foodLevel = this.getFoodLevel();
-        if (sfl > 0) {  //¿Û³ý±¥ºÍ¶È
+        if (sfl > 0) {  //ï¿½Û³ï¿½Í¶ï¿½
            int  newSfl = sfl - amount;
             if (newSfl < 0) newSfl = 0;
             this.setFoodSaturationLevel(newSfl);
-        } else {  //¿Û³ý±¥Ê³¶È
+        } else {  //ï¿½Û³ï¿½Ê³ï¿½ï¿½
             this.setFoodLevel(foodLevel - amount);
         }
     }
@@ -161,8 +161,6 @@ public class PlayerFood {
             this.useHunger(1);
             this.foodExpLevel = 0;
         }
-        //debug
-        this.getPlayer().sendTip(TextFormat.GREEN + "¼õÉÙ¼¢¶ö¼ÆÊ±Æ÷: "+ this.foodTickTimer+" £¬±¥ºÍ¶È: "+this.getFoodSaturationLevel());
     }
 
 }
