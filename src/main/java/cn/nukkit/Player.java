@@ -534,6 +534,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return;
         }
 
+        System.out.println("sending chunk " + Level.chunkHash(x, z));
+
         this.usedChunks.put(Level.chunkHash(x, z), true);
         this.chunkLoadCount++;
 

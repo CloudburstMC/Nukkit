@@ -3,6 +3,7 @@ package cn.nukkit.level.format.mcregion;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
@@ -110,7 +111,7 @@ public class McRegion extends BaseLevelProvider {
 
     @Override
     public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
-        Chunk chunk = this.getChunk(x, z, false);
+        BaseFullChunk chunk = this.getChunk(x, z, false);
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk Sent");
         }
@@ -135,12 +136,12 @@ public class McRegion extends BaseLevelProvider {
 
         BinaryStream extraData = new BinaryStream();
         extraData.putLInt(chunk.getBlockExtraDataArray().size());
-        for (Integer key : chunk.getBlockExtraDataArray().values()) {
+        for (Integer key : chunk.getBlockExtraDataArray().keySet()) {
             extraData.putLInt(key);
             extraData.putLShort(chunk.getBlockExtraDataArray().get(key));
         }
 
-        BinaryStream stream = new BinaryStream(new byte[65536]);
+        BinaryStream stream = new BinaryStream();
         stream.put(chunk.getBlockIdArray());
         stream.put(chunk.getBlockDataArray());
         stream.put(chunk.getBlockSkyLightArray());

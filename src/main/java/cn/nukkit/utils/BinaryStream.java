@@ -78,6 +78,7 @@ public class BinaryStream {
         if (bytes == null) {
             return;
         }
+
         this.ensureCapacity(this.count + bytes.length);
 
         System.arraycopy(bytes, 0, this.buffer, this.count, bytes.length);
