@@ -1689,6 +1689,10 @@ public class Level implements ChunkManager, Metadatable {
         this.getChunk(x >> 4, z >> 4, true).setBiomeColor(x & 0x0f, z & 0x0f, R, G, B);
     }
 
+    public Map<String, BaseFullChunk> getChunks() {
+        return chunks;
+    }
+
     @Override
     public BaseFullChunk getChunk(int chunkX, int chunkZ) {
         return this.getChunk(chunkX, chunkZ, false);
@@ -2362,7 +2366,9 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void setThundering(boolean thundering) {
-        if (thundering && !hasStorm()) { setStorm(true); }
+        if (thundering && !hasStorm()) {
+            setStorm(true);
+        }
         Server server = this.getServer();
         ThunderChangeEvent thunder = new ThunderChangeEvent(this, thundering);
         server.getPluginManager().callEvent(thunder);
@@ -2396,12 +2402,11 @@ public class Level implements ChunkManager, Metadatable {
         if (hasStorm) {
             pk.evid = LevelEventPacket.EVENT_START_RAIN;
             pk.data = rand.nextInt(50000) + 10000;
-            this.getServer().getLogger().debug(String.valueOf(pk.data));
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
             pk.data = 0;
         }
-        for (Player p: this.getPlayers().values()) {
+        for (Player p : this.getPlayers().values()) {
             p.dataPacket(pk);
         }
     }
@@ -2415,7 +2420,6 @@ public class Level implements ChunkManager, Metadatable {
         if (hasStorm) {
             pk.evid = LevelEventPacket.EVENT_START_RAIN;
             pk.data = rand.nextInt(50000) + 10000;
-            this.getServer().getLogger().debug(String.valueOf(pk.data));
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
             pk.data = 0;
@@ -2433,10 +2437,11 @@ public class Level implements ChunkManager, Metadatable {
             pk.evid = LevelEventPacket.EVENT_START_THUNDER;
             pk.data = rand.nextInt(50000) + 10000;
         } else {
-            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;;
+            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
+            ;
             pk.data = 0;
         }
-        for (Player p: this.getPlayers().values()) {
+        for (Player p : this.getPlayers().values()) {
             p.dataPacket(pk);
         }
     }
@@ -2451,7 +2456,8 @@ public class Level implements ChunkManager, Metadatable {
             pk.evid = LevelEventPacket.EVENT_START_THUNDER;
             pk.data = rand.nextInt(50000) + 10000;
         } else {
-            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;;
+            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
+            ;
             pk.data = 0;
         }
         player.dataPacket(pk);

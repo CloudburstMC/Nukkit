@@ -17,14 +17,14 @@ public class ListCommand extends VanillaCommand {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
         final String[] online = {""};
         final int[] onlineCount = {0};
         sender.getServer().getOnlinePlayers().forEach((s, player) -> {
-            if (player.isOnline() && (!(sender instanceof Player) || ((Player)sender).canSee(player))) {
-                    online[0] += player.getDisplayName() + ", ";
+            if (player.isOnline() && (!(sender instanceof Player) || ((Player) sender).canSee(player))) {
+                online[0] += player.getDisplayName() + ", ";
                 ++onlineCount[0];
             }
         });

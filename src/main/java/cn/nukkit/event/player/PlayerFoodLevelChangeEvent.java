@@ -1,12 +1,8 @@
 package cn.nukkit.event.player;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.permission.Permissible;
-
-import java.util.Set;
 
 public class PlayerFoodLevelChangeEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -16,28 +12,27 @@ public class PlayerFoodLevelChangeEvent extends PlayerEvent implements Cancellab
     }
 
     protected int foodLevel;
-    protected int FSL;
+    protected int foodSaturationLevel;
 
-    public PlayerFoodLevelChangeEvent(Player player, int foodLevel, int FSL) {
+    public PlayerFoodLevelChangeEvent(Player player, int foodLevel, int foodSaturationLevel) {
         this.player = player;
         this.foodLevel = foodLevel;
-        this.FSL = FSL;
+        this.foodSaturationLevel = foodSaturationLevel;
     }
 
     public int getFoodLevel() {
-        return  this.foodLevel;
+        return this.foodLevel;
     }
 
     public void setFoodLevel(int foodLevel) {
         this.foodLevel = foodLevel;
     }
 
-    public int getFSL() {
-        return this.FSL;
+    public int getFoodSaturationLevel() {
+        return foodSaturationLevel;
     }
 
-    public void setFSL(int FSL) {
-        this.FSL = FSL;
+    public void setFoodSaturationLevel(int foodSaturationLevel) {
+        this.foodSaturationLevel = foodSaturationLevel;
     }
-
 }

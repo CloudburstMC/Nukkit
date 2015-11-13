@@ -2,7 +2,6 @@ package cn.nukkit.event.weather;
 
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.event.level.LevelEvent;
 import cn.nukkit.level.Level;
 
 /**

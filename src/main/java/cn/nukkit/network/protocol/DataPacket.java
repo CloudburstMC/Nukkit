@@ -29,7 +29,7 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
         this.putByte(this.pid());
     }
 
-    public void setChannel(int channel){
+    public void setChannel(int channel) {
         this.channel = channel;
     }
 

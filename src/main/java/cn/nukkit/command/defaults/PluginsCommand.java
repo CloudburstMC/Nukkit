@@ -24,14 +24,14 @@ public class PluginsCommand extends VanillaCommand {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
 
         final String[] list = {""};
         Map<String, Plugin> plugins = sender.getServer().getPluginManager().getPlugins();
-        plugins.forEach((s, p)->{
-            if(list[0].length() > 0){
+        plugins.forEach((s, p) -> {
+            if (list[0].length() > 0) {
                 list[0] += TextFormat.WHITE + ", ";
             }
             list[0] += p.isEnabled() ? TextFormat.GREEN : TextFormat.RED;

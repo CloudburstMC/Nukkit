@@ -19,10 +19,10 @@ public class DeopCommand extends VanillaCommand {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
-        if(args.length == 0){
+        if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
             return false;
         }
@@ -31,8 +31,8 @@ public class DeopCommand extends VanillaCommand {
         player.setOp(false);
 
         Command.broadcastCommandMessage(sender, new TranslationContainer("commands.deop.success", new String[]{player.getName()}));
-        if(player instanceof Player)
-            ((Player)player).sendMessage(TextFormat.GRAY + "You are no longer op!"); //todo use TranslationContainer?
+        if (player instanceof Player)
+            ((Player) player).sendMessage(TextFormat.GRAY + "You are no longer op!"); //todo use TranslationContainer?
         return true;
     }
 }

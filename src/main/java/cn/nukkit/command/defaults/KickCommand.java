@@ -19,33 +19,39 @@ public class KickCommand extends VanillaCommand {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
-        if(args.length == 0){
+        if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
             return false;
         }
         String name = args[0];
-        String reason;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 1; i < args.length; i++) sb.append(args[i]);
-        reason = sb.toString();
+
+        String reason = "";
+        for (int i = 1; i < args.length; i++) {
+            reason += args[i] + " ";
+        }
+
+        if (reason.length() > 0) {
+            reason = reason.substring(0, reason.length() - 1);
+        }
+
         Player player = sender.getServer().getPlayer(name);
-        if(player != null){ //player instanceof Player
+        if (player != null) {
             player.kick(reason);
-            if(reason.length() >= 1){
+            if (reason.length() >= 1) {
                 Command.broadcastCommandMessage(sender,
-                        new TranslationContainer("commands.kick.success.reason",new String[]{player.getName(), reason})
+                        new TranslationContainer("commands.kick.success.reason", new String[]{player.getName(), reason})
                 );
-            }else{
+            } else {
                 Command.broadcastCommandMessage(sender,
-                        new TranslationContainer("commands.kick.success",new String[]{player.getName()})
-                );
+                        new TranslationContainer("commands.kick.success", player.getName()));
             }
-        }else{
+        } else {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
         }
+
         return true;
     }
 }

@@ -6,7 +6,6 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.network.protocol.UpdateAttributesPacket;
-import cn.nukkit.utils.TextFormat;
 
 /**
  * Created by funcraft on 2015/11/11.
@@ -21,7 +20,9 @@ public class PlayerFood {
         this.foodSaturationLevel = foodSaturationLevel;
     }
 
-    public Player getPlayer() { return  this.player; }
+    public Player getPlayer() {
+        return this.player;
+    }
 
     private int foodLevel = 20;
     private int foodSaturationLevel = 20;
@@ -49,7 +50,7 @@ public class PlayerFood {
             return;
         }
         int foodLevel0 = ev.getFoodLevel();
-        int fsl = ev.getFSL();
+        int fsl = ev.getFoodSaturationLevel();
         this.foodLevel = foodLevel;
         if (fsl != -1) {
             if (fsl > foodLevel) fsl = foodLevel;
@@ -72,22 +73,22 @@ public class PlayerFood {
         if (ev.isCancelled()) {
             return;
         }
-        fsl = ev.getFSL();
+        fsl = ev.getFoodSaturationLevel();
         this.foodSaturationLevel = fsl;
     }
 
     public void useHunger() {
-        this.useHunger(1);;
+        this.useHunger(1);
     }
 
     public void useHunger(int amount) {
         int sfl = this.getFoodSaturationLevel();
         int foodLevel = this.getFoodLevel();
-        if (sfl > 0) {  //�۳�Ͷ�
-           int  newSfl = sfl - amount;
+        if (sfl > 0) {
+            int newSfl = sfl - amount;
             if (newSfl < 0) newSfl = 0;
             this.setFoodSaturationLevel(newSfl);
-        } else {  //�۳�ʳ��
+        } else {
             this.setFoodLevel(foodLevel - amount);
         }
     }
@@ -130,7 +131,7 @@ public class PlayerFood {
                 }
                 this.foodTickTimer = 0;
             }
-        } else if(this.getFoodLevel() == 0) {
+        } else if (this.getFoodLevel() == 0) {
             this.foodTickTimer += tickDiff;
             if (this.foodTickTimer >= 80) {
                 EntityDamageEvent ev = new EntityDamageEvent(this.getPlayer(), EntityDamageEvent.CAUSE_VOID, 1);

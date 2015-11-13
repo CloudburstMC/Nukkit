@@ -20,20 +20,20 @@ public class TellCommand extends VanillaCommand {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
-        if(args.length < 2){
+        if (args.length < 2) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
             return false;
         }
         String name = args[0].toLowerCase();
         Player target = sender.getServer().getPlayer(name);
-        if(target == null){
+        if (target == null) {
             sender.sendMessage(new TranslationContainer("commands.generic.player.notFound"));
             return true;
         }
-        if(Objects.equals(target, sender)){
+        if (Objects.equals(target, sender)) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.message.sameTarget"));
             return true;
         }
@@ -41,7 +41,7 @@ public class TellCommand extends VanillaCommand {
         String msg = "";
         for (int i = 1; i < args.length; i++) msg += args[i] + " ";
 
-        String displayName = (sender instanceof Player ? ((Player)sender).getDisplayName() : sender.getName());
+        String displayName = (sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName());
 
         sender.sendMessage("[" + sender.getName() + " -> " + target.getDisplayName() + "] " + msg);
         target.sendMessage("[" + displayName + " -> " + target.getName() + "] " + msg);

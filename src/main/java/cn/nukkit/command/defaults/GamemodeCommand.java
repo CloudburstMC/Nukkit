@@ -18,11 +18,12 @@ public class GamemodeCommand extends VanillaCommand {
         this.setPermission("nukkit.command.gamemode");
     }
 
-    private static class GamemodeCommandRequest{
+    private static class GamemodeCommandRequest {
         int gamemode;
         Player player;
 
-        enum Valid{VALID_SELF, VALID_OTHERS, INCORRECT_PARAM, INCORRECT_GAMEMODE, PLAYER_NOT_FOUND, PLAYER_EXECUTIONS_ONLY}
+        enum Valid {VALID_SELF, VALID_OTHERS, INCORRECT_PARAM, INCORRECT_GAMEMODE, PLAYER_NOT_FOUND, PLAYER_EXECUTIONS_ONLY}
+
         Valid valid;
 
         public int getGamemode() {
@@ -37,27 +38,27 @@ public class GamemodeCommand extends VanillaCommand {
             return valid;
         }
 
-        private GamemodeCommandRequest(int gamemode, Player player, Valid valid){
+        private GamemodeCommandRequest(int gamemode, Player player, Valid valid) {
             this.gamemode = gamemode;
             this.player = player;
             this.valid = valid;
         }
 
-        static GamemodeCommandRequest of(String[] args, CommandSender sender){
-            if(args.length < 1 || args.length > 2){
+        static GamemodeCommandRequest of(String[] args, CommandSender sender) {
+            if (args.length < 1 || args.length > 2) {
                 return new GamemodeCommandRequest(-1, null, Valid.INCORRECT_PARAM);
             }
             int gamemode = Server.getGamemodeFromString(args[0]);
-            if(gamemode == -1){
+            if (gamemode == -1) {
                 return new GamemodeCommandRequest(-1, null, Valid.INCORRECT_GAMEMODE);
             }
-            if(args.length == 1){
-                if(!(sender instanceof Player))
+            if (args.length == 1) {
+                if (!(sender instanceof Player))
                     return new GamemodeCommandRequest(gamemode, null, Valid.PLAYER_EXECUTIONS_ONLY);
-                return new GamemodeCommandRequest(gamemode, (Player)sender, Valid.VALID_SELF);
-            }else{ //args.length == 2
+                return new GamemodeCommandRequest(gamemode, (Player) sender, Valid.VALID_SELF);
+            } else { //args.length == 2
                 Player player = sender.getServer().getPlayer(args[1]);
-                if(player == null)
+                if (player == null)
                     return new GamemodeCommandRequest(gamemode, null, Valid.PLAYER_NOT_FOUND);
                 return new GamemodeCommandRequest(gamemode, player, Valid.VALID_OTHERS);
             }
@@ -66,23 +67,23 @@ public class GamemodeCommand extends VanillaCommand {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
 
         GamemodeCommandRequest request = GamemodeCommandRequest.of(args, sender);
 
-        switch (request.valid){
+        switch (request.valid) {
             case VALID_SELF:
             case VALID_OTHERS:
                 request.getPlayer().setGamemode(request.getGamemode());
-                if(request.getPlayer().getGamemode() == request.getGamemode()) {
+                if (request.getPlayer().getGamemode() == request.getGamemode()) {
                     String gamemodeString = Server.getGamemodeString(request.getGamemode());
-                    TranslationContainer t = (request.getValid() == GamemodeCommandRequest.Valid.VALID_SELF)?
-                            new TranslationContainer("commands.gamemode.success.self",gamemodeString):
+                    TranslationContainer t = (request.getValid() == GamemodeCommandRequest.Valid.VALID_SELF) ?
+                            new TranslationContainer("commands.gamemode.success.self", gamemodeString) :
                             new TranslationContainer("commands.gamemode.success.other", new String[]{request.getPlayer().getName(), gamemodeString});
                     Command.broadcastCommandMessage(sender, t);
-                }else
+                } else
                     sender.sendMessage("Game mode change for " + request.getPlayer().getName() + " failed!");
                 break;
             case PLAYER_NOT_FOUND:

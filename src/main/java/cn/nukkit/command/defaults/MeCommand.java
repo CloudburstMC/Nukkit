@@ -18,18 +18,18 @@ public class MeCommand extends VanillaCommand {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
-        if(args.length == 0){
+        if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
             return false;
         }
 
         String senderString;
-        if(sender instanceof Player){
+        if (sender instanceof Player) {
             senderString = ((Player) sender).getDisplayName();
-        }else{
+        } else {
             senderString = sender.getName();
         }
 

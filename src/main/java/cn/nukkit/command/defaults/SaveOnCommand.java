@@ -8,7 +8,7 @@ import cn.nukkit.event.TranslationContainer;
  * Created on 2015/11/13 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class SaveOnCommand extends VanillaCommand{
+public class SaveOnCommand extends VanillaCommand {
 
     public SaveOnCommand(String name) {
         super(name, "%nukkit.command.saveon.description", "%commands.save-on.usage");
@@ -17,7 +17,7 @@ public class SaveOnCommand extends VanillaCommand{
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
         sender.getServer().setAutoSave(true);

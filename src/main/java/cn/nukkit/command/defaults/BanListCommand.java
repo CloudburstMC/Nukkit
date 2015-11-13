@@ -15,45 +15,58 @@ import java.util.Objects;
 public class BanListCommand extends VanillaCommand {
     public BanListCommand(String name) {
         super(name, "%nukkit.command.banlist.description", "%commands.banlist.usage");
-        this.setPermission("nukkit.command.ban.list"); //好像没在DefaultPermissions里面找到？
+        this.setPermission("nukkit.command.ban.list");
     }
 
     private enum BanListRequestType {PLAYERS, IPS, INVALID}
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
 
         BanListRequestType reqType;
         BanList banList;
 
-        if(args == null) reqType = BanListRequestType.PLAYERS;
-        else if(args.length != 1)reqType = BanListRequestType.INVALID;
-        else if(Objects.equals(args[0], "ips")) reqType = BanListRequestType.IPS;
-        else if(Objects.equals(args[0], "players")) reqType = BanListRequestType.PLAYERS;
+        if (args == null) reqType = BanListRequestType.PLAYERS;
+        else if (args.length != 1) reqType = BanListRequestType.INVALID;
+        else if (Objects.equals(args[0], "ips")) reqType = BanListRequestType.IPS;
+        else if (Objects.equals(args[0], "players")) reqType = BanListRequestType.PLAYERS;
         else reqType = BanListRequestType.INVALID;
 
-        switch (reqType){
-            case PLAYERS:banList = sender.getServer().getNameBans();break;
-            case IPS:banList = sender.getServer().getIPBans();break;
+        switch (reqType) {
+            case PLAYERS:
+                banList = sender.getServer().getNameBans();
+                break;
+            case IPS:
+                banList = sender.getServer().getIPBans();
+                break;
             default:
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{usageMessage}));
                 return false;
         }
 
-        final String[] message = {""};
+        String message = "";
         Map<String, BanEntry> banEntries = banList.getEntires();
-        banEntries.forEach((s, b)-> message[0] += (b.getName()+","));
-        String sizeString = String.valueOf(banList.getEntires().size());
 
-        switch (reqType){
-            case PLAYERS:sender.sendMessage(new TranslationContainer("commands.banlist.players", new String[]{sizeString}));break;
-            case IPS:sender.sendMessage(new TranslationContainer("commands.banlist.ips", new String[]{sizeString}));break;
+        for (BanEntry entry : banEntries.values()) {
+            message += entry.getName() + ", ";
         }
 
-        sender.sendMessage(message[0]);
+        String sizeString = String.valueOf(banList.getEntires().size());
+
+        switch (reqType) {
+            case PLAYERS:
+                sender.sendMessage(new TranslationContainer("commands.banlist.players", new String[]{sizeString}));
+                break;
+            case IPS:
+                sender.sendMessage(new TranslationContainer("commands.banlist.ips", new String[]{sizeString}));
+                break;
+        }
+
+        sender.sendMessage(message.substring(0, message.length() - 2));
+
         return true;
     }
 }

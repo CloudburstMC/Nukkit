@@ -5,8 +5,6 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
 
 import java.util.HashSet;

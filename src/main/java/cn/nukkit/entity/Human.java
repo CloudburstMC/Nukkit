@@ -84,7 +84,7 @@ public class Human extends Creature implements InventoryHolder {
     protected void initEntity() {
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
 
-        this.setDataProperty(DATA_PLAYER_BED_POSITION,new PositionEntityDataEntry(0,0,0));
+        this.setDataProperty(DATA_PLAYER_BED_POSITION, new PositionEntityDataEntry(0, 0, 0));
 
         this.inventory = new PlayerInventory(this);
         if (this instanceof Player) {

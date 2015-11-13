@@ -16,22 +16,23 @@ public class SayCommand extends VanillaCommand {
         super(name, "%nukkit.command.say.description", "%commands.say.usage");
         this.setPermission("nukkit.command.say");
     }
+
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
-        if(args.length == 0){
+        if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
             return false;
         }
 
         String senderString;
-        if(sender instanceof Player){
+        if (sender instanceof Player) {
             senderString = ((Player) sender).getDisplayName();
-        }else if(sender instanceof ConsoleCommandSender){
+        } else if (sender instanceof ConsoleCommandSender) {
             senderString = "Server";
-        }else{
+        } else {
             senderString = sender.getName();
         }
 

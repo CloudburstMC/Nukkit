@@ -31,7 +31,7 @@ public class AddPlayerPacket extends DataPacket {
     public float pitch;
     public float yaw;
     public Item item;
-    public Map<Integer,EntityDataEntry> metadata;
+    public Map<Integer, EntityDataEntry> metadata;
 
     @Override
     public void decode() {
