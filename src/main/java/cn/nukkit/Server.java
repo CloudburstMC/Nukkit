@@ -994,7 +994,7 @@ public class Server {
             title += " | U " + NukkitMath.round((this.network.getUpload()) / 1024, 2)
                     + " D " + NukkitMath.round((this.network.getDownload()) / 1024, 2) + " kB/s";
         }
-        title += " |TPS " + this.getTicksPerSecond() +
+        title += " | TPS " + this.getTicksPerSecond() +
                 " | Load " + this.getTickUsage() + "%" + (char) 0x07;
 
         System.out.print(title);
@@ -1631,7 +1631,7 @@ public class Server {
     }
 
     public int getPropertyInt(String variable, Integer defaultValue) {
-        return this.properties.exists(variable) ? (!this.properties.get(variable).equals("") ? Integer.parseInt((String) this.properties.get(variable)) : defaultValue) : defaultValue;
+        return this.properties.exists(variable) ? (!this.properties.get(variable).equals("") ? Integer.parseInt(String.valueOf(this.properties.get(variable))) : defaultValue) : defaultValue;
     }
 
     public void setPropertyInt(String variable, int value) {

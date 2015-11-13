@@ -1181,6 +1181,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             }
         }
 
+        Vector2 newPosV2 = new Vector2(newPos.x, newPos.z);
+        double distance = newPosV2.distance(this.x, this.z);
+
         if (!revert && distanceSquared != 0) {
             double dx = newPos.x - this.x;
             double dy = newPos.y - this.y;
@@ -1261,6 +1264,29 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.speed = from.subtract(to);
         } else if (distanceSquared == 0) {
             this.speed = new Vector3(0, 0, 0);
+        }
+
+        if (!revert && (this.isFoodEnabled() || this.getServer().getDifficulty() == 0)) {
+            if ((this.isSurvival() || this.isAdventure())/* && !this.getRiddingOn() instanceof Entity*/) {
+
+                //UpdateFoodExpLevel
+                if (distance >= 0.05) {
+                    double jump = 0;
+                    double swimming = this.isInsideOfWater() ? 0.015 * distance : 0;
+                    if (swimming != 0) distance = 0;
+                    if (this.isSprinting()) {  //Running
+                        if (this.inAirTicks == 3 && swimming == 0) {
+                            jump = 0.7;
+                        }
+                        this.getFoodData().updateFoodExpLevel(0.1 * distance + jump + swimming);
+                    } else {
+                        if (this.inAirTicks == 3 && swimming == 0) {
+                            jump = 0.2;
+                        }
+                        this.getFoodData().updateFoodExpLevel(0.01 * distance + jump + swimming);
+                    }
+                }
+            }
         }
 
         if (revert) {
@@ -1360,6 +1386,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     }
 
                     ++this.inAirTicks;
+                }
+                if (this.isSurvival() || this.isAdventure()) {
+                    if (this.getFoodData() != null) this.getFoodData().updateFoodTickTimer(tickDiff);
                 }
             }
         }
@@ -1559,13 +1588,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.invulnerable = this.namedTag.getBoolean("Invulnerable");
 
         if (!this.namedTag.contains("FoodLevel")) {
-            this.namedTag.putShort("FoodLevel", 20);
+            this.namedTag.putInt("FoodLevel", 20);
         }
-        int foodLevel = this.namedTag.getShort("FoodLevel");
+        int foodLevel = this.namedTag.getInt("FoodLevel");
         if (!this.namedTag.contains("FoodSaturationLevel")) {
-            this.namedTag.putShort("FoodSaturationLevel", 20);
+            this.namedTag.putInt("FoodSaturationLevel", 20);
         }
-        int foodSaturationLevel = this.namedTag.getShort("FoodSaturationLevel");
+        int foodSaturationLevel = this.namedTag.getInt("FoodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
         this.chunk.addEntity(this);
@@ -2207,6 +2236,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                 if (this.canInteract(vector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 6) && this.level.useBreakOn(vector, item, this) != null) {
                     if (this.isSurvival()) {
+                        this.getFoodData().updateFoodExpLevel(0.025);
                         if (!item.deepEquals(oldItem) || item.getCount() != oldItem.getCount()) {
                             this.inventory.setItemInHand(item);
                             this.inventory.sendHeldItem(this.hasSpawned.values());
@@ -2346,6 +2376,41 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
 
                 break;
+            case ProtocolInfo.TEXT_PACKET:
+                if(this.spawned == false || !this.isAlive()){
+                break;
+            }
+            this.craftingType = 0;
+                TextPacket packet0 = (TextPacket) packet;
+            if(packet0.type == TextPacket.TYPE_CHAT){
+                packet0.message = this.removeFormat ? TextFormat.clean(packet0.message) : packet0.message;
+                 for (String message0: packet0.message.split("\n")){
+                    if(message0.trim() != "" && message0.length() <= 255 && this.messageCounter-- > 0){
+                        PlayerCommandPreprocessEvent ev0 = new PlayerCommandPreprocessEvent(this, message0);
+
+                        if(ev0.getMessage().length() > 320){
+                            ev.setCancelled();
+                        }
+                        this.server.getPluginManager().callEvent(ev0);
+
+                        if(ev0.isCancelled()){
+                            break;
+                        }
+                        if(ev0.getMessage().startsWith("/")){ //Command
+                            //Timings::playerCommandTimer.startTiming();
+                            this.server.dispatchCommand(ev0.getPlayer(), ev0.getMessage().substring(1));
+                            //Timings::playerCommandTimer.stopTiming();
+                        }else{
+                            PlayerChatEvent ev1 = new PlayerChatEvent(this, ev0.getMessage());
+                            this.server.getPluginManager().callEvent(ev1);
+                            if(!ev1.isCancelled()){
+                                this.server.broadcastMessage(this.getServer().getLanguage().translateString(ev1.getFormat(), new String[]{ev1.getPlayer().getDisplayName(), ev1.getMessage()}/*, ev1.getRecipients()*/));
+                            }
+                        }
+                    }
+                }
+            }
+            break;
             //todo alot
             default:
                 break;
@@ -2782,9 +2847,29 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             source.setCancelled();
         }
 
+        if (source instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+            if (damager instanceof Player) {
+                ((Player) damager).getFoodData().updateFoodExpLevel(0.3);
+            }
+            //暴击
+            boolean add = false;
+            if (!damager.onGround) {
+                /* TODO
+                for (int i = 0; i < 5); i++) {
+                    CriticalParticle par = new CriticalPartice(new Vector3(this.x + mt_rand(-15, 15) / 10, this.y + mt_rand(0, 20) / 10, this.z + mt_rand(-15, 15) / 10));
+                    this.getLevel().addParticle(par);
+                }
+                */
+                add = true;
+            }
+            if (add) source.setDamage((float)(source.getDamage() * 1.5));
+        }
+
         super.attack(damage, source);
 
         if (!source.isCancelled() && this.getLastDamageCause() == source && this.spawned) {
+            this.getFoodData().updateFoodExpLevel(0.3);
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = 0;
             pk.event = EntityEventPacket.HURT_ANIMATION;
