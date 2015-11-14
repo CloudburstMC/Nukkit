@@ -211,7 +211,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
-    public Object hasPlayedBefore() {
+    public boolean hasPlayedBefore() {
         return this.namedTag != null;
     }
 

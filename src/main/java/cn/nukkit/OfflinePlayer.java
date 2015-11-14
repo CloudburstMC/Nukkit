@@ -103,7 +103,7 @@ public class OfflinePlayer implements IPlayer {
     }
 
     @Override
-    public Object hasPlayedBefore() {
+    public boolean hasPlayedBefore() {
         return this.namedTag != null;
     }
 
