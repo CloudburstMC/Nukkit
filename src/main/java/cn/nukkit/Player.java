@@ -133,7 +133,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     protected Map<UUID, Player> hiddenPlayers = new HashMap<>();
 
-    protected Vector3 newPosition;
+    protected Vector3 newPosition = null;
 
     protected int viewDistance;
     protected int chunksPerTick;
@@ -400,7 +400,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.gamemode = this.server.getGamemode();
         this.setLevel(this.server.getDefaultLevel());
         this.viewDistance = this.server.getViewDistance();
-        this.newPosition = new Vector3(0, 0, 0);
+        //this.newPosition = new Vector3(0, 0, 0);
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
         this.uuid = null;
@@ -534,8 +534,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return;
         }
 
-        System.out.println("sending chunk " + Level.chunkHash(x, z));
-
         this.usedChunks.put(Level.chunkHash(x, z), true);
         this.chunkLoadCount++;
 
@@ -662,12 +660,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         //todo Updater
 
         if (this.getHealth() <= 0) {
-            RespawnPacket respawnPacket1 = new RespawnPacket();
+            respawnPacket = new RespawnPacket();
             pos = this.getSpawn();
-            respawnPacket1.x = (float) pos.x;
-            respawnPacket1.y = (float) pos.y;
-            respawnPacket1.z = (float) pos.z;
-            this.dataPacket(respawnPacket1);
+            respawnPacket.x = (float) pos.x;
+            respawnPacket.y = (float) pos.y;
+            respawnPacket.z = (float) pos.z;
+            this.dataPacket(respawnPacket);
         }
 
         //Weather
@@ -739,7 +737,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             }
         }
 
-        for (String index : lastChunk.keySet()) {
+        for (String index : new ArrayList<>(lastChunk.keySet())) {
             Chunk.Entry entry = Level.getChunkXZ(index);
             this.unloadChunk(entry.chunkX, entry.chunkZ);
         }
@@ -1161,12 +1159,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return;
         }
 
+
         Vector3 newPos = this.newPosition;
         double distanceSquared = newPos.distanceSquared(this);
 
         boolean revert = false;
 
-        if ((distanceSquared / (tickDiff * tickDiff)) > 100) {
+        if ((distanceSquared / ((double) (tickDiff * tickDiff))) > 100) {
             revert = true;
         } else {
             if (this.chunk == null || !this.chunk.isGenerated()) {
@@ -1202,7 +1201,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 diffY = 0;
             }
 
-            double diff = (diffX * diffX + diffY * diffY + diffZ * diffZ) / (tickDiff * tickDiff);
+            double diff = (diffX * diffX + diffY * diffY + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
 
             if (this.isSurvival()) {
                 if (!this.isSleeping()) {
@@ -1301,6 +1300,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.lastPitch = from.pitch;
 
             this.sendPosition(from, from.yaw, from.pitch, MovePlayerPacket.MODE_RESET);
+            //this.sendSettings();
             this.forceMovement = new Vector3(from.x, from.y, from.z);
         } else {
             this.forceMovement = null;
@@ -1374,12 +1374,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     }
                     this.inAirTicks = 0;
                 } else {
-                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && (byte) this.getDataPropertyByte(DATA_NO_AI).data != 1) {
-                        double expectedVelocity = (-this.gravity) / this.drag - ((-this.gravity) / this.drag) * Math.exp(-this.drag * (this.inAirTicks - this.startAirTicks));
+                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && this.getDataPropertyByte(DATA_NO_AI).data != 1) {
+                        double expectedVelocity = (-this.gravity) / ((double) this.drag) - ((-this.gravity) / ((double) this.drag)) * Math.exp(-((double) this.drag) * ((double) (this.inAirTicks - this.startAirTicks)));
                         double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
                         if (!this.hasEffect(Effect.JUMP) && diff > 0.6 && expectedVelocity < this.speed.y && !this.server.getAllowFlight()) {
                             if (this.inAirTicks < 100) {
+                                //this.sendSettings();
                                 this.setMotion(new Vector3(0, expectedVelocity, 0));
                             } else if (this.kick("Flying is not enabled on this server")) {
                                 return false;
@@ -1389,6 +1390,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                     ++this.inAirTicks;
                 }
+
                 if (this.isSurvival() || this.isAdventure()) {
                     if (this.getFoodData() != null) this.getFoodData().updateFoodTickTimer(tickDiff);
                 }
@@ -1532,7 +1534,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.temporalVector = new Vector3();
 
-        if (this.eyeHeight == 0) {
+        if (this.eyeHeight == null) {
             this.eyeHeight = (float) (this.height / 2 + 0.1);
         }
 
@@ -1632,7 +1634,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
         }
 
-        spawnPosition = this.getSpawn();
+        Position spawnPosition = this.getSpawn();
 
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.seed = -1;
@@ -1807,8 +1809,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 break;
             case ProtocolInfo.MOVE_PLAYER_PACKET:
 
+
                 MovePlayerPacket movePlayerPacket = (MovePlayerPacket) packet;
-                Vector3 newPos = new Vector3(((MovePlayerPacket) packet).x, ((MovePlayerPacket) packet).y - this.getEyeHeight(), ((MovePlayerPacket) packet).z);
+                Vector3 newPos = new Vector3(movePlayerPacket.x, movePlayerPacket.y - this.getEyeHeight(), movePlayerPacket.z);
 
                 boolean revert = false;
                 if (!this.isAlive() || !this.spawned) {
@@ -2052,7 +2055,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 CompoundTag nbt = new CompoundTag()
                                         .putList(new ListTag<DoubleTag>("Pos")
                                                 .add(new DoubleTag("", x))
-                                                .add(new DoubleTag("", y + getEyeHeight()))
+                                                .add(new DoubleTag("", y + this.getEyeHeight()))
                                                 .add(new DoubleTag("", z)))
                                         .putList(new ListTag<DoubleTag>("Motion")
                                                 .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
@@ -2317,7 +2320,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     } else if (targetEntity instanceof Player) {
                         if ((((Player) targetEntity).getGamemode() & 0x01) > 0) {
                             break;
-                        } else if (!(boolean) this.server.getConfig("pvp") || this.server.getDifficulty() == 0) {
+                        } else if (!this.server.getPropertyBoolean("pvp") || this.server.getDifficulty() == 0) {
                             cancelled = true;
                         }
 
@@ -2892,16 +2895,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void sendPosition(Vector3 pos, double yaw, double pitch, byte mode) {
-        MovePlayerPacket pk = new MovePlayerPacket();
-        pk.eid = 0;
-        pk.x = (float) pos.x;
-        pk.y = (float) (pos.y + this.getEyeHeight());
-        pk.z = (float) pos.z;
-        pk.bodyYaw = (float) yaw;
-        pk.pitch = (float) pitch;
-        pk.yaw = (float) yaw;
-        pk.mode = mode;
-        this.dataPacket(pk);
+        this.sendPosition(pos, yaw, pitch, mode, null);
     }
 
     public void sendPosition(Vector3 pos, double yaw, double pitch, byte mode, Player[] targets) {

@@ -35,7 +35,7 @@ public class Human extends Creature implements InventoryHolder {
 
     public float width = 0.6f;
     public float length = 0.6f;
-    public float height = 0.6f;
+    public float height = 1.8f;
     public Float eyeHeight = 1.62f;
 
     protected byte[] skin;
@@ -239,4 +239,8 @@ public class Human extends Creature implements InventoryHolder {
         }
     }
 
+    @Override
+    public Float getEyeHeight() {
+        return this.eyeHeight;
+    }
 }

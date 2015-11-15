@@ -213,16 +213,19 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
     @Override
     public Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
+
         if (this.identifiers.containsKey(player)) {
+            byte[] buffer = packet.getBuffer();
             String identifier = this.identifiers.get(player);
             EncapsulatedPacket pk = null;
             if (!packet.isEncoded) {
                 packet.encode();
+                buffer = packet.getBuffer();
             } else if (!needACK) {
                 if (packet.encapsulatedPacket == null) {
                     packet.encapsulatedPacket = new CacheEncapsulatedPacket();
                     packet.encapsulatedPacket.identifierACK = null;
-                    packet.encapsulatedPacket.buffer = packet.getBuffer();
+                    packet.encapsulatedPacket.buffer = buffer;
                     if (packet.getChannel() != 0) {
                         packet.encapsulatedPacket.reliability = 3;
                         packet.encapsulatedPacket.orderChannel = packet.getChannel();
@@ -234,14 +237,15 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                 pk = packet.encapsulatedPacket;
             }
 
-            if (!immediate && !needACK && packet.pid() != ProtocolInfo.BATCH_PACKET && Network.BATCH_THRESHOLD >= 0 && packet.getBuffer() != null && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
+
+            if (!immediate && !needACK && packet.pid() != ProtocolInfo.BATCH_PACKET && Network.BATCH_THRESHOLD >= 0 && buffer != null && buffer.length >= Network.BATCH_THRESHOLD) {
                 this.server.batchPackets(new Player[]{player}, new DataPacket[]{packet}, true);
                 return null;
             }
 
             if (pk == null) {
                 pk = new EncapsulatedPacket();
-                pk.buffer = packet.getBuffer();
+                pk.buffer = buffer;
                 if (packet.getChannel() != 0) {
                     packet.reliability = 3;
                     packet.orderChannel = packet.getChannel();
@@ -251,10 +255,10 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                 }
 
                 if (needACK) {
-                    int iack = this.identifiersACK.get(identifier);
-                    iack++;
-                    pk.identifierACK = iack;
-                    this.identifiersACK.put(identifier, iack);
+                    int iACK = this.identifiersACK.get(identifier);
+                    iACK++;
+                    pk.identifierACK = iACK;
+                    this.identifiersACK.put(identifier, iACK);
                 }
             }
 

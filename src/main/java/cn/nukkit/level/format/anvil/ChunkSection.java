@@ -31,7 +31,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public int getBlockId(int x, int y, int z) {
-        return this.blocks[(y << 8) + (z << 4) + x];
+        return this.blocks[(y << 8) + (z << 4) + x] & 0xff;
     }
 
     @Override
@@ -62,10 +62,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public int getFullBlock(int x, int y, int z) {
         int i = (y << 8) + (z << 4) + x;
+        int block = this.blocks[i] & 0xff;
+        int data = this.data[i + 1] & 0xff;
         if ((x & 1) == 0) {
-            return (this.blocks[i] << 4) | (this.data[i >> 1] & 0x0F);
+            return (block << 4) | (data & 0x0F);
         }
-        return (this.blocks[i] << 4) | (this.data[i >> 1] >> 4);
+        return (block << 4) | (data >> 4);
     }
 
     @Override

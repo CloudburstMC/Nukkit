@@ -495,15 +495,14 @@ public class Server {
 
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
         byte[][] payload = new byte[packets.length * 2][];
-        for (int i = 0; i < packets.length * 2; i += 2) {
-            DataPacket p = packets[i / 2];
+        for (int i = 0; i < packets.length; i++) {
+            DataPacket p = packets[i];
             if (!p.isEncoded) {
                 p.encode();
             }
             byte[] buf = p.getBuffer();
-            payload[i] = Binary.writeInt(buf.length);
-            payload[i + 1] = buf;
-
+            payload[i * 2] = Binary.writeInt(buf.length);
+            payload[i * 2 + 1] = buf;
         }
         this.batchPackets(players, payload, forceSync);
     }
@@ -528,7 +527,7 @@ public class Server {
             try {
                 this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
-                //ignore
+                throw new RuntimeException(e);
             }
         }
     }

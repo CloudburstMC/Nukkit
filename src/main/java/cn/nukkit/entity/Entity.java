@@ -830,10 +830,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public Vector3 getDirectionVector() {
-        float y = (float) -Math.sin(Math.toRadians(this.pitch));
-        float xz = (float) Math.sin(Math.toRadians(this.pitch));
-        float x = -xz * (float) Math.sin(Math.toRadians(this.yaw));
-        float z = xz * (float) Math.cos(Math.toRadians(this.yaw));
+        double y = -Math.sin(Math.toRadians(this.pitch));
+        double xz = Math.sin(Math.toRadians(this.pitch));
+        double x = -xz * Math.sin(Math.toRadians(this.yaw));
+        double z = xz * Math.cos(Math.toRadians(this.yaw));
 
         return this.temporalVector.setComponents(x, y, z).normalize();
     }
@@ -1008,7 +1008,12 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean isInsideOfSolid() {
         double y = this.y + this.getEyeHeight();
-        Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
+        Block block = this.level.getBlock(
+                this.temporalVector.setComponents(
+                        NukkitMath.floorDouble(this.x),
+                        NukkitMath.floorDouble(y),
+                        NukkitMath.floorDouble(this.z))
+        );
 
         AxisAlignedBB bb = block.getBoundingBox();
 
@@ -1431,35 +1436,35 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public IntEntityDataEntry getDataPropertyInt(int id) {
-        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof IntEntityDataEntry) ? (IntEntityDataEntry) this.dataProperties.get(id) : null;
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof IntEntityDataEntry) ? (IntEntityDataEntry) this.dataProperties.get(id) : new IntEntityDataEntry();
     }
 
     public ShortEntityDataEntry getDataPropertyShort(int id) {
-        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof ShortEntityDataEntry) ? (ShortEntityDataEntry) this.dataProperties.get(id) : null;
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof ShortEntityDataEntry) ? (ShortEntityDataEntry) this.dataProperties.get(id) : new ShortEntityDataEntry();
     }
 
     public ByteEntityDataEntry getDataPropertyByte(int id) {
-        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof ByteEntityDataEntry) ? (ByteEntityDataEntry) this.dataProperties.get(id) : null;
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof ByteEntityDataEntry) ? (ByteEntityDataEntry) this.dataProperties.get(id) : new ByteEntityDataEntry();
     }
 
     public LongEntityDataEntry getDataPropertyLong(int id) {
-        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof LongEntityDataEntry) ? (LongEntityDataEntry) this.dataProperties.get(id) : null;
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof LongEntityDataEntry) ? (LongEntityDataEntry) this.dataProperties.get(id) : new LongEntityDataEntry();
     }
 
     public StringEntityDataEntry getDataPropertyString(int id) {
-        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof StringEntityDataEntry) ? (StringEntityDataEntry) this.dataProperties.get(id) : null;
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof StringEntityDataEntry) ? (StringEntityDataEntry) this.dataProperties.get(id) : new StringEntityDataEntry();
     }
 
     public FloatEntityDataEntry getDataPropertyFloat(int id) {
-        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof FloatEntityDataEntry) ? (FloatEntityDataEntry) this.dataProperties.get(id) : null;
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof FloatEntityDataEntry) ? (FloatEntityDataEntry) this.dataProperties.get(id) : new FloatEntityDataEntry();
     }
 
     public SlotEntityDataEntry getDataPropertySlot(int id) {
-        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof SlotEntityDataEntry) ? (SlotEntityDataEntry) this.dataProperties.get(id) : null;
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof SlotEntityDataEntry) ? (SlotEntityDataEntry) this.dataProperties.get(id) : new SlotEntityDataEntry();
     }
 
     public PositionEntityDataEntry getDataPropertyPos(int id) {
-        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof PositionEntityDataEntry) ? (PositionEntityDataEntry) this.dataProperties.get(id) : null;
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof PositionEntityDataEntry) ? (PositionEntityDataEntry) this.dataProperties.get(id) : new PositionEntityDataEntry();
     }
 
     public int getDataPropertyType(int id) {
@@ -1479,7 +1484,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean getDataFlag(int propertyId, int id) {
-        return ((this.getDataPropertyByte(propertyId) == null ? 0 : this.getDataPropertyByte(propertyId).data & 0xff) & (1 << id)) > 0;
+        return ((this.getDataPropertyByte(propertyId).data & 0xff) & (1 << id)) > 0;
     }
 
     @Override

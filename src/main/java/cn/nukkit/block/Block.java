@@ -266,7 +266,160 @@ public class Block extends Position implements Metadatable, Cloneable {
             solid = new boolean[256];
             hardness = new double[256];
             transparent = new boolean[256];
-            // todo register blocks
+
+            list[AIR] = Air.class;
+            list[STONE] = Stone.class;
+            //list[GRASS] = Grass.class;
+            list[DIRT] = Dirt.class;
+            //list[COBBLESTONE] = Cobblestone.class;
+            list[PLANKS] = Planks.class;
+            //list[SAPLING] = Sapling.class;
+            //list[BEDROCK] = Bedrock.class;
+            list[WATER] = Water.class;
+            //list[STILL_WATER] = StillWater.class;
+            list[LAVA] = Lava.class;
+            //list[STILL_LAVA] = StillLava.class;
+            //list[SAND] = Sand.class;
+            list[GRAVEL] = Gravel.class;
+            list[GOLD_ORE] = GoldOre.class;
+            list[IRON_ORE] = IronOre.class;
+            list[COAL_ORE] = CoalOre.class;
+            list[WOOD] = Wood.class;
+            //list[LEAVES] = Leaves.class;
+            //list[SPONGE] = Sponge.class;
+            //list[GLASS] = Glass.class;
+            list[LAPIS_ORE] = LapisOre.class;
+            //list[LAPIS_BLOCK] = Lapis.class;
+            //list[SANDSTONE] = Sandstone.class;
+            list[BED_BLOCK] = Bed.class;
+            /*list[COBWEB] = Cobweb.class;
+            list[TALL_GRASS] = TallGrass.class;
+            list[DEAD_BUSH] = DeadBush.class;
+            list[WOOL] = Wool.class;
+            list[DANDELION] = Dandelion.class;
+            list[RED_FLOWER] = Flower.class;
+            list[BROWN_MUSHROOM] = BrownMushroom.class;
+            list[RED_MUSHROOM] = RedMushroom.class;
+            list[GOLD_BLOCK] = Gold.class;
+            list[IRON_BLOCK] = Iron.class;
+            list[DOUBLE_SLAB] = DoubleSlab.class;
+            list[SLAB] = Slab.class;
+            list[BRICKS_BLOCK] = Bricks.class;
+            list[TNT] = TNT.class;
+            list[BOOKSHELF] = Bookshelf.class;
+            list[MOSS_STONE] = MossStone.class;
+            list[OBSIDIAN] = Obsidian.class;
+            list[TORCH] = Torch.class;*/
+            list[FIRE] = Fire.class;
+            //list[MONSTER_SPAWNER] = MonsterSpawner.class;
+            //list[WOOD_STAIRS] = WoodStairs.class;
+            //list[CHEST] = Chest.class;
+
+            list[DIAMOND_ORE] = DiamondOre.class;
+            //list[DIAMOND_BLOCK] = Diamond.class;
+            //list[WORKBENCH] = Workbench.class;
+            //list[WHEAT_BLOCK] = Wheat.class;
+            //list[FARMLAND] = Farmland.class;
+            //list[FURNACE] = Furnace.class;
+            //list[BURNING_FURNACE] = BurningFurnace.class;
+            list[SIGN_POST] = SignPost.class;
+            //list[WOOD_DOOR_BLOCK] = WoodDoor.class;
+            //list[LADDER] = Ladder.class;
+
+            //list[COBBLESTONE_STAIRS] = CobblestoneStairs.class;
+            //list[WALL_SIGN] = WallSign.class;
+
+            //list[IRON_DOOR_BLOCK] = IronDoor.class;
+            list[REDSTONE_ORE] = RedstoneOre.class;
+            //list[GLOWING_REDSTONE_ORE] = GlowingRedstoneOre.class;
+
+            //list[SNOW_LAYER] = SnowLayer.class;
+            list[ICE] = Ice.class;
+            //list[SNOW_BLOCK] = Snow.class;
+            //list[CACTUS] = Cactus.class;
+            //list[CLAY_BLOCK] = Clay.class;
+            //list[SUGARCANE_BLOCK] = Sugarcane.class;
+
+            /*list[FENCE] = Fence.class;
+            list[PUMPKIN] = Pumpkin.class;
+            list[NETHERRACK] = Netherrack.class;
+            list[SOUL_SAND] = SoulSand.class;
+            list[GLOWSTONE_BLOCK] = Glowstone.class;
+
+            list[LIT_PUMPKIN] = LitPumpkin.class;*/
+            //list[CAKE_BLOCK] = Cake.class;
+
+            //list[TRAPDOOR] = Trapdoor.class;
+
+            list[STONE_BRICKS] = StoneBricks.class;
+
+            //list[IRON_BARS] = IronBars.class;
+            //list[GLASS_PANE] = GlassPane.class;
+            //list[MELON_BLOCK] = Melon.class;
+            /*list[PUMPKIN_STEM] = PumpkinStem.class;
+            list[MELON_STEM] = MelonStem.class;
+            list[VINE] = Vine.class;
+            list[FENCE_GATE] = FenceGate.class;
+            list[BRICK_STAIRS] = BrickStairs.class;
+            list[STONE_BRICK_STAIRS] = StoneBrickStairs.class;
+
+            list[MYCELIUM] = Mycelium.class;
+            list[WATER_LILY] = WaterLily.class;*/
+            //list[NETHER_BRICKS] = NetherBrick.class;
+            /*list[NETHER_BRICK_FENCE] = NetherBrickFence.class;
+            list[NETHER_BRICKS_STAIRS] = NetherBrickStairs.class;
+
+            list[ENCHANTING_TABLE] = EnchantingTable.class;
+
+            list[END_PORTAL_FRAME] = EndPortalFrame.class;
+            list[END_STONE] = EndStone.class;
+            list[SANDSTONE_STAIRS] = SandstoneStairs.class;
+            list[EMERALD_ORE] = EmeraldOre.class;*/
+
+            //list[EMERALD_BLOCK] = Emerald.class;
+            /*list[SPRUCE_WOOD_STAIRS] = SpruceWoodStairs.class;
+            list[BIRCH_WOOD_STAIRS] = BirchWoodStairs.class;
+            list[JUNGLE_WOOD_STAIRS] = JungleWoodStairs.class;*/
+            list[STONE_WALL] = StoneWall.class;
+
+            //list[CARROT_BLOCK] = Carrot.class;
+            //list[POTATO_BLOCK] = Potato.class;
+            //list[ANVIL] = Anvil.class;
+
+            //list[REDSTONE_BLOCK] = Redstone.class;
+
+            list[QUARTZ_BLOCK] = Quartz.class;
+            /*list[QUARTZ_STAIRS] = QuartzStairs.class;
+            list[DOUBLE_WOOD_SLAB] = DoubleWoodSlab.class;
+            list[WOOD_SLAB] = WoodSlab.class;
+            list[STAINED_CLAY] = StainedClay.class;
+
+            list[LEAVES2] = Leaves2.class;*/
+            list[WOOD2] = Wood2.class;
+            list[ACACIA_WOOD_STAIRS] = AcaciaWoodStairs.class;
+            /*list[DARK_OAK_WOOD_STAIRS] = DarkOakWoodStairs.class;
+
+            list[HAY_BALE] = HayBale.class;
+            list[CARPET] = Carpet.class;
+            list[HARDENED_CLAY] = HardenedClay.class;*/
+            //list[COAL_BLOCK] = Coal.class;
+
+            /*list[DOUBLE_PLANT] = DoublePlant.class;
+
+            list[FENCE_GATE_SPRUCE] = FenceGateSpruce.class;
+            list[FENCE_GATE_BIRCH] = FenceGateBirch.class;
+            list[FENCE_GATE_JUNGLE] = FenceGateJungle.class;
+            list[FENCE_GATE_DARK_OAK] = FenceGateDarkOak.class;
+            list[FENCE_GATE_ACACIA] = FenceGateAcacia.class;
+
+            list[GRASS_PATH] = GrassPath.class;
+
+            list[PODZOL] = Podzol.class;*/
+            //list[BEETROOT_BLOCK] = Beetroot.class;
+            /*list[STONECUTTER] = Stonecutter.class;
+            list[GLOWING_OBSIDIAN] = GlowingObsidian.class;
+            list[NETHER_REACTOR] = NetherReactor.class;*/
+
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];
                 if (c != null) {
@@ -279,6 +432,7 @@ public class Block extends Position implements Metadatable, Cloneable {
                             fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                         Server.getInstance().getLogger().error("Error while registering " + c.getName());
                         return;
                     }

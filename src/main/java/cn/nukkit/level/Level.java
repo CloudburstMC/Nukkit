@@ -2087,13 +2087,14 @@ public class Level implements ChunkManager, Metadatable {
         if (spawn == null || spawn.y <= 0) {
             spawn = this.getSpawnLocation();
         }
+
         if (spawn != null) {
             Vector3 v = spawn.floor();
             FullChunk chunk = this.getChunk((int) v.x >> 4, (int) v.z >> 4, false);
             int x = (int) v.x & 0x0f;
             int z = (int) v.z & 0x0f;
             if (chunk != null) {
-                int y = Math.min(126, (int) v.y);
+                int y = (int) Math.min(126, v.y);
                 boolean wasAir = chunk.getBlockId(x, y - 1, z) == 0;
                 for (; y > 0; --y) {
                     int b = chunk.getFullBlock(x, y, z);
@@ -2121,6 +2122,7 @@ public class Level implements ChunkManager, Metadatable {
                         ++y;
                     }
                 }
+
                 v.y = y;
             }
 

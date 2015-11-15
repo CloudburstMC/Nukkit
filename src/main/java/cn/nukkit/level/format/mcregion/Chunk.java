@@ -124,7 +124,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public int getBlockId(int x, int y, int z) {
-        return this.blocks[(x << 11) | (z << 7) | y];
+        return this.blocks[(x << 11) | (z << 7) | y] & 0xff;
     }
 
     @Override
@@ -158,10 +158,12 @@ public class Chunk extends BaseFullChunk {
     @Override
     public int getFullBlock(int x, int y, int z) {
         int i = (x << 11) | (z << 7) | y;
+        int block = this.blocks[i] & 0xff;
+        int data = this.data[i >> 1] & 0xff;
         if ((y & 1) == 0) {
-            return (this.blocks[i] << 4) | (this.data[i >> 1] & 0x0f);
+            return (block << 4) | (data & 0x0f);
         } else {
-            return (this.blocks[i] << 4) | (this.data[i >> 1] >> 4);
+            return (block << 4) | (data >> 4);
         }
     }
 
