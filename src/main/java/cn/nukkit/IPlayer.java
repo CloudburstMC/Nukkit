@@ -95,6 +95,15 @@ public interface IPlayer extends ServerOperator, Metadatable {
     Player getPlayer();
 
     /**
+     * 返回玩家所在的服务器。<br>
+     * Returns the server carrying this player.
+     *
+     * @return 玩家所在的服务器。<br>the server carrying this player.
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
+    Server getServer();
+
+    /**
      * 得到这个玩家第一次游戏的时间。<br>
      * Returns the time this player first played in this server.
      *
@@ -113,7 +122,7 @@ public interface IPlayer extends ServerOperator, Metadatable {
     Long getLastPlayed();
 
     /**
-     * 得到这个玩家以前是不是玩过游戏。<br>
+     * 返回这个玩家以前是否来过服务器。<br>
      * Returns if this player had played in this server before.
      * <p>
      * <p>如果想得到这个玩家是不是第一次玩，可以使用：<br>
