@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class SlotEntityDataEntry implements EntityDataEntry {
+public class SlotEntityDataEntry implements EntityDataEntry<Item> {
     public int id;
     public byte meta;
     public int count;
@@ -26,6 +26,18 @@ public class SlotEntityDataEntry implements EntityDataEntry {
         this.id = item.getId();
         this.meta = (byte) (item.hasMeta() ? item.getDamage() : 0);
         this.count = item.getCount();
+    }
+
+    @Override
+    public Item getData() {
+        return new Item(id, meta & 0xff, count);
+    }
+
+    @Override
+    public void setData(Item data) {
+        this.id = data.getId();
+        this.meta = (byte) (data.hasMeta() ? data.getDamage() : 0);
+        this.count = data.getCount();
     }
 
     @Override

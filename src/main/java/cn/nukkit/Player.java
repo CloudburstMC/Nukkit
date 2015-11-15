@@ -2512,7 +2512,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void sendTip(String message) {
         TextPacket pk = new TextPacket();
         pk.type = TextPacket.TYPE_TIP;
-        pk.source = message;
+        pk.message = message;
         this.dataPacket(pk);
     }
 

@@ -6,7 +6,7 @@ import cn.nukkit.entity.Entity;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class FloatEntityDataEntry implements EntityDataEntry {
+public class FloatEntityDataEntry implements EntityDataEntry<Float> {
     public float data;
 
     public FloatEntityDataEntry() {
@@ -17,12 +17,17 @@ public class FloatEntityDataEntry implements EntityDataEntry {
         this.data = data;
     }
 
-    public float getData() {
+    public Float getData() {
         return data;
     }
 
-    public void setData(float data) {
-        this.data = data;
+    public void setData(Float data) {
+        if (data == null) {
+            this.data = 0;
+        } else {
+            this.data = data;
+        }
+
     }
 
     @Override

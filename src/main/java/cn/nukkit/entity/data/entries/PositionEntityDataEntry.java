@@ -7,7 +7,7 @@ import cn.nukkit.math.Vector3;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PositionEntityDataEntry implements EntityDataEntry {
+public class PositionEntityDataEntry implements EntityDataEntry<Vector3> {
     public int x;
     public int y;
     public int z;
@@ -26,6 +26,20 @@ public class PositionEntityDataEntry implements EntityDataEntry {
         this.x = (int) pos.x;
         this.y = (int) pos.y;
         this.z = (int) pos.z;
+    }
+
+    @Override
+    public Vector3 getData() {
+        return new Vector3(x, y, z);
+    }
+
+    @Override
+    public void setData(Vector3 data) {
+        if (data != null) {
+            this.x = (int) data.x;
+            this.y = (int) data.y;
+            this.z = (int) data.z;
+        }
     }
 
     @Override

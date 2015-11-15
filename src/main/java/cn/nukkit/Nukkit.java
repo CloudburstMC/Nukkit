@@ -5,14 +5,15 @@ import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.ServerKiller;
 
 /**
- * 
- *  _   _       _    _    _ _   
- * | \ | |     | |  | |  (_) |  
- * |  \| |_   _| | _| | ___| |_ 
+ * _   _       _    _    _ _
+ * | \ | |     | |  | |  (_) |
+ * |  \| |_   _| | _| | ___| |_
  * | . ` | | | | |/ / |/ / | __|
- * | |\  | |_| |   <|   <| | |_ 
+ * | |\  | |_| |   <|   <| | |_
  * |_| \_|\__,_|_|\_\_|\_\_|\__|
- * 
+ */
+
+/**
  * Nukkit启动类，包含{@code main}函数。<br>
  * The launcher class of Nukkit, including the {@code main} function.
  *

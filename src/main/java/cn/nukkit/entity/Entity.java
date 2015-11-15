@@ -1416,7 +1416,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean setDataProperty(int id, EntityDataEntry dataEntry) {
-        if (!dataEntry.equals(this.getDataProperty(id))) {
+        if (dataEntry.getData().equals(this.getDataProperty(id).getData())) {
             this.dataProperties.put(id, dataEntry);
 
             this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new HashMap<Integer, EntityDataEntry>() {
@@ -1432,7 +1432,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public EntityDataEntry getDataProperty(int id) {
-        return this.dataProperties.containsKey(id) ? this.dataProperties.get(id) : null;
+        return this.dataProperties.containsKey(id) ? this.dataProperties.get(id) : new IntEntityDataEntry();
     }
 
     public IntEntityDataEntry getDataPropertyInt(int id) {

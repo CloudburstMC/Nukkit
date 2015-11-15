@@ -6,7 +6,7 @@ import cn.nukkit.entity.Entity;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class LongEntityDataEntry implements EntityDataEntry {
+public class LongEntityDataEntry implements EntityDataEntry<Long> {
     public long data;
 
     public LongEntityDataEntry() {
@@ -17,11 +17,11 @@ public class LongEntityDataEntry implements EntityDataEntry {
         this.data = data;
     }
 
-    public long getData() {
+    public Long getData() {
         return data;
     }
 
-    public void setData(long data) {
+    public void setData(Long data) {
         this.data = data;
     }
 

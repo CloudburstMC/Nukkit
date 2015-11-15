@@ -6,7 +6,7 @@ import cn.nukkit.entity.Entity;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ShortEntityDataEntry implements EntityDataEntry {
+public class ShortEntityDataEntry implements EntityDataEntry<Integer> {
     public int data;
 
     public ShortEntityDataEntry() {
@@ -17,12 +17,16 @@ public class ShortEntityDataEntry implements EntityDataEntry {
         this.data = data;
     }
 
-    public int getData() {
+    public Integer getData() {
         return data;
     }
 
-    public void setData(int data) {
-        this.data = data;
+    public void setData(Integer data) {
+        if (data == null) {
+            this.data = 0;
+        } else {
+            this.data = data;
+        }
     }
 
     @Override

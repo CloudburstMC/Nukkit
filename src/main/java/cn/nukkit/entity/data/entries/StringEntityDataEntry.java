@@ -6,7 +6,7 @@ import cn.nukkit.entity.Entity;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class StringEntityDataEntry implements EntityDataEntry {
+public class StringEntityDataEntry implements EntityDataEntry<String> {
     public String data;
 
     public StringEntityDataEntry() {

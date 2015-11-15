@@ -5,7 +5,7 @@ import cn.nukkit.item.Item;
 /**
  * 表达一个容器的接口。<br>
  * An interface describes a container.
- *
+ * <p>
  * <p>{@code Container}容器必须包含物品的{@code Item}对象。<br>
  * A {@code Container} must contain items as {@code Item} objects.</p>
  *
@@ -30,12 +30,12 @@ public interface Container {
     /**
      * 把一个物品存储进容器。<br>
      * Sets or stores this item into this container.
-     *
+     * <p>
      * <p>注意：如果这个容器相应的索引序号已经有了物品，那么新存储的物品将会替换原有的物品。<br>
      * Notice: If there is already an item for this index number, the new item being stored will REPLACE the old one.</p>
      *
      * @param index 这个物品的索引序号。<br>The index number of this item.
-     * @param item 描述这个物品的 {@code Item}对象。<br>The {@code Item} object that describes this item.
+     * @param item  描述这个物品的 {@code Item}对象。<br>The {@code Item} object that describes this item.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     void setItem(int index, Item item);

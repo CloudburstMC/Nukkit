@@ -25,10 +25,10 @@ public class OfflinePlayer implements IPlayer {
      * 初始化这个{@code OfflinePlayer}对象。<br>
      * Initializes the object {@code OfflinePlayer}.
      *
-     * @param server      这个玩家所在服务器的{@code Server}对象。<br>
-     *                    The server this player is in, as a {@code Server} object.
-     * @param name      这个玩家所的名字。<br>
-     *                    Name of this player.
+     * @param server 这个玩家所在服务器的{@code Server}对象。<br>
+     *               The server this player is in, as a {@code Server} object.
+     * @param name   这个玩家所的名字。<br>
+     *               Name of this player.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public OfflinePlayer(Server server, String name) {

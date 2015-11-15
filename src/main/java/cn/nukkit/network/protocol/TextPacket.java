@@ -20,9 +20,9 @@ public class TextPacket extends DataPacket {
     public static final byte TYPE_SYSTEM = 5;
 
     public byte type;
-    public String source;
-    public String message;
-    public String[] parameters;
+    public String source = "";
+    public String message = "";
+    public String[] parameters = new String[0];
 
     @Override
     public void decode() {
