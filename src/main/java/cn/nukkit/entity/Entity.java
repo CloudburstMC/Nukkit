@@ -1416,7 +1416,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean setDataProperty(int id, EntityDataEntry dataEntry) {
-        if (dataEntry.getData().equals(this.getDataProperty(id).getData())) {
+        if (!dataEntry.getData().equals(this.getDataProperty(id).getData())) {
             this.dataProperties.put(id, dataEntry);
 
             this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new HashMap<Integer, EntityDataEntry>() {
