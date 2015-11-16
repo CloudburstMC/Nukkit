@@ -135,7 +135,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public int getBlockData(int x, int y, int z) {
-        int b = this.data[(x << 10) | (z << 6) | (y >> 1)];
+        int b = this.data[(x << 10) | (z << 6) | (y >> 1)] & 0xff;
         if ((y & 1) == 0) {
             return b & 0x0f;
         } else {
@@ -146,7 +146,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockData(int x, int y, int z, int data) {
         int i = (x << 10) | (z << 6) | (y >> 1);
-        int old = this.data[i];
+        int old = this.data[i] & 0xff;
         if ((y & 1) == 0) {
             this.data[i] = (byte) (((old & 0xf0) | (old & 0x0f)) & 0xff);
         } else {
@@ -191,7 +191,7 @@ public class Chunk extends BaseFullChunk {
 
         if (meta != null) {
             i >>= 1;
-            int old = this.data[i];
+            int old = this.data[i] & 0xff;
             if ((y & 1) == 0) {
                 this.data[i] = (byte) (((old & 0xf0) | (meta & 0x0f)) & 0xff);
                 if ((old & 0x0f) != meta) {
@@ -213,7 +213,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public int getBlockSkyLight(int x, int y, int z) {
-        int sl = this.skyLight[(x << 10) | (z << 6) | (y >> 1)];
+        int sl = this.skyLight[(x << 10) | (z << 6) | (y >> 1)] & 0xff;
         if ((y & 1) == 0) {
             return sl & 0x0f;
         } else {
@@ -224,7 +224,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockSkyLight(int x, int y, int z, int level) {
         int i = (x << 10) | (z << 6) | (y >> 1);
-        int old = this.skyLight[i];
+        int old = this.skyLight[i] & 0xff;
         if ((y & 1) == 0) {
             this.skyLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
         } else {
@@ -235,7 +235,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public int getBlockLight(int x, int y, int z) {
-        byte b = this.blockLight[(x << 10) | (z << 6) | (y >> 1)];
+        int b = this.blockLight[(x << 10) | (z << 6) | (y >> 1)] & 0xff;
         if ((y & 1) == 0) {
             return b & 0x0f;
         } else {
@@ -246,7 +246,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockLight(int x, int y, int z, int level) {
         int i = (x << 10) | (z << 6) | (y >> 1);
-        byte old = this.blockLight[i];
+        int old = this.blockLight[i] & 0xff;
         if ((y & 1) == 0) {
             this.blockLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
         } else {
