@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator;
 
+import cn.nukkit.level.ChunkManagerPool;
 import cn.nukkit.level.Level;
 import cn.nukkit.scheduler.AsyncTask;
 
@@ -17,7 +18,7 @@ public class GeneratorUnregisterTask extends AsyncTask {
 
     @Override
     public void onRun() {
-        this.saveToThreadStore("generation.level" + this.levelId + ".manager", null);
-        this.saveToThreadStore("generation.level" + this.levelId + ".generator", null);
+        ChunkManagerPool.remove(levelId);
+        GeneratorPool.remove(levelId);
     }
 }

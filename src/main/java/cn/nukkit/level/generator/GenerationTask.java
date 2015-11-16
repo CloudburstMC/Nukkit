@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.Server;
+import cn.nukkit.level.ChunkManagerPool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.SimpleChunkManager;
 import cn.nukkit.level.format.generic.BaseFullChunk;
@@ -15,53 +16,44 @@ public class GenerationTask extends AsyncTask {
     public int levelId;
     public BaseFullChunk chunk;
 
-    /*public byte[] chunk;
-    public Class<? extends FullChunk> chunkClass;*/
-
-
     public GenerationTask(Level level, BaseFullChunk chunk) {
         this.state = true;
         this.levelId = level.getId();
-
-        /*this.chunk = chunk.toFastBinary();
-        this.chunkClass = chunk.getClass();*/
-
         this.chunk = chunk;
     }
 
     @Override
     public void onRun() {
-        SimpleChunkManager manager = (SimpleChunkManager) this.getFromThreadStore("generation.level" + this.levelId + ".manager");
+        SimpleChunkManager manager = (SimpleChunkManager) ChunkManagerPool.get(this.levelId);
 
-        Generator generator = (Generator) this.getFromThreadStore("generation.level" + this.levelId + ".generator");
+        Generator generator = GeneratorPool.get(this.levelId);
 
         if (manager == null || generator == null) {
             this.state = false;
             return;
         }
 
-        /*FullChunk chunk;
-        try {
-            chunk = (FullChunk) this.chunkClass.getMethod("fromFastBinary").invoke(null, this.chunk);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }*/
+        synchronized (manager) {
+            synchronized (generator) {
+                BaseFullChunk chunk = this.chunk.clone();
 
-        BaseFullChunk chunk = this.chunk.clone();
+                if (chunk == null) {
+                    return;
+                }
 
-        if (chunk == null) {
-            return;
+                manager.setChunk(chunk.getX(), chunk.getZ(), chunk);
+
+                generator.generateChunk(chunk.getX(), chunk.getZ());
+
+                chunk = manager.getChunk(chunk.getX(), chunk.getZ());
+                chunk.setGenerated();
+                this.chunk = chunk.clone();
+
+                manager.setChunk(chunk.getX(), chunk.getZ(), null);
+            }
         }
 
-        manager.setChunk(chunk.getX(), chunk.getZ(), chunk);
 
-        generator.generateChunk(chunk.getX(), chunk.getZ());
-
-        chunk = manager.getChunk(chunk.getX(), chunk.getZ());
-        chunk.setGenerated();
-        this.chunk = chunk;
-
-        manager.setChunk(chunk.getX(), chunk.getZ(), null);
     }
 
     @Override
@@ -72,13 +64,6 @@ public class GenerationTask extends AsyncTask {
                 level.registerGenerator();
                 return;
             }
-
-            /*FullChunk chunk;
-            try {
-                chunk = (FullChunk) this.chunkClass.getMethod("fromFastBinary").invoke(null, this.chunk, level.getProvider());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }*/
 
             BaseFullChunk chunk = this.chunk.clone();
 

@@ -17,8 +17,7 @@ public class ShapedRecipe implements Recipe {
 
     private Map<Character, String> shapes = new HashMap<>();
 
-    //todo: private
-    public Map<Integer, Map<Integer, Item>> ingredients = new HashMap<>();
+    private Map<Integer, Map<Integer, Item>> ingredients = new HashMap<>();
 
     private Map<Character, List<Entry>> shapeItems = new HashMap<>();
 
