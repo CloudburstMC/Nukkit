@@ -8,9 +8,6 @@ import org.yaml.snakeyaml.Yaml;
 import java.util.*;
 
 /* TODO Add these to Javadoc：
- *     <li><i>depend</i><br>
- *     <br>
- *     </li>
  *     <li><i>softdepend</i><br>
  *     <br>
  *     </li>
@@ -43,6 +40,8 @@ import java.util.*;
  *   description: the helloworld command
  *   usage: "/helloworld"
  *   permission: helloworldplugin.command.helloworld
+ * depend:
+ * - TestPlugin1
  * </pre></blockquote>
  * 在使用plugin.yml来定义插件时，{@code name}、{@code main}、{@code version}、{@code api}这几个字段是必需的，
  * 要让Nukkit能够正常加载你的插件，必须要合理地填写这几个字段。<br>
@@ -83,6 +82,10 @@ import java.util.*;
  * <li><i>description</i><br>
  * 字符串，表示这个插件的一些描述。<br>
  * String, some description of plugin.</li>
+ * <li><i>depend</i><br>
+ * 序列，表示这个插件所依赖的一个或一些插件的名字的列表。参见：{@link cn.nukkit.plugin.PluginDescription#getDepend()}<br>
+ * List, strings for plugin names, what is depended on by this plugin. See:
+ * {@link cn.nukkit.plugin.PluginDescription#getDepend()}</li>
  * <li><i>prefix</i><br>
  * 字符串，表示这个插件的消息头衔。参见：{@link cn.nukkit.plugin.PluginDescription#getPrefix()}<br>
  * String, the message title of the plugin. See: {@link cn.nukkit.plugin.PluginDescription#getPrefix()}</li>
@@ -274,7 +277,29 @@ public class PluginDescription {
     }
 
     /**
-     * TODO finish javadoc
+     * 返回这个插件所依赖的插件名字。<br>
+     * The names of the plugins what is depended by this plugin.
+     * <p>
+     * <p>Nukkit插件的依赖有这些注意事项：<br>Here are some note for Nukkit plugin depending:
+     * <ul>
+     * <li>一个插件不能依赖自己（否则会报错）。<br>A plugin can not depend on itself (or there will be an exception).</li>
+     * <li>如果一个插件依赖另一个插件，那么必须要安装依赖的插件后才能加载这个插件。<br>
+     *     If a plugin relies on another one, the another one must be installed at the same time, or Nukkit
+     *     won't load this plugin.</li>
+     * <li>当一个插件所依赖的插件不存在时，Nukkit不会加载这个插件，但是会提醒用户去安装所依赖的插件。<br>
+     *     When the required dependency plugin does not exists, Nukkit won't load this plugin, but will tell the
+     *     user that this dependency is required.</li>
+     * </ul></p>
+     * <p>
+     * <p>举个例子，如果A插件依赖于B插件，在没有安装B插件而安装A插件的情况下，Nukkit会阻止A插件的加载。
+     * 只有在安装B插件前安装了它所依赖的A插件，Nukkit才会允许加载B插件。<br>
+     *     For example, there is a Plugin A which relies on Plugin B. If you installed A without installing B,
+     *     Nukkit won't load A because its dependency B is lost. Only when B is installed, A will be loaded
+     *     by Nukkit.</p>
+     *
+     * @return 插件名字列表的 {@code List}对象。<br>A {@code List} object carries the plugin names.
+     * @see cn.nukkit.plugin.PluginDescription
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public List<String> getDepend() {
         return depend;
