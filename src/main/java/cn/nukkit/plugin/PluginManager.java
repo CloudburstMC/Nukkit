@@ -236,9 +236,8 @@ public class PluginManager {
 
             while (!plugins.isEmpty()) {
                 boolean missingDependency = true;
-                for (Map.Entry entry : plugins.entrySet()) {
-                    String name = (String) entry.getKey();
-                    File file = (File) entry.getValue();
+                for (String name : new ArrayList<>(plugins.keySet())) {
+                    File file = plugins.get(name);
                     if (dependencies.containsKey(name)) {
                         for (String dependency : new ArrayList<>(dependencies.get(name))) {
                             if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
@@ -262,7 +261,7 @@ public class PluginManager {
                             }
                         }
 
-                        if (softDependencies.get(name).size() == 0) {
+                        if (softDependencies.get(name).isEmpty()) {
                             softDependencies.remove(name);
                         }
                     }
@@ -274,19 +273,16 @@ public class PluginManager {
                         if (plugin != null) {
                             loadedPlugins.put(name, plugin);
                         } else {
-                            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit" +
-                                    ".plugin.genericLoadError", name));
+                            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.genericLoadError", name));
                         }
                     }
                 }
 
                 if (missingDependency) {
-                    for (Map.Entry entry : plugins.entrySet()) {
-                        String name = (String) entry.getKey();
-                        this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin" +
-                                ".loadError", new String[]{name, "%nukkit.plugin.circularDependency"}));
-                        plugins.clear();
+                    for (String name : plugins.keySet()) {
+                        this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.loadError", new String[]{name, "%nukkit.plugin.circularDependency"}));
                     }
+                    plugins.clear();
                 }
             }
 
