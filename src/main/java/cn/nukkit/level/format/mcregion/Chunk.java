@@ -389,7 +389,7 @@ public class Chunk extends BaseFullChunk {
             chunk.nbt.putByte("LightPopulated", (byte) ((flags >> 2) & 0b1));
             return chunk;
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -480,7 +480,6 @@ public class Chunk extends BaseFullChunk {
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
         try {
-            //Chunk chunk = new Chunk(provider != null ? provider : McRegion.class.newInstance(), null);
             Chunk chunk = new Chunk(provider, null);
             chunk.x = chunkX;
             chunk.z = chunkZ;
@@ -489,16 +488,20 @@ public class Chunk extends BaseFullChunk {
             byte[] skyLight = new byte[16384];
             Arrays.fill(skyLight, (byte) 0xff);
             chunk.skyLight = skyLight;
+            chunk.blockLight = chunk.data;
+
             chunk.heightMap = new int[256];
             chunk.biomeColors = new int[256];
+
             chunk.nbt.putByte("V", (byte) 1);
             chunk.nbt.putLong("InhabitedTime", 0);
             chunk.nbt.putBoolean("TerrainGenerated", false);
             chunk.nbt.putBoolean("TerrainPopulated", false);
             chunk.nbt.putBoolean("LightPopulated", false);
+
             return chunk;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw null;
         }
     }
 }

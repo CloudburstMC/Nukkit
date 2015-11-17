@@ -40,11 +40,12 @@ public abstract class BaseLevelProvider implements LevelProvider {
             throw new LevelException("Invalid level.dat");
         }
 
-        if (!this.levelData.contains("generateName")) {
+        if (!this.levelData.contains("generatorName")) {
             this.levelData.putString("generatorName", Generator.getGenerator("DEFAULT").getSimpleName().toLowerCase());
         }
+
         if (!this.levelData.contains("generatorOptions")) {
-            this.levelData.putString("generatorName", Generator.getGenerator("DEFAULT").getSimpleName().toLowerCase());
+            this.levelData.putString("generatorOptions", "");
         }
     }
 

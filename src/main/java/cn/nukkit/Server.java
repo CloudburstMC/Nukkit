@@ -347,13 +347,13 @@ public class Server {
 
                 Map<String, Object> options = new HashMap<>();
                 String[] opts = ((String) this.getConfig("worlds." + name + ".generator", Generator.getGenerator("default").getSimpleName())).split(":");
-                Class<? extends Generator> generator = Generator.getGenerator(opts[1]);
-                if (opts.length > 1) {
+                Class<? extends Generator> generator = Generator.getGenerator(opts[0]);
+                if (opts.length > 0) {
                     String preset = "";
                     for (int i = 1; i < opts.length; i++) {
                         preset += opts[i] + ":";
                     }
-                    preset = preset.substring(0, preset.length() - 2);
+                    preset = preset.substring(0, preset.length() - 1);
 
                     options.put("preset", preset);
                 }

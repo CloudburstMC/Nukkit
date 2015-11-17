@@ -17,8 +17,6 @@ public class LightPopulationTask extends AsyncTask {
     public LightPopulationTask(Level level, BaseFullChunk chunk) {
         this.levelId = level.getId();
         this.chunk = chunk;
-        /*this.chunk = chunk.toFastBinary();
-        this.chunkClass = chunk.getClass();*/
     }
 
     @Override
@@ -32,7 +30,7 @@ public class LightPopulationTask extends AsyncTask {
         chunk.populateSkyLight();
         chunk.setLightPopulated();
 
-        this.chunk = chunk;
+        this.chunk = chunk.clone();
     }
 
     @Override

@@ -72,6 +72,7 @@ public class Flat extends Generator {
     }
 
     protected void parsePreset(String preset, int chunkX, int chunkZ) {
+        System.out.println("parsing preset");
         try {
             this.preset = preset;
             String[] presetArray = preset.split(";");
@@ -86,8 +87,8 @@ public class Flat extends Generator {
                 if (Pattern.matches("^[0-9]{1,3}x[0-9]$", block)) {
                     //AxB
                     String[] s = block.split("x");
-                    id = Integer.valueOf(s[0]);
-                    cnt = Integer.valueOf(s[1]);
+                    cnt = Integer.valueOf(s[0]);
+                    id = Integer.valueOf(s[1]);
                 } else if (Pattern.matches("^[0-9]{1,3}:[0-9]{0,2}$", block)) {
                     //A:B
                     String[] s = block.split(":");
@@ -147,7 +148,8 @@ public class Flat extends Generator {
             }
 
         } catch (Exception e) {
-            Server.getInstance().getLogger().error("error while parsing the preset: " + e.getMessage());
+            Server.getInstance().getLogger().error("error while parsing the preset");
+            throw new RuntimeException(e);
         }
     }
 
