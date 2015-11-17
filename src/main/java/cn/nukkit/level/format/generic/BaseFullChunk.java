@@ -133,7 +133,7 @@ public abstract class BaseFullChunk implements FullChunk {
                             changed = true;
                             continue;
                         }
-                        if (((int) nbt.getDouble("x") >> 4) != this.x || (((int) nbt.getDouble("z") >> 4) != this.z)) {
+                        if ((nbt.getInt("x") >> 4) != this.x || ((nbt.getInt("z") >> 4) != this.z)) {
                             changed = true;
                             continue;
                         }
