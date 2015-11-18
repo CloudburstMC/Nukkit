@@ -83,15 +83,15 @@ import java.util.*;
  * 字符串，表示这个插件的一些描述。<br>
  * String, some description of plugin.</li>
  * <li><i>depend</i><br>
- * 序列，表示这个插件所依赖的一个或一些插件的名字的列表。参见：{@link cn.nukkit.plugin.PluginDescription#getDepend()}<br>
+ * 序列，表示这个插件所依赖的一个或一些插件的名字的列表。参见：{@link PluginDescription#getDepend()}<br>
  * List, strings for plugin names, what is depended on by this plugin. See:
- * {@link cn.nukkit.plugin.PluginDescription#getDepend()}</li>
+ * {@link PluginDescription#getDepend()}</li>
  * <li><i>prefix</i><br>
- * 字符串，表示这个插件的消息头衔。参见：{@link cn.nukkit.plugin.PluginDescription#getPrefix()}<br>
- * String, the message title of the plugin. See: {@link cn.nukkit.plugin.PluginDescription#getPrefix()}</li>
+ * 字符串，表示这个插件的消息头衔。参见：{@link PluginDescription#getPrefix()}<br>
+ * String, the message title of the plugin. See: {@link PluginDescription#getPrefix()}</li>
  * <li><i>load</i><br>
- * 字符串，表示这个插件的加载顺序，或者说在什么时候加载。参见：{@link cn.nukkit.plugin.PluginLoadOrder}<br>
- * String, the load order of plugin, or when the plugin loads. See: {@link cn.nukkit.plugin.PluginLoadOrder}</li>
+ * 字符串，表示这个插件的加载顺序，或者说在什么时候加载。参见：{@link PluginLoadOrder}<br>
+ * String, the load order of plugin, or when the plugin loads. See: {@link PluginLoadOrder}</li>
  * <li><i>commands</i><br>
  * 序列，表示这个插件的命令列表。<br>
  * List, the command list.</li>
@@ -103,8 +103,8 @@ import java.util.*;
  * @author MagicDroidX(code) @ Nukkit Project
  * @author iNevet(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
- * @see cn.nukkit.plugin.Plugin
- * @see cn.nukkit.plugin.PluginLoadOrder
+ * @see Plugin
+ * @see PluginLoadOrder
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 public class PluginDescription {
@@ -215,7 +215,7 @@ public class PluginDescription {
      * <p>{@code HelloWorld v1.0.0}</p>
      *
      * @return 这个插件完整的名字。<br>The full name of this plugin.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public String getFullName() {
@@ -227,7 +227,7 @@ public class PluginDescription {
      * Returns all Nukkit API versions this plugin supports.
      *
      * @return 这个插件支持的Nukkit API版本列表。<br>A list of all Nukkit API versions String this plugin supports.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public List<String> getCompatibleAPIs() {
@@ -239,7 +239,7 @@ public class PluginDescription {
      * Returns all the authors of this plugin.
      *
      * @return 这个插件的作者列表。<br>A list of all authors of this plugin.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public List<String> getAuthors() {
@@ -256,8 +256,8 @@ public class PluginDescription {
      *
      * @return 这个插件的作信息前缀。如果没定义，返回{@code null}。<br>
      * The message title of this plugin, or{@code null} if undefined.
-     * @see cn.nukkit.plugin.PluginLogger
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginLogger
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public String getPrefix() {
@@ -269,7 +269,7 @@ public class PluginDescription {
      * Returns all the defined commands of this plugin.
      *
      * @return 这个插件定义的命令列表。<br>A map of all defined commands of this plugin.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public Map<String, Object> getCommands() {
@@ -284,21 +284,21 @@ public class PluginDescription {
      * <ul>
      * <li>一个插件不能依赖自己（否则会报错）。<br>A plugin can not depend on itself (or there will be an exception).</li>
      * <li>如果一个插件依赖另一个插件，那么必须要安装依赖的插件后才能加载这个插件。<br>
-     *     If a plugin relies on another one, the another one must be installed at the same time, or Nukkit
-     *     won't load this plugin.</li>
+     * If a plugin relies on another one, the another one must be installed at the same time, or Nukkit
+     * won't load this plugin.</li>
      * <li>当一个插件所依赖的插件不存在时，Nukkit不会加载这个插件，但是会提醒用户去安装所依赖的插件。<br>
-     *     When the required dependency plugin does not exists, Nukkit won't load this plugin, but will tell the
-     *     user that this dependency is required.</li>
+     * When the required dependency plugin does not exists, Nukkit won't load this plugin, but will tell the
+     * user that this dependency is required.</li>
      * </ul></p>
      * <p>
      * <p>举个例子，如果A插件依赖于B插件，在没有安装B插件而安装A插件的情况下，Nukkit会阻止A插件的加载。
      * 只有在安装B插件前安装了它所依赖的A插件，Nukkit才会允许加载B插件。<br>
-     *     For example, there is a Plugin A which relies on Plugin B. If you installed A without installing B,
-     *     Nukkit won't load A because its dependency B is lost. Only when B is installed, A will be loaded
-     *     by Nukkit.</p>
+     * For example, there is a Plugin A which relies on Plugin B. If you installed A without installing B,
+     * Nukkit won't load A because its dependency B is lost. Only when B is installed, A will be loaded
+     * by Nukkit.</p>
      *
      * @return 插件名字列表的 {@code List}对象。<br>A {@code List} object carries the plugin names.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public List<String> getDepend() {
@@ -310,7 +310,7 @@ public class PluginDescription {
      * Returns the description text of this plugin.
      *
      * @return 这个插件的描述文字。<br>The description text of this plugin.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public String getDescription() {
@@ -334,7 +334,7 @@ public class PluginDescription {
      * {@code "com.example.ExamplePlugin"}</p>
      *
      * @return 这个插件的主类名。<br>The main class name of this plugin.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public String getMain() {
@@ -346,7 +346,7 @@ public class PluginDescription {
      * Returns the name of this plugin.
      *
      * @return 这个插件的名字。<br>The name of this plugin.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public String getName() {
@@ -358,8 +358,8 @@ public class PluginDescription {
      * Returns the order the plugin loads, or when the plugin is loaded.
      *
      * @return 这个插件加载的顺序。<br>The order the plugin loads.
-     * @see cn.nukkit.plugin.PluginDescription
-     * @see cn.nukkit.plugin.PluginLoadOrder
+     * @see PluginDescription
+     * @see PluginLoadOrder
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public PluginLoadOrder getOrder() {
@@ -371,7 +371,7 @@ public class PluginDescription {
      * Returns all the defined permissions of this plugin.
      *
      * @return 这个插件定义的权限列表。<br>A map of all defined permissions of this plugin.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public List<Permission> getPermissions() {
@@ -390,7 +390,7 @@ public class PluginDescription {
      * Returns the version string of this plugin.
      *
      * @return 这个插件的版本号。<br>The version string od this plugin.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public String getVersion() {
@@ -402,7 +402,7 @@ public class PluginDescription {
      * Returns the website of this plugin.
      *
      * @return 这个插件的网站。<br>The website of this plugin.
-     * @see cn.nukkit.plugin.PluginDescription
+     * @see PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public String getWebsite() {

@@ -51,11 +51,6 @@ public abstract class Living extends Entity implements Damageable {
 
     @Override
     public void setHealth(float health) {
-        this.setHealth((int) health);
-    }
-
-    @Override
-    public void setHealth(int health) {
         boolean wasAlive = this.isAlive();
         super.setHealth(health);
         if (this.isAlive() && !wasAlive) {

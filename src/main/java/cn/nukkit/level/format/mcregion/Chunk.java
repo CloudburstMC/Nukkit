@@ -501,7 +501,7 @@ public class Chunk extends BaseFullChunk {
 
             return chunk;
         } catch (Exception e) {
-            throw null;
+            throw new RuntimeException(e);
         }
     }
 }

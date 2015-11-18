@@ -72,7 +72,6 @@ public class Flat extends Generator {
     }
 
     protected void parsePreset(String preset, int chunkX, int chunkZ) {
-        System.out.println("parsing preset");
         try {
             this.preset = preset;
             String[] presetArray = preset.split(";");

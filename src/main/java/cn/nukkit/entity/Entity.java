@@ -597,20 +597,17 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setHealth(float health) {
-        this.setHealth((int) health);
-    }
-
-    public void setHealth(int health) {
-        if (this.health == health) {
+        int h = (int) health;
+        if (this.health == h) {
             return;
         }
 
-        if (health <= 0) {
+        if (h <= 0) {
             if (this.isAlive()) {
                 this.kill();
             }
-        } else if (health <= this.getMaxHealth() || health < this.health) {
-            this.health = health;
+        } else if (h <= this.getMaxHealth() || h < this.health) {
+            this.health = h;
         } else {
             this.health = this.getMaxHealth();
         }

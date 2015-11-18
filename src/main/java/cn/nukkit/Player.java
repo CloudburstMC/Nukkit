@@ -2930,7 +2930,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 newChunk.remove(this.getLoaderId());
 
                 //List<Player> reload = new ArrayList<>();
-                for (Player player : this.hasSpawned.values()) {
+                for (Player player : new ArrayList<>(this.hasSpawned.values())) {
                     if (!newChunk.containsKey(player.getLoaderId())) {
                         this.despawnFrom(player);
                     } else {
