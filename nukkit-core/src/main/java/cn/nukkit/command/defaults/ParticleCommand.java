@@ -1,11 +1,12 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.ExplodeParticle;
-import cn.nukkit.level.particle.Particle;
+import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.TextFormat;
 
@@ -77,10 +78,56 @@ public class ParticleCommand extends VanillaCommand {
             switch (string){
                 case "explode":
                     return new ExplodeParticle(pos);
-                //todo a lot
+                case "bubble":
+                    return new BubbleParticle(pos);
+                case "splash":
+                    return new SplashParticle(pos);
+                case "wake":
+                case "water":
+                    return new WaterParticle(pos);
+                case "crit":
+                    return new CriticalParticle(pos);
+                case "smoke":
+                    return new SmokeParticle(pos, data);
+                case "spell":
+                    return new EnchantParticle(pos);
+                case "dripwater":
+                    return new WaterDripParticle(pos);
+                case "driplava":
+                    return new LavaDripParticle(pos);
+                case "townaura":
+                case "spore":
+                    return new SporeParticle(pos);
+                case "portal":
+                    return new PortalParticle(pos);
+                case "flame":
+                    return new FlameParticle(pos);
+                case "lava":
+                    return new LavaParticle(pos);
+                case "reddust":
+                    return new RedstoneParticle(pos, data);
+                case "snowballpoof":
+                    return new ItemBreakParticle(pos, Item.get(Item.SNOWBALL));
+                case "itembreak":
+                    if(data != 0){
+                        Item block = new Item(data);
+                        return new ItemBreakParticle(pos, block);
+                    }
+                    break;
+                case "terrain":
+                    if(data != 0){
+                        Block block = new Block(data);
+                        return new TerrainParticle(pos, block);
+                    }
+                    break;
+                case "heart":
+                    return new HeartParticle(pos, data);
+                case "ink":
+                    return new InkParticle(pos, data);
                 default:
                     return null;
             }
+            return null;
         }
 
         private static boolean isParticleExist(String string){
