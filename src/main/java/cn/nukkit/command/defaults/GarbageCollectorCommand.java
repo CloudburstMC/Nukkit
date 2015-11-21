@@ -1,6 +1,7 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
 
@@ -20,32 +21,32 @@ public class GarbageCollectorCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-        //todo finish chunk collector after getChunks added
-        //final int[] chunksCollected = {0};
-        final int[] entitiesCollected = {0};
-        final int[] tilesCollected = {0};
+
+        int chunksCollected = 0;
+        int entitiesCollected = 0;
+        int tilesCollected = 0;
         long memory = Runtime.getRuntime().freeMemory();
 
-        sender.getServer().getLevels().forEach((i, level) -> {
-            //int chunksCount = level.getChunks(); //wtf no getChunks()
+        for (Level level : sender.getServer().getLevels().values()) {
+            int chunksCount = level.getChunks().size();
             int entitiesCount = level.getEntities().length;
             int tilesCount = level.getTiles().size();
             level.doChunkGarbageCollection();
             level.unloadChunks(true);
-            //chunksCollected[0] += chunksCount - level.getChunks();
-            entitiesCollected[0] += entitiesCount - level.getEntities().length;
-            tilesCollected[0] += tilesCount - level.getTiles().size();
+            chunksCollected += chunksCount - level.getChunks().size();
+            entitiesCollected += entitiesCount - level.getEntities().length;
+            tilesCollected += tilesCount - level.getTiles().size();
             level.clearCache(true);
-        });
+        }
 
         System.gc();
 
         long freedMemory = Runtime.getRuntime().freeMemory() - memory;
 
         sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Garbage collection result" + TextFormat.GREEN + " ----");
-        //sender.sendMessage(TextFormat.GOLD +"Chunks: "+ TextFormat.RED + chunksCollected);
-        sender.sendMessage(TextFormat.GOLD + "Entities: " + TextFormat.RED + entitiesCollected[0]);
-        sender.sendMessage(TextFormat.GOLD + "Tiles: " + TextFormat.RED + tilesCollected[0]);
+        sender.sendMessage(TextFormat.GOLD + "Chunks: " + TextFormat.RED + chunksCollected);
+        sender.sendMessage(TextFormat.GOLD + "Entities: " + TextFormat.RED + entitiesCollected);
+        sender.sendMessage(TextFormat.GOLD + "Tiles: " + TextFormat.RED + tilesCollected);
         sender.sendMessage(TextFormat.GOLD + "Memory freed: " + TextFormat.RED + NukkitMath.round((freedMemory / 1024d / 1024d), 2) + " MB");
         return true;
     }
