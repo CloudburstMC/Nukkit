@@ -63,7 +63,7 @@ public class ArgumentsParser{
     }
 
     private String peekNextValue(){
-        return this.hasNext() ? this.arguments[this.index + 1].isEmpty() ? null : this.arguments[this.index + 1] : null;
+        return this.index + 1 < this.arguments.length ? this.arguments[this.index + 1].isEmpty() ? null : this.arguments[this.index + 1] : null;
     }
 
     private boolean hasNext(){
