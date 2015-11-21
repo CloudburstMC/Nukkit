@@ -5,7 +5,7 @@ import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Created on 2015/11/21 by xtypr.
@@ -23,7 +23,7 @@ public class MobSpawnParticle extends Particle {
     }
 
     @Override
-    public List<DataPacket> encode() {
+    public Collection<DataPacket> encode() {
         LevelEventPacket packet = new LevelEventPacket();
         packet.evid = LevelEventPacket.EVENT_PARTICLE_SPAWN;
         packet.x = this.getFloorX();
@@ -32,7 +32,7 @@ public class MobSpawnParticle extends Particle {
         packet.data =  (this.width & 0xff) + ((this.height & 0xff) << 8);
         packet.encode();
 
-        List<DataPacket> pks = new ArrayList<>();
+        Collection<DataPacket> pks = new ArrayList<>();
         pks.add(packet);
         return pks;
     }

@@ -35,6 +35,7 @@ import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
+import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.AsyncTask;
@@ -318,7 +319,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addParticle(Particle particle) {
         Objects.requireNonNull(particle);
-        List<DataPacket> pks = particle.encode();
+        Collection<DataPacket> pks = particle.encode();
         Objects.requireNonNull(pks);
         pks.forEach((pk)->{
             this.addChunkPacket(particle.getFloorX() >> 4, particle.getFloorZ() >> 4, pk);
@@ -331,7 +332,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addParticle(Particle particle, Player[] players) {
         Objects.requireNonNull(particle);
-        List<DataPacket> pks = particle.encode();
+        Collection<DataPacket> pks = particle.encode();
         Objects.requireNonNull(pks);
 
         this.server.batchPackets(players, pks.toArray(new DataPacket[]{}));
@@ -1317,16 +1318,22 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-
         if (createParticles) {
-            Map<Integer, Player> players = this.getChunkPlayers((int) target.x >> 4, (int) target.z >> 4);
-
+            Map<Integer, Player> playersMap = this.getChunkPlayers((int) target.x >> 4, (int) target.z >> 4);
             if (player != null) {
-                players.remove(player.getLoaderId());
+                playersMap.remove(player.getLoaderId());
             }
+            Collection<Player> playersCollection = new ArrayList<>();
+            playersMap.forEach((i, p)->playersCollection.add(p));
 
-            //todo particle
-            //this.addParticle();
+            LevelEventPacket pk = new LevelEventPacket();
+            pk.evid = 2001;
+            pk.x = (float)target.x + 0.5f;
+            pk.y = (float)target.y + 0.5f;
+            pk.z = (float)target.z + 0.5f;
+            pk.data = target.getId() + (target.getDamage() << 12);
+            pk.setChannel(Network.CHANNEL_WORLD_EVENTS);
+            Server.broadcastPacket(playersCollection, pk);
         }
 
         target.onBreak(item);
