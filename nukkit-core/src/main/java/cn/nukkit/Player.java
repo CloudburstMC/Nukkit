@@ -1789,10 +1789,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     break;
                 }
 
-                if (loginPacket.skin.length != 64 * 32 * 4 && loginPacket.skin.length != 64 * 64 * 4) {
-                    this.close("", "disconnectionScreen.invalidSkin");
-                    break;
-                }
+                //if (loginPacket.skin.length != 64 * 32 * 4 && loginPacket.skin.length != 64 * 64 * 4) {
+                //    this.close("", "disconnectionScreen.invalidSkin");
+                //    break;
+                //}
 
                 this.setSkin(loginPacket.skin, loginPacket.slim);
 

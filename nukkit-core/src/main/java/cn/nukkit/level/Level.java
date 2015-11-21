@@ -25,6 +25,7 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.level.generator.*;
+import cn.nukkit.level.particle.Particle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
@@ -315,8 +316,25 @@ public class Level implements ChunkManager, Metadatable {
         //todo
     }
 
-    public void addParticle() {
-        //todo
+    public void addParticle(Particle particle) {
+        Objects.requireNonNull(particle);
+        List<DataPacket> pks = particle.encode();
+        Objects.requireNonNull(pks);
+        pks.forEach((pk)->{
+            this.addChunkPacket(particle.getFloorX() >> 4, particle.getFloorZ() >> 4, pk);
+        });
+    }
+
+    public void addParticle(Particle particle, Player player) {
+        this.addParticle(particle, new Player[]{player});
+    }
+
+    public void addParticle(Particle particle, Player[] players) {
+        Objects.requireNonNull(particle);
+        List<DataPacket> pks = particle.encode();
+        Objects.requireNonNull(pks);
+
+        this.server.batchPackets(players, pks.toArray(new DataPacket[]{}));
     }
 
     public boolean getAutoSave() {
@@ -1308,7 +1326,7 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             //todo particle
-            this.addParticle();
+            //this.addParticle();
         }
 
         target.onBreak(item);
