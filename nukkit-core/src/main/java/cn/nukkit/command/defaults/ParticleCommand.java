@@ -86,7 +86,7 @@ public class ParticleCommand extends VanillaCommand {
                 case "water":
                     return new WaterParticle(pos);
                 case "crit":
-                    return new CriticalParticle(pos);
+                    return new CriticalParticle(pos, data);
                 case "smoke":
                     return new SmokeParticle(pos, data);
                 case "spell":
