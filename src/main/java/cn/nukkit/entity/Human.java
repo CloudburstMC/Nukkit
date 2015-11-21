@@ -88,10 +88,10 @@ public class Human extends Creature implements InventoryHolder {
             }
 
             if (this.namedTag.contains("Skin") && this.namedTag.get("Skin") instanceof CompoundTag) {
-                if (!this.namedTag.getCompound("Skin").contains("Alpha")) {
-                    this.namedTag.getCompound("Skin").putByte("Skin", (byte) 0);
+                if (!this.namedTag.getCompound("Skin").contains("Transparent")) {
+                    this.namedTag.getCompound("Skin").putBoolean("Transparent", false);
                 }
-                this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getBoolean("Slim"), this.namedTag.getCompound("Skin").getByte("Alpha") & 0xff));
+                this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getBoolean("Slim"), this.namedTag.getCompound("Skin").getBoolean("Transparent")));
             }
 
             this.uuid = Utils.dataToUUID(String.valueOf(this.getId()), Binary.bytesToHexString(this.getSkin().getData()), this.getNameTag());
@@ -167,7 +167,7 @@ public class Human extends Creature implements InventoryHolder {
             this.namedTag.putCompound("Skin", new CompoundTag()
                             .putByteArray("Data", this.getSkin().getData())
                             .putBoolean("Slim", this.getSkin().isSlim())
-                            .putByte("Alpha", (byte) this.getSkin().getAlpha())
+                            .putBoolean("Transparent", this.getSkin().isTransparent())
             );
         }
     }

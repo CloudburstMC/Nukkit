@@ -20,7 +20,7 @@ public class Skin {
 
     private byte[] data = new byte[SINGLE_SKIN_SIZE];
     private boolean slim = false;
-    private int alpha = 0;
+    private boolean transparent = false;
 
     public Skin(byte[] data) {
         this(data, false);
@@ -47,36 +47,36 @@ public class Skin {
     }
 
     public Skin(byte[] data, boolean slim) {
-        this(data, slim, 0);
+        this(data, slim, false);
     }
 
     public Skin(InputStream inputStream, boolean slim) {
-        this(inputStream, slim, 0);
+        this(inputStream, slim, false);
     }
 
     public Skin(ImageInputStream inputStream, boolean slim) {
-        this(inputStream, slim, 0);
+        this(inputStream, slim, false);
     }
 
     public Skin(File file, boolean slim) {
-        this(file, slim, 0);
+        this(file, slim, false);
     }
 
     public Skin(URL url, boolean slim) {
-        this(url, slim, 0);
+        this(url, slim, false);
     }
 
     public Skin(BufferedImage image, boolean slim) {
-        this(image, false, 0);
+        this(image, false, false);
     }
 
-    public Skin(byte[] data, boolean slim, int alpha) {
+    public Skin(byte[] data, boolean slim,boolean transparent) {
         this.setData(data);
         this.slim = slim;
-        this.setAlpha(alpha);
+        this.setTransparent(transparent);
     }
 
-    public Skin(InputStream inputStream, boolean slim, int alpha) {
+    public Skin(InputStream inputStream, boolean slim, boolean transparent) {
         BufferedImage image;
         try {
             image = ImageIO.read(inputStream);
@@ -85,10 +85,10 @@ public class Skin {
         }
         this.parseBufferedImage(image);
         this.slim = slim;
-        this.setAlpha(alpha);
+        this.setTransparent(transparent);
     }
 
-    public Skin(ImageInputStream inputStream, boolean slim, int alpha) {
+    public Skin(ImageInputStream inputStream, boolean slim, boolean transparent) {
         BufferedImage image;
         try {
             image = ImageIO.read(inputStream);
@@ -97,10 +97,10 @@ public class Skin {
         }
         this.parseBufferedImage(image);
         this.slim = slim;
-        this.setAlpha(alpha);
+        this.setTransparent(transparent);
     }
 
-    public Skin(File file, boolean slim, int alpha) {
+    public Skin(File file, boolean slim, boolean transparent) {
         BufferedImage image;
         try {
             image = ImageIO.read(file);
@@ -109,10 +109,10 @@ public class Skin {
         }
         this.parseBufferedImage(image);
         this.slim = slim;
-        this.setAlpha(alpha);
+        this.setTransparent(transparent);
     }
 
-    public Skin(URL url, boolean slim, int alpha) {
+    public Skin(URL url, boolean slim, boolean transparent) {
         BufferedImage image;
         try {
             image = ImageIO.read(url);
@@ -121,13 +121,13 @@ public class Skin {
         }
         this.parseBufferedImage(image);
         this.slim = slim;
-        this.setAlpha(alpha);
+        this.setTransparent(transparent);
     }
 
-    public Skin(BufferedImage image, boolean slim, int alpha) {
+    public Skin(BufferedImage image, boolean slim,boolean transparent) {
         this.parseBufferedImage(image);
         this.slim = slim;
-        this.setAlpha(alpha);
+        this.setTransparent(transparent);
     }
 
     public void parseBufferedImage(BufferedImage image) {
@@ -153,8 +153,8 @@ public class Skin {
         return slim;
     }
 
-    public int getAlpha() {
-        return alpha;
+    public boolean isTransparent() {
+        return transparent;
     }
 
     public void setData(byte[] data) {
@@ -168,11 +168,8 @@ public class Skin {
         this.slim = slim;
     }
 
-    public void setAlpha(int alpha) {
-        if (alpha < 0 || alpha > 255) {
-            throw new IllegalArgumentException("Invalid Alpha value: " + alpha);
-        }
-        this.alpha = alpha;
+    public void setTransparent(boolean transparent) {
+        this.transparent = transparent;
     }
 
     public boolean isValid() {

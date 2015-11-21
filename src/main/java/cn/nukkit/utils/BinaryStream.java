@@ -231,16 +231,16 @@ public class BinaryStream {
 
     public void putSkinData(Skin skin) {
         this.putBoolean(skin.isSlim());
-        this.putByte((byte) skin.getAlpha());
+        this.putBoolean(skin.isTransparent());
         this.putShort(skin.getData().length);
         this.put(skin.getData());
     }
 
     public Skin getSkinData() {
         boolean slim = this.getBoolean();
-        int alpha = this.getByte();
+        boolean transparent = this.getBoolean();
         byte[] skinData = this.get(this.getShort());
-        return new Skin(skinData, slim, alpha);
+        return new Skin(skinData, slim, transparent);
     }
 
     public Item getSlot() {
