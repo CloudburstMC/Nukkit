@@ -26,6 +26,7 @@ import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.level.generator.*;
 import cn.nukkit.level.particle.Particle;
+import cn.nukkit.level.sound.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
@@ -313,9 +314,27 @@ public class Level implements ChunkManager, Metadatable {
         this.temporalPosition = null;
     }
 
-    public void addSound() {
-        //todo
+    public void addSound(Sound sound) {
+        Objects.requireNonNull(sound);
+        Collection<DataPacket> pks = sound.encode();
+        Objects.requireNonNull(pks);
+        pks.forEach((pk)->{
+            this.addChunkPacket(sound.getFloorX() >> 4, sound.getFloorZ() >> 4, pk);
+        });
     }
+
+    public void addSound(Sound sound, Player player) {
+        this.addSound(sound, new Player[]{player});
+    }
+
+    public void addSound(Sound sound, Player[] players) {
+        Objects.requireNonNull(sound);
+        Collection<DataPacket> pks = sound.encode();
+        Objects.requireNonNull(pks);
+
+        this.server.batchPackets(players, pks.toArray(new DataPacket[]{}));
+    }
+
 
     public void addParticle(Particle particle) {
         Objects.requireNonNull(particle);
