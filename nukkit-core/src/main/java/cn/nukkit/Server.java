@@ -62,15 +62,13 @@ import java.nio.ByteOrder;
 import java.util.*;
 
 /**
- * author: MagicDroidX & Box
- * Nukkit
+ * The Server class
+ * Contains main thread ticker
  */
 public class Server {
 
     public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "nukkit.broadcast.admin";
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
-
-    private static Server instance = null;
 
     private BanList banByName = null;
 
@@ -168,8 +166,7 @@ public class Server {
 
     private Level defaultLevel = null;
 
-    public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
-        instance = this;
+    public void initialize(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
         this.logger = logger;
 
         this.filePath = filePath;
@@ -1769,7 +1766,7 @@ public class Server {
     }
 
     public static Server getInstance() {
-        return instance;
+        return Nukkit.getServerInstance();
     }
 
 }
