@@ -24,16 +24,20 @@ public class OpCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
-        String playerName = args[0];
-        IPlayer player = sender.getServer().getOfflinePlayer(playerName);
+
+        String name = args[0];
+        IPlayer player = sender.getServer().getOfflinePlayer(name);
+
+        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", player.getName()));
+        if (player instanceof Player) {
+            ((Player) player).sendMessage(TextFormat.GRAY + "You are now op!");
+        }
+
         player.setOp(true);
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", new String[]{player.getName()}));
-        if (player instanceof Player)
-            ((Player) player).sendMessage(TextFormat.GRAY + "You are now op!"); //todo use TranslationContainer?
         return true;
     }
 }

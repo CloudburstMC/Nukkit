@@ -28,17 +28,21 @@ public class PluginsCommand extends VanillaCommand {
             return true;
         }
 
-        final String[] list = {""};
-        Map<String, Plugin> plugins = sender.getServer().getPluginManager().getPlugins();
-        plugins.forEach((s, p) -> {
-            if (list[0].length() > 0) {
-                list[0] += TextFormat.WHITE + ", ";
-            }
-            list[0] += p.isEnabled() ? TextFormat.GREEN : TextFormat.RED;
-            list[0] += p.getDescription().getFullName();
-        });
-        String pluginsCountString = String.valueOf(plugins.size());
-        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", new String[]{pluginsCountString, list[0]}));
+        this.sendPluginList(sender);
         return true;
+    }
+
+    private void sendPluginList(CommandSender sender) {
+        String list = "";
+        Map<String, Plugin> plugins = sender.getServer().getPluginManager().getPlugins();
+        for (Plugin plugin : plugins.values()) {
+            if (list.length() > 0) {
+                list += TextFormat.WHITE + ", ";
+            }
+            list += plugin.isEnabled() ? TextFormat.GOLD : TextFormat.RED;
+            list += plugin.getDescription().getFullName();
+        }
+
+        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", new String[]{String.valueOf(plugins.size()), list}));
     }
 }

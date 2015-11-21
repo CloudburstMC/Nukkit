@@ -22,8 +22,9 @@ public class SayCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
+
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
 
@@ -37,13 +38,18 @@ public class SayCommand extends VanillaCommand {
         }
 
         String msg = "";
-        for (String arg : args) msg += arg + " ";
+        for (String arg : args) {
+            msg += arg + " ";
+        }
+        if (msg.length() > 0) {
+            msg = msg.substring(0, msg.length() - 1);
+        }
 
-        TranslationContainer cont = new TranslationContainer(
+
+        sender.getServer().broadcastMessage(new TranslationContainer(
                 TextFormat.LIGHT_PURPLE + "%chat.type.announcement",
                 new String[]{senderString, TextFormat.LIGHT_PURPLE + msg}
-        );
-        sender.getServer().broadcastMessage(cont);
+        ));
         return true;
     }
 }

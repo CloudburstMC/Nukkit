@@ -5,8 +5,7 @@ import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.LinkedHashMap;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -18,51 +17,39 @@ public class BanListCommand extends VanillaCommand {
         this.setPermission("nukkit.command.ban.list");
     }
 
-    private enum BanListRequestType {PLAYERS, IPS, INVALID}
-
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
             return true;
         }
 
-        BanListRequestType reqType;
-        BanList banList;
+        BanList list;
+        if (args.length > 0) {
+            args[0] = args[0].toLowerCase();
+            if ("ips".equals(args[0])) {
+                list = sender.getServer().getIPBans();
+            } else if ("players".equals(args[0])) {
+                list = sender.getServer().getNameBans();
+            } else {
+                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
 
-        if (args == null) reqType = BanListRequestType.PLAYERS;
-        else if (args.length != 1) reqType = BanListRequestType.INVALID;
-        else if (Objects.equals(args[0], "ips")) reqType = BanListRequestType.IPS;
-        else if (Objects.equals(args[0], "players")) reqType = BanListRequestType.PLAYERS;
-        else reqType = BanListRequestType.INVALID;
-
-        switch (reqType) {
-            case PLAYERS:
-                banList = sender.getServer().getNameBans();
-                break;
-            case IPS:
-                banList = sender.getServer().getIPBans();
-                break;
-            default:
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{usageMessage}));
                 return false;
+            }
+        } else {
+            list = sender.getServer().getNameBans();
+            args[0] = "players";
         }
 
         String message = "";
-        Map<String, BanEntry> banEntries = banList.getEntires();
-
-        for (BanEntry entry : banEntries.values()) {
+        LinkedHashMap<String, BanEntry> entries = list.getEntires();
+        for (BanEntry entry : entries.values()) {
             message += entry.getName() + ", ";
         }
 
-        String sizeString = String.valueOf(banList.getEntires().size());
-
-        switch (reqType) {
-            case PLAYERS:
-                sender.sendMessage(new TranslationContainer("commands.banlist.players", new String[]{sizeString}));
-                break;
-            case IPS:
-                sender.sendMessage(new TranslationContainer("commands.banlist.ips", new String[]{sizeString}));
-                break;
+        if ("ips".equals(args[0])) {
+            sender.sendMessage(new TranslationContainer("commands.banlist.ips", String.valueOf(entries.size())));
+        } else {
+            sender.sendMessage(new TranslationContainer("commands.banlist.players", String.valueOf(entries.size())));
         }
 
         sender.sendMessage(message.substring(0, message.length() - 2));

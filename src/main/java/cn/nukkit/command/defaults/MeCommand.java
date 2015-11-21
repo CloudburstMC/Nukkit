@@ -21,26 +21,31 @@ public class MeCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
+
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+
             return false;
         }
 
-        String senderString;
+        String name;
         if (sender instanceof Player) {
-            senderString = ((Player) sender).getDisplayName();
+            name = ((Player) sender).getDisplayName();
         } else {
-            senderString = sender.getName();
+            name = sender.getName();
         }
 
         String msg = "";
-        for (String arg : args) msg += arg + " ";
+        for (String arg : args) {
+            msg += arg + " ";
+        }
 
-        TranslationContainer cont = new TranslationContainer(
-                "chat.type.emote",
-                new String[]{senderString, TextFormat.WHITE + msg}
-        );
-        sender.getServer().broadcastMessage(cont);
+        if (msg.length() > 0) {
+            msg = msg.substring(0, msg.length() - 1);
+        }
+
+        sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", new String[]{name, TextFormat.WHITE + msg}));
+
         return true;
     }
 }
