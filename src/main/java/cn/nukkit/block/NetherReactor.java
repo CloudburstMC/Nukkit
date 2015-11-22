@@ -14,7 +14,7 @@ public class NetherReactor extends Solid {
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return "Nether Reactor";
     }
 

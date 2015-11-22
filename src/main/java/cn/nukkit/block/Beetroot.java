@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class Beetroot extends Crop {
-    public Beetroot(){
+    public Beetroot() {
         this(0);
     }
 
@@ -16,13 +16,18 @@ public class Beetroot extends Crop {
     }
 
     @Override
+    public String getName() {
+        return "Beetroot Block";
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
-        if(this.meta >= 0x07) {
+        if (this.meta >= 0x07) {
             return new int[][]{
                     {Item.BEETROOT, 0, 1},
-                    {Item.BEETROOT_SEEDS, 0, (int) (4d * Math.random())} //0~3的随机整数
+                    {Item.BEETROOT_SEEDS, 0, (int) (4d * Math.random())}
             };
-        }else{
+        } else {
             return new int[][]{
                     {Item.BEETROOT_SEEDS, 0, 1}
             };

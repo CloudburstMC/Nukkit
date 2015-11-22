@@ -70,7 +70,7 @@ public class Skin {
         this(image, false, false);
     }
 
-    public Skin(byte[] data, boolean slim,boolean transparent) {
+    public Skin(byte[] data, boolean slim, boolean transparent) {
         this.setData(data);
         this.slim = slim;
         this.setTransparent(transparent);
@@ -124,7 +124,7 @@ public class Skin {
         this.setTransparent(transparent);
     }
 
-    public Skin(BufferedImage image, boolean slim,boolean transparent) {
+    public Skin(BufferedImage image, boolean slim, boolean transparent) {
         this.parseBufferedImage(image);
         this.slim = slim;
         this.setTransparent(transparent);
