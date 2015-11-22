@@ -948,7 +948,7 @@ public class Item implements Cloneable {
             if (c == null) {
                 return new Item(id, meta, count).setCompoundTag(tags);
             } else if (id < 256) {
-                return new ItemBlock((Block) c.getConstructor(Integer.class).newInstance(meta), meta, count).setCompoundTag(tags);
+                return new ItemBlock((Block) c.getConstructor(int.class).newInstance(meta), meta, count).setCompoundTag(tags);
             } else {
                 return ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count)).setCompoundTag(tags);
             }
