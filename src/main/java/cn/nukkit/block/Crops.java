@@ -12,12 +12,12 @@ import java.util.Random;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Crop extends Flowable {
-    public Crop(int id) {
+public abstract class Crops extends Flowable {
+    public Crops(int id) {
         super(id);
     }
 
-    public Crop(int id, int meta) {
+    public Crops(int id, int meta) {
         super(id, meta);
     }
 
@@ -45,7 +45,7 @@ public abstract class Crop extends Flowable {
     public boolean onActivate(Item item) {
         //骨粉
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
-            Crop block = (Crop) this.clone();
+            Crops block = (Crops) this.clone();
             block.meta += new Random().nextInt(3) + 2;
             if (block.meta > 7) {
                 block.meta = 7;
@@ -75,7 +75,7 @@ public abstract class Crop extends Flowable {
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (new Random().nextInt(2) == 1) {
                 if (this.meta < 0x07) {
-                    Crop block = (Crop) this.clone();
+                    Crops block = (Crops) this.clone();
                     ++block.meta;
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);

@@ -6,7 +6,7 @@ import cn.nukkit.item.Item;
  * Created on 2015/11/22 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class Beetroot extends Crop {
+public class Beetroot extends Crops {
     public Beetroot() {
         this(0);
     }
