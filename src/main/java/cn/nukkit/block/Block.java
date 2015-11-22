@@ -411,14 +411,14 @@ public class Block extends Position implements Metadatable, Cloneable {
             list[FENCE_GATE_JUNGLE] = FenceGateJungle.class;
             list[FENCE_GATE_DARK_OAK] = FenceGateDarkOak.class;
             list[FENCE_GATE_ACACIA] = FenceGateAcacia.class;
-
+            */
             list[GRASS_PATH] = GrassPath.class;
 
-            list[PODZOL] = Podzol.class;*/
-            //list[BEETROOT_BLOCK] = Beetroot.class;
-            /*list[STONECUTTER] = Stonecutter.class;
+            list[PODZOL] = Podzol.class;
+            list[BEETROOT_BLOCK] = Beetroot.class;
+            list[STONECUTTER] = Stonecutter.class;
             list[GLOWING_OBSIDIAN] = GlowingObsidian.class;
-            list[NETHER_REACTOR] = NetherReactor.class;*/
+            list[NETHER_REACTOR] = NetherReactor.class;
 
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];
