@@ -269,12 +269,12 @@ public class Block extends Position implements Metadatable, Cloneable {
 
             list[AIR] = Air.class;
             list[STONE] = Stone.class;
-            //list[GRASS] = Grass.class;
+            list[GRASS] = Grass.class;
             list[DIRT] = Dirt.class;
-            //list[COBBLESTONE] = Cobblestone.class;
+            list[COBBLESTONE] = Cobblestone.class;
             list[PLANKS] = Planks.class;
-            //list[SAPLING] = Sapling.class;
-            //list[BEDROCK] = Bedrock.class;
+            list[SAPLING] = Sapling.class;
+            list[BEDROCK] = Bedrock.class;
             list[WATER] = Water.class;
             //list[STILL_WATER] = StillWater.class;
             list[LAVA] = Lava.class;
@@ -285,7 +285,7 @@ public class Block extends Position implements Metadatable, Cloneable {
             list[IRON_ORE] = IronOre.class;
             list[COAL_ORE] = CoalOre.class;
             list[WOOD] = Wood.class;
-            //list[LEAVES] = Leaves.class;
+            list[LEAVES] = Leaves.class;
             //list[SPONGE] = Sponge.class;
             //list[GLASS] = Glass.class;
             list[LAPIS_ORE] = LapisOre.class;
