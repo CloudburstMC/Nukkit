@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.Flower;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -736,15 +737,15 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.FURNACE, 0));
         addCreativeItem(Item.get(Item.END_PORTAL, 0));
         addCreativeItem(Item.get(Item.DANDELION, 0));
-        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_POPPY));
-        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_BLUE_ORCHID));
-        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ALLIUM));
-        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_AZURE_BLUET));
-        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_RED_TULIP));
-        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ORANGE_TULIP));
-        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_WHITE_TULIP));
-        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_PINK_TULIP));
-        //addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_OXEYE_DAISY));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_POPPY));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_BLUE_ORCHID));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ALLIUM));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_AZURE_BLUET));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_RED_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ORANGE_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_WHITE_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_PINK_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_OXEYE_DAISY));
         //TODO: Lilac
         //TODO: Double Tallgrass
         //TODO: Large Fern
