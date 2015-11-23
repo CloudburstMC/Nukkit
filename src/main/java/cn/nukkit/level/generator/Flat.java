@@ -160,24 +160,28 @@ public class Flat extends Generator {
 
     @Override
     public void generateChunk(int chunkX, int chunkZ) {
-        if (this.chunk == null) {
-            if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
-                this.parsePreset((String) this.options.get("preset"), chunkX, chunkZ);
-            } else {
-                this.parsePreset(this.preset, chunkX, chunkZ);
+        synchronized (this.level) {
+            if (this.chunk == null) {
+                if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
+                    this.parsePreset((String) this.options.get("preset"), chunkX, chunkZ);
+                } else {
+                    this.parsePreset(this.preset, chunkX, chunkZ);
+                }
             }
+            BaseFullChunk chunk = this.chunk.clone();
+            chunk.setX(chunkX);
+            chunk.setZ(chunkZ);
+            this.level.setChunk(chunkX, chunkZ, chunk);
         }
-        BaseFullChunk chunk = this.chunk.clone();
-        chunk.setX(chunkX);
-        chunk.setZ(chunkZ);
-        this.level.setChunk(chunkX, chunkZ, chunk);
     }
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
-        this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
-        for (Populator populator : this.populators) {
-            populator.populate(this.level, chunkX, chunkZ, this.random);
+        synchronized (this.level) {
+            this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
+            for (Populator populator : this.populators) {
+                populator.populate(this.level, chunkX, chunkZ, this.random);
+            }
         }
     }
 

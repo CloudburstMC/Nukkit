@@ -381,6 +381,12 @@ public abstract class Entity extends Location implements Metadatable {
             }
             try {
                 return clazz.getConstructor(FullChunk.class, CompoundTag.class, Object[].class).newInstance(chunk, nbt, args);
+            } catch (NoSuchMethodException e) {
+                try {
+                    return clazz.getConstructor(FullChunk.class, CompoundTag.class).newInstance(chunk, nbt);
+                } catch (Exception e2) {
+                    return null;
+                }
             } catch (Exception e) {
                 return null;
             }

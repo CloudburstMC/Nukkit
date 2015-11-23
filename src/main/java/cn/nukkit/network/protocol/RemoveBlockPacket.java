@@ -14,10 +14,10 @@ public class RemoveBlockPacket extends DataPacket {
 
     @Override
     public void decode() {
-        eid = getLong();
-        x = getInt();
-        z = getInt();
-        y = getByte();
+        this.eid = this.getLong();
+        this.x = this.getInt();
+        this.z = getInt();
+        this.y = getByte();
     }
 
     @Override

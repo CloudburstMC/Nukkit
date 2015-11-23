@@ -670,10 +670,10 @@ public class Level implements ChunkManager, Metadatable {
                     first = true;
                 }
 
-                List<int[]> list = new ArrayList<>();
+                List<UpdateBlockPacket.Entry> list = new ArrayList<>();
                 Collections.addAll(list, pk.records);
-                list.add(new int[]{(int) b.x, (int) b.z, (int) b.y, b.getId(), b.getDamage(), first ? flags : UpdateBlockPacket.FLAG_NONE});
-                pk.records = list.stream().toArray(int[][]::new);
+                list.add(new UpdateBlockPacket.Entry((int) b.x, (int) b.z, (int) b.y, b.getId(), b.getDamage(), first ? flags : UpdateBlockPacket.FLAG_NONE));
+                pk.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
             }
         } else {
             for (Block b : blocks) {
@@ -681,10 +681,10 @@ public class Level implements ChunkManager, Metadatable {
                     continue;
                 }
 
-                List<int[]> list = new ArrayList<>();
+                List<UpdateBlockPacket.Entry> list = new ArrayList<>();
                 Collections.addAll(list, pk.records);
-                list.add(new int[]{(int) b.x, (int) b.z, (int) b.y, b.getId(), b.getDamage(), flags});
-                pk.records = list.stream().toArray(int[][]::new);
+                list.add(new UpdateBlockPacket.Entry((int) b.x, (int) b.z, (int) b.y, b.getId(), b.getDamage(), flags));
+                pk.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
             }
         }
 
