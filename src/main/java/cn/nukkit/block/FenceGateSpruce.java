@@ -5,12 +5,12 @@ package cn.nukkit.block;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class FenceGateSpruce extends FenceGate {
-    public FenceGateSpruce(){
+    public FenceGateSpruce() {
         this(0);
     }
 
     public FenceGateSpruce(int meta) {
-        super(FENCE_GATE_SPRUCE ,meta);
+        super(FENCE_GATE_SPRUCE, meta);
     }
 
     @Override

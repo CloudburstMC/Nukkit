@@ -5,7 +5,7 @@ package cn.nukkit.block;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class FenceGateBirch extends FenceGate {
-    public FenceGateBirch(){
+    public FenceGateBirch() {
         this(0);
     }
 

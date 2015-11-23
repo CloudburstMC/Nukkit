@@ -46,10 +46,9 @@ public class Leaves extends Transparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player)
-    {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         this.meta |= 0x04;
-        this.getLevel().setBlock(this,this,true);
+        this.getLevel().setBlock(this, this, true);
         return true;
     }
 
