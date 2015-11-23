@@ -16,8 +16,8 @@ public class RemoveBlockPacket extends DataPacket {
     public void decode() {
         eid = getLong();
         x = getInt();
-        y = getInt();
-        z = getByte();
+        z = getInt();
+        y = getByte();
     }
 
     @Override
