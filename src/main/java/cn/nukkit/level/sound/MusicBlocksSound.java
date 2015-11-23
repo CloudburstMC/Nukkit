@@ -27,6 +27,7 @@ public class MusicBlocksSound extends Sound {
     }
 
     public MusicBlocksSound(Vector3 pos, int instrument, int pitch) {
+        super(pos.x, pos.y, pos.z);
         this.instrument = instrument;
         this.pitch = pitch;
     }

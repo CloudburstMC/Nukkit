@@ -19,7 +19,7 @@ public class GrassPath extends Transparent {
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return "Grass Path";
     }
 

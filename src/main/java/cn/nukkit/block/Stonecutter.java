@@ -9,7 +9,7 @@ import cn.nukkit.item.Tool;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class Stonecutter extends Solid {
-    public Stonecutter(){
+    public Stonecutter() {
         this(0);
     }
 
@@ -34,7 +34,7 @@ public class Stonecutter extends Solid {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if(player != null){
+        if (player != null) {
             player.craftingType = 2;
         }
         return true;
@@ -42,11 +42,11 @@ public class Stonecutter extends Solid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isPickaxe()){
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
             return new int[][]{
                     {Item.STONECUTTER, 0, 1}
             };
-        }else{
+        } else {
             return new int[][]{};
         }
     }

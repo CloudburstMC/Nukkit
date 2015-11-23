@@ -5,7 +5,7 @@ package cn.nukkit.block;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class GlowingObsidian extends Solid {
-    public GlowingObsidian(){
+    public GlowingObsidian() {
         this(0);
     }
 
