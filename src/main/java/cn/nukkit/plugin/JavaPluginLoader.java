@@ -3,13 +3,14 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
-import cn.nukkit.utils.JarClassLoader;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -17,13 +18,14 @@ import java.util.regex.Pattern;
 /**
  * Created by Nukkit Team.
  */
-public class JarPluginLoader implements PluginLoader {
+public class JavaPluginLoader implements PluginLoader {
 
     private Server server;
 
-    private JarClassLoader classLoader;
+    private Map<String, Class> classes = new HashMap<>();
+    private Map<String, PluginClassLoader> classLoaders = new HashMap<>();
 
-    public JarPluginLoader(Server server) {
+    public JavaPluginLoader(Server server) {
         this.server = server;
     }
 
@@ -37,9 +39,9 @@ public class JarPluginLoader implements PluginLoader {
                 throw new IllegalStateException("Projected dataFolder '" + dataFolder.toString() + "' for " + description.getName() + " exists and is not a directory");
             }
             String className = description.getMain();
-            classLoader = new JarClassLoader(this.getClass().getClassLoader(), file);
+            PluginClassLoader classLoader = new PluginClassLoader(this, this.getClass().getClassLoader(), file);
+            this.classLoaders.put(description.getName(), classLoader);
             try {
-
                 Class javaClass = classLoader.loadClass(className);
 
                 try {
@@ -121,4 +123,33 @@ public class JarPluginLoader implements PluginLoader {
         }
     }
 
+    Class<?> getClassByName(final String name) {
+        Class<?> cachedClass = classes.get(name);
+
+        if (cachedClass != null) {
+            return cachedClass;
+        } else {
+            for (PluginClassLoader loader : this.classLoaders.values()) {
+
+                try {
+                    cachedClass = loader.findClass(name, false);
+                } catch (ClassNotFoundException e) {
+                }
+                if (cachedClass != null) {
+                    return cachedClass;
+                }
+            }
+        }
+        return null;
+    }
+
+    void setClass(final String name, final Class<?> clazz) {
+        if (!classes.containsKey(name)) {
+            classes.put(name, clazz);
+        }
+    }
+
+    private void removeClass(String name) {
+        Class<?> clazz = classes.remove(name);
+    }
 }

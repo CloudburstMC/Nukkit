@@ -37,10 +37,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.*;
-import cn.nukkit.permission.PermissibleBase;
-import cn.nukkit.permission.Permission;
-import cn.nukkit.permission.PermissionAttachment;
-import cn.nukkit.permission.PermissionAttachmentInfo;
+import cn.nukkit.permission.*;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
@@ -2378,35 +2375,38 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
 
                 break;
+            //TODO: PACKETS
+
             case ProtocolInfo.TEXT_PACKET:
-                if (this.spawned == false || !this.isAlive()) {
+                if (!this.spawned || !this.isAlive()) {
                     break;
                 }
-                this.craftingType = 0;
-                TextPacket packet0 = (TextPacket) packet;
-                if (packet0.type == TextPacket.TYPE_CHAT) {
-                    packet0.message = this.removeFormat ? TextFormat.clean(packet0.message) : packet0.message;
-                    for (String message0 : packet0.message.split("\n")) {
-                        if (message0.trim() != "" && message0.length() <= 255 && this.messageCounter-- > 0) {
-                            PlayerCommandPreprocessEvent ev0 = new PlayerCommandPreprocessEvent(this, message0);
 
-                            if (ev0.getMessage().length() > 320) {
+                this.craftingType = 0;
+                TextPacket textPacket = (TextPacket) packet;
+                if (textPacket.type == TextPacket.TYPE_CHAT) {
+                    textPacket.message = this.removeFormat ? TextFormat.clean(textPacket.message) : textPacket.message;
+                    for (String msg : textPacket.message.split("\n")) {
+                        if (!"".equals(msg.trim()) && msg.length() <= 255 && this.messageCounter-- > 0) {
+                            PlayerCommandPreprocessEvent commandPreprocessEvent = new PlayerCommandPreprocessEvent(this, msg);
+
+                            if (commandPreprocessEvent.getMessage().length() > 320) {
                                 ev.setCancelled();
                             }
-                            this.server.getPluginManager().callEvent(ev0);
+                            this.server.getPluginManager().callEvent(commandPreprocessEvent);
 
-                            if (ev0.isCancelled()) {
+                            if (commandPreprocessEvent.isCancelled()) {
                                 break;
                             }
-                            if (ev0.getMessage().startsWith("/")) { //Command
+                            if (commandPreprocessEvent.getMessage().startsWith("/")) { //Command
                                 //Timings::playerCommandTimer.startTiming();
-                                this.server.dispatchCommand(ev0.getPlayer(), ev0.getMessage().substring(1));
+                                this.server.dispatchCommand(commandPreprocessEvent.getPlayer(), commandPreprocessEvent.getMessage().substring(1));
                                 //Timings::playerCommandTimer.stopTiming();
                             } else {
-                                PlayerChatEvent ev1 = new PlayerChatEvent(this, ev0.getMessage());
-                                this.server.getPluginManager().callEvent(ev1);
-                                if (!ev1.isCancelled()) {
-                                    this.server.broadcastMessage(this.getServer().getLanguage().translateString(ev1.getFormat(), new String[]{ev1.getPlayer().getDisplayName(), ev1.getMessage()}/*, ev1.getRecipients()*/));
+                                PlayerChatEvent chatEvent = new PlayerChatEvent(this, commandPreprocessEvent.getMessage());
+                                this.server.getPluginManager().callEvent(chatEvent);
+                                if (!chatEvent.isCancelled()) {
+                                    this.server.broadcastMessage(this.getServer().getLanguage().translateString(chatEvent.getFormat(), new String[]{chatEvent.getPlayer().getDisplayName(), chatEvent.getMessage()}),  chatEvent.getRecipients());
                                 }
                             }
                         }

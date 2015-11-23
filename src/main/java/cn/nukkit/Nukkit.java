@@ -5,7 +5,7 @@ import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.ServerKiller;
 
 /**
- * _   _       _    _    _ _
+ * `_   _       _    _    _ _
  * | \ | |     | |  | |  (_) |
  * |  \| |_   _| | _| | ___| |_
  * | . ` | | | | |/ / |/ / | __|

@@ -327,7 +327,11 @@ public class Level implements ChunkManager, Metadatable {
             }
         } else {
             if (packets != null) {
-                this.server.batchPackets(players, packets, false);
+                if (packets.length == 1) {
+                    Server.broadcastPacket(players, packets[0]);
+                } else {
+                    this.server.batchPackets(players, packets, false);
+                }
             }
         }
     }
@@ -1571,7 +1575,7 @@ public class Level implements ChunkManager, Metadatable {
             for (int x = minX; x <= maxX; ++x) {
                 for (int z = minZ; z <= maxZ; ++z) {
                     for (Entity ent : this.getChunkEntities(x, z).values()) {
-                        if (entity != null && !ent.equals(entity) && ent.boundingBox.intersectsWith(bb)) {
+                        if (!Objects.equals(ent, entity) && ent.boundingBox.intersectsWith(bb)) {
                             nearby.add(ent);
                         }
                     }
