@@ -297,7 +297,9 @@ public class Block extends Position implements Metadatable, Cloneable {
             list[DEAD_BUSH] = DeadBush.class;
             list[WOOL] = Wool.class;
             list[DANDELION] = Dandelion.class;
+            */
             list[RED_FLOWER] = Flower.class;
+            /*
             list[BROWN_MUSHROOM] = BrownMushroom.class;
             list[RED_MUSHROOM] = RedMushroom.class;
             list[GOLD_BLOCK] = Gold.class;
@@ -359,7 +361,9 @@ public class Block extends Position implements Metadatable, Cloneable {
             /*list[PUMPKIN_STEM] = PumpkinStem.class;
             list[MELON_STEM] = MelonStem.class;
             list[VINE] = Vine.class;
+            */
             list[FENCE_GATE] = FenceGate.class;
+            /*
             list[BRICK_STAIRS] = BrickStairs.class;
             list[STONE_BRICK_STAIRS] = StoneBrickStairs.class;
 
@@ -405,13 +409,13 @@ public class Block extends Position implements Metadatable, Cloneable {
             //list[COAL_BLOCK] = Coal.class;
 
             /*list[DOUBLE_PLANT] = DoublePlant.class;
-
+            */
             list[FENCE_GATE_SPRUCE] = FenceGateSpruce.class;
             list[FENCE_GATE_BIRCH] = FenceGateBirch.class;
             list[FENCE_GATE_JUNGLE] = FenceGateJungle.class;
             list[FENCE_GATE_DARK_OAK] = FenceGateDarkOak.class;
             list[FENCE_GATE_ACACIA] = FenceGateAcacia.class;
-            */
+
             list[GRASS_PATH] = GrassPath.class;
 
             list[PODZOL] = Podzol.class;
