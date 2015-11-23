@@ -97,9 +97,11 @@ public abstract class Entity extends Location implements Metadatable {
 
     private List<Block> blocksAround = new ArrayList<>();
 
-    public Double lastX = null;
-    public Double lastY = null;
-    public Double lastZ = null;
+    public double lastX;
+    public double lastY;
+    public double lastZ;
+
+    public boolean firstMove = true;
 
     public double motionX;
     public double motionY;

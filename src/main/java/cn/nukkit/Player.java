@@ -37,7 +37,10 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.*;
-import cn.nukkit.permission.*;
+import cn.nukkit.permission.PermissibleBase;
+import cn.nukkit.permission.Permission;
+import cn.nukkit.permission.PermissionAttachment;
+import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
@@ -1216,21 +1219,22 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         Location from = new Location(
-                this.lastX == null ? 0 : this.lastX,
-                this.lastY == null ? 0 : this.lastY,
-                this.lastZ == null ? 0 : this.lastZ,
+                this.lastX,
+                this.lastY,
+                this.lastZ,
                 this.lastYaw,
                 this.lastPitch
                 , this.level);
         Location to = this.getLocation();
 
-        double delta = Math.pow((this.lastX == null ? 0 : this.lastX) - to.x, 2) + Math.pow((this.lastY == null ? 0 : this.lastY) - to.y, 2) + Math.pow((this.lastZ == null ? 0 : this.lastZ) - to.z, 2);
+        double delta = Math.pow(this.lastX - to.x, 2) + Math.pow(this.lastY - to.y, 2) + Math.pow(this.lastZ - to.z, 2);
         double deltaAngle = Math.abs(this.lastYaw - to.yaw) + Math.abs(this.lastPitch - to.pitch);
 
         if (!revert && (delta > (1 / 16) || deltaAngle > 10)) {
 
-            boolean isFirst = (this.lastX == null || this.lastY == null || this.lastZ == null);
+            boolean isFirst = this.firstMove;
 
+            this.firstMove = false;
             this.lastX = to.x;
             this.lastY = to.y;
             this.lastZ = to.z;
@@ -2406,7 +2410,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 PlayerChatEvent chatEvent = new PlayerChatEvent(this, commandPreprocessEvent.getMessage());
                                 this.server.getPluginManager().callEvent(chatEvent);
                                 if (!chatEvent.isCancelled()) {
-                                    this.server.broadcastMessage(this.getServer().getLanguage().translateString(chatEvent.getFormat(), new String[]{chatEvent.getPlayer().getDisplayName(), chatEvent.getMessage()}),  chatEvent.getRecipients());
+                                    this.server.broadcastMessage(this.getServer().getLanguage().translateString(chatEvent.getFormat(), new String[]{chatEvent.getPlayer().getDisplayName(), chatEvent.getMessage()}), chatEvent.getRecipients());
                                 }
                             }
                         }
