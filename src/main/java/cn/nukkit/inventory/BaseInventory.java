@@ -276,7 +276,7 @@ public abstract class BaseInventory implements Inventory {
                 emptySlots.add(i);
             }
 
-            for (Item slot : itemSlots) {
+            for (Item slot : new ArrayList<>(itemSlots)) {
                 if (slot.equals(item) && item.getCount() < item.getMaxStackSize()) {
                     int amount = Math.min(item.getMaxStackSize() - item.getCount(), slot.getCount());
                     amount = Math.min(amount, this.getMaxStackSize());
@@ -328,7 +328,7 @@ public abstract class BaseInventory implements Inventory {
                 continue;
             }
 
-            for (Item slot : itemSlots) {
+            for (Item slot : new ArrayList<>(itemSlots)) {
                 if (slot.equals(item, item.hasMeta(), item.getCompoundTag() != null)) {
                     int amount = Math.min(item.getCount(), slot.getCount());
                     slot.setCount(slot.getCount() - amount);

@@ -21,7 +21,9 @@ public class Sapling extends Flowable {
 
     public Sapling(int meta) {
         super(SAPLING, meta);
-    };
+    }
+
+    ;
 
     @Override
     public String getName() {
@@ -39,12 +41,10 @@ public class Sapling extends Flowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player)
-    {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         Block down = this.getSide(Block.SIDE_DOWN);
-        if(down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND)
-        {
-            this.getLevel().setBlock(block,this,true,true);
+        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND) {
+            this.getLevel().setBlock(block, this, true, true);
             return true;
         }
 
@@ -52,8 +52,7 @@ public class Sapling extends Flowable {
     }
 
     @Override
-    public boolean canBeActivated()
-    {
+    public boolean canBeActivated() {
         return true;
     }
 

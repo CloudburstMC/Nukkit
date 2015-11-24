@@ -16,12 +16,14 @@ public class ContainerSetSlotPacket extends DataPacket {
 
     public int windowid;
     public int slot;
+    public int hotbarSlot;
     public Item item;
 
     @Override
     public void decode() {
         this.windowid = this.getByte();
         this.slot = this.getShort();
+        this.hotbarSlot = this.getShort();
         this.item = this.getSlot();
     }
 
@@ -30,6 +32,7 @@ public class ContainerSetSlotPacket extends DataPacket {
         this.reset();
         this.putByte((byte) this.windowid);
         this.putShort(this.slot);
+        this.putShort(this.hotbarSlot);
         this.putSlot(this.item);
     }
 }

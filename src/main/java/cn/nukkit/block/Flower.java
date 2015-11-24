@@ -54,7 +54,7 @@ public class Flower extends Flowable {
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         Block down = this.getSide(0);
-        if(down.getId() == Block.GRASS || down.getId() == DIRT || down.getId() == FARMLAND){
+        if (down.getId() == Block.GRASS || down.getId() == DIRT || down.getId() == FARMLAND) {
             this.getLevel().setBlock(block, this, true);
 
             return true;
@@ -64,8 +64,8 @@ public class Flower extends Flowable {
 
     @Override
     public int onUpdate(int type) {
-        if(type == Level.BLOCK_UPDATE_NORMAL){
-            if(this.getSide(Vector3.SIDE_DOWN).isTransparent()){
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.getSide(Vector3.SIDE_DOWN).isTransparent()) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;

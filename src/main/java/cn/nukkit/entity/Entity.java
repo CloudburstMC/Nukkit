@@ -97,9 +97,11 @@ public abstract class Entity extends Location implements Metadatable {
 
     private List<Block> blocksAround = new ArrayList<>();
 
-    public Double lastX = null;
-    public Double lastY = null;
-    public Double lastZ = null;
+    public double lastX;
+    public double lastY;
+    public double lastZ;
+
+    public boolean firstMove = true;
 
     public double motionX;
     public double motionY;
@@ -380,12 +382,16 @@ public abstract class Entity extends Location implements Metadatable {
                 return null;
             }
             try {
-                return clazz.getConstructor(FullChunk.class, CompoundTag.class, Object[].class).newInstance(chunk, nbt, args);
-            } catch (NoSuchMethodException e) {
-                try {
+                if (args != null && args.length > 0) {
+                    Class[] argClasses = new Class[args.length + 2];
+                    argClasses[0] = FullChunk.class;
+                    argClasses[1] = CompoundTag.class;
+                    for (int i = 0; i < args.length; i++) {
+                        argClasses[i + 2] = args[i].getClass();
+                    }
+                    return clazz.getConstructor(argClasses).newInstance(chunk, nbt, args);
+                } else {
                     return clazz.getConstructor(FullChunk.class, CompoundTag.class).newInstance(chunk, nbt);
-                } catch (Exception e2) {
-                    return null;
                 }
             } catch (Exception e) {
                 return null;

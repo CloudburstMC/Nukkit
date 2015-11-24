@@ -10,9 +10,9 @@ import cn.nukkit.math.AxisAlignedBB;
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class FenceGate extends Transparent{
+public class FenceGate extends Transparent {
 
-    public FenceGate(){
+    public FenceGate() {
         this(0);
     }
 
@@ -20,7 +20,7 @@ public class FenceGate extends Transparent{
         this(FENCE_GATE, meta);
     }
 
-    public FenceGate(int id, int meta){
+    public FenceGate(int id, int meta) {
         super(id, meta);
     }
 
@@ -46,11 +46,11 @@ public class FenceGate extends Transparent{
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-        if ((this.getDamage() & 0x04) > 0){
+        if ((this.getDamage() & 0x04) > 0) {
             return null;
         }
         int i = this.getDamage() & 0x03;
-        if (i == 2 || i == 0){ //todo: check it
+        if (i == 2 || i == 0) { //todo: check it
             return new AxisAlignedBB(
                     x,
                     y,
@@ -59,7 +59,7 @@ public class FenceGate extends Transparent{
                     y + 1.5,
                     z + 0.625
             );
-        }else{
+        } else {
             return new AxisAlignedBB(
                     x + 0.375,
                     y,
