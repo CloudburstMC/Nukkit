@@ -98,11 +98,6 @@ public class FenceGate extends Transparent {
             rotation += 360.0;
         }
 
-        int[][] faces = new int[][]{
-                {0, 2},
-                {1, 3}
-        };
-
         int originDirection = this.meta & 0x01;
 
         int direction;

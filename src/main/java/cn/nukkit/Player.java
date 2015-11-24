@@ -569,7 +569,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             ++count;
 
             this.usedChunks.put(index, false);
-
             this.level.registerChunkLoader(this, chunkX, chunkZ, false);
 
             if (!this.level.populateChunk(chunkX, chunkZ)) {
