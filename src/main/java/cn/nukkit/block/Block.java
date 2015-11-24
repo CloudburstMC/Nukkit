@@ -402,11 +402,12 @@ public class Block extends Position implements Metadatable, Cloneable {
             list[WOOD2] = Wood2.class;
             list[ACACIA_WOOD_STAIRS] = AcaciaWoodStairs.class;
             /*list[DARK_OAK_WOOD_STAIRS] = DarkOakWoodStairs.class;
+            */
 
             list[HAY_BALE] = HayBale.class;
             list[CARPET] = Carpet.class;
-            list[HARDENED_CLAY] = HardenedClay.class;*/
-            //list[COAL_BLOCK] = Coal.class;
+            list[HARDENED_CLAY] = HardenedClay.class;
+            list[COAL_BLOCK] = Coal.class;
 
             /*list[DOUBLE_PLANT] = DoublePlant.class;
             */
