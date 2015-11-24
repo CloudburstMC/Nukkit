@@ -1203,13 +1203,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             if (this.isSurvival()) {
                 if (!this.isSleeping()) {
                     if (diff > 0.0625) {
-
                         PlayerInvalidMoveEvent ev;
                         this.getServer().getPluginManager().callEvent(ev = new PlayerInvalidMoveEvent(this, true));
                         if (!ev.isCancelled()) {
-                            if(ev.isRevert()){ revert = true;}
+                            revert = ev.isRevert();
 
-                            this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                            if (revert) {
+                                this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                            }
                         }
                     }
                 }
