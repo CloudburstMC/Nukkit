@@ -683,7 +683,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         //viewDistance = this.server.getMemoryManager().getViewDistance(this.viewDistance);
 
         Map<String, Integer> newOrder = new HashMap<>();
-        Map<String, Boolean> lastChunk = this.usedChunks;
+        Map<String, Boolean> lastChunk = new HashMap<>();
+
+        lastChunk.putAll(this.usedChunks);
 
         int centerX = (int) this.x >> 4;
         int centerZ = (int) this.z >> 4;
