@@ -50,7 +50,7 @@ public class FenceGate extends Transparent {
             return null;
         }
         int i = this.getDamage() & 0x03;
-        if (i == 2 || i == 0) { //todo: check it
+        if (i == 2 || i == 0) {
             return new AxisAlignedBB(
                     x,
                     y,
@@ -89,8 +89,33 @@ public class FenceGate extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        int[] faces = new int[]{3, 0, 1, 2};
-        this.meta = (faces[(player != null) ? player.getDirection() : 0] & 0x03) | ((~this.meta) & 0x04);
+        if (player == null) {
+            return false;
+        }
+
+        double rotation = (player.yaw - 90) % 360;
+        if (rotation < 0) {
+            rotation += 360.0;
+        }
+
+        int originDirection = this.meta & 0x01;
+
+        int direction;
+        if (originDirection == 0) {
+            if (rotation >= 0 && rotation < 180) {
+                direction = 2;
+            } else {
+                direction = 0;
+            }
+        } else {
+            if (rotation >= 90 && rotation < 270) {
+                direction = 3;
+            } else {
+                direction = 1;
+            }
+        }
+
+        this.meta = direction | ((~this.meta) & 0x04);
         this.getLevel().setBlock(this, this, true);
         this.getLevel().addSound(new DoorSound(this));
         return true;
