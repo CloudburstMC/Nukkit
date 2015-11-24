@@ -47,7 +47,7 @@ public class EntityDespawnEvent extends EntityEvent {
     }
 
     public boolean isItem() {
-        return this.entity instanceof Item;
+        return this.entity instanceof DroppedItem;
     }
 
 }

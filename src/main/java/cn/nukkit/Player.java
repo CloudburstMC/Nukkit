@@ -1107,9 +1107,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                 this.inventory.addItem(item.clone());
                 entity.kill();
-            } else if (entity instanceof cn.nukkit.entity.Item) {
-                if (((cn.nukkit.entity.Item) entity).getPickupDelay() <= 0) {
-                    Item item = ((cn.nukkit.entity.Item) entity).getItem();
+            } else if (entity instanceof DroppedItem) {
+                if (((DroppedItem) entity).getPickupDelay() <= 0) {
+                    Item item = ((DroppedItem) entity).getItem();
 
                     if (item != null) {
                         if (this.isSurvival() && !this.inventory.canAddItem(item)) {
@@ -1117,7 +1117,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         }
 
                         InventoryPickupItemEvent ev;
-                        this.server.getPluginManager().callEvent(ev = new InventoryPickupItemEvent(this.inventory, (cn.nukkit.entity.Item) entity));
+                        this.server.getPluginManager().callEvent(ev = new InventoryPickupItemEvent(this.inventory, (DroppedItem) entity));
                         if (ev.isCancelled()) {
                             continue;
                         }
@@ -2282,7 +2282,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     cancelled = true;
                 }
                 if (targetEntity != null && this.getGamemode() != Player.VIEW && this.isAlive() && targetEntity.isAlive()) {
-                    if (targetEntity instanceof cn.nukkit.entity.Item || targetEntity instanceof Arrow) {
+                    if (targetEntity instanceof DroppedItem || targetEntity instanceof Arrow) {
                         this.kick("Attempting to attack an invalid entity");
                         this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
                         break;

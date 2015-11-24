@@ -1,6 +1,6 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.Item;
+import cn.nukkit.entity.DroppedItem;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
@@ -15,12 +15,12 @@ public class ItemDespawnEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
-    public ItemDespawnEvent(Item item) {
+    public ItemDespawnEvent(DroppedItem item) {
         this.entity = item;
     }
 
     @Override
-    public Item getEntity() {
-        return (Item) this.entity;
+    public DroppedItem getEntity() {
+        return (DroppedItem) this.entity;
     }
 }

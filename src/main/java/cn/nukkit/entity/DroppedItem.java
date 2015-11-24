@@ -13,10 +13,10 @@ import cn.nukkit.network.protocol.AddItemEntityPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Item extends Entity {
+public class DroppedItem extends Entity {
     public static final int NETWORK_ID = 64;
 
-    public Item(FullChunk chunk, CompoundTag nbt) {
+    public DroppedItem(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

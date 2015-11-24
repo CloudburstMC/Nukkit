@@ -1754,7 +1754,7 @@ public class Server {
 
     private void registerEntities() {
         Entity.registerEntity(Arrow.class);
-        Entity.registerEntity(cn.nukkit.entity.Item.class);
+        Entity.registerEntity(DroppedItem.class);
         Entity.registerEntity(FallingSand.class);
         Entity.registerEntity(PrimedTNT.class);
         Entity.registerEntity(Snowball.class);

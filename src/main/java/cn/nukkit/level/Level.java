@@ -6,6 +6,7 @@ import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Ice;
 import cn.nukkit.entity.Arrow;
+import cn.nukkit.entity.DroppedItem;
 import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockBreakEvent;
@@ -1437,7 +1438,7 @@ public class Level implements ChunkManager, Metadatable {
             Entity[] entities = this.getCollidingEntities(hand.getBoundingBox());
             int realCount = 0;
             for (Entity e : entities) {
-                if (e instanceof Arrow || e instanceof cn.nukkit.entity.Item) {
+                if (e instanceof Arrow || e instanceof DroppedItem) {
                     continue;
                 }
                 ++realCount;
