@@ -1,4 +1,2 @@
 rootProject.name = 'Nukkit'
-include 'nukkit-loader'
-include 'nukkit-core'
-
+include 'nukkit'
