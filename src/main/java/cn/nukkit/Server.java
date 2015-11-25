@@ -870,7 +870,6 @@ public class Server {
 
                 String exceptionMsg = e.getMessage();
                 this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), exceptionMsg == null ? e.toString() : exceptionMsg}));
-                e.printStackTrace();
             }
         }
     }
