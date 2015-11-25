@@ -420,7 +420,7 @@ public class Server {
         for (Player recipient : recipients) {
             recipient.sendMessage(message);
         }
-
+        this.getLogger().info(message);
         return recipients.size();
     }
 
