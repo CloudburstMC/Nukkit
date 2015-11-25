@@ -29,7 +29,7 @@ public class DroppedItem extends Entity {
     protected String owner = null;
     protected String thrower = null;
 
-    protected cn.nukkit.item.Item item;
+    protected Item item;
 
     protected int pickupDelay = 0;
 
