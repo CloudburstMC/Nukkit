@@ -2,6 +2,7 @@ package cn.nukkit.event.player;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.permission.Permissible;
@@ -20,22 +21,22 @@ public class PlayerChatEvent extends PlayerEvent implements Cancellable {
 
     protected String format;
 
-    protected Set<Player> recipients = new HashSet<>();
+    protected Set<CommandSender> recipients = new HashSet<>();
 
     public PlayerChatEvent(Player player, String message) {
         this(player, message, "chat.type.text", null);
     }
 
-    public PlayerChatEvent(Player player, String message, String format, Set<Player> recipients) {
+    public PlayerChatEvent(Player player, String message, String format, Set<CommandSender> recipients) {
         this.player = player;
         this.message = message;
 
         this.format = format;
 
         if (recipients == null) {
-            for (Permissible p : Server.getInstance().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_USERS)) {
-                if (p instanceof Player) {
-                    this.recipients.add((Player) p);
+            for (Permissible permissible : Server.getInstance().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_USERS)) {
+                if (permissible instanceof CommandSender) {
+                    this.recipients.add((CommandSender) permissible);
                 }
             }
 
@@ -67,11 +68,11 @@ public class PlayerChatEvent extends PlayerEvent implements Cancellable {
         this.format = format;
     }
 
-    public Set<Player> getRecipients() {
+    public Set<CommandSender> getRecipients() {
         return this.recipients;
     }
 
-    public void setRecipients(Set<Player> recipients) {
+    public void setRecipients(Set<CommandSender> recipients) {
         this.recipients = recipients;
     }
 }

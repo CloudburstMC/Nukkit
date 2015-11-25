@@ -33,11 +33,11 @@ public class Coal extends Solid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isPickaxe()){
+        if (item.isPickaxe()) {
             return new int[][]{
                     {Item.COAL_BLOCK, 0, 1}
             };
-        }else{
+        } else {
             return new int[0][];
         }
     }

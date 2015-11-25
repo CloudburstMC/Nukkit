@@ -408,24 +408,24 @@ public class Server {
         return this.broadcast(message, BROADCAST_CHANNEL_USERS);
     }
 
-    public int broadcastMessage(String message, Player[] recipients) {
-        for (Player recipient : recipients) {
+    public int broadcastMessage(String message, CommandSender[] recipients) {
+        for (CommandSender recipient : recipients) {
             recipient.sendMessage(message);
         }
 
         return recipients.length;
     }
 
-    public int broadcastMessage(String message, Collection<Player> recipients) {
-        for (Player recipient : recipients) {
+    public int broadcastMessage(String message, Collection<CommandSender> recipients) {
+        for (CommandSender recipient : recipients) {
             recipient.sendMessage(message);
         }
-        this.getLogger().info(message);
+
         return recipients.size();
     }
 
-    public int broadcastMessage(TextContainer message, Collection<Player> recipients) {
-        for (Player recipient : recipients) {
+    public int broadcastMessage(TextContainer message, Collection<CommandSender> recipients) {
+        for (CommandSender recipient : recipients) {
             recipient.sendMessage(message);
         }
 
@@ -868,8 +868,7 @@ public class Server {
                     this.logger.logException(e);
                 }
 
-                String exceptionMsg = e.getMessage();
-                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), exceptionMsg == null ? e.toString() : exceptionMsg}));
+                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.toString()}));
             }
         }
     }
