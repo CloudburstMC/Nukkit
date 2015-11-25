@@ -1206,7 +1206,7 @@ public class Level implements ChunkManager, Metadatable {
         itemTag.setName("Item");
 
         if (item.getId() > 0 && item.getCount() > 0) {
-            Entity itemEntity = Entity.createEntity("Item", this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true), new CompoundTag()
+            Entity itemEntity = Entity.createEntity("DroppedItem", this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true), new CompoundTag()
                             .putList(new ListTag<DoubleTag>("Pos")
                                     .add(new DoubleTag("", source.getX()))
                                     .add(new DoubleTag("", source.getY()))

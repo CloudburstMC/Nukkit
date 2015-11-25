@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -28,7 +29,7 @@ public class DroppedItem extends Entity {
     protected String owner = null;
     protected String thrower = null;
 
-    protected cn.nukkit.item.Item item;
+    protected Item item;
 
     protected int pickupDelay = 0;
 
@@ -169,7 +170,7 @@ public class DroppedItem extends Entity {
         }
     }
 
-    public cn.nukkit.item.Item getItem() {
+    public Item getItem() {
         return item;
     }
 

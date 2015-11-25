@@ -420,7 +420,7 @@ public class Server {
         for (Player recipient : recipients) {
             recipient.sendMessage(message);
         }
-
+        this.getLogger().info(message);
         return recipients.size();
     }
 
@@ -869,7 +869,7 @@ public class Server {
                 }
 
                 String exceptionMsg = e.getMessage();
-                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), exceptionMsg == null ? "NullPointException" : exceptionMsg}));
+                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), exceptionMsg == null ? e.toString() : exceptionMsg}));
             }
         }
     }
