@@ -9,7 +9,7 @@ import cn.nukkit.math.AxisAlignedBB;
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class Carpet extends Flowable{
+public class Carpet extends Flowable {
     public Carpet() {
         this(0);
     }
@@ -67,7 +67,7 @@ public class Carpet extends Flowable{
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         Block down = this.getSide(0);
-        if(down.getId() != Item.AIR){
+        if (down.getId() != Item.AIR) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
@@ -76,8 +76,8 @@ public class Carpet extends Flowable{
 
     @Override
     public int onUpdate(int type) {
-        if(type == Level.BLOCK_UPDATE_NORMAL){
-            if(this.getSide(0).getId() == Item.AIR){
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.getSide(0).getId() == Item.AIR) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;

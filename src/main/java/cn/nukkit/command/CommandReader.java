@@ -3,7 +3,6 @@ package cn.nukkit.command;
 import cn.nukkit.InterruptibleThread;
 import cn.nukkit.Server;
 import cn.nukkit.event.server.ServerCommandEvent;
-import cn.nukkit.utils.MainLogger;
 import jline.console.ConsoleReader;
 import jline.console.CursorBuffer;
 
@@ -37,20 +36,23 @@ public class CommandReader extends Thread implements InterruptibleThread {
             Server.getInstance().getLogger().error("Unable to start Console Reader");
         }
         this.setName("Console");
-        this.start();
+    }
+
+    public String readLine() {
+        try {
+            reader.resetPromptLine("", "", 0);
+            return this.reader.readLine("> ");
+        } catch (IOException e) {
+            Server.getInstance().getLogger().logException(e);
+            return "";
+        }
     }
 
     public void run() {
-        MainLogger logger = Server.getInstance().getLogger();
         Long lastLine = System.currentTimeMillis();
         while (true) {
-            String line = "";
-            try {
-                reader.resetPromptLine("", "", 0);
-                line = this.reader.readLine("> ");
-            } catch (IOException e) {
-                logger.logException(e);
-            }
+            String line = readLine();
+
             if (!line.trim().equals("")) {
                 //todo 将即时执行指令改为每tick执行
                 try {
@@ -101,4 +103,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
         }
     }
 
+    public ConsoleReader getReader() {
+        return reader;
+    }
 }
