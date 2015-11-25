@@ -18,6 +18,7 @@ import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.SimpleTransactionGroup;
+import cn.nukkit.item.EdibleItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
@@ -26,6 +27,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
@@ -2008,7 +2010,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 snowball.kill();
                             } else {
                                 snowball.spawnToAll();
-                                //TODO:this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                                this.level.addSound(new LaunchSound(this), this.getViewers().values());
                             }
                         } else {
                             snowball.spawnToAll();
@@ -2102,7 +2104,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                             entityShootBowEvent.getProjectile().kill();
                                         } else {
                                             entityShootBowEvent.getProjectile().spawnToAll();
-                                            //TODO:this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                                            this.level.addSound(new LaunchSound(this), this.getViewers().values());
                                         }
                                     } else {
                                         entityShootBowEvent.getProjectile().spawnToAll();
@@ -2385,7 +2387,88 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
 
                 break;
-            //TODO: PACKETS
+            case ProtocolInfo.ANIMATE_PACKET:
+                if (!this.spawned || !this.isAlive()) {
+                    break;
+                }
+
+                PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, ((AnimatePacket) packet).action);
+                this.server.getPluginManager().callEvent(animationEvent);
+                if (animationEvent.isCancelled()) {
+                    break;
+                }
+
+                AnimatePacket animatePacket = new AnimatePacket();
+                animatePacket.eid = this.getId();
+                animatePacket.action = animationEvent.getAnimationType();
+                Server.broadcastPacket(this.getViewers().values(), packet);
+                break;
+            case ProtocolInfo.SET_HEALTH_PACKET:
+                //use UpdateAttributePacket instead
+                break;
+
+            case ProtocolInfo.ENTITY_EVENT_PACKET:
+                if (!this.spawned || this.blocked || !this.isAlive()) {
+                    break;
+                }
+                this.craftingType = 0;
+
+                this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false); //TODO: check if this should be true
+                EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
+
+                switch (entityEventPacket.event) {
+                    case 9: //Eating
+                        Item itemInHand = this.inventory.getItemInHand();
+                        int amount = EdibleItem.getRegainAmount(itemInHand.getId(), itemInHand.getDamage());
+                        if (this.getHealth() < this.getMaxHealth() && amount > 0) {
+                            PlayerItemConsumeEvent consumeEvent;
+                            this.server.getPluginManager().callEvent(consumeEvent = new PlayerItemConsumeEvent(this, itemInHand));
+                            if (consumeEvent.isCancelled()) {
+                                this.inventory.sendContents(this);
+                                break;
+                            }
+
+                            EntityEventPacket pk = new EntityEventPacket();
+                            pk.eid = this.getId();
+                            pk.event = EntityEventPacket.USE_ITEM;
+                            this.dataPacket(pk);
+                            Server.broadcastPacket(this.getViewers().values(), pk);
+
+                            EntityRegainHealthEvent regainHealthEvent = new EntityRegainHealthEvent(this, amount, EntityRegainHealthEvent.CAUSE_EATING);
+                            this.heal(regainHealthEvent.getAmount(), regainHealthEvent);
+
+                            --itemInHand.count;
+                            this.inventory.setItemInHand(itemInHand);
+                            if (itemInHand.getId() == Item.MUSHROOM_STEW || itemInHand.getId() == Item.BEETROOT_SOUP) {
+                                this.inventory.addItem(Item.get(Item.BOWL, 0, 1));
+                            } else if (itemInHand.getId() == Item.RAW_FISH && itemInHand.getDamage() == 3) { //Pufferfish
+                                //this.addEffect(Effect::getEffect(Effect::HUNGER).setAmplifier(2).setDuration(15 * 20));
+                                this.addEffect(Effect.getEffect(Effect.NAUSEA).setAmplifier(1).setDuration(15 * 20));
+                                this.addEffect(Effect.getEffect(Effect.POISON).setAmplifier(3).setDuration(60 * 20));
+                            }
+                        }
+                        break;
+                }
+                break;
+            case ProtocolInfo.DROP_ITEM_PACKET:
+                if (!this.spawned || this.blocked || !this.isAlive()) {
+                    break;
+                }
+                item = this.inventory.getItemInHand();
+                PlayerDropItemEvent dropItemEvent = new PlayerDropItemEvent(this, item);
+                this.server.getPluginManager().callEvent(dropItemEvent);
+                if (dropItemEvent.isCancelled()) {
+                    this.inventory.sendContents(this);
+                    break;
+                }
+
+                this.inventory.setItemInHand(Item.get(Item.AIR, 0, 1));
+                Vector3 motion = this.getDirectionVector().multiply(0.4);
+
+                this.level.dropItem(this.add(0, 1.3, 0), item, motion, 40);
+
+                this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
+                break;
 
             case ProtocolInfo.TEXT_PACKET:
                 if (!this.spawned || !this.isAlive()) {

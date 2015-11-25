@@ -13,32 +13,32 @@ import cn.nukkit.network.protocol.MobEffectPacket;
  */
 public class Effect implements Cloneable {
 
-    public static final byte SPEED = 1;
-    public static final byte SLOWNESS = 2;
-    public static final byte HASTE = 3;
-    public static final byte SWIFTNESS = 3;
-    public static final byte FATIGUE = 4;
-    public static final byte MINING_FATIGUE = 4;
-    public static final byte STRENGTH = 5;
-    public static final byte HEALING = 6;
-    public static final byte HARMING = 7;
-    public static final byte JUMP = 8;
-    public static final byte NAUSEA = 9;
-    public static final byte CONFUSION = 9;
-    public static final byte REGENERATION = 10;
-    public static final byte DAMAGE_RESISTANCE = 11;
-    public static final byte FIRE_RESISTANCE = 12;
-    public static final byte WATER_BREATHING = 13;
-    public static final byte INVISIBILITY = 14;
-    public static final byte BLINDNESS = 15;
-    public static final byte NIGHT_VISION = 16;
-    public static final byte HUNGER = 17;
-    public static final byte WEAKNESS = 18;
-    public static final byte POISON = 19;
-    public static final byte WITHER = 20;
-    public static final byte HEALTH_BOOST = 21;
-    public static final byte ABSORPTION = 22;
-    public static final byte SATURATION = 23;
+    public static final int SPEED = 1;
+    public static final int SLOWNESS = 2;
+    public static final int HASTE = 3;
+    public static final int SWIFTNESS = 3;
+    public static final int FATIGUE = 4;
+    public static final int MINING_FATIGUE = 4;
+    public static final int STRENGTH = 5;
+    public static final int HEALING = 6;
+    public static final int HARMING = 7;
+    public static final int JUMP = 8;
+    public static final int NAUSEA = 9;
+    public static final int CONFUSION = 9;
+    public static final int REGENERATION = 10;
+    public static final int DAMAGE_RESISTANCE = 11;
+    public static final int FIRE_RESISTANCE = 12;
+    public static final int WATER_BREATHING = 13;
+    public static final int INVISIBILITY = 14;
+    public static final int BLINDNESS = 15;
+    public static final int NIGHT_VISION = 16;
+    public static final int HUNGER = 17;
+    public static final int WEAKNESS = 18;
+    public static final int POISON = 19;
+    public static final int WITHER = 20;
+    public static final int HEALTH_BOOST = 21;
+    public static final int ABSORPTION = 22;
+    public static final int SATURATION = 23;
 
     protected static Effect[] effects;
 
@@ -73,10 +73,9 @@ public class Effect implements Cloneable {
         effects[Effect.SATURATION] = new Effect(Effect.SATURATION, "%potion.saturation", 255, 0, 255);
     }
 
-    public static Effect getEffect(byte id) {
-        int i = id & 0xff;
-        if (i >= 0 && i < effects.length && effects[i] != null) {
-            return effects[i].clone();
+    public static Effect getEffect(int id) {
+        if (id >= 0 && id < effects.length && effects[id] != null) {
+            return effects[id].clone();
         } else {
             return null;
         }
@@ -91,13 +90,13 @@ public class Effect implements Cloneable {
         }
     }
 
-    protected byte id;
+    protected int id;
 
     protected String name;
 
     protected int duration;
 
-    protected byte amplifier;
+    protected int amplifier;
 
     protected int color;
 
@@ -107,11 +106,11 @@ public class Effect implements Cloneable {
 
     protected boolean bad;
 
-    public Effect(byte id, String name, int r, int g, int b) {
+    public Effect(int id, String name, int r, int g, int b) {
         this(id, name, r, g, b, false);
     }
 
-    public Effect(byte id, String name, int r, int g, int b, boolean isBad) {
+    public Effect(int id, String name, int r, int g, int b, boolean isBad) {
         this.id = id;
         this.name = name;
         this.bad = isBad;
@@ -122,7 +121,7 @@ public class Effect implements Cloneable {
         return name;
     }
 
-    public byte getId() {
+    public int getId() {
         return id;
     }
 
@@ -144,11 +143,11 @@ public class Effect implements Cloneable {
         return this;
     }
 
-    public byte getAmplifier() {
+    public int getAmplifier() {
         return amplifier;
     }
 
-    public Effect setAmplifier(byte amplifier) {
+    public Effect setAmplifier(int amplifier) {
         this.amplifier = amplifier;
         return this;
     }
