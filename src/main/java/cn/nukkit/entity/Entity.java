@@ -478,8 +478,8 @@ public abstract class Entity extends Location implements Metadatable {
             ListTag<CompoundTag> list = new ListTag<>("ActiveEffects");
             for (Effect effect : this.effects.values()) {
                 list.add(new CompoundTag(String.valueOf(effect.getId()))
-                                .putByte("Id", effect.getId())
-                                .putByte("Amplifier", effect.getAmplifier())
+                                .putByte("Id", (byte) effect.getId())
+                                .putByte("Amplifier", (byte) effect.getAmplifier())
                                 .putInt("Duration", effect.getDuration())
                                 .putBoolean("Ambient", false)
                                 .putBoolean("ShowParticles", effect.isVisible())

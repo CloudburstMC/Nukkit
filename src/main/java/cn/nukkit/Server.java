@@ -55,10 +55,7 @@ import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.tile.*;
 import cn.nukkit.utils.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
 
@@ -190,18 +187,46 @@ public class Server {
         this.pluginPath = new File(pluginPath).getAbsolutePath() + "/";
 
         this.console = new CommandReader();
-
         //todo: VersionString 现在不必要
 
-        this.logger.info("Loading " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + "...");
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
+            this.getLogger().info(TextFormat.GREEN + "Welcome! Please choose a language first!");
             try {
-                Utils.writeFile(this.dataPath + "nukkit.yml", this.getClass().getClassLoader().getResourceAsStream("nukkit.yml"));
-
+                String[] lines = Utils.readFile(this.getClass().getClassLoader().getResourceAsStream("lang/language.list")).split("\n");
+                for (String line : lines) {
+                    this.getLogger().info(line);
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
+
+            String fallback = "eng";
+            String language = null;
+            while (language == null) {
+                String lang = this.console.readLine();
+                InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + lang + "/lang.ini");
+                if (conf != null) {
+                    language = lang;
+                }
+            }
+
+            InputStream advacedConf = this.getClass().getClassLoader().getResourceAsStream("lang/" + language + "/nukkit.yml");
+            if (advacedConf == null) {
+                advacedConf = this.getClass().getClassLoader().getResourceAsStream("lang/" + fallback + "/nukkit.yml");
+            }
+
+            try {
+                Utils.writeFile(this.dataPath + "nukkit.yml", advacedConf);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            Nukkit.START_TIME = System.currentTimeMillis();//reset it!
         }
+
+        this.console.start();
+
+        this.logger.info("Loading " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + "...");
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
         this.logger.info("Loading " + TextFormat.GREEN + "server properties" + TextFormat.WHITE + "...");
