@@ -1404,7 +1404,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void despawnFromAll() {
-        for (Player player : this.hasSpawned.values()) {
+        for (Player player : new ArrayList<>(this.hasSpawned.values())) {
             this.despawnFrom(player);
         }
     }
