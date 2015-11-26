@@ -10,12 +10,12 @@ import java.util.Random;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Ore {
+public class ObjectOre {
 
     private Random random;
     public OreType type;
 
-    public Ore(Random random, OreType type) {
+    public ObjectOre(Random random, OreType type) {
         this.type = type;
         this.random = random;
     }

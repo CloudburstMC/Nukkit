@@ -46,6 +46,7 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
+import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
 
@@ -1535,6 +1536,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         ListTag<DoubleTag> posList = nbt.getList(new ListTag<>(), "Pos");
         BaseFullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
+        if (chunk == null || chunk.getProvider() == null) {
+            throw new ChunkException("Invalid garbage Chunk given to Entity");
+        }
 
         this.isPlayer = true;
 

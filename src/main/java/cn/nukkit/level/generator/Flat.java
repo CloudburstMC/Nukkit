@@ -6,8 +6,8 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.object.OreType;
-import cn.nukkit.level.generator.populator.Ore;
 import cn.nukkit.level.generator.populator.Populator;
+import cn.nukkit.level.generator.populator.PopulatorOre;
 import cn.nukkit.math.Vector3;
 
 import java.util.*;
@@ -56,7 +56,7 @@ public class Flat extends Generator {
         this.chunk = null;
 
         if (this.options.containsKey("decoration")) {
-            Ore ores = new Ore();
+            PopulatorOre ores = new PopulatorOre();
             ores.setOreTypes(new OreType[]{
                     new OreType(new CoalOre(), 20, 16, 0, 128),
                     new OreType(new IronOre(), 20, 8, 0, 64),

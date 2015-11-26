@@ -137,7 +137,7 @@ public class Anvil extends BaseLevelProvider {
             extraData.putLShort(chunk.getBlockExtraDataArray().get(key));
         }
 
-        BinaryStream stream = new BinaryStream(new byte[65536]);
+        BinaryStream stream = new BinaryStream();
         stream.put(chunk.getBlockIdArray());
         stream.put(chunk.getBlockDataArray());
         stream.put(chunk.getBlockSkyLightArray());

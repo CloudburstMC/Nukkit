@@ -8,7 +8,7 @@ public class DesertBiome extends SandyBiome {
     public DesertBiome() {
         super();
         this.setElevation(63, 74);
-        this.temerature = 2;
+        this.temperature = 2;
         this.rainfall = 0;
     }
 

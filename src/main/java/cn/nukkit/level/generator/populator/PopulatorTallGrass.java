@@ -10,7 +10,7 @@ import java.util.Random;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class TallGrass extends Populator {
+public class PopulatorTallGrass extends Populator {
     private ChunkManager level;
     private int randomAmount;
     private int baseAmount;
