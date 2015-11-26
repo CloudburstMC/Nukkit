@@ -7,7 +7,7 @@ import cn.nukkit.item.Tool;
  * Created on 2015/11/25 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BirchWoodStairs extends Stair{
+public class BirchWoodStairs extends Stair {
 
     public BirchWoodStairs() {
         this(0);

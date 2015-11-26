@@ -32,7 +32,7 @@ public class Nukkit {
     public final static String PATH = System.getProperty("user.dir") + "/";
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
-    public final static Long START_TIME = System.currentTimeMillis();
+    public static long START_TIME = System.currentTimeMillis();
     public static boolean ANSI = true;
     public static boolean shortTitle = false;
     public static int DEBUG = 1;
@@ -60,6 +60,7 @@ public class Nukkit {
             }
             Server server = new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
         } catch (Exception e) {
+            e.printStackTrace();
             logger.logException(e);
         }
 

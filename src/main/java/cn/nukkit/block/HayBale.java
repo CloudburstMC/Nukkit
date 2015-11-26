@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class HayBale extends Solid{
+public class HayBale extends Solid {
     public HayBale() {
         this(0);
     }
