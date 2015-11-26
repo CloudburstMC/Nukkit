@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
+import cn.nukkit.event.inventory.InventoryOpenEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerSetContentPacket;
 import cn.nukkit.network.protocol.ContainerSetSlotPacket;
@@ -401,7 +402,14 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public boolean open(Player who) {
-        return false;
+        InventoryOpenEvent ev = new InventoryOpenEvent(this, who);
+        who.getServer().getPluginManager().callEvent(ev);
+        if(ev.isCancelled()) {
+            return false;
+        }
+        this.onOpen(who);
+
+        return true;
     }
 
     @Override
