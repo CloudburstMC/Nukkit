@@ -26,6 +26,8 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.level.generator.*;
+import cn.nukkit.level.particle.DestroyBlockParticle;
+import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.sound.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
@@ -341,8 +343,32 @@ public class Level implements ChunkManager, Metadatable {
         this.addSound(sound, players.stream().toArray(Player[]::new));
     }
 
-    public void addParticle() {
-        //todo
+    public void addParticle(Particle particle) {
+        this.addParticle(particle, (Player[]) null);
+    }
+
+    public void addParticle(Particle particle, Player[] players) {
+        DataPacket[] packets = particle.encode();
+
+        if (players == null) {
+            if (packets != null) {
+                for (DataPacket packet : packets) {
+                    this.addChunkPacket((int) particle.x >> 4, (int) particle.z >> 4, packet);
+                }
+            }
+        } else {
+            if (packets != null) {
+                if (packets.length == 1) {
+                    Server.broadcastPacket(players, packets[0]);
+                } else {
+                    this.server.batchPackets(players, packets, false);
+                }
+            }
+        }
+    }
+
+    public void addParticle(Particle particle, Collection<Player> players) {
+        this.addParticle(particle, players.stream().toArray(Player[]::new));
     }
 
     public boolean getAutoSave() {
@@ -1334,8 +1360,7 @@ public class Level implements ChunkManager, Metadatable {
                 players.remove(player.getLoaderId());
             }
 
-            //todo particle
-            this.addParticle();
+            this.addParticle(new DestroyBlockParticle(target.add(0.5), target), players.values());
         }
 
         target.onBreak(item);
