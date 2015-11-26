@@ -200,7 +200,7 @@ public class Server {
                 throw new RuntimeException(e);
             }
 
-            String fallback = "eng";
+            String fallback = BaseLang.FALLBACK_LANGUAGE;
             String language = null;
             while (language == null) {
                 String lang = this.console.readLine();
@@ -221,7 +221,6 @@ public class Server {
                 throw new RuntimeException(e);
             }
 
-            Nukkit.START_TIME = System.currentTimeMillis();//reset it!
         }
 
         this.console.start();
@@ -1357,7 +1356,7 @@ public class Server {
         name = name.toLowerCase();
         int delta = Integer.MAX_VALUE;
         for (Player player : this.getOnlinePlayers().values()) {
-            if (player.getName().startsWith(name)) {
+            if (player.getName().toLowerCase().startsWith(name)) {
                 int curDelta = player.getName().length() - name.length();
                 if (curDelta < delta) {
                     found = player;

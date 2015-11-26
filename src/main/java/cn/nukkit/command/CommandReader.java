@@ -103,7 +103,4 @@ public class CommandReader extends Thread implements InterruptibleThread {
         }
     }
 
-    public ConsoleReader getReader() {
-        return reader;
-    }
 }
