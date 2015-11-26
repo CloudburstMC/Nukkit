@@ -200,7 +200,7 @@ public class Server {
                 throw new RuntimeException(e);
             }
 
-            String fallback = "eng";
+            String fallback = BaseLang.FALLBACK_LANGUAGE;
             String language = null;
             while (language == null) {
                 String lang = this.console.readLine();
@@ -221,7 +221,6 @@ public class Server {
                 throw new RuntimeException(e);
             }
 
-            Nukkit.START_TIME = System.currentTimeMillis();//reset it!
         }
 
         this.console.start();
