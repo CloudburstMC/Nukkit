@@ -27,23 +27,28 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
-    final public void setBlockId(int x, int y, int z, int id) throws ChunkException {
-        throw new ChunkException("Tried to modify an empty Chunk");
+    public byte[] getBlockIdColumn(int x, int z) {
+        return new byte[16];
     }
 
     @Override
-    final public int getBlockData(int x, int y, int z) {
-        return 0;
+    public byte[] getBlockDataColumn(int x, int z) {
+        return new byte[8];
     }
 
     @Override
-    public void setBlockData(int x, int y, int z, int data) throws ChunkException {
-        throw new ChunkException("Tried to modify an empty Chunk");
+    public byte[] getBlockSkyLightColumn(int x, int z) {
+        return new byte[]{(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff};
+    }
+
+    @Override
+    public byte[] getBlockLightColumn(int x, int z) {
+        return new byte[8];
     }
 
     @Override
     public int getFullBlock(int x, int y, int z) throws ChunkException {
-        throw new ChunkException("Tried to modify an empty Chunk");
+        return 0;
     }
 
     @Override
@@ -62,12 +67,39 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
-    public int getBlockSkyLight(int x, int y, int z) {
-        return 15;
+    public byte[] getIdArray() {
+        return new byte[4096];
     }
 
     @Override
-    public void setBlockSkyLight(int x, int y, int z, int level) throws ChunkException {
+    public byte[] getDataArray() {
+        return new byte[2048];
+    }
+
+    @Override
+    public byte[] getSkyLightArray() {
+        byte[] b = new byte[2048];
+        Arrays.fill(b, (byte) 0xff);
+        return b;
+    }
+
+    @Override
+    public byte[] getLightArray() {
+        return new byte[2048];
+    }
+
+    @Override
+    final public void setBlockId(int x, int y, int z, int id) throws ChunkException {
+        throw new ChunkException("Tried to modify an empty Chunk");
+    }
+
+    @Override
+    final public int getBlockData(int x, int y, int z) {
+        return 0;
+    }
+
+    @Override
+    public void setBlockData(int x, int y, int z, int data) throws ChunkException {
         throw new ChunkException("Tried to modify an empty Chunk");
     }
 
@@ -82,59 +114,13 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
-    public byte[] getBlockIdColumn(int x, int z) {
-        byte[] b = new byte[16];
-        Arrays.fill(b, (byte) 0x00);
-        return b;
+    public int getBlockSkyLight(int x, int y, int z) {
+        return 15;
     }
 
     @Override
-    public byte[] getBlockDataColumn(int x, int z) {
-        byte[] b = new byte[8];
-        Arrays.fill(b, (byte) 0x00);
-        return b;
-    }
-
-    @Override
-    public byte[] getBlockSkyLightColumn(int x, int z) {
-        byte[] b = new byte[8];
-        Arrays.fill(b, (byte) 0xff);
-        return b;
-    }
-
-    @Override
-    public byte[] getBlockLightColumn(int x, int z) {
-        byte[] b = new byte[8];
-        Arrays.fill(b, (byte) 0x00);
-        return b;
-    }
-
-    @Override
-    public byte[] getIdArray() {
-        byte[] b = new byte[4096];
-        Arrays.fill(b, (byte) 0x00);
-        return b;
-    }
-
-    @Override
-    public byte[] getDataArray() {
-        byte[] b = new byte[2048];
-        Arrays.fill(b, (byte) 0x00);
-        return b;
-    }
-
-    @Override
-    public byte[] getSkyLightArray() {
-        byte[] b = new byte[2048];
-        Arrays.fill(b, (byte) 0xff);
-        return b;
-    }
-
-    @Override
-    public byte[] getLightArray() {
-        byte[] b = new byte[2048];
-        Arrays.fill(b, (byte) 0x00);
-        return b;
+    public void setBlockSkyLight(int x, int y, int z, int level) throws ChunkException {
+        throw new ChunkException("Tried to modify an empty Chunk");
     }
 
 }
