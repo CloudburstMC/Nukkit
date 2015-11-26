@@ -33,6 +33,11 @@ It has a few key advantages over PocketMine-MP:
 
 However, Nukkit is **not finished** yet. We welcome contributions.
 
+Build JAR file
+-------------
+- Init modules by `git submodule update --init`
+- Compile by `mvn clean package`
+
 Running
 -------------
 Simply run `start.sh` or `start.cmd`. Or execute `java -jar Nukkit.jar`.
