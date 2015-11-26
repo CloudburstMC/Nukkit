@@ -46,6 +46,7 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
+import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
 
@@ -1527,7 +1528,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         //todo achievement
-        nbt.putLong("lastPlayed", System.currentTimeMillis());
+        nbt.putLong("lastPlayed", System.currentTimeMillis() / 1000);
 
         if (this.server.getAutoSave()) {
             this.server.saveOfflinePlayerData(this.username, nbt, true);
@@ -1535,6 +1536,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         ListTag<DoubleTag> posList = nbt.getList(new ListTag<>(), "Pos");
         BaseFullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
+        if (chunk == null || chunk.getProvider() == null) {
+            throw new ChunkException("Invalid garbage Chunk given to Entity");
+        }
 
         this.isPlayer = true;
 
@@ -2734,7 +2738,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             //todo save achievement
 
             this.namedTag.putInt("playerGameType", this.gamemode);
-            this.namedTag.putLong("lastPlayed", System.currentTimeMillis());
+            this.namedTag.putLong("lastPlayed", System.currentTimeMillis() / 1000);
 
             this.namedTag.putString("lastIP", this.getAddress());
 

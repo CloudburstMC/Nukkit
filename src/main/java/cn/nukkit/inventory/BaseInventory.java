@@ -404,7 +404,7 @@ public abstract class BaseInventory implements Inventory {
     public boolean open(Player who) {
         InventoryOpenEvent ev = new InventoryOpenEvent(this, who);
         who.getServer().getPluginManager().callEvent(ev);
-        if(ev.isCancelled()) {
+        if (ev.isCancelled()) {
             return false;
         }
         this.onOpen(who);

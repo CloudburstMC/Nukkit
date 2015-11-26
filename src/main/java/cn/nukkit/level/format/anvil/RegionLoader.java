@@ -41,10 +41,13 @@ public class RegionLoader extends BaseRegionLoader {
         if (index < 0 || index >= 4096) {
             return null;
         }
+
         this.lastUsed = System.currentTimeMillis();
+
         if (!this.isChunkGenerated(index)) {
             return null;
         }
+
         Integer[] table = this.locationTable.get(index);
         this.randomAccessFile.seek(table[0] << 12);
         int length = this.randomAccessFile.readInt();
@@ -58,6 +61,7 @@ public class RegionLoader extends BaseRegionLoader {
             }
             return null;
         }
+
         if (length > (table[1] << 12)) {
             MainLogger.getLogger().error("Corrupted bigger chunk detected");
             table[1] = length >> 12;
@@ -67,6 +71,7 @@ public class RegionLoader extends BaseRegionLoader {
             MainLogger.getLogger().error("Invalid compression type");
             return null;
         }
+
         byte[] data = new byte[length - 1];
         this.randomAccessFile.read(data);
         Chunk chunk = this.unserializeChunk(data);

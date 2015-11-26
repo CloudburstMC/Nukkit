@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.TileEventPacket;
+import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.tile.Chest;
 
 /**
@@ -25,7 +25,7 @@ public class ChestInventory extends ContainerInventory {
         super.onOpen(who);
 
         if (this.getViewers().size() == 1) {
-            TileEventPacket pk = new TileEventPacket();
+            BlockEventPacket pk = new BlockEventPacket();
             pk.x = (int) this.getHolder().getX();
             pk.y = (int) this.getHolder().getY();
             pk.z = (int) this.getHolder().getZ();
@@ -42,7 +42,7 @@ public class ChestInventory extends ContainerInventory {
     @Override
     public void onClose(Player who) {
         if (this.getViewers().size() == 1) {
-            TileEventPacket pk = new TileEventPacket();
+            BlockEventPacket pk = new BlockEventPacket();
             pk.x = (int) this.getHolder().getX();
             pk.y = (int) this.getHolder().getY();
             pk.z = (int) this.getHolder().getZ();

@@ -96,6 +96,16 @@ public class NBTIO {
         }
     }
 
+    public static CompoundTag readCompressed(byte[] data) throws IOException {
+        return readCompressed(data, ByteOrder.BIG_ENDIAN);
+    }
+
+    public static CompoundTag readCompressed(byte[] data, ByteOrder endianness) throws IOException {
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(data))) {
+            return read(gzipInputStream, endianness);
+        }
+    }
+
     public static byte[] write(CompoundTag tag) throws IOException {
         return write(tag, ByteOrder.BIG_ENDIAN);
     }

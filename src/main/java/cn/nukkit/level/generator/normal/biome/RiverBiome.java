@@ -6,24 +6,24 @@ import cn.nukkit.level.generator.populator.PopulatorTallGrass;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PlainBiome extends GrassyBiome {
+public class RiverBiome extends GrassyBiome {
 
-    public PlainBiome() {
+    public RiverBiome() {
         super();
 
         PopulatorTallGrass tallGrass = new PopulatorTallGrass();
-        tallGrass.setBaseAmount(12);
+        tallGrass.setBaseAmount(5);
 
         this.addPopulator(tallGrass);
 
-        this.setElevation(63, 74);
+        this.setElevation(58, 62);
 
-        this.temperature = 0.8;
-        this.rainfall = 0.4;
+        this.temperature = 0.5;
+        this.rainfall = 0.7;
     }
 
     @Override
     public String getName() {
-        return "Plains";
+        return "River";
     }
 }

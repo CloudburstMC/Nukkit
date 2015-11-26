@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.populator;
 
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.generator.object.ObjectOre;
 import cn.nukkit.level.generator.object.OreType;
 import cn.nukkit.math.NukkitMath;
 
@@ -10,13 +11,13 @@ import java.util.Random;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Ore extends Populator {
+public class PopulatorOre extends Populator {
     private OreType[] oreTypes = new OreType[0];
 
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, Random random) {
         for (OreType type : this.oreTypes) {
-            cn.nukkit.level.generator.object.Ore ore = new cn.nukkit.level.generator.object.Ore(random, type);
+            ObjectOre ore = new ObjectOre(random, type);
             for (int i = 0; i < ore.type.clusterCount; ++i) {
                 int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
                 int y = NukkitMath.randomRange(random, ore.type.maxHeight, ore.type.maxHeight);

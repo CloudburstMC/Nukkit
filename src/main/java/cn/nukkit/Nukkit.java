@@ -49,7 +49,11 @@ public class Nukkit {
 
         //启动参数
         for (String arg : args) {
-            if (arg.equals("disable-ansi")) ANSI = false;
+            switch (arg) {
+                case "disable-ansi":
+                    ANSI = false;
+                    break;
+            }
         }
 
         MainLogger logger = new MainLogger(DATA_PATH + "server.log");

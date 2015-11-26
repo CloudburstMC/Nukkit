@@ -4,8 +4,8 @@ package cn.nukkit.network.protocol;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class TileEntityDataPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.TILE_ENTITY_DATA_PACKET;
+public class BlockEntityDataPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.BLOCK_ENTITY_DATA_PACKET;
 
     public int x;
     public int y;

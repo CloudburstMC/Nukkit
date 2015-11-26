@@ -293,7 +293,7 @@ public class Block extends Position implements Metadatable, Cloneable {
             //list[SANDSTONE] = Sandstone.class;
             list[BED_BLOCK] = Bed.class;
             /*list[COBWEB] = Cobweb.class;
-            list[TALL_GRASS] = TallGrass.class;
+            list[TALL_GRASS] = PopulatorTallGrass.class;
             list[DEAD_BUSH] = DeadBush.class;
             list[WOOL] = Wool.class;
             list[DANDELION] = Dandelion.class;

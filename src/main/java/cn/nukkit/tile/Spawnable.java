@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.TileEntityDataPacket;
+import cn.nukkit.network.protocol.BlockEntityDataPacket;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -27,7 +27,7 @@ public abstract class Spawnable extends Tile {
         }
 
         CompoundTag tag = this.getSpawnCompound();
-        TileEntityDataPacket pk = new TileEntityDataPacket();
+        BlockEntityDataPacket pk = new BlockEntityDataPacket();
         pk.x = this.x;
         pk.y = (byte) this.y;
         pk.z = this.z;

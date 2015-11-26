@@ -40,8 +40,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @Override
     public BaseChunk clone() {
         BaseChunk chunk = (BaseChunk) super.clone();
-        chunk.biomeColors = biomeColors.clone();
-        chunk.heightMap = heightMap.clone();
+        chunk.biomeColors = this.getBiomeColorArray().clone();
+        chunk.heightMap = this.getHeightMapArray().clone();
         return chunk;
     }
 
@@ -243,36 +243,36 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     @Override
     public byte[] getBlockIdArray() {
-        ByteBuffer buffer = ByteBuffer.allocate(4096);
+        ByteBuffer buffer = ByteBuffer.allocate(4096 * SECTION_COUNT);
         for (int y = 0; y < SECTION_COUNT; y++) {
-            buffer.put(this.sections[y].getBlockIdColumn(x, z));
+            buffer.put(this.sections[y].getIdArray());
         }
         return buffer.array();
     }
 
     @Override
     public byte[] getBlockDataArray() {
-        ByteBuffer buffer = ByteBuffer.allocate(2048);
+        ByteBuffer buffer = ByteBuffer.allocate(2048 * SECTION_COUNT);
         for (int y = 0; y < SECTION_COUNT; y++) {
-            buffer.put(this.sections[y].getBlockDataColumn(x, z));
+            buffer.put(this.sections[y].getDataArray());
         }
         return buffer.array();
     }
 
     @Override
     public byte[] getBlockSkyLightArray() {
-        ByteBuffer buffer = ByteBuffer.allocate(2048);
+        ByteBuffer buffer = ByteBuffer.allocate(2048 * SECTION_COUNT);
         for (int y = 0; y < SECTION_COUNT; y++) {
-            buffer.put(this.sections[y].getBlockSkyLightColumn(x, z));
+            buffer.put(this.sections[y].getSkyLightArray());
         }
         return buffer.array();
     }
 
     @Override
     public byte[] getBlockLightArray() {
-        ByteBuffer buffer = ByteBuffer.allocate(2048);
+        ByteBuffer buffer = ByteBuffer.allocate(2048 * SECTION_COUNT);
         for (int y = 0; y < SECTION_COUNT; y++) {
-            buffer.put(this.sections[y].getBlockLightColumn(x, z));
+            buffer.put(this.sections[y].getLightArray());
         }
         return buffer.array();
     }
@@ -282,4 +282,18 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         return sections;
     }
 
+    @Override
+    public int[] getBiomeColorArray() {
+        return this.biomeColors;
+    }
+
+    @Override
+    public int[] getHeightMapArray() {
+        return this.heightMap;
+    }
+
+    @Override
+    public LevelProvider getProvider() {
+        return this.provider;
+    }
 }

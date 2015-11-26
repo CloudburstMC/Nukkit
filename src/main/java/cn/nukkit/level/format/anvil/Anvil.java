@@ -85,7 +85,7 @@ public class Anvil extends BaseLevelProvider {
                 .putInt("SpawnZ", 128)
                 .putInt("version", 19133)
                 .putInt("DayTime", 0)
-                .putLong("LastPlayed", System.currentTimeMillis())
+                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
                 .putLong("RandomSeed", seed)
                 .putLong("SizeOnDisk", 0)
                 .putInt("Time", 0)
@@ -137,7 +137,7 @@ public class Anvil extends BaseLevelProvider {
             extraData.putLShort(chunk.getBlockExtraDataArray().get(key));
         }
 
-        BinaryStream stream = new BinaryStream(new byte[65536]);
+        BinaryStream stream = new BinaryStream();
         stream.put(chunk.getBlockIdArray());
         stream.put(chunk.getBlockDataArray());
         stream.put(chunk.getBlockSkyLightArray());
