@@ -89,7 +89,7 @@ public class McRegion extends BaseLevelProvider {
                 .putInt("SpawnZ", 128)
                 .putInt("version", 19133)
                 .putInt("DayTime", 0)
-                .putLong("LastPlayed", System.currentTimeMillis())
+                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
                 .putLong("RandomSeed", seed)
                 .putLong("SizeOnDisk", 0)
                 .putInt("Time", 0)

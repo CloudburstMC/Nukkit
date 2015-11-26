@@ -4,8 +4,8 @@ package cn.nukkit.network.protocol;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class TileEventPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.TILE_EVENT_PACKET;
+public class BlockEventPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.BLOCK_EVENT_PACKET;
 
     @Override
     public byte pid() {

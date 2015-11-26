@@ -3,7 +3,7 @@ package cn.nukkit.inventory;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.TileEventPacket;
+import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.tile.Chest;
 
 import java.util.HashMap;
@@ -102,7 +102,7 @@ public class DoubleChestInventory extends BaseInventory implements InventoryHold
         super.onOpen(who);
 
         if (this.getViewers().size() == 1) {
-            TileEventPacket pk = new TileEventPacket();
+            BlockEventPacket pk = new BlockEventPacket();
             pk.x = (int) this.right.getHolder().getX();
             pk.y = (int) this.right.getHolder().getY();
             pk.z = (int) this.right.getHolder().getZ();
@@ -119,7 +119,7 @@ public class DoubleChestInventory extends BaseInventory implements InventoryHold
     @Override
     public void onClose(Player who) {
         if (this.getViewers().size() == 1) {
-            TileEventPacket pk = new TileEventPacket();
+            BlockEventPacket pk = new BlockEventPacket();
             pk.x = (int) this.right.getHolder().getX();
             pk.y = (int) this.right.getHolder().getY();
             pk.z = (int) this.right.getHolder().getZ();

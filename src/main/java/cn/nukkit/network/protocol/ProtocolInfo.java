@@ -30,7 +30,7 @@ public interface ProtocolInfo {
     byte ADD_PAINTING_PACKET = (byte) 0xa0;
     byte EXPLODE_PACKET = (byte) 0xa1;
     byte LEVEL_EVENT_PACKET = (byte) 0xa2;
-    byte TILE_EVENT_PACKET = (byte) 0xa3;
+    byte BLOCK_EVENT_PACKET = (byte) 0xa3;
     byte ENTITY_EVENT_PACKET = (byte) 0xa4;
     byte MOB_EFFECT_PACKET = (byte) 0xa5;
     byte UPDATE_ATTRIBUTES_PACKET = (byte) 0xa6;
@@ -56,7 +56,7 @@ public interface ProtocolInfo {
     byte CRAFTING_DATA_PACKET = (byte) 0xba;
     byte CRAFTING_EVENT_PACKET = (byte) 0xbb;
     byte ADVENTURE_SETTINGS_PACKET = (byte) 0xbc;
-    byte TILE_ENTITY_DATA_PACKET = (byte) 0xbd;
+    byte BLOCK_ENTITY_DATA_PACKET = (byte) 0xbd;
     //public static final byte PLAYER_INPUT_PACKET = (byte) 0xbe;
     byte FULL_CHUNK_DATA_PACKET = (byte) 0xbf;
     byte SET_DIFFICULTY_PACKET = (byte) 0xc0;

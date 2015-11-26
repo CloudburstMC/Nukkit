@@ -1304,8 +1304,8 @@ public class Server {
 
         Position spawn = this.getDefaultLevel().getSafeSpawn();
         CompoundTag nbt = new CompoundTag()
-                .putLong("firstPlayed", System.currentTimeMillis())
-                .putLong("lastPlayed", System.currentTimeMillis())
+                .putLong("firstPlayed", System.currentTimeMillis() / 1000)
+                .putLong("lastPlayed", System.currentTimeMillis() / 1000)
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("0", spawn.x))
                         .add(new DoubleTag("1", spawn.y))

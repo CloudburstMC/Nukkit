@@ -1528,7 +1528,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         //todo achievement
-        nbt.putLong("lastPlayed", System.currentTimeMillis());
+        nbt.putLong("lastPlayed", System.currentTimeMillis() / 1000);
 
         if (this.server.getAutoSave()) {
             this.server.saveOfflinePlayerData(this.username, nbt, true);
@@ -2738,7 +2738,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             //todo save achievement
 
             this.namedTag.putInt("playerGameType", this.gamemode);
-            this.namedTag.putLong("lastPlayed", System.currentTimeMillis());
+            this.namedTag.putLong("lastPlayed", System.currentTimeMillis() / 1000);
 
             this.namedTag.putString("lastIP", this.getAddress());
 
