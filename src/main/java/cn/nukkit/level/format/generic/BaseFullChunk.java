@@ -13,6 +13,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.tile.Tile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -389,14 +390,14 @@ public abstract class BaseFullChunk implements FullChunk {
                 }
             }
         }
-        for (Entity entity : this.getEntities().values()) {
+        for (Entity entity : new ArrayList<>(this.getEntities().values())) {
             if (entity instanceof Player) {
                 continue;
             }
             entity.close();
         }
 
-        for (Tile tile : this.getTiles().values()) {
+        for (Tile tile : new ArrayList<>(this.getTiles().values())) {
             tile.close();
         }
         this.provider = null;
