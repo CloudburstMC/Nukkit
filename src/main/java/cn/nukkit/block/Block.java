@@ -287,10 +287,10 @@ public class Block extends Position implements Metadatable, Cloneable {
             list[WOOD] = Wood.class;
             list[LEAVES] = Leaves.class;
             list[SPONGE] = Sponge.class;
-            //list[GLASS] = Glass.class;
+            list[GLASS] = Glass.class;
             list[LAPIS_ORE] = LapisOre.class;
-            //list[LAPIS_BLOCK] = Lapis.class;
-            //list[SANDSTONE] = Sandstone.class;
+            list[LAPIS_BLOCK] = Lapis.class;
+            list[SANDSTONE] = SandStone.class;
             list[BED_BLOCK] = Bed.class;
             /*list[COBWEB] = Cobweb.class;
             list[TALL_GRASS] = PopulatorTallGrass.class;
@@ -299,19 +299,18 @@ public class Block extends Position implements Metadatable, Cloneable {
             list[DANDELION] = Dandelion.class;
             */
             list[RED_FLOWER] = Flower.class;
-            /*
-            list[BROWN_MUSHROOM] = BrownMushroom.class;
-            list[RED_MUSHROOM] = RedMushroom.class;
+            //list[BROWN_MUSHROOM] = BrownMushroom.class;
+            //list[RED_MUSHROOM] = RedMushroom.class;
             list[GOLD_BLOCK] = Gold.class;
             list[IRON_BLOCK] = Iron.class;
             list[DOUBLE_SLAB] = DoubleSlab.class;
             list[SLAB] = Slab.class;
-            list[BRICKS_BLOCK] = Bricks.class;
-            list[TNT] = TNT.class;
-            list[BOOKSHELF] = Bookshelf.class;
-            list[MOSS_STONE] = MossStone.class;
-            list[OBSIDIAN] = Obsidian.class;
-            list[TORCH] = Torch.class;*/
+            //list[BRICKS_BLOCK] = Bricks.class;
+            //list[TNT] = TNT.class;
+            //list[BOOKSHELF] = Bookshelf.class;
+            //list[MOSS_STONE] = MossStone.class;
+            //list[OBSIDIAN] = Obsidian.class;
+            //list[TORCH] = Torch.class;
             list[FIRE] = Fire.class;
             //list[MONSTER_SPAWNER] = MonsterSpawner.class;
             list[WOOD_STAIRS] = WoodStairs.class;
