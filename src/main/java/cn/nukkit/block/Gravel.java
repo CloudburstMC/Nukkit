@@ -17,7 +17,7 @@ public class Gravel extends Solid {
     }
 
     public Gravel(int meta) {
-        super(GRAVEL, 0);
+        super(GRAVEL, meta);
     }
 
     @Override

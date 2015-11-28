@@ -13,7 +13,7 @@ public class Coal extends Solid {
     }
 
     public Coal(int meta) {
-        super(COAL_BLOCK, 0);
+        super(COAL_BLOCK, meta);
     }
 
     @Override

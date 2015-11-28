@@ -15,7 +15,7 @@ public class DiamondOre extends Solid {
     }
 
     public DiamondOre(int meta) {
-        super(DIAMOND_ORE, 0);
+        super(DIAMOND_ORE, meta);
     }
 
     @Override
