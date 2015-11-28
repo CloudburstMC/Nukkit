@@ -7,15 +7,11 @@ package cn.nukkit.block;
 public class Glass extends Transparent {
 
     public Glass() {
-        this(Block.GLASS);
+        this(0);
     }
 
-    public Glass(int id) {
-        super(id);
-    }
-
-    public Glass(int id, int meta) {
-        super(id, meta);
+    public Glass(int meta) {
+        super(GLASS, meta);
     }
 
     @Override
