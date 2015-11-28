@@ -15,7 +15,7 @@ public class Ice extends Transparent {
     }
 
     public Ice(int meta) {
-        super(ICE, 0);
+        super(ICE, meta);
     }
 
     @Override

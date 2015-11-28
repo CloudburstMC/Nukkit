@@ -18,7 +18,7 @@ public class RedstoneOre extends Solid {
     }
 
     public RedstoneOre(int meta) {
-        super(REDSTONE_ORE, 0);
+        super(REDSTONE_ORE, meta);
     }
 
     @Override

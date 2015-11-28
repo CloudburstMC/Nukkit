@@ -16,7 +16,7 @@ public class Grass extends Solid {
     }
 
     public Grass(int meta) {
-        super(GRASS, 0);
+        super(GRASS, meta);
     }
 
     @Override

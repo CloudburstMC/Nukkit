@@ -14,7 +14,7 @@ public class Air extends Transparent {
     }
 
     public Air(int meta) {
-        super(AIR, 0);
+        super(AIR, meta);
     }
 
     @Override

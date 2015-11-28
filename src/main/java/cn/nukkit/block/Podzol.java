@@ -13,7 +13,7 @@ public class Podzol extends Solid {
     }
 
     public Podzol(int meta) {
-        super(PODZOL, 0);
+        super(PODZOL, meta);
     }
 
     @Override
