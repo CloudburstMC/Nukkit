@@ -15,7 +15,12 @@ public class IronOre extends Solid {
     }
 
     public IronOre(int meta) {
-        super(IRON_ORE, meta);
+        super(0);
+    }
+
+    @Override
+    public int getId() {
+        return IRON_ORE;
     }
 
     @Override

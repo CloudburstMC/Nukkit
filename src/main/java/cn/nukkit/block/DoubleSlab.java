@@ -15,14 +15,19 @@ public class DoubleSlab extends Solid {
     public static final int BRICK = 4;
     public static final int STONE_BRICK = 5;
     public static final int QUARTZ = 6;
-
+    public static final int NETHER_BRICK = 7;
 
     public DoubleSlab() {
         this(0);
     }
 
     public DoubleSlab(int meta) {
-        super(DOUBLE_SLAB, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return DOUBLE_SLAB;
     }
 
     @Override
@@ -45,9 +50,9 @@ public class DoubleSlab extends Solid {
                 "Brick",
                 "Stone Brick",
                 "Quartz",
-                ""
+                "Nether Brick"
         };
-        return "Double "+names[this.meta & 0x07]+" Slab";
+        return "Double " + names[this.meta & 0x07] + " Slab";
     }
 
     @Override

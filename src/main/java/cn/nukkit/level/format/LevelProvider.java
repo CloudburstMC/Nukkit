@@ -70,4 +70,6 @@ public interface LevelProvider {
     Level getLevel();
 
     void close();
+
+    void saveLevelData();
 }

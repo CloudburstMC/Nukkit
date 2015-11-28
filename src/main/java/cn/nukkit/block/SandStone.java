@@ -12,13 +12,17 @@ public class SandStone extends Solid {
     public static final int CHISELED = 1;
     public static final int SMOOTH = 2;
 
-
     public SandStone() {
         this(0);
     }
 
     public SandStone(int meta) {
-        super(SANDSTONE, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return SANDSTONE;
     }
 
     @Override

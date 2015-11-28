@@ -2493,7 +2493,6 @@ public class Level implements ChunkManager, Metadatable {
             pk.data = rand.nextInt(50000) + 10000;
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
-            ;
             pk.data = 0;
         }
         for (Player p : this.getPlayers().values()) {
@@ -2512,7 +2511,6 @@ public class Level implements ChunkManager, Metadatable {
             pk.data = rand.nextInt(50000) + 10000;
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
-            ;
             pk.data = 0;
         }
         player.dataPacket(pk);

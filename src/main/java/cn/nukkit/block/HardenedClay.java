@@ -12,7 +12,12 @@ public class HardenedClay extends Solid {
     }
 
     public HardenedClay(int meta) {
-        super(HARDENED_CLAY, meta);
+        super(0);
+    }
+
+    @Override
+    public int getId() {
+        return HARDENED_CLAY;
     }
 
     @Override

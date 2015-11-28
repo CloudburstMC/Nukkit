@@ -20,7 +20,7 @@ import java.util.List;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Block extends Position implements Metadatable, Cloneable {
+public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int AIR = 0;
     public static final int STONE = 1;
     public static final int GRASS = 2;
@@ -66,6 +66,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int DANDELION = 37;
     public static final int ROSE = 38;
     public static final int POPPY = 38;
+    public static final int FLOWER = 38;
     public static final int RED_FLOWER = 38;
     public static final int BROWN_MUSHROOM = 39;
     public static final int RED_MUSHROOM = 40;
@@ -152,6 +153,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int VINE = 106;
     public static final int VINES = 106;
     public static final int FENCE_GATE = 107;
+    public static final int FENCE_GATE_OAK = 107;
     public static final int BRICK_STAIRS = 108;
     public static final int STONE_BRICK_STAIRS = 109;
     public static final int MYCELIUM = 110;
@@ -233,7 +235,6 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int BEETROOT_BLOCK = 244;
     public static final int STONECUTTER = 245;
     public static final int GLOWING_OBSIDIAN = 246;
-    public static final int NETHER_REACTOR = 247;
 
     public static Class[] list = null;
     public static Block[] fullList = null;
@@ -243,20 +244,15 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static double[] hardness = null;
     public static boolean[] transparent = null;
 
-    protected int id;
     protected int meta = 0;
 
     public AxisAlignedBB boundingBox = null;
 
-    public Block(int id) {
-        this(id, 0);
-    }
-
-    public Block(int id, Integer meta) {
-        this.id = id;
+    protected Block(Integer meta) {
         this.meta = (meta != null ? meta : 0);
     }
 
+    @SuppressWarnings("unchecked")
     public static void init() {
         if (list == null) {
             list = new Class[256];
@@ -290,7 +286,7 @@ public class Block extends Position implements Metadatable, Cloneable {
             list[GLASS] = Glass.class;
             list[LAPIS_ORE] = LapisOre.class;
             list[LAPIS_BLOCK] = Lapis.class;
-            list[SANDSTONE] = SandStone.class;
+            //list[SANDSTONE] = Sandstone.class;
             list[BED_BLOCK] = Bed.class;
             /*list[COBWEB] = Cobweb.class;
             list[TALL_GRASS] = PopulatorTallGrass.class;
@@ -298,7 +294,8 @@ public class Block extends Position implements Metadatable, Cloneable {
             list[WOOL] = Wool.class;
             list[DANDELION] = Dandelion.class;
             */
-            list[RED_FLOWER] = Flower.class;
+            list[FLOWER] = Flower.class;
+
             //list[BROWN_MUSHROOM] = BrownMushroom.class;
             //list[RED_MUSHROOM] = RedMushroom.class;
             list[GOLD_BLOCK] = Gold.class;
@@ -423,7 +420,6 @@ public class Block extends Position implements Metadatable, Cloneable {
             list[BEETROOT_BLOCK] = Beetroot.class;
             list[STONECUTTER] = Stonecutter.class;
             list[GLOWING_OBSIDIAN] = GlowingObsidian.class;
-            list[NETHER_REACTOR] = NetherReactor.class;
 
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];
@@ -463,7 +459,7 @@ public class Block extends Position implements Metadatable, Cloneable {
                 } else {
                     lightFilter[id] = 1;
                     for (int data = 0; data < 16; ++data) {
-                        fullList[(id) << 4 | data] = new Block(id, data);
+                        fullList[(id) << 4 | data] = new UnknownBlock(id, data);
                     }
                 }
             }
@@ -478,6 +474,7 @@ public class Block extends Position implements Metadatable, Cloneable {
         return get(id, meta, null);
     }
 
+    @SuppressWarnings("unchecked")
     public static Block get(int id, Integer meta, Position pos) {
         Block block;
         try {
@@ -487,10 +484,10 @@ public class Block extends Position implements Metadatable, Cloneable {
                 constructor.setAccessible(true);
                 block = (Block) constructor.newInstance(meta);
             } else {
-                block = new Block(id, meta);
+                block = new UnknownBlock(id, meta);
             }
         } catch (Exception e) {
-            block = new Block(id, meta);
+            block = new UnknownBlock(id, meta);
         }
 
         if (pos != null) {
@@ -582,13 +579,9 @@ public class Block extends Position implements Metadatable, Cloneable {
         return false;
     }
 
-    public String getName() {
-        return "Unknown";
-    }
+    public abstract String getName();
 
-    public int getId() {
-        return this.id;
-    }
+    public abstract int getId();
 
     public void addVelocityToEntity(Entity entity, Vector3 vector) {
 
@@ -611,7 +604,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     }
 
     public int[][] getDrops(Item item) {
-        if (this.id < 0 || this.id > list.length) { //Unknown blocks
+        if (this.getId() < 0 || this.getId() > list.length) { //Unknown blocks
             return new int[0][0];
         } else {
             return new int[][]{

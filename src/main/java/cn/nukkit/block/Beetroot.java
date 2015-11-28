@@ -12,7 +12,12 @@ public class Beetroot extends Crops {
     }
 
     public Beetroot(int meta) {
-        super(BEETROOT_BLOCK, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return BEETROOT_BLOCK;
     }
 
     @Override

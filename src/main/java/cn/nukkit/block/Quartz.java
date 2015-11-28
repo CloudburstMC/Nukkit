@@ -19,7 +19,12 @@ public class Quartz extends Solid {
     }
 
     public Quartz(int meta) {
-        super(QUARTZ_BLOCK, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return QUARTZ_BLOCK;
     }
 
     @Override

@@ -18,7 +18,12 @@ public class StoneWall extends Transparent {
     }
 
     public StoneWall(int meta) {
-        super(STONE_WALL, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return STONE_WALL;
     }
 
     @Override

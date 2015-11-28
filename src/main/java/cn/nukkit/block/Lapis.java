@@ -15,7 +15,12 @@ public class Lapis extends Solid {
     }
 
     public Lapis(int meta) {
-        super(LAPIS_BLOCK, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return LAPIS_BLOCK;
     }
 
     @Override

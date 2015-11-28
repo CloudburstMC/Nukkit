@@ -15,7 +15,12 @@ public class Iron extends Solid {
     }
 
     public Iron(int meta) {
-        super(IRON_BLOCK, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return IRON_BLOCK;
     }
 
     @Override

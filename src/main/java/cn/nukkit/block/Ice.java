@@ -9,13 +9,17 @@ import cn.nukkit.item.Tool;
  */
 public class Ice extends Transparent {
 
-
     public Ice() {
         this(0);
     }
 
     public Ice(int meta) {
-        super(ICE, meta);
+        super(0);
+    }
+
+    @Override
+    public int getId() {
+        return ICE;
     }
 
     @Override

@@ -12,7 +12,12 @@ public class NetherBrickStairs extends Stair {
     }
 
     public NetherBrickStairs(int meta) {
-        super(NETHER_BRICKS_STAIRS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return NETHER_BRICKS_STAIRS;
     }
 
     @Override

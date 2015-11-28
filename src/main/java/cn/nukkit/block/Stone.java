@@ -22,7 +22,12 @@ public class Stone extends Solid {
     }
 
     public Stone(int meta) {
-        super(STONE, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return STONE;
     }
 
     @Override

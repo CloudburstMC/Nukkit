@@ -6,12 +6,8 @@ package cn.nukkit.block;
  */
 public abstract class Transparent extends Block {
 
-    public Transparent(int id) {
-        super(id);
-    }
-
-    public Transparent(int id, int meta) {
-        super(id, meta);
+    protected Transparent(int meta) {
+        super(meta);
     }
 
     @Override

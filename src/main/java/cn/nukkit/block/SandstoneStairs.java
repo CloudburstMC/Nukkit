@@ -12,7 +12,12 @@ public class SandstoneStairs extends Stair {
     }
 
     public SandstoneStairs(int meta) {
-        super(SANDSTONE_STAIRS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return SANDSTONE_STAIRS;
     }
 
     @Override

@@ -17,11 +17,12 @@ public class FenceGate extends Transparent {
     }
 
     public FenceGate(int meta) {
-        this(FENCE_GATE, meta);
+        super(meta);
     }
 
-    public FenceGate(int id, int meta) {
-        super(id, meta);
+    @Override
+    public int getId() {
+        return FENCE_GATE_OAK;
     }
 
     @Override
@@ -83,7 +84,7 @@ public class FenceGate extends Transparent {
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
-                {this.id, 0, 1}
+                {this.getId(), 0, 1}
         };
     }
 

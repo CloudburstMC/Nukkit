@@ -14,7 +14,12 @@ public class Cobblestone extends Solid {
     }
 
     public Cobblestone(int meta) {
-        super(COBBLESTONE, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return COBBLESTONE;
     }
 
     @Override

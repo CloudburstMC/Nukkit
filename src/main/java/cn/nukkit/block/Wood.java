@@ -13,8 +13,8 @@ public class Wood extends Solid {
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
-    //public static final short ACACIA = 4;
-    //public static final short DARK_OAK = 5;
+    //public static final int ACACIA = 4;
+    //public static final int DARK_OAK = 5;
 
 
     public Wood() {
@@ -22,7 +22,12 @@ public class Wood extends Solid {
     }
 
     public Wood(int meta) {
-        super(WOOD, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return WOOD;
     }
 
     @Override
@@ -67,7 +72,7 @@ public class Wood extends Solid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
-            return new int[][]{new int[]{this.id, this.meta & 0x03, 1}};
+            return new int[][]{new int[]{this.getId(), this.meta & 0x03, 1}};
         } else {
             return new int[0][];
         }

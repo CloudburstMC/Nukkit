@@ -15,7 +15,12 @@ public class Carpet extends Flowable {
     }
 
     public Carpet(int meta) {
-        super(CARPET, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return CARPET;
     }
 
     @Override
