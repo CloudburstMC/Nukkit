@@ -23,6 +23,12 @@ __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
 -------------
 
+Get Nukkit
+-------------
+* __[Jenkins](http://ci.mengcraft.com:8080/job/nukkit/)__ powered by **MengCraft**
+
+-------------
+
 Introduction
 -------------
 Nukkit is nuclear-powered server software for Minecraft: Pocket Edtion.
