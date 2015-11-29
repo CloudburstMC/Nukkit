@@ -334,7 +334,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     @Override
     public boolean hasPermission(String name) {
-        return this.perm.hasPermission(name);
+        return this.perm != null && this.perm.hasPermission(name);
     }
 
     @Override
