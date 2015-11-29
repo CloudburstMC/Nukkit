@@ -34,8 +34,4 @@ public class StringEntityData implements EntityData<String> {
     public String toString() {
         return data;
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 }
