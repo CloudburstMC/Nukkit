@@ -2302,7 +2302,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        for (FullChunk chunk : this.provider.getLoadedChunks().values()) {
+        for (FullChunk chunk : new ArrayList<>(this.provider.getLoadedChunks().values())) {
             if (!this.chunks.containsKey(Level.chunkHash(chunk.getX(), chunk.getZ()))) {
                 this.provider.unloadChunk(chunk.getX(), chunk.getZ(), false);
             }

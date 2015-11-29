@@ -1,11 +1,9 @@
 package cn.nukkit.raknet.protocol;
 
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.TreeMap;
 
 /**
  * author: MagicDroidX
@@ -13,33 +11,39 @@ import java.util.List;
  */
 public abstract class AcknowledgePacket extends Packet {
 
-    public Integer[] packets;
+    public TreeMap<Integer, Integer> packets;
 
     @Override
     public void encode() {
         super.encode();
-        int count = this.packets.length;
+        int count = this.packets.size();
+        int[] packets = new int[count];
+
+        int index = 0;
+        for (int i : this.packets.values()) {
+            packets[index++] = i;
+        }
         short records = 0;
-        ByteBuffer payload = ByteBuffer.allocate(count * 7 + 7);
+        BinaryStream payload = new BinaryStream();
 
         if (count > 0) {
             int pointer = 1;
-            int start = this.packets[0];
-            int last = this.packets[0];
+            int start = packets[0];
+            int last = packets[0];
 
             while (pointer < count) {
-                int current = this.packets[pointer++];
+                int current = packets[pointer++];
                 int diff = current - last;
                 if (diff == 1) {
                     last = current;
                 } else if (diff > 1) {
 
                     if (start == last) {
-                        payload.put((byte) 0x01);
+                        payload.putByte((byte) 0x01);
                         payload.put(Binary.writeLTriad(start));
                         start = last = current;
                     } else {
-                        payload.put((byte) 0x00);
+                        payload.putByte((byte) 0x00);
                         payload.put(Binary.writeLTriad(start));
                         payload.put(Binary.writeLTriad(last));
                         start = last = current;
@@ -49,10 +53,10 @@ public abstract class AcknowledgePacket extends Packet {
             }
 
             if (start == last) {
-                payload.put((byte) 0x01);
+                payload.putByte((byte) 0x01);
                 payload.put(Binary.writeLTriad(start));
             } else {
-                payload.put((byte) 0x00);
+                payload.putByte((byte) 0x00);
                 payload.put(Binary.writeLTriad(start));
                 payload.put(Binary.writeLTriad(last));
             }
@@ -62,7 +66,7 @@ public abstract class AcknowledgePacket extends Packet {
         this.putShort(records);
         this.buffer = Binary.appendBytes(
                 this.buffer,
-                Arrays.copyOf(payload.array(), payload.position())
+                payload.getBuffer()
         );
     }
 
@@ -70,7 +74,7 @@ public abstract class AcknowledgePacket extends Packet {
     public void decode() {
         super.decode();
         short count = this.getSignedShort();
-        List<Integer> packets = new ArrayList<>();
+        this.packets = new TreeMap<>();
         int cnt = 0;
         for (int i = 0; i < count && !this.feof() && cnt < 4096; ++i) {
             if (this.getByte() == 0) {
@@ -80,28 +84,24 @@ public abstract class AcknowledgePacket extends Packet {
                     end = start + 512;
                 }
                 for (int c = start; c <= end; ++c) {
-                    cnt++;
-                    packets.add(c);
+                    packets.put(cnt++, c);
                 }
             } else {
-                cnt++;
-                packets.add(this.getLTriad());
+                this.packets.put(cnt++, this.getLTriad());
             }
         }
-
-        this.packets = packets.toArray(new Integer[packets.size()]);
     }
 
     @Override
     public Packet clean() {
-        this.packets = new Integer[0];
+        this.packets = new TreeMap<>();
         return super.clean();
     }
 
     @Override
     public AcknowledgePacket clone() throws CloneNotSupportedException {
         AcknowledgePacket packet = (AcknowledgePacket) super.clone();
-        packet.packets = this.packets.clone();
+        packet.packets = new TreeMap<>(this.packets);
         return packet;
     }
 }

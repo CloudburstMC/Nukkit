@@ -408,7 +408,7 @@ public abstract class Entity extends Location implements Metadatable {
 
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //ignore
                 }
 
             }
@@ -449,11 +449,12 @@ public abstract class Entity extends Location implements Metadatable {
 
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //ignore
                 }
 
             }
         }
+
         return entity;
     }
 
