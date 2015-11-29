@@ -69,7 +69,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static long entityCount = 1;
 
     private static Map<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
-    private static Map<Class<? extends Entity>, String> shortNames = new HashMap<>();
+    private static Map<String, Class<? extends Entity>> shortNames = new HashMap<>();
 
     protected Map<Integer, Player> hasSpawned = new HashMap<>();
 
@@ -374,13 +374,8 @@ public abstract class Entity extends Location implements Metadatable {
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
         Entity entity = null;
 
-        if (shortNames.containsValue(name)) {
-            Class<? extends Entity> clazz = null;
-            for (Map.Entry<Class<? extends Entity>, String> entry : shortNames.entrySet()) {
-                if (name.equals(entry.getValue())) {
-                    clazz = entry.getKey();
-                }
-            }
+        if (shortNames.containsKey(name)) {
+            Class<? extends Entity> clazz = shortNames.get(name);
 
             if (clazz == null) {
                 return null;
@@ -474,7 +469,7 @@ public abstract class Entity extends Location implements Metadatable {
                 return false;
             }
 
-            shortNames.put(clazz, clazz.getSimpleName());
+            shortNames.put(clazz.getSimpleName(), clazz);
             return true;
         } catch (Exception e) {
             return false;
@@ -482,7 +477,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public String getSaveId() {
-        return shortNames.get(this.getClass());
+        return this.getClass().getSimpleName();
     }
 
     public void saveNBT() {

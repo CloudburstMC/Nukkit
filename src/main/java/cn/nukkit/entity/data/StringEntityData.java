@@ -29,4 +29,9 @@ public class StringEntityData implements EntityData<String> {
     public int getType() {
         return Entity.DATA_TYPE_STRING;
     }
+
+    @Override
+    public String toString() {
+        return data;
+    }
 }
