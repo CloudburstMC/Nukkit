@@ -1234,29 +1234,27 @@ public class Level implements ChunkManager, Metadatable {
         itemTag.setName("Item");
 
         if (item.getId() > 0 && item.getCount() > 0) {
-            Entity itemEntity = Entity.createEntity("DroppedItem", this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true), new CompoundTag()
-                            .putList(new ListTag<DoubleTag>("Pos")
-                                    .add(new DoubleTag("", source.getX()))
-                                    .add(new DoubleTag("", source.getY()))
-                                    .add(new DoubleTag("", source.getZ())))
+            DroppedItem itemEntity = new DroppedItem(this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true), new CompoundTag()
+                    .putList(new ListTag<DoubleTag>("Pos")
+                            .add(new DoubleTag("", source.getX()))
+                            .add(new DoubleTag("", source.getY()))
+                            .add(new DoubleTag("", source.getZ())))
 
-                            .putList(new ListTag<DoubleTag>("Motion")
-                                    .add(new DoubleTag("", motion.x))
-                                    .add(new DoubleTag("", motion.y))
-                                    .add(new DoubleTag("", motion.z)))
+                    .putList(new ListTag<DoubleTag>("Motion")
+                            .add(new DoubleTag("", motion.x))
+                            .add(new DoubleTag("", motion.y))
+                            .add(new DoubleTag("", motion.z)))
 
-                            .putList(new ListTag<FloatTag>("Rotation")
-                                    .add(new FloatTag("", new Random().nextFloat() * 360))
-                                    .add(new FloatTag("", 0)))
+                    .putList(new ListTag<FloatTag>("Rotation")
+                            .add(new FloatTag("", new Random().nextFloat() * 360))
+                            .add(new FloatTag("", 0)))
 
-                            .putShort("Health", 5)
-                            .putCompound("Item", itemTag)
-                            .putShort("PickupDelay", delay)
+                    .putShort("Health", 5)
+                    .putCompound("Item", itemTag)
+                    .putShort("PickupDelay", delay)
             );
 
-            if (itemEntity != null) {
-                itemEntity.spawnToAll();
-            }
+            itemEntity.spawnToAll();
         }
     }
 

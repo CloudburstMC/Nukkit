@@ -26,6 +26,7 @@ import cn.nukkit.network.protocol.SetEntityDataPacket;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.ChunkException;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
@@ -371,6 +372,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
+        Entity entity = null;
+
         if (shortNames.containsValue(name)) {
             Class<? extends Entity> clazz = null;
             for (Map.Entry<Class<? extends Entity>, String> entry : shortNames.entrySet()) {
@@ -378,38 +381,80 @@ public abstract class Entity extends Location implements Metadatable {
                     clazz = entry.getKey();
                 }
             }
+
             if (clazz == null) {
                 return null;
             }
-            try {
-                if (args != null && args.length > 0) {
-                    Class[] argClasses = new Class[args.length + 2];
-                    argClasses[0] = FullChunk.class;
-                    argClasses[1] = CompoundTag.class;
-                    for (int i = 0; i < args.length; i++) {
-                        argClasses[i + 2] = args[i].getClass();
-                    }
-                    return clazz.getConstructor(argClasses).newInstance(chunk, nbt, args);
-                } else {
-                    return clazz.getConstructor(FullChunk.class, CompoundTag.class).newInstance(chunk, nbt);
+
+            for (Constructor constructor : clazz.getConstructors()) {
+                if (entity != null) {
+                    break;
                 }
-            } catch (Exception e) {
-                return null;
+
+                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
+                    continue;
+                }
+
+                try {
+                    if (args == null || args.length == 0) {
+                        entity = (Entity) constructor.newInstance(chunk, nbt);
+                    } else {
+                        Object[] objects = new Object[args.length + 2];
+
+                        objects[0] = chunk;
+                        objects[1] = nbt;
+                        System.arraycopy(args, 0, objects, 2, args.length);
+                        entity = (Entity) constructor.newInstance(objects);
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         }
-        return null;
+
+        return entity;
     }
 
     public static Entity createEntity(int type, FullChunk chunk, CompoundTag nbt, Object... args) {
+        Entity entity = null;
+
         if (knownEntities.containsKey(type)) {
             Class<? extends Entity> clazz = knownEntities.get(type);
-            try {
-                return clazz.getConstructor(FullChunk.class, CompoundTag.class, Object[].class).newInstance(chunk, nbt, args);
-            } catch (Exception e) {
+
+            if (clazz == null) {
                 return null;
             }
+
+            for (Constructor constructor : clazz.getConstructors()) {
+                if (entity != null) {
+                    break;
+                }
+
+                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
+                    continue;
+                }
+
+                try {
+                    if (args == null || args.length == 0) {
+                        entity = (Entity) constructor.newInstance(chunk, nbt);
+                    } else {
+                        Object[] objects = new Object[args.length + 2];
+
+                        objects[0] = chunk;
+                        objects[1] = nbt;
+                        System.arraycopy(args, 0, objects, 2, args.length);
+                        entity = (Entity) constructor.newInstance(objects);
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
         }
-        return null;
+        return entity;
     }
 
     public static boolean registerEntity(Class<? extends Entity> clazz) {

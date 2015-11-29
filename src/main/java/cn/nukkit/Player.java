@@ -592,6 +592,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     protected void doFirstSpawn() {
+
         this.spawned = true;
 
         this.sendSettings();
@@ -1995,11 +1996,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                         .add(new FloatTag("", (float) pitch)));
 
                         float f = 1.5f;
-                        Entity snowball = Entity.createEntity("Snowball", this.chunk, nbt, this);
-
-                        if (snowball == null) {
-                            break;
-                        }
+                        Snowball snowball = new Snowball(this.chunk, nbt, this);
 
                         snowball.setMotion(snowball.getMotion().multiply(f));
                         if (this.isSurvival()) {
@@ -2007,17 +2004,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
                         }
 
-                        if (snowball instanceof Projectile) {
-                            ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent((Projectile) snowball);
-                            this.server.getPluginManager().callEvent(projectileLaunchEvent);
-                            if (projectileLaunchEvent.isCancelled()) {
-                                snowball.kill();
-                            } else {
-                                snowball.spawnToAll();
-                                this.level.addSound(new LaunchSound(this), this.getViewers().values());
-                            }
+                        ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(snowball);
+                        this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                        if (projectileLaunchEvent.isCancelled()) {
+                            snowball.kill();
                         } else {
                             snowball.spawnToAll();
+                            this.level.addSound(new LaunchSound(this), this.getViewers().values());
                         }
                     }
 
@@ -2080,7 +2073,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 double p = (double) diff / 20;
 
                                 double f = Math.min((p * p + p * 2) / 3, 1) * 2;
-                                EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(this, bow, (Projectile) Entity.createEntity("Arrow", this.chunk, nbt, this, f == 2), f);
+                                EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(this, bow, new Arrow(this.chunk, nbt, this, f == 2), f);
 
                                 if (f < 0.1 || diff < 5) {
                                     entityShootBowEvent.setCancelled();
