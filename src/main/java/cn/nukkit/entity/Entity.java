@@ -247,7 +247,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public String getNameTag() {
-        return String.valueOf(this.getDataProperty(DATA_NAMETAG));
+        return this.getDataPropertyString(DATA_NAMETAG).getData();
     }
 
     public boolean isNameTagVisible() {
@@ -490,10 +490,10 @@ public abstract class Entity extends Location implements Metadatable {
             if (!this.getNameTag().equals("")) {
                 this.namedTag.putString("id", this.getSaveId());
                 this.namedTag.putString("CustomName", this.getNameTag());
-                this.namedTag.putString("CustomeNameVisible", String.valueOf(this.isNameTagVisible()));
+                this.namedTag.putString("CustomNameVisible", String.valueOf(this.isNameTagVisible()));
             } else {
                 this.namedTag.remove("CustomName");
-                this.namedTag.remove("CustomeNameVisible");
+                this.namedTag.remove("CustomNameVisible");
             }
         }
 
