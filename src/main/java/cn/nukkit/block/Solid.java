@@ -5,12 +5,9 @@ package cn.nukkit.block;
  * Nukkit Project
  */
 public abstract class Solid extends Block {
-    public Solid(int id) {
-        super(id);
-    }
 
-    public Solid(int id, int meta) {
-        super(id, meta);
+    protected Solid(int meta) {
+        super(meta);
     }
 
     @Override

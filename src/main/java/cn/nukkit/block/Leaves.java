@@ -21,7 +21,12 @@ public class Leaves extends Transparent {
     }
 
     public Leaves(int meta) {
-        super(LEAVES, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return LEAVES;
     }
 
     @Override

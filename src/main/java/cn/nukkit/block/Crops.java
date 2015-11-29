@@ -13,12 +13,9 @@ import java.util.Random;
  * Nukkit Project
  */
 public abstract class Crops extends Flowable {
-    public Crops(int id) {
-        super(id);
-    }
 
-    public Crops(int id, int meta) {
-        super(id, meta);
+    protected Crops(int meta) {
+        super(meta);
     }
 
     @Override

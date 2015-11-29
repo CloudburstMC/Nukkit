@@ -25,7 +25,12 @@ public class Flower extends Flowable {
     }
 
     public Flower(int meta) {
-        super(RED_FLOWER, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return FLOWER;
     }
 
     @Override
@@ -48,7 +53,7 @@ public class Flower extends Flowable {
                 "Unknown",
                 "Unknown"
         };
-        return names[this.meta]; //这里会不会有数组越界bug...
+        return names[this.meta & 0x0f];
     }
 
     @Override

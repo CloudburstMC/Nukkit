@@ -17,7 +17,12 @@ public class Bed extends Transparent {
     }
 
     public Bed(int meta) {
-        super(BED_BLOCK, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return BED_BLOCK;
     }
 
     @Override
@@ -72,13 +77,13 @@ public class Bed extends Transparent {
         if ((this.meta & 0x08) == 0x08) {
             b = this;
         } else {
-            if (blockNorth.getId() == this.id && (blockNorth.meta & 0x08) == 0x08) {
+            if (blockNorth.getId() == this.getId() && (blockNorth.meta & 0x08) == 0x08) {
                 b = blockNorth;
-            } else if (blockSouth.getId() == this.id && (blockSouth.meta & 0x08) == 0x08) {
+            } else if (blockSouth.getId() == this.getId() && (blockSouth.meta & 0x08) == 0x08) {
                 b = blockSouth;
-            } else if (blockEast.getId() == this.id && (blockEast.meta & 0x08) == 0x08) {
+            } else if (blockEast.getId() == this.getId() && (blockEast.meta & 0x08) == 0x08) {
                 b = blockEast;
-            } else if (blockWest.getId() == this.id && (blockWest.meta & 0x08) == 0x08) {
+            } else if (blockWest.getId() == this.getId() && (blockWest.meta & 0x08) == 0x08) {
                 b = blockWest;
             } else {
                 if (player != null) {
@@ -113,8 +118,8 @@ public class Bed extends Transparent {
 
             if (next.canBeReplaced() && !downNext.isTransparent()) {
                 int meta = ((d + 3) % 4) & 0x03;
-                this.getLevel().setBlock(block, Block.get(this.id, meta), true, true);
-                this.getLevel().setBlock(next, Block.get(this.id, meta | 0x08), true, true);
+                this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
+                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
 
                 return true;
             }
@@ -131,23 +136,23 @@ public class Bed extends Transparent {
         Block blockWest = this.getSide(4);
 
         if ((this.meta & 0x08) == 0x08) { //This is the Top part of bed
-            if (blockNorth.getId() == this.id && blockNorth.meta != 0x08) { //Checks if the block ID&&meta are right
+            if (blockNorth.getId() == this.getId() && blockNorth.meta != 0x08) { //Checks if the block ID&&meta are right
                 this.getLevel().setBlock(blockNorth, new Air(), true, true);
-            } else if (blockSouth.getId() == this.id && blockSouth.meta != 0x08) {
+            } else if (blockSouth.getId() == this.getId() && blockSouth.meta != 0x08) {
                 this.getLevel().setBlock(blockSouth, new Air(), true, true);
-            } else if (blockEast.getId() == this.id && blockEast.meta != 0x08) {
+            } else if (blockEast.getId() == this.getId() && blockEast.meta != 0x08) {
                 this.getLevel().setBlock(blockEast, new Air(), true, true);
-            } else if (blockWest.getId() == this.id && blockWest.meta != 0x08) {
+            } else if (blockWest.getId() == this.getId() && blockWest.meta != 0x08) {
                 this.getLevel().setBlock(blockWest, new Air(), true, true);
             }
         } else { //Bottom Part of Bed
-            if (blockNorth.getId() == this.id && (blockNorth.meta & 0x08) == 0x08) {
+            if (blockNorth.getId() == this.getId() && (blockNorth.meta & 0x08) == 0x08) {
                 this.getLevel().setBlock(blockNorth, new Air(), true, true);
-            } else if (blockSouth.getId() == this.id && (blockSouth.meta & 0x08) == 0x08) {
+            } else if (blockSouth.getId() == this.getId() && (blockSouth.meta & 0x08) == 0x08) {
                 this.getLevel().setBlock(blockSouth, new Air(), true, true);
-            } else if (blockEast.getId() == this.id && (blockEast.meta & 0x08) == 0x08) {
+            } else if (blockEast.getId() == this.getId() && (blockEast.meta & 0x08) == 0x08) {
                 this.getLevel().setBlock(blockEast, new Air(), true, true);
-            } else if (blockWest.getId() == this.id && (blockWest.meta & 0x08) == 0x08) {
+            } else if (blockWest.getId() == this.getId() && (blockWest.meta & 0x08) == 0x08) {
                 this.getLevel().setBlock(blockWest, new Air(), true, true);
             }
         }

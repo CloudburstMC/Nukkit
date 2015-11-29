@@ -10,7 +10,12 @@ public class FenceGateJungle extends FenceGate {
     }
 
     public FenceGateJungle(int meta) {
-        super(FENCE_GATE_JUNGLE, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return FENCE_GATE_JUNGLE;
     }
 
     @Override

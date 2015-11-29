@@ -16,7 +16,12 @@ public class Water extends Liquid {
     }
 
     public Water(int meta) {
-        super(WATER, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return WATER;
     }
 
     @Override

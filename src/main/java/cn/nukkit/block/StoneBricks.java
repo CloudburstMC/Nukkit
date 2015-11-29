@@ -20,7 +20,12 @@ public class StoneBricks extends Solid {
     }
 
     public StoneBricks(int meta) {
-        super(STONE_BRICKS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return STONE_BRICKS;
     }
 
     @Override

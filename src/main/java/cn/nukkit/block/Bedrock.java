@@ -13,7 +13,12 @@ public class Bedrock extends Solid {
     }
 
     public Bedrock(int meta) {
-        super(BEDROCK, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return BEDROCK;
     }
 
     @Override

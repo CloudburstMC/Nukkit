@@ -14,7 +14,12 @@ public class DoublePlant extends Flowable {
     }
 
     public DoublePlant(int meta) {
-        super(DOUBLE_PLANT, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return DOUBLE_PLANT;
     }
 
     @Override

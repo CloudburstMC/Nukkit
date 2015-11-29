@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
+
 /**
  * author: Angelic47
  * Nukkit Project
@@ -11,7 +13,12 @@ public class Glass extends Transparent {
     }
 
     public Glass(int meta) {
-        super(GLASS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return GLASS;
     }
 
     @Override
@@ -24,4 +31,8 @@ public class Glass extends Transparent {
         return 0.3;
     }
 
+    @Override
+    public int[][] getDrops(Item item) {
+        return new int[0][];
+    }
 }

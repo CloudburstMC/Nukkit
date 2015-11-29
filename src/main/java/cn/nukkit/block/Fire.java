@@ -20,7 +20,12 @@ public class Fire extends Flowable {
     }
 
     public Fire(int meta) {
-        super(FIRE, meta);
+        super(0);
+    }
+
+    @Override
+    public int getId() {
+        return FIRE;
     }
 
     @Override

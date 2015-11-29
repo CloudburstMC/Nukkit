@@ -20,10 +20,13 @@ public class Sapling extends Flowable {
     }
 
     public Sapling(int meta) {
-        super(SAPLING, meta);
+        super(meta);
     }
 
-    ;
+    @Override
+    public int getId() {
+        return SAPLING;
+    }
 
     @Override
     public String getName() {

@@ -14,7 +14,12 @@ public class BirchWoodStairs extends Stair {
     }
 
     public BirchWoodStairs(int meta) {
-        super(BIRCH_WOOD_STAIRS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return BIRCH_WOOD_STAIRS;
     }
 
     @Override
@@ -24,7 +29,7 @@ public class BirchWoodStairs extends Stair {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{this.id, 0, 1}};
+        return new int[][]{new int[]{this.getId(), 0, 1}};
     }
 
     @Override

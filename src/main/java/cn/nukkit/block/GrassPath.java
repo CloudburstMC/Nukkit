@@ -15,7 +15,12 @@ public class GrassPath extends Transparent {
     }
 
     public GrassPath(int meta) {
-        super(GRASS_PATH, meta);
+        super(0);
+    }
+
+    @Override
+    public int getId() {
+        return GRASS_PATH;
     }
 
     @Override

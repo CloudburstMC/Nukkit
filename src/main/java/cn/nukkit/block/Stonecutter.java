@@ -14,7 +14,12 @@ public class Stonecutter extends Solid {
     }
 
     public Stonecutter(int meta) {
-        super(STONECUTTER, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return STONECUTTER;
     }
 
     @Override

@@ -12,7 +12,12 @@ public class BrickStairs extends Stair {
     }
 
     public BrickStairs(int meta) {
-        super(BRICK_STAIRS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return BRICK_STAIRS;
     }
 
     @Override

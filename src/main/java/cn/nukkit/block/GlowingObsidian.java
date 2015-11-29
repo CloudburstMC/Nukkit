@@ -10,7 +10,12 @@ public class GlowingObsidian extends Solid {
     }
 
     public GlowingObsidian(int meta) {
-        super(GLOWING_OBSIDIAN, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return GLOWING_OBSIDIAN;
     }
 
     @Override

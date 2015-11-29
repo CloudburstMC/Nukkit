@@ -375,12 +375,12 @@ public class Chunk extends BaseFullChunk {
             offset += 16384;
             chunk.heightMap = new int[256];
             for (int i = 0; i < 256; i++) {
-                chunk.heightMap[i] = data[offset];
+                chunk.heightMap[i] = data[offset] & 0xff;
                 offset++;
             }
             chunk.biomeColors = new int[256];
             for (int i = 0; i < 256; i++) {
-                chunk.heightMap[i] = Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3));
+                chunk.biomeColors[i] = Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3));
                 offset += 4;
             }
             byte flags = data[offset++];

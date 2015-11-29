@@ -10,7 +10,12 @@ public class FenceGateAcacia extends FenceGate {
     }
 
     public FenceGateAcacia(int meta) {
-        super(FENCE_GATE_ACACIA, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return FENCE_GATE_ACACIA;
     }
 
     @Override

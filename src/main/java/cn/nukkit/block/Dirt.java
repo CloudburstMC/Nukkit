@@ -16,7 +16,12 @@ public class Dirt extends Solid {
     }
 
     public Dirt(int meta) {
-        super(DIRT, meta);
+        super(0);
+    }
+
+    @Override
+    public int getId() {
+        return DIRT;
     }
 
     @Override

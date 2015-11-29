@@ -17,6 +17,11 @@ public class Wood2 extends Wood {
     }
 
     @Override
+    public int getId() {
+        return WOOD2;
+    }
+
+    @Override
     public String getName() {
         String[] names = new String[]{
                 "Acacia Wood",

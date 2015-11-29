@@ -15,13 +15,17 @@ import cn.nukkit.item.Item;
  */
 public class Lava extends Liquid {
 
-
     public Lava() {
         this(0);
     }
 
     public Lava(int meta) {
-        super(LAVA, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return LAVA;
     }
 
     @Override

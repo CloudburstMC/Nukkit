@@ -15,12 +15,8 @@ import java.util.Random;
 public abstract class Liquid extends Transparent {
     private Vector3 temporalVector = null;
 
-    public Liquid(int id) {
-        super(id);
-    }
-
-    public Liquid(int id, int meta) {
-        super(id, meta);
+    protected Liquid(int meta) {
+        super(meta);
     }
 
     @Override
@@ -241,7 +237,7 @@ public abstract class Liquid extends Transparent {
                     if (decay < 0) {
                         this.getLevel().setBlock(this, new Air(), true);
                     } else {
-                        this.getLevel().setBlock(this, Block.get(this.id, decay), true);
+                        this.getLevel().setBlock(this, Block.get(this.getId(), decay), true);
                         this.getLevel().scheduleUpdate(this, this.tickRate());
                     }
                 } else if (flag) {
@@ -261,10 +257,10 @@ public abstract class Liquid extends Transparent {
                 }
 
                 if (decay >= 8) {
-                    this.getLevel().setBlock(bottomBlock, Block.get(this.id, decay), true);
+                    this.getLevel().setBlock(bottomBlock, Block.get(this.getId(), decay), true);
                     this.getLevel().scheduleUpdate(bottomBlock, this.tickRate());
                 } else {
-                    this.getLevel().setBlock(bottomBlock, Block.get(this.id, decay + 8), true);
+                    this.getLevel().setBlock(bottomBlock, Block.get(this.getId(), decay + 8), true);
                     this.getLevel().scheduleUpdate(bottomBlock, this.tickRate());
                 }
             } else if (decay >= 0 && (decay == 0 || !bottomBlock.canBeFlowedInto())) {

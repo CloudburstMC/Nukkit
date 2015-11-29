@@ -12,7 +12,12 @@ public class QuartzStairs extends Stair {
     }
 
     public QuartzStairs(int meta) {
-        super(QUARTZ_STAIRS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return QUARTZ_STAIRS;
     }
 
     @Override

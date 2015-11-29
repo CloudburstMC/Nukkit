@@ -13,7 +13,12 @@ public class HayBale extends Solid {
     }
 
     public HayBale(int meta) {
-        super(HAY_BALE, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return HAY_BALE;
     }
 
     @Override
@@ -45,7 +50,7 @@ public class HayBale extends Solid {
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
-                {this.id, 0, 1}
+                {this.getId(), 0, 1}
         };
     }
 }

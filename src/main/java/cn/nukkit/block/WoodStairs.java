@@ -13,7 +13,12 @@ public class WoodStairs extends Stair {
     }
 
     public WoodStairs(int meta) {
-        super(WOOD_STAIRS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return WOOD_STAIRS;
     }
 
     @Override
@@ -28,7 +33,7 @@ public class WoodStairs extends Stair {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{this.id, 0, 1}};
+        return new int[][]{{this.getId(), 0, 1}};
     }
 
     @Override

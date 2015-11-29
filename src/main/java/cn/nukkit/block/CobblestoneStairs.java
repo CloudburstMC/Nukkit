@@ -12,7 +12,12 @@ public class CobblestoneStairs extends Stair {
     }
 
     public CobblestoneStairs(int meta) {
-        super(COBBLESTONE_STAIRS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return COBBLESTONE_STAIRS;
     }
 
     @Override

@@ -10,7 +10,12 @@ public class FenceGateDarkOak extends FenceGate {
     }
 
     public FenceGateDarkOak(int meta) {
-        super(FENCE_GATE_DARK_OAK, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return FENCE_GATE_DARK_OAK;
     }
 
     @Override

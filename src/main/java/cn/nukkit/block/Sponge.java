@@ -1,9 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
-
 /**
  * author: Angelic47
  * Nukkit Project
@@ -16,7 +12,12 @@ public class Sponge extends Solid {
     }
 
     public Sponge(int meta) {
-        super(SPONGE, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return SPONGE;
     }
 
     @Override
