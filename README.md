@@ -27,7 +27,6 @@ Get Nukkit
 -------------
 * __[Jenkins](http://ci.mengcraft.com:8080/job/nukkit/)__ powered by **MengCraft**
 
--------------
 
 Introduction
 -------------
