@@ -291,22 +291,24 @@ public abstract class BaseInventory implements Inventory {
                     }
                 }
             }
-            if (itemSlots.size() == 0) {
+            if (itemSlots.isEmpty()) {
                 break;
             }
         }
 
-        if (itemSlots.size() > 0 && emptySlots.size() > 0) {
-            for (Integer slotIndex : emptySlots) {
-                Item slot = itemSlots.get(0);
-                int amount = Math.min(slot.getMaxStackSize(), slot.getCount());
-                amount = Math.min(amount, this.getMaxStackSize());
-                slot.setCount(slot.getCount() - amount);
-                Item item = slot.clone();
-                item.setCount(amount);
-                this.setItem(slotIndex, item);
-                if (slot.getCount() <= 0) {
-                    itemSlots.remove(slot);
+        if (!itemSlots.isEmpty() && !emptySlots.isEmpty()) {
+            for (int slotIndex : emptySlots) {
+                if (!itemSlots.isEmpty()){
+                    Item slot = itemSlots.get(0);
+                    int amount = Math.min(slot.getMaxStackSize(), slot.getCount());
+                    amount = Math.min(amount, this.getMaxStackSize());
+                    slot.setCount(slot.getCount() - amount);
+                    Item item = slot.clone();
+                    item.setCount(amount);
+                    this.setItem(slotIndex, item);
+                    if (slot.getCount() <= 0) {
+                        itemSlots.remove(slot);
+                    }
                 }
             }
         }
