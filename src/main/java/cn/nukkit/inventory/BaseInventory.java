@@ -298,7 +298,7 @@ public abstract class BaseInventory implements Inventory {
 
         if (!itemSlots.isEmpty() && !emptySlots.isEmpty()) {
             for (int slotIndex : emptySlots) {
-                if (!itemSlots.isEmpty()){
+                if (!itemSlots.isEmpty()) {
                     Item slot = itemSlots.get(0);
                     int amount = Math.min(slot.getMaxStackSize(), slot.getCount());
                     amount = Math.min(amount, this.getMaxStackSize());

@@ -219,7 +219,7 @@ public abstract class Living extends Entity implements Damageable {
         return hasUpdate;
     }
 
-    public cn.nukkit.item.Item[] getDrops() {
+    public Item[] getDrops() {
         return new Item[0];
     }
 

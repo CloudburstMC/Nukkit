@@ -6,6 +6,7 @@ import cn.nukkit.block.Liquid;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -112,7 +113,7 @@ public class FallingSand extends Entity {
                 kill();
                 Block block = level.getBlock(pos);
                 if (block.getId() > 0 && !block.isSolid() && !(block instanceof Liquid)) {
-                    getLevel().dropItem(this, cn.nukkit.item.Item.get(this.getBlock(), this.getDamage(), 1));
+                    getLevel().dropItem(this, Item.get(this.getBlock(), this.getDamage(), 1));
                 } else {
                     EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, Block.get(getBlock(), getDamage()));
                     server.getPluginManager().callEvent(event);

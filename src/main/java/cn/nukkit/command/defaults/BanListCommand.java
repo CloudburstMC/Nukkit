@@ -24,11 +24,12 @@ public class BanListCommand extends VanillaCommand {
         }
 
         BanList list;
+        String arg;
         if (args.length > 0) {
-            args[0] = args[0].toLowerCase();
-            if ("ips".equals(args[0])) {
+            arg = args[0].toLowerCase();
+            if ("ips".equals(arg)) {
                 list = sender.getServer().getIPBans();
-            } else if ("players".equals(args[0])) {
+            } else if ("players".equals(arg)) {
                 list = sender.getServer().getNameBans();
             } else {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
@@ -37,7 +38,7 @@ public class BanListCommand extends VanillaCommand {
             }
         } else {
             list = sender.getServer().getNameBans();
-            args[0] = "players";
+            arg = "players";
         }
 
         String message = "";
@@ -46,13 +47,16 @@ public class BanListCommand extends VanillaCommand {
             message += entry.getName() + ", ";
         }
 
-        if ("ips".equals(args[0])) {
+        if ("ips".equals(arg)) {
             sender.sendMessage(new TranslationContainer("commands.banlist.ips", String.valueOf(entries.size())));
         } else {
             sender.sendMessage(new TranslationContainer("commands.banlist.players", String.valueOf(entries.size())));
         }
 
-        sender.sendMessage(message.substring(0, message.length() - 2));
+        if (message.length() > 0) {
+            message = message.substring(0, message.length() - 2);
+        }
+        sender.sendMessage(message);
 
         return true;
     }

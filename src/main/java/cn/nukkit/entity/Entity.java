@@ -69,7 +69,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static long entityCount = 1;
 
     private static Map<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
-    private static Map<Class<? extends Entity>, String> shortNames = new HashMap<>();
+    private static Map<String, Class<? extends Entity>> shortNames = new HashMap<>();
 
     protected Map<Integer, Player> hasSpawned = new HashMap<>();
 
@@ -247,7 +247,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public String getNameTag() {
-        return String.valueOf(this.getDataProperty(DATA_NAMETAG));
+        return this.getDataPropertyString(DATA_NAMETAG).getData();
     }
 
     public boolean isNameTagVisible() {
@@ -374,13 +374,8 @@ public abstract class Entity extends Location implements Metadatable {
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
         Entity entity = null;
 
-        if (shortNames.containsValue(name)) {
-            Class<? extends Entity> clazz = null;
-            for (Map.Entry<Class<? extends Entity>, String> entry : shortNames.entrySet()) {
-                if (name.equals(entry.getValue())) {
-                    clazz = entry.getKey();
-                }
-            }
+        if (shortNames.containsKey(name)) {
+            Class<? extends Entity> clazz = shortNames.get(name);
 
             if (clazz == null) {
                 return null;
@@ -474,7 +469,7 @@ public abstract class Entity extends Location implements Metadatable {
                 return false;
             }
 
-            shortNames.put(clazz, clazz.getSimpleName());
+            shortNames.put(clazz.getSimpleName(), clazz);
             return true;
         } catch (Exception e) {
             return false;
@@ -482,7 +477,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public String getSaveId() {
-        return shortNames.get(this.getClass());
+        return this.getClass().getSimpleName();
     }
 
     public void saveNBT() {
@@ -490,10 +485,10 @@ public abstract class Entity extends Location implements Metadatable {
             if (!this.getNameTag().equals("")) {
                 this.namedTag.putString("id", this.getSaveId());
                 this.namedTag.putString("CustomName", this.getNameTag());
-                this.namedTag.putString("CustomeNameVisible", String.valueOf(this.isNameTagVisible()));
+                this.namedTag.putString("CustomNameVisible", String.valueOf(this.isNameTagVisible()));
             } else {
                 this.namedTag.remove("CustomName");
-                this.namedTag.remove("CustomeNameVisible");
+                this.namedTag.remove("CustomNameVisible");
             }
         }
 
@@ -1299,7 +1294,7 @@ public abstract class Entity extends Location implements Metadatable {
 
             if (!this.justCreated) {
                 Map<Integer, Player> newChunk = this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
-                for (Player player : this.hasSpawned.values()) {
+                for (Player player : new ArrayList<>(this.hasSpawned.values())) {
                     if (!newChunk.containsKey(player.getLoaderId())) {
                         this.despawnFrom(player);
                     } else {
