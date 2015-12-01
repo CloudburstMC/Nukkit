@@ -364,7 +364,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[STONE_BRICK_STAIRS] = StoneBrickStairs.class;
 
             //list[MYCELIUM] = Mycelium.class;
-            //list[WATER_LILY] = WaterLily.class;
+            list[WATER_LILY] = WaterLily.class;
             //list[NETHER_BRICKS] = NetherBrick.class;
             //list[NETHER_BRICK_FENCE] = NetherBrickFence.class;
             list[NETHER_BRICKS_STAIRS] = NetherBrickStairs.class;
@@ -372,12 +372,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[ENCHANTING_TABLE] = EnchantingTable.class;
 
             //list[END_PORTAL_FRAME] = EndPortalFrame.class;
-            //list[END_STONE] = EndStone.class;
+            list[END_STONE] = EndStone.class;
 
             list[SANDSTONE_STAIRS] = SandstoneStairs.class;
 
-            //list[EMERALD_ORE] = EmeraldOre.class;
-            //list[EMERALD_BLOCK] = Emerald.class;
+            list[EMERALD_ORE] = EmeraldOre.class;
+            list[EMERALD_BLOCK] = Emerald.class;
 
             list[SPRUCE_WOOD_STAIRS] = SpruceWoodStairs.class;
             list[BIRCH_WOOD_STAIRS] = BirchWoodStairs.class;
