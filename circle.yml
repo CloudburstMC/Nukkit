@@ -1,3 +1,13 @@
+checkout:
+  post:
+    - git submodule sync
+    - git submodule update --init
+    - mvn package
+
 machine:
   java:
     version: oraclejdk8
+	
+general:
+  artifacts:
+    - "nukkit-1.0-SNAPSHOT.jar"
