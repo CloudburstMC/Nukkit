@@ -286,14 +286,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[GLASS] = Glass.class;
             list[LAPIS_ORE] = LapisOre.class;
             list[LAPIS_BLOCK] = Lapis.class;
-            //list[SANDSTONE] = Sandstone.class;
+            list[SANDSTONE] = Sandstone.class;
             list[BED_BLOCK] = Bed.class;
-            /*list[COBWEB] = Cobweb.class;
-            list[TALL_GRASS] = PopulatorTallGrass.class;
+            list[COBWEB] = Cobweb.class;
+            //list[TALL_GRASS] = PopulatorTallGrass.class;
             list[DEAD_BUSH] = DeadBush.class;
             list[WOOL] = Wool.class;
             list[DANDELION] = Dandelion.class;
-            */
+
             list[FLOWER] = Flower.class;
 
             list[BROWN_MUSHROOM] = BrownMushroom.class;
@@ -305,9 +305,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[BRICKS_BLOCK] = Bricks.class;
             //list[TNT] = TNT.class;
             list[BOOKSHELF] = Bookshelf.class;
-            //list[MOSS_STONE] = MossStone.class;
-            //list[OBSIDIAN] = Obsidian.class;
-            //list[TORCH] = Torch.class;
+            list[MOSS_STONE] = MossStone.class;
+            list[OBSIDIAN] = Obsidian.class;
+            list[TORCH] = Torch.class;
             list[FIRE] = Fire.class;
             //list[MONSTER_SPAWNER] = MonsterSpawner.class;
             list[WOOD_STAIRS] = WoodStairs.class;
@@ -316,8 +316,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[DIAMOND_ORE] = DiamondOre.class;
             //list[DIAMOND_BLOCK] = Diamond.class;
             //list[WORKBENCH] = Workbench.class;
-            //list[WHEAT_BLOCK] = Wheat.class;
-            //list[FARMLAND] = Farmland.class;
+            list[WHEAT_BLOCK] = Wheat.class;
+            list[FARMLAND] = Farmland.class;
             //list[FURNACE] = Furnace.class;
             //list[BURNING_FURNACE] = BurningFurnace.class;
             list[SIGN_POST] = SignPost.class;
@@ -338,13 +338,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[CLAY_BLOCK] = Clay.class;
             //list[SUGARCANE_BLOCK] = Sugarcane.class;
 
-            /*list[FENCE] = Fence.class;
-            list[PUMPKIN] = Pumpkin.class;
-            list[NETHERRACK] = Netherrack.class;
-            list[SOUL_SAND] = SoulSand.class;
-            list[GLOWSTONE_BLOCK] = Glowstone.class;
+            //list[FENCE] = Fence.class;
+            //list[PUMPKIN] = Pumpkin.class;
+            //list[NETHERRACK] = Netherrack.class;
+            //list[SOUL_SAND] = SoulSand.class;
+            //list[GLOWSTONE_BLOCK] = Glowstone.class;
 
-            list[LIT_PUMPKIN] = LitPumpkin.class;*/
+            //list[LIT_PUMPKIN] = LitPumpkin.class;
             //list[CAKE_BLOCK] = Cake.class;
 
             //list[TRAPDOOR] = Trapdoor.class;
