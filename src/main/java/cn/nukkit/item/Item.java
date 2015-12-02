@@ -446,7 +446,7 @@ public class Item implements Cloneable {
         }
         this.count = count;
         this.name = name;
-        if (!(this.block == null && this.id <= 0xff && Block.list[id] != null)) {
+        if (this.block != null && this.id <= 0xff && Block.list[id] != null) {
             this.block = Block.get(this.id, this.meta);
             this.name = this.block.getName();
         }
