@@ -196,7 +196,7 @@ public class Level implements ChunkManager, Metadatable {
         this.updateQueue = new PriorityQueue<>(11, new Comparator<PriorityObject>() {
             @Override
             public int compare(PriorityObject o1, PriorityObject o2) {
-                return o1.priority < o2.priority ? 1 : (o1.priority == o2.priority ? 0 : -1);
+                return o1.priority > o2.priority ? 1 : (o1.priority == o2.priority ? 0 : -1);
             }
         });
         this.time = this.provider.getTime();
