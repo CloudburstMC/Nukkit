@@ -415,8 +415,8 @@ public class CraftingManager {
                 new Entry(Item.COBBLESTONE_WALL, StoneWall.MOSSY_WALL, Item.MOSSY_STONE, 0, "wall/fence", 6),
                 new Entry(Item.NETHER_BRICK_FENCE, 0, Item.NETHER_BRICK_BLOCK, 0, "wall/fence", 6),
                 new Entry(Item.NETHER_BRICKS, 0, Item.NETHER_BRICK, 0, "blockrecipe1", 1),
-                new Entry(Item.SANDSTONE, SandStone.NORMAL, Item.SAND, 0, "blockrecipe1", 1),
-                new Entry(Item.SANDSTONE, SandStone.CHISELED, Item.SANDSTONE, SandStone.NORMAL, "blockrecipe1", 4),
+                new Entry(Item.SANDSTONE, Sandstone.NORMAL, Item.SAND, 0, "blockrecipe1", 1),
+                new Entry(Item.SANDSTONE, Sandstone.CHISELED, Item.SANDSTONE, Sandstone.NORMAL, "blockrecipe1", 4),
                 new Entry(Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.NORMAL, "blockrecipe1", 4),
                 new Entry(Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.POLISHED_GRANITE, "blockrecipe1", 4),
                 new Entry(Item.STONE_BRICK, StoneBricks.NORMAL, Item.STONE, Stone.POLISHED_DIORITE, "blockrecipe1", 4),
@@ -426,7 +426,7 @@ public class CraftingManager {
                 new Entry(Item.STONE, Stone.POLISHED_ANDESITE, Item.STONE, Stone.ANDESITE, "blockrecipe1", 4),
                 new Entry(Item.QUARTZ_BLOCK, Quartz.QUARTZ_NORMAL, Item.QUARTZ, Stone.ANDESITE, "blockrecipe1", 4),
                 new Entry(Item.QUARTZ_BLOCK, Quartz.QUARTZ_CHISELED, Item.SLAB, Slab.QUARTZ, "blockrecipe2X1", 1),
-                new Entry(Item.SANDSTONE, SandStone.CHISELED, Item.SLAB, Slab.SANDSTONE, "blockrecipe2X1", 1),
+                new Entry(Item.SANDSTONE, Sandstone.CHISELED, Item.SLAB, Slab.SANDSTONE, "blockrecipe2X1", 1),
                 new Entry(Item.STONE_BRICK, StoneBricks.CHISELED, Item.SLAB, Slab.STONE_BRICK, "blockrecipe2X1", 1)
         };
 
