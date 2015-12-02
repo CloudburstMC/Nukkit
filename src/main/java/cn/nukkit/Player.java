@@ -3013,8 +3013,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.chunk = this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true);
 
             if (!this.justCreated) {
-                Map<Integer, Player> newChunk = new HashMap<Integer, Player>();
-                newChunk.putAll(this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4));
+                Map<Integer, Player> newChunk = this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
                 newChunk.remove(this.getLoaderId());
 
                 //List<Player> reload = new ArrayList<>();
