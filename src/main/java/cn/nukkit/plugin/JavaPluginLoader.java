@@ -5,7 +5,6 @@ import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
 import cn.nukkit.plugin.certification.PluginCertificateTask;
 import cn.nukkit.utils.PluginException;
-import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
 
 import java.io.File;
@@ -57,7 +56,7 @@ public class JavaPluginLoader implements PluginLoader {
                     if (plugin != null && description.isSigned()) {
                         PluginCertificateTask task = new PluginCertificateTask(plugin);
                         boolean result = task.run();
-                        
+
                     }
 
                     return plugin;

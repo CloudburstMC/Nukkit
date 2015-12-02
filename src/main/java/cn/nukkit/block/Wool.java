@@ -8,7 +8,7 @@ import cn.nukkit.item.Tool;
  */
 public class Wool extends Solid {
 
-    public Wool(){
+    public Wool() {
         this(0);
     }
 

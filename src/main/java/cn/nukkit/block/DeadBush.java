@@ -7,7 +7,7 @@ import cn.nukkit.level.Level;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class DeadBush extends Flowable {
-    public DeadBush(){
+    public DeadBush() {
         this(0);
     }
 

@@ -10,11 +10,11 @@ import cn.nukkit.level.Level;
  */
 public class Torch extends Flowable {
 
-    public Torch(){
+    public Torch() {
         this(0);
     }
 
-    public Torch(int meta){
+    public Torch(int meta) {
         super(meta);
     }
 
@@ -35,7 +35,7 @@ public class Torch extends Flowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL){
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block below = this.getSide(0);
             int side = this.getDamage();
             int[] faces = new int[]{
@@ -62,7 +62,7 @@ public class Torch extends Flowable {
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         Block below = this.getSide(0);
 
-        if (!target.isTransparent() && face != 0){
+        if (!target.isTransparent() && face != 0) {
             int[] faces = new int[]{
                     0, //0，不可能取到，占位置用
                     5, //1

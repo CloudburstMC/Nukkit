@@ -8,33 +8,33 @@ import cn.nukkit.item.Tool;
  */
 public class StainedClay extends Solid {
 
-    public StainedClay(){
+    public StainedClay() {
         this(0);
     }
 
-    public StainedClay(int meta){
+    public StainedClay(int meta) {
         super(meta);
     }
 
     @Override
     public String getName() {
         String[] names = new String[]{
-            "White Stained Clay",
-            "Orange Stained Clay",
-            "Magenta Stained Clay",
-            "Light Blue Stained Clay",
-            "Yellow Stained Clay",
-            "Lime Stained Clay",
-            "Pink Stained Clay",
-            "Gray Stained Clay",
-            "Light Gray Stained Clay",
-            "Cyan Stained Clay",
-            "Purple Stained Clay",
-            "Blue Stained Clay",
-            "Brown Stained Clay",
-            "Green Stained Clay",
-            "Red Stained Clay",
-            "Black Stained Clay"
+                "White Stained Clay",
+                "Orange Stained Clay",
+                "Magenta Stained Clay",
+                "Light Blue Stained Clay",
+                "Yellow Stained Clay",
+                "Lime Stained Clay",
+                "Pink Stained Clay",
+                "Gray Stained Clay",
+                "Light Gray Stained Clay",
+                "Cyan Stained Clay",
+                "Purple Stained Clay",
+                "Blue Stained Clay",
+                "Brown Stained Clay",
+                "Green Stained Clay",
+                "Red Stained Clay",
+                "Black Stained Clay"
         };
         return names[this.meta & 0x0f];
     }

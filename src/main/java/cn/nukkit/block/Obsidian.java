@@ -9,7 +9,7 @@ import cn.nukkit.item.Tool;
  */
 public class Obsidian extends Solid {
 
-    public Obsidian(){
+    public Obsidian() {
         this(0);
     }
 

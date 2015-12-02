@@ -12,11 +12,11 @@ import cn.nukkit.math.Vector3;
  */
 public class WaterLily extends Flowable {
 
-    public WaterLily(){
+    public WaterLily() {
         this(0);
     }
 
-    public WaterLily(int meta){
+    public WaterLily(int meta) {
         super(meta);
     }
 
@@ -59,9 +59,9 @@ public class WaterLily extends Flowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if(target instanceof Water){
+        if (target instanceof Water) {
             Block up = target.getSide(Vector3.SIDE_UP);
-            if(up.getId() == Block.AIR){
+            if (up.getId() == Block.AIR) {
                 this.getLevel().setBlock(up, this, true, true);
                 return true;
             }
@@ -71,8 +71,8 @@ public class WaterLily extends Flowable {
 
     @Override
     public int onUpdate(int type) {
-        if(type == Level.BLOCK_UPDATE_NORMAL){
-            if(!(this.getSide(0) instanceof Water)){
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (!(this.getSide(0) instanceof Water)) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }

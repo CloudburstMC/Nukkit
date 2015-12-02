@@ -1,6 +1,5 @@
 package cn.nukkit.plugin.certification;
 
-import java.io.Externalizable;
 import java.io.Serializable;
 
 /**

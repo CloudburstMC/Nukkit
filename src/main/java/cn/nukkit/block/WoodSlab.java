@@ -11,11 +11,11 @@ import cn.nukkit.math.AxisAlignedBB;
  */
 public class WoodSlab extends Transparent {
 
-    public WoodSlab(){
+    public WoodSlab() {
         this(0);
     }
 
-    public WoodSlab(int meta){
+    public WoodSlab(int meta) {
         super(meta);
     }
 
@@ -42,7 +42,7 @@ public class WoodSlab extends Transparent {
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-        if((this.meta & 0x08) > 0){
+        if ((this.meta & 0x08) > 0) {
             return new AxisAlignedBB(
                     this.x,
                     this.y + 0.5,
@@ -51,7 +51,7 @@ public class WoodSlab extends Transparent {
                     this.y + 1,
                     this.z + 1
             );
-        }else{
+        } else {
             return new AxisAlignedBB(
                     this.x,
                     this.y,

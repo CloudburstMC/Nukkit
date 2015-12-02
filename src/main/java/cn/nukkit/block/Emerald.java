@@ -9,11 +9,11 @@ import cn.nukkit.item.Tool;
  */
 public class Emerald extends Solid {
 
-    public Emerald(){
+    public Emerald() {
         this(0);
     }
 
-    public Emerald(int meta){
+    public Emerald(int meta) {
         super(0);
     }
 
@@ -34,11 +34,11 @@ public class Emerald extends Solid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isPickaxe()){
+        if (item.isPickaxe()) {
             return new int[][]{
                     {Item.EMERALD_BLOCK, 0, 1}
             };
-        }else{
+        } else {
             return new int[][]{};
         }
     }
