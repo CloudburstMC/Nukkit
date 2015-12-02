@@ -51,7 +51,7 @@ public class Slab extends Transparent {
                 "Nether Brick"
         };
 
-        return ((this.meta & 0x08) > 0 ? "Upper" : "") + names[this.meta & 0x07] + " Slab";
+        return ((this.meta & 0x08) > 0 ? "Upper " : "") + names[this.meta & 0x07] + " Slab";
     }
 
     @Override

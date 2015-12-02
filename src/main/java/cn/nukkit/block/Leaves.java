@@ -62,7 +62,7 @@ public class Leaves extends Transparent {
         if (item.isShears()) {
             return new int[][]{new int[]{Item.LEAVES, this.meta & 0x03, 1}};
         } else {
-            if ((int) ((Math.random()) * 200) == 0 && (this.meta & 0x03) == this.OAK) {
+            if ((int) ((Math.random()) * 200) == 0 && (this.meta & 0x03) == OAK) {
                 return new int[][]{new int[]{Item.APPLE, 0, 1}};
             }
             if ((int) ((Math.random()) * 20) == 0) {
