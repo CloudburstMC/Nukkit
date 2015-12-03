@@ -334,7 +334,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[SNOW_LAYER] = SnowLayer.class;
             list[ICE] = Ice.class;
             //list[SNOW_BLOCK] = Snow.class;
-            //list[CACTUS] = Cactus.class;
+            list[CACTUS] = Cactus.class;
             //list[CLAY_BLOCK] = Clay.class;
             //list[SUGARCANE_BLOCK] = Sugarcane.class;
 
