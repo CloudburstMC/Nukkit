@@ -3,7 +3,7 @@ checkout:
     - git submodule sync
     - git submodule update --init
     - mvn package
-    - cp -R ./target $CIRCLE_ARTIFACT
+    - ls
 
 machine:
   java:
