@@ -3,6 +3,7 @@ checkout:
     - git submodule sync
     - git submodule update --init
     - mvn package
+    - cp -R ./target $CIRCLE_ARTIFACT
 
 machine:
   java:
@@ -11,3 +12,4 @@ machine:
 general:
   artifacts:
     - "nukkit-1.0-SNAPSHOT.jar"
+    - "nukkit-1.0-SNAPSHOT-shaded.jar"
