@@ -3,11 +3,9 @@ checkout:
     - git submodule sync
     - git submodule update --init
     - mvn package
+    - cp -R ./target/nukkit-1.0-SNAPSHOT.jar $CIRCLE_ARTIFACTS
 
 machine:
   java:
     version: oraclejdk8
 
-general:
-  artifacts:
-    - "target/nukkit-1.0-SNAPSHOT.jar"
