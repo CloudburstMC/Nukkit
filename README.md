@@ -20,13 +20,14 @@ __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Nukkit/Nukkit)
 [![Build Status](https://travis-ci.org/Nukkit/Nukkit.svg)](https://travis-ci.org/Nukkit/Nukkit)
+[![Circle CI](https://circleci.com/gh/Nukkit/Nukkit.svg?style=svg)](https://circleci.com/gh/Nukkit/Nukkit)
 
 -------------
 
 Get Nukkit
 -------------
 * __[Jenkins](http://ci.mengcraft.com:8080/job/nukkit/)__ powered by **MengCraft**
-
+* __[Circle CI](https://circleci.com/gh/Nukkit/Nukkit/tree/master/)__ (**login required**)
 
 Introduction
 -------------
