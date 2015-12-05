@@ -275,7 +275,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[STILL_WATER] = StillWater.class;
             list[LAVA] = Lava.class;
             list[STILL_LAVA] = StillLava.class;
-            //list[SAND] = Sand.class;
+            list[SAND] = Sand.class;
             list[GRAVEL] = Gravel.class;
             list[GOLD_ORE] = GoldOre.class;
             list[IRON_ORE] = IronOre.class;
