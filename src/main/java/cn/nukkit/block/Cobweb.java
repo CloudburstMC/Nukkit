@@ -9,11 +9,11 @@ import cn.nukkit.item.Tool;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class Cobweb extends Flowable {
-    public Cobweb(){
+    public Cobweb() {
         this(0);
     }
 
-    public Cobweb(int meta){
+    public Cobweb(int meta) {
         super(0);
     }
 
@@ -44,8 +44,12 @@ public class Cobweb extends Flowable {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.STRING, 0, 1}
-        };
+        if (item.isShears() || item.isSword()) {
+            return new int[][]{
+                    {Item.STRING, 0, 1}
+            };
+        } else {
+            return new int[0][];
+        }
     }
 }

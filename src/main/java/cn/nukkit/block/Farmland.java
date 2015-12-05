@@ -8,9 +8,9 @@ import cn.nukkit.math.AxisAlignedBB;
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class Farmland extends Solid{
+public class Farmland extends Solid {
 
-    public Farmland(){
+    public Farmland() {
         this(0);
     }
 

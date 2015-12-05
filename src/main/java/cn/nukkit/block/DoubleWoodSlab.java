@@ -9,11 +9,11 @@ import cn.nukkit.item.Tool;
  */
 public class DoubleWoodSlab extends Solid {
 
-    public DoubleWoodSlab(){
+    public DoubleWoodSlab() {
         this(0);
     }
 
-    public DoubleWoodSlab(int meta){
+    public DoubleWoodSlab(int meta) {
         super(meta);
     }
 

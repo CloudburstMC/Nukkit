@@ -8,7 +8,7 @@ import cn.nukkit.item.Item;
  */
 public class Wheat extends Crops {
 
-    public Wheat(){
+    public Wheat() {
         this(0);
     }
 

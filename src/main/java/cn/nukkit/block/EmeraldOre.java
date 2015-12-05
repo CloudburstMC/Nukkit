@@ -7,13 +7,13 @@ import cn.nukkit.item.Tool;
  * Created on 2015/12/1 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class EmeraldOre extends Solid{
+public class EmeraldOre extends Solid {
 
-    public EmeraldOre(){
+    public EmeraldOre() {
         this(0);
     }
 
-    public EmeraldOre(int meta){
+    public EmeraldOre(int meta) {
         super(0);
     }
 
@@ -39,11 +39,11 @@ public class EmeraldOre extends Solid{
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isPickaxe()){
+        if (item.isPickaxe()) {
             return new int[][]{
                     {Item.EMERALD, 0, 1}
             };
-        }else{
+        } else {
             return new int[][]{};
         }
     }

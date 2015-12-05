@@ -3,6 +3,7 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
+import cn.nukkit.plugin.certification.PluginCertificateTask;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
@@ -38,17 +39,26 @@ public class JavaPluginLoader implements PluginLoader {
             if (dataFolder.exists() && !dataFolder.isDirectory()) {
                 throw new IllegalStateException("Projected dataFolder '" + dataFolder.toString() + "' for " + description.getName() + " exists and is not a directory");
             }
+
             String className = description.getMain();
             PluginClassLoader classLoader = new PluginClassLoader(this, this.getClass().getClassLoader(), file);
             this.classLoaders.put(description.getName(), classLoader);
+            PluginBase plugin = null;
             try {
                 Class javaClass = classLoader.loadClass(className);
 
                 try {
                     Class<? extends PluginBase> pluginClass = javaClass.asSubclass(PluginBase.class);
 
-                    PluginBase plugin = pluginClass.newInstance();
+                    plugin = pluginClass.newInstance();
                     this.initPlugin(plugin, description, dataFolder, file);
+
+                    if (plugin != null && description.isSigned()) {
+                        PluginCertificateTask task = new PluginCertificateTask(plugin);
+                        boolean result = task.run();
+
+                    }
+
                     return plugin;
                 } catch (ClassCastException e) {
                     throw new PluginException("main class `" + description.getMain() + "' does not extend PluginBase");

@@ -419,9 +419,7 @@ public class Level implements ChunkManager, Metadatable {
     public Map<Integer, Player> getChunkPlayers(int chunkX, int chunkZ) {
         String index = Level.chunkHash(chunkX, chunkZ);
         if (this.playerLoaders.containsKey(index)) {
-            HashMap<Integer, Player> chunkPlayers = new HashMap<Integer, Player>();
-            chunkPlayers.putAll(this.playerLoaders.get(index));
-            return chunkPlayers;
+            return new HashMap<>(this.playerLoaders.get(index));
         } else {
             return new HashMap<>();
         }
@@ -699,17 +697,16 @@ public class Level implements ChunkManager, Metadatable {
                     first = true;
                 }
 
-                if(b instanceof  Block) {
+                if (b instanceof Block) {
                     List<UpdateBlockPacket.Entry> list = new ArrayList<>();
                     Collections.addAll(list, pk.records);
                     list.add(new UpdateBlockPacket.Entry((int) ((Block) b).x, (int) ((Block) b).z, (int) ((Block) b).y, ((Block) b).getId(), ((Block) b).getDamage(), first ? flags : UpdateBlockPacket.FLAG_NONE));
                     pk.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
-                }
-                else {
-                    int fullBlock = this.getFullBlock((int)b.x, (int)b.y, (int)b.z);
+                } else {
+                    int fullBlock = this.getFullBlock((int) b.x, (int) b.y, (int) b.z);
                     List<UpdateBlockPacket.Entry> list = new ArrayList<>();
                     Collections.addAll(list, pk.records);
-                    list.add(new UpdateBlockPacket.Entry((int)b.x, (int)b.z, (int)b.y, fullBlock >> 4, fullBlock & 0xf, first ? flags : UpdateBlockPacket.FLAG_NONE));
+                    list.add(new UpdateBlockPacket.Entry((int) b.x, (int) b.z, (int) b.y, fullBlock >> 4, fullBlock & 0xf, first ? flags : UpdateBlockPacket.FLAG_NONE));
                     pk.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
                 }
             }
@@ -719,17 +716,16 @@ public class Level implements ChunkManager, Metadatable {
                     continue;
                 }
 
-                if(b instanceof  Block) {
+                if (b instanceof Block) {
                     List<UpdateBlockPacket.Entry> list = new ArrayList<>();
                     Collections.addAll(list, pk.records);
                     list.add(new UpdateBlockPacket.Entry((int) ((Block) b).x, (int) ((Block) b).z, (int) ((Block) b).y, ((Block) b).getId(), ((Block) b).getDamage(), flags));
                     pk.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
-                }
-                else {
-                    int fullBlock = this.getFullBlock((int)b.x, (int)b.y, (int)b.z);
+                } else {
+                    int fullBlock = this.getFullBlock((int) b.x, (int) b.y, (int) b.z);
                     List<UpdateBlockPacket.Entry> list = new ArrayList<>();
                     Collections.addAll(list, pk.records);
-                    list.add(new UpdateBlockPacket.Entry((int)b.x, (int)b.z, (int)b.y, fullBlock >> 4, fullBlock & 0xf, flags));
+                    list.add(new UpdateBlockPacket.Entry((int) b.x, (int) b.z, (int) b.y, fullBlock >> 4, fullBlock & 0xf, flags));
                     pk.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
                 }
             }

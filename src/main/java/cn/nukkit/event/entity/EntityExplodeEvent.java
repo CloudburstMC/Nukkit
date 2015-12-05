@@ -11,13 +11,13 @@ import java.util.HashMap;
  * author: Angelic47
  * Nukkit Project
  */
-public class EntityExplodeEvent extends EntityEvent implements Cancellable{
+public class EntityExplodeEvent extends EntityEvent implements Cancellable {
 
     protected Position position;
     protected HashMap<String, Block> blocks;
     protected float yield;
 
-    public EntityExplodeEvent(Entity entity, Position position, HashMap<String, Block> blocks, float yield){
+    public EntityExplodeEvent(Entity entity, Position position, HashMap<String, Block> blocks, float yield) {
         this.entity = entity;
         this.position = position;
         this.blocks = blocks;

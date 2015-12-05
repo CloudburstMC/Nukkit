@@ -8,11 +8,11 @@ import cn.nukkit.item.Tool;
  */
 public class EndStone extends Solid {
 
-    public EndStone(){
+    public EndStone() {
         this(0);
     }
 
-    public EndStone(int meta){
+    public EndStone(int meta) {
         super(0);
     }
 

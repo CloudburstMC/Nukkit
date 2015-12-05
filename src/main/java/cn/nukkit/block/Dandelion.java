@@ -9,7 +9,7 @@ import cn.nukkit.level.Level;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class Dandelion extends Flowable {
-    public Dandelion(){
+    public Dandelion() {
         this(0);
     }
 

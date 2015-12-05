@@ -16,7 +16,7 @@ public class Leaves2 extends Leaves {
         super(meta);
     }
 
-    public String getName(){
+    public String getName() {
         String[] names = new String[]{
                 "Oak Leaves",
                 "Spruce Leaves",
