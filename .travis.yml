@@ -3,4 +3,6 @@ language: java
 jdk:
   - oraclejdk8
 
-before_install: mvn install:install-file -Dfile=${basedir}/lib/leveldb.jar
+install:
+  - mvn clean
+  - mvn install
