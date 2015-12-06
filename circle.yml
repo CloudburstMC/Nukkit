@@ -2,6 +2,8 @@ checkout:
   post:
     - git submodule sync
     - git submodule update --init
+    - mvn clean
+    - mvn install:install-file -Dfile=${basedir}/lib/leveldb.jar
     - mvn package
     - cp -R ./target/nukkit-1.0-SNAPSHOT.jar $CIRCLE_ARTIFACTS
 
