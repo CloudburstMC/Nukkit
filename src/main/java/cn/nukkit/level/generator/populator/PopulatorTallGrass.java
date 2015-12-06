@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitMath;
 
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -26,7 +26,7 @@ public class PopulatorTallGrass extends Populator {
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, Random random) {
         this.level = level;
-        int amount = random.nextInt(this.randomAmount + 1) + this.baseAmount;
+        int amount = random.nextBoundedInt(this.randomAmount + 1) + this.baseAmount;
         for (int i = 0; i < amount; ++i) {
             int x = NukkitMath.randomRange(random, chunkX * 16, chunkX * 16 + 15);
             int z = NukkitMath.randomRange(random, chunkZ * 16, chunkZ * 16 + 15);

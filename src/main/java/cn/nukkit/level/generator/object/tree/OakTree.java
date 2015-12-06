@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.Wood;
 import cn.nukkit.level.ChunkManager;
 
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -35,7 +35,7 @@ public class OakTree extends ObjectTree {
 
     @Override
     public void placeObject(ChunkManager level, int x, int y, int z, Random random) {
-        this.treeHeight = random.nextInt(3) + 4;
+        this.treeHeight = random.nextBoundedInt(3) + 4;
         super.placeObject(level, x, y, z, random);
     }
 }

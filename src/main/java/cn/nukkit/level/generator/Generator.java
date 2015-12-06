@@ -177,7 +177,7 @@ public abstract class Generator {
         return noiseArray;
     }
 
-    public abstract void init(ChunkManager level, Random random);
+    public abstract void init(ChunkManager level, cn.nukkit.utils.Random random);
 
     public abstract void generateChunk(int chunkX, int chunkZ);
 

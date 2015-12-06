@@ -6,7 +6,7 @@ import cn.nukkit.level.ChunkManager;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -49,14 +49,14 @@ public abstract class ObjectTree {
         ObjectTree tree;
         switch (type) {
             case Sapling.SPRUCE:
-                if (random.nextInt(39) == 0) {
+                if (random.nextBoundedInt(39) == 0) {
                     tree = new MatchstickSpruceTree();
                 } else {
                     tree = new SpruceTree();
                 }
                 break;
             case Sapling.BIRCH:
-                if (random.nextInt(39) == 0) {
+                if (random.nextBoundedInt(39) == 0) {
                     tree = new TallBirchTree();
                 } else {
                     tree = new BirchTree();
@@ -107,7 +107,7 @@ public abstract class ObjectTree {
                 int xOff = Math.abs(xx - x);
                 for (int zz = z - mid; zz <= z + mid; ++zz) {
                     int zOff = Math.abs(zz - z);
-                    if (xOff == mid && zOff == mid && (yOff == 0 || random.nextInt(2) == 0)) {
+                    if (xOff == mid && zOff == mid && (yOff == 0 || random.nextBoundedInt(2) == 0)) {
                         continue;
                     }
                     if (!Block.solid[level.getBlockIdAt(xx, yy, zz)]) {

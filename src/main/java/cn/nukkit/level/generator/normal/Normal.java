@@ -26,7 +26,7 @@ public class Normal extends Generator {
 
     private ChunkManager level;
 
-    private Random random;
+    private cn.nukkit.utils.Random random;
     private int waterHeight = 62;
     private int bedrockDepth = 5;
 
@@ -94,7 +94,7 @@ public class Normal extends Generator {
     }
 
     @Override
-    public void init(ChunkManager level, Random random) {
+    public void init(ChunkManager level, cn.nukkit.utils.Random random) {
         this.level = level;
         this.random = random;
         this.random.setSeed(this.level.getSeed());

@@ -4,7 +4,7 @@ import cn.nukkit.level.generator.noise.Simplex;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX

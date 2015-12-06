@@ -23,7 +23,7 @@ public class Flat extends Generator {
 
     private BaseFullChunk chunk;
 
-    private Random random;
+    private cn.nukkit.utils.Random random;
 
     private List<Populator> populators = new ArrayList<>();
 
@@ -153,7 +153,7 @@ public class Flat extends Generator {
     }
 
     @Override
-    public void init(ChunkManager level, Random random) {
+    public void init(ChunkManager level, cn.nukkit.utils.Random random) {
         this.level = level;
         this.random = random;
     }
