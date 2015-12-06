@@ -69,13 +69,13 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public int getTime() {
-        return this.levelData.getInt("Time");
+    public long getTime() {
+        return this.levelData.getLong("Time");
     }
 
     @Override
-    public void setTime(int value) {
-        this.levelData.putInt("Time", value);
+    public void setTime(long value) {
+        this.levelData.putLong("Time", value);
     }
 
     @Override

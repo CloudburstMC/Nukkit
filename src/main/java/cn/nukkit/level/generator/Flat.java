@@ -19,6 +19,11 @@ import java.util.regex.Pattern;
  */
 public class Flat extends Generator {
 
+    @Override
+    public int getId() {
+        return TYPE_FLAT;
+    }
+
     private ChunkManager level;
 
     private BaseFullChunk chunk;

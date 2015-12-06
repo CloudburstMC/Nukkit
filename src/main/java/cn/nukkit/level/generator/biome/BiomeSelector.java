@@ -83,8 +83,8 @@ public class BiomeSelector {
     }
 
     public Biome pickBiome(double x, double z) {
-        int temperature = (int) (this.getTemperature(x, z) * 63d);
-        int rainfall = (int) (this.getRainfall(x, z) * 63d);
+        int temperature = (int) (this.getTemperature(x, z) * 63);
+        int rainfall = (int) (this.getRainfall(x, z) * 63);
 
         int biomeId = this.map[temperature + (rainfall << 6)];
         return this.biomes.containsKey(biomeId) ? this.biomes.get(biomeId) : this.fallback;

@@ -51,9 +51,9 @@ public interface LevelProvider {
 
     String getName();
 
-    int getTime();
+    long getTime();
 
-    void setTime(int value);
+    void setTime(long value);
 
     long getSeed();
 

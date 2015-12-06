@@ -92,7 +92,7 @@ public class McRegion extends BaseLevelProvider {
                 .putLong("LastPlayed", System.currentTimeMillis() / 1000)
                 .putLong("RandomSeed", seed)
                 .putLong("SizeOnDisk", 0)
-                .putInt("Time", 0)
+                .putLong("Time", 0)
                 .putString("generatorName", Generator.getGeneratorName(generator))
                 .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
                 .putString("LevelName", name)

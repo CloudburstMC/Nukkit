@@ -1,10 +1,11 @@
-package cn.nukkit.level.generator;
+package cn.nukkit.level.generator.task;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.ChunkManagerPool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.SimpleChunkManager;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.generator.Generator;
 import cn.nukkit.scheduler.AsyncTask;
 
 /**

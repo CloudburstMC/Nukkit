@@ -10,6 +10,8 @@ import cn.nukkit.level.format.leveldb.key.TilesKey;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
@@ -344,7 +346,7 @@ public class Chunk extends BaseFullChunk {
                             if (!(tag instanceof CompoundTag)) {
                                 throw new IOException("Root tag must be a named compound tag");
                             }
-                            entities.add((CompoundTag) tag);
+                            tiles.add((CompoundTag) tag);
                         }
                     }
                 }
@@ -359,6 +361,19 @@ public class Chunk extends BaseFullChunk {
                         extraDataMap.put(key, value);
                     }
                 }
+
+                /*if (!entities.isEmpty() || !tiles.isEmpty()) {
+                    CompoundTag ct = new CompoundTag();
+                    ListTag<CompoundTag> entityList = new ListTag<>("entities");
+                    ListTag<CompoundTag> tileList = new ListTag<>("tiles");
+
+                    entityList.list = entities;
+                    tileList.list = tiles;
+                    ct.putList(entityList);
+                    ct.putList(tileList);
+                    NBTIO.write(ct, new File(Nukkit.DATA_PATH + chunkX + "_" + chunkZ + ".dat"));
+                }*/
+
 
                 Chunk chunk = new Chunk(provider, chunkX, chunkZ, chunkData, entities, tiles, extraDataMap);
 
@@ -497,6 +512,62 @@ public class Chunk extends BaseFullChunk {
             return chunk;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void initChunk() {
+        if (this.getProvider() != null && !this.isInit) {
+            boolean changed = false;
+
+            if (this.NBTentities != null) {
+
+                for (CompoundTag nbt : NBTentities) {
+                    if (!nbt.contains("id")) {
+                        this.setChanged();
+                        continue;
+                    }
+                    ListTag pos = nbt.getList("Pos");
+                    if ((((NumberTag) pos.get(0)).getData().intValue() >> 4) != this.x || ((((NumberTag) pos.get(2)).getData().intValue() >> 4) != this.z)) {
+                        changed = true;
+                        continue;
+                    }
+                    Entity entity = Entity.createEntity(nbt.getInt("id"), this, nbt);
+                    if (entity != null) {
+                        entity.spawnToAll();
+                    } else {
+                        changed = true;
+                        continue;
+                    }
+                }
+
+                for (CompoundTag nbt : NBTtiles) {
+                    if (nbt != null) {
+                        if (!nbt.contains("id")) {
+                            changed = true;
+                            continue;
+                        }
+                        if ((nbt.getInt("x") >> 4) != this.x || ((nbt.getInt("z") >> 4) != this.z)) {
+                            changed = true;
+                            continue;
+                        }
+                        Tile tile = Tile.createTile(nbt.getString("id"), this, nbt);
+                        if (tile == null) {
+                            changed = true;
+                            continue;
+                        }
+                    }
+                }
+
+                this.NBTentities = null;
+                this.NBTtiles = null;
+
+
+            }
+
+            this.setChanged(changed);
+
+            this.isInit = true;
         }
     }
 }
