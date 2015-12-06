@@ -315,7 +315,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             list[DIAMOND_ORE] = DiamondOre.class;
             //list[DIAMOND_BLOCK] = Diamond.class;
-            //list[WORKBENCH] = Workbench.class;
+            list[WORKBENCH] = Workbench.class;
             list[WHEAT_BLOCK] = Wheat.class;
             list[FARMLAND] = Farmland.class;
             //list[FURNACE] = Furnace.class;

@@ -1781,7 +1781,7 @@ public class Server {
         Entity.registerEntity(FallingSand.class);
         Entity.registerEntity(PrimedTNT.class);
         Entity.registerEntity(Snowball.class);
-
+        Entity.registerEntity(Painting.class);
         //todo mobs
 
         Entity.registerEntity(Human.class, true);

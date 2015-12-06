@@ -1581,7 +1581,7 @@ public class Level implements ChunkManager, Metadatable {
     public Entity[] getCollidingEntities(AxisAlignedBB bb, Entity entity) {
         List<Entity> nearby = new ArrayList<>();
 
-        if (entity == null || entity.canCollide) {
+        if (entity == null || entity.canCollide()) {
             int minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
             int maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
             int minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);
@@ -1608,7 +1608,7 @@ public class Level implements ChunkManager, Metadatable {
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
         List<Entity> nearby = new ArrayList<>();
 
-        if (entity == null || entity.canCollide) {
+        if (entity == null || entity.canCollide()) {
             int minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
             int maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
             int minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);

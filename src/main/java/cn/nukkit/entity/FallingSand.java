@@ -20,16 +20,38 @@ public class FallingSand extends Entity {
     public static final int NETWORK_ID = 66;
     public static final int DATA_BLOCK_INFO = 20;
 
-    public float width = 0.98F;
-    public float length = 0.98F;
-    public float height = 0.98F;
+    @Override
+    public float getWidth() {
+        return 0.98f;
+    }
 
-    protected float gravity = 0.04F;
-    protected float drag = 0.02F;
+    @Override
+    public float getLength() {
+        return 0.98f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 0.98f;
+    }
+
+    @Override
+    protected float getGravity() {
+        return 0.04f;
+    }
+
+    @Override
+    protected float getDrag() {
+        return 0x02f;
+    }
+
+    @Override
+    public boolean canCollide() {
+        return false;
+    }
+
     protected int blockId;
     protected int damage;
-
-    public boolean canCollide;
 
     public FallingSand(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -97,14 +119,14 @@ public class FallingSand extends Entity {
                 level.setBlock(pos, Block.get(0), true);
             }
 
-            motionY -= gravity;
+            motionY -= getGravity();
 
             move(motionX, motionY, motionZ);
 
-            float friction = 1 - drag;
+            float friction = 1 - getDrag();
 
             motionX *= friction;
-            motionY *= 1 - drag;
+            motionY *= 1 - getDrag();
             motionZ *= friction;
 
             pos = (new Vector3(x - 0.5, y, z - 0.5)).floor();

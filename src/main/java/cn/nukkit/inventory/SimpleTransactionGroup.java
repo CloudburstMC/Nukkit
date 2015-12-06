@@ -5,10 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.item.Item;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -73,7 +70,7 @@ public class SimpleTransactionGroup implements TransactionGroup {
         this.inventories.add(transaction.getInventory());
     }
 
-    protected boolean matchItems(List<Item> needItems, List<Item> haveItems) {
+    protected boolean matchItems(Collection<Item> needItems, Collection<Item> haveItems) {
         for (Transaction ts : this.transactions) {
             if (ts.getTargetItem().getId() != Item.AIR) {
                 needItems.add(ts.getTargetItem());
@@ -87,7 +84,13 @@ public class SimpleTransactionGroup implements TransactionGroup {
                 haveItems.add(sourceItem);
             }
         }
-
+        //todo java.lang.ConcurrentModificationException
+        /*
+        Collection<Item> newNeedItems = new ArrayList<>();
+        newNeedItems.addAll(needItems);
+        Collection<Item> newHaveItems = new ArrayList<>();
+        newHaveItems.addAll(haveItems);
+        */
         for (Item needItem : needItems) {
             for (Item haveItem : haveItems) {
                 if (needItem.deepEquals(haveItem)) {
@@ -96,22 +99,27 @@ public class SimpleTransactionGroup implements TransactionGroup {
                     haveItem.setCount(haveItem.getCount() - amount);
                     if (haveItem.getCount() == 0) {
                         haveItems.remove(haveItem);
+                        //newHaveItems.remove(haveItem);
                     }
                     if (needItem.getCount() == 0) {
                         needItems.remove(needItem);
+                        //newNeedItems.remove(needItem);
                         break;
                     }
                 }
             }
         }
 
+        //needItems = newNeedItems;
+        //haveItems = newHaveItems;
+
         return true;
     }
 
     @Override
     public boolean canExecute() {
-        List<Item> haveItems = new ArrayList<>();
-        List<Item> needItems = new ArrayList<>();
+        Collection<Item> haveItems = new ArrayList<>();
+        Collection<Item> needItems = new ArrayList<>();
 
         return this.matchItems(needItems, haveItems) && haveItems.isEmpty() && needItems.isEmpty() && !this.transactions.isEmpty();
     }
