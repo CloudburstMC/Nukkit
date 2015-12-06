@@ -314,7 +314,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[CHEST] = Chest.class;
 
             list[DIAMOND_ORE] = DiamondOre.class;
-            //list[DIAMOND_BLOCK] = Diamond.class;
+            list[DIAMOND_BLOCK] = Diamond.class;
             list[WORKBENCH] = Workbench.class;
             list[WHEAT_BLOCK] = Wheat.class;
             list[FARMLAND] = Farmland.class;
@@ -329,9 +329,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             //list[IRON_DOOR_BLOCK] = IronDoor.class;
             list[REDSTONE_ORE] = RedstoneOre.class;
-            //list[GLOWING_REDSTONE_ORE] = GlowingRedstoneOre.class;
+            list[GLOWING_REDSTONE_ORE] = GlowingRedstoneOre.class;
 
-            //list[SNOW_LAYER] = SnowLayer.class;
+            list[SNOW_LAYER] = SnowLayer.class;
             list[ICE] = Ice.class;
             //list[SNOW_BLOCK] = Snow.class;
             //list[CACTUS] = Cactus.class;
@@ -342,7 +342,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[PUMPKIN] = Pumpkin.class;
             //list[NETHERRACK] = Netherrack.class;
             //list[SOUL_SAND] = SoulSand.class;
-            //list[GLOWSTONE_BLOCK] = Glowstone.class;
+            list[GLOWSTONE_BLOCK] = Glowstone.class;
 
             //list[LIT_PUMPKIN] = LitPumpkin.class;
             list[CAKE_BLOCK] = Cake.class;
@@ -351,8 +351,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             list[STONE_BRICKS] = StoneBricks.class;
 
-            //list[IRON_BARS] = IronBars.class;
-            //list[GLASS_PANE] = GlassPane.class;
+            list[IRON_BARS] = IronBars.class;
+            list[GLASS_PANE] = GlassPane.class;
             //list[MELON_BLOCK] = Melon.class;
             /*list[PUMPKIN_STEM] = PumpkinStem.class;
             list[MELON_STEM] = MelonStem.class;
