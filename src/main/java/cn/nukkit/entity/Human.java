@@ -34,10 +34,25 @@ public class Human extends Creature implements InventoryHolder {
     protected UUID uuid;
     protected UUID rawUUID;
 
-    public float width = 0.6f;
-    public float length = 0.6f;
-    public float height = 1.8f;
-    public Float eyeHeight = 1.62f;
+    @Override
+    public float getWidth() {
+        return 0.6f;
+    }
+
+    @Override
+    public float getLength() {
+        return 0.6f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 1.8f;
+    }
+
+    @Override
+    public float getEyeHeight() {
+        return 1.62f;
+    }
 
     protected Skin skin;
 
@@ -234,8 +249,4 @@ public class Human extends Creature implements InventoryHolder {
         }
     }
 
-    @Override
-    public Float getEyeHeight() {
-        return this.eyeHeight;
-    }
 }

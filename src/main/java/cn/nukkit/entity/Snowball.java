@@ -17,12 +17,30 @@ public class Snowball extends Projectile {
         return NETWORK_ID;
     }
 
-    public float width = 0.25f;
-    public float length = 0.25f;
-    public float height = 0.25f;
+    @Override
+    public float getWidth() {
+        return 0.25f;
+    }
 
-    protected float gravity = 0.03f;
-    protected float drag = 0.01f;
+    @Override
+    public float getLength() {
+        return 0.25f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 0.25f;
+    }
+
+    @Override
+    protected float getGravity() {
+        return 0.03f;
+    }
+
+    @Override
+    protected float getDrag() {
+        return 0.01f;
+    }
 
     public Snowball(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
