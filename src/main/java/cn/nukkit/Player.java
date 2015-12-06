@@ -10,14 +10,13 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.entity.*;
+import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
-import cn.nukkit.inventory.Inventory;
-import cn.nukkit.inventory.InventoryHolder;
-import cn.nukkit.inventory.SimpleTransactionGroup;
+import cn.nukkit.inventory.*;
 import cn.nukkit.item.EdibleItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.ChunkLoader;
@@ -2502,6 +2501,176 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         }
                     }
                 }
+                break;
+            case ProtocolInfo.CONTAINER_CLOSE_PACKET:
+                ContainerClosePacket containerClosePacket = (ContainerClosePacket) packet;
+                if(!this.spawned || containerClosePacket.windowid == 0){
+                    break;
+                }
+                this.craftingType = 0;
+                this.currentTransaction = null;
+                if(this.windowIndex.containsKey(containerClosePacket.windowid)){
+                    this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windowIndex.get(containerClosePacket.windowid), this));
+                    this.removeWindow(this.windowIndex.get(containerClosePacket.windowid));
+                }else{
+                    this.windowIndex.remove(containerClosePacket.windowid);
+                }
+                break;
+            
+            case ProtocolInfo.CONTAINER_SET_CONTENT_PACKET:
+                ContainerSetContentPacket containerSetContentPacket = (ContainerSetContentPacket) packet;
+                if(containerSetContentPacket.windowid == ContainerSetContentPacket.SPECIAL_CRAFTING){
+                    if(containerSetContentPacket.slots.length < 9){
+                        this.inventory.sendContents(this);
+                        break;
+                    }
+                    for (int i = 0; i < containerSetContentPacket.slots.length; i++) {
+                        Item itemInContainerSetPacketSlot = containerSetContentPacket.slots[i];
+                        if(itemInContainerSetPacketSlot.getDamage() == -1 ||
+                                itemInContainerSetPacketSlot.getDamage() == 0xffff
+                                ){
+                            itemInContainerSetPacketSlot.setDamage(null);
+                        }
+                        if(i < 9 && itemInContainerSetPacketSlot.getId() > 0){
+                            itemInContainerSetPacketSlot.setCount(1);
+                        }
+                    }
+                    Item result = containerSetContentPacket.slots[9];
+                    ShapelessRecipe recipe;
+                    if(this.craftingType == 1 || this.craftingType == 2){
+                        recipe = new BigShapelessRecipe(result);
+                    }else{
+                        recipe = new ShapelessRecipe(result);
+                    }
+                    /** @var Item[] ingredients */
+                    Item[] ingredients = new Item[]{};
+                    for(int x = 0; x < 3; ++x){
+                        for(int y = 0; y < 3; ++y){
+                            Item itemInSlots = containerSetContentPacket.slots[x * 3 + y];
+                            if(itemInSlots.getCount() > 0 && itemInSlots.getId() > 0){
+                                //TODO shaped
+                                recipe.addIngredient(itemInSlots);
+                                ingredients[x * 3 + y] = itemInSlots;
+                            }
+                        }
+                    }
+                    if(!Server.getInstance().getCraftingManager().matchRecipe(recipe)){
+                        String recipesString = "";
+                        for(Item i : recipe.getIngredientList()){
+                            recipesString += i + ",";
+                        }
+
+                        this.server.getLogger().debug("Unmatched recipe from player "+ this.getName() +
+                                ": " + recipe.getResult()+", using: " + recipesString);
+                        this.inventory.sendContents(this);
+                        break;
+                    }
+                    boolean canCraft = true;
+                    int[] used = new int[this.inventory.getSize()];
+                    for(Item ingredient : ingredients){
+                        int slotInIngredients = -1;
+                        boolean checkDamage = ingredient.getDamage() != 0; //  ingredient.getDamage() == null ? false : true;
+                        for(Integer index : this.inventory.getContents().keySet()){
+                            Item i = this.inventory.getContents().get(index);
+                            if(ingredient.equals(i, checkDamage) && (i.getCount() - used[index]) >= 1){
+                                slotInIngredients = index;
+                                used[index]++;
+                                break;
+                            }
+                        }
+                        if(slotInIngredients == -1){
+                            canCraft = false;
+                            break;
+                        }
+                    }
+                    if(!canCraft){
+                        this.inventory.sendContents(this);
+                        break;
+                    }
+                    for (int i = 0; i < used.length; i++) {
+                        int count = used[i];
+                        if(count == 0){
+                            continue;
+                        }
+                        Item itemInUsed = this.inventory.getItem(i);
+                        Item newItem;
+                        if(itemInUsed.getCount() > count){
+                            newItem = itemInUsed.clone();
+                            newItem.setCount(itemInUsed.getCount() - count);
+                        }else{
+                            newItem = Item.get(Item.AIR, 0, 0);
+                        }
+                        this.inventory.setItem(i, newItem);
+                    }
+
+                    Item[] extraItems = this.inventory.addItem(recipe.getResult());
+                    if(extraItems.length > 0){
+                        for(Item extraItem : extraItems){
+                            this.level.dropItem(this, extraItem);
+                        }
+                    }
+                    //todo award achievement
+                }
+                break;
+
+            /*
+            case ProtocolInfo.CONTAINER_SET_SLOT_PACKET:
+                ContainerSetSlotPacket containerSetSlotPacket = (ContainerSetSlotPacket) packet;
+                if(!this.spawned || this.blocked || !this.isAlive()){
+                    break;
+                }
+                if(containerSetSlotPacket.slot < 0){
+                    break;
+                }
+                Transaction transaction;
+                if(containerSetSlotPacket.windowid == 0){ //Our inventory
+                    if(containerSetSlotPacket.slot >= this.inventory.getSize()){
+                        break;
+                    }
+                    if(this.isCreative()){
+                        if(Item.getCreativeItemIndex(containerSetSlotPacket.item) != -1){
+                            this.inventory.setItem(containerSetSlotPacket.slot, containerSetSlotPacket.item);
+                            this.inventory.setHotbarSlotIndex(containerSetSlotPacket.slot, containerSetSlotPacket.slot); //links hotbar[containerSetSlotPacket.slot] to slots[containerSetSlotPacket.slot]
+                        }
+                    }
+                    transaction = new BaseTransaction(this.inventory, containerSetSlotPacket.slot, this.inventory.getItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
+                }else if(containerSetSlotPacket.windowid == ContainerSetContentPacket.SPECIAL_ARMOR){ //Our armor
+                    if(containerSetSlotPacket.slot >= 4){
+                        break;
+                    }
+                    transaction = new BaseTransaction(this.inventory, containerSetSlotPacket.slot + this.inventory.getSize(), this.inventory.getArmorItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
+                }else if(this.windowIndex.containsKey(containerSetSlotPacket.windowid)){
+                    this.craftingType = 0;
+                    Inventory inv = this.windowIndex.get(containerSetSlotPacket.windowid);
+                    transaction = new BaseTransaction(inv, containerSetSlotPacket.slot, inv.getItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
+                }else{
+                    break;
+                }
+                if(transaction.getSourceItem().equals(transaction.getTargetItem(), true) && transaction.getTargetItem().getCount() == transaction.getSourceItem().getCount()){ //No changes!
+                    //No changes, just a local inventory update sent by the server
+                    break;
+                }
+                //?
+                if(this.currentTransaction == null || this.currentTransaction.getCreationTime() < (System.currentTimeMillis() - 8)){
+                    if(this.currentTransaction != null){
+                        for(Inventory inventory : this.currentTransaction.getInventories()){
+                            if(inventory instanceof PlayerInventory){
+                                ((PlayerInventory)inventory).sendArmorContents(this);
+                            }
+                            inventory.sendContents(this);
+                        }
+                    }
+                    this.currentTransaction = new SimpleTransactionGroup(this);
+                }
+                this.currentTransaction.addTransaction(transaction);
+                if(this.currentTransaction.canExecute()){
+                    //todo achievements
+                    this.currentTransaction = null;
+                }
+
+                break;
+            */
+            case ProtocolInfo.BLOCK_ENTITY_DATA_PACKET:
                 break;
             //todo alot
             default:
