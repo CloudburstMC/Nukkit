@@ -20,7 +20,9 @@ public abstract class Projectile extends Entity {
 
     public Entity shootingEntity = null;
 
-    protected double damage = 0;
+    protected double getDamage() {
+        return 0;
+    }
 
     public boolean hadCollision = false;
 
@@ -85,7 +87,7 @@ public abstract class Projectile extends Entity {
             MovingObjectPosition movingObjectPosition = null;
 
             if (!this.isCollided) {
-                this.motionY -= this.gravity;
+                this.motionY -= this.getGravity();
             }
 
             Vector3 moveVector = new Vector3(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
@@ -127,7 +129,7 @@ public abstract class Projectile extends Entity {
                     this.server.getPluginManager().callEvent(new ProjectileHitEvent(this));
 
                     double motion = Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-                    damage = Math.ceil(motion * this.damage);
+                    double damage = Math.ceil(motion * this.getDamage());
 
                     if (this instanceof Arrow && ((Arrow) this).isCritical) {
                         damage += new Random().nextInt((int) (damage / 2) + 1);

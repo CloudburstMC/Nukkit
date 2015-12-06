@@ -124,17 +124,10 @@ public abstract class Entity extends Location implements Metadatable {
     public int deadTicks = 0;
     protected int age = 0;
 
-    public float height;
-    public Float eyeHeight = null;
-
-    public float width;
-    public float length;
-
     protected int health = 20;
     private int maxHealth = 20;
 
     protected float ySize = 0;
-    protected float stepHeight = 20;
     public boolean keepMovement = false;
 
     public float fallDistance = 0;
@@ -144,7 +137,6 @@ public abstract class Entity extends Location implements Metadatable {
     public int fireTicks = 0;
 
     public CompoundTag namedTag;
-    public boolean canCollide = true;
 
     protected boolean isStatic = false;
 
@@ -157,14 +149,43 @@ public abstract class Entity extends Location implements Metadatable {
     public boolean fireProof;
     public boolean invulnerable;
 
-    protected float gravity;
-    protected float drag;
-
     protected Server server;
 
     public boolean closed = false;
 
     protected boolean isPlayer = false;
+
+    public float getHeight() {
+        return 0;
+    }
+
+    public float getEyeHeight() {
+        return this.getHeight() / 2 + 0.1f;
+    }
+
+    public float getWidth() {
+        return 0;
+    }
+
+    public float getLength() {
+        return 0;
+    }
+
+    protected double getStepHeight() {
+        return 0;
+    }
+
+    public boolean canCollide() {
+        return true;
+    }
+
+    protected float getGravity() {
+        return 0;
+    }
+
+    protected float getDrag() {
+        return 0;
+    }
 
     public Entity(FullChunk chunk, CompoundTag nbt) {
         if (this instanceof Player) {
@@ -177,10 +198,6 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.isPlayer = this instanceof Player;
         this.temporalVector = new Vector3();
-
-        if (this.eyeHeight == null) {
-            this.eyeHeight = (float) (this.height / 2 + 0.1);
-        }
 
         this.id = Entity.entityCount++;
         this.justCreated = true;
@@ -983,7 +1000,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public AxisAlignedBB getBoundingBox() {
-        return boundingBox;
+        return this.boundingBox;
     }
 
     public void fall(float fallDistance) {
@@ -996,10 +1013,6 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void handleLavaMovement() {
         //todo
-    }
-
-    public Float getEyeHeight() {
-        return this.eyeHeight == null ? 0 : this.eyeHeight;
     }
 
     public void moveFlying() {
@@ -1147,12 +1160,12 @@ public abstract class Entity extends Location implements Metadatable {
             this.boundingBox.offset(0, 0, dz);
 
 
-            if (this.stepHeight > 0 && fallingFlag && this.ySize < 0.05 && (movX != dx || movZ != dz)) {
+            if (this.getStepHeight() > 0 && fallingFlag && this.ySize < 0.05 && (movX != dx || movZ != dz)) {
                 double cx = dx;
                 double cy = dy;
                 double cz = dz;
                 dx = movX;
-                dy = this.stepHeight;
+                dy = this.getStepHeight();
                 dz = movZ;
 
                 AxisAlignedBB axisalignedbb1 = this.boundingBox.clone();
@@ -1330,9 +1343,9 @@ public abstract class Entity extends Location implements Metadatable {
         this.y = pos.y;
         this.z = pos.z;
 
-        float radius = this.width / 2;
+        float radius = this.getWidth() / 2;
 
-        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + this.height, pos.z + radius);
+        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + this.getHealth(), pos.z + radius);
 
         this.checkChunks();
 

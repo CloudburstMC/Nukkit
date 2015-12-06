@@ -1223,8 +1223,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 this.x = newPos.x;
                 this.y = newPos.y;
                 this.z = newPos.z;
-                double radius = this.width / 2;
-                this.boundingBox.setBounds(this.x - radius, this.y, this.z - radius, this.x + radius, this.y + this.height, this.z + radius);
+                double radius = this.getWidth() / 2;
+                this.boundingBox.setBounds(this.x - radius, this.y, this.z - radius, this.x + radius, this.y + this.getHeight(), this.z + radius);
             }
         }
 
@@ -1332,7 +1332,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             if (this.motionY > 0) {
                 //todo: check this
-                this.startAirTicks = (int) ((-(Math.log(this.gravity / (this.gravity + this.drag * this.motionY))) / this.drag) * 2 + 5);
+                this.startAirTicks = (int) ((-(Math.log(this.getGravity() / (this.getGravity() + this.getDrag() * this.motionY))) / this.getDrag()) * 2 + 5);
             }
 
             return true;
@@ -1383,7 +1383,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     this.inAirTicks = 0;
                 } else {
                     if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && this.getDataPropertyByte(DATA_NO_AI).data != 1) {
-                        double expectedVelocity = (-this.gravity) / ((double) this.drag) - ((-this.gravity) / ((double) this.drag)) * Math.exp(-((double) this.drag) * ((double) (this.inAirTicks - this.startAirTicks)));
+                        double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                         double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
                         if (!this.hasEffect(Effect.JUMP) && diff > 0.6 && expectedVelocity < this.speed.y && !this.server.getAllowFlight()) {
@@ -1544,10 +1544,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.isPlayer = true;
 
         this.temporalVector = new Vector3();
-
-        if (this.eyeHeight == null) {
-            this.eyeHeight = (float) (this.height / 2 + 0.1);
-        }
 
         this.id = Entity.entityCount++;
         this.justCreated = true;

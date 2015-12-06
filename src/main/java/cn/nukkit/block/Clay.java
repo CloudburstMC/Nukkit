@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.Tool;
 
 /**
  * @author Nukkit Project Team
@@ -8,11 +9,21 @@ import cn.nukkit.item.Item;
 public class Clay extends Solid {
 
     public Clay(int meta) {
-        super(meta);
+        super(0);
     }
 
     public Clay() {
         this(0);
+    }
+
+    @Override
+    public double getHardness() {
+        return 0.6;
+    }
+
+    @Override
+    public int getToolType() {
+        return Tool.TYPE_SHOVEL;
     }
 
     @Override
