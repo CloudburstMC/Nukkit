@@ -56,7 +56,7 @@ public class PopulatorTree extends Populator {
             int b = this.level.getBlockIdAt(x, y, z);
             if (b == Block.DIRT || b == Block.GRASS) {
                 break;
-            } else if (b != 0 && b != Block.SNOW_LAYER) {
+            } else if (b != Block.AIR && b != Block.SNOW_LAYER) {
                 return -1;
             }
         }

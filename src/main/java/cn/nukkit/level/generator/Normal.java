@@ -37,6 +37,8 @@ public class Normal extends Generator {
     private List<Populator> generationPopulators = new ArrayList<>();
 
     private Simplex noiseBase;
+    private Simplex noiseMountain;
+    private Simplex noiseOcean;
 
     private BiomeSelector selector;
 
@@ -102,7 +104,9 @@ public class Normal extends Generator {
         this.level = level;
         this.random = random;
         this.random.setSeed(this.level.getSeed());
-        this.noiseBase = new Simplex(this.random, 4F, 1F / 32F, 1F / 72F);
+        this.noiseBase = new Simplex(this.random, 4F, 1F / 4F, 1F / 64F);
+        this.noiseMountain = new Simplex(this.random, 4F, 1F / 4F, 1F / 110F);
+        this.noiseOcean = new Simplex(this.random, 4F, 1F / 4F, 1F / 64F);
         this.random.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.random, Biome.getBiome(Biome.OCEAN));
 
@@ -141,13 +145,18 @@ public class Normal extends Generator {
     public void generateChunk(int chunkX, int chunkZ) {
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
 
-        double[][] noise = Generator.getFastNoise2D(this.noiseBase, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] baseNoise = Generator.getFastNoise2D(this.noiseBase, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] oceanNoise = Generator.getFastNoise2D(this.noiseOcean, 16, 16, 8, chunkX * 16, 0, chunkZ * 16);
+        double[][] mountainNoise = Generator.getFastNoise2D(this.noiseMountain, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
         for(int genx = 0; genx < 16; genx++) {
             for(int genz = 0; genz < 16; genz++) {
-                int height = (int) (waterHeight + waterHeight * noise[genx][genz] * 0.2125F + 5);
+                int baseheight = (int) (waterHeight + waterHeight * baseNoise[genx][genz] * 0.05F + 3);
+                int oceanheight = (int) (oceanNoise[genx][genz] > 0.5 ? (oceanNoise[genx][genz] - 0.5) * 40 : 0);
+                int mountainheight = (int) (mountainNoise[genx][genz] > -0.2 ? (mountainNoise[genx][genz] + 0.2) / 1.2 * 25 : 0);
+                int height = baseheight + mountainheight - oceanheight;
                 int generatey = height > waterHeight ? height : waterHeight;
                 Biome biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
                 chunk.setBiomeId(genx, genz, biome.getId());
@@ -160,7 +169,7 @@ public class Normal extends Generator {
                         //to generate bedrocks
                         chunk.setBlock(genx, geny, genz, Block.BED_BLOCK);
                     }
-                    if(geny > height) {
+                    else if(geny > height) {
                         chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
                     }
                     else {
