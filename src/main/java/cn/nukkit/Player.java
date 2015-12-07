@@ -950,7 +950,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void sendSettings() {
         /*
          bit mask | flag name
-		0x00000001 world_inmutable
+		0x00000001 world_immutable
 		0x00000002 no_pvp
 		0x00000004 no_pvm
 		0x00000008 no_mvp
