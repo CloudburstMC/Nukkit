@@ -5,8 +5,18 @@ import cn.nukkit.nbt.stream.NBTOutputStream;
 
 import java.io.IOException;
 
-public class DoubleTag extends Tag {
+public class DoubleTag extends NumberTag<Double> {
     public double data;
+
+    @Override
+    public Double getData() {
+        return data;
+    }
+
+    @Override
+    public void setData(Double data) {
+        this.data = data == null ? 0 : data;
+    }
 
     public DoubleTag(String name) {
         super(name);

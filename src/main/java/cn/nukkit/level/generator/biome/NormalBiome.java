@@ -1,6 +1,4 @@
-package cn.nukkit.level.generator.normal.biome;
-
-import cn.nukkit.level.generator.biome.Biome;
+package cn.nukkit.level.generator.biome;
 
 /**
  * author: MagicDroidX

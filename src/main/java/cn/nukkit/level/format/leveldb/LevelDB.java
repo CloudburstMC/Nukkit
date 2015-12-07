@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.leveldb;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
@@ -22,10 +23,7 @@ import org.iq80.leveldb.impl.Iq80DBFactory;
 
 import java.io.*;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -106,23 +104,29 @@ public class LevelDB implements LevelProvider {
         }
 
         CompoundTag levelData = new CompoundTag("")
-                .putBoolean("hardcore", false)
-                .putBoolean("initialized", true)
+                .putLong("currentTick", 0)
+                .putInt("DayCycleStopTime", -1)
                 .putInt("GameType", 0)
-                .putInt("generatorVersion", 1)
+                .putInt("Generator", 1)
+                .putBoolean("hasBeenLoadedInCreative", false)
+                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
+                .putString("LevelName", name)
+                .putFloat("lightningLevel", 0)
+                .putInt("lightningTime", new Random().nextInt())
+                .putInt("limitedWorldOriginX", 128)
+                .putInt("limitedWorldOriginY", 70)
+                .putInt("limitedWorldOriginZ", 128)
+                .putInt("Platform", 0)
+                .putFloat("rainLevel", 0)
+                .putInt("rainTime", new Random().nextInt())
+                .putLong("RandomSeed", seed)
+                .putByte("spawnMobs", (byte) 0)
                 .putInt("SpawnX", 128)
                 .putInt("SpawnY", 70)
                 .putInt("SpawnZ", 128)
-                .putInt("version", 19133)
-                .putInt("DayTime", 0)
-                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
-                .putLong("RandomSeed", seed)
-                .putLong("SizeOnDisk", 0)
-                .putInt("Time", 0)
-                .putString("generatorName", Generator.getGeneratorName(generator))
-                .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
-                .putString("LevelName", name)
-                .putCompound("GameRules", new CompoundTag());
+                .putInt("storageVersion", 4)
+                .putLong("Time", 0)
+                .putLong("worldStartCount", ((long) Integer.MAX_VALUE) & 0xffffffffl);
 
         byte[] data = NBTIO.writeGZIPCompressed(levelData, ByteOrder.BIG_ENDIAN);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -405,13 +409,13 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public int getTime() {
-        return this.levelData.getInt("Time");
+    public long getTime() {
+        return this.levelData.getLong("Time");
     }
 
     @Override
-    public void setTime(int value) {
-        this.levelData.putInt("Time", value);
+    public void setTime(long value) {
+        this.levelData.putLong("Time", value);
     }
 
     @Override
