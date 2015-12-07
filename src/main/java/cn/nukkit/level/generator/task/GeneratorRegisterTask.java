@@ -37,7 +37,7 @@ public class GeneratorRegisterTask extends AsyncTask {
         ChunkManagerPool.put(this.levelId, manager);
         try {
             Generator generator = this.generator.getConstructor(Map.class).newInstance(this.settings);
-            generator.init(manager, new Random(manager.getSeed()));
+            generator.init(manager, new cn.nukkit.utils.Random(manager.getSeed()));
             GeneratorPool.put(this.levelId, generator);
         } catch (Exception e) {
             throw new RuntimeException(e);

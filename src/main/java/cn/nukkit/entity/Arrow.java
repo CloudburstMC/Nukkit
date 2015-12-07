@@ -7,7 +7,7 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX

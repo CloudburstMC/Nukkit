@@ -6,7 +6,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.object.tree.ObjectTree;
 import cn.nukkit.math.NukkitMath;
 
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -38,7 +38,7 @@ public class PopulatorTree extends Populator {
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, Random random) {
         this.level = level;
-        int amount = random.nextInt(this.randomAmount + 1) + this.baseAmount;
+        int amount = random.nextBoundedInt(this.randomAmount + 1) + this.baseAmount;
         for (int i = 0; i < amount; ++i) {
             int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
             int z = NukkitMath.randomRange(random, chunkZ << 4, (chunkZ << 4) + 15);
@@ -56,7 +56,7 @@ public class PopulatorTree extends Populator {
             int b = this.level.getBlockIdAt(x, y, z);
             if (b == Block.DIRT || b == Block.GRASS) {
                 break;
-            } else if (b != 0 && b != Block.SNOW_LAYER) {
+            } else if (b != Block.AIR && b != Block.SNOW_LAYER) {
                 return -1;
             }
         }

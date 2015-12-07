@@ -7,7 +7,7 @@ import cn.nukkit.level.generator.populator.Populator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX

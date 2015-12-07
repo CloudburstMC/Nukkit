@@ -1,6 +1,5 @@
 package cn.nukkit.level.format.leveldb;
 
-import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
@@ -24,6 +23,7 @@ import org.iq80.leveldb.impl.Iq80DBFactory;
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.Random;
 
 /**
  * author: MagicDroidX

@@ -163,7 +163,7 @@ public class Level implements ChunkManager, Metadatable {
     private Class<? extends Generator> generator;
     private Generator generatorInstance;
 
-    private Random rand = new Random();
+    private java.util.Random rand = new java.util.Random();
     private boolean hasStrom = false;
     private int weatherDuration = 0;
     private boolean isThundering = false;
@@ -263,7 +263,7 @@ public class Level implements ChunkManager, Metadatable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.generatorInstance.init(this, new Random(this.getSeed()));
+        this.generatorInstance.init(this, new cn.nukkit.utils.Random(this.getSeed()));
 
         this.registerGenerator();
     }
@@ -776,8 +776,8 @@ public class Level implements ChunkManager, Metadatable {
             int existingLoaders = Math.max(0, this.chunkTickList.containsKey(index) ? this.chunkTickList.get(index) : 0);
             this.chunkTickList.put(index, existingLoaders + 1);
             for (int chunk = 0; chunk < chunksPerLoader; ++chunk) {
-                int dx = new Random().nextInt(2 * randRange) - randRange;
-                int dz = new Random().nextInt(2 * randRange) - randRange;
+                int dx = new java.util.Random().nextInt(2 * randRange) - randRange;
+                int dz = new java.util.Random().nextInt(2 * randRange) - randRange;
                 String hash = Level.chunkHash(dx + chunkX, dz + chunkZ);
                 if (!this.chunkTickList.containsKey(hash) && this.chunks.containsKey(hash)) {
                     this.chunkTickList.put(hash, -1);
@@ -811,7 +811,7 @@ public class Level implements ChunkManager, Metadatable {
                 for (ChunkSection section : ((Chunk) chunk).getSections()) {
                     if (!(section instanceof EmptyChunkSection)) {
                         int Y = section.getY();
-                        int k = new Random().nextInt(0x7fffffff);
+                        int k = new java.util.Random().nextInt(0x7fffffff);
                         for (int i = 0; i < 3; ++i, k >>= 10) {
                             int x = k & 0x0f;
                             int y = (k >> 8) & 0x0f;
@@ -837,7 +837,7 @@ public class Level implements ChunkManager, Metadatable {
             } else {
                 for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
                     blockTest = 0;
-                    int k = new Random().nextInt();
+                    int k = new java.util.Random().nextInt();
                     for (int i = 0; i < 3; ++i, k >>= 10) {
                         int x = k & 0x0f;
                         int y = (k >> 8) & 0x0f;
@@ -1245,7 +1245,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropItem(Vector3 source, Item item, Vector3 motion, int delay) {
-        motion = motion == null ? new Vector3(new Random().nextDouble() * 0.2 - 0.1, 0.2, new Random().nextDouble() * 0.2 - 0.1) : motion;
+        motion = motion == null ? new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2, new java.util.Random().nextDouble() * 0.2 - 0.1) : motion;
 
         CompoundTag itemTag = NBTIO.putItemHelper(item);
         itemTag.setName("Item");
@@ -1263,7 +1263,7 @@ public class Level implements ChunkManager, Metadatable {
                             .add(new DoubleTag("", motion.z)))
 
                     .putList(new ListTag<FloatTag>("Rotation")
-                            .add(new FloatTag("", new Random().nextFloat() * 360))
+                            .add(new FloatTag("", new java.util.Random().nextFloat() * 360))
                             .add(new FloatTag("", 0)))
 
                     .putShort("Health", 5)

@@ -1509,7 +1509,7 @@ public class Server {
     }
 
     public boolean generateLevel(String name) {
-        return this.generateLevel(name, (int) new Random().nextLong());
+        return this.generateLevel(name, (int) new java.util.Random().nextLong());
     }
 
     public boolean generateLevel(String name, long seed) {
