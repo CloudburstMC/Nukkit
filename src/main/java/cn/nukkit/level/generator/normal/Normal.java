@@ -98,7 +98,7 @@ public class Normal extends Generator {
         this.level = level;
         this.random = random;
         this.random.setSeed(this.level.getSeed());
-        this.noiseBase = new Simplex(this.random, 4, 1 / 4, 1 / 32);
+        this.noiseBase = new Simplex(this.random, 4F, 1F / 32F, 1F / 72F);
         this.random.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.random, Biome.getBiome(Biome.OCEAN));
 
@@ -137,74 +137,37 @@ public class Normal extends Generator {
     public void generateChunk(int chunkX, int chunkZ) {
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
 
-        double[][][] noise = Generator.getFastNoise3D(this.noiseBase, 16, 128, 16, 4, 8, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] noise = Generator.getFastNoise2D(this.noiseBase, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
-        Map<String, Biome> biomeCache = new HashMap<>();
+        for(int genx = 0; genx < 16; genx++) {
+            for(int genz = 0; genz < 16; genz++) {
+                int height = (int) (waterHeight + waterHeight * noise[genx][genz] * 0.2125F + 5);
+                int generatey = height > waterHeight ? height : waterHeight;
+                Biome biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
+                chunk.setBiomeId(genx, genz, biome.getId());
 
-        for (int x = 0; x < 16; ++x) {
-            for (int z = 0; z < 16; ++z) {
-                double minSum = 0;
-                double maxSum = 0;
-                double weightSum = 0;
-
-                Biome biome = this.pickBiome(chunkX * 16 + x, chunkZ * 16 + z);
-                chunk.setBiomeId(x, z, biome.getId());
-                int[] color = {0, 0, 0};
-
-                for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; ++sx) {
-                    for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; ++sz) {
-
-                        double weight = GAUSSIAN_KERNEL.get(sx + SMOOTH_SIZE).get(sz + SMOOTH_SIZE);
-
-                        Biome adjacent;
-                        if (sx == 0 && sz == 0) {
-                            adjacent = biome;
-                        } else {
-                            String index = Level.chunkHash(chunkX * 16 + x + sx, chunkZ * 16 + z + sz);
-                            if (biomeCache.containsKey(index)) {
-                                adjacent = biomeCache.get(index);
-                            } else {
-                                biomeCache.put(index, adjacent = this.pickBiome(chunkX * 16 + x + sx, chunkZ * 16 + z + sz));
-                            }
-                        }
-
-                        minSum += (adjacent.getMinElevation() - 1) * weight;
-                        maxSum += adjacent.getMaxElevation() * weight;
-                        int bColor = adjacent.getColor();
-                        color[0] += ((bColor >> 16) * (bColor >> 16)) * weight;
-                        color[1] += (((bColor >> 8) & 0xff) * ((bColor >> 8) & 0xff)) * weight;
-                        color[2] += ((bColor & 0xff) * (bColor & 0xff)) * weight;
-
-                        weightSum += weight;
+                for(int geny = 0; geny <= generatey; geny++) {
+                    int biomecolor = biome.getColor();
+                    //todo: smooth color
+                    chunk.setBiomeColor(genx, genz, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
+                    if(geny == 0) {
+                        //to generate bedrocks
+                        chunk.setBlock(genx, geny, genz, Block.BED_BLOCK);
+                    }
+                    if(geny > height) {
+                        chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
+                    }
+                    else {
+                        chunk.setBlock(genx, geny, genz, Block.STONE);
                     }
                 }
 
-                minSum /= weightSum;
-                maxSum /= weightSum;
-
-                chunk.setBiomeColor(x, z, (int) Math.sqrt(color[0] / weightSum), (int) Math.sqrt(color[1] / weightSum), (int) Math.sqrt(color[2] / weightSum));
-
-                double smoothHeight = (maxSum - minSum) / 2;
-
-                for (int y = 0; y < 128; ++y) {
-                    if (y == 0) {
-                        chunk.setBlockId(x, y, z, Block.BEDROCK);
-                        continue;
-                    }
-                    double noiseValue = noise[x][z][y] - 1 / smoothHeight * (y - smoothHeight - minSum);
-
-                    if (noiseValue > 0) {
-                        chunk.setBlockId(x, y, z, Block.STONE);
-                    } else if (y <= this.waterHeight) {
-                        chunk.setBlockId(x, y, z, Block.STILL_WATER);
-                    }
-                }
             }
         }
 
-        for (Populator populator : this.generationPopulators) {
+        for(Populator populator : this.generationPopulators) {
             populator.populate(this.level, chunkX, chunkZ, this.random);
         }
     }
