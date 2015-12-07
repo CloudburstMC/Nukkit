@@ -48,7 +48,7 @@ public class Torch extends Flowable {
                     0  //6
             };
 
-            if (this.getSide(faces[side]).isTransparent() && !(side == 0 && (below.getId() == FENCE || below.getId() == COBBLE_WALL))) {
+            if (this.getSide(faces[side]).isTransparent() && !(side == 0 && (below instanceof Fence || below.getId() == COBBLE_WALL))) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -75,7 +75,7 @@ public class Torch extends Flowable {
             this.getLevel().setBlock(block, this, true, true);
 
             return true;
-        } else if (!below.isTransparent() || below.getId() == FENCE || below.getId() == COBBLE_WALL) {
+        } else if (!below.isTransparent() || below instanceof Fence || below.getId() == COBBLE_WALL) {
             this.meta = 0;
             this.getLevel().setBlock(block, this, true, true);
 
