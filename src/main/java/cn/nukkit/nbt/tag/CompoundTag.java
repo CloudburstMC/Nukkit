@@ -126,32 +126,32 @@ public class CompoundTag extends Tag {
 
     public byte getByte(String name) {
         if (!tags.containsKey(name)) return (byte) 0;
-        return ((ByteTag) tags.get(name)).data;
+        return ((NumberTag) tags.get(name)).getData().byteValue();
     }
 
     public int getShort(String name) {
         if (!tags.containsKey(name)) return 0;
-        return ((ShortTag) tags.get(name)).data;
+        return ((NumberTag) tags.get(name)).getData().intValue();
     }
 
     public int getInt(String name) {
         if (!tags.containsKey(name)) return 0;
-        return ((IntTag) tags.get(name)).data;
+        return ((NumberTag) tags.get(name)).getData().intValue();
     }
 
     public long getLong(String name) {
         if (!tags.containsKey(name)) return (long) 0;
-        return ((LongTag) tags.get(name)).data;
+        return ((NumberTag) tags.get(name)).getData().longValue();
     }
 
     public float getFloat(String name) {
         if (!tags.containsKey(name)) return (float) 0;
-        return ((FloatTag) tags.get(name)).data;
+        return ((NumberTag) tags.get(name)).getData().floatValue();
     }
 
     public double getDouble(String name) {
         if (!tags.containsKey(name)) return (double) 0;
-        return ((DoubleTag) tags.get(name)).data;
+        return ((NumberTag) tags.get(name)).getData().doubleValue();
     }
 
     public String getString(String name) {

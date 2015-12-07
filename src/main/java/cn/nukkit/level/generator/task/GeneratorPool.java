@@ -1,4 +1,6 @@
-package cn.nukkit.level.generator;
+package cn.nukkit.level.generator.task;
+
+import cn.nukkit.level.generator.Generator;
 
 import java.util.HashMap;
 import java.util.Map;

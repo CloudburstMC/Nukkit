@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.generator.normal.biome.*;
 import cn.nukkit.level.generator.populator.Populator;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator;
+package cn.nukkit.level.generator.task;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
