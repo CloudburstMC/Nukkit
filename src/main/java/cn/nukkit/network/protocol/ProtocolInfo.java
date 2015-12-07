@@ -57,12 +57,12 @@ public interface ProtocolInfo {
     byte CRAFTING_EVENT_PACKET = (byte) 0xbb;
     byte ADVENTURE_SETTINGS_PACKET = (byte) 0xbc;
     byte BLOCK_ENTITY_DATA_PACKET = (byte) 0xbd;
-    //public static final byte PLAYER_INPUT_PACKET = (byte) 0xbe;
+    //byte PLAYER_INPUT_PACKET = (byte) 0xbe;
     byte FULL_CHUNK_DATA_PACKET = (byte) 0xbf;
     byte SET_DIFFICULTY_PACKET = (byte) 0xc0;
-    //public static final byte CHANGE_DIMENSION_PACKET = (byte) 0xc1;
-    //public static final byte SET_PLAYER_GAMETYPE_PACKET = (byte) 0xc2;
+    //byte CHANGE_DIMENSION_PACKET = (byte) 0xc1;
+    byte SET_PLAYER_GAMETYPE_PACKET = (byte) 0xc2;
     byte PLAYER_LIST_PACKET = (byte) 0xc3;
-    //public static final byte TELEMETRY_EVENT_PACKET = (byte) 0xc4;
+    //byte TELEMETRY_EVENT_PACKET = (byte) 0xc4;
 
 }
