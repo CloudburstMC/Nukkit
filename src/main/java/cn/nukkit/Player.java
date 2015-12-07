@@ -2261,7 +2261,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 if (targetEntity instanceof Player && !((boolean) this.server.getConfig("pvp", true))) {
                     cancelled = true;
                 }
+
                 if (targetEntity != null && this.getGamemode() != Player.VIEW && this.isAlive() && targetEntity.isAlive()) {
+
                     if (targetEntity instanceof DroppedItem || targetEntity instanceof Arrow) {
                         this.kick("Attempting to attack an invalid entity");
                         this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
@@ -2294,11 +2296,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         }
                     };
 
-                    HashMap<Integer, Float> damage = new HashMap<Integer, Float>() {
-                        {
-                            put(EntityDamageEvent.MODIFIER_BASE, damageTable.getOrDefault(item.getId(), 1f));
-                        }
-                    };
+                    HashMap<Integer, Float> damage = new HashMap<>();
+                    damage.put(EntityDamageEvent.MODIFIER_BASE, damageTable.getOrDefault(item.getId(), 1f));
 
                     if (!this.canInteract(targetEntity, 8)) {
                         cancelled = true;
