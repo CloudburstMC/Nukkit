@@ -2,7 +2,6 @@ package cn.nukkit.level.generator;
 
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.biome.BiomeSelector;
@@ -23,7 +22,7 @@ public class Normal extends Generator {
 
     @Override
     public int getId() {
-        return TYPE_UNLIMITED;
+        return TYPE_INFINITE;
     }
 
     private List<Populator> populators = new ArrayList<>();
