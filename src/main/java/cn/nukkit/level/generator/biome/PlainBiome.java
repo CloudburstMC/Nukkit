@@ -1,5 +1,7 @@
 package cn.nukkit.level.generator.biome;
 
+import cn.nukkit.level.generator.populator.PopulatorFlower;
+import cn.nukkit.level.generator.populator.PopulatorGrass;
 import cn.nukkit.level.generator.populator.PopulatorTallGrass;
 
 /**
@@ -11,10 +13,16 @@ public class PlainBiome extends GrassyBiome {
     public PlainBiome() {
         super();
 
+        PopulatorGrass grass = new PopulatorGrass();
+        grass.setBaseAmount(40);
         PopulatorTallGrass tallGrass = new PopulatorTallGrass();
-        tallGrass.setBaseAmount(12);
+        tallGrass.setBaseAmount(7);
+        //PopulatorFlower flower = new PopulatorFlower();
+        //flower.setBaseAmount(10);
 
+        this.addPopulator(grass);
         this.addPopulator(tallGrass);
+        //this.addPopulator(flower);
 
         this.setElevation(63, 74);
 

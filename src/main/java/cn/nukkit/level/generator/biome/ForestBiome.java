@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Sapling;
+import cn.nukkit.level.generator.populator.PopulatorGrass;
 import cn.nukkit.level.generator.populator.PopulatorTallGrass;
 import cn.nukkit.level.generator.populator.PopulatorTree;
 
@@ -26,6 +27,10 @@ public class ForestBiome extends GrassyBiome {
         PopulatorTree trees = new PopulatorTree(type == TYPE_BIRCH ? Sapling.BIRCH : Sapling.OAK);
         trees.setBaseAmount(5);
         this.addPopulator(trees);
+
+        PopulatorGrass grass = new PopulatorGrass();
+        grass.setBaseAmount(30);
+        this.addPopulator(grass);
 
         PopulatorTallGrass tallGrass = new PopulatorTallGrass();
         tallGrass.setBaseAmount(3);

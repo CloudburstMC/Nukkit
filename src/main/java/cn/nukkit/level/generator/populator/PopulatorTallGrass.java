@@ -33,15 +33,17 @@ public class PopulatorTallGrass extends Populator {
             int y = this.getHighestWorkableBlock(x, z);
 
             if (y != -1 && this.canTallGrassStay(x, y, z)) {
-                this.level.setBlockIdAt(x, y, z, Block.TALL_GRASS);
-                this.level.setBlockDataAt(x, y, z, 1);
+                this.level.setBlockIdAt(x, y, z, Block.DOUBLE_PLANT);
+                this.level.setBlockDataAt(x, y, z, 2);
+                this.level.setBlockIdAt(x, y + 1, z, Block.DOUBLE_PLANT);
+                this.level.setBlockDataAt(x, y + 1, z, 10);
             }
         }
     }
 
     private boolean canTallGrassStay(int x, int y, int z) {
         int b = this.level.getBlockIdAt(x, y, z);
-        return (b == Block.AIR || b == Block.SNOW_LAYER) && this.level.getBlockIdAt(x, y - 1, z) == Block.GRASS;
+        return (b == Block.AIR || b == Block.SNOW_LAYER) && this.level.getBlockIdAt(x, y - 1, z) == Block.GRASS && this.level.getBlockIdAt(x, y + 1, z) == Block.AIR;
     }
 
     private int getHighestWorkableBlock(int x, int z) {
