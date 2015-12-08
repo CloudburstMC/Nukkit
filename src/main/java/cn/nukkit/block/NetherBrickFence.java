@@ -7,7 +7,7 @@ import cn.nukkit.item.Tool;
  * Created on 2015/12/7 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class NetherBrickFence extends Fence{
+public class NetherBrickFence extends Fence {
 
     public NetherBrickFence() {
         this(0);
@@ -15,6 +15,20 @@ public class NetherBrickFence extends Fence{
 
     public NetherBrickFence(int meta) {
         super(meta);
+    }
+
+    @Override
+    public double getBreakTime(Item item) {
+        if (item.getId() == 0) {
+            return 10;
+        } else {
+            return super.getBreakTime(item);
+        }
+    }
+
+    @Override
+    public int getToolType() {
+        return Tool.TYPE_PICKAXE;
     }
 
     @Override
@@ -28,28 +42,18 @@ public class NetherBrickFence extends Fence{
     }
 
     @Override
-    public double getHardness() {
-        return 2;
-    }
-
-    @Override
-    public double getResistance() {
-        return 30;
-    }
-
-    @Override
-    public int getToolType() {
-        return Tool.TYPE_AXE;
-    }
-
-    @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{
-                {this.getId(), 0, 1}
-        };
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
+            return new int[][]{
+                    {this.getId(), 0, 1}
+            };
+        } else {
+            return new int[0][];
+        }
     }
 
-    protected boolean canConnect(Block block){
+    @Override
+    public boolean canConnect(Block block) {
         return (block instanceof NetherBrickFence || block instanceof FenceGate) || block.isSolid() && !block.isTransparent();
     }
 

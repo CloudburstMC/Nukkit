@@ -2,7 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.FenceWood;
+import cn.nukkit.block.Fence;
 import cn.nukkit.block.Flower;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
@@ -715,12 +715,12 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.GLASS_PANE, 0));
         addCreativeItem(Item.get(Item.WOODEN_DOOR, 0));
         addCreativeItem(Item.get(Item.TRAPDOOR, 0));
-        addCreativeItem(Item.get(Item.FENCE, FenceWood.FENCE_OAK));
-        addCreativeItem(Item.get(Item.FENCE, FenceWood.FENCE_SPRUCE));
-        addCreativeItem(Item.get(Item.FENCE, FenceWood.FENCE_BIRCH));
-        addCreativeItem(Item.get(Item.FENCE, FenceWood.FENCE_JUNGLE));
-        addCreativeItem(Item.get(Item.FENCE, FenceWood.FENCE_ACACIA));
-        addCreativeItem(Item.get(Item.FENCE, FenceWood.FENCE_DARK_OAK));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_OAK));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_SPRUCE));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_BIRCH));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_JUNGLE));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_ACACIA));
+        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_DARK_OAK));
         addCreativeItem(Item.get(Item.NETHER_BRICK_FENCE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_BIRCH, 0));
