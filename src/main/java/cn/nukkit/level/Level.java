@@ -1288,6 +1288,9 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Item useBreakOn(Vector3 vector, Item item, Player player, boolean createParticles) {
+        if (player != null && player.getGamemode() > 1) {
+            return null;
+        }
         Block target = this.getBlock(vector);
         Item[] drops;
         if (item == null) {
@@ -1364,6 +1367,10 @@ public class Level implements ChunkManager, Metadatable {
                         }
                     }
                 }
+
+                if (!canBreak) {
+                    return null;
+                }
             }
         }
 
@@ -1418,6 +1425,10 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Item useItemOn(Vector3 vector, Item item, int face, float fx, float fy, float fz, Player player) {
+        if (player != null && player.getGamemode() > 1) {
+            return null;
+        }
+
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
 
