@@ -61,7 +61,7 @@ public class FenceWood extends Fence {
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
-                {this.getId(), 0, 1}
+                {this.getId(), this.meta, 1}
         };
     }
 
