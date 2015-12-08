@@ -157,7 +157,7 @@ public class Normal extends Generator {
                 int oceanheight = (int) (oceanNoise[genx][genz] > 0.5 ? (oceanNoise[genx][genz] - 0.5) * 40 : 0);
                 int mountainheight = (int) (mountainNoise[genx][genz] > -0.2 ? (mountainNoise[genx][genz] + 0.2) / 1.2 * 25 : 0);
                 int height = baseheight + mountainheight - oceanheight;
-                int generatey = height > waterHeight ? height : waterHeight;
+                int generatey = height > 127 ? 127 : height > waterHeight ? height : waterHeight;
                 Biome biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
                 chunk.setBiomeId(genx, genz, biome.getId());
 
@@ -165,12 +165,16 @@ public class Normal extends Generator {
                     int biomecolor = biome.getColor();
                     //todo: smooth color
                     chunk.setBiomeColor(genx, genz, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
-                    if(geny == 0) {
-                        //to generate bedrocks
-                        chunk.setBlock(genx, geny, genz, Block.BED_BLOCK);
+                    if(geny <= bedrockDepth && (geny == 0 || random.nextRange(1,5) == 1)) {
+                        chunk.setBlock(genx, geny, genz, Block.BEDROCK);
                     }
                     else if(geny > height) {
-                        chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
+                        if((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == waterHeight) {
+                            chunk.setBlock(genx, geny, genz, Block.ICE);
+                        }
+                        else {
+                            chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
+                        }
                     }
                     else {
                         chunk.setBlock(genx, geny, genz, Block.STONE);

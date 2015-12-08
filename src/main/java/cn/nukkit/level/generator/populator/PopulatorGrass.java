@@ -3,14 +3,13 @@ package cn.nukkit.level.generator.populator;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitMath;
-
 import cn.nukkit.utils.Random;
 
 /**
- * author: MagicDroidX
+ * author: Angelic47
  * Nukkit Project
  */
-public class PopulatorTallGrass extends Populator {
+public class PopulatorGrass extends Populator {
     private ChunkManager level;
     private int randomAmount;
     private int baseAmount;
@@ -32,18 +31,16 @@ public class PopulatorTallGrass extends Populator {
             int z = NukkitMath.randomRange(random, chunkZ * 16, chunkZ * 16 + 15);
             int y = this.getHighestWorkableBlock(x, z);
 
-            if (y != -1 && this.canTallGrassStay(x, y, z)) {
-                this.level.setBlockIdAt(x, y, z, Block.DOUBLE_PLANT);
-                this.level.setBlockDataAt(x, y, z, 2);
-                this.level.setBlockIdAt(x, y + 1, z, Block.DOUBLE_PLANT);
-                this.level.setBlockDataAt(x, y + 1, z, 10);
+            if (y != -1 && this.canGrassStay(x, y, z)) {
+                this.level.setBlockIdAt(x, y, z, Block.TALL_GRASS);
+                this.level.setBlockDataAt(x, y, z, 0);
             }
         }
     }
 
-    private boolean canTallGrassStay(int x, int y, int z) {
+    private boolean canGrassStay(int x, int y, int z) {
         int b = this.level.getBlockIdAt(x, y, z);
-        return (b == Block.AIR || b == Block.SNOW_LAYER) && this.level.getBlockIdAt(x, y - 1, z) == Block.GRASS && this.level.getBlockIdAt(x, y + 1, z) == Block.AIR;
+        return (b == Block.AIR || b == Block.SNOW_LAYER) && this.level.getBlockIdAt(x, y - 1, z) == Block.GRASS;
     }
 
     private int getHighestWorkableBlock(int x, int z) {
