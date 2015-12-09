@@ -57,6 +57,11 @@ public class Normal extends Generator {
         }
     }
 
+    @Override
+    public ChunkManager getChunkManager() {
+        return level;
+    }
+
     public static void generateKernel() {
         GAUSSIAN_KERNEL = new HashMap<>();
 
@@ -145,63 +150,59 @@ public class Normal extends Generator {
 
     @Override
     public void generateChunk(int chunkX, int chunkZ) {
-        synchronized (this.level) {
-            this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
+        this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
 
-            double[][] baseNoise = Generator.getFastNoise2D(this.noiseBase, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-            double[][] oceanNoise = Generator.getFastNoise2D(this.noiseOcean, 16, 16, 8, chunkX * 16, 0, chunkZ * 16);
-            double[][] mountainNoise = Generator.getFastNoise2D(this.noiseMountain, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] baseNoise = Generator.getFastNoise2D(this.noiseBase, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] oceanNoise = Generator.getFastNoise2D(this.noiseOcean, 16, 16, 8, chunkX * 16, 0, chunkZ * 16);
+        double[][] mountainNoise = Generator.getFastNoise2D(this.noiseMountain, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
 
-            FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
+        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
-            for (int genx = 0; genx < 16; genx++) {
-                for (int genz = 0; genz < 16; genz++) {
-                    int baseheight = (int) (waterHeight + waterHeight * baseNoise[genx][genz] * 0.05F + 3);
-                    int oceanheight = (int) (oceanNoise[genx][genz] > 0.5 ? (oceanNoise[genx][genz] - 0.5) * 40 : 0);
-                    int mountainheight = (int) (mountainNoise[genx][genz] > -0.2 ? (mountainNoise[genx][genz] + 0.2) / 1.2 * 25 : 0);
-                    int height = baseheight + mountainheight - oceanheight;
-                    int generatey = height > 127 ? 127 : height > waterHeight ? height : waterHeight;
-                    Biome biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
-                    chunk.setBiomeId(genx, genz, biome.getId());
+        for (int genx = 0; genx < 16; genx++) {
+            for (int genz = 0; genz < 16; genz++) {
+                int baseheight = (int) (waterHeight + waterHeight * baseNoise[genx][genz] * 0.05F + 3);
+                int oceanheight = (int) (oceanNoise[genx][genz] > 0.5 ? (oceanNoise[genx][genz] - 0.5) * 40 : 0);
+                int mountainheight = (int) (mountainNoise[genx][genz] > -0.2 ? (mountainNoise[genx][genz] + 0.2) / 1.2 * 25 : 0);
+                int height = baseheight + mountainheight - oceanheight;
+                int generatey = height > 127 ? 127 : height > waterHeight ? height : waterHeight;
+                Biome biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
+                chunk.setBiomeId(genx, genz, biome.getId());
 
-                    for (int geny = 0; geny <= generatey; geny++) {
-                        int biomecolor = biome.getColor();
-                        //todo: smooth color
-                        chunk.setBiomeColor(genx, genz, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
-                        if (geny <= bedrockDepth && (geny == 0 || random.nextRange(1, 5) == 1)) {
-                            chunk.setBlock(genx, geny, genz, Block.BEDROCK);
-                        } else if (geny > height) {
-                            if ((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == waterHeight) {
-                                chunk.setBlock(genx, geny, genz, Block.ICE);
-                            } else {
-                                chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
-                            }
+                for (int geny = 0; geny <= generatey; geny++) {
+                    int biomecolor = biome.getColor();
+                    //todo: smooth color
+                    chunk.setBiomeColor(genx, genz, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
+                    if (geny <= bedrockDepth && (geny == 0 || random.nextRange(1, 5) == 1)) {
+                        chunk.setBlock(genx, geny, genz, Block.BEDROCK);
+                    } else if (geny > height) {
+                        if ((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == waterHeight) {
+                            chunk.setBlock(genx, geny, genz, Block.ICE);
                         } else {
-                            chunk.setBlock(genx, geny, genz, Block.STONE);
+                            chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
                         }
+                    } else {
+                        chunk.setBlock(genx, geny, genz, Block.STONE);
                     }
-
                 }
-            }
 
-            for (Populator populator : this.generationPopulators) {
-                populator.populate(this.level, chunkX, chunkZ, this.random);
             }
+        }
+
+        for (Populator populator : this.generationPopulators) {
+            populator.populate(this.level, chunkX, chunkZ, this.random);
         }
     }
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
-        synchronized (this.level) {
-            this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
-            for (Populator populator : this.populators) {
-                populator.populate(this.level, chunkX, chunkZ, this.random);
-            }
-
-            FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
-            Biome biome = Biome.getBiome(chunk.getBiomeId(7, 7));
-            biome.populateChunk(this.level, chunkX, chunkZ, this.random);
+        this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
+        for (Populator populator : this.populators) {
+            populator.populate(this.level, chunkX, chunkZ, this.random);
         }
+
+        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
+        Biome biome = Biome.getBiome(chunk.getBiomeId(7, 7));
+        biome.populateChunk(this.level, chunkX, chunkZ, this.random);
     }
 
     @Override

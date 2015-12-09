@@ -35,7 +35,7 @@ public class WeatherCommand extends VanillaCommand {
         if (args.length > 1) {
             seconds = Integer.parseInt(args[1]);
         } else {
-            seconds = 0;
+            seconds = 600 * 20;
         }
 
         if (sender instanceof Player) {
@@ -63,7 +63,7 @@ public class WeatherCommand extends VanillaCommand {
                 level.setRainTime(seconds * 20);
                 level.setThunderTime(seconds * 20);
                 Command.broadcastCommandMessage(sender,
-                        new TranslationContainer("commands.weather.clear"));
+                        new TranslationContainer("commands.weather.thunder"));
                 return true;
             default:
                 sender.sendMessage(new TranslationContainer("commands.weather.usage", this.usageMessage));

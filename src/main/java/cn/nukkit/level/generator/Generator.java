@@ -213,4 +213,6 @@ public abstract class Generator {
     public abstract String getName();
 
     public abstract Vector3 getSpawn();
+
+    public abstract ChunkManager getChunkManager();
 }

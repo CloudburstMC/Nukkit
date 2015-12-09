@@ -48,86 +48,87 @@ public class PopulationTask extends AsyncTask {
 
         synchronized (manager) {
             synchronized (generator) {
+                synchronized (generator.getChunkManager()){
+                    BaseFullChunk[] chunks = new BaseFullChunk[9];
 
-                BaseFullChunk[] chunks = new BaseFullChunk[9];
+                    BaseFullChunk chunk = this.chunk.clone();
 
-                BaseFullChunk chunk = this.chunk.clone();
-
-                if (chunk == null) {
-                    return;
-                }
-
-                for (int i = 0; i < 9; i++) {
-                    if (i == 4) {
-                        continue;
+                    if (chunk == null) {
+                        return;
                     }
 
-                    int xx = -1 + i % 3;
-                    int zz = -1 + (i / 3);
-                    BaseFullChunk ck = this.chunks[i];
-
-                    if (ck == null) {
-                        try {
-                            chunks[i] = (BaseFullChunk) this.chunk.getClass().getMethod("getEmptyChunk", int.class, int.class).invoke(null, chunk.getX() + xx, chunk.getZ() + zz);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
+                    for (int i = 0; i < 9; i++) {
+                        if (i == 4) {
+                            continue;
                         }
-                    } else {
-                        chunks[i] = ck.clone();
+
+                        int xx = -1 + i % 3;
+                        int zz = -1 + (i / 3);
+                        BaseFullChunk ck = this.chunks[i];
+
+                        if (ck == null) {
+                            try {
+                                chunks[i] = (BaseFullChunk) this.chunk.getClass().getMethod("getEmptyChunk", int.class, int.class).invoke(null, chunk.getX() + xx, chunk.getZ() + zz);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else {
+                            chunks[i] = ck.clone();
+                        }
                     }
-                }
 
-                manager.setChunk(chunk.getX(), chunk.getZ(), chunk);
-                if (!chunk.isGenerated()) {
-                    generator.generateChunk(chunk.getX(), chunk.getZ());
-                    chunk.setGenerated();
-                }
+                    manager.setChunk(chunk.getX(), chunk.getZ(), chunk);
+                    if (!chunk.isGenerated()) {
+                        generator.generateChunk(chunk.getX(), chunk.getZ());
+                        chunk.setGenerated();
+                    }
 
-                for (BaseFullChunk c : chunks) {
-                    if (c != null) {
-                        manager.setChunk(c.getX(), c.getZ(), c);
-                        if (!c.isGenerated()) {
-                            generator.generateChunk(c.getX(), c.getZ());
-                            c = manager.getChunk(c.getX(), c.getZ());
-                            c.setGenerated();
+                    for (BaseFullChunk c : chunks) {
+                        if (c != null) {
                             manager.setChunk(c.getX(), c.getZ(), c);
+                            if (!c.isGenerated()) {
+                                generator.generateChunk(c.getX(), c.getZ());
+                                c = manager.getChunk(c.getX(), c.getZ());
+                                c.setGenerated();
+                                manager.setChunk(c.getX(), c.getZ(), c);
+                            }
                         }
                     }
-                }
 
-                generator.populateChunk(chunk.getX(), chunk.getZ());
+                    generator.populateChunk(chunk.getX(), chunk.getZ());
 
-                chunk = manager.getChunk(chunk.getX(), chunk.getZ());
-                chunk.recalculateHeightMap();
-                chunk.populateSkyLight();
-                chunk.setLightPopulated();
-                chunk.setPopulated();
-                this.chunk = chunk.clone();
+                    chunk = manager.getChunk(chunk.getX(), chunk.getZ());
+                    chunk.recalculateHeightMap();
+                    chunk.populateSkyLight();
+                    chunk.setLightPopulated();
+                    chunk.setPopulated();
+                    this.chunk = chunk.clone();
 
-                manager.setChunk(chunk.getX(), chunk.getZ(), null);
+                    manager.setChunk(chunk.getX(), chunk.getZ(), null);
 
-                for (int i = 0; i < chunks.length; i++) {
-                    if (i == 4) {
-                        continue;
-                    }
+                    for (int i = 0; i < chunks.length; i++) {
+                        if (i == 4) {
+                            continue;
+                        }
 
-                    BaseFullChunk c = chunks[i];
-                    if (c != null) {
-                        c = chunks[i] = manager.getChunk(c.getX(), c.getZ());
-                        if (!c.hasChanged()) {
-                            chunks[i] = null;
+                        BaseFullChunk c = chunks[i];
+                        if (c != null) {
+                            c = chunks[i] = manager.getChunk(c.getX(), c.getZ());
+                            if (!c.hasChanged()) {
+                                chunks[i] = null;
+                            }
                         }
                     }
-                }
 
-                manager.cleanChunks();
+                    manager.cleanChunks();
 
-                for (int i = 0; i < 9; i++) {
-                    if (i == 4) {
-                        continue;
+                    for (int i = 0; i < 9; i++) {
+                        if (i == 4) {
+                            continue;
+                        }
+
+                        this.chunks[i] = chunks[i] != null ? chunks[i].clone() : null;
                     }
-
-                    this.chunks[i] = chunks[i] != null ? chunks[i].clone() : null;
                 }
             }
         }
