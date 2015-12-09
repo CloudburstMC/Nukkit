@@ -669,8 +669,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         //Weather
-        this.getLevel().enableWeather(this);
-        this.getLevel().enableThunder(this);
+        //this.getLevel().enableWeather(this);
+        //this.getLevel().enableThunder(this);
 
         //FoodLevel
         this.getFoodData().sendFoodLevel();
