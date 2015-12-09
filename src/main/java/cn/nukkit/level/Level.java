@@ -927,7 +927,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void saveChunks() {
-        for (FullChunk chunk : this.chunks.values()) {
+        for (FullChunk chunk : new ArrayList<>(this.chunks.values())) {
             if (chunk.hasChanged()) {
                 try {
                     this.provider.setChunk(chunk.getX(), chunk.getZ(), chunk);
