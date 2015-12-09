@@ -131,7 +131,7 @@ public class ShapedRecipe implements Recipe {
     public Item getIngredient(int x, int y) {
         if (this.ingredients.containsKey(y)) {
             if (this.ingredients.get(y).containsKey(x)) {
-                return this.ingredients.get(y).get(x);
+                return this.ingredients.get(y).get(x) != null ? this.ingredients.get(y).get(x) : Item.get(Item.AIR);
             }
         }
 
