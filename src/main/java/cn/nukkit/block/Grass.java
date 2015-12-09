@@ -91,7 +91,7 @@ public class Grass extends Solid {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new Grass());
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if(!ev.isCancelled()) {
-                        this.getLevel().setBlock(block, ev.getNewState());
+                        this.getLevel().setBlock(block, ev.getNewState(), true, true);
                         return Level.BLOCK_UPDATE_RANDOM;
                     }
                 }
@@ -100,7 +100,7 @@ public class Grass extends Solid {
                 BlockUpdateEvent ev = new BlockUpdateEvent(new Dirt());
                 Server.getInstance().getPluginManager().callEvent(ev);
                 if(!ev.isCancelled()) {
-                    this.getLevel().setBlock(this, ev.getBlock());
+                    this.getLevel().setBlock(this, ev.getBlock(), true, true);
                     return Level.BLOCK_UPDATE_RANDOM;
                 }
             }
