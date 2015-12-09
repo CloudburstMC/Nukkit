@@ -65,7 +65,7 @@ public class FenceWood extends Fence {
         };
     }
 
-    protected boolean canConnect(Block block){
+    public boolean canConnect(Block block){
         //block instanceof FenceGateWood?
         return (block instanceof FenceWood || block instanceof FenceGate) || block.isSolid() && !block.isTransparent();
     }
