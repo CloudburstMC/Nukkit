@@ -51,7 +51,7 @@ public abstract class Crops extends Flowable {
             Server.getInstance().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                this.getLevel().setBlock(this, ev.getNewState(), false, true);
+                this.getLevel().setBlock(this, ev.getNewState(), true, true);
             }
 
             item.count--;
@@ -78,7 +78,7 @@ public abstract class Crops extends Flowable {
                     Server.getInstance().getPluginManager().callEvent(ev);
 
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), false, true);
+                        this.getLevel().setBlock(this, ev.getNewState(), true, true);
                     } else {
                         return Level.BLOCK_UPDATE_RANDOM;
                     }
