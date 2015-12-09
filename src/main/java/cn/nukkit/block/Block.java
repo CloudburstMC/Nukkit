@@ -289,7 +289,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[SANDSTONE] = Sandstone.class;
             list[BED_BLOCK] = Bed.class;
             list[COBWEB] = Cobweb.class;
-            //list[TALL_GRASS] = PopulatorTallGrass.class;
+            list[TALL_GRASS] = TallGrass.class;
             list[DEAD_BUSH] = DeadBush.class;
             list[WOOL] = Wool.class;
             list[DANDELION] = Dandelion.class;
@@ -303,7 +303,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[DOUBLE_SLAB] = DoubleSlab.class;
             list[SLAB] = Slab.class;
             list[BRICKS_BLOCK] = Bricks.class;
-            //list[TNT] = TNT.class;
+            list[TNT] = TNT.class;
             list[BOOKSHELF] = Bookshelf.class;
             list[MOSS_STONE] = MossStone.class;
             list[OBSIDIAN] = Obsidian.class;
@@ -337,14 +337,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[CACTUS] = Cactus.class;
             //list[CLAY_BLOCK] = Clay.class;
             //list[SUGARCANE_BLOCK] = Sugarcane.class;
-
             list[FENCE] = Fence.class;
-            //list[PUMPKIN] = Pumpkin.class;
+            list[PUMPKIN] = Pumpkin.class;
             //list[NETHERRACK] = Netherrack.class;
             //list[SOUL_SAND] = SoulSand.class;
             list[GLOWSTONE_BLOCK] = Glowstone.class;
 
-            //list[LIT_PUMPKIN] = LitPumpkin.class;
+            list[LIT_PUMPKIN] = LitPumpkin.class;
             list[CAKE_BLOCK] = Cake.class;
 
             //list[TRAPDOOR] = Trapdoor.class;
@@ -406,8 +405,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[HARDENED_CLAY] = HardenedClay.class;
             list[COAL_BLOCK] = Coal.class;
 
-            /*list[DOUBLE_PLANT] = DoublePlant.class;
-            */
+            list[DOUBLE_PLANT] = DoublePlant.class;
+
             list[FENCE_GATE_SPRUCE] = FenceGateSpruce.class;
             list[FENCE_GATE_BIRCH] = FenceGateBirch.class;
             list[FENCE_GATE_JUNGLE] = FenceGateJungle.class;

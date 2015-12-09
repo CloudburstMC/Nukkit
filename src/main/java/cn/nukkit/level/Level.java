@@ -2,9 +2,7 @@ package cn.nukkit.level;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.Air;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.Ice;
+import cn.nukkit.block.*;
 import cn.nukkit.entity.Arrow;
 import cn.nukkit.entity.DroppedItem;
 import cn.nukkit.entity.Effect;
@@ -152,7 +150,24 @@ public class Level implements ChunkManager, Metadatable {
     private int chunksPerTicks;
     private boolean clearChunksOnTick;
     private HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {{
-        //todo alot blocks
+        put(Block.GRASS, Grass.class);
+        put(Block.SAPLING, Sapling.class);
+        put(Block.LEAVES, Leaves.class);
+        put(Block.WHEAT_BLOCK, Wheat.class);
+        put(Block.FARMLAND, Farmland.class);
+        put(Block.SNOW_LAYER, SnowLayer.class);
+        put(Block.ICE, Ice.class);
+        //put(Block.CACTUS, Cactus.class);
+        //put(Block.SUGARCANE_BLOCK, Sugarcane.class);
+        //put(Block.RED_MUSHROOM, RedMushroom.class);
+        put(Block.BROWN_MUSHROOM, BrownMushroom.class);
+        //put(Block.PUMPKIN_STEM, PumpkinStem.class);
+        //put(Block.MELON_STEM, MelonStem.class);
+        //put(Block.MYCELIUM, Mycelium.class);
+        put(Block.CARROT_BLOCK, Carrot.class);
+        //put(Block.POTATO_BLOCK, Potato.class);
+        put(Block.LEAVES2, Leaves2.class);
+        put(Block.BEETROOT_BLOCK, Beetroot.class);
         put(Block.ICE, Ice.class);
     }};
 
@@ -1201,7 +1216,7 @@ public class Level implements ChunkManager, Metadatable {
             String index = Level.chunkHash((int) pos.x >> 4, (int) pos.z >> 4);
 
             if (direct) {
-                this.sendBlocks(this.getChunkPlayers((int) pos.x >> 4, (int) pos.z >> 4).values().stream().toArray(Player[]::new), new Block[]{block}, UpdateBlockPacket.FLAG_PRIORITY);
+                this.sendBlocks(this.getChunkPlayers((int) pos.x >> 4, (int) pos.z >> 4).values().stream().toArray(Player[]::new), new Block[]{block}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
                 this.chunkCache.remove(index);
             } else {
                 if (!this.changedBlocks.containsKey(index)) {

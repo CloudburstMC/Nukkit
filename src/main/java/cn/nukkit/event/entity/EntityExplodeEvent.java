@@ -3,6 +3,7 @@ package cn.nukkit.event.entity;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
+import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Position;
 
 import java.util.HashMap;
@@ -12,6 +13,12 @@ import java.util.HashMap;
  * Nukkit Project
  */
 public class EntityExplodeEvent extends EntityEvent implements Cancellable {
+
+    private static final HandlerList handlers = new HandlerList();
+
+    public static HandlerList getHandlers() {
+        return handlers;
+    }
 
     protected Position position;
     protected HashMap<String, Block> blocks;

@@ -40,7 +40,7 @@ public abstract class Crops extends Flowable {
 
     @Override
     public boolean onActivate(Item item) {
-        //骨粉
+        //Bone meal
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
             Crops block = (Crops) this.clone();
             block.meta += new Random().nextInt(3) + 2;
@@ -51,7 +51,7 @@ public abstract class Crops extends Flowable {
             Server.getInstance().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                this.getLevel().setBlock(this, ev.getNewState(), true, true);
+                this.getLevel().setBlock(this, ev.getNewState(), false, true);
             }
 
             item.count--;
@@ -78,7 +78,7 @@ public abstract class Crops extends Flowable {
                     Server.getInstance().getPluginManager().callEvent(ev);
 
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), true, true);
+                        this.getLevel().setBlock(this, ev.getNewState(), false, true);
                     } else {
                         return Level.BLOCK_UPDATE_RANDOM;
                     }
