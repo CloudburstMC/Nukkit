@@ -289,7 +289,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[SANDSTONE] = Sandstone.class;
             list[BED_BLOCK] = Bed.class;
             list[COBWEB] = Cobweb.class;
-            //list[TALL_GRASS] = PopulatorTallGrass.class;
+            list[TALL_GRASS] = TallGrass.class;
             list[DEAD_BUSH] = DeadBush.class;
             list[WOOL] = Wool.class;
             list[DANDELION] = Dandelion.class;
@@ -405,8 +405,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[HARDENED_CLAY] = HardenedClay.class;
             list[COAL_BLOCK] = Coal.class;
 
-            /*list[DOUBLE_PLANT] = DoublePlant.class;
-            */
+            list[DOUBLE_PLANT] = DoublePlant.class;
+
             list[FENCE_GATE_SPRUCE] = FenceGateSpruce.class;
             list[FENCE_GATE_BIRCH] = FenceGateBirch.class;
             list[FENCE_GATE_JUNGLE] = FenceGateJungle.class;

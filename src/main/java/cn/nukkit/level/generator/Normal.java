@@ -158,6 +158,10 @@ public class Normal extends Generator {
                 int height = baseheight + mountainheight - oceanheight;
                 int generatey = height > 127 ? 127 : height > waterHeight ? height : waterHeight;
                 Biome biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
+                if(chunk == null || biome == null)
+                {
+                    System.out.print("Crashed!");
+                }
                 chunk.setBiomeId(genx, genz, biome.getId());
 
                 for(int geny = 0; geny <= generatey; geny++) {
