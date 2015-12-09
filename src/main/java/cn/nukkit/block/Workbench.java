@@ -44,7 +44,7 @@ public class Workbench extends Solid {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if(player != null){
+        if (player != null) {
             player.craftingType = 1;
         }
         return true;

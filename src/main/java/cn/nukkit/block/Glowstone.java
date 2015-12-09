@@ -8,7 +8,7 @@ import cn.nukkit.item.Tool;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class Glowstone extends Transparent {
-    public Glowstone(){
+    public Glowstone() {
         this(0);
     }
 
@@ -44,7 +44,7 @@ public class Glowstone extends Transparent {
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
-                {Item.GLOWSTONE_DUST, 0,((int)(2d * Math.random()) + 2)}
+                {Item.GLOWSTONE_DUST, 0, ((int) (2d * Math.random()) + 2)}
         };
     }
 }

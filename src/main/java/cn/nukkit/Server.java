@@ -268,7 +268,7 @@ public class Server {
             try {
                 poolSize = Integer.valueOf((String) poolSize);
             } catch (Exception e) {
-                poolSize = Math.max(Runtime.getRuntime().availableProcessors() * 2, 4);
+                poolSize = Math.max(Runtime.getRuntime().availableProcessors() + 1, 4);
             }
         }
 
@@ -364,10 +364,10 @@ public class Server {
         LevelProviderManager.addProvider(this, McRegion.class);
         LevelProviderManager.addProvider(this, LevelDB.class);
 
-        Generator.addGenerator(Flat.class, "flat");
-        Generator.addGenerator(Normal.class, "normal");
-        Generator.addGenerator(Normal.class, "default");
-        //todo: add hell generator
+        Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
+        Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
+        Generator.addGenerator(Normal.class, "default", Generator.TYPE_INFINITE);
+        //todo: add old generator and hell generator
 
         for (String name : ((Map<String, Object>) this.getConfig("worlds", new HashMap<>())).keySet()) {
             if (!this.loadLevel(name)) {
@@ -726,7 +726,6 @@ public class Server {
         this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
 
         this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
-
 
         this.tickProcessor();
         this.forceShutdown();

@@ -13,11 +13,11 @@ import cn.nukkit.math.AxisAlignedBB;
  */
 public class Ladder extends Transparent {
 
-    public Ladder(){
+    public Ladder() {
         this(0);
     }
 
-    public Ladder(int meta){
+    public Ladder(int meta) {
         super(meta);
     }
 
@@ -60,7 +60,7 @@ public class Ladder extends Transparent {
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
         double f = 0.125;
-        if(this.meta == 2){
+        if (this.meta == 2) {
             return new AxisAlignedBB(
                     this.x,
                     this.y,
@@ -69,7 +69,7 @@ public class Ladder extends Transparent {
                     this.y + 1,
                     this.z + 1
             );
-        }else if(this.meta == 3){
+        } else if (this.meta == 3) {
             return new AxisAlignedBB(
                     this.x,
                     this.y,
@@ -78,7 +78,7 @@ public class Ladder extends Transparent {
                     this.y + 1,
                     this.z + f
             );
-        }else if(this.meta == 4){
+        } else if (this.meta == 4) {
             return new AxisAlignedBB(
                     this.x + 1 - f,
                     this.y,
@@ -87,7 +87,7 @@ public class Ladder extends Transparent {
                     this.y + 1,
                     this.z + 1
             );
-        }else if(this.meta == 5){
+        } else if (this.meta == 5) {
             return new AxisAlignedBB(
                     this.x,
                     this.y,
@@ -102,8 +102,8 @@ public class Ladder extends Transparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if(target.isTransparent()){
-            if(face >= 2 && face <= 5){
+        if (target.isTransparent()) {
+            if (face >= 2 && face <= 5) {
                 this.meta = face;
                 this.getLevel().setBlock(block, this, true, true);
                 return true;
@@ -114,12 +114,12 @@ public class Ladder extends Transparent {
 
     @Override
     public int onUpdate(int type) {
-        if(type == Level.BLOCK_UPDATE_NORMAL){
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
             //todo:附着的方块是transparent时掉落自己。pm逻辑捉鸡
-			//if(this.getSide(this.meta).isTransparent()){
+            //if(this.getSide(this.meta).isTransparent()){
             //    this.getLevel().useBreakOn(this);
-				return Level.BLOCK_UPDATE_NORMAL;
-			//}
+            return Level.BLOCK_UPDATE_NORMAL;
+            //}
         }
         return 0;
     }

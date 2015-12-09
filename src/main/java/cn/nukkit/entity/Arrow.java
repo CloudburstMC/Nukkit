@@ -6,7 +6,6 @@ import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-
 import cn.nukkit.utils.Random;
 
 /**

@@ -1,10 +1,10 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.level.generator.noise.Simplex;
+import cn.nukkit.utils.Random;
 
 import java.util.HashMap;
 import java.util.Map;
-import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX

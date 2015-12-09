@@ -32,7 +32,7 @@ public class KillCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                 return true;
             }
-        }else if (!(sender instanceof Player)){
+        } else if (!(sender instanceof Player)) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
@@ -46,21 +46,21 @@ public class KillCommand extends VanillaCommand {
             ((Player) target).setLastDamageCause(ev);
             ((Player) target).setHealth(0);
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", target.getName()));
-        }else{
+        } else {
             if (!(sender.hasPermission("nukkit.command.kill.self"))) {
-                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                 return true;
-                }
-                Player player = sender.getServer().getPlayer(sender.getName());
-                EntityDamageEvent ev = new EntityDamageEvent(player, EntityDamageEvent.CAUSE_SUICIDE, 1000);
-                sender.getServer().getPluginManager().callEvent(ev);
-                if (ev.isCancelled()) {
-                    return true;
-                }
-                ((Player) sender).setLastDamageCause(ev);
-                ((Player) sender).setHealth(0);
-                sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
             }
-            return true;
+            Player player = sender.getServer().getPlayer(sender.getName());
+            EntityDamageEvent ev = new EntityDamageEvent(player, EntityDamageEvent.CAUSE_SUICIDE, 1000);
+            sender.getServer().getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return true;
+            }
+            ((Player) sender).setLastDamageCause(ev);
+            ((Player) sender).setHealth(0);
+            sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
         }
+        return true;
     }
+}

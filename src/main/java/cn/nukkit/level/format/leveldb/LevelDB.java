@@ -107,7 +107,7 @@ public class LevelDB implements LevelProvider {
                 .putLong("currentTick", 0)
                 .putInt("DayCycleStopTime", -1)
                 .putInt("GameType", 0)
-                .putInt("Generator", 1)
+                .putInt("Generator", Generator.getGeneratorType(generator))
                 .putBoolean("hasBeenLoadedInCreative", false)
                 .putLong("LastPlayed", System.currentTimeMillis() / 1000)
                 .putString("LevelName", name)
@@ -406,6 +406,56 @@ public class LevelDB implements LevelProvider {
     @Override
     public String getName() {
         return this.levelData.getString("LevelName");
+    }
+
+    @Override
+    public boolean isRaining() {
+        return this.levelData.getFloat("rainLevel") > 0;
+    }
+
+    @Override
+    public void setRaining(boolean raining) {
+        this.levelData.putFloat("rainLevel", raining ? 1.0f : 0);
+    }
+
+    @Override
+    public int getRainTime() {
+        return this.levelData.getInt("rainTime");
+    }
+
+    @Override
+    public void setRainTime(int rainTime) {
+        this.levelData.putInt("rainTime", rainTime);
+    }
+
+    @Override
+    public boolean isThundering() {
+        return this.levelData.getFloat("lightningLevel") > 0;
+    }
+
+    @Override
+    public void setThundering(boolean thundering) {
+        this.levelData.putFloat("lightningLevel", thundering ? 1.0f : 0);
+    }
+
+    @Override
+    public int getThunderTime() {
+        return this.levelData.getInt("lightningTime");
+    }
+
+    @Override
+    public void setThunderTime(int thunderTime) {
+        this.levelData.putInt("lightningTime", thunderTime);
+    }
+
+    @Override
+    public long getCurrentTick() {
+        return this.levelData.getLong("currentTick");
+    }
+
+    @Override
+    public void setCurrentTick(long currentTick) {
+        this.levelData.putLong("currentTick", currentTick);
     }
 
     @Override

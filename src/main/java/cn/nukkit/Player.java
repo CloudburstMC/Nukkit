@@ -2581,14 +2581,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
 
                 List<Item> ingredientsList = new ArrayList<Item>();
-                if(recipe instanceof ShapedRecipe) {
-                    for(int x = 0; x < 3; x++) {
-                        for(int y = 0; y < 3; y++) {
+                if (recipe instanceof ShapedRecipe) {
+                    for (int x = 0; x < 3; x++) {
+                        for (int y = 0; y < 3; y++) {
                             Item need = ((ShapedRecipe) recipe).getIngredient(x, y);
-                            if(need.getId() == 0) {
+                            if (need.getId() == 0) {
                                 continue;
                             }
-                            for(int count = need.getCount(); count > 0; count--) {
+                            for (int count = need.getCount(); count > 0; count--) {
                                 Item needAdd = need.clone();
                                 //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
                                 needAdd.setCount(1);
@@ -2597,10 +2597,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         }
                     }
                 }
-                if(recipe instanceof ShapelessRecipe) {
+                if (recipe instanceof ShapelessRecipe) {
                     List<Item> recipeItem = ((ShapelessRecipe) recipe).getIngredientList();
-                    for(Item need : recipeItem) {
-                        if(need.getId() == 0) {
+                    for (Item need : recipeItem) {
+                        if (need.getId() == 0) {
                             continue;
                         }
                         Item needAdd = need.clone();
@@ -3289,8 +3289,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.newPosition = null;
 
             //Weather
-            this.getLevel().enableWeather(this);
-            this.getLevel().enableThunder(this);
+            this.getLevel().sendWeather(this);
 
             return true;
         }

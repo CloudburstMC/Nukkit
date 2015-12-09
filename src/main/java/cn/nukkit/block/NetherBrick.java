@@ -7,9 +7,9 @@ import cn.nukkit.item.Tool;
  * Created on 2015/12/7 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class NetherBrick extends Solid{
+public class NetherBrick extends Solid {
 
-    public NetherBrick(){
+    public NetherBrick() {
         this(0);
     }
 

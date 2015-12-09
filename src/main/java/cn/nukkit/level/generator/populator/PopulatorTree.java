@@ -5,7 +5,6 @@ import cn.nukkit.block.Sapling;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.object.tree.ObjectTree;
 import cn.nukkit.math.NukkitMath;
-
 import cn.nukkit.utils.Random;
 
 /**

@@ -6,7 +6,6 @@ import cn.nukkit.math.Vector3;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * author: MagicDroidX
@@ -19,37 +18,58 @@ public abstract class Generator {
 
     public abstract int getId();
 
-    private static Map<String, Class<? extends Generator>> list = new HashMap<>();
+    private static Map<String, Class<? extends Generator>> nameList = new HashMap<>();
 
-    public static boolean addGenerator(Class<? extends Generator> clazz, String name) {
+    private static Map<Integer, Class<? extends Generator>> typeList = new HashMap<>();
+
+    public static boolean addGenerator(Class<? extends Generator> clazz, String name, int type) {
         name = name.toLowerCase();
-        if (clazz != null && !Generator.list.containsKey(name)) {
-            Generator.list.put(name, clazz);
+        if (clazz != null && !Generator.nameList.containsKey(name)) {
+            Generator.nameList.put(name, clazz);
+            if (!Generator.typeList.containsKey(type)) {
+                Generator.typeList.put(type, clazz);
+            }
             return true;
         }
         return false;
     }
 
     public static String[] getGeneratorList() {
-        String[] keys = new String[Generator.list.size()];
-        return Generator.list.keySet().toArray(keys);
+        String[] keys = new String[Generator.nameList.size()];
+        return Generator.nameList.keySet().toArray(keys);
     }
 
     public static Class<? extends Generator> getGenerator(String name) {
         name = name.toLowerCase();
-        if (Generator.list.containsKey(name)) {
-            return Generator.list.get(name);
+        if (Generator.nameList.containsKey(name)) {
+            return Generator.nameList.get(name);
+        }
+        return Normal.class;
+    }
+
+    public static Class<? extends Generator> getGenerator(int type) {
+        if (Generator.typeList.containsKey(type)) {
+            return Generator.typeList.get(type);
         }
         return Normal.class;
     }
 
     public static String getGeneratorName(Class<? extends Generator> c) {
-        for (String key : Generator.list.keySet()) {
-            if (Generator.list.get(key).equals(c)) {
+        for (String key : Generator.nameList.keySet()) {
+            if (Generator.nameList.get(key).equals(c)) {
                 return key;
             }
         }
         return "unknown";
+    }
+
+    public static int getGeneratorType(Class<? extends Generator> c) {
+        for (int key : Generator.typeList.keySet()) {
+            if (Generator.typeList.get(key).equals(c)) {
+                return key;
+            }
+        }
+        return Generator.TYPE_INFINITE;
     }
 
     public static double[] getFastNoise1D(Noise noise, int xSize, int samplingRate, int x, int y, int z) {

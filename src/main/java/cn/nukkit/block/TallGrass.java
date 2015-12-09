@@ -38,7 +38,7 @@ public class TallGrass extends Flowable {
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         Block down = this.getSide(Vector3.SIDE_DOWN);
-        if(down.getId() == Block.GRASS) {
+        if (down.getId() == Block.GRASS) {
             this.getLevel().setBlock(block, this, true);
             return true;
         }
