@@ -71,11 +71,7 @@ public class Wood extends Solid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
-            return new int[][]{new int[]{this.getId(), this.meta & 0x03, 1}};
-        } else {
-            return new int[0][];
-        }
+        return new int[][]{new int[]{this.getId(), this.meta & 0x03, 1}};
     }
 
     @Override

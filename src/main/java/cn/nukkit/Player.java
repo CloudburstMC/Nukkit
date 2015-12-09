@@ -2538,15 +2538,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             item = craftingEventPacket.input[y * 3 + x];
                             Item ingredient = ((ShapedRecipe) recipe).getIngredient(x, y);
                             //todo: check this https://github.com/PocketMine/PocketMine-MP/commit/58709293cf4eee2e836a94226bbba4aca0f53908
-                            if (item.getCount() > 0 && item.getId() > 0) {
+                            if (item.getCount() > 0) {
                                 if (ingredient == null || !ingredient.deepEquals(item, ingredient.hasMeta(), ingredient.getCompoundTag() != null)) {
                                     canCraft = false;
                                     break;
                                 }
 
-                            } else if (ingredient != null && ingredient.getId() != 0) {
-                                canCraft = false;
-                                break;
                             }
                         }
                     }
@@ -2583,7 +2580,38 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     canCraft = false;
                 }
 
-                Item[] ingredients = craftingEventPacket.input;
+                List<Item> ingredientsList = new ArrayList<Item>();
+                if(recipe instanceof ShapedRecipe) {
+                    for(int x = 0; x < 3; x++) {
+                        for(int y = 0; y < 3; y++) {
+                            Item need = ((ShapedRecipe) recipe).getIngredient(x, y);
+                            if(need.getId() == 0) {
+                                continue;
+                            }
+                            for(int count = need.getCount(); count > 0; count--) {
+                                Item needAdd = need.clone();
+                                //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
+                                needAdd.setCount(1);
+                                ingredientsList.add(needAdd);
+                            }
+                        }
+                    }
+                }
+                if(recipe instanceof ShapelessRecipe) {
+                    List<Item> recipeItem = ((ShapelessRecipe) recipe).getIngredientList();
+                    for(Item need : recipeItem) {
+                        if(need.getId() == 0) {
+                            continue;
+                        }
+                        Item needAdd = need.clone();
+                        //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
+                        needAdd.setCount(1);
+                        ingredientsList.add(needAdd);
+                    }
+                }
+
+                Item[] ingredients = ingredientsList.stream().toArray(Item[]::new);
+
                 Item result = craftingEventPacket.output[0];
 
                 if (!canCraft || !recipe.getResult().deepEquals(result)) {
@@ -2598,7 +2626,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     slot = -1;
                     for (int index : this.inventory.getContents().keySet()) {
                         Item i = this.inventory.getContents().get(index);
-                        if (ingredient.getId() != 0 && ingredient.deepEquals(i, i.hasMeta()) && (i.getCount() - used[index]) >= 1) {
+                        if (ingredient.getId() != 0 && ingredient.deepEquals(i, ingredient.hasMeta()) && (i.getCount() - used[index]) >= 1) {
                             slot = index;
                             used[index]++;
                             break;
