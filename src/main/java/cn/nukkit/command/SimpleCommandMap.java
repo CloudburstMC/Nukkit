@@ -47,7 +47,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new SaveOnCommand("save-on"));
         this.register("nukkit", new SaveOffCommand("save-off"));
         this.register("nukkit", new SaveCommand("save-all"));
-        this.register("nukkit", new GiveCommand("give"));
+        //this.register("nukkit", new GiveCommand("give"));
         //this.register("nukkit", new EffectCommand("effect"));
         //this.register("nukkit", new EnchantCommand("enchant"));
         this.register("nukkit", new ParticleCommand("particle"));
