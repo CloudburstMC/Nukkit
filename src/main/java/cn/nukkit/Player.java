@@ -2830,7 +2830,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.hiddenPlayers = new HashMap<>();
 
-            for (Inventory window : this.windowIndex.values()) {
+            for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
                 this.removeWindow(window);
             }
 

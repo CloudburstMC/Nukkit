@@ -43,6 +43,9 @@ public abstract class Tile extends Position {
     protected Server server;
 
     public Tile(FullChunk chunk, CompoundTag nbt) {
+        //todo: check if there need super()
+        super((double) nbt.getInt("x"), (double) nbt.getInt("y"), (double) nbt.getInt("z"), chunk.getProvider().getLevel());
+
         if (chunk == null || chunk.getProvider() == null) {
             throw new ChunkException("Invalid garbage Chunk given to Tile");
         }
