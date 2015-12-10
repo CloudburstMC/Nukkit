@@ -23,7 +23,7 @@ public class SimpleChunkManager implements ChunkManager {
     public int getBlockIdAt(int x, int y, int z) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            return chunk.getBlockId(x & 0xf, y & 0xf, z & 0xf);
+            return chunk.getBlockId(x & 0xf, y & 0x7f, z & 0xf);
         }
         return 0;
     }
@@ -32,7 +32,7 @@ public class SimpleChunkManager implements ChunkManager {
     public void setBlockIdAt(int x, int y, int z, int id) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            chunk.setBlockId(x & 0xf, y & 0xf, z & 0xf, id);
+            chunk.setBlockId(x & 0xf, y & 0x7f, z & 0xf, id);
         }
     }
 
@@ -40,7 +40,7 @@ public class SimpleChunkManager implements ChunkManager {
     public int getBlockDataAt(int x, int y, int z) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            return chunk.getBlockData(x & 0xf, y & 0xf, z & 0xf);
+            return chunk.getBlockData(x & 0xf, y & 0x7f, z & 0xf);
         }
         return 0;
     }
@@ -49,7 +49,7 @@ public class SimpleChunkManager implements ChunkManager {
     public void setBlockDataAt(int x, int y, int z, int data) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            chunk.setBlockData(x & 0xf, y & 0xf, z & 0xf, data);
+            chunk.setBlockData(x & 0xf, y & 0x7f, z & 0xf, data);
         }
     }
 

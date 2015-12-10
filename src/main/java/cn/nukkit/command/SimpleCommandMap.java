@@ -47,18 +47,19 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new SaveOnCommand("save-on"));
         this.register("nukkit", new SaveOffCommand("save-off"));
         this.register("nukkit", new SaveCommand("save-all"));
-        //this.register("nukkit", new GiveCommand("give"));
+        this.register("nukkit", new GiveCommand("give"));
         //this.register("nukkit", new EffectCommand("effect"));
         //this.register("nukkit", new EnchantCommand("enchant"));
         this.register("nukkit", new ParticleCommand("particle"));
         this.register("nukkit", new GamemodeCommand("gamemode"));
-        //this.register("nukkit", new KillCommand("kill"));
+        this.register("nukkit", new KillCommand("kill"));
         //this.register("nukkit", new SpawnpointCommand("spawnpoint"));
         //this.register("nukkit", new SetWorldSpawnCommand("setworldspawn"));
         //this.register("nukkit", new TeleportCommand("tp"));
-        //this.register("nukkit", new TimeCommand("time"));
+        this.register("nukkit", new TimeCommand("time"));
         //this.register("nukkit", new TimingsCommand("timings"));
         this.register("nukkit", new ReloadCommand("reload"));
+        this.register("nukkit", new WeatherCommand("weather"));
 
         if ((boolean) this.server.getConfig("debug.commands", false)) {
             this.register("nukkit", new StatusCommand("status"));

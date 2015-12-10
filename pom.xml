@@ -33,14 +33,37 @@
             <version>2.13</version>
         </dependency>
 		<dependency>
-            <groupId>org.iq80.leveldb</groupId>
+            <groupId>com.tinfoiled.mcpe.leveldb</groupId>
             <artifactId>leveldb</artifactId>
-            <version>0.7</version>
+            <version>0.8</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+		    <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>install-external</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${basedir}/lib/leveldb.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>com.tinfoiled.mcpe.leveldb</groupId>
+                            <artifactId>leveldb</artifactId>
+                            <version>0.8</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

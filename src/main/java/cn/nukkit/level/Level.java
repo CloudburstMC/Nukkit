@@ -2,9 +2,7 @@ package cn.nukkit.level;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.Air;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.Ice;
+import cn.nukkit.block.*;
 import cn.nukkit.entity.Arrow;
 import cn.nukkit.entity.DroppedItem;
 import cn.nukkit.entity.Effect;
@@ -14,8 +12,6 @@ import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.level.*;
 import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.event.weather.ThunderChangeEvent;
-import cn.nukkit.event.weather.WeatherChangeEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.Chunk;
@@ -25,7 +21,8 @@ import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
-import cn.nukkit.level.generator.*;
+import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.task.*;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.sound.Sound;
@@ -151,7 +148,24 @@ public class Level implements ChunkManager, Metadatable {
     private int chunksPerTicks;
     private boolean clearChunksOnTick;
     private HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {{
-        //todo alot blocks
+        put(Block.GRASS, Grass.class);
+        put(Block.SAPLING, Sapling.class);
+        put(Block.LEAVES, Leaves.class);
+        put(Block.WHEAT_BLOCK, Wheat.class);
+        put(Block.FARMLAND, Farmland.class);
+        put(Block.SNOW_LAYER, SnowLayer.class);
+        put(Block.ICE, Ice.class);
+        //put(Block.CACTUS, Cactus.class);
+        //put(Block.SUGARCANE_BLOCK, Sugarcane.class);
+        //put(Block.RED_MUSHROOM, RedMushroom.class);
+        put(Block.BROWN_MUSHROOM, BrownMushroom.class);
+        //put(Block.PUMPKIN_STEM, PumpkinStem.class);
+        //put(Block.MELON_STEM, MelonStem.class);
+        //put(Block.MYCELIUM, Mycelium.class);
+        put(Block.CARROT_BLOCK, Carrot.class);
+        //put(Block.POTATO_BLOCK, Potato.class);
+        put(Block.LEAVES2, Leaves2.class);
+        put(Block.BEETROOT_BLOCK, Beetroot.class);
         put(Block.ICE, Ice.class);
     }};
 
@@ -162,11 +176,13 @@ public class Level implements ChunkManager, Metadatable {
     private Class<? extends Generator> generator;
     private Generator generatorInstance;
 
-    private Random rand = new Random();
-    private boolean hasStrom = false;
-    private int weatherDuration = 0;
-    private boolean isThundering = false;
-    private int thunderDuration = 0;
+    private java.util.Random rand = new java.util.Random();
+    private boolean raining = false;
+    private int rainTime = 0;
+    private boolean thundering = false;
+    private int thunderTime = 0;
+
+    private long levelCurrentTick = 0;
 
     public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
         this.blockStates = Block.fullList;
@@ -200,6 +216,20 @@ public class Level implements ChunkManager, Metadatable {
             }
         });
         this.time = this.provider.getTime();
+
+        this.raining = this.provider.isRaining();
+        this.rainTime = this.provider.getRainTime();
+        if (this.rainTime <= 0) {
+            setRainTime(rand.nextInt(168000) + 12000);
+        }
+
+        this.thundering = this.provider.isThundering();
+        this.thunderTime = this.provider.getThunderTime();
+        if (this.thunderTime <= 0) {
+            setThunderTime(rand.nextInt(168000) + 12000);
+        }
+
+        this.levelCurrentTick = this.provider.getCurrentTick();
 
         this.chunkTickRadius = Math.min(this.server.getViewDistance(), Math.max(1, (Integer) this.server.getConfig("chunk-ticking.tick-radius", 4)));
         this.chunksPerTicks = (int) this.server.getConfig("chunk-ticking.per-tick", 40);
@@ -262,7 +292,7 @@ public class Level implements ChunkManager, Metadatable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.generatorInstance.init(this, new Random(this.getSeed()));
+        this.generatorInstance.init(this, new cn.nukkit.utils.Random(this.getSeed()));
 
         this.registerGenerator();
     }
@@ -520,14 +550,17 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         //Tick Weather
-        this.weatherDuration--;
-        if (this.weatherDuration <= 0) {
-            this.setStorm(!this.hasStorm());
+        this.rainTime--;
+        if (this.rainTime <= 0) {
+            this.setRaining(!this.raining);
         }
-        this.thunderDuration--;
-        if (this.thunderDuration <= 0) {
-            this.setThundering(!this.isThundering());
+
+        this.thunderTime--;
+        if (this.thunderTime <= 0) {
+            this.setThundering(!this.thundering);
         }
+
+        this.levelCurrentTick++;
 
         this.unloadChunks();
 
@@ -775,8 +808,8 @@ public class Level implements ChunkManager, Metadatable {
             int existingLoaders = Math.max(0, this.chunkTickList.containsKey(index) ? this.chunkTickList.get(index) : 0);
             this.chunkTickList.put(index, existingLoaders + 1);
             for (int chunk = 0; chunk < chunksPerLoader; ++chunk) {
-                int dx = new Random().nextInt(2 * randRange) - randRange;
-                int dz = new Random().nextInt(2 * randRange) - randRange;
+                int dx = new java.util.Random().nextInt(2 * randRange) - randRange;
+                int dz = new java.util.Random().nextInt(2 * randRange) - randRange;
                 String hash = Level.chunkHash(dx + chunkX, dz + chunkZ);
                 if (!this.chunkTickList.containsKey(hash) && this.chunks.containsKey(hash)) {
                     this.chunkTickList.put(hash, -1);
@@ -810,7 +843,7 @@ public class Level implements ChunkManager, Metadatable {
                 for (ChunkSection section : ((Chunk) chunk).getSections()) {
                     if (!(section instanceof EmptyChunkSection)) {
                         int Y = section.getY();
-                        int k = new Random().nextInt(0x7fffffff);
+                        int k = new java.util.Random().nextInt(0x7fffffff);
                         for (int i = 0; i < 3; ++i, k >>= 10) {
                             int x = k & 0x0f;
                             int y = (k >> 8) & 0x0f;
@@ -836,7 +869,7 @@ public class Level implements ChunkManager, Metadatable {
             } else {
                 for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
                     blockTest = 0;
-                    int k = new Random().nextInt();
+                    int k = new java.util.Random().nextInt();
                     for (int i = 0; i < 3; ++i, k >>= 10) {
                         int x = k & 0x0f;
                         int y = (k >> 8) & 0x0f;
@@ -880,16 +913,21 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getPluginManager().callEvent(new LevelSaveEvent(this));
 
         this.provider.setTime((int) this.time);
+        this.provider.setRaining(this.raining);
+        this.provider.setRainTime(this.rainTime);
+        this.provider.setThundering(this.thundering);
+        this.provider.setThunderTime(this.thunderTime);
+        this.provider.setCurrentTick(this.levelCurrentTick);
         this.saveChunks();
         if (this.provider instanceof BaseLevelProvider) {
-            ((BaseLevelProvider) this.provider).saveLevelData();
+            this.provider.saveLevelData();
         }
 
         return true;
     }
 
     public void saveChunks() {
-        for (FullChunk chunk : this.chunks.values()) {
+        for (FullChunk chunk : new ArrayList<>(this.chunks.values())) {
             if (chunk.hasChanged()) {
                 try {
                     this.provider.setChunk(chunk.getX(), chunk.getZ(), chunk);
@@ -1200,7 +1238,7 @@ public class Level implements ChunkManager, Metadatable {
             String index = Level.chunkHash((int) pos.x >> 4, (int) pos.z >> 4);
 
             if (direct) {
-                this.sendBlocks(this.getChunkPlayers((int) pos.x >> 4, (int) pos.z >> 4).values().stream().toArray(Player[]::new), new Block[]{block}, UpdateBlockPacket.FLAG_PRIORITY);
+                this.sendBlocks(this.getChunkPlayers((int) pos.x >> 4, (int) pos.z >> 4).values().stream().toArray(Player[]::new), new Block[]{block}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
                 this.chunkCache.remove(index);
             } else {
                 if (!this.changedBlocks.containsKey(index)) {
@@ -1244,7 +1282,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropItem(Vector3 source, Item item, Vector3 motion, int delay) {
-        motion = motion == null ? new Vector3(new Random().nextDouble() * 0.2 - 0.1, 0.2, new Random().nextDouble() * 0.2 - 0.1) : motion;
+        motion = motion == null ? new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2, new java.util.Random().nextDouble() * 0.2 - 0.1) : motion;
 
         CompoundTag itemTag = NBTIO.putItemHelper(item);
         itemTag.setName("Item");
@@ -1262,7 +1300,7 @@ public class Level implements ChunkManager, Metadatable {
                             .add(new DoubleTag("", motion.z)))
 
                     .putList(new ListTag<FloatTag>("Rotation")
-                            .add(new FloatTag("", new Random().nextFloat() * 360))
+                            .add(new FloatTag("", new java.util.Random().nextFloat() * 360))
                             .add(new FloatTag("", 0)))
 
                     .putShort("Health", 5)
@@ -1287,6 +1325,9 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Item useBreakOn(Vector3 vector, Item item, Player player, boolean createParticles) {
+        if (player != null && player.getGamemode() > 1) {
+            return null;
+        }
         Block target = this.getBlock(vector);
         Item[] drops;
         if (item == null) {
@@ -1363,6 +1404,10 @@ public class Level implements ChunkManager, Metadatable {
                         }
                     }
                 }
+
+                if (!canBreak) {
+                    return null;
+                }
             }
         }
 
@@ -1417,6 +1462,10 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Item useItemOn(Vector3 vector, Item item, int face, float fx, float fy, float fz, Player player) {
+        if (player != null && player.getGamemode() > 1) {
+            return null;
+        }
+
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
 
@@ -1581,7 +1630,7 @@ public class Level implements ChunkManager, Metadatable {
     public Entity[] getCollidingEntities(AxisAlignedBB bb, Entity entity) {
         List<Entity> nearby = new ArrayList<>();
 
-        if (entity == null || entity.canCollide) {
+        if (entity == null || entity.canCollide()) {
             int minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
             int maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
             int minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);
@@ -1608,7 +1657,7 @@ public class Level implements ChunkManager, Metadatable {
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
         List<Entity> nearby = new ArrayList<>();
 
-        if (entity == null || entity.canCollide) {
+        if (entity == null || entity.canCollide()) {
             int minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
             int maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
             int minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);
@@ -2401,133 +2450,110 @@ public class Level implements ChunkManager, Metadatable {
         this.moveToSend.get(index).put(entityId, new MoveEntityPacket.Entry(entityId, x, y, z, yaw, headYaw, pitch));
     }
 
-    public boolean hasStorm() {
-        return this.hasStrom;
+    public boolean isRaining() {
+        return this.raining;
     }
 
-    public void setStorm(boolean hasStorm) {
-        Server server = this.getServer();
-        WeatherChangeEvent weather = new WeatherChangeEvent(this, hasStorm);
-        server.getPluginManager().callEvent(weather);
-        if (!weather.isCancelled()) {
-            this.hasStrom = hasStorm;
-            this.enableWeather();
-            // These numbers are from Minecraft
-            if (hasStorm) {
-                setWeatherDuration(rand.nextInt(12000) + 12000);
-            } else {
-                setWeatherDuration(rand.nextInt(168000) + 12000);
-            }
+    public void setRaining(boolean raining) {
+        WeatherChangeEvent weather = new WeatherChangeEvent(this, raining);
+        this.getServer().getPluginManager().callEvent(weather);
+
+        this.raining = raining;
+
+        LevelEventPacket pk = new LevelEventPacket();
+        // These numbers are from Minecraft
+        if (raining) {
+            pk.evid = LevelEventPacket.EVENT_START_RAIN;
+            pk.data = rand.nextInt(50000) + 10000;
+            setRainTime(rand.nextInt(12000) + 12000);
+        } else {
+            pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
+            setRainTime(rand.nextInt(168000) + 12000);
         }
+
+        Server.broadcastPacket(this.getPlayers().values(), pk);
     }
 
-    public int getWeatherDuration() {
-        return this.weatherDuration;
+    public int getRainTime() {
+        return this.rainTime;
     }
 
-    public void setWeatherDuration(int duration) {
-        this.weatherDuration = duration;
-        this.enableWeather();
+    public void setRainTime(int rainTime) {
+        this.rainTime = rainTime;
     }
 
     public boolean isThundering() {
-        return hasStorm() && this.isThundering;
+        return isRaining() && this.thundering;
     }
 
     public void setThundering(boolean thundering) {
-        if (thundering && !hasStorm()) {
-            setStorm(true);
+        if (thundering && !isRaining()) {
+            setRaining(true);
         }
-        Server server = this.getServer();
+
         ThunderChangeEvent thunder = new ThunderChangeEvent(this, thundering);
-        server.getPluginManager().callEvent(thunder);
-        if (!thunder.isCancelled()) {
-            this.isThundering = thundering;
-            this.enableThunder();
-            // These numbers are from Minecraft
-            if (thundering) {
-                setThunderDuration(rand.nextInt(12000) + 3600);
-            } else {
-                setThunderDuration(rand.nextInt(168000) + 12000);
-            }
-        }
-    }
+        this.getServer().getPluginManager().callEvent(thunder);
 
-    public int getThunderDuration() {
-        return this.thunderDuration;
-    }
+        this.thundering = thundering;
 
-    public void setThunderDuration(int duration) {
-        this.thunderDuration = duration;
-        this.enableThunder();
-    }
-
-    public void enableWeather() {
-        boolean hasStorm = this.hasStrom;
         LevelEventPacket pk = new LevelEventPacket();
-        pk.x = 0;
-        pk.y = 0;
-        pk.z = 0;
-        if (hasStorm) {
+        // These numbers are from Minecraft
+        if (thundering) {
+            pk.evid = LevelEventPacket.EVENT_START_THUNDER;
+            pk.data = rand.nextInt(50000) + 10000;
+            setThunderTime(rand.nextInt(12000) + 3600);
+        } else {
+            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
+            setThunderTime(rand.nextInt(168000) + 12000);
+        }
+
+        Server.broadcastPacket(this.getPlayers().values(), pk);
+    }
+
+    public int getThunderTime() {
+        return this.thunderTime;
+    }
+
+    public void setThunderTime(int thunderTime) {
+        this.thunderTime = thunderTime;
+    }
+
+    public void sendWeather(Player[] players) {
+        if (players == null) {
+            players = this.getPlayers().values().stream().toArray(Player[]::new);
+        }
+
+        LevelEventPacket pk = new LevelEventPacket();
+
+        if (this.isRaining()) {
             pk.evid = LevelEventPacket.EVENT_START_RAIN;
             pk.data = rand.nextInt(50000) + 10000;
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
-            pk.data = 0;
         }
-        for (Player p : this.getPlayers().values()) {
-            p.dataPacket(pk);
-        }
-    }
 
-    public void enableWeather(Player player) {
-        boolean hasStorm = this.hasStrom;
-        LevelEventPacket pk = new LevelEventPacket();
-        pk.x = 0;
-        pk.y = 0;
-        pk.z = 0;
-        if (hasStorm) {
-            pk.evid = LevelEventPacket.EVENT_START_RAIN;
-            pk.data = rand.nextInt(50000) + 10000;
-        } else {
-            pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
-            pk.data = 0;
-        }
-        player.dataPacket(pk);
-    }
+        Server.broadcastPacket(players, pk);
 
-    public void enableThunder() {
-        boolean hasStorm = this.hasStrom;
-        LevelEventPacket pk = new LevelEventPacket();
-        pk.x = 0;
-        pk.y = 0;
-        pk.z = 0;
-        if (hasStorm) {
+        if (this.isThundering()) {
             pk.evid = LevelEventPacket.EVENT_START_THUNDER;
             pk.data = rand.nextInt(50000) + 10000;
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
-            pk.data = 0;
         }
-        for (Player p : this.getPlayers().values()) {
-            p.dataPacket(pk);
+
+        Server.broadcastPacket(players, pk);
+    }
+
+    public void sendWeather(Player player) {
+        if (player != null) {
+            this.sendWeather(new Player[]{player});
         }
     }
 
-    public void enableThunder(Player player) {
-        boolean hasStorm = this.hasStrom;
-        LevelEventPacket pk = new LevelEventPacket();
-        pk.x = 0;
-        pk.y = 0;
-        pk.z = 0;
-        if (hasStorm) {
-            pk.evid = LevelEventPacket.EVENT_START_THUNDER;
-            pk.data = rand.nextInt(50000) + 10000;
-        } else {
-            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
-            pk.data = 0;
+    public void sendWeather(Collection<Player> players) {
+        if (players == null) {
+            players = this.getPlayers().values();
         }
-        player.dataPacket(pk);
+        this.sendWeather(players.stream().toArray(Player[]::new));
     }
-
 }

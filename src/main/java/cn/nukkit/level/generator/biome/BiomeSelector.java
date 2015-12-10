@@ -1,10 +1,10 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.level.generator.noise.Simplex;
+import cn.nukkit.utils.Random;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * author: MagicDroidX
@@ -27,9 +27,9 @@ public class BiomeSelector {
 
     public int lookup(double temperature, double rainfall) {
         if (rainfall < 0.25) {
-            if (rainfall < 0.7) {
+            if (temperature < 0.7) {
                 return Biome.OCEAN;
-            } else if (rainfall < 0.85) {
+            } else if (temperature < 0.85) {
                 return Biome.RIVER;
             } else {
                 return Biome.SWAMP;
@@ -51,9 +51,9 @@ public class BiomeSelector {
                 return Biome.BIRCH_FOREST;
             }
         } else {
-            if (rainfall < 0.25) {
+            if (temperature < 0.25) {
                 return Biome.MOUNTAINS;
-            } else if (rainfall < 0.70) {
+            } else if (temperature < 0.70) {
                 return Biome.SMALL_MOUNTAINS;
             } else {
                 return Biome.RIVER;
@@ -83,8 +83,8 @@ public class BiomeSelector {
     }
 
     public Biome pickBiome(double x, double z) {
-        int temperature = (int) (this.getTemperature(x, z) * 63d);
-        int rainfall = (int) (this.getRainfall(x, z) * 63d);
+        int temperature = (int) (this.getTemperature(x, z) * 63);
+        int rainfall = (int) (this.getRainfall(x, z) * 63);
 
         int biomeId = this.map[temperature + (rainfall << 6)];
         return this.biomes.containsKey(biomeId) ? this.biomes.get(biomeId) : this.fallback;

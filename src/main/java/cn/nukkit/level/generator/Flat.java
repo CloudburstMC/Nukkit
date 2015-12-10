@@ -10,7 +10,10 @@ import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.level.generator.populator.PopulatorOre;
 import cn.nukkit.math.Vector3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -19,11 +22,16 @@ import java.util.regex.Pattern;
  */
 public class Flat extends Generator {
 
+    @Override
+    public int getId() {
+        return TYPE_FLAT;
+    }
+
     private ChunkManager level;
 
     private BaseFullChunk chunk;
 
-    private Random random;
+    private cn.nukkit.utils.Random random;
 
     private List<Populator> populators = new ArrayList<>();
 
@@ -35,6 +43,10 @@ public class Flat extends Generator {
 
     private String preset;
 
+    @Override
+    public ChunkManager getChunkManager() {
+        return level;
+    }
 
     @Override
     public Map<String, Object> getSettings() {
@@ -153,35 +165,31 @@ public class Flat extends Generator {
     }
 
     @Override
-    public void init(ChunkManager level, Random random) {
+    public void init(ChunkManager level, cn.nukkit.utils.Random random) {
         this.level = level;
         this.random = random;
     }
 
     @Override
     public void generateChunk(int chunkX, int chunkZ) {
-        synchronized (this.level) {
-            if (this.chunk == null) {
-                if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
-                    this.parsePreset((String) this.options.get("preset"), chunkX, chunkZ);
-                } else {
-                    this.parsePreset(this.preset, chunkX, chunkZ);
-                }
+        if (this.chunk == null) {
+            if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
+                this.parsePreset((String) this.options.get("preset"), chunkX, chunkZ);
+            } else {
+                this.parsePreset(this.preset, chunkX, chunkZ);
             }
-            BaseFullChunk chunk = this.chunk.clone();
-            chunk.setX(chunkX);
-            chunk.setZ(chunkZ);
-            this.level.setChunk(chunkX, chunkZ, chunk);
         }
+        BaseFullChunk chunk = this.chunk.clone();
+        chunk.setX(chunkX);
+        chunk.setZ(chunkZ);
+        this.level.setChunk(chunkX, chunkZ, chunk);
     }
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
-        synchronized (this.level) {
-            this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
-            for (Populator populator : this.populators) {
-                populator.populate(this.level, chunkX, chunkZ, this.random);
-            }
+        this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
+        for (Populator populator : this.populators) {
+            populator.populate(this.level, chunkX, chunkZ, this.random);
         }
     }
 

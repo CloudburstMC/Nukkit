@@ -8,8 +8,8 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.tile.Tile;
 
 import java.io.IOException;
@@ -54,7 +54,7 @@ public abstract class BaseFullChunk implements FullChunk {
 
     protected boolean hasChanged = false;
 
-    private boolean isInit = false;
+    protected boolean isInit = false;
 
     @Override
     public BaseFullChunk clone() {
@@ -115,7 +115,7 @@ public abstract class BaseFullChunk implements FullChunk {
                         continue;
                     }
                     ListTag pos = nbt.getList("Pos");
-                    if (((int) ((DoubleTag) pos.get(0)).data >> 4) != this.x || (((int) ((DoubleTag) pos.get(2)).data >> 4) != this.z)) {
+                    if ((((NumberTag) pos.get(0)).getData().intValue() >> 4) != this.x || ((((NumberTag) pos.get(2)).getData().intValue() >> 4) != this.z)) {
                         changed = true;
                         continue;
                     }

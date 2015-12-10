@@ -22,10 +22,8 @@ import org.iq80.leveldb.impl.Iq80DBFactory;
 
 import java.io.*;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Random;
 
 /**
  * author: MagicDroidX
@@ -106,23 +104,29 @@ public class LevelDB implements LevelProvider {
         }
 
         CompoundTag levelData = new CompoundTag("")
-                .putBoolean("hardcore", false)
-                .putBoolean("initialized", true)
+                .putLong("currentTick", 0)
+                .putInt("DayCycleStopTime", -1)
                 .putInt("GameType", 0)
-                .putInt("generatorVersion", 1)
+                .putInt("Generator", Generator.getGeneratorType(generator))
+                .putBoolean("hasBeenLoadedInCreative", false)
+                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
+                .putString("LevelName", name)
+                .putFloat("lightningLevel", 0)
+                .putInt("lightningTime", new Random().nextInt())
+                .putInt("limitedWorldOriginX", 128)
+                .putInt("limitedWorldOriginY", 70)
+                .putInt("limitedWorldOriginZ", 128)
+                .putInt("Platform", 0)
+                .putFloat("rainLevel", 0)
+                .putInt("rainTime", new Random().nextInt())
+                .putLong("RandomSeed", seed)
+                .putByte("spawnMobs", (byte) 0)
                 .putInt("SpawnX", 128)
                 .putInt("SpawnY", 70)
                 .putInt("SpawnZ", 128)
-                .putInt("version", 19133)
-                .putInt("DayTime", 0)
-                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
-                .putLong("RandomSeed", seed)
-                .putLong("SizeOnDisk", 0)
-                .putInt("Time", 0)
-                .putString("generatorName", Generator.getGeneratorName(generator))
-                .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
-                .putString("LevelName", name)
-                .putCompound("GameRules", new CompoundTag());
+                .putInt("storageVersion", 4)
+                .putLong("Time", 0)
+                .putLong("worldStartCount", ((long) Integer.MAX_VALUE) & 0xffffffffl);
 
         byte[] data = NBTIO.writeGZIPCompressed(levelData, ByteOrder.BIG_ENDIAN);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -405,13 +409,63 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public int getTime() {
-        return this.levelData.getInt("Time");
+    public boolean isRaining() {
+        return this.levelData.getFloat("rainLevel") > 0;
     }
 
     @Override
-    public void setTime(int value) {
-        this.levelData.putInt("Time", value);
+    public void setRaining(boolean raining) {
+        this.levelData.putFloat("rainLevel", raining ? 1.0f : 0);
+    }
+
+    @Override
+    public int getRainTime() {
+        return this.levelData.getInt("rainTime");
+    }
+
+    @Override
+    public void setRainTime(int rainTime) {
+        this.levelData.putInt("rainTime", rainTime);
+    }
+
+    @Override
+    public boolean isThundering() {
+        return this.levelData.getFloat("lightningLevel") > 0;
+    }
+
+    @Override
+    public void setThundering(boolean thundering) {
+        this.levelData.putFloat("lightningLevel", thundering ? 1.0f : 0);
+    }
+
+    @Override
+    public int getThunderTime() {
+        return this.levelData.getInt("lightningTime");
+    }
+
+    @Override
+    public void setThunderTime(int thunderTime) {
+        this.levelData.putInt("lightningTime", thunderTime);
+    }
+
+    @Override
+    public long getCurrentTick() {
+        return this.levelData.getLong("currentTick");
+    }
+
+    @Override
+    public void setCurrentTick(long currentTick) {
+        this.levelData.putLong("currentTick", currentTick);
+    }
+
+    @Override
+    public long getTime() {
+        return this.levelData.getLong("Time");
+    }
+
+    @Override
+    public void setTime(long value) {
+        this.levelData.putLong("Time", value);
     }
 
     @Override

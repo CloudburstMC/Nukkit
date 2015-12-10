@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 /**
  * @author Nukkit Project Team
@@ -30,9 +30,13 @@ public class Carrot extends Crops {
     @Override
     public int[][] getDrops(Item item) {
         if (meta >= 0x07) {
-            return new int[][]{{Item.CARROT, 0, ThreadLocalRandom.current().nextInt(1, 5)}};
+            return new int[][]{
+                    {Item.CARROT, 0, new Random().nextInt(3) + 1}
+            };
         }
-        return new int[][]{{Item.CARROT, 0, 1}};
+        return new int[][]{
+                {Item.CARROT, 0, 1}
+        };
     }
 
 }

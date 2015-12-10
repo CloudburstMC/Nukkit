@@ -51,9 +51,29 @@ public interface LevelProvider {
 
     String getName();
 
-    int getTime();
+    boolean isRaining();
 
-    void setTime(int value);
+    void setRaining(boolean raining);
+
+    int getRainTime();
+
+    void setRainTime(int rainTime);
+
+    boolean isThundering();
+
+    void setThundering(boolean thundering);
+
+    int getThunderTime();
+
+    void setThunderTime(int thunderTime);
+
+    long getCurrentTick();
+
+    void setCurrentTick(long currentTick);
+
+    long getTime();
+
+    void setTime(long value);
 
     long getSeed();
 

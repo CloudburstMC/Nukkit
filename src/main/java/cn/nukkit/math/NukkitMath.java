@@ -1,6 +1,6 @@
 package cn.nukkit.math;
 
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX

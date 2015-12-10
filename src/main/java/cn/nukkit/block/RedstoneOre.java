@@ -31,6 +31,11 @@ public class RedstoneOre extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 15;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }
@@ -51,7 +56,7 @@ public class RedstoneOre extends Solid {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_TOUCH) {
+        if (type == Level.BLOCK_UPDATE_TOUCH) { //type == Level.BLOCK_UPDATE_NORMAL ||
             this.getLevel().setBlock(this, Block.get(Item.GLOWING_REDSTONE_ORE, this.meta), false, true);
 
             return Level.BLOCK_UPDATE_WEAK;

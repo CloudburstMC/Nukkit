@@ -13,7 +13,6 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.*;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.ExplodePacket;
 
 import java.util.ArrayList;
@@ -220,7 +219,7 @@ public class Explosion {
         pk.z = (float) this.source.z;
         pk.radius = this.size;
         pk.records = send.stream().toArray(Vector3[]::new);
-        pk.setChannel(Network.CHANNEL_BLOCKS);
+
         this.level.addChunkPacket((int) source.x >> 4, (int) source.z >> 4, pk);
 
         return true;

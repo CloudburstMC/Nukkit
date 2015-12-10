@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.noise;
 
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -40,10 +40,36 @@ public class Simplex extends Perlin {
 
     public Simplex(Random random, double octaves, double persistence) {
         super(random, octaves, persistence);
+        this.offsetW = random.nextDouble() * 256;
+        this.SQRT_3 = Math.sqrt(3);
+        this.SQRT_5 = Math.sqrt(5);
+        this.F2 = 0.5 * (this.SQRT_3 - 1);
+        this.G2 = (3 - this.SQRT_3) / 6;
+        this.G22 = this.G2 * 2.0 - 1;
+        this.F3 = 1.0 / 3.0;
+        this.G3 = 1.0 / 6.0;
+        this.F4 = (this.SQRT_5 - 1.0) / 4.0;
+        this.G4 = (5.0 - this.SQRT_5) / 20.0;
+        this.G42 = this.G4 * 2.0;
+        this.G43 = this.G4 * 3.0;
+        this.G44 = this.G4 * 4.0 - 1.0;
     }
 
     public Simplex(Random random, double octaves, double persistence, double expansion) {
         super(random, octaves, persistence, expansion);
+        this.offsetW = random.nextDouble() * 256;
+        this.SQRT_3 = Math.sqrt(3);
+        this.SQRT_5 = Math.sqrt(5);
+        this.F2 = 0.5 * (this.SQRT_3 - 1);
+        this.G2 = (3 - this.SQRT_3) / 6;
+        this.G22 = this.G2 * 2.0 - 1;
+        this.F3 = 1.0 / 3.0;
+        this.G3 = 1.0 / 6.0;
+        this.F4 = (this.SQRT_5 - 1.0) / 4.0;
+        this.G4 = (5.0 - this.SQRT_5) / 20.0;
+        this.G42 = this.G4 * 2.0;
+        this.G43 = this.G4 * 3.0;
+        this.G44 = this.G4 * 4.0 - 1.0;
     }
 
 

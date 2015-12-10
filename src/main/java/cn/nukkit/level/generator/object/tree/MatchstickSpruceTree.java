@@ -3,8 +3,7 @@ package cn.nukkit.level.generator.object.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Wood;
 import cn.nukkit.level.ChunkManager;
-
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -35,14 +34,14 @@ public class MatchstickSpruceTree extends ObjectTree {
 
     @Override
     public void placeObject(ChunkManager level, int x, int y, int z, Random random) {
-        this.treeHeight = random.nextInt(10) + 5;
+        this.treeHeight = random.nextBoundedInt(10) + 5;
 
-        int topSize = this.getTreeHeight() - (1 + random.nextInt(2));
-        int lRadius = 1 + random.nextInt(2);
+        int topSize = this.getTreeHeight() - (1 + random.nextBoundedInt(2));
+        int lRadius = 1 + random.nextBoundedInt(2);
 
         this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - 1);
 
-        int radius = random.nextInt(2);
+        int radius = random.nextBoundedInt(2);
         int maxR = 1;
         int minR = 0;
 

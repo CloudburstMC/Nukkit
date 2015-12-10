@@ -26,8 +26,15 @@ public abstract class Living extends Entity implements Damageable {
         super(chunk, nbt);
     }
 
-    protected float gravity = 0.08f;
-    protected float drag = 0.02f;
+    @Override
+    protected float getGravity() {
+        return 0.08f;
+    }
+
+    @Override
+    protected float getDrag() {
+        return 0.02f;
+    }
 
     protected int attackTime = 0;
 

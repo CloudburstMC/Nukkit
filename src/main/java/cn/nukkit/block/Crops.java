@@ -40,7 +40,7 @@ public abstract class Crops extends Flowable {
 
     @Override
     public boolean onActivate(Item item) {
-        //骨粉
+        //Bone meal
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
             Crops block = (Crops) this.clone();
             block.meta += new Random().nextInt(3) + 2;

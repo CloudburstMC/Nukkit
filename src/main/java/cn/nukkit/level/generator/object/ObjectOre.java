@@ -3,8 +3,7 @@ package cn.nukkit.level.generator.object;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.VectorMath;
-
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -36,8 +35,8 @@ public class ObjectOre {
         double x2 = x + 8 - offset.x;
         double z1 = z + 8 + offset.y;
         double z2 = z + 8 - offset.y;
-        double y1 = y + this.random.nextInt(3) + 2;
-        double y2 = y + this.random.nextInt(3) + 2;
+        double y1 = y + this.random.nextBoundedInt(3) + 2;
+        double y2 = y + this.random.nextBoundedInt(3) + 2;
         for (int count = 0; count <= clusterSize; ++count) {
             double seedX = x1 + (x2 - x1) * count / clusterSize;
             double seedY = y1 + (y2 - y1) * count / clusterSize;

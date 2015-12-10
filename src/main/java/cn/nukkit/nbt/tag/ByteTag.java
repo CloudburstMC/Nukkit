@@ -5,8 +5,18 @@ import cn.nukkit.nbt.stream.NBTOutputStream;
 
 import java.io.IOException;
 
-public class ByteTag extends Tag {
+public class ByteTag extends NumberTag<Byte> {
     public byte data;
+
+    @Override
+    public Byte getData() {
+        return data;
+    }
+
+    @Override
+    public void setData(Byte data) {
+        this.data = data == null ? 0 : data;
+    }
 
     public ByteTag(String name) {
         super(name);

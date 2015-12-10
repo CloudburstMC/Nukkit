@@ -47,6 +47,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
         if (!this.levelData.contains("generatorOptions")) {
             this.levelData.putString("generatorOptions", "");
         }
+
     }
 
     @Override
@@ -69,13 +70,63 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public int getTime() {
-        return this.levelData.getInt("Time");
+    public boolean isRaining() {
+        return this.levelData.getBoolean("raining");
     }
 
     @Override
-    public void setTime(int value) {
-        this.levelData.putInt("Time", value);
+    public void setRaining(boolean raining) {
+        this.levelData.putBoolean("raining", raining);
+    }
+
+    @Override
+    public int getRainTime() {
+        return this.levelData.getInt("rainTime");
+    }
+
+    @Override
+    public void setRainTime(int rainTime) {
+        this.levelData.putInt("rainTime", rainTime);
+    }
+
+    @Override
+    public boolean isThundering() {
+        return this.levelData.getBoolean("thundering");
+    }
+
+    @Override
+    public void setThundering(boolean thundering) {
+        this.levelData.putBoolean("thundering", thundering);
+    }
+
+    @Override
+    public int getThunderTime() {
+        return this.levelData.getInt("thunderTime");
+    }
+
+    @Override
+    public void setThunderTime(int thunderTime) {
+        this.levelData.putInt("thunderTime", thunderTime);
+    }
+
+    @Override
+    public long getCurrentTick() {
+        return this.levelData.getLong("Time");
+    }
+
+    @Override
+    public void setCurrentTick(long currentTick) {
+        this.levelData.putLong("Time", currentTick);
+    }
+
+    @Override
+    public long getTime() {
+        return this.levelData.getLong("DayTime");
+    }
+
+    @Override
+    public void setTime(long value) {
+        this.levelData.putLong("DayTime", value);
     }
 
     @Override

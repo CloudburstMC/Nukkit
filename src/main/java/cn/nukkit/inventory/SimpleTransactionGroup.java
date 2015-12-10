@@ -88,8 +88,8 @@ public class SimpleTransactionGroup implements TransactionGroup {
             }
         }
 
-        for (Item needItem : needItems) {
-            for (Item haveItem : haveItems) {
+        for (Item needItem : new ArrayList<>(needItems)) {
+            for (Item haveItem : new ArrayList<>(haveItems)) {
                 if (needItem.deepEquals(haveItem)) {
                     int amount = Math.min(haveItem.getCount(), needItem.getCount());
                     needItem.setCount(needItem.getCount() - amount);

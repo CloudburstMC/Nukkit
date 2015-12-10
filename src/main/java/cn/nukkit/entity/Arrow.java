@@ -6,8 +6,7 @@ import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-
-import java.util.Random;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -21,9 +20,35 @@ public class Arrow extends Projectile {
         return NETWORK_ID;
     }
 
-    public float width = 0.5f;
-    public float length = 0.5f;
-    public float height = 0.5f;
+    @Override
+    public float getWidth() {
+        return 0.5f;
+    }
+
+    @Override
+    public float getLength() {
+        return 0.5f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 0.5f;
+    }
+
+    @Override
+    public float getGravity() {
+        return 0.05f;
+    }
+
+    @Override
+    public float getDrag() {
+        return 0.01f;
+    }
+
+    @Override
+    protected double getDamage() {
+        return 2;
+    }
 
     protected float gravity = 0.05f;
     protected float drag = 0.01f;
@@ -56,9 +81,9 @@ public class Arrow extends Projectile {
         if (!this.hadCollision && this.isCritical) {
             Random random = new Random();
             this.level.addParticle(new CriticalParticle(this.add(
-                    this.width / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.height / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.width / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500)));
+                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
+                    this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
+                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500)));
         } else if (this.onGround) {
             this.isCritical = false;
         }

@@ -76,23 +76,28 @@ public class Anvil extends BaseLevelProvider {
         }
 
         CompoundTag levelData = new CompoundTag("Data")
+                .putCompound("GameRules", new CompoundTag())
+
+                .putLong("DayTime", 0)
+                .putInt("GameType", 0)
+                .putString("generatorName", Generator.getGeneratorName(generator))
+                .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
+                .putInt("generatorVersion", 1)
                 .putBoolean("hardcore", false)
                 .putBoolean("initialized", true)
-                .putInt("GameType", 0)
-                .putInt("generatorVersion", 1)
+                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
+                .putString("LevelName", name)
+                .putBoolean("raining", false)
+                .putInt("rainTime", 0)
+                .putLong("RandomSeed", seed)
                 .putInt("SpawnX", 128)
                 .putInt("SpawnY", 70)
                 .putInt("SpawnZ", 128)
+                .putBoolean("thundering", false)
+                .putInt("thunderTime", 0)
                 .putInt("version", 19133)
-                .putInt("DayTime", 0)
-                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
-                .putLong("RandomSeed", seed)
-                .putLong("SizeOnDisk", 0)
-                .putInt("Time", 0)
-                .putString("generatorName", Generator.getGeneratorName(generator))
-                .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
-                .putString("LevelName", name)
-                .putCompound("GameRules", new CompoundTag());
+                .putLong("Time", 0)
+                .putLong("SizeOnDisk", 0);
 
         NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
     }

@@ -5,8 +5,18 @@ import cn.nukkit.nbt.stream.NBTOutputStream;
 
 import java.io.IOException;
 
-public class IntTag extends Tag {
+public class IntTag extends NumberTag<Integer> {
     public int data;
+
+    @Override
+    public Integer getData() {
+        return data;
+    }
+
+    @Override
+    public void setData(Integer data) {
+        this.data = data == null ? 0 : data;
+    }
 
     public IntTag(String name) {
         super(name);

@@ -42,7 +42,7 @@ public class Cake extends Transparent {
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
         return new AxisAlignedBB(
-                x + (1 + getDamage() << 1) / 16,
+                x + (1 + getDamage() * 2) / 16,
                 y,
                 z + 0.0625,
                 x - 0.0625 + 1,
@@ -54,7 +54,9 @@ public class Cake extends Transparent {
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (getSide(0).getId() != Block.AIR) {
-            return getLevel().setBlock(block, this, true, true);
+            getLevel().setBlock(block, this, true, true);
+
+            return true;
         }
         return false;
     }
@@ -63,9 +65,12 @@ public class Cake extends Transparent {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (getSide(0).getId() == Block.AIR) {
-                return getLevel().setBlock(this, new Air(), true) ? Level.BLOCK_UPDATE_NORMAL : 0;
+                getLevel().setBlock(this, new Air(), true);
+
+                return Level.BLOCK_UPDATE_NORMAL;
             }
         }
+
         return 0;
     }
 
@@ -77,7 +82,7 @@ public class Cake extends Transparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null && player.getHealth() < player.getMaxHealth()) {
-            EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, 3, 1);
+            EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, 3, EntityRegainHealthEvent.CAUSE_EATING);
             player.heal(3, event);
             if (!event.isCancelled()) {
                 if (++meta >= 0x06) {
