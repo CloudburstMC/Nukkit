@@ -318,8 +318,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[WORKBENCH] = Workbench.class;
             list[WHEAT_BLOCK] = Wheat.class;
             list[FARMLAND] = Farmland.class;
-            //list[FURNACE] = Furnace.class;
-            //list[BURNING_FURNACE] = BurningFurnace.class;
+            list[FURNACE] = Furnace.class;
+            list[BURNING_FURNACE] = BurningFurnace.class;
             list[SIGN_POST] = SignPost.class;
             //list[WOOD_DOOR_BLOCK] = WoodDoor.class;
             list[LADDER] = Ladder.class;

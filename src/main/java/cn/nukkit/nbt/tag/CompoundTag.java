@@ -190,6 +190,12 @@ public class CompoundTag extends Tag {
         }
     }
 
+    public Map<String, Tag> getTags() {
+        Map<String, Tag> newTag = new HashMap<String, Tag>();
+        newTag.putAll(tags);
+        return newTag;
+    }
+
     public boolean getBoolean(String string) {
         return getByte(string) != 0;
     }

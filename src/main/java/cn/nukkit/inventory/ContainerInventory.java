@@ -38,14 +38,16 @@ public abstract class ContainerInventory extends BaseInventory {
         pk.slots = this.getSize();
         InventoryHolder holder = this.getHolder();
         if (holder instanceof Vector3) {
-            pk.x = (int) ((Vector3) holder).x;
-            pk.y = (int) ((Vector3) holder).y;
-            pk.z = (int) ((Vector3) holder).z;
+            pk.x = (int) ((Vector3) holder).getX();
+            pk.y = (int) ((Vector3) holder).getY();
+            pk.z = (int) ((Vector3) holder).getZ();
         } else {
             pk.x = pk.y = pk.z = 0;
         }
 
         who.dataPacket(pk);
+
+        this.sendContents(who);
     }
 
     @Override
