@@ -2140,6 +2140,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.teleport(playerRespawnEvent.getRespawnPosition());
                         this.setSprinting(false);
                         this.setSneaking(false);
+                        
+                        this.getFoodData().setFoodLevel(20, 20);
 
                         this.extinguish();
                         this.setDataProperty(Player.DATA_AIR, new ShortEntityData(300));
