@@ -632,6 +632,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    @Deprecated
     public void attack(float damage, EntityDamageEvent source) {
         if (this.hasEffect(Effect.FIRE_RESISTANCE)
                 && (source.getCause() == EntityDamageEvent.CAUSE_FIRE
@@ -647,6 +648,32 @@ public abstract class Entity extends Location implements Metadatable {
         this.setLastDamageCause(source);
 
         this.setHealth(this.getHealth() - source.getFinalDamage());
+    }
+
+    public void attack(EntityDamageEvent source) {
+        if (hasEffect(Effect.FIRE_RESISTANCE)
+                && (source.getCause() == EntityDamageEvent.CAUSE_FIRE
+                || source.getCause() == EntityDamageEvent.CAUSE_FIRE_TICK
+                || source.getCause() == EntityDamageEvent.CAUSE_LAVA)) {
+            source.setCancelled();
+        }
+
+        getServer().getPluginManager().callEvent(source);
+        if (source.isCancelled()) {
+            return;
+        }
+        setLastDamageCause(source);
+        setHealth(getHealth() - source.getFinalDamage());
+    }
+
+    public void attack(float damage) {
+        EntityDamageEvent event = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, damage);
+        getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+        setLastDamageCause(event);
+        setHealth(getHealth() - event.getFinalDamage());
     }
 
     public void heal(float amount, EntityRegainHealthEvent source) {
@@ -1574,6 +1601,10 @@ public abstract class Entity extends Location implements Metadatable {
     @Override
     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
         this.server.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
+    }
+
+    public Server getServer() {
+        return server;
     }
 
 }
