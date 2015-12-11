@@ -40,4 +40,14 @@ public class ItemBlock extends Item {
         return this.block;
     }
 
+    //in order to fix named Unknown
+    @Override
+    public boolean hasCustomName() {
+        return true;
+    }
+
+    @Override
+    public String getCustomName() {
+        return getBlock().getName();
+    }
 }
