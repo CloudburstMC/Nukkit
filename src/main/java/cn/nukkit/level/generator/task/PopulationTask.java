@@ -48,7 +48,7 @@ public class PopulationTask extends AsyncTask {
 
         synchronized (manager) {
             synchronized (generator) {
-                synchronized (generator.getChunkManager()){
+                synchronized (generator.getChunkManager()) {
                     BaseFullChunk[] chunks = new BaseFullChunk[9];
 
                     BaseFullChunk chunk = this.chunk.clone();

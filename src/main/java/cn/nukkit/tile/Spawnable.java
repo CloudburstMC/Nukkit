@@ -28,9 +28,9 @@ public abstract class Spawnable extends Tile {
 
         CompoundTag tag = this.getSpawnCompound();
         BlockEntityDataPacket pk = new BlockEntityDataPacket();
-        pk.x = this.x;
+        pk.x = (int) this.x;
         pk.y = (byte) this.y;
-        pk.z = this.z;
+        pk.z = (int) this.z;
         try {
             pk.namedTag = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {

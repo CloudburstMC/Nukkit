@@ -183,7 +183,7 @@ public abstract class Living extends Entity implements Damageable {
             if (this.isInsideOfSolid()) {
                 hasUpdate = true;
                 EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1);
-                this.attack( ev);
+                this.attack(ev);
             }
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {

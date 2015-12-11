@@ -57,6 +57,7 @@ public class FallingSand extends Entity {
         super(chunk, nbt);
     }
 
+    @Override
     protected void initEntity() {
         super.initEntity();
 
@@ -84,12 +85,14 @@ public class FallingSand extends Entity {
         return false;
     }
 
-    public void attack(float damage, EntityDamageEvent source) {
+    @Override
+    public void attack(EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(damage, source);
+            super.attack(source);
         }
     }
 
+    @Override
     public boolean onUpdate(int currentTick) {
 
         if (closed) {
@@ -164,11 +167,13 @@ public class FallingSand extends Entity {
         return NETWORK_ID;
     }
 
+    @Override
     public void saveNBT() {
         namedTag.putInt("TileID", blockId);
         namedTag.putByte("Data", (byte) damage);
     }
 
+    @Override
     public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
         packet.type = FallingSand.NETWORK_ID;

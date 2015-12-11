@@ -56,9 +56,10 @@ public class PrimedTNT extends Entity implements Explosive {
         return NETWORK_ID;
     }
 
-    public void attack(float damage, EntityDamageEvent source) {
+    @Override
+    public void attack(EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(damage, source);
+            super.attack(source);
         }
     }
 
