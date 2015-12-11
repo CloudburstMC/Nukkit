@@ -33,9 +33,6 @@ public abstract class Tile extends Position {
     public FullChunk chunk;
     public String name;
     public long id;
-    public int x;
-    public int y;
-    public int z;
 
     public boolean closed = false;
     public CompoundTag namedTag;
@@ -43,12 +40,10 @@ public abstract class Tile extends Position {
     protected Server server;
 
     public Tile(FullChunk chunk, CompoundTag nbt) {
-        //todo: check if there need super()
-        super((double) nbt.getInt("x"), (double) nbt.getInt("y"), (double) nbt.getInt("z"), chunk.getProvider().getLevel());
-
         if (chunk == null || chunk.getProvider() == null) {
             throw new ChunkException("Invalid garbage Chunk given to Tile");
         }
+
         this.server = chunk.getProvider().getLevel().getServer();
         this.chunk = chunk;
         this.setLevel(chunk.getProvider().getLevel());
@@ -65,17 +60,44 @@ public abstract class Tile extends Position {
     }
 
     public static Tile createTile(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
-        if (knownTiles.containsKey(type)) {
-            try {
-                Class<? extends Tile> c = knownTiles.get(type);
-                Constructor constructor = c.getConstructor(String.class, FullChunk.class, CompoundTag.class, Object[].class);
-                constructor.setAccessible(true);
-                return (Tile) constructor.newInstance(type, chunk, nbt, args);
-            } catch (Exception e) {
+        Tile tile = null;
+
+        if (shortNames.containsKey(type)) {
+            Class<? extends Tile> clazz = knownTiles.get(type);
+
+            if (clazz == null) {
                 return null;
             }
+
+            for (Constructor constructor : clazz.getConstructors()) {
+                if (tile != null) {
+                    break;
+                }
+
+                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
+                    continue;
+                }
+
+                try {
+                    if (args == null || args.length == 0) {
+                        tile = (Tile) constructor.newInstance(chunk, nbt);
+                    } else {
+                        Object[] objects = new Object[args.length + 2];
+
+                        objects[0] = chunk;
+                        objects[1] = nbt;
+                        System.arraycopy(args, 0, objects, 2, args.length);
+                        tile = (Tile) constructor.newInstance(objects);
+
+                    }
+                } catch (Exception e) {
+                    //ignore
+                }
+
+            }
         }
-        return null;
+
+        return tile;
     }
 
     public static boolean registerTile(Class<? extends Tile> c) {
@@ -99,9 +121,9 @@ public abstract class Tile extends Position {
 
     public void saveNBT() {
         this.namedTag.putString("id", this.getSaveId());
-        this.namedTag.putInt("x", this.x);
-        this.namedTag.putInt("y", this.y);
-        this.namedTag.putInt("z", this.z);
+        this.namedTag.putInt("x", (int) this.getX());
+        this.namedTag.putInt("y", (int) this.getY());
+        this.namedTag.putInt("z", (int) this.getZ());
     }
 
     public Block getBlock() {
@@ -140,4 +162,5 @@ public abstract class Tile extends Position {
     public String getName() {
         return name;
     }
+
 }

@@ -92,15 +92,15 @@ public abstract class Living extends Entity implements Damageable {
     }
 
     @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         if (this.attackTime > 0 && this.noDamageTicks > 0) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
-            if (lastCause != null && lastCause.getDamage() >= damage) {
+            if (lastCause != null && lastCause.getDamage() >= source.getDamage()) {
                 source.setCancelled();
             }
         }
 
-        super.attack(damage, source);
+        super.attack(source);
 
         if (source.isCancelled()) {
             return;
@@ -116,9 +116,9 @@ public abstract class Living extends Entity implements Damageable {
                 this.setOnFire(2 * this.server.getDifficulty());
             }
 
-            double deltaX = this.x - e.x;
-            double deltaZ = this.z = e.z;
-            this.knockBack(e, damage, deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
+            double deltaX = this.x - e.getX();
+            double deltaZ = this.z = e.getZ();
+            this.knockBack(e, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
         }
 
         EntityEventPacket pk = new EntityEventPacket();
@@ -183,7 +183,7 @@ public abstract class Living extends Entity implements Damageable {
             if (this.isInsideOfSolid()) {
                 hasUpdate = true;
                 EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1);
-                this.attack(ev.getFinalDamage(), ev);
+                this.attack( ev);
             }
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
@@ -196,7 +196,7 @@ public abstract class Living extends Entity implements Damageable {
                     if (airTicks <= -20) {
                         airTicks = 0;
                         EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2);
-                        this.attack(ev.getFinalDamage(), ev);
+                        this.attack(ev);
                     }
 
                     this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
@@ -209,7 +209,7 @@ public abstract class Living extends Entity implements Damageable {
                     if (airTicks <= -20) {
                         airTicks = 0;
                         EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 2);
-                        this.attack(ev.getFinalDamage(), ev);
+                        this.attack(ev);
                     }
 
                     this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
