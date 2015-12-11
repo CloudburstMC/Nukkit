@@ -116,8 +116,8 @@ public abstract class Living extends Entity implements Damageable {
                 this.setOnFire(2 * this.server.getDifficulty());
             }
 
-            double deltaX = this.x - e.getX();
-            double deltaZ = this.z = e.getZ();
+            double deltaX = this.x - e.x;
+            double deltaZ = this.z = e.z;
             this.knockBack(e, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
         }
 

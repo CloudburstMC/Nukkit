@@ -1065,7 +1065,7 @@ public abstract class Entity extends Location implements Metadatable {
         Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
 
         if (block instanceof Water) {
-            double f = (block.getY() + 1) - (((Water) block).getFluidHeightPercent() - 0.1111111);
+            double f = (block.y + 1) - (((Water) block).getFluidHeightPercent() - 0.1111111);
             return y < f;
         }
 
@@ -1280,9 +1280,9 @@ public abstract class Entity extends Location implements Metadatable {
         if (vector.lengthSquared() > 0) {
             vector = vector.normalize();
             double d = 0.014d;
-            this.motionX += vector.getX() * d;
-            this.motionY += vector.getY() * d;
-            this.motionZ += vector.getZ() * d;
+            this.motionX += vector.x * d;
+            this.motionY += vector.y * d;
+            this.motionZ += vector.z * d;
         }
     }
 
@@ -1342,13 +1342,13 @@ public abstract class Entity extends Location implements Metadatable {
             }
         }
 
-        this.x = pos.getX();
-        this.y = pos.getY();
-        this.z = pos.getZ();
+        this.x = pos.x;
+        this.y = pos.y;
+        this.z = pos.z;
 
         float radius = this.getWidth() / 2;
 
-        this.boundingBox.setBounds(pos.getX() - radius, pos.getY(), pos.getZ() - radius, pos.getX() + radius, pos.getY() + this.getHealth(), pos.getZ() + radius);
+        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + this.getHealth(), pos.z + radius);
 
         this.checkChunks();
 
@@ -1368,9 +1368,9 @@ public abstract class Entity extends Location implements Metadatable {
             }
         }
 
-        this.motionX = motion.getX();
-        this.motionY = motion.getY();
-        this.motionZ = motion.getZ();
+        this.motionX = motion.x;
+        this.motionY = motion.y;
+        this.motionZ = motion.z;
 
         if (!this.justCreated) {
             this.updateMovement();
