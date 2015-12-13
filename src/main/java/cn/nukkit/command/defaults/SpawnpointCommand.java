@@ -44,15 +44,16 @@ public class SpawnpointCommand extends VanillaCommand {
         DecimalFormat round2 = new DecimalFormat("##0.00");
         if(args.length == 4){
             if(level != null){
-                int x = 0;
-                int y = 128;
-                int z = 0;
+                int x;
+                int y;
+                int z;
                 try {
                     x = Integer.parseInt(args[1]);
                     y = Integer.parseInt(args[2]);
                     z = Integer.parseInt(args[3]);
                 } catch (NumberFormatException e1) {
                     sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
                 }
                 if (y < 0) y = 0;
                 if (y > 128) y = 128;

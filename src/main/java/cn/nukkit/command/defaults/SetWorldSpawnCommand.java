@@ -37,7 +37,12 @@ public class SetWorldSpawnCommand extends VanillaCommand {
             }
         }else if(args.length == 3){
             level = sender.getServer().getDefaultLevel();
-            pos = new Vector3(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+            try {
+                pos = new Vector3(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+            } catch (NumberFormatException e1) {
+                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                return true;
+            }
         }else{
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
