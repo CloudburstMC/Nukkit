@@ -72,4 +72,28 @@ public class TextFormat {
         return new String(b);
     }
 
+    public static String getLastColors(String input){
+        String result = "";
+        int length = input.length();
+        for (int index = length - 1; index > -1; index--){
+            char section = input.charAt(index);
+            if ((section == '§') && (index < length - 1)){
+                char c = input.charAt(index + 1);
+                String color = "§"+c;
+                    result = color + result;
+                    if (isColor(c)||c=='r'||c=='R') {
+                        break;
+                    }
+            }
+        }
+        return result;
+    }
+
+    private static boolean isColor(char c){
+        String colors = "0123456789AaBbCcDdEeFf";
+        for (char a : colors.toCharArray())
+            if (a==c) return true;
+        return false;
+    }
+
 }
