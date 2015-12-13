@@ -25,9 +25,29 @@ public class LibraryLoader {
         }
     }
 
+    public static void load(String library) {
+        String[] split = library.split(":");
+        if (split.length != 3) {
+            throw new IllegalArgumentException(library);
+        }
+        load(new Library() {
+            public String getGroupId() {
+                return split[0];
+            }
+
+            public String getArtifactId() {
+                return split[1];
+            }
+
+            public String getVersion() {
+                return split[2];
+            }
+        });
+    }
+
     public static void load(Library library) {
-        String filePath = getFilePath(library);
-        String fileName = getFileName(library);
+        String filePath = library.getGroupId().replace('.', '/') + '/' + library.getArtifactId() + '/' + library.getVersion();
+        String fileName = library.getArtifactId() + '-' + library.getVersion() + SUFFIX;
 
         File folder = new File(BASE_FOLDER, filePath);
         if (folder.mkdirs()) {
@@ -59,14 +79,6 @@ public class LibraryLoader {
         }
 
         LOGGER.info("Load library " + fileName + " done!");
-    }
-
-    public static String getFilePath(Library library) {
-        return library.getGroupId().replace('.', '/') + '/' + library.getArtifactId() + '/' + library.getVersion();
-    }
-
-    public static String getFileName(Library library) {
-        return library.getArtifactId() + '-' + library.getVersion() + SUFFIX;
     }
 
     public static File getBaseFolder() {
