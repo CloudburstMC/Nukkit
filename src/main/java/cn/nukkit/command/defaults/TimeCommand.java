@@ -90,8 +90,11 @@ public class TimeCommand extends VanillaCommand {
                 value = 0;
             } else if ("night".equals(args[1])) {
                 value = Level.TIME_NIGHT;
-            } else {
+            } else if (args[1].matches("^[1-9]+\\d*$")){
                 value = Math.max(0, Integer.parseInt(args[1]));
+            } else {
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.usage"));
+                return true;
             }
 
             for (Level level : sender.getServer().getLevels().values()) {

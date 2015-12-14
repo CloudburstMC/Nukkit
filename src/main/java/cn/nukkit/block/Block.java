@@ -220,7 +220,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int CARPET = 171;
     public static final int HARDENED_CLAY = 172;
     public static final int COAL_BLOCK = 173;
-
+    public static final int PACKED_ICE = 174;
     public static final int DOUBLE_PLANT = 175;
 
     public static final int FENCE_GATE_SPRUCE = 183;
@@ -311,7 +311,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[FIRE] = Fire.class;
             //list[MONSTER_SPAWNER] = MonsterSpawner.class;
             list[WOOD_STAIRS] = WoodStairs.class;
-            //list[CHEST] = Chest.class;
+            list[CHEST] = Chest.class;
 
             list[DIAMOND_ORE] = DiamondOre.class;
             list[DIAMOND_BLOCK] = Diamond.class;
@@ -333,7 +333,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             list[SNOW_LAYER] = SnowLayer.class;
             list[ICE] = Ice.class;
-            //list[SNOW_BLOCK] = Snow.class;
+            list[SNOW_BLOCK] = SnowBlock.class;
             list[CACTUS] = Cactus.class;
             //list[CLAY_BLOCK] = Clay.class;
             //list[SUGARCANE_BLOCK] = Sugarcane.class;
@@ -404,7 +404,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[CARPET] = Carpet.class;
             list[HARDENED_CLAY] = HardenedClay.class;
             list[COAL_BLOCK] = Coal.class;
-
+            list[PACKED_ICE] = PackedIce.class;
             list[DOUBLE_PLANT] = DoublePlant.class;
 
             list[FENCE_GATE_SPRUCE] = FenceGateSpruce.class;
