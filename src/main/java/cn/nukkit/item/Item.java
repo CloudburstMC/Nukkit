@@ -114,7 +114,7 @@ public class Item implements Cloneable {
     public static final int OAK_WOOD_STAIRS = 53;
     public static final int OAK_WOODEN_STAIRS = 53;
     public static final int CHEST = 54;
-
+    public static final int REDSTONE_DUST_BLOCK = 55;
     public static final int DIAMOND_ORE = 56;
     public static final int DIAMOND_BLOCK = 57;
     public static final int CRAFTING_TABLE = 58;
@@ -828,6 +828,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.BUCKET, 1));
         addCreativeItem(Item.get(Item.BUCKET, 8));
         addCreativeItem(Item.get(Item.BUCKET, 10));
+        addCreativeItem(Item.get(Item.REDSTONE, 0));
         addCreativeItem(Item.get(Item.TNT, 0));
         addCreativeItem(Item.get(Item.IRON_HOE, 0));
         addCreativeItem(Item.get(Item.IRON_SHOVEL, 0));

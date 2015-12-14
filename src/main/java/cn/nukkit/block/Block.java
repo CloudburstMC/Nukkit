@@ -91,7 +91,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int OAK_WOOD_STAIRS = 53;
     public static final int OAK_WOODEN_STAIRS = 53;
     public static final int CHEST = 54;
-
+    public static final int REDSTONE_DUST = 55;
     public static final int DIAMOND_ORE = 56;
     public static final int DIAMOND_BLOCK = 57;
     public static final int CRAFTING_TABLE = 58;
@@ -246,6 +246,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     protected int meta = 0;
 
+    protected int redEnergyLevel = 0;
+    protected boolean energySource = false;
+
     public AxisAlignedBB boundingBox = null;
 
     protected Block(Integer meta) {
@@ -312,7 +315,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[MONSTER_SPAWNER] = MonsterSpawner.class;
             list[WOOD_STAIRS] = WoodStairs.class;
             list[CHEST] = Chest.class;
-
+            list[REDSTONE_DUST] = RedstoneDust.class;
             list[DIAMOND_ORE] = DiamondOre.class;
             list[DIAMOND_BLOCK] = Diamond.class;
             list[WORKBENCH] = Workbench.class;
@@ -335,7 +338,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[ICE] = Ice.class;
             list[SNOW_BLOCK] = SnowBlock.class;
             list[CACTUS] = Cactus.class;
-            //list[CLAY_BLOCK] = Clay.class;
+            list[CLAY_BLOCK] = Clay.class;
             //list[SUGARCANE_BLOCK] = Sugarcane.class;
             list[FENCE] = Fence.class;
             list[PUMPKIN] = Pumpkin.class;
@@ -812,6 +815,39 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     public Block clone() {
         return (Block) super.clone();
+    }
+
+    public void setRedEnergyLevel(int energyLevel) {
+        redEnergyLevel = energyLevel;
+    }
+
+    public int getRedEnergyLevel() {
+        return redEnergyLevel;
+    }
+
+    public boolean hasRedEnergy() {
+        //todo: There is incorrect and need rewrite.
+        int energy = 0;
+        if(this.redEnergyLevel > 0) return true;
+        energy += this.getSide(SIDE_DOWN).getRedEnergyLevel();
+        energy += this.getSide(SIDE_UP).getRedEnergyLevel();
+        energy += this.getSide(SIDE_EAST).getRedEnergyLevel();
+        energy += this.getSide(SIDE_WEST).getRedEnergyLevel();
+        energy += this.getSide(SIDE_NORTH).getRedEnergyLevel();
+        energy += this.getSide(SIDE_SOUTH).getRedEnergyLevel();
+        return energy > 0 ? true : false;
+    }
+
+    public boolean hasRedEnerySelf() {
+        return this.redEnergyLevel > 0 ? true : false;
+    }
+
+    public boolean isEnergySource() {
+        return this.energySource;
+    }
+
+    public void setEnergySource(boolean isSource) {
+        this.energySource = isSource;
     }
 
 }
