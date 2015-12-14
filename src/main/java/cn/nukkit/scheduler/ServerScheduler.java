@@ -4,7 +4,6 @@ import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -16,21 +15,16 @@ import java.util.PriorityQueue;
 public class ServerScheduler {
     public static int WORKERS = 4;
 
-    protected PriorityQueue<TaskHandler> queue;
-    protected Map<Integer, TaskHandler> tasks;
-    protected AsyncPool asyncPool;
-    private int ids = 1;
-    protected int currentTick = 0;
+    private final AsyncPool asyncPool;
 
-    Comparator<TaskHandler> comparator = new Comparator<TaskHandler>() {
-        @Override
-        public int compare(TaskHandler handler1, TaskHandler handler2) {
-            return handler1.getNextRun() < handler2.getNextRun() ? 1 : (handler1.getNextRun() == handler2.getNextRun() ? 0 : -1);
-        }
-    };
+    private final PriorityQueue<TaskHandler> queue;
+    private final Map<Integer, TaskHandler>  tasks;
+
+    private int currentTaskId;
+    private int currentTick;
 
     public ServerScheduler() {
-        this.queue = new PriorityQueue<>(11, comparator);
+        this.queue = new PriorityQueue<>(11, (left, right) -> left.getNextRun() - right.getNextRun());
         this.tasks = new HashMap<>();
         this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
@@ -108,9 +102,9 @@ public class ServerScheduler {
         for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
             entry.getValue().cancel();
         }
-        this.tasks = new HashMap<>();
-        this.queue = new PriorityQueue<>(11, comparator);
-        this.ids = 1;
+        this.tasks.clear();
+        this.queue.clear();
+        this.currentTaskId = 0;
     }
 
     public boolean isQueued(int taskId) {
@@ -180,12 +174,16 @@ public class ServerScheduler {
         this.asyncPool.collectTasks();
     }
 
+    public int getQueueSize() {
+        return queue.size();
+    }
+
     private boolean isReady(int currentTick) {
         return this.queue.peek() != null && this.queue.peek().getNextRun() <= currentTick;
     }
 
     private int nextId() {
-        return this.ids++;
+        return ++currentTaskId;
     }
 
 }
