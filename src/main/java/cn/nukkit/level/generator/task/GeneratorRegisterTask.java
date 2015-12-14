@@ -9,7 +9,6 @@ import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.scheduler.AsyncTask;
 
 import java.util.Map;
-import java.util.Random;
 
 /**
  * author: MagicDroidX

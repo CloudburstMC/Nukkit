@@ -67,8 +67,7 @@ public class Grass extends Solid {
             item.useOn(this);
             this.getLevel().setBlock(this, new Farmland());
             return true;
-        }
-        else if(item.isShovel()) {
+        } else if (item.isShovel()) {
             item.useOn(this);
             this.getLevel().setBlock(this, new GrassPath());
             return true;
@@ -79,26 +78,26 @@ public class Grass extends Solid {
 
     @Override
     public int onUpdate(int type) {
-        if(type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == Level.BLOCK_UPDATE_RANDOM) {
             //todo: light levels
             Random random = new Random();
             int x = ((int) this.x) - 1 + random.nextInt() % 3;
             int y = ((int) this.y) - 2 + random.nextInt() % 5;
             int z = ((int) this.z) - 1 + random.nextInt() % 3;
             Block block = this.getLevel().getBlock(new Vector3(x, y, z));
-            if(block.getId() == Block.DIRT){
-                if((block.getSide(Vector3.SIDE_UP) instanceof Transparent) && !(block.getSide(Vector3.SIDE_UP) instanceof Liquid)) {
+            if (block.getId() == Block.DIRT) {
+                if ((block.getSide(Vector3.SIDE_UP) instanceof Transparent) && !(block.getSide(Vector3.SIDE_UP) instanceof Liquid)) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new Grass());
                     Server.getInstance().getPluginManager().callEvent(ev);
-                    if(!ev.isCancelled()) {
+                    if (!ev.isCancelled()) {
                         this.getLevel().setBlock(block, ev.getNewState(), true, true);
                     }
                 }
             }
-            if(!(this.getSide(Vector3.SIDE_UP) instanceof Transparent) || (this.getSide(Vector3.SIDE_UP) instanceof Liquid)) {
+            if (!(this.getSide(Vector3.SIDE_UP) instanceof Transparent) || (this.getSide(Vector3.SIDE_UP) instanceof Liquid)) {
                 BlockUpdateEvent ev = new BlockUpdateEvent(new Dirt());
                 Server.getInstance().getPluginManager().callEvent(ev);
-                if(!ev.isCancelled()) {
+                if (!ev.isCancelled()) {
                     this.getLevel().setBlock(this, ev.getBlock(), true, true);
                 }
             }

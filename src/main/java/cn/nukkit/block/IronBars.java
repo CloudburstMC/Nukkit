@@ -9,7 +9,7 @@ import cn.nukkit.item.Tool;
  */
 public class IronBars extends Thin {
 
-    public IronBars(){
+    public IronBars() {
         this(0);
     }
 

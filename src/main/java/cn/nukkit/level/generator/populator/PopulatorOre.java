@@ -4,7 +4,6 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.object.ObjectOre;
 import cn.nukkit.level.generator.object.OreType;
 import cn.nukkit.math.NukkitMath;
-
 import cn.nukkit.utils.Random;
 
 /**

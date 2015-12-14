@@ -13,7 +13,6 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.*;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.ExplodePacket;
 
 import java.util.ArrayList;
@@ -152,13 +151,13 @@ public class Explosion {
 
                 if (this.what instanceof Entity) {
                     EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent((Entity) this.what, entity, EntityDamageEvent.CAUSE_ENTITY_EXPLOSION, damage);
-                    entity.attack(ev.getFinalDamage(), ev);
+                    entity.attack(ev);
                 } else if (this.what instanceof Block) {
                     EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent((Block) this.what, entity, EntityDamageEvent.CAUSE_BLOCK_EXPLOSION, damage);
-                    entity.attack(ev.getFinalDamage(), ev);
+                    entity.attack(ev);
                 } else {
                     EntityDamageEvent ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_BLOCK_EXPLOSION, damage);
-                    entity.attack(ev.getFinalDamage(), ev);
+                    entity.attack(ev);
                 }
 
                 entity.setMotion(motion.multiply(impact));

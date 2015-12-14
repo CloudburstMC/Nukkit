@@ -131,7 +131,7 @@ public class ServerScheduler {
         }
 
         if (period <= -1) {
-            delay = -1;
+            period = -1;
         } else if (period < 1) {
             period = 1;
         }

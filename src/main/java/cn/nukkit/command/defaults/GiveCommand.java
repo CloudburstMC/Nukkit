@@ -22,10 +22,10 @@ public class GiveCommand extends VanillaCommand {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
-        if(args.length < 2){
+        if (args.length < 2) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
@@ -42,7 +42,7 @@ public class GiveCommand extends VanillaCommand {
             Collection<Item> itemsCollection = new ArrayList<>();
             int count = Integer.parseInt(args[2]);
 
-            while(count > 0){
+            while (count > 0) {
                 Item slot = rawItem.clone();
                 if (count > rawItem.getMaxStackSize()) {
                     itemsCollection.add(slot);
@@ -54,20 +54,20 @@ public class GiveCommand extends VanillaCommand {
             }
             items = itemsCollection.toArray(new Item[1]);
         }
-        if(player != null){
-            if(rawItem.getId() == 0){
+        if (player != null) {
+            if (rawItem.getId() == 0) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", args[1]));
                 return true;
             }
             player.getInventory().addItem(items);
-        }else{
+        } else {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             return true;
         }
         Command.broadcastCommandMessage(sender, new TranslationContainer(
                 "%commands.give.success",
                 new String[]{
-                        rawItem.getName()+" ("+rawItem.getId()+":"+rawItem.getDamage()+")",
+                        rawItem.getName() + " (" + rawItem.getId() + ":" + rawItem.getDamage() + ")",
                         args[2],
                         player.getName()
                 }

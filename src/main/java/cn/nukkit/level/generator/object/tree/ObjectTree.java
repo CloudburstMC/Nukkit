@@ -3,10 +3,10 @@ package cn.nukkit.level.generator.object.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Sapling;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.utils.Random;
 
 import java.util.HashMap;
 import java.util.Map;
-import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX

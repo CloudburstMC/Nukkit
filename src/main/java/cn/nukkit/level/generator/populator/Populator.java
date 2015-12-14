@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.populator;
 
 import cn.nukkit.level.ChunkManager;
-
 import cn.nukkit.utils.Random;
 
 /**

@@ -18,7 +18,7 @@ public abstract class Thin extends Transparent {
         return false;
     }
 
-    protected AxisAlignedBB recalculateBoundingBox(){
+    protected AxisAlignedBB recalculateBoundingBox() {
         double f = 0.4375;
         double f1 = 0.5625;
         double f2 = 0.4375;
@@ -48,7 +48,7 @@ public abstract class Thin extends Transparent {
                 f2 = 0;
                 f3 = 1;
             }
-        } catch (LevelException ignore){
+        } catch (LevelException ignore) {
             //null sucks
         }
         return new AxisAlignedBB(
@@ -60,7 +60,8 @@ public abstract class Thin extends Transparent {
                 this.z + f3
         );
     }
-    public boolean canConnect(Block block){
+
+    public boolean canConnect(Block block) {
         return block.isSolid() || block.getId() == this.getId() || block.getId() == GLASS_PANE || block.getId() == GLASS;
     }
 

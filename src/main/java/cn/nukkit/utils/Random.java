@@ -10,12 +10,13 @@ import java.util.zip.CRC32;
  */
 public class Random {
     protected long seed;
+
     public Random() {
         this(-1);
     }
 
     public Random(long seeds) {
-        if(seeds == -1) {
+        if (seeds == -1) {
             seeds = System.currentTimeMillis() / 1000L;
         }
         this.setSeed(seeds);
@@ -24,13 +25,13 @@ public class Random {
     public void setSeed(long seeds) {
         CRC32 crc32 = new CRC32();
         ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
-        buffer.putInt((int)seeds);
+        buffer.putInt((int) seeds);
         crc32.update(buffer.array());
         this.seed = crc32.getValue();
     }
 
     public int nextSignedInt() {
-        int t = (((int) ((this.seed * 65535) + 31337) >> 8) +1337);
+        int t = (((int) ((this.seed * 65535) + 31337) >> 8) + 1337);
         this.seed ^= t;
         return t;
     }
@@ -40,19 +41,19 @@ public class Random {
     }
 
     public double nextDouble() {
-        return (double)this.nextInt() / 0x7fffffff;
+        return (double) this.nextInt() / 0x7fffffff;
     }
 
     public float nextFloat() {
-        return (float)this.nextInt() / 0x7fffffff;
+        return (float) this.nextInt() / 0x7fffffff;
     }
 
     public float nextSignedFloat() {
-        return (float)this.nextInt() / 0x7fffffff;
+        return (float) this.nextInt() / 0x7fffffff;
     }
 
     public double nextSignedDouble() {
-        return (double)this.nextSignedInt() / 0x7fffffff;
+        return (double) this.nextSignedInt() / 0x7fffffff;
     }
 
     public boolean nextBoolean() {

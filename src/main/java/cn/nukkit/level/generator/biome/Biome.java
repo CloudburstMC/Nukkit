@@ -3,11 +3,11 @@ package cn.nukkit.level.generator.biome;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.populator.Populator;
+import cn.nukkit.utils.Random;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
