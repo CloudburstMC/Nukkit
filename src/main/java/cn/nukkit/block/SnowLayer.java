@@ -11,11 +11,11 @@ import cn.nukkit.level.Level;
  */
 public class SnowLayer extends Flowable {
 
-    public SnowLayer(){
+    public SnowLayer() {
         this(0);
     }
 
-    public SnowLayer(int meta){
+    public SnowLayer(int meta) {
         super(meta);
     }
 
@@ -49,7 +49,7 @@ public class SnowLayer extends Flowable {
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         Block down = this.getSide(0);
-        if(down.isSolid()){
+        if (down.isSolid()) {
             this.getLevel().setBlock(block, this, true);
 
             return true;
@@ -59,8 +59,8 @@ public class SnowLayer extends Flowable {
 
     @Override
     public int onUpdate(int type) {
-        if(type == Level.BLOCK_UPDATE_NORMAL) {
-            if(this.getSide(0).getId() == AIR) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.getSide(0).getId() == AIR) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -71,7 +71,7 @@ public class SnowLayer extends Flowable {
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isShovel()) {
+        if (item.isShovel()) {
             return new int[][]{
                     {Item.SNOWBALL, 0, 1}
             };

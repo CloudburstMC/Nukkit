@@ -32,11 +32,10 @@ public class PopulatorFlower extends Populator {
             int y = this.getHighestWorkableBlock(x, z);
 
             if (y != -1 && this.canFlowerStay(x, y, z)) {
-                if(random.nextBoolean()) {
+                if (random.nextBoolean()) {
                     this.level.setBlockIdAt(x, y, z, Block.DANDELION);
                     this.level.setBlockDataAt(x, y, z, 0);
-                }
-                else {
+                } else {
                     this.level.setBlockIdAt(x, y, z, Block.ROSE);
                     this.level.setBlockDataAt(x, y, z, 0);
                 }

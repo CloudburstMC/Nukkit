@@ -4,14 +4,17 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.PrimedTNT;
 import cn.nukkit.item.Item;
-import cn.nukkit.nbt.tag.*;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Random;
 
 /**
  * Created on 2015/12/8 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class TNT extends Solid{
+public class TNT extends Solid {
 
     public TNT() {
         this(0);
@@ -48,7 +51,7 @@ public class TNT extends Solid{
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if(item.getId() == Item.FLINT_STEEL){
+        if (item.getId() == Item.FLINT_STEEL) {
             item.useOn(this);
             this.getLevel().setBlock(this, new Air(), true);
             double mot = (new Random()).nextSignedFloat() * Math.PI * 2;

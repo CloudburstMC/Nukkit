@@ -191,9 +191,7 @@ public class CompoundTag extends Tag {
     }
 
     public Map<String, Tag> getTags() {
-        Map<String, Tag> newTag = new HashMap<String, Tag>();
-        newTag.putAll(tags);
-        return newTag;
+        return new HashMap<>(this.tags);
     }
 
     public boolean getBoolean(String string) {

@@ -21,14 +21,6 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
 
     protected FurnaceInventory inventory;
 
-    public Furnace(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
-        this(chunk, nbt);
-    }
-
-    public Furnace(FullChunk chunk, CompoundTag nbt, Object... args) {
-        this(chunk, nbt);
-    }
-
     public Furnace(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         this.inventory = new FurnaceInventory(this);

@@ -8,7 +8,7 @@ import cn.nukkit.item.Tool;
  * Created on 2015/12/8 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class Pumpkin extends Solid{
+public class Pumpkin extends Solid {
     public Pumpkin() {
         this(0);
     }
@@ -44,8 +44,8 @@ public class Pumpkin extends Solid{
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if(player != null){
-            if(player.getDirection() != null) {
+        if (player != null) {
+            if (player.getDirection() != null) {
                 this.meta = (player.getDirection() + 5) % 4;
             }
         }

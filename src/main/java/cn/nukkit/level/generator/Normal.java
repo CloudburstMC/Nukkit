@@ -12,7 +12,10 @@ import cn.nukkit.level.generator.populator.PopulatorGroundCover;
 import cn.nukkit.level.generator.populator.PopulatorOre;
 import cn.nukkit.math.Vector3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -52,6 +55,11 @@ public class Normal extends Generator {
         if (GAUSSIAN_KERNEL == null) {
             generateKernel();
         }
+    }
+
+    @Override
+    public ChunkManager getChunkManager() {
+        return level;
     }
 
     public static void generateKernel() {
@@ -150,8 +158,8 @@ public class Normal extends Generator {
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
-        for(int genx = 0; genx < 16; genx++) {
-            for(int genz = 0; genz < 16; genz++) {
+        for (int genx = 0; genx < 16; genx++) {
+            for (int genz = 0; genz < 16; genz++) {
                 int baseheight = (int) (waterHeight + waterHeight * baseNoise[genx][genz] * 0.05F + 3);
                 int oceanheight = (int) (oceanNoise[genx][genz] > 0.5 ? (oceanNoise[genx][genz] - 0.5) * 40 : 0);
                 int mountainheight = (int) (mountainNoise[genx][genz] > -0.2 ? (mountainNoise[genx][genz] + 0.2) / 1.2 * 25 : 0);
@@ -160,22 +168,19 @@ public class Normal extends Generator {
                 Biome biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
                 chunk.setBiomeId(genx, genz, biome.getId());
 
-                for(int geny = 0; geny <= generatey; geny++) {
+                for (int geny = 0; geny <= generatey; geny++) {
                     int biomecolor = biome.getColor();
                     //todo: smooth color
                     chunk.setBiomeColor(genx, genz, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
-                    if(geny <= bedrockDepth && (geny == 0 || random.nextRange(1,5) == 1)) {
+                    if (geny <= bedrockDepth && (geny == 0 || random.nextRange(1, 5) == 1)) {
                         chunk.setBlock(genx, geny, genz, Block.BEDROCK);
-                    }
-                    else if(geny > height) {
-                        if((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == waterHeight) {
+                    } else if (geny > height) {
+                        if ((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == waterHeight) {
                             chunk.setBlock(genx, geny, genz, Block.ICE);
-                        }
-                        else {
+                        } else {
                             chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
                         }
-                    }
-                    else {
+                    } else {
                         chunk.setBlock(genx, geny, genz, Block.STONE);
                     }
                 }
@@ -183,7 +188,7 @@ public class Normal extends Generator {
             }
         }
 
-        for(Populator populator : this.generationPopulators) {
+        for (Populator populator : this.generationPopulators) {
             populator.populate(this.level, chunkX, chunkZ, this.random);
         }
     }

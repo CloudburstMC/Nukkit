@@ -137,11 +137,11 @@ public class PlayerFood {
                 EntityDamageEvent ev = new EntityDamageEvent(this.getPlayer(), EntityDamageEvent.CAUSE_VOID, 1);
                 int now = this.getPlayer().getHealth();
                 if (diff == 1) {
-                    if (now > 10) this.getPlayer().attack(1, ev);
+                    if (now > 10) this.getPlayer().attack(ev);
                 } else if (diff == 2) {
-                    if (now > 1) this.getPlayer().attack(1, ev);
+                    if (now > 1) this.getPlayer().attack(ev);
                 } else {
-                    this.getPlayer().attack(1, ev);
+                    this.getPlayer().attack(ev);
                 }
 
                 this.foodTickTimer = 0;

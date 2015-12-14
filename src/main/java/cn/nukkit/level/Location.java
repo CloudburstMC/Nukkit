@@ -57,7 +57,7 @@ public class Location extends Position {
     }
 
     public static Location fromObject(Vector3 pos, Level level, float yaw, float pitch) {
-        return new Location((int) pos.x, (int) pos.y, (int) pos.z, yaw, pitch, (level == null) ? ((pos instanceof Position) ? ((Position) pos).level : null) : level);
+        return new Location(pos.x, pos.y, pos.z, yaw, pitch, (level == null) ? ((pos instanceof Position) ? ((Position) pos).level : null) : level);
     }
 
     public double getYaw() {

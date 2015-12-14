@@ -3,7 +3,6 @@ package cn.nukkit.level.generator.object;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.VectorMath;
-
 import cn.nukkit.utils.Random;
 
 /**

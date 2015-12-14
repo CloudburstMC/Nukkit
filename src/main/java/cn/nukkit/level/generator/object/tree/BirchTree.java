@@ -3,7 +3,6 @@ package cn.nukkit.level.generator.object.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Wood;
 import cn.nukkit.level.ChunkManager;
-
 import cn.nukkit.utils.Random;
 
 /**

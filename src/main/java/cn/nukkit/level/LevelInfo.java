@@ -6,48 +6,48 @@ import cn.nukkit.level.generator.Generator;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class LevelInfo {
+public final class LevelInfo {
 
-    private long dayTime;
+    public long time;
 
-    private int gameType;
+    public int gameType;
 
     private Class<? extends Generator> generator;
 
-    private long lastPlayed;
+    public long lastPlayed;
 
-    private String levelName;
+    public String levelName;
 
-    private boolean raining;
+    public boolean raining;
 
-    private int rainTime;
+    public int rainTime;
 
-    private float rainLevel;
+    public float rainLevel;
 
-    private boolean thundering;
+    public boolean thundering;
 
-    private int thunderTime;
+    public int thunderTime;
 
-    private float thunderLevel;
+    public float thunderLevel;
 
-    private long randomSeed;
+    public long randomSeed;
 
-    private int spawnX;
+    public int spawnX;
 
-    private int spawnY;
+    public int spawnY;
 
-    private int spawnZ;
+    public int spawnZ;
 
-    private long time;
+    public long currentTick;
 
-    private boolean spawnMobs = true;
+    public boolean spawnMobs = true;
 
-    public long getDayTime() {
-        return dayTime;
+    public long getTime() {
+        return time;
     }
 
-    public void setDayTime(long dayTime) {
-        this.dayTime = dayTime;
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public int getGameType() {
@@ -162,12 +162,12 @@ public class LevelInfo {
         this.spawnZ = spawnZ;
     }
 
-    public long getTime() {
-        return time;
+    public long getCurrentTick() {
+        return currentTick;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public void setCurrentTick(long currentTick) {
+        this.currentTick = currentTick;
     }
 
     public boolean canSpawnMobs() {

@@ -669,8 +669,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         //Weather
-        //this.getLevel().enableWeather(this);
-        //this.getLevel().enableThunder(this);
+        this.getLevel().sendWeather(this);
 
         //FoodLevel
         this.getFoodData().sendFoodLevel();
@@ -2346,7 +2345,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         entityDamageByEntityEvent.setCancelled();
                     }
 
-                    targetEntity.attack(entityDamageByEntityEvent.getFinalDamage(), entityDamageByEntityEvent);
+                    targetEntity.attack(entityDamageByEntityEvent);
 
                     if (ev.isCancelled()) {
                         if (item.isTool() && this.isSurvival()) {
@@ -2581,14 +2580,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
 
                 List<Item> ingredientsList = new ArrayList<Item>();
-                if(recipe instanceof ShapedRecipe) {
-                    for(int x = 0; x < 3; x++) {
-                        for(int y = 0; y < 3; y++) {
+                if (recipe instanceof ShapedRecipe) {
+                    for (int x = 0; x < 3; x++) {
+                        for (int y = 0; y < 3; y++) {
                             Item need = ((ShapedRecipe) recipe).getIngredient(x, y);
-                            if(need.getId() == 0) {
+                            if (need.getId() == 0) {
                                 continue;
                             }
-                            for(int count = need.getCount(); count > 0; count--) {
+                            for (int count = need.getCount(); count > 0; count--) {
                                 Item needAdd = need.clone();
                                 //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
                                 needAdd.setCount(1);
@@ -2597,10 +2596,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         }
                     }
                 }
-                if(recipe instanceof ShapelessRecipe) {
+                if (recipe instanceof ShapelessRecipe) {
                     List<Item> recipeItem = ((ShapelessRecipe) recipe).getIngredientList();
-                    for(Item need : recipeItem) {
-                        if(need.getId() == 0) {
+                    for (Item need : recipeItem) {
+                        if (need.getId() == 0) {
                             continue;
                         }
                         Item needAdd = need.clone();
@@ -3101,7 +3100,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         if (!this.isAlive()) {
             return;
         }
@@ -3135,7 +3134,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             if (add) source.setDamage((float) (source.getDamage() * 1.5));
         }
 
-        super.attack(damage, source);
+        super.attack(source);
 
         if (!source.isCancelled() && this.getLastDamageCause() == source && this.spawned) {
             this.getFoodData().updateFoodExpLevel(0.3);
@@ -3289,8 +3288,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.newPosition = null;
 
             //Weather
-            this.getLevel().enableWeather(this);
-            this.getLevel().enableThunder(this);
+            this.getLevel().sendWeather(this);
 
             return true;
         }

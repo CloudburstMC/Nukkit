@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.noise;
 
 import cn.nukkit.utils.Random;
-import sun.applet.Main;
 
 /**
  * author: MagicDroidX
@@ -50,7 +49,7 @@ public class Simplex extends Perlin {
         this.F3 = 1.0 / 3.0;
         this.G3 = 1.0 / 6.0;
         this.F4 = (this.SQRT_5 - 1.0) / 4.0;
-        this.G4 = (5.0 -this.SQRT_5) / 20.0;
+        this.G4 = (5.0 - this.SQRT_5) / 20.0;
         this.G42 = this.G4 * 2.0;
         this.G43 = this.G4 * 3.0;
         this.G44 = this.G4 * 4.0 - 1.0;
@@ -67,7 +66,7 @@ public class Simplex extends Perlin {
         this.F3 = 1.0 / 3.0;
         this.G3 = 1.0 / 6.0;
         this.F4 = (this.SQRT_5 - 1.0) / 4.0;
-        this.G4 = (5.0 -this.SQRT_5) / 20.0;
+        this.G4 = (5.0 - this.SQRT_5) / 20.0;
         this.G42 = this.G4 * 2.0;
         this.G43 = this.G4 * 3.0;
         this.G44 = this.G4 * 4.0 - 1.0;

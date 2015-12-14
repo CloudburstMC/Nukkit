@@ -3,7 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.nbt.tag.*;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.StringTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.tile.Furnace;
 import cn.nukkit.tile.Tile;
 
@@ -14,7 +17,7 @@ import java.util.Map;
  * author: Angelic47
  * Nukkit Project
  */
-public class BurningFurnace extends Solid{
+public class BurningFurnace extends Solid {
 
     public BurningFurnace() {
         this(0);
@@ -66,14 +69,14 @@ public class BurningFurnace extends Solid{
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-        if(item.hasCustomName()) {
+        if (item.hasCustomName()) {
             nbt.putString("CustomName", item.getCustomName());
         }
 
-        if(item.hasCustomBlockData()) {
+        if (item.hasCustomBlockData()) {
             Map<String, Tag> customData = item.getCustomBlockData().getTags();
             Iterator iter = customData.entrySet().iterator();
-            while(iter.hasNext()) {
+            while (iter.hasNext()) {
                 Map.Entry tag = (Map.Entry) iter.next();
                 nbt.put((String) tag.getKey(), (Tag) tag.getValue());
             }
@@ -91,13 +94,12 @@ public class BurningFurnace extends Solid{
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if(player instanceof Player) {
+        if (player instanceof Player) {
             Tile t = this.getLevel().getTile(this);
             Furnace furnace = null;
-            if(t instanceof Furnace) {
+            if (t instanceof Furnace) {
                 furnace = (Furnace) t;
-            }
-            else {
+            } else {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
                         .putString("id", Tile.FURNACE)
@@ -107,13 +109,13 @@ public class BurningFurnace extends Solid{
                 furnace = (Furnace) (Tile.createTile("Furnace", this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt));
             }
 
-            if(furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {
-                if(furnace.namedTag.getString("Lock") != item.getCustomName()) {
+            if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {
+                if (furnace.namedTag.getString("Lock") != item.getCustomName()) {
                     return true;
                 }
             }
 
-            if(player.isCreative()) {
+            if (player.isCreative()) {
                 return true;
             }
 

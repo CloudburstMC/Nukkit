@@ -8,7 +8,7 @@ import cn.nukkit.item.Item;
  */
 public class GlassPane extends Thin {
 
-    public GlassPane(){
+    public GlassPane() {
         this(0);
     }
 
