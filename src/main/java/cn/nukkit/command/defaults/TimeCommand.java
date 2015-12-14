@@ -93,7 +93,7 @@ public class TimeCommand extends VanillaCommand {
             } else if (args[1].matches("^[1-9]+\\d*$")){
                 value = Math.max(0, Integer.parseInt(args[1]));
             } else {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.usage"));
                 return true;
             }
 
