@@ -2148,6 +2148,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.noDamageTicks = 60;
 
                         this.setHealth(this.getMaxHealth());
+                        this.getFoodData().setFoodLevel(20, 20);
 
                         this.removeAllEffects();
                         this.sendData(this);
