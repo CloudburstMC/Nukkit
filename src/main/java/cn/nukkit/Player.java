@@ -1123,7 +1123,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 break;
                         }*/
 
-                        /*TakeItemEntityPacket pk = new TakeItemEntityPacket();
+                        TakeItemEntityPacket pk = new TakeItemEntityPacket();
                         pk.entityId = this.getId();
                         pk.target = entity.getId();
                         Server.broadcastPacket(entity.getViewers().values(), pk);
@@ -1131,8 +1131,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         pk = new TakeItemEntityPacket();
                         pk.entityId = 0;
                         pk.target = entity.getId();
-                        this.dataPacket(pk);*/
-                        //todo: check if this cause client crash
+                        this.dataPacket(pk);
 
                         this.inventory.addItem(item.clone());
                         entity.kill();

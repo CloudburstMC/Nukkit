@@ -94,9 +94,9 @@ public class BurningFurnace extends Solid {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (player instanceof Player) {
+        if (player != null) {
             Tile t = this.getLevel().getTile(this);
-            Furnace furnace = null;
+            Furnace furnace;
             if (t instanceof Furnace) {
                 furnace = (Furnace) t;
             } else {
@@ -106,11 +106,11 @@ public class BurningFurnace extends Solid {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                furnace = (Furnace) (Tile.createTile("Furnace", this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt));
+                furnace = new Furnace(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
             }
 
             if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {
-                if (furnace.namedTag.getString("Lock") != item.getCustomName()) {
+                if (!furnace.namedTag.getString("Lock").equals(item.getCustomName())) {
                     return true;
                 }
             }

@@ -62,7 +62,7 @@ public abstract class Tile extends Position {
     public static Tile createTile(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
         Tile tile = null;
 
-        if (shortNames.containsKey(type)) {
+        if (knownTiles.containsKey(type)) {
             Class<? extends Tile> clazz = knownTiles.get(type);
 
             if (clazz == null) {
@@ -104,7 +104,6 @@ public abstract class Tile extends Position {
         if (c == null) {
             return false;
         }
-
 
         knownTiles.put(c.getSimpleName(), c);
         shortNames.put(c.getName(), c.getSimpleName());
