@@ -53,7 +53,7 @@ public class BrewingStand extends Solid{
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player){
         int faces[] = {4, 2, 5, 3};
 
-        meta = faces[player instanceof Player ? player.getDirection() : 0];
+        meta = faces[player != null ? player.getDirection() : 0];
         getLevel().setBlock(block, this, true, true);
 
         CompoundTag nbt = new CompoundTag()
@@ -94,7 +94,7 @@ public class BrewingStand extends Solid{
 
     @Override
     public boolean onActivate(Item item, Player player){
-        if(player instanceof Player){
+        if(player != null){
             Tile t = getLevel().getTile(this);
             cn.nukkit.tile.BrewingStand brewing = null;
             if(t instanceof cn.nukkit.tile.BrewingStand){
@@ -106,7 +106,7 @@ public class BrewingStand extends Solid{
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                brewing = (cn.nukkit.tile.BrewingStand) (Tile.createTile("BrewingStand", this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt));
+                brewing = new cn.nukkit.tile.BrewingStand(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
             }
 
             if(brewing.namedTag.contains("Lock") && brewing.namedTag.get("Lock") instanceof StringTag){

@@ -212,7 +212,8 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
                 .putString("id", Tile.BREWING_STAND)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
+                .putInt("z", (int) this.z)
+                .putShort("BrewTime", (int) MAX_BREW_TIME);
 
         if(this.hasName()){
             nbt.put("CustomName", namedTag.get("CustomName"));
