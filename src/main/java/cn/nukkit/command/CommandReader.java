@@ -51,7 +51,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
     public void run() {
         Long lastLine = System.currentTimeMillis();
         while (true) {
-            if (reader == null) {
+            if (Server.getInstance().getConsoleSender() == null) {
                 continue;
             }
 
