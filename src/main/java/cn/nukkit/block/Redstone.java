@@ -14,7 +14,7 @@ public class Redstone extends Transparent {
     }
 
     public Redstone(int meta) {
-        super(meta);
+        super(0);
     }
 
     @Override
@@ -44,9 +44,9 @@ public class Redstone extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe()) {
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
             return new int[][]{{Item.REDSTONE_BLOCK, 0, 1}};
-        }else{
+        } else {
             return new int[0][];
         }
     }
