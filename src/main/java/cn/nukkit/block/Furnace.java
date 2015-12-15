@@ -4,7 +4,7 @@ package cn.nukkit.block;
  * author: Angelic47
  * Nukkit Project
  */
-public class Furnace extends BurningFurnace{
+public class Furnace extends BurningFurnace {
 
     public Furnace() {
         this(0);

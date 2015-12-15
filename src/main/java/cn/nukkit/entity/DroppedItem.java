@@ -75,13 +75,13 @@ public class DroppedItem extends Entity {
     }
 
     @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID ||
                 source.getCause() == EntityDamageEvent.CAUSE_FIRE_TICK ||
                 source.getCause() == EntityDamageEvent.CAUSE_ENTITY_EXPLOSION ||
                 source.getCause() == EntityDamageEvent.CAUSE_BLOCK_EXPLOSION
                 ) {
-            super.attack(damage, source);
+            super.attack(source);
         }
     }
 

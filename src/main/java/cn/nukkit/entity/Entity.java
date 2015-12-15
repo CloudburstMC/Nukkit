@@ -632,24 +632,6 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    @Deprecated
-    public void attack(float damage, EntityDamageEvent source) {
-        if (this.hasEffect(Effect.FIRE_RESISTANCE)
-                && (source.getCause() == EntityDamageEvent.CAUSE_FIRE
-                || source.getCause() == EntityDamageEvent.CAUSE_FIRE_TICK
-                || source.getCause() == EntityDamageEvent.CAUSE_LAVA)) {
-            source.setCancelled();
-        }
-
-        this.server.getPluginManager().callEvent(source);
-        if (source.isCancelled()) {
-            return;
-        }
-        this.setLastDamageCause(source);
-
-        this.setHealth(this.getHealth() - source.getFinalDamage());
-    }
-
     public void attack(EntityDamageEvent source) {
         if (hasEffect(Effect.FIRE_RESISTANCE)
                 && (source.getCause() == EntityDamageEvent.CAUSE_FIRE
@@ -667,13 +649,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void attack(float damage) {
-        EntityDamageEvent event = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, damage);
-        getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return;
-        }
-        setLastDamageCause(event);
-        setHealth(getHealth() - event.getFinalDamage());
+        this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, damage));
     }
 
     public void heal(float amount, EntityRegainHealthEvent source) {
@@ -858,7 +834,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (this.y <= -16 && this.isAlive()) {
             EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, 10);
-            this.attack(ev.getFinalDamage(), ev);
+            this.attack(ev);
             hasUpdate = true;
         }
 
@@ -871,7 +847,7 @@ public abstract class Entity extends Location implements Metadatable {
             } else {
                 if (!this.hasEffect(Effect.FIRE_RESISTANCE) && (this.fireTicks % 20) == 0 || tickDiff > 20) {
                     EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FIRE_TICK, 1);
-                    this.attack(ev.getFinalDamage(), ev);
+                    this.attack(ev);
                 }
                 this.fireTicks -= tickDiff;
             }
@@ -1034,7 +1010,7 @@ public abstract class Entity extends Location implements Metadatable {
         float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
         if (damage > 0) {
             EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FALL, damage);
-            this.attack(ev.getFinalDamage(), ev);
+            this.attack(ev);
         }
     }
 
@@ -1089,7 +1065,7 @@ public abstract class Entity extends Location implements Metadatable {
         Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
 
         if (block instanceof Water) {
-            double f = (((Water) block).y + 1) - (((Water) block).getFluidHeightPercent() - 0.1111111);
+            double f = (block.y + 1) - (((Water) block).getFluidHeightPercent() - 0.1111111);
             return y < f;
         }
 

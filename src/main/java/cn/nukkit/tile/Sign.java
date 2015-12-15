@@ -80,9 +80,9 @@ public class Sign extends Spawnable {
                 .put("Text2", this.namedTag.get("Text2"))
                 .put("Text3", this.namedTag.get("Text3"))
                 .put("Text4", this.namedTag.get("Text4"))
-                .putInt("x", this.x)
-                .putInt("y", this.y)
-                .putInt("z", this.z);
+                .putInt("x", (int) this.x)
+                .putInt("y", (int) this.y)
+                .putInt("z", (int) this.z);
 
     }
 }

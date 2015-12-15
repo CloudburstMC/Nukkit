@@ -1,7 +1,5 @@
 package cn.nukkit.nbt.stream;
 
-import cn.nukkit.utils.Binary;
-
 import java.io.*;
 import java.nio.ByteOrder;
 
@@ -72,7 +70,7 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
     public int readUnsignedShort() throws IOException {
         int s = this.getStream().readUnsignedShort();
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
-            s = Binary.readLShort(Binary.writeShort(s));
+            s = Integer.reverseBytes(s) >> 16;
         }
         return s;
     }
@@ -122,6 +120,9 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
 
     @Override
     public String readUTF() throws IOException {
-        return DataInputStream.readUTF(this);
+        int length = this.readUnsignedShort();
+        byte[] bytes = new byte[length];
+        this.read(bytes);
+        return new String(bytes);
     }
 }

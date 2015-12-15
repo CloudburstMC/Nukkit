@@ -151,13 +151,13 @@ public class Explosion {
 
                 if (this.what instanceof Entity) {
                     EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent((Entity) this.what, entity, EntityDamageEvent.CAUSE_ENTITY_EXPLOSION, damage);
-                    entity.attack(ev.getFinalDamage(), ev);
+                    entity.attack(ev);
                 } else if (this.what instanceof Block) {
                     EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent((Block) this.what, entity, EntityDamageEvent.CAUSE_BLOCK_EXPLOSION, damage);
-                    entity.attack(ev.getFinalDamage(), ev);
+                    entity.attack(ev);
                 } else {
                     EntityDamageEvent ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_BLOCK_EXPLOSION, damage);
-                    entity.attack(ev.getFinalDamage(), ev);
+                    entity.attack(ev);
                 }
 
                 entity.setMotion(motion.multiply(impact));

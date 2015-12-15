@@ -6,7 +6,7 @@ package cn.nukkit.utils;
  */
 public class TextFormat {
 
-    public static final String ESCAPE = "\u00a7";
+    public static final char ESCAPE = '\u00a7';
 
     public static final String BLACK = TextFormat.ESCAPE + "0";
     public static final String DARK_BLUE = TextFormat.ESCAPE + "1";
@@ -61,11 +61,12 @@ public class TextFormat {
         string = string.replace(TextFormat.WHITE, (char) 0x1b + "[37;1m");
         return string;
     }
-    public static String colorize(String textToColorize){
+
+    public static String colorize(String textToColorize) {
         char[] b = textToColorize.toCharArray();
         for (int i = 0; i < b.length - 1; i++) {
-            if ((b[i] == '&') && ("0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[(i + 1)]) > -1)){
-                b[i] = '§';
+            if ((b[i] == '&') && ("0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[(i + 1)]) > -1)) {
+                b[i] = ESCAPE;
                 b[(i + 1)] = Character.toLowerCase(b[(i + 1)]);
             }
         }

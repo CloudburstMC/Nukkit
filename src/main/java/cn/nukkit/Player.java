@@ -669,8 +669,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         //Weather
-        //this.getLevel().enableWeather(this);
-        //this.getLevel().enableThunder(this);
+        this.getLevel().sendWeather(this);
 
         //FoodLevel
         this.getFoodData().sendFoodLevel();
@@ -1124,7 +1123,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 break;
                         }*/
 
-                        /*TakeItemEntityPacket pk = new TakeItemEntityPacket();
+                        TakeItemEntityPacket pk = new TakeItemEntityPacket();
                         pk.entityId = this.getId();
                         pk.target = entity.getId();
                         Server.broadcastPacket(entity.getViewers().values(), pk);
@@ -1132,8 +1131,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         pk = new TakeItemEntityPacket();
                         pk.entityId = 0;
                         pk.target = entity.getId();
-                        this.dataPacket(pk);*/
-                        //todo: check if this cause client crash
+                        this.dataPacket(pk);
 
                         this.inventory.addItem(item.clone());
                         entity.kill();
@@ -2140,6 +2138,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.teleport(playerRespawnEvent.getRespawnPosition());
                         this.setSprinting(false);
                         this.setSneaking(false);
+                        
+                        this.getFoodData().setFoodLevel(20, 20);
 
                         this.extinguish();
                         this.setDataProperty(Player.DATA_AIR, new ShortEntityData(300));
@@ -2147,6 +2147,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.noDamageTicks = 60;
 
                         this.setHealth(this.getMaxHealth());
+                        this.getFoodData().setFoodLevel(20, 20);
 
                         this.removeAllEffects();
                         this.sendData(this);
@@ -2346,7 +2347,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         entityDamageByEntityEvent.setCancelled();
                     }
 
-                    targetEntity.attack(entityDamageByEntityEvent.getFinalDamage(), entityDamageByEntityEvent);
+                    targetEntity.attack(entityDamageByEntityEvent);
 
                     if (ev.isCancelled()) {
                         if (item.isTool() && this.isSurvival()) {
@@ -3101,7 +3102,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         if (!this.isAlive()) {
             return;
         }
@@ -3135,7 +3136,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             if (add) source.setDamage((float) (source.getDamage() * 1.5));
         }
 
-        super.attack(damage, source);
+        super.attack(source);
 
         if (!source.isCancelled() && this.getLastDamageCause() == source && this.spawned) {
             this.getFoodData().updateFoodExpLevel(0.3);
