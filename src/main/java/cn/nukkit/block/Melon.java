@@ -17,7 +17,7 @@ public class Melon extends Transparent {
     }
 
     public Melon(int meta) {
-        super(meta);
+        super(0);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class Melon extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{Item.MELON_SLICE, 0, new Random().nextInt(3) + 4}};
+        return new int[][]{new int[]{Item.MELON_SLICE, 0, new Random().nextInt(4) + 3}};
     }
 
     @Override
