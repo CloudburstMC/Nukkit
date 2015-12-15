@@ -253,7 +253,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
 
     @Override
     public CompoundTag getSpawnCompound() {
-        return new CompoundTag()
+        CompoundTag c = new CompoundTag()
                 .putString("id", Tile.FURNACE)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
@@ -261,5 +261,11 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
                 .putShort("BurnDuration", this.namedTag.getShort("BurnDuration"))
                 .putShort("BurnTime", this.namedTag.getShort("BurnTime"))
                 .putShort("CookTime", this.namedTag.getShort("CookTime"));
+
+        if (this.hasName()) {
+            c.put("CustomName", this.namedTag.get("CustomName"));
+        }
+
+        return c;
     }
 }

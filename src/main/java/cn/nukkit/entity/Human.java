@@ -151,7 +151,7 @@ public class Human extends Creature implements InventoryHolder {
                 if (hotbarSlot != -1) {
                     Item item = this.inventory.getItem(hotbarSlot);
                     if (item.getId() != 0 && item.getCount() > 0) {
-                        (this.namedTag.getList("Inventory", new ListTag<>())).add(slot, NBTIO.putItemHelper(item, (int) slot).putByte("TrueSlot", (byte) hotbarSlot));
+                        this.namedTag.getList("Inventory", new ListTag<>()).add(slot, NBTIO.putItemHelper(item, (int) slot).putByte("TrueSlot", (byte) hotbarSlot));
                         continue;
                     }
                 }
@@ -173,7 +173,7 @@ public class Human extends Creature implements InventoryHolder {
             for (byte slot = 100; slot < 104; ++slot) {
                 Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
                 if (item != null && item.getId() != Item.AIR) {
-                    (this.namedTag.getList("Inventory", new ListTag<>())).add(slot, NBTIO.putItemHelper(item, (int) slot));
+                    this.namedTag.getList("Inventory", new ListTag<>()).add(slot, NBTIO.putItemHelper(item, (int) slot));
                 }
             }
         }
