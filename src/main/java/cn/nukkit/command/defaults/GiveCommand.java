@@ -35,7 +35,7 @@ public class GiveCommand extends VanillaCommand {
         Item rawItem;
         try {
             rawItem = Item.fromString(args[1]);
-        } catch (Exception e){
+        } catch (Exception e) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }

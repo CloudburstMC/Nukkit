@@ -18,7 +18,7 @@ public class ServerScheduler {
     private final AsyncPool asyncPool;
 
     private final PriorityQueue<TaskHandler> queue;
-    private final Map<Integer, TaskHandler>  tasks;
+    private final Map<Integer, TaskHandler> tasks;
 
     private int currentTaskId;
     private int currentTick;

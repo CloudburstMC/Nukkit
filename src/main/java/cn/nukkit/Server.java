@@ -423,7 +423,7 @@ public class Server {
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
-        
+
         this.start();
     }
 

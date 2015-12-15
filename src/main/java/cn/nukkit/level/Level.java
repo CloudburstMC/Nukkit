@@ -1395,7 +1395,7 @@ public class Level implements ChunkManager, Metadatable {
             Tag tag = item.getNamedTagEntry("CanDestroy");
             if (tag instanceof ListTag) {
                 boolean canBreak = false;
-                for (Tag v : ((ListTag<Tag>) tag).list) {
+                for (Tag v : ((ListTag<Tag>) tag).getAll()) {
                     if (v instanceof StringTag) {
                         Item entry = Item.fromString(((StringTag) v).data);
                         if (entry.getId() > 0 && entry.getBlock() != null && entry.getBlock().getId() == target.getId()) {
@@ -1552,7 +1552,7 @@ public class Level implements ChunkManager, Metadatable {
         Tag tag = item.getNamedTagEntry("CanPlaceOn");
         if (tag instanceof ListTag) {
             boolean canBreak = false;
-            for (Tag v : ((ListTag<Tag>) tag).list) {
+            for (Tag v : ((ListTag<Tag>) tag).getAll()) {
                 if (v instanceof StringTag) {
                     Item entry = Item.fromString(((StringTag) v).data);
                     if (entry.getId() > 0 && entry.getBlock() != null && entry.getBlock().getId() == target.getId()) {
