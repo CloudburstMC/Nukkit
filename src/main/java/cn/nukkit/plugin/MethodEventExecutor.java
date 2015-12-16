@@ -22,9 +22,7 @@ public class MethodEventExecutor implements EventExecutor {
     public void execute(Listener listener, Event event) {
         try {
             method.invoke(listener, event);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }

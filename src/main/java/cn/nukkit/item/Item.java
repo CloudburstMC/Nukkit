@@ -1079,7 +1079,7 @@ public class Item implements Cloneable {
             return null;
         }
 
-        for (CompoundTag entry : ((ListTag<CompoundTag>) this.getNamedTag().getList("ench")).list) {
+        for (CompoundTag entry : ((ListTag<CompoundTag>) this.getNamedTag().getList("ench")).getAll()) {
             if (entry.getShort("id") == id) {
                 Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
                 e.setLevel(entry.getShort("lvl"));
@@ -1106,11 +1106,11 @@ public class Item implements Cloneable {
 
         boolean found = false;
 
-        ench = (ListTag<CompoundTag>) tag.getList("ench");
-        for (int k = 0; k < ench.list.size(); k++) {
-            CompoundTag entry = ench.list.get(k);
+        ench = tag.getList("ench", new ListTag<>());
+        for (int k = 0; k < ench.size(); k++) {
+            CompoundTag entry = ench.get(k);
             if (entry.getShort("id") == enchantment.getId()) {
-                ench.list.add(k, new CompoundTag()
+                ench.add(k, new CompoundTag()
                                 .putShort("id", enchantment.getId())
                                 .putShort("lvl", enchantment.getLevel())
                 );
@@ -1136,8 +1136,8 @@ public class Item implements Cloneable {
 
         List<Enchantment> enchantments = new ArrayList<>();
 
-        ListTag<CompoundTag> ench = (ListTag<CompoundTag>) this.getNamedTag().getList("ench");
-        for (CompoundTag entry : ench.list) {
+        ListTag<CompoundTag> ench = this.getNamedTag().getList("ench", new ListTag<>());
+        for (CompoundTag entry : ench.getAll()) {
             Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
             e.setLevel(entry.getShort("lvl"));
             enchantments.add(e);

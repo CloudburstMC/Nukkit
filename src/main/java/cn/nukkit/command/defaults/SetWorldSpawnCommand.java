@@ -16,26 +16,26 @@ import java.text.DecimalFormat;
  */
 public class SetWorldSpawnCommand extends VanillaCommand {
     public SetWorldSpawnCommand(String name) {
-        super(name,"%nukkit.command.setworldspawn.description", "%commands.setworldspawn.usage");
+        super(name, "%nukkit.command.setworldspawn.description", "%commands.setworldspawn.usage");
         this.setPermission("nukkit.command.setworldspawn");
     }
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if(!this.testPermission(sender)){
+        if (!this.testPermission(sender)) {
             return true;
         }
         Level level;
         Vector3 pos;
-        if(args.length == 0){
-            if(sender instanceof Player){
+        if (args.length == 0) {
+            if (sender instanceof Player) {
                 level = ((Player) sender).getLevel();
                 pos = ((Player) sender).round();
-            }else{
+            } else {
                 sender.sendMessage(TextFormat.RED + "You can only perform this command as a player");
                 return true;
             }
-        }else if(args.length == 3){
+        } else if (args.length == 3) {
             level = sender.getServer().getDefaultLevel();
             try {
                 pos = new Vector3(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
@@ -43,13 +43,13 @@ public class SetWorldSpawnCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
             }
-        }else{
+        } else {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
         level.setSpawnLocation(pos);
         DecimalFormat round2 = new DecimalFormat("##0.00");
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success",new String[]{
+        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", new String[]{
                 round2.format(pos.x),
                 round2.format(pos.y),
                 round2.format(pos.z)

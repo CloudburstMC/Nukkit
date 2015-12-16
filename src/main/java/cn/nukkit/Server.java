@@ -423,7 +423,7 @@ public class Server {
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
-        
+
         this.start();
     }
 
@@ -1108,8 +1108,8 @@ public class Server {
         return this.getPropertyBoolean("generate-structures", true);
     }
 
-    public byte getGamemode() {
-        return (byte) (this.getPropertyInt("gamemode", 0) & 0b11);
+    public int getGamemode() {
+        return this.getPropertyInt("gamemode", 0) & 0b11;
     }
 
     public boolean getForceGamemode() {

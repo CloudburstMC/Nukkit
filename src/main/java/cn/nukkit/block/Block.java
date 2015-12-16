@@ -275,7 +275,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[STILL_WATER] = StillWater.class;
             list[LAVA] = Lava.class;
             list[STILL_LAVA] = StillLava.class;
-            //list[SAND] = Sand.class;
+            list[SAND] = Sand.class;
             list[GRAVEL] = Gravel.class;
             list[GOLD_ORE] = GoldOre.class;
             list[IRON_ORE] = IronOre.class;
@@ -352,7 +352,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             list[IRON_BARS] = IronBars.class;
             list[GLASS_PANE] = GlassPane.class;
-            //list[MELON_BLOCK] = Melon.class;
+            list[MELON_BLOCK] = Melon.class;
             /*list[PUMPKIN_STEM] = PumpkinStem.class;
             list[MELON_STEM] = MelonStem.class;
             list[VINE] = Vine.class;
@@ -387,7 +387,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[POTATO_BLOCK] = Potato.class;
             //list[ANVIL] = Anvil.class;
 
-            //list[REDSTONE_BLOCK] = Redstone.class;
+            list[REDSTONE_BLOCK] = Redstone.class;
 
             list[QUARTZ_BLOCK] = Quartz.class;
             list[QUARTZ_STAIRS] = QuartzStairs.class;

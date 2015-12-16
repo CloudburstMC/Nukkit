@@ -1507,7 +1507,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
-            nbt.getList(new ListTag<>(), "Pos")
+            nbt.getList("Pos", new ListTag<>())
                     .add(0, new DoubleTag("0", this.level.getSpawnLocation().x))
                     .add(1, new DoubleTag("1", this.level.getSpawnLocation().y))
                     .add(2, new DoubleTag("2", this.level.getSpawnLocation().z));
@@ -1522,7 +1522,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.saveOfflinePlayerData(this.username, nbt, true);
         }
 
-        ListTag<DoubleTag> posList = nbt.getList(new ListTag<>(), "Pos");
+        ListTag<DoubleTag> posList = nbt.getList("Pos", new ListTag<>());
         BaseFullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
         if (chunk == null || chunk.getProvider() == null) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
@@ -1542,8 +1542,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        ListTag<FloatTag> rotationList = this.namedTag.getList(new ListTag<>(), "Rotation");
-        ListTag<DoubleTag> motionList = this.namedTag.getList(new ListTag<>(), "Motion");
+        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", new ListTag<>());
+        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", new ListTag<>());
         this.setPositionAndRotation(
                 this.temporalVector.setComponents(
                         posList.get(0).data,
@@ -2138,8 +2138,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.teleport(playerRespawnEvent.getRespawnPosition());
                         this.setSprinting(false);
                         this.setSneaking(false);
-                        
-                        this.getFoodData().setFoodLevel(20, 20);
 
                         this.extinguish();
                         this.setDataProperty(Player.DATA_AIR, new ShortEntityData(300));
@@ -2581,7 +2579,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     canCraft = false;
                 }
 
-                List<Item> ingredientsList = new ArrayList<Item>();
+                List<Item> ingredientsList = new ArrayList<>();
                 if (recipe instanceof ShapedRecipe) {
                     for (int x = 0; x < 3; x++) {
                         for (int y = 0; y < 3; y++) {
@@ -3451,7 +3449,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     private boolean foodEnabled = true;
 
     public boolean isFoodEnabled() {
-        return this.isCreative() || this.isSpectator() ? false : this.foodEnabled;
+        return !(this.isCreative() || this.isSpectator()) && this.foodEnabled;
     }
 
     public void setFoodEnabled(boolean foodEnabled) {

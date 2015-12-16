@@ -158,7 +158,7 @@ public class LevelDB implements LevelProvider {
     @Override
     public AsyncTask requestChunkTask(int x, int z) {
         FullChunk chunk = this.getChunk(x, z, false);
-        if (!(chunk instanceof Chunk)) {
+        if (chunk == null) {
             throw new ChunkException("Invalid Chunk sent");
         }
 

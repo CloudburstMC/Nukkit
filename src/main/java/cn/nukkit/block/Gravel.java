@@ -9,7 +9,7 @@ import java.util.Random;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Gravel extends Solid {
+public class Gravel extends Fallable {
 
 
     public Gravel() {

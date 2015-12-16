@@ -25,18 +25,21 @@ public class GiveCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
+
         if (args.length < 2) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
+
         Player player = sender.getServer().getPlayer(args[0]);
         Item rawItem;
         try {
             rawItem = Item.fromString(args[1]);
-        } catch (Exception e){
+        } catch (Exception e) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
+
         Item[] items;
         String countString;
         if (!(args.length >= 3)) {

@@ -100,9 +100,9 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
     }
 
     protected int getSlotIndex(int index) {
-        ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
+        ListTag<CompoundTag> list = this.namedTag.getList("Items", new ListTag<>());
         for (int i = 0; i < list.size(); i++) {
-            if (list.list.get(i).getByte("Slot") == index) {
+            if (list.get(i).getByte("Slot") == index) {
                 return i;
             }
         }
@@ -133,14 +133,14 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
 
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
             if (i >= 0) {
-                this.namedTag.getList("Items").list.remove(i);
+                this.namedTag.getList("Items").getAll().remove(i);
             }
         } else if (i < 0) {
-            i = this.namedTag.getList("Items").list.size();
+            i = this.namedTag.getList("Items").getAll().size();
             i = Math.max(i, this.getSize());
-            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
         } else {
-            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
         }
     }
 
@@ -253,7 +253,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
 
     @Override
     public CompoundTag getSpawnCompound() {
-        return new CompoundTag()
+        CompoundTag c = new CompoundTag()
                 .putString("id", Tile.FURNACE)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
@@ -261,5 +261,11 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
                 .putShort("BurnDuration", this.namedTag.getShort("BurnDuration"))
                 .putShort("BurnTime", this.namedTag.getShort("BurnTime"))
                 .putShort("CookTime", this.namedTag.getShort("CookTime"));
+
+        if (this.hasName()) {
+            c.put("CustomName", this.namedTag.get("CustomName"));
+        }
+
+        return c;
     }
 }

@@ -1,8 +1,8 @@
 package cn.nukkit.level.sound;
 
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.BlockEventPacket;
+import cn.nukkit.network.protocol.DataPacket;
 
 /**
  * author: MagicDroidX

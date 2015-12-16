@@ -209,9 +209,9 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        ListTag<DoubleTag> posList = (ListTag<DoubleTag>) this.namedTag.getList("Pos");
-        ListTag<FloatTag> rotationList = (ListTag<FloatTag>) this.namedTag.getList("Rotation");
-        ListTag<DoubleTag> motionList = (ListTag<DoubleTag>) this.namedTag.getList("Motion");
+        ListTag<DoubleTag> posList = this.namedTag.getList("Pos", new ListTag<>());
+        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", new ListTag<>());
+        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", new ListTag<>());
         this.setPositionAndRotation(
                 this.temporalVector.setComponents(
                         posList.get(0).data,
@@ -336,8 +336,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addEffect(Effect effect) {
-        if (this.effects.containsKey((int) effect.getId())) {
-            Effect oldEffect = this.effects.get((int) effect.getId());
+        if (this.effects.containsKey(effect.getId())) {
+            Effect oldEffect = this.effects.get(effect.getId());
             if (Math.abs(effect.getAmplifier()) <= (oldEffect.getAmplifier())
                     || (Math.abs(effect.getAmplifier())) == Math.abs(oldEffect.getAmplifier())
                     && effect.getDuration() < oldEffect.getDuration()) {
@@ -349,7 +349,7 @@ public abstract class Entity extends Location implements Metadatable {
             effect.add(this, false);
         }
 
-        this.effects.put((int) effect.getId(), effect);
+        this.effects.put(effect.getId(), effect);
 
         this.recalculateEffectColor();
 
@@ -552,8 +552,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected void initEntity() {
         if (this.namedTag.contains("ActiveEffects")) {
-            ListTag<CompoundTag> effects = (ListTag<CompoundTag>) this.namedTag.getList("ActiveEffects");
-            for (CompoundTag e : effects.list) {
+            ListTag<CompoundTag> effects = this.namedTag.getList("ActiveEffects", new ListTag<>());
+            for (CompoundTag e : effects.getAll()) {
                 Effect effect = Effect.getEffect(e.getByte("Id"));
                 if (effect == null) {
                     continue;
