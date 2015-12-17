@@ -1794,6 +1794,7 @@ public class Server {
         Tile.registerTile(Furnace.class);
         Tile.registerTile(Sign.class);
         Tile.registerTile(EnchantTable.class);
+        Tile.registerTile(BrewingStand.class);
     }
 
     public static Server getInstance() {

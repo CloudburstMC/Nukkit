@@ -20,6 +20,7 @@ import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.EdibleItem;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.Potion;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -2397,7 +2398,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     case 9: //Eating
                         Item itemInHand = this.inventory.getItemInHand();
                         int amount = EdibleItem.getRegainAmount(itemInHand.getId(), itemInHand.getDamage());
-                        if (this.getHealth() < this.getMaxHealth() && amount > 0) {
+                        if ((this.getHealth() < this.getMaxHealth() && amount > 0) || itemInHand.getId() == Item.POTION) {
                             PlayerItemConsumeEvent consumeEvent;
                             this.server.getPluginManager().callEvent(consumeEvent = new PlayerItemConsumeEvent(this, itemInHand));
                             if (consumeEvent.isCancelled()) {
@@ -2405,24 +2406,40 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 break;
                             }
 
-                            EntityEventPacket pk = new EntityEventPacket();
-                            pk.eid = this.getId();
-                            pk.event = EntityEventPacket.USE_ITEM;
-                            this.dataPacket(pk);
-                            Server.broadcastPacket(this.getViewers().values(), pk);
+                            if(itemInHand instanceof Potion){
+                                if(itemInHand.getCount() > 1){
+                                    if(this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))){
+                                        this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
+                                    }
+                                    --itemInHand.count;
+                                }else{
+                                    itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
+                                }
 
-                            EntityRegainHealthEvent regainHealthEvent = new EntityRegainHealthEvent(this, amount, EntityRegainHealthEvent.CAUSE_EATING);
-                            this.heal(regainHealthEvent.getAmount(), regainHealthEvent);
+                                ((Potion) itemInHand).applyPotion(this);
+                            }else{
+                                EntityEventPacket pk = new EntityEventPacket();
+                                pk.eid = this.getId();
+                                pk.event = EntityEventPacket.USE_ITEM;
+                                this.dataPacket(pk);
+                                Server.broadcastPacket(this.getViewers().values(), pk);
 
-                            --itemInHand.count;
-                            this.inventory.setItemInHand(itemInHand);
-                            if (itemInHand.getId() == Item.MUSHROOM_STEW || itemInHand.getId() == Item.BEETROOT_SOUP) {
-                                this.inventory.addItem(Item.get(Item.BOWL, 0, 1));
-                            } else if (itemInHand.getId() == Item.RAW_FISH && itemInHand.getDamage() == 3) { //Pufferfish
-                                //this.addEffect(Effect::getEffect(Effect::HUNGER).setAmplifier(2).setDuration(15 * 20));
-                                this.addEffect(Effect.getEffect(Effect.NAUSEA).setAmplifier(1).setDuration(15 * 20));
-                                this.addEffect(Effect.getEffect(Effect.POISON).setAmplifier(3).setDuration(60 * 20));
+                                EntityRegainHealthEvent regainHealthEvent = new EntityRegainHealthEvent(this, amount, EntityRegainHealthEvent.CAUSE_EATING);
+                                this.heal(regainHealthEvent.getAmount(), regainHealthEvent);
+
+                                --itemInHand.count;
+
+                                if (itemInHand.getId() == Item.MUSHROOM_STEW || itemInHand.getId() == Item.BEETROOT_SOUP) {
+                                    this.inventory.addItem(Item.get(Item.BOWL, 0, 1));
+                                } else if (itemInHand.getId() == Item.RAW_FISH && itemInHand.getDamage() == 3) { //Pufferfish
+                                    //this.addEffect(Effect::getEffect(Effect::HUNGER).setAmplifier(2).setDuration(15 * 20));
+                                    this.addEffect(Effect.getEffect(Effect.NAUSEA).setAmplifier(1).setDuration(15 * 20));
+                                    this.addEffect(Effect.getEffect(Effect.POISON).setAmplifier(3).setDuration(60 * 20));
+                                }
                             }
+
+                            this.inventory.setItemInHand(itemInHand);
+                            this.inventory.sendHeldItem(this);
                         }
                         break;
                 }
