@@ -1024,16 +1024,18 @@ public class Level implements ChunkManager, Metadatable {
         return collides.stream().toArray(Block[]::new);
     }
 
-    public boolean isFullBlock(Block block) {
-        if (block.isSolid()) {
-            return true;
-        }
-        AxisAlignedBB bb = block.getBoundingBox();
-        return bb != null && bb.getAverageEdgeLength() >= 1;
-    }
-
     public boolean isFullBlock(Vector3 pos) {
-        return this.isFullBlock(this.getBlock(pos));
+        AxisAlignedBB bb;
+        if (pos instanceof Block) {
+            if (((Block) pos).isSolid()) {
+                return true;
+            }
+            bb = ((Block) pos).getBoundingBox();
+        } else {
+            bb = this.getBlock(pos).getBoundingBox();
+        }
+
+        return bb != null && bb.getAverageEdgeLength() >= 1;
     }
 
     public AxisAlignedBB[] getCollisionCubes(Entity entity, AxisAlignedBB bb) {

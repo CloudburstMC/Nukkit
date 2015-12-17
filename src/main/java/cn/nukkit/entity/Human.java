@@ -106,7 +106,7 @@ public class Human extends Creature implements InventoryHolder {
                 if (!this.namedTag.getCompound("Skin").contains("Transparent")) {
                     this.namedTag.getCompound("Skin").putBoolean("Transparent", false);
                 }
-                this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getBoolean("Slim"), this.namedTag.getCompound("Skin").getBoolean("Transparent")));
+                this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getString("ModelId")));
             }
 
             this.uuid = Utils.dataToUUID(String.valueOf(this.getId()), Binary.bytesToHexString(this.getSkin().getData()), this.getNameTag());
@@ -181,8 +181,7 @@ public class Human extends Creature implements InventoryHolder {
         if (this.getSkin().getData().length > 0) {
             this.namedTag.putCompound("Skin", new CompoundTag()
                             .putByteArray("Data", this.getSkin().getData())
-                            .putBoolean("Slim", this.getSkin().isSlim())
-                            .putBoolean("Transparent", this.getSkin().isTransparent())
+                            .putString("ModelId", this.getSkin().getModel())
             );
         }
     }
