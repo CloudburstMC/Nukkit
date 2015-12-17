@@ -16,6 +16,7 @@ package cn.nukkit.scheduler;
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
  * @since Nukkit 1.0 | Nukkit API 1.0.0
+ * @deprecated Use Java Runnable instead.
  */
 public abstract class Task {
     private TaskHandler taskHandler = null;
@@ -46,23 +47,6 @@ public abstract class Task {
 
     public void onCancel() {
 
-    }
-
-    /**
-     * 根据一个{@code Runnable}类，返回一个被执行时运行这个类的任务对象。<br>
-     * Returns a task object, which will run a {@code Runnable} when is executed.
-     *
-     * @param task 返回的任务对象中，在任务被执行时运行的{@code Runnable}对象。<br>
-     *             The {@code Runnable} object that will be executed when this task is carried out.
-     * @since Nukkit 1.0 | Nukkit API 1.0.0
-     */
-    public static Task of(Runnable task) {
-        return new Task() {
-            @Override
-            public void onRun(int currentTick) {
-                task.run();
-            }
-        };
     }
 
 }
