@@ -337,6 +337,16 @@ public class CraftingManager {
                 "III",
                 "III"
         )).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GLASS_BOTTLE, 0, 3),
+                "I I",
+                " I "
+        )).setIngredient("I", Item.get(Item.GLASS, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.BREWING_STAND, 0, 1),
+                " I ",
+                "CCC"
+        )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("I", Item.get(Item.BLAZE_ROD, 0, 1)));
     }
 
     protected void registerFurnace() {
@@ -362,7 +372,7 @@ public class CraftingManager {
         this.registerRecipe(new FurnaceRecipe(Item.get(Item.HARDENED_CLAY, 0, 1), Item.get(Item.CLAY_BLOCK, 0, 1)));
     }
 
-    public void registerBrewing(){
+    protected void registerBrewing(){
         for(int ingredient : new int[]{Item.NETHER_WART, Item.GOLD_NUGGET, Item.GHAST_TEAR, Item.GLOWSTONE_DUST, Item.REDSTONE_DUST, Item.GUNPOWDER, Item.MAGMA_CREAM, Item.BLAZE_POWDER, Item.GOLDEN_CARROT, Item.SPIDER_EYE, Item.FERMENTED_SPIDER_EYE, Item.GLISTERING_MELON, Item.SUGAR, Item.RAW_FISH}){
             cn.nukkit.tile.BrewingStand.ingredients.add(ingredient); //temporally solution for ingredients
         }

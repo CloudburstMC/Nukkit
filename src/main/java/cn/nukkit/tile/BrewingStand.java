@@ -11,6 +11,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
 import cn.nukkit.Server;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class BrewingStand extends Spawnable implements InventoryHolder, Container, Nameable{
@@ -19,7 +21,7 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
 
     public static final int MAX_BREW_TIME = 400;
 
-    public static List<Integer> ingredients;
+    public static List<Integer> ingredients = new ArrayList<>();
 
     public BrewingStand(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -86,9 +88,9 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
     }
 
     protected int getSlotIndex(int index) {
-        ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
+        ListTag<CompoundTag> list = this.namedTag.getList("Items", new ListTag<>());
         for (int i = 0; i < list.size(); i++) {
-            if (list.list.get(i).getByte("Slot") == index) {
+            if (list.get(i).getByte("Slot") == index) {
                 return i;
             }
         }
@@ -119,14 +121,14 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
 
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
             if (i >= 0) {
-                this.namedTag.getList("Items").list.remove(i);
+                this.namedTag.getList("Items").getAll().remove(i);
             }
         } else if (i < 0) {
-            i = this.namedTag.getList("Items").list.size();
+            i = this.namedTag.getList("Items").getAll().size();
             i = Math.max(i, this.getSize());
-            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
         } else {
-            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
         }
     }
 
@@ -213,7 +215,7 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putShort("BrewTime", (int) MAX_BREW_TIME);
+                .putShort("BrewTime", MAX_BREW_TIME);
 
         if(this.hasName()){
             nbt.put("CustomName", namedTag.get("CustomName"));
