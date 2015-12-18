@@ -105,8 +105,8 @@ public class Chunk extends BaseFullChunk {
 
         this.extraData = extraData;
 
-        this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).list;
-        this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).list;
+        this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).getAll();
+        this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).getAll();
 
         if (this.nbt.contains("Biomes")) {
             this.checkOldBiomes(this.nbt.getByteArray("Biomes"));
@@ -438,7 +438,7 @@ public class Chunk extends BaseFullChunk {
             }
         }
         ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
-        entityListTag.list = entities;
+        entityListTag.setAll(entities);
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
@@ -447,7 +447,7 @@ public class Chunk extends BaseFullChunk {
             tiles.add(tile.namedTag);
         }
         ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
-        tileListTag.list = tiles;
+        tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
 
         BinaryStream extraData = new BinaryStream();

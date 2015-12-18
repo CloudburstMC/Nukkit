@@ -15,7 +15,7 @@ public class PlayerListPacket extends DataPacket {
     public static final byte TYPE_REMOVE = 1;
 
     public byte type;
-    public Entry[] entries;
+    public Entry[] entries = new Entry[0];
 
     @Override
     public void decode() {
@@ -37,6 +37,7 @@ public class PlayerListPacket extends DataPacket {
                 this.putUUID(entry.uuid);
             }
         }
+
     }
 
     @Override
@@ -61,7 +62,6 @@ public class PlayerListPacket extends DataPacket {
             this.name = name;
             this.skin = skin;
         }
-
     }
 
 }

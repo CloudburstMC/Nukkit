@@ -16,7 +16,6 @@ import java.nio.ByteOrder;
 public abstract class Spawnable extends Tile {
     public Spawnable(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-
     }
 
     public abstract CompoundTag getSpawnCompound();
@@ -29,12 +28,12 @@ public abstract class Spawnable extends Tile {
         CompoundTag tag = this.getSpawnCompound();
         BlockEntityDataPacket pk = new BlockEntityDataPacket();
         pk.x = (int) this.x;
-        pk.y = (byte) this.y;
+        pk.y = (int) this.y;
         pk.z = (int) this.z;
         try {
             pk.namedTag = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {
-            //ignore
+            throw new RuntimeException(e);
         }
         player.dataPacket(pk);
     }

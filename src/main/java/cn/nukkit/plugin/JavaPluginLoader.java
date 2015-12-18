@@ -62,9 +62,7 @@ public class JavaPluginLoader implements PluginLoader {
                     return plugin;
                 } catch (ClassCastException e) {
                     throw new PluginException("main class `" + description.getMain() + "' does not extend PluginBase");
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
 
@@ -144,6 +142,7 @@ public class JavaPluginLoader implements PluginLoader {
                 try {
                     cachedClass = loader.findClass(name, false);
                 } catch (ClassNotFoundException e) {
+                    //ignore
                 }
                 if (cachedClass != null) {
                     return cachedClass;

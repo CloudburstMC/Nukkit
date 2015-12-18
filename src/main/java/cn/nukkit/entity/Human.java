@@ -106,15 +106,15 @@ public class Human extends Creature implements InventoryHolder {
                 if (!this.namedTag.getCompound("Skin").contains("Transparent")) {
                     this.namedTag.getCompound("Skin").putBoolean("Transparent", false);
                 }
-                this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getBoolean("Slim"), this.namedTag.getCompound("Skin").getBoolean("Transparent")));
+                this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getString("ModelId")));
             }
 
             this.uuid = Utils.dataToUUID(String.valueOf(this.getId()), Binary.bytesToHexString(this.getSkin().getData()), this.getNameTag());
         }
 
         if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
-            ListTag<CompoundTag> inventoryList = (ListTag<CompoundTag>) this.namedTag.getList("Inventory");
-            for (CompoundTag item : inventoryList.list) {
+            ListTag<CompoundTag> inventoryList = this.namedTag.getList("Inventory", new ListTag<>());
+            for (CompoundTag item : inventoryList.getAll()) {
                 if ((item.getByte("Slot") & 0xff) >= 0 && (item.getByte("Slot") & 0xff) < 9) {
                     this.inventory.setHotbarSlotIndex((item.getByte("Slot") & 0xff), item.contains("TrueSlot") ? (item.getByte("TrueSlot") & 0xff) : -1);
                 } else if ((item.getByte("Slot") & 0xff) >= 100 && (item.getByte("Slot") & 0xff) < 104) {
@@ -151,11 +151,11 @@ public class Human extends Creature implements InventoryHolder {
                 if (hotbarSlot != -1) {
                     Item item = this.inventory.getItem(hotbarSlot);
                     if (item.getId() != 0 && item.getCount() > 0) {
-                        ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, NBTIO.putItemHelper(item, (int) slot).putByte("TrueSlot", (byte) hotbarSlot));
+                        this.namedTag.getList("Inventory", new ListTag<>()).add(slot, NBTIO.putItemHelper(item, (int) slot).putByte("TrueSlot", (byte) hotbarSlot));
                         continue;
                     }
                 }
-                ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, new CompoundTag()
+                this.namedTag.getList("Inventory", new ListTag<>()).add(slot, new CompoundTag()
                                 .putByte("Count", (byte) 0)
                                 .putShort("Damage", 0)
                                 .putByte("Slot", slot)
@@ -167,13 +167,13 @@ public class Human extends Creature implements InventoryHolder {
             int slotCount = Player.SURVIVAL_SLOTS + 9;
             for (byte slot = 9; slot < slotCount; ++slot) {
                 Item item = this.inventory.getItem(slot - 9);
-                ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, NBTIO.putItemHelper(item, (int) slot));
+                this.namedTag.getList("Inventory", new ListTag<>()).add(slot, NBTIO.putItemHelper(item, (int) slot));
             }
 
             for (byte slot = 100; slot < 104; ++slot) {
                 Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
                 if (item != null && item.getId() != Item.AIR) {
-                    ((ListTag<CompoundTag>) this.namedTag.getList("Inventory")).list.add(slot, NBTIO.putItemHelper(item, (int) slot));
+                    this.namedTag.getList("Inventory", new ListTag<>()).add(slot, NBTIO.putItemHelper(item, (int) slot));
                 }
             }
         }
@@ -181,8 +181,7 @@ public class Human extends Creature implements InventoryHolder {
         if (this.getSkin().getData().length > 0) {
             this.namedTag.putCompound("Skin", new CompoundTag()
                             .putByteArray("Data", this.getSkin().getData())
-                            .putBoolean("Slim", this.getSkin().isSlim())
-                            .putBoolean("Transparent", this.getSkin().isTransparent())
+                            .putString("ModelId", this.getSkin().getModel())
             );
         }
     }

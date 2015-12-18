@@ -17,7 +17,7 @@ import cn.nukkit.network.protocol.ContainerSetDataPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Furnace extends Tile implements InventoryHolder, Container, Nameable {
+public class Furnace extends Spawnable implements InventoryHolder, Container, Nameable {
 
     protected FurnaceInventory inventory;
 
@@ -37,13 +37,18 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
             this.namedTag.putShort("BurnTime", 0);
         }
 
-        if (!this.namedTag.contains("BurnTime") || this.namedTag.getShort("CookTime") < 0 || (this.namedTag.getShort("BurnTime") == 0 && this.namedTag.getShort("CookTime") > 0)) {
+        if (!this.namedTag.contains("CookTime") || this.namedTag.getShort("CookTime") < 0 || (this.namedTag.getShort("BurnTime") == 0 && this.namedTag.getShort("CookTime") > 0)) {
             this.namedTag.putShort("CookTime", 0);
         }
 
         if (!this.namedTag.contains("MaxTime")) {
             this.namedTag.putShort("MaxTime", this.namedTag.getShort("BurnTime"));
-            this.namedTag.putShort("BurnTicks", 0);
+            this.namedTag.putShort("BurnDuration", 0);
+        }
+
+        if (this.namedTag.contains("BurnTicks")) {
+            this.namedTag.putShort("BurnDuration", this.namedTag.getShort("BurnTicks"));
+            this.namedTag.remove("BurnTicks");
         }
 
         if (this.namedTag.getShort("BurnTime") > 0) {
@@ -95,9 +100,9 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
     }
 
     protected int getSlotIndex(int index) {
-        ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
+        ListTag<CompoundTag> list = this.namedTag.getList("Items", new ListTag<>());
         for (int i = 0; i < list.size(); i++) {
-            if (list.list.get(i).getByte("Slot") == index) {
+            if (list.get(i).getByte("Slot") == index) {
                 return i;
             }
         }
@@ -128,14 +133,14 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
 
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
             if (i >= 0) {
-                this.namedTag.getList("Items").list.remove(i);
+                this.namedTag.getList("Items").getAll().remove(i);
             }
         } else if (i < 0) {
-            i = this.namedTag.getList("Items").list.size();
+            i = this.namedTag.getList("Items").getAll().size();
             i = Math.max(i, this.getSize());
-            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
         } else {
-            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
         }
     }
 
@@ -154,7 +159,7 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
 
         this.namedTag.putShort("MaxTime", ev.getBurnTime());
         this.namedTag.putShort("BurnTime", ev.getBurnTime());
-        this.namedTag.putShort("BurnTicks", 0);
+        this.namedTag.putShort("BurnDuration", 0);
         if (this.getBlock().getId() == Item.FURNACE) {
             this.getLevel().setBlock(this, Block.get(Item.BURNING_FURNACE, this.getBlock().getDamage()), true);
         }
@@ -186,8 +191,8 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
         }
 
         if (this.namedTag.getShort("BurnTime") > 0) {
-            this.namedTag.putShort("BurnTime", (this.namedTag.getShort("BurnTime") + 1));
-            this.namedTag.putShort("BurnTicks", (int) Math.ceil((double) this.namedTag.getShort("BurnTime") / (double) this.namedTag.getShort("MaxTime") * 200d));
+            this.namedTag.putShort("BurnTime", (this.namedTag.getShort("BurnTime") - 1));
+            this.namedTag.putShort("BurnDuration", (int) Math.ceil((double) this.namedTag.getShort("BurnTime") / (double) this.namedTag.getShort("MaxTime") * 200d));
 
             if (smelt != null && canSmelt) {
                 this.namedTag.putShort("CookTime", (this.namedTag.getShort("CookTime") + 1));
@@ -210,7 +215,7 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
             } else if (this.namedTag.getShort("BurnTime") <= 0) {
                 this.namedTag.putShort("BurnTime", 0);
                 this.namedTag.putShort("CookTime", 0);
-                this.namedTag.putShort("BurnTicks", 0);
+                this.namedTag.putShort("BurnDuration", 0);
             } else {
                 this.namedTag.putShort("CookTime", 0);
             }
@@ -221,7 +226,7 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
             }
             this.namedTag.putShort("BurnTime", 0);
             this.namedTag.putShort("CookTime", 0);
-            this.namedTag.putShort("BurnTicks", 0);
+            this.namedTag.putShort("BurnDuration", 0);
         }
 
         for (Player player : this.getInventory().getViewers()) {
@@ -236,7 +241,7 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
                 pk = new ContainerSetDataPacket();
                 pk.windowid = (byte) windowId;
                 pk.property = 1;
-                pk.value = this.namedTag.getShort("BurnTicks");
+                pk.value = this.namedTag.getShort("BurnDuration");
                 player.dataPacket(pk);
             }
         }
@@ -244,5 +249,23 @@ public class Furnace extends Tile implements InventoryHolder, Container, Nameabl
         this.lastUpdate = System.currentTimeMillis();
 
         return ret;
+    }
+
+    @Override
+    public CompoundTag getSpawnCompound() {
+        CompoundTag c = new CompoundTag()
+                .putString("id", Tile.FURNACE)
+                .putInt("x", (int) this.x)
+                .putInt("y", (int) this.y)
+                .putInt("z", (int) this.z)
+                .putShort("BurnDuration", this.namedTag.getShort("BurnDuration"))
+                .putShort("BurnTime", this.namedTag.getShort("BurnTime"))
+                .putShort("CookTime", this.namedTag.getShort("CookTime"));
+
+        if (this.hasName()) {
+            c.put("CustomName", this.namedTag.get("CustomName"));
+        }
+
+        return c;
     }
 }

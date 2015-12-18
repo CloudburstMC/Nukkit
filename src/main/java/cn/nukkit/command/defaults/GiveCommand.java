@@ -25,16 +25,27 @@ public class GiveCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
+
         if (args.length < 2) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
+
         Player player = sender.getServer().getPlayer(args[0]);
-        Item rawItem = Item.fromString(args[1]);
+        Item rawItem;
+        try {
+            rawItem = Item.fromString(args[1]);
+        } catch (Exception e) {
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            return true;
+        }
+
         Item[] items;
+        String countString;
         if (!(args.length >= 3)) {
             rawItem.setCount(rawItem.getMaxStackSize());
             items = new Item[]{rawItem};
+            countString = String.valueOf(rawItem.getMaxStackSize());
         } else if (!args[2].matches("^[1-9]+\\d*$")) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
@@ -53,6 +64,7 @@ public class GiveCommand extends VanillaCommand {
                 count -= rawItem.getMaxStackSize();
             }
             items = itemsCollection.toArray(new Item[1]);
+            countString = String.valueOf(count);
         }
         if (player != null) {
             if (rawItem.getId() == 0) {
@@ -68,7 +80,7 @@ public class GiveCommand extends VanillaCommand {
                 "%commands.give.success",
                 new String[]{
                         rawItem.getName() + " (" + rawItem.getId() + ":" + rawItem.getDamage() + ")",
-                        args[2],
+                        countString,
                         player.getName()
                 }
         ));

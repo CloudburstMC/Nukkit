@@ -1,7 +1,5 @@
 package cn.nukkit.nbt.stream;
 
-import cn.nukkit.utils.Binary;
-
 import java.io.*;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -43,7 +41,7 @@ public class NBTOutputStream extends FilterOutputStream implements DataOutput {
     @Override
     public void writeShort(int v) throws IOException {
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
-            v = Binary.readLShort(Binary.writeShort(v));
+            v = Integer.reverseBytes(v) >> 16;
         }
         this.getStream().writeShort(v);
     }

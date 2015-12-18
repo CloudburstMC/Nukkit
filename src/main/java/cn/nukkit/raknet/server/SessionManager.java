@@ -445,9 +445,7 @@ public class SessionManager {
         if (this.packetPool.containsKey(id)) {
             try {
                 return this.packetPool.get(id).newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }

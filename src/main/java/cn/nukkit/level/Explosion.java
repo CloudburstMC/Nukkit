@@ -31,7 +31,7 @@ public class Explosion {
     private Position source;
     private float size;
 
-    private HashMap<String, Block> affectedBlocks = new HashMap<String, Block>();
+    private HashMap<String, Block> affectedBlocks = new HashMap<>();
     private float stepLen = 0.3F;
 
     private Object what;
@@ -112,8 +112,8 @@ public class Explosion {
 
     public boolean explodeB() {
 
-        HashMap<String, Boolean> updateBlocks = new HashMap<String, Boolean>();
-        List<Vector3> send = new ArrayList<Vector3>();
+        HashMap<String, Boolean> updateBlocks = new HashMap<>();
+        List<Vector3> send = new ArrayList<>();
 
         Vector3 source = (new Vector3(this.source.x, this.source.y, this.source.z)).floor();
         float yield = (1 / this.size) * 100;
@@ -171,7 +171,7 @@ public class Explosion {
             Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
                 float mot = (float) (Math.random() * Math.PI * 2);
-                PrimedTNT tnt = (PrimedTNT) Entity.createEntity("PrimedTNT", this.level.getChunk((int) block.x >> 4, (int) block.z >> 4),
+                PrimedTNT tnt = new PrimedTNT(this.level.getChunk((int) block.x >> 4, (int) block.z >> 4),
                         new CompoundTag()
                                 .putList(new ListTag<DoubleTag>("Pos")
                                         .add(new DoubleTag("", block.x + 0.5))

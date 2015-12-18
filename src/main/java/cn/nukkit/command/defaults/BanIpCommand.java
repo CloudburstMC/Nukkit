@@ -75,7 +75,7 @@ public class BanIpCommand extends VanillaCommand {
 
                     Command.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success", value));
                 } else {
-                    sender.sendMessage(new TranslationContainer("commands.banip.offline.invalid"));
+                    sender.sendMessage(new TranslationContainer("commands.banip.invalid"));
                     return false;
                 }
             }

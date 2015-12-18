@@ -20,7 +20,7 @@ public class BlockEntityDataPacket extends DataPacket {
     @Override
     public void decode() {
         this.x = this.getInt();
-        this.y = this.getByte();
+        this.y = this.getInt();
         this.z = this.getInt();
         this.namedTag = this.get();
     }
@@ -29,7 +29,7 @@ public class BlockEntityDataPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putInt(this.x);
-        this.putByte((byte) this.y);
+        this.putInt(this.y);
         this.putInt(this.z);
         this.put(this.namedTag);
     }
