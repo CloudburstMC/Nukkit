@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.task;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.ChunkManagerPool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.SimpleChunkManager;
 import cn.nukkit.level.generator.Generator;
@@ -33,7 +32,6 @@ public class GeneratorRegisterTask extends AsyncTask {
         Block.init();
         Biome.init();
         SimpleChunkManager manager = new SimpleChunkManager(this.seed);
-        ChunkManagerPool.put(this.levelId, manager);
         try {
             Generator generator = this.generator.getConstructor(Map.class).newInstance(this.settings);
             generator.init(manager, new cn.nukkit.utils.Random(manager.getSeed()));

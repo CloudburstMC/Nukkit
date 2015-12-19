@@ -20,6 +20,7 @@ import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.EdibleItem;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.Potion;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -1123,7 +1124,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 break;
                         }*/
 
-                        /*TakeItemEntityPacket pk = new TakeItemEntityPacket();
+                        TakeItemEntityPacket pk = new TakeItemEntityPacket();
                         pk.entityId = this.getId();
                         pk.target = entity.getId();
                         Server.broadcastPacket(entity.getViewers().values(), pk);
@@ -1131,8 +1132,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         pk = new TakeItemEntityPacket();
                         pk.entityId = 0;
                         pk.target = entity.getId();
-                        this.dataPacket(pk);*/
-                        //todo: check if this cause client crash
+                        this.dataPacket(pk);
 
                         this.inventory.addItem(item.clone());
                         entity.kill();
@@ -1508,7 +1508,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
-            nbt.getList(new ListTag<>(), "Pos")
+            nbt.getList("Pos", new ListTag<>())
                     .add(0, new DoubleTag("0", this.level.getSpawnLocation().x))
                     .add(1, new DoubleTag("1", this.level.getSpawnLocation().y))
                     .add(2, new DoubleTag("2", this.level.getSpawnLocation().z));
@@ -1523,7 +1523,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.saveOfflinePlayerData(this.username, nbt, true);
         }
 
-        ListTag<DoubleTag> posList = nbt.getList(new ListTag<>(), "Pos");
+        ListTag<DoubleTag> posList = nbt.getList("Pos", new ListTag<>());
         BaseFullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
         if (chunk == null || chunk.getProvider() == null) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
@@ -1543,8 +1543,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        ListTag<FloatTag> rotationList = this.namedTag.getList(new ListTag<>(), "Rotation");
-        ListTag<DoubleTag> motionList = this.namedTag.getList(new ListTag<>(), "Motion");
+        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", new ListTag<>());
+        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", new ListTag<>());
         this.setPositionAndRotation(
                 this.temporalVector.setComponents(
                         posList.get(0).data,
@@ -2139,8 +2139,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.teleport(playerRespawnEvent.getRespawnPosition());
                         this.setSprinting(false);
                         this.setSneaking(false);
-                        
-                        this.getFoodData().setFoodLevel(20, 20);
 
                         this.extinguish();
                         this.setDataProperty(Player.DATA_AIR, new ShortEntityData(300));
@@ -2148,6 +2146,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.noDamageTicks = 60;
 
                         this.setHealth(this.getMaxHealth());
+                        this.getFoodData().setFoodLevel(20, 20);
 
                         this.removeAllEffects();
                         this.sendData(this);
@@ -2399,7 +2398,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     case 9: //Eating
                         Item itemInHand = this.inventory.getItemInHand();
                         int amount = EdibleItem.getRegainAmount(itemInHand.getId(), itemInHand.getDamage());
-                        if (this.getHealth() < this.getMaxHealth() && amount > 0) {
+                        if ((this.getHealth() < this.getMaxHealth() && amount > 0) || itemInHand.getId() == Item.POTION) {
                             PlayerItemConsumeEvent consumeEvent;
                             this.server.getPluginManager().callEvent(consumeEvent = new PlayerItemConsumeEvent(this, itemInHand));
                             if (consumeEvent.isCancelled()) {
@@ -2407,24 +2406,40 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 break;
                             }
 
-                            EntityEventPacket pk = new EntityEventPacket();
-                            pk.eid = this.getId();
-                            pk.event = EntityEventPacket.USE_ITEM;
-                            this.dataPacket(pk);
-                            Server.broadcastPacket(this.getViewers().values(), pk);
+                            if (itemInHand instanceof Potion) {
+                                if (itemInHand.getCount() > 1) {
+                                    if (this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))) {
+                                        this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
+                                    }
+                                    --itemInHand.count;
+                                } else {
+                                    itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
+                                }
 
-                            EntityRegainHealthEvent regainHealthEvent = new EntityRegainHealthEvent(this, amount, EntityRegainHealthEvent.CAUSE_EATING);
-                            this.heal(regainHealthEvent.getAmount(), regainHealthEvent);
+                                ((Potion) itemInHand).applyPotion(this);
+                            } else {
+                                EntityEventPacket pk = new EntityEventPacket();
+                                pk.eid = this.getId();
+                                pk.event = EntityEventPacket.USE_ITEM;
+                                this.dataPacket(pk);
+                                Server.broadcastPacket(this.getViewers().values(), pk);
 
-                            --itemInHand.count;
-                            this.inventory.setItemInHand(itemInHand);
-                            if (itemInHand.getId() == Item.MUSHROOM_STEW || itemInHand.getId() == Item.BEETROOT_SOUP) {
-                                this.inventory.addItem(Item.get(Item.BOWL, 0, 1));
-                            } else if (itemInHand.getId() == Item.RAW_FISH && itemInHand.getDamage() == 3) { //Pufferfish
-                                //this.addEffect(Effect::getEffect(Effect::HUNGER).setAmplifier(2).setDuration(15 * 20));
-                                this.addEffect(Effect.getEffect(Effect.NAUSEA).setAmplifier(1).setDuration(15 * 20));
-                                this.addEffect(Effect.getEffect(Effect.POISON).setAmplifier(3).setDuration(60 * 20));
+                                EntityRegainHealthEvent regainHealthEvent = new EntityRegainHealthEvent(this, amount, EntityRegainHealthEvent.CAUSE_EATING);
+                                this.heal(regainHealthEvent.getAmount(), regainHealthEvent);
+
+                                --itemInHand.count;
+
+                                if (itemInHand.getId() == Item.MUSHROOM_STEW || itemInHand.getId() == Item.BEETROOT_SOUP) {
+                                    this.inventory.addItem(Item.get(Item.BOWL, 0, 1));
+                                } else if (itemInHand.getId() == Item.RAW_FISH && itemInHand.getDamage() == 3) { //Pufferfish
+                                    //this.addEffect(Effect::getEffect(Effect::HUNGER).setAmplifier(2).setDuration(15 * 20));
+                                    this.addEffect(Effect.getEffect(Effect.NAUSEA).setAmplifier(1).setDuration(15 * 20));
+                                    this.addEffect(Effect.getEffect(Effect.POISON).setAmplifier(3).setDuration(60 * 20));
+                                }
                             }
+
+                            this.inventory.setItemInHand(itemInHand);
+                            this.inventory.sendHeldItem(this);
                         }
                         break;
                 }
@@ -2581,7 +2596,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     canCraft = false;
                 }
 
-                List<Item> ingredientsList = new ArrayList<Item>();
+                List<Item> ingredientsList = new ArrayList<>();
                 if (recipe instanceof ShapedRecipe) {
                     for (int x = 0; x < 3; x++) {
                         for (int y = 0; y < 3; y++) {
@@ -3451,7 +3466,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     private boolean foodEnabled = true;
 
     public boolean isFoodEnabled() {
-        return this.isCreative() || this.isSpectator() ? false : this.foodEnabled;
+        return !(this.isCreative() || this.isSpectator()) && this.foodEnabled;
     }
 
     public void setFoodEnabled(boolean foodEnabled) {

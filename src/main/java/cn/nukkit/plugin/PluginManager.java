@@ -27,7 +27,7 @@ public class PluginManager {
 
     private SimpleCommandMap commandMap;
 
-    protected Map<String, Plugin> plugins = new HashMap<>();
+    protected Map<String, Plugin> plugins = new LinkedHashMap<>();
 
     protected Map<String, Permission> permissions = new HashMap<>();
 
@@ -129,11 +129,11 @@ public class PluginManager {
 
     public Map<String, Plugin> loadPlugins(File dictionary, List<String> newLoaders) {
         if (dictionary.isDirectory()) {
-            Map<String, File> plugins = new HashMap<>();
-            Map<String, Plugin> loadedPlugins = new HashMap<>();
-            Map<String, List<String>> dependencies = new HashMap<>();
-            Map<String, List<String>> softDependencies = new HashMap<>();
-            Map<String, PluginLoader> loaders = new HashMap<>();
+            Map<String, File> plugins = new LinkedHashMap<>();
+            Map<String, Plugin> loadedPlugins = new LinkedHashMap<>();
+            Map<String, List<String>> dependencies = new LinkedHashMap<>();
+            Map<String, List<String>> softDependencies = new LinkedHashMap<>();
+            Map<String, PluginLoader> loaders = new LinkedHashMap<>();
             if (newLoaders != null) {
                 for (String key : newLoaders) {
                     if (this.fileAssociations.containsKey(key)) {
@@ -255,7 +255,7 @@ public class PluginManager {
                     }
 
                     if (softDependencies.containsKey(name)) {
-                        for (String dependency : softDependencies.get(name)) {
+                        for (String dependency : new ArrayList<>(softDependencies.get(name))) {
                             if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
                                 softDependencies.get(name).remove(dependency);
                             }

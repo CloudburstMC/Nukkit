@@ -1024,16 +1024,18 @@ public class Level implements ChunkManager, Metadatable {
         return collides.stream().toArray(Block[]::new);
     }
 
-    public boolean isFullBlock(Block block) {
-        if (block.isSolid()) {
-            return true;
-        }
-        AxisAlignedBB bb = block.getBoundingBox();
-        return bb != null && bb.getAverageEdgeLength() >= 1;
-    }
-
     public boolean isFullBlock(Vector3 pos) {
-        return this.isFullBlock(this.getBlock(pos));
+        AxisAlignedBB bb;
+        if (pos instanceof Block) {
+            if (((Block) pos).isSolid()) {
+                return true;
+            }
+            bb = ((Block) pos).getBoundingBox();
+        } else {
+            bb = this.getBlock(pos).getBoundingBox();
+        }
+
+        return bb != null && bb.getAverageEdgeLength() >= 1;
     }
 
     public AxisAlignedBB[] getCollisionCubes(Entity entity, AxisAlignedBB bb) {
@@ -1395,7 +1397,7 @@ public class Level implements ChunkManager, Metadatable {
             Tag tag = item.getNamedTagEntry("CanDestroy");
             if (tag instanceof ListTag) {
                 boolean canBreak = false;
-                for (Tag v : ((ListTag<Tag>) tag).list) {
+                for (Tag v : ((ListTag<Tag>) tag).getAll()) {
                     if (v instanceof StringTag) {
                         Item entry = Item.fromString(((StringTag) v).data);
                         if (entry.getId() > 0 && entry.getBlock() != null && entry.getBlock().getId() == target.getId()) {
@@ -1556,7 +1558,7 @@ public class Level implements ChunkManager, Metadatable {
         Tag tag = item.getNamedTagEntry("CanPlaceOn");
         if (tag instanceof ListTag) {
             boolean canBreak = false;
-            for (Tag v : ((ListTag<Tag>) tag).list) {
+            for (Tag v : ((ListTag<Tag>) tag).getAll()) {
                 if (v instanceof StringTag) {
                     Item entry = Item.fromString(((StringTag) v).data);
                     if (entry.getId() > 0 && entry.getBlock() != null && entry.getBlock().getId() == target.getId()) {

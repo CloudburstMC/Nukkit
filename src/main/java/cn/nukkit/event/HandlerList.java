@@ -146,7 +146,7 @@ public class HandlerList {
 
     public static ArrayList<HandlerList> getHandlerLists() {
         synchronized (allLists) {
-            return (ArrayList<HandlerList>) allLists.clone();
+            return new ArrayList<>(allLists);
         }
     }
 

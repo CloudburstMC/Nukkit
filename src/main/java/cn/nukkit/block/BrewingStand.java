@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
@@ -7,34 +8,25 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.tile.Furnace;
 import cn.nukkit.tile.Tile;
 
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * author: Angelic47
- * Nukkit Project
- */
-public class BurningFurnace extends Solid {
+public class BrewingStand extends Solid {
+    protected int id = BREWING_STAND_BLOCK;
 
-    public BurningFurnace() {
+    public BrewingStand() {
         this(0);
     }
 
-    public BurningFurnace(int meta) {
+    public BrewingStand(int meta) {
         super(meta);
     }
 
     @Override
-    public int getId() {
-        return Block.BURNING_FURNACE;
-    }
-
-    @Override
     public String getName() {
-        return "Burning Furnace";
+        return "Brewing Stand";
     }
 
     @Override
@@ -44,7 +36,7 @@ public class BurningFurnace extends Solid {
 
     @Override
     public double getHardness() {
-        return 3.5;
+        return 0.5;
     }
 
     @Override
@@ -54,17 +46,19 @@ public class BurningFurnace extends Solid {
 
     @Override
     public int getLightLevel() {
-        return 13;
+        return 1;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         int faces[] = {4, 2, 5, 3};
-        this.meta = faces[player != null ? player.getDirection() : 0];
-        this.getLevel().setBlock(block, this, true, true);
+
+        meta = faces[player != null ? player.getDirection() : 0];
+        getLevel().setBlock(block, this, true, true);
+
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
-                .putString("id", Tile.FURNACE)
+                .putString("id", Tile.BREWING_STAND)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
@@ -81,7 +75,8 @@ public class BurningFurnace extends Solid {
                 nbt.put((String) tag.getKey(), (Tag) tag.getValue());
             }
         }
-        Tile.createTile("Furnace", this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+
+        Tile.createTile("BrewingStand", getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
         return true;
     }
@@ -93,12 +88,17 @@ public class BurningFurnace extends Solid {
     }
 
     @Override
+    public int getId() {
+        return Block.BREWING_STAND_BLOCK;
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            Tile t = this.getLevel().getTile(this);
-            Furnace furnace;
-            if (t instanceof Furnace) {
-                furnace = (Furnace) t;
+            Tile t = getLevel().getTile(this);
+            cn.nukkit.tile.BrewingStand brewing = null;
+            if (t instanceof cn.nukkit.tile.BrewingStand) {
+                brewing = (cn.nukkit.tile.BrewingStand) t;
             } else {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
@@ -106,20 +106,20 @@ public class BurningFurnace extends Solid {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                furnace = new Furnace(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                brewing = new cn.nukkit.tile.BrewingStand(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
             }
 
-            if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {
-                if (!furnace.namedTag.getString("Lock").equals(item.getCustomName())) {
-                    return true;
+            if (brewing.namedTag.contains("Lock") && brewing.namedTag.get("Lock") instanceof StringTag) {
+                if (!brewing.namedTag.getString("Lock").equals(item.getCustomName())) {
+                    return false;
                 }
             }
 
             if (player.isCreative()) {
-                return true;
+                return false;
             }
 
-            player.addWindow(furnace.getInventory());
+            player.addWindow(brewing.getInventory());
         }
 
         return true;
@@ -128,7 +128,7 @@ public class BurningFurnace extends Solid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
-            return new int[][]{new int[]{Item.FURNACE, 0, 1}};
+            return new int[][]{new int[]{Item.BREWING_STAND, 0, 1}};
         } else {
             return new int[0][];
         }
