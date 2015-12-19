@@ -2,6 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.block.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.Potion;
 import cn.nukkit.utils.Utils;
 
 import java.util.*;
@@ -18,12 +19,14 @@ public class CraftingManager {
 
     public Map<String, FurnaceRecipe> furnaceRecipes = new HashMap<>();
 
+    public Map<String, BrewingRecipe> brewingRecipes = new HashMap<>();
+
     private static int RECIPE_COUNT = 0;
 
     public CraftingManager() {
         this.registerStonecutter();
         this.registerFurnace();
-
+        this.registerBrewing();
 
         this.registerDyes();
         this.registerIngots();
@@ -333,6 +336,16 @@ public class CraftingManager {
                 "III",
                 "III"
         )).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GLASS_BOTTLE, 0, 3),
+                "I I",
+                " I "
+        )).setIngredient("I", Item.get(Item.GLASS, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.BREWING_STAND, 0, 1),
+                " I ",
+                "CCC"
+        )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("I", Item.get(Item.BLAZE_ROD, 0, 1)));
     }
 
     protected void registerFurnace() {
@@ -356,6 +369,52 @@ public class CraftingManager {
         this.registerRecipe(new FurnaceRecipe(Item.get(Item.BAKED_POTATO, 0, 1), Item.get(Item.POTATO, 0, 1)));
 
         this.registerRecipe(new FurnaceRecipe(Item.get(Item.HARDENED_CLAY, 0, 1), Item.get(Item.CLAY_BLOCK, 0, 1)));
+    }
+
+    protected void registerBrewing() {
+        for (int ingredient : new int[]{Item.NETHER_WART, Item.GOLD_NUGGET, Item.GHAST_TEAR, Item.GLOWSTONE_DUST, Item.REDSTONE_DUST, Item.GUNPOWDER, Item.MAGMA_CREAM, Item.BLAZE_POWDER, Item.GOLDEN_CARROT, Item.SPIDER_EYE, Item.FERMENTED_SPIDER_EYE, Item.GLISTERING_MELON, Item.SUGAR, Item.RAW_FISH}) {
+            cn.nukkit.tile.BrewingStand.ingredients.add(ingredient); //temporally solution for ingredients
+        }
+
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.AWKWARD, 1), Item.get(Item.NETHER_WART, 0, 1), Item.get(Item.POTION, Potion.NO_EFFECTS, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.THICK, 1), Item.get(Item.GLOWSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.NO_EFFECTS, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.MUNDANE_II, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.NO_EFFECTS, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.STRENGTH, 1), Item.get(Item.BLAZE_POWDER, 0, 1), Item.get(Item.POTION, Potion.AWKWARD, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.STRENGTH_LONG, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.STRENGTH, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.STRENGTH_LONG, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.STRENGTH_II, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.STRENGTH_II, 1), Item.get(Item.GLOWSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.STRENGTH, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.STRENGTH_II, 1), Item.get(Item.GLOWSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.STRENGTH_LONG, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.WEAKNESS, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.NO_EFFECTS, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.WEAKNESS_LONG, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.WEAKNESS, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.NIGHT_VISION, 1), Item.get(Item.GOLDEN_CARROT, 0, 1), Item.get(Item.POTION, Potion.AWKWARD, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.NIGHT_VISION_LONG, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.NIGHT_VISION, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.INVISIBLE, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.NIGHT_VISION, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.INVISIBLE_LONG, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.INVISIBLE, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.INVISIBLE_LONG, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.NIGHT_VISION_LONG, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.FIRE_RESISTANCE, 1), Item.get(Item.MAGMA_CREAM, 0, 1), Item.get(Item.POTION, Potion.AWKWARD, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.FIRE_RESISTANCE_LONG, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.FIRE_RESISTANCE, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.SLOWNESS, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.FIRE_RESISTANCE, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.SLOWNESS, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.SPEED, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.SLOWNESS, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.LEAPING, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.SLOWNESS_LONG, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.FIRE_RESISTANCE_LONG, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.SLOWNESS_LONG, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.SPEED_LONG, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.SPEED, 1), Item.get(Item.SUGAR, 0, 1), Item.get(Item.POTION, Potion.AWKWARD, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.SPEED_LONG, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.SPEED, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.SPEED_II, 1), Item.get(Item.GLOWSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.SPEED, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.INSTANT_HEALTH, 1), Item.get(Item.GLISTERING_MELON, 0, 1), Item.get(Item.POTION, Potion.AWKWARD, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.INSTANT_HEALTH_II, 1), Item.get(Item.GLOWSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.INSTANT_HEALTH, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.POISON, 1), Item.get(Item.SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.AWKWARD, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.POISON_LONG, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.POISON, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.POISON_II, 1), Item.get(Item.GLOWSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.POISON, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.REGENERATION, 1), Item.get(Item.GHAST_TEAR, 0, 1), Item.get(Item.POTION, Potion.AWKWARD, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.REGENERATION_LONG, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.REGENERATION, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.REGENERATION_II, 1), Item.get(Item.GLOWSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.REGENERATION, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.HARMING, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.WATER_BREATHING, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.HARMING, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.INSTANT_HEALTH, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.HARMING, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.POISON, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.HARMING_II, 1), Item.get(Item.GLOWSTONE_DUST, 0, 1), Item.get(Item.POTION, Potion.HARMING, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.HARMING_II, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.INSTANT_HEALTH_II, 1)));
+        registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.HARMING_II, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, Potion.POISON_LONG, 1)));
     }
 
     protected void registerStonecutter() {
@@ -760,6 +819,20 @@ public class CraftingManager {
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
         Item input = recipe.getInput();
         this.furnaceRecipes.put(input.getId() + ":" + (!input.hasMeta() ? "?" : input.getDamage()), recipe);
+    }
+
+    public void registerBrewingRecipe(BrewingRecipe recipe) {
+        Item input = recipe.getInput();
+        Item potion = recipe.getPotion();
+
+        this.brewingRecipes.put(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()), recipe);
+    }
+
+    public BrewingRecipe matchBrewingRecipe(Item input, Item potion) {
+        if (brewingRecipes.containsKey(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()))) {
+            return brewingRecipes.get(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()));
+        }
+        return null;
     }
 
     public boolean matchRecipe(ShapelessRecipe recipe) {

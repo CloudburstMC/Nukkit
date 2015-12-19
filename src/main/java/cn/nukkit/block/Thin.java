@@ -29,9 +29,9 @@ public abstract class Thin extends Transparent {
             boolean flag2 = this.canConnect(this.getSide(4));
             boolean flag3 = this.canConnect(this.getSide(5));
             if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1)) {
-                if (flag2 && !flag3) {
+                if (flag2) {
                     f = 0;
-                } else if (!flag2 && flag3) {
+                } else if (flag3) {
                     f1 = 1;
                 }
             } else {
@@ -39,9 +39,9 @@ public abstract class Thin extends Transparent {
                 f1 = 1;
             }
             if ((!flag || !flag1) && (flag2 || flag3 || flag || flag1)) {
-                if (flag && !flag1) {
+                if (flag) {
                     f2 = 0;
-                } else if (!flag && flag1) {
+                } else if (flag1) {
                     f3 = 1;
                 }
             } else {

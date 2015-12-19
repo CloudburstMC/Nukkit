@@ -192,6 +192,8 @@ public class Item implements Cloneable {
     public static final int ENCHANTING_TABLE = 116;
     public static final int ENCHANT_TABLE = 116;
     public static final int ENCHANTMENT_TABLE = 116;
+    public static final int BREWING_STAND_BLOCK = 117;
+    public static final int BREWING_BLOCK = 117;
 
     public static final int END_PORTAL = 120;
     public static final int END_STONE = 121;
@@ -391,9 +393,22 @@ public class Item implements Cloneable {
     public static final int RAW_CHICKEN = 365;
     public static final int COOKED_CHICKEN = 366;
 
+    public static final int BLAZE_ROD = 369;
+    public static final int GHAST_TEAR = 370;
     public static final int GOLD_NUGGET = 371;
     public static final int GOLDEN_NUGGET = 371;
+    public static final int NETHER_WART = 372;
+    public static final int POTION = 373;
+    public static final int GLASS_BOTTLE = 374;
+    public static final int BOTTLE = 374;
+    public static final int SPIDER_EYE = 375;
+    public static final int FERMENTED_SPIDER_EYE = 376;
+    public static final int BLAZE_POWDER = 377;
+    public static final int MAGMA_CREAM = 378;
+    public static final int BREWING_STAND = 379;
+    public static final int BREWING = 379;
 
+    public static final int GLISTERING_MELON = 382;
     public static final int SPAWN_EGG = 383;
 
     public static final int EMERALD = 388;
@@ -404,6 +419,8 @@ public class Item implements Cloneable {
     public static final int POTATOES = 392;
     public static final int BAKED_POTATO = 393;
     public static final int BAKED_POTATOES = 393;
+
+    public static final int GOLDEN_CARROT = 396;
 
     public static final int PUMPKIN_PIE = 400;
 
@@ -583,6 +600,9 @@ public class Item implements Cloneable {
             list[BEETROOT_SEEDS] = BeetrootSeeds.class;
             list[BEETROOT_SOUP] = BeetrootSoup.class;
             list[REDSTONE_TORCH] = RedstoneTorch.class;
+            list[BREWING_STAND] = BrewingStand.class;
+            list[GLASS_BOTTLE] = GlassBottle.class;
+            list[POTION] = Potion.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -1085,7 +1105,7 @@ public class Item implements Cloneable {
             return null;
         }
 
-        for (CompoundTag entry : ((ListTag<CompoundTag>) this.getNamedTag().getList("ench")).list) {
+        for (CompoundTag entry : ((ListTag<CompoundTag>) this.getNamedTag().getList("ench")).getAll()) {
             if (entry.getShort("id") == id) {
                 Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
                 e.setLevel(entry.getShort("lvl"));
@@ -1112,11 +1132,11 @@ public class Item implements Cloneable {
 
         boolean found = false;
 
-        ench = (ListTag<CompoundTag>) tag.getList("ench");
-        for (int k = 0; k < ench.list.size(); k++) {
-            CompoundTag entry = ench.list.get(k);
+        ench = tag.getList("ench", new ListTag<>());
+        for (int k = 0; k < ench.size(); k++) {
+            CompoundTag entry = ench.get(k);
             if (entry.getShort("id") == enchantment.getId()) {
-                ench.list.add(k, new CompoundTag()
+                ench.add(k, new CompoundTag()
                                 .putShort("id", enchantment.getId())
                                 .putShort("lvl", enchantment.getLevel())
                 );
@@ -1142,8 +1162,8 @@ public class Item implements Cloneable {
 
         List<Enchantment> enchantments = new ArrayList<>();
 
-        ListTag<CompoundTag> ench = (ListTag<CompoundTag>) this.getNamedTag().getList("ench");
-        for (CompoundTag entry : ench.list) {
+        ListTag<CompoundTag> ench = this.getNamedTag().getList("ench", new ListTag<>());
+        for (CompoundTag entry : ench.getAll()) {
             Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
             e.setLevel(entry.getShort("lvl"));
             enchantments.add(e);

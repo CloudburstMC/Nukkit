@@ -17,7 +17,10 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.InflaterInputStream;
 
 /**
@@ -65,7 +68,7 @@ public class Chunk extends BaseChunk {
         }
 
         cn.nukkit.level.format.ChunkSection[] sections = new cn.nukkit.level.format.ChunkSection[8];
-        for (Tag section : this.nbt.getList("Sections").list) {
+        for (Tag section : this.nbt.getList("Sections").getAll()) {
             if (section instanceof CompoundTag) {
                 int y = ((CompoundTag) section).getByte("Y");
                 if (y < 8) {
@@ -123,8 +126,8 @@ public class Chunk extends BaseChunk {
 
         this.extraData = extraData;
 
-        this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).list;
-        this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).list;
+        this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).getAll();
+        this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).getAll();
 
         if (this.nbt.contains("Biomes")) {
             this.checkOldBiomes(this.nbt.getByteArray("Biomes"));
@@ -233,7 +236,7 @@ public class Chunk extends BaseChunk {
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
             s.putByteArray("SkyLight", section.getSkyLightArray());
-            ((List<CompoundTag>) nbt.getList("Sections").list).add(section.getY(), s);
+            nbt.getList("Sections", new ListTag<>()).add(section.getY(), s);
         }
 
         ArrayList<CompoundTag> entities = new ArrayList<>();
@@ -244,7 +247,7 @@ public class Chunk extends BaseChunk {
             }
         }
         ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
-        entityListTag.list = entities;
+        entityListTag.setAll(entities);
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
@@ -253,7 +256,7 @@ public class Chunk extends BaseChunk {
             tiles.add(tile.namedTag);
         }
         ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
-        tileListTag.list = tiles;
+        tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
 
         BinaryStream extraData = new BinaryStream();
@@ -310,7 +313,7 @@ public class Chunk extends BaseChunk {
             }
         }
         ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
-        entityListTag.list = entities;
+        entityListTag.setAll(entities);
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
@@ -319,7 +322,7 @@ public class Chunk extends BaseChunk {
             tiles.add(tile.namedTag);
         }
         ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
-        tileListTag.list = tiles;
+        tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
 
         BinaryStream extraData = new BinaryStream();

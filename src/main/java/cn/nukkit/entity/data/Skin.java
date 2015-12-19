@@ -15,68 +15,46 @@ import java.net.URL;
  * Nukkit Project
  */
 public class Skin {
+
     public static final int SINGLE_SKIN_SIZE = 64 * 32 * 4;
     public static final int DOUBLE_SKIN_SIZE = 64 * 64 * 4;
 
+    public static final String MODEL_STEVE = "Standard_Steve";
+    public static final String MODEL_ALEX = "Standard_Alex";
+
     private byte[] data = new byte[SINGLE_SKIN_SIZE];
-    private boolean slim = false;
-    private boolean transparent = false;
+    private String model;
 
     public Skin(byte[] data) {
-        this(data, false);
+        this(data, MODEL_STEVE);
     }
 
     public Skin(InputStream inputStream) {
-        this(inputStream, false);
+        this(inputStream, MODEL_STEVE);
     }
 
     public Skin(ImageInputStream inputStream) {
-        this(inputStream, false);
+        this(inputStream, MODEL_STEVE);
     }
 
     public Skin(File file) {
-        this(file, false);
+        this(file, MODEL_STEVE);
     }
 
     public Skin(URL url) {
-        this(url, false);
+        this(url, MODEL_STEVE);
     }
 
     public Skin(BufferedImage image) {
-        this(image, false);
+        this(image, MODEL_STEVE);
     }
 
-    public Skin(byte[] data, boolean slim) {
-        this(data, slim, false);
-    }
-
-    public Skin(InputStream inputStream, boolean slim) {
-        this(inputStream, slim, false);
-    }
-
-    public Skin(ImageInputStream inputStream, boolean slim) {
-        this(inputStream, slim, false);
-    }
-
-    public Skin(File file, boolean slim) {
-        this(file, slim, false);
-    }
-
-    public Skin(URL url, boolean slim) {
-        this(url, slim, false);
-    }
-
-    public Skin(BufferedImage image, boolean slim) {
-        this(image, false, false);
-    }
-
-    public Skin(byte[] data, boolean slim, boolean transparent) {
+    public Skin(byte[] data, String model) {
         this.setData(data);
-        this.slim = slim;
-        this.setTransparent(transparent);
+        this.setModel(model);
     }
 
-    public Skin(InputStream inputStream, boolean slim, boolean transparent) {
+    public Skin(InputStream inputStream, String model) {
         BufferedImage image;
         try {
             image = ImageIO.read(inputStream);
@@ -84,11 +62,10 @@ public class Skin {
             throw new RuntimeException(e);
         }
         this.parseBufferedImage(image);
-        this.slim = slim;
-        this.setTransparent(transparent);
+        this.setModel(model);
     }
 
-    public Skin(ImageInputStream inputStream, boolean slim, boolean transparent) {
+    public Skin(ImageInputStream inputStream, String model) {
         BufferedImage image;
         try {
             image = ImageIO.read(inputStream);
@@ -96,11 +73,10 @@ public class Skin {
             throw new RuntimeException(e);
         }
         this.parseBufferedImage(image);
-        this.slim = slim;
-        this.setTransparent(transparent);
+        this.setModel(model);
     }
 
-    public Skin(File file, boolean slim, boolean transparent) {
+    public Skin(File file, String model) {
         BufferedImage image;
         try {
             image = ImageIO.read(file);
@@ -108,11 +84,10 @@ public class Skin {
             throw new RuntimeException(e);
         }
         this.parseBufferedImage(image);
-        this.slim = slim;
-        this.setTransparent(transparent);
+        this.setModel(model);
     }
 
-    public Skin(URL url, boolean slim, boolean transparent) {
+    public Skin(URL url, String model) {
         BufferedImage image;
         try {
             image = ImageIO.read(url);
@@ -120,14 +95,12 @@ public class Skin {
             throw new RuntimeException(e);
         }
         this.parseBufferedImage(image);
-        this.slim = slim;
-        this.setTransparent(transparent);
+        this.setModel(model);
     }
 
-    public Skin(BufferedImage image, boolean slim, boolean transparent) {
+    public Skin(BufferedImage image, String model) {
         this.parseBufferedImage(image);
-        this.slim = slim;
-        this.setTransparent(transparent);
+        this.setModel(model);
     }
 
     public void parseBufferedImage(BufferedImage image) {
@@ -149,12 +122,8 @@ public class Skin {
         return data;
     }
 
-    public boolean isSlim() {
-        return slim;
-    }
-
-    public boolean isTransparent() {
-        return transparent;
+    public String getModel() {
+        return model;
     }
 
     public void setData(byte[] data) {
@@ -164,12 +133,12 @@ public class Skin {
         this.data = data;
     }
 
-    public void setSlim(boolean slim) {
-        this.slim = slim;
-    }
+    public void setModel(String model) {
+        if (model == null || model.trim().isEmpty()) {
+            model = MODEL_STEVE;
+        }
 
-    public void setTransparent(boolean transparent) {
-        this.transparent = transparent;
+        this.model = model;
     }
 
     public boolean isValid() {

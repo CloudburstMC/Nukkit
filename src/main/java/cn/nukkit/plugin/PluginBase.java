@@ -184,6 +184,11 @@ abstract public class PluginBase implements Plugin {
 
     @Override
     public boolean saveResource(String filename, boolean replace) {
+        File out = new File(this.dataFolder, filename);
+        return this.saveResource(filename, replace, out);
+    }
+
+    public boolean saveResource(String filename, boolean replace, File out) {
         if (filename.trim().equals("")) {
             return false;
         }
@@ -197,7 +202,6 @@ abstract public class PluginBase implements Plugin {
             this.dataFolder.mkdirs();
         }
 
-        File out = new File(this.dataFolder, filename);
         if (out.exists() && !replace) {
             return false;
         }

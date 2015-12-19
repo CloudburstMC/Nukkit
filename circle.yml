@@ -4,7 +4,6 @@ checkout:
     - git submodule update --init
     - mvn clean
     - mvn install
-    - mvn package
     - cp -R ./target/nukkit-1.0-SNAPSHOT.jar $CIRCLE_ARTIFACTS
 
 machine:

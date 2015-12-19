@@ -169,6 +169,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int ENCHANTING_TABLE = 116;
     public static final int ENCHANT_TABLE = 116;
     public static final int ENCHANTMENT_TABLE = 116;
+    public static final int BREWING_STAND_BLOCK = 117;
+    public static final int BREWING_BLOCK = 117;
 
     public static final int END_PORTAL_FRAME = 120;
     public static final int END_STONE = 121;
@@ -280,7 +282,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[STILL_WATER] = StillWater.class;
             list[LAVA] = Lava.class;
             list[STILL_LAVA] = StillLava.class;
-            //list[SAND] = Sand.class;
+            list[SAND] = Sand.class;
             list[GRAVEL] = Gravel.class;
             list[GOLD_ORE] = GoldOre.class;
             list[IRON_ORE] = IronOre.class;
@@ -359,7 +361,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             list[IRON_BARS] = IronBars.class;
             list[GLASS_PANE] = GlassPane.class;
-            //list[MELON_BLOCK] = Melon.class;
+            list[MELON_BLOCK] = Melon.class;
             /*list[PUMPKIN_STEM] = PumpkinStem.class;
             list[MELON_STEM] = MelonStem.class;
             list[VINE] = Vine.class;
@@ -394,7 +396,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[POTATO_BLOCK] = Potato.class;
             //list[ANVIL] = Anvil.class;
 
-            //list[REDSTONE_BLOCK] = Redstone.class;
+            list[REDSTONE_BLOCK] = Redstone.class;
 
             list[QUARTZ_BLOCK] = Quartz.class;
             list[QUARTZ_STAIRS] = QuartzStairs.class;
@@ -426,6 +428,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[BEETROOT_BLOCK] = Beetroot.class;
             list[STONECUTTER] = Stonecutter.class;
             list[GLOWING_OBSIDIAN] = GlowingObsidian.class;
+            list[BREWING_STAND_BLOCK] = BrewingStand.class;
 
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];

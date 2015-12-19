@@ -39,8 +39,8 @@ public class PackedIce extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-            return new int[][]{
-                    {this.getId(), 0, 1}
-            };
+        return new int[][]{
+                {this.getId(), 0, 1}
+        };
     }
 }
