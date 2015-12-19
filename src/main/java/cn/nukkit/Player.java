@@ -2406,18 +2406,18 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 break;
                             }
 
-                            if(itemInHand instanceof Potion){
-                                if(itemInHand.getCount() > 1){
-                                    if(this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))){
+                            if (itemInHand instanceof Potion) {
+                                if (itemInHand.getCount() > 1) {
+                                    if (this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))) {
                                         this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
                                     }
                                     --itemInHand.count;
-                                }else{
+                                } else {
                                     itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
                                 }
 
                                 ((Potion) itemInHand).applyPotion(this);
-                            }else{
+                            } else {
                                 EntityEventPacket pk = new EntityEventPacket();
                                 pk.eid = this.getId();
                                 pk.event = EntityEventPacket.USE_ITEM;

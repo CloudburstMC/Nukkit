@@ -182,7 +182,7 @@ public class ServerScheduler {
             if (taskHandler.isCancelled()) {
                 tasks.remove(taskHandler.getTaskId());
                 continue;
-            } else if (taskHandler.isAsynchronous()){
+            } else if (taskHandler.isAsynchronous()) {
                 asyncPool.submitTask(taskHandler.getTask());
             } else {
                 try {
