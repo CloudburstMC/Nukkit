@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Fence;
 import cn.nukkit.block.Flower;
+import cn.nukkit.block.RedstoneTorch;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -114,7 +115,7 @@ public class Item implements Cloneable {
     public static final int OAK_WOOD_STAIRS = 53;
     public static final int OAK_WOODEN_STAIRS = 53;
     public static final int CHEST = 54;
-    public static final int REDSTONE_DUST_BLOCK = 55;
+    public static final int REDSTONE_WIRE = 55;
     public static final int DIAMOND_ORE = 56;
     public static final int DIAMOND_BLOCK = 57;
     public static final int CRAFTING_TABLE = 58;
@@ -139,6 +140,8 @@ public class Item implements Cloneable {
     public static final int REDSTONE_ORE = 73;
     public static final int GLOWING_REDSTONE_ORE = 74;
     public static final int LIT_REDSTONE_ORE = 74;
+
+    public static final int REDSTONE_TORCH = 76;
 
     public static final int SNOW = 78;
     public static final int SNOW_LAYER = 78;
@@ -579,6 +582,7 @@ public class Item implements Cloneable {
             list[BEETROOT] = Beetroot.class;
             list[BEETROOT_SEEDS] = BeetrootSeeds.class;
             list[BEETROOT_SOUP] = BeetrootSoup.class;
+            list[REDSTONE_TORCH] = RedstoneTorch.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -687,6 +691,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.DIAMOND_ORE, 0));
         addCreativeItem(Item.get(Item.LAPIS_ORE, 0));
         addCreativeItem(Item.get(Item.REDSTONE_ORE, 0));
+        addCreativeItem(Item.get(Item.REDSTONE_TORCH, 0));
         addCreativeItem(Item.get(Item.EMERALD_ORE, 0));
         addCreativeItem(Item.get(Item.OBSIDIAN, 0));
         addCreativeItem(Item.get(Item.ICE, 0));

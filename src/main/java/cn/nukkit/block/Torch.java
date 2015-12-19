@@ -64,7 +64,7 @@ public class Torch extends Flowable {
 
         if (!target.isTransparent() && face != 0) {
             int[] faces = new int[]{
-                    0, //0，不可能取到，占位置用
+                    0, //0, nerver used
                     5, //1
                     4, //2
                     3, //3
