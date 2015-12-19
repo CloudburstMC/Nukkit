@@ -228,24 +228,21 @@ public class Config {
         return (T) this.get(k);
     }
 
+    @SuppressWarnings("unchecked")
     public void setNested(final String key, final Object value) {
         final String[] vars = key.split("\\.");
-        if (vars.length < 2) {
-            this.set(key, value);
-            return;
-        }
-        Map<String, Object> hashMap = new LinkedHashMap<String, Object>() {
-            {
-                put(vars[vars.length - 1], value);
+
+        Map<String, Object> map = this.config;
+
+        for (int i = 0; i < vars.length - 1; i++) {
+            String k = vars[i];
+            if (!map.containsKey(k)) {
+                map.put(k, new LinkedHashMap<>());
             }
-        }; //内嵌中心元素
-        for (int i = vars.length - 2; i > 0; i--) {
-            Map<String, Object> new_hashMap = new LinkedHashMap<>();
-            new_hashMap.put(vars[i], hashMap);
-            hashMap = new_hashMap;
+            map = (Map<String, Object>) map.get(k);
         }
-        this.config.put(vars[0], hashMap);
-        this.config.put(key, value);
+
+        map.put(vars[vars.length - 1], value);
     }
 
     public Object getNested(String key) {
@@ -258,29 +255,17 @@ public class Config {
             return (T) this.nestedCache.get(key);
         }
         String[] vars = key.split("\\.");
-        if (vars.length < 2) {
-            return this.get(key, defaultValue);
-        }
 
-        if (!this.config.containsKey(vars[0])) {
-            return defaultValue;
-        } else {
-            Map<String, Object> map = (Map<String, Object>) this.config.get(vars[0]);
-            for (int i = 1; i < vars.length - 1; i++) {
-                if (map.containsKey(vars[i])) {
-                    map = (Map<String, Object>) map.get(vars[i]);
-                } else {
-                    return defaultValue;
-                }
-            }
-            if (map.containsKey(vars[vars.length - 1])) {
-                Object value = map.get(vars[vars.length - 1]);
-                this.nestedCache.put(key, value);
-                return (T) value;
-            } else {
+        Map map = this.config;
+        for (int i = 0; i < vars.length - 1; i++) {
+            String k = vars[i];
+            if (!map.containsKey(k)) {
                 return defaultValue;
             }
+            map = (Map<String, Object>) map.get(k);
         }
+
+        return (T) map.getOrDefault(vars[vars.length - 1], defaultValue);
     }
 
     @SuppressWarnings("unchecked")
@@ -324,7 +309,7 @@ public class Config {
     }
 
     public Map<String, Object> getAll() {
-        return this.config;
+        return new LinkedHashMap<>(this.config);
     }
 
     public int setDefault(LinkedHashMap<String, Object> map) {
