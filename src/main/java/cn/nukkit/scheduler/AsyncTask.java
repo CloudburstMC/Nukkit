@@ -7,7 +7,7 @@ import cn.nukkit.utils.ThreadStore;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class AsyncTask extends Thread {
+public abstract class AsyncTask implements Runnable {
 
     private Object result;
     private int taskId;
