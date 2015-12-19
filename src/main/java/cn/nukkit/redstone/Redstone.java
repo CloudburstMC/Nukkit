@@ -61,6 +61,7 @@ public class Redstone {
     }
 
     public static void updateDeactive(Block source, int updateLevel) {
+        //todo: im not finished here now... let's me think
         Queue updateQueue = new PriorityQueue<UpdateObject>(1, orderIsdn);
         Queue sourceQueue = new PriorityQueue<UpdateObject>(1, orderIsdn);
         int currentUpdateLevel = updateLevel - 1;
@@ -73,7 +74,7 @@ public class Redstone {
             Block updating = updatingObj.getLocation();
             currentUpdateLevel = updatingObj.getPopulation();
             if(currentUpdateLevel >= updating.getRedEnergyLevel()) {
-                
+
             }
         }
     }
