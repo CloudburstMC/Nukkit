@@ -17,8 +17,8 @@ public class RedstoneTorch extends Flowable {
 
     public RedstoneTorch(int meta) {
         super(meta);
-        this.setEnergySource(true);
-        this.setRedEnergyLevel(Redstone.ENERGY_STRONG);
+        this.setPowerSource(true);
+        this.setPowerLevel(Redstone.POWER_STRONGEST);
     }
 
     @Override
@@ -76,13 +76,13 @@ public class RedstoneTorch extends Flowable {
             };
             this.meta = faces[face];
             this.getLevel().setBlock(block, this, true, true);
-            Redstone.updateActive(this);
+            Redstone.active(this);
 
             return true;
         } else if (!below.isTransparent() || below instanceof Fence || below.getId() == COBBLE_WALL) {
             this.meta = 0;
             this.getLevel().setBlock(block, this, true, true);
-            Redstone.updateActive(this);
+            Redstone.active(this);
 
             return true;
         }
@@ -98,9 +98,9 @@ public class RedstoneTorch extends Flowable {
 
     @Override
     public boolean onBreak(Item item) {
-        int level = this.getRedEnergyLevel();
+        int level = this.getPowerLevel();
         this.getLevel().setBlock(this, new Air(), true, false);
-        Redstone.updateDeactive(this, level);
+        Redstone.deactive(this, level);
         return true;
     }
 
