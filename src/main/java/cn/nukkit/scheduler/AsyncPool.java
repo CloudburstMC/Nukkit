@@ -1,15 +1,14 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author Nukkit Project Team
  */
 public class AsyncPool {
 
@@ -21,8 +20,8 @@ public class AsyncPool {
     public AsyncPool(Server server, int size) {
         this.currentThread = new AtomicInteger();
         this.size = size;
-        this.pool = new ThreadPoolExecutor(size, size, 0,
-                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(),
+        this.pool = new ThreadPoolExecutor(size, Integer.MAX_VALUE,
+                60, TimeUnit.MILLISECONDS, new SynchronousQueue<>(),
                 runnable -> new Thread(runnable) {{
                     setDaemon(true);
                     setName(String.format("Nukkit Asynchronous Task Handler #%s", currentThread.incrementAndGet()));
@@ -33,6 +32,10 @@ public class AsyncPool {
 
     public void submitTask(Runnable runnable) {
         pool.execute(runnable);
+    }
+
+    public Server getServer() {
+        return server;
     }
 
     public int getSize() {
