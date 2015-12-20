@@ -1521,8 +1521,12 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        if (!(block.canBePlaced() || (hand.getId() == Item.SLAB))) {
-            target = block;
+        if (!(block.canBeReplaced() || (hand.getId() == Item.SLAB && block.getId() == Item.SLAB))) {
+            return null;
+        }
+
+        if(target.canBeReplaced()) {
+            block = target;
             hand.position(block);
         }
 

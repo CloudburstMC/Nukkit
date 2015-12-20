@@ -91,7 +91,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int OAK_WOOD_STAIRS = 53;
     public static final int OAK_WOODEN_STAIRS = 53;
     public static final int CHEST = 54;
-
+    public static final int REDSTONE_WIRE = 55;
     public static final int DIAMOND_ORE = 56;
     public static final int DIAMOND_BLOCK = 57;
     public static final int CRAFTING_TABLE = 58;
@@ -116,6 +116,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int REDSTONE_ORE = 73;
     public static final int GLOWING_REDSTONE_ORE = 74;
     public static final int LIT_REDSTONE_ORE = 74;
+
+    public static final int REDSTONE_TORCH = 76;
 
     public static final int SNOW = 78;
     public static final int SNOW_LAYER = 78;
@@ -248,6 +250,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     protected int meta = 0;
 
+    protected int redEnergyLevel = 0;
+    protected boolean energySource = false;
+
     public AxisAlignedBB boundingBox = null;
 
     protected Block(Integer meta) {
@@ -314,7 +319,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[MONSTER_SPAWNER] = MonsterSpawner.class;
             list[WOOD_STAIRS] = WoodStairs.class;
             list[CHEST] = Chest.class;
-
+            list[REDSTONE_WIRE] = RedstoneWire.class;
             list[DIAMOND_ORE] = DiamondOre.class;
             list[DIAMOND_BLOCK] = Diamond.class;
             list[WORKBENCH] = Workbench.class;
@@ -333,11 +338,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[REDSTONE_ORE] = RedstoneOre.class;
             list[GLOWING_REDSTONE_ORE] = GlowingRedstoneOre.class;
 
+            list[REDSTONE_TORCH] = RedstoneTorch.class;
+
             list[SNOW_LAYER] = SnowLayer.class;
             list[ICE] = Ice.class;
             list[SNOW_BLOCK] = SnowBlock.class;
             list[CACTUS] = Cactus.class;
-            //list[CLAY_BLOCK] = Clay.class;
+            list[CLAY_BLOCK] = Clay.class;
             //list[SUGARCANE_BLOCK] = Sugarcane.class;
             list[FENCE] = Fence.class;
             list[PUMPKIN] = Pumpkin.class;
@@ -815,6 +822,62 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     public Block clone() {
         return (Block) super.clone();
+    }
+
+    public void setRedEnergyLevel(int energyLevel) {
+        redEnergyLevel = energyLevel;
+    }
+
+    public int getRedEnergyLevel() {
+        return redEnergyLevel;
+    }
+
+    public int getRedEnergyLevel(int side) {
+        return this.getSide(side).getRedEnergyLevel();
+    }
+
+    public boolean hasSideRedEnergy() {
+        return this.getSideRedEnergy() > 0;
+    }
+
+    public int getSideRedEnergy() {
+        int energy = 0;
+        int tempLevel = 0;
+        tempLevel = this.getSide(SIDE_DOWN).getRedEnergyLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_UP).getRedEnergyLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_NORTH).getRedEnergyLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_SOUTH).getRedEnergyLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_EAST).getRedEnergyLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_WEST).getRedEnergyLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        return energy;
+    }
+
+    public boolean hasRedEnergy() {
+        return this.redEnergyLevel > 0;
+    }
+
+    public boolean isEnergySource() {
+        return this.energySource;
+    }
+
+    public void setEnergySource(boolean isSource) {
+        this.energySource = isSource;
+    }
+
+    public String getLocationHash() {
+        String str = "";
+        str = String.valueOf((int) this.x);
+        str += ":";
+        str += String.valueOf((int) this.y);
+        str += ":";
+        str += String.valueOf((int) this.z);
+        return str;
     }
 
 }
