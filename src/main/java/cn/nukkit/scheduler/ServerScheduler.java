@@ -4,9 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -18,7 +16,7 @@ public class ServerScheduler {
 
     private final AsyncPool asyncPool;
 
-    private final PriorityQueue<TaskHandler> queue;
+    private final Queue<TaskHandler> queue;
     private final Map<Integer, TaskHandler> tasks;
 
     private int currentTaskId;
@@ -150,7 +148,7 @@ public class ServerScheduler {
             throw new PluginException("Plugin '" + plugin.getName() + "' attempted to register a task while disabled.");
         }
         if (delay < 0 || period < 0) {
-            throw new PluginException("Plugin '" + plugin.getName() + "' attempted to register a task with negative delay or period.");
+            throw new PluginException("Attempted to register a task with negative delay or period.");
         }
 
         TaskHandler taskHandler = new TaskHandler(plugin, "Unknown", task, nextTaskId(), asynchronous);
@@ -182,7 +180,7 @@ public class ServerScheduler {
             if (taskHandler.isCancelled()) {
                 tasks.remove(taskHandler.getTaskId());
                 continue;
-            } else if (taskHandler.isAsynchronous()){
+            } else if (taskHandler.isAsynchronous()) {
                 asyncPool.submitTask(taskHandler.getTask());
             } else {
                 try {
@@ -200,6 +198,7 @@ public class ServerScheduler {
                 this.tasks.remove(taskHandler.getTaskId());
             }
         }
+        AsyncTask.collectTask();
     }
 
     public int getQueueSize() {
