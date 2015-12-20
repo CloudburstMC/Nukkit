@@ -870,4 +870,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         this.energySource = isSource;
     }
 
+    public String getLocationHash() {
+        String str = "";
+        str = String.valueOf((int) this.x);
+        str += ":";
+        str += String.valueOf((int) this.y);
+        str += ":";
+        str += String.valueOf((int) this.z);
+        return str;
+    }
+
 }

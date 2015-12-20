@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.redstone.Redstone;
 
 /**
@@ -36,6 +38,22 @@ public class RedstoneWire extends Flowable{
     @Override
     public int onUpdate(int type) {
         return 0;
+    }
+
+    @Override
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        this.setRedEnergyLevel(this.getSideRedEnergy() - 1);
+        block.getLevel().setBlock(block, this, true, true);
+        Redstone.updateActive(this);
+        return false;
+    }
+
+    @Override
+    public boolean onBreak(Item item) {
+        int level = this.getRedEnergyLevel();
+        this.getLevel().setBlock(this, new Air(), true, false);
+        Redstone.updateDeactive(this, level);
+        return true;
     }
 
 }

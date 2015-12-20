@@ -95,4 +95,13 @@ public class RedstoneTorch extends Flowable {
                 {this.getId(), 0, 1}
         };
     }
+
+    @Override
+    public boolean onBreak(Item item) {
+        int level = this.getRedEnergyLevel();
+        this.getLevel().setBlock(this, new Air(), true, false);
+        Redstone.updateDeactive(this, level);
+        return true;
+    }
+
 }
