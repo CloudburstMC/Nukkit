@@ -13,7 +13,6 @@ import java.util.PriorityQueue;
  * Nukkit Project
  */
 public class ServerScheduler {
-
     public static int WORKERS = 4;
 
     private final AsyncPool asyncPool;
@@ -25,105 +24,76 @@ public class ServerScheduler {
     private int currentTick;
 
     public ServerScheduler() {
-        this.queue = new PriorityQueue<>(11, (left, right) -> left.getNextRunTick() - right.getNextRunTick());
+        this.queue = new PriorityQueue<>(11, (left, right) -> left.getNextRun() - right.getNextRun());
         this.tasks = new HashMap<>();
         this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
 
-    @Deprecated
     public TaskHandler scheduleTask(Task task) {
-        return addTask(task, 0, 0, false);
+        return this.addTask(task, -1, -1);
     }
 
     public TaskHandler scheduleTask(Runnable task) {
-        return addTask(null, task, 0, 0, false);
+        return this.addTask(Task.of(task), -1, -1);
     }
 
-    public TaskHandler scheduleTask(Runnable task, boolean asynchronous) {
-        return addTask(null, task, 0, 0, asynchronous);
+    public void scheduleAsyncTask(AsyncTask task) {
+        task.setTaskId(this.nextId());
+        this.asyncPool.submitTask(task);
     }
 
-    @Deprecated
-    public TaskHandler scheduleAsyncTask(AsyncTask task) {
-        return addTask(null, task, 0, 0, true);
-    }
-
-    @Deprecated
     public void scheduleAsyncTaskToWorker(AsyncTask task, int worker) {
-        scheduleAsyncTask(task);
+        task.setTaskId(this.nextId());
+        this.asyncPool.submitTaskToWorker(task, worker);
     }
 
     public int getAsyncTaskPoolSize() {
-        return asyncPool.getSize();
+        return this.asyncPool.getSize();
     }
 
     public void increaseAsyncTaskPoolSize(int newSize) {
-        throw new UnsupportedOperationException("Cannot increase a working pool size.");
+        this.asyncPool.increaseSize(newSize);
     }
 
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
-        return this.addTask(task, delay, 0, false);
-    }
-
-    public TaskHandler scheduleDelayedTask(Task task, int delay, boolean asynchronous) {
-        return this.addTask(task, delay, 0, asynchronous);
+        return this.addTask(task, delay, -1);
     }
 
     public TaskHandler scheduleDelayedTask(Runnable task, int delay) {
-        return addTask(null, task, delay, 0, false);
-    }
-
-    public TaskHandler scheduleDelayedTask(Runnable task, int delay, boolean asynchronous) {
-        return addTask(null, task, delay, 0, asynchronous);
+        return this.addTask(Task.of(task), delay, -1);
     }
 
     public TaskHandler scheduleRepeatingTask(Runnable task, int period) {
-        return addTask(null, task, 0, period, false);
-    }
-
-    public TaskHandler scheduleRepeatingTask(Runnable task, int period, boolean asynchronous) {
-        return addTask(null, task, 0, period, asynchronous);
+        return this.addTask(Task.of(task), -1, period);
     }
 
     public TaskHandler scheduleRepeatingTask(Task task, int period) {
-        return addTask(task, 0, period, false);
-    }
-
-    public TaskHandler scheduleRepeatingTask(Task task, int period, boolean asynchronous) {
-        return addTask(task, 0, period, asynchronous);
+        return this.addTask(task, -1, period);
     }
 
     public TaskHandler scheduleDelayedRepeatingTask(Task task, int delay, int period) {
-        return addTask(task, delay, period, false);
-    }
-
-    public TaskHandler scheduleDelayedRepeatingTask(Task task, int delay, int period, boolean asynchronous) {
-        return addTask(task, delay, period, asynchronous);
+        return this.addTask(task, delay, period);
     }
 
     public TaskHandler scheduleDelayedRepeatingTask(Runnable task, int delay, int period) {
-        return addTask(null, task, delay, period, false);
-    }
-
-    public TaskHandler scheduleDelayedRepeatingTask(Runnable task, int delay, int period, boolean asynchronous) {
-        return addTask(null, task, delay, period, asynchronous);
+        return this.addTask(Task.of(task), delay, period);
     }
 
     public void cancelTask(int taskId) {
-        if (tasks.containsKey(taskId)) {
-            tasks.remove(taskId).cancel();
+        if (this.tasks.containsKey(taskId)) {
+            this.tasks.get(taskId).cancel();
+            this.tasks.remove(taskId);
         }
     }
 
     public void cancelTask(Plugin plugin) {
-        if (plugin == null) {
-            throw new NullPointerException("Plugin cannot be null!");
-        }
         for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
-            TaskHandler taskHandler = entry.getValue();
-            if (plugin.equals(taskHandler.getPlugin())) {
-                taskHandler.cancel();
-                this.tasks.remove(entry.getKey());
+            int taskId = entry.getKey();
+            TaskHandler task = entry.getValue();
+            Task ptask = task.getTask();
+            if (ptask instanceof PluginTask && ((PluginTask) ptask).getOwner().equals(plugin)) {
+                task.cancel();
+                this.tasks.remove(taskId);
             }
         }
     }
@@ -141,23 +111,28 @@ public class ServerScheduler {
         return this.tasks.containsKey(taskId);
     }
 
-    private TaskHandler addTask(Task task, int delay, int period, boolean asynchronous) {
-        return addTask(task instanceof PluginTask ? ((PluginTask) task).getOwner() : null, () -> task.onRun(currentTick + delay), delay, period, asynchronous);
-    }
-
-    private TaskHandler addTask(Plugin plugin, Runnable task, int delay, int period, boolean asynchronous) {
-        if (plugin != null && plugin.isDisabled()) {
-            throw new PluginException("Plugin '" + plugin.getName() + "' attempted to register a task while disabled.");
+    private TaskHandler addTask(Task task, int delay, int period) {
+        if (task instanceof PluginTask) {
+            if (((PluginTask) task).getOwner() == null) {
+                throw new PluginException("Invalid owner of PluginTask " + task.getClass().getName());
+            } else if (!((PluginTask) task).getOwner().isEnabled()) {
+                throw new PluginException("Plugin '" + ((PluginTask) task).getOwner().getName() + "' attempted to register a task while disabled");
+            }
         }
-        if (delay < 0 || period < 0) {
-            throw new PluginException("Plugin '" + plugin.getName() + "' attempted to register a task with negative delay or period.");
+        //todo deprecate CallBackTask??
+        if (delay <= 0) {
+            delay = -1;
         }
 
-        TaskHandler taskHandler = new TaskHandler(plugin, "Unknown", task, nextTaskId(), asynchronous);
-        taskHandler.setDelay(delay);
-        taskHandler.setPeriod(period);
+        if (period <= -1) {
+            period = -1;
+        } else if (period < 1) {
+            period = 1;
+        }
 
-        return handle(taskHandler);
+        return this.handle(new TaskHandler(
+                task.getClass().getName(), task, this.nextId(), delay, period
+        ));
     }
 
     private TaskHandler handle(TaskHandler handler) {
@@ -167,39 +142,36 @@ public class ServerScheduler {
         } else {
             nextRun = this.currentTick;
         }
-        handler.setNextRunTick(nextRun);
-
+        handler.setNextRun(nextRun);
         this.tasks.put(handler.getTaskId(), handler);
         this.queue.add(handler);
-
         return handler;
     }
 
     public void mainThreadHeartbeat(int currentTick) {
         this.currentTick = currentTick;
-        while (isReady(currentTick)) {
-            TaskHandler taskHandler = queue.poll();
-            if (taskHandler.isCancelled()) {
-                tasks.remove(taskHandler.getTaskId());
+        while (this.isReady(this.currentTick)) {
+            TaskHandler task = this.queue.poll();
+            if (task.isCancelled()) {
+                this.tasks.remove(task.getTaskId());
                 continue;
-            } else if (taskHandler.isAsynchronous()) {
-                asyncPool.submitTask(taskHandler.getTask());
             } else {
                 try {
-                    taskHandler.run(currentTick);
+                    task.run(this.currentTick);
                 } catch (Exception e) {
-                    Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskName() + ": " + e.getMessage());
+                    Server.getInstance().getLogger().critical("Could not execute task " + task.getTaskName() + ": " + e.getMessage());
                     Server.getInstance().getLogger().logException(e);
                 }
             }
-            if (taskHandler.isRepeating()) {
-                taskHandler.setNextRunTick(currentTick + taskHandler.getPeriod());
-                this.queue.offer(taskHandler);
+            if (task.isRepeating()) {
+                task.setNextRun(this.currentTick + task.getPeriod());
+                this.queue.add(task);
             } else {
-                taskHandler.cancel();
-                this.tasks.remove(taskHandler.getTaskId());
+                task.remove();
+                this.tasks.remove(task.getTaskId());
             }
         }
+        this.asyncPool.collectTasks();
     }
 
     public int getQueueSize() {
@@ -207,10 +179,10 @@ public class ServerScheduler {
     }
 
     private boolean isReady(int currentTick) {
-        return this.queue.peek() != null && this.queue.peek().getNextRunTick() <= currentTick;
+        return this.queue.peek() != null && this.queue.peek().getNextRun() <= currentTick;
     }
 
-    private int nextTaskId() {
+    private int nextId() {
         return ++currentTaskId;
     }
 
