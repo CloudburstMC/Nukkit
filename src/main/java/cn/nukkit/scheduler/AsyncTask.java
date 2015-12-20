@@ -3,23 +3,25 @@ package cn.nukkit.scheduler;
 import cn.nukkit.Server;
 import cn.nukkit.utils.ThreadStore;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author Nukkit Project Team
  */
 public abstract class AsyncTask implements Runnable {
+
+    public static final Queue<AsyncTask> FINISHED_LIST = new ConcurrentLinkedQueue<>();
 
     private Object result;
     private int taskId;
     private boolean finished = false;
-    private boolean cancelRun = false;
 
     public void run() {
         this.result = null;
-        if (!this.cancelRun) {
-            this.onRun();
-        }
+        this.onRun();
         this.finished = true;
+        FINISHED_LIST.offer(this);
     }
 
     public boolean isFinished() {
@@ -71,4 +73,11 @@ public abstract class AsyncTask implements Runnable {
         this.taskId = 0;
         this.finished = false;
     }
+
+    public static void collectTask() {
+        while (!FINISHED_LIST.isEmpty()) {
+            FINISHED_LIST.poll().onCompletion(Server.getInstance());
+        }
+    }
+
 }
