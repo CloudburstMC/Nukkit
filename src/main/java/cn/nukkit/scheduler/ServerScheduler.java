@@ -7,8 +7,7 @@ import cn.nukkit.utils.PluginException;
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author Nukkit Project Team
  */
 public class ServerScheduler {
 
@@ -117,11 +116,10 @@ public class ServerScheduler {
         if (plugin == null) {
             throw new NullPointerException("Plugin cannot be null!");
         }
-        for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
+        for (Map.Entry<Integer, TaskHandler> entry : tasks.entrySet()) {
             TaskHandler taskHandler = entry.getValue();
             if (plugin.equals(taskHandler.getPlugin())) {
-                taskHandler.cancel();
-                this.tasks.remove(entry.getKey());
+                taskHandler.cancel(); /* It will remove from task map automatic in next main heartbeat. */
             }
         }
     }
@@ -143,7 +141,8 @@ public class ServerScheduler {
         return addTask(task instanceof PluginTask ? ((PluginTask) task).getOwner() : null, () -> task.onRun(currentTick + delay), delay, period, asynchronous);
     }
 
-    private TaskHandler addTask(Plugin plugin, Runnable task, int delay, int period, boolean asynchronous) {
+    // Synchronized it for thread safe.
+    private synchronized TaskHandler addTask(Plugin plugin, Runnable task, int delay, int period, boolean asynchronous) {
         if (plugin != null && plugin.isDisabled()) {
             throw new PluginException("Plugin '" + plugin.getName() + "' attempted to register a task while disabled.");
         }
