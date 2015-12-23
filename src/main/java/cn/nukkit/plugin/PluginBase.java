@@ -202,11 +202,12 @@ abstract public class PluginBase implements Plugin {
                         outFolder.mkdirs();
                     }
                     Utils.writeFile(out, resource);
+
+                    return true;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return true;
         }
         return false;
     }
