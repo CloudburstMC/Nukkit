@@ -171,7 +171,7 @@ public class ServerScheduler {
     public void mainThreadHeartbeat(int currentTick) {
         this.currentTick = currentTick;
         // Accepts pending.
-        while (pending.size() != 0) {
+        while (!pending.isEmpty()) {
             queue.offer(pending.poll());
         }
         // Main heart beat.
