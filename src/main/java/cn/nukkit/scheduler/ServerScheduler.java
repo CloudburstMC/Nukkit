@@ -141,8 +141,7 @@ public class ServerScheduler {
         return addTask(task instanceof PluginTask ? ((PluginTask) task).getOwner() : null, () -> task.onRun(currentTick + delay), delay, period, asynchronous);
     }
 
-    // Synchronized it for thread safe.
-    private synchronized TaskHandler addTask(Plugin plugin, Runnable task, int delay, int period, boolean asynchronous) {
+    private TaskHandler addTask(Plugin plugin, Runnable task, int delay, int period, boolean asynchronous) {
         if (plugin != null && plugin.isDisabled()) {
             throw new PluginException("Plugin '" + plugin.getName() + "' attempted to register a task while disabled.");
         }
