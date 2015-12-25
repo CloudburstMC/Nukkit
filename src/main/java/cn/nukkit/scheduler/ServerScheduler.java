@@ -4,11 +4,15 @@ import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 
-import java.util.*;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author Nukkit Project Team
  */
 public class ServerScheduler {
 
@@ -16,15 +20,18 @@ public class ServerScheduler {
 
     private final AsyncPool asyncPool;
 
+    private final Queue<TaskHandler> pending;
     private final Queue<TaskHandler> queue;
-    private final Map<Integer, TaskHandler> tasks;
+    private final Map<Integer, TaskHandler> taskMap;
+    private final AtomicInteger currentTaskId;
 
-    private int currentTaskId;
-    private int currentTick;
+    private volatile int currentTick;
 
     public ServerScheduler() {
+        this.pending = new ConcurrentLinkedQueue<>();
+        this.currentTaskId = new AtomicInteger();
         this.queue = new PriorityQueue<>(11, (left, right) -> left.getNextRunTick() - right.getNextRunTick());
-        this.tasks = new HashMap<>();
+        this.taskMap = new ConcurrentHashMap<>();
         this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
 
@@ -106,8 +113,8 @@ public class ServerScheduler {
     }
 
     public void cancelTask(int taskId) {
-        if (tasks.containsKey(taskId)) {
-            tasks.remove(taskId).cancel();
+        if (taskMap.containsKey(taskId)) {
+            taskMap.remove(taskId).cancel();
         }
     }
 
@@ -115,26 +122,25 @@ public class ServerScheduler {
         if (plugin == null) {
             throw new NullPointerException("Plugin cannot be null!");
         }
-        for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
+        for (Map.Entry<Integer, TaskHandler> entry : taskMap.entrySet()) {
             TaskHandler taskHandler = entry.getValue();
             if (plugin.equals(taskHandler.getPlugin())) {
-                taskHandler.cancel();
-                this.tasks.remove(entry.getKey());
+                taskHandler.cancel(); /* It will remove from task map automatic in next main heartbeat. */
             }
         }
     }
 
     public void cancelAllTasks() {
-        for (Map.Entry<Integer, TaskHandler> entry : this.tasks.entrySet()) {
+        for (Map.Entry<Integer, TaskHandler> entry : this.taskMap.entrySet()) {
             entry.getValue().cancel();
         }
-        this.tasks.clear();
+        this.taskMap.clear();
         this.queue.clear();
-        this.currentTaskId = 0;
+        this.currentTaskId.set(0);
     }
 
     public boolean isQueued(int taskId) {
-        return this.tasks.containsKey(taskId);
+        return this.taskMap.containsKey(taskId);
     }
 
     private TaskHandler addTask(Task task, int delay, int period, boolean asynchronous) {
@@ -152,31 +158,25 @@ public class ServerScheduler {
         TaskHandler taskHandler = new TaskHandler(plugin, "Unknown", task, nextTaskId(), asynchronous);
         taskHandler.setDelay(delay);
         taskHandler.setPeriod(period);
+        taskHandler.setNextRunTick(taskHandler.isDelayed() ? currentTick + taskHandler.getDelay() : currentTick);
 
-        return handle(taskHandler);
-    }
+        pending.offer(taskHandler);
+        taskMap.put(taskHandler.getTaskId(), taskHandler);
 
-    private TaskHandler handle(TaskHandler handler) {
-        int nextRun;
-        if (handler.isDelayed()) {
-            nextRun = this.currentTick + handler.getDelay();
-        } else {
-            nextRun = this.currentTick;
-        }
-        handler.setNextRunTick(nextRun);
-
-        this.tasks.put(handler.getTaskId(), handler);
-        this.queue.add(handler);
-
-        return handler;
+        return taskHandler;
     }
 
     public void mainThreadHeartbeat(int currentTick) {
         this.currentTick = currentTick;
+        // Accepts pending.
+        while (!pending.isEmpty()) {
+            queue.offer(pending.poll());
+        }
+        // Main heart beat.
         while (isReady(currentTick)) {
             TaskHandler taskHandler = queue.poll();
             if (taskHandler.isCancelled()) {
-                tasks.remove(taskHandler.getTaskId());
+                taskMap.remove(taskHandler.getTaskId());
                 continue;
             } else if (taskHandler.isAsynchronous()) {
                 asyncPool.submitTask(taskHandler.getTask());
@@ -190,17 +190,16 @@ public class ServerScheduler {
             }
             if (taskHandler.isRepeating()) {
                 taskHandler.setNextRunTick(currentTick + taskHandler.getPeriod());
-                this.queue.offer(taskHandler);
+                pending.offer(taskHandler);
             } else {
-                taskHandler.cancel();
-                this.tasks.remove(taskHandler.getTaskId());
+                taskMap.remove(taskHandler.getTaskId()).cancel();
             }
         }
         AsyncTask.collectTask();
     }
 
     public int getQueueSize() {
-        return queue.size();
+        return queue.size() + pending.size();
     }
 
     private boolean isReady(int currentTick) {
@@ -208,7 +207,7 @@ public class ServerScheduler {
     }
 
     private int nextTaskId() {
-        return ++currentTaskId;
+        return currentTaskId.incrementAndGet();
     }
 
 }
