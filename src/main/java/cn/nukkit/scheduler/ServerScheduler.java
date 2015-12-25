@@ -28,7 +28,6 @@ public class ServerScheduler {
         this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
 
-    @Deprecated
     public TaskHandler scheduleTask(Task task) {
         return addTask(task, 0, 0, false);
     }
@@ -41,7 +40,6 @@ public class ServerScheduler {
         return addTask(null, task, 0, 0, asynchronous);
     }
 
-    @Deprecated
     public TaskHandler scheduleAsyncTask(AsyncTask task) {
         return addTask(null, task, 0, 0, true);
     }
