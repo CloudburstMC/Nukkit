@@ -47,6 +47,7 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
+import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
@@ -263,14 +264,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public boolean canSee(Player player) {
-        return !this.hiddenPlayers.containsKey(player.getRawUniqueId());
+        return !this.hiddenPlayers.containsKey(player.getUniqueId());
     }
 
     public void hidePlayer(Player player) {
         if (this.equals(player)) {
             return;
         }
-        this.hiddenPlayers.put(player.getRawUniqueId(), player);
+        this.hiddenPlayers.put(player.getUniqueId(), player);
         player.despawnFrom(this);
     }
 
@@ -278,7 +279,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (this.equals(player)) {
             return;
         }
-        this.hiddenPlayers.remove(player.getRawUniqueId());
+        this.hiddenPlayers.remove(player.getUniqueId());
         if (player.isOnline()) {
             player.spawnTo(this);
         }
@@ -1753,7 +1754,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 this.randomClientId = loginPacket.clientId;
 
                 this.uuid = loginPacket.clientUUID;
-                this.rawUUID = this.uuid;
+                this.rawUUID = Binary.writeUUID(this.uuid);
                 this.clientSecret = loginPacket.clientSecret;
 
                 boolean valid = true;

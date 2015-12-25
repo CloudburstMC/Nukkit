@@ -757,7 +757,7 @@ public class Server {
 
     public void onPlayerLogin(Player player) {
         if (this.sendUsageTicker > 0) {
-            this.uniquePlayers.add(player.getRawUniqueId());
+            this.uniquePlayers.add(player.getUniqueId());
         }
 
         this.sendFullPlayerListData(player);
@@ -770,14 +770,14 @@ public class Server {
     }
 
     public void addOnlinePlayer(Player player) {
-        this.playerList.put(player.getRawUniqueId(), player);
+        this.playerList.put(player.getUniqueId(), player);
 
         this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin());
     }
 
     public void removeOnlinePlayer(Player player) {
-        if (this.playerList.containsKey(player.getRawUniqueId())) {
-            this.playerList.remove(player.getRawUniqueId());
+        if (this.playerList.containsKey(player.getUniqueId())) {
+            this.playerList.remove(player.getUniqueId());
 
             PlayerListPacket pk = new PlayerListPacket();
             pk.type = PlayerListPacket.TYPE_REMOVE;
