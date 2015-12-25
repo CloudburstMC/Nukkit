@@ -1995,6 +1995,80 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             this.level.addSound(new LaunchSound(this), this.getViewers().values());
                         }
                     }
+                    else if (item.getId() == Item.EXPERIENCE_BOTTLE)  {
+                        CompoundTag nbt = new CompoundTag()
+                                .putList(new ListTag<DoubleTag>("Pos")
+                                        .add(new DoubleTag("", x))
+                                        .add(new DoubleTag("", y + this.getEyeHeight()))
+                                        .add(new DoubleTag("", z)))
+                                .putList(new ListTag<DoubleTag>("Motion")
+                                        .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                        .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                        .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                .putList(new ListTag<FloatTag>("Rotation")
+                                        .add(new FloatTag("", (float) yaw))
+                                        .add(new FloatTag("", (float) pitch)))
+                                .putInt("Potion", item.getDamage());
+                        double f = 1.5;
+                        Entity bottle = Entity.createEntity("ExpBottleThrown", this.chunk, nbt, this);
+                        bottle.setMotion(bottle.getMotion().multiply(f));
+                        if (this.isSurvival()) {
+                            item.setCount(item.getCount() - 1);
+                            this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                        }
+                        if (bottle instanceof Projectile) {
+                            Projectile bottleEntity = (Projectile) bottle;
+                            ProjectileLaunchEvent projectileEv = new ProjectileLaunchEvent(bottleEntity);
+                            this.server.getPluginManager().callEvent(projectileEv);
+                            if (projectileEv.isCancelled()) {
+                                bottle.kill();
+                            } else {
+                                bottle.spawnToAll();
+                                this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                            }
+                        } else {
+                            bottle.spawnToAll();
+                        }
+                    }
+                    //todo splash potion, I GIVE UP
+                    /*
+                    else if (item.getId() == Item.SPLASH_POTION) {
+                        CompoundTag nbt = new CompoundTag()
+                                .putList(new ListTag<DoubleTag>("Pos")
+                                        .add(new DoubleTag("", x))
+                                        .add(new DoubleTag("", y + this.getEyeHeight()))
+                                        .add(new DoubleTag("", z)))
+                                .putList(new ListTag<DoubleTag>("Motion")
+                                        .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                        .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                        .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                .putList(new ListTag<FloatTag>("Rotation")
+                                        .add(new FloatTag("", (float) yaw))
+                                        .add(new FloatTag("", (float) pitch)))
+                                .putInt("Potion", item.getDamage());
+                        double f = 1.5;
+                        Entity bottle = Entity.createEntity("SplashPotion", this.chunk, nbt, this);
+                        bottle.setMotion(bottle.getMotion().multiply(f));
+                        if (this.isSurvival()) {
+                            item.setCount(item.getCount() - 1);
+                            this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                        }
+                        if (bottle instanceof ThrownSplashPotion) {
+                            ThrownSplashPotion bottleEntity = (ThrownSplashPotion) bottle;
+                            bottleEntity.setEffectData(item.getDamage());
+                            ProjectileLaunchEvent projectileEv = new ProjectileLaunchEvent(bottleEntity);
+                            this.server.getPluginManager().callEvent(projectileEv);
+                            if (projectileEv.isCancelled()) {
+                                bottle.kill();
+                            } else {
+                                bottle.spawnToAll();
+                                this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                            }
+                        } else {
+                            bottle.spawnToAll();
+                        }
+                    }
+                    */
 
                     this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, true);
                     this.startAction = this.server.getTick();

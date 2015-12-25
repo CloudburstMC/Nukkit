@@ -410,6 +410,7 @@ public class Item implements Cloneable {
 
     public static final int GLISTERING_MELON = 382;
     public static final int SPAWN_EGG = 383;
+    public static final int EXPERIENCE_BOTTLE = 384;
 
     public static final int EMERALD = 388;
 
@@ -427,6 +428,8 @@ public class Item implements Cloneable {
     public static final int NETHER_BRICK = 405;
     public static final int QUARTZ = 406;
     public static final int NETHER_QUARTZ = 406;
+
+    //public static final int SPLASH_POTION = 438;
 
     public static final int CAMERA = 456;
     public static final int BEETROOT = 457;
@@ -603,6 +606,8 @@ public class Item implements Cloneable {
             list[BREWING_STAND] = BrewingStand.class;
             list[GLASS_BOTTLE] = GlassBottle.class;
             list[POTION] = Potion.class;
+            //list[SPLASH_POTION] = SplashPotion.class;
+            list[EXPERIENCE_BOTTLE] = ExpBottle.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -915,6 +920,86 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.DYE, 10));
         addCreativeItem(Item.get(Item.DYE, 9));
         addCreativeItem(Item.get(Item.DYE, 8));
+
+        addCreativeItem(Item.get(Item.EXPERIENCE_BOTTLE));
+
+        //Potion
+        addCreativeItem(Item.get(Item.POTION, 0));
+        addCreativeItem(Item.get(Item.POTION, 1));
+        addCreativeItem(Item.get(Item.POTION, 2));
+        addCreativeItem(Item.get(Item.POTION, 3));
+        addCreativeItem(Item.get(Item.POTION, 4));
+        addCreativeItem(Item.get(Item.POTION, 5));
+        addCreativeItem(Item.get(Item.POTION, 6));
+        addCreativeItem(Item.get(Item.POTION, 7));
+        addCreativeItem(Item.get(Item.POTION, 8));
+        addCreativeItem(Item.get(Item.POTION, 9));
+        addCreativeItem(Item.get(Item.POTION, 10));
+        addCreativeItem(Item.get(Item.POTION, 11));
+        addCreativeItem(Item.get(Item.POTION, 12));
+        addCreativeItem(Item.get(Item.POTION, 13));
+        addCreativeItem(Item.get(Item.POTION, 14));
+        addCreativeItem(Item.get(Item.POTION, 15));
+        addCreativeItem(Item.get(Item.POTION, 16));
+        addCreativeItem(Item.get(Item.POTION, 17));
+        addCreativeItem(Item.get(Item.POTION, 18));
+        addCreativeItem(Item.get(Item.POTION, 19));
+        addCreativeItem(Item.get(Item.POTION, 20));
+        addCreativeItem(Item.get(Item.POTION, 21));
+        addCreativeItem(Item.get(Item.POTION, 22));
+        addCreativeItem(Item.get(Item.POTION, 23));
+        addCreativeItem(Item.get(Item.POTION, 24));
+        addCreativeItem(Item.get(Item.POTION, 25));
+        addCreativeItem(Item.get(Item.POTION, 26));
+        addCreativeItem(Item.get(Item.POTION, 27));
+        addCreativeItem(Item.get(Item.POTION, 28));
+        addCreativeItem(Item.get(Item.POTION, 29));
+        addCreativeItem(Item.get(Item.POTION, 30));
+        addCreativeItem(Item.get(Item.POTION, 31));
+        addCreativeItem(Item.get(Item.POTION, 32));
+        addCreativeItem(Item.get(Item.POTION, 33));
+        addCreativeItem(Item.get(Item.POTION, 34));
+        addCreativeItem(Item.get(Item.POTION, 35));
+
+        //todo Splash Potion
+        /*
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 0));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 1));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 2));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 3));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 4));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 5));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 6));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 7));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 8));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 9));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 10));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 11));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 12));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 13));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 14));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 15));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 16));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 17));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 18));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 19));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 20));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 21));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 22));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 23));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 24));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 25));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 26));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 27));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 28));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 29));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 30));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 31));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 32));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 33));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 34));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, 35));
+        */
     }
 
     public static void clearCreativeItems() {
