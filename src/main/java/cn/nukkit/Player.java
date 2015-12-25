@@ -1474,7 +1474,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this);
         }
 
-        for (Player p : this.server.getOnlinePlayers().values()) {
+        for (Player p : new ArrayList<>(this.server.getOnlinePlayers().values())) {
             if (p != this && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
                 if (!p.kick("logged in from another location")) {
                     this.close(this.getLeaveMessage(), "Logged in from another location");
@@ -2837,7 +2837,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
             }
 
-            for (Player player : this.server.getOnlinePlayers().values()) {
+            for (Player player : new ArrayList<>(this.server.getOnlinePlayers().values())) {
                 if (!player.canSee(this)) {
                     player.showPlayer(this);
                 }
