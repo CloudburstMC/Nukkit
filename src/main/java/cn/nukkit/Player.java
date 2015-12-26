@@ -28,16 +28,14 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.sound.ClickSound;
 import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.permission.PermissibleBase;
@@ -159,6 +157,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     private Map<Integer, List<DataPacket>> batchedPackets = new HashMap<>();
 
     private PermissibleBase perm = null;
+
+    private int exp = 0;
+    private int expLevel = 0;
 
     private PlayerFood foodData = null;
 
@@ -651,6 +652,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             }
         }
 
+        this.sendExperience(this.getExperience());
+        this.sendExperienceLevel(this.getExperienceLevel());
+
         this.teleport(pos);
 
         this.spawnToAll();
@@ -1141,6 +1145,24 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
             }
         }
+        for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(3.5, 2, 3.5), this)) {
+            entity.scheduleUpdate();
+
+            if (!entity.isAlive()) {
+                continue;
+            }
+            if (entity instanceof ExpOrb) {
+                ExpOrb expOrb = (ExpOrb) entity;
+                if (expOrb.getPickupDelay() <= 0) {
+                    int exp = expOrb.getExp();
+                    this.addExperience(exp);
+                    entity.kill();
+                    ClickSound sound = new ClickSound(this, (float)(new cn.nukkit.utils.Random().nextRange(260, 360)) / 100f);
+                    this.getLevel().addSound(sound);
+                    break;
+                }
+            }
+        }
     }
 
     protected void processMovement(int tickDiff) {
@@ -1496,6 +1518,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         nbt.putString("NameTag", this.username);
+
+        int exp = nbt.getInt("EXP");
+        int expLevel = nbt.getInt("expLevel");
+        this.setExperience(exp, expLevel);
 
         this.gamemode = nbt.getInt("playerGameType") & 0x03;
         if (this.server.getForceGamemode()) {
@@ -3001,6 +3027,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.namedTag.putString("lastIP", this.getAddress());
 
+            this.namedTag.putInt("EXP", this.getExperience());
+            this.namedTag.putInt("expLevel", this.getExperienceLevel());
+
+            //todo check: Hunger? HungerFSL?
             this.namedTag.putInt("FoodLevel", this.getFoodData().getFoodLevel());
             this.namedTag.putInt("FoodSaturationLevel", this.getFoodData().getFoodSaturationLevel());
 
@@ -3147,6 +3177,18 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             }
         }
 
+        //todo Can I add keep exp in PlayerDeathEvent?
+        if (this.isSurvival() || this.isAdventure()) {
+            int exp = this.getExperienceLevel() * 7;
+            if (exp > 100) exp = 100;
+            int add = 1;
+            for (int ii = 1; ii < exp; ii += add) {
+                this.getLevel().dropExpOrb(this, add);
+                add = new cn.nukkit.utils.Random().nextRange(1, 3);
+            }
+        }
+        this.setExperience(0, 0);
+
         if (!Objects.equals(ev.getDeathMessage().toString(), "")) {
             this.server.broadcast(ev.getDeathMessage(), Server.BROADCAST_CHANNEL_USERS);
         }
@@ -3170,6 +3212,81 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             pk.entityId = 0;
             this.dataPacket(pk);
         }
+    }
+
+    public int getExperience() {
+        return this.exp;
+    }
+
+    public int getExperienceLevel() {
+        return this.expLevel;
+    }
+
+    public void addExperience(int add) {
+        if (add == 0) return;
+        int now = this.getExperience();
+        int added = now + add;
+        int level = this.getExperienceLevel();
+        int most = this.getNeedExpToNextLevel(level);
+        while (added >= most) {
+            added = added - most;
+            level++;
+            most = this.getNeedExpToNextLevel(level);
+        }
+        getServer().getLogger().debug("Most: "+most+", Set EXP:"+added+" level:"+level);
+        this.setExperience(added, level);
+        //$sound = new ZombieInfectSound($this);
+        //$this->getLevel()->addSound($sound);
+    }
+
+    public int getNeedExpToNextLevel(int level) {
+        if (level < 16) {
+            return 2 * level + 7;
+        } else if (level >= 17 && level <= 31) {
+            return 5 * level - 38;
+        } else {
+            return 9 * level - 158;
+        }
+    }
+
+    public void setExperience(int exp) {
+        setExperience(exp, this.getExperienceLevel());
+    }
+
+    //setExperienceLevel?
+
+    public void setExperience(int exp, int level) {
+        this.exp = exp;
+        this.expLevel = level;
+        sendExperienceLevel(level);
+        sendExperience(exp);
+    }
+
+    public void sendExperience(){
+        sendExperience(0);
+    }
+
+    public void sendExperience(int exp) {
+        UpdateAttributesPacket pk = new UpdateAttributesPacket();
+        pk.entityId = 0;
+        float ee = ((float)exp) / (float)this.getNeedExpToNextLevel(this.getExperienceLevel());
+        pk.entries = new Attribute[]{
+                Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, ee, true).setValue(ee)
+        };
+        this.dataPacket(pk);
+    }
+
+    public void sendExperienceLevel(){
+        sendExperienceLevel(0);
+    }
+
+    public void sendExperienceLevel(int level) {
+        UpdateAttributesPacket pk = new UpdateAttributesPacket();
+        pk.entityId = 0;
+        pk.entries = new Attribute[]{
+                Attribute.addAttribute(Attribute.EXPERIENCE_LEVEL, "player.level", 0, 24791, level, true).setValue(level)
+        };
+        this.dataPacket(pk);
     }
 
     //@Override
