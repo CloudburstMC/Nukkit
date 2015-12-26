@@ -196,6 +196,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int ANVIL = 145;
 
     public static final int REDSTONE_BLOCK = 152;
+    public static final int QUARTZ_ORE = 153;
 
     public static final int QUARTZ_BLOCK = 155;
     public static final int QUARTZ_STAIRS = 156;
@@ -398,6 +399,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             list[REDSTONE_BLOCK] = Redstone.class;
 
+            list[QUARTZ_ORE] = QuartzOre.class;
             list[QUARTZ_BLOCK] = Quartz.class;
             list[QUARTZ_STAIRS] = QuartzStairs.class;
             list[DOUBLE_WOOD_SLAB] = DoubleWoodSlab.class;
@@ -878,6 +880,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         str += ":";
         str += String.valueOf((int) this.z);
         return str;
+    }
+
+    public int getDropExp() {
+        return 0;
     }
 
 }

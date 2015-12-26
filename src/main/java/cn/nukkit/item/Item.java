@@ -219,6 +219,7 @@ public class Item implements Cloneable {
     public static final int ANVIL = 145;
 
     public static final int REDSTONE_BLOCK = 152;
+    public static final int QUARTZ_ORE = 153;
 
     public static final int QUARTZ_BLOCK = 155;
     public static final int QUARTZ_STAIRS = 156;
@@ -247,7 +248,7 @@ public class Item implements Cloneable {
     public static final int CARPET = 171;
     public static final int HARDENED_CLAY = 172;
     public static final int COAL_BLOCK = 173;
-
+    public static final int PACKED_ICE = 174;
     public static final int DOUBLE_PLANT = 175;
 
     public static final int FENCE_GATE_SPRUCE = 183;
@@ -718,6 +719,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.REDSTONE_ORE, 0));
         addCreativeItem(Item.get(Item.REDSTONE_TORCH, 0));
         addCreativeItem(Item.get(Item.EMERALD_ORE, 0));
+        addCreativeItem(Item.get(Item.QUARTZ_ORE, 0));
         addCreativeItem(Item.get(Item.OBSIDIAN, 0));
         addCreativeItem(Item.get(Item.ICE, 0));
         addCreativeItem(Item.get(Item.SNOW_BLOCK, 0));
@@ -924,42 +926,42 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.EXPERIENCE_BOTTLE));
 
         //Potion
-        addCreativeItem(Item.get(Item.POTION, 0));
-        addCreativeItem(Item.get(Item.POTION, 1));
-        addCreativeItem(Item.get(Item.POTION, 2));
-        addCreativeItem(Item.get(Item.POTION, 3));
-        addCreativeItem(Item.get(Item.POTION, 4));
-        addCreativeItem(Item.get(Item.POTION, 5));
-        addCreativeItem(Item.get(Item.POTION, 6));
-        addCreativeItem(Item.get(Item.POTION, 7));
-        addCreativeItem(Item.get(Item.POTION, 8));
-        addCreativeItem(Item.get(Item.POTION, 9));
-        addCreativeItem(Item.get(Item.POTION, 10));
-        addCreativeItem(Item.get(Item.POTION, 11));
-        addCreativeItem(Item.get(Item.POTION, 12));
-        addCreativeItem(Item.get(Item.POTION, 13));
-        addCreativeItem(Item.get(Item.POTION, 14));
-        addCreativeItem(Item.get(Item.POTION, 15));
-        addCreativeItem(Item.get(Item.POTION, 16));
-        addCreativeItem(Item.get(Item.POTION, 17));
-        addCreativeItem(Item.get(Item.POTION, 18));
-        addCreativeItem(Item.get(Item.POTION, 19));
-        addCreativeItem(Item.get(Item.POTION, 20));
-        addCreativeItem(Item.get(Item.POTION, 21));
-        addCreativeItem(Item.get(Item.POTION, 22));
-        addCreativeItem(Item.get(Item.POTION, 23));
-        addCreativeItem(Item.get(Item.POTION, 24));
-        addCreativeItem(Item.get(Item.POTION, 25));
-        addCreativeItem(Item.get(Item.POTION, 26));
-        addCreativeItem(Item.get(Item.POTION, 27));
-        addCreativeItem(Item.get(Item.POTION, 28));
-        addCreativeItem(Item.get(Item.POTION, 29));
-        addCreativeItem(Item.get(Item.POTION, 30));
-        addCreativeItem(Item.get(Item.POTION, 31));
-        addCreativeItem(Item.get(Item.POTION, 32));
-        addCreativeItem(Item.get(Item.POTION, 33));
-        addCreativeItem(Item.get(Item.POTION, 34));
-        addCreativeItem(Item.get(Item.POTION, 35));
+        addCreativeItem(Item.get(Item.POTION, Potion.NO_EFFECTS));
+        addCreativeItem(Item.get(Item.POTION, Potion.MUNDANE));
+        addCreativeItem(Item.get(Item.POTION, Potion.MUNDANE_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.THICK));
+        addCreativeItem(Item.get(Item.POTION, Potion.AWKWARD));
+        addCreativeItem(Item.get(Item.POTION, Potion.NIGHT_VISION));
+        addCreativeItem(Item.get(Item.POTION, Potion.NIGHT_VISION_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.INVISIBLE));
+        addCreativeItem(Item.get(Item.POTION, Potion.INVISIBLE_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.LEAPING));
+        addCreativeItem(Item.get(Item.POTION, Potion.LEAPING_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.LEAPING_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.FIRE_RESISTANCE));
+        addCreativeItem(Item.get(Item.POTION, Potion.FIRE_RESISTANCE_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.SPEED));
+        addCreativeItem(Item.get(Item.POTION, Potion.SPEED_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.SPEED_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.SLOWNESS));
+        addCreativeItem(Item.get(Item.POTION, Potion.SLOWNESS_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.WATER_BREATHING));
+        addCreativeItem(Item.get(Item.POTION, Potion.WATER_BREATHING_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.INSTANT_HEALTH));
+        addCreativeItem(Item.get(Item.POTION, Potion.INSTANT_HEALTH_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.HARMING));
+        addCreativeItem(Item.get(Item.POTION, Potion.HARMING_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.POISON));
+        addCreativeItem(Item.get(Item.POTION, Potion.POISON_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.POISON_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.REGENERATION));
+        addCreativeItem(Item.get(Item.POTION, Potion.REGENERATION_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.REGENERATION_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.STRENGTH));
+        addCreativeItem(Item.get(Item.POTION, Potion.STRENGTH_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.STRENGTH_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.WEAKNESS));
+        addCreativeItem(Item.get(Item.POTION, Potion.WEAKNESS_LONG));
 
         //todo Splash Potion
         /*
