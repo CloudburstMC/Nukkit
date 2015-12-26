@@ -1346,9 +1346,10 @@ public abstract class Entity extends Location implements Metadatable {
         this.y = pos.y;
         this.z = pos.z;
 
-        float radius = this.getWidth() / 2;
+        double radius = this.getWidth() / 2d;
 
-        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + this.getHealth(), pos.z + radius);
+        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + this.getHeight(), pos.z +
+                radius);
 
         this.checkChunks();
 
@@ -1390,21 +1391,33 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean teleport(Vector3 pos) {
         if (pos instanceof Location) {
-            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
+            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
         } else {
-            return this.teleport(pos, this.yaw);
-        }
-    }
-
-    public boolean teleport(Vector3 pos, double yaw) {
-        if (pos instanceof Location) {
-            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleport(pos, yaw, this.pitch);
+            return this.teleportYawAndPitch(pos, this.yaw, this.pitch);
         }
     }
 
     public boolean teleport(Vector3 pos, double yaw, double pitch) {
+        return this.teleportYawAndPitch(pos, yaw, pitch);
+    }
+
+    public boolean teleportYaw(Vector3 pos, double yaw) {
+        if (pos instanceof Location) {
+            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
+        } else {
+            return this.teleportYawAndPitch(pos, yaw, this.pitch);
+        }
+    }
+
+    public boolean teleportPitch(Vector3 pos, double pitch) {
+        if (pos instanceof Location) {
+            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
+        } else {
+            return this.teleportYawAndPitch(pos, this.yaw, pitch);
+        }
+    }
+
+    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
         Position from = Position.fromObject(this, this.level);
         Position to = Position.fromObject(pos, pos instanceof Position ? ((Position) pos).getLevel() : this.level);
         EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to);
@@ -1417,8 +1430,8 @@ public abstract class Entity extends Location implements Metadatable {
         pos = ev.getTo();
 
         this.setMotion(this.temporalVector.setComponents(0, 0, 0));
-
-        if (!this.setPositionAndRotation(pos, yaw, pitch)) {
+        
+        if (this.setPositionAndRotation(pos, yaw, pitch)) {
             this.resetFallDistance();
             this.onGround = true;
 

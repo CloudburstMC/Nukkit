@@ -2138,6 +2138,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.server.getPluginManager().callEvent(playerRespawnEvent);
 
                         this.teleport(playerRespawnEvent.getRespawnPosition());
+
                         this.setSprinting(false);
                         this.setSneaking(false);
 
@@ -3253,25 +3254,22 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
     public boolean teleport(Vector3 pos) {
-        if (pos instanceof Location) {
-            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleport(pos, this.yaw);
+        if (!this.isOnline()) {
+            return false;
         }
-    }
 
-    @Override
-    public boolean teleport(Vector3 pos, double yaw) {
-        if (pos instanceof Location) {
-            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleport(pos, yaw, this.pitch);
+        Position oldPos = this.getPosition();
+        if (super.teleport(pos)) {
+            this.resetAfterTeleport(oldPos);
+            return true;
         }
+
+        return false;
     }
 
     @Override
@@ -3282,62 +3280,128 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         Position oldPos = this.getPosition();
         if (super.teleport(pos, yaw, pitch)) {
-
-            for (Inventory window : this.windowIndex.values()) {
-                if (Objects.equals(window, this.inventory)) {
-                    continue;
-                }
-                this.removeWindow(window);
-            }
-
-            this.teleportPosition = new Vector3(this.x, this.y, this.z);
-
-            if (!this.checkTeleportPosition()) {
-                this.forceMovement = oldPos;
-            } else {
-                this.spawnToAll();
-            }
-
-
-            this.resetFallDistance();
-            this.nextChunkOrderRun = 0;
-            this.newPosition = null;
-
-            //Weather
-            this.getLevel().sendWeather(this);
-
+            this.resetAfterTeleport(oldPos);
             return true;
         }
 
         return false;
     }
 
-    public void teleportImmediate(Vector3 pos) {
-        this.teleportImmediate(pos, this.yaw);
+    @Override
+    public boolean teleportYaw(Vector3 pos, double yaw) {
+        if (!this.isOnline()) {
+            return false;
+        }
+
+        Position oldPos = this.getPosition();
+        if (super.teleportYaw(pos, yaw)) {
+            this.resetAfterTeleport(oldPos);
+            return true;
+        }
+
+        return false;
     }
 
-    public void teleportImmediate(Vector3 pos, double yaw) {
-        this.teleportImmediate(pos, yaw, this.pitch);
+    @Override
+    public boolean teleportPitch(Vector3 pos, double pitch) {
+        if (!this.isOnline()) {
+            return false;
+        }
+
+        Position oldPos = this.getPosition();
+        if (super.teleportPitch(pos, pitch)) {
+            this.resetAfterTeleport(oldPos);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
+        if (!this.isOnline()) {
+            return false;
+        }
+
+        Position oldPos = this.getPosition();
+        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
+            this.resetAfterTeleport(oldPos);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void resetAfterTeleport(Position oldPos) {
+        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+            if (Objects.equals(window, this.inventory)) {
+                continue;
+            }
+            this.removeWindow(window);
+        }
+
+        this.teleportPosition = new Vector3(this.x, this.y, this.z);
+
+        if (!this.checkTeleportPosition()) {
+            this.forceMovement = oldPos;
+        } else {
+            this.spawnToAll();
+        }
+
+
+        this.resetFallDistance();
+        this.nextChunkOrderRun = 0;
+        this.newPosition = null;
+
+        //Weather
+        this.getLevel().sendWeather(this);
+    }
+
+    public void teleportImmediate(Vector3 pos) {
+        if (super.teleport(pos)) {
+            resetAfterTeleportImmediate();
+        }
     }
 
     public void teleportImmediate(Vector3 pos, double yaw, double pitch) {
         if (super.teleport(pos, yaw, pitch)) {
-
-            for (Inventory window : this.windowIndex.values()) {
-                if (Objects.equals(window, this.inventory)) {
-                    continue;
-                }
-                this.removeWindow(window);
-            }
-
-            this.forceMovement = new Vector3(this.x, this.y, this.z);
-            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
-
-            this.resetFallDistance();
-            this.orderChunks();
-            this.nextChunkOrderRun = 0;
-            this.newPosition = null;
+            resetAfterTeleportImmediate();
         }
+    }
+
+    public void teleportImmediateYaw(Vector3 pos, double yaw) {
+        if (super.teleportYaw(pos, yaw)) {
+            resetAfterTeleportImmediate();
+        }
+    }
+
+    public void teleportImmediatePitch(Vector3 pos, double pitch) {
+        if (super.teleportPitch(pos, pitch)) {
+            resetAfterTeleportImmediate();
+        }
+    }
+
+    public void teleportImmediateYawAndPitch(Vector3 pos, double yaw, double pitch) {
+        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
+            resetAfterTeleportImmediate();
+        }
+    }
+
+    private void resetAfterTeleportImmediate() {
+        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+            if (Objects.equals(window, this.inventory)) {
+                continue;
+            }
+            this.removeWindow(window);
+        }
+
+        this.forceMovement = new Vector3(this.x, this.y, this.z);
+        this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+
+        this.resetFallDistance();
+        this.orderChunks();
+        this.nextChunkOrderRun = 0;
+        this.newPosition = null;
     }
 
     public int getWindowId(Inventory inventory) {
