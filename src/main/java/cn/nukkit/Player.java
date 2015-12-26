@@ -3233,7 +3233,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             level++;
             most = this.getNeedExpToNextLevel(level);
         }
-        getServer().getLogger().debug("Most: "+most+", Set EXP:"+added+" level:"+level);
+        getServer().getLogger().debug("Added "+add+" EXP to "+getName()+", now lv:"+level+" ("+added+"/"+most+") .");
         this.setExperience(added, level);
         //$sound = new ZombieInfectSound($this);
         //$this->getLevel()->addSound($sound);
@@ -3253,7 +3253,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         setExperience(exp, this.getExperienceLevel());
     }
 
-    //setExperienceLevel?
+    //todo something on performance, lots of exp orbs then lots of packets, could crash client
 
     public void setExperience(int exp, int level) {
         this.exp = exp;
