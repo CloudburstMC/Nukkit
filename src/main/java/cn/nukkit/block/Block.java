@@ -332,7 +332,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[LADDER] = Ladder.class;
 
             list[COBBLESTONE_STAIRS] = CobblestoneStairs.class;
-            //list[WALL_SIGN] = WallSign.class;
+            list[WALL_SIGN] = WallSign.class;
 
             //list[IRON_DOOR_BLOCK] = IronDoor.class;
             list[REDSTONE_ORE] = RedstoneOre.class;
