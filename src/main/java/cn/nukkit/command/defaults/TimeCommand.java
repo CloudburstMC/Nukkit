@@ -87,7 +87,7 @@ public class TimeCommand extends VanillaCommand {
 
             int value;
             if ("day".equals(args[1])) {
-                value = 0;
+                value = Level.TIME_DAY;
             } else if ("night".equals(args[1])) {
                 value = Level.TIME_NIGHT;
             } else {
