@@ -8,6 +8,7 @@ import cn.nukkit.level.particle.EnchantParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+import cn.nukkit.utils.Random;
 
 /**
  * Created on 2015/12/25 by xtypr.
@@ -78,7 +79,13 @@ public class ExpBottleThrown extends Projectile {
             Particle particle2 = new DestroyBlockParticle(this, Block.get(Block.GLASS));
             this.getLevel().addParticle(particle2);
             hasUpdate = true;
-            //todo drop exp orbs
+
+            Random random = new Random();
+            int add = 1;
+            for (int ii = 1; ii <= random.nextRange(3, 11); ii += add) {
+                getLevel().dropExpOrb(this, add);
+                add = random.nextRange(1, 3);
+            }
         }
 
         //this.timings.stopTiming();

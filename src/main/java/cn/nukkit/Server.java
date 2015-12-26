@@ -1787,7 +1787,9 @@ public class Server {
         //todo mobs
 
         Entity.registerEntity(ExpBottleThrown.class);
+        Entity.registerEntity(ExpOrb.class);
         //todo thrown potion
+
         Entity.registerEntity(Human.class, true);
     }
 
