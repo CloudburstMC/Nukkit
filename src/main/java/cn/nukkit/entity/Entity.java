@@ -1430,7 +1430,7 @@ public abstract class Entity extends Location implements Metadatable {
         pos = ev.getTo();
 
         this.setMotion(this.temporalVector.setComponents(0, 0, 0));
-        
+
         if (this.setPositionAndRotation(pos, yaw, pitch)) {
             this.resetFallDistance();
             this.onGround = true;
