@@ -1602,7 +1602,7 @@ public class Level implements ChunkManager, Metadatable {
                     .putString("Text4", "");
 
             if (player != null) {
-                nbt.putString("Creator", player.getRawUniqueId().toString());
+                nbt.putString("Creator", player.getUniqueId().toString());
             }
 
             if (item.hasCustomBlockData()) {

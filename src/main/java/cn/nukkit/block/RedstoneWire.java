@@ -16,7 +16,7 @@ public class RedstoneWire extends Flowable{
 
     public RedstoneWire(int meta) {
         super(meta);
-        this.redEnergyLevel = meta;
+        this.powerLevel = meta;
     }
 
     @Override
@@ -30,9 +30,9 @@ public class RedstoneWire extends Flowable{
     }
 
     @Override
-    public void setRedEnergyLevel(int energyLevel) {
-        this.redEnergyLevel = energyLevel;
-        this.meta = energyLevel;
+    public void setPowerLevel(int redstonePower) {
+        this.powerLevel = redstonePower;
+        this.meta = redstonePower;
     }
 
     @Override
@@ -42,17 +42,17 @@ public class RedstoneWire extends Flowable{
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        this.setRedEnergyLevel(this.getSideRedEnergy() - 1);
+        this.setPowerLevel(this.getNeighborPowerLevel() - 1);
         block.getLevel().setBlock(block, this, true, true);
-        Redstone.updateActive(this);
+        Redstone.active(this);
         return false;
     }
 
     @Override
     public boolean onBreak(Item item) {
-        int level = this.getRedEnergyLevel();
+        int level = this.getPowerLevel();
         this.getLevel().setBlock(this, new Air(), true, false);
-        Redstone.updateDeactive(this, level);
+        Redstone.deactive(this, level);
         return true;
     }
 

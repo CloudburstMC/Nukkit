@@ -250,8 +250,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     protected int meta = 0;
 
-    protected int redEnergyLevel = 0;
-    protected boolean energySource = false;
+    protected int powerLevel = 0;
+    protected boolean powerSource = false;
 
     public AxisAlignedBB boundingBox = null;
 
@@ -824,50 +824,50 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return (Block) super.clone();
     }
 
-    public void setRedEnergyLevel(int energyLevel) {
-        redEnergyLevel = energyLevel;
+    public void setPowerLevel(int powerLevel) {
+        this.powerLevel = powerLevel;
     }
 
-    public int getRedEnergyLevel() {
-        return redEnergyLevel;
+    public int getPowerLevel() {
+        return powerLevel;
     }
 
-    public int getRedEnergyLevel(int side) {
-        return this.getSide(side).getRedEnergyLevel();
+    public int getPowerLevel(int side) {
+        return this.getSide(side).getPowerLevel();
     }
 
-    public boolean hasSideRedEnergy() {
-        return this.getSideRedEnergy() > 0;
+    public boolean isNeighborPowered() {
+        return this.getNeighborPowerLevel() > 0;
     }
 
-    public int getSideRedEnergy() {
+    public int getNeighborPowerLevel() {
         int energy = 0;
         int tempLevel = 0;
-        tempLevel = this.getSide(SIDE_DOWN).getRedEnergyLevel();
+        tempLevel = this.getSide(SIDE_DOWN).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_UP).getRedEnergyLevel();
+        tempLevel = this.getSide(SIDE_UP).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_NORTH).getRedEnergyLevel();
+        tempLevel = this.getSide(SIDE_NORTH).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_SOUTH).getRedEnergyLevel();
+        tempLevel = this.getSide(SIDE_SOUTH).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_EAST).getRedEnergyLevel();
+        tempLevel = this.getSide(SIDE_EAST).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_WEST).getRedEnergyLevel();
+        tempLevel = this.getSide(SIDE_WEST).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
         return energy;
     }
 
-    public boolean hasRedEnergy() {
-        return this.redEnergyLevel > 0;
+    public boolean isPowered() {
+        return this.powerLevel > 0;
     }
 
-    public boolean isEnergySource() {
-        return this.energySource;
+    public boolean isPowerSource() {
+        return this.powerSource;
     }
 
-    public void setEnergySource(boolean isSource) {
-        this.energySource = isSource;
+    public void setPowerSource(boolean isSource) {
+        this.powerSource = isSource;
     }
 
     public String getLocationHash() {

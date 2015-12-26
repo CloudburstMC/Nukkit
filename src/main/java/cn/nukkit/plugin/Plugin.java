@@ -176,6 +176,8 @@ public interface Plugin extends CommandExecutor {
 
     boolean saveResource(String filename, boolean replace);
 
+    boolean saveResource(String filename, String outputName, boolean replace);
+
     /**
      * 返回这个Nukkit插件配置文件的{@link cn.nukkit.utils.Config}对象。<br>
      * The config file this Nukkit plugin as a {@link cn.nukkit.utils.Config} object.
