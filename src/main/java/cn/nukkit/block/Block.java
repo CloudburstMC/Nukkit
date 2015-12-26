@@ -355,7 +355,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[LIT_PUMPKIN] = LitPumpkin.class;
             list[CAKE_BLOCK] = Cake.class;
 
-            //list[TRAPDOOR] = Trapdoor.class;
+            list[TRAPDOOR] = Trapdoor.class;
 
             list[STONE_BRICKS] = StoneBricks.class;
 
