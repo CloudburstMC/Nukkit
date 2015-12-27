@@ -2073,15 +2073,15 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                         .add(new FloatTag("", (float) pitch)))
                                 .putInt("Potion", item.getDamage());
                         double f = 1.5;
-                        Entity bottle = Entity.createEntity("SplashPotion", this.chunk, nbt, this);
+                        Entity bottle = Entity.createEntity("ThrownPotion", this.chunk, nbt, this);
                         bottle.setMotion(bottle.getMotion().multiply(f));
                         if (this.isSurvival()) {
                             item.setCount(item.getCount() - 1);
                             this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
                         }
-                        if (bottle instanceof ThrownSplashPotion) {
-                            ThrownSplashPotion bottleEntity = (ThrownSplashPotion) bottle;
-                            bottleEntity.setEffectData(item.getDamage());
+                        if (bottle instanceof ThrownPotion) {
+                            ThrownPotion bottleEntity = (ThrownPotion) bottle;
+                            bottleEntity.setPotionType(item.getDamage());
                             ProjectileLaunchEvent projectileEv = new ProjectileLaunchEvent(bottleEntity);
                             this.server.getPluginManager().callEvent(projectileEv);
                             if (projectileEv.isCancelled()) {

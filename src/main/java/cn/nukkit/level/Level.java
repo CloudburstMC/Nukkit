@@ -1489,7 +1489,7 @@ public class Level implements ChunkManager, Metadatable {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", 0))
                         .add(new FloatTag("", 0)));
-        Entity entity = Entity.createEntity("ExpOrb", this.getChunk(source.getFloorX() >> 4, source.getFloorZ() >> 4), nbt);
+        Entity entity = Entity.createEntity("XPOrb", this.getChunk(source.getFloorX() >> 4, source.getFloorZ() >> 4), nbt);
         if (entity instanceof XPOrb) {
             XPOrb xpOrb = (XPOrb) entity;
             xpOrb.setExp(exp);
