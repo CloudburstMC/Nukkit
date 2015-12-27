@@ -12,7 +12,7 @@ import java.util.HashMap;
  * Created on 2015/12/26 by xtypr.
  * Package cn.nukkit.entity in project Nukkit .
  */
-public class ExpOrb extends Entity {
+public class XPOrb extends Entity {
 
     public static final int NETWORK_ID = 69;
 
@@ -51,7 +51,7 @@ public class ExpOrb extends Entity {
         return false;
     }
 
-    public ExpOrb(FullChunk chunk, CompoundTag nbt) {
+    public XPOrb(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

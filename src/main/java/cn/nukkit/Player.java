@@ -1151,10 +1151,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             if (!entity.isAlive()) {
                 continue;
             }
-            if (entity instanceof ExpOrb) {
-                ExpOrb expOrb = (ExpOrb) entity;
-                if (expOrb.getPickupDelay() <= 0) {
-                    int exp = expOrb.getExp();
+            if (entity instanceof XPOrb) {
+                XPOrb xpOrb = (XPOrb) entity;
+                if (xpOrb.getPickupDelay() <= 0) {
+                    int exp = xpOrb.getExp();
                     this.addExperience(exp);
                     entity.kill();
                     ClickSound sound = new ClickSound(this, (float)(new cn.nukkit.utils.Random().nextRange(260, 360)) / 100f);

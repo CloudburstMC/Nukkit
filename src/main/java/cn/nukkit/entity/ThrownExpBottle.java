@@ -1,7 +1,6 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -12,7 +11,7 @@ import cn.nukkit.utils.Random;
  * Created on 2015/12/25 by xtypr.
  * Package cn.nukkit.entity in project Nukkit .
  */
-public class ExpBottleThrown extends Projectile {
+public class ThrownExpBottle extends Projectile {
 
     public static final int NETWORK_ID = 68;
 
@@ -46,11 +45,11 @@ public class ExpBottleThrown extends Projectile {
         return 0.01f;
     }
 
-    public ExpBottleThrown(FullChunk chunk, CompoundTag nbt) {
+    public ThrownExpBottle(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public ExpBottleThrown(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public ThrownExpBottle(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 
@@ -95,7 +94,7 @@ public class ExpBottleThrown extends Projectile {
     @Override
     public void spawnTo(Player player){
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = ExpBottleThrown.NETWORK_ID;
+        pk.type = ThrownExpBottle.NETWORK_ID;
         pk.eid = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;
