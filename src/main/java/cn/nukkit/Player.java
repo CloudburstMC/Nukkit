@@ -3228,9 +3228,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         int added = now + add;
         int level = this.getExperienceLevel();
         int most = this.getNeedExpToNextLevel(level);
-        while (added >= most) {
+        while (added >= most) {  //Level Up!
             added = added - most;
             level++;
+            this.sendExperienceLevelUp();
+            getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
             most = this.getNeedExpToNextLevel(level);
         }
         getServer().getLogger().debug("Added "+add+" EXP to "+getName()+", now lv:"+level+" ("+added+"/"+most+") .");
@@ -3287,6 +3289,17 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 Attribute.addAttribute(Attribute.EXPERIENCE_LEVEL, "player.level", 0, 24791, level, true).setValue(level)
         };
         this.dataPacket(pk);
+    }
+
+    public void sendExperienceLevelUp() {
+        //todo 似乎没用？需要抓包Attribute
+        //UpdateAttributesPacket pk = new UpdateAttributesPacket();
+        //pk.entityId = 0;
+        //float secret = this.expLevel > 30 ? 1.0F : (float)this.expLevel / 30.0F;
+        //pk.entries = new Attribute[]{
+        //        Attribute.addAttribute(Attribute.EXPERIENCE_LEVEL, "random.levelup", 0, 1, secret, true).setValue(secret)
+        //};
+        //this.dataPacket(pk);
     }
 
     //@Override

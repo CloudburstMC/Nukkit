@@ -15,7 +15,7 @@ public class ExpBottle extends Item {
     }
 
     public ExpBottle(Integer meta, int count) {
-        super(EXPERIENCE_BOTTLE, meta, count);
+        super(EXPERIENCE_BOTTLE, meta, count, "Exp Bottle");
     }
 
     @Override

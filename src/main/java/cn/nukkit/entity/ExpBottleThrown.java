@@ -3,9 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.DestroyBlockParticle;
-import cn.nukkit.level.particle.EnchantParticle;
-import cn.nukkit.level.particle.Particle;
+import cn.nukkit.level.particle.*;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.utils.Random;
@@ -76,7 +74,8 @@ public class ExpBottleThrown extends Projectile {
             this.kill();
             Particle particle1 = new EnchantParticle(this);
             this.getLevel().addParticle(particle1);
-            Particle particle2 = new DestroyBlockParticle(this, Block.get(Block.GLASS));
+            //todo 颜色待验证 Verify if this color is true
+            Particle particle2 = new SpellParticle(this, 0, 0, 255);
             this.getLevel().addParticle(particle2);
             hasUpdate = true;
 
