@@ -1,10 +1,42 @@
 package cn.nukkit.utils;
 
 /**
- * author: MagicDroidX
- * Nukkit
+ * 一个帮助处理文字格颜色和样式的工具类。<br>
+ * A tool class that deals with text color and format.
+ * <ul>
+ * <li>{@link #toANSI(String)}可以把字符串的颜色转换为ANSI的形式.<br>
+ * {@link #toANSI(String)} can convert colorized string to ANSI format.</li>
+ *
+ * <li>{@link #clean(String)}可以清除字符串中所有的颜色字符.<br>
+ * {@link #clean(String)} can remove all colors from a string.</li>
+ *
+ * <li>{@link #colorize(String)}可以把以&加上数字或字母的形式转换为§开头的颜色格式.<br>
+ * {@link #colorize(String)} can convert format like "&+number/character" to the color format begins with "§".</li>
+ *
+ * <li>{@link #getLastColors(String)}可以得到这个字符串尾端的颜色.<br>
+ * {@link #getLastColors(String)} can get the color of a string's tail.</li>
+ * </ul>
+ *
+ * <p>如果想要你处理文字颜色或格式的代码变得更简洁，可以参考这个：<br>
+ * If you are dealing with colors and want to make code simple, refer to this:
+ * <pre>
+ * import cn.nukkit.plugin.PluginBase;
+ * import static cn.nukkit.utils.TextFormat.*;
+ *
+ * public class ExamplePlugin extends PluginBase {
+ *    {@code @Override}
+ *     public void onEnable() {
+ *         getLogger().info(BLUE + "Shorter" + GREEN + " code" + YELLOW +" using import static!");
+ *         getLogger().info(colorize("&eMore &6simpler &7with colorize!"));
+ *     }
+ * }
+ * </pre></p>
+ *
+ * @author MagicDroidX(code) @ Nukkit Project
+ * @author 粉鞋大妈(javadoc) @ Nukkit Project
+ * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
-public class TextFormat {
+public final class TextFormat {
 
     public static final char ESCAPE = '\u00a7';
 
