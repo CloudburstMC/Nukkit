@@ -20,7 +20,7 @@ package cn.nukkit.event;
  * Note that for the handler, tag {@code @EventHandler} and the parameter is required:</p>
  * <pre>
  * public class ExampleListener implements Listener {
- *    {@code @EventHandler}
+ *    {@code @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)}
  *     public void onBlockBreak(BlockBreakEvent event) {
  *          int blockID = event.getBlock().getId();
  *          if (blockID == Block.STONE) {
@@ -34,8 +34,8 @@ package cn.nukkit.event;
  * <p>关于注册监听类，请看：{@link cn.nukkit.plugin.PluginManager#registerEvents}.<br>
  * For registering listener class, See: {@link cn.nukkit.plugin.PluginManager#registerEvents}.</p>
  *
- * <p>关于监听器的优先级和监听器是否接收被取消的事件，请看：{@link EventHandler}.<br>
- * For the priority of listener and whether the listener receive cancelled events or not, See: {@link EventHandler}.</p>
+ * <p>关于处理器的优先级和处理器是否忽略被取消的事件，请看：{@link EventHandler}.<br>
+ * For the priority of handler and whether the handler ignore cancelled events or not, See: {@link EventHandler}.</p>
  *
  * @author Unknown(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
