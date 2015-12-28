@@ -6,8 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * 定义一个事件的处理器的注解。<br>
+ * Annotation that defines a handler.
+ *
+ * <p></p>
+ *
+ * @author MagicDroidX(code) @ Nukkit Project
+ * @author 粉鞋大妈(javadoc) @ Nukkit Project
+ * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 
 @Target(ElementType.METHOD)
