@@ -93,7 +93,7 @@ public abstract class Living extends Entity implements Damageable {
 
     @Override
     public void attack(EntityDamageEvent source) {
-        if (this.attackTime > 0 && this.noDamageTicks > 0) {
+        if (this.attackTime > 0 || this.noDamageTicks > 0) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
             if (lastCause != null && lastCause.getDamage() >= source.getDamage()) {
                 source.setCancelled();
