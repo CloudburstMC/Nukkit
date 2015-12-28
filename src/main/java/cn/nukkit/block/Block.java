@@ -394,7 +394,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             //list[CARROT_BLOCK] = Carrot.class;
             //list[POTATO_BLOCK] = Potato.class;
-            //list[ANVIL] = Anvil.class;
+            list[ANVIL] = Anvil.class;
 
             list[REDSTONE_BLOCK] = Redstone.class;
 
