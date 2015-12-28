@@ -2,6 +2,7 @@ package cn.nukkit.tile;
 
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.inventory.BrewingInventory;
 import cn.nukkit.inventory.BrewingRecipe;
 import cn.nukkit.inventory.InventoryHolder;
@@ -10,12 +11,11 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
-import cn.nukkit.Server;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BrewingStand extends Spawnable implements InventoryHolder, Container, Nameable{
+public class BrewingStand extends Spawnable implements InventoryHolder, Container, Nameable {
 
     protected BrewingInventory inventory;
 
@@ -23,11 +23,11 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
 
     public static List<Integer> ingredients = new ArrayList<>();
 
-    public BrewingStand(FullChunk chunk, CompoundTag nbt){
+    public BrewingStand(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         inventory = new BrewingInventory(this);
 
-        if(!namedTag.contains("Items") || !(namedTag.get("Items") instanceof ListTag)){
+        if (!namedTag.contains("Items") || !(namedTag.get("Items") instanceof ListTag)) {
             namedTag.putList(new ListTag<CompoundTag>("Items"));
         }
 
@@ -35,28 +35,28 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
             inventory.setItem(i, this.getItem(i));
         }
 
-        if(!namedTag.contains("BrewTime") || namedTag.getShort("BrewTime") > MAX_BREW_TIME){
-            namedTag.putShort("BrewTime", MAX_BREW_TIME);
+        if (!namedTag.contains("CookTime") || namedTag.getShort("CookTime") > MAX_BREW_TIME) {
+            namedTag.putShort("CookTime", MAX_BREW_TIME);
         }
 
-        if(namedTag.getShort("BrewTime")  < MAX_BREW_TIME){
+        if (namedTag.getShort("CookTime") < MAX_BREW_TIME) {
             this.scheduleUpdate();
         }
     }
 
     @Override
-    public String getName(){
-        return this.hasName() ? this.namedTag.getString("CustomName") : "Furnace";
+    public String getName() {
+        return this.hasName() ? this.namedTag.getString("CustomName") : "Brewing Stand";
     }
 
     @Override
-    public boolean hasName(){
+    public boolean hasName() {
         return namedTag.contains("CustomName");
     }
 
     @Override
-    public void setName(String name){
-        if(name.equals("")){
+    public void setName(String name) {
+        if (name.equals("")) {
             namedTag.remove("CustomName");
             return;
         }
@@ -83,7 +83,7 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
     }
 
     @Override
-    public int getSize(){
+    public int getSize() {
         return 4;
     }
 
@@ -133,17 +133,17 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
     }
 
     @Override
-    public BrewingInventory getInventory(){
+    public BrewingInventory getInventory() {
         return inventory;
     }
 
-    protected boolean checkIngredient(Item ingredient){
+    protected boolean checkIngredient(Item ingredient) {
         return ingredients.contains(ingredient.getId());
     }
 
     @Override
-    public boolean onUpdate(){
-        if(closed){
+    public boolean onUpdate() {
+        if (closed) {
             return false;
         }
 
@@ -152,29 +152,29 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
         Item ingredient = inventory.getIngredient();
         boolean canBrew = false;
 
-        for(int i = 1; i <= 3; i++){
-            if(this.inventory.getItem(i).getId() == Item.POTION){
+        for (int i = 1; i <= 3; i++) {
+            if (this.inventory.getItem(i).getId() == Item.POTION) {
                 canBrew = true;
             }
         }
 
-        if(namedTag.getShort("BrewTime") <= MAX_BREW_TIME && canBrew && ingredient.getCount() > 0){
-            if(!this.checkIngredient(ingredient)){
+        if (namedTag.getShort("CookTime") <= MAX_BREW_TIME && canBrew && ingredient.getCount() > 0) {
+            if (!this.checkIngredient(ingredient)) {
                 canBrew = false;
             }
-        }else{
+        } else {
             canBrew = false;
         }
 
-        if(canBrew){
-            namedTag.putShort("BrewTime", namedTag.getShort("BrewTime"));
+        if (canBrew) {
+            namedTag.putShort("CookTime", namedTag.getShort("CookTime"));
 
-            if (namedTag.getShort("BrewTime") <= 0){ //20 seconds
-                for(int i = 1; i <= 3; i++){
+            if (namedTag.getShort("CookTime") <= 0) { //20 seconds
+                for (int i = 1; i <= 3; i++) {
                     Item potion = this.inventory.getItem(i);
                     BrewingRecipe recipe = Server.getInstance().getCraftingManager().matchBrewingRecipe(ingredient, potion);
 
-                    if(recipe != null){
+                    if (recipe != null) {
                         this.inventory.setItem(i, recipe.getResult());
                     }
                 }
@@ -182,25 +182,24 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
                 ingredient.count--;
                 this.inventory.setIngredient(ingredient);
 
-                namedTag.putShort("BrewTime", namedTag.getShort("BrewTime"));
+                namedTag.putShort("CookTime", namedTag.getShort("CookTime"));
             }
 
-            for(Player player : getInventory().getViewers()){
+            for (Player player : getInventory().getViewers()) {
                 int windowId = player.getWindowId(getInventory());
-                if(windowId > 0){
+                if (windowId > 0) {
                     ContainerSetDataPacket pk = new ContainerSetDataPacket();
                     pk.windowid = (byte) windowId;
-                    pk.property = 0; //Brewing
-                    pk.value = namedTag.getShort("BrewTime");
+                    pk.property = 0;
+                    pk.value = namedTag.getShort("CookTime");
                     player.dataPacket(pk);
                 }
 
             }
 
             ret = true;
-        }else {
-            namedTag.putShort("BrewTime", MAX_BREW_TIME);
-            ret = false;
+        } else {
+            namedTag.putShort("CookTime", MAX_BREW_TIME);
         }
 
         lastUpdate = System.currentTimeMillis();
@@ -209,15 +208,15 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
     }
 
     @Override
-    public CompoundTag getSpawnCompound(){
+    public CompoundTag getSpawnCompound() {
         CompoundTag nbt = new CompoundTag()
                 .putString("id", Tile.BREWING_STAND)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putShort("BrewTime", MAX_BREW_TIME);
+                .putShort("CookTime", MAX_BREW_TIME);
 
-        if(this.hasName()){
+        if (this.hasName()) {
             nbt.put("CustomName", namedTag.get("CustomName"));
         }
 

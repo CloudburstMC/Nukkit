@@ -1,12 +1,12 @@
 package cn.nukkit.inventory;
 
 
-import cn.nukkit.item.Item;
 import cn.nukkit.Server;
+import cn.nukkit.item.Item;
 
 import java.util.UUID;
 
-public class BrewingRecipe implements Recipe{
+public class BrewingRecipe implements Recipe {
     private UUID id;
 
     private Item output;
@@ -15,45 +15,45 @@ public class BrewingRecipe implements Recipe{
 
     private Item ingredient;
 
-    public BrewingRecipe(Item result, Item ingredient, Item potion){
+    public BrewingRecipe(Item result, Item ingredient, Item potion) {
         this.output = result.clone();
         this.ingredient = ingredient.clone();
         this.potion = potion.clone();
     }
 
     @Override
-    public UUID getId(){
+    public UUID getId() {
         return id;
     }
 
     @Override
-    public void setId(UUID uuid){
-        if(id != null){
+    public void setId(UUID uuid) {
+        if (id != null) {
             throw new IllegalStateException("Id is already set");
         }
 
         this.id = uuid;
     }
 
-    public void setInput(Item item){
+    public void setInput(Item item) {
         ingredient = item.clone();
     }
 
-    public Item getInput(){
+    public Item getInput() {
         return ingredient.clone();
     }
 
-    public Item getPotion(){
+    public Item getPotion() {
         return potion.clone();
     }
 
     @Override
-    public Item getResult(){
+    public Item getResult() {
         return output.clone();
     }
 
     @Override
-    public void registerToCraftingManager(){
+    public void registerToCraftingManager() {
         Server.getInstance().getCraftingManager().registerBrewingRecipe(this);
     }
 }

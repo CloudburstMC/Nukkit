@@ -5,7 +5,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 
-public class Potion extends Item{
+public class Potion extends Item {
 
     public static final int NO_EFFECTS = 0;
     public static final int MUNDANE = 1;
@@ -44,24 +44,24 @@ public class Potion extends Item{
     public static final int WEAKNESS = 34;
     public static final int WEAKNESS_LONG = 35;
 
-    public Potion(){
+    public Potion() {
         this(0, 1);
     }
 
-    public Potion(int meta){
+    public Potion(int meta) {
         this(meta, 1);
     }
 
-    public Potion(int meta, int count){
+    public Potion(int meta, int count) {
         super(POTION, meta, count, "Potion");
     }
 
     @Override
-    public int getMaxStackSize(){
+    public int getMaxStackSize() {
         return 1;
     }
 
-    public void applyPotion(Entity entity){
+    public void applyPotion(Entity entity) {
         switch (this.getDamage()) {
             case 5: //night vision
                 entity.addEffect(Effect.getEffect(Effect.NIGHT_VISION).setAmplifier(0).setDuration(180 * 20));

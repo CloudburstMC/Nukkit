@@ -3,34 +3,37 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.redstone.Redstone;
 
 /**
- * Created on 2015/12/2 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * author: Angelic47
+ * Nukkit Project
  */
-public class Torch extends Flowable {
+public class RedstoneTorch extends Flowable {
 
-    public Torch() {
+    public RedstoneTorch() {
         this(0);
     }
 
-    public Torch(int meta) {
+    public RedstoneTorch(int meta) {
         super(meta);
+        this.setPowerSource(true);
+        this.setPowerLevel(Redstone.POWER_STRONGEST);
     }
 
     @Override
     public String getName() {
-        return "Torch";
+        return "Redstone Torch";
     }
 
     @Override
     public int getId() {
-        return TORCH;
+        return REDSTONE_TORCH;
     }
 
     @Override
     public int getLightLevel() {
-        return 15;
+        return 7;
     }
 
     @Override
@@ -73,11 +76,13 @@ public class Torch extends Flowable {
             };
             this.meta = faces[face];
             this.getLevel().setBlock(block, this, true, true);
+            Redstone.active(this);
 
             return true;
         } else if (!below.isTransparent() || below instanceof Fence || below.getId() == COBBLE_WALL) {
             this.meta = 0;
             this.getLevel().setBlock(block, this, true, true);
+            Redstone.active(this);
 
             return true;
         }
@@ -90,4 +95,13 @@ public class Torch extends Flowable {
                 {this.getId(), 0, 1}
         };
     }
+
+    @Override
+    public boolean onBreak(Item item) {
+        int level = this.getPowerLevel();
+        this.getLevel().setBlock(this, new Air(), true, false);
+        Redstone.deactive(this, level);
+        return true;
+    }
+
 }

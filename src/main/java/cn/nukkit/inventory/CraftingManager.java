@@ -3,7 +3,6 @@ package cn.nukkit.inventory;
 import cn.nukkit.block.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Potion;
-import cn.nukkit.tile.*;
 import cn.nukkit.utils.Utils;
 
 import java.util.*;
@@ -372,8 +371,8 @@ public class CraftingManager {
         this.registerRecipe(new FurnaceRecipe(Item.get(Item.HARDENED_CLAY, 0, 1), Item.get(Item.CLAY_BLOCK, 0, 1)));
     }
 
-    protected void registerBrewing(){
-        for(int ingredient : new int[]{Item.NETHER_WART, Item.GOLD_NUGGET, Item.GHAST_TEAR, Item.GLOWSTONE_DUST, Item.REDSTONE_DUST, Item.GUNPOWDER, Item.MAGMA_CREAM, Item.BLAZE_POWDER, Item.GOLDEN_CARROT, Item.SPIDER_EYE, Item.FERMENTED_SPIDER_EYE, Item.GLISTERING_MELON, Item.SUGAR, Item.RAW_FISH}){
+    protected void registerBrewing() {
+        for (int ingredient : new int[]{Item.NETHER_WART, Item.GOLD_NUGGET, Item.GHAST_TEAR, Item.GLOWSTONE_DUST, Item.REDSTONE_DUST, Item.GUNPOWDER, Item.MAGMA_CREAM, Item.BLAZE_POWDER, Item.GOLDEN_CARROT, Item.SPIDER_EYE, Item.FERMENTED_SPIDER_EYE, Item.GLISTERING_MELON, Item.SUGAR, Item.RAW_FISH}) {
             cn.nukkit.tile.BrewingStand.ingredients.add(ingredient); //temporally solution for ingredients
         }
 
@@ -822,16 +821,16 @@ public class CraftingManager {
         this.furnaceRecipes.put(input.getId() + ":" + (!input.hasMeta() ? "?" : input.getDamage()), recipe);
     }
 
-    public void registerBrewingRecipe(BrewingRecipe recipe){
+    public void registerBrewingRecipe(BrewingRecipe recipe) {
         Item input = recipe.getInput();
         Item potion = recipe.getPotion();
 
-        this.brewingRecipes.put(input.getId()+":"+(!potion.hasMeta() ? 0 : potion.getDamage()), recipe);
+        this.brewingRecipes.put(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()), recipe);
     }
 
-    public BrewingRecipe matchBrewingRecipe(Item input, Item potion){
-        if(brewingRecipes.containsKey(input.getId()+":"+(!potion.hasMeta() ? 0 : potion.getDamage()))){
-            return brewingRecipes.get(input.getId()+":"+(!potion.hasMeta() ? 0 : potion.getDamage()));
+    public BrewingRecipe matchBrewingRecipe(Item input, Item potion) {
+        if (brewingRecipes.containsKey(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()))) {
+            return brewingRecipes.get(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()));
         }
         return null;
     }
