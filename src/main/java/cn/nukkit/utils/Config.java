@@ -308,6 +308,22 @@ public class Config {
         this.config.remove(k);
     }
 
+    @SuppressWarnings("unchecked")
+    public void removeNested(String key) {
+        final String[] vars = key.split("\\.");
+
+        Map<String, Object> map = this.config;
+
+        for (int i = 0; i < vars.length - 1; i++) {
+            String k = vars[i];
+            if (!map.containsKey(k)) {
+                return;
+            }
+            map = (Map<String, Object>) map.get(k);
+        }
+        map.remove(vars[vars.length - 1]);
+    }
+
     public Map<String, Object> getAll() {
         return new LinkedHashMap<>(this.config);
     }
