@@ -316,7 +316,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[OBSIDIAN] = Obsidian.class;
             list[TORCH] = Torch.class;
             list[FIRE] = Fire.class;
-            //list[MONSTER_SPAWNER] = MonsterSpawner.class;
+            list[MONSTER_SPAWNER] = MonsterSpawner.class;
             list[WOOD_STAIRS] = WoodStairs.class;
             list[CHEST] = Chest.class;
             list[REDSTONE_WIRE] = RedstoneWire.class;
