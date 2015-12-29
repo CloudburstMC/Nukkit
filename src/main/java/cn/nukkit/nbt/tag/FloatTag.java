@@ -5,8 +5,18 @@ import cn.nukkit.nbt.stream.NBTOutputStream;
 
 import java.io.IOException;
 
-public class FloatTag extends Tag {
+public class FloatTag extends NumberTag<Float> {
     public float data;
+
+    @Override
+    public Float getData() {
+        return data;
+    }
+
+    @Override
+    public void setData(Float data) {
+        this.data = data == null ? 0 : data;
+    }
 
     public FloatTag(String name) {
         super(name);

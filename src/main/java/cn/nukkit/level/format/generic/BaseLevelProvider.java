@@ -40,12 +40,14 @@ public abstract class BaseLevelProvider implements LevelProvider {
             throw new LevelException("Invalid level.dat");
         }
 
-        if (!this.levelData.contains("generateName")) {
+        if (!this.levelData.contains("generatorName")) {
             this.levelData.putString("generatorName", Generator.getGenerator("DEFAULT").getSimpleName().toLowerCase());
         }
+
         if (!this.levelData.contains("generatorOptions")) {
-            this.levelData.putString("generatorName", Generator.getGenerator("DEFAULT").getSimpleName().toLowerCase());
+            this.levelData.putString("generatorOptions", "");
         }
+
     }
 
     @Override
@@ -68,13 +70,63 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public long getTime() {
+    public boolean isRaining() {
+        return this.levelData.getBoolean("raining");
+    }
+
+    @Override
+    public void setRaining(boolean raining) {
+        this.levelData.putBoolean("raining", raining);
+    }
+
+    @Override
+    public int getRainTime() {
+        return this.levelData.getInt("rainTime");
+    }
+
+    @Override
+    public void setRainTime(int rainTime) {
+        this.levelData.putInt("rainTime", rainTime);
+    }
+
+    @Override
+    public boolean isThundering() {
+        return this.levelData.getBoolean("thundering");
+    }
+
+    @Override
+    public void setThundering(boolean thundering) {
+        this.levelData.putBoolean("thundering", thundering);
+    }
+
+    @Override
+    public int getThunderTime() {
+        return this.levelData.getInt("thunderTime");
+    }
+
+    @Override
+    public void setThunderTime(int thunderTime) {
+        this.levelData.putInt("thunderTime", thunderTime);
+    }
+
+    @Override
+    public long getCurrentTick() {
         return this.levelData.getLong("Time");
     }
 
     @Override
+    public void setCurrentTick(long currentTick) {
+        this.levelData.putLong("Time", currentTick);
+    }
+
+    @Override
+    public long getTime() {
+        return this.levelData.getLong("DayTime");
+    }
+
+    @Override
     public void setTime(long value) {
-        this.levelData.putLong("Time", value);
+        this.levelData.putLong("DayTime", value);
     }
 
     @Override
@@ -108,6 +160,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
         return levelData;
     }
 
+    @Override
     public void saveLevelData() {
         try {
             NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", this.levelData), new FileOutputStream(this.getPath() + "level.dat"));

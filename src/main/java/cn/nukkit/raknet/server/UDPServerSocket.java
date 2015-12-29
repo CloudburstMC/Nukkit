@@ -1,8 +1,5 @@
 package cn.nukkit.raknet.server;
 
-import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.ThreadedLogger;
 
 import java.io.IOException;
@@ -68,7 +65,7 @@ public class UDPServerSocket {
         packet.setPort(socketAddress.getPort());
         packet.setLength(buffer.position());
         packet.setData(Arrays.copyOf(buffer.array(), packet.getLength()));
-        MainLogger.getLogger().debug(TextFormat.YELLOW + "In: " + Binary.bytesToHexString(packet.getData()));
+        //MainLogger.getLogger().debug(TextFormat.YELLOW + "In: " + Binary.bytesToHexString(packet.getData(), true));
         return packet;
         /*DatagramPacket packet = new DatagramPacket(new byte[65536], 65536);
 
@@ -82,7 +79,7 @@ public class UDPServerSocket {
     }
 
     public int writePacket(byte[] data, InetSocketAddress dest) throws IOException {
-        MainLogger.getLogger().debug(TextFormat.AQUA + "Out: " + Binary.bytesToHexString(data));
+        //MainLogger.getLogger().debug(TextFormat.AQUA + "Out: " + Binary.bytesToHexString(data, true));
         return this.channel.send(ByteBuffer.wrap(data), dest);
 
         /*DatagramPacket packet = new DatagramPacket(data, data.length, dest);

@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class TextPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.TEXT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.TEXT_PACKET;
 
     @Override
     public byte pid() {
@@ -20,9 +20,9 @@ public class TextPacket extends DataPacket {
     public static final byte TYPE_SYSTEM = 5;
 
     public byte type;
-    public String source;
-    public String message;
-    public String[] parameters;
+    public String source = "";
+    public String message = "";
+    public String[] parameters = new String[0];
 
     @Override
     public void decode() {

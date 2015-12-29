@@ -5,6 +5,15 @@ import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.ServerKiller;
 
 /**
+ * `_   _       _    _    _ _
+ * | \ | |     | |  | |  (_) |
+ * |  \| |_   _| | _| | ___| |_
+ * | . ` | | | | |/ / |/ / | __|
+ * | |\  | |_| |   <|   <| | |_
+ * |_| \_|\__,_|_|\_\_|\_\_|\__|
+ */
+
+/**
  * Nukkit启动类，包含{@code main}函数。<br>
  * The launcher class of Nukkit, including the {@code main} function.
  *
@@ -17,13 +26,13 @@ public class Nukkit {
     public final static String VERSION = "1.0dev";
     public final static String API_VERSION = "1.0.0";
     public final static String CODENAME = "蘋果(Apple)派(Pie)";
-    public final static String MINECRAFT_VERSION = "v0.12.3 alpha";
-    public final static String MINECRAFT_VERSION_NETWORK = "0.12.3";
+    public final static String MINECRAFT_VERSION = "v0.13.1 alpha";
+    public final static String MINECRAFT_VERSION_NETWORK = "0.13.1";
 
     public final static String PATH = System.getProperty("user.dir") + "/";
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
-    public final static Long START_TIME = System.currentTimeMillis();
+    public static final long START_TIME = System.currentTimeMillis();
     public static boolean ANSI = true;
     public static boolean shortTitle = false;
     public static int DEBUG = 1;
@@ -40,7 +49,11 @@ public class Nukkit {
 
         //启动参数
         for (String arg : args) {
-            if (arg.equals("disable-ansi")) ANSI = false;
+            switch (arg) {
+                case "disable-ansi":
+                    ANSI = false;
+                    break;
+            }
         }
 
         MainLogger logger = new MainLogger(DATA_PATH + "server.log");

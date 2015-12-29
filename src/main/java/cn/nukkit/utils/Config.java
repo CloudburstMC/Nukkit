@@ -30,7 +30,7 @@ public class Config {
     public static final int ENUM = 5; // .txt, .list, .enum
     public static final int ENUMERATION = Config.ENUM;
 
-    private Map<String, Object> config = new LinkedHashMap<>();
+    private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
     private Map<String, Object> nestedCache = new HashMap<>();
     private File file;
     private boolean correct = false;
@@ -70,12 +70,12 @@ public class Config {
         this(file.toString(), type, new LinkedHashMap<>());
     }
 
-    public Config(String file, int type, Map<String, Object> default_map) {
-        this.load(file, type, default_map);
+    public Config(String file, int type, LinkedHashMap<String, Object> defaultMap) {
+        this.load(file, type, defaultMap);
     }
 
-    public Config(File file, int type, Map<String, Object> default_map) {
-        this(file.toString(), type, default_map);
+    public Config(File file, int type, LinkedHashMap<String, Object> defaultMap) {
+        this(file.toString(), type, defaultMap);
     }
 
     public void reload() {
@@ -94,7 +94,8 @@ public class Config {
         return this.load(file, type, new LinkedHashMap<>());
     }
 
-    public boolean load(String file, int type, Map<String, Object> default_map) {
+    @SuppressWarnings("unchecked")
+    public boolean load(String file, int type, LinkedHashMap<String, Object> defaultMap) {
         this.correct = true;
         this.type = type;
         this.file = new File(file);
@@ -102,9 +103,9 @@ public class Config {
             try {
                 this.file.createNewFile();
             } catch (IOException e) {
-                MainLogger.getLogger().error("无法创建配置文件 " + this.file.toString());
+                MainLogger.getLogger().error("Could not create Config " + this.file.toString() + ": " + e.getMessage());
             }
-            this.config = default_map;
+            this.config = defaultMap;
             this.save();
         } else {
             if (this.type == Config.DETECT) {
@@ -140,6 +141,9 @@ public class Config {
                         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                         Yaml yaml = new Yaml(dumperOptions);
                         this.config = yaml.loadAs(content, LinkedHashMap.class);
+                        if (this.config == null) {
+                            this.config = new LinkedHashMap<>();
+                        }
                         break;
                     // case Config.SERIALIZED
                     case Config.ENUM:
@@ -149,7 +153,7 @@ public class Config {
                         this.correct = false;
                         return false;
                 }
-                if (this.setDefault(default_map) > 0) {
+                if (this.setDefault(defaultMap) > 0) {
                     this.save();
                 }
             } else {
@@ -161,6 +165,10 @@ public class Config {
 
     public boolean check() {
         return this.correct;
+    }
+
+    public boolean isCorrect() {
+        return correct;
     }
 
     public boolean save() {
@@ -206,82 +214,63 @@ public class Config {
         }
     }
 
-    public Object __get(String k) {
-        return this.get(k);
-    }
-
-    public void __set(String k, Object v) {
-        this.set(k, v);
-    }
-
-    public boolean __exists(String k) {
-        return this.exists(k);
-    }
-
-    public void __remove(String k) {
-        this.remove(k);
-    }
-
     public Object get(String k) {
         return this.get(k, true);
     }
 
-    public Object get(String k, Object default_value) {
-        return (this.correct && this.config.containsKey(k)) ? this.config.get(k) : default_value;
+    @SuppressWarnings("unchecked")
+    public <T> T get(String k, T defaultValue) {
+        return (this.correct && this.config.containsKey(k)) ? (T) this.config.get(k) : defaultValue;
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T getAs(String k, Class<T> type) {
+        return (T) this.get(k);
+    }
+
+    @SuppressWarnings("unchecked")
     public void setNested(final String key, final Object value) {
         final String[] vars = key.split("\\.");
-        if (vars.length < 2) {
-            this.set(key, value);
-            return;
-        }
-        Map<String, Object> hashMap = new LinkedHashMap<String, Object>() {
-            {
-                put(vars[vars.length - 1], value);
+
+        Map<String, Object> map = this.config;
+
+        for (int i = 0; i < vars.length - 1; i++) {
+            String k = vars[i];
+            if (!map.containsKey(k)) {
+                map.put(k, new LinkedHashMap<>());
             }
-        }; //内嵌中心元素
-        for (int i = vars.length - 2; i > 0; i--) {
-            Map<String, Object> new_hashMap = new LinkedHashMap<>();
-            new_hashMap.put(vars[i], hashMap);
-            hashMap = new_hashMap;
+            map = (Map<String, Object>) map.get(k);
         }
-        this.config.put(vars[0], hashMap);
-        this.config.put(key, value);
+
+        map.put(vars[vars.length - 1], value);
     }
 
     public Object getNested(String key) {
         return this.getNested(key, null);
     }
 
-    public Object getNested(String key, Object default_value) {
+    @SuppressWarnings("unchecked")
+    public <T> T getNested(String key, T defaultValue) {
         if (this.nestedCache.containsKey(key)) {
-            return this.nestedCache.get(key);
+            return (T) this.nestedCache.get(key);
         }
         String[] vars = key.split("\\.");
-        if (vars.length < 2) {
-            return this.get(key, default_value);
+
+        Map map = this.config;
+        for (int i = 0; i < vars.length - 1; i++) {
+            String k = vars[i];
+            if (!map.containsKey(k)) {
+                return defaultValue;
+            }
+            map = (Map<String, Object>) map.get(k);
         }
 
-        if (!this.config.containsKey(vars[0])) {
-            return default_value;
-        } else {
-            Map<String, Object> map = (Map<String, Object>) this.config.get(vars[0]);
-            for (int i = 1; i < vars.length - 1; i++) {
-                if (map.containsKey(vars[i])) {
-                    map = (Map<String, Object>) map.get(vars[i]);
-                } else {
-                    return default_value;
-                }
-            }
-            if (map.containsKey(vars[vars.length - 1])) {
-                Object value = map.get(vars[vars.length - 1]);
-                this.nestedCache.put(key, value);
-                return value;
-            } else {
-                return default_value;
-            }
-        }
+        return (T) map.getOrDefault(vars[vars.length - 1], defaultValue);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getNestedAs(String key, Class<T> type) {
+        return (T) this.getNested(key);
     }
 
     public void set(String k) {
@@ -292,7 +281,7 @@ public class Config {
         this.config.put(k, v);
     }
 
-    public void setAll(Map<String, Object> map) {
+    public void setAll(LinkedHashMap<String, Object> map) {
         this.config = map;
     }
 
@@ -320,17 +309,17 @@ public class Config {
     }
 
     public Map<String, Object> getAll() {
-        return this.config;
+        return new LinkedHashMap<>(this.config);
     }
 
-    public int setDefault(Map<String, Object> map) {
+    public int setDefault(LinkedHashMap<String, Object> map) {
         int size = this.config.size();
         this.config = this.fillDefaults(map, this.config);
         return this.config.size() - size;
     }
 
 
-    private Map<String, Object> fillDefaults(Map<String, Object> default_map, Map<String, Object> data) {
+    private LinkedHashMap<String, Object> fillDefaults(LinkedHashMap<String, Object> default_map, LinkedHashMap<String, Object> data) {
         for (Map.Entry<String, Object> entry : default_map.entrySet()) {
             if (!data.containsKey(entry.getKey())) {
                 data.put(entry.getKey(), entry.getValue());

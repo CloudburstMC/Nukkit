@@ -20,7 +20,12 @@ public class Planks extends Solid {
     }
 
     public Planks(int meta) {
-        super(WOODEN_PLANKS, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return WOODEN_PLANKS;
     }
 
     @Override

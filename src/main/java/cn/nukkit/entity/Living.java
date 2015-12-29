@@ -2,6 +2,7 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -25,8 +26,15 @@ public abstract class Living extends Entity implements Damageable {
         super(chunk, nbt);
     }
 
-    protected float gravity = 0.08f;
-    protected float drag = 0.02f;
+    @Override
+    protected float getGravity() {
+        return 0.08f;
+    }
+
+    @Override
+    protected float getDrag() {
+        return 0.02f;
+    }
 
     protected int attackTime = 0;
 
@@ -50,11 +58,6 @@ public abstract class Living extends Entity implements Damageable {
 
     @Override
     public void setHealth(float health) {
-        this.setHealth((int) health);
-    }
-
-    @Override
-    public void setHealth(int health) {
         boolean wasAlive = this.isAlive();
         super.setHealth(health);
         if (this.isAlive() && !wasAlive) {
@@ -89,15 +92,15 @@ public abstract class Living extends Entity implements Damageable {
     }
 
     @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         if (this.attackTime > 0 && this.noDamageTicks > 0) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
-            if (lastCause != null && lastCause.getDamage() >= damage) {
+            if (lastCause != null && lastCause.getDamage() >= source.getDamage()) {
                 source.setCancelled();
             }
         }
 
-        super.attack(damage, source);
+        super.attack(source);
 
         if (source.isCancelled()) {
             return;
@@ -115,7 +118,7 @@ public abstract class Living extends Entity implements Damageable {
 
             double deltaX = this.x - e.x;
             double deltaZ = this.z = e.z;
-            this.knockBack(e, damage, deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
+            this.knockBack(e, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
         }
 
         EntityEventPacket pk = new EntityEventPacket();
@@ -180,38 +183,38 @@ public abstract class Living extends Entity implements Damageable {
             if (this.isInsideOfSolid()) {
                 hasUpdate = true;
                 EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1);
-                this.attack(ev.getFinalDamage(), ev);
+                this.attack(ev);
             }
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
                 if (this instanceof WaterAnimal) {
-                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, 300);
+                    this.setDataProperty(DATA_AIR, new ShortEntityData(300));
                 } else {
                     hasUpdate = true;
-                    int airTicks = (int) this.getDataProperty(DATA_AIR) - tickDiff;
+                    int airTicks = this.getDataPropertyInt(DATA_AIR).data - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
                         EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2);
-                        this.attack(ev.getFinalDamage(), ev);
+                        this.attack(ev);
                     }
 
-                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, airTicks);
+                    this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
                 }
             } else {
                 if (this instanceof WaterAnimal) {
                     hasUpdate = true;
-                    int airTicks = (int) this.getDataProperty(DATA_AIR) - tickDiff;
+                    int airTicks = this.getDataPropertyInt(DATA_AIR).data - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
                         EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 2);
-                        this.attack(ev.getFinalDamage(), ev);
+                        this.attack(ev);
                     }
 
-                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, airTicks);
+                    this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
                 } else {
-                    this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, 300);
+                    this.setDataProperty(DATA_AIR, new ShortEntityData(300));
                 }
             }
         }
@@ -223,7 +226,7 @@ public abstract class Living extends Entity implements Damageable {
         return hasUpdate;
     }
 
-    public cn.nukkit.item.Item[] getDrops() {
+    public Item[] getDrops() {
         return new Item[0];
     }
 

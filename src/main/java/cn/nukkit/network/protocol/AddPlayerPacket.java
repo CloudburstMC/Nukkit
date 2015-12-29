@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Binary;
 
@@ -11,7 +12,7 @@ import java.util.UUID;
  * Nukkit Project
  */
 public class AddPlayerPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.ADD_PLAYER_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ADD_PLAYER_PACKET;
 
     @Override
     public byte pid() {
@@ -30,7 +31,7 @@ public class AddPlayerPacket extends DataPacket {
     public float pitch;
     public float yaw;
     public Item item;
-    public Map<Integer, Object[]> metadata;
+    public Map<Integer, EntityData> metadata;
 
     @Override
     public void decode() {

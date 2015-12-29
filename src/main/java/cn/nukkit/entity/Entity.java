@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Water;
+import cn.nukkit.entity.data.*;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -25,6 +26,7 @@ import cn.nukkit.network.protocol.SetEntityDataPacket;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.ChunkException;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
@@ -67,7 +69,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static long entityCount = 1;
 
     private static Map<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
-    private static Map<Class<? extends Entity>, String> shortNames = new HashMap<>();
+    private static Map<String, Class<? extends Entity>> shortNames = new HashMap<>();
 
     protected Map<Integer, Player> hasSpawned = new HashMap<>();
 
@@ -77,13 +79,13 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected int dataFlags = 0;
 
-    protected Map<Integer, Object[]> dataProperties = new HashMap<Integer, Object[]>() {{
-        put(DATA_FLAGS, new Object[]{DATA_TYPE_BYTE, 0});
-        put(DATA_AIR, new Object[]{DATA_TYPE_SHORT, 300});
-        put(DATA_NAMETAG, new Object[]{DATA_TYPE_STRING, ""});
-        put(DATA_SHOW_NAMETAG, new Object[]{DATA_TYPE_BYTE, 1});
-        put(DATA_SILENT, new Object[]{DATA_TYPE_BYTE, 0});
-        put(DATA_NO_AI, new Object[]{DATA_TYPE_BYTE, 0});
+    protected Map<Integer, EntityData> dataProperties = new HashMap<Integer, EntityData>() {{
+        put(DATA_FLAGS, new ByteEntityData((byte) 0));
+        put(DATA_AIR, new ShortEntityData(300));
+        put(DATA_NAMETAG, new StringEntityData(""));
+        put(DATA_SHOW_NAMETAG, new ByteEntityData((byte) 1));
+        put(DATA_SILENT, new ByteEntityData((byte) 0));
+        put(DATA_NO_AI, new ByteEntityData((byte) 0));
     }};
 
     public Entity passenger = null;
@@ -96,9 +98,11 @@ public abstract class Entity extends Location implements Metadatable {
 
     private List<Block> blocksAround = new ArrayList<>();
 
-    public Double lastX = null;
-    public Double lastY = null;
-    public Double lastZ = null;
+    public double lastX;
+    public double lastY;
+    public double lastZ;
+
+    public boolean firstMove = true;
 
     public double motionX;
     public double motionY;
@@ -120,17 +124,10 @@ public abstract class Entity extends Location implements Metadatable {
     public int deadTicks = 0;
     protected int age = 0;
 
-    public float height;
-    public Float eyeHeight = null;
-
-    public float width;
-    public float length;
-
     protected int health = 20;
     private int maxHealth = 20;
 
     protected float ySize = 0;
-    protected float stepHeight = 20;
     public boolean keepMovement = false;
 
     public float fallDistance = 0;
@@ -140,7 +137,6 @@ public abstract class Entity extends Location implements Metadatable {
     public int fireTicks = 0;
 
     public CompoundTag namedTag;
-    public boolean canCollide = true;
 
     protected boolean isStatic = false;
 
@@ -153,14 +149,43 @@ public abstract class Entity extends Location implements Metadatable {
     public boolean fireProof;
     public boolean invulnerable;
 
-    protected float gravity;
-    protected float drag;
-
     protected Server server;
 
     public boolean closed = false;
 
     protected boolean isPlayer = false;
+
+    public float getHeight() {
+        return 0;
+    }
+
+    public float getEyeHeight() {
+        return this.getHeight() / 2 + 0.1f;
+    }
+
+    public float getWidth() {
+        return 0;
+    }
+
+    public float getLength() {
+        return 0;
+    }
+
+    protected double getStepHeight() {
+        return 0;
+    }
+
+    public boolean canCollide() {
+        return true;
+    }
+
+    protected float getGravity() {
+        return 0;
+    }
+
+    protected float getDrag() {
+        return 0;
+    }
 
     public Entity(FullChunk chunk, CompoundTag nbt) {
         if (this instanceof Player) {
@@ -174,10 +199,6 @@ public abstract class Entity extends Location implements Metadatable {
         this.isPlayer = this instanceof Player;
         this.temporalVector = new Vector3();
 
-        if (this.eyeHeight == null) {
-            this.eyeHeight = (float) (this.height / 2 + 0.1);
-        }
-
         this.id = Entity.entityCount++;
         this.justCreated = true;
         this.namedTag = nbt;
@@ -188,9 +209,9 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        ListTag<DoubleTag> posList = (ListTag<DoubleTag>) this.namedTag.getList("Pos");
-        ListTag<FloatTag> rotationList = (ListTag<FloatTag>) this.namedTag.getList("Rotation");
-        ListTag<DoubleTag> motionList = (ListTag<DoubleTag>) this.namedTag.getList("Motion");
+        ListTag<DoubleTag> posList = this.namedTag.getList("Pos", new ListTag<>());
+        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", new ListTag<>());
+        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", new ListTag<>());
         this.setPositionAndRotation(
                 this.temporalVector.setComponents(
                         posList.get(0).data,
@@ -220,7 +241,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (!this.namedTag.contains("Air")) {
             this.namedTag.putShort("Air", 300);
         }
-        this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, this.namedTag.getShort("Air"));
+        this.setDataProperty(DATA_AIR, new ShortEntityData(this.namedTag.getShort("Air")));
 
         if (!this.namedTag.contains("OnGround")) {
             this.namedTag.putBoolean("OnGround", false);
@@ -243,15 +264,15 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public String getNameTag() {
-        return String.valueOf(this.getDataProperty(DATA_NAMETAG));
+        return this.getDataPropertyString(DATA_NAMETAG).getData();
     }
 
     public boolean isNameTagVisible() {
-        return (int) this.getDataProperty(DATA_SHOW_NAMETAG) > 0;
+        return this.getDataPropertyByte(DATA_SHOW_NAMETAG).data > 0;
     }
 
     public void setNameTag(String name) {
-        this.setDataProperty(DATA_NAMETAG, DATA_TYPE_STRING, name);
+        this.setDataProperty(DATA_NAMETAG, new StringEntityData(name));
     }
 
     public void setNameTagVisible() {
@@ -259,7 +280,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setNameTagVisible(boolean visible) {
-        this.setDataProperty(DATA_SHOW_NAMETAG, DATA_TYPE_BYTE, visible ? (byte) 1 : (byte) 0);
+        this.setDataProperty(DATA_SHOW_NAMETAG, new ByteEntityData(visible ? (byte) 1 : (byte) 0));
     }
 
     public boolean isSneaking() {
@@ -315,8 +336,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addEffect(Effect effect) {
-        if (this.effects.containsKey((int) effect.getId())) {
-            Effect oldEffect = this.effects.get((int) effect.getId());
+        if (this.effects.containsKey(effect.getId())) {
+            Effect oldEffect = this.effects.get(effect.getId());
             if (Math.abs(effect.getAmplifier()) <= (oldEffect.getAmplifier())
                     || (Math.abs(effect.getAmplifier())) == Math.abs(oldEffect.getAmplifier())
                     && effect.getDuration() < oldEffect.getDuration()) {
@@ -328,7 +349,7 @@ public abstract class Entity extends Location implements Metadatable {
             effect.add(this, false);
         }
 
-        this.effects.put((int) effect.getId(), effect);
+        this.effects.put(effect.getId(), effect);
 
         this.recalculateEffectColor();
 
@@ -359,44 +380,94 @@ public abstract class Entity extends Location implements Metadatable {
             int g = (color[1] / count) & 0xff;
             int b = (color[2] / count) & 0xff;
 
-            this.setDataProperty(Entity.DATA_POTION_COLOR, Entity.DATA_TYPE_INT, (r << 16) + (g << 8) + b);
-            this.setDataProperty(Entity.DATA_POTION_AMBIENT, Entity.DATA_TYPE_BYTE, ambient ? 1 : 0);
+            this.setDataProperty(Entity.DATA_POTION_COLOR, new IntEntityData((r << 16) + (g << 8) + b));
+            this.setDataProperty(Entity.DATA_POTION_AMBIENT, new ByteEntityData((byte) (ambient ? 1 : 0)));
         } else {
-            this.setDataProperty(Entity.DATA_POTION_COLOR, Entity.DATA_TYPE_INT, 0);
-            this.setDataProperty(Entity.DATA_POTION_AMBIENT, Entity.DATA_TYPE_BYTE, 0);
+            this.setDataProperty(Entity.DATA_POTION_COLOR, new IntEntityData(0));
+            this.setDataProperty(Entity.DATA_POTION_AMBIENT, new ByteEntityData((byte) 0));
         }
     }
 
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
-        if (shortNames.containsValue(name)) {
-            Class<? extends Entity> clazz = null;
-            for (Map.Entry<Class<? extends Entity>, String> entry : shortNames.entrySet()) {
-                if (name.equals(entry.getValue())) {
-                    clazz = entry.getKey();
-                }
-            }
+        Entity entity = null;
+
+        if (shortNames.containsKey(name)) {
+            Class<? extends Entity> clazz = shortNames.get(name);
+
             if (clazz == null) {
                 return null;
             }
-            try {
-                return clazz.getConstructor(FullChunk.class, CompoundTag.class, Object[].class).newInstance(chunk, nbt, args);
-            } catch (Exception e) {
-                return null;
+
+            for (Constructor constructor : clazz.getConstructors()) {
+                if (entity != null) {
+                    break;
+                }
+
+                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
+                    continue;
+                }
+
+                try {
+                    if (args == null || args.length == 0) {
+                        entity = (Entity) constructor.newInstance(chunk, nbt);
+                    } else {
+                        Object[] objects = new Object[args.length + 2];
+
+                        objects[0] = chunk;
+                        objects[1] = nbt;
+                        System.arraycopy(args, 0, objects, 2, args.length);
+                        entity = (Entity) constructor.newInstance(objects);
+
+                    }
+                } catch (Exception e) {
+                    //ignore
+                }
+
             }
         }
-        return null;
+
+        return entity;
     }
 
     public static Entity createEntity(int type, FullChunk chunk, CompoundTag nbt, Object... args) {
+        Entity entity = null;
+
         if (knownEntities.containsKey(type)) {
             Class<? extends Entity> clazz = knownEntities.get(type);
-            try {
-                return clazz.getConstructor(FullChunk.class, CompoundTag.class, Object[].class).newInstance(chunk, nbt, args);
-            } catch (Exception e) {
+
+            if (clazz == null) {
                 return null;
             }
+
+            for (Constructor constructor : clazz.getConstructors()) {
+                if (entity != null) {
+                    break;
+                }
+
+                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
+                    continue;
+                }
+
+                try {
+                    if (args == null || args.length == 0) {
+                        entity = (Entity) constructor.newInstance(chunk, nbt);
+                    } else {
+                        Object[] objects = new Object[args.length + 2];
+
+                        objects[0] = chunk;
+                        objects[1] = nbt;
+                        System.arraycopy(args, 0, objects, 2, args.length);
+                        entity = (Entity) constructor.newInstance(objects);
+
+                    }
+                } catch (Exception e) {
+                    //ignore
+                }
+
+            }
         }
-        return null;
+
+        return entity;
     }
 
     public static boolean registerEntity(Class<? extends Entity> clazz) {
@@ -415,7 +486,7 @@ public abstract class Entity extends Location implements Metadatable {
                 return false;
             }
 
-            shortNames.put(clazz, clazz.getSimpleName());
+            shortNames.put(clazz.getSimpleName(), clazz);
             return true;
         } catch (Exception e) {
             return false;
@@ -423,7 +494,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public String getSaveId() {
-        return shortNames.get(this.getClass());
+        return this.getClass().getSimpleName();
     }
 
     public void saveNBT() {
@@ -431,10 +502,10 @@ public abstract class Entity extends Location implements Metadatable {
             if (!this.getNameTag().equals("")) {
                 this.namedTag.putString("id", this.getSaveId());
                 this.namedTag.putString("CustomName", this.getNameTag());
-                this.namedTag.putString("CustomeNameVisible", String.valueOf(this.isNameTagVisible()));
+                this.namedTag.putString("CustomNameVisible", String.valueOf(this.isNameTagVisible()));
             } else {
                 this.namedTag.remove("CustomName");
-                this.namedTag.remove("CustomeNameVisible");
+                this.namedTag.remove("CustomNameVisible");
             }
         }
 
@@ -457,7 +528,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.namedTag.putFloat("FallDistance", this.fallDistance);
         this.namedTag.putShort("Fire", this.fireTicks);
-        this.namedTag.putShort("Air", (Integer) this.getDataProperty(DATA_AIR));
+        this.namedTag.putShort("Air", this.getDataPropertyShort(DATA_AIR).data);
         this.namedTag.putBoolean("OnGround", this.onGround);
         this.namedTag.putBoolean("Invulnerable", this.invulnerable);
 
@@ -465,8 +536,8 @@ public abstract class Entity extends Location implements Metadatable {
             ListTag<CompoundTag> list = new ListTag<>("ActiveEffects");
             for (Effect effect : this.effects.values()) {
                 list.add(new CompoundTag(String.valueOf(effect.getId()))
-                                .putByte("Id", effect.getId())
-                                .putByte("Amplifier", effect.getAmplifier())
+                                .putByte("Id", (byte) effect.getId())
+                                .putByte("Amplifier", (byte) effect.getAmplifier())
                                 .putInt("Duration", effect.getDuration())
                                 .putBoolean("Ambient", false)
                                 .putBoolean("ShowParticles", effect.isVisible())
@@ -481,8 +552,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected void initEntity() {
         if (this.namedTag.contains("ActiveEffects")) {
-            ListTag<CompoundTag> effects = (ListTag<CompoundTag>) this.namedTag.getList("ActiveEffects");
-            for (CompoundTag e : effects.list) {
+            ListTag<CompoundTag> effects = this.namedTag.getList("ActiveEffects", new ListTag<>());
+            for (CompoundTag e : effects.getAll()) {
                 Effect effect = Effect.getEffect(e.getByte("Id"));
                 if (effect == null) {
                     continue;
@@ -532,7 +603,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.sendData(player, null);
     }
 
-    public void sendData(Player player, Map<Integer, Object[]> data) {
+    public void sendData(Player player, Map<Integer, EntityData> data) {
         SetEntityDataPacket pk = new SetEntityDataPacket();
         pk.eid = (player.equals(this) ? 0 : this.getId());
         pk.metadata = data == null ? this.dataProperties : data;
@@ -544,7 +615,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.sendData(players, null);
     }
 
-    public void sendData(Player[] players, Map<Integer, Object[]> data) {
+    public void sendData(Player[] players, Map<Integer, EntityData> data) {
         SetEntityDataPacket pk = new SetEntityDataPacket();
         pk.eid = this.getId();
         pk.metadata = data == null ? this.dataProperties : data;
@@ -561,21 +632,24 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public void attack(float damage, EntityDamageEvent source) {
-        if (this.hasEffect(Effect.FIRE_RESISTANCE)
+    public void attack(EntityDamageEvent source) {
+        if (hasEffect(Effect.FIRE_RESISTANCE)
                 && (source.getCause() == EntityDamageEvent.CAUSE_FIRE
                 || source.getCause() == EntityDamageEvent.CAUSE_FIRE_TICK
                 || source.getCause() == EntityDamageEvent.CAUSE_LAVA)) {
             source.setCancelled();
         }
 
-        this.server.getPluginManager().callEvent(source);
+        getServer().getPluginManager().callEvent(source);
         if (source.isCancelled()) {
             return;
         }
-        this.setLastDamageCause(source);
+        setLastDamageCause(source);
+        setHealth(getHealth() - source.getFinalDamage());
+    }
 
-        this.setHealth(this.getHealth() - source.getFinalDamage());
+    public void attack(float damage) {
+        this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, damage));
     }
 
     public void heal(float amount, EntityRegainHealthEvent source) {
@@ -596,20 +670,17 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setHealth(float health) {
-        this.setHealth((int) health);
-    }
-
-    public void setHealth(int health) {
-        if (this.health == health) {
+        int h = (int) health;
+        if (this.health == h) {
             return;
         }
 
-        if (health <= 0) {
+        if (h <= 0) {
             if (this.isAlive()) {
                 this.kill();
             }
-        } else if (health <= this.getMaxHealth() || health < this.health) {
-            this.health = health;
+        } else if (h <= this.getMaxHealth() || h < this.health) {
+            this.health = h;
         } else {
             this.health = this.getMaxHealth();
         }
@@ -763,7 +834,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (this.y <= -16 && this.isAlive()) {
             EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, 10);
-            this.attack(ev.getFinalDamage(), ev);
+            this.attack(ev);
             hasUpdate = true;
         }
 
@@ -776,7 +847,7 @@ public abstract class Entity extends Location implements Metadatable {
             } else {
                 if (!this.hasEffect(Effect.FIRE_RESISTANCE) && (this.fireTicks % 20) == 0 || tickDiff > 20) {
                     EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FIRE_TICK, 1);
-                    this.attack(ev.getFinalDamage(), ev);
+                    this.attack(ev);
                 }
                 this.fireTicks -= tickDiff;
             }
@@ -829,10 +900,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public Vector3 getDirectionVector() {
-        float y = (float) -Math.sin(Math.toRadians(this.pitch));
-        float xz = (float) Math.sin(Math.toRadians(this.pitch));
-        float x = -xz * (float) Math.sin(Math.toRadians(this.yaw));
-        float z = xz * (float) Math.cos(Math.toRadians(this.yaw));
+        double y = -Math.sin(Math.toRadians(this.pitch));
+        double xz = Math.sin(Math.toRadians(this.pitch));
+        double x = -xz * Math.sin(Math.toRadians(this.yaw));
+        double z = xz * Math.cos(Math.toRadians(this.yaw));
 
         return this.temporalVector.setComponents(x, y, z).normalize();
     }
@@ -932,23 +1003,19 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public AxisAlignedBB getBoundingBox() {
-        return boundingBox;
+        return this.boundingBox;
     }
 
     public void fall(float fallDistance) {
         float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
         if (damage > 0) {
             EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FALL, damage);
-            this.attack(ev.getFinalDamage(), ev);
+            this.attack(ev);
         }
     }
 
     public void handleLavaMovement() {
         //todo
-    }
-
-    public Float getEyeHeight() {
-        return eyeHeight;
     }
 
     public void moveFlying() {
@@ -998,7 +1065,7 @@ public abstract class Entity extends Location implements Metadatable {
         Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
 
         if (block instanceof Water) {
-            double f = (((Water) block).y + 1) - (((Water) block).getFluidHeightPercent() - 0.1111111);
+            double f = (block.y + 1) - (((Water) block).getFluidHeightPercent() - 0.1111111);
             return y < f;
         }
 
@@ -1007,7 +1074,12 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean isInsideOfSolid() {
         double y = this.y + this.getEyeHeight();
-        Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
+        Block block = this.level.getBlock(
+                this.temporalVector.setComponents(
+                        NukkitMath.floorDouble(this.x),
+                        NukkitMath.floorDouble(y),
+                        NukkitMath.floorDouble(this.z))
+        );
 
         AxisAlignedBB bb = block.getBoundingBox();
 
@@ -1091,12 +1163,12 @@ public abstract class Entity extends Location implements Metadatable {
             this.boundingBox.offset(0, 0, dz);
 
 
-            if (this.stepHeight > 0 && fallingFlag && this.ySize < 0.05 && (movX != dx || movZ != dz)) {
+            if (this.getStepHeight() > 0 && fallingFlag && this.ySize < 0.05 && (movX != dx || movZ != dz)) {
                 double cx = dx;
                 double cy = dy;
                 double cz = dz;
                 dx = movX;
-                dy = this.stepHeight;
+                dy = this.getStepHeight();
                 dz = movZ;
 
                 AxisAlignedBB axisalignedbb1 = this.boundingBox.clone();
@@ -1238,7 +1310,7 @@ public abstract class Entity extends Location implements Metadatable {
 
             if (!this.justCreated) {
                 Map<Integer, Player> newChunk = this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
-                for (Player player : this.hasSpawned.values()) {
+                for (Player player : new ArrayList<>(this.hasSpawned.values())) {
                     if (!newChunk.containsKey(player.getLoaderId())) {
                         this.despawnFrom(player);
                     } else {
@@ -1274,9 +1346,10 @@ public abstract class Entity extends Location implements Metadatable {
         this.y = pos.y;
         this.z = pos.z;
 
-        float radius = this.width / 2;
+        double radius = this.getWidth() / 2d;
 
-        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + this.height, pos.z + radius);
+        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + this.getHeight(), pos.z +
+                radius);
 
         this.checkChunks();
 
@@ -1318,21 +1391,33 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean teleport(Vector3 pos) {
         if (pos instanceof Location) {
-            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
+            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
         } else {
-            return this.teleport(pos, this.yaw);
-        }
-    }
-
-    public boolean teleport(Vector3 pos, double yaw) {
-        if (pos instanceof Location) {
-            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleport(pos, yaw, this.pitch);
+            return this.teleportYawAndPitch(pos, this.yaw, this.pitch);
         }
     }
 
     public boolean teleport(Vector3 pos, double yaw, double pitch) {
+        return this.teleportYawAndPitch(pos, yaw, pitch);
+    }
+
+    public boolean teleportYaw(Vector3 pos, double yaw) {
+        if (pos instanceof Location) {
+            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
+        } else {
+            return this.teleportYawAndPitch(pos, yaw, this.pitch);
+        }
+    }
+
+    public boolean teleportPitch(Vector3 pos, double pitch) {
+        if (pos instanceof Location) {
+            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
+        } else {
+            return this.teleportYawAndPitch(pos, this.yaw, pitch);
+        }
+    }
+
+    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
         Position from = Position.fromObject(this, this.level);
         Position to = Position.fromObject(pos, pos instanceof Position ? ((Position) pos).getLevel() : this.level);
         EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to);
@@ -1346,7 +1431,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.setMotion(this.temporalVector.setComponents(0, 0, 0));
 
-        if (!this.setPositionAndRotation(pos, yaw, pitch)) {
+        if (this.setPositionAndRotation(pos, yaw, pitch)) {
             this.resetFallDistance();
             this.onGround = true;
 
@@ -1389,7 +1474,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void despawnFromAll() {
-        for (Player player : this.hasSpawned.values()) {
+        for (Player player : new ArrayList<>(this.hasSpawned.values())) {
             this.despawnFrom(player);
         }
     }
@@ -1409,11 +1494,11 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public boolean setDataProperty(int id, int type, Object value) {
-        if (!value.equals(this.getDataProperty(id))) {
-            this.dataProperties.put(id, new Object[]{type, value});
+    public boolean setDataProperty(int id, EntityData dataEntry) {
+        if (!dataEntry.getData().equals(this.getDataProperty(id).getData())) {
+            this.dataProperties.put(id, dataEntry);
 
-            this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new HashMap<Integer, Object[]>() {
+            this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new HashMap<Integer, EntityData>() {
                 {
                     put(id, dataProperties.get(id));
                 }
@@ -1425,12 +1510,44 @@ public abstract class Entity extends Location implements Metadatable {
         return false;
     }
 
-    public Object getDataProperty(int id) {
-        return this.dataProperties.containsKey(id) ? this.dataProperties.get(id)[1] : null;
+    public EntityData getDataProperty(int id) {
+        return this.dataProperties.containsKey(id) ? this.dataProperties.get(id) : new IntEntityData();
+    }
+
+    public IntEntityData getDataPropertyInt(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof IntEntityData) ? (IntEntityData) this.dataProperties.get(id) : new IntEntityData();
+    }
+
+    public ShortEntityData getDataPropertyShort(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof ShortEntityData) ? (ShortEntityData) this.dataProperties.get(id) : new ShortEntityData();
+    }
+
+    public ByteEntityData getDataPropertyByte(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof ByteEntityData) ? (ByteEntityData) this.dataProperties.get(id) : new ByteEntityData();
+    }
+
+    public LongEntityData getDataPropertyLong(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof LongEntityData) ? (LongEntityData) this.dataProperties.get(id) : new LongEntityData();
+    }
+
+    public StringEntityData getDataPropertyString(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof StringEntityData) ? (StringEntityData) this.dataProperties.get(id) : new StringEntityData();
+    }
+
+    public FloatEntityData getDataPropertyFloat(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof FloatEntityData) ? (FloatEntityData) this.dataProperties.get(id) : new FloatEntityData();
+    }
+
+    public SlotEntityData getDataPropertySlot(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof SlotEntityData) ? (SlotEntityData) this.dataProperties.get(id) : new SlotEntityData();
+    }
+
+    public PositionEntityData getDataPropertyPos(int id) {
+        return this.dataProperties.containsKey(id) && (this.dataProperties.get(id) instanceof PositionEntityData) ? (PositionEntityData) this.dataProperties.get(id) : new PositionEntityData();
     }
 
     public int getDataPropertyType(int id) {
-        return (int) (this.dataProperties.containsKey(id) ? this.dataProperties.get(id)[0] : null);
+        return (this.dataProperties.containsKey(id) ? this.dataProperties.get(id).getType() : -1);
     }
 
     public void setDataFlag(int propertyId, int id) {
@@ -1438,19 +1555,15 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setDataFlag(int propertyId, int id, boolean value) {
-        this.setDataFlag(propertyId, id, value, DATA_TYPE_BYTE);
-    }
-
-    public void setDataFlag(int propertyId, int id, boolean value, int type) {
         if (this.getDataFlag(propertyId, id) != value) {
-            int flags = (int) this.getDataProperty(propertyId);
+            int flags = this.getDataPropertyInt(propertyId).data;
             flags ^= 1 << id;
-            this.setDataProperty(propertyId, type, flags);
+            this.setDataProperty(propertyId, new ByteEntityData((byte) flags));
         }
     }
 
     public boolean getDataFlag(int propertyId, int id) {
-        return (((int) this.getDataProperty(propertyId)) & (1 << id)) > 0;
+        return ((this.getDataPropertyByte(propertyId).data & 0xff) & (1 << id)) > 0;
     }
 
     @Override
@@ -1477,6 +1590,10 @@ public abstract class Entity extends Location implements Metadatable {
     @Override
     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
         this.server.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
+    }
+
+    public Server getServer() {
+        return server;
     }
 
 }

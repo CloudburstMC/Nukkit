@@ -101,7 +101,7 @@ public class EncapsulatedPacket implements Cloneable {
 
         if (reliability > 0) {
             if (reliability >= 2 && reliability != 5) {
-                bb.put(Binary.writeLTriad(messageIndex));
+                bb.put(Binary.writeLTriad(messageIndex == null ? 0 : messageIndex));
             }
             if (reliability <= 4 && reliability != 2) {
                 bb.put(Binary.writeLTriad(orderIndex));

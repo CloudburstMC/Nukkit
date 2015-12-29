@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.entity.data.Skin;
+
 import java.util.UUID;
 
 /**
@@ -7,13 +9,13 @@ import java.util.UUID;
  */
 public class PlayerListPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.PLAYER_LIST_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_LIST_PACKET;
 
-    public static final int TYPE_ADD = 0;
-    public static final int TYPE_REMOVE = 1;
+    public static final byte TYPE_ADD = 0;
+    public static final byte TYPE_REMOVE = 1;
 
-    public int type;
-    public Entry[] entries;
+    public byte type;
+    public Entry[] entries = new Entry[0];
 
     @Override
     public void decode() {
@@ -22,21 +24,20 @@ public class PlayerListPacket extends DataPacket {
 
     @Override
     public void encode() {
-        reset();
-        putByte((byte) type);
-        putInt(entries.length);
-        for (Entry entry : entries) {
+        this.reset();
+        this.putByte(this.type);
+        this.putInt(this.entries.length);
+        for (Entry entry : this.entries) {
             if (type == TYPE_ADD) {
-                putUUID(entry.uuid);
-                putLong(entry.entityId);
-                putString(entry.name);
-                putByte((byte) (entry.slim ? 1 : 0));
-                putShort(entry.skin.length);
-                put(entry.skin);
+                this.putUUID(entry.uuid);
+                this.putLong(entry.entityId);
+                this.putString(entry.name);
+                this.putSkinData(entry.skin);
             } else {
-                putUUID(entry.uuid);
+                this.putUUID(entry.uuid);
             }
         }
+
     }
 
     @Override
@@ -49,21 +50,18 @@ public class PlayerListPacket extends DataPacket {
         public UUID uuid;
         public long entityId = 0;
         public String name = "";
-        public boolean slim = false;
-        public byte[] skin = new byte[0];
+        public Skin skin;
 
         public Entry(UUID uuid) {
             this.uuid = uuid;
         }
 
-        public Entry(UUID uuid, long entityId, String name, boolean slim, byte[] skin) {
+        public Entry(UUID uuid, long entityId, String name, Skin skin) {
             this.uuid = uuid;
             this.entityId = entityId;
             this.name = name;
-            this.slim = slim;
             this.skin = skin;
         }
-
     }
 
 }

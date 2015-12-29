@@ -14,7 +14,12 @@ public class CoalOre extends Solid {
     }
 
     public CoalOre(int meta) {
-        super(COAL_ORE, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return COAL_ORE;
     }
 
     @Override

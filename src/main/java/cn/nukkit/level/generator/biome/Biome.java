@@ -2,13 +2,12 @@ package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.generator.normal.biome.DesertBiome;
 import cn.nukkit.level.generator.populator.Populator;
+import cn.nukkit.utils.Random;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * author: MagicDroidX
@@ -50,28 +49,27 @@ public abstract class Biome {
     private Block[] groundCover;
 
     protected double rainfall = 0.5;
-    protected double temerature = 0.5;
+    protected double temperature = 0.5;
     protected int grassColor = 0;
 
     protected static void register(int id, Biome biome) {
         biome.setId(id);
-        biome.grassColor = generateBiomeColor(biome.getTemerature(), biome.getRainfall());
+        biome.grassColor = generateBiomeColor(biome.getTemperature(), biome.getRainfall());
         biomes.put(id, biome);
     }
 
     public static void init() {
-        //todo alot register
-        //register(OCEAN, new OceanBiome());
-        //register(PLAINS, new PlainBiome());
+        register(OCEAN, new OceanBiome());
+        register(PLAINS, new PlainBiome());
         register(DESERT, new DesertBiome());
-        //register(MOUNTAINS, new MountainsBiome());
-        //register(FOREST, new ForestBiome());
-        //register(TAIGA, new TaigaBiome());
-        //register(SWAMP, new SwampBiome());
-        //register(RIVER, new RiverBiome());
-        //register(ICE_PLAINS, new IcePlainsBiome());
-        //register(SMALL_MOUNTAINS, new SmallMountainsBiome());
-        //register(BIRCH_FOREST, new ForestBiome(ForestBiome.TYPE_BIRCH));
+        register(MOUNTAINS, new MountainsBiome());
+        register(FOREST, new ForestBiome());
+        register(TAIGA, new TaigaBiome());
+        register(SWAMP, new SwampBiome());
+        register(RIVER, new RiverBiome());
+        register(ICE_PLAINS, new IcePlainsBiome());
+        register(SMALL_MOUNTAINS, new SmallMountainsBiome());
+        register(BIRCH_FOREST, new ForestBiome(ForestBiome.TYPE_BIRCH));
     }
 
     public static Biome getBiome(int id) {
@@ -127,8 +125,8 @@ public abstract class Biome {
         this.groundCover = covers;
     }
 
-    public double getTemerature() {
-        return temerature;
+    public double getTemperature() {
+        return temperature;
     }
 
     public double getRainfall() {

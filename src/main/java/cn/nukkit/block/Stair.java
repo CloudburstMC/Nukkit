@@ -10,12 +10,9 @@ import cn.nukkit.math.AxisAlignedBB;
  * Nukkit Project
  */
 public abstract class Stair extends Transparent {
-    public Stair(int id) {
-        super(id);
-    }
 
-    public Stair(int id, int meta) {
-        super(id, meta);
+    protected Stair(int meta) {
+        super(meta);
     }
 
     @Override

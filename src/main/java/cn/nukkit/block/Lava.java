@@ -15,13 +15,17 @@ import cn.nukkit.item.Item;
  */
 public class Lava extends Liquid {
 
-
     public Lava() {
         this(0);
     }
 
     public Lava(int meta) {
-        super(LAVA, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return LAVA;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class Lava extends Liquid {
         entity.fallDistance *= 0.5;
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
             EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.CAUSE_LAVA, 4);
-            entity.attack(ev.getFinalDamage(), ev);
+            entity.attack(ev);
         }
 
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 15);

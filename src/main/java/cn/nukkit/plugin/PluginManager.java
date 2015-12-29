@@ -27,7 +27,7 @@ public class PluginManager {
 
     private SimpleCommandMap commandMap;
 
-    protected Map<String, Plugin> plugins = new HashMap<>();
+    protected Map<String, Plugin> plugins = new LinkedHashMap<>();
 
     protected Map<String, Permission> permissions = new HashMap<>();
 
@@ -129,11 +129,11 @@ public class PluginManager {
 
     public Map<String, Plugin> loadPlugins(File dictionary, List<String> newLoaders) {
         if (dictionary.isDirectory()) {
-            Map<String, File> plugins = new HashMap<>();
-            Map<String, Plugin> loadedPlugins = new HashMap<>();
-            Map<String, List<String>> dependencies = new HashMap<>();
-            Map<String, List<String>> softDependencies = new HashMap<>();
-            Map<String, PluginLoader> loaders = new HashMap<>();
+            Map<String, File> plugins = new LinkedHashMap<>();
+            Map<String, Plugin> loadedPlugins = new LinkedHashMap<>();
+            Map<String, List<String>> dependencies = new LinkedHashMap<>();
+            Map<String, List<String>> softDependencies = new LinkedHashMap<>();
+            Map<String, PluginLoader> loaders = new LinkedHashMap<>();
             if (newLoaders != null) {
                 for (String key : newLoaders) {
                     if (this.fileAssociations.containsKey(key)) {
@@ -236,9 +236,8 @@ public class PluginManager {
 
             while (!plugins.isEmpty()) {
                 boolean missingDependency = true;
-                for (Map.Entry entry : plugins.entrySet()) {
-                    String name = (String) entry.getKey();
-                    File file = (File) entry.getValue();
+                for (String name : new ArrayList<>(plugins.keySet())) {
+                    File file = plugins.get(name);
                     if (dependencies.containsKey(name)) {
                         for (String dependency : new ArrayList<>(dependencies.get(name))) {
                             if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
@@ -256,13 +255,13 @@ public class PluginManager {
                     }
 
                     if (softDependencies.containsKey(name)) {
-                        for (String dependency : softDependencies.get(name)) {
+                        for (String dependency : new ArrayList<>(softDependencies.get(name))) {
                             if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
                                 softDependencies.get(name).remove(dependency);
                             }
                         }
 
-                        if (softDependencies.get(name).size() == 0) {
+                        if (softDependencies.get(name).isEmpty()) {
                             softDependencies.remove(name);
                         }
                     }
@@ -274,19 +273,16 @@ public class PluginManager {
                         if (plugin != null) {
                             loadedPlugins.put(name, plugin);
                         } else {
-                            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit" +
-                                    ".plugin.genericLoadError", name));
+                            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.genericLoadError", name));
                         }
                     }
                 }
 
                 if (missingDependency) {
-                    for (Map.Entry entry : plugins.entrySet()) {
-                        String name = (String) entry.getKey();
-                        this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin" +
-                                ".loadError", new String[]{name, "%nukkit.plugin.circularDependency"}));
-                        plugins.clear();
+                    for (String name : plugins.keySet()) {
+                        this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.loadError", new String[]{name, "%nukkit.plugin.circularDependency"}));
                     }
+                    plugins.clear();
                 }
             }
 

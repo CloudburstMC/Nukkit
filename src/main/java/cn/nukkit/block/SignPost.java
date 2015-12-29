@@ -16,7 +16,12 @@ public class SignPost extends Transparent {
     }
 
     public SignPost(int meta) {
-        super(Block.SIGN_POST, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return SIGN_POST;
     }
 
     public double getHardness() {

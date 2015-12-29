@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class AddPaintingPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.ADD_PAINTING_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ADD_PAINTING_PACKET;
 
     public long eid;
     public int x;

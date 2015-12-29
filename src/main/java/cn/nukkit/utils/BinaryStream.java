@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 
 import java.nio.charset.StandardCharsets;
@@ -75,6 +76,10 @@ public class BinaryStream {
     }
 
     public void put(byte[] bytes) {
+        if (bytes == null) {
+            return;
+        }
+
         this.ensureCapacity(this.count + bytes.length);
 
         System.arraycopy(bytes, 0, this.buffer, this.count, bytes.length);
@@ -181,6 +186,14 @@ public class BinaryStream {
         return this.buffer[this.offset++];
     }
 
+    public boolean getBoolean() {
+        return this.getByte() == 0x01;
+    }
+
+    public void putBoolean(boolean bool) {
+        this.putByte((byte) (bool ? 1 : 0));
+    }
+
     public int getByte() {
         return this.buffer[this.offset++] & 0xff;
     }
@@ -216,6 +229,18 @@ public class BinaryStream {
         return Binary.readUUID(this.get(16));
     }
 
+    public void putSkinData(Skin skin) {
+        this.putString(skin.getModel());
+        this.putShort(skin.getData().length);
+        this.put(skin.getData());
+    }
+
+    public Skin getSkinData() {
+        String modelId = this.getString();
+        byte[] skinData = this.get(this.getShort());
+        return new Skin(skinData, modelId);
+    }
+
     public Item getSlot() {
         short id = this.getSignedShort();
 
@@ -239,7 +264,7 @@ public class BinaryStream {
     }
 
     public void putSlot(Item item) {
-        if (item.getId() == 0) {
+        if (item == null || item.getId() == 0) {
             this.putShort(0);
             return;
         }

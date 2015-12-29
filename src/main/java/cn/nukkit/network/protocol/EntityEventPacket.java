@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class EntityEventPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.ENTITY_EVENT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ENTITY_EVENT_PACKET;
 
 
     public static final byte HURT_ANIMATION = 2;

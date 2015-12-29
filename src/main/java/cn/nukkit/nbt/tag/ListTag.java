@@ -6,11 +6,12 @@ import cn.nukkit.nbt.stream.NBTOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ListTag<T extends Tag> extends Tag {
 
-    public List<T> list = new ArrayList<>();
+    private List<T> list = new ArrayList<>();
 
     public byte type;
 
@@ -80,6 +81,26 @@ public class ListTag<T extends Tag> extends Tag {
 
     public T get(int index) {
         return list.get(index);
+    }
+
+    public List<T> getAll() {
+        return new ArrayList<>(list);
+    }
+
+    public void setAll(List<T> tags) {
+        this.list = new ArrayList<>(tags);
+    }
+
+    public void remove(T tag) {
+        list.remove(tag);
+    }
+
+    public void remove(int index) {
+        list.remove(index);
+    }
+
+    public void removeAll(Collection<T> tags) {
+        list.remove(tags);
     }
 
     public int size() {

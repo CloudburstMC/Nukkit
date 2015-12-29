@@ -1,5 +1,6 @@
 package cn.nukkit.entity;
 
+import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
@@ -19,7 +20,9 @@ public abstract class Projectile extends Entity {
 
     public Entity shootingEntity = null;
 
-    protected double damage = 0;
+    protected double getDamage() {
+        return 0;
+    }
 
     public boolean hadCollision = false;
 
@@ -31,14 +34,13 @@ public abstract class Projectile extends Entity {
         super(chunk, nbt);
         this.shootingEntity = shootingEntity;
         if (shootingEntity != null) {
-            this.setDataProperty(DATA_SHOOTER_ID, DATA_TYPE_LONG, shootingEntity.getId());
+            this.setDataProperty(DATA_SHOOTER_ID, new LongEntityData(shootingEntity.getId()));
         }
     }
 
-    @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(damage, source);
+            super.attack(source);
         }
     }
 
@@ -84,7 +86,7 @@ public abstract class Projectile extends Entity {
             MovingObjectPosition movingObjectPosition = null;
 
             if (!this.isCollided) {
-                this.motionY -= this.gravity;
+                this.motionY -= this.getGravity();
             }
 
             Vector3 moveVector = new Vector3(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
@@ -126,7 +128,7 @@ public abstract class Projectile extends Entity {
                     this.server.getPluginManager().callEvent(new ProjectileHitEvent(this));
 
                     double motion = Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-                    damage = Math.ceil(motion * this.damage);
+                    double damage = Math.ceil(motion * this.getDamage());
 
                     if (this instanceof Arrow && ((Arrow) this).isCritical) {
                         damage += new Random().nextInt((int) (damage / 2) + 1);
@@ -139,7 +141,7 @@ public abstract class Projectile extends Entity {
                         ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
                     }
 
-                    movingObjectPosition.entityHit.attack(ev.getFinalDamage(), ev);
+                    movingObjectPosition.entityHit.attack(ev);
 
                     this.hadCollision = true;
 

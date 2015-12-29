@@ -148,19 +148,17 @@ public class MainLogger extends ThreadedLogger {
         Date now = new Date();
         String cleanMessage = new SimpleDateFormat("HH:mm:ss").format(now) + " " + TextFormat.clean(message);
         message = TextFormat.toANSI(TextFormat.AQUA + new SimpleDateFormat("HH:mm:ss").format(now) + TextFormat.RESET + " " + message + TextFormat.RESET);
-        CommandReader.getInstance().stashLine();
-        if (Nukkit.ANSI) {
-            System.out.println(message);
-        } else {
-            System.out.println(cleanMessage);
-        }
-        CommandReader.getInstance().unstashLine();
-        String str = new SimpleDateFormat("Y-M-d").format(now) + " " + cleanMessage + "" + "\r\n";
-        /*synchronized (this) {
+        synchronized (this) {
+            CommandReader.getInstance().stashLine();
+            if (Nukkit.ANSI) {
+                System.out.println(message);
+            } else {
+                System.out.println(cleanMessage);
+            }
+            CommandReader.getInstance().unstashLine();
+            String str = new SimpleDateFormat("Y-M-d").format(now) + " " + cleanMessage + "" + "\r\n";
             this.logStream += str;
-            this.notify();
-        }*/
-        this.logStream += str;
+        }
     }
 
     @Override

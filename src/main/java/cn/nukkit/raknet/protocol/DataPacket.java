@@ -58,7 +58,7 @@ public abstract class DataPacket extends Packet {
     @Override
     public DataPacket clone() throws CloneNotSupportedException {
         DataPacket packet = (DataPacket) super.clone();
-        packet.packets = (ArrayList<Object>) this.packets.clone();
+        packet.packets = new ArrayList<>(this.packets);
         return packet;
     }
 

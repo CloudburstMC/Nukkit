@@ -3,21 +3,24 @@ package cn.nukkit;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.*;
+import cn.nukkit.entity.data.EntityData;
+import cn.nukkit.entity.data.PositionEntityData;
+import cn.nukkit.entity.data.ShortEntityData;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
-import cn.nukkit.event.entity.EntityDamageByBlockEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntitySpawnEvent;
+import cn.nukkit.event.entity.*;
+import cn.nukkit.event.inventory.CraftItemEvent;
+import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
-import cn.nukkit.inventory.Inventory;
-import cn.nukkit.inventory.InventoryHolder;
-import cn.nukkit.inventory.SimpleTransactionGroup;
+import cn.nukkit.inventory.*;
+import cn.nukkit.item.EdibleItem;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.Potion;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -25,6 +28,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
@@ -41,6 +45,10 @@ import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.tile.Spawnable;
+import cn.nukkit.tile.Tile;
+import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
 
@@ -131,7 +139,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     protected Map<UUID, Player> hiddenPlayers = new HashMap<>();
 
-    protected Vector3 newPosition;
+    protected Vector3 newPosition = null;
 
     protected int viewDistance;
     protected int chunksPerTick;
@@ -151,6 +159,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     private Map<Integer, List<DataPacket>> batchedPackets = new HashMap<>();
 
     private PermissibleBase perm = null;
+
+    private PlayerFood foodData = null;
+
+    private float movementSpeed = 0.1f;
 
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
@@ -205,7 +217,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
-    public Object hasPlayedBefore() {
+    public boolean hasPlayedBefore() {
         return this.namedTag != null;
     }
 
@@ -252,14 +264,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public boolean canSee(Player player) {
-        return !this.hiddenPlayers.containsKey(player.getRawUniqueId());
+        return !this.hiddenPlayers.containsKey(player.getUniqueId());
     }
 
     public void hidePlayer(Player player) {
         if (this.equals(player)) {
             return;
         }
-        this.hiddenPlayers.put(player.getRawUniqueId(), player);
+        this.hiddenPlayers.put(player.getUniqueId(), player);
         player.despawnFrom(this);
     }
 
@@ -267,7 +279,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (this.equals(player)) {
             return;
         }
-        this.hiddenPlayers.remove(player.getRawUniqueId());
+        this.hiddenPlayers.remove(player.getUniqueId());
         if (player.isOnline()) {
             player.spawnTo(this);
         }
@@ -324,7 +336,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     @Override
     public boolean hasPermission(String name) {
-        return this.perm.hasPermission(name);
+        return this.perm != null && this.perm.hasPermission(name);
     }
 
     @Override
@@ -394,13 +406,17 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.gamemode = this.server.getGamemode();
         this.setLevel(this.server.getDefaultLevel());
         this.viewDistance = this.server.getViewDistance();
-        this.newPosition = new Vector3(0, 0, 0);
+        //this.newPosition = new Vector3(0, 0, 0);
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
         this.uuid = null;
         this.rawUUID = null;
 
         this.creationTime = System.currentTimeMillis();
+    }
+
+    public boolean isPlayer() {
+        return true;
     }
 
     public boolean isConnected() {
@@ -414,20 +430,15 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
         if (this.spawned) {
-            this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getDisplayName(), this.isSkinSlim(), this.getSkinData());
+            this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getDisplayName(), this.getSkin());
         }
     }
 
     @Override
-    public void setSkin(byte[] skinData) {
-        this.setSkin(skinData, false);
-    }
-
-    @Override
-    public void setSkin(byte[] skinData, boolean isSlim) {
-        super.setSkin(skinData, isSlim);
+    public void setSkin(Skin skin) {
+        super.setSkin(skin);
         if (this.spawned) {
-            this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getDisplayName(), isSlim, skinData);
+            this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getDisplayName(), skin);
         }
     }
 
@@ -532,6 +543,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         pk.chunkZ = z;
         pk.order = ordering;
         pk.data = payload;
+
         this.batchDataPacket(pk);
 
         if (this.spawned) {
@@ -550,7 +562,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         int count = 0;
 
-        for (String index : this.loadQueue.keySet()) {
+        for (String index : new ArrayList<>(this.loadQueue.keySet())) {
             if (count >= this.chunksPerTick) {
                 break;
             }
@@ -562,7 +574,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             ++count;
 
             this.usedChunks.put(index, false);
-
             this.level.registerChunkLoader(this, chunkX, chunkZ, false);
 
             if (!this.level.populateChunk(chunkX, chunkZ)) {
@@ -583,6 +594,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     protected void doFirstSpawn() {
+
         this.spawned = true;
 
         this.sendSettings();
@@ -643,19 +655,26 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.spawnToAll();
 
+
         /*if (this.server.getUpdater().hasUpdate() and this.hasPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE)){
             this.server.getUpdater().showPlayerUpdate(this);
         }*/
         //todo Updater
 
         if (this.getHealth() <= 0) {
-            RespawnPacket respawnPacket1 = new RespawnPacket();
+            respawnPacket = new RespawnPacket();
             pos = this.getSpawn();
-            respawnPacket1.x = (float) pos.x;
-            respawnPacket1.y = (float) pos.y;
-            respawnPacket1.z = (float) pos.z;
-            this.dataPacket(respawnPacket1);
+            respawnPacket.x = (float) pos.x;
+            respawnPacket.y = (float) pos.y;
+            respawnPacket.z = (float) pos.z;
+            this.dataPacket(respawnPacket);
         }
+
+        //Weather
+        this.getLevel().sendWeather(this);
+
+        //FoodLevel
+        this.getFoodData().sendFoodLevel();
     }
 
     protected boolean orderChunks() {
@@ -669,7 +688,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         //viewDistance = this.server.getMemoryManager().getViewDistance(this.viewDistance);
 
         Map<String, Integer> newOrder = new HashMap<>();
-        Map<String, Boolean> lastChunk = this.usedChunks;
+        Map<String, Boolean> lastChunk = new HashMap<>(this.usedChunks);
 
         int centerX = (int) this.x >> 4;
         int centerZ = (int) this.z >> 4;
@@ -719,7 +738,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             }
         }
 
-        for (String index : lastChunk.keySet()) {
+        for (String index : new ArrayList<>(lastChunk.keySet())) {
             Chunk.Entry entry = Level.getChunkXZ(index);
             this.unloadChunk(entry.chunkX, entry.chunkZ);
         }
@@ -831,7 +850,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sleeping = pos.clone();
         this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level));
 
-        this.setDataProperty(DATA_PLAYER_BED_POSITION, DATA_TYPE_POS, new Object[]{pos.x, pos.y, pos.z});
+        this.setDataProperty(DATA_PLAYER_BED_POSITION, new PositionEntityData((int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
 
         this.setSpawn(pos);
@@ -861,7 +880,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.getPluginManager().callEvent(new PlayerBedLeaveEvent(this, this.level.getBlock(this.sleeping)));
 
             this.sleeping = null;
-            this.setDataProperty(DATA_PLAYER_BED_POSITION, DATA_TYPE_POS, new Object[]{0, 0, 0});
+            this.setDataProperty(DATA_PLAYER_BED_POSITION, new PositionEntityData(0, 0, 0));
             this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
 
 
@@ -902,19 +921,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.namedTag.putInt("playerGameType", this.gamemode);
 
-        Position spawnPosition = this.getSpawn();
-
-        StartGamePacket pk = new StartGamePacket();
-        pk.seed = -1;
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.spawnX = (int) spawnPosition.x;
-        pk.spawnY = (int) spawnPosition.y;
-        pk.spawnZ = (int) spawnPosition.z;
-        pk.generator = 1; //0 old, 1 infinite, 2 flat
+        SetPlayerGameTypePacket pk = new SetPlayerGameTypePacket();
         pk.gamemode = this.gamemode & 0x01;
-        pk.eid = 0;
         this.dataPacket(pk);
         this.sendSettings();
 
@@ -943,7 +951,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void sendSettings() {
         /*
          bit mask | flag name
-		0x00000001 world_inmutable
+		0x00000001 world_immutable
 		0x00000002 no_pvp
 		0x00000004 no_pvm
 		0x00000008 no_mvp
@@ -1028,9 +1036,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
-    public boolean setDataProperty(int id, int type, Object value) {
-        if (super.setDataProperty(id, type, value)) {
-            this.sendData(this, new HashMap<Integer, Object[]>() {
+    public boolean setDataProperty(int id, EntityData dataEntry) {
+        if (super.setDataProperty(id, dataEntry)) {
+            this.sendData(this, new HashMap<Integer, EntityData>() {
                 {
                     put(id, dataProperties.get(id));
                 }
@@ -1092,9 +1100,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                 this.inventory.addItem(item.clone());
                 entity.kill();
-            } else if (entity instanceof cn.nukkit.entity.Item) {
-                if (((cn.nukkit.entity.Item) entity).getPickupDelay() <= 0) {
-                    Item item = ((cn.nukkit.entity.Item) entity).getItem();
+            } else if (entity instanceof DroppedItem) {
+                if (((DroppedItem) entity).getPickupDelay() <= 0) {
+                    Item item = ((DroppedItem) entity).getItem();
 
                     if (item != null) {
                         if (this.isSurvival() && !this.inventory.canAddItem(item)) {
@@ -1102,7 +1110,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         }
 
                         InventoryPickupItemEvent ev;
-                        this.server.getPluginManager().callEvent(ev = new InventoryPickupItemEvent(this.inventory, (cn.nukkit.entity.Item) entity));
+                        this.server.getPluginManager().callEvent(ev = new InventoryPickupItemEvent(this.inventory, (DroppedItem) entity));
                         if (ev.isCancelled()) {
                             continue;
                         }
@@ -1117,7 +1125,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 break;
                         }*/
 
-                        /*TakeItemEntityPacket pk = new TakeItemEntityPacket();
+                        TakeItemEntityPacket pk = new TakeItemEntityPacket();
                         pk.entityId = this.getId();
                         pk.target = entity.getId();
                         Server.broadcastPacket(entity.getViewers().values(), pk);
@@ -1125,8 +1133,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         pk = new TakeItemEntityPacket();
                         pk.entityId = 0;
                         pk.target = entity.getId();
-                        this.dataPacket(pk);*/
-                        //todo: check if this cause client crash
+                        this.dataPacket(pk);
 
                         this.inventory.addItem(item.clone());
                         entity.kill();
@@ -1141,12 +1148,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return;
         }
 
+
         Vector3 newPos = this.newPosition;
         double distanceSquared = newPos.distanceSquared(this);
 
         boolean revert = false;
 
-        if ((distanceSquared / (tickDiff * tickDiff)) > 100) {
+        if ((distanceSquared / ((double) (tickDiff * tickDiff))) > 100) {
             revert = true;
         } else {
             if (this.chunk == null || !this.chunk.isGenerated()) {
@@ -1162,6 +1170,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
             }
         }
+
+        Vector2 newPosV2 = new Vector2(newPos.x, newPos.z);
+        double distance = newPosV2.distance(this.x, this.z);
 
         if (!revert && distanceSquared != 0) {
             double dx = newPos.x - this.x;
@@ -1179,13 +1190,20 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 diffY = 0;
             }
 
-            double diff = (diffX * diffX + diffY * diffY + diffZ * diffZ) / (tickDiff * tickDiff);
+            double diff = (diffX * diffX + diffY * diffY + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
 
             if (this.isSurvival()) {
                 if (!this.isSleeping()) {
                     if (diff > 0.0625) {
-                        revert = true;
-                        this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                        PlayerInvalidMoveEvent ev;
+                        this.getServer().getPluginManager().callEvent(ev = new PlayerInvalidMoveEvent(this, true));
+                        if (!ev.isCancelled()) {
+                            revert = ev.isRevert();
+
+                            if (revert) {
+                                this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                            }
+                        }
                     }
                 }
             }
@@ -1194,12 +1212,18 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 this.x = newPos.x;
                 this.y = newPos.y;
                 this.z = newPos.z;
-                double radius = this.width / 2;
-                this.boundingBox.setBounds(this.x - radius, this.y, this.z - radius, this.x + radius, this.y + this.height, this.z + radius);
+                double radius = this.getWidth() / 2;
+                this.boundingBox.setBounds(this.x - radius, this.y, this.z - radius, this.x + radius, this.y + this.getHeight(), this.z + radius);
             }
         }
 
-        Location from = new Location(this.lastX, this.lastY, this.lastZ, this.lastYaw, this.lastPitch, this.level);
+        Location from = new Location(
+                this.lastX,
+                this.lastY,
+                this.lastZ,
+                this.lastYaw,
+                this.lastPitch
+                , this.level);
         Location to = this.getLocation();
 
         double delta = Math.pow(this.lastX - to.x, 2) + Math.pow(this.lastY - to.y, 2) + Math.pow(this.lastZ - to.z, 2);
@@ -1207,8 +1231,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         if (!revert && (delta > (1 / 16) || deltaAngle > 10)) {
 
-            boolean isFirst = (this.lastX == null || this.lastY == null || this.lastZ == null);
+            boolean isFirst = this.firstMove;
 
+            this.firstMove = false;
             this.lastX = to.x;
             this.lastY = to.y;
             this.lastZ = to.z;
@@ -1239,6 +1264,29 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.speed = new Vector3(0, 0, 0);
         }
 
+        if (!revert && (this.isFoodEnabled() || this.getServer().getDifficulty() == 0)) {
+            if ((this.isSurvival() || this.isAdventure())/* && !this.getRiddingOn() instanceof Entity*/) {
+
+                //UpdateFoodExpLevel
+                if (distance >= 0.05) {
+                    double jump = 0;
+                    double swimming = this.isInsideOfWater() ? 0.015 * distance : 0;
+                    if (swimming != 0) distance = 0;
+                    if (this.isSprinting()) {  //Running
+                        if (this.inAirTicks == 3 && swimming == 0) {
+                            jump = 0.7;
+                        }
+                        this.getFoodData().updateFoodExpLevel(0.1 * distance + jump + swimming);
+                    } else {
+                        if (this.inAirTicks == 3 && swimming == 0) {
+                            jump = 0.2;
+                        }
+                        this.getFoodData().updateFoodExpLevel(0.01 * distance + jump + swimming);
+                    }
+                }
+            }
+        }
+
         if (revert) {
 
             this.lastX = from.x;
@@ -1249,6 +1297,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.lastPitch = from.pitch;
 
             this.sendPosition(from, from.yaw, from.pitch, MovePlayerPacket.MODE_RESET);
+            //this.sendSettings();
             this.forceMovement = new Vector3(from.x, from.y, from.z);
         } else {
             this.forceMovement = null;
@@ -1272,7 +1321,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             if (this.motionY > 0) {
                 //todo: check this
-                this.startAirTicks = (int) ((-(Math.log(this.gravity / (this.gravity + this.drag * this.motionY))) / this.drag) * 2 + 5);
+                this.startAirTicks = (int) ((-(Math.log(this.getGravity() / (this.getGravity() + this.getDrag() * this.motionY))) / this.getDrag()) * 2 + 5);
             }
 
             return true;
@@ -1322,12 +1371,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     }
                     this.inAirTicks = 0;
                 } else {
-                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && (byte) this.getDataProperty(DATA_NO_AI) != 1) {
-                        double expectedVelocity = (-this.gravity) / this.drag - ((-this.gravity) / this.drag) * Math.exp(-this.drag * (this.inAirTicks - this.startAirTicks));
+                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && this.getDataPropertyByte(DATA_NO_AI).data != 1) {
+                        double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                         double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
                         if (!this.hasEffect(Effect.JUMP) && diff > 0.6 && expectedVelocity < this.speed.y && !this.server.getAllowFlight()) {
                             if (this.inAirTicks < 100) {
+                                //this.sendSettings();
                                 this.setMotion(new Vector3(0, expectedVelocity, 0));
                             } else if (this.kick("Flying is not enabled on this server")) {
                                 return false;
@@ -1336,6 +1386,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     }
 
                     ++this.inAirTicks;
+                }
+
+                if (this.isSurvival() || this.isAdventure()) {
+                    if (this.getFoodData() != null) this.getFoodData().updateFoodTickTimer(tickDiff);
                 }
             }
         }
@@ -1420,7 +1474,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this);
         }
 
-        for (Player p : this.server.getOnlinePlayers().values()) {
+        for (Player p : new ArrayList<>(this.server.getOnlinePlayers().values())) {
             if (p != this && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
                 if (!p.kick("logged in from another location")) {
                     this.close(this.getLeaveMessage(), "Logged in from another location");
@@ -1455,7 +1509,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
-            nbt.getList(new ListTag<>(), "Pos")
+            nbt.getList("Pos", new ListTag<>())
                     .add(0, new DoubleTag("0", this.level.getSpawnLocation().x))
                     .add(1, new DoubleTag("1", this.level.getSpawnLocation().y))
                     .add(2, new DoubleTag("2", this.level.getSpawnLocation().z));
@@ -1464,14 +1518,17 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         //todo achievement
-        nbt.putLong("lastPlayed", System.currentTimeMillis());
+        nbt.putLong("lastPlayed", System.currentTimeMillis() / 1000);
 
         if (this.server.getAutoSave()) {
             this.server.saveOfflinePlayerData(this.username, nbt, true);
         }
 
-        ListTag<DoubleTag> posList = nbt.getList(new ListTag<>(), "Pos");
+        ListTag<DoubleTag> posList = nbt.getList("Pos", new ListTag<>());
         BaseFullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
+        if (chunk == null || chunk.getProvider() == null) {
+            throw new ChunkException("Invalid garbage Chunk given to Entity");
+        }
 
         this.isPlayer = true;
 
@@ -1487,8 +1544,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        ListTag<FloatTag> rotationList = this.namedTag.getList(new ListTag<>(), "Rotation");
-        ListTag<DoubleTag> motionList = this.namedTag.getList(new ListTag<>(), "Motion");
+        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", new ListTag<>());
+        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", new ListTag<>());
         this.setPositionAndRotation(
                 this.temporalVector.setComponents(
                         posList.get(0).data,
@@ -1518,7 +1575,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (!this.namedTag.contains("Air")) {
             this.namedTag.putShort("Air", 300);
         }
-        this.setDataProperty(DATA_AIR, DATA_TYPE_SHORT, this.namedTag.getShort("Air"));
+        this.setDataProperty(DATA_AIR, new ShortEntityData(this.namedTag.getShort("Air")));
 
         if (!this.namedTag.contains("OnGround")) {
             this.namedTag.putBoolean("OnGround", false);
@@ -1529,6 +1586,16 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.namedTag.putBoolean("Invulnerable", false);
         }
         this.invulnerable = this.namedTag.getBoolean("Invulnerable");
+
+        if (!this.namedTag.contains("FoodLevel")) {
+            this.namedTag.putInt("FoodLevel", 20);
+        }
+        int foodLevel = this.namedTag.getInt("FoodLevel");
+        if (!this.namedTag.contains("FoodSaturationLevel")) {
+            this.namedTag.putInt("FoodSaturationLevel", 20);
+        }
+        int foodSaturationLevel = this.namedTag.getInt("FoodSaturationLevel");
+        this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
         this.chunk.addEntity(this);
         this.level.addEntity(this);
@@ -1563,7 +1630,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
         }
 
-        spawnPosition = this.getSpawn();
+        Position spawnPosition = this.getSpawn();
 
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.seed = -1;
@@ -1590,13 +1657,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         setSpawnPositionPacket.z = (int) spawnPosition.z;
         this.dataPacket(setSpawnPositionPacket);
 
-        /*pk = new SetHealthPacket();
-        pk.health = this.getHealth();
-        this.dataPacket(pk);*/
         UpdateAttributesPacket updateAttributesPacket = new UpdateAttributesPacket();
         updateAttributesPacket.entityId = 0;
         updateAttributesPacket.entries = new Attribute[]{
-                Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(this.getHealth())
+                Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(this.getHealth()),
+                Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(this.getMovementSpeed())
         };
         this.dataPacket(updateAttributesPacket);
 
@@ -1640,7 +1705,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return;
         }
 
-        if (packet.pid() == Info.BATCH_PACKET) {
+        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
             this.server.getNetwork().processBatch((BatchPacket) packet, this);
             return;
         }
@@ -1652,10 +1717,990 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         switch (packet.pid()) {
+            case ProtocolInfo.LOGIN_PACKET:
+                if (this.loggedIn) {
+                    break;
+                }
+
+                LoginPacket loginPacket = (LoginPacket) packet;
+                this.username = TextFormat.clean(loginPacket.username);
+                this.displayName = this.username;
+                this.setNameTag(this.username);
+                this.iusername = this.username.toLowerCase();
+
+                if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)) {
+                    break;
+                }
+
+                String message;
+                if (loginPacket.protocol1 != ProtocolInfo.CURRENT_PROTOCOL) {
+                    if (loginPacket.protocol1 < ProtocolInfo.CURRENT_PROTOCOL) {
+                        message = "disconnectionScreen.outdatedClient";
+
+                        PlayStatusPacket pk = new PlayStatusPacket();
+                        pk.status = PlayStatusPacket.LOGIN_FAILED_CLIENT;
+                        this.directDataPacket(pk);
+                    } else {
+                        message = "disconnectionScreen.outdatedServer";
+
+                        PlayStatusPacket pk = new PlayStatusPacket();
+                        pk.status = PlayStatusPacket.LOGIN_FAILED_SERVER;
+                        this.directDataPacket(pk);
+                    }
+                    this.close("", message, false);
+                    break;
+                }
+
+                this.randomClientId = loginPacket.clientId;
+
+                this.uuid = loginPacket.clientUUID;
+                this.rawUUID = Binary.writeUUID(this.uuid);
+                this.clientSecret = loginPacket.clientSecret;
+
+                boolean valid = true;
+                int len = loginPacket.username.length();
+                if (len > 16 || len < 3) {
+                    valid = false;
+                }
+
+                for (int i = 0; i < len && valid; i++) {
+                    char c = loginPacket.username.charAt(i);
+                    if ((c >= 'a' && c <= 'z') ||
+                            (c >= 'A' && c <= 'Z') ||
+                            (c >= '0' && c <= '9') || c == '_'
+                            ) {
+                        continue;
+                    }
+
+                    valid = false;
+                    break;
+                }
+
+                if (!valid || Objects.equals(this.iusername, "rcon") || Objects.equals(this.iusername, "console")) {
+                    this.close("", "disconnectionScreen.invalidName");
+
+                    break;
+                }
+
+                if (!loginPacket.skin.isValid()) {
+                    this.close("", "disconnectionScreen.invalidSkin");
+                    break;
+                }
+
+                this.setSkin(loginPacket.skin);
+
+                PlayerPreLoginEvent playerPreLoginEvent;
+                this.server.getPluginManager().callEvent(playerPreLoginEvent = new PlayerPreLoginEvent(this, "Plugin reason"));
+                if (playerPreLoginEvent.isCancelled()) {
+                    this.close("", playerPreLoginEvent.getKickMessage());
+
+                    break;
+                }
+
+                this.onPlayerPreLogin();
+
+                break;
+            case ProtocolInfo.MOVE_PLAYER_PACKET:
+
+
+                MovePlayerPacket movePlayerPacket = (MovePlayerPacket) packet;
+                Vector3 newPos = new Vector3(movePlayerPacket.x, movePlayerPacket.y - this.getEyeHeight(), movePlayerPacket.z);
+
+                boolean revert = false;
+                if (!this.isAlive() || !this.spawned) {
+                    revert = true;
+                    this.forceMovement = new Vector3(this.x, this.y, this.z);
+                }
+
+                if (this.teleportPosition != null || (this.forceMovement != null && newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
+                    this.sendPosition(this.forceMovement, movePlayerPacket.yaw, movePlayerPacket.pitch);
+                } else {
+
+                    movePlayerPacket.yaw %= 360;
+                    movePlayerPacket.pitch %= 360;
+
+                    if (movePlayerPacket.yaw < 0) {
+                        movePlayerPacket.yaw += 360;
+                    }
+
+                    this.setRotation(movePlayerPacket.yaw, movePlayerPacket.pitch);
+                    this.newPosition = newPos;
+                    this.forceMovement = null;
+                }
+
+                break;
+            case ProtocolInfo.MOB_EQUIPMENT_PACKET:
+                if (!this.spawned || !this.isAlive()) {
+                    break;
+                }
+
+                MobEquipmentPacket mobEquipmentPacket = (MobEquipmentPacket) packet;
+
+                if (mobEquipmentPacket.slot == 0x28 || mobEquipmentPacket.slot == 0 || mobEquipmentPacket.slot == 255) {
+                    mobEquipmentPacket.slot = -1;
+                } else {
+                    mobEquipmentPacket.slot -= 9;
+                }
+
+                Item item;
+                int slot;
+                if (this.isCreative()) {
+                    item = mobEquipmentPacket.item;
+                    slot = Item.getCreativeItemIndex(item);
+                } else {
+                    item = this.inventory.getItem(mobEquipmentPacket.slot);
+                    slot = mobEquipmentPacket.slot;
+                }
+
+                if (mobEquipmentPacket.slot == -1) {
+                    if (this.isCreative()) {
+                        boolean found = false;
+                        for (int i = 0; i < this.inventory.getHotbarSize(); ++i) {
+                            if (this.inventory.getHotbarSlotIndex(i) == -1) {
+                                this.inventory.setHeldItemIndex(i);
+                                found = true;
+                                break;
+                            }
+
+                        }
+                        if (!found) {
+                            this.inventory.sendContents(this);
+                            break;
+                        }
+                    } else {
+                        if (mobEquipmentPacket.selectedSlot >= 0 && mobEquipmentPacket.selectedSlot < 9) {
+                            this.inventory.setHeldItemIndex(mobEquipmentPacket.selectedSlot);
+                            this.inventory.setHeldItemSlot(mobEquipmentPacket.slot);
+                        } else {
+                            this.inventory.sendContents(this);
+                            break;
+                        }
+                    }
+                } else if (item == null || slot == -1 || !item.deepEquals(mobEquipmentPacket.item)) {
+                    this.inventory.sendContents(this);
+                    break;
+                } else if (this.isCreative()) {
+                    this.inventory.setHeldItemIndex(mobEquipmentPacket.selectedSlot);
+                    this.inventory.setItem(mobEquipmentPacket.selectedSlot, item);
+                    this.inventory.setHeldItemSlot(mobEquipmentPacket.selectedSlot);
+                } else {
+                    if (mobEquipmentPacket.selectedSlot >= 0 && mobEquipmentPacket.selectedSlot < this.inventory.getHotbarSize()) {
+                        this.inventory.setHeldItemIndex(mobEquipmentPacket.selectedSlot);
+                        this.inventory.setHeldItemSlot(slot);
+                    } else {
+                        this.inventory.sendContents(this);
+                        break;
+                    }
+                }
+
+                this.inventory.sendHeldItem(this.hasSpawned.values());
+
+                this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
+                break;
+            case ProtocolInfo.USE_ITEM_PACKET:
+                if (!this.spawned || !this.isAlive() || this.blocked) {
+                    break;
+                }
+
+                UseItemPacket useItemPacket = (UseItemPacket) packet;
+
+                Vector3 blockVector = new Vector3(useItemPacket.x, useItemPacket.y, useItemPacket.z);
+
+                this.craftingType = 0;
+
+                if (useItemPacket.face >= 0 && useItemPacket.face <= 5) {
+                    this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
+
+                    if (!this.canInteract(blockVector.add(0.5, 0.5, 0.5), 13) || this.isSpectator()) {
+                    } else if (this.isCreative()) {
+                        if (this.level.useItemOn(blockVector, this.inventory.getItemInHand(), useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this) != null) {
+                            break;
+                        }
+                    } else if (!this.inventory.getItemInHand().deepEquals(useItemPacket.item)) {
+                        this.inventory.sendHeldItem(this);
+                    } else {
+                        item = this.inventory.getItemInHand();
+                        Item oldItem = item.clone();
+                        //TODO: Implement adventure mode checks
+                        if (this.level.useItemOn(blockVector, item, useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this) != null) {
+                            if (!item.deepEquals(oldItem) || item.getCount() != oldItem.getCount()) {
+                                this.inventory.setItemInHand(item);
+                                this.inventory.sendHeldItem(this.hasSpawned.values());
+                            }
+                            break;
+                        }
+                    }
+
+                    this.inventory.sendHeldItem(this);
+
+                    if (blockVector.distanceSquared(this) > 10000) {
+                        break;
+                    }
+
+                    Block target = this.level.getBlock(blockVector);
+                    Block block = target.getSide(useItemPacket.face);
+                    this.level.sendBlocks(new Player[]{this}, new Block[]{target, block}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
+                    break;
+                } else if (useItemPacket.face == 0xff) {
+                    Vector3 aimPos = (new Vector3(useItemPacket.x / 32768, useItemPacket.y / 32768, useItemPacket.z / 32768)).normalize();
+
+                    if (this.isCreative()) {
+                        item = this.inventory.getItemInHand();
+                    } else if (!this.inventory.getItemInHand().deepEquals(useItemPacket.item)) {
+                        this.inventory.sendHeldItem(this);
+                        break;
+                    } else {
+                        item = this.inventory.getItemInHand();
+                    }
+
+                    PlayerInteractEvent playerInteractEvent = new PlayerInteractEvent(this, item, aimPos, useItemPacket.face, PlayerInteractEvent.RIGHT_CLICK_AIR);
+
+                    this.server.getPluginManager().callEvent(playerInteractEvent);
+
+                    if (playerInteractEvent.isCancelled()) {
+                        this.inventory.sendHeldItem(this);
+                        break;
+                    }
+
+                    if (item.getId() == Item.SNOWBALL) {
+                        CompoundTag nbt = new CompoundTag()
+                                .putList(new ListTag<DoubleTag>("Pos")
+                                        .add(new DoubleTag("", x))
+                                        .add(new DoubleTag("", y + this.getEyeHeight()))
+                                        .add(new DoubleTag("", z)))
+                                .putList(new ListTag<DoubleTag>("Motion")
+                                        .add(new DoubleTag("", aimPos.x))
+                                        .add(new DoubleTag("", aimPos.y))
+                                        .add(new DoubleTag("", aimPos.z)))
+
+                                .putList(new ListTag<FloatTag>("Rotation")
+                                        .add(new FloatTag("", (float) yaw))
+                                        .add(new FloatTag("", (float) pitch)));
+
+                        float f = 1.5f;
+                        Snowball snowball = new Snowball(this.chunk, nbt, this);
+
+                        snowball.setMotion(snowball.getMotion().multiply(f));
+                        if (this.isSurvival()) {
+                            item.setCount(item.getCount() - 1);
+                            this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                        }
+
+                        ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(snowball);
+                        this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                        if (projectileLaunchEvent.isCancelled()) {
+                            snowball.kill();
+                        } else {
+                            snowball.spawnToAll();
+                            this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                        }
+                    }
+
+                    this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, true);
+                    this.startAction = this.server.getTick();
+                }
+                break;
+            case ProtocolInfo.PLAYER_ACTION_PACKET:
+                if (!this.spawned || this.blocked || (!this.isAlive() && ((PlayerActionPacket) packet).action != PlayerActionPacket.ACTION_RESPAWN && ((PlayerActionPacket) packet).action != PlayerActionPacket.ACTION_DIMENSION_CHANGE)) {
+                    break;
+                }
+
+                ((PlayerActionPacket) packet).entityId = this.id;
+                Vector3 pos = new Vector3(((PlayerActionPacket) packet).x, ((PlayerActionPacket) packet).y, ((PlayerActionPacket) packet).z);
+
+                switch (((PlayerActionPacket) packet).action) {
+                    case PlayerActionPacket.ACTION_START_BREAK:
+                        if (this.lastBreak != Long.MAX_VALUE || pos.distanceSquared(this) > 10000) {
+                            break;
+                        }
+                        Block target = this.level.getBlock(pos);
+                        PlayerInteractEvent playerInteractEvent = new PlayerInteractEvent(this, this.inventory.getItemInHand(), target, ((PlayerActionPacket) packet).face, target.getId() == 0 ? PlayerInteractEvent.LEFT_CLICK_AIR : PlayerInteractEvent.LEFT_CLICK_BLOCK);
+                        this.getServer().getPluginManager().callEvent(playerInteractEvent);
+                        if (playerInteractEvent.isCancelled()) {
+                            this.inventory.sendHeldItem(this);
+                            break;
+                        }
+                        this.lastBreak = System.currentTimeMillis();
+                        break;
+
+                    case PlayerActionPacket.ACTION_ABORT_BREAK:
+                        this.lastBreak = Long.MAX_VALUE;
+                        break;
+
+                    case PlayerActionPacket.ACTION_RELEASE_ITEM:
+                        if (this.startAction > -1 && this.getDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION)) {
+                            if (this.inventory.getItemInHand().getId() == Item.BOW) {
+
+                                Item bow = this.inventory.getItemInHand();
+                                if (this.isSurvival() && !this.inventory.contains(Item.get(Item.ARROW, 0, 1))) {
+                                    this.inventory.sendContents(this);
+                                    break;
+                                }
+
+                                CompoundTag nbt = new CompoundTag()
+                                        .putList(new ListTag<DoubleTag>("Pos")
+                                                .add(new DoubleTag("", x))
+                                                .add(new DoubleTag("", y + this.getEyeHeight()))
+                                                .add(new DoubleTag("", z)))
+                                        .putList(new ListTag<DoubleTag>("Motion")
+                                                .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                                .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                                .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                        .putList(new ListTag<FloatTag>("Rotation")
+                                                .add(new FloatTag("", (float) yaw))
+                                                .add(new FloatTag("", (float) pitch)))
+                                        .putShort("Fire", this.isOnFire() ? 45 * 60 : 0);
+
+                                int diff = (this.server.getTick() - this.startAction);
+                                double p = (double) diff / 20;
+
+                                double f = Math.min((p * p + p * 2) / 3, 1) * 2;
+                                EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(this, bow, new Arrow(this.chunk, nbt, this, f == 2), f);
+
+                                if (f < 0.1 || diff < 5) {
+                                    entityShootBowEvent.setCancelled();
+                                }
+
+                                this.server.getPluginManager().callEvent(entityShootBowEvent);
+                                if (entityShootBowEvent.isCancelled()) {
+                                    entityShootBowEvent.getProjectile().kill();
+                                    this.inventory.sendContents(this);
+                                } else {
+                                    entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
+                                    if (this.isSurvival()) {
+                                        this.inventory.removeItem(Item.get(Item.ARROW, 0, 1));
+                                        bow.setDamage(bow.getDamage() + 1);
+                                        if (bow.getDamage() >= 385) {
+                                            this.inventory.setItemInHand(Item.get(Item.AIR, 0, 0));
+                                        } else {
+                                            this.inventory.setItemInHand(bow);
+                                        }
+                                    }
+                                    if (entityShootBowEvent.getProjectile() instanceof Projectile) {
+                                        ProjectileLaunchEvent projectev = new ProjectileLaunchEvent(entityShootBowEvent.getProjectile());
+                                        this.server.getPluginManager().callEvent(projectev);
+                                        if (projectev.isCancelled()) {
+                                            entityShootBowEvent.getProjectile().kill();
+                                        } else {
+                                            entityShootBowEvent.getProjectile().spawnToAll();
+                                            this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                                        }
+                                    } else {
+                                        entityShootBowEvent.getProjectile().spawnToAll();
+                                    }
+                                }
+                            }
+                        } else if (this.inventory.getItemInHand().getId() == Item.BUCKET && this.inventory.getItemInHand().getDamage() == 1) {
+                            //牛奶！
+                            PlayerItemConsumeEvent itemConsumeEvent = new PlayerItemConsumeEvent(this, this.inventory.getItemInHand());
+                            this.server.getPluginManager().callEvent(itemConsumeEvent);
+                            if (itemConsumeEvent.isCancelled()) {
+                                this.inventory.sendContents(this);
+                                break;
+                            }
+
+                            EntityEventPacket pk = new EntityEventPacket();
+                            pk.eid = this.getId();
+                            pk.event = EntityEventPacket.USE_ITEM;
+                            this.dataPacket(pk);
+                            Server.broadcastPacket(this.getViewers().values(), pk);
+
+                            if (this.isSurvival()) {
+                                Item itemSlot = this.inventory.getItemInHand();
+                                itemSlot.count--;
+                                this.inventory.setItemInHand(itemSlot);
+                                this.inventory.addItem(Item.get(Item.BUCKET, 0, 1));
+                            }
+
+                            this.removeAllEffects();
+                        } else {
+                            this.inventory.sendContents(this);
+                        }
+                        break;
+
+                    case PlayerActionPacket.ACTION_STOP_SLEEPING:
+                        this.stopSleep();
+                        break;
+
+                    case PlayerActionPacket.ACTION_RESPAWN:
+                        if (!this.spawned || this.isAlive() || !this.isOnline()) {
+                            break;
+                        }
+
+                        if (this.server.isHardcore()) {
+                            this.setBanned(true);
+                            break;
+                        }
+
+                        this.craftingType = 0;
+
+                        PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
+                        this.server.getPluginManager().callEvent(playerRespawnEvent);
+
+                        this.teleport(playerRespawnEvent.getRespawnPosition());
+
+                        this.setSprinting(false);
+                        this.setSneaking(false);
+
+                        this.extinguish();
+                        this.setDataProperty(Player.DATA_AIR, new ShortEntityData(300));
+                        this.deadTicks = 0;
+                        this.noDamageTicks = 60;
+
+                        this.setHealth(this.getMaxHealth());
+                        this.getFoodData().setFoodLevel(20, 20);
+
+                        this.removeAllEffects();
+                        this.sendData(this);
+
+                        this.setMovementSpeed(0.1f);
+
+                        this.sendSettings();
+                        this.inventory.sendContents(this);
+                        this.inventory.sendArmorContents(this);
+
+                        this.blocked = false;
+
+                        this.spawnToAll();
+                        this.scheduleUpdate();
+                        break;
+
+                    case PlayerActionPacket.ACTION_START_SPRINT:
+                        PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, true);
+                        this.server.getPluginManager().callEvent(playerToggleSprintEvent);
+                        if (playerToggleSprintEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSprinting(true);
+                        }
+                        break;
+
+                    case PlayerActionPacket.ACTION_STOP_SPRINT:
+                        playerToggleSprintEvent = new PlayerToggleSprintEvent(this, false);
+                        this.server.getPluginManager().callEvent(playerToggleSprintEvent);
+                        if (playerToggleSprintEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSprinting(false);
+                        }
+                        break;
+
+                    case PlayerActionPacket.ACTION_START_SNEAK:
+                        PlayerToggleSneakEvent playerToggleSneakEvent = new PlayerToggleSneakEvent(this, true);
+                        this.server.getPluginManager().callEvent(playerToggleSneakEvent);
+                        if (playerToggleSneakEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSneaking(true);
+                        }
+                        break;
+
+                    case PlayerActionPacket.ACTION_STOP_SNEAK:
+                        playerToggleSneakEvent = new PlayerToggleSneakEvent(this, false);
+                        this.server.getPluginManager().callEvent(playerToggleSneakEvent);
+                        if (playerToggleSneakEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSneaking(false);
+                        }
+                        break;
+                }
+
+                this.startAction = -1;
+                this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
+                break;
+
+            case ProtocolInfo.REMOVE_BLOCK_PACKET:
+                if (!this.spawned || this.blocked || !this.isAlive()) {
+                    break;
+                }
+                this.craftingType = 0;
+
+                Vector3 vector = new Vector3(((RemoveBlockPacket) packet).x, ((RemoveBlockPacket) packet).y, ((RemoveBlockPacket) packet).z);
+
+                if (this.isCreative()) {
+                    item = this.inventory.getItemInHand();
+                } else {
+                    item = this.inventory.getItemInHand();
+                }
+
+                Item oldItem = item.clone();
+
+                if (this.canInteract(vector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 6) && this.level.useBreakOn(vector, item, this) != null) {
+                    if (this.isSurvival()) {
+                        this.getFoodData().updateFoodExpLevel(0.025);
+                        if (!item.deepEquals(oldItem) || item.getCount() != oldItem.getCount()) {
+                            this.inventory.setItemInHand(item);
+                            this.inventory.sendHeldItem(this.hasSpawned.values());
+                        }
+                    }
+                    break;
+                }
+
+                this.inventory.sendContents(this);
+                Block target = this.level.getBlock(vector);
+                Tile tile = this.level.getTile(vector);
+
+                this.level.sendBlocks(new Player[]{this}, new Block[]{target}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
+
+                this.inventory.sendHeldItem(this);
+
+                if (tile instanceof Spawnable) {
+                    ((Spawnable) tile).spawnTo(this);
+                }
+                break;
+
+            case ProtocolInfo.MOB_ARMOR_EQUIPMENT_PACKET:
+                break;
+
+            case ProtocolInfo.INTERACT_PACKET:
+                if (!this.spawned || !this.isAlive() || this.blocked) {
+                    break;
+                }
+                this.craftingType = 0;
+                Entity targetEntity = this.level.getEntity(((InteractPacket) packet).target);
+                boolean cancelled = false;
+                if (targetEntity instanceof Player && !((boolean) this.server.getConfig("pvp", true))) {
+                    cancelled = true;
+                }
+
+                if (targetEntity != null && this.getGamemode() != Player.VIEW && this.isAlive() && targetEntity.isAlive()) {
+
+                    if (targetEntity instanceof DroppedItem || targetEntity instanceof Arrow) {
+                        this.kick("Attempting to attack an invalid entity");
+                        this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
+                        break;
+                    }
+
+                    item = this.inventory.getItemInHand();
+                    HashMap<Integer, Float> damageTable = new HashMap<Integer, Float>() {
+                        {
+                            put(Item.WOODEN_SWORD, 4f);
+                            put(Item.GOLD_SWORD, 4f);
+                            put(Item.STONE_SWORD, 5f);
+                            put(Item.IRON_SWORD, 6f);
+                            put(Item.DIAMOND_SWORD, 7f);
+                            put(Item.WOODEN_AXE, 3f);
+                            put(Item.GOLD_AXE, 3f);
+                            put(Item.STONE_AXE, 3f);
+                            put(Item.IRON_AXE, 5f);
+                            put(Item.DIAMOND_AXE, 6f);
+                            put(Item.WOODEN_PICKAXE, 2f);
+                            put(Item.GOLD_PICKAXE, 2f);
+                            put(Item.STONE_PICKAXE, 3f);
+                            put(Item.IRON_PICKAXE, 4f);
+                            put(Item.DIAMOND_PICKAXE, 5f);
+                            put(Item.WOODEN_SHOVEL, 1f);
+                            put(Item.GOLD_SHOVEL, 1f);
+                            put(Item.STONE_SHOVEL, 2f);
+                            put(Item.IRON_SHOVEL, 3f);
+                            put(Item.DIAMOND_SHOVEL, 4f);
+                        }
+                    };
+
+                    HashMap<Integer, Float> damage = new HashMap<>();
+                    damage.put(EntityDamageEvent.MODIFIER_BASE, damageTable.getOrDefault(item.getId(), 1f));
+
+                    if (!this.canInteract(targetEntity, 8)) {
+                        cancelled = true;
+                    } else if (targetEntity instanceof Player) {
+                        if ((((Player) targetEntity).getGamemode() & 0x01) > 0) {
+                            break;
+                        } else if (!this.server.getPropertyBoolean("pvp") || this.server.getDifficulty() == 0) {
+                            cancelled = true;
+                        }
+
+                        HashMap<Integer, Float> armorValues = new HashMap<Integer, Float>() {
+                            {
+                                put(Item.LEATHER_CAP, 1f);
+                                put(Item.LEATHER_TUNIC, 3f);
+                                put(Item.LEATHER_PANTS, 2f);
+                                put(Item.LEATHER_BOOTS, 1f);
+                                put(Item.CHAIN_HELMET, 1f);
+                                put(Item.CHAIN_CHESTPLATE, 5f);
+                                put(Item.CHAIN_LEGGINGS, 4f);
+                                put(Item.CHAIN_BOOTS, 1f);
+                                put(Item.GOLD_HELMET, 1f);
+                                put(Item.GOLD_CHESTPLATE, 5f);
+                                put(Item.GOLD_LEGGINGS, 3f);
+                                put(Item.GOLD_BOOTS, 1f);
+                                put(Item.IRON_HELMET, 2f);
+                                put(Item.IRON_CHESTPLATE, 6f);
+                                put(Item.IRON_LEGGINGS, 5f);
+                                put(Item.IRON_BOOTS, 2f);
+                                put(Item.DIAMOND_HELMET, 3f);
+                                put(Item.DIAMOND_CHESTPLATE, 8f);
+                                put(Item.DIAMOND_LEGGINGS, 6f);
+                                put(Item.DIAMOND_BOOTS, 3f);
+                            }
+                        };
+
+                        float points = 0;
+                        for (Item i : ((Player) targetEntity).getInventory().getArmorContents()) {
+                            points += armorValues.getOrDefault(i.getId(), 0f);
+                        }
+
+                        damage.put(EntityDamageEvent.MODIFIER_ARMOR, (float) (damage.getOrDefault(EntityDamageEvent.MODIFIER_ARMOR, 0f) - Math.floor(damage.getOrDefault(EntityDamageEvent.MODIFIER_BASE, 1f) * points * 0.04)));
+                    }
+
+                    EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, targetEntity, EntityDamageEvent.CAUSE_ENTITY_ATTACK, damage);
+                    if (cancelled) {
+                        entityDamageByEntityEvent.setCancelled();
+                    }
+
+                    targetEntity.attack(entityDamageByEntityEvent);
+
+                    if (ev.isCancelled()) {
+                        if (item.isTool() && this.isSurvival()) {
+                            this.inventory.sendContents(this);
+                        }
+                        break;
+                    }
+
+                    if (item.isTool() && this.isSurvival()) {
+                        if (item.useOn(targetEntity) && item.getDamage() >= item.getMaxDurability()) {
+                            this.inventory.setItemInHand(Item.get(Item.AIR, 0, 1));
+                        } else {
+                            this.inventory.setItemInHand(item);
+                        }
+                    }
+                }
+
+                break;
+            case ProtocolInfo.ANIMATE_PACKET:
+                if (!this.spawned || !this.isAlive()) {
+                    break;
+                }
+
+                PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, ((AnimatePacket) packet).action);
+                this.server.getPluginManager().callEvent(animationEvent);
+                if (animationEvent.isCancelled()) {
+                    break;
+                }
+
+                AnimatePacket animatePacket = new AnimatePacket();
+                animatePacket.eid = this.getId();
+                animatePacket.action = animationEvent.getAnimationType();
+                Server.broadcastPacket(this.getViewers().values(), packet);
+                break;
+            case ProtocolInfo.SET_HEALTH_PACKET:
+                //use UpdateAttributePacket instead
+                break;
+
+            case ProtocolInfo.ENTITY_EVENT_PACKET:
+                if (!this.spawned || this.blocked || !this.isAlive()) {
+                    break;
+                }
+                this.craftingType = 0;
+
+                this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false); //TODO: check if this should be true
+                EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
+
+                switch (entityEventPacket.event) {
+                    case 9: //Eating
+                        Item itemInHand = this.inventory.getItemInHand();
+                        int amount = EdibleItem.getRegainAmount(itemInHand.getId(), itemInHand.getDamage());
+                        if ((this.getHealth() < this.getMaxHealth() && amount > 0) || itemInHand.getId() == Item.POTION) {
+                            PlayerItemConsumeEvent consumeEvent;
+                            this.server.getPluginManager().callEvent(consumeEvent = new PlayerItemConsumeEvent(this, itemInHand));
+                            if (consumeEvent.isCancelled()) {
+                                this.inventory.sendContents(this);
+                                break;
+                            }
+
+                            if (itemInHand instanceof Potion) {
+                                if (itemInHand.getCount() > 1) {
+                                    if (this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))) {
+                                        this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
+                                    }
+                                    --itemInHand.count;
+                                } else {
+                                    itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
+                                }
+
+                                ((Potion) itemInHand).applyPotion(this);
+                            } else {
+                                EntityEventPacket pk = new EntityEventPacket();
+                                pk.eid = this.getId();
+                                pk.event = EntityEventPacket.USE_ITEM;
+                                this.dataPacket(pk);
+                                Server.broadcastPacket(this.getViewers().values(), pk);
+
+                                EntityRegainHealthEvent regainHealthEvent = new EntityRegainHealthEvent(this, amount, EntityRegainHealthEvent.CAUSE_EATING);
+                                this.heal(regainHealthEvent.getAmount(), regainHealthEvent);
+
+                                --itemInHand.count;
+
+                                if (itemInHand.getId() == Item.MUSHROOM_STEW || itemInHand.getId() == Item.BEETROOT_SOUP) {
+                                    this.inventory.addItem(Item.get(Item.BOWL, 0, 1));
+                                } else if (itemInHand.getId() == Item.RAW_FISH && itemInHand.getDamage() == 3) { //Pufferfish
+                                    //this.addEffect(Effect::getEffect(Effect::HUNGER).setAmplifier(2).setDuration(15 * 20));
+                                    this.addEffect(Effect.getEffect(Effect.NAUSEA).setAmplifier(1).setDuration(15 * 20));
+                                    this.addEffect(Effect.getEffect(Effect.POISON).setAmplifier(3).setDuration(60 * 20));
+                                }
+                            }
+
+                            this.inventory.setItemInHand(itemInHand);
+                            this.inventory.sendHeldItem(this);
+                        }
+                        break;
+                }
+                break;
+            case ProtocolInfo.DROP_ITEM_PACKET:
+                if (!this.spawned || this.blocked || !this.isAlive()) {
+                    break;
+                }
+                item = this.inventory.getItemInHand();
+                PlayerDropItemEvent dropItemEvent = new PlayerDropItemEvent(this, item);
+                this.server.getPluginManager().callEvent(dropItemEvent);
+                if (dropItemEvent.isCancelled()) {
+                    this.inventory.sendContents(this);
+                    break;
+                }
+
+                this.inventory.setItemInHand(Item.get(Item.AIR, 0, 1));
+                Vector3 motion = this.getDirectionVector().multiply(0.4);
+
+                this.level.dropItem(this.add(0, 1.3, 0), item, motion, 40);
+
+                this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
+                break;
+
+            case ProtocolInfo.TEXT_PACKET:
+                if (!this.spawned || !this.isAlive()) {
+                    break;
+                }
+
+                this.craftingType = 0;
+                TextPacket textPacket = (TextPacket) packet;
+                if (textPacket.type == TextPacket.TYPE_CHAT) {
+                    textPacket.message = this.removeFormat ? TextFormat.clean(textPacket.message) : textPacket.message;
+                    for (String msg : textPacket.message.split("\n")) {
+                        if (!"".equals(msg.trim()) && msg.length() <= 255 && this.messageCounter-- > 0) {
+                            if (msg.startsWith("/")) { //Command
+                                PlayerCommandPreprocessEvent commandPreprocessEvent = new PlayerCommandPreprocessEvent(this, msg);
+                                if (commandPreprocessEvent.getMessage().length() > 320) {
+                                    ev.setCancelled();
+                                }
+                                this.server.getPluginManager().callEvent(commandPreprocessEvent);
+                                if (commandPreprocessEvent.isCancelled()) {
+                                    break;
+                                }
+                                //Timings::playerCommandTimer.startTiming();
+                                this.server.dispatchCommand(commandPreprocessEvent.getPlayer(), commandPreprocessEvent.getMessage().substring(1));
+                                //Timings::playerCommandTimer.stopTiming();
+                            } else { //Chat
+                                PlayerChatEvent chatEvent = new PlayerChatEvent(this, msg);
+                                this.server.getPluginManager().callEvent(chatEvent);
+                                if (!chatEvent.isCancelled()) {
+                                    this.server.broadcastMessage(this.getServer().getLanguage().translateString(chatEvent.getFormat(), new String[]{chatEvent.getPlayer().getDisplayName(), chatEvent.getMessage()}), chatEvent.getRecipients());
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            case ProtocolInfo.CONTAINER_CLOSE_PACKET:
+                ContainerClosePacket containerClosePacket = (ContainerClosePacket) packet;
+                if (!this.spawned || containerClosePacket.windowid == 0) {
+                    break;
+                }
+                this.craftingType = 0;
+                this.currentTransaction = null;
+                if (this.windowIndex.containsKey(containerClosePacket.windowid)) {
+                    this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windowIndex.get(containerClosePacket.windowid), this));
+                    this.removeWindow(this.windowIndex.get(containerClosePacket.windowid));
+                } else {
+                    this.windowIndex.remove(containerClosePacket.windowid);
+                }
+                break;
+
+            case ProtocolInfo.CRAFTING_EVENT_PACKET:
+                CraftingEventPacket craftingEventPacket = (CraftingEventPacket) packet;
+                if (!this.spawned || !this.isAlive()) {
+                    break;
+                } else if (!this.windowIndex.containsKey(craftingEventPacket.windowId)) {
+                    this.inventory.sendContents(this);
+                    containerClosePacket = new ContainerClosePacket();
+                    containerClosePacket.windowid = craftingEventPacket.windowId;
+                    this.dataPacket(containerClosePacket);
+                    break;
+                }
+
+                Recipe recipe = this.server.getCraftingManager().getRecipe(craftingEventPacket.id);
+
+                if ((recipe == null) || (((recipe instanceof BigShapelessRecipe) || (recipe instanceof BigShapedRecipe)) && this.craftingType == 0)) {
+                    this.inventory.sendContents(this);
+                    break;
+                }
+
+                for (int i = 0; i < craftingEventPacket.input.length; i++) {
+                    Item inputItem = craftingEventPacket.input[i];
+                    if (inputItem.getDamage() == -1 || inputItem.getDamage() == 0xffff) {
+                        inputItem.setDamage(null);
+                    }
+
+                    if (i < 9 && inputItem.getId() > 0) {
+                        inputItem.setCount(1);
+                    }
+                }
+
+                boolean canCraft = true;
+
+
+                if (recipe instanceof ShapedRecipe) {
+                    for (int x = 0; x < 3 && canCraft; ++x) {
+                        for (int y = 0; y < 3; ++y) {
+                            item = craftingEventPacket.input[y * 3 + x];
+                            Item ingredient = ((ShapedRecipe) recipe).getIngredient(x, y);
+                            //todo: check this https://github.com/PocketMine/PocketMine-MP/commit/58709293cf4eee2e836a94226bbba4aca0f53908
+                            if (item.getCount() > 0) {
+                                if (ingredient == null || !ingredient.deepEquals(item, ingredient.hasMeta(), ingredient.getCompoundTag() != null)) {
+                                    canCraft = false;
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                } else if (recipe instanceof ShapelessRecipe) {
+                    List<Item> needed = ((ShapelessRecipe) recipe).getIngredientList();
+
+                    for (int x = 0; x < 3 && canCraft; ++x) {
+                        for (int y = 0; y < 3; ++y) {
+                            item = craftingEventPacket.input[y * 3 + x].clone();
+
+                            for (Item n : new ArrayList<>(needed)) {
+                                if (n.deepEquals(item, n.hasMeta(), n.getCompoundTag() != null)) {
+                                    int remove = Math.min(n.getCount(), item.getCount());
+                                    n.setCount(n.getCount() - remove);
+                                    item.setCount(item.getCount() - remove);
+
+                                    if (n.getCount() == 0) {
+                                        needed.remove(n);
+                                    }
+                                }
+                            }
+
+                            if (item.getCount() > 0) {
+                                canCraft = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!needed.isEmpty()) {
+                        canCraft = false;
+                    }
+                } else {
+                    canCraft = false;
+                }
+
+                List<Item> ingredientsList = new ArrayList<>();
+                if (recipe instanceof ShapedRecipe) {
+                    for (int x = 0; x < 3; x++) {
+                        for (int y = 0; y < 3; y++) {
+                            Item need = ((ShapedRecipe) recipe).getIngredient(x, y);
+                            if (need.getId() == 0) {
+                                continue;
+                            }
+                            for (int count = need.getCount(); count > 0; count--) {
+                                Item needAdd = need.clone();
+                                //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
+                                needAdd.setCount(1);
+                                ingredientsList.add(needAdd);
+                            }
+                        }
+                    }
+                }
+                if (recipe instanceof ShapelessRecipe) {
+                    List<Item> recipeItem = ((ShapelessRecipe) recipe).getIngredientList();
+                    for (Item need : recipeItem) {
+                        if (need.getId() == 0) {
+                            continue;
+                        }
+                        Item needAdd = need.clone();
+                        //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
+                        needAdd.setCount(1);
+                        ingredientsList.add(needAdd);
+                    }
+                }
+
+                Item[] ingredients = ingredientsList.stream().toArray(Item[]::new);
+
+                Item result = craftingEventPacket.output[0];
+
+                if (!canCraft || !recipe.getResult().deepEquals(result)) {
+                    this.server.getLogger().debug("Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": expected " + recipe.getResult() + ", got " + result + ", using: " + Arrays.asList(ingredients).toString());
+                    this.inventory.sendContents(this);
+                    break;
+                }
+
+                int[] used = new int[this.inventory.getSize()];
+
+                for (Item ingredient : ingredients) {
+                    slot = -1;
+                    for (int index : this.inventory.getContents().keySet()) {
+                        Item i = this.inventory.getContents().get(index);
+                        if (ingredient.getId() != 0 && ingredient.deepEquals(i, ingredient.hasMeta()) && (i.getCount() - used[index]) >= 1) {
+                            slot = index;
+                            used[index]++;
+                            break;
+                        }
+                    }
+
+                    if (ingredient.getId() != 0 && slot == -1) {
+                        canCraft = false;
+                        break;
+                    }
+                }
+
+                if (!canCraft) {
+                    this.server.getLogger().debug("Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": client does not have enough items, using: " + Arrays.asList(ingredients).toString());
+                    this.inventory.sendContents(this);
+                    break;
+                }
+                CraftItemEvent craftItemEvent;
+                this.server.getPluginManager().callEvent(craftItemEvent = new CraftItemEvent(this, ingredients, recipe));
+
+                if (craftItemEvent.isCancelled()) {
+                    this.inventory.sendContents(this);
+                    break;
+                }
+
+                for (int i = 0; i < used.length; i++) {
+                    int count = used[i];
+                    if (count == 0) {
+                        continue;
+                    }
+
+                    item = this.inventory.getItem(i);
+
+                    Item newItem;
+                    if (item.getCount() > count) {
+                        newItem = item.clone();
+                        newItem.setCount(item.getCount() - count);
+                    } else {
+                        newItem = Item.get(Item.AIR, 0, 0);
+                    }
+
+                    this.inventory.setItem(i, newItem);
+                }
+
+                Item[] extraItem = this.inventory.addItem(recipe.getResult());
+                if (extraItem.length > 0) {
+                    for (Item i : extraItem) {
+                        this.level.dropItem(this, i);
+                    }
+                }
+                //todo: achievement
+
+                break;
             //todo alot
             default:
                 break;
         }
+
     }
 
     public boolean kick() {
@@ -1747,7 +2792,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void sendTip(String message) {
         TextPacket pk = new TextPacket();
         pk.type = TextPacket.TYPE_TIP;
-        pk.source = message;
+        pk.message = message;
         this.dataPacket(pk);
     }
 
@@ -1793,7 +2838,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
             }
 
-            for (Player player : this.server.getOnlinePlayers().values()) {
+            for (Player player : new ArrayList<>(this.server.getOnlinePlayers().values())) {
                 if (!player.canSee(this)) {
                     player.showPlayer(this);
                 }
@@ -1801,11 +2846,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.hiddenPlayers = new HashMap<>();
 
-            for (Inventory window : this.windowIndex.values()) {
+            for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
                 this.removeWindow(window);
             }
 
-            for (String index : this.usedChunks.keySet()) {
+            for (String index : new ArrayList<>(this.usedChunks.keySet())) {
                 Chunk.Entry entry = Level.getChunkXZ(index);
                 this.level.unregisterChunkLoader(this, entry.chunkX, entry.chunkZ);
                 this.usedChunks.remove(index);
@@ -1879,9 +2924,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             //todo save achievement
 
             this.namedTag.putInt("playerGameType", this.gamemode);
-            this.namedTag.putLong("lastPlayed", System.currentTimeMillis());
+            this.namedTag.putLong("lastPlayed", System.currentTimeMillis() / 1000);
 
             this.namedTag.putString("lastIP", this.getAddress());
+
+            this.namedTag.putInt("FoodLevel", this.getFoodData().getFoodLevel());
+            this.namedTag.putInt("FoodSaturationLevel", this.getFoodData().getFoodSaturationLevel());
 
             if (!"".equals(this.username) && this.namedTag != null) {
                 this.server.saveOfflinePlayerData(this.username, this.namedTag, async);
@@ -2042,7 +3090,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     @Override
     public void setHealth(float health) {
         super.setHealth(health);
-        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health);
+        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? health : 0);
         if (this.spawned) {
             UpdateAttributesPacket pk = new UpdateAttributesPacket();
             pk.entries = new Attribute[]{attr};
@@ -2051,8 +3099,25 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
+    //@Override
+    public void setMovementSpeed(float speed) {
+        this.movementSpeed = speed;
+        Attribute attr = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
+        if (this.spawned) {
+            UpdateAttributesPacket pk = new UpdateAttributesPacket();
+            pk.entries = new Attribute[]{attr};
+            pk.entityId = 0;
+            this.dataPacket(pk);
+        }
+    }
+
+    //@Override
+    public float getMovementSpeed() {
+        return this.movementSpeed;
+    }
+
     @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         if (!this.isAlive()) {
             return;
         }
@@ -2067,9 +3132,29 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             source.setCancelled();
         }
 
-        super.attack(damage, source);
+        if (source instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+            if (damager instanceof Player) {
+                ((Player) damager).getFoodData().updateFoodExpLevel(0.3);
+            }
+            //暴击
+            boolean add = false;
+            if (!damager.onGround) {
+                /* TODO
+                for (int i = 0; i < 5); i++) {
+                    CriticalParticle par = new CriticalPartice(new Vector3(this.x + mt_rand(-15, 15) / 10, this.y + mt_rand(0, 20) / 10, this.z + mt_rand(-15, 15) / 10));
+                    this.getLevel().addParticle(par);
+                }
+                */
+                add = true;
+            }
+            if (add) source.setDamage((float) (source.getDamage() * 1.5));
+        }
+
+        super.attack(source);
 
         if (!source.isCancelled() && this.getLastDamageCause() == source && this.spawned) {
+            this.getFoodData().updateFoodExpLevel(0.3);
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = 0;
             pk.event = EntityEventPacket.HURT_ANIMATION;
@@ -2090,16 +3175,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void sendPosition(Vector3 pos, double yaw, double pitch, byte mode) {
-        MovePlayerPacket pk = new MovePlayerPacket();
-        pk.eid = 0;
-        pk.x = (float) pos.x;
-        pk.y = (float) (pos.y + this.getEyeHeight());
-        pk.z = (float) pos.z;
-        pk.bodyYaw = (float) yaw;
-        pk.pitch = (float) pitch;
-        pk.yaw = (float) yaw;
-        pk.mode = mode;
-        this.dataPacket(pk);
+        this.sendPosition(pos, yaw, pitch, mode, null);
     }
 
     public void sendPosition(Vector3 pos, double yaw, double pitch, byte mode, Player[] targets) {
@@ -2134,7 +3210,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 newChunk.remove(this.getLoaderId());
 
                 //List<Player> reload = new ArrayList<>();
-                for (Player player : this.hasSpawned.values()) {
+                for (Player player : new ArrayList<>(this.hasSpawned.values())) {
                     if (!newChunk.containsKey(player.getLoaderId())) {
                         this.despawnFrom(player);
                     } else {
@@ -2178,25 +3254,22 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
     public boolean teleport(Vector3 pos) {
-        if (pos instanceof Location) {
-            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleport(pos, this.yaw);
+        if (!this.isOnline()) {
+            return false;
         }
-    }
 
-    @Override
-    public boolean teleport(Vector3 pos, double yaw) {
-        if (pos instanceof Location) {
-            return this.teleport(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleport(pos, yaw, this.pitch);
+        Position oldPos = this.getPosition();
+        if (super.teleport(pos)) {
+            this.resetAfterTeleport(oldPos);
+            return true;
         }
+
+        return false;
     }
 
     @Override
@@ -2207,59 +3280,128 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         Position oldPos = this.getPosition();
         if (super.teleport(pos, yaw, pitch)) {
-
-            for (Inventory window : this.windowIndex.values()) {
-                if (Objects.equals(window, this.inventory)) {
-                    continue;
-                }
-                this.removeWindow(window);
-            }
-
-            this.teleportPosition = new Vector3(this.x, this.y, this.z);
-
-            if (!this.checkTeleportPosition()) {
-                this.forceMovement = oldPos;
-            } else {
-                this.spawnToAll();
-            }
-
-
-            this.resetFallDistance();
-            this.nextChunkOrderRun = 0;
-            this.newPosition = null;
-
+            this.resetAfterTeleport(oldPos);
             return true;
         }
 
         return false;
     }
 
-    public void teleportImmediate(Vector3 pos) {
-        this.teleportImmediate(pos, this.yaw);
+    @Override
+    public boolean teleportYaw(Vector3 pos, double yaw) {
+        if (!this.isOnline()) {
+            return false;
+        }
+
+        Position oldPos = this.getPosition();
+        if (super.teleportYaw(pos, yaw)) {
+            this.resetAfterTeleport(oldPos);
+            return true;
+        }
+
+        return false;
     }
 
-    public void teleportImmediate(Vector3 pos, double yaw) {
-        this.teleportImmediate(pos, yaw, this.pitch);
+    @Override
+    public boolean teleportPitch(Vector3 pos, double pitch) {
+        if (!this.isOnline()) {
+            return false;
+        }
+
+        Position oldPos = this.getPosition();
+        if (super.teleportPitch(pos, pitch)) {
+            this.resetAfterTeleport(oldPos);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
+        if (!this.isOnline()) {
+            return false;
+        }
+
+        Position oldPos = this.getPosition();
+        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
+            this.resetAfterTeleport(oldPos);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void resetAfterTeleport(Position oldPos) {
+        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+            if (Objects.equals(window, this.inventory)) {
+                continue;
+            }
+            this.removeWindow(window);
+        }
+
+        this.teleportPosition = new Vector3(this.x, this.y, this.z);
+
+        if (!this.checkTeleportPosition()) {
+            this.forceMovement = oldPos;
+        } else {
+            this.spawnToAll();
+        }
+
+
+        this.resetFallDistance();
+        this.nextChunkOrderRun = 0;
+        this.newPosition = null;
+
+        //Weather
+        this.getLevel().sendWeather(this);
+    }
+
+    public void teleportImmediate(Vector3 pos) {
+        if (super.teleport(pos)) {
+            resetAfterTeleportImmediate();
+        }
     }
 
     public void teleportImmediate(Vector3 pos, double yaw, double pitch) {
         if (super.teleport(pos, yaw, pitch)) {
-
-            for (Inventory window : this.windowIndex.values()) {
-                if (Objects.equals(window, this.inventory)) {
-                    continue;
-                }
-                this.removeWindow(window);
-            }
-
-            this.forceMovement = new Vector3(this.x, this.y, this.z);
-            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
-
-            this.resetFallDistance();
-            this.orderChunks();
-            this.nextChunkOrderRun = 0;
-            this.newPosition = null;
+            resetAfterTeleportImmediate();
         }
+    }
+
+    public void teleportImmediateYaw(Vector3 pos, double yaw) {
+        if (super.teleportYaw(pos, yaw)) {
+            resetAfterTeleportImmediate();
+        }
+    }
+
+    public void teleportImmediatePitch(Vector3 pos, double pitch) {
+        if (super.teleportPitch(pos, pitch)) {
+            resetAfterTeleportImmediate();
+        }
+    }
+
+    public void teleportImmediateYawAndPitch(Vector3 pos, double yaw, double pitch) {
+        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
+            resetAfterTeleportImmediate();
+        }
+    }
+
+    private void resetAfterTeleportImmediate() {
+        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+            if (Objects.equals(window, this.inventory)) {
+                continue;
+            }
+            this.removeWindow(window);
+        }
+
+        this.forceMovement = new Vector3(this.x, this.y, this.z);
+        this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+
+        this.resetFallDistance();
+        this.orderChunks();
+        this.nextChunkOrderRun = 0;
+        this.newPosition = null;
     }
 
     public int getWindowId(Inventory inventory) {
@@ -2383,4 +3525,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         batch.isEncoded = true;
         return batch;
     }
+
+    private boolean foodEnabled = true;
+
+    public boolean isFoodEnabled() {
+        return !(this.isCreative() || this.isSpectator()) && this.foodEnabled;
+    }
+
+    public void setFoodEnabled(boolean foodEnabled) {
+        this.foodEnabled = foodEnabled;
+    }
+
+    public PlayerFood getFoodData() {
+        return this.foodData;
+    }
+
 }

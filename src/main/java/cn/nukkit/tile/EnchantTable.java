@@ -37,9 +37,9 @@ public class EnchantTable extends Spawnable implements Nameable {
     public CompoundTag getSpawnCompound() {
         CompoundTag c = new CompoundTag()
                 .putString("id", Tile.ENCHANT_TABLE)
-                .putInt("x", this.x)
-                .putInt("y", this.y)
-                .putInt("z", this.z);
+                .putInt("x", (int) this.x)
+                .putInt("y", (int) this.y)
+                .putInt("z", (int) this.z);
 
         if (this.hasName()) {
             c.put("CustomName", this.namedTag.get("CustomName"));

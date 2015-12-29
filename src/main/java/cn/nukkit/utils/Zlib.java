@@ -42,7 +42,7 @@ public abstract class Zlib {
     }
 
     public static byte[] inflate(byte[] data, int maxSize) throws DataFormatException, IOException {
-        return Binary.subBytes(data, 0, maxSize);
+        return Binary.subBytes(inflate(data), 0, maxSize);
     }
 
 }

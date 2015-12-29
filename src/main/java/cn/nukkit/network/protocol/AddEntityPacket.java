@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.utils.Binary;
 
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.Map;
  * Nukkit Project
  */
 public class AddEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.ADD_ENTITY_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ADD_ENTITY_PACKET;
 
     @Override
     public byte pid() {
@@ -26,7 +27,7 @@ public class AddEntityPacket extends DataPacket {
     public float speedZ;
     public float yaw;
     public float pitch;
-    public Map<Integer, Object[]> metadata;
+    public Map<Integer, EntityData> metadata;
     public Object[][] links = new Object[0][3];
 
     @Override

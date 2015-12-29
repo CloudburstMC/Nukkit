@@ -46,6 +46,7 @@ public abstract class DefaultPermissions {
         Permission ban = registerPermission(new Permission(ROOT + ".command.ban", "Allows the user to ban people", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.ban.player", "Allows the user to ban players"), ban);
         registerPermission(new Permission(ROOT + ".command.ban.ip", "Allows the user to ban IP addresses"), ban);
+        registerPermission(new Permission(ROOT + ".command.ban.list", "Allows the user to list all the banned ips or players"), ban);
         ban.recalculatePermissibles();
 
         Permission unban = registerPermission(new Permission(ROOT + ".command.unban", "Allows the user to unban people", Permission.DEFAULT_OP), commands);
@@ -100,6 +101,7 @@ public abstract class DefaultPermissions {
         registerPermission(new Permission(ROOT + ".command.timings", "Allows the user to records timings for all plugin events", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.spawnpoint", "Allows the user to change player's spawnpoint", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.setworldspawn", "Allows the user to change the world spawn", Permission.DEFAULT_OP), commands);
+        registerPermission(new Permission(ROOT + ".command.weather", "Allows the user to change the weather", Permission.DEFAULT_OP), commands);
 
         commands.recalculatePermissibles();
 

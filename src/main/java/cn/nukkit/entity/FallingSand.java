@@ -3,8 +3,10 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Liquid;
+import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -18,21 +20,44 @@ public class FallingSand extends Entity {
     public static final int NETWORK_ID = 66;
     public static final int DATA_BLOCK_INFO = 20;
 
-    public float width = 0.98F;
-    public float length = 0.98F;
-    public float height = 0.98F;
+    @Override
+    public float getWidth() {
+        return 0.98f;
+    }
 
-    protected float gravity = 0.04F;
-    protected float drag = 0.02F;
+    @Override
+    public float getLength() {
+        return 0.98f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 0.98f;
+    }
+
+    @Override
+    protected float getGravity() {
+        return 0.04f;
+    }
+
+    @Override
+    protected float getDrag() {
+        return 0x02f;
+    }
+
+    @Override
+    public boolean canCollide() {
+        return false;
+    }
+
     protected int blockId;
     protected int damage;
-
-    public boolean canCollide;
 
     public FallingSand(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
+    @Override
     protected void initEntity() {
         super.initEntity();
 
@@ -53,19 +78,21 @@ public class FallingSand extends Entity {
             return;
         }
 
-        setDataProperty(DATA_BLOCK_INFO, DATA_TYPE_INT, this.getBlock() | this.getDamage() << 8);
+        setDataProperty(DATA_BLOCK_INFO, new IntEntityData(this.getBlock() | this.getDamage() << 8));
     }
 
     public boolean canCollideWith(Entity entity) {
         return false;
     }
 
-    public void attack(float damage, EntityDamageEvent source) {
+    @Override
+    public void attack(EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(damage, source);
+            super.attack(source);
         }
     }
 
+    @Override
     public boolean onUpdate(int currentTick) {
 
         if (closed) {
@@ -95,14 +122,14 @@ public class FallingSand extends Entity {
                 level.setBlock(pos, Block.get(0), true);
             }
 
-            motionY -= gravity;
+            motionY -= getGravity();
 
             move(motionX, motionY, motionZ);
 
-            float friction = 1 - drag;
+            float friction = 1 - getDrag();
 
             motionX *= friction;
-            motionY *= 1 - drag;
+            motionY *= 1 - getDrag();
             motionZ *= friction;
 
             pos = (new Vector3(x - 0.5, y, z - 0.5)).floor();
@@ -111,7 +138,7 @@ public class FallingSand extends Entity {
                 kill();
                 Block block = level.getBlock(pos);
                 if (block.getId() > 0 && !block.isSolid() && !(block instanceof Liquid)) {
-                    getLevel().dropItem(this, cn.nukkit.item.Item.get(this.getBlock(), this.getDamage(), 1));
+                    getLevel().dropItem(this, Item.get(this.getBlock(), this.getDamage(), 1));
                 } else {
                     EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, Block.get(getBlock(), getDamage()));
                     server.getPluginManager().callEvent(event);
@@ -140,11 +167,13 @@ public class FallingSand extends Entity {
         return NETWORK_ID;
     }
 
+    @Override
     public void saveNBT() {
         namedTag.putInt("TileID", blockId);
         namedTag.putByte("Data", (byte) damage);
     }
 
+    @Override
     public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
         packet.type = FallingSand.NETWORK_ID;

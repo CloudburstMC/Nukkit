@@ -25,7 +25,12 @@ public class Slab extends Transparent {
     }
 
     public Slab(int meta) {
-        super(SLAB, meta);
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return SLAB;
     }
 
     @Override
@@ -46,7 +51,7 @@ public class Slab extends Transparent {
                 "Nether Brick"
         };
 
-        return ((this.meta & 0x08) > 0 ? "Upper" : "") + names[this.meta & 0x07] + " Slab";
+        return ((this.meta & 0x08) > 0 ? "Upper " : "") + names[this.meta & 0x07] + " Slab";
     }
 
     @Override
@@ -130,7 +135,7 @@ public class Slab extends Transparent {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
-            return new int[][]{new int[]{this.id, this.meta & 0x07, 1}};
+            return new int[][]{new int[]{this.getId(), this.meta & 0x07, 1}};
         } else {
             return new int[0][];
         }

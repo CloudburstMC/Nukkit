@@ -26,8 +26,8 @@ import cn.nukkit.plugin.Plugin;
  *     }
  *     </pre></p>
  *
- * <p>如果要让Nukkit能够延时或循环执行这个任务，请使用{@link cn.nukkit.scheduler.ServerScheduler}。<br>
- * If you want Nukkit to execute this task with delay or repeat, use {@link cn.nukkit.scheduler.ServerScheduler}.</p>
+ * <p>如果要让Nukkit能够延时或循环执行这个任务，请使用{@link ServerScheduler}。<br>
+ * If you want Nukkit to execute this task with delay or repeat, use {@link ServerScheduler}.</p>
  *
  * @param <T> 这个任务所属的插件。<br>The plugin that owns this task.
  * @author MagicDroidX(code) @ Nukkit Project

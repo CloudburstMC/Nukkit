@@ -4,7 +4,7 @@ package cn.nukkit.network.protocol;
  * Created by on 15-10-12.
  */
 public class DisconnectPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.DISCONNECT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.DISCONNECT_PACKET;
 
     public String message;
 

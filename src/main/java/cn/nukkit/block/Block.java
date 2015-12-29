@@ -20,7 +20,7 @@ import java.util.List;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Block extends Position implements Metadatable, Cloneable {
+public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int AIR = 0;
     public static final int STONE = 1;
     public static final int GRASS = 2;
@@ -66,6 +66,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int DANDELION = 37;
     public static final int ROSE = 38;
     public static final int POPPY = 38;
+    public static final int FLOWER = 38;
     public static final int RED_FLOWER = 38;
     public static final int BROWN_MUSHROOM = 39;
     public static final int RED_MUSHROOM = 40;
@@ -90,7 +91,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int OAK_WOOD_STAIRS = 53;
     public static final int OAK_WOODEN_STAIRS = 53;
     public static final int CHEST = 54;
-
+    public static final int REDSTONE_WIRE = 55;
     public static final int DIAMOND_ORE = 56;
     public static final int DIAMOND_BLOCK = 57;
     public static final int CRAFTING_TABLE = 58;
@@ -115,6 +116,8 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int REDSTONE_ORE = 73;
     public static final int GLOWING_REDSTONE_ORE = 74;
     public static final int LIT_REDSTONE_ORE = 74;
+
+    public static final int REDSTONE_TORCH = 76;
 
     public static final int SNOW = 78;
     public static final int SNOW_LAYER = 78;
@@ -152,6 +155,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int VINE = 106;
     public static final int VINES = 106;
     public static final int FENCE_GATE = 107;
+    public static final int FENCE_GATE_OAK = 107;
     public static final int BRICK_STAIRS = 108;
     public static final int STONE_BRICK_STAIRS = 109;
     public static final int MYCELIUM = 110;
@@ -165,6 +169,8 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int ENCHANTING_TABLE = 116;
     public static final int ENCHANT_TABLE = 116;
     public static final int ENCHANTMENT_TABLE = 116;
+    public static final int BREWING_STAND_BLOCK = 117;
+    public static final int BREWING_BLOCK = 117;
 
     public static final int END_PORTAL_FRAME = 120;
     public static final int END_STONE = 121;
@@ -218,7 +224,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int CARPET = 171;
     public static final int HARDENED_CLAY = 172;
     public static final int COAL_BLOCK = 173;
-
+    public static final int PACKED_ICE = 174;
     public static final int DOUBLE_PLANT = 175;
 
     public static final int FENCE_GATE_SPRUCE = 183;
@@ -233,7 +239,6 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static final int BEETROOT_BLOCK = 244;
     public static final int STONECUTTER = 245;
     public static final int GLOWING_OBSIDIAN = 246;
-    public static final int NETHER_REACTOR = 247;
 
     public static Class[] list = null;
     public static Block[] fullList = null;
@@ -243,20 +248,18 @@ public class Block extends Position implements Metadatable, Cloneable {
     public static double[] hardness = null;
     public static boolean[] transparent = null;
 
-    protected int id;
     protected int meta = 0;
+
+    protected int powerLevel = 0;
+    protected boolean powerSource = false;
 
     public AxisAlignedBB boundingBox = null;
 
-    public Block(int id) {
-        this(id, 0);
-    }
-
-    public Block(int id, Integer meta) {
-        this.id = id;
+    protected Block(Integer meta) {
         this.meta = (meta != null ? meta : 0);
     }
 
+    @SuppressWarnings("unchecked")
     public static void init() {
         if (list == null) {
             list = new Class[256];
@@ -266,7 +269,167 @@ public class Block extends Position implements Metadatable, Cloneable {
             solid = new boolean[256];
             hardness = new double[256];
             transparent = new boolean[256];
-            // todo register blocks
+
+            list[AIR] = Air.class;
+            list[STONE] = Stone.class;
+            list[GRASS] = Grass.class;
+            list[DIRT] = Dirt.class;
+            list[COBBLESTONE] = Cobblestone.class;
+            list[PLANKS] = Planks.class;
+            list[SAPLING] = Sapling.class;
+            list[BEDROCK] = Bedrock.class;
+            list[WATER] = Water.class;
+            list[STILL_WATER] = StillWater.class;
+            list[LAVA] = Lava.class;
+            list[STILL_LAVA] = StillLava.class;
+            list[SAND] = Sand.class;
+            list[GRAVEL] = Gravel.class;
+            list[GOLD_ORE] = GoldOre.class;
+            list[IRON_ORE] = IronOre.class;
+            list[COAL_ORE] = CoalOre.class;
+            list[WOOD] = Wood.class;
+            list[LEAVES] = Leaves.class;
+            list[SPONGE] = Sponge.class;
+            list[GLASS] = Glass.class;
+            list[LAPIS_ORE] = LapisOre.class;
+            list[LAPIS_BLOCK] = Lapis.class;
+            list[SANDSTONE] = Sandstone.class;
+            list[BED_BLOCK] = Bed.class;
+            list[COBWEB] = Cobweb.class;
+            list[TALL_GRASS] = TallGrass.class;
+            list[DEAD_BUSH] = DeadBush.class;
+            list[WOOL] = Wool.class;
+            list[DANDELION] = Dandelion.class;
+
+            list[FLOWER] = Flower.class;
+
+            list[BROWN_MUSHROOM] = BrownMushroom.class;
+            //list[RED_MUSHROOM] = RedMushroom.class;
+            list[GOLD_BLOCK] = Gold.class;
+            list[IRON_BLOCK] = Iron.class;
+            list[DOUBLE_SLAB] = DoubleSlab.class;
+            list[SLAB] = Slab.class;
+            list[BRICKS_BLOCK] = Bricks.class;
+            list[TNT] = TNT.class;
+            list[BOOKSHELF] = Bookshelf.class;
+            list[MOSS_STONE] = MossStone.class;
+            list[OBSIDIAN] = Obsidian.class;
+            list[TORCH] = Torch.class;
+            list[FIRE] = Fire.class;
+            list[MONSTER_SPAWNER] = MonsterSpawner.class;
+            list[WOOD_STAIRS] = WoodStairs.class;
+            list[CHEST] = Chest.class;
+            list[REDSTONE_WIRE] = RedstoneWire.class;
+            list[DIAMOND_ORE] = DiamondOre.class;
+            list[DIAMOND_BLOCK] = Diamond.class;
+            list[WORKBENCH] = Workbench.class;
+            list[WHEAT_BLOCK] = Wheat.class;
+            list[FARMLAND] = Farmland.class;
+            list[FURNACE] = Furnace.class;
+            list[BURNING_FURNACE] = BurningFurnace.class;
+            list[SIGN_POST] = SignPost.class;
+            //list[WOOD_DOOR_BLOCK] = WoodDoor.class;
+            list[LADDER] = Ladder.class;
+
+            list[COBBLESTONE_STAIRS] = CobblestoneStairs.class;
+            //list[WALL_SIGN] = WallSign.class;
+
+            //list[IRON_DOOR_BLOCK] = IronDoor.class;
+            list[REDSTONE_ORE] = RedstoneOre.class;
+            list[GLOWING_REDSTONE_ORE] = GlowingRedstoneOre.class;
+
+            list[REDSTONE_TORCH] = RedstoneTorch.class;
+
+            list[SNOW_LAYER] = SnowLayer.class;
+            list[ICE] = Ice.class;
+            list[SNOW_BLOCK] = SnowBlock.class;
+            list[CACTUS] = Cactus.class;
+            list[CLAY_BLOCK] = Clay.class;
+            //list[SUGARCANE_BLOCK] = Sugarcane.class;
+            list[FENCE] = Fence.class;
+            list[PUMPKIN] = Pumpkin.class;
+            //list[NETHERRACK] = Netherrack.class;
+            list[SOUL_SAND] = SoulSand.class;
+            list[GLOWSTONE_BLOCK] = Glowstone.class;
+
+            list[LIT_PUMPKIN] = LitPumpkin.class;
+            list[CAKE_BLOCK] = Cake.class;
+
+            //list[TRAPDOOR] = Trapdoor.class;
+
+            list[STONE_BRICKS] = StoneBricks.class;
+
+            list[IRON_BARS] = IronBars.class;
+            list[GLASS_PANE] = GlassPane.class;
+            list[MELON_BLOCK] = Melon.class;
+            /*list[PUMPKIN_STEM] = PumpkinStem.class;
+            list[MELON_STEM] = MelonStem.class;
+            list[VINE] = Vine.class;
+            */
+            list[FENCE_GATE] = FenceGate.class;
+
+            list[BRICK_STAIRS] = BrickStairs.class;
+            list[STONE_BRICK_STAIRS] = StoneBrickStairs.class;
+
+            //list[MYCELIUM] = Mycelium.class;
+            list[WATER_LILY] = WaterLily.class;
+            list[NETHER_BRICKS] = NetherBrick.class;
+            list[NETHER_BRICK_FENCE] = NetherBrickFence.class;
+            list[NETHER_BRICKS_STAIRS] = NetherBrickStairs.class;
+
+            //list[ENCHANTING_TABLE] = EnchantingTable.class;
+
+            //list[END_PORTAL_FRAME] = EndPortalFrame.class;
+            list[END_STONE] = EndStone.class;
+
+            list[SANDSTONE_STAIRS] = SandstoneStairs.class;
+
+            list[EMERALD_ORE] = EmeraldOre.class;
+            list[EMERALD_BLOCK] = Emerald.class;
+
+            list[SPRUCE_WOOD_STAIRS] = SpruceWoodStairs.class;
+            list[BIRCH_WOOD_STAIRS] = BirchWoodStairs.class;
+            list[JUNGLE_WOOD_STAIRS] = JungleWoodStairs.class;
+            list[STONE_WALL] = StoneWall.class;
+
+            //list[CARROT_BLOCK] = Carrot.class;
+            //list[POTATO_BLOCK] = Potato.class;
+            list[ANVIL] = Anvil.class;
+
+            list[REDSTONE_BLOCK] = Redstone.class;
+
+            list[QUARTZ_BLOCK] = Quartz.class;
+            list[QUARTZ_STAIRS] = QuartzStairs.class;
+            list[DOUBLE_WOOD_SLAB] = DoubleWoodSlab.class;
+            list[WOOD_SLAB] = WoodSlab.class;
+            list[STAINED_CLAY] = StainedClay.class;
+
+            list[LEAVES2] = Leaves2.class;
+            list[WOOD2] = Wood2.class;
+            list[ACACIA_WOOD_STAIRS] = AcaciaWoodStairs.class;
+            list[DARK_OAK_WOOD_STAIRS] = DarkOakWoodStairs.class;
+
+            list[HAY_BALE] = HayBale.class;
+            list[CARPET] = Carpet.class;
+            list[HARDENED_CLAY] = HardenedClay.class;
+            list[COAL_BLOCK] = Coal.class;
+            list[PACKED_ICE] = PackedIce.class;
+            list[DOUBLE_PLANT] = DoublePlant.class;
+
+            list[FENCE_GATE_SPRUCE] = FenceGateSpruce.class;
+            list[FENCE_GATE_BIRCH] = FenceGateBirch.class;
+            list[FENCE_GATE_JUNGLE] = FenceGateJungle.class;
+            list[FENCE_GATE_DARK_OAK] = FenceGateDarkOak.class;
+            list[FENCE_GATE_ACACIA] = FenceGateAcacia.class;
+
+            list[GRASS_PATH] = GrassPath.class;
+
+            list[PODZOL] = Podzol.class;
+            list[BEETROOT_BLOCK] = Beetroot.class;
+            list[STONECUTTER] = Stonecutter.class;
+            list[GLOWING_OBSIDIAN] = GlowingObsidian.class;
+            list[BREWING_STAND_BLOCK] = BrewingStand.class;
+
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];
                 if (c != null) {
@@ -279,6 +442,7 @@ public class Block extends Position implements Metadatable, Cloneable {
                             fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                         Server.getInstance().getLogger().error("Error while registering " + c.getName());
                         return;
                     }
@@ -304,7 +468,7 @@ public class Block extends Position implements Metadatable, Cloneable {
                 } else {
                     lightFilter[id] = 1;
                     for (int data = 0; data < 16; ++data) {
-                        fullList[(id) << 4 | data] = new Block(id, data);
+                        fullList[(id) << 4 | data] = new UnknownBlock(id, data);
                     }
                 }
             }
@@ -319,6 +483,7 @@ public class Block extends Position implements Metadatable, Cloneable {
         return get(id, meta, null);
     }
 
+    @SuppressWarnings("unchecked")
     public static Block get(int id, Integer meta, Position pos) {
         Block block;
         try {
@@ -328,10 +493,10 @@ public class Block extends Position implements Metadatable, Cloneable {
                 constructor.setAccessible(true);
                 block = (Block) constructor.newInstance(meta);
             } else {
-                block = new Block(id, meta);
+                block = new UnknownBlock(id, meta);
             }
         } catch (Exception e) {
-            block = new Block(id, meta);
+            block = new UnknownBlock(id, meta);
         }
 
         if (pos != null) {
@@ -423,13 +588,9 @@ public class Block extends Position implements Metadatable, Cloneable {
         return false;
     }
 
-    public String getName() {
-        return "Unknown";
-    }
+    public abstract String getName();
 
-    public int getId() {
-        return this.id;
-    }
+    public abstract int getId();
 
     public void addVelocityToEntity(Entity entity, Vector3 vector) {
 
@@ -452,7 +613,7 @@ public class Block extends Position implements Metadatable, Cloneable {
     }
 
     public int[][] getDrops(Item item) {
-        if (this.id < 0 || this.id > list.length) { //Unknown blocks
+        if (this.getId() < 0 || this.getId() > list.length) { //Unknown blocks
             return new int[0][0];
         } else {
             return new int[][]{
@@ -661,6 +822,62 @@ public class Block extends Position implements Metadatable, Cloneable {
 
     public Block clone() {
         return (Block) super.clone();
+    }
+
+    public void setPowerLevel(int powerLevel) {
+        this.powerLevel = powerLevel;
+    }
+
+    public int getPowerLevel() {
+        return powerLevel;
+    }
+
+    public int getPowerLevel(int side) {
+        return this.getSide(side).getPowerLevel();
+    }
+
+    public boolean isNeighborPowered() {
+        return this.getNeighborPowerLevel() > 0;
+    }
+
+    public int getNeighborPowerLevel() {
+        int energy = 0;
+        int tempLevel = 0;
+        tempLevel = this.getSide(SIDE_DOWN).getPowerLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_UP).getPowerLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_NORTH).getPowerLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_SOUTH).getPowerLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_EAST).getPowerLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        tempLevel = this.getSide(SIDE_WEST).getPowerLevel();
+        energy = tempLevel > energy ? tempLevel : energy;
+        return energy;
+    }
+
+    public boolean isPowered() {
+        return this.powerLevel > 0;
+    }
+
+    public boolean isPowerSource() {
+        return this.powerSource;
+    }
+
+    public void setPowerSource(boolean isSource) {
+        this.powerSource = isSource;
+    }
+
+    public String getLocationHash() {
+        String str = "";
+        str = String.valueOf((int) this.x);
+        str += ":";
+        str += String.valueOf((int) this.y);
+        str += ":";
+        str += String.valueOf((int) this.z);
+        return str;
     }
 
 }

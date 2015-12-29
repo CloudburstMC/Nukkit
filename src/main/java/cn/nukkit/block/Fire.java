@@ -20,7 +20,12 @@ public class Fire extends Flowable {
     }
 
     public Fire(int meta) {
-        super(FIRE, 0);
+        super(0);
+    }
+
+    @Override
+    public int getId() {
+        return FIRE;
     }
 
     @Override
@@ -52,7 +57,7 @@ public class Fire extends Flowable {
     public void onEntityCollide(Entity entity) {
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
             EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.CAUSE_FIRE, 1);
-            entity.attack(ev.getFinalDamage(), ev);
+            entity.attack(ev);
         }
 
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 8);

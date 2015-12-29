@@ -7,13 +7,13 @@ import cn.nukkit.item.Item;
  */
 public class UseItemPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.USE_ITEM_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.USE_ITEM_PACKET;
 
     public int x;
     public int y;
     public int z;
 
-    public byte face;
+    public int face;
 
     public float fx;
     public float fy;
@@ -35,7 +35,7 @@ public class UseItemPacket extends DataPacket {
         this.x = this.getInt();
         this.y = this.getInt();
         this.z = this.getInt();
-        this.face = (byte) getByte();
+        this.face = this.getByte();
         this.fx = this.getFloat();
         this.fy = this.getFloat();
         this.fz = this.getFloat();

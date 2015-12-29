@@ -8,12 +8,8 @@ import cn.nukkit.math.AxisAlignedBB;
  */
 public abstract class Flowable extends Transparent {
 
-    public Flowable(int id) {
-        super(id);
-    }
-
-    public Flowable(int id, int meta) {
-        super(id, meta);
+    protected Flowable(int meta) {
+        super(meta);
     }
 
     @Override

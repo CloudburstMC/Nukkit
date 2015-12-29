@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class FullChunkDataPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.FULL_CHUNK_DATA_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.FULL_CHUNK_DATA_PACKET;
 
     public static final byte ORDER_COLUMNS = 0;
     public static final byte ORDER_LAYERED = 1;

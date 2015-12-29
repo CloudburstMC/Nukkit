@@ -15,16 +15,37 @@ public class PrimedTNT extends Entity implements Explosive {
 
     public static final int NETWORK_ID = 65;
 
-    private float width = 0.98F;
-    private float length = 0.98F;
-    private float height = 0.98F;
+    @Override
+    public float getWidth() {
+        return 0.98f;
+    }
 
-    protected float gravity = 0.04F;
-    protected float drag = 0.02F;
+    @Override
+    public float getLength() {
+        return 0.98f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 0.98f;
+    }
+
+    @Override
+    protected float getGravity() {
+        return 0.04f;
+    }
+
+    @Override
+    protected float getDrag() {
+        return 0.02f;
+    }
+
+    @Override
+    public boolean canCollide() {
+        return false;
+    }
 
     protected int fuse;
-
-    private boolean canCollide;
 
     public PrimedTNT(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -35,9 +56,10 @@ public class PrimedTNT extends Entity implements Explosive {
         return NETWORK_ID;
     }
 
-    public void attack(float damage, EntityDamageEvent source) {
+    @Override
+    public void attack(EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(damage, source);
+            super.attack(source);
         }
     }
 
@@ -80,11 +102,11 @@ public class PrimedTNT extends Entity implements Explosive {
 
         if (isAlive()) {
 
-            motionY -= gravity;
+            motionY -= getGravity();
 
             move(motionX, motionY, motionZ);
 
-            float friction = 1 - drag;
+            float friction = 1 - getDrag();
 
             motionX *= friction;
             motionY *= friction;
@@ -134,38 +156,6 @@ public class PrimedTNT extends Entity implements Explosive {
         packet.metadata = dataProperties;
         player.dataPacket(packet);
         super.spawnTo(player);
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public void setWidth(float width) {
-        this.width = width;
-    }
-
-    public float getLength() {
-        return length;
-    }
-
-    public void setLength(float length) {
-        this.length = length;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
-    public void setHeight(float height) {
-        this.height = height;
-    }
-
-    public boolean isCanCollide() {
-        return canCollide;
-    }
-
-    public void setCanCollide(boolean canCollide) {
-        this.canCollide = canCollide;
     }
 
 }

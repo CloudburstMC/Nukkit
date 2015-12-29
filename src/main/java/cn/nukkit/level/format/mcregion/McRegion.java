@@ -3,6 +3,7 @@ package cn.nukkit.level.format.mcregion;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
@@ -79,23 +80,28 @@ public class McRegion extends BaseLevelProvider {
         }
 
         CompoundTag levelData = new CompoundTag("Data")
+                .putCompound("GameRules", new CompoundTag())
+
+                .putLong("DayTime", 0)
+                .putInt("GameType", 0)
+                .putString("generatorName", Generator.getGeneratorName(generator))
+                .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
+                .putInt("generatorVersion", 1)
                 .putBoolean("hardcore", false)
                 .putBoolean("initialized", true)
-                .putInt("GameType", 0)
-                .putInt("generatorVersion", 1)
+                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
+                .putString("LevelName", name)
+                .putBoolean("raining", false)
+                .putInt("rainTime", 0)
+                .putLong("RandomSeed", seed)
                 .putInt("SpawnX", 128)
                 .putInt("SpawnY", 70)
                 .putInt("SpawnZ", 128)
+                .putBoolean("thundering", false)
+                .putInt("thunderTime", 0)
                 .putInt("version", 19133)
-                .putLong("DayTime", 0)
-                .putLong("LastPlayed", System.currentTimeMillis())
-                .putLong("RandomSeed", seed)
-                .putLong("SizeOnDisk", 0)
                 .putLong("Time", 0)
-                .putString("generatorName", Generator.getGeneratorName(generator))
-                .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
-                .putString("LevelName", name)
-                .putCompound("GameRules", new CompoundTag());
+                .putLong("SizeOnDisk", 0);
 
         NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
     }
@@ -110,7 +116,7 @@ public class McRegion extends BaseLevelProvider {
 
     @Override
     public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
-        Chunk chunk = this.getChunk(x, z, false);
+        BaseFullChunk chunk = this.getChunk(x, z, false);
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk Sent");
         }
@@ -135,12 +141,12 @@ public class McRegion extends BaseLevelProvider {
 
         BinaryStream extraData = new BinaryStream();
         extraData.putLInt(chunk.getBlockExtraDataArray().size());
-        for (Integer key : chunk.getBlockExtraDataArray().values()) {
+        for (Integer key : chunk.getBlockExtraDataArray().keySet()) {
             extraData.putLInt(key);
             extraData.putLShort(chunk.getBlockExtraDataArray().get(key));
         }
 
-        BinaryStream stream = new BinaryStream(new byte[65536]);
+        BinaryStream stream = new BinaryStream();
         stream.put(chunk.getBlockIdArray());
         stream.put(chunk.getBlockDataArray());
         stream.put(chunk.getBlockSkyLightArray());
@@ -161,7 +167,7 @@ public class McRegion extends BaseLevelProvider {
 
     @Override
     public void unloadChunks() {
-        for (Chunk chunk : this.chunks.values()) {
+        for (Chunk chunk : new ArrayList<>(this.chunks.values())) {
             this.unloadChunk(chunk.getX(), chunk.getZ(), false);
         }
         this.chunks = new HashMap<>();

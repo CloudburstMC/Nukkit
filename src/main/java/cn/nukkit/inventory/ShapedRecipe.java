@@ -17,9 +17,9 @@ public class ShapedRecipe implements Recipe {
 
     private Map<Character, String> shapes = new HashMap<>();
 
-    private List<List<Item>> ingredients = new ArrayList<>();
+    private Map<Integer, Map<Integer, Item>> ingredients = new HashMap<>();
 
-    private Map<Character, List<int[]>> shapeItems = new HashMap<>();
+    private Map<Character, List<Entry>> shapeItems = new HashMap<>();
 
     public ShapedRecipe(Item result, String... shape) {
         if (shape.length == 0) {
@@ -37,15 +37,22 @@ public class ShapedRecipe implements Recipe {
                 throw new IllegalStateException("Crafting rows should be 1, 2, 3 characters, not " + row.length());
             }
 
-            this.ingredients.add(new ArrayList<>(Arrays.asList(new Item[row.length()])));
+            this.ingredients.put(y, new HashMap<Integer, Item>() {
+                {
+                    for (int i = 0; i < row.length(); i++) {
+                        put(i, null);
+                    }
+                }
+            });
+
             int len = row.length();
             for (int i = 0; i < len; i++) {
                 this.shapes.put(row.charAt(i), null);
 
                 if (!this.shapeItems.containsKey(row.charAt(i))) {
-                    this.shapeItems.put(row.charAt(i), new ArrayList<>(Arrays.asList(new int[][]{new int[]{i, y}})));
+                    this.shapeItems.put(row.charAt(i), new ArrayList<>(Arrays.asList(new Entry[]{new Entry(i, y)})));
                 } else {
-                    this.shapeItems.get(row.charAt(i)).add(new int[]{i, y});
+                    this.shapeItems.get(row.charAt(i)).add(new Entry(i, y));
                 }
             }
         }
@@ -94,26 +101,24 @@ public class ShapedRecipe implements Recipe {
     }
 
     protected void fixRecipe(char key, Item item) {
-        for (int[] entry : this.shapeItems.get(key)) {
-            this.ingredients.get(entry[1]).add(entry[0], item.clone());
+        for (Entry entry : this.shapeItems.get(key)) {
+            this.ingredients.get(entry.y).put(entry.x, item.clone());
         }
     }
 
     public Map<Integer, Map<Integer, Item>> getIngredientMap() {
         Map<Integer, Map<Integer, Item>> ingredients = new HashMap<>();
-        for (int y = 0; y < this.ingredients.size(); y++) {
-            List<Item> row = this.ingredients.get(y);
-            for (int x = 0; x < row.size(); x++) {
+        for (int y : this.ingredients.keySet()) {
+            Map<Integer, Item> row = this.ingredients.get(y);
+
+            ingredients.put(y, new HashMap<>());
+
+            for (int x : row.keySet()) {
                 Item ingredient = row.get(x);
+
                 if (ingredient != null) {
-                    if (!ingredients.containsKey(y)) {
-                        ingredients.put(y, new HashMap<>());
-                    }
                     ingredients.get(y).put(x, ingredient.clone());
                 } else {
-                    if (!ingredients.containsKey(y)) {
-                        ingredients.put(y, new HashMap<>());
-                    }
                     ingredients.get(y).put(x, Item.get(Item.AIR));
                 }
             }
@@ -124,11 +129,13 @@ public class ShapedRecipe implements Recipe {
     }
 
     public Item getIngredient(int x, int y) {
-        try {
-            return this.ingredients.get(y).get(x);
-        } catch (Exception e) {
-            return Item.get(Item.AIR);
+        if (this.ingredients.containsKey(y)) {
+            if (this.ingredients.get(y).containsKey(x)) {
+                return this.ingredients.get(y).get(x) != null ? this.ingredients.get(y).get(x) : Item.get(Item.AIR);
+            }
         }
+
+        return Item.get(Item.AIR);
     }
 
     public Map<Character, String> getShape() {
@@ -138,5 +145,15 @@ public class ShapedRecipe implements Recipe {
     @Override
     public void registerToCraftingManager() {
         Server.getInstance().getCraftingManager().registerShapedRecipe(this);
+    }
+
+    public static class Entry {
+        public int x;
+        public int y;
+
+        public Entry(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 }

@@ -62,9 +62,9 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
     }
 
     protected int getSlotIndex(int index) {
-        ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
+        ListTag<CompoundTag> list = this.namedTag.getList("Items", new ListTag<>());
         for (int i = 0; i < list.size(); i++) {
-            if (list.list.get(i).getByte("Slot") == index) {
+            if (list.get(i).getByte("Slot") == index) {
                 return i;
             }
         }
@@ -95,14 +95,14 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
 
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
             if (i >= 0) {
-                this.namedTag.getList("Items").list.remove(i);
+                this.namedTag.getList("Items").remove(i);
             }
         } else if (i < 0) {
-            i = this.namedTag.getList("Items").list.size();
+            i = this.namedTag.getList("Items").size();
             i = Math.max(i, this.getSize());
-            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
         } else {
-            ((ListTag<CompoundTag>) this.namedTag.getList("Items")).list.add(i, d);
+            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
         }
     }
 
@@ -128,7 +128,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
             }
 
             if (this.doubleInventory == null) {
-                if ((pair.x + (pair.z << 15)) > (this.x + (this.z << 15))) { //Order them correctly
+                if ((pair.x + ((int) pair.z << 15)) > (this.x + ((int) this.z << 15))) { //Order them correctly
                     this.doubleInventory = new DoubleChestInventory(pair, this);
                 } else {
                     this.doubleInventory = new DoubleChestInventory(this, pair);
@@ -191,10 +191,10 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
     }
 
     public void createPair(Chest tile) {
-        this.namedTag.putInt("pairx", tile.x);
-        this.namedTag.putInt("pairz", tile.z);
-        tile.namedTag.putInt("pairx", this.x);
-        tile.namedTag.putInt("pairz", this.z);
+        this.namedTag.putInt("pairx", (int) tile.x);
+        this.namedTag.putInt("pairz", (int) tile.z);
+        tile.namedTag.putInt("pairx", (int) this.x);
+        tile.namedTag.putInt("pairz", (int) this.z);
     }
 
     public boolean unpair() {
@@ -226,17 +226,17 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
         if (this.isPaired()) {
             c = new CompoundTag()
                     .putString("id", Tile.CHEST)
-                    .putInt("x", this.x)
-                    .putInt("y", this.y)
-                    .putInt("z", this.z)
+                    .putInt("x", (int) this.x)
+                    .putInt("y", (int) this.y)
+                    .putInt("z", (int) this.z)
                     .putInt("pairx", this.namedTag.getInt("pairx"))
                     .putInt("pairz", this.namedTag.getInt("pairz"));
         } else {
             c = new CompoundTag()
                     .putString("id", Tile.CHEST)
-                    .putInt("x", this.x)
-                    .putInt("y", this.y)
-                    .putInt("z", this.z);
+                    .putInt("x", (int) this.x)
+                    .putInt("y", (int) this.y)
+                    .putInt("z", (int) this.z);
         }
 
         if (this.hasName()) {

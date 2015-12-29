@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class MovePlayerPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.MOVE_PLAYER_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.MOVE_PLAYER_PACKET;
 
     public static final byte MODE_NORMAL = 0;
     public static final byte MODE_RESET = 1;

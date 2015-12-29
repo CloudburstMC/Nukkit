@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class MobArmorEquipmentPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.MOB_ARMOR_EQUIPMENT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.MOB_ARMOR_EQUIPMENT_PACKET;
 
     @Override
     public byte pid() {

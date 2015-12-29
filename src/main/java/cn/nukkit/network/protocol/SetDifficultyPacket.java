@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class SetDifficultyPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.SET_DIFFICULTY_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.SET_DIFFICULTY_PACKET;
 
     public int difficulty;
 

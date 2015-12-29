@@ -17,7 +17,12 @@ public class LapisOre extends Solid {
     }
 
     public LapisOre(int meta) {
-        super(LAPIS_ORE, 0);
+        super(0);
+    }
+
+    @Override
+    public int getId() {
+        return LAPIS_ORE;
     }
 
     @Override

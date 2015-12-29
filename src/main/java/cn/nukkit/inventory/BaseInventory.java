@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
+import cn.nukkit.event.inventory.InventoryOpenEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerSetContentPacket;
 import cn.nukkit.network.protocol.ContainerSetSlotPacket;
@@ -276,7 +277,7 @@ public abstract class BaseInventory implements Inventory {
                 emptySlots.add(i);
             }
 
-            for (Item slot : itemSlots) {
+            for (Item slot : new ArrayList<>(itemSlots)) {
                 if (slot.equals(item) && item.getCount() < item.getMaxStackSize()) {
                     int amount = Math.min(item.getMaxStackSize() - item.getCount(), slot.getCount());
                     amount = Math.min(amount, this.getMaxStackSize());
@@ -290,22 +291,24 @@ public abstract class BaseInventory implements Inventory {
                     }
                 }
             }
-            if (itemSlots.size() == 0) {
+            if (itemSlots.isEmpty()) {
                 break;
             }
         }
 
-        if (itemSlots.size() > 0 && emptySlots.size() > 0) {
-            for (Integer slotIndex : emptySlots) {
-                Item slot = itemSlots.get(0);
-                int amount = Math.min(slot.getMaxStackSize(), slot.getCount());
-                amount = Math.min(amount, this.getMaxStackSize());
-                slot.setCount(slot.getCount() - amount);
-                Item item = slot.clone();
-                item.setCount(amount);
-                this.setItem(slotIndex, item);
-                if (slot.getCount() <= 0) {
-                    itemSlots.remove(slot);
+        if (!itemSlots.isEmpty() && !emptySlots.isEmpty()) {
+            for (int slotIndex : emptySlots) {
+                if (!itemSlots.isEmpty()) {
+                    Item slot = itemSlots.get(0);
+                    int amount = Math.min(slot.getMaxStackSize(), slot.getCount());
+                    amount = Math.min(amount, this.getMaxStackSize());
+                    slot.setCount(slot.getCount() - amount);
+                    Item item = slot.clone();
+                    item.setCount(amount);
+                    this.setItem(slotIndex, item);
+                    if (slot.getCount() <= 0) {
+                        itemSlots.remove(slot);
+                    }
                 }
             }
         }
@@ -328,7 +331,7 @@ public abstract class BaseInventory implements Inventory {
                 continue;
             }
 
-            for (Item slot : itemSlots) {
+            for (Item slot : new ArrayList<>(itemSlots)) {
                 if (slot.equals(item, item.hasMeta(), item.getCompoundTag() != null)) {
                     int amount = Math.min(item.getCount(), slot.getCount());
                     slot.setCount(slot.getCount() - amount);
@@ -401,7 +404,14 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public boolean open(Player who) {
-        return false;
+        InventoryOpenEvent ev = new InventoryOpenEvent(this, who);
+        who.getServer().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return false;
+        }
+        this.onOpen(who);
+
+        return true;
     }
 
     @Override
