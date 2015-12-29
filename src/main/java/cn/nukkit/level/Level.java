@@ -3,10 +3,7 @@ package cn.nukkit.level;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
-import cn.nukkit.entity.Arrow;
-import cn.nukkit.entity.DroppedItem;
-import cn.nukkit.entity.Effect;
-import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.*;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
@@ -166,7 +163,6 @@ public class Level implements ChunkManager, Metadatable {
         //put(Block.POTATO_BLOCK, Potato.class);
         put(Block.LEAVES2, Leaves2.class);
         put(Block.BEETROOT_BLOCK, Beetroot.class);
-        put(Block.ICE, Ice.class);
     }};
 
     private int tickRate;
@@ -1448,6 +1444,17 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
+        int dropExp = target.getDropExp();
+        if (player != null) {
+            if (player.isSurvival()) {
+                player.addExperience(dropExp);
+
+                for (int ii = 1; ii <= dropExp; ii ++) {
+                    this.dropExpOrb(target, 1);
+                }
+            }
+        }
+
         if (player == null || player.isSurvival()) {
             for (Item drop : drops) {
                 if (drop.getCount() > 0) {
@@ -1457,6 +1464,39 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         return item;
+    }
+
+    public void dropExpOrb(Vector3 source, int exp) {
+        dropExpOrb(source, exp, null);
+    }
+
+    public void dropExpOrb(Vector3 source, int exp, Vector3 motion) {
+        dropExpOrb(source, exp, motion, 10);
+    }
+
+    public void dropExpOrb(Vector3 source, int exp, Vector3 motion, int delay) {
+        motion = (motion == null) ? new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2, new java.util.Random().nextDouble() * 0.2 - 0.1) : motion;
+        CompoundTag nbt = new CompoundTag()
+                .putList(new ListTag<DoubleTag>("Pos")
+                        .add(new DoubleTag("", source.getX()))
+                        .add(new DoubleTag("", source.getY()))
+                        .add(new DoubleTag("", source.getZ())))
+                .putList(new ListTag<DoubleTag>("Motion")
+                        .add(new DoubleTag("", motion.getX()))
+                        .add(new DoubleTag("", motion.getY()))
+                        .add(new DoubleTag("", motion.getZ())))
+                .putList(new ListTag<FloatTag>("Rotation")
+                        .add(new FloatTag("", 0))
+                        .add(new FloatTag("", 0)));
+        Entity entity = Entity.createEntity("XPOrb", this.getChunk(source.getFloorX() >> 4, source.getFloorZ() >> 4), nbt);
+        if (entity instanceof XPOrb) {
+            XPOrb xpOrb = (XPOrb) entity;
+            xpOrb.setExp(exp);
+            xpOrb.setPickupDelay(delay);
+            xpOrb.saveNBT();
+            xpOrb.spawnToAll();
+        }
+
     }
 
     public Item useItemOn(Vector3 vector, Item item, int face, float fx, float fy, float fz) {

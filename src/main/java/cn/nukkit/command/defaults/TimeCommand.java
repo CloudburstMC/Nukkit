@@ -87,7 +87,7 @@ public class TimeCommand extends VanillaCommand {
 
             int value;
             if ("day".equals(args[1])) {
-                value = 0;
+                value = Level.TIME_DAY;
             } else if ("night".equals(args[1])) {
                 value = Level.TIME_NIGHT;
             } else {
@@ -107,7 +107,8 @@ public class TimeCommand extends VanillaCommand {
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.set", String.valueOf(value)));
         } else if ("add".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.add")) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+                
                 return true;
             }
 

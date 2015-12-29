@@ -59,7 +59,9 @@ public class Ladder extends Transparent {
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-        double f = 0.125;
+
+        double f = 0.125d;
+
         if (this.meta == 2) {
             return new AxisAlignedBB(
                     this.x,
@@ -102,7 +104,7 @@ public class Ladder extends Transparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (target.isTransparent()) {
+        if (!target.isTransparent()) {
             if (face >= 2 && face <= 5) {
                 this.meta = face;
                 this.getLevel().setBlock(block, this, true, true);
@@ -115,11 +117,17 @@ public class Ladder extends Transparent {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            //todo:附着的方块是transparent时掉落自己。pm逻辑捉鸡
-            //if(this.getSide(this.meta).isTransparent()){
-            //    this.getLevel().useBreakOn(this);
-            return Level.BLOCK_UPDATE_NORMAL;
-            //}
+            int[] faces = {
+                    0, //never use
+                    1, //never use
+                    3,
+                    2,
+                    5,
+                    4
+            };
+            if (this.getSide(faces[this.meta]).isTransparent()) {
+                this.getLevel().useBreakOn(this);
+            }
         }
         return 0;
     }

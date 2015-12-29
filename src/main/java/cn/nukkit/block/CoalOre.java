@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -44,5 +45,10 @@ public class CoalOre extends Solid {
         } else {
             return new int[0][];
         }
+    }
+
+    @Override
+    public int getDropExp() {
+        return new Random().nextRange(0, 2);
     }
 }

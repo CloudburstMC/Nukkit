@@ -2,30 +2,34 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Random;
 
 /**
- * Created on 2015/12/1 by xtypr.
+ * Created on 2015/12/26 by Pub4Game.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class EmeraldOre extends Solid {
+public class Netherrack extends Solid {
 
-    public EmeraldOre() {
+    public Netherrack() {
         this(0);
     }
 
-    public EmeraldOre(int meta) {
+    public Netherrack(int meta) {
         super(0);
     }
 
     @Override
-    public String getName() {
-        return "Emerald Ore";
+    public int getId() {
+        return NETHERRACK;
     }
 
     @Override
-    public int getId() {
-        return EMERALD_ORE;
+    public double getResistance() {
+        return 2;
+    }
+
+    @Override
+    public double getHardness() {
+        return 0.4;
     }
 
     @Override
@@ -34,23 +38,18 @@ public class EmeraldOre extends Solid {
     }
 
     @Override
-    public double getHardness() {
-        return 3;
+    public String getName() {
+        return "Netherrack";
     }
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe()) {
+        if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
             return new int[][]{
-                    {Item.EMERALD, 0, 1}
+                    {Item.NETHERRACK, 0, 1}
             };
         } else {
             return new int[][]{};
         }
-    }
-
-    @Override
-    public int getDropExp() {
-        return new Random().nextRange(3, 7);
     }
 }
