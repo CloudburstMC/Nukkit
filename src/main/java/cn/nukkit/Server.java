@@ -1786,6 +1786,10 @@ public class Server {
         Entity.registerEntity(Painting.class);
         //todo mobs
 
+        Entity.registerEntity(ThrownExpBottle.class);
+        Entity.registerEntity(XPOrb.class);
+        Entity.registerEntity(ThrownPotion.class);
+
         Entity.registerEntity(Human.class, true);
     }
 
