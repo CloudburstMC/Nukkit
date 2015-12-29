@@ -163,7 +163,6 @@ public class Level implements ChunkManager, Metadatable {
         //put(Block.POTATO_BLOCK, Potato.class);
         put(Block.LEAVES2, Leaves2.class);
         put(Block.BEETROOT_BLOCK, Beetroot.class);
-        put(Block.ICE, Ice.class);
     }};
 
     private int tickRate;
