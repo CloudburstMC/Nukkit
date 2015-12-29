@@ -1290,7 +1290,7 @@ public class Server {
 
     public CompoundTag getOfflinePlayerData(String name) {
         name = name.toLowerCase();
-        /*String path = this.getDataPath() + "players/";
+        String path = this.getDataPath() + "players/";
         File file = new File(path + name + ".dat");
 
         if (file.exists()) {
@@ -1302,7 +1302,7 @@ public class Server {
             }
         } else {
             this.logger.notice(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
-        }*/
+        }
 
         Position spawn = this.getDefaultLevel().getSafeSpawn();
         CompoundTag nbt = new CompoundTag()
@@ -1330,7 +1330,7 @@ public class Server {
                 .putBoolean("Invulnerable", false)
                 .putString("NameTag", name);
 
-        //this.saveOfflinePlayerData(name, nbt);
+        this.saveOfflinePlayerData(name, nbt);
         return nbt;
     }
 
@@ -1339,7 +1339,7 @@ public class Server {
     }
 
     public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
-        /*try {
+        try {
             if (async) {
                 this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
             } else {
@@ -1350,7 +1350,7 @@ public class Server {
             if (Nukkit.DEBUG > 1 && this.logger != null) {
                 this.logger.logException(e);
             }
-        }*/
+        }
     }
 
     public Player getPlayer(String name) {
