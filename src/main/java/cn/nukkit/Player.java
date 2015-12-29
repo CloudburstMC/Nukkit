@@ -1623,22 +1623,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         int foodSaturationLevel = this.namedTag.getInt("FoodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
-        if(!this.namedTag.contains("XpLevel")){
-            this.namedTag.putInt("XpLevel", 0);
-        }
-
-        if(!this.namedTag.contains("XpP")){
-            this.namedTag.putFloat("XpP", 0);
-        }
-
-        if(!this.namedTag.contains("XpTotal")){
-            this.namedTag.putInt("XpTotal", this.expTotal);
-        }
-
-        this.setExpLevel(this.namedTag.getInt("XpLevel"));
-        this.setExp(this.namedTag.getFloat("XpP"));
-        this.setTotalExperience(this.namedTag.getInt("XpTotal"));
-
         this.chunk.addEntity(this);
         this.level.addEntity(this);
         this.initEntity();
@@ -3051,10 +3035,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.namedTag.putInt("FoodLevel", this.getFoodData().getFoodLevel());
             this.namedTag.putInt("FoodSaturationLevel", this.getFoodData().getFoodSaturationLevel());
 
-            this.namedTag.putInt("XpLevel", this.expLevel);
-            this.namedTag.putFloat("XpP", this.exp);
-            this.namedTag.putInt("XpTotal", this.expTotal);
-
             if (!"".equals(this.username) && this.namedTag != null) {
                 this.server.saveOfflinePlayerData(this.username, this.namedTag, async);
             }
@@ -3764,86 +3744,4 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.foodData;
     }
 
-    public int oldLevel = -1;
-    public int expLevel;
-    public int expTotal;
-    public float exp;
-
-    public void addExp(int i) {
-        int j = 2147483647 - this.expTotal;
-        if(i > j) {
-            i = j;
-        }
-
-        this.exp += (float)i / (float)this.getExpToLevel();
-
-        for(this.expTotal += i; this.exp >= 1.0F; this.exp /= (float)this.getExpToLevel()) {
-            this.exp = (this.exp - 1.0F) * (float)this.getExpToLevel();
-            this.levelDown(1);
-        }
-
-    }
-
-    public void addExpLevels(int i){
-        this.levelDown(i);
-    }
-
-    public float getExp(){
-        return this.exp;
-    }
-
-    public void setExp(float i){
-        this.exp = i;
-    }
-
-    public int getExpLevel(){
-        return this.expLevel;
-    }
-
-    public void setExpLevel(int i){
-        this.expLevel = i;
-    }
-
-    public int getTotalExperience(){
-        return this.expTotal;
-    }
-
-    public void setTotalExperience(int i){
-        this.expTotal = i;
-    }
-
-    public void levelDown(int i){
-        this.expLevel += i;
-        if(this.expLevel < 0) {
-            this.expLevel = 0;
-            this.exp = 0.0F;
-            this.expTotal = 0;
-        }
-    }
-
-    public int getExpToLevel() {
-        return this.expLevel >= 30?112 + (this.expLevel - 30) * 9:(this.expLevel >= 15?37 + (this.expLevel - 15) * 5:7 + this.expLevel * 2);
-    }
-
-    public void sendExpLevel(){
-        UpdateAttributesPacket pk = new UpdateAttributesPacket();
-
-        pk.entityId = 0;
-        pk.entries = new Attribute[]{
-                Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setMaxValue(2147483647).setValue(this.expLevel)
-        };
-
-        this.dataPacket(pk);
-    }
-
-    public void sendExp(){
-        UpdateAttributesPacket pk = new UpdateAttributesPacket();
-
-        pk.entityId = 0;
-        pk.entries = new Attribute[]{
-                Attribute.getAttribute(Attribute.EXPERIENCE).setMaxValue(1).setValue(this.exp)
-        };
-
-        this.dataPacket(pk);
-    }
 }
