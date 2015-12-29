@@ -380,7 +380,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             //list[ENCHANTING_TABLE] = EnchantingTable.class;
 
-            //list[END_PORTAL_FRAME] = EndPortalFrame.class;
+            list[END_PORTAL_FRAME] = EndPortalFrame.class;
             list[END_STONE] = EndStone.class;
 
             list[SANDSTONE_STAIRS] = SandstoneStairs.class;
