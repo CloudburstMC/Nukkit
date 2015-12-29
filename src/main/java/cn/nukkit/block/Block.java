@@ -349,7 +349,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             //list[SUGARCANE_BLOCK] = Sugarcane.class;
             list[FENCE] = Fence.class;
             list[PUMPKIN] = Pumpkin.class;
-            //list[NETHERRACK] = Netherrack.class;
+            list[NETHERRACK] = Netherrack.class;
             //list[SOUL_SAND] = SoulSand.class;
             list[GLOWSTONE_BLOCK] = Glowstone.class;
 
