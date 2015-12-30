@@ -154,7 +154,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     private Map<Integer, Boolean> needACK = new HashMap<>();
 
-    private Map<Integer, List<DataPacket>> batchedPackets = new HashMap<>();
+    private Map<Integer, List<DataPacket>> batchedPackets = new TreeMap<>();
 
     private PermissibleBase perm = null;
 
@@ -1438,7 +1438,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             for (int channel : this.batchedPackets.keySet()) {
                 this.server.batchPackets(new Player[]{this}, batchedPackets.get(channel).stream().toArray(DataPacket[]::new), false);
             }
-            this.batchedPackets = new HashMap<>();
+            this.batchedPackets = new TreeMap<>();
         }
 
     }

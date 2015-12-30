@@ -1565,7 +1565,7 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        if(target.canBeReplaced()) {
+        if (target.canBeReplaced()) {
             block = target;
             hand.position(block);
         }

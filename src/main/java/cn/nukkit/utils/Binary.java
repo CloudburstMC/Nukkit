@@ -414,6 +414,18 @@ public class Binary {
         return splits;
     }
 
+    public static byte[] appendBytes(byte[][] bytes) {
+        int length = 1;
+        for (byte[] b : bytes) {
+            length += b.length;
+        }
+        ByteBuffer buffer = ByteBuffer.allocate(length);
+        for (byte[] b : bytes) {
+            buffer.put(b);
+        }
+        return buffer.array();
+    }
+
     public static byte[] appendBytes(byte byte1, byte[]... bytes2) {
         int length = 1;
         for (byte[] bytes : bytes2) {

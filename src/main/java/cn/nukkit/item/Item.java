@@ -21,7 +21,6 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * author: MagicDroidX
@@ -1476,9 +1475,9 @@ public class Item implements Cloneable {
         return false;
     }
 
-
-    public final boolean equals(Item item) {
-        return equals(item, true);
+    @Override
+    public final boolean equals(Object item) {
+        return item instanceof Item && this.equals((Item) item, true);
     }
 
     public final boolean equals(Item item, boolean checkDamage) {
@@ -1486,7 +1485,7 @@ public class Item implements Cloneable {
     }
 
     public final boolean equals(Item item, boolean checkDamage, boolean checkCompound) {
-        return this.id == item.getId() && ((!checkDamage) || Objects.equals(this.getDamage(), item.getDamage())) && ((!checkCompound) || Arrays.equals(this.getCompoundTag(), item.getCompoundTag()));
+        return this.getId() == item.getId() && (!checkDamage || this.getDamage() == item.getDamage()) && (!checkCompound || Arrays.equals(this.getCompoundTag(), item.getCompoundTag()));
     }
 
     public final boolean deepEquals(Item item) {

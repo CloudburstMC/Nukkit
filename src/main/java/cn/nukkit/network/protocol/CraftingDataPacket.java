@@ -42,34 +42,6 @@ public class CraftingDataPacket extends DataPacket {
         return -1;
     }
 
-    private static int writeEntry(ShapelessRecipe entry, BinaryStream stream) {
-        if (entry != null) {
-            return writeShapelessRecipe(entry, stream);
-        }
-        return -1;
-    }
-
-    private static int writeEntry(ShapedRecipe entry, BinaryStream stream) {
-        if (entry != null) {
-            return writeShapedRecipe(entry, stream);
-        }
-        return -1;
-    }
-
-    private static int writeEntry(FurnaceRecipe entry, BinaryStream stream) {
-        if (entry != null) {
-            return writeFurnaceRecipe(entry, stream);
-        }
-        return -1;
-    }
-
-    private static int writeEntry(EnchantmentList entry, BinaryStream stream) {
-        if (entry != null) {
-            return writeEnchantList(entry, stream);
-        }
-        return -1;
-    }
-
     private static int writeShapelessRecipe(ShapelessRecipe recipe, BinaryStream stream) {
         stream.putInt(recipe.getIngredientCount());
 
@@ -167,7 +139,7 @@ public class CraftingDataPacket extends DataPacket {
 
         for (Object entry : entries) {
             int entryType = writeEntry(entry, writer);
-            if (entryType != 0) {
+            if (entryType >= 0) {
                 putInt(entryType);
                 putInt(writer.getCount());
                 put(writer.getBuffer());
@@ -175,10 +147,12 @@ public class CraftingDataPacket extends DataPacket {
                 putInt(-1);
                 putInt(0);
             }
+
             writer.reset();
         }
 
         putByte((byte) (cleanRecipes ? 1 : 0));
+        System.out.println(this.getCount());
     }
 
     @Override
