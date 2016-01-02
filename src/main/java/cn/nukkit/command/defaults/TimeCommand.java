@@ -108,7 +108,7 @@ public class TimeCommand extends VanillaCommand {
         } else if ("add".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.add")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
-                
+
                 return true;
             }
 

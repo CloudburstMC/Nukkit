@@ -242,7 +242,7 @@ public class Item implements Cloneable {
     public static final int ACACIA_WOODEN_STAIRS = 163;
     public static final int DARK_OAK_WOOD_STAIRS = 164;
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
-    
+
     public static final int IRON_TRAPDOOR = 167;
     public static final int HAY_BALE = 170;
     public static final int CARPET = 171;

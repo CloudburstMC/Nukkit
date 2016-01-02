@@ -759,9 +759,6 @@ public class Server {
         if (this.sendUsageTicker > 0) {
             this.uniquePlayers.add(player.getUniqueId());
         }
-
-        this.sendFullPlayerListData(player);
-        this.sendRecipeList(player);
     }
 
     public void addPlayer(String identifier, Player player) {

@@ -152,7 +152,6 @@ public class CraftingDataPacket extends DataPacket {
         }
 
         putByte((byte) (cleanRecipes ? 1 : 0));
-        System.out.println(this.getCount());
     }
 
     @Override

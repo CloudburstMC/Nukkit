@@ -48,7 +48,7 @@ public class EndPortalFrame extends Solid {
 
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox(){
+    protected AxisAlignedBB recalculateBoundingBox() {
         return new AxisAlignedBB(
                 x,
                 y,

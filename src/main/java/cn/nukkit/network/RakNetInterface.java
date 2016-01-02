@@ -213,7 +213,6 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
     @Override
     public Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
-
         if (this.identifiers.containsKey(player)) {
             byte[] buffer = packet.getBuffer();
             String identifier = this.identifiers.get(player);
@@ -268,6 +267,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
         }
 
         return null;
+
     }
 
     private DataPacket getPacket(byte[] buffer) {

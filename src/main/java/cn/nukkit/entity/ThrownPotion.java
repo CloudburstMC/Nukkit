@@ -10,7 +10,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * Created on 2015/12/27 by xtypr.
  * Package cn.nukkit.entity in project Nukkit .
  */
-public class ThrownPotion extends Projectile{
+public class ThrownPotion extends Projectile {
 
     public static final int NETWORK_ID = 86;
 
@@ -64,7 +64,7 @@ public class ThrownPotion extends Projectile{
 
     @Override
     public boolean onUpdate(int currentTick) {
-        if(this.closed){
+        if (this.closed) {
             return false;
         }
 
@@ -73,7 +73,7 @@ public class ThrownPotion extends Projectile{
         int tickDiff = currentTick - this.lastUpdate;
         boolean hasUpdate = super.onUpdate(currentTick);
 
-        if(this.age > 1200){
+        if (this.age > 1200) {
             this.kill();
             hasUpdate = true;
         }

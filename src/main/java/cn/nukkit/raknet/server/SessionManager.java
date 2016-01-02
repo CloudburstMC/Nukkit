@@ -92,7 +92,7 @@ public class SessionManager {
 
     private void tick() throws Exception {
         long time = System.currentTimeMillis();
-        for (Session session : this.sessions.values()) {
+        for (Session session : new ArrayList<>(this.sessions.values())) {
             session.update(time);
         }
 
