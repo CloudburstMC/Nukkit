@@ -50,9 +50,4 @@ public class RedMushroom extends Flowable {
         }
         return false;
     }
-
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return null;
-    }
 }
