@@ -10,7 +10,7 @@ public class SplashPotion extends Item {
         this(meta, 1);
     }
 
-    public SplashPotion(int meta, int count){
+    public SplashPotion(int meta, int count) {
         super(SPLASH_POTION, meta, count, "Splash Potion");
     }
 

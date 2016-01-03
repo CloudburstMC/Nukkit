@@ -21,6 +21,7 @@ public class SpellParticle extends Particle {
         super(pos.x, pos.y, pos.z);
         this.data = data;
     }
+
     public SpellParticle(Vector3 pos, int r, int g, int b) {
         this(pos, r, g, b, 255);
     }

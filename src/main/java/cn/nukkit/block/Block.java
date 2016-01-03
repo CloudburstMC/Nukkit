@@ -330,13 +330,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[FURNACE] = Furnace.class;
             list[BURNING_FURNACE] = BurningFurnace.class;
             list[SIGN_POST] = SignPost.class;
-            //list[WOOD_DOOR_BLOCK] = WoodDoor.class;
+            list[WOOD_DOOR_BLOCK] = WoodDoor.class;
             list[LADDER] = Ladder.class;
 
             list[COBBLESTONE_STAIRS] = CobblestoneStairs.class;
             list[WALL_SIGN] = WallSign.class;
 
-            //list[IRON_DOOR_BLOCK] = IronDoor.class;
+            list[IRON_DOOR_BLOCK] = IronDoor.class;
             list[REDSTONE_ORE] = RedstoneOre.class;
             list[GLOWING_REDSTONE_ORE] = GlowingRedstoneOre.class;
 
@@ -411,7 +411,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[WOOD2] = Wood2.class;
             list[ACACIA_WOOD_STAIRS] = AcaciaWoodStairs.class;
             list[DARK_OAK_WOOD_STAIRS] = DarkOakWoodStairs.class;
-            
+
             list[IRON_TRAPDOOR] = IronTrapdoor.class;
             list[HAY_BALE] = HayBale.class;
             list[CARPET] = Carpet.class;
@@ -678,7 +678,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         if (this.isValid()) {
             return this.getLevel().getBlock(super.getSide(side, step));
         }
-        return Block.get(Item.AIR, 0, Position.fromObject(super.getSide(side, step)));
+        return Block.get(Item.AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(side, step)));
     }
 
     @Override

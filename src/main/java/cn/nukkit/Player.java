@@ -35,7 +35,10 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
-import cn.nukkit.nbt.tag.*;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.permission.PermissibleBase;
@@ -463,7 +466,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     protected boolean switchLevel(Level targetLevel) {
         Level oldLevel = this.level;
         if (super.switchLevel(targetLevel)) {
-            for (String index : this.usedChunks.keySet()) {
+            for (String index : new ArrayList<>(this.usedChunks.keySet())) {
                 Chunk.Entry chunkEntry = Level.getChunkXZ(index);
                 int chunkX = chunkEntry.chunkX;
                 int chunkZ = chunkEntry.chunkZ;
@@ -598,6 +601,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.spawned = true;
 
+        this.server.sendRecipeList(this);
         this.sendSettings();
         this.sendPotionEffects(this);
         this.sendData(this);
@@ -1157,7 +1161,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     int exp = xpOrb.getExp();
                     this.addExperience(exp);
                     entity.kill();
-                    ClickSound sound = new ClickSound(this, (float)(new cn.nukkit.utils.Random().nextRange(260, 360)) / 100f);
+                    ClickSound sound = new ClickSound(this, (float) (new cn.nukkit.utils.Random().nextRange(260, 360)) / 100f);
                     this.getLevel().addSound(sound);
                     break;
                 }
@@ -1695,6 +1699,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         setDifficultyPacket.difficulty = this.server.getDifficulty();
         this.dataPacket(setDifficultyPacket);
 
+        this.server.sendFullPlayerListData(this);
+
         this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logIn", new String[]{
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
                 this.ip,
@@ -1995,10 +2001,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                         .add(new DoubleTag("", y + this.getEyeHeight()))
                                         .add(new DoubleTag("", z)))
                                 .putList(new ListTag<DoubleTag>("Motion")
-                                        .add(new DoubleTag("", aimPos.x))
+                                       /* .add(new DoubleTag("", aimPos.x))
                                         .add(new DoubleTag("", aimPos.y))
-                                        .add(new DoubleTag("", aimPos.z)))
-
+                                        .add(new DoubleTag("", aimPos.z)))*/
+                                        .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                        .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                        .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
                                 .putList(new ListTag<FloatTag>("Rotation")
                                         .add(new FloatTag("", (float) yaw))
                                         .add(new FloatTag("", (float) pitch)));
@@ -2020,8 +2028,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             snowball.spawnToAll();
                             this.level.addSound(new LaunchSound(this), this.getViewers().values());
                         }
-                    }
-                    else if (item.getId() == Item.EXPERIENCE_BOTTLE)  {
+                    } else if (item.getId() == Item.EXPERIENCE_BOTTLE) {
                         CompoundTag nbt = new CompoundTag()
                                 .putList(new ListTag<DoubleTag>("Pos")
                                         .add(new DoubleTag("", x))
@@ -3236,7 +3243,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
             most = this.getNeedExpToNextLevel(level);
         }
-        getServer().getLogger().debug("Added "+add+" EXP to "+getName()+", now lv:"+level+" ("+added+"/"+most+") .");
+        getServer().getLogger().debug("Added " + add + " EXP to " + getName() + ", now lv:" + level + " (" + added + "/" + most + ") .");
         this.setExperience(added, level);
         //$sound = new ZombieInfectSound($this);
         //$this->getLevel()->addSound($sound);
@@ -3265,21 +3272,21 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         sendExperience(exp);
     }
 
-    public void sendExperience(){
+    public void sendExperience() {
         sendExperience(0);
     }
 
     public void sendExperience(int exp) {
         UpdateAttributesPacket pk = new UpdateAttributesPacket();
         pk.entityId = 0;
-        float ee = ((float)exp) / (float)this.getNeedExpToNextLevel(this.getExperienceLevel());
+        float ee = ((float) exp) / (float) this.getNeedExpToNextLevel(this.getExperienceLevel());
         pk.entries = new Attribute[]{
                 Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, ee, true).setValue(ee)
         };
         this.dataPacket(pk);
     }
 
-    public void sendExperienceLevel(){
+    public void sendExperienceLevel() {
         sendExperienceLevel(0);
     }
 

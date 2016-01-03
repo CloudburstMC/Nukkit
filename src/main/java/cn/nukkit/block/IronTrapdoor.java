@@ -50,7 +50,7 @@ public class IronTrapdoor extends Transparent {
         int damage = this.getDamage();
         AxisAlignedBB bb;
         double f = 0.1875;
-        if((damage & 0x08) > 0){
+        if ((damage & 0x08) > 0) {
             bb = new AxisAlignedBB(
                     this.x,
                     this.y + 1 - f,
@@ -59,7 +59,7 @@ public class IronTrapdoor extends Transparent {
                     this.y + 1,
                     this.z + 1
             );
-        }else{
+        } else {
             bb = new AxisAlignedBB(
                     this.x,
                     this.y,
@@ -69,8 +69,8 @@ public class IronTrapdoor extends Transparent {
                     this.z + 1
             );
         }
-        if((damage & 0x04) > 0){
-            if((damage & 0x03) == 0){
+        if ((damage & 0x04) > 0) {
+            if ((damage & 0x03) == 0) {
                 bb.setBounds(
                         this.x,
                         this.y,
@@ -79,7 +79,7 @@ public class IronTrapdoor extends Transparent {
                         this.y + 1,
                         this.z + 1
                 );
-            }else if((damage & 0x03) == 1){
+            } else if ((damage & 0x03) == 1) {
                 bb.setBounds(
                         this.x,
                         this.y,
@@ -89,7 +89,7 @@ public class IronTrapdoor extends Transparent {
                         this.z + f
                 );
             }
-            if((damage & 0x03) == 2){
+            if ((damage & 0x03) == 2) {
                 bb.setBounds(
                         this.x + 1 - f,
                         this.y,
@@ -99,7 +99,7 @@ public class IronTrapdoor extends Transparent {
                         this.z + 1
                 );
             }
-            if((damage & 0x03) == 3){
+            if ((damage & 0x03) == 3) {
                 bb.setBounds(
                         this.x,
                         this.y,
@@ -121,9 +121,11 @@ public class IronTrapdoor extends Transparent {
                     1,
                     2,
                     3,
+                    4,
+                    5
             };
             this.meta = faces[face] & 0x03;
-            if(fy > 0.5){
+            if (fy > 0.5) {
                 this.meta |= 0x08;
             }
             this.getLevel().setBlock(block, this, true, true);

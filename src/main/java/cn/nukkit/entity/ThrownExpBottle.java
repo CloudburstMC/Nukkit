@@ -2,7 +2,9 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.*;
+import cn.nukkit.level.particle.EnchantParticle;
+import cn.nukkit.level.particle.Particle;
+import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.utils.Random;
@@ -54,8 +56,8 @@ public class ThrownExpBottle extends Projectile {
     }
 
     @Override
-    public boolean onUpdate(int currentTick){
-        if(this.closed){
+    public boolean onUpdate(int currentTick) {
+        if (this.closed) {
             return false;
         }
 
@@ -64,7 +66,7 @@ public class ThrownExpBottle extends Projectile {
         int tickDiff = currentTick - this.lastUpdate;
         boolean hasUpdate = super.onUpdate(currentTick);
 
-        if(this.age > 1200){
+        if (this.age > 1200) {
             this.kill();
             hasUpdate = true;
         }
@@ -92,7 +94,7 @@ public class ThrownExpBottle extends Projectile {
     }
 
     @Override
-    public void spawnTo(Player player){
+    public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.type = ThrownExpBottle.NETWORK_ID;
         pk.eid = this.getId();

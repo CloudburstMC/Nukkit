@@ -66,10 +66,10 @@ public class XPOrb extends Entity {
         setMaxHealth(5);
         setHealth(5);
 
-        if(namedTag.contains("Age")) {
+        if (namedTag.contains("Age")) {
             this.age = namedTag.getInt("Age");
         }
-        if(namedTag.contains("PickupDelay")) {
+        if (namedTag.contains("PickupDelay")) {
             this.pickupDelay = namedTag.getInt("PickupDelay");
         }
 
@@ -100,18 +100,18 @@ public class XPOrb extends Entity {
         this.lastUpdate = currentTick;
 
         boolean hasUpdate = entityBaseTick(tickDiff);
-        if(this.isAlive()){
+        if (this.isAlive()) {
 
-            if(this.pickupDelay > 0 && this.pickupDelay < 32767){ //Infinite delay
+            if (this.pickupDelay > 0 && this.pickupDelay < 32767) { //Infinite delay
                 this.pickupDelay -= tickDiff;
-                if(this.pickupDelay < 0){
+                if (this.pickupDelay < 0) {
                     this.pickupDelay = 0;
                 }
             }
 
             this.motionY -= this.getGravity();
 
-            if(this.checkObstruction(this.x, this.y, this.z)){
+            if (this.checkObstruction(this.x, this.y, this.z)) {
                 hasUpdate = true;
             }
 
@@ -119,7 +119,7 @@ public class XPOrb extends Entity {
 
             double friction = 1d - this.getDrag();
 
-            if(this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)){
+            if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
                 friction = this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor() * friction;
             }
 
@@ -127,13 +127,13 @@ public class XPOrb extends Entity {
             this.motionY *= 1 - this.getDrag();
             this.motionZ *= friction;
 
-            if(this.onGround){
+            if (this.onGround) {
                 this.motionY *= -0.5;
             }
 
             this.updateMovement();
 
-            if(this.age > 6000){
+            if (this.age > 6000) {
                 this.kill();
                 hasUpdate = true;
             }
