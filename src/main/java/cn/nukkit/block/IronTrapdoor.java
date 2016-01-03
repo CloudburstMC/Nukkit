@@ -121,6 +121,8 @@ public class IronTrapdoor extends Transparent {
                     1,
                     2,
                     3,
+                    4,
+                    5
             };
             this.meta = faces[face] & 0x03;
             if (fy > 0.5) {
