@@ -466,7 +466,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     protected boolean switchLevel(Level targetLevel) {
         Level oldLevel = this.level;
         if (super.switchLevel(targetLevel)) {
-            for (String index : this.usedChunks.keySet()) {
+            for (String index : new ArrayList<>(this.usedChunks.keySet())) {
                 Chunk.Entry chunkEntry = Level.getChunkXZ(index);
                 int chunkX = chunkEntry.chunkX;
                 int chunkZ = chunkEntry.chunkZ;

@@ -746,7 +746,12 @@ public class Server {
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
         while (this.isRunning) {
-            this.tick();
+            try {
+                this.tick();
+            } catch (RuntimeException e) {
+                this.getLogger().logException(e);
+            }
+
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
