@@ -1,10 +1,12 @@
 package cn.nukkit.entity;
 
+import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.EnchantParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
  * Created on 2015/12/27 by xtypr.
@@ -96,5 +98,22 @@ public class ThrownPotion extends Projectile {
         //this.timings.stopTiming();
 
         return hasUpdate;
+    }
+
+    @Override
+    public void spawnTo(Player player) {
+        AddEntityPacket pk = new AddEntityPacket();
+        pk.type = ThrownPotion.NETWORK_ID;
+        pk.eid = this.getId();
+        pk.x = (float) this.x;
+        pk.y = (float) this.y;
+        pk.z = (float) this.z;
+        pk.speedX = (float) this.motionX;
+        pk.speedY = (float) this.motionY;
+        pk.speedZ = (float) this.motionZ;
+        pk.metadata = this.dataProperties;
+        player.dataPacket(pk);
+
+        super.spawnTo(player);
     }
 }
