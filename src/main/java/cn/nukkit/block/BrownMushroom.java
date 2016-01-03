@@ -10,12 +10,12 @@ import cn.nukkit.math.AxisAlignedBB;
  */
 public class BrownMushroom extends Flowable {
 
-    public BrownMushroom(int meta) {
-        super(meta);
-    }
-
     public BrownMushroom() {
         this(0);
+    }
+
+    public BrownMushroom(int meta) {
+        super(0);
     }
 
     @Override
