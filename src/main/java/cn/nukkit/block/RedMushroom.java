@@ -10,12 +10,12 @@ import cn.nukkit.math.AxisAlignedBB;
  */
 public class RedMushroom extends Flowable {
 
-    public RedMushroom(int meta) {
-        super(meta);
-    }
-
     public RedMushroom() {
         this(0);
+    }
+
+    public RedMushroom(int meta) {
+        super(0);
     }
 
     @Override
