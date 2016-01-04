@@ -336,6 +336,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addEffect(Effect effect) {
+        if (effect == null) return; //here add null means add nothing
+
         if (this.effects.containsKey(effect.getId())) {
             Effect oldEffect = this.effects.get(effect.getId());
             if (Math.abs(effect.getAmplifier()) <= (oldEffect.getAmplifier())
