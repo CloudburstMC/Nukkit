@@ -92,7 +92,7 @@ public class ThrownPotion extends Projectile {
 
             Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(8.25, 4.24, 8.25));
             for (Entity anEntity : entities) {
-                anEntity.addEffect(Potions.getApplyEffect(getPotionType(), true));
+                Potions.applyPotion(getPotionType(), true, anEntity);
             }
         }
 

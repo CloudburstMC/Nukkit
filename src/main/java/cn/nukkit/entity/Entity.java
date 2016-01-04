@@ -28,6 +28,7 @@ import cn.nukkit.utils.ChunkException;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * author: MagicDroidX
@@ -73,7 +74,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected Map<Integer, Player> hasSpawned = new HashMap<>();
 
-    protected Map<Integer, Effect> effects = new HashMap<>();
+    protected Map<Integer, Effect> effects = new ConcurrentHashMap<>();
 
     protected long id;
 
@@ -659,8 +660,9 @@ public abstract class Entity extends Location implements Metadatable {
         if (source.isCancelled()) {
             return;
         }
-
-        this.setHealth(this.getHealth() + source.getAmount());
+        float targetHealth = this.getHealth() + source.getAmount();
+        if (targetHealth > getMaxHealth()) targetHealth = getMaxHealth();
+        this.setHealth(targetHealth);
     }
 
     public int getHealth() {

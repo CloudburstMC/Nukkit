@@ -1,6 +1,10 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.entity.Effect;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.Living;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.level.particle.InstantSpellParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
@@ -247,7 +251,9 @@ public final class Potions {
 
     public static Particle getParticle(int potionType, Vector3 pos) {
         requireValid(potionType);
-        int[] colors = getApplyEffect(potionType, true).getColor();
+        Effect effect = getApplyEffect(potionType, true);
+        if (effect == null) return null;
+        int[] colors = effect.getColor();
         int r = colors[0];
         int g = colors[1];
         int b = colors[2];
@@ -255,6 +261,26 @@ public final class Potions {
             return new InstantSpellParticle(pos, r, g, b);
         } else {
             return new SpellParticle(pos, r, g, b);
+        }
+    }
+
+    public static void applyPotion(int potionType, boolean isSplash, Entity entity) {
+        if (!(entity instanceof Living)) return;
+        switch (potionType) {
+            case INSTANT_HEALTH:
+                entity.heal(4, new EntityRegainHealthEvent(entity, 4, EntityRegainHealthEvent.CAUSE_EATING));
+                break;
+            case INSTANT_HEALTH_II:
+                entity.heal(8, new EntityRegainHealthEvent(entity, 8, EntityRegainHealthEvent.CAUSE_EATING));
+                break;
+            case HARMING:
+                entity.attack(new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 6));
+                break;
+            case HARMING_II:
+                entity.attack(new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 12));
+                break;
+            default:
+                entity.addEffect(getApplyEffect(potionType, isSplash));
         }
     }
 }
