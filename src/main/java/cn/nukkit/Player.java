@@ -2086,7 +2086,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         }
                         if (bottle instanceof ThrownPotion) {
                             ThrownPotion bottleEntity = (ThrownPotion) bottle;
-                            bottleEntity.setPotionType(item.getDamage());
                             ProjectileLaunchEvent projectileEv = new ProjectileLaunchEvent(bottleEntity);
                             this.server.getPluginManager().callEvent(projectileEv);
                             if (projectileEv.isCancelled()) {
