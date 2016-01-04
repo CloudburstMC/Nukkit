@@ -13,6 +13,7 @@ import cn.nukkit.math.Vector3;
 /**
  * Created on 2016/1/4 by xtypr.
  * Package cn.nukkit.utils in project nukkit .
+ * todo improve this and allow custom potions
  */
 public final class Potions {
 
