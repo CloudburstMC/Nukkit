@@ -2063,8 +2063,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             bottle.spawnToAll();
                         }
                     }
-                    //todo splash potion, I GIVE UP
-                    /*
                     else if (item.getId() == Item.SPLASH_POTION) {
                         CompoundTag nbt = new CompoundTag()
                                 .putList(new ListTag<DoubleTag>("Pos")
@@ -2101,7 +2099,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             bottle.spawnToAll();
                         }
                     }
-                    */
 
                     this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, true);
                     this.startAction = this.server.getTick();
