@@ -674,7 +674,7 @@ public class Server {
             this.getLogger().debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
-            for (Player player : this.players.values()) {
+            for (Player player : new ArrayList<>(this.players.values())) {
                 player.close(player.getLeaveMessage(), (String) this.getConfig("settings.shutdown-message", "Server closed"));
             }
 
