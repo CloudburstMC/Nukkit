@@ -1,6 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.network.protocol.ChangeDimensionPacket;
+import cn.nukkit.network.protocol.DataPacket;
 
 /**
  * Created on 2016/1/5 by xtypr.
@@ -67,4 +71,19 @@ public class NetherPortalBlock extends Flowable {
     }
 
     //todo teleport to the nether
+
+    /*
+    @Override
+    public boolean hasEntityCollision() {
+        return true;
+    }
+
+    @Override
+    public void onEntityCollide(Entity entity) {
+        if (entity instanceof Player) {
+            //?
+        }
+    }
+    */
+
 }
