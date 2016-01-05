@@ -1664,7 +1664,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.seed = -1;
-        startGamePacket.dimension = 0;
+        startGamePacket.dimension = (byte) (getLevel().getDimension() & 0xFF);
         startGamePacket.x = (float) this.x;
         startGamePacket.y = (float) this.y;
         startGamePacket.z = (float) this.z;
@@ -3799,6 +3799,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public PlayerFood getFoodData() {
         return this.foodData;
+    }
+
+    //todo a lot on dimension
+
+    public void updateDimension() {
+        ChangeDimensionPacket pk = new ChangeDimensionPacket();
+        pk.dimension = (byte) (getLevel().getDimension() & 0xff);
+        this.dataPacket(pk);
     }
 
 }

@@ -66,6 +66,9 @@ public class Level implements ChunkManager, Metadatable {
 
     public static final int TIME_FULL = 24000;
 
+    public static final int DIMENSION_NORMAL = 0;
+    public static final int DIMENSION_NETHER = 1;
+
     private Map<Long, Tile> tiles = new HashMap<>();
 
     private Map<String, Map<Long, SetEntityMotionPacket.Entry>> motionToSend = new HashMap<>();
@@ -179,6 +182,8 @@ public class Level implements ChunkManager, Metadatable {
     private int thunderTime = 0;
 
     private long levelCurrentTick = 0;
+
+    private int dimension = DIMENSION_NORMAL;
 
     public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
         this.blockStates = Block.fullList;
@@ -2602,4 +2607,9 @@ public class Level implements ChunkManager, Metadatable {
         }
         this.sendWeather(players.stream().toArray(Player[]::new));
     }
+
+    public int getDimension() {
+        return dimension;
+    }
+
 }
