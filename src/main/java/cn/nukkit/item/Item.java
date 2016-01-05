@@ -157,8 +157,7 @@ public class Item implements Cloneable {
     public static final int SOUL_SAND = 88;
     public static final int GLOWSTONE = 89;
     public static final int GLOWSTONE_BLOCK = 89;
-
-
+    public static final int NETHER_PORTAL = 90;
     public static final int LIT_PUMPKIN = 91;
     public static final int JACK_O_LANTERN = 91;
     public static final int CAKE_BLOCK = 92;

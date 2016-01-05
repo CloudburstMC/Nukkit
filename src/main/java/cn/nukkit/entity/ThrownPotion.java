@@ -1,12 +1,13 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.EnchantParticle;
 import cn.nukkit.level.particle.Particle;
-import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+import cn.nukkit.utils.Potions;
 
 /**
  * Created on 2015/12/27 by xtypr.
@@ -15,8 +16,6 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 public class ThrownPotion extends Projectile {
 
     public static final int NETWORK_ID = 86;
-
-    private int potionType = 0;
 
     @Override
     public int getNetworkId() {
@@ -54,14 +53,16 @@ public class ThrownPotion extends Projectile {
 
     public ThrownPotion(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
+        setPotionType(getPotionType()); //in order to set data property.
     }
 
     public int getPotionType() {
-        return potionType;
+        return namedTag.getInt("Potion");
     }
 
     public void setPotionType(int potionType) {
-        this.potionType = potionType;
+        namedTag.putInt("Potion", potionType);
+        setDataProperty(DATA_POTION_TYPE, new ShortEntityData(potionType));
     }
 
     @Override
@@ -84,14 +85,14 @@ public class ThrownPotion extends Projectile {
             this.kill();
             Particle particle1 = new EnchantParticle(this);
             this.getLevel().addParticle(particle1);
-            //todo 颜色根据药水的不同而不同 Color is different according to potion type
-            Particle particle2 = new SpellParticle(this, 0, 0, 255);
+            Particle particle2 = Potions.getParticle(getPotionType(), this);
+            if (particle2 != null)
             this.getLevel().addParticle(particle2);
             hasUpdate = true;
 
             Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(8.25, 4.24, 8.25));
             for (Entity anEntity : entities) {
-                //todo 应用药水效果
+                Potions.applyPotion(getPotionType(), true, anEntity);
             }
         }
 
