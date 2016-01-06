@@ -758,11 +758,11 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_DARK_OAK));
         addCreativeItem(Item.get(Item.NETHER_BRICK_FENCE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE_BIRCH, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_SPRUCE, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE_DARK_OAK, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE_BIRCH, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_JUNGLE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_ACACIA, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE_DARK_OAK, 0));
         addCreativeItem(Item.get(Item.IRON_BARS, 0));
         addCreativeItem(Item.get(Item.BED, 0));
         addCreativeItem(Item.get(Item.BOOKSHELF, 0));
