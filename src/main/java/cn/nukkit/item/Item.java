@@ -683,6 +683,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.TRUNK2, 1));
         addCreativeItem(Item.get(Item.NETHER_BRICKS, 0));
         addCreativeItem(Item.get(Item.NETHERRACK, 0));
+        addCreativeItem(Item.get(Item.SOUL_SAND, 0));
         addCreativeItem(Item.get(Item.BEDROCK, 0));
         addCreativeItem(Item.get(Item.COBBLESTONE_STAIRS, 0));
         addCreativeItem(Item.get(Item.OAK_WOODEN_STAIRS, 0));
