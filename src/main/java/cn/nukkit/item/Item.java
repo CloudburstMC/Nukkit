@@ -723,6 +723,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.QUARTZ_ORE, 0));
         addCreativeItem(Item.get(Item.OBSIDIAN, 0));
         addCreativeItem(Item.get(Item.ICE, 0));
+        addCreativeItem(Item.get(Item.PACKED_ICE, 0));
         addCreativeItem(Item.get(Item.SNOW_BLOCK, 0));
         addCreativeItem(Item.get(Item.END_STONE, 0));
         addCreativeItem(Item.get(Item.QUARTZ, 0));
