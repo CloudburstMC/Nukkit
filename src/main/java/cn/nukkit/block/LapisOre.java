@@ -49,4 +49,8 @@ public class LapisOre extends Solid {
         }
     }
 
+    @Override
+    public int getDropExp() {
+        return new cn.nukkit.utils.Random().nextRange(2, 5);
+    }
 }

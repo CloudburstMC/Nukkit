@@ -2,30 +2,39 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class CoalOre extends Solid {
+public class IronDoor extends Door {
 
-    public CoalOre() {
+    public IronDoor() {
         this(0);
     }
 
-    public CoalOre(int meta) {
+    public IronDoor(int meta) {
         super(meta);
     }
 
     @Override
+    public String getName() {
+        return "Iron Door Block";
+    }
+
+    @Override
     public int getId() {
-        return COAL_ORE;
+        return IRON_DOOR_BLOCK;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
     }
 
     @Override
     public double getHardness() {
-        return 3;
+        return 5;
     }
 
     @Override
@@ -34,21 +43,13 @@ public class CoalOre extends Solid {
     }
 
     @Override
-    public String getName() {
-        return "Coal Ore";
-    }
-
-    @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
-            return new int[][]{new int[]{Item.COAL, 0, 1}};
+            return new int[][]{
+                    {Item.WOODEN_DOOR, 0, 1}
+            };
         } else {
             return new int[0][];
         }
-    }
-
-    @Override
-    public int getDropExp() {
-        return new Random().nextRange(0, 2);
     }
 }
