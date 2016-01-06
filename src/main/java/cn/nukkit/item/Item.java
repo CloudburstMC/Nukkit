@@ -744,7 +744,6 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.GLASS, 0));
         addCreativeItem(Item.get(Item.GLOWSTONE_BLOCK, 0));
         addCreativeItem(Item.get(Item.VINES, 0));
-        addCreativeItem(Item.get(Item.NETHER_REACTOR, 0));
         addCreativeItem(Item.get(Item.LADDER, 0));
         addCreativeItem(Item.get(Item.SPONGE, 0));
         addCreativeItem(Item.get(Item.GLASS_PANE, 0));
@@ -774,6 +773,9 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CHEST, 0));
         addCreativeItem(Item.get(Item.FURNACE, 0));
         addCreativeItem(Item.get(Item.END_PORTAL, 0));
+        addCreativeItem(Item.get(Item.ANVIL, 0));
+        addCreativeItem(Item.get(Item.ANVIL, 4));
+        addCreativeItem(Item.get(Item.ANVIL, 8));
         addCreativeItem(Item.get(Item.DANDELION, 0));
         addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_POPPY));
         addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_BLUE_ORCHID));
@@ -852,10 +854,6 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CARPET, 2));
         addCreativeItem(Item.get(Item.CARPET, 6));
 
-
-        addCreativeItem(Item.get(Item.ANVIL, 0));
-        addCreativeItem(Item.get(Item.ANVIL, 4));
-        addCreativeItem(Item.get(Item.ANVIL, 8));
 
         //Tools
         //TODO addCreativeItem(Item.get(Item.RAILS, 0));
