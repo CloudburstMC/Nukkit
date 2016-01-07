@@ -2,6 +2,7 @@ package cn.nukkit.nbt.stream;
 
 import java.io.*;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * author: MagicDroidX
@@ -123,6 +124,6 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
         int length = this.readUnsignedShort();
         byte[] bytes = new byte[length];
         this.read(bytes);
-        return new String(bytes);
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 }

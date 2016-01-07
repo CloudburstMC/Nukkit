@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Fence;
 import cn.nukkit.block.Flower;
+import cn.nukkit.block.RedstoneTorch;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -20,7 +21,6 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * author: MagicDroidX
@@ -114,7 +114,7 @@ public class Item implements Cloneable {
     public static final int OAK_WOOD_STAIRS = 53;
     public static final int OAK_WOODEN_STAIRS = 53;
     public static final int CHEST = 54;
-
+    public static final int REDSTONE_WIRE = 55;
     public static final int DIAMOND_ORE = 56;
     public static final int DIAMOND_BLOCK = 57;
     public static final int CRAFTING_TABLE = 58;
@@ -139,6 +139,8 @@ public class Item implements Cloneable {
     public static final int REDSTONE_ORE = 73;
     public static final int GLOWING_REDSTONE_ORE = 74;
     public static final int LIT_REDSTONE_ORE = 74;
+
+    public static final int REDSTONE_TORCH = 76;
 
     public static final int SNOW = 78;
     public static final int SNOW_LAYER = 78;
@@ -189,6 +191,8 @@ public class Item implements Cloneable {
     public static final int ENCHANTING_TABLE = 116;
     public static final int ENCHANT_TABLE = 116;
     public static final int ENCHANTMENT_TABLE = 116;
+    public static final int BREWING_STAND_BLOCK = 117;
+    public static final int BREWING_BLOCK = 117;
 
     public static final int END_PORTAL = 120;
     public static final int END_STONE = 121;
@@ -214,6 +218,7 @@ public class Item implements Cloneable {
     public static final int ANVIL = 145;
 
     public static final int REDSTONE_BLOCK = 152;
+    public static final int QUARTZ_ORE = 153;
 
     public static final int QUARTZ_BLOCK = 155;
     public static final int QUARTZ_STAIRS = 156;
@@ -238,11 +243,12 @@ public class Item implements Cloneable {
     public static final int DARK_OAK_WOOD_STAIRS = 164;
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
 
+    public static final int IRON_TRAPDOOR = 167;
     public static final int HAY_BALE = 170;
     public static final int CARPET = 171;
     public static final int HARDENED_CLAY = 172;
     public static final int COAL_BLOCK = 173;
-
+    public static final int PACKED_ICE = 174;
     public static final int DOUBLE_PLANT = 175;
 
     public static final int FENCE_GATE_SPRUCE = 183;
@@ -388,10 +394,24 @@ public class Item implements Cloneable {
     public static final int RAW_CHICKEN = 365;
     public static final int COOKED_CHICKEN = 366;
 
+    public static final int BLAZE_ROD = 369;
+    public static final int GHAST_TEAR = 370;
     public static final int GOLD_NUGGET = 371;
     public static final int GOLDEN_NUGGET = 371;
+    public static final int NETHER_WART = 372;
+    public static final int POTION = 373;
+    public static final int GLASS_BOTTLE = 374;
+    public static final int BOTTLE = 374;
+    public static final int SPIDER_EYE = 375;
+    public static final int FERMENTED_SPIDER_EYE = 376;
+    public static final int BLAZE_POWDER = 377;
+    public static final int MAGMA_CREAM = 378;
+    public static final int BREWING_STAND = 379;
+    public static final int BREWING = 379;
 
+    public static final int GLISTERING_MELON = 382;
     public static final int SPAWN_EGG = 383;
+    public static final int EXPERIENCE_BOTTLE = 384;
 
     public static final int EMERALD = 388;
 
@@ -402,11 +422,15 @@ public class Item implements Cloneable {
     public static final int BAKED_POTATO = 393;
     public static final int BAKED_POTATOES = 393;
 
+    public static final int GOLDEN_CARROT = 396;
+
     public static final int PUMPKIN_PIE = 400;
 
     public static final int NETHER_BRICK = 405;
     public static final int QUARTZ = 406;
     public static final int NETHER_QUARTZ = 406;
+
+    public static final int SPLASH_POTION = 438;
 
     public static final int CAMERA = 456;
     public static final int BEETROOT = 457;
@@ -579,6 +603,12 @@ public class Item implements Cloneable {
             list[BEETROOT] = Beetroot.class;
             list[BEETROOT_SEEDS] = BeetrootSeeds.class;
             list[BEETROOT_SOUP] = BeetrootSoup.class;
+            list[REDSTONE_TORCH] = RedstoneTorch.class;
+            list[BREWING_STAND] = BrewingStand.class;
+            list[GLASS_BOTTLE] = GlassBottle.class;
+            list[POTION] = Potion.class;
+            //list[SPLASH_POTION] = SplashPotion.class;
+            list[EXPERIENCE_BOTTLE] = ExpBottle.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -687,7 +717,9 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.DIAMOND_ORE, 0));
         addCreativeItem(Item.get(Item.LAPIS_ORE, 0));
         addCreativeItem(Item.get(Item.REDSTONE_ORE, 0));
+        addCreativeItem(Item.get(Item.REDSTONE_TORCH, 0));
         addCreativeItem(Item.get(Item.EMERALD_ORE, 0));
+        addCreativeItem(Item.get(Item.QUARTZ_ORE, 0));
         addCreativeItem(Item.get(Item.OBSIDIAN, 0));
         addCreativeItem(Item.get(Item.ICE, 0));
         addCreativeItem(Item.get(Item.SNOW_BLOCK, 0));
@@ -715,6 +747,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.GLASS_PANE, 0));
         addCreativeItem(Item.get(Item.WOODEN_DOOR, 0));
         addCreativeItem(Item.get(Item.TRAPDOOR, 0));
+        addCreativeItem(Item.get(Item.IRON_TRAPDOOR, 0));
         addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_OAK));
         addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_SPRUCE));
         addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_BIRCH));
@@ -828,6 +861,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.BUCKET, 1));
         addCreativeItem(Item.get(Item.BUCKET, 8));
         addCreativeItem(Item.get(Item.BUCKET, 10));
+        addCreativeItem(Item.get(Item.REDSTONE, 0));
         addCreativeItem(Item.get(Item.TNT, 0));
         addCreativeItem(Item.get(Item.IRON_HOE, 0));
         addCreativeItem(Item.get(Item.IRON_SHOVEL, 0));
@@ -889,6 +923,84 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.DYE, 10));
         addCreativeItem(Item.get(Item.DYE, 9));
         addCreativeItem(Item.get(Item.DYE, 8));
+
+        addCreativeItem(Item.get(Item.EXPERIENCE_BOTTLE));
+
+        //Potion
+        addCreativeItem(Item.get(Item.POTION, Potion.NO_EFFECTS));
+        addCreativeItem(Item.get(Item.POTION, Potion.MUNDANE));
+        addCreativeItem(Item.get(Item.POTION, Potion.MUNDANE_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.THICK));
+        addCreativeItem(Item.get(Item.POTION, Potion.AWKWARD));
+        addCreativeItem(Item.get(Item.POTION, Potion.NIGHT_VISION));
+        addCreativeItem(Item.get(Item.POTION, Potion.NIGHT_VISION_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.INVISIBLE));
+        addCreativeItem(Item.get(Item.POTION, Potion.INVISIBLE_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.LEAPING));
+        addCreativeItem(Item.get(Item.POTION, Potion.LEAPING_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.LEAPING_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.FIRE_RESISTANCE));
+        addCreativeItem(Item.get(Item.POTION, Potion.FIRE_RESISTANCE_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.SPEED));
+        addCreativeItem(Item.get(Item.POTION, Potion.SPEED_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.SPEED_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.SLOWNESS));
+        addCreativeItem(Item.get(Item.POTION, Potion.SLOWNESS_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.WATER_BREATHING));
+        addCreativeItem(Item.get(Item.POTION, Potion.WATER_BREATHING_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.INSTANT_HEALTH));
+        addCreativeItem(Item.get(Item.POTION, Potion.INSTANT_HEALTH_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.HARMING));
+        addCreativeItem(Item.get(Item.POTION, Potion.HARMING_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.POISON));
+        addCreativeItem(Item.get(Item.POTION, Potion.POISON_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.POISON_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.REGENERATION));
+        addCreativeItem(Item.get(Item.POTION, Potion.REGENERATION_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.REGENERATION_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.STRENGTH));
+        addCreativeItem(Item.get(Item.POTION, Potion.STRENGTH_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.STRENGTH_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.WEAKNESS));
+        addCreativeItem(Item.get(Item.POTION, Potion.WEAKNESS_LONG));
+
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.NO_EFFECTS));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.MUNDANE));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.MUNDANE_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.THICK));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.AWKWARD));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.NIGHT_VISION));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.NIGHT_VISION_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.INVISIBLE));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.INVISIBLE_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.LEAPING));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.LEAPING_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.LEAPING_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.FIRE_RESISTANCE));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.FIRE_RESISTANCE_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SPEED));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SPEED_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SPEED_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SLOWNESS));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SLOWNESS_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WATER_BREATHING));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WATER_BREATHING_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.INSTANT_HEALTH));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.INSTANT_HEALTH_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.HARMING));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.HARMING_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.POISON));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.POISON_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.POISON_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.REGENERATION));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.REGENERATION_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.REGENERATION_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.STRENGTH));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.STRENGTH_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.STRENGTH_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WEAKNESS));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WEAKNESS_LONG));
+
     }
 
     public static void clearCreativeItems() {
@@ -1363,9 +1475,9 @@ public class Item implements Cloneable {
         return false;
     }
 
-
-    public final boolean equals(Item item) {
-        return equals(item, true);
+    @Override
+    public final boolean equals(Object item) {
+        return item instanceof Item && this.equals((Item) item, true);
     }
 
     public final boolean equals(Item item, boolean checkDamage) {
@@ -1373,7 +1485,7 @@ public class Item implements Cloneable {
     }
 
     public final boolean equals(Item item, boolean checkDamage, boolean checkCompound) {
-        return this.id == item.getId() && ((!checkDamage) || Objects.equals(this.getDamage(), item.getDamage())) && ((!checkCompound) || Arrays.equals(this.getCompoundTag(), item.getCompoundTag()));
+        return this.getId() == item.getId() && (!checkDamage || this.getDamage() == item.getDamage()) && (!checkCompound || Arrays.equals(this.getCompoundTag(), item.getCompoundTag()));
     }
 
     public final boolean deepEquals(Item item) {

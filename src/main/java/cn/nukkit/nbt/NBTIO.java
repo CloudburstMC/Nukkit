@@ -75,6 +75,8 @@ public class NBTIO {
                 return (CompoundTag) tag;
             }
             throw new IOException("Root tag must be a named compound tag");
+        } finally {
+            inputStream.close();
         }
     }
 
@@ -93,6 +95,8 @@ public class NBTIO {
     public static CompoundTag readCompressed(InputStream in, ByteOrder endianness) throws IOException {
         try (GZIPInputStream gzipInputStream = new GZIPInputStream(in)) {
             return read(gzipInputStream, endianness);
+        } finally {
+            in.close();
         }
     }
 
@@ -149,6 +153,8 @@ public class NBTIO {
     public static void write(CompoundTag tag, OutputStream outputStream, ByteOrder endianness) throws IOException {
         try (NBTOutputStream nbtOutputStream = new NBTOutputStream(outputStream, endianness)) {
             Tag.writeNamedTag(tag, nbtOutputStream);
+        } finally {
+            outputStream.close();
         }
     }
 
@@ -169,6 +175,8 @@ public class NBTIO {
     public static void writeGZIPCompressed(CompoundTag tag, OutputStream out, ByteOrder endianness) throws IOException {
         try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
             write(tag, gzip, endianness);
+        } finally {
+            out.close();
         }
     }
 
@@ -187,6 +195,8 @@ public class NBTIO {
     public static void writeZLIBCompressed(CompoundTag tag, OutputStream out, int level, ByteOrder endianness) throws IOException {
         try (DeflaterOutputStream outputStream = new DeflaterOutputStream(out, new Deflater(level))) {
             write(tag, outputStream, endianness);
+        } finally {
+            out.close();
         }
     }
 

@@ -12,9 +12,9 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemovePlayerPacket;
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Utils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -32,7 +32,7 @@ public class Human extends Creature implements InventoryHolder {
     protected PlayerInventory inventory;
 
     protected UUID uuid;
-    protected UUID rawUUID;
+    protected byte[] rawUUID;
 
     @Override
     public float getWidth() {
@@ -73,7 +73,7 @@ public class Human extends Creature implements InventoryHolder {
         return uuid;
     }
 
-    public UUID getRawUniqueId() {
+    public byte[] getRawUniqueId() {
         return rawUUID;
     }
 
@@ -106,10 +106,11 @@ public class Human extends Creature implements InventoryHolder {
                 if (!this.namedTag.getCompound("Skin").contains("Transparent")) {
                     this.namedTag.getCompound("Skin").putBoolean("Transparent", false);
                 }
-                this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getBoolean("Slim"), this.namedTag.getCompound("Skin").getBoolean("Transparent")));
+                this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getString("ModelId")));
             }
 
-            this.uuid = Utils.dataToUUID(String.valueOf(this.getId()), Binary.bytesToHexString(this.getSkin().getData()), this.getNameTag());
+            this.uuid = Utils.dataToUUID(String.valueOf(this.getId()).getBytes(StandardCharsets.UTF_8), this.getSkin()
+                    .getData(), this.getNameTag().getBytes(StandardCharsets.UTF_8));
         }
 
         if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
@@ -181,8 +182,7 @@ public class Human extends Creature implements InventoryHolder {
         if (this.getSkin().getData().length > 0) {
             this.namedTag.putCompound("Skin", new CompoundTag()
                             .putByteArray("Data", this.getSkin().getData())
-                            .putBoolean("Slim", this.getSkin().isSlim())
-                            .putBoolean("Transparent", this.getSkin().isTransparent())
+                            .putString("ModelId", this.getSkin().getModel())
             );
         }
     }

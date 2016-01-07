@@ -10,14 +10,12 @@ import cn.nukkit.permission.Permissible;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PlayerChatEvent extends PlayerEvent implements Cancellable {
+public class PlayerChatEvent extends PlayerMessageEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {
         return handlers;
     }
-
-    protected String message;
 
     protected String format;
 
@@ -43,14 +41,6 @@ public class PlayerChatEvent extends PlayerEvent implements Cancellable {
         } else {
             this.recipients = recipients;
         }
-    }
-
-    public String getMessage() {
-        return this.message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     /**

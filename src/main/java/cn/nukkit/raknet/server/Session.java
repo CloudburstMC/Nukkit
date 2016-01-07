@@ -54,21 +54,21 @@ public class Session {
     private Map<Integer, Integer> ACKQueue = new HashMap<>();
     private Map<Integer, Integer> NACKQueue = new HashMap<>();
 
-    private Map<Integer, DataPacket> recoveryQueue = new HashMap<>();
+    private Map<Integer, DataPacket> recoveryQueue = new TreeMap<>();
 
     private Map<Integer, Map<Integer, EncapsulatedPacket>> splitPackets = new HashMap<>();
 
-    private Map<Integer, Map<Integer, Integer>> needACK = new HashMap<>();
+    private Map<Integer, Map<Integer, Integer>> needACK = new TreeMap<>();
 
     private DataPacket sendQueue;
 
     private int windowStart;
-    private Map<Integer, Integer> receivedWindow = new HashMap<>();
+    private Map<Integer, Integer> receivedWindow = new TreeMap<>();
     private int windowEnd;
 
     private int reliableWindowStart;
     private int reliableWindowEnd;
-    private Map<Integer, EncapsulatedPacket> reliableWindow = new HashMap<>();
+    private Map<Integer, EncapsulatedPacket> reliableWindow = new TreeMap<>();
     private int lastReliableIndex = -1;
 
     public Session(SessionManager sessionManager, String address, int port) {
@@ -204,7 +204,6 @@ public class Session {
     private void addToQueue(EncapsulatedPacket pk, int flags) throws Exception {
         int priority = flags & 0b0000111;
         if (pk.needACK && pk.messageIndex != null) {
-            Map<Integer, Integer> map;
             if (!this.needACK.containsKey(pk.identifierACK)) {
                 this.needACK.put(pk.identifierACK, new HashMap<>());
             }
@@ -497,7 +496,7 @@ public class Session {
                     }
                 }
             }
-        } else if ((packet.buffer[0] & 0xff) > 0x00 || (packet.buffer[0] & 0xff) < (byte) 0x80) { //Not Data packet :)
+        } else if ((packet.buffer[0] & 0xff) > 0x00 || (packet.buffer[0] & 0xff) < 0x80) { //Not Data packet :)
             packet.decode();
             if (packet instanceof OPEN_CONNECTION_REQUEST_1) {
                 //TODO: check protocol number and refuse connections

@@ -41,8 +41,9 @@ However, Nukkit is **not finished** yet. We welcome contributions.
 
 Build JAR file
 -------------
-- Init modules by `git submodule update --init`
-- Compile by `mvn clean install`
+- `git submodule update --init`
+- `mvn clean`
+- `mvn package`
 
 Running
 -------------

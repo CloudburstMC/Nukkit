@@ -230,17 +230,15 @@ public class BinaryStream {
     }
 
     public void putSkinData(Skin skin) {
-        this.putBoolean(skin.isSlim());
-        this.putBoolean(skin.isTransparent());
+        this.putString(skin.getModel());
         this.putShort(skin.getData().length);
         this.put(skin.getData());
     }
 
     public Skin getSkinData() {
-        boolean slim = this.getBoolean();
-        boolean transparent = this.getBoolean();
+        String modelId = this.getString();
         byte[] skinData = this.get(this.getShort());
-        return new Skin(skinData, slim, transparent);
+        return new Skin(skinData, modelId);
     }
 
     public Item getSlot() {

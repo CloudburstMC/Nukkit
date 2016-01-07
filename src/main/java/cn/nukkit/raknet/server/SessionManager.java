@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -31,7 +28,7 @@ public class SessionManager {
     protected int receiveBytes = 0;
     protected int sendBytes = 0;
 
-    protected Map<String, Session> sessions = new ConcurrentHashMap<>();
+    protected Map<String, Session> sessions = new HashMap<>();
 
     protected String name = "";
 
@@ -42,8 +39,8 @@ public class SessionManager {
     protected long ticks = 0;
     protected long lastMeasure;
 
-    protected Map<String, Long> block = new ConcurrentHashMap<>();
-    protected Map<String, Integer> ipSec = new ConcurrentHashMap<>();
+    protected Map<String, Long> block = new HashMap<>();
+    protected Map<String, Integer> ipSec = new HashMap<>();
 
     public boolean portChecking = true;
 
@@ -95,7 +92,7 @@ public class SessionManager {
 
     private void tick() throws Exception {
         long time = System.currentTimeMillis();
-        for (Session session : this.sessions.values()) {
+        for (Session session : new ArrayList<>(this.sessions.values())) {
             session.update(time);
         }
 

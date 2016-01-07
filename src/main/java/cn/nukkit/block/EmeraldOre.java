@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.Random;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -46,5 +47,10 @@ public class EmeraldOre extends Solid {
         } else {
             return new int[][]{};
         }
+    }
+
+    @Override
+    public int getDropExp() {
+        return new Random().nextRange(3, 7);
     }
 }
