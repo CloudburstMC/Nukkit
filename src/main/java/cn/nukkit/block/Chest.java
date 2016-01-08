@@ -26,6 +26,11 @@ public class Chest extends Transparent {
     public Chest(int meta) {
         super(meta);
     }
+    
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
 
     @Override
     public int getId() {
