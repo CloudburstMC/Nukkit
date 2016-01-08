@@ -318,7 +318,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[OBSIDIAN] = Obsidian.class;
             list[TORCH] = Torch.class;
             list[FIRE] = Fire.class;
-            //list[MONSTER_SPAWNER] = MonsterSpawner.class;
+            list[MONSTER_SPAWNER] = MonsterSpawner.class;
             list[WOOD_STAIRS] = WoodStairs.class;
             list[CHEST] = Chest.class;
             list[REDSTONE_WIRE] = RedstoneWire.class;
@@ -351,7 +351,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[FENCE] = Fence.class;
             list[PUMPKIN] = Pumpkin.class;
             list[NETHERRACK] = Netherrack.class;
-            //list[SOUL_SAND] = SoulSand.class;
+            list[SOUL_SAND] = SoulSand.class;
             list[GLOWSTONE_BLOCK] = Glowstone.class;
 
             list[LIT_PUMPKIN] = LitPumpkin.class;
@@ -396,7 +396,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             //list[CARROT_BLOCK] = Carrot.class;
             //list[POTATO_BLOCK] = Potato.class;
-            //list[ANVIL] = Anvil.class;
+            list[ANVIL] = Anvil.class;
 
             list[REDSTONE_BLOCK] = Redstone.class;
 
