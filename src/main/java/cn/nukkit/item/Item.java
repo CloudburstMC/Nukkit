@@ -163,6 +163,7 @@ public class Item implements Cloneable {
     public static final int JACK_O_LANTERN = 91;
     public static final int CAKE_BLOCK = 92;
 
+    public static final int INVISIBLE_BEDROCK = 95;
     public static final int TRAPDOOR = 96;
 
     public static final int STONE_BRICKS = 98;

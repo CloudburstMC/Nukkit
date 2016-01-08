@@ -140,6 +140,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int JACK_O_LANTERN = 91;
     public static final int CAKE_BLOCK = 92;
 
+    public static final int INVISIBLE_BEDROCK = 95;
     public static final int TRAPDOOR = 96;
 
     public static final int STONE_BRICKS = 98;
@@ -357,6 +358,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[LIT_PUMPKIN] = LitPumpkin.class;
             list[CAKE_BLOCK] = Cake.class;
 
+            list[INVISIBLE_BEDROCK] = InvisibleBedrock.class;
             list[TRAPDOOR] = Trapdoor.class;
 
             list[STONE_BRICKS] = StoneBricks.class;
