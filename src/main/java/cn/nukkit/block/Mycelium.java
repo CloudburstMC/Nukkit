@@ -50,11 +50,12 @@ public class Mycelium extends Solid {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
             //TODO: light levels
-            x = new Random().nextRange((int)x - 1, (int)x + 1);
-            y = new Random().nextRange((int)y - 1, (int)y + 1);
-            z = new Random().nextRange((int)z - 1, (int)z + 1);
+            Random random = new Random();
+            x = random.nextRange((int) x - 1, (int) x + 1);
+            y = random.nextRange((int) y - 1, (int) y + 1);
+            z = random.nextRange((int) z - 1, (int) z + 1);
             Block block = this.getLevel().getBlock(new Vector3(x, y, z));
-            if (block.getId() == Block.DIRT){
+            if (block.getId() == Block.DIRT) {
                 if (block.getSide(1) instanceof Transparent) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new Mycelium());
                     Server.getInstance().getPluginManager().callEvent(ev);
