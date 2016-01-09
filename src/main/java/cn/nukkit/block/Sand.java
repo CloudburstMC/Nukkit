@@ -6,7 +6,7 @@ import cn.nukkit.item.Tool;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Sand extends Solid {
+public class Sand extends Fallable {
 
     public Sand() {
         this(0);
