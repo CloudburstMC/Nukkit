@@ -29,6 +29,125 @@ public class TeleportCommand extends VanillaCommand {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
+        Player origin = null, destination = null;
+        Vector3 dest = null;
+        boolean hasRot = false;
+        switch (args.length) {
+            case 1:
+                //tp <player2> sender->player2 Player
+                if (!sender.isPlayer() || sender.getServer().getPlayer(args[0]) == null) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
+                }
+                origin = sender.getServer().getPlayer(sender.getName());
+                destination = sender.getServer().getPlayer(args[0]);
+                break;
+            case 2:
+                //tp <player1> <player2> player1->player2 Console&Player
+                if (sender.getServer().getPlayer(args[0]) == null || sender.getServer().getPlayer(args[1]) == null) {
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+                    return true;
+                }
+                origin = sender.getServer().getPlayer(args[0]);
+                destination = sender.getServer().getPlayer(args[1]);
+                break;
+            case 3:
+                //tp <x> <y> <z> sender->(x,y,z) Player
+                if (!sender.isPlayer()) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
+                }
+                origin = sender.getServer().getPlayer(sender.getName());
+                try {
+                    dest = new Vector3(Double.valueOf(args[0]), Double.valueOf(args[1]), Double.valueOf(args[2]));
+                } catch (Exception e) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
+                }
+                break;
+            case 4:
+                //tp <player1> <x> <y> <z> player1->(x,y,z) Console&Player
+                if (sender.getServer().getPlayer(args[0]) == null) {
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+                    return true;
+                }
+                origin = sender.getServer().getPlayer(args[0]);
+                try {
+                    dest = new Vector3(Double.valueOf(args[1]), Double.valueOf(args[2]), Double.valueOf(args[3]));
+                } catch (Exception e) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
+                }
+                break;
+            case 5:
+                //tp <x> <y> <z> <x-rot> <y-rot> sender->(x,y,z(x-rot,y-rot)) Player
+                if (!sender.isPlayer()) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
+                }
+                origin = sender.getServer().getPlayer(sender.getName());
+                try {
+                    dest = new Vector3(Double.valueOf(args[0]), Double.valueOf(args[1]), Double.valueOf(args[2]));
+                    hasRot = true;
+                } catch (Exception e) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
+                }
+                break;
+            case 6:
+                //tp <player1> <x> <y> <z> <x-rot> <y-rot> player1->(x,y,z(x-rot,y-rot)) Console&Player
+                if (sender.getServer().getPlayer(args[0]) == null) {
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+                    return true;
+                }
+                origin = sender.getServer().getPlayer(args[0]);
+                try {
+                    dest = new Vector3(Double.valueOf(args[1]), Double.valueOf(args[2]), Double.valueOf(args[3]));
+                    hasRot = true;
+                } catch (Exception e) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
+                }
+                break;
+        }
+        //Origin and Destination Initialization Finished
+        //Start Teleporting
+        if (origin == null) {
+            sender.sendMessage(new TranslationContainer("commands.generic.exception", this.usageMessage));
+            return true;
+        }
+        if (destination != null) {
+            origin.teleport(destination);
+        } else if (dest != null) {
+            if (hasRot) {
+                try {
+                    origin.teleport(dest, Double.valueOf(args[args.length - 1]), Double.valueOf(args[args.length - 2]));
+                } catch (Exception e) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
+                }
+            } else {
+                origin.teleport(dest);
+            }
+        } else {
+            sender.sendMessage(new TranslationContainer("commands.generic.exception", this.usageMessage));
+            return true;
+        }
+
+        Command.broadcastCommandMessage(sender, new TranslationContainer(
+                "%commands.tp.success.coordinates",
+                new String[]{
+                        origin.getName(),
+                        String.valueOf(origin.x),
+                        String.valueOf(origin.y),
+                        String.valueOf(origin.z)
+                }
+        ));
+
+
+
+
+
         //Player player = sender.getServer().getPlayer(args[0]);
         /*
         double x=0;
@@ -84,7 +203,7 @@ public class TeleportCommand extends VanillaCommand {
         */
 
 
-
+        /*
         Player origin=sender.getServer().getPlayer(args[0]);
         if(origin==null){
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
@@ -127,7 +246,7 @@ public class TeleportCommand extends VanillaCommand {
                         "(" + origin.x + "," + origin.y + "," + origin.z + ")"
                 }
         ));
-
+        */
         return true;
 
     }
