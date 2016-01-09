@@ -50,7 +50,7 @@ public class Anvil extends Fallable {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
+        String[] names = new String[] {
                 "Anvil",
                 "Anvil",
                 "Anvil",
@@ -73,11 +73,11 @@ public class Anvil extends Fallable {
             int faces[] = {0, 1, 2, 3};
             int damage = this.getDamage();
             this.meta = faces[player != null ? player.getDirection() : 0] & 0x04;
-            if(damage >= 0 && damage <= 3){
+            if (damage >= 0 && damage <= 3) {
                 this.meta = faces[player != null ? player.getDirection() : 0];
-            }else if(damage >= 4 && damage <= 7){
+            } else if (damage >= 4 && damage <= 7) {
                 this.meta = faces[player != null ? player.getDirection() : 0] | 0x04;
-            }else if(damage >= 8 && damage <= 11){
+            } else if (damage >= 8 && damage <= 11) {
                 this.meta = faces[player != null ? player.getDirection() : 0] | 0x08;
             }
             this.getLevel().setBlock(block, this, true);
@@ -101,14 +101,14 @@ public class Anvil extends Fallable {
     public int[][] getDrops(Item item) {
         int damage = this.getDamage();
         if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
-            if(damage >= 0 && damage <= 3){ //Anvil
+            if (damage >= 0 && damage <= 3) { //Anvil
                 return new int[][]{new int[]{this.getId(), 0, 1}};
-            }else if(damage >= 4 && damage <= 7){ //Slightly Anvil
+            } else if (damage >= 4 && damage <= 7) { //Slightly Anvil
                 return new int[][]{new int[]{this.getId(), this.meta & 0x04, 1}};
-            }else if(damage >= 8 && damage <= 11){ //Very Damaged Anvil
+            } else if (damage >= 8 && damage <= 11) { //Very Damaged Anvil
                 return new int[][]{new int[]{this.getId(), this.meta & 0x08, 1}};
             }
-        }else{
+        } else {
             return new int[0][];
         }
         return new int[0][];
