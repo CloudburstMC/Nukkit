@@ -102,7 +102,7 @@ public class BrewingStand extends Solid {
             } else {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
-                        .putString("id", Tile.FURNACE)
+                        .putString("id", Tile.BREWING_STAND)
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
