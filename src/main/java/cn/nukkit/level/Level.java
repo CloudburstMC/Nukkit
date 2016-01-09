@@ -2228,7 +2228,7 @@ public class Level implements ChunkManager, Metadatable {
             this.provider.unloadChunk(x, z, safe);
         } catch (Exception e) {
             MainLogger logger = this.server.getLogger();
-            logger.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.getMessage()));
+            logger.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.toString()));
             logger.logException(e);
         }
 
