@@ -2930,7 +2930,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     break;
                 }
 
-                System.out.println("*");
                 Tile t = this.level.getTile(pos);
                 if (t instanceof Sign) {
                     CompoundTag nbt;
