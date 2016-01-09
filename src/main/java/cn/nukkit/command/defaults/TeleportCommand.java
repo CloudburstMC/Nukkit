@@ -5,6 +5,7 @@ import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.TextFormat;
 
@@ -138,9 +139,9 @@ public class TeleportCommand extends VanillaCommand {
                 "%commands.tp.success.coordinates",
                 new String[]{
                         origin.getName(),
-                        String.valueOf(origin.x),
-                        String.valueOf(origin.y),
-                        String.valueOf(origin.z)
+                        String.valueOf(NukkitMath.round(origin.x, 4)),
+                        String.valueOf(NukkitMath.round(origin.y, 4)),
+                        String.valueOf(NukkitMath.round(origin.z, 4))
                 }
         ));
 
