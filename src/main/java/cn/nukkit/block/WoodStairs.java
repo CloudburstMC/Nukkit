@@ -40,4 +40,9 @@ public class WoodStairs extends Stair {
     public double getHardness() {
         return 2;
     }
+
+    @Override
+    public double getResistance() {
+        return 15;
+    }
 }

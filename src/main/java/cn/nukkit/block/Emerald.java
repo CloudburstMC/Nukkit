@@ -28,6 +28,16 @@ public class Emerald extends Solid {
     }
 
     @Override
+    public double getHardness() {
+        return 5;
+    }
+
+    @Override
+    public double getResistance() {
+        return 10;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }

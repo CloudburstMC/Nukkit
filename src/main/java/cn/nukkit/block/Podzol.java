@@ -33,6 +33,11 @@ public class Podzol extends Solid {
 
     @Override
     public double getHardness() {
+        return 0.5;
+    }
+
+    @Override
+    public double getResistance() {
         return 2.5;
     }
 }

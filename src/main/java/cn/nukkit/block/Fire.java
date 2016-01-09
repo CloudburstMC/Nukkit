@@ -8,6 +8,7 @@ import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.Vector3;
 
 /**
  * author: MagicDroidX
@@ -85,7 +86,7 @@ public class Fire extends Flowable {
 
             return Level.BLOCK_UPDATE_NORMAL;
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getSide(0).getId() != NETHERRACK) {
+            if (this.getSide(Vector3.SIDE_DOWN).getId() != NETHERRACK) {
                 this.getLevel().setBlock(this, new Air(), true);
 
                 return Level.BLOCK_UPDATE_NORMAL;

@@ -1,10 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
-
-import java.util.Random;
 
 //和pm源码有点出入，这里参考了wiki
 
@@ -12,7 +9,7 @@ import java.util.Random;
  * Created on 2015/12/6 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class GlowingRedstoneOre extends Solid {
+public class GlowingRedstoneOre extends RedstoneOre {
 
     public GlowingRedstoneOre() {
         this(0);
@@ -33,32 +30,8 @@ public class GlowingRedstoneOre extends Solid {
     }
 
     @Override
-    public double getHardness() {
-        return 3;
-    }
-
-    @Override
-    public double getResistance() {
-        return 15;
-    }
-
-    @Override
-    public int getToolType() {
-        return Tool.TYPE_PICKAXE;
-    }
-
-    @Override
     public int getLightLevel() {
         return 9;
-    }
-
-    @Override
-    public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= Tool.TIER_IRON) {
-            return new int[][]{new int[]{Item.REDSTONE_DUST, 0, new Random().nextInt(1) + 4}};
-        } else {
-            return new int[0][];
-        }
     }
 
     @Override
@@ -70,10 +43,5 @@ public class GlowingRedstoneOre extends Solid {
         }
 
         return 0;
-    }
-
-    @Override
-    public int getDropExp() {
-        return new cn.nukkit.utils.Random().nextRange(1, 5);
     }
 }

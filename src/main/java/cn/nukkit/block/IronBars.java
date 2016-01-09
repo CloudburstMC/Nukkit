@@ -33,6 +33,11 @@ public class IronBars extends Thin {
     }
 
     @Override
+    public double getResistance() {
+        return 10;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }

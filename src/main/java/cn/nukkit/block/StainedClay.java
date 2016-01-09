@@ -50,6 +50,11 @@ public class StainedClay extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 0.75;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }

@@ -36,11 +36,6 @@ public class WaterLily extends Flowable {
     }
 
     @Override
-    public double getHardness() {
-        return 0.6;
-    }
-
-    @Override
     public boolean canPassThrough() {
         return true;
     }

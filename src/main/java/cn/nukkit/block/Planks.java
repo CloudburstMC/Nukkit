@@ -34,6 +34,11 @@ public class Planks extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 5;
+    }
+
+    @Override
     public String getName() {
         String[] names = new String[]{
                 "Oak Wood Planks",

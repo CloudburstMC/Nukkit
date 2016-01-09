@@ -29,6 +29,11 @@ public class Carpet extends Flowable {
     }
 
     @Override
+    public double getResistance() {
+        return 0.5;
+    }
+
+    @Override
     public boolean isSolid() {
         return true;
     }

@@ -27,6 +27,11 @@ public class Sand extends Fallable {
     }
 
     @Override
+    public double getResistance() {
+        return 2.5;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_SHOVEL;
     }

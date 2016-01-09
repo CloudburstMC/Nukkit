@@ -22,6 +22,11 @@ public class Clay extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 3;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_SHOVEL;
     }

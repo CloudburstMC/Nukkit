@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
 
@@ -32,6 +33,11 @@ public class SoulSand extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 2.5;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_SHOVEL;
     }
@@ -48,4 +54,14 @@ public class SoulSand extends Solid {
         );
     }
 
+    @Override
+    public boolean hasEntityCollision() {
+        return true;
+    }
+
+    @Override
+    public void onEntityCollide(Entity entity) {
+        entity.motionX *= 0.4d;
+        entity.motionZ *= 0.4d;
+    }
 }
