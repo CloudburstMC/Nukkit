@@ -87,14 +87,16 @@ public class TimeCommand extends VanillaCommand {
 
             int value;
             if ("day".equals(args[1])) {
-                value = 0;
+                value = Level.TIME_DAY;
             } else if ("night".equals(args[1])) {
                 value = Level.TIME_NIGHT;
-            } else if (args[1].matches("^[1-9]+\\d*$")) {
-                value = Math.max(0, Integer.parseInt(args[1]));
             } else {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.usage"));
-                return true;
+                try {
+                    value = Math.max(0, Integer.parseInt(args[1]));
+                } catch (Exception e) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return true;
+                }
             }
 
             for (Level level : sender.getServer().getLevels().values()) {
@@ -110,7 +112,14 @@ public class TimeCommand extends VanillaCommand {
                 return true;
             }
 
-            int value = Math.max(0, Integer.parseInt(args[1]));
+            int value;
+            try {
+                value = Math.max(0, Integer.parseInt(args[1]));
+            } catch (Exception e) {
+                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                return true;
+            }
+
             for (Level level : sender.getServer().getLevels().values()) {
                 level.checkTime();
                 level.setTime(level.getTime() + value);

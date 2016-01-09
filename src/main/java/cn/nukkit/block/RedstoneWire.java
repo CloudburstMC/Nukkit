@@ -8,7 +8,7 @@ import cn.nukkit.redstone.Redstone;
  * author: Angelic47
  * Nukkit Project
  */
-public class RedstoneWire extends Flowable{
+public class RedstoneWire extends Flowable {
 
     public RedstoneWire() {
         this(0);

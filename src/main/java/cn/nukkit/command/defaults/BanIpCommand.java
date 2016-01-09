@@ -10,6 +10,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -87,7 +88,7 @@ public class BanIpCommand extends VanillaCommand {
     private void processIPBan(String ip, CommandSender sender, String reason) {
         sender.getServer().getIPBans().addBan(ip, reason, null, sender.getName());
 
-        for (Player player : sender.getServer().getOnlinePlayers().values()) {
+        for (Player player : new ArrayList<>(sender.getServer().getOnlinePlayers().values())) {
             if (player.getAddress().equals(ip)) {
                 player.kick(!Objects.equals(reason, "") ? reason : "IP banned.");
             }

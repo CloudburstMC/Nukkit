@@ -64,4 +64,9 @@ public class RedstoneOre extends Solid {
 
         return 0;
     }
+
+    @Override
+    public int getDropExp() {
+        return new cn.nukkit.utils.Random().nextRange(1, 5);
+    }
 }

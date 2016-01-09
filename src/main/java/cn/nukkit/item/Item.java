@@ -21,7 +21,6 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * author: MagicDroidX
@@ -164,6 +163,7 @@ public class Item implements Cloneable {
     public static final int JACK_O_LANTERN = 91;
     public static final int CAKE_BLOCK = 92;
 
+    public static final int INVISIBLE_BEDROCK = 95;
     public static final int TRAPDOOR = 96;
 
     public static final int STONE_BRICKS = 98;
@@ -219,6 +219,7 @@ public class Item implements Cloneable {
     public static final int ANVIL = 145;
 
     public static final int REDSTONE_BLOCK = 152;
+    public static final int QUARTZ_ORE = 153;
 
     public static final int QUARTZ_BLOCK = 155;
     public static final int QUARTZ_STAIRS = 156;
@@ -243,11 +244,12 @@ public class Item implements Cloneable {
     public static final int DARK_OAK_WOOD_STAIRS = 164;
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
 
+    public static final int IRON_TRAPDOOR = 167;
     public static final int HAY_BALE = 170;
     public static final int CARPET = 171;
     public static final int HARDENED_CLAY = 172;
     public static final int COAL_BLOCK = 173;
-
+    public static final int PACKED_ICE = 174;
     public static final int DOUBLE_PLANT = 175;
 
     public static final int FENCE_GATE_SPRUCE = 183;
@@ -410,6 +412,7 @@ public class Item implements Cloneable {
 
     public static final int GLISTERING_MELON = 382;
     public static final int SPAWN_EGG = 383;
+    public static final int EXPERIENCE_BOTTLE = 384;
 
     public static final int EMERALD = 388;
 
@@ -427,6 +430,8 @@ public class Item implements Cloneable {
     public static final int NETHER_BRICK = 405;
     public static final int QUARTZ = 406;
     public static final int NETHER_QUARTZ = 406;
+
+    public static final int SPLASH_POTION = 438;
 
     public static final int CAMERA = 456;
     public static final int BEETROOT = 457;
@@ -603,6 +608,8 @@ public class Item implements Cloneable {
             list[BREWING_STAND] = BrewingStand.class;
             list[GLASS_BOTTLE] = GlassBottle.class;
             list[POTION] = Potion.class;
+            //list[SPLASH_POTION] = SplashPotion.class;
+            list[EXPERIENCE_BOTTLE] = ExpBottle.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -648,21 +655,21 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CLAY_BLOCK, 0));
         addCreativeItem(Item.get(Item.HARDENED_CLAY, 0));
         addCreativeItem(Item.get(Item.STAINED_CLAY, 0));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 7));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 6));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 5));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 4));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 3));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 2));
         addCreativeItem(Item.get(Item.STAINED_CLAY, 1));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 15));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 14));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 13));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 12));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 11));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 10));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 9));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 2));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 3));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 4));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 5));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 6));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 7));
         addCreativeItem(Item.get(Item.STAINED_CLAY, 8));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 9));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 10));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 11));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 12));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 13));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 14));
+        addCreativeItem(Item.get(Item.STAINED_CLAY, 15));
         addCreativeItem(Item.get(Item.SANDSTONE, 0));
         addCreativeItem(Item.get(Item.SANDSTONE, 1));
         addCreativeItem(Item.get(Item.SANDSTONE, 2));
@@ -677,6 +684,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.TRUNK2, 1));
         addCreativeItem(Item.get(Item.NETHER_BRICKS, 0));
         addCreativeItem(Item.get(Item.NETHERRACK, 0));
+        addCreativeItem(Item.get(Item.SOUL_SAND, 0));
         addCreativeItem(Item.get(Item.BEDROCK, 0));
         addCreativeItem(Item.get(Item.COBBLESTONE_STAIRS, 0));
         addCreativeItem(Item.get(Item.OAK_WOODEN_STAIRS, 0));
@@ -691,20 +699,21 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.NETHER_BRICKS_STAIRS, 0));
         addCreativeItem(Item.get(Item.QUARTZ_STAIRS, 0));
         addCreativeItem(Item.get(Item.SLAB, 0));
-        addCreativeItem(Item.get(Item.SLAB, 1));
+        addCreativeItem(Item.get(Item.SLAB, 3));
         addCreativeItem(Item.get(Item.WOODEN_SLAB, 0));
         addCreativeItem(Item.get(Item.WOODEN_SLAB, 1));
         addCreativeItem(Item.get(Item.WOODEN_SLAB, 2));
         addCreativeItem(Item.get(Item.WOODEN_SLAB, 3));
         addCreativeItem(Item.get(Item.WOODEN_SLAB, 4));
         addCreativeItem(Item.get(Item.WOODEN_SLAB, 5));
-        addCreativeItem(Item.get(Item.SLAB, 3));
         addCreativeItem(Item.get(Item.SLAB, 4));
+        addCreativeItem(Item.get(Item.SLAB, 1));
         addCreativeItem(Item.get(Item.SLAB, 5));
         addCreativeItem(Item.get(Item.SLAB, 6));
+        addCreativeItem(Item.get(Item.SLAB, 7));
         addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 0));
-        addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 1));
         addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 2));
+        addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 1));
         addCreativeItem(Item.get(Item.COAL_ORE, 0));
         addCreativeItem(Item.get(Item.IRON_ORE, 0));
         addCreativeItem(Item.get(Item.GOLD_ORE, 0));
@@ -713,8 +722,10 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.REDSTONE_ORE, 0));
         addCreativeItem(Item.get(Item.REDSTONE_TORCH, 0));
         addCreativeItem(Item.get(Item.EMERALD_ORE, 0));
+        addCreativeItem(Item.get(Item.QUARTZ_ORE, 0));
         addCreativeItem(Item.get(Item.OBSIDIAN, 0));
         addCreativeItem(Item.get(Item.ICE, 0));
+        addCreativeItem(Item.get(Item.PACKED_ICE, 0));
         addCreativeItem(Item.get(Item.SNOW_BLOCK, 0));
         addCreativeItem(Item.get(Item.END_STONE, 0));
         addCreativeItem(Item.get(Item.QUARTZ, 0));
@@ -734,12 +745,13 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.GLASS, 0));
         addCreativeItem(Item.get(Item.GLOWSTONE_BLOCK, 0));
         addCreativeItem(Item.get(Item.VINES, 0));
-        addCreativeItem(Item.get(Item.NETHER_REACTOR, 0));
         addCreativeItem(Item.get(Item.LADDER, 0));
         addCreativeItem(Item.get(Item.SPONGE, 0));
         addCreativeItem(Item.get(Item.GLASS_PANE, 0));
         addCreativeItem(Item.get(Item.WOODEN_DOOR, 0));
+        addCreativeItem(Item.get(Item.IRON_DOOR, 0));
         addCreativeItem(Item.get(Item.TRAPDOOR, 0));
+        addCreativeItem(Item.get(Item.IRON_TRAPDOOR, 0));
         addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_OAK));
         addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_SPRUCE));
         addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_BIRCH));
@@ -748,11 +760,11 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_DARK_OAK));
         addCreativeItem(Item.get(Item.NETHER_BRICK_FENCE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE_BIRCH, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_SPRUCE, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE_DARK_OAK, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE_BIRCH, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_JUNGLE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_ACACIA, 0));
+        addCreativeItem(Item.get(Item.FENCE_GATE_DARK_OAK, 0));
         addCreativeItem(Item.get(Item.IRON_BARS, 0));
         addCreativeItem(Item.get(Item.BED, 0));
         addCreativeItem(Item.get(Item.BOOKSHELF, 0));
@@ -761,7 +773,11 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.STONECUTTER, 0));
         addCreativeItem(Item.get(Item.CHEST, 0));
         addCreativeItem(Item.get(Item.FURNACE, 0));
+        addCreativeItem(Item.get(Item.BREWING_STAND, 0));
         addCreativeItem(Item.get(Item.END_PORTAL, 0));
+        addCreativeItem(Item.get(Item.ANVIL, 0));
+        addCreativeItem(Item.get(Item.ANVIL, 4));
+        addCreativeItem(Item.get(Item.ANVIL, 8));
         addCreativeItem(Item.get(Item.DANDELION, 0));
         addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_POPPY));
         addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_BLUE_ORCHID));
@@ -808,42 +824,38 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SIGN, 0));
         addCreativeItem(Item.get(Item.MONSTER_SPAWNER, 0));
         addCreativeItem(Item.get(Item.WOOL, 0));
+        addCreativeItem(Item.get(Item.WOOL, 8));
         addCreativeItem(Item.get(Item.WOOL, 7));
-        addCreativeItem(Item.get(Item.WOOL, 6));
-        addCreativeItem(Item.get(Item.WOOL, 5));
-        addCreativeItem(Item.get(Item.WOOL, 4));
-        addCreativeItem(Item.get(Item.WOOL, 3));
-        addCreativeItem(Item.get(Item.WOOL, 2));
-        addCreativeItem(Item.get(Item.WOOL, 1));
         addCreativeItem(Item.get(Item.WOOL, 15));
-        addCreativeItem(Item.get(Item.WOOL, 14));
-        addCreativeItem(Item.get(Item.WOOL, 13));
         addCreativeItem(Item.get(Item.WOOL, 12));
+        addCreativeItem(Item.get(Item.WOOL, 14));
+        addCreativeItem(Item.get(Item.WOOL, 1));
+        addCreativeItem(Item.get(Item.WOOL, 4));
+        addCreativeItem(Item.get(Item.WOOL, 5));
+        addCreativeItem(Item.get(Item.WOOL, 13));
+        addCreativeItem(Item.get(Item.WOOL, 9));
+        addCreativeItem(Item.get(Item.WOOL, 3));
         addCreativeItem(Item.get(Item.WOOL, 11));
         addCreativeItem(Item.get(Item.WOOL, 10));
-        addCreativeItem(Item.get(Item.WOOL, 9));
-        addCreativeItem(Item.get(Item.WOOL, 8));
+        addCreativeItem(Item.get(Item.WOOL, 2));
+        addCreativeItem(Item.get(Item.WOOL, 6));
         addCreativeItem(Item.get(Item.CARPET, 0));
+        addCreativeItem(Item.get(Item.CARPET, 8));
         addCreativeItem(Item.get(Item.CARPET, 7));
-        addCreativeItem(Item.get(Item.CARPET, 6));
-        addCreativeItem(Item.get(Item.CARPET, 5));
-        addCreativeItem(Item.get(Item.CARPET, 4));
-        addCreativeItem(Item.get(Item.CARPET, 3));
-        addCreativeItem(Item.get(Item.CARPET, 2));
-        addCreativeItem(Item.get(Item.CARPET, 1));
         addCreativeItem(Item.get(Item.CARPET, 15));
-        addCreativeItem(Item.get(Item.CARPET, 14));
-        addCreativeItem(Item.get(Item.CARPET, 13));
         addCreativeItem(Item.get(Item.CARPET, 12));
+        addCreativeItem(Item.get(Item.CARPET, 14));
+        addCreativeItem(Item.get(Item.CARPET, 1));
+        addCreativeItem(Item.get(Item.CARPET, 4));
+        addCreativeItem(Item.get(Item.CARPET, 5));
+        addCreativeItem(Item.get(Item.CARPET, 13));
+        addCreativeItem(Item.get(Item.CARPET, 9));
+        addCreativeItem(Item.get(Item.CARPET, 3));
         addCreativeItem(Item.get(Item.CARPET, 11));
         addCreativeItem(Item.get(Item.CARPET, 10));
-        addCreativeItem(Item.get(Item.CARPET, 9));
-        addCreativeItem(Item.get(Item.CARPET, 8));
+        addCreativeItem(Item.get(Item.CARPET, 2));
+        addCreativeItem(Item.get(Item.CARPET, 6));
 
-
-        addCreativeItem(Item.get(Item.ANVIL, 0));
-        addCreativeItem(Item.get(Item.ANVIL, 4));
-        addCreativeItem(Item.get(Item.ANVIL, 8));
 
         //Tools
         //TODO addCreativeItem(Item.get(Item.RAILS, 0));
@@ -915,6 +927,84 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.DYE, 10));
         addCreativeItem(Item.get(Item.DYE, 9));
         addCreativeItem(Item.get(Item.DYE, 8));
+
+        addCreativeItem(Item.get(Item.EXPERIENCE_BOTTLE));
+
+        //Potion
+        addCreativeItem(Item.get(Item.POTION, Potion.NO_EFFECTS));
+        addCreativeItem(Item.get(Item.POTION, Potion.MUNDANE));
+        addCreativeItem(Item.get(Item.POTION, Potion.MUNDANE_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.THICK));
+        addCreativeItem(Item.get(Item.POTION, Potion.AWKWARD));
+        addCreativeItem(Item.get(Item.POTION, Potion.NIGHT_VISION));
+        addCreativeItem(Item.get(Item.POTION, Potion.NIGHT_VISION_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.INVISIBLE));
+        addCreativeItem(Item.get(Item.POTION, Potion.INVISIBLE_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.LEAPING));
+        addCreativeItem(Item.get(Item.POTION, Potion.LEAPING_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.LEAPING_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.FIRE_RESISTANCE));
+        addCreativeItem(Item.get(Item.POTION, Potion.FIRE_RESISTANCE_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.SPEED));
+        addCreativeItem(Item.get(Item.POTION, Potion.SPEED_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.SPEED_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.SLOWNESS));
+        addCreativeItem(Item.get(Item.POTION, Potion.SLOWNESS_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.WATER_BREATHING));
+        addCreativeItem(Item.get(Item.POTION, Potion.WATER_BREATHING_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.INSTANT_HEALTH));
+        addCreativeItem(Item.get(Item.POTION, Potion.INSTANT_HEALTH_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.HARMING));
+        addCreativeItem(Item.get(Item.POTION, Potion.HARMING_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.POISON));
+        addCreativeItem(Item.get(Item.POTION, Potion.POISON_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.POISON_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.REGENERATION));
+        addCreativeItem(Item.get(Item.POTION, Potion.REGENERATION_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.REGENERATION_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.STRENGTH));
+        addCreativeItem(Item.get(Item.POTION, Potion.STRENGTH_LONG));
+        addCreativeItem(Item.get(Item.POTION, Potion.STRENGTH_II));
+        addCreativeItem(Item.get(Item.POTION, Potion.WEAKNESS));
+        addCreativeItem(Item.get(Item.POTION, Potion.WEAKNESS_LONG));
+
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.NO_EFFECTS));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.MUNDANE));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.MUNDANE_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.THICK));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.AWKWARD));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.NIGHT_VISION));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.NIGHT_VISION_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.INVISIBLE));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.INVISIBLE_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.LEAPING));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.LEAPING_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.LEAPING_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.FIRE_RESISTANCE));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.FIRE_RESISTANCE_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SPEED));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SPEED_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SPEED_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SLOWNESS));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.SLOWNESS_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WATER_BREATHING));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WATER_BREATHING_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.INSTANT_HEALTH));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.INSTANT_HEALTH_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.HARMING));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.HARMING_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.POISON));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.POISON_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.POISON_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.REGENERATION));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.REGENERATION_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.REGENERATION_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.STRENGTH));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.STRENGTH_LONG));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.STRENGTH_II));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WEAKNESS));
+        addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WEAKNESS_LONG));
+
     }
 
     public static void clearCreativeItems() {
@@ -1389,9 +1479,9 @@ public class Item implements Cloneable {
         return false;
     }
 
-
-    public final boolean equals(Item item) {
-        return equals(item, true);
+    @Override
+    public final boolean equals(Object item) {
+        return item instanceof Item && this.equals((Item) item, true);
     }
 
     public final boolean equals(Item item, boolean checkDamage) {
@@ -1399,7 +1489,7 @@ public class Item implements Cloneable {
     }
 
     public final boolean equals(Item item, boolean checkDamage, boolean checkCompound) {
-        return this.id == item.getId() && ((!checkDamage) || Objects.equals(this.getDamage(), item.getDamage())) && ((!checkCompound) || Arrays.equals(this.getCompoundTag(), item.getCompoundTag()));
+        return this.getId() == item.getId() && (!checkDamage || this.getDamage() == item.getDamage()) && (!checkCompound || Arrays.equals(this.getCompoundTag(), item.getCompoundTag()));
     }
 
     public final boolean deepEquals(Item item) {

@@ -274,18 +274,18 @@ public class Server {
 
         ServerScheduler.WORKERS = (int) poolSize;
 
-        Object threshold = this.getConfig("network.batch-threshold", 256);
-        if (!(threshold instanceof Integer)) {
-            try {
-                threshold = Integer.valueOf((String) threshold);
-            } catch (Exception e) {
-                threshold = 256;
-            }
+        int threshold;
+        try {
+            threshold = Integer.valueOf(String.valueOf(this.getConfig("network.batch-threshold", 256)));
+        } catch (Exception e) {
+            threshold = 256;
         }
-        if ((int) threshold < 0) {
+
+        if (threshold < 0) {
             threshold = -1;
         }
-        Network.BATCH_THRESHOLD = (int) threshold;
+
+        Network.BATCH_THRESHOLD = threshold;
         this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
         this.networkCompressionAsync = (boolean) this.getConfig("network.async-compression", true);
 
@@ -504,7 +504,7 @@ public class Server {
         packet.encode();
         packet.isEncoded = true;
         if (Network.BATCH_THRESHOLD >= 0 && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
-            Server.getInstance().batchPackets(players, new byte[][]{packet.getBuffer()}, false);
+            Server.getInstance().batchPackets(players, packet.getBuffer(), false);
             return;
         }
 
@@ -532,16 +532,16 @@ public class Server {
             payload[i * 2] = Binary.writeInt(buf.length);
             payload[i * 2 + 1] = buf;
         }
-        this.batchPackets(players, payload, forceSync);
+        byte[] data = new byte[0];
+        data = Binary.appendBytes(data, payload);
+        this.batchPackets(players, data, forceSync);
     }
 
-    public void batchPackets(Player[] players, byte[][] payload) {
+    public void batchPackets(Player[] players, byte[] payload) {
         this.batchPackets(players, payload, false);
     }
 
-    public void batchPackets(Player[] players, byte[][] payload, boolean forceSync) {
-        byte[] data = new byte[0];
-        data = Binary.appendBytes(data, payload);
+    public void batchPackets(Player[] players, byte[] payload, boolean forceSync) {
         List<String> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
@@ -550,10 +550,10 @@ public class Server {
         }
 
         if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel));
+            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
         } else {
             try {
-                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
+                this.broadcastPacketsCallback(Zlib.deflate(payload, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -674,7 +674,7 @@ public class Server {
             this.getLogger().debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
-            for (Player player : this.players.values()) {
+            for (Player player : new ArrayList<>(this.players.values())) {
                 player.close(player.getLeaveMessage(), (String) this.getConfig("settings.shutdown-message", "Server closed"));
             }
 
@@ -746,7 +746,12 @@ public class Server {
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
         while (this.isRunning) {
-            this.tick();
+            try {
+                this.tick();
+            } catch (RuntimeException e) {
+                this.getLogger().logException(e);
+            }
+
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
@@ -759,9 +764,6 @@ public class Server {
         if (this.sendUsageTicker > 0) {
             this.uniquePlayers.add(player.getUniqueId());
         }
-
-        this.sendFullPlayerListData(player);
-        this.sendRecipeList(player);
     }
 
     public void addPlayer(String identifier, Player player) {
@@ -1785,6 +1787,10 @@ public class Server {
         Entity.registerEntity(Snowball.class);
         Entity.registerEntity(Painting.class);
         //todo mobs
+
+        Entity.registerEntity(ThrownExpBottle.class);
+        Entity.registerEntity(XPOrb.class);
+        Entity.registerEntity(ThrownPotion.class);
 
         Entity.registerEntity(Human.class, true);
     }

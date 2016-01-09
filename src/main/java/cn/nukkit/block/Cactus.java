@@ -42,12 +42,12 @@ public class Cactus extends Transparent {
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
         return new AxisAlignedBB(
-                x + 0.0625,
-                y + 0.0625,
-                z + 0.0625,
-                x + 0.9375,
-                y + 0.9375,
-                z + 0.9375
+                this.x + 0.0625,
+                this.y + 0.0625,
+                this.z + 0.0625,
+                this.x + 0.9375,
+                this.y + 0.9375,
+                this.z + 0.9375
         );
     }
 
@@ -60,20 +60,22 @@ public class Cactus extends Transparent {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = getSide(0);
-            if (down.getId() != Block.SAND && down.getId() != Block.CACTUS) {
-                getLevel().useBreakOn(this);
-            } else for (int side = 2; side != 6; ++side) {
-                Block block = getSide(side);
-                if (block.canBeFlowedInto()) {
-                    getLevel().useBreakOn(this);
+            if (down.getId() != SAND && down.getId() != CACTUS) {
+                this.getLevel().useBreakOn(this);
+            } else {
+                for (int side = 2; side <= 5; ++side) {
+                    Block block = getSide(side);
+                    if (!block.canBeFlowedInto()) {
+                        this.getLevel().useBreakOn(this);
+                    }
                 }
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (getSide(0).getId() != Block.CACTUS) {
-                if (meta == 0x0F) {
-                    for (y = 1; y < 3; ++y) {
-                        Block b = getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
-                        if (b.getId() == Block.AIR) {
+            if (getSide(0).getId() != CACTUS) {
+                if (this.meta == 0x0F) {
+                    for (int y = 1; y < 3; ++y) {
+                        Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
+                        if (b.getId() == AIR) {
                             BlockGrowEvent event = new BlockGrowEvent(b, new Cactus());
                             Server.getInstance().getPluginManager().callEvent(event);
                             if (!event.isCancelled()) {
@@ -81,27 +83,30 @@ public class Cactus extends Transparent {
                             }
                         }
                     }
-                    meta = 0;
-                    getLevel().setBlock(this, this);
+                    this.meta = 0;
+                    this.getLevel().setBlock(this, this);
                 } else {
-                    ++meta;
-                    getLevel().setBlock(this, this);
+                    ++this.meta;
+                    this.getLevel().setBlock(this, this);
                 }
             }
         }
+
         return 0;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        Block down = getSide(0);
-        if (down.getId() == Block.SAND || down.getId() == Block.CACTUS) {
+        Block down = this.getSide(0);
+        if (down.getId() == SAND || down.getId() == CACTUS) {
             Block block0 = getSide(2);
             Block block1 = getSide(3);
             Block block2 = getSide(4);
             Block block3 = getSide(5);
             if (block0.isTransparent() && block1.isTransparent() && block2.isTransparent() && block3.isTransparent()) {
-                return getLevel().setBlock(this, this, true);
+                this.getLevel().setBlock(this, this, true);
+
+                return true;
             }
         }
         return false;
@@ -109,7 +114,7 @@ public class Cactus extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{getId(), 0, 1}};
+        return new int[][]{{this.getId(), 0, 1}};
     }
 
     @Override
