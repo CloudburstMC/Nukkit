@@ -6,6 +6,7 @@ import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.level.generator.object.TallGrass;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 
@@ -16,7 +17,6 @@ import java.util.Random;
  * Nukkit Project
  */
 public class Grass extends Solid {
-
 
     public Grass() {
         this(0);
@@ -63,7 +63,12 @@ public class Grass extends Solid {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.isHoe()) {
+        if(item.getId()==Item.DYE && item.getDamage() == 0x0F){
+            item.count--;
+            TallGrass.growGrass(this.getLevel(),this,new cn.nukkit.utils.Random(),15,10);
+            return true;
+        }
+        else if (item.isHoe()) {
             item.useOn(this);
             this.getLevel().setBlock(this, new Farmland());
             return true;
@@ -72,7 +77,7 @@ public class Grass extends Solid {
             this.getLevel().setBlock(this, new GrassPath());
             return true;
         }
-        //todo: Item.DYE growGrass
+
         return false;
     }
 
