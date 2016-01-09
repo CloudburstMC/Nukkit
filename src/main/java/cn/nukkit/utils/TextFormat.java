@@ -65,7 +65,12 @@ public final class TextFormat {
     public static final String RESET = TextFormat.ESCAPE + "r";
 
     public static String clean(String message) {
-        return message.replaceAll(ESCAPE + "+[0123456789abcdefklmnor]", "");
+        return clean(message, true);
+    }
+
+    public static String clean(String message, boolean removeFormat) {
+        message = message.replaceAll((char) 0x1b + "[0-9;\\[\\(]+[Bm]", "");
+        return removeFormat ? message.replaceAll(ESCAPE + "[0123456789abcdefklmnor]", "") : message;
     }
 
     public static String toANSI(String string) {
