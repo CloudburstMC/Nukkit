@@ -114,9 +114,8 @@ public class SessionManager {
 
             if (!this.block.isEmpty()) {
                 long now = System.currentTimeMillis();
-                for (Map.Entry<String, Long> entry : this.block.entrySet()) {
-                    String address = entry.getKey();
-                    long timeout = entry.getValue();
+                for (String address : new ArrayList<>(this.block.keySet())) {
+                    long timeout = this.block.get(address);
                     if (timeout <= now) {
                         this.block.remove(address);
                     } else {
