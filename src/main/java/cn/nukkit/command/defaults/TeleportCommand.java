@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.IPlayer;
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
@@ -113,7 +114,7 @@ public class TeleportCommand extends VanillaCommand {
                     origin.teleport(new Vector3(x, y, z));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
             }
