@@ -1,8 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.IPlayer;
+
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
