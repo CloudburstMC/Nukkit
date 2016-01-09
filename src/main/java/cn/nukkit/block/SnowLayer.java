@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.Vector3;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -60,7 +61,7 @@ public class SnowLayer extends Flowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(0).getId() == AIR) {
+            if (this.getSide(Vector3.SIDE_DOWN).isTransparent()) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;

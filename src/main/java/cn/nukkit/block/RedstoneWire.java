@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.redstone.Redstone;
 
 /**
@@ -37,15 +39,25 @@ public class RedstoneWire extends Flowable {
 
     @Override
     public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.getSide(Vector3.SIDE_DOWN).isTransparent()) {
+                this.getLevel().useBreakOn(this);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
+        }
         return 0;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        this.setPowerLevel(this.getNeighborPowerLevel() - 1);
-        block.getLevel().setBlock(block, this, true, true);
-        Redstone.active(this);
-        return false;
+        if (this.getSide(Vector3.SIDE_DOWN).isTransparent()) {
+            return false;
+        } else {
+            this.setPowerLevel(this.getNeighborPowerLevel() - 1);
+            block.getLevel().setBlock(block, this, true, true);
+            Redstone.active(this);
+            return true;
+        }
     }
 
     @Override
@@ -56,4 +68,10 @@ public class RedstoneWire extends Flowable {
         return true;
     }
 
+    @Override
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {Item.REDSTONE, 0, 1}
+        };
+    }
 }
