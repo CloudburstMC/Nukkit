@@ -16,6 +16,7 @@ import java.nio.ByteOrder;
 public abstract class Spawnable extends Tile {
     public Spawnable(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+        this.spawnToAll();
     }
 
     public abstract CompoundTag getSpawnCompound();

@@ -85,8 +85,8 @@ public class SessionManager {
                 } catch (InterruptedException e) {
                     //ignore
                 }
-                this.tick();
             }
+            this.tick();
         }
     }
 
@@ -96,9 +96,8 @@ public class SessionManager {
             session.update(time);
         }
 
-        for (Map.Entry<String, Integer> entry : this.ipSec.entrySet()) {
-            String address = entry.getKey();
-            int count = entry.getValue();
+        for (String address : this.ipSec.keySet()) {
+            int count = this.ipSec.get(address);
             if (count >= this.packetLimit) {
                 this.blockAddress(address);
             }
@@ -118,6 +117,7 @@ public class SessionManager {
                     long timeout = this.block.get(address);
                     if (timeout <= now) {
                         this.block.remove(address);
+                        this.getLogger().notice("Unblocked " + address);
                     } else {
                         break;
                     }
@@ -378,7 +378,7 @@ public class SessionManager {
     }
 
     public void blockAddress(String address, int timeout) {
-        long finalTime = System.currentTimeMillis() + 300 * 1000;
+        long finalTime = System.currentTimeMillis() + timeout * 1000;
         if (!this.block.containsKey(address) || timeout == -1) {
             if (timeout == -1) {
                 finalTime = Long.MAX_VALUE;
