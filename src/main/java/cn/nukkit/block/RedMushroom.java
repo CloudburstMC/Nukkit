@@ -6,31 +6,26 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 
 /**
- * @author Nukkit Project Team
+ * Created by Pub4Game on 03.01.2015.
  */
-public class BrownMushroom extends Flowable {
+public class RedMushroom extends Flowable {
 
-    public BrownMushroom() {
+    public RedMushroom() {
         this(0);
     }
 
-    public BrownMushroom(int meta) {
+    public RedMushroom(int meta) {
         super(0);
     }
 
     @Override
     public String getName() {
-        return "Brown Mushroom";
+        return "Red Mushroom";
     }
 
     @Override
     public int getId() {
-        return Block.BROWN_MUSHROOM;
-    }
-
-    @Override
-    public int getLightLevel() {
-        return 1;
+        return Block.RED_MUSHROOM;
     }
 
     @Override
@@ -55,10 +50,4 @@ public class BrownMushroom extends Flowable {
         }
         return false;
     }
-
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return null;
-    }
-
 }
