@@ -1664,7 +1664,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.seed = -1;
-        startGamePacket.dimension = 0;
+        startGamePacket.dimension = (byte) (getLevel().getDimension() & 0xFF);
         startGamePacket.x = (float) this.x;
         startGamePacket.y = (float) this.y;
         startGamePacket.z = (float) this.z;
@@ -2063,8 +2063,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             bottle.spawnToAll();
                         }
                     }
-                    //todo splash potion, I GIVE UP
-                    /*
                     else if (item.getId() == Item.SPLASH_POTION) {
                         CompoundTag nbt = new CompoundTag()
                                 .putList(new ListTag<DoubleTag>("Pos")
@@ -2088,7 +2086,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         }
                         if (bottle instanceof ThrownPotion) {
                             ThrownPotion bottleEntity = (ThrownPotion) bottle;
-                            bottleEntity.setPotionType(item.getDamage());
                             ProjectileLaunchEvent projectileEv = new ProjectileLaunchEvent(bottleEntity);
                             this.server.getPluginManager().callEvent(projectileEv);
                             if (projectileEv.isCancelled()) {
@@ -2101,7 +2098,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             bottle.spawnToAll();
                         }
                     }
-                    */
 
                     this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, true);
                     this.startAction = this.server.getTick();
@@ -2654,11 +2650,46 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                 boolean canCraft = true;
 
-
                 if (recipe instanceof ShapedRecipe) {
-                    for (int x = 0; x < 3 && canCraft; ++x) {
-                        for (int y = 0; y < 3; ++y) {
-                            item = craftingEventPacket.input[y * 3 + x];
+                    int offsetX = 0;
+                    int offsetY = 0;
+
+                    if (this.craftingType == 1)
+                    {
+                        int minX = -1, minY = -1, maxX = 0, maxY = 0;
+                        for (int x = 0; x < 3 && canCraft; ++x) {
+                            for (int y = 0; y < 3; ++y) {
+                                Item readItem = craftingEventPacket.input[y * 3 + x];
+                                if(readItem.getId() != Item.AIR) {
+                                    if(minY == -1 || minY > y) {
+                                        minY = y;
+                                    }
+                                    if(maxY < y) {
+                                        maxY = y;
+                                    }
+                                    if(minX == -1) {
+                                        minX = x;
+                                    }
+                                    if(maxX < x) {
+                                        maxX = x;
+                                    }
+                                }
+                            }
+                        }
+                        if(maxX == minX)
+                        {
+                            offsetX = minX;
+                        }
+                        if(maxY == minY)
+                        {
+                            offsetY = minY;
+                        }
+                    }
+
+                    //To fix some items can't craft
+                    for (int x = 0; x < 3 - offsetX && canCraft; ++x) {
+                        for (int y = 0; y < 3 - offsetY; ++y) {
+                            item = craftingEventPacket.input[(y + offsetY) * 3 + (x + offsetX)];
                             Item ingredient = ((ShapedRecipe) recipe).getIngredient(x, y);
                             //todo: check this https://github.com/PocketMine/PocketMine-MP/commit/58709293cf4eee2e836a94226bbba4aca0f53908
                             if (item.getCount() > 0) {
@@ -2670,6 +2701,25 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             }
                         }
                     }
+
+                    //If can't craft by auto resize, will try to craft this item in another way
+                    if (!canCraft) {
+                        canCraft = true;
+                        for (int x = 0; x < 3 && canCraft; ++x) {
+                            for (int y = 0; y < 3; ++y) {
+                                item = craftingEventPacket.input[y * 3 + x];
+                                Item ingredient = ((ShapedRecipe) recipe).getIngredient(x, y);
+                                if (item.getCount() > 0) {
+                                    if (ingredient == null || !ingredient.deepEquals(item, ingredient.hasMeta(), ingredient.getCompoundTag() != null)) {
+                                        canCraft = false;
+                                        break;
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
                 } else if (recipe instanceof ShapelessRecipe) {
                     List<Item> needed = ((ShapelessRecipe) recipe).getIngredientList();
 
@@ -3749,6 +3799,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public PlayerFood getFoodData() {
         return this.foodData;
+    }
+
+    //todo a lot on dimension
+
+    public void updateDimension() {
+        ChangeDimensionPacket pk = new ChangeDimensionPacket();
+        pk.dimension = (byte) (getLevel().getDimension() & 0xff);
+        this.dataPacket(pk);
     }
 
 }
