@@ -97,6 +97,7 @@ public class TeleportCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                 return true;
             }
+
             origin.teleport(destination);
         }
         else{
@@ -114,7 +115,7 @@ public class TeleportCommand extends VanillaCommand {
                     origin.teleport(new Vector3(x, y, z));
                 }
             } catch (Exception e) {
-                
+
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
             }
@@ -124,7 +125,7 @@ public class TeleportCommand extends VanillaCommand {
                 "%commands.tp.success",
                 new String[]{
                         origin.getName(),
-                        "(" + Double.valueOf(args[1]) + "," + Double.valueOf(args[2]) + "," + Double.valueOf(args[3]) + ")"
+                        "(" + origin.x + "," + origin.y + "," + origin.z + ")"
                 }
         ));
 
