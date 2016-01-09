@@ -36,6 +36,11 @@ public class Fence extends Transparent {
     }
 
     @Override
+    public double getResistance() {
+        return 5;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_AXE;
     }

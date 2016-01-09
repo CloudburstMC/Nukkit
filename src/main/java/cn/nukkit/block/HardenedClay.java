@@ -34,4 +34,9 @@ public class HardenedClay extends Solid {
     public double getHardness() {
         return 1.25;
     }
+
+    @Override
+    public double getResistance() {
+        return 7;
+    }
 }

@@ -34,6 +34,11 @@ public class StoneBricks extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 30;
+    }
+
+    @Override
     public String getName() {
         String[] names = new String[]{
                 "Stone Bricks",

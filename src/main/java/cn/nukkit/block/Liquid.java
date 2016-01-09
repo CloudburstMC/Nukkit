@@ -13,6 +13,9 @@ import java.util.Random;
  * Nukkit Project
  */
 public abstract class Liquid extends Transparent {
+    public int adjacentSources = 0;
+    public boolean[] isOptimalFlowDirection = {false, false, false, false};
+    public int[] flowinCost = {0, 0, 0, 0};
     private Vector3 temporalVector = null;
 
     protected Liquid(int meta) {
@@ -38,10 +41,6 @@ public abstract class Liquid extends Transparent {
     public boolean isSolid() {
         return false;
     }
-
-    public int adjacentSources = 0;
-    public boolean[] isOptimalFlowDirection = {false, false, false, false};
-    public int[] flowinCost = {0, 0, 0, 0};
 
     public float getFluidHeightPercent() {
         float d = (float) this.meta;
@@ -169,12 +168,6 @@ public abstract class Liquid extends Transparent {
     }
 
     public int tickRate() {
-        if (this instanceof Water) {
-            return 5;
-        } else if (this instanceof Lava) {
-            return 30;
-        }
-
         return 0;
     }
 

@@ -36,6 +36,11 @@ public class SnowLayer extends Flowable {
     }
 
     @Override
+    public double getResistance() {
+        return 0.5;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_SHOVEL;
     }

@@ -30,6 +30,8 @@ public class DoubleSlab extends Solid {
         return DOUBLE_SLAB;
     }
 
+    //todo hardness and residence
+
     @Override
     public double getHardness() {
         return 2;

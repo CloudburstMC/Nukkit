@@ -39,6 +39,11 @@ public class EmeraldOre extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 5;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe()) {
             return new int[][]{

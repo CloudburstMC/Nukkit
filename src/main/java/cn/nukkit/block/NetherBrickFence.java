@@ -42,6 +42,16 @@ public class NetherBrickFence extends Fence {
     }
 
     @Override
+    public double getHardness() {
+        return 2;
+    }
+
+    @Override
+    public double getResistance() {
+        return 10;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
             return new int[][]{

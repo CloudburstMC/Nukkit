@@ -39,6 +39,11 @@ public class Obsidian extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 2000;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= Tool.TIER_DIAMOND) {
             return new int[][]{

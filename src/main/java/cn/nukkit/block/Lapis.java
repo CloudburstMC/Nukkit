@@ -39,6 +39,11 @@ public class Lapis extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 5;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= Tool.TIER_STONE) {
             return new int[][]{new int[]{Item.LAPIS_BLOCK, 0, 1}};

@@ -80,9 +80,7 @@ public class NetherPortalBlock extends Flowable {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        if (entity instanceof Player) {
-            //?
-        }
+        //?
     }
     */
 

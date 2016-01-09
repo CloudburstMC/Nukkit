@@ -129,6 +129,11 @@ public class WoodSlab extends Transparent {
     }
 
     @Override
+    public double getResistance() {
+        return 15;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
                 {this.getId(), this.meta & 0x07, 1}
