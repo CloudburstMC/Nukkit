@@ -48,6 +48,11 @@ public class BurningFurnace extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 17.5;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }

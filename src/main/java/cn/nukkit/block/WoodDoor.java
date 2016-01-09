@@ -38,6 +38,11 @@ public class WoodDoor extends Door {
     }
 
     @Override
+    public double getResistance() {
+        return 15;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_AXE;
     }

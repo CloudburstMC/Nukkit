@@ -26,6 +26,11 @@ public class SandstoneStairs extends Stair {
     }
 
     @Override
+    public double getResistance() {
+        return 4;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }

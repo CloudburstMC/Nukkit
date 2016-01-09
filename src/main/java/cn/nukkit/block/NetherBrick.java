@@ -38,6 +38,11 @@ public class NetherBrick extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 10;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         if (item.getTier() >= Tool.TIER_WOODEN) {
             return new int[][]{

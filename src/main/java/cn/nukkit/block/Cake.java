@@ -40,6 +40,11 @@ public class Cake extends Transparent {
     }
 
     @Override
+    public double getResistance() {
+        return 2.5;
+    }
+
+    @Override
     protected AxisAlignedBB recalculateBoundingBox() {
         return new AxisAlignedBB(
                 x + (1 + getDamage() * 2) / 16,

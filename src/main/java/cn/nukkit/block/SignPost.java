@@ -24,22 +24,32 @@ public class SignPost extends Transparent {
         return SIGN_POST;
     }
 
+    @Override
     public double getHardness() {
         return 1;
     }
 
+    @Override
+    public double getResistance() {
+        return 5;
+    }
+
+    @Override
     public boolean isSolid() {
         return false;
     }
 
+    @Override
     public String getName() {
         return "Sign Post";
     }
 
+    @Override
     public AxisAlignedBB getBoundingBox() {
         return null;
     }
 
+    @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (face != 0) {
             if (face < 2 || face > 5) {
@@ -58,6 +68,7 @@ public class SignPost extends Transparent {
         return false;
     }
 
+    @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (getSide(0).getId() == Block.AIR) {
@@ -70,6 +81,7 @@ public class SignPost extends Transparent {
         return 0;
     }
 
+    @Override
     public boolean onBreak(Item item) {
         getLevel().setBlock(this, new Air(), true, true);
 
@@ -81,6 +93,7 @@ public class SignPost extends Transparent {
         return new int[][]{{Item.SIGN, 0, 1}};
     }
 
+    @Override
     public int getToolType() {
         return Tool.TYPE_AXE;
     }

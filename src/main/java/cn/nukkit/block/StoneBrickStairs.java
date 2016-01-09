@@ -31,6 +31,11 @@ public class StoneBrickStairs extends Stair {
     }
 
     @Override
+    public double getResistance() {
+        return 30;
+    }
+
+    @Override
     public String getName() {
         return "Stone Brick Stairs";
     }

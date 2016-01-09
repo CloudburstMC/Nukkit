@@ -38,6 +38,11 @@ public class Workbench extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 15;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }

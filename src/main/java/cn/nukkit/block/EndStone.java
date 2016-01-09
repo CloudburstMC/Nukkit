@@ -27,12 +27,17 @@ public class EndStone extends Solid {
     }
 
     @Override
-    public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+    public double getHardness() {
+        return 3;
     }
 
     @Override
-    public double getHardness() {
-        return 3;
+    public double getResistance() {
+        return 15;
+    }
+
+    @Override
+    public int getToolType() {
+        return Tool.TYPE_PICKAXE;
     }
 }

@@ -53,4 +53,9 @@ public class Wool extends Solid {
     public double getHardness() {
         return 0.8;
     }
+
+    @Override
+    public double getResistance() {
+        return 4;
+    }
 }

@@ -35,6 +35,11 @@ public class Cactus extends Transparent {
     }
 
     @Override
+    public double getResistance() {
+        return 2;
+    }
+
+    @Override
     public boolean hasEntityCollision() {
         return true;
     }
