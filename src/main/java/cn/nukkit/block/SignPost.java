@@ -70,7 +70,6 @@ public class SignPost extends Transparent {
 
     @Override
     public int onUpdate(int type) {
-        System.out.println("!");
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (getSide(0).getId() == Block.AIR) {
                 getLevel().useBreakOn(this);
