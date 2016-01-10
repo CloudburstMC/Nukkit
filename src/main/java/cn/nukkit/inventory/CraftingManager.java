@@ -34,6 +34,7 @@ public class CraftingManager {
         this.registerWeapons();
         this.registerArmor();
         this.registerFood();
+        this.registerWoodenDoors();
 
         this.registerRecipe((new ShapelessRecipe(Item.get(Item.CLAY_BLOCK, 0, 1))).addIngredient(Item.get(Item.CLAY, 0, 4)));
 
@@ -193,21 +194,9 @@ public class CraftingManager {
                 "S S"
         )).setIngredient("S", Item.get(Item.STICK, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.NETHER_REACTOR, 0, 1),
-                "IDI",
-                "IDI",
-                "IDI"
-        )).setIngredient("D", Item.get(Item.DIAMOND, 0, 1)).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 1)));
-
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.TRAPDOOR, 0, 2),
                 "PPP",
                 "PPP"
-        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, null, 1)));
-
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOODEN_DOOR, 0, 1),
-                "PP",
-                "PP",
-                "PP"
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, null, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOODEN_STAIRS, 0, 4),
@@ -346,6 +335,8 @@ public class CraftingManager {
                 " I ",
                 "CCC"
         )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("I", Item.get(Item.BLAZE_ROD, 0, 1)));
+
+
     }
 
     protected void registerFurnace() {
@@ -671,6 +662,18 @@ public class CraftingManager {
                 " X",
                 "X "
         )).setIngredient("X", Item.get(Item.IRON_INGOT)));
+    }
+
+    protected void registerWoodenDoors(){
+        int[] items = new int[]{Item.WOODEN_DOOR, Item.SPRUCE_DOOR, Item.BIRCH_DOOR, Item.JUNGLE_DOOR, Item.ACACIA_DOOR, Item.DARK_OAK_DOOR};
+
+        for(int i = 0; i < 6; i++){
+            this.registerRecipe((new BigShapedRecipe(Item.get(items[i], 0, 1),
+                    "XX ",
+                    "XX ",
+                    "XX "
+            )).setIngredient("X", Item.get(Item.PLANKS, i, 1)));
+        }
     }
 
     protected void registerDyes() {
