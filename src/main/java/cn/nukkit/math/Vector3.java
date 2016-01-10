@@ -237,7 +237,7 @@ public class Vector3 implements Cloneable {
     }
 
     public boolean equals(Vector3 v) {
-        return this.x == v.x && this.y == v.y && this.z == v.z;
+        return v != null && this.x == v.x && this.y == v.y && this.z == v.z;
     }
 
     /**
