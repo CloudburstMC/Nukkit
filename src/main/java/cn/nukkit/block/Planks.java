@@ -35,7 +35,7 @@ public class Planks extends Solid {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 15;
     }
 
     @Override
@@ -46,10 +46,10 @@ public class Planks extends Solid {
                 "Birch Wood Planks",
                 "Jungle Wood Planks",
                 "Acacia Wood Planks",
-                "Jungle Wood Planks",
+                "Dark Oak Wood Planks",
         };
 
-        return names[this.meta & 0x03];
+        return names[this.meta & 0x07];
     }
 
     @Override
