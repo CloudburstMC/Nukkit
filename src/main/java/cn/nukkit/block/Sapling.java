@@ -63,9 +63,7 @@ public class Sapling extends Flowable {
 
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //BoneMeal
-            //TODO: Change log type
-
-            ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new cn.nukkit.utils.Random());
+            ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new cn.nukkit.utils.Random(), this.meta & 0x07);
             if ((player.gamemode & 0x01) == 0) {
                 item.count--;
             }
