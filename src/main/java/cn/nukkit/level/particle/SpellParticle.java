@@ -23,10 +23,10 @@ public class SpellParticle extends Particle {
     }
 
     public SpellParticle(Vector3 pos, int r, int g, int b) {
-        this(pos, r, g, b, 255);
+        this(pos, r, g, b, 0x00);
     }
 
-    public SpellParticle(Vector3 pos, int r, int g, int b, int a) {
+    protected SpellParticle(Vector3 pos, int r, int g, int b, int a) {
         this(pos, ((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff));
     }
 

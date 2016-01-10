@@ -33,6 +33,11 @@ public class Cobweb extends Flowable {
     }
 
     @Override
+    public double getResistance() {
+        return 20;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_SWORD;
     }

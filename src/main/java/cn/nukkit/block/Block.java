@@ -134,8 +134,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int SOUL_SAND = 88;
     public static final int GLOWSTONE = 89;
     public static final int GLOWSTONE_BLOCK = 89;
-
-
+    public static final int NETHER_PORTAL = 90;
     public static final int LIT_PUMPKIN = 91;
     public static final int JACK_O_LANTERN = 91;
     public static final int CAKE_BLOCK = 92;
@@ -348,13 +347,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[SNOW_BLOCK] = SnowBlock.class;
             list[CACTUS] = Cactus.class;
             list[CLAY_BLOCK] = Clay.class;
-            //list[SUGARCANE_BLOCK] = Sugarcane.class;
+            list[SUGARCANE_BLOCK] = Sugarcane.class;
             list[FENCE] = Fence.class;
             list[PUMPKIN] = Pumpkin.class;
             list[NETHERRACK] = Netherrack.class;
             list[SOUL_SAND] = SoulSand.class;
             list[GLOWSTONE_BLOCK] = Glowstone.class;
-
+            list[NETHER_PORTAL] = NetherPortalBlock.class;
             list[LIT_PUMPKIN] = LitPumpkin.class;
             list[CAKE_BLOCK] = Cake.class;
 
@@ -375,7 +374,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[BRICK_STAIRS] = BrickStairs.class;
             list[STONE_BRICK_STAIRS] = StoneBrickStairs.class;
 
-            //list[MYCELIUM] = Mycelium.class;
+            list[MYCELIUM] = Mycelium.class;
             list[WATER_LILY] = WaterLily.class;
             list[NETHER_BRICKS] = NetherBrick.class;
             list[NETHER_BRICK_FENCE] = NetherBrickFence.class;

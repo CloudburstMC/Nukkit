@@ -37,6 +37,11 @@ public class StoneWall extends Transparent {
     }
 
     @Override
+    public double getResistance() {
+        return 30;
+    }
+
+    @Override
     public String getName() {
         if (this.meta == 0x01) {
             return "Mossy Cobblestone Wall";

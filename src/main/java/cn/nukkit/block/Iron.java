@@ -39,6 +39,11 @@ public class Iron extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 10;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= Tool.TIER_STONE) {
             return new int[][]{new int[]{Item.IRON_BLOCK, 0, 1}};

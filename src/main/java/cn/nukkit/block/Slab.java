@@ -33,6 +33,8 @@ public class Slab extends Transparent {
         return SLAB;
     }
 
+    //todo hardness and residence
+
     @Override
     public double getHardness() {
         return 2;

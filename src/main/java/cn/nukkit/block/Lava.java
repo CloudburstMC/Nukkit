@@ -39,6 +39,12 @@ public class Lava extends Liquid {
     }
 
     @Override
+    public int tickRate() {
+        //todo if getLevel is nether, set to 5
+        return 30;
+    }
+
+    @Override
     public void onEntityCollide(Entity entity) {
         entity.fallDistance *= 0.5;
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {

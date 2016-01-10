@@ -28,6 +28,11 @@ public class Cobblestone extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 30;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }

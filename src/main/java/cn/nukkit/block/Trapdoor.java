@@ -36,6 +36,11 @@ public class Trapdoor extends Transparent {
     }
 
     @Override
+    public double getResistance() {
+        return 15;
+    }
+
+    @Override
     public boolean canBeActivated() {
         return true;
     }

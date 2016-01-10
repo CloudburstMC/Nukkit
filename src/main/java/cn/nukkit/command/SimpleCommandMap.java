@@ -91,9 +91,11 @@ public class SimpleCommandMap implements CommandMap {
         boolean registered = this.registerAlias(command, false, fallbackPrefix, label);
 
         List<String> aliases = new ArrayList<>(Arrays.asList(command.getAliases()));
-        for (String alias : aliases) {
+
+        for (Iterator<String> iterator = aliases.iterator(); iterator.hasNext();) {
+            String alias = iterator.next();
             if (!this.registerAlias(command, true, fallbackPrefix, alias)) {
-                aliases.remove(alias);
+                iterator.remove();
             }
         }
         command.setAliases(aliases.stream().toArray(String[]::new));

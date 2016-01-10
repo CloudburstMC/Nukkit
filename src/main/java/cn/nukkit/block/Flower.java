@@ -57,6 +57,11 @@ public class Flower extends Flowable {
     }
 
     @Override
+    public boolean canBeReplaced() {
+        return true;
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         Block down = this.getSide(0);
         if (down.getId() == Block.GRASS || down.getId() == DIRT || down.getId() == FARMLAND) {

@@ -75,8 +75,7 @@ public class ThrownExpBottle extends Projectile {
             this.kill();
             Particle particle1 = new EnchantParticle(this);
             this.getLevel().addParticle(particle1);
-            //todo 颜色待验证 Verify if this color is true
-            Particle particle2 = new SpellParticle(this, 0, 0, 255);
+            Particle particle2 = new SpellParticle(this, 0x00385dc6);
             this.getLevel().addParticle(particle2);
             hasUpdate = true;
 

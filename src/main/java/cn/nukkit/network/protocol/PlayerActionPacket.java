@@ -22,6 +22,8 @@ public class PlayerActionPacket extends DataPacket {
     public static final byte ACTION_STOP_SNEAK = 12;
     public static final byte ACTION_DIMENSION_CHANGE = 13;
 
+    public static final byte ACTION_NETHER_UNKNOWN = 14; //todo what's this?
+
     public long entityId;
     public int action;
     public int x;

@@ -6,7 +6,7 @@ import cn.nukkit.item.Tool;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Sand extends Solid {
+public class Sand extends Fallable {
 
     public Sand() {
         this(0);
@@ -24,6 +24,11 @@ public class Sand extends Solid {
     @Override
     public double getHardness() {
         return 0.5;
+    }
+
+    @Override
+    public double getResistance() {
+        return 2.5;
     }
 
     @Override

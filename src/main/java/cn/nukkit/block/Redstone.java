@@ -24,7 +24,7 @@ public class Redstone extends Transparent {
 
     @Override
     public double getResistance() {
-        return 30;
+        return 10;
     }
 
     @Override

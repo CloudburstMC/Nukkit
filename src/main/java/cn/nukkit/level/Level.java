@@ -36,6 +36,7 @@ import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.tile.Chest;
+import cn.nukkit.tile.Sign;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.*;
 
@@ -65,6 +66,9 @@ public class Level implements ChunkManager, Metadatable {
     public static final int TIME_SUNRISE = 23000;
 
     public static final int TIME_FULL = 24000;
+
+    public static final int DIMENSION_NORMAL = 0;
+    public static final int DIMENSION_NETHER = 1;
 
     private Map<Long, Tile> tiles = new HashMap<>();
 
@@ -179,6 +183,8 @@ public class Level implements ChunkManager, Metadatable {
     private int thunderTime = 0;
 
     private long levelCurrentTick = 0;
+
+    private int dimension = DIMENSION_NORMAL;
 
     public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
         this.blockStates = Block.fullList;
@@ -1651,7 +1657,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-            Tile.createTile("Sign", this.getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+            new Sign(this.getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
         }
 
         item.setCount(item.getCount() - 1);
@@ -2053,7 +2059,7 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public void removeEntity(Entity entity) throws LevelException {
+    public void removeEntity(Entity entity) {
         if (!entity.getLevel().equals(this)) {
             throw new LevelException("Invalid Entity level");
         }
@@ -2069,7 +2075,7 @@ public class Level implements ChunkManager, Metadatable {
         this.updateEntities.remove(entity.getId());
     }
 
-    public void addEntity(Entity entity) throws LevelException {
+    public void addEntity(Entity entity) {
         if (!entity.getLevel().equals(this)) {
             throw new LevelException("Invalid Entity level");
         }
@@ -2080,7 +2086,7 @@ public class Level implements ChunkManager, Metadatable {
         this.entities.put(entity.getId(), entity);
     }
 
-    public void addTile(Tile tile) throws LevelException {
+    public void addTile(Tile tile) {
         if (!tile.getLevel().equals(this)) {
             throw new LevelException("Invalid Tile level");
         }
@@ -2088,7 +2094,7 @@ public class Level implements ChunkManager, Metadatable {
         this.clearChunkCache((int) tile.getX() >> 4, (int) tile.getZ() >> 4);
     }
 
-    public void removeTile(Tile tile) throws LevelException {
+    public void removeTile(Tile tile) {
         if (!tile.getLevel().equals(this)) {
             throw new LevelException("Invalid Tile level");
         }
@@ -2223,7 +2229,7 @@ public class Level implements ChunkManager, Metadatable {
             this.provider.unloadChunk(x, z, safe);
         } catch (Exception e) {
             MainLogger logger = this.server.getLogger();
-            logger.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.getMessage()));
+            logger.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.toString()));
             logger.logException(e);
         }
 
@@ -2602,4 +2608,9 @@ public class Level implements ChunkManager, Metadatable {
         }
         this.sendWeather(players.stream().toArray(Player[]::new));
     }
+
+    public int getDimension() {
+        return dimension;
+    }
+
 }

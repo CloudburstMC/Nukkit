@@ -51,6 +51,11 @@ public class GrassPath extends Transparent {
     }
 
     @Override
+    public double getResistance() {
+        return 3.25;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
                 {Item.DIRT, 0, 1}

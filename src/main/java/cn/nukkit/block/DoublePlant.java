@@ -21,6 +21,11 @@ public class DoublePlant extends Flowable {
     public int getId() {
         return DOUBLE_PLANT;
     }
+    
+    @Override
+    public boolean canBeReplaced() {
+        return true;
+    }
 
     @Override
     public String getName() {

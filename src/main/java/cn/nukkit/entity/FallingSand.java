@@ -18,6 +18,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 public class FallingSand extends Entity {
 
     public static final int NETWORK_ID = 66;
+
     public static final int DATA_BLOCK_INFO = 20;
 
     @Override
@@ -68,6 +69,7 @@ public class FallingSand extends Entity {
                 blockId = namedTag.getInt("Tile");
                 namedTag.putInt("TileID", blockId);
             }
+
             if (namedTag.contains("Data")) {
                 damage = namedTag.getByte("Data") & 0xff;
             }

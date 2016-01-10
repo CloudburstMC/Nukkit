@@ -28,6 +28,7 @@ import cn.nukkit.utils.ChunkException;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * author: MagicDroidX
@@ -57,7 +58,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_COLOR = 7;
     public static final int DATA_POTION_AMBIENT = 8;
     public static final int DATA_NO_AI = 15;
-
+    public static final int DATA_POTION_TYPE = 16;
 
     public static final int DATA_FLAG_ONFIRE = 0;
     public static final int DATA_FLAG_SNEAKING = 1;
@@ -73,7 +74,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected Map<Integer, Player> hasSpawned = new HashMap<>();
 
-    protected Map<Integer, Effect> effects = new HashMap<>();
+    protected Map<Integer, Effect> effects = new ConcurrentHashMap<>();
 
     protected long id;
 
@@ -336,6 +337,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addEffect(Effect effect) {
+        if (effect == null) return; //here add null means add nothing
+
         if (this.effects.containsKey(effect.getId())) {
             Effect oldEffect = this.effects.get(effect.getId());
             if (Math.abs(effect.getAmplifier()) <= (oldEffect.getAmplifier())
@@ -657,8 +660,9 @@ public abstract class Entity extends Location implements Metadatable {
         if (source.isCancelled()) {
             return;
         }
-
-        this.setHealth(this.getHealth() + source.getAmount());
+        float targetHealth = this.getHealth() + source.getAmount();
+        if (targetHealth > getMaxHealth()) targetHealth = getMaxHealth();
+        this.setHealth(targetHealth);
     }
 
     public int getHealth() {

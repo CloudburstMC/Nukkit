@@ -40,6 +40,11 @@ public class BrewingStand extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 2.5;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }
@@ -102,7 +107,7 @@ public class BrewingStand extends Solid {
             } else {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
-                        .putString("id", Tile.FURNACE)
+                        .putString("id", Tile.BREWING_STAND)
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);

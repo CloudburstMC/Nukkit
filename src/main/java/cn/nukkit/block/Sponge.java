@@ -26,6 +26,11 @@ public class Sponge extends Solid {
     }
 
     @Override
+    public double getResistance() {
+        return 3;
+    }
+
+    @Override
     public String getName() {
         return "Sponge";
     }
