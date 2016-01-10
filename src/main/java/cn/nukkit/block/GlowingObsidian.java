@@ -39,7 +39,7 @@ public class GlowingObsidian extends Solid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() > Tool.DIAMOND_PICKAXE) {
-            return new int[][]{{Block.GLOWING_OBSIDIAN, 0, 1}};
+            return new int[][]{{Item.GLOWING_OBSIDIAN, 0, 1}};
         } else {
             return new int[0][];
         }
