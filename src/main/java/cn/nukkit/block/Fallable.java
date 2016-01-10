@@ -51,8 +51,9 @@ public abstract class Fallable extends Solid {
                         .putInt("TileID", this.getId())
                         .putByte("Data", (byte) this.getDamage());
 
-                FallingSand fs = new FallingSand(this.getLevel().getChunk((int) this.x, (int) this.y, true), nbt);
-                fs.spawnToAll();
+                FallingSand fall = new FallingSand(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+
+                fall.spawnToAll();
             }
         }
         return type;

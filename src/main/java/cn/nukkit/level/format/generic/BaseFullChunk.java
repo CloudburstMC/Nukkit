@@ -308,7 +308,7 @@ public abstract class BaseFullChunk implements FullChunk {
     @Override
     public void addTile(Tile tile) {
         this.tiles.put(tile.getId(), tile);
-        int index = ((tile.getFloorZ() & 0x0f) << 12) | ((tile.getFloorX() & 0x0f) << 8) | (tile.getFloorY() & 0xff);
+        int index = (((int) tile.z & 0x0f) << 12) | (((int) tile.x & 0x0f) << 8) | ((int) tile.y & 0xff);
         if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(tile)) {
             this.tileList.get(index).close();
         }
