@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 
 /**
@@ -40,7 +41,7 @@ public class EndStone extends Solid {
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }
-    
+
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() > Tool.TIER_WOODEN) {
