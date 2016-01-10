@@ -67,8 +67,10 @@ public class Sapling extends Flowable {
             if ((player.gamemode & 0x01) == 0) {
                 item.count--;
             }
+
             return true;
         }
+        this.getLevel().loadChunk((int)this.x >> 4,(int)this.z >> 4);
         return false;
     }
 
