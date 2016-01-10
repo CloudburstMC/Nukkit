@@ -33,6 +33,8 @@ public class RedstoneWire extends Flowable {
 
     @Override
     public void setPowerLevel(int redstonePower) {
+        if(redstonePower > 15) redstonePower = 15;
+        else if(redstonePower < 0) redstonePower = 0;
         this.powerLevel = redstonePower;
         this.meta = redstonePower;
     }

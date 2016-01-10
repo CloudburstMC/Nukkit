@@ -847,7 +847,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     public int getNeighborPowerLevel() {
         int energy = 0;
-        int tempLevel = 0;
+        int tempLevel;
         tempLevel = this.getSide(SIDE_DOWN).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
         tempLevel = this.getSide(SIDE_UP).getPowerLevel();
