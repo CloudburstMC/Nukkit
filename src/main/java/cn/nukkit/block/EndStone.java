@@ -33,11 +33,20 @@ public class EndStone extends Solid {
 
     @Override
     public double getResistance() {
-        return 15;
+        return 45;
     }
 
     @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
+    }
+    
+    @Override
+    public int[][] getDrops(Item item) {
+        if (item.isPickaxe() && item.getTier() > Tool.TIER_WOODEN) {
+            return new int[][]{{Item.END_STONE, 0, 1}};
+        } else {
+            return new int[0][];
+        }
     }
 }
