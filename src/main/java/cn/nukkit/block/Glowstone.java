@@ -25,15 +25,15 @@ public class Glowstone extends Transparent {
     public int getId() {
         return GLOWSTONE_BLOCK;
     }
+    
+    @Override
+    public double getResistance() {
+        return 1.5;
+    }
 
     @Override
     public double getHardness() {
         return 0.3;
-    }
-
-    @Override
-    public int getToolType() {
-        return Tool.TYPE_PICKAXE;
     }
 
     @Override
