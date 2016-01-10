@@ -5,49 +5,50 @@ package cn.nukkit.utils;
  */
 public class Color extends java.awt.Color {
 
-    public static final Color voidColor = (Color) new java.awt.Color(0x00, 0x00, 0x00);
+    public static final Color transparentColor = new Color(0x00, 0x00, 0x00, 0x00);
+    public static final Color voidColor = new Color(0x00, 0x00, 0x00, 0x00);
 
-    public static final Color airColor = (Color) new java.awt.Color(0x00, 0x00, 0x00);
-    public static final Color grassColor = (Color) new java.awt.Color(0x7f, 0xb2, 0x38);
-    public static final Color sandColor = (Color) new java.awt.Color(0xf1, 0xe9, 0xa3);
-    public static final Color clothColor = (Color) new java.awt.Color(0xa7, 0xa7, 0xa7);
-    public static final Color tntColor = (Color) new java.awt.Color(0xff, 0x00, 0x00);
-    public static final Color iceColor = (Color) new java.awt.Color(0xa0, 0xa0, 0xff);
-    public static final Color ironColor = (Color) new java.awt.Color(0xa7, 0xa7, 0xa7);
-    public static final Color foliageColor = (Color) new java.awt.Color(0x00, 0x7c, 0x00);
-    public static final Color snowColor = (Color) new java.awt.Color(0xff, 0xff, 0xff);
-    public static final Color clayColor = (Color) new java.awt.Color(0xa4, 0xa8, 0xb8);
-    public static final Color dirtColor = (Color) new java.awt.Color(0xb7, 0x6a, 0x2f);
-    public static final Color stoneColor = (Color) new java.awt.Color(0x70, 0x70, 0x70);
-    public static final Color waterColor = (Color) new java.awt.Color(0x40, 0x40, 0xff);
+    public static final Color airColor = new Color(0x00, 0x00, 0x00);
+    public static final Color grassColor = new Color(0x7f, 0xb2, 0x38);
+    public static final Color sandColor = new Color(0xf1, 0xe9, 0xa3);
+    public static final Color clothColor = new Color(0xa7, 0xa7, 0xa7);
+    public static final Color tntColor = new Color(0xff, 0x00, 0x00);
+    public static final Color iceColor = new Color(0xa0, 0xa0, 0xff);
+    public static final Color ironColor = new Color(0xa7, 0xa7, 0xa7);
+    public static final Color foliageColor = new Color(0x00, 0x7c, 0x00);
+    public static final Color snowColor = new Color(0xff, 0xff, 0xff);
+    public static final Color clayColor = new Color(0xa4, 0xa8, 0xb8);
+    public static final Color dirtColor = new Color(0xb7, 0x6a, 0x2f);
+    public static final Color stoneColor = new Color(0x70, 0x70, 0x70);
+    public static final Color waterColor = new Color(0x40, 0x40, 0xff);
     public static final Color lavaColor = tntColor;
-    public static final Color woodColor = (Color) new java.awt.Color(0x68, 0x53, 0x32);
-    public static final Color quartzColor = (Color) new java.awt.Color(0xff, 0xfc, 0xf5);
-    public static final Color adobeColor = (Color) new java.awt.Color(0xd8, 0x7f, 0x33);
+    public static final Color woodColor = new Color(0x68, 0x53, 0x32);
+    public static final Color quartzColor = new Color(0xff, 0xfc, 0xf5);
+    public static final Color adobeColor = new Color(0xd8, 0x7f, 0x33);
 
     public static final Color whiteColor = snowColor;
     public static final Color orangeColor = adobeColor;
-    public static final Color magentaColor = (Color) new java.awt.Color(0xb2, 0x4c, 0xd8);
-    public static final Color lightBlueColor = (Color) new java.awt.Color(0x66, 0x99, 0xd8);
-    public static final Color yellowColor = (Color) new java.awt.Color(0xe5, 0xe5, 0x33);
-    public static final Color limeColor = (Color) new java.awt.Color(0x7f, 0xcc, 0x19);
-    public static final Color pinkColor = (Color) new java.awt.Color(0xf2, 0x7f, 0xa5);
-    public static final Color grayColor = (Color) new java.awt.Color(0x4c, 0x4c, 0x4c);
-    public static final Color silverColor = (Color) new java.awt.Color(0x99, 0x99, 0x99);
-    public static final Color cyanColor = (Color) new java.awt.Color(0x4c, 0x7f, 0x99);
-    public static final Color purpleColor = (Color) new java.awt.Color(0x7f, 0x3f, 0xb2);
-    public static final Color blueColor = (Color) new java.awt.Color(0x33, 0x4c, 0xb2);
-    public static final Color brownColor = (Color) new java.awt.Color(0x66, 0x4c, 0x33);
-    public static final Color greenColor = (Color) new java.awt.Color(0x66, 0x7f, 0x33);
-    public static final Color redColor = (Color) new java.awt.Color(0x99, 0x33, 0x33);
-    public static final Color blackColor = (Color) new java.awt.Color(0x19, 0x19, 0x19);
+    public static final Color magentaColor = new Color(0xb2, 0x4c, 0xd8);
+    public static final Color lightBlueColor = new Color(0x66, 0x99, 0xd8);
+    public static final Color yellowColor = new Color(0xe5, 0xe5, 0x33);
+    public static final Color limeColor = new Color(0x7f, 0xcc, 0x19);
+    public static final Color pinkColor = new Color(0xf2, 0x7f, 0xa5);
+    public static final Color grayColor = new Color(0x4c, 0x4c, 0x4c);
+    public static final Color silverColor = new Color(0x99, 0x99, 0x99);
+    public static final Color cyanColor = new Color(0x4c, 0x7f, 0x99);
+    public static final Color purpleColor = new Color(0x7f, 0x3f, 0xb2);
+    public static final Color blueColor = new Color(0x33, 0x4c, 0xb2);
+    public static final Color brownColor = new Color(0x66, 0x4c, 0x33);
+    public static final Color greenColor = new Color(0x66, 0x7f, 0x33);
+    public static final Color redColor = new Color(0x99, 0x33, 0x33);
+    public static final Color blackColor = new Color(0x19, 0x19, 0x19);
 
-    public static final Color goldColor = (Color) new java.awt.Color(0xfa, 0xee, 0x4d);
-    public static final Color diamondColor = (Color) new java.awt.Color(0x5c, 0xdb, 0xd5);
-    public static final Color lapisColor = (Color) new java.awt.Color(0x4a, 0x80, 0xff);
-    public static final Color emeraldColor = (Color) new java.awt.Color(0x00, 0xd9, 0x3a);
-    public static final Color obsidianColor = (Color) new java.awt.Color(0x15, 0x14, 0x1f);
-    public static final Color netherrackColor = (Color) new java.awt.Color(0x70, 0x02, 0x00);
+    public static final Color goldColor = new Color(0xfa, 0xee, 0x4d);
+    public static final Color diamondColor = new Color(0x5c, 0xdb, 0xd5);
+    public static final Color lapisColor = new Color(0x4a, 0x80, 0xff);
+    public static final Color emeraldColor = new Color(0x00, 0xd9, 0x3a);
+    public static final Color obsidianColor = new Color(0x15, 0x14, 0x1f);
+    public static final Color netherrackColor = new Color(0x70, 0x02, 0x00);
     public static final Color redstoneColor = tntColor;
 
     public Color(float r, float g, float b, float a) {
