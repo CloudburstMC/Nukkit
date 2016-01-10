@@ -51,8 +51,8 @@ public class Ice extends Transparent {
 
     @Override
     public int onUpdate(int type) {
-        if(type == Level.BLOCK_UPDATE_RANDOM){
-            if(this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12){
+        if (type == Level.BLOCK_UPDATE_RANDOM) {
+            if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12) {
                 this.getLevel().setBlock(this, new Water(), true);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
