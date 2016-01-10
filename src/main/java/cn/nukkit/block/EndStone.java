@@ -45,7 +45,7 @@ public class EndStone extends Solid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() > Tool.TIER_WOODEN) {
-            return new int[][]{{Item.END_STONE, 0, 1}};
+            return new int[][]{{Block.END_STONE, 0, 1}};
         } else {
             return new int[0][];
         }
