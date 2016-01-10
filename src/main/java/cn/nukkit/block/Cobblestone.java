@@ -24,7 +24,7 @@ public class Cobblestone extends Solid {
 
     @Override
     public double getHardness() {
-        return 2.0;
+        return 2;
     }
 
     @Override
