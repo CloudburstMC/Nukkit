@@ -26,6 +26,11 @@ public class GlassPane extends Thin {
     public int getId() {
         return GLASS_PANE;
     }
+    
+    @Override
+    public double getResistance() {
+        return 1.5;
+    }
 
     @Override
     public double getHardness() {
