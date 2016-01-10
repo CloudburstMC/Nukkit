@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -55,7 +55,7 @@ public class DoublePlant extends Flowable {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.foliageColor;
+    public Color getMapColor() {
+        return Color.foliageColor;
     }
 }

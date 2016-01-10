@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2016/1/5 by xtypr.
@@ -82,8 +82,8 @@ public class NetherPortalBlock extends Flowable {
     */
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.airColor;
+    public Color getMapColor() {
+        return Color.airColor;
     }
 
 }

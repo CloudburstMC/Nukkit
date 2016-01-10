@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * author: MagicDroidX
@@ -18,7 +18,7 @@ public abstract class Solid extends Block {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.stoneColor;
+    public Color getMapColor() {
+        return Color.stoneColor;
     }
 }

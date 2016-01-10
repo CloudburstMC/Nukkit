@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * @author Nukkit Project Team
@@ -51,7 +51,7 @@ public class Bricks extends Solid {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.stoneColor;
+    public Color getMapColor() {
+        return Color.stoneColor;
     }
 }

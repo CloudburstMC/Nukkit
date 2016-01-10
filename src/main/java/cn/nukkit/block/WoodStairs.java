@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/25 by xtypr.
@@ -48,7 +48,7 @@ public class WoodStairs extends Stair {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.woodColor;
+    public Color getMapColor() {
+        return Color.woodColor;
     }
 }

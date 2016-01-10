@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -56,7 +56,7 @@ public class HayBale extends Solid {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.grassColor;
+    public Color getMapColor() {
+        return Color.grassColor;
     }
 }

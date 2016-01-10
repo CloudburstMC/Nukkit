@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * author: MagicDroidX
@@ -19,8 +19,8 @@ public abstract class Transparent extends Block {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        if (this.getFloorY() == 0) return RGBColor.voidColor;
+    public Color getMapColor() {
+        if (this.getFloorY() == 0) return Color.voidColor;
         Block down = getSide(Vector3.SIDE_DOWN);
         return down.getMapColor();
     }

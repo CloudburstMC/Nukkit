@@ -12,7 +12,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -591,8 +591,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return false;
     }
 
-    public RGBColor getMapColor() {
-        return RGBColor.voidColor;
+    public Color getMapColor() {
+        return Color.voidColor;
     }
 
     public abstract String getName();

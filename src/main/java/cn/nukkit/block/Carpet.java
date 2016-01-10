@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -99,8 +99,8 @@ public class Carpet extends Flowable {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.getDyeColor(meta);
+    public Color getMapColor() {
+        return Color.getDyeColor(meta);
     }
 
 }

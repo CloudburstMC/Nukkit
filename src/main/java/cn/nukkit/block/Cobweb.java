@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -60,7 +60,7 @@ public class Cobweb extends Flowable {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.clothColor;
+    public Color getMapColor() {
+        return Color.clothColor;
     }
 }

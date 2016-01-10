@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/25 by xtypr.
@@ -37,8 +37,8 @@ public class NetherBrickStairs extends Stair {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.netherrackColor;
+    public Color getMapColor() {
+        return Color.netherrackColor;
     }
 
 }

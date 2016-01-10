@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 import cn.nukkit.utils.TextFormat;
 
 /**
@@ -170,7 +170,7 @@ public class Bed extends Transparent {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.clothColor;
+    public Color getMapColor() {
+        return Color.clothColor;
     }
 }

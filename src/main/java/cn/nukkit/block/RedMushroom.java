@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created by Pub4Game on 03.01.2015.
@@ -52,7 +52,7 @@ public class RedMushroom extends Flowable {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.foliageColor;
+    public Color getMapColor() {
+        return Color.foliageColor;
     }
 }

@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/12/5 by xtypr.
@@ -64,7 +64,7 @@ public class Workbench extends Solid {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.woodColor;
+    public Color getMapColor() {
+        return Color.woodColor;
     }
 }

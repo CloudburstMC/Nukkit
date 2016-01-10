@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created by Pub4Game on 27.12.2015.
@@ -76,8 +76,8 @@ public class Anvil extends Fallable {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.ironColor;
+    public Color getMapColor() {
+        return Color.ironColor;
     }
 
 }

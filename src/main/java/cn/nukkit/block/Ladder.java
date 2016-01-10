@@ -6,7 +6,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -146,7 +146,7 @@ public class Ladder extends Transparent {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.airColor;
+    public Color getMapColor() {
+        return Color.airColor;
     }
 }

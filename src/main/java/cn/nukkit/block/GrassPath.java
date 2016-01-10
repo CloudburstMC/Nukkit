@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/22 by xtypr.
@@ -51,9 +51,9 @@ public class GrassPath extends Grass {
     }
 
     @Override
-    public RGBColor getMapColor() {
+    public Color getMapColor() {
         //todo edit this after minecraft pc 1.9 come out
-        return RGBColor.grassColor;
+        return Color.grassColor;
     }
 
 }

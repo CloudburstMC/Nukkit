@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -93,7 +93,7 @@ public class Torch extends Flowable {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.airColor;
+    public Color getMapColor() {
+        return Color.airColor;
     }
 }

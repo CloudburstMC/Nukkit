@@ -9,7 +9,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.tile.Tile;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -178,7 +178,7 @@ public class Chest extends Transparent {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.woodColor;
+    public Color getMapColor() {
+        return Color.woodColor;
     }
 }

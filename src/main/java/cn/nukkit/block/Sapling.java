@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * author: Angelic47
@@ -68,7 +68,7 @@ public class Sapling extends Flowable {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.foliageColor;
+    public Color getMapColor() {
+        return Color.foliageColor;
     }
 }

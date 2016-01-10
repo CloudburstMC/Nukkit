@@ -5,7 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created by Pub4Game on 26.12.2015.
@@ -156,8 +156,8 @@ public class Trapdoor extends Transparent {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.woodColor;
+    public Color getMapColor() {
+        return Color.woodColor;
     }
 
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -42,7 +42,7 @@ public class HardenedClay extends Solid {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.adobeColor;
+    public Color getMapColor() {
+        return Color.adobeColor;
     }
 }

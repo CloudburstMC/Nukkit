@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.utils.RGBColor;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -142,7 +142,7 @@ public class WoodSlab extends Slab {
     }
 
     @Override
-    public RGBColor getMapColor() {
-        return RGBColor.woodColor;
+    public Color getMapColor() {
+        return Color.woodColor;
     }
 }
