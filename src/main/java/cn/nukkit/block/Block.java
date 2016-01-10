@@ -12,7 +12,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
-import org.bukkit.material.DetectorRail;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -158,6 +157,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int VINE = 106;
     public static final int VINES = 106;
     public static final int FENCE_GATE = 107;
+    public static final int FENCE_GATE_OAK = 107;
     public static final int BRICK_STAIRS = 108;
     public static final int STONE_BRICK_STAIRS = 109;
     public static final int MYCELIUM = 110;
