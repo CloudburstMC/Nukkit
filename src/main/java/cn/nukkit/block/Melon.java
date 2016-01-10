@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 import java.util.Random;
 
@@ -41,5 +42,10 @@ public class Melon extends Transparent {
     @Override
     public int getToolType() {
         return Tool.TYPE_AXE;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.foliageColor;
     }
 }

@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -51,5 +52,10 @@ public class Emerald extends Solid {
         } else {
             return new int[][]{};
         }
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.emeraldColor;
     }
 }

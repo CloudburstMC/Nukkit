@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * author: MagicDroidX
@@ -80,5 +81,10 @@ public class Quartz extends Solid {
     @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.quartzColor;
     }
 }

@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.redstone.Redstone;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * author: Angelic47
@@ -73,5 +74,10 @@ public class RedstoneWire extends Flowable {
         return new int[][]{
                 {Item.REDSTONE, 0, 1}
         };
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.airColor;
     }
 }

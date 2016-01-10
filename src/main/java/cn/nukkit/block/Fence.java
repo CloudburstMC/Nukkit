@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * Created on 2015/12/7 by xtypr.
@@ -81,5 +82,10 @@ public class Fence extends Transparent {
 
     public boolean canConnect(Block block) {
         return (block instanceof Fence || block instanceof FenceGate) || block.isSolid() && !block.isTransparent();
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.woodColor;
     }
 }

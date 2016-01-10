@@ -1,14 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
-import cn.nukkit.level.generator.object.TallGrass;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.generator.object.TallGrass;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.RGBColor;
 
 import java.util.Random;
 
@@ -16,7 +15,7 @@ import java.util.Random;
  * author: Angelic47
  * Nukkit Project
  */
-public class Grass extends Solid {
+public class Grass extends Dirt {
 
     public Grass() {
         this(0);
@@ -42,18 +41,13 @@ public class Grass extends Solid {
     }
 
     @Override
-    public int getToolType() {
-        return Tool.TYPE_SHOVEL;
+    public double getResistance() {
+        return 3;
     }
 
     @Override
     public String getName() {
         return "Grass";
-    }
-
-    @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{Item.DIRT, 0, 1}};
     }
 
     @Override
@@ -93,7 +87,7 @@ public class Grass extends Solid {
             if (block.getId() == Block.DIRT) {
                 if ((block.getSide(Vector3.SIDE_UP) instanceof Transparent) && !(block.getSide(Vector3.SIDE_UP) instanceof Liquid)) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new Grass());
-                    Server.getInstance().getPluginManager().callEvent(ev);
+                    getLevel().getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         this.getLevel().setBlock(block, ev.getNewState(), true, true);
                     }
@@ -101,12 +95,17 @@ public class Grass extends Solid {
             }
             if (!(this.getSide(Vector3.SIDE_UP) instanceof Transparent) || (this.getSide(Vector3.SIDE_UP) instanceof Liquid)) {
                 BlockUpdateEvent ev = new BlockUpdateEvent(new Dirt());
-                Server.getInstance().getPluginManager().callEvent(ev);
+                getLevel().getServer().getPluginManager().callEvent(ev);
                 if (!ev.isCancelled()) {
                     this.getLevel().setBlock(this, ev.getBlock(), true, true);
                 }
             }
         }
         return 0;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.grassColor;
     }
 }

@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -83,5 +84,10 @@ public class Flower extends Flowable {
         }
 
         return 0;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.foliageColor;
     }
 }

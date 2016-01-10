@@ -8,6 +8,7 @@ import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * author: MagicDroidX
@@ -73,4 +74,10 @@ public class Lava extends Liquid {
 
         return ret;
     }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.lavaColor;
+    }
+
 }

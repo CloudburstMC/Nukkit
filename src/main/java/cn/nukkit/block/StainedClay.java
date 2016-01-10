@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -58,4 +59,10 @@ public class StainedClay extends Solid {
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.getDyeColor(meta);
+    }
+
 }

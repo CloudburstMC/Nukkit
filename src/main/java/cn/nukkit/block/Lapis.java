@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * author: Angelic47
@@ -51,4 +52,10 @@ public class Lapis extends Solid {
             return new int[0][];
         }
     }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.lapisColor;
+    }
+
 }

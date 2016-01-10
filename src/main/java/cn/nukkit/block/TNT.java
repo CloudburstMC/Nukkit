@@ -8,6 +8,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.RGBColor;
 import cn.nukkit.utils.Random;
 
 /**
@@ -76,5 +77,10 @@ public class TNT extends Solid {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.tntColor;
     }
 }

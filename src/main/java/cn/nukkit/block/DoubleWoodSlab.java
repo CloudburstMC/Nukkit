@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -56,5 +57,10 @@ public class DoubleWoodSlab extends Solid {
         return new int[][]{
                 {Item.WOOD_SLAB, this.meta & 0x07, 2}
         };
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.woodColor;
     }
 }

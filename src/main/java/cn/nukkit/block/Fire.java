@@ -9,6 +9,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * author: MagicDroidX
@@ -94,5 +95,10 @@ public class Fire extends Flowable {
         }
 
         return 0;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.airColor;
     }
 }

@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -57,5 +58,10 @@ public class Wool extends Solid {
     @Override
     public double getResistance() {
         return 4;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.getDyeColor(meta);
     }
 }

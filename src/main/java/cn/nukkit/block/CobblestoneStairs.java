@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * Created on 2015/11/25 by xtypr.
@@ -38,5 +39,10 @@ public class CobblestoneStairs extends Stair {
     @Override
     public String getName() {
         return "Cobblestone Stairs";
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.stoneColor;
     }
 }

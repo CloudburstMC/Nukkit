@@ -66,7 +66,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public static final int TIME_FULL = 24000;
 
-    public static final int DIMENSION_NORMAL = 0;
+    public static final int DIMENSION_OVERWORLD = 0;
     public static final int DIMENSION_NETHER = 1;
 
     private Map<Long, Tile> tiles = new HashMap<>();
@@ -183,7 +183,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private long levelCurrentTick = 0;
 
-    private int dimension = DIMENSION_NORMAL;
+    private int dimension = DIMENSION_OVERWORLD;
 
     public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
         this.blockStates = Block.fullList;

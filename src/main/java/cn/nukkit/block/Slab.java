@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * author: MagicDroidX
@@ -146,5 +147,21 @@ public class Slab extends Transparent {
     @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        switch (this.meta & 0x07) {
+            case Slab.STONE: return RGBColor.stoneColor;
+            case Slab.SANDSTONE: return RGBColor.sandColor;
+            case Slab.WOODEN: return RGBColor.woodColor;
+            case Slab.COBBLESTONE: return RGBColor.stoneColor;
+            case Slab.BRICK: return RGBColor.stoneColor;
+            case Slab.STONE_BRICK: return RGBColor.stoneColor;
+            case Slab.QUARTZ: return RGBColor.quartzColor;
+            case Slab.NETHER_BRICK: return RGBColor.netherrackColor;
+
+            default: return RGBColor.stoneColor;     //unreachable
+        }
     }
 }

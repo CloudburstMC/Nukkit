@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 import java.util.Random;
 
@@ -48,4 +49,10 @@ public class Gravel extends Fallable {
             return new int[][]{new int[]{Item.GRAVEL, 0, 1}};
         }
     }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.sandColor;
+    }
+
 }

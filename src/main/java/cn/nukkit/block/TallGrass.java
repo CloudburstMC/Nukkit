@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * author: Angelic47
@@ -66,5 +67,10 @@ public class TallGrass extends Flowable {
         //todo
 
         return new int[0][];
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.foliageColor;
     }
 }

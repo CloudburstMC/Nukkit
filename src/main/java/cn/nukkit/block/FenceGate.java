@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -125,5 +126,10 @@ public class FenceGate extends Transparent {
         this.getLevel().setBlock(this, this, true);
         this.getLevel().addSound(new DoorSound(this));
         return true;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.woodColor;
     }
 }

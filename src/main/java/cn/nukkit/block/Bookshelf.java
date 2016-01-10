@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * @author Nukkit Project Team
@@ -46,6 +47,11 @@ public class Bookshelf extends Solid {
         return new int[][]{
                 {Item.BOOK, 0, 3}
         };
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.woodColor;
     }
 
 }

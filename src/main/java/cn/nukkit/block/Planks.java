@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * author: MagicDroidX
@@ -55,5 +56,10 @@ public class Planks extends Solid {
     @Override
     public int getToolType() {
         return Tool.TYPE_AXE;
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.woodColor;
     }
 }

@@ -4,12 +4,13 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.utils.RGBColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class WoodSlab extends Transparent {
+public class WoodSlab extends Slab {
 
     public WoodSlab() {
         this(0);
@@ -138,5 +139,10 @@ public class WoodSlab extends Transparent {
         return new int[][]{
                 {this.getId(), this.meta & 0x07, 1}
         };
+    }
+
+    @Override
+    public RGBColor getMapColor() {
+        return RGBColor.woodColor;
     }
 }
