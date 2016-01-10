@@ -13,7 +13,7 @@ public class WallSign extends SignPost {
     }
 
     public WallSign(int meta) {
-        super(0);
+        super(meta);
     }
 
     @Override
@@ -35,10 +35,12 @@ public class WallSign extends SignPost {
                 4,
         };
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(faces[this.meta]).getId() == Item.AIR) {
-                this.getLevel().useBreakOn(this);
+            if (this.meta >= 2 && this.meta <= 5) {
+                if (this.getSide(faces[this.meta - 2]).getId() == Item.AIR) {
+                    this.getLevel().useBreakOn(this);
+                }
+                return Level.BLOCK_UPDATE_NORMAL;
             }
-            return Level.BLOCK_UPDATE_NORMAL;
         }
         return 0;
     }
