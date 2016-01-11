@@ -131,7 +131,7 @@ public class Item implements Cloneable {
     public static final int WOODEN_DOOR_BLOCK = 64;
     public static final int WOOD_DOOR_BLOCK = 64;
     public static final int LADDER = 65;
-
+    public static final int RAIL = 66;
     public static final int COBBLE_STAIRS = 67;
     public static final int COBBLESTONE_STAIRS = 67;
     public static final int WALL_SIGN = 68;
@@ -895,8 +895,10 @@ public class Item implements Cloneable {
 
 
         //Tools
-        //TODO addCreativeItem(Item.get(Item.RAILS, 0));
-        //TODO addCreativeItem(Item.get(Item.POWERED_RAILS, 0));
+        addCreativeItem(Item.get(Item.RAIL, 0));
+        addCreativeItem(Item.get(Item.POWERED_RAIL, 0));
+        addCreativeItem(Item.get(Item.DETECTOR_RAIL, 0));
+        addCreativeItem(Item.get(Item.ACTIVATOR_RAIL, 0));
         addCreativeItem(Item.get(Item.TORCH, 0));
         addCreativeItem(Item.get(Item.BUCKET, 0));
         addCreativeItem(Item.get(Item.BUCKET, 1));
