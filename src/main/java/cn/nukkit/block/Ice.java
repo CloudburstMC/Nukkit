@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.Color;
 
 /**
  * author: MagicDroidX
@@ -39,6 +40,11 @@ public class Ice extends Transparent {
     }
 
     @Override
+    public double getFrictionFactor() {
+        return 0.98;
+    }
+
+    @Override
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }
@@ -63,5 +69,10 @@ public class Ice extends Transparent {
     @Override
     public int[][] getDrops(Item item) {
         return new int[0][0];
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.iceColor;
     }
 }

@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -80,5 +81,10 @@ public class WaterLily extends Flowable {
         return new int[][]{
                 {this.getId(), 0, 1}
         };
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.foliageColor;
     }
 }

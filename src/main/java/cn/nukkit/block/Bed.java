@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.utils.Color;
 import cn.nukkit.utils.TextFormat;
 
 /**
@@ -171,5 +172,10 @@ public class Bed extends Transparent {
         return new int[][]{
                 {Item.BED, 0, 1}
         };
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.clothColor;
     }
 }

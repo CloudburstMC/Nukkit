@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Color;
 
 /**
  * author: MagicDroidX
@@ -55,5 +56,10 @@ public class Water extends Liquid {
         this.getLevel().scheduleUpdate(this, this.tickRate());
 
         return ret;
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.waterColor;
     }
 }
