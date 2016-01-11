@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.Color;
 
 /**
  * author: Angelic47
@@ -50,5 +51,10 @@ public class Gold extends Solid {
         } else {
             return new int[0][];
         }
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.goldColor;
     }
 }

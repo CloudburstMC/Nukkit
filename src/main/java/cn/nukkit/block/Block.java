@@ -12,6 +12,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.utils.Color;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -269,13 +270,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static boolean[] solid = null;
     public static double[] hardness = null;
     public static boolean[] transparent = null;
-
+    public AxisAlignedBB boundingBox = null;
     protected int meta = 0;
-
     protected int powerLevel = 0;
     protected boolean powerSource = false;
-
-    public AxisAlignedBB boundingBox = null;
 
     protected Block(Integer meta) {
         this.meta = (meta != null ? meta : 0);
@@ -630,6 +628,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return false;
     }
 
+    public Color getMapColor() {
+        return Color.voidColor;
+    }
+
     public abstract String getName();
 
     public abstract int getId();
@@ -866,12 +868,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return (Block) super.clone();
     }
 
-    public void setPowerLevel(int powerLevel) {
-        this.powerLevel = powerLevel;
-    }
-
     public int getPowerLevel() {
         return powerLevel;
+    }
+
+    public void setPowerLevel(int powerLevel) {
+        this.powerLevel = powerLevel;
     }
 
     public int getPowerLevel(int side) {

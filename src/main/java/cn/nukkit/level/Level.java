@@ -67,7 +67,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public static final int TIME_FULL = 24000;
 
-    public static final int DIMENSION_NORMAL = 0;
+    public static final int DIMENSION_OVERWORLD = 0;
     public static final int DIMENSION_NETHER = 1;
 
     private Map<Long, Tile> tiles = new HashMap<>();
@@ -184,7 +184,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private long levelCurrentTick = 0;
 
-    private int dimension = DIMENSION_NORMAL;
+    private int dimension = DIMENSION_OVERWORLD;
 
     public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
         this.blockStates = Block.fullList;
@@ -1962,6 +1962,20 @@ public class Level implements ChunkManager, Metadatable {
 
     public int getHighestBlockAt(int x, int z) {
         return this.getChunk(x >> 4, z >> 4, true).getHighestBlockAt(x & 0x0f, z & 0x0f);
+    }
+
+    public Color getMapColorAt(int x, int z) {
+        int y = getHighestBlockAt(x, z);
+        while (y > 1) {
+            Block block = getBlock(new Vector3(x, y, z));
+            Color color = block.getMapColor();
+            if (color.getAlpha() == 0x00) {
+                y--;
+            } else {
+                return color;
+            }
+        }
+        return Color.voidColor;
     }
 
     public boolean isChunkLoaded(int x, int z) {

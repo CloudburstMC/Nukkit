@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.Color;
 
 /**
  * author: MagicDroidX
@@ -45,4 +46,8 @@ public class Sand extends Fallable {
         return "Sand";
     }
 
+    @Override
+    public Color getMapColor() {
+        return Color.sandColor;
+    }
 }
