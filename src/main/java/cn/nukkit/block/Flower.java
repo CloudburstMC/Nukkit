@@ -84,6 +84,7 @@ public class Flower extends Flowable {
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{new int[]{this.getId(), this.meta, 1}};
+    }
 
     @Override
     public Color getMapColor() {
