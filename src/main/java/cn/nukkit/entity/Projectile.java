@@ -133,7 +133,7 @@ public abstract class Projectile extends Entity {
                     if (this instanceof Arrow && ((Arrow) this).isCritical) {
                         damage += new Random().nextInt((int) (damage / 2) + 1);
                     }
-                    if (this instanceof Snowball) {
+                    if (this instanceof Snowball || this instanceof Egg) {
                         damage = 0;
                     }
 
