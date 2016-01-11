@@ -1,6 +1,7 @@
 package cn.nukkit.potion;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.ThrownPotion;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Potions;
@@ -70,7 +71,28 @@ public abstract class Potion {
     protected boolean levelII = false;
     protected boolean splashPotion = false;
 
-    public abstract void applyTo(Entity entity);
+    public final void applyTo(Entity entity) {
+        //todo events?
+        onApplyTo(entity);
+    }
+
+    protected abstract void onApplyTo(Entity entity);
+
+    public final void thrownPotionCollide(ThrownPotion potionEntity) {
+        if (!this.isSplashPotion()) return;
+        Potion potion = Potion.getPotion(potionEntity.getPotionType()).setSplashPotion();
+        Particle[] particles = potion.getParticles(potionEntity);
+        if (particles != null) {
+            for (Particle particle : particles) {
+                if (particle != null) potionEntity.getLevel().addParticle(particle);
+            }
+        }
+        onThrownPotionCollide(potionEntity);
+    }
+
+    protected void onThrownPotionCollide(ThrownPotion potionEntity) {
+
+    }
 
     public int getDisplayType() {
         return displayType;

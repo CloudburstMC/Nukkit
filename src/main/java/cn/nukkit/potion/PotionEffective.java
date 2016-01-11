@@ -17,7 +17,7 @@ public class PotionEffective extends Potion {
     }
 
     @Override
-    public void applyTo(Entity entity) {
+    protected void onApplyTo(Entity entity) {
         Potions.applyPotion(potionType, isSplashPotion(), entity);
     }
 

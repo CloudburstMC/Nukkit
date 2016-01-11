@@ -85,14 +85,7 @@ public class ThrownPotion extends Projectile {
         if (this.isCollided) {
             this.kill();
             Potion potion = Potion.getPotion(getPotionType()).setSplashPotion();
-            Particle[] particles = potion.getParticles(this);
-            if (particles != null) {
-                for (Particle particle : particles) {
-                    if (particle != null)
-                    this.getLevel().addParticle(particle);
-                }
-            }
-
+            potion.thrownPotionCollide(this);
             hasUpdate = true;
             Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(8.25, 4.24, 8.25));
             for (Entity anEntity : entities) {

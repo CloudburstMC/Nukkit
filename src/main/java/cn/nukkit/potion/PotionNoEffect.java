@@ -9,7 +9,7 @@ import cn.nukkit.entity.Entity;
 public class PotionNoEffect extends Potion {
 
     @Override
-    public void applyTo(Entity entity) {
+    protected void onApplyTo(Entity entity) {
         //do nothing
     }
 }
