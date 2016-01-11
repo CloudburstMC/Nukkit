@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.Color;
 
 /**
  * author: MagicDroidX
@@ -82,5 +83,10 @@ public class Wood extends Solid {
     @Override
     public int getToolType() {
         return Tool.TYPE_AXE;
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.woodColor;
     }
 }

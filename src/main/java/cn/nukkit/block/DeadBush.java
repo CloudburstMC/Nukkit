@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.Color;
 
 import java.util.Random;
 
@@ -47,5 +48,9 @@ public class DeadBush extends Flowable {
         } else {
             return new int[][]{{Item.STICK, 0, new Random().nextInt(1) + 2}};
         }
+    }
+
+    public Color getMapColor() {
+        return Color.foliageColor;
     }
 }

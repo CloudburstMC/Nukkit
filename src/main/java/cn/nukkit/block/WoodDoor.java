@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.Color;
 
 /**
  * author: MagicDroidX
@@ -52,5 +53,10 @@ public class WoodDoor extends Door {
         return new int[][]{
                 {Item.WOODEN_DOOR, 0, 1}
         };
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.woodColor;
     }
 }

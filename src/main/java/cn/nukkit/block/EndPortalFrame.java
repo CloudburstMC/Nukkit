@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.math.AxisAlignedBB;
-
 /**
  * Created by Pub4Game on 26.12.2015.
  */

@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -83,5 +84,9 @@ public class Flower extends Flowable {
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{new int[]{this.getId(), this.meta, 1}};
+
+    @Override
+    public Color getMapColor() {
+        return Color.foliageColor;
     }
 }

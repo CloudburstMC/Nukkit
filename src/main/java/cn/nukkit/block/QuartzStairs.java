@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/25 by xtypr.
@@ -33,5 +34,10 @@ public class QuartzStairs extends Stair {
     @Override
     public String getName() {
         return "Quartz Stairs";
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.quartzColor;
     }
 }

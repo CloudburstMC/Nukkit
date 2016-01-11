@@ -1,13 +1,10 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
-
 /**
  * Created on 2015/11/25 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class JungleWoodStairs extends Stair {
+public class JungleWoodStairs extends WoodStairs {
 
     public JungleWoodStairs() {
         this(0);
@@ -27,24 +24,4 @@ public class JungleWoodStairs extends Stair {
         return "Jungle Wood Stairs";
     }
 
-    @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{this.getId(), 0, 1}};
-    }
-
-
-    @Override
-    public double getHardness() {
-        return 2;
-    }
-
-    @Override
-    public double getResistance() {
-        return 15;
-    }
-
-    @Override
-    public int getToolType() {
-        return Tool.TYPE_AXE;
-    }
 }
