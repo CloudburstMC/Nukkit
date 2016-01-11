@@ -148,7 +148,7 @@ public class Trapdoor extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        this.meta ^= 0x04;
+        this.meta |= 0x04;
         this.getLevel().setBlock(this, this, true);
         this.level.addSound(new DoorSound(this));
         return true;
