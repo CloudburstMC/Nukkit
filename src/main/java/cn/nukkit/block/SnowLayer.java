@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -88,6 +89,11 @@ public class SnowLayer extends Flowable {
             };
         }
         return new int[][]{};
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.snowColor;
     }
 }
 

@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -46,5 +47,10 @@ public class Glowstone extends Transparent {
         return new int[][]{
                 {Item.GLOWSTONE_DUST, 0, ((int) (2d * Math.random()) + 2)}
         };
+    }
+
+    @Override
+    public Color getMapColor() {
+        return Color.airColor;
     }
 }

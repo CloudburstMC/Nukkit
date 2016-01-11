@@ -7,7 +7,7 @@ import cn.nukkit.item.Tool;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PackedIce extends Transparent {
+public class PackedIce extends Ice {
 
     public PackedIce() {
         this(0);
@@ -25,11 +25,6 @@ public class PackedIce extends Transparent {
     @Override
     public String getName() {
         return "Packed Ice";
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.5;
     }
 
     @Override
