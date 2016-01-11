@@ -855,6 +855,9 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CAKE, 0));
         addCreativeItem(Item.get(Item.SIGN, 0));
         addCreativeItem(Item.get(Item.MONSTER_SPAWNER, 0));
+        addCreativeItem(Item.get(Item.FLOWER_POT, 0));
+        addCreativeItem(Item.get(Item.MONSTER_SPAWNER, 0));
+        addCreativeItem(Item.get(Item.ENCHANTMENT_TABLE, 0));
         addCreativeItem(Item.get(Item.WOOL, 0));
         addCreativeItem(Item.get(Item.WOOL, 8));
         addCreativeItem(Item.get(Item.WOOL, 7));
@@ -1037,6 +1040,105 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WEAKNESS));
         addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WEAKNESS_LONG));
 
+        addCreativeItem(Item.get(Item.COAL, 0));
+        addCreativeItem(Item.get(Item.COAL, 1));
+        addCreativeItem(Item.get(Item.DIAMOND, 0));
+        addCreativeItem(Item.get(Item.IRON_INGOT, 0));
+        addCreativeItem(Item.get(Item.GOLD_INGOT, 0));
+        addCreativeItem(Item.get(Item.EMERALD, 0));
+        addCreativeItem(Item.get(Item.STICK, 0));
+        addCreativeItem(Item.get(Item.BOWL, 0));
+        addCreativeItem(Item.get(Item.STRING, 0));
+        addCreativeItem(Item.get(Item.FEATHER, 0));
+        addCreativeItem(Item.get(Item.FLINT, 0));
+        addCreativeItem(Item.get(Item.LEATHER, 0));
+        // TODO: Rabbit hide
+        addCreativeItem(Item.get(Item.CLAY, 0));
+        addCreativeItem(Item.get(Item.SUGAR, 0));
+        addCreativeItem(Item.get(Item.NETHER_QUARTZ, 0));
+        addCreativeItem(Item.get(Item.PAPER, 0));
+        addCreativeItem(Item.get(Item.BOOK, 0));
+        addCreativeItem(Item.get(Item.ARROW, 0));
+        addCreativeItem(Item.get(Item.BONE, 0));
+        addCreativeItem(Item.get(Item.SUGARCANE, 0));
+        addCreativeItem(Item.get(Item.WHEAT, 0));
+        addCreativeItem(Item.get(Item.SEEDS, 0));
+        addCreativeItem(Item.get(Item.PUMPKIN_SEEDS, 0));
+        addCreativeItem(Item.get(Item.MELON_SEEDS, 0));
+        addCreativeItem(Item.get(Item.BEETROOT_SEEDS, 0));
+        addCreativeItem(Item.get(Item.EGG, 0));
+        addCreativeItem(Item.get(Item.APPLE, 0));
+        addCreativeItem(Item.get(Item.GOLDEN_APPLE, 0));
+        // TODO: Golden apple enchanted
+        addCreativeItem(Item.get(Item.RAW_FISH, 0));
+        addCreativeItem(Item.get(Item.RAW_FISH, 1)); // TODO: Raw salmon
+        addCreativeItem(Item.get(Item.RAW_FISH, 2)); // TODO: Clownfish
+        addCreativeItem(Item.get(Item.RAW_FISH, 3)); // TODO: Pufferfish
+        addCreativeItem(Item.get(Item.COOKED_FISH, 0));
+        addCreativeItem(Item.get(Item.COOKED_FISH, 1)); //salmon
+        // TODO: Rotten flesh
+        // TODO: Mushroom stew
+        addCreativeItem(Item.get(Item.BREAD, 0));
+        addCreativeItem(Item.get(Item.RAW_PORKCHOP, 0));
+        addCreativeItem(Item.get(Item.COOKED_PORKCHOP, 0));
+        addCreativeItem(Item.get(Item.RAW_CHICKEN, 0));
+        addCreativeItem(Item.get(Item.COOKED_CHICKEN, 0));
+        addCreativeItem(Item.get(Item.RAW_BEEF, 0));
+        addCreativeItem(Item.get(Item.STEAK, 0));
+        addCreativeItem(Item.get(Item.MELON, 0));
+        addCreativeItem(Item.get(Item.CARROT, 0));
+        addCreativeItem(Item.get(Item.POTATO, 0));
+        addCreativeItem(Item.get(Item.BAKED_POTATO, 0));
+        // TODO: Poisonous potato
+        addCreativeItem(Item.get(Item.COOKIE, 0));
+        addCreativeItem(Item.get(Item.PUMPKIN_PIE, 0));
+
+        addCreativeItem(Item.get(Item.WOODEN_SWORD, 0));
+        addCreativeItem(Item.get(Item.WOODEN_HOE, 0));
+        addCreativeItem(Item.get(Item.WOODEN_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.WOODEN_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.WOODEN_AXE, 0));
+        addCreativeItem(Item.get(Item.STONE_SWORD, 0));
+        addCreativeItem(Item.get(Item.STONE_HOE, 0));
+        addCreativeItem(Item.get(Item.STONE_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.STONE_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.STONE_AXE, 0));
+        addCreativeItem(Item.get(Item.IRON_SWORD, 0));
+        addCreativeItem(Item.get(Item.IRON_HOE, 0));
+        addCreativeItem(Item.get(Item.IRON_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.IRON_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.IRON_AXE, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_SWORD, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_HOE, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_AXE, 0));
+        addCreativeItem(Item.get(Item.GOLD_SWORD, 0));
+        addCreativeItem(Item.get(Item.GOLD_HOE, 0));
+        addCreativeItem(Item.get(Item.GOLD_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.GOLD_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.GOLD_AXE, 0));
+        addCreativeItem(Item.get(Item.LEATHER_CAP, 0));
+        addCreativeItem(Item.get(Item.LEATHER_TUNIC, 0));
+        addCreativeItem(Item.get(Item.LEATHER_PANTS, 0));
+        addCreativeItem(Item.get(Item.LEATHER_BOOTS, 0));
+        addCreativeItem(Item.get(Item.CHAIN_HELMET, 0));
+        addCreativeItem(Item.get(Item.CHAIN_CHESTPLATE, 0));
+        addCreativeItem(Item.get(Item.CHAIN_LEGGINGS, 0));
+        addCreativeItem(Item.get(Item.CHAIN_BOOTS, 0));
+        addCreativeItem(Item.get(Item.IRON_HELMET, 0));
+        addCreativeItem(Item.get(Item.IRON_CHESTPLATE, 0));
+        addCreativeItem(Item.get(Item.IRON_LEGGINGS, 0));
+        addCreativeItem(Item.get(Item.IRON_BOOTS, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_HELMET, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_CHESTPLATE, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_LEGGINGS, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_BOOTS, 0));
+        addCreativeItem(Item.get(Item.GOLD_HELMET, 0));
+        addCreativeItem(Item.get(Item.GOLD_CHESTPLATE, 0));
+        addCreativeItem(Item.get(Item.GOLD_LEGGINGS, 0));
+        addCreativeItem(Item.get(Item.GOLD_BOOTS, 0));
+        
     }
 
     public static void clearCreativeItems() {
