@@ -44,7 +44,7 @@ public class Workbench extends Solid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return Tool.TYPE_AXE;
     }
 
     @Override

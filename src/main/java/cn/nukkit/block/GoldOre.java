@@ -9,7 +9,6 @@ import cn.nukkit.item.Tool;
  */
 public class GoldOre extends Solid {
 
-
     public GoldOre() {
         this(0);
     }
@@ -30,7 +29,7 @@ public class GoldOre extends Solid {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 15;
     }
 
     @Override

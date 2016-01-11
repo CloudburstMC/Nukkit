@@ -10,7 +10,6 @@ import cn.nukkit.item.Tool;
  */
 public class Dirt extends Solid {
 
-
     public Dirt() {
         this(0);
     }
@@ -27,6 +26,11 @@ public class Dirt extends Solid {
     @Override
     public boolean canBeActivated() {
         return true;
+    }
+    
+    @Override
+    public double getResistance() {
+        return 2.5;
     }
 
     @Override

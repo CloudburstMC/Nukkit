@@ -37,7 +37,7 @@ public class Fence extends Transparent {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 15;
     }
 
     @Override

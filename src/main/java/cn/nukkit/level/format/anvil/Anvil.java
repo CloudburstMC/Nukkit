@@ -315,9 +315,9 @@ public class Anvil extends BaseLevelProvider {
         this.chunks.put(index, (Chunk) chunk);
     }
 
-    public static ChunkSection createChunkSection(byte Y) {
+    public static ChunkSection createChunkSection(int Y) {
         CompoundTag nbt = new CompoundTag();
-        nbt.putByte("Y", Y);
+        nbt.putByte("Y", (byte) Y);
         nbt.putByteArray("Blocks", new byte[4096]);
         nbt.putByteArray("Data", new byte[2048]);
         byte[] sl = new byte[2048];

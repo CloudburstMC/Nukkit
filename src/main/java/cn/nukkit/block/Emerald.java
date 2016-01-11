@@ -34,7 +34,7 @@ public class Emerald extends Solid {
 
     @Override
     public double getResistance() {
-        return 10;
+        return 30;
     }
 
     @Override

@@ -71,6 +71,11 @@ public class SnowLayer extends Flowable {
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
+        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+            if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 10) {
+                this.getLevel().setBlock(this, new Air(), true);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
         }
         return 0;
     }
