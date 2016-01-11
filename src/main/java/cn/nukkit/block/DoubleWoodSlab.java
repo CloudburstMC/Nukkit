@@ -29,7 +29,7 @@ public class DoubleWoodSlab extends Solid {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 15;
     }
 
     @Override

@@ -63,7 +63,7 @@ public class BinaryStream {
     }
 
     public byte[] get() {
-        return Arrays.copyOfRange(this.buffer, this.offset, this.count - 1);
+        return this.get(this.count - this.offset);
     }
 
     public byte[] get(int len) {

@@ -76,10 +76,10 @@ public class Sign extends Spawnable {
     public CompoundTag getSpawnCompound() {
         return new CompoundTag()
                 .putString("id", Tile.SIGN)
-                .put("Text1", this.namedTag.get("Text1"))
-                .put("Text2", this.namedTag.get("Text2"))
-                .put("Text3", this.namedTag.get("Text3"))
-                .put("Text4", this.namedTag.get("Text4"))
+                .putString("Text1", this.namedTag.getString("Text1"))
+                .putString("Text2", this.namedTag.getString("Text2"))
+                .putString("Text3", this.namedTag.getString("Text3"))
+                .putString("Text4", this.namedTag.getString("Text4"))
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);

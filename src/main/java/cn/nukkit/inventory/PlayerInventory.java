@@ -123,17 +123,18 @@ public class PlayerInventory extends BaseInventory {
         Item item = this.getItemInHand();
 
         MobEquipmentPacket pk = new MobEquipmentPacket();
-        pk.eid = 0;
         pk.item = item;
         pk.slot = (byte) this.getHeldItemSlot();
         pk.selectedSlot = (byte) this.getHeldItemIndex();
 
-        Server.broadcastPacket(players, pk);
         for (Player player : players) {
+            pk.eid = this.getHolder().getId();
             if (player.equals(this.getHolder())) {
+                pk.eid = 0;
                 this.sendSlot(this.getHeldItemSlot(), player);
-                break;
             }
+
+            player.dataPacket(pk);
         }
     }
 

@@ -2068,8 +2068,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         } else {
                             bottle.spawnToAll();
                         }
-                    }
-                    else if (item.getId() == Item.SPLASH_POTION) {
+                    } else if (item.getId() == Item.SPLASH_POTION) {
                         CompoundTag nbt = new CompoundTag()
                                 .putList(new ListTag<DoubleTag>("Pos")
                                         .add(new DoubleTag("", x))
@@ -2660,34 +2659,31 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     int offsetX = 0;
                     int offsetY = 0;
 
-                    if (this.craftingType == 1)
-                    {
+                    if (this.craftingType == 1) {
                         int minX = -1, minY = -1, maxX = 0, maxY = 0;
                         for (int x = 0; x < 3 && canCraft; ++x) {
                             for (int y = 0; y < 3; ++y) {
                                 Item readItem = craftingEventPacket.input[y * 3 + x];
-                                if(readItem.getId() != Item.AIR) {
-                                    if(minY == -1 || minY > y) {
+                                if (readItem.getId() != Item.AIR) {
+                                    if (minY == -1 || minY > y) {
                                         minY = y;
                                     }
-                                    if(maxY < y) {
+                                    if (maxY < y) {
                                         maxY = y;
                                     }
-                                    if(minX == -1) {
+                                    if (minX == -1) {
                                         minX = x;
                                     }
-                                    if(maxX < x) {
+                                    if (maxX < x) {
                                         maxX = x;
                                     }
                                 }
                             }
                         }
-                        if(maxX == minX)
-                        {
+                        if (maxX == minX) {
                             offsetX = minX;
                         }
-                        if(maxY == minY)
-                        {
+                        if (maxY == minY) {
                             offsetY = minY;
                         }
                     }
@@ -2936,24 +2932,24 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                 Tile t = this.level.getTile(pos);
                 if (t instanceof Sign) {
-                    CompoundTag nbt = null;
+                    CompoundTag nbt;
                     try {
                         nbt = NBTIO.read(blockEntityDataPacket.namedTag, ByteOrder.LITTLE_ENDIAN);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
 
-                    if (!Tile.SIGN.equals(nbt.getString("Id"))) {
+                    if (!Tile.SIGN.equals(nbt.getString("id"))) {
                         ((Sign) t).spawnTo(this);
                     } else {
                         SignChangeEvent signChangeEvent = new SignChangeEvent(t.getBlock(), this, new String[]{
                                 TextFormat.clean(nbt.getString("Text1"), this.removeFormat),
-                                TextFormat.clean(nbt.getString("Text1"), this.removeFormat),
-                                TextFormat.clean(nbt.getString("Text1"), this.removeFormat),
-                                TextFormat.clean(nbt.getString("Text1"), this.removeFormat)
+                                TextFormat.clean(nbt.getString("Text2"), this.removeFormat),
+                                TextFormat.clean(nbt.getString("Text3"), this.removeFormat),
+                                TextFormat.clean(nbt.getString("Text4"), this.removeFormat)
                         });
 
-                        if (!t.namedTag.contains("Creator") || !Arrays.equals(this.getRawUniqueId(), t.namedTag.getByteArray("Creator"))) {
+                        if (!t.namedTag.contains("Creator") || !Objects.equals(this.getUniqueId().toString(), t.namedTag.getString("Creator"))) {
                             signChangeEvent.setCancelled();
                         } else {
                             for (String line : signChangeEvent.getLines()) {
@@ -2970,6 +2966,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         } else {
                             ((Sign) t).spawnTo(this);
                         }
+
                     }
                 }
                 break;
