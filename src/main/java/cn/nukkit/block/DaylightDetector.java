@@ -1,8 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.utils.Color;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
@@ -30,6 +29,21 @@ public class DaylightDetector extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{Item.DAYLIGHT_DETECTOR, 0, 1}};
+        return new int[][]{
+                {Item.DAYLIGHT_DETECTOR, 0, 1}
+        };
     }
+
+    @Override
+    public Color getMapColor() {
+        return Color.woodColor;
+    }
+
+    //这个函数提供一个结构的建议，可重命名也可删
+    protected boolean invertDetect() {
+        return false;
+    }
+
+    //todo redstone
+
 }

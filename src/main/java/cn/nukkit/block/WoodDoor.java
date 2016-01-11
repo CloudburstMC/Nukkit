@@ -29,11 +29,6 @@ public class WoodDoor extends Door {
     }
 
     @Override
-    public boolean canBeActivated() {
-        return true;
-    }
-
-    @Override
     public double getHardness() {
         return 3;
     }
