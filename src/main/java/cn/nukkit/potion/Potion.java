@@ -2,6 +2,7 @@ package cn.nukkit.potion;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.ThrownPotion;
+import cn.nukkit.event.potion.PotionApplyEvent;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Potions;
@@ -72,8 +73,10 @@ public abstract class Potion {
     protected boolean splashPotion = false;
 
     public final void applyTo(Entity entity) {
-        //todo events?
-        onApplyTo(entity);
+        PotionApplyEvent event = new PotionApplyEvent(this, entity);
+        entity.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+        event.getPotion().onApplyTo(entity);
     }
 
     protected abstract void onApplyTo(Entity entity);
