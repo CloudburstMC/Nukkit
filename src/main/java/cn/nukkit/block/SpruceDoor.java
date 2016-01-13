@@ -1,11 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
 
-public class SpruceDoor extends Door{
+public class SpruceDoor extends WoodDoor {
 
-  public SpruceDoor(){
+    public SpruceDoor(){
 		this(0);
 	}
 
@@ -22,27 +21,7 @@ public class SpruceDoor extends Door{
 	public int getId(){
 	    return SPRUCE_DOOR_BLOCK;
 	}
-	
-	@Override
-	public boolean canBeActivated(){
-		return true;
-	}
-	
-	@Override
-	public double getHardness(){
-		return 3;
-	}
-	
-	@Override
-	public int getToolType(){
-		return Tool.TYPE_AXE;
-	}
-	
-	@Override
-	public double getResistance() {
-        return 15;
-    }
-	
+
 	@Override
 	public int[][] getDrops(Item item) {
         return new int[][]{

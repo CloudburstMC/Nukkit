@@ -33,6 +33,11 @@ public class PackedIce extends Ice {
     }
 
     @Override
+    public int onUpdate(int type) {
+        return 0; //not being melted
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
                 {this.getId(), 0, 1}
