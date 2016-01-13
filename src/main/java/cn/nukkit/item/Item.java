@@ -80,7 +80,8 @@ public class Item implements Cloneable {
     public static final int SANDSTONE = 24;
 
     public static final int BED_BLOCK = 26;
-
+    public static final int POWERED_RAIL = 27;
+    public static final int DETECTOR_RAIL = 28;
 
     public static final int COBWEB = 30;
     public static final int TALL_GRASS = 31;
@@ -90,6 +91,7 @@ public class Item implements Cloneable {
     public static final int DANDELION = 37;
     public static final int POPPY = 38;
     public static final int ROSE = 38;
+    public static final int FLOWER = 38;
     public static final int RED_FLOWER = 38;
     public static final int BROWN_MUSHROOM = 39;
     public static final int RED_MUSHROOM = 40;
@@ -129,13 +131,14 @@ public class Item implements Cloneable {
     public static final int WOODEN_DOOR_BLOCK = 64;
     public static final int WOOD_DOOR_BLOCK = 64;
     public static final int LADDER = 65;
-
+    public static final int RAIL = 66;
     public static final int COBBLE_STAIRS = 67;
     public static final int COBBLESTONE_STAIRS = 67;
     public static final int WALL_SIGN = 68;
-
+    public static final int LEVER = 69;
+    public static final int STONE_PRESSURE_PLATE = 70;
     public static final int IRON_DOOR_BLOCK = 71;
-
+    public static final int WOODEN_PRESSURE_PLATE = 72;
     public static final int REDSTONE_ORE = 73;
     public static final int GLOWING_REDSTONE_ORE = 74;
     public static final int LIT_REDSTONE_ORE = 74;
@@ -195,7 +198,13 @@ public class Item implements Cloneable {
     public static final int BREWING_BLOCK = 117;
 
     public static final int END_PORTAL = 120;
+    public static final int END_PORTAL_FRAME = 120;
     public static final int END_STONE = 121;
+
+    public static final int REDSTONE_LAMP = 123;
+    public static final int LIT_REDSTONE_LAMP = 124;
+
+    public static final int ACTIVATOR_RAIL = 126;
 
     public static final int SANDSTONE_STAIRS = 128;
     public static final int EMERALD_ORE = 129;
@@ -211,12 +220,16 @@ public class Item implements Cloneable {
     public static final int COBBLE_WALL = 139;
     public static final int STONE_WALL = 139;
     public static final int COBBLESTONE_WALL = 139;
-
+    public static final int FLOWER_POT_BLOCK = 140;
     public static final int CARROT_BLOCK = 141;
     public static final int POTATO_BLOCK = 142;
 
     public static final int ANVIL = 145;
+    public static final int TRAPPED_CHEST = 146;
+    public static final int LIGHT_WEIGHTED_PRESSURE_PLATE = 147;
+    public static final int HEAVY_WEIGHTED_PRESSURE_PLATE = 148;
 
+    public static final int DAYLIGHT_DETECTOR = 151;
     public static final int REDSTONE_BLOCK = 152;
     public static final int QUARTZ_ORE = 153;
 
@@ -251,11 +264,19 @@ public class Item implements Cloneable {
     public static final int PACKED_ICE = 174;
     public static final int DOUBLE_PLANT = 175;
 
+    public static final int DAYLIGHT_DETECTOR_INVERTED = 178;
+
     public static final int FENCE_GATE_SPRUCE = 183;
     public static final int FENCE_GATE_BIRCH = 184;
     public static final int FENCE_GATE_JUNGLE = 185;
     public static final int FENCE_GATE_DARK_OAK = 186;
     public static final int FENCE_GATE_ACACIA = 187;
+
+    public static final int SPRUCE_DOOR_BLOCK = 193;
+    public static final int BIRCH_DOOR_BLOCK = 194;
+    public static final int JUNGLE_DOOR_BLOCK = 195;
+    public static final int ACACIA_DOOR_BLOCK = 196;
+    public static final int DARK_OAK_DOOR_BLOCK = 197;
 
     public static final int GRASS_PATH = 198;
 
@@ -263,7 +284,6 @@ public class Item implements Cloneable {
     public static final int BEETROOT_BLOCK = 244;
     public static final int STONECUTTER = 245;
     public static final int GLOWING_OBSIDIAN = 246;
-    public static final int NETHER_REACTOR = 247;
 
 
     //Normal Item IDs
@@ -415,6 +435,7 @@ public class Item implements Cloneable {
 
     public static final int EMERALD = 388;
 
+    public static final int FLOWER_POT = 390;
     public static final int CARROT = 391;
     public static final int CARROTS = 391;
     public static final int POTATO = 392;
@@ -430,6 +451,12 @@ public class Item implements Cloneable {
     public static final int QUARTZ = 406;
     public static final int NETHER_QUARTZ = 406;
 
+    public static final int SPRUCE_DOOR = 427;
+    public static final int BIRCH_DOOR = 428;
+    public static final int JUNGLE_DOOR = 429;
+    public static final int ACACIA_DOOR = 430;
+    public static final int DARK_OAK_DOOR = 431;
+
     public static final int SPLASH_POTION = 438;
 
     public static final int CAMERA = 456;
@@ -437,6 +464,7 @@ public class Item implements Cloneable {
     public static final int BEETROOT_SEEDS = 458;
     public static final int BEETROOT_SEED = 458;
     public static final int BEETROOT_SOUP = 459;
+
 
     public static Class[] list = null;
 
@@ -607,8 +635,13 @@ public class Item implements Cloneable {
             list[BREWING_STAND] = BrewingStand.class;
             list[GLASS_BOTTLE] = GlassBottle.class;
             list[POTION] = Potion.class;
-            //list[SPLASH_POTION] = SplashPotion.class;
+            list[SPLASH_POTION] = SplashPotion.class;
             list[EXPERIENCE_BOTTLE] = ExpBottle.class;
+            list[SPRUCE_DOOR] = SpruceDoor.class;
+            list[BIRCH_DOOR] = BirchDoor.class;
+            list[JUNGLE_DOOR] = JungleDoor.class;
+            list[ACACIA_DOOR] = AcaciaDoor.class;
+            list[DARK_OAK_DOOR] = DarkOakDoor.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -748,6 +781,11 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SPONGE, 0));
         addCreativeItem(Item.get(Item.GLASS_PANE, 0));
         addCreativeItem(Item.get(Item.WOODEN_DOOR, 0));
+        addCreativeItem(Item.get(Item.SPRUCE_DOOR, 0));
+        addCreativeItem(Item.get(Item.BIRCH_DOOR, 0));
+        addCreativeItem(Item.get(Item.JUNGLE_DOOR, 0));
+        addCreativeItem(Item.get(Item.ACACIA_DOOR, 0));
+        addCreativeItem(Item.get(Item.DARK_OAK_DOOR, 0));
         addCreativeItem(Item.get(Item.IRON_DOOR, 0));
         addCreativeItem(Item.get(Item.TRAPDOOR, 0));
         addCreativeItem(Item.get(Item.IRON_TRAPDOOR, 0));
@@ -822,6 +860,9 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CAKE, 0));
         addCreativeItem(Item.get(Item.SIGN, 0));
         addCreativeItem(Item.get(Item.MONSTER_SPAWNER, 0));
+        addCreativeItem(Item.get(Item.FLOWER_POT, 0));
+        addCreativeItem(Item.get(Item.MONSTER_SPAWNER, 0));
+        addCreativeItem(Item.get(Item.ENCHANTMENT_TABLE, 0));
         addCreativeItem(Item.get(Item.WOOL, 0));
         addCreativeItem(Item.get(Item.WOOL, 8));
         addCreativeItem(Item.get(Item.WOOL, 7));
@@ -857,8 +898,10 @@ public class Item implements Cloneable {
 
 
         //Tools
-        //TODO addCreativeItem(Item.get(Item.RAILS, 0));
-        //TODO addCreativeItem(Item.get(Item.POWERED_RAILS, 0));
+        addCreativeItem(Item.get(Item.RAIL, 0));
+        addCreativeItem(Item.get(Item.POWERED_RAIL, 0));
+        addCreativeItem(Item.get(Item.DETECTOR_RAIL, 0));
+        addCreativeItem(Item.get(Item.ACTIVATOR_RAIL, 0));
         addCreativeItem(Item.get(Item.TORCH, 0));
         addCreativeItem(Item.get(Item.BUCKET, 0));
         addCreativeItem(Item.get(Item.BUCKET, 1));
@@ -1004,6 +1047,105 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WEAKNESS));
         addCreativeItem(Item.get(Item.SPLASH_POTION, Potion.WEAKNESS_LONG));
 
+        addCreativeItem(Item.get(Item.COAL, 0));
+        addCreativeItem(Item.get(Item.COAL, 1));
+        addCreativeItem(Item.get(Item.DIAMOND, 0));
+        addCreativeItem(Item.get(Item.IRON_INGOT, 0));
+        addCreativeItem(Item.get(Item.GOLD_INGOT, 0));
+        addCreativeItem(Item.get(Item.EMERALD, 0));
+        addCreativeItem(Item.get(Item.STICK, 0));
+        addCreativeItem(Item.get(Item.BOWL, 0));
+        addCreativeItem(Item.get(Item.STRING, 0));
+        addCreativeItem(Item.get(Item.FEATHER, 0));
+        addCreativeItem(Item.get(Item.FLINT, 0));
+        addCreativeItem(Item.get(Item.LEATHER, 0));
+        // TODO: Rabbit hide
+        addCreativeItem(Item.get(Item.CLAY, 0));
+        addCreativeItem(Item.get(Item.SUGAR, 0));
+        addCreativeItem(Item.get(Item.NETHER_QUARTZ, 0));
+        addCreativeItem(Item.get(Item.PAPER, 0));
+        addCreativeItem(Item.get(Item.BOOK, 0));
+        addCreativeItem(Item.get(Item.ARROW, 0));
+        addCreativeItem(Item.get(Item.BONE, 0));
+        addCreativeItem(Item.get(Item.SUGARCANE, 0));
+        addCreativeItem(Item.get(Item.WHEAT, 0));
+        addCreativeItem(Item.get(Item.SEEDS, 0));
+        addCreativeItem(Item.get(Item.PUMPKIN_SEEDS, 0));
+        addCreativeItem(Item.get(Item.MELON_SEEDS, 0));
+        addCreativeItem(Item.get(Item.BEETROOT_SEEDS, 0));
+        addCreativeItem(Item.get(Item.EGG, 0));
+        addCreativeItem(Item.get(Item.APPLE, 0));
+        addCreativeItem(Item.get(Item.GOLDEN_APPLE, 0));
+        // TODO: Golden apple enchanted
+        addCreativeItem(Item.get(Item.RAW_FISH, 0));
+        addCreativeItem(Item.get(Item.RAW_FISH, 1)); // TODO: Raw salmon
+        addCreativeItem(Item.get(Item.RAW_FISH, 2)); // TODO: Clownfish
+        addCreativeItem(Item.get(Item.RAW_FISH, 3)); // TODO: Pufferfish
+        addCreativeItem(Item.get(Item.COOKED_FISH, 0));
+        addCreativeItem(Item.get(Item.COOKED_FISH, 1)); //salmon
+        // TODO: Rotten flesh
+        // TODO: Mushroom stew
+        addCreativeItem(Item.get(Item.BREAD, 0));
+        addCreativeItem(Item.get(Item.RAW_PORKCHOP, 0));
+        addCreativeItem(Item.get(Item.COOKED_PORKCHOP, 0));
+        addCreativeItem(Item.get(Item.RAW_CHICKEN, 0));
+        addCreativeItem(Item.get(Item.COOKED_CHICKEN, 0));
+        addCreativeItem(Item.get(Item.RAW_BEEF, 0));
+        addCreativeItem(Item.get(Item.STEAK, 0));
+        addCreativeItem(Item.get(Item.MELON, 0));
+        addCreativeItem(Item.get(Item.CARROT, 0));
+        addCreativeItem(Item.get(Item.POTATO, 0));
+        addCreativeItem(Item.get(Item.BAKED_POTATO, 0));
+        // TODO: Poisonous potato
+        addCreativeItem(Item.get(Item.COOKIE, 0));
+        addCreativeItem(Item.get(Item.PUMPKIN_PIE, 0));
+
+        addCreativeItem(Item.get(Item.WOODEN_SWORD, 0));
+        addCreativeItem(Item.get(Item.WOODEN_HOE, 0));
+        addCreativeItem(Item.get(Item.WOODEN_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.WOODEN_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.WOODEN_AXE, 0));
+        addCreativeItem(Item.get(Item.STONE_SWORD, 0));
+        addCreativeItem(Item.get(Item.STONE_HOE, 0));
+        addCreativeItem(Item.get(Item.STONE_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.STONE_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.STONE_AXE, 0));
+        addCreativeItem(Item.get(Item.IRON_SWORD, 0));
+        addCreativeItem(Item.get(Item.IRON_HOE, 0));
+        addCreativeItem(Item.get(Item.IRON_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.IRON_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.IRON_AXE, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_SWORD, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_HOE, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_AXE, 0));
+        addCreativeItem(Item.get(Item.GOLD_SWORD, 0));
+        addCreativeItem(Item.get(Item.GOLD_HOE, 0));
+        addCreativeItem(Item.get(Item.GOLD_SHOVEL, 0));
+        addCreativeItem(Item.get(Item.GOLD_PICKAXE, 0));
+        addCreativeItem(Item.get(Item.GOLD_AXE, 0));
+        addCreativeItem(Item.get(Item.LEATHER_CAP, 0));
+        addCreativeItem(Item.get(Item.LEATHER_TUNIC, 0));
+        addCreativeItem(Item.get(Item.LEATHER_PANTS, 0));
+        addCreativeItem(Item.get(Item.LEATHER_BOOTS, 0));
+        addCreativeItem(Item.get(Item.CHAIN_HELMET, 0));
+        addCreativeItem(Item.get(Item.CHAIN_CHESTPLATE, 0));
+        addCreativeItem(Item.get(Item.CHAIN_LEGGINGS, 0));
+        addCreativeItem(Item.get(Item.CHAIN_BOOTS, 0));
+        addCreativeItem(Item.get(Item.IRON_HELMET, 0));
+        addCreativeItem(Item.get(Item.IRON_CHESTPLATE, 0));
+        addCreativeItem(Item.get(Item.IRON_LEGGINGS, 0));
+        addCreativeItem(Item.get(Item.IRON_BOOTS, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_HELMET, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_CHESTPLATE, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_LEGGINGS, 0));
+        addCreativeItem(Item.get(Item.DIAMOND_BOOTS, 0));
+        addCreativeItem(Item.get(Item.GOLD_HELMET, 0));
+        addCreativeItem(Item.get(Item.GOLD_CHESTPLATE, 0));
+        addCreativeItem(Item.get(Item.GOLD_LEGGINGS, 0));
+        addCreativeItem(Item.get(Item.GOLD_BOOTS, 0));
+        
     }
 
     public static void clearCreativeItems() {

@@ -2,56 +2,50 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author Nukkit Project Team
  */
-public class WoodDoor extends Door {
+public class RedstoneLamp extends Solid {
 
-    public WoodDoor() {
-        this(0);
+    public RedstoneLamp(int meta) {
+        super(meta);
     }
 
-    public WoodDoor(int meta) {
-        super(meta);
+    public RedstoneLamp() {
+        this(0);
     }
 
     @Override
     public String getName() {
-        return "Wood Door Block";
+        return "Redstone Lamp";
     }
 
     @Override
     public int getId() {
-        return WOOD_DOOR_BLOCK;
+        return REDSTONE_LAMP;
     }
 
     @Override
     public double getHardness() {
-        return 3;
+        return 0.3D;
     }
 
     @Override
     public double getResistance() {
-        return 15;
+        return 1.5D;
     }
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_AXE;
+        return Tool.TYPE_PICKAXE;
     }
 
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
-                {Item.WOODEN_DOOR, 0, 1}
+                {Item.REDSTONE_LAMP, 0, 1}
         };
     }
 
-    @Override
-    public Color getMapColor() {
-        return Color.woodColor;
-    }
 }

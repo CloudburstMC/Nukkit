@@ -5,53 +5,55 @@ import cn.nukkit.item.Tool;
 import cn.nukkit.utils.Color;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * Created by Snake1999 on 2016/1/11.
+ * Package cn.nukkit.block in project nukkit
  */
-public class WoodDoor extends Door {
+public class Rail extends Transparent {
 
-    public WoodDoor() {
+    public Rail() {
         this(0);
     }
 
-    public WoodDoor(int meta) {
+    public Rail(int meta) {
         super(meta);
     }
 
     @Override
     public String getName() {
-        return "Wood Door Block";
+        return "Rail";
     }
 
     @Override
     public int getId() {
-        return WOOD_DOOR_BLOCK;
+        return RAIL;
     }
 
     @Override
     public double getHardness() {
-        return 3;
+        return 0.7;
     }
 
     @Override
     public double getResistance() {
-        return 15;
+        return 3.5;
     }
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_AXE;
+        return Tool.TYPE_PICKAXE;
     }
 
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
-                {Item.WOODEN_DOOR, 0, 1}
+                {Item.RAIL, 0, 1}
         };
     }
 
     @Override
     public Color getMapColor() {
-        return Color.woodColor;
+        return Color.airColor;
     }
+
+
 }
