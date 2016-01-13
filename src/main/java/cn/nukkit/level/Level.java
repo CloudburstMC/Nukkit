@@ -3,14 +3,18 @@ package cn.nukkit.level;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
+import cn.nukkit.block.Beetroot;
+import cn.nukkit.block.Carrot;
+import cn.nukkit.block.Wheat;
 import cn.nukkit.entity.*;
+import cn.nukkit.entity.Arrow;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.level.*;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.inventory.InventoryHolder;
-import cn.nukkit.item.Item;
+import cn.nukkit.item.*;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
@@ -34,6 +38,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.redstone.Redstone;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.tile.Chest;
 import cn.nukkit.tile.Sign;
@@ -1266,6 +1271,22 @@ public class Level implements ChunkManager, Metadatable {
                         entity.scheduleUpdate();
                     }
                     ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+
+                    //added for redstone support
+                    Block redstoneWire = ev.getBlock().getSide(Vector3.SIDE_DOWN);
+                    if(redstoneWire instanceof RedstoneWire) {
+                        if (ev.getBlock() instanceof Solid) {
+                            int level = redstoneWire.getPowerLevel();
+                            redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
+                            redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
+                            Redstone.deactive(redstoneWire, level);
+                        }
+                        else {
+                            redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
+                            redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
+                            Redstone.active(redstoneWire);
+                        }
+                    }
                 }
 
                 this.updateAround(pos);
