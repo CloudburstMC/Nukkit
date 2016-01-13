@@ -1,18 +1,17 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
 
 /**
  * @author Nukkit Project Team
  */
-public class ActivatorRail extends Transparent {
+public class RailActivator extends Rail {
 
-    public ActivatorRail(int meta) {
+    public RailActivator(int meta) {
         super(meta);
     }
 
-    public ActivatorRail() {
+    public RailActivator() {
         this(0);
     }
 
@@ -24,21 +23,6 @@ public class ActivatorRail extends Transparent {
     @Override
     public int getId() {
         return ACTIVATOR_RAIL;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.7;
-    }
-
-    @Override
-    public double getResistance() {
-        return 3.5;
-    }
-
-    @Override
-    public int getToolType() {
-        return Tool.TYPE_PICKAXE;
     }
 
     @Override

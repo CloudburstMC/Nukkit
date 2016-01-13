@@ -6,7 +6,7 @@ import cn.nukkit.item.Tool;
 /**
  * @author Nukkit Project Team
  */
-public class HeavyWeightedPressurePlate extends Transparent {
+public class HeavyWeightedPressurePlate extends WeightedPressurePlate {
 
     public HeavyWeightedPressurePlate(int meta) {
         super(meta);

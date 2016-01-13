@@ -1,11 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
 
-public class DarkOakDoor extends Door{
+public class DarkOakDoor extends WoodDoor {
 
-  public DarkOakDoor(){
+    public DarkOakDoor(){
 		this(0);
 	}
 
@@ -22,26 +21,6 @@ public class DarkOakDoor extends Door{
 	public int getId(){
 	    return DARK_OAK_DOOR_BLOCK;
 	}
-	
-	@Override
-	public boolean canBeActivated(){
-		return true;
-	}
-	
-	@Override
-	public double getHardness(){
-		return 3;
-	}
-	
-	@Override
-	public int getToolType(){
-		return Tool.TYPE_AXE;
-	}
-	
-	@Override
-	public double getResistance() {
-        return 15;
-    }
 	
 	@Override
 	public int[][] getDrops(Item item) {

@@ -108,7 +108,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int WOODEN_DOOR_BLOCK = 64;
     public static final int WOOD_DOOR_BLOCK = 64;
     public static final int LADDER = 65;
-
+    public static final int RAIL = 66;
     public static final int COBBLE_STAIRS = 67;
     public static final int COBBLESTONE_STAIRS = 67;
     public static final int WALL_SIGN = 68;
@@ -457,10 +457,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[DARK_OAK_DOOR_BLOCK] = DarkOakDoor.class;
             list[BIRCH_DOOR_BLOCK] = BirchDoor.class;
             list[JUNGLE_DOOR_BLOCK] = JungleDoor.class;
-            list[ACTIVATOR_RAIL] = ActivatorRail.class;
             list[DAYLIGHT_DETECTOR] = DaylightDetector.class;
             list[DAYLIGHT_DETECTOR_INVERTED] = DaylightDetectorInverted.class;
-            list[DETECTOR_RAIL] = DetectorRail.class;
+            list[ACTIVATOR_RAIL] = RailActivator.class;
+            list[DETECTOR_RAIL] = RailDetector.class;
+            list[POWERED_RAIL] = RailPowered.class;
             list[ENCHANTING_TABLE] = EnchantingTable.class;
             list[FLOWER_POT_BLOCK] = FlowerPot.class;
             list[LEVER] = Lever.class;

@@ -1,14 +1,13 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class DaylightDetectorInverted extends Transparent {
+public class DaylightDetectorInverted extends DaylightDetector {
+
     public DaylightDetectorInverted() {
         this(0);
     }
@@ -29,6 +28,13 @@ public class DaylightDetectorInverted extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{Item.DAYLIGHT_DETECTOR_INVERTED}};
+        return new int[][]{
+                {Item.DAYLIGHT_DETECTOR_INVERTED, 0, 1}
+        };
     }
+
+    protected boolean invertDetect() {
+        return true;
+    }
+
 }

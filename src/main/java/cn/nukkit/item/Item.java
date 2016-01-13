@@ -131,7 +131,7 @@ public class Item implements Cloneable {
     public static final int WOODEN_DOOR_BLOCK = 64;
     public static final int WOOD_DOOR_BLOCK = 64;
     public static final int LADDER = 65;
-
+    public static final int RAIL = 66;
     public static final int COBBLE_STAIRS = 67;
     public static final int COBBLESTONE_STAIRS = 67;
     public static final int WALL_SIGN = 68;
@@ -635,7 +635,7 @@ public class Item implements Cloneable {
             list[BREWING_STAND] = BrewingStand.class;
             list[GLASS_BOTTLE] = GlassBottle.class;
             list[POTION] = Potion.class;
-            //list[SPLASH_POTION] = SplashPotion.class;
+            list[SPLASH_POTION] = SplashPotion.class;
             list[EXPERIENCE_BOTTLE] = ExpBottle.class;
             list[SPRUCE_DOOR] = SpruceDoor.class;
             list[BIRCH_DOOR] = BirchDoor.class;
@@ -781,6 +781,11 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SPONGE, 0));
         addCreativeItem(Item.get(Item.GLASS_PANE, 0));
         addCreativeItem(Item.get(Item.WOODEN_DOOR, 0));
+        addCreativeItem(Item.get(Item.SPRUCE_DOOR, 0));
+        addCreativeItem(Item.get(Item.BIRCH_DOOR, 0));
+        addCreativeItem(Item.get(Item.JUNGLE_DOOR, 0));
+        addCreativeItem(Item.get(Item.ACACIA_DOOR, 0));
+        addCreativeItem(Item.get(Item.DARK_OAK_DOOR, 0));
         addCreativeItem(Item.get(Item.IRON_DOOR, 0));
         addCreativeItem(Item.get(Item.TRAPDOOR, 0));
         addCreativeItem(Item.get(Item.IRON_TRAPDOOR, 0));
@@ -893,8 +898,10 @@ public class Item implements Cloneable {
 
 
         //Tools
-        //TODO addCreativeItem(Item.get(Item.RAILS, 0));
-        //TODO addCreativeItem(Item.get(Item.POWERED_RAILS, 0));
+        addCreativeItem(Item.get(Item.RAIL, 0));
+        addCreativeItem(Item.get(Item.POWERED_RAIL, 0));
+        addCreativeItem(Item.get(Item.DETECTOR_RAIL, 0));
+        addCreativeItem(Item.get(Item.ACTIVATOR_RAIL, 0));
         addCreativeItem(Item.get(Item.TORCH, 0));
         addCreativeItem(Item.get(Item.BUCKET, 0));
         addCreativeItem(Item.get(Item.BUCKET, 1));

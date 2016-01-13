@@ -1,18 +1,17 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class DetectorRail extends Transparent {
-    public DetectorRail() {
+public class RailDetector extends Transparent {
+    public RailDetector() {
         this(0);
     }
 
-    public DetectorRail(int meta) {
+    public RailDetector(int meta) {
         super(meta);
     }
 
@@ -24,11 +23,6 @@ public class DetectorRail extends Transparent {
     @Override
     public String getName() {
         return "Detector Rail";
-    }
-
-    @Override
-    public int getToolType() {
-        return Tool.TYPE_PICKAXE;
     }
 
     @Override
