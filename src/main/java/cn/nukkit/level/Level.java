@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.block.Beetroot;
 import cn.nukkit.block.Carrot;
+import cn.nukkit.block.Sugarcane;
 import cn.nukkit.block.Wheat;
 import cn.nukkit.entity.*;
 import cn.nukkit.entity.Arrow;
