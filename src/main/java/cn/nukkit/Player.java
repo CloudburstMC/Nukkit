@@ -2034,6 +2034,40 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             snowball.spawnToAll();
                             this.level.addSound(new LaunchSound(this), this.getViewers().values());
                         }
+                    } else if (item.getId() == Item.EGG) {
+                        CompoundTag nbt = new CompoundTag()
+                                .putList(new ListTag<DoubleTag>("Pos")
+                                        .add(new DoubleTag("", x))
+                                        .add(new DoubleTag("", y + this.getEyeHeight()))
+                                        .add(new DoubleTag("", z)))
+                                .putList(new ListTag<DoubleTag>("Motion")
+                                       /* .add(new DoubleTag("", aimPos.x))
+                                        .add(new DoubleTag("", aimPos.y))
+                                        .add(new DoubleTag("", aimPos.z)))*/
+                                        .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                        .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                        .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                .putList(new ListTag<FloatTag>("Rotation")
+                                        .add(new FloatTag("", (float) yaw))
+                                        .add(new FloatTag("", (float) pitch)));
+
+                        float f = 1.5f;
+                        Egg egg = new Egg(this.chunk, nbt, this);
+
+                        egg.setMotion(egg.getMotion().multiply(f));
+                        if (this.isSurvival()) {
+                            item.setCount(item.getCount() - 1);
+                            this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                        }
+
+                        ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(egg);
+                        this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                        if (projectileLaunchEvent.isCancelled()) {
+                            egg.kill();
+                        } else {
+                            egg.spawnToAll();
+                            this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                        }
                     } else if (item.getId() == Item.EXPERIENCE_BOTTLE) {
                         CompoundTag nbt = new CompoundTag()
                                 .putList(new ListTag<DoubleTag>("Pos")
