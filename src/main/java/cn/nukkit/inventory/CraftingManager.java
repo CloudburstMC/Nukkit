@@ -664,10 +664,10 @@ public class CraftingManager {
         )).setIngredient("X", Item.get(Item.IRON_INGOT)));
     }
 
-    protected void registerWoodenDoors(){
+    protected void registerWoodenDoors() {
         int[] items = new int[]{Item.WOODEN_DOOR, Item.SPRUCE_DOOR, Item.BIRCH_DOOR, Item.JUNGLE_DOOR, Item.ACACIA_DOOR, Item.DARK_OAK_DOOR};
 
-        for(int i = 0; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             this.registerRecipe((new BigShapedRecipe(Item.get(items[i], 0, 1),
                     "XX ",
                     "XX ",

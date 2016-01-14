@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.TextFormat;
 
 /**
@@ -30,7 +30,7 @@ public class Bed extends Transparent {
     public boolean canBeActivated() {
         return true;
     }
-    
+
     @Override
     public double getResistance() {
         return 1;
@@ -175,7 +175,7 @@ public class Bed extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.clothColor;
+    public BlockColor getColor() {
+        return BlockColor.CLOTH_BLOCK_COLOR;
     }
 }

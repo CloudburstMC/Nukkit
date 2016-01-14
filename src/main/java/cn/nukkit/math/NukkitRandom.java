@@ -1,4 +1,4 @@
-package cn.nukkit.utils;
+package cn.nukkit.math;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -8,14 +8,14 @@ import java.util.zip.CRC32;
  * author: Angelic47
  * Nukkit Project
  */
-public class Random {
+public class NukkitRandom {
     protected long seed;
 
-    public Random() {
+    public NukkitRandom() {
         this(-1);
     }
 
-    public Random(long seeds) {
+    public NukkitRandom(long seeds) {
         if (seeds == -1) {
             seeds = System.currentTimeMillis() / 1000L;
         }

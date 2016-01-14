@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -55,7 +55,7 @@ public class Emerald extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.emeraldColor;
+    public BlockColor getColor() {
+        return BlockColor.EMERALD_BLOCK_COLOR;
     }
 }

@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: Angelic47
@@ -38,7 +38,7 @@ public class Sponge extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.clothColor;
+    public BlockColor getColor() {
+        return BlockColor.CLOTH_BLOCK_COLOR;
     }
 }

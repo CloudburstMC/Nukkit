@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/25 by xtypr.
@@ -42,7 +42,7 @@ public class SandstoneStairs extends Stair {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.sandColor;
+    public BlockColor getColor() {
+        return BlockColor.SAND_BLOCK_COLOR;
     }
 }

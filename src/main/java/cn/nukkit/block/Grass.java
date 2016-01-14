@@ -6,8 +6,9 @@ import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.TallGrass;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
 
@@ -57,12 +58,11 @@ public class Grass extends Dirt {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if(item.getId()==Item.DYE && item.getDamage() == 0x0F){
+        if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
             item.count--;
-            TallGrass.growGrass(this.getLevel(),this,new cn.nukkit.utils.Random(),15,10);
+            TallGrass.growGrass(this.getLevel(), this, new NukkitRandom(), 15, 10);
             return true;
-        }
-        else if (item.isHoe()) {
+        } else if (item.isHoe()) {
             item.useOn(this);
             this.getLevel().setBlock(this, new Farmland());
             return true;
@@ -105,7 +105,7 @@ public class Grass extends Dirt {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.grassColor;
+    public BlockColor getColor() {
+        return BlockColor.GRASS_BLOCK_COLOR;
     }
 }

@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.noise;
 
-import cn.nukkit.utils.Random;
+import cn.nukkit.math.NukkitRandom;
 
 /**
  * author: MagicDroidX
@@ -38,7 +38,7 @@ public class Simplex extends Perlin {
             {2, 1, 0, 3}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 1, 0, 2}, {0, 0, 0, 0}, {3, 2, 0, 1}, {3, 2, 1, 0}};
     protected double offsetW;
 
-    public Simplex(Random random, double octaves, double persistence) {
+    public Simplex(NukkitRandom random, double octaves, double persistence) {
         super(random, octaves, persistence);
         this.offsetW = random.nextDouble() * 256;
         SQRT_3 = Math.sqrt(3);
@@ -55,7 +55,7 @@ public class Simplex extends Perlin {
         G44 = G4 * 4.0 - 1.0;
     }
 
-    public Simplex(Random random, double octaves, double persistence, double expansion) {
+    public Simplex(NukkitRandom random, double octaves, double persistence, double expansion) {
         super(random, octaves, persistence, expansion);
         this.offsetW = random.nextDouble() * 256;
         SQRT_3 = Math.sqrt(3);

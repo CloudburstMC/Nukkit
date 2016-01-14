@@ -3,7 +3,7 @@ package cn.nukkit.level.particle;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/27 by xtypr.
@@ -23,9 +23,9 @@ public class SpellParticle extends Particle {
         this.data = data;
     }
 
-    public SpellParticle(Vector3 pos, Color color) {
+    public SpellParticle(Vector3 pos, BlockColor blockColor) {
         //alpha is ignored
-        this(pos, color.getRed(), color.getGreen(), color.getBlue());
+        this(pos, blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());
     }
 
     public SpellParticle(Vector3 pos, int r, int g, int b) {

@@ -9,7 +9,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.tile.Tile;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -141,7 +141,7 @@ public class BrewingStand extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.ironColor;
+    public BlockColor getColor() {
+        return BlockColor.IRON_BLOCK_COLOR;
     }
 }

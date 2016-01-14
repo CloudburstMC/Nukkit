@@ -1,8 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -26,7 +25,7 @@ public class Glowstone extends Transparent {
     public int getId() {
         return GLOWSTONE_BLOCK;
     }
-    
+
     @Override
     public double getResistance() {
         return 1.5;
@@ -50,7 +49,7 @@ public class Glowstone extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.airColor;
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
     }
 }

@@ -1,7 +1,5 @@
 package cn.nukkit.math;
 
-import cn.nukkit.utils.Random;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -28,15 +26,15 @@ public class NukkitMath {
         return n >= i ? i : i - 1;
     }
 
-    public static int randomRange(Random random) {
+    public static int randomRange(NukkitRandom random) {
         return randomRange(random, 0);
     }
 
-    public static int randomRange(Random random, int start) {
+    public static int randomRange(NukkitRandom random, int start) {
         return randomRange(random, 0, 0x7fffffff);
     }
 
-    public static int randomRange(Random random, int start, int end) {
+    public static int randomRange(NukkitRandom random, int start, int end) {
         return start + (random.nextInt() % (end + 1 - start));
     }
 
