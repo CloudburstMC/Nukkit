@@ -236,7 +236,7 @@ public class Chunk extends BaseChunk {
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
             s.putByteArray("SkyLight", section.getSkyLightArray());
-            nbt.getList("Sections", new ListTag<>()).add(section.getY(), s);
+            nbt.getList("Sections", CompoundTag.class).add(section.getY(), s);
         }
 
         ArrayList<CompoundTag> entities = new ArrayList<>();

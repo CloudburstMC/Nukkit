@@ -114,7 +114,7 @@ public class Human extends Creature implements InventoryHolder {
         }
 
         if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
-            ListTag<CompoundTag> inventoryList = this.namedTag.getList("Inventory", new ListTag<>());
+            ListTag<CompoundTag> inventoryList = this.namedTag.getList("Inventory", CompoundTag.class);
             for (CompoundTag item : inventoryList.getAll()) {
                 if ((item.getByte("Slot") & 0xff) >= 0 && (item.getByte("Slot") & 0xff) < 9) {
                     this.inventory.setHotbarSlotIndex((item.getByte("Slot") & 0xff), item.contains("TrueSlot") ? (item.getByte("TrueSlot") & 0xff) : -1);
@@ -152,11 +152,11 @@ public class Human extends Creature implements InventoryHolder {
                 if (hotbarSlot != -1) {
                     Item item = this.inventory.getItem(hotbarSlot);
                     if (item.getId() != 0 && item.getCount() > 0) {
-                        this.namedTag.getList("Inventory", new ListTag<>()).add(slot, NBTIO.putItemHelper(item, (int) slot).putByte("TrueSlot", (byte) hotbarSlot));
+                        this.namedTag.getList("Inventory", CompoundTag.class).add(slot, NBTIO.putItemHelper(item, (int) slot).putByte("TrueSlot", (byte) hotbarSlot));
                         continue;
                     }
                 }
-                this.namedTag.getList("Inventory", new ListTag<>()).add(slot, new CompoundTag()
+                this.namedTag.getList("Inventory", CompoundTag.class).add(slot, new CompoundTag()
                                 .putByte("Count", (byte) 0)
                                 .putShort("Damage", 0)
                                 .putByte("Slot", slot)
@@ -168,13 +168,13 @@ public class Human extends Creature implements InventoryHolder {
             int slotCount = Player.SURVIVAL_SLOTS + 9;
             for (byte slot = 9; slot < slotCount; ++slot) {
                 Item item = this.inventory.getItem(slot - 9);
-                this.namedTag.getList("Inventory", new ListTag<>()).add(slot, NBTIO.putItemHelper(item, (int) slot));
+                this.namedTag.getList("Inventory", CompoundTag.class).add(slot, NBTIO.putItemHelper(item, (int) slot));
             }
 
             for (byte slot = 100; slot < 104; ++slot) {
                 Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
                 if (item != null && item.getId() != Item.AIR) {
-                    this.namedTag.getList("Inventory", new ListTag<>()).add(slot, NBTIO.putItemHelper(item, (int) slot));
+                    this.namedTag.getList("Inventory", CompoundTag.class).add(slot, NBTIO.putItemHelper(item, (int) slot));
                 }
             }
         }

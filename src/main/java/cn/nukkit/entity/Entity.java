@@ -210,9 +210,9 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        ListTag<DoubleTag> posList = this.namedTag.getList("Pos", new ListTag<>());
-        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", new ListTag<>());
-        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", new ListTag<>());
+        ListTag<DoubleTag> posList = this.namedTag.getList("Pos", DoubleTag.class);
+        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", FloatTag.class);
+        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", DoubleTag.class);
         this.setPositionAndRotation(
                 this.temporalVector.setComponents(
                         posList.get(0).data,
@@ -555,7 +555,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected void initEntity() {
         if (this.namedTag.contains("ActiveEffects")) {
-            ListTag<CompoundTag> effects = this.namedTag.getList("ActiveEffects", new ListTag<>());
+            ListTag<CompoundTag> effects = this.namedTag.getList("ActiveEffects", CompoundTag.class);
             for (CompoundTag e : effects.getAll()) {
                 Effect effect = Effect.getEffect(e.getByte("Id"));
                 if (effect == null) {

@@ -181,9 +181,11 @@ public class CompoundTag extends Tag {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Tag> ListTag<T> getList(String name, ListTag<T> tag) {
-        if (!tags.containsKey(name)) return (ListTag<T>) tag.setName(name);
-        return (ListTag<T>) tags.get(name);
+    public <T extends Tag> ListTag<T> getList(String name, Class<T> type) {
+        if (tags.containsKey(name)) {
+            return (ListTag<T>) tags.get(name);
+        }
+        return new ListTag<>(name);
     }
 
     public Map<String, Tag> getTags() {
