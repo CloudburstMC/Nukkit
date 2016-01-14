@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.biome;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.populator.Populator;
-import cn.nukkit.utils.Random;
+import cn.nukkit.math.NukkitRandom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +84,7 @@ public abstract class Biome {
         this.populators.add(populator);
     }
 
-    public void populateChunk(ChunkManager level, int chunkX, int chunkZ, Random random) {
+    public void populateChunk(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
         for (Populator populator : populators) {
             populator.populate(level, chunkX, chunkZ, random);
         }

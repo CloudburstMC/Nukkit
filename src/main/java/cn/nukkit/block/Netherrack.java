@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/26 by Pub4Game.
@@ -55,7 +55,7 @@ public class Netherrack extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.netherrackColor;
+    public BlockColor getColor() {
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
     }
 }

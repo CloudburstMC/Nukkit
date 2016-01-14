@@ -3,12 +3,7 @@ package cn.nukkit.level;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
-import cn.nukkit.block.Beetroot;
-import cn.nukkit.block.Carrot;
-import cn.nukkit.block.Sugarcane;
-import cn.nukkit.block.Wheat;
 import cn.nukkit.entity.*;
-import cn.nukkit.entity.Arrow;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
@@ -16,7 +11,7 @@ import cn.nukkit.event.level.*;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.inventory.InventoryHolder;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
@@ -29,10 +24,7 @@ import cn.nukkit.level.generator.task.*;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.sound.Sound;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector2;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.*;
 import cn.nukkit.metadata.BlockMetadataStore;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
@@ -301,7 +293,7 @@ public class Level implements ChunkManager, Metadatable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.generatorInstance.init(this, new cn.nukkit.utils.Random(this.getSeed()));
+        this.generatorInstance.init(this, new NukkitRandom(this.getSeed()));
 
         this.registerGenerator();
     }
@@ -309,14 +301,14 @@ public class Level implements ChunkManager, Metadatable {
     public void registerGenerator() {
         int size = this.server.getScheduler().getAsyncTaskPoolSize();
         for (int i = 0; i < size; ++i) {
-            this.server.getScheduler().scheduleAsyncTaskToWorker(new GeneratorRegisterTask(this, this.generatorInstance), i);
+            this.server.getScheduler().scheduleAsyncTask(new GeneratorRegisterTask(this, this.generatorInstance));
         }
     }
 
     public void unregisterGenerator() {
         int size = this.server.getScheduler().getAsyncTaskPoolSize();
         for (int i = 0; i < size; ++i) {
-            this.server.getScheduler().scheduleAsyncTaskToWorker(new GeneratorUnregisterTask(this), i);
+            this.server.getScheduler().scheduleAsyncTask(new GeneratorUnregisterTask(this));
         }
     }
 
@@ -1991,18 +1983,18 @@ public class Level implements ChunkManager, Metadatable {
         return this.getChunk(x >> 4, z >> 4, true).getHighestBlockAt(x & 0x0f, z & 0x0f);
     }
 
-    public Color getMapColorAt(int x, int z) {
+    public BlockColor getMapColorAt(int x, int z) {
         int y = getHighestBlockAt(x, z);
         while (y > 1) {
             Block block = getBlock(new Vector3(x, y, z));
-            Color color = block.getMapColor();
-            if (color.getAlpha() == 0x00) {
+            BlockColor blockColor = block.getColor();
+            if (blockColor.getAlpha() == 0x00) {
                 y--;
             } else {
-                return color;
+                return blockColor;
             }
         }
-        return Color.voidColor;
+        return BlockColor.VOID_BLOCK_COLOR;
     }
 
     public boolean isChunkLoaded(int x, int z) {

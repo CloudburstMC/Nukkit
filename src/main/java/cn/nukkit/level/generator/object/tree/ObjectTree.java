@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.object.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Sapling;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.utils.Random;
+import cn.nukkit.math.NukkitRandom;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,11 +41,11 @@ public abstract class ObjectTree {
         return 7;
     }
 
-    public static void growTree(ChunkManager level, int x, int y, int z, Random random) {
+    public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random) {
         growTree(level, x, y, z, random, 0);
     }
 
-    public static void growTree(ChunkManager level, int x, int y, int z, Random random, int type) {
+    public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random, int type) {
         ObjectTree tree;
         switch (type) {
             case Sapling.SPRUCE:
@@ -78,7 +78,7 @@ public abstract class ObjectTree {
     }
 
 
-    public boolean canPlaceObject(ChunkManager level, int x, int y, int z, Random random) {
+    public boolean canPlaceObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
         int radiusToCheck = 0;
         for (int yy = 0; yy < this.getTreeHeight() + 3; ++yy) {
             if (yy == 1 || yy == this.getTreeHeight()) {
@@ -96,7 +96,7 @@ public abstract class ObjectTree {
         return true;
     }
 
-    public void placeObject(ChunkManager level, int x, int y, int z, Random random) {
+    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
 
         this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - 1);
 
@@ -120,7 +120,7 @@ public abstract class ObjectTree {
         }
     }
 
-    protected void placeTrunk(ChunkManager level, int x, int y, int z, Random random, int trunkHeight) {
+    protected void placeTrunk(ChunkManager level, int x, int y, int z, NukkitRandom random, int trunkHeight) {
         // The base dirt block
         level.setBlockIdAt(x, y - 1, z, Block.DIRT);
 

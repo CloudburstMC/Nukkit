@@ -288,7 +288,7 @@ public class PluginManager {
                             Plugin plugin = this.loadPlugin(file, loaders);
                             if (plugin != null) {
                                 loadedPlugins.put(name, plugin);
-                            }else {
+                            } else {
                                 this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.genericLoadError", name));
                             }
                         }

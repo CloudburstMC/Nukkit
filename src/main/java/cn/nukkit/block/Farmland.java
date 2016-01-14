@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -33,7 +33,7 @@ public class Farmland extends Solid {
     public double getResistance() {
         return 3;
     }
-    
+
     @Override
     public double getHardness() {
         return 0.6;
@@ -64,7 +64,7 @@ public class Farmland extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.dirtColor;
+    public BlockColor getColor() {
+        return BlockColor.DIRT_BLOCK_COLOR;
     }
 }

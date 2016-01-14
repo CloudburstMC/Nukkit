@@ -4,7 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.tree.ObjectTree;
-import cn.nukkit.utils.Color;
+import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: Angelic47
@@ -64,14 +65,14 @@ public class Sapling extends Flowable {
 
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //BoneMeal
-            ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new cn.nukkit.utils.Random(), this.meta & 0x07);
+            ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new NukkitRandom(), this.meta & 0x07);
             if ((player.gamemode & 0x01) == 0) {
                 item.count--;
             }
 
             return true;
         }
-        this.getLevel().loadChunk((int)this.x >> 4,(int)this.z >> 4);
+        this.getLevel().loadChunk((int) this.x >> 4, (int) this.z >> 4);
         return false;
     }
 
@@ -82,9 +83,9 @@ public class Sapling extends Flowable {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) { //Growth
-            if (new cn.nukkit.utils.Random().nextRange(1, 7) == 1) {
+            if (new NukkitRandom().nextRange(1, 7) == 1) {
                 if ((this.meta & 0x08) == 0x08) {
-                    ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new cn.nukkit.utils.Random(), this.meta & 0x07);
+                    ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new NukkitRandom(), this.meta & 0x07);
                 } else {
                     this.meta |= 0x08;
                     this.getLevel().setBlock(this, this, true);
@@ -103,7 +104,7 @@ public class Sapling extends Flowable {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.foliageColor;
+    public BlockColor getColor() {
+        return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
 }

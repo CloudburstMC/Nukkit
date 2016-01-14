@@ -1237,7 +1237,7 @@ public class Item implements Cloneable {
     }
 
     public static ArrayList<Item> getCreativeItems() {
-        return Item.creative;
+        return new ArrayList<>(Item.creative);
     }
 
     public static void addCreativeItem(Item item) {
@@ -1447,7 +1447,7 @@ public class Item implements Cloneable {
 
         boolean found = false;
 
-        ench = tag.getList("ench", new ListTag<>());
+        ench = tag.getList("ench", CompoundTag.class);
         for (int k = 0; k < ench.size(); k++) {
             CompoundTag entry = ench.get(k);
             if (entry.getShort("id") == enchantment.getId()) {
@@ -1477,7 +1477,7 @@ public class Item implements Cloneable {
 
         List<Enchantment> enchantments = new ArrayList<>();
 
-        ListTag<CompoundTag> ench = this.getNamedTag().getList("ench", new ListTag<>());
+        ListTag<CompoundTag> ench = this.getNamedTag().getList("ench", CompoundTag.class);
         for (CompoundTag entry : ench.getAll()) {
             Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
             e.setLevel(entry.getShort("lvl"));

@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: Angelic47
@@ -54,7 +54,7 @@ public class Iron extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.ironColor;
+    public BlockColor getColor() {
+        return BlockColor.IRON_BLOCK_COLOR;
     }
 }

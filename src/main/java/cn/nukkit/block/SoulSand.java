@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Pub4Game on 27.12.2015.
@@ -67,8 +67,8 @@ public class SoulSand extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.sandColor;
+    public BlockColor getColor() {
+        return BlockColor.SAND_BLOCK_COLOR;
     }
 
 }

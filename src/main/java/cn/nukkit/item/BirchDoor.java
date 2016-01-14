@@ -2,7 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
 
-public class BirchDoor extends Item{
+public class BirchDoor extends Item {
     public BirchDoor() {
         this(0, 1);
     }

@@ -32,10 +32,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.sound.ClickSound;
 import cn.nukkit.level.sound.LaunchSound;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector2;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -53,7 +50,6 @@ import cn.nukkit.tile.Sign;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
 
@@ -610,6 +606,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.server.sendRecipeList(this);
         this.sendSettings();
+
         this.sendPotionEffects(this);
         this.sendData(this);
         this.inventory.sendContents(this);
@@ -668,12 +665,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.teleport(pos);
 
-        this.spawnToAll();
+        if (!this.isSpectator()) {
+            this.spawnToAll();
+        }
 
-
-        /*if (this.server.getUpdater().hasUpdate() and this.hasPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE)){
-            this.server.getUpdater().showPlayerUpdate(this);
-        }*/
         //todo Updater
 
         if (this.getHealth() <= 0) {
@@ -948,11 +943,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         } else {
             ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
             containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
-            List<Item> slots = new ArrayList<>();
-            for (Item item : Item.getCreativeItems()) {
-                slots.add(item.clone());
-            }
-            containerSetContentPacket.slots = slots.stream().toArray(Item[]::new);
+            containerSetContentPacket.slots = Item.getCreativeItems().stream().toArray(Item[]::new);
             this.dataPacket(containerSetContentPacket);
         }
 
@@ -1168,7 +1159,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     int exp = xpOrb.getExp();
                     this.addExperience(exp);
                     entity.kill();
-                    ClickSound sound = new ClickSound(this, (float) (new cn.nukkit.utils.Random().nextRange(260, 360)) / 100f);
+                    ClickSound sound = new ClickSound(this, (float) (new NukkitRandom().nextRange(260, 360)) / 100f);
                     this.getLevel().addSound(sound);
                     break;
                 }
@@ -1546,7 +1537,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
-            nbt.getList("Pos", new ListTag<>())
+            nbt.getList("Pos", DoubleTag.class)
                     .add(0, new DoubleTag("0", this.level.getSpawnLocation().x))
                     .add(1, new DoubleTag("1", this.level.getSpawnLocation().y))
                     .add(2, new DoubleTag("2", this.level.getSpawnLocation().z));
@@ -1561,68 +1552,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.saveOfflinePlayerData(this.username, nbt, true);
         }
 
-        ListTag<DoubleTag> posList = nbt.getList("Pos", new ListTag<>());
-        BaseFullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
-        if (chunk == null || chunk.getProvider() == null) {
-            throw new ChunkException("Invalid garbage Chunk given to Entity");
-        }
+        ListTag<DoubleTag> posList = nbt.getList("Pos", DoubleTag.class);
 
-        this.isPlayer = true;
-
-        this.temporalVector = new Vector3();
-
-        this.id = Entity.entityCount++;
-        this.justCreated = true;
-        this.namedTag = nbt;
-
-        this.chunk = chunk;
-        this.setLevel(chunk.getProvider().getLevel());
-        this.server = chunk.getProvider().getLevel().getServer();
-
-        this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
-
-        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", new ListTag<>());
-        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", new ListTag<>());
-        this.setPositionAndRotation(
-                this.temporalVector.setComponents(
-                        posList.get(0).data,
-                        posList.get(1).data,
-                        posList.get(2).data
-                ),
-                rotationList.get(0).data,
-                rotationList.get(1).data
-        );
-
-        this.setMotion(this.temporalVector.setComponents(
-                motionList.get(0).data,
-                motionList.get(1).data,
-                motionList.get(2).data
-        ));
-
-        if (!this.namedTag.contains("FallDistance")) {
-            this.namedTag.putFloat("FallDistance", 0);
-        }
-        this.fallDistance = this.namedTag.getFloat("FallDistance");
-
-        if (!this.namedTag.contains("Fire")) {
-            this.namedTag.putShort("Fire", 0);
-        }
-        this.fireTicks = this.namedTag.getShort("Fire");
-
-        if (!this.namedTag.contains("Air")) {
-            this.namedTag.putShort("Air", 300);
-        }
-        this.setDataProperty(DATA_AIR, new ShortEntityData(this.namedTag.getShort("Air")));
-
-        if (!this.namedTag.contains("OnGround")) {
-            this.namedTag.putBoolean("OnGround", false);
-        }
-        this.onGround = this.namedTag.getBoolean("OnGround");
-
-        if (!this.namedTag.contains("Invulnerable")) {
-            this.namedTag.putBoolean("Invulnerable", false);
-        }
-        this.invulnerable = this.namedTag.getBoolean("Invulnerable");
+        super.init(this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true), nbt);
 
         if (!this.namedTag.contains("foodLevel")) {
             this.namedTag.putInt("foodLevel", 20);
@@ -1633,14 +1565,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
         float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
-
-        this.chunk.addEntity(this);
-        this.level.addEntity(this);
-        this.initEntity();
-        this.lastUpdate = this.server.getTick();
-        this.server.getPluginManager().callEvent(new EntitySpawnEvent(this));
-
-        this.scheduleUpdate();
 
         this.loggedIn = true;
         this.server.addOnlinePlayer(this);
@@ -3383,7 +3307,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             int add = 1;
             for (int ii = 1; ii < exp; ii += add) {
                 this.getLevel().dropExpOrb(this, add);
-                add = new cn.nukkit.utils.Random().nextRange(1, 3);
+                add = new NukkitRandom().nextRange(1, 3);
             }
         }
         this.setExperience(0, 0);

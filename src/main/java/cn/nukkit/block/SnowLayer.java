@@ -5,7 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -92,8 +92,8 @@ public class SnowLayer extends Flowable {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.snowColor;
+    public BlockColor getColor() {
+        return BlockColor.SNOW_BLOCK_COLOR;
     }
 }
 

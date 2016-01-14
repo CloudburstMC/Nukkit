@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Snake1999 on 2016/1/11.
@@ -51,8 +51,8 @@ public class Rail extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.airColor;
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
     }
 
 

@@ -30,25 +30,25 @@ public class EnchantingTable extends Solid {
     public int getToolType() {
         return Tool.TYPE_PICKAXE;
     }
-    
+
     @Override
-    public double getHardness(){
+    public double getHardness() {
         return 5;
     }
-    
+
     @Override
-    public double getResistance(){
+    public double getResistance() {
         return 6000;
     }
-    
+
     @Override
-    public boolean canBeActivated(){
+    public boolean canBeActivated() {
         return true;
     }
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe()){
+        if (item.isPickaxe()) {
             return new int[][]{{Item.ENCHANTING_TABLE, 0, 1}};
         }
         return new int[][]{{}};

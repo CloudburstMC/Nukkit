@@ -43,9 +43,9 @@ public class LightWeightedPressurePlate extends WeightedPressurePlate {
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isPickaxe()){
+        if (item.isPickaxe()) {
             return new int[][]{
-                {Item.LIGHT_WEIGHTED_PRESSURE_PLATE, 0, 1}
+                    {Item.LIGHT_WEIGHTED_PRESSURE_PLATE, 0, 1}
             };
         }
         return new int[][]{{}};

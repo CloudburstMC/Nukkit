@@ -25,7 +25,7 @@ public class Glass extends Transparent {
     public String getName() {
         return "Glass";
     }
-    
+
     @Override
     public double getResistance() {
         return 1.5;

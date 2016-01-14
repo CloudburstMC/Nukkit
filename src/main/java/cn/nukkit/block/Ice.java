@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -72,7 +72,7 @@ public class Ice extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.iceColor;
+    public BlockColor getColor() {
+        return BlockColor.ICE_BLOCK_COLOR;
     }
 }

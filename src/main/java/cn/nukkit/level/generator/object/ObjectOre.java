@@ -1,9 +1,9 @@
 package cn.nukkit.level.generator.object;
 
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.VectorMath;
-import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -11,10 +11,10 @@ import cn.nukkit.utils.Random;
  */
 public class ObjectOre {
 
-    private Random random;
+    private NukkitRandom random;
     public OreType type;
 
-    public ObjectOre(Random random, OreType type) {
+    public ObjectOre(NukkitRandom random, OreType type) {
         this.type = type;
         this.random = random;
     }

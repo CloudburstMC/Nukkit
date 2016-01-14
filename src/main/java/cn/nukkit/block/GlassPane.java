@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -27,7 +27,7 @@ public class GlassPane extends Thin {
     public int getId() {
         return GLASS_PANE;
     }
-    
+
     @Override
     public double getResistance() {
         return 1.5;
@@ -44,7 +44,7 @@ public class GlassPane extends Thin {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.airColor;
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
     }
 }

@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -59,9 +59,9 @@ public class Obsidian extends Solid {
     public boolean onBreak(Item item) {
         //destroy the nether portal
         Block[] nearby = new Block[]{
-                this.getSide(Vector3.SIDE_UP),this.getSide(Vector3.SIDE_DOWN),
-                this.getSide(Vector3.SIDE_NORTH),this.getSide(Vector3.SIDE_SOUTH),
-                this.getSide(Vector3.SIDE_WEST),this.getSide(Vector3.SIDE_EAST),
+                this.getSide(Vector3.SIDE_UP), this.getSide(Vector3.SIDE_DOWN),
+                this.getSide(Vector3.SIDE_NORTH), this.getSide(Vector3.SIDE_SOUTH),
+                this.getSide(Vector3.SIDE_WEST), this.getSide(Vector3.SIDE_EAST),
         };
         for (Block aNearby : nearby) {
             if (aNearby != null) if (aNearby.getId() == NETHER_PORTAL) {
@@ -72,7 +72,7 @@ public class Obsidian extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.obsidianColor;
+    public BlockColor getColor() {
+        return BlockColor.OBSIDIAN_BLOCK_COLOR;
     }
 }

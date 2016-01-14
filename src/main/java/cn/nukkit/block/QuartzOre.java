@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.math.NukkitRandom;
 
 /**
  * Created on 2015/12/26 by xtypr.
@@ -55,6 +56,6 @@ public class QuartzOre extends Solid {
 
     @Override
     public int getDropExp() {
-        return new cn.nukkit.utils.Random().nextRange(1, 5);
+        return new NukkitRandom().nextRange(1, 5);
     }
 }

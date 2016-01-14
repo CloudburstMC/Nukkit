@@ -16,9 +16,10 @@ import cn.nukkit.utils.TextFormat;
  */
 public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {
-            super(name, "%nukkit.command.tp.description", "%commands.tp.usage");
-            this.setPermission("nukkit.command.tp");
+        super(name, "%nukkit.command.tp.description", "%commands.tp.usage");
+        this.setPermission("nukkit.command.tp");
     }
+
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
 
@@ -144,9 +145,6 @@ public class TeleportCommand extends VanillaCommand {
                         String.valueOf(NukkitMath.round(origin.z, 4))
                 }
         ));
-
-
-
 
 
         //Player player = sender.getServer().getPlayer(args[0]);

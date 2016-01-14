@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * @author Nukkit Project Team
@@ -44,7 +44,7 @@ public class StonePressurePlate extends PressurePlate {
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isPickaxe()){
+        if (item.isPickaxe()) {
             return new int[][]{
                     {Item.STONE_PRESSURE_PLATE, 0, 1}
             };
@@ -53,8 +53,8 @@ public class StonePressurePlate extends PressurePlate {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.stoneColor;
+    public BlockColor getColor() {
+        return BlockColor.STONE_BLOCK_COLOR;
     }
 
 }

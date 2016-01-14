@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -42,7 +42,7 @@ public class HardenedClay extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
-        return Color.adobeColor;
+    public BlockColor getColor() {
+        return BlockColor.ADOBE_BLOCK_COLOR;
     }
 }
