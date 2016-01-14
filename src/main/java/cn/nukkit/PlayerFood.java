@@ -5,6 +5,8 @@ import cn.nukkit.entity.Effect;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
+import cn.nukkit.food.Food;
+import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.UpdateAttributesPacket;
 
 /**
@@ -12,9 +14,14 @@ import cn.nukkit.network.protocol.UpdateAttributesPacket;
  */
 public class PlayerFood {
 
+    private int foodLevel = 20;
+    private float foodSaturationLevel = 20f;
+    private int foodTickTimer = 0;
+    private double foodExpLevel = 0;
+
     private Player player;
 
-    public PlayerFood(Player player, int foodLevel, int foodSaturationLevel) {
+    public PlayerFood(Player player, int foodLevel, float foodSaturationLevel) {
         this.player = player;
         this.foodLevel = foodLevel;
         this.foodSaturationLevel = foodSaturationLevel;
@@ -23,12 +30,6 @@ public class PlayerFood {
     public Player getPlayer() {
         return this.player;
     }
-
-    private int foodLevel = 20;
-    private int foodSaturationLevel = 20;
-    private int foodTickTimer = 0;
-    private double foodExpLevel = 0;
-
     public int getFoodLevel() {
         return this.foodLevel;
     }
@@ -37,7 +38,7 @@ public class PlayerFood {
         this.setFoodLevel(foodLevel, -1);
     }
 
-    public void setFoodLevel(int foodLevel, int FSL) {
+    public void setFoodLevel(int foodLevel, float FSL) {
         if (foodLevel > 20) foodLevel = 20;
         if (foodLevel < 0) foodLevel = 0;
         if (foodLevel <= 6 && !(this.getFoodLevel() <= 6)) {
@@ -50,7 +51,7 @@ public class PlayerFood {
             return;
         }
         int foodLevel0 = ev.getFoodLevel();
-        int fsl = ev.getFoodSaturationLevel();
+        float fsl = ev.getFoodSaturationLevel();
         this.foodLevel = foodLevel;
         if (fsl != -1) {
             if (fsl > foodLevel) fsl = foodLevel;
@@ -61,11 +62,11 @@ public class PlayerFood {
         this.sendFoodLevel();
     }
 
-    public int getFoodSaturationLevel() {
+    public float getFoodSaturationLevel() {
         return this.foodSaturationLevel;
     }
 
-    public void setFoodSaturationLevel(int fsl) {
+    public void setFoodSaturationLevel(float fsl) {
         if (fsl > this.getFoodLevel()) fsl = this.getFoodLevel();
         if (fsl < 0) fsl = 0;
         PlayerFoodLevelChangeEvent ev = new PlayerFoodLevelChangeEvent(this.getPlayer(), this.getFoodLevel(), fsl);
@@ -82,10 +83,10 @@ public class PlayerFood {
     }
 
     public void useHunger(int amount) {
-        int sfl = this.getFoodSaturationLevel();
+        float sfl = this.getFoodSaturationLevel();
         int foodLevel = this.getFoodLevel();
         if (sfl > 0) {
-            int newSfl = sfl - amount;
+            float newSfl = sfl - amount;
             if (newSfl < 0) newSfl = 0;
             this.setFoodSaturationLevel(newSfl);
         } else {
@@ -93,7 +94,11 @@ public class PlayerFood {
         }
     }
 
-    public void addFoodLevel(int foodLevel, int fsl) {
+    public void addFoodLevel(Food food) {
+        this.addFoodLevel(food.getRestoreFood(), food.getRestoreSaturation());
+    }
+
+    public void addFoodLevel(int foodLevel, float fsl) {
         this.setFoodLevel(this.getFoodLevel() + foodLevel, this.getFoodSaturationLevel() + fsl);
     }
 

@@ -9,6 +9,7 @@ import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.level.*;
 import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.Chunk;
@@ -1266,17 +1267,22 @@ public class Level implements ChunkManager, Metadatable {
                     ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
 
                     //added for redstone support
-                    Block redstoneWire = ev.getBlock().getSide(Vector3.SIDE_DOWN);
-                    if (redstoneWire instanceof RedstoneWire) {
-                        if (ev.getBlock() instanceof Solid) {
-                            int level = redstoneWire.getPowerLevel();
-                            redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
-                            redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
-                            Redstone.deactive(redstoneWire, level);
-                        } else {
-                            redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
-                            redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
-                            Redstone.active(redstoneWire);
+                    RedstoneUpdateEvent rsEv = new RedstoneUpdateEvent(ev.getBlock());
+                    this.server.getPluginManager().callEvent(rsEv);
+                    if(!rsEv.isCancelled()) {
+                        Block redstoneWire = rsEv.getBlock().getSide(Vector3.SIDE_DOWN);
+                        if(redstoneWire instanceof RedstoneWire) {
+                            if (rsEv.getBlock() instanceof Solid) {
+                                int level = redstoneWire.getPowerLevel();
+                                redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
+                                redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
+                                Redstone.deactive(redstoneWire, level);
+                            }
+                            else {
+                                redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
+                                redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
+                                Redstone.active(redstoneWire);
+                            }
                         }
                     }
                 }

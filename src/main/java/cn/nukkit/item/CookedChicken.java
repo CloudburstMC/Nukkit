@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class CookedChicken extends Item {
+public class CookedChicken extends EdibleItem {
 
     public CookedChicken() {
         this(0, 1);

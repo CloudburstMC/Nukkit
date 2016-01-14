@@ -427,6 +427,7 @@ public class Item implements Cloneable {
 
     public static final int RAW_CHICKEN = 365;
     public static final int COOKED_CHICKEN = 366;
+    public static final int ROTTEN_FLESH = 367;
 
     public static final int BLAZE_ROD = 369;
     public static final int GHAST_TEAR = 370;
@@ -468,6 +469,11 @@ public class Item implements Cloneable {
     public static final int QUARTZ = 406;
     public static final int NETHER_QUARTZ = 406;
 
+    public static final int RAW_RABBIT = 411;
+    public static final int COOKED_RABBIT = 412;
+    public static final int RABBIT_STEW = 413;
+    public static final int RABBIT_FOOT = 414;
+
     public static final int SPRUCE_DOOR = 427;
     public static final int BIRCH_DOOR = 428;
     public static final int JUNGLE_DOOR = 429;
@@ -487,7 +493,12 @@ public class Item implements Cloneable {
     public static final int BEETROOT_SEEDS = 458;
     public static final int BEETROOT_SEED = 458;
     public static final int BEETROOT_SOUP = 459;
+    public static final int RAW_SALMON = 460;
+    public static final int CLOWNFISH = 461;
+    public static final int PUFFERFISH = 462;
+    public static final int COOKED_SALMON = 463;
 
+    public static final int GOLDEN_APPLE_ENCHANTED = 466;
 
     public static Class[] list = null;
 
@@ -667,6 +678,19 @@ public class Item implements Cloneable {
             list[JUNGLE_DOOR] = JungleDoor.class;
             list[ACACIA_DOOR] = AcaciaDoor.class;
             list[DARK_OAK_DOOR] = DarkOakDoor.class;
+
+            list[RAW_SALMON] = Salmon.class;
+            list[CLOWNFISH] = Clownfish.class;
+            list[PUFFERFISH] = Pufferfish.class;
+            list[COOKED_SALMON] = CookedSalmon.class;
+            list[SPIDER_EYE] = SpiderEye.class;
+            list[RAW_RABBIT] = RawRabbit.class;
+            list[COOKED_RABBIT] = CookedRabbit.class;
+            list[RABBIT_FOOT] = RabbitFoot.class;
+            list[GOLDEN_APPLE_ENCHANTED] = GoldenAppleEnchanted.class;
+            list[RABBIT_STEW] = RabbitStew.class;
+            list[POISONOUS_POTATO] = PoisonousPotato.class;
+            list[ROTTEN_FLESH] = RottenFlesh.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -1073,14 +1097,14 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.EGG, 0));
         addCreativeItem(Item.get(Item.APPLE, 0));
         addCreativeItem(Item.get(Item.GOLDEN_APPLE, 0));
-        // TODO: Golden apple enchanted
+        addCreativeItem(Item.get(Item.GOLDEN_APPLE_ENCHANTED, 0));
         addCreativeItem(Item.get(Item.RAW_FISH, 0));
-        addCreativeItem(Item.get(Item.RAW_FISH, 1)); // Raw salmon
-        addCreativeItem(Item.get(Item.RAW_FISH, 2)); // Clownfish
-        addCreativeItem(Item.get(Item.RAW_FISH, 3)); // Pufferfish
+        addCreativeItem(Item.get(Item.RAW_SALMON, 0));
+        addCreativeItem(Item.get(Item.CLOWNFISH, 0));
+        addCreativeItem(Item.get(Item.PUFFERFISH, 0));
         addCreativeItem(Item.get(Item.COOKED_FISH, 0));
-        addCreativeItem(Item.get(Item.COOKED_FISH, 1)); // Salmon
-        // TODO: Rotten flesh
+        addCreativeItem(Item.get(Item.COOKED_SALMON, 0));
+        addCreativeItem(Item.get(Item.ROTTEN_FLESH, 0));
         addCreativeItem(Item.get(Item.MUSHROOM_STEW, 0));
         addCreativeItem(Item.get(Item.BREAD, 0));
         addCreativeItem(Item.get(Item.RAW_PORKCHOP, 0));
@@ -1093,15 +1117,18 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CARROT, 0));
         addCreativeItem(Item.get(Item.POTATO, 0));
         addCreativeItem(Item.get(Item.BAKED_POTATO, 0));
-        // TODO: Poisonous potato
+        addCreativeItem(Item.get(Item.POISONOUS_POTATO, 0));
         addCreativeItem(Item.get(Item.BEETROOT, 0));
         addCreativeItem(Item.get(Item.COOKIE, 0));
         addCreativeItem(Item.get(Item.PUMPKIN_PIE, 0));
-        addCreativeItem(Item.get(Item.MAGMA_CREAM, 0));
+        addCreativeItem(Item.get(Item.RAW_RABBIT, 0));
+        addCreativeItem(Item.get(Item.COOKED_RABBIT, 0));
+        addCreativeItem(Item.get(Item.RABBIT_STEW, 0));
         addCreativeItem(Item.get(Item.BLAZE_ROD, 0));
         addCreativeItem(Item.get(Item.GOLD_NUGGET, 0));
         addCreativeItem(Item.get(Item.GOLDEN_CARROT, 0));
         addCreativeItem(Item.get(Item.GLISTERING_MELON, 0));
+        addCreativeItem(Item.get(Item.RABBIT_FOOT, 0));
         addCreativeItem(Item.get(Item.GHAST_TEAR, 0));
         addCreativeItem(Item.get(Item.SLIMEBALL, 0));
         addCreativeItem(Item.get(Item.BLAZE_POWDER, 0));

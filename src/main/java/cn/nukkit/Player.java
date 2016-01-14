@@ -18,6 +18,7 @@ import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
+import cn.nukkit.food.Food;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.EdibleItem;
 import cn.nukkit.item.Item;
@@ -1555,14 +1556,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         super.init(this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true), nbt);
 
-        if (!this.namedTag.contains("FoodLevel")) {
-            this.namedTag.putInt("FoodLevel", 20);
+        if (!this.namedTag.contains("foodLevel")) {
+            this.namedTag.putInt("foodLevel", 20);
         }
-        int foodLevel = this.namedTag.getInt("FoodLevel");
+        int foodLevel = this.namedTag.getInt("foodLevel");
         if (!this.namedTag.contains("FoodSaturationLevel")) {
-            this.namedTag.putInt("FoodSaturationLevel", 20);
+            this.namedTag.putFloat("FoodSaturationLevel", 20);
         }
-        int foodSaturationLevel = this.namedTag.getInt("FoodSaturationLevel");
+        float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
         this.loggedIn = true;
@@ -2463,53 +2464,44 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
 
                 switch (entityEventPacket.event) {
-                    case 9: //Eating
+                    case EntityEventPacket.USE_ITEM: //Eating
                         Item itemInHand = this.inventory.getItemInHand();
-                        int amount = EdibleItem.getRegainAmount(itemInHand.getId(), itemInHand.getDamage());
-                        if ((this.getHealth() < this.getMaxHealth() && amount > 0) || itemInHand.getId() == Item.POTION) {
-                            PlayerItemConsumeEvent consumeEvent;
-                            this.server.getPluginManager().callEvent(consumeEvent = new PlayerItemConsumeEvent(this, itemInHand));
-                            if (consumeEvent.isCancelled()) {
-                                this.inventory.sendContents(this);
-                                break;
-                            }
-
-                            if (itemInHand instanceof Potion) {
-                                if (itemInHand.getCount() > 1) {
-                                    if (this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))) {
-                                        this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
-                                    }
-                                    --itemInHand.count;
-                                } else {
-                                    itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
-                                }
-
-                                ((Potion) itemInHand).applyPotion(this);
-                            } else {
-                                EntityEventPacket pk = new EntityEventPacket();
-                                pk.eid = this.getId();
-                                pk.event = EntityEventPacket.USE_ITEM;
-                                this.dataPacket(pk);
-                                Server.broadcastPacket(this.getViewers().values(), pk);
-
-                                EntityRegainHealthEvent regainHealthEvent = new EntityRegainHealthEvent(this, amount, EntityRegainHealthEvent.CAUSE_EATING);
-                                this.heal(regainHealthEvent.getAmount(), regainHealthEvent);
-
-                                --itemInHand.count;
-
-                                if (itemInHand.getId() == Item.MUSHROOM_STEW || itemInHand.getId() == Item.BEETROOT_SOUP) {
-                                    this.inventory.addItem(Item.get(Item.BOWL, 0, 1));
-                                } else if (itemInHand.getId() == Item.RAW_FISH && itemInHand.getDamage() == 3) { //Pufferfish
-                                    //this.addEffect(Effect::getEffect(Effect::HUNGER).setAmplifier(2).setDuration(15 * 20));
-                                    this.addEffect(Effect.getEffect(Effect.NAUSEA).setAmplifier(1).setDuration(15 * 20));
-                                    this.addEffect(Effect.getEffect(Effect.POISON).setAmplifier(3).setDuration(60 * 20));
-                                }
-                            }
-
-                            this.inventory.setItemInHand(itemInHand);
-                            this.inventory.sendHeldItem(this);
+                        PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(this, itemInHand);
+                        this.server.getPluginManager().callEvent(consumeEvent);
+                        if (consumeEvent.isCancelled()) {
+                            this.inventory.sendContents(this);
+                            break;
                         }
-                        break;
+
+                        if (itemInHand instanceof Potion) {
+                            if (itemInHand.getCount() > 1) {
+                                if (this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))) {
+                                    this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
+                                }
+                                --itemInHand.count;
+                            } else {
+                                itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
+                            }
+
+                            ((Potion) itemInHand).applyPotion(this);
+                        } else {
+                            EntityEventPacket pk = new EntityEventPacket();
+                            pk.eid = this.getId();
+                            pk.event = EntityEventPacket.USE_ITEM;
+                            this.dataPacket(pk);
+                            Server.broadcastPacket(this.getViewers().values(), pk);
+
+                            Food food = Food.getByRelative(itemInHand);
+                            if (food.eatenBy(this)) {
+                                --itemInHand.count;
+                            }
+
+                        }
+
+                        this.inventory.setItemInHand(itemInHand);
+                        this.inventory.sendHeldItem(this);
+
+                    break;
                 }
                 break;
             case ProtocolInfo.DROP_ITEM_PACKET:
@@ -3162,9 +3154,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.namedTag.putInt("EXP", this.getExperience());
             this.namedTag.putInt("expLevel", this.getExperienceLevel());
 
-            //todo check: Hunger? HungerFSL?
-            this.namedTag.putInt("FoodLevel", this.getFoodData().getFoodLevel());
-            this.namedTag.putInt("FoodSaturationLevel", this.getFoodData().getFoodSaturationLevel());
+            this.namedTag.putInt("foodLevel", this.getFoodData().getFoodLevel());
+            this.namedTag.putFloat("foodSaturationLevel", this.getFoodData().getFoodSaturationLevel());
 
             if (!"".equals(this.username) && this.namedTag != null) {
                 this.server.saveOfflinePlayerData(this.username, this.namedTag, async);
