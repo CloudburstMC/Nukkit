@@ -89,7 +89,8 @@ public class Cake extends Transparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player == null) return false;
-        if (++meta >= 0x06) {
+        if (meta <= 0x06) meta++;
+        if (meta >= 0x06) {
             getLevel().setBlock(this, new Air(), true);
         } else {
             Food.getByRelative(this).eatenBy(player);
