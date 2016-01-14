@@ -55,7 +55,7 @@ public class IronBars extends Thin {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.ironColor;
     }
 }

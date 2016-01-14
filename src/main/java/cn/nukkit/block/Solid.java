@@ -18,7 +18,7 @@ public abstract class Solid extends Block {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.stoneColor;
     }
 }

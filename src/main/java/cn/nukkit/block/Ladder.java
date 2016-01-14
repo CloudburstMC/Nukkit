@@ -146,7 +146,7 @@ public class Ladder extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.airColor;
     }
 }

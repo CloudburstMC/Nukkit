@@ -84,7 +84,7 @@ public class Quartz extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.quartzColor;
     }
 }

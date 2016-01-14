@@ -629,7 +629,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return false;
     }
 
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.voidColor;
     }
 

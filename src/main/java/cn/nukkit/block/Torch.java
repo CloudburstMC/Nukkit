@@ -93,7 +93,7 @@ public class Torch extends Flowable {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.airColor;
     }
 }

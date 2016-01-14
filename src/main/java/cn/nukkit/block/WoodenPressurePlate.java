@@ -50,7 +50,7 @@ public class WoodenPressurePlate extends PressurePlate {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.woodColor;
     }
 

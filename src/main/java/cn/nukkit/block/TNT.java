@@ -80,7 +80,7 @@ public class TNT extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.tntColor;
     }
 }

@@ -53,7 +53,7 @@ public class StonePressurePlate extends PressurePlate {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.stoneColor;
     }
 

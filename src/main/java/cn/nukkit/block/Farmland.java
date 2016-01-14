@@ -64,7 +64,7 @@ public class Farmland extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.dirtColor;
     }
 }

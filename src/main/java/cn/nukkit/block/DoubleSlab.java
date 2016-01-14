@@ -68,7 +68,7 @@ public class DoubleSlab extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         switch (this.meta & 0x07) {
             case DoubleSlab.STONE:
                 return Color.stoneColor;

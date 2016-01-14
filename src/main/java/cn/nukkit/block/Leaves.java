@@ -77,7 +77,7 @@ public class Leaves extends Transparent {
 
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.foliageColor;
     }
 }

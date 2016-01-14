@@ -104,7 +104,7 @@ public class Grass extends Dirt {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.grassColor;
     }
 }

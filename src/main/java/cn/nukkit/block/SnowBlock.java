@@ -73,7 +73,7 @@ public class SnowBlock extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.snowColor;
     }
 }

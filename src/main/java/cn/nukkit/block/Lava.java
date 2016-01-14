@@ -76,7 +76,7 @@ public class Lava extends Liquid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.lavaColor;
     }
 

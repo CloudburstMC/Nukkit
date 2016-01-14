@@ -51,7 +51,7 @@ public class Bricks extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.stoneColor;
     }
 }

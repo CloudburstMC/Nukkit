@@ -47,7 +47,7 @@ public class Sand extends Fallable {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.sandColor;
     }
 }

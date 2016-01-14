@@ -69,7 +69,7 @@ public class NetherBrickFence extends Fence {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.netherrackColor;
     }
 

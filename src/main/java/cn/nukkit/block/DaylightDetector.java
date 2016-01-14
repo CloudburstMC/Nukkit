@@ -35,7 +35,7 @@ public class DaylightDetector extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.woodColor;
     }
 

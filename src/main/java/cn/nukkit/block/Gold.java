@@ -54,7 +54,7 @@ public class Gold extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.goldColor;
     }
 }

@@ -51,7 +51,7 @@ public class WoodDoor extends Door {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.woodColor;
     }
 }

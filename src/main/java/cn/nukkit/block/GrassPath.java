@@ -51,7 +51,7 @@ public class GrassPath extends Grass {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         //todo edit this after minecraft pc 1.9 come out
         return Color.grassColor;
     }

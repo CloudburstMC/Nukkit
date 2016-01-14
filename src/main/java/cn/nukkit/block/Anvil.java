@@ -116,7 +116,7 @@ public class Anvil extends Fallable {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.ironColor;
     }
 

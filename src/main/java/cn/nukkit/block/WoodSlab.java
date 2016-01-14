@@ -142,7 +142,7 @@ public class WoodSlab extends Slab {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.woodColor;
     }
 }

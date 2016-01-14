@@ -44,7 +44,7 @@ public class GlassPane extends Thin {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.airColor;
     }
 }

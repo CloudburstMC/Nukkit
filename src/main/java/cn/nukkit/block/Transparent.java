@@ -18,7 +18,7 @@ public abstract class Transparent extends Block {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.transparentColor;
     }
 

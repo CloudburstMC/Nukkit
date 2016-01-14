@@ -48,7 +48,7 @@ public class WoodStairs extends Stair {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.woodColor;
     }
 }

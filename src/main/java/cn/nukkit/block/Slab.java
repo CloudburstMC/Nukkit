@@ -150,7 +150,7 @@ public class Slab extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         switch (this.meta & 0x07) {
             case Slab.STONE:
                 return Color.stoneColor;

@@ -59,7 +59,7 @@ public class Water extends Liquid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.waterColor;
     }
 }

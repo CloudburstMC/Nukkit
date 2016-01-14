@@ -64,7 +64,7 @@ public class Workbench extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.woodColor;
     }
 }

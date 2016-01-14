@@ -61,7 +61,7 @@ public class Wool extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.getDyeColor(meta);
     }
 }

@@ -103,7 +103,7 @@ public class Cake extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.airColor;
     }
 }

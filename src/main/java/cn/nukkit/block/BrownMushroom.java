@@ -63,7 +63,7 @@ public class BrownMushroom extends Flowable {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.foliageColor;
     }
 }

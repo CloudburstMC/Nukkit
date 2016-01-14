@@ -42,7 +42,7 @@ public class CobblestoneStairs extends Stair {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.stoneColor;
     }
 }

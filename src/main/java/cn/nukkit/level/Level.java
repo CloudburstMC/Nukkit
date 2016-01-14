@@ -1984,7 +1984,7 @@ public class Level implements ChunkManager, Metadatable {
         int y = getHighestBlockAt(x, z);
         while (y > 1) {
             Block block = getBlock(new Vector3(x, y, z));
-            Color color = block.getMapColor();
+            Color color = block.getColor();
             if (color.getAlpha() == 0x00) {
                 y--;
             } else {

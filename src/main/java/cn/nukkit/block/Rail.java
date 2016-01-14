@@ -51,7 +51,7 @@ public class Rail extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.airColor;
     }
 

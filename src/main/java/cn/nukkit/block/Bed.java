@@ -175,7 +175,7 @@ public class Bed extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.clothColor;
     }
 }

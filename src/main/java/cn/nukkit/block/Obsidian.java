@@ -72,7 +72,7 @@ public class Obsidian extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.obsidianColor;
     }
 }

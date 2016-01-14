@@ -50,7 +50,7 @@ public class IronTrapdoor extends Trapdoor {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.ironColor;
     }
 }

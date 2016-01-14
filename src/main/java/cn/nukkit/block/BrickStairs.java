@@ -42,7 +42,7 @@ public class BrickStairs extends Stair {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.stoneColor;
     }
 

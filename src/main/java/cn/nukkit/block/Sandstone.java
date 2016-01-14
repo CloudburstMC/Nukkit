@@ -63,7 +63,7 @@ public class Sandstone extends Solid {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.sandColor;
     }
 }

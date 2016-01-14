@@ -72,7 +72,7 @@ public class Ice extends Transparent {
     }
 
     @Override
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.iceColor;
     }
 }

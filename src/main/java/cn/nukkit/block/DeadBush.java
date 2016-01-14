@@ -50,7 +50,7 @@ public class DeadBush extends Flowable {
         }
     }
 
-    public Color getMapColor() {
+    public Color getColor() {
         return Color.foliageColor;
     }
 }
