@@ -62,7 +62,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
     }
 
     protected int getSlotIndex(int index) {
-        ListTag<CompoundTag> list = this.namedTag.getList("Items", new ListTag<>());
+        ListTag<CompoundTag> list = this.namedTag.getList("Items", CompoundTag.class);
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getByte("Slot") == index) {
                 return i;
@@ -100,9 +100,9 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
         } else if (i < 0) {
             i = this.namedTag.getList("Items").size();
             i = Math.max(i, this.getSize());
-            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
+            this.namedTag.getList("Items", CompoundTag.class).add(i, d);
         } else {
-            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
+            this.namedTag.getList("Items", CompoundTag.class).add(i, d);
         }
     }
 

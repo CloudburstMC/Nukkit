@@ -1545,7 +1545,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
-            nbt.getList("Pos", new ListTag<>())
+            nbt.getList("Pos", DoubleTag.class)
                     .add(0, new DoubleTag("0", this.level.getSpawnLocation().x))
                     .add(1, new DoubleTag("1", this.level.getSpawnLocation().y))
                     .add(2, new DoubleTag("2", this.level.getSpawnLocation().z));
@@ -1560,7 +1560,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.saveOfflinePlayerData(this.username, nbt, true);
         }
 
-        ListTag<DoubleTag> posList = nbt.getList("Pos", new ListTag<>());
+        ListTag<DoubleTag> posList = nbt.getList("Pos", DoubleTag.class);
         BaseFullChunk chunk = this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true);
         if (chunk == null || chunk.getProvider() == null) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
@@ -1580,8 +1580,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", new ListTag<>());
-        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", new ListTag<>());
+        ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", FloatTag.class);
+        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", DoubleTag.class);
         this.setPositionAndRotation(
                 this.temporalVector.setComponents(
                         posList.get(0).data,
