@@ -487,7 +487,10 @@ public class Item implements Cloneable {
     public static final int BEETROOT_SEEDS = 458;
     public static final int BEETROOT_SEED = 458;
     public static final int BEETROOT_SOUP = 459;
-
+    public static final int RAW_SALMON = 460;
+    public static final int CLOWNFISH = 461;
+    public static final int PUFFERFISH = 462;
+    public static final int COOKED_SALMON = 463;
 
     public static Class[] list = null;
 
@@ -667,6 +670,11 @@ public class Item implements Cloneable {
             list[JUNGLE_DOOR] = JungleDoor.class;
             list[ACACIA_DOOR] = AcaciaDoor.class;
             list[DARK_OAK_DOOR] = DarkOakDoor.class;
+
+            list[RAW_SALMON] = Salmon.class;
+            list[CLOWNFISH] = Clownfish.class;
+            list[PUFFERFISH] = Pufferfish.class;
+            list[COOKED_SALMON] = CookedSalmon.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -1075,11 +1083,11 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.GOLDEN_APPLE, 0));
         // TODO: Golden apple enchanted
         addCreativeItem(Item.get(Item.RAW_FISH, 0));
-        addCreativeItem(Item.get(Item.RAW_FISH, 1)); // Raw salmon
-        addCreativeItem(Item.get(Item.RAW_FISH, 2)); // Clownfish
-        addCreativeItem(Item.get(Item.RAW_FISH, 3)); // Pufferfish
+        addCreativeItem(Item.get(Item.RAW_SALMON, 0));
+        addCreativeItem(Item.get(Item.CLOWNFISH, 0));
+        addCreativeItem(Item.get(Item.PUFFERFISH, 0));
         addCreativeItem(Item.get(Item.COOKED_FISH, 0));
-        addCreativeItem(Item.get(Item.COOKED_FISH, 1)); // Salmon
+        addCreativeItem(Item.get(Item.COOKED_SALMON, 0));
         // TODO: Rotten flesh
         addCreativeItem(Item.get(Item.MUSHROOM_STEW, 0));
         addCreativeItem(Item.get(Item.BREAD, 0));

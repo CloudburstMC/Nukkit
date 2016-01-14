@@ -16,12 +16,10 @@ public class Fish extends Item {
 
     public Fish(Integer meta, int count) {
         super(RAW_FISH, meta, count, "Raw Fish");
-        if (this.meta == 1) {
-            this.name = "Raw Salmon";
-        } else if (this.meta == 2) {
-            this.name = "Clownfish";
-        } else if (this.meta == 3) {
-            this.name = "Pufferfish";
-        }
     }
+
+    protected Fish(int id, Integer meta, int count, String name) {
+        super(id, meta, count, name);
+    }
+
 }
