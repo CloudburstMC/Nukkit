@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
+import cn.nukkit.food.Food;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -87,19 +88,14 @@ public class Cake extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (player != null && player.getHealth() < player.getMaxHealth()) {
-            EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, 3, EntityRegainHealthEvent.CAUSE_EATING);
-            player.heal(3, event);
-            if (!event.isCancelled()) {
-                if (++meta >= 0x06) {
-                    getLevel().setBlock(this, new Air(), true);
-                } else {
-                    getLevel().setBlock(this, this, true);
-                }
-                return true;
-            }
+        if (player == null) return false;
+        if (++meta >= 0x06) {
+            getLevel().setBlock(this, new Air(), true);
+        } else {
+            Food.getByRelative(this).eatenBy(player);
+            getLevel().setBlock(this, this, true);
         }
-        return false;
+        return true;
     }
 
     @Override

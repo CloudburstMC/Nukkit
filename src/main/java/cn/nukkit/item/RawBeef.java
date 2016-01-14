@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class RawBeef extends Item {
+public class RawBeef extends EdibleItem {
 
     public RawBeef() {
         this(0, 1);
