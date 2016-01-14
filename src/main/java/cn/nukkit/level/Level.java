@@ -23,10 +23,7 @@ import cn.nukkit.level.generator.task.*;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.sound.Sound;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector2;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.*;
 import cn.nukkit.metadata.BlockMetadataStore;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
@@ -295,7 +292,7 @@ public class Level implements ChunkManager, Metadatable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.generatorInstance.init(this, new cn.nukkit.utils.Random(this.getSeed()));
+        this.generatorInstance.init(this, new NukkitRandom(this.getSeed()));
 
         this.registerGenerator();
     }
@@ -303,14 +300,14 @@ public class Level implements ChunkManager, Metadatable {
     public void registerGenerator() {
         int size = this.server.getScheduler().getAsyncTaskPoolSize();
         for (int i = 0; i < size; ++i) {
-            this.server.getScheduler().scheduleAsyncTaskToWorker(new GeneratorRegisterTask(this, this.generatorInstance), i);
+            this.server.getScheduler().scheduleAsyncTask(new GeneratorRegisterTask(this, this.generatorInstance));
         }
     }
 
     public void unregisterGenerator() {
         int size = this.server.getScheduler().getAsyncTaskPoolSize();
         for (int i = 0; i < size; ++i) {
-            this.server.getScheduler().scheduleAsyncTaskToWorker(new GeneratorUnregisterTask(this), i);
+            this.server.getScheduler().scheduleAsyncTask(new GeneratorUnregisterTask(this));
         }
     }
 

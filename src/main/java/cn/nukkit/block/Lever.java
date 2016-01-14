@@ -70,7 +70,7 @@ public class Lever extends Flowable {
 
             if (face == 0) {
                 to = player != null ? player.getDirection() : 0;
-                this.meta = (to ^ 0);
+                this.meta = (to);
             } else if (face == 1) {
                 to = player != null ? player.getDirection() : 0;
                 this.meta = (to ^ 6);

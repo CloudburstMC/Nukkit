@@ -8,6 +8,7 @@ import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.object.OreType;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.level.generator.populator.PopulatorOre;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class Flat extends Generator {
 
     private BaseFullChunk chunk;
 
-    private cn.nukkit.utils.Random random;
+    private NukkitRandom random;
 
     private List<Populator> populators = new ArrayList<>();
 
@@ -165,7 +166,7 @@ public class Flat extends Generator {
     }
 
     @Override
-    public void init(ChunkManager level, cn.nukkit.utils.Random random) {
+    public void init(ChunkManager level, NukkitRandom random) {
         this.level = level;
         this.random = random;
     }

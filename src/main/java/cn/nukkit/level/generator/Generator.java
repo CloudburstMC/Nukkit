@@ -2,6 +2,7 @@ package cn.nukkit.level.generator;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.noise.Noise;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 import java.util.HashMap;
@@ -202,7 +203,7 @@ public abstract class Generator {
         return noiseArray;
     }
 
-    public abstract void init(ChunkManager level, cn.nukkit.utils.Random random);
+    public abstract void init(ChunkManager level, NukkitRandom random);
 
     public abstract void generateChunk(int chunkX, int chunkZ);
 

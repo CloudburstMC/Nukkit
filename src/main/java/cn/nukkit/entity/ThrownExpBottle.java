@@ -5,9 +5,9 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.EnchantParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.utils.Random;
 
 /**
  * Created on 2015/12/25 by xtypr.
@@ -79,7 +79,7 @@ public class ThrownExpBottle extends Projectile {
             this.getLevel().addParticle(particle2);
             hasUpdate = true;
 
-            Random random = new Random();
+            NukkitRandom random = new NukkitRandom();
             int add = 1;
             for (int ii = 1; ii <= random.nextRange(3, 11); ii += add) {
                 getLevel().dropExpOrb(this, add);

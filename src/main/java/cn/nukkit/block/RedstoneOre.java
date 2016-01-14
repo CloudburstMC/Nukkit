@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.NukkitRandom;
 
 import java.util.Random;
 
@@ -67,6 +68,6 @@ public class RedstoneOre extends Solid {
 
     @Override
     public int getDropExp() {
-        return new cn.nukkit.utils.Random().nextRange(1, 5);
+        return new NukkitRandom().nextRange(1, 5);
     }
 }

@@ -5,9 +5,9 @@ import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Random;
 
 /**
  * Created by Pub4Game on 03.01.2016.
@@ -51,7 +51,7 @@ public class Mycelium extends Solid {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
             //TODO: light levels
-            Random random = new Random();
+            NukkitRandom random = new NukkitRandom();
             x = random.nextRange((int) x - 1, (int) x + 1);
             y = random.nextRange((int) y - 1, (int) y + 1);
             z = random.nextRange((int) z - 1, (int) z + 1);

@@ -2,8 +2,8 @@ package cn.nukkit.level.generator.object;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.Random;
 
 /**
  * author: ItsLucas
@@ -11,7 +11,7 @@ import cn.nukkit.utils.Random;
  */
 
 public class TallGrass {
-    public static void growGrass(ChunkManager level, Vector3 pos, Random random, int count, int radius) {
+    public static void growGrass(ChunkManager level, Vector3 pos, NukkitRandom random, int count, int radius) {
         int[][] arr = {
                 {Block.DANDELION, 0},
                 {Block.POPPY, 0},

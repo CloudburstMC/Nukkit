@@ -4,12 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.PrimedTNT;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Random;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -55,7 +55,7 @@ public class TNT extends Solid {
         if (item.getId() == Item.FLINT_STEEL) {
             item.useOn(this);
             this.getLevel().setBlock(this, new Air(), true);
-            double mot = (new Random()).nextSignedFloat() * Math.PI * 2;
+            double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
             CompoundTag nbt = new CompoundTag()
                     .putList(new ListTag<DoubleTag>("Pos")
                             .add(new DoubleTag("", this.x + 0.5))

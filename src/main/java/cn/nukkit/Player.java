@@ -31,10 +31,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.sound.ClickSound;
 import cn.nukkit.level.sound.LaunchSound;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector2;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -1161,7 +1158,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     int exp = xpOrb.getExp();
                     this.addExperience(exp);
                     entity.kill();
-                    ClickSound sound = new ClickSound(this, (float) (new cn.nukkit.utils.Random().nextRange(260, 360)) / 100f);
+                    ClickSound sound = new ClickSound(this, (float) (new NukkitRandom().nextRange(260, 360)) / 100f);
                     this.getLevel().addSound(sound);
                     break;
                 }
@@ -3319,7 +3316,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             int add = 1;
             for (int ii = 1; ii < exp; ii += add) {
                 this.getLevel().dropExpOrb(this, add);
-                add = new cn.nukkit.utils.Random().nextRange(1, 3);
+                add = new NukkitRandom().nextRange(1, 3);
             }
         }
         this.setExperience(0, 0);
