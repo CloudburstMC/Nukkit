@@ -125,7 +125,7 @@ public class Redstone {
         if (location.getSide(Vector3.SIDE_WEST) instanceof RedstoneWire) {
             updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, location.getSide(Vector3.SIDE_WEST)));
         }
-        if(location instanceof RedstoneWire) {
+        if (location instanceof RedstoneWire) {
             Block block = location.getSide(Vector3.SIDE_UP);
             if (!(block instanceof Solid)) {
                 if (block.getSide(Vector3.SIDE_NORTH) instanceof RedstoneWire) {
@@ -208,68 +208,55 @@ public class Redstone {
                 updateQueue.add(new UpdateObject(updateLevel - 1, location.getSide(Vector3.SIDE_WEST)));
             }
         }
-        if(location instanceof RedstoneWire) {
+        if (location instanceof RedstoneWire) {
             Block block = location.getSide(Vector3.SIDE_UP);
-            if (!(block instanceof Solid)) {
-                if (block.getSide(Vector3.SIDE_NORTH) instanceof RedstoneWire) {
-                    if (!updateMap.containsKey(block.getSide(Vector3.SIDE_NORTH).getLocationHash())) {
-                        updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_NORTH)));
-                    }
+            if (block.getSide(Vector3.SIDE_NORTH) instanceof RedstoneWire) {
+                if (!updateMap.containsKey(block.getSide(Vector3.SIDE_NORTH).getLocationHash())) {
+                    updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_NORTH)));
                 }
-                if (block.getSide(Vector3.SIDE_SOUTH) instanceof RedstoneWire) {
-                    if (!updateMap.containsKey(block.getSide(Vector3.SIDE_SOUTH).getLocationHash())) {
-                        updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_SOUTH)));
-                    }
+            }
+            if (block.getSide(Vector3.SIDE_SOUTH) instanceof RedstoneWire) {
+                if (!updateMap.containsKey(block.getSide(Vector3.SIDE_SOUTH).getLocationHash())) {
+                    updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_SOUTH)));
                 }
-                if (block.getSide(Vector3.SIDE_EAST) instanceof RedstoneWire) {
-                    if (!updateMap.containsKey(block.getSide(Vector3.SIDE_EAST).getLocationHash())) {
-                        updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_EAST)));
-                    }
+            }
+            if (block.getSide(Vector3.SIDE_EAST) instanceof RedstoneWire) {
+                if (!updateMap.containsKey(block.getSide(Vector3.SIDE_EAST).getLocationHash())) {
+                    updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_EAST)));
                 }
-                if (block.getSide(Vector3.SIDE_WEST) instanceof RedstoneWire) {
-                    if (!updateMap.containsKey(block.getSide(Vector3.SIDE_WEST).getLocationHash())) {
-                        updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_WEST)));
-                    }
+            }
+            if (block.getSide(Vector3.SIDE_WEST) instanceof RedstoneWire) {
+                if (!updateMap.containsKey(block.getSide(Vector3.SIDE_WEST).getLocationHash())) {
+                    updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_WEST)));
                 }
             }
             block = location.getSide(Vector3.SIDE_NORTH);
-            if (!(block instanceof Solid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof RedstoneWire) {
-                    if (!updateMap.containsKey(blockDown.getLocationHash())) {
-                        updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
-                    }
+            Block blockDown;
+            blockDown = block.getSide(Vector3.SIDE_DOWN);
+            if (blockDown instanceof RedstoneWire) {
+                if (!updateMap.containsKey(blockDown.getLocationHash())) {
+                    updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
                 }
             }
             block = location.getSide(Vector3.SIDE_SOUTH);
-            if (!(block instanceof Solid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof RedstoneWire) {
-                    if (!updateMap.containsKey(blockDown.getLocationHash())) {
-                        updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
-                    }
+            blockDown = block.getSide(Vector3.SIDE_DOWN);
+            if (blockDown instanceof RedstoneWire) {
+                if (!updateMap.containsKey(blockDown.getLocationHash())) {
+                    updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
                 }
             }
             block = location.getSide(Vector3.SIDE_EAST);
-            if (!(block instanceof Solid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof RedstoneWire) {
-                    if (!updateMap.containsKey(blockDown.getLocationHash())) {
-                        updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
-                    }
+            blockDown = block.getSide(Vector3.SIDE_DOWN);
+            if (blockDown instanceof RedstoneWire) {
+                if (!updateMap.containsKey(blockDown.getLocationHash())) {
+                    updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
                 }
             }
             block = location.getSide(Vector3.SIDE_WEST);
-            if (!(block instanceof Solid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof RedstoneWire) {
-                    if (!updateMap.containsKey(blockDown.getLocationHash())) {
-                        updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
-                    }
+            blockDown = block.getSide(Vector3.SIDE_DOWN);
+            if (blockDown instanceof RedstoneWire) {
+                if (!updateMap.containsKey(blockDown.getLocationHash())) {
+                    updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
                 }
             }
         }
