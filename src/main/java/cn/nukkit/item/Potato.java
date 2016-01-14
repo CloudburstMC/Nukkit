@@ -17,7 +17,11 @@ public class Potato extends EdibleItem {
     }
 
     public Potato(Integer meta, int count) {
-        super(POTATO, 0, count, "Potato");
+        super(POTATO, meta, count, "Potato");
         this.block = Block.get(Item.POTATO_BLOCK);
+    }
+
+    protected Potato(int id, Integer meta, int count, String name) {
+        super(id, meta, count, name);
     }
 }
