@@ -8,6 +8,8 @@ import cn.nukkit.nbt.tag.Tag;
 
 import java.io.*;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
@@ -206,11 +208,7 @@ public class NBTIO {
             tmpFile.delete();
         }
         write(tag, tmpFile);
-        if (file.exists()) {
-            if (!file.delete()) {
-                throw new IOException("Failed to delete " + file);
-            }
-        }
-        tmpFile.renameTo(file);
+        Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
     }
+
 }
