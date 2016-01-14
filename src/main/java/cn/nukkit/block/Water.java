@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -59,7 +59,7 @@ public class Water extends Liquid {
     }
 
     @Override
-    public Color getColor() {
-        return Color.waterColor;
+    public BlockColor getColor() {
+        return BlockColor.WATER_BLOCK_COLOR;
     }
 }

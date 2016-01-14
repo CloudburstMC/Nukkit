@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
 
@@ -45,7 +45,7 @@ public class Melon extends Transparent {
     }
 
     @Override
-    public Color getColor() {
-        return Color.foliageColor;
+    public BlockColor getColor() {
+        return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
 }

@@ -1980,18 +1980,18 @@ public class Level implements ChunkManager, Metadatable {
         return this.getChunk(x >> 4, z >> 4, true).getHighestBlockAt(x & 0x0f, z & 0x0f);
     }
 
-    public Color getMapColorAt(int x, int z) {
+    public BlockColor getMapColorAt(int x, int z) {
         int y = getHighestBlockAt(x, z);
         while (y > 1) {
             Block block = getBlock(new Vector3(x, y, z));
-            Color color = block.getColor();
-            if (color.getAlpha() == 0x00) {
+            BlockColor blockColor = block.getColor();
+            if (blockColor.getAlpha() == 0x00) {
                 y--;
             } else {
-                return color;
+                return blockColor;
             }
         }
-        return Color.voidColor;
+        return BlockColor.VOID_BLOCK_COLOR;
     }
 
     public boolean isChunkLoaded(int x, int z) {

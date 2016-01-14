@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -60,7 +60,7 @@ public class DoublePlant extends Flowable {
     }
 
     @Override
-    public Color getColor() {
-        return Color.foliageColor;
+    public BlockColor getColor() {
+        return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
 }

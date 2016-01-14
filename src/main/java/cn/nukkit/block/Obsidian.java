@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -72,7 +72,7 @@ public class Obsidian extends Solid {
     }
 
     @Override
-    public Color getColor() {
-        return Color.obsidianColor;
+    public BlockColor getColor() {
+        return BlockColor.OBSIDIAN_BLOCK_COLOR;
     }
 }

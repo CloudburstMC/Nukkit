@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -84,7 +84,7 @@ public class Quartz extends Solid {
     }
 
     @Override
-    public Color getColor() {
-        return Color.quartzColor;
+    public BlockColor getColor() {
+        return BlockColor.QUARTZ_BLOCK_COLOR;
     }
 }

@@ -8,7 +8,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Random;
 
 /**
@@ -80,7 +80,7 @@ public class TNT extends Solid {
     }
 
     @Override
-    public Color getColor() {
-        return Color.tntColor;
+    public BlockColor getColor() {
+        return BlockColor.TNT_BLOCK_COLOR;
     }
 }

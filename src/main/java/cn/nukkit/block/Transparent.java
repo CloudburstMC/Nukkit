@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -18,8 +18,8 @@ public abstract class Transparent extends Block {
     }
 
     @Override
-    public Color getColor() {
-        return Color.transparentColor;
+    public BlockColor getColor() {
+        return BlockColor.TRANSPARENT_BLOCK_COLOR;
     }
 
 }

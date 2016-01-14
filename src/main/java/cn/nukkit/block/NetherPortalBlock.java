@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2016/1/5 by xtypr.
@@ -82,8 +82,8 @@ public class NetherPortalBlock extends Flowable {
     */
 
     @Override
-    public Color getColor() {
-        return Color.airColor;
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
     }
 
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/25 by xtypr.
@@ -42,7 +42,7 @@ public class CobblestoneStairs extends Stair {
     }
 
     @Override
-    public Color getColor() {
-        return Color.stoneColor;
+    public BlockColor getColor() {
+        return BlockColor.STONE_BLOCK_COLOR;
     }
 }

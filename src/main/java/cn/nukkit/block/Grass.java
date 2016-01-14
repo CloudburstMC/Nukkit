@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.TallGrass;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
 
@@ -104,7 +104,7 @@ public class Grass extends Dirt {
     }
 
     @Override
-    public Color getColor() {
-        return Color.grassColor;
+    public BlockColor getColor() {
+        return BlockColor.GRASS_BLOCK_COLOR;
     }
 }

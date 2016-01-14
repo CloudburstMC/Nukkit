@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.Color;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/7 by xtypr.
@@ -85,7 +85,7 @@ public class Fence extends Transparent {
     }
 
     @Override
-    public Color getColor() {
-        return Color.woodColor;
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 }
