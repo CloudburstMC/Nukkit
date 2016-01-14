@@ -3,6 +3,7 @@ package cn.nukkit.food;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Effect;
+import cn.nukkit.event.player.PlayerEatFoodEvent;
 import cn.nukkit.item.Fish;
 import cn.nukkit.item.Item;
 
@@ -26,7 +27,8 @@ public abstract class Food {
             .addEffect(Effect.getEffect(Effect.REGENERATION).setAmplifier(4).setDuration(30 * 20))
             .addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(2 * 60 * 20))
             .addEffect(Effect.getEffect(Effect.DAMAGE_RESISTANCE).setDuration(5 * 60 * 20))
-            .addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(5 * 60 * 20)));
+            .addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(5 * 60 * 20))
+            .addRelative(Item.GOLDEN_APPLE_ENCHANTED));
     public static final Food beef_raw = registerFood(new FoodNormal(3, 1.8F).addRelative(Item.RAW_BEEF));
     public static final Food beetroot = registerFood(new FoodNormal(1, 1.2F).addRelative(Item.BEETROOT));
     public static final Food beetroot_soup = registerFood(new FoodNormal(6, 7.2F).addRelative(Item.BEETROOT_SOUP));
@@ -52,13 +54,15 @@ public abstract class Food {
     public static final Food potato_raw = registerFood(new FoodNormal(1, 0.6F).addRelative(Item.POTATO));
     public static final Food potato_baked = registerFood(new FoodNormal(5, 7.2F).addRelative(Item.BAKED_POTATO));
     public static final Food potato_poisonous = registerFood(new FoodEffective(2, 1.2F)
-            .addChanceEffect(0.6F, Effect.getEffect(Effect.POISON).setDuration(4 * 20)));
+            .addChanceEffect(0.6F, Effect.getEffect(Effect.POISON).setDuration(4 * 20))
+            .addRelative(Item.POISONOUS_POTATO));
     public static final Food pumpkin_pie = registerFood(new FoodNormal(8, 4.8F).addRelative(Item.PUMPKIN_PIE));
-    public static final Food rabbit_cooked = registerFood(new FoodNormal(5, 6F));
-    public static final Food rabbit_raw = registerFood(new FoodNormal(3, 1.8F));
-    public static final Food rabbit_stew = registerFood(new FoodInBowl(10, 12F));
+    public static final Food rabbit_cooked = registerFood(new FoodNormal(5, 6F).addRelative(Item.COOKED_RABBIT));
+    public static final Food rabbit_raw = registerFood(new FoodNormal(3, 1.8F).addRelative(Item.RAW_RABBIT));
+    public static final Food rabbit_stew = registerFood(new FoodInBowl(10, 12F).addRelative(Item.RABBIT_STEW));
     public static final Food rotten_flesh = registerFood(new FoodEffective(4, 0.8F)
-            .addChanceEffect(0.8F, Effect.getEffect(Effect.HUNGER).setDuration(30 * 20)));
+            .addChanceEffect(0.8F, Effect.getEffect(Effect.HUNGER).setDuration(30 * 20))
+            .addRelative(Item.ROTTEN_FLESH));
     public static final Food spider_eye = registerFood(new FoodEffective(2, 3.2F)
             .addEffect(Effect.getEffect(Effect.POISON).setDuration(4 * 20))
             .addRelative(Item.SPIDER_EYE));
@@ -101,8 +105,10 @@ public abstract class Food {
     protected List<NodeIDMeta> relativeIDs = new ArrayList<>();
 
     public final boolean eatenBy(Player player) {
-        //TODO EVENT
-        return onEatenBy(player);
+        PlayerEatFoodEvent event = new PlayerEatFoodEvent(player, this);
+        player.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) return false;
+        return event.getFood().onEatenBy(player);
     }
 
     protected boolean onEatenBy(Player player){
