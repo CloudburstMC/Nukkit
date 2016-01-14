@@ -34,8 +34,8 @@ public class RedstoneWire extends Flowable {
 
     @Override
     public void setPowerLevel(int redstonePower) {
-        if(redstonePower > 15) redstonePower = 15;
-        else if(redstonePower < 0) redstonePower = 0;
+        if (redstonePower > 15) redstonePower = 15;
+        else if (redstonePower < 0) redstonePower = 0;
         this.powerLevel = redstonePower;
         this.meta = redstonePower;
     }
@@ -51,12 +51,10 @@ public class RedstoneWire extends Flowable {
         Block block = this.getSide(SIDE_NORTH);
         tempLevel = block.getPowerLevel();
         power = tempLevel > power ? tempLevel : power;
-        if(!(block instanceof Solid))
-        {
+        if (!(block instanceof Solid)) {
             Block blockDown;
             blockDown = block.getSide(SIDE_DOWN);
-            if(blockDown instanceof RedstoneWire)
-            {
+            if (blockDown instanceof RedstoneWire) {
                 tempLevel = blockDown.getPowerLevel();
                 power = tempLevel > power ? tempLevel : power;
             }
@@ -64,12 +62,10 @@ public class RedstoneWire extends Flowable {
         block = this.getSide(SIDE_SOUTH);
         tempLevel = block.getPowerLevel();
         power = tempLevel > power ? tempLevel : power;
-        if(!(block instanceof Solid))
-        {
+        if (!(block instanceof Solid)) {
             Block blockDown;
             blockDown = block.getSide(SIDE_DOWN);
-            if(blockDown instanceof RedstoneWire)
-            {
+            if (blockDown instanceof RedstoneWire) {
                 tempLevel = blockDown.getPowerLevel();
                 power = tempLevel > power ? tempLevel : power;
             }
@@ -77,12 +73,10 @@ public class RedstoneWire extends Flowable {
         block = this.getSide(SIDE_EAST);
         tempLevel = block.getPowerLevel();
         power = tempLevel > power ? tempLevel : power;
-        if(!(block instanceof Solid))
-        {
+        if (!(block instanceof Solid)) {
             Block blockDown;
             blockDown = block.getSide(SIDE_DOWN);
-            if(blockDown instanceof RedstoneWire)
-            {
+            if (blockDown instanceof RedstoneWire) {
                 tempLevel = blockDown.getPowerLevel();
                 power = tempLevel > power ? tempLevel : power;
             }
@@ -90,39 +84,33 @@ public class RedstoneWire extends Flowable {
         block = this.getSide(SIDE_WEST);
         tempLevel = block.getPowerLevel();
         power = tempLevel > power ? tempLevel : power;
-        if(!(block instanceof Solid))
-        {
+        if (!(block instanceof Solid)) {
             Block blockDown;
             blockDown = block.getSide(SIDE_DOWN);
-            if(blockDown instanceof RedstoneWire)
-            {
+            if (blockDown instanceof RedstoneWire) {
                 tempLevel = blockDown.getPowerLevel();
                 power = tempLevel > power ? tempLevel : power;
             }
         }
         Block topBlock = this.getSide(SIDE_UP);
-        if(!(topBlock instanceof Solid)) {
+        if (!(topBlock instanceof Solid)) {
             block = topBlock.getSide(SIDE_NORTH);
-            if(block instanceof RedstoneWire)
-            {
+            if (block instanceof RedstoneWire) {
                 tempLevel = block.getPowerLevel();
                 power = tempLevel > power ? tempLevel : power;
             }
             block = topBlock.getSide(SIDE_SOUTH);
-            if(block instanceof RedstoneWire)
-            {
+            if (block instanceof RedstoneWire) {
                 tempLevel = block.getPowerLevel();
                 power = tempLevel > power ? tempLevel : power;
             }
             block = topBlock.getSide(SIDE_EAST);
-            if(block instanceof RedstoneWire)
-            {
+            if (block instanceof RedstoneWire) {
                 tempLevel = block.getPowerLevel();
                 power = tempLevel > power ? tempLevel : power;
             }
             block = topBlock.getSide(SIDE_WEST);
-            if(block instanceof RedstoneWire)
-            {
+            if (block instanceof RedstoneWire) {
                 tempLevel = block.getPowerLevel();
                 power = tempLevel > power ? tempLevel : power;
             }

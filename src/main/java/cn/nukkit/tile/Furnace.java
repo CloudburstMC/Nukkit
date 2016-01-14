@@ -138,9 +138,9 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
         } else if (i < 0) {
             i = this.namedTag.getList("Items").getAll().size();
             i = Math.max(i, this.getSize());
-            this.namedTag.getList("Items", CompoundTag.class).add(i, d);
+            (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
         } else {
-            this.namedTag.getList("Items", CompoundTag.class).add(i, d);
+            (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
         }
     }
 

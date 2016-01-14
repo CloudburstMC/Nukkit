@@ -59,9 +59,9 @@ public class Obsidian extends Solid {
     public boolean onBreak(Item item) {
         //destroy the nether portal
         Block[] nearby = new Block[]{
-                this.getSide(Vector3.SIDE_UP),this.getSide(Vector3.SIDE_DOWN),
-                this.getSide(Vector3.SIDE_NORTH),this.getSide(Vector3.SIDE_SOUTH),
-                this.getSide(Vector3.SIDE_WEST),this.getSide(Vector3.SIDE_EAST),
+                this.getSide(Vector3.SIDE_UP), this.getSide(Vector3.SIDE_DOWN),
+                this.getSide(Vector3.SIDE_NORTH), this.getSide(Vector3.SIDE_SOUTH),
+                this.getSide(Vector3.SIDE_WEST), this.getSide(Vector3.SIDE_EAST),
         };
         for (Block aNearby : nearby) {
             if (aNearby != null) if (aNearby.getId() == NETHER_PORTAL) {

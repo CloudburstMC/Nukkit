@@ -10,7 +10,7 @@ import cn.nukkit.utils.Color;
  * Nukkit Project
  */
 public class Quartz extends Solid {
-    
+
     public static final int QUARTZ_NORMAL = 0;
     public static final int QUARTZ_CHISELED = 1;
     public static final int QUARTZ_PILLAR = 2;
@@ -46,7 +46,7 @@ public class Quartz extends Solid {
 
         return names[this.meta & 0x03];
     }
-    
+
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);

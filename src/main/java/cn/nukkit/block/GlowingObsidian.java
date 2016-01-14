@@ -26,7 +26,7 @@ public class GlowingObsidian extends Obsidian {
     public String getName() {
         return "Glowing Obsidian";
     }
-    
+
     @Override
     public double getResistance() {
         return 6000;
@@ -36,7 +36,7 @@ public class GlowingObsidian extends Obsidian {
     public int getLightLevel() {
         return 12;
     }
-    
+
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() > Tool.DIAMOND_PICKAXE) {

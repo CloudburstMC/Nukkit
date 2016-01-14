@@ -92,7 +92,7 @@ public class SimpleCommandMap implements CommandMap {
 
         List<String> aliases = new ArrayList<>(Arrays.asList(command.getAliases()));
 
-        for (Iterator<String> iterator = aliases.iterator(); iterator.hasNext();) {
+        for (Iterator<String> iterator = aliases.iterator(); iterator.hasNext(); ) {
             String alias = iterator.next();
             if (!this.registerAlias(command, true, fallbackPrefix, alias)) {
                 iterator.remove();

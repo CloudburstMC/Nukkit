@@ -8,7 +8,7 @@ import cn.nukkit.utils.Color;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class DaylightDetector extends Transparent {
-    
+
     public DaylightDetector() {
         this(0);
     }

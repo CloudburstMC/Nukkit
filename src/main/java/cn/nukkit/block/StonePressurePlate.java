@@ -44,7 +44,7 @@ public class StonePressurePlate extends PressurePlate {
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isPickaxe()){
+        if (item.isPickaxe()) {
             return new int[][]{
                     {Item.STONE_PRESSURE_PLATE, 0, 1}
             };

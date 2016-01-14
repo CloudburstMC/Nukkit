@@ -1210,7 +1210,7 @@ public class Item implements Cloneable {
     }
 
     public static ArrayList<Item> getCreativeItems() {
-        return Item.creative;
+        return new ArrayList<>(Item.creative);
     }
 
     public static void addCreativeItem(Item item) {

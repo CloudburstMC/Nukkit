@@ -193,6 +193,35 @@ public abstract class Entity extends Location implements Metadatable {
             return;
         }
 
+        this.init(chunk, nbt);
+    }
+
+    protected void initEntity() {
+        if (this.namedTag.contains("ActiveEffects")) {
+            ListTag<CompoundTag> effects = this.namedTag.getList("ActiveEffects", CompoundTag.class);
+            for (CompoundTag e : effects.getAll()) {
+                Effect effect = Effect.getEffect(e.getByte("Id"));
+                if (effect == null) {
+                    continue;
+                }
+
+                effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("showParticles"));
+
+                this.addEffect(effect);
+            }
+        }
+
+        if (this.namedTag.contains("CustomName")) {
+            this.setNameTag(this.namedTag.getString("CustomName"));
+            if (this.namedTag.contains("CustomNameVisible")) {
+                this.setNameTagVisible(this.namedTag.getBoolean("CustomNameVisible"));
+            }
+        }
+
+        this.scheduleUpdate();
+    }
+
+    protected void init(FullChunk chunk, CompoundTag nbt) {
         if ((chunk == null || chunk.getProvider() == null)) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
         }
@@ -256,12 +285,13 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.chunk.addEntity(this);
         this.level.addEntity(this);
+
         this.initEntity();
+
         this.lastUpdate = this.server.getTick();
         this.server.getPluginManager().callEvent(new EntitySpawnEvent(this));
 
         this.scheduleUpdate();
-
     }
 
     public String getNameTag() {
@@ -513,20 +543,20 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         this.namedTag.putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("0", this.x))
-                        .add(new DoubleTag("1", this.y))
-                        .add(new DoubleTag("2", this.z))
+                .add(new DoubleTag("0", this.x))
+                .add(new DoubleTag("1", this.y))
+                .add(new DoubleTag("2", this.z))
         );
 
         this.namedTag.putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("0", this.motionX))
-                        .add(new DoubleTag("1", this.motionY))
-                        .add(new DoubleTag("2", this.motionZ))
+                .add(new DoubleTag("0", this.motionX))
+                .add(new DoubleTag("1", this.motionY))
+                .add(new DoubleTag("2", this.motionZ))
         );
 
         this.namedTag.putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("0", (float) this.yaw))
-                        .add(new FloatTag("1", (float) this.pitch))
+                .add(new FloatTag("0", (float) this.yaw))
+                .add(new FloatTag("1", (float) this.pitch))
         );
 
         this.namedTag.putFloat("FallDistance", this.fallDistance);
@@ -539,11 +569,11 @@ public abstract class Entity extends Location implements Metadatable {
             ListTag<CompoundTag> list = new ListTag<>("ActiveEffects");
             for (Effect effect : this.effects.values()) {
                 list.add(new CompoundTag(String.valueOf(effect.getId()))
-                                .putByte("Id", (byte) effect.getId())
-                                .putByte("Amplifier", (byte) effect.getAmplifier())
-                                .putInt("Duration", effect.getDuration())
-                                .putBoolean("Ambient", false)
-                                .putBoolean("ShowParticles", effect.isVisible())
+                        .putByte("Id", (byte) effect.getId())
+                        .putByte("Amplifier", (byte) effect.getAmplifier())
+                        .putInt("Duration", effect.getDuration())
+                        .putBoolean("Ambient", false)
+                        .putBoolean("ShowParticles", effect.isVisible())
                 );
             }
 
@@ -551,31 +581,6 @@ public abstract class Entity extends Location implements Metadatable {
         } else {
             this.namedTag.remove("ActiveEffects");
         }
-    }
-
-    protected void initEntity() {
-        if (this.namedTag.contains("ActiveEffects")) {
-            ListTag<CompoundTag> effects = this.namedTag.getList("ActiveEffects", CompoundTag.class);
-            for (CompoundTag e : effects.getAll()) {
-                Effect effect = Effect.getEffect(e.getByte("Id"));
-                if (effect == null) {
-                    continue;
-                }
-
-                effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("showParticles"));
-
-                this.addEffect(effect);
-            }
-        }
-
-        if (this.namedTag.contains("CustomName")) {
-            this.setNameTag(this.namedTag.getString("CustomName"));
-            if (this.namedTag.contains("CustomNameVisible")) {
-                this.setNameTagVisible(this.namedTag.getBoolean("CustomNameVisible"));
-            }
-        }
-
-        this.scheduleUpdate();
     }
 
     public void spawnTo(Player player) {

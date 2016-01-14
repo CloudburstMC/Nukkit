@@ -3,12 +3,9 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.EnchantParticle;
-import cn.nukkit.level.particle.Particle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.potion.Potion;
-import cn.nukkit.utils.Potions;
 
 /**
  * Created on 2015/12/27 by xtypr.

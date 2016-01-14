@@ -57,12 +57,11 @@ public class Grass extends Dirt {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if(item.getId()==Item.DYE && item.getDamage() == 0x0F){
+        if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
             item.count--;
-            TallGrass.growGrass(this.getLevel(),this,new cn.nukkit.utils.Random(),15,10);
+            TallGrass.growGrass(this.getLevel(), this, new cn.nukkit.utils.Random(), 15, 10);
             return true;
-        }
-        else if (item.isHoe()) {
+        } else if (item.isHoe()) {
             item.useOn(this);
             this.getLevel().setBlock(this, new Farmland());
             return true;

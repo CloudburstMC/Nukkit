@@ -51,7 +51,7 @@ public class Anvil extends Fallable {
 
     @Override
     public String getName() {
-        String[] names = new String[] {
+        String[] names = new String[]{
                 "Anvil",
                 "Anvil",
                 "Anvil",

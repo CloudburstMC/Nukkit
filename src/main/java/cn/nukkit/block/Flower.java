@@ -80,7 +80,7 @@ public class Flower extends Flowable {
 
         return 0;
     }
-    
+
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{new int[]{this.getId(), this.meta, 1}};

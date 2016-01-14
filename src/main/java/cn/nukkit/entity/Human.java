@@ -157,11 +157,11 @@ public class Human extends Creature implements InventoryHolder {
                     }
                 }
                 this.namedTag.getList("Inventory", CompoundTag.class).add(slot, new CompoundTag()
-                                .putByte("Count", (byte) 0)
-                                .putShort("Damage", 0)
-                                .putByte("Slot", slot)
-                                .putByte("TrueSlot", (byte) -1)
-                                .putShort("id", 0)
+                        .putByte("Count", (byte) 0)
+                        .putShort("Damage", 0)
+                        .putByte("Slot", slot)
+                        .putByte("TrueSlot", (byte) -1)
+                        .putShort("id", 0)
                 );
             }
 
@@ -181,8 +181,8 @@ public class Human extends Creature implements InventoryHolder {
 
         if (this.getSkin().getData().length > 0) {
             this.namedTag.putCompound("Skin", new CompoundTag()
-                            .putByteArray("Data", this.getSkin().getData())
-                            .putString("ModelId", this.getSkin().getModel())
+                    .putByteArray("Data", this.getSkin().getData())
+                    .putString("ModelId", this.getSkin().getModel())
             );
         }
     }

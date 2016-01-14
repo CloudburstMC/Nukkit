@@ -1,4 +1,5 @@
 package cn.nukkit.utils;
+
 /**
  * Created by Snake1999 on 2016/1/10.
  * Package cn.nukkit.utils in project nukkit
@@ -77,24 +78,41 @@ public class Color extends java.awt.Color {
 
     public static Color getDyeColor(int dyeColorMeta) {
         switch (dyeColorMeta & 0x0f) {
-            case 0: return whiteColor;
-            case 1: return orangeColor;
-            case 2: return magentaColor;
-            case 3: return lightBlueColor;
-            case 4: return yellowColor;
-            case 5: return limeColor;
-            case 6: return pinkColor;
-            case 7: return grayColor;
-            case 8: return silverColor;
-            case 9: return cyanColor;
-            case 10: return purpleColor;
-            case 11: return blueColor;
-            case 12: return brownColor;
-            case 13: return greenColor;
-            case 14: return redColor;
-            case 15: return blackColor;
+            case 0:
+                return whiteColor;
+            case 1:
+                return orangeColor;
+            case 2:
+                return magentaColor;
+            case 3:
+                return lightBlueColor;
+            case 4:
+                return yellowColor;
+            case 5:
+                return limeColor;
+            case 6:
+                return pinkColor;
+            case 7:
+                return grayColor;
+            case 8:
+                return silverColor;
+            case 9:
+                return cyanColor;
+            case 10:
+                return purpleColor;
+            case 11:
+                return blueColor;
+            case 12:
+                return brownColor;
+            case 13:
+                return greenColor;
+            case 14:
+                return redColor;
+            case 15:
+                return blackColor;
 
-            default: return whiteColor;
+            default:
+                return whiteColor;
         }
     }
 

@@ -125,7 +125,7 @@ public class Redstone {
         if (location.getSide(Vector3.SIDE_WEST) instanceof RedstoneWire) {
             updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, location.getSide(Vector3.SIDE_WEST)));
         }
-        if(location instanceof RedstoneWire) {
+        if (location instanceof RedstoneWire) {
             Block block = location.getSide(Vector3.SIDE_UP);
             if (!(block instanceof Solid)) {
                 if (block.getSide(Vector3.SIDE_NORTH) instanceof RedstoneWire) {
@@ -208,7 +208,7 @@ public class Redstone {
                 updateQueue.add(new UpdateObject(updateLevel - 1, location.getSide(Vector3.SIDE_WEST)));
             }
         }
-        if(location instanceof RedstoneWire) {
+        if (location instanceof RedstoneWire) {
             Block block = location.getSide(Vector3.SIDE_UP);
             if (!(block instanceof Solid)) {
                 if (block.getSide(Vector3.SIDE_NORTH) instanceof RedstoneWire) {

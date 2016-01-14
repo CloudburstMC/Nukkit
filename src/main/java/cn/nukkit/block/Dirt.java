@@ -28,7 +28,7 @@ public class Dirt extends Solid {
     public boolean canBeActivated() {
         return true;
     }
-    
+
     @Override
     public double getResistance() {
         return 2.5;

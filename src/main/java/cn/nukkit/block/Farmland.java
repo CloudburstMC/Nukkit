@@ -33,7 +33,7 @@ public class Farmland extends Solid {
     public double getResistance() {
         return 3;
     }
-    
+
     @Override
     public double getHardness() {
         return 0.6;

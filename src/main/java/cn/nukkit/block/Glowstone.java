@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
 import cn.nukkit.utils.Color;
 
 /**
@@ -26,7 +25,7 @@ public class Glowstone extends Transparent {
     public int getId() {
         return GLOWSTONE_BLOCK;
     }
-    
+
     @Override
     public double getResistance() {
         return 1.5;
