@@ -32,7 +32,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
                 level = ((Player) sender).getLevel();
                 pos = ((Player) sender).round();
             } else {
-                sender.sendMessage(TextFormat.RED + "You can only perform this command as a player");
+                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                 return true;
             }
         } else if (args.length == 3) {
