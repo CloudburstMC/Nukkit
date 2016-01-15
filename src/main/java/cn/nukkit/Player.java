@@ -54,7 +54,6 @@ import cn.nukkit.utils.Zlib;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 //import cn.nukkit.entity.Item;
@@ -2903,7 +2902,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             signChangeEvent.setCancelled();
                         } else {
                             for (String line : signChangeEvent.getLines()) {
-                                if (line.getBytes(StandardCharsets.UTF_8).length > 16) {
+                                if (line.length() > 16) {
                                     signChangeEvent.setCancelled();
                                 }
                             }
