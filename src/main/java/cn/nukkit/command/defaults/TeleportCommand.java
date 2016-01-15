@@ -37,8 +37,12 @@ public class TeleportCommand extends VanillaCommand {
         switch (args.length) {
             case 1:
                 //tp <player2> sender->player2 Player
-                if (!sender.isPlayer() || sender.getServer().getPlayer(args[0]) == null) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                if (sender.getServer().getPlayer(args[0]) == null) {
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+                    return true;
+                }
+                if (!sender.isPlayer()) {
+                    sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                     return true;
                 }
                 origin = sender.getServer().getPlayer(sender.getName());
@@ -56,7 +60,7 @@ public class TeleportCommand extends VanillaCommand {
             case 3:
                 //tp <x> <y> <z> sender->(x,y,z) Player
                 if (!sender.isPlayer()) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                     return true;
                 }
                 origin = sender.getServer().getPlayer(sender.getName());
@@ -84,7 +88,7 @@ public class TeleportCommand extends VanillaCommand {
             case 5:
                 //tp <x> <y> <z> <x-rot> <y-rot> sender->(x,y,z(x-rot,y-rot)) Player
                 if (!sender.isPlayer()) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                     return true;
                 }
                 origin = sender.getServer().getPlayer(sender.getName());
@@ -140,9 +144,9 @@ public class TeleportCommand extends VanillaCommand {
                 "%commands.tp.success.coordinates",
                 new String[]{
                         origin.getName(),
-                        String.valueOf(NukkitMath.round(origin.x, 4)),
-                        String.valueOf(NukkitMath.round(origin.y, 4)),
-                        String.valueOf(NukkitMath.round(origin.z, 4))
+                        String.valueOf(NukkitMath.round(origin.x, 2)),
+                        String.valueOf(NukkitMath.round(origin.y, 2)),
+                        String.valueOf(NukkitMath.round(origin.z, 2))
                 }
         ));
 

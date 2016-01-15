@@ -398,7 +398,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[NETHER_BRICK_FENCE] = NetherBrickFence.class;
             list[NETHER_BRICKS_STAIRS] = NetherBrickStairs.class;
 
-            //list[ENCHANTING_TABLE] = EnchantingTable.class;
+            list[ENCHANTING_TABLE] = EnchantingTable.class;
 
             list[END_PORTAL_FRAME] = EndPortalFrame.class;
             list[END_STONE] = EndStone.class;
@@ -462,7 +462,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[ACTIVATOR_RAIL] = RailActivator.class;
             list[DETECTOR_RAIL] = RailDetector.class;
             list[POWERED_RAIL] = RailPowered.class;
-            list[ENCHANTING_TABLE] = EnchantingTable.class;
             list[FLOWER_POT_BLOCK] = FlowerPot.class;
             list[LEVER] = Lever.class;
             list[HEAVY_WEIGHTED_PRESSURE_PLATE] = HeavyWeightedPressurePlate.class;
