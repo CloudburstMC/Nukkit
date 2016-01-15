@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.food.Food;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;

@@ -4,10 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Effect;
 import cn.nukkit.event.player.PlayerEatFoodEvent;
-import cn.nukkit.item.Fish;
 import cn.nukkit.item.Item;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Snake1999 on 2016/1/13.
@@ -111,7 +113,7 @@ public abstract class Food {
         return event.getFood().onEatenBy(player);
     }
 
-    protected boolean onEatenBy(Player player){
+    protected boolean onEatenBy(Player player) {
         player.getFoodData().addFoodLevel(this);
         return true;
     }
@@ -148,7 +150,7 @@ public abstract class Food {
         return this;
     }
 
-    class NodeIDMeta{
+    class NodeIDMeta {
         int id;
         int meta;
 

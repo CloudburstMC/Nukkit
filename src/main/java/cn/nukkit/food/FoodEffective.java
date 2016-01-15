@@ -3,7 +3,10 @@ package cn.nukkit.food;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Effect;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Snake1999 on 2016/1/13.
