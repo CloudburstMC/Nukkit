@@ -1419,7 +1419,7 @@ public class Item implements Cloneable {
             return null;
         }
 
-        for (CompoundTag entry : ((ListTag<CompoundTag>) this.getNamedTag().getList("ench")).getAll()) {
+        for (CompoundTag entry : this.getNamedTag().getList("ench", CompoundTag.class).getAll()) {
             if (entry.getShort("id") == id) {
                 Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
                 e.setLevel(entry.getShort("lvl"));
