@@ -974,14 +974,13 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CLOCK, 0));
         addCreativeItem(Item.get(Item.COMPASS, 0));
         addCreativeItem(Item.get(Item.MINECART, 0));
-        /*
         addCreativeItem(Item.get(Item.BOAT, 0)); // Oak
         addCreativeItem(Item.get(Item.BOAT, 1)); // Spruce
         addCreativeItem(Item.get(Item.BOAT, 2)); // Birch
         addCreativeItem(Item.get(Item.BOAT, 3)); // Jungle
         addCreativeItem(Item.get(Item.BOAT, 4)); // Acacia
         addCreativeItem(Item.get(Item.BOAT, 5)); // Dark Oak
-
+        /*
         addCreativeItem(Item.get(Item.SPAWN_EGG, 15)); //Villager
         addCreativeItem(Item.get(Item.SPAWN_EGG, 10)); //Chicken
         addCreativeItem(Item.get(Item.SPAWN_EGG, 11)); //Cow
