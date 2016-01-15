@@ -859,7 +859,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CHEST, 0));
         addCreativeItem(Item.get(Item.TRAPPED_CHEST, 0));
         addCreativeItem(Item.get(Item.FURNACE, 0));
-        addCreativeItem(Item.get(Item.BREWING_STAND, 0));
+        addCreativeItem(Item.get(Item.BREWING_STAND_BLOCK, 0));
         addCreativeItem(Item.get(Item.NOTEBLOCK, 0));
         addCreativeItem(Item.get(Item.END_PORTAL_FRAME, 0));
         addCreativeItem(Item.get(Item.ANVIL, 0));
