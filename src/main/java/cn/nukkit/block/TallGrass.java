@@ -79,14 +79,15 @@ public class TallGrass extends Flowable {
                     this.getLevel().setBlock(new Vector3(this.x, this.y + 1, this.z), Block.get(DOUBLE_PLANT, 10), true, true);
 
                     item.count--;
+                    return true;
                 } else if (this.meta == 1) {
                     this.getLevel().setBlock(this, Block.get(DOUBLE_PLANT, 3), true, true);
                     this.getLevel().setBlock(new Vector3(this.x, this.y + 1, this.z), Block.get(DOUBLE_PLANT, 11), true, true);
 
                     item.count--;
+                    return true;
                 }
             }
-            return true;
         }
 
         return false;
