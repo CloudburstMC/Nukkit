@@ -386,7 +386,7 @@ public class Item implements Cloneable {
     public static final int REDSTONE = 331;
     public static final int REDSTONE_DUST = 331;
     public static final int SNOWBALL = 332;
-
+    public static final int BOAT = 333;
     public static final int LEATHER = 334;
 
     public static final int BRICK = 336;
@@ -481,13 +481,13 @@ public class Item implements Cloneable {
     public static final int DARK_OAK_DOOR = 431;
 
     public static final int SPLASH_POTION = 438;
-    /*
+
     public static final int SPRUCE_BOAT = 444;
     public static final int BIRCH_BOAT = 445;
     public static final int JUNGLE_BOAT = 446;
     public static final int ACACIA_BOAT = 447;
     public static final int DARK_OAK_BOAT = 448;
-    */
+
     public static final int CAMERA = 456;
     public static final int BEETROOT = 457;
     public static final int BEETROOT_SEEDS = 458;
@@ -633,7 +633,7 @@ public class Item implements Cloneable {
             list[SLIMEBALL] = Slimeball.class;
             list[EGG] = Egg.class;
             list[COMPASS] = Compass.class;
-            //list[FISHING_ROD] = FishingRod.class;
+            list[FISHING_ROD] = FishingRod.class;
             list[CLOCK] = Clock.class;
             list[GLOWSTONE_DUST] = GlowstoneDust.class;
             list[RAW_FISH] = Fish.class;

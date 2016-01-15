@@ -61,8 +61,4 @@ public class Potion extends Item {
         return 1;
     }
 
-    public void applyPotion(Entity entity) {
-        cn.nukkit.potion.Potion potion = cn.nukkit.potion.Potion.getPotion(getDamage());
-        potion.applyTo(entity);
-    }
 }
