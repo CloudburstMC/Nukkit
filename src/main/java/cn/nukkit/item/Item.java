@@ -1124,6 +1124,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.RAW_RABBIT, 0));
         addCreativeItem(Item.get(Item.COOKED_RABBIT, 0));
         addCreativeItem(Item.get(Item.RABBIT_STEW, 0));
+        addCreativeItem(Item.get(Item.MAGMA_CREAM, 0));
         addCreativeItem(Item.get(Item.BLAZE_ROD, 0));
         addCreativeItem(Item.get(Item.GOLD_NUGGET, 0));
         addCreativeItem(Item.get(Item.GOLDEN_CARROT, 0));
