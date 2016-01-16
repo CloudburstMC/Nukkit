@@ -184,6 +184,9 @@ public class Effect implements Cloneable {
                     return (this.duration % interval) == 0;
                 }
                 return true;
+            case Effect.SPEED:
+            case Effect.SLOWNESS:
+                return true;
         }
         return false;
     }
@@ -206,6 +209,12 @@ public class Effect implements Cloneable {
                     ev = new EntityRegainHealthEvent(entity, 1, EntityRegainHealthEvent.CAUSE_MAGIC);
                     entity.heal(((EntityRegainHealthEvent) ev).getAmount(), (EntityRegainHealthEvent) ev);
                 }
+                break;
+            case Effect.SPEED:
+                if (entity instanceof Player) ((Player) entity).setMovementSpeed(0.1f + (this.amplifier + 1) * 0.01f);
+                break;
+            case Effect.SLOWNESS:
+                if (entity instanceof Player) ((Player) entity).setMovementSpeed(0.1f - (this.amplifier + 1) * 0.01f);
                 break;
         }
     }
