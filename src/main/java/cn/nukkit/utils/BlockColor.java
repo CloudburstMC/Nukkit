@@ -77,43 +77,7 @@ public class BlockColor extends java.awt.Color {
     }
 
     public static BlockColor getDyeColor(int dyeColorMeta) {
-        switch (dyeColorMeta & 0x0f) {
-            case 0:
-                return WHITE_BLOCK_COLOR;
-            case 1:
-                return ORANGE_BLOCK_COLOR;
-            case 2:
-                return MAGENTA_BLOCK_COLOR;
-            case 3:
-                return LIGHT_BLUE_BLOCK_COLOR;
-            case 4:
-                return YELLOW_BLOCK_COLOR;
-            case 5:
-                return LIME_BLOCK_COLOR;
-            case 6:
-                return PINK_BLOCK_COLOR;
-            case 7:
-                return GRAY_BLOCK_COLOR;
-            case 8:
-                return SILVER_BLOCK_COLOR;
-            case 9:
-                return CYAN_BLOCK_COLOR;
-            case 10:
-                return PURPLE_BLOCK_COLOR;
-            case 11:
-                return BLUE_BLOCK_COLOR;
-            case 12:
-                return BROWN_BLOCK_COLOR;
-            case 13:
-                return GREEN_BLOCK_COLOR;
-            case 14:
-                return RED_BLOCK_COLOR;
-            case 15:
-                return BLACK_BLOCK_COLOR;
-
-            default:
-                return WHITE_BLOCK_COLOR;
-        }
+        return Dyes.getDyeColor(dyeColorMeta);
     }
 
 }
