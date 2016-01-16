@@ -20,7 +20,6 @@ import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.food.Food;
 import cn.nukkit.inventory.*;
-import cn.nukkit.item.EdibleItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Potion;
 import cn.nukkit.level.ChunkLoader;
@@ -55,7 +54,6 @@ import cn.nukkit.utils.Zlib;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 //import cn.nukkit.entity.Item;
@@ -1566,7 +1564,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
-        this.loggedIn = true;
         this.server.addOnlinePlayer(this);
 
         PlayerLoginEvent ev;
@@ -1576,6 +1573,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             return;
         }
+
+        this.loggedIn = true;
 
         if (this.isCreative()) {
             this.inventory.setHeldItemSlot(0);
@@ -2501,7 +2500,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.inventory.setItemInHand(itemInHand);
                         this.inventory.sendHeldItem(this);
 
-                    break;
+                        break;
                 }
                 break;
             case ProtocolInfo.DROP_ITEM_PACKET:
@@ -2903,7 +2902,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             signChangeEvent.setCancelled();
                         } else {
                             for (String line : signChangeEvent.getLines()) {
-                                if (line.getBytes(StandardCharsets.UTF_8).length > 16) {
+                                if (line.length() > 16) {
                                     signChangeEvent.setCancelled();
                                 }
                             }
@@ -2935,6 +2934,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public boolean kick(String reason, boolean isAdmin) {
+        if (!this.loggedIn) {
+            return false;
+        }
+
         PlayerKickEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerKickEvent(this, reason, this.getLeaveMessage()));
         if (!ev.isCancelled()) {

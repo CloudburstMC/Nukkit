@@ -6,7 +6,6 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.food.Food;
-import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.UpdateAttributesPacket;
 
 /**
@@ -30,6 +29,7 @@ public class PlayerFood {
     public Player getPlayer() {
         return this.player;
     }
+
     public int getFoodLevel() {
         return this.foodLevel;
     }

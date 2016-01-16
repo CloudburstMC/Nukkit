@@ -102,7 +102,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
     protected int getSlotIndex(int index) {
         ListTag<CompoundTag> list = this.namedTag.getList("Items", CompoundTag.class);
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getByte("Slot") == index) {
+            if ((list.get(i).getByte("Slot") & 0xff) == index) {
                 return i;
             }
         }
@@ -117,7 +117,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
             return Item.get(Item.AIR, 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
-            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count"));
+            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count") & 0xff);
         }
     }
 

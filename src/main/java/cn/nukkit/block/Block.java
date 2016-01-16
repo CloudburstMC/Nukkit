@@ -383,10 +383,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[IRON_BARS] = IronBars.class;
             list[GLASS_PANE] = GlassPane.class;
             list[MELON_BLOCK] = Melon.class;
-            /*list[PUMPKIN_STEM] = PumpkinStem.class;
+            list[PUMPKIN_STEM] = PumpkinStem.class;
             list[MELON_STEM] = MelonStem.class;
             list[VINE] = Vine.class;
-            */
             list[FENCE_GATE] = FenceGate.class;
 
             list[BRICK_STAIRS] = BrickStairs.class;
@@ -398,7 +397,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[NETHER_BRICK_FENCE] = NetherBrickFence.class;
             list[NETHER_BRICKS_STAIRS] = NetherBrickStairs.class;
 
-            //list[ENCHANTING_TABLE] = EnchantingTable.class;
+            list[ENCHANTING_TABLE] = EnchantingTable.class;
 
             list[END_PORTAL_FRAME] = EndPortalFrame.class;
             list[END_STONE] = EndStone.class;
@@ -413,8 +412,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[JUNGLE_WOOD_STAIRS] = JungleWoodStairs.class;
             list[STONE_WALL] = StoneWall.class;
 
-            //list[CARROT_BLOCK] = Carrot.class;
-            //list[POTATO_BLOCK] = Potato.class;
+            list[CARROT_BLOCK] = Carrot.class;
+            list[POTATO_BLOCK] = Potato.class;
             list[ANVIL] = Anvil.class;
 
             list[REDSTONE_BLOCK] = Redstone.class;
@@ -462,7 +461,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[ACTIVATOR_RAIL] = RailActivator.class;
             list[DETECTOR_RAIL] = RailDetector.class;
             list[POWERED_RAIL] = RailPowered.class;
-            list[ENCHANTING_TABLE] = EnchantingTable.class;
             list[FLOWER_POT_BLOCK] = FlowerPot.class;
             list[LEVER] = Lever.class;
             list[HEAVY_WEIGHTED_PRESSURE_PLATE] = HeavyWeightedPressurePlate.class;

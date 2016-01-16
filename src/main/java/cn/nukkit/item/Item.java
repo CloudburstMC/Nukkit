@@ -473,6 +473,7 @@ public class Item implements Cloneable {
     public static final int COOKED_RABBIT = 412;
     public static final int RABBIT_STEW = 413;
     public static final int RABBIT_FOOT = 414;
+    public static final int RABBIT_HIDE = 415;
 
     public static final int SPRUCE_DOOR = 427;
     public static final int BIRCH_DOOR = 428;
@@ -858,7 +859,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CHEST, 0));
         addCreativeItem(Item.get(Item.TRAPPED_CHEST, 0));
         addCreativeItem(Item.get(Item.FURNACE, 0));
-        addCreativeItem(Item.get(Item.BREWING_STAND, 0));
+        addCreativeItem(Item.get(Item.BREWING_STAND_BLOCK, 0));
         addCreativeItem(Item.get(Item.NOTEBLOCK, 0));
         addCreativeItem(Item.get(Item.END_PORTAL_FRAME, 0));
         addCreativeItem(Item.get(Item.ANVIL, 0));
@@ -1080,7 +1081,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.FEATHER, 0));
         addCreativeItem(Item.get(Item.FLINT, 0));
         addCreativeItem(Item.get(Item.LEATHER, 0));
-        // TODO: Rabbit hide
+        addCreativeItem(Item.get(Item.RABBIT_HIDE, 0));
         addCreativeItem(Item.get(Item.CLAY, 0));
         addCreativeItem(Item.get(Item.SUGAR, 0));
         addCreativeItem(Item.get(Item.NETHER_QUARTZ, 0));
@@ -1124,6 +1125,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.RAW_RABBIT, 0));
         addCreativeItem(Item.get(Item.COOKED_RABBIT, 0));
         addCreativeItem(Item.get(Item.RABBIT_STEW, 0));
+        addCreativeItem(Item.get(Item.MAGMA_CREAM, 0));
         addCreativeItem(Item.get(Item.BLAZE_ROD, 0));
         addCreativeItem(Item.get(Item.GOLD_NUGGET, 0));
         addCreativeItem(Item.get(Item.GOLDEN_CARROT, 0));

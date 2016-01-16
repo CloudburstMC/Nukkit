@@ -30,7 +30,7 @@ public class SpawnpointCommand extends VanillaCommand {
             if (sender instanceof Player) {
                 target = (Player) sender;
             } else {
-                sender.sendMessage(TextFormat.RED + "Please provide a player!");
+                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                 return true;
             }
         } else {
@@ -78,7 +78,7 @@ public class SpawnpointCommand extends VanillaCommand {
                 }));
                 return true;
             } else {
-                sender.sendMessage(TextFormat.RED + "Please provide a player!");
+                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                 return true;
             }
         }

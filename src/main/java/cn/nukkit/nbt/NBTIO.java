@@ -46,7 +46,7 @@ public class NBTIO {
             return Item.get(0);
         }
 
-        Item item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
+        Item item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count") & 0xff);
 
         if (tag.contains("tag") && tag.get("tag") instanceof CompoundTag) {
             item.setNamedTag(tag.getCompound("tag"));

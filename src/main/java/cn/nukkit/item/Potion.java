@@ -1,9 +1,6 @@
 package cn.nukkit.item;
 
-import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityRegainHealthEvent;
 
 public class Potion extends Item {
 
