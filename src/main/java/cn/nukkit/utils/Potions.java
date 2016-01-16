@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.Living;
@@ -342,6 +343,9 @@ public final class Potions {
 
     public static void applyPotion(int potionType, boolean isSplash, Entity entity) {
         if (!(entity instanceof Living)) return;
+        Effect applyEffect = getApplyEffect(potionType, isSplash);
+        if (applyEffect == null) return;
+        if (entity instanceof Player) if (!((Player) entity).isSurvival() && applyEffect.isBad()) return;
         switch (potionType) {
             case INSTANT_HEALTH:
                 entity.heal(4, new EntityRegainHealthEvent(entity, 4, EntityRegainHealthEvent.CAUSE_EATING));
@@ -356,7 +360,7 @@ public final class Potions {
                 entity.attack(new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 12));
                 break;
             default:
-                entity.addEffect(getApplyEffect(potionType, isSplash));
+                entity.addEffect(applyEffect);
         }
     }
 }

@@ -21,7 +21,6 @@ import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.food.Food;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Potion;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -2472,17 +2471,21 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             break;
                         }
 
-                        if (itemInHand instanceof Potion) {
-                            if (itemInHand.getCount() > 1) {
-                                if (this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))) {
-                                    this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
+                        if (itemInHand.getId() == Item.POTION) {
+                            if (this.getGamemode() == SURVIVAL) {
+                                if (itemInHand.getCount() > 1) {
+                                    if (this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))) {
+                                        this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
+                                    }
+                                    --itemInHand.count;
+                                } else {
+                                    itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
                                 }
-                                --itemInHand.count;
-                            } else {
-                                itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
                             }
 
-                            ((Potion) itemInHand).applyPotion(this);
+                            cn.nukkit.potion.Potion potion = cn.nukkit.potion.Potion.getPotion(itemInHand.getDamage());
+                            if (potion != null) potion.applyTo(this);
+
                         } else {
                             EntityEventPacket pk = new EntityEventPacket();
                             pk.eid = this.getId();
@@ -2491,9 +2494,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             Server.broadcastPacket(this.getViewers().values(), pk);
 
                             Food food = Food.getByRelative(itemInHand);
-                            if (food.eatenBy(this)) {
-                                --itemInHand.count;
-                            }
+                            if (food != null) if (food.eatenBy(this)) --itemInHand.count;
 
                         }
 

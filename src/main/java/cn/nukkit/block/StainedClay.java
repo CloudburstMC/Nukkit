@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Dyes;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -19,25 +20,7 @@ public class StainedClay extends Solid {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "White Stained Clay",
-                "Orange Stained Clay",
-                "Magenta Stained Clay",
-                "Light Blue Stained Clay",
-                "Yellow Stained Clay",
-                "Lime Stained Clay",
-                "Pink Stained Clay",
-                "Gray Stained Clay",
-                "Light Gray Stained Clay",
-                "Cyan Stained Clay",
-                "Purple Stained Clay",
-                "Blue Stained Clay",
-                "Brown Stained Clay",
-                "Green Stained Clay",
-                "Red Stained Clay",
-                "Black Stained Clay"
-        };
-        return names[this.meta & 0x0f];
+        return Dyes.getUnlocalizedColorName(meta) + " Stained Clay";
     }
 
     @Override
