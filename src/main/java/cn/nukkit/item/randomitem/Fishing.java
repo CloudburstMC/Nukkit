@@ -1,7 +1,5 @@
 package cn.nukkit.item.randomitem;
 
-import cn.nukkit.Player;
-import cn.nukkit.item.FishingRod;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.Dyes;
@@ -41,9 +39,13 @@ public final class Fishing {
     public static final Selector JUNK_INK_SAC = putSelector(new ConstantItemSelector(Item.DYE, Dyes.BLACK, 10, JUNKS), 0.012F);
     public static final Selector JUNK_TRIPWIRE_HOOK = putSelector(new ConstantItemSelector(Item.TRIPWIRE_HOOK, JUNKS), 0.12F);
 
-    public static Item getFishingResult(FishingRod rod) {
-        int fortuneLevel = rod.getEnchantment(Enchantment.TYPE_FISHING_FORTUNE).getLevel();
-        int lureLevel = rod.getEnchantment(Enchantment.TYPE_FISHING_LURE).getLevel();
+    public static Item getFishingResult(Item rod) {
+        int fortuneLevel = 0;
+        int lureLevel = 0;
+        if (rod != null) {
+            rod.getEnchantment(Enchantment.TYPE_FISHING_FORTUNE).getLevel();
+            rod.getEnchantment(Enchantment.TYPE_FISHING_LURE).getLevel();
+        }
         return getFishingResult(fortuneLevel, lureLevel);
     }
 
