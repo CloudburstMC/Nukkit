@@ -41,6 +41,12 @@ public final class Fishing {
     public static final Selector JUNK_INK_SAC = putSelector(new ConstantItemSelector(Item.DYE, Dyes.BLACK, 10, JUNKS), 0.012F);
     public static final Selector JUNK_TRIPWIRE_HOOK = putSelector(new ConstantItemSelector(Item.TRIPWIRE_HOOK, JUNKS), 0.12F);
 
+    public static Item getFishingResult(FishingRod rod) {
+        int fortuneLevel = rod.getEnchantment(Enchantment.TYPE_FISHING_FORTUNE).getLevel();
+        int lureLevel = rod.getEnchantment(Enchantment.TYPE_FISHING_LURE).getLevel();
+        return getFishingResult(fortuneLevel, lureLevel);
+    }
+
     public static Item getFishingResult(int fortuneLevel, int lureLevel) {
         float treasureChance = limitRange(0, 1, 0.05f + 0.01f * fortuneLevel - 0.01f * lureLevel);
         float junkChance = limitRange(0, 1, 0.05f - 0.025f * fortuneLevel - 0.01f * lureLevel);
