@@ -8,6 +8,8 @@ import cn.nukkit.nbt.tag.Tag;
 
 import java.io.*;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
@@ -44,7 +46,7 @@ public class NBTIO {
             return Item.get(0);
         }
 
-        Item item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
+        Item item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count") & 0xff);
 
         if (tag.contains("tag") && tag.get("tag") instanceof CompoundTag) {
             item.setNamedTag(tag.getCompound("tag"));
@@ -206,11 +208,7 @@ public class NBTIO {
             tmpFile.delete();
         }
         write(tag, tmpFile);
-        if (file.exists()) {
-            if (!file.delete()) {
-                throw new IOException("Failed to delete " + file);
-            }
-        }
-        tmpFile.renameTo(file);
+        Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
     }
+
 }

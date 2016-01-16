@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Dyes;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -40,25 +42,7 @@ public class Carpet extends Flowable {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "White Carpet",
-                "Orange Carpet",
-                "Magenta Carpet",
-                "Light Blue Carpet",
-                "Yellow Carpet",
-                "Lime Carpet",
-                "Pink Carpet",
-                "Gray Carpet",
-                "Light Gray Carpet",
-                "Cyan Carpet",
-                "Purple Carpet",
-                "Blue Carpet",
-                "Brown Carpet",
-                "Green Carpet",
-                "Red Carpet",
-                "Black Carpet"
-        };
-        return names[this.meta & 0x0f];
+        return Dyes.getUnlocalizedColorName(meta) + " Carpet";
     }
 
     @Override
@@ -96,4 +80,10 @@ public class Carpet extends Flowable {
 
         return 0;
     }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.getDyeColor(meta);
+    }
+
 }

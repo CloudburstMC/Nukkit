@@ -6,13 +6,12 @@ import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Pub4Game on 09.01.2016.
  */
 public class Sugarcane extends Flowable {
-
-    protected int id = SUGARCANE_BLOCK;
 
     public Sugarcane() {
         this(0);
@@ -111,5 +110,10 @@ public class Sugarcane extends Flowable {
             }
         }
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
 }

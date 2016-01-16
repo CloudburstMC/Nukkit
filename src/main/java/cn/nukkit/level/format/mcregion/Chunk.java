@@ -193,12 +193,12 @@ public class Chunk extends BaseFullChunk {
             i >>= 1;
             int old = this.data[i] & 0xff;
             if ((y & 1) == 0) {
-                this.data[i] = (byte) (((old & 0xf0) | (meta & 0x0f)) & 0xff);
+                this.data[i] = (byte) ((old & 0xf0) | (meta & 0x0f));
                 if ((old & 0x0f) != meta) {
                     changed = true;
                 }
             } else {
-                this.data[i] = (byte) ((((meta & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+                this.data[i] = (byte) (((meta & 0x0f) << 4) | (old & 0x0f));
                 if (!meta.equals((old & 0xf0) >> 4)) {
                     changed = true;
                 }

@@ -56,6 +56,7 @@ Example Plugin which shows the API of Nukkit.
 
 * __[Example Plugin](http://github.com/Nukkit/ExamplePlugin)__
 
-一起来讨论Nukkit！
+Discussion
 -------------
-* __欢迎加入[百度 Nukkit 吧](http://tieba.baidu.com/f?kw=nukkit)__
+* __[Forums](http://forums.nukkit.cn)__
+* __[百度 Nukkit 吧](http://tieba.baidu.com/f?kw=nukkit)__

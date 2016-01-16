@@ -1,7 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.level.Level;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -25,7 +23,7 @@ public class SetTimePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putInt((this.time / Level.TIME_FULL) * 19200);
+        this.putInt(this.time);
         this.putByte((byte) (this.started ? 1 : 0));
     }
 

@@ -23,7 +23,6 @@ import org.iq80.leveldb.impl.Iq80DBFactory;
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
-import java.util.Random;
 
 /**
  * author: MagicDroidX
@@ -126,7 +125,7 @@ public class LevelDB implements LevelProvider {
                 .putInt("SpawnZ", 128)
                 .putInt("storageVersion", 4)
                 .putLong("Time", 0)
-                .putLong("worldStartCount", ((long) Integer.MAX_VALUE) & 0xffffffffl);
+                .putLong("worldStartCount", ((long) Integer.MAX_VALUE) & 0xffffffffL);
 
         byte[] data = NBTIO.writeGZIPCompressed(levelData, ByteOrder.BIG_ENDIAN);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

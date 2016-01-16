@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.level.generator.noise.Simplex;
-import cn.nukkit.utils.Random;
+import cn.nukkit.math.NukkitRandom;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ public class BiomeSelector {
 
     private int[] map = new int[64 * 64];
 
-    public BiomeSelector(Random random, Biome fallback) {
+    public BiomeSelector(NukkitRandom random, Biome fallback) {
         this.fallback = fallback;
         this.temperature = new Simplex(random, 2d, 1 / 16d, 1 / 512d);
         this.rainfall = new Simplex(random, 2d, 1 / 16d, 1 / 512d);

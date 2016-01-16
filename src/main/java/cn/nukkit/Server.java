@@ -235,7 +235,8 @@ public class Server {
             {
                 put("motd", "Nukkit Server For Minecraft: PE");
                 put("server-port", 19132);
-                put("write-list", false);
+                put("server-ip", "0.0.0.0");
+                put("white-list", false);
                 put("announce-player-achievements", true);
                 put("spawn-protection", 16);
                 put("max-players", 20);

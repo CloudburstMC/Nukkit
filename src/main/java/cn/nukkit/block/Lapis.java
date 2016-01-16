@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: Angelic47
@@ -51,4 +52,10 @@ public class Lapis extends Solid {
             return new int[0][];
         }
     }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.LAPIS_BLOCK_COLOR;
+    }
+
 }

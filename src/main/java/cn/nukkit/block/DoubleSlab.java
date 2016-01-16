@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -66,4 +67,28 @@ public class DoubleSlab extends Solid {
         }
     }
 
+    @Override
+    public BlockColor getColor() {
+        switch (this.meta & 0x07) {
+            case DoubleSlab.STONE:
+                return BlockColor.STONE_BLOCK_COLOR;
+            case DoubleSlab.SANDSTONE:
+                return BlockColor.SAND_BLOCK_COLOR;
+            case DoubleSlab.WOODEN:
+                return BlockColor.WOOD_BLOCK_COLOR;
+            case DoubleSlab.COBBLESTONE:
+                return BlockColor.STONE_BLOCK_COLOR;
+            case DoubleSlab.BRICK:
+                return BlockColor.STONE_BLOCK_COLOR;
+            case DoubleSlab.STONE_BRICK:
+                return BlockColor.STONE_BLOCK_COLOR;
+            case DoubleSlab.QUARTZ:
+                return BlockColor.QUARTZ_BLOCK_COLOR;
+            case DoubleSlab.NETHER_BRICK:
+                return BlockColor.NETHERRACK_BLOCK_COLOR;
+
+            default:
+                return BlockColor.STONE_BLOCK_COLOR;     //unreachable
+        }
+    }
 }

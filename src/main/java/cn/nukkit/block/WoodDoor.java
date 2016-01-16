@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -28,11 +29,6 @@ public class WoodDoor extends Door {
     }
 
     @Override
-    public boolean canBeActivated() {
-        return true;
-    }
-
-    @Override
     public double getHardness() {
         return 3;
     }
@@ -52,5 +48,10 @@ public class WoodDoor extends Door {
         return new int[][]{
                 {Item.WOODEN_DOOR, 0, 1}
         };
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 }

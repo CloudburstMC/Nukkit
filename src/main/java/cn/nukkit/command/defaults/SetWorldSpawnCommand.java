@@ -6,7 +6,6 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.TextFormat;
 
 import java.text.DecimalFormat;
 
@@ -32,7 +31,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
                 level = ((Player) sender).getLevel();
                 pos = ((Player) sender).round();
             } else {
-                sender.sendMessage(TextFormat.RED + "You can only perform this command as a player");
+                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                 return true;
             }
         } else if (args.length == 3) {

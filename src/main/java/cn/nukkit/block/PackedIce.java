@@ -7,7 +7,7 @@ import cn.nukkit.item.Tool;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PackedIce extends Transparent {
+public class PackedIce extends Ice {
 
     public PackedIce() {
         this(0);
@@ -28,13 +28,13 @@ public class PackedIce extends Transparent {
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public int getToolType() {
+        return Tool.TYPE_PICKAXE;
     }
 
     @Override
-    public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+    public int onUpdate(int type) {
+        return 0; //not being melted
     }
 
     @Override

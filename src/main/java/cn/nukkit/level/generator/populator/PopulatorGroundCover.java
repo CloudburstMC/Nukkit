@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.biome.Biome;
-import cn.nukkit.utils.Random;
+import cn.nukkit.math.NukkitRandom;
 
 /**
  * author: MagicDroidX
@@ -13,7 +13,7 @@ import cn.nukkit.utils.Random;
 public class PopulatorGroundCover extends Populator {
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, Random random) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
         FullChunk chunk = level.getChunk(chunkX, chunkZ);
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {

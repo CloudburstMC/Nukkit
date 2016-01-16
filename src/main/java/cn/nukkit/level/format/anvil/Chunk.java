@@ -70,7 +70,7 @@ public class Chunk extends BaseChunk {
         cn.nukkit.level.format.ChunkSection[] sections = new cn.nukkit.level.format.ChunkSection[8];
         for (Tag section : this.nbt.getList("Sections").getAll()) {
             if (section instanceof CompoundTag) {
-                int y = ((CompoundTag) section).getByte("Y");
+                int y = ((CompoundTag) section).getByte("Y") & 0xff;
                 if (y < 8) {
                     sections[y] = new ChunkSection((CompoundTag) section);
                 }
@@ -236,7 +236,7 @@ public class Chunk extends BaseChunk {
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
             s.putByteArray("SkyLight", section.getSkyLightArray());
-            nbt.getList("Sections", new ListTag<>()).add(section.getY(), s);
+            nbt.getList("Sections", CompoundTag.class).add(section.getY(), s);
         }
 
         ArrayList<CompoundTag> entities = new ArrayList<>();

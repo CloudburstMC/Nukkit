@@ -3,11 +3,9 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.EnchantParticle;
-import cn.nukkit.level.particle.Particle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.utils.Potions;
+import cn.nukkit.potion.Potion;
 
 /**
  * Created on 2015/12/27 by xtypr.
@@ -83,16 +81,12 @@ public class ThrownPotion extends Projectile {
 
         if (this.isCollided) {
             this.kill();
-            Particle particle1 = new EnchantParticle(this);
-            this.getLevel().addParticle(particle1);
-            Particle particle2 = Potions.getParticle(getPotionType(), this);
-            if (particle2 != null)
-            this.getLevel().addParticle(particle2);
+            Potion potion = Potion.getPotion(getPotionType()).setSplashPotion();
+            potion.thrownPotionCollide(this);
             hasUpdate = true;
-
             Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(8.25, 4.24, 8.25));
             for (Entity anEntity : entities) {
-                Potions.applyPotion(getPotionType(), true, anEntity);
+                potion.applyTo(anEntity);
             }
         }
 

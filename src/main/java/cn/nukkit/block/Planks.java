@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -35,7 +36,7 @@ public class Planks extends Solid {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 15;
     }
 
     @Override
@@ -46,14 +47,19 @@ public class Planks extends Solid {
                 "Birch Wood Planks",
                 "Jungle Wood Planks",
                 "Acacia Wood Planks",
-                "Jungle Wood Planks",
+                "Dark Oak Wood Planks",
         };
 
-        return names[this.meta & 0x03];
+        return names[this.meta & 0x07];
     }
 
     @Override
     public int getToolType() {
         return Tool.TYPE_AXE;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 }

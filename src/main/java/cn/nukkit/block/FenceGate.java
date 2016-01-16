@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -37,7 +38,7 @@ public class FenceGate extends Transparent {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 15;
     }
 
     @Override
@@ -125,5 +126,10 @@ public class FenceGate extends Transparent {
         this.getLevel().setBlock(this, this, true);
         this.getLevel().addSound(new DoorSound(this));
         return true;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 }

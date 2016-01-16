@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.noise;
 
-import cn.nukkit.utils.Random;
+import cn.nukkit.math.NukkitRandom;
 
 /**
  * author: MagicDroidX
@@ -13,11 +13,11 @@ public class Perlin extends Noise {
             {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1}
     };
 
-    public Perlin(Random random, double octaves, double persistence) {
+    public Perlin(NukkitRandom random, double octaves, double persistence) {
         this(random, octaves, persistence, 1);
     }
 
-    public Perlin(Random random, double octaves, double persistence, double expansion) {
+    public Perlin(NukkitRandom random, double octaves, double persistence, double expansion) {
         this.octaves = octaves;
         this.persistence = persistence;
         this.expansion = expansion;
