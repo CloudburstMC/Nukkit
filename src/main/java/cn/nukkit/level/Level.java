@@ -1544,7 +1544,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
-            PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face, PlayerInteractEvent.RIGHT_CLICK_BLOCK);
+            PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face, target.getId() == 0 ? PlayerInteractEvent.RIGHT_CLICK_AIR : PlayerInteractEvent.RIGHT_CLICK_BLOCK);
             int distance = this.server.getSpawnRadius();
             if (!player.isOp() && distance > -1) {
                 Vector2 t = new Vector2(target.x, target.z);
@@ -1570,7 +1570,7 @@ public class Level implements ChunkManager, Metadatable {
             } else {
                 return null;
             }
-        } else if (target.canBeActivated() && target.onActivate(item, player)) {
+        } else if (target.canBeActivated() && target.onActivate(item, null)) {
             return item;
         }
         Block hand;
@@ -1621,15 +1621,20 @@ public class Level implements ChunkManager, Metadatable {
 
         Tag tag = item.getNamedTagEntry("CanPlaceOn");
         if (tag instanceof ListTag) {
-            boolean canBreak = false;
+            boolean canPlace = false;
             for (Tag v : ((ListTag<Tag>) tag).getAll()) {
                 if (v instanceof StringTag) {
                     Item entry = Item.fromString(((StringTag) v).data);
                     if (entry.getId() > 0 && entry.getBlock() != null && entry.getBlock().getId() == target.getId()) {
-                        canBreak = true;
+                        canPlace = true;
                         break;
                     }
                 }
+            }
+
+
+            if (!canPlace) {
+                return null;
             }
         }
 
