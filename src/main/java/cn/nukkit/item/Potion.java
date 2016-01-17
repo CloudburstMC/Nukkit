@@ -1,7 +1,5 @@
 package cn.nukkit.item;
 
-import cn.nukkit.entity.Entity;
-
 public class Potion extends Item {
 
     public static final int NO_EFFECTS = 0;

@@ -1,9 +1,6 @@
 package cn.nukkit.item.randomitem;
 
-import cn.nukkit.Player;
-import cn.nukkit.item.FishingRod;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.Dyes;
 import cn.nukkit.utils.Potions;
 
