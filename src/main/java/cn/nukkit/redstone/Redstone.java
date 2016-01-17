@@ -177,7 +177,7 @@ public class Redstone {
         }
     }
 
-    private static void addToDeactiveQueue(Queue<UpdateObject> updateQueue, Block location, Map<String, Block> closedMap,Queue<UpdateObject> sourceList, int updateLevel) {
+    private static void addToDeactiveQueue(Queue<UpdateObject> updateQueue, Block location, Map<String, Block> closedMap, Queue<UpdateObject> sourceList, int updateLevel) {
         if (updateLevel < 0) {
             return;
         }
