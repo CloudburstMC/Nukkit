@@ -2,9 +2,12 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+
+import java.util.Random;
 
 /**
  * author: Angelic47
@@ -37,6 +40,11 @@ public class TallGrass extends Flowable {
     }
 
     @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
     public boolean canBeReplaced() {
         return true;
     }
@@ -54,8 +62,8 @@ public class TallGrass extends Flowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(0).isTransparent()) { //Replace with common break method
-                this.getLevel().setBlock(this, new Air(), false, false);
+            if (this.getSide(0).isTransparent()) {
+                this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }
@@ -63,10 +71,59 @@ public class TallGrass extends Flowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        //todo
+    public boolean onActivate(Item item) {
+        return this.onActivate(item, null);
+    }
 
-        return new int[0][];
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
+            if (this.getLevel().getBlock(new Vector3(this.x, this.y + 1, this.z)).getId() == AIR) {
+                if (this.meta == 1) {
+                    this.getLevel().setBlock(this, Block.get(DOUBLE_PLANT, 2), true, true);
+
+                    item.count--;
+                    return true;
+                } else if (this.meta == 2) {
+                    this.getLevel().setBlock(this, Block.get(DOUBLE_PLANT, 3), true, true);
+                    item.count--;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        boolean dropSeeds = new Random().nextInt(10) == 0;
+        if (item.isShears()) {
+            //todo enchantment
+            if (dropSeeds) {
+                return new int[][]{
+                        {Item.SEEDS, 0, 1},
+                        {Item.TALL_GRASS, this.meta, 1}
+                };
+            } else {
+                return new int[][]{
+                        {Item.TALL_GRASS, this.meta, 1}
+                };
+            }
+        }
+
+        if (dropSeeds) {
+            return new int[][]{
+                    {Item.SEEDS, 0, 1},
+            };
+        } else {
+            return new int[0][];
+        }
+    }
+
+    @Override
+    public int getToolType() {
+        return Tool.TYPE_SHEARS;
     }
 
     @Override

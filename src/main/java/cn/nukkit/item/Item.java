@@ -386,7 +386,7 @@ public class Item implements Cloneable {
     public static final int REDSTONE = 331;
     public static final int REDSTONE_DUST = 331;
     public static final int SNOWBALL = 332;
-
+    public static final int BOAT = 333;
     public static final int LEATHER = 334;
 
     public static final int BRICK = 336;
@@ -482,13 +482,13 @@ public class Item implements Cloneable {
     public static final int DARK_OAK_DOOR = 431;
 
     public static final int SPLASH_POTION = 438;
-    /*
+
     public static final int SPRUCE_BOAT = 444;
     public static final int BIRCH_BOAT = 445;
     public static final int JUNGLE_BOAT = 446;
     public static final int ACACIA_BOAT = 447;
     public static final int DARK_OAK_BOAT = 448;
-    */
+
     public static final int CAMERA = 456;
     public static final int BEETROOT = 457;
     public static final int BEETROOT_SEEDS = 458;
@@ -634,7 +634,7 @@ public class Item implements Cloneable {
             list[SLIMEBALL] = Slimeball.class;
             list[EGG] = Egg.class;
             list[COMPASS] = Compass.class;
-            //list[FISHING_ROD] = FishingRod.class;
+            list[FISHING_ROD] = FishingRod.class;
             list[CLOCK] = Clock.class;
             list[GLOWSTONE_DUST] = GlowstoneDust.class;
             list[RAW_FISH] = Fish.class;
@@ -975,14 +975,13 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CLOCK, 0));
         addCreativeItem(Item.get(Item.COMPASS, 0));
         addCreativeItem(Item.get(Item.MINECART, 0));
-        /*
         addCreativeItem(Item.get(Item.BOAT, 0)); // Oak
         addCreativeItem(Item.get(Item.BOAT, 1)); // Spruce
         addCreativeItem(Item.get(Item.BOAT, 2)); // Birch
         addCreativeItem(Item.get(Item.BOAT, 3)); // Jungle
         addCreativeItem(Item.get(Item.BOAT, 4)); // Acacia
         addCreativeItem(Item.get(Item.BOAT, 5)); // Dark Oak
-
+        /*
         addCreativeItem(Item.get(Item.SPAWN_EGG, 15)); //Villager
         addCreativeItem(Item.get(Item.SPAWN_EGG, 10)); //Chicken
         addCreativeItem(Item.get(Item.SPAWN_EGG, 11)); //Cow
@@ -1422,7 +1421,7 @@ public class Item implements Cloneable {
             return null;
         }
 
-        for (CompoundTag entry : ((ListTag<CompoundTag>) this.getNamedTag().getList("ench")).getAll()) {
+        for (CompoundTag entry : this.getNamedTag().getList("ench", CompoundTag.class).getAll()) {
             if (entry.getShort("id") == id) {
                 Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
                 e.setLevel(entry.getShort("lvl"));

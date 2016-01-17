@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Tool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Dyes;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -19,25 +20,7 @@ public class Wool extends Solid {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "White Wool",
-                "Orange Wool",
-                "Magenta Wool",
-                "Light Blue Wool",
-                "Yellow Wool",
-                "Lime Wool",
-                "Pink Wool",
-                "Gray Wool",
-                "Light Gray Wool",
-                "Cyan Wool",
-                "Purple Wool",
-                "Blue Wool",
-                "Brown Wool",
-                "Green Wool",
-                "Red Wool",
-                "Black Wool"
-        };
-        return names[this.meta & 0x0f];
+        return Dyes.getUnlocalizedColorName(meta) + " Wool";
     }
 
     @Override
