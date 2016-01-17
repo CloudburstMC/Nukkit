@@ -28,7 +28,7 @@ public class Explosion {
 
     private int rays = 16; //Rays
     private Level level;
-    private Position source;
+    private Location source;
     private float size;
 
     private HashMap<String, Block> affectedBlocks = new HashMap<>();
@@ -36,7 +36,7 @@ public class Explosion {
 
     private Object what;
 
-    public Explosion(Position center, float size, Entity what) {
+    public Explosion(Location center, float size, Entity what) {
         this.level = center.getLevel();
         this.source = center;
         this.size = Math.max(size, 0);

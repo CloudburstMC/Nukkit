@@ -8,7 +8,6 @@ import cn.nukkit.entity.data.*;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
-import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
@@ -1061,8 +1060,8 @@ public abstract class Entity extends Location implements Metadatable {
         return true;
     }
 
-    public Position getPosition() {
-        return new Position(this.x, this.y, this.z, this.level);
+    public Location getPosition() {
+        return new Location(this.level, this.x, this.y, this.z);
     }
 
     public Location getLocation() {
@@ -1345,8 +1344,8 @@ public abstract class Entity extends Location implements Metadatable {
             return false;
         }
 
-        if (pos instanceof Position && ((Position) pos).level != null && !((Position) pos).level.equals(this.level)) {
-            if (!this.switchLevel(((Position) pos).getLevel())) {
+        if (pos instanceof Location && ((Location) pos).level != null && !((Location) pos).level.equals(this.level)) {
+            if (!this.switchLevel(((Location) pos).getLevel())) {
                 return false;
             }
         }
@@ -1427,8 +1426,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        Position from = Position.fromObject(this, this.level);
-        Position to = Position.fromObject(pos, pos instanceof Position ? ((Position) pos).getLevel() : this.level);
+        Location from = Location.fromObject(this, this.level);
+        Location to = Location.fromObject(pos, pos instanceof Location ? ((Location) pos).getLevel() : this.level);
         EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to);
         this.server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {

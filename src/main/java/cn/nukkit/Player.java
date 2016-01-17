@@ -24,7 +24,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
-import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
@@ -146,7 +145,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     protected int chunksPerTick;
     protected int spawnThreshold;
 
-    private Position spawnPosition = null;
+    private Location spawnPosition = null;
 
     protected int inAirTicks = 0;
     protected int startAirTicks = 5;
@@ -454,8 +453,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return port;
     }
 
-    public Position getNextPosition() {
-        return this.newPosition != null ? new Position(this.newPosition.x, this.newPosition.y, this.newPosition.z, this.level) : this.getPosition();
+    public Location getNextPosition() {
+        return this.newPosition != null ? new Location(this.level, this.newPosition.x, this.newPosition.y, this.newPosition.z) : this.getPosition();
     }
 
     public boolean isSleeping() {
@@ -503,7 +502,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.loadQueue.remove(index);
     }
 
-    public Position getSpawn() {
+    public Location getSpawn() {
         if (this.spawnPosition != null && this.spawnPosition.getLevel() != null) {
             return this.spawnPosition;
         } else {
@@ -614,7 +613,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         setTimePacket.started = !this.level.stopTime;
         this.dataPacket(setTimePacket);
 
-        Position pos = this.level.getSafeSpawn(this);
+        Location pos = this.level.getSafeSpawn(this);
 
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(this, pos);
 
@@ -855,7 +854,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         this.sleeping = pos.clone();
-        this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level));
+        this.teleport(new Location(this.level, pos.x + 0.5, pos.y - 0.5, pos.z + 0.5));
 
         this.setDataProperty(DATA_PLAYER_BED_POSITION, new PositionEntityData((int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
@@ -869,12 +868,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public void setSpawn(Vector3 pos) {
         Level level;
-        if (!(pos instanceof Position)) {
+        if (!(pos instanceof Location)) {
             level = this.level;
         } else {
-            level = ((Position) pos).getLevel();
+            level = ((Location) pos).getLevel();
         }
-        this.spawnPosition = new Position(pos.x, pos.y, pos.z, level);
+        this.spawnPosition = new Location(level, pos.x, pos.y, pos.z);
         SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
         pk.x = (int) this.spawnPosition.x;
         pk.y = (int) this.spawnPosition.y;
@@ -1586,10 +1585,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.dataPacket(statusPacket);
 
         if (this.spawnPosition == null && this.namedTag.contains("SpawnLevel") && (level = this.server.getLevelByName(this.namedTag.getString("SpawnLevel"))) != null) {
-            this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
+            this.spawnPosition = new Location(level, this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"));
         }
 
-        Position spawnPosition = this.getSpawn();
+        Location spawnPosition = this.getSpawn();
 
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.seed = -1;
@@ -3322,7 +3321,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
 
         RespawnPacket pk = new RespawnPacket();
-        Position pos = this.getSpawn();
+        Location pos = this.getSpawn();
         pk.x = (float) pos.x;
         pk.y = (float) pos.y;
         pk.z = (float) pos.z;
@@ -3593,7 +3592,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return false;
         }
 
-        Position oldPos = this.getPosition();
+        Location oldPos = this.getPosition();
         if (super.teleport(pos)) {
             this.resetAfterTeleport(oldPos);
             return true;
@@ -3608,7 +3607,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return false;
         }
 
-        Position oldPos = this.getPosition();
+        Location oldPos = this.getPosition();
         if (super.teleport(pos, yaw, pitch)) {
             this.resetAfterTeleport(oldPos);
             return true;
@@ -3623,7 +3622,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return false;
         }
 
-        Position oldPos = this.getPosition();
+        Location oldPos = this.getPosition();
         if (super.teleportYaw(pos, yaw)) {
             this.resetAfterTeleport(oldPos);
             return true;
@@ -3638,7 +3637,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return false;
         }
 
-        Position oldPos = this.getPosition();
+        Location oldPos = this.getPosition();
         if (super.teleportPitch(pos, pitch)) {
             this.resetAfterTeleport(oldPos);
             return true;
@@ -3653,7 +3652,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return false;
         }
 
-        Position oldPos = this.getPosition();
+        Location oldPos = this.getPosition();
         if (super.teleportYawAndPitch(pos, yaw, pitch)) {
             this.resetAfterTeleport(oldPos);
             return true;
@@ -3662,7 +3661,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return false;
     }
 
-    private void resetAfterTeleport(Position oldPos) {
+    private void resetAfterTeleport(Location oldPos) {
         for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
             if (Objects.equals(window, this.inventory)) {
                 continue;
