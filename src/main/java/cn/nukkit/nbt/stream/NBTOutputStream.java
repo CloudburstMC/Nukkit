@@ -96,4 +96,9 @@ public class NBTOutputStream extends FilterOutputStream implements DataOutput {
         this.writeShort(bytes.length);
         this.getStream().write(bytes);
     }
+
+    @Override
+    public void close() throws IOException {
+        this.getStream().close();
+    }
 }
