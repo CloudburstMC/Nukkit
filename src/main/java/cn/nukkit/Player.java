@@ -604,6 +604,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.server.sendRecipeList(this);
         this.sendSettings();
 
+        this.server.sendFullPlayerListData(this, false);
+
         this.sendPotionEffects(this);
         this.sendData(this);
         this.inventory.sendContents(this);
@@ -1563,8 +1565,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
-        this.server.addOnlinePlayer(this);
-
         PlayerLoginEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerLoginEvent(this, "Plugin reason"));
         if (ev.isCancelled()) {
@@ -1628,7 +1628,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         setDifficultyPacket.difficulty = this.server.getDifficulty();
         this.dataPacket(setDifficultyPacket);
 
-        this.server.sendFullPlayerListData(this);
+        this.server.addOnlinePlayer(this);
 
         this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logIn", new String[]{
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
