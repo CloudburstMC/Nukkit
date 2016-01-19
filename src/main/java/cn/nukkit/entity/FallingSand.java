@@ -43,7 +43,7 @@ public class FallingSand extends Entity {
 
     @Override
     protected float getDrag() {
-        return 0x02f;
+        return 0.02f;
     }
 
     @Override

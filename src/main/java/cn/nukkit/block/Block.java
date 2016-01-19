@@ -55,7 +55,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int LAPIS_BLOCK = 22;
 
     public static final int SANDSTONE = 24;
-
+    public static final int NOTEBLOCK = 25;
     public static final int BED_BLOCK = 26;
     public static final int POWERED_RAIL = 27;
     public static final int DETECTOR_RAIL = 28;
@@ -314,6 +314,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[LAPIS_ORE] = LapisOre.class;
             list[LAPIS_BLOCK] = Lapis.class;
             list[SANDSTONE] = Sandstone.class;
+            list[NOTEBLOCK] = Noteblock.class;
             list[BED_BLOCK] = Bed.class;
             list[COBWEB] = Cobweb.class;
             list[TALL_GRASS] = TallGrass.class;

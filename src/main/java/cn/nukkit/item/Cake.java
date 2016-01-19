@@ -1,5 +1,9 @@
 package cn.nukkit.item;
 
+import cn.nukkit.Player;
+import cn.nukkit.block.Block;
+import cn.nukkit.level.Level;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -22,4 +26,16 @@ public class Cake extends Item {
     public int getMaxStackSize() {
         return 1;
     }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
+        level.setBlock(block, Block.get(Block.CAKE_BLOCK), true);
+        return true;
+    }
+
 }
