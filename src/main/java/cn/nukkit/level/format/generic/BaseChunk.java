@@ -62,9 +62,11 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     @Override
     public boolean setBlock(int x, int y, int z, Integer blockId, Integer meta) {
+        int id = blockId == null ? 0 : blockId;
+        int damage = meta == null ? 0 : meta;
         try {
             this.hasChanged = true;
-            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, blockId & 0xff, meta & 0x0f);
+            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, id & 0xff, damage & 0x0f);
         } catch (ChunkException e) {
             LevelProvider level = this.getProvider();
             int Y = y >> 4;
@@ -73,7 +75,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
                 e1.printStackTrace();
             }
-            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, blockId & 0xff, meta & 0x0f);
+            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, id & 0xff, damage & 0x0f);
         }
     }
 
