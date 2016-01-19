@@ -1416,6 +1416,10 @@ public class Item implements Cloneable {
         return false;
     }
 
+    public Enchantment getEnchantment(int id) {
+        return getEnchantment((short) (id & 0xffff));
+    }
+
     public Enchantment getEnchantment(short id) {
         if (!this.hasEnchantments()) {
             return null;
