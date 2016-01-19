@@ -61,7 +61,7 @@ public final class Dyes {
                 return BlockColor.WHITE_BLOCK_COLOR;
         }
     }
-    
+
     public static String getUnlocalizedColorName(int dyeColorMeta) {
         String[] names = new String[]{
                 "Black",

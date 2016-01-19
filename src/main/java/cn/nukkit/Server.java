@@ -821,10 +821,18 @@ public class Server {
     }
 
     public void sendFullPlayerListData(Player player) {
+        this.sendFullPlayerListData(player, false);
+    }
+
+    public void sendFullPlayerListData(Player player, boolean self) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
         List<PlayerListPacket.Entry> entries = new ArrayList<>();
         for (Player p : this.playerList.values()) {
+            if (!self && p.equals(player)) {
+                continue;
+            }
+
             entries.add(new PlayerListPacket.Entry(p.getUniqueId(), p.getId(), p.getDisplayName(), p.getSkin()));
         }
 

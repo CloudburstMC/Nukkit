@@ -126,4 +126,9 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
         this.read(bytes);
         return new String(bytes, StandardCharsets.UTF_8);
     }
+
+    @Override
+    public void close() throws IOException {
+        this.getStream().close();
+    }
 }

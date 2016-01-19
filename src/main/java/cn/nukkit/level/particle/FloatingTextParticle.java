@@ -21,7 +21,7 @@ public class FloatingTextParticle extends Particle {
     protected String text;
     protected String title;
     protected long entityId = -1;
-    protected boolean invisible = true;
+    protected boolean invisible = false;
 
     public FloatingTextParticle(Vector3 pos, String text) {
         this(pos, text, "");

@@ -355,7 +355,7 @@ public class SessionManager {
                     this.blockAddress(address, timeout);
                     break;
                 case RakNet.PACKET_SHUTDOWN:
-                    for (Session session : this.sessions.values()) {
+                    for (Session session : new ArrayList<>(this.sessions.values())) {
                         this.removeSession(session);
                     }
 
