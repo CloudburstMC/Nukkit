@@ -1,7 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 
 /**
  * author: MagicDroidX
@@ -9,7 +9,7 @@ import cn.nukkit.level.Location;
  */
 public class AnvilInventory extends ContainerInventory {
 
-    public AnvilInventory(Location position) {
+    public AnvilInventory(Position position) {
         super(null, InventoryType.get(InventoryType.ANVIL));
         this.holder = new FakeBlockMenu(this, position);
     }

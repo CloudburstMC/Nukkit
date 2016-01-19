@@ -15,7 +15,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.LevelProviderManager;
@@ -1315,7 +1315,7 @@ public class Server {
             this.logger.notice(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
         }
 
-        Location spawn = this.getDefaultLevel().getSafeSpawn();
+        Position spawn = this.getDefaultLevel().getSafeSpawn();
         CompoundTag nbt = new CompoundTag()
                 .putLong("firstPlayed", System.currentTimeMillis() / 1000)
                 .putLong("lastPlayed", System.currentTimeMillis() / 1000)

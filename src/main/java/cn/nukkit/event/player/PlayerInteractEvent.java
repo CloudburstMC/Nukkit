@@ -5,7 +5,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 
 /**
@@ -46,7 +46,7 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
             this.touchVector = new Vector3(0, 0, 0);
         } else {
             this.touchVector = block;
-            this.blockTouched = Block.get(0, 0, new Location(player.getLevel(),0, 0, 0));
+            this.blockTouched = Block.get(0, 0, new Position(0, 0, 0, player.level));
         }
 
         this.player = player;

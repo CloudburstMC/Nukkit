@@ -2,7 +2,7 @@ package cn.nukkit.event.entity;
 
 import cn.nukkit.entity.*;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 
 /**
  * author: MagicDroidX
@@ -22,7 +22,7 @@ public class EntitySpawnEvent extends EntityEvent {
         this.entityType = entity.getNetworkId();
     }
 
-    public Location getPosition() {
+    public Position getPosition() {
         return this.entity.getPosition();
     }
 

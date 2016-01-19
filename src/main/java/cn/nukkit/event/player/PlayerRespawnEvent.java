@@ -3,7 +3,7 @@ package cn.nukkit.event.player;
 import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 
 public class PlayerRespawnEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -12,18 +12,18 @@ public class PlayerRespawnEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    private Location position;
+    private Position position;
 
-    public PlayerRespawnEvent(Player player, Location position) {
+    public PlayerRespawnEvent(Player player, Position position) {
         this.player = player;
         this.position = position;
     }
 
-    public Location getRespawnPosition() {
+    public Position getRespawnPosition() {
         return position;
     }
 
-    public void setRespawnPosition(Location position) {
+    public void setRespawnPosition(Position position) {
         this.position = position;
     }
 }

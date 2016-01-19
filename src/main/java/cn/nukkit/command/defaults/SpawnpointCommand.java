@@ -5,7 +5,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 import cn.nukkit.utils.TextFormat;
 
 import java.text.DecimalFormat;
@@ -57,7 +57,7 @@ public class SpawnpointCommand extends VanillaCommand {
                 }
                 if (y < 0) y = 0;
                 if (y > 128) y = 128;
-                target.setSpawn(new Location(level, x, y, z));
+                target.setSpawn(new Position(x, y, z, level));
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success", new String[]{
                         target.getName(),
                         round2.format(x),
@@ -68,7 +68,7 @@ public class SpawnpointCommand extends VanillaCommand {
             }
         } else if (args.length <= 1) {
             if (sender instanceof Player) {
-                Location pos = (Location) sender;
+                Position pos = (Position) sender;
                 target.setSpawn(pos);
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success", new String[]{
                         target.getName(),

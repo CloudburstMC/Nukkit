@@ -136,7 +136,7 @@ public class Level implements ChunkManager, Metadatable {
     private boolean useSections;
     private byte blockOrder;
 
-    private Location temporalPosition;
+    private Position temporalPosition;
     private Vector3 temporalVector;
 
     private Block[] blockStates;
@@ -240,7 +240,7 @@ public class Level implements ChunkManager, Metadatable {
         this.clearChunksOnTick = (boolean) this.server.getConfig("chunk-ticking.clear-tick-list", true);
         this.cacheChunks = (boolean) this.server.getConfig("chunk-sending.cache-chunks", false);
 
-        this.temporalPosition = new Location(this, 0, 0, 0);
+        this.temporalPosition = new Position(0, 0, 0, this);
         this.temporalVector = new Vector3(0, 0, 0);
         this.tickRate = 1;
     }
@@ -1228,11 +1228,11 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, true).setBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f, (int) pos.z & 0x0f, block.getId(), block.getDamage())) {
-            Location position;
-            if (!(pos instanceof Location)) {
+            Position position;
+            if (!(pos instanceof Position)) {
                 position = this.temporalPosition.setComponents(pos.x, pos.y, pos.z);
             } else {
-                position = (Location) pos;
+                position = (Position) pos;
             }
 
             block.position(position);
@@ -2015,12 +2015,12 @@ public class Level implements ChunkManager, Metadatable {
         return chunk != null && chunk.isPopulated();
     }
 
-    public Location getSpawnLocation() {
-        return Location.fromObject(this.provider.getSpawn(), this);
+    public Position getSpawnLocation() {
+        return Position.fromObject(this.provider.getSpawn(), this);
     }
 
     public void setSpawnLocation(Vector3 pos) {
-        Location previousSpawn = this.getSpawnLocation();
+        Position previousSpawn = this.getSpawnLocation();
         this.provider.setSpawn(pos);
         this.server.getPluginManager().callEvent(new SpawnChangeEvent(this, previousSpawn));
     }
@@ -2284,11 +2284,11 @@ public class Level implements ChunkManager, Metadatable {
         return Math.abs(X - spawnX) <= 1 && Math.abs(Z - spawnZ) <= 1;
     }
 
-    public Location getSafeSpawn() {
+    public Position getSafeSpawn() {
         return this.getSafeSpawn(null);
     }
 
-    public Location getSafeSpawn(Vector3 spawn) {
+    public Position getSafeSpawn(Vector3 spawn) {
         if (spawn == null || spawn.y <= 0) {
             spawn = this.getSpawnLocation();
         }
@@ -2321,7 +2321,7 @@ public class Level implements ChunkManager, Metadatable {
                         b = chunk.getFullBlock(x, y, z);
                         block = Block.get(b >> 4, b & 0x0f);
                         if (!this.isFullBlock(block)) {
-                            return new Location(this, spawn.x, y == (int) spawn.y ? spawn.y : y, spawn.z);
+                            return new Position(spawn.x, y == (int) spawn.y ? spawn.y : y, spawn.z, this);
                         }
                     } else {
                         ++y;
@@ -2331,7 +2331,7 @@ public class Level implements ChunkManager, Metadatable {
                 v.y = y;
             }
 
-            return new Location(this, spawn.x, v.y, spawn.z);
+            return new Position(spawn.x, v.y, spawn.z, this);
         }
 
         return null;

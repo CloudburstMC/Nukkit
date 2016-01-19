@@ -3,7 +3,7 @@ package cn.nukkit.event.entity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 
 /**
  * author: MagicDroidX
@@ -16,28 +16,28 @@ public class EntityTeleportEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
-    private Location from;
-    private Location to;
+    private Position from;
+    private Position to;
 
-    public EntityTeleportEvent(Entity entity, Location from, Location to) {
+    public EntityTeleportEvent(Entity entity, Position from, Position to) {
         this.entity = entity;
         this.from = from;
         this.to = to;
     }
 
-    public Location getFrom() {
+    public Position getFrom() {
         return from;
     }
 
-    public void setFrom(Location from) {
+    public void setFrom(Position from) {
         this.from = from;
     }
 
-    public Location getTo() {
+    public Position getTo() {
         return to;
     }
 
-    public void setTo(Location to) {
+    public void setTo(Position to) {
         this.to = to;
     }
 }

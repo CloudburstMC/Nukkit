@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 
 import java.util.HashMap;
 
@@ -20,18 +20,18 @@ public class EntityExplodeEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
-    protected Location position;
+    protected Position position;
     protected HashMap<String, Block> blocks;
     protected float yield;
 
-    public EntityExplodeEvent(Entity entity, Location position, HashMap<String, Block> blocks, float yield) {
+    public EntityExplodeEvent(Entity entity, Position position, HashMap<String, Block> blocks, float yield) {
         this.entity = entity;
         this.position = position;
         this.blocks = blocks;
         this.yield = yield;
     }
 
-    public Location getPosition() {
+    public Position getPosition() {
         return this.position;
     }
 

@@ -1,7 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 
 /**
  * author: MagicDroidX
@@ -9,7 +9,7 @@ import cn.nukkit.level.Location;
  */
 public class EnchantInventory extends ContainerInventory {
 
-    public EnchantInventory(Location position) {
+    public EnchantInventory(Position position) {
         super(null, InventoryType.get(InventoryType.ENCHANT_TABLE));
         this.holder = new FakeBlockMenu(this, position);
     }
