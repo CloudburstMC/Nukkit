@@ -5,8 +5,8 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
@@ -21,7 +21,7 @@ import java.util.List;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Block extends Position implements Metadatable, Cloneable {
+public abstract class Block extends Location implements Metadatable, Cloneable {
     public static final int AIR = 0;
     public static final int STONE = 1;
     public static final int GRASS = 2;
@@ -523,7 +523,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     @SuppressWarnings("unchecked")
-    public static Block get(int id, Integer meta, Position pos) {
+    public static Block get(int id, Integer meta, Location pos) {
         Block block;
         try {
             Class c = list[id];
@@ -647,7 +647,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         this.meta = (meta == null ? 0 : meta & 0x0f);
     }
 
-    final public void position(Position v) {
+    final public void position(Location v) {
         this.x = (int) v.x;
         this.y = (int) v.y;
         this.z = (int) v.z;
@@ -717,7 +717,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         if (this.isValid()) {
             return this.getLevel().getBlock(super.getSide(side, step));
         }
-        return Block.get(Item.AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(side, step)));
+        return Block.get(Item.AIR, 0, Location.fromObject(new Vector3(this.x, this.y, this.z).getSide(side, step)));
     }
 
     @Override

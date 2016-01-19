@@ -13,7 +13,7 @@ public interface ChunkLoader {
 
     boolean isLoaderActive();
 
-    Position getPosition();
+    Location getPosition();
 
     double getX();
 

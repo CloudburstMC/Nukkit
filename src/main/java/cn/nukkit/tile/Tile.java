@@ -2,7 +2,7 @@ package cn.nukkit.tile;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
@@ -15,7 +15,7 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Tile extends Position {
+public abstract class Tile extends Location {
     public static final String SIGN = "Sign";
     public static final String CHEST = "Chest";
     public static final String FURNACE = "Furnace";
