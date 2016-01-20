@@ -3872,7 +3872,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     //todo a lot on dimension
 
-    public void updateDimension() {
+    public void setDimension() {
         ChangeDimensionPacket pk = new ChangeDimensionPacket();
         pk.dimension = (byte) (getLevel().getDimension() & 0xff);
         this.dataPacket(pk);
