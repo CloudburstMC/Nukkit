@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /*
  * Created on 2015/12/11 by Pub4Game.
@@ -51,4 +52,8 @@ public class Redstone extends Transparent {
         }
     }
 
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.REDSTONE_BLOCK_COLOR;
+    }
 }

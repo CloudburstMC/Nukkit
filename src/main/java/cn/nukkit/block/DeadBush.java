@@ -1,6 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.BlockColor;
+
+import java.util.Random;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -35,5 +39,18 @@ public class DeadBush extends Flowable {
             }
         }
         return 0;
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        if (item.isShears()) {
+            return new int[][]{{Item.DEAD_BUSH, 0, 1}};
+        } else {
+            return new int[][]{{Item.STICK, 0, new Random().nextInt(1) + 2}};
+        }
+    }
+
+    public BlockColor getColor() {
+        return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
 }

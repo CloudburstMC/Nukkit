@@ -279,10 +279,27 @@ public class PluginManager {
                 }
 
                 if (missingDependency) {
-                    for (String name : plugins.keySet()) {
-                        this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.loadError", new String[]{name, "%nukkit.plugin.circularDependency"}));
+                    for (String name : new ArrayList<>(plugins.keySet())) {
+                        File file = plugins.get(name);
+                        if (!dependencies.containsKey(name)) {
+                            softDependencies.remove(name);
+                            plugins.remove(name);
+                            missingDependency = false;
+                            Plugin plugin = this.loadPlugin(file, loaders);
+                            if (plugin != null) {
+                                loadedPlugins.put(name, plugin);
+                            } else {
+                                this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.genericLoadError", name));
+                            }
+                        }
                     }
-                    plugins.clear();
+
+                    if (missingDependency) {
+                        for (String name : plugins.keySet()) {
+                            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.loadError", new String[]{name, "%nukkit.plugin.circularDependency"}));
+                        }
+                        plugins.clear();
+                    }
                 }
             }
 

@@ -64,7 +64,7 @@ public class Air extends Transparent {
 
     @Override
     public double getHardness() {
-        return -1;
+        return 0;
     }
 
     @Override

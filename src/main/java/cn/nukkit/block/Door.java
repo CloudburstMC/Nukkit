@@ -272,8 +272,7 @@ public abstract class Door extends Transparent {
         if ((this.getDamage() & 0x08) == 0x08) { //Top
             Block down = this.getSide(0);
             if (down.getId() == this.getId()) {
-                meta = down.getDamage() ^ 0x04;
-                this.getLevel().setBlock(down, Block.get(this.getId(), meta), true);
+                this.getLevel().setBlock(down, Block.get(this.getId(), down.getDamage() ^ 0x04), true);
                 Map<Integer, Player> players = this.getLevel().getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
                 if (player != null) {
                     players.remove(player.getLoaderId());

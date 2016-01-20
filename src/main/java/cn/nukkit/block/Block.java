@@ -12,6 +12,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.utils.BlockColor;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -43,9 +44,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int GOLD_ORE = 14;
     public static final int IRON_ORE = 15;
     public static final int COAL_ORE = 16;
+    public static final int LOG = 17;
     public static final int WOOD = 17;
     public static final int TRUNK = 17;
-    public static final int LOG = 17;
     public static final int LEAVES = 18;
     public static final int LEAVE = 18;
     public static final int SPONGE = 19;
@@ -54,9 +55,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int LAPIS_BLOCK = 22;
 
     public static final int SANDSTONE = 24;
-
+    public static final int NOTEBLOCK = 25;
     public static final int BED_BLOCK = 26;
-
+    public static final int POWERED_RAIL = 27;
+    public static final int DETECTOR_RAIL = 28;
 
     public static final int COBWEB = 30;
     public static final int TALL_GRASS = 31;
@@ -64,8 +66,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int DEAD_BUSH = 32;
     public static final int WOOL = 35;
     public static final int DANDELION = 37;
-    public static final int ROSE = 38;
     public static final int POPPY = 38;
+    public static final int ROSE = 38;
     public static final int FLOWER = 38;
     public static final int RED_FLOWER = 38;
     public static final int BROWN_MUSHROOM = 39;
@@ -106,13 +108,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int WOODEN_DOOR_BLOCK = 64;
     public static final int WOOD_DOOR_BLOCK = 64;
     public static final int LADDER = 65;
-
+    public static final int RAIL = 66;
     public static final int COBBLE_STAIRS = 67;
     public static final int COBBLESTONE_STAIRS = 67;
     public static final int WALL_SIGN = 68;
-
+    public static final int LEVER = 69;
+    public static final int STONE_PRESSURE_PLATE = 70;
     public static final int IRON_DOOR_BLOCK = 71;
-
+    public static final int WOODEN_PRESSURE_PLATE = 72;
     public static final int REDSTONE_ORE = 73;
     public static final int GLOWING_REDSTONE_ORE = 74;
     public static final int LIT_REDSTONE_ORE = 74;
@@ -172,8 +175,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int BREWING_STAND_BLOCK = 117;
     public static final int BREWING_BLOCK = 117;
 
+    public static final int END_PORTAL = 120;
     public static final int END_PORTAL_FRAME = 120;
     public static final int END_STONE = 121;
+
+    public static final int REDSTONE_LAMP = 123;
+    public static final int LIT_REDSTONE_LAMP = 124;
+
+    public static final int ACTIVATOR_RAIL = 126;
 
     public static final int SANDSTONE_STAIRS = 128;
     public static final int EMERALD_ORE = 129;
@@ -189,12 +198,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int COBBLE_WALL = 139;
     public static final int STONE_WALL = 139;
     public static final int COBBLESTONE_WALL = 139;
-
+    public static final int FLOWER_POT_BLOCK = 140;
     public static final int CARROT_BLOCK = 141;
     public static final int POTATO_BLOCK = 142;
 
     public static final int ANVIL = 145;
+    public static final int TRAPPED_CHEST = 146;
+    public static final int LIGHT_WEIGHTED_PRESSURE_PLATE = 147;
+    public static final int HEAVY_WEIGHTED_PRESSURE_PLATE = 148;
 
+    public static final int DAYLIGHT_DETECTOR = 151;
     public static final int REDSTONE_BLOCK = 152;
     public static final int QUARTZ_ORE = 153;
 
@@ -229,11 +242,19 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int PACKED_ICE = 174;
     public static final int DOUBLE_PLANT = 175;
 
+    public static final int DAYLIGHT_DETECTOR_INVERTED = 178;
+
     public static final int FENCE_GATE_SPRUCE = 183;
     public static final int FENCE_GATE_BIRCH = 184;
     public static final int FENCE_GATE_JUNGLE = 185;
     public static final int FENCE_GATE_DARK_OAK = 186;
     public static final int FENCE_GATE_ACACIA = 187;
+
+    public static final int SPRUCE_DOOR_BLOCK = 193;
+    public static final int BIRCH_DOOR_BLOCK = 194;
+    public static final int JUNGLE_DOOR_BLOCK = 195;
+    public static final int ACACIA_DOOR_BLOCK = 196;
+    public static final int DARK_OAK_DOOR_BLOCK = 197;
 
     public static final int GRASS_PATH = 198;
 
@@ -249,13 +270,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static boolean[] solid = null;
     public static double[] hardness = null;
     public static boolean[] transparent = null;
-
+    public AxisAlignedBB boundingBox = null;
     protected int meta = 0;
-
     protected int powerLevel = 0;
     protected boolean powerSource = false;
-
-    public AxisAlignedBB boundingBox = null;
 
     protected Block(Integer meta) {
         this.meta = (meta != null ? meta : 0);
@@ -296,6 +314,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[LAPIS_ORE] = LapisOre.class;
             list[LAPIS_BLOCK] = Lapis.class;
             list[SANDSTONE] = Sandstone.class;
+            list[NOTEBLOCK] = Noteblock.class;
             list[BED_BLOCK] = Bed.class;
             list[COBWEB] = Cobweb.class;
             list[TALL_GRASS] = TallGrass.class;
@@ -365,10 +384,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[IRON_BARS] = IronBars.class;
             list[GLASS_PANE] = GlassPane.class;
             list[MELON_BLOCK] = Melon.class;
-            /*list[PUMPKIN_STEM] = PumpkinStem.class;
+            list[PUMPKIN_STEM] = PumpkinStem.class;
             list[MELON_STEM] = MelonStem.class;
             list[VINE] = Vine.class;
-            */
             list[FENCE_GATE] = FenceGate.class;
 
             list[BRICK_STAIRS] = BrickStairs.class;
@@ -380,7 +398,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[NETHER_BRICK_FENCE] = NetherBrickFence.class;
             list[NETHER_BRICKS_STAIRS] = NetherBrickStairs.class;
 
-            //list[ENCHANTING_TABLE] = EnchantingTable.class;
+            list[ENCHANTING_TABLE] = EnchantingTable.class;
 
             list[END_PORTAL_FRAME] = EndPortalFrame.class;
             list[END_STONE] = EndStone.class;
@@ -395,8 +413,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[JUNGLE_WOOD_STAIRS] = JungleWoodStairs.class;
             list[STONE_WALL] = StoneWall.class;
 
-            //list[CARROT_BLOCK] = Carrot.class;
-            //list[POTATO_BLOCK] = Potato.class;
+            list[CARROT_BLOCK] = Carrot.class;
+            list[POTATO_BLOCK] = Potato.class;
             list[ANVIL] = Anvil.class;
 
             list[REDSTONE_BLOCK] = Redstone.class;
@@ -434,6 +452,23 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[STONECUTTER] = Stonecutter.class;
             list[GLOWING_OBSIDIAN] = GlowingObsidian.class;
             list[BREWING_STAND_BLOCK] = BrewingStand.class;
+            list[ACACIA_DOOR_BLOCK] = AcaciaDoor.class;
+            list[SPRUCE_DOOR_BLOCK] = SpruceDoor.class;
+            list[DARK_OAK_DOOR_BLOCK] = DarkOakDoor.class;
+            list[BIRCH_DOOR_BLOCK] = BirchDoor.class;
+            list[JUNGLE_DOOR_BLOCK] = JungleDoor.class;
+            list[DAYLIGHT_DETECTOR] = DaylightDetector.class;
+            list[DAYLIGHT_DETECTOR_INVERTED] = DaylightDetectorInverted.class;
+            list[ACTIVATOR_RAIL] = RailActivator.class;
+            list[DETECTOR_RAIL] = RailDetector.class;
+            list[POWERED_RAIL] = RailPowered.class;
+            list[FLOWER_POT_BLOCK] = FlowerPot.class;
+            list[LEVER] = Lever.class;
+            list[HEAVY_WEIGHTED_PRESSURE_PLATE] = HeavyWeightedPressurePlate.class;
+            list[LIGHT_WEIGHTED_PRESSURE_PLATE] = LightWeightedPressurePlate.class;
+            list[REDSTONE_LAMP] = RedstoneLamp.class;
+            list[STONE_PRESSURE_PLATE] = StonePressurePlate.class;
+            list[WOODEN_PRESSURE_PLATE] = WoodenPressurePlate.class;
 
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];
@@ -591,6 +626,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     public boolean canPassThrough() {
         return false;
+    }
+
+    public BlockColor getColor() {
+        return BlockColor.VOID_BLOCK_COLOR;
     }
 
     public abstract String getName();
@@ -829,12 +868,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return (Block) super.clone();
     }
 
-    public void setPowerLevel(int powerLevel) {
-        this.powerLevel = powerLevel;
-    }
-
     public int getPowerLevel() {
         return powerLevel;
+    }
+
+    public void setPowerLevel(int powerLevel) {
+        this.powerLevel = powerLevel;
     }
 
     public int getPowerLevel(int side) {

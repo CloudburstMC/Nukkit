@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Beetroot extends Item {
+public class Beetroot extends EdibleItem {
 
     public Beetroot() {
         this(0, 1);

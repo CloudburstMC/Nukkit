@@ -229,13 +229,13 @@ public class BinaryStream {
         return Binary.readUUID(this.get(16));
     }
 
-    public void putSkinData(Skin skin) {
+    public void putSkin(Skin skin) {
         this.putString(skin.getModel());
         this.putShort(skin.getData().length);
         this.put(skin.getData());
     }
 
-    public Skin getSkinData() {
+    public Skin getSkin() {
         String modelId = this.getString();
         byte[] skinData = this.get(this.getShort());
         return new Skin(skinData, modelId);

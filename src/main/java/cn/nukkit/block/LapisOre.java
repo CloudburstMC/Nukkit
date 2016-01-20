@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.math.NukkitRandom;
 
 import java.util.Random;
 
@@ -56,6 +57,6 @@ public class LapisOre extends Solid {
 
     @Override
     public int getDropExp() {
-        return new cn.nukkit.utils.Random().nextRange(2, 5);
+        return new NukkitRandom().nextRange(2, 5);
     }
 }

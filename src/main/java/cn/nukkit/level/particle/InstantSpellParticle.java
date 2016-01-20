@@ -1,8 +1,7 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2016/1/4 by xtypr.
@@ -17,6 +16,11 @@ public class InstantSpellParticle extends SpellParticle {
 
     public InstantSpellParticle(Vector3 pos, int data) {
         super(pos, data);
+    }
+
+    public InstantSpellParticle(Vector3 pos, BlockColor blockColor) {
+        //alpha is ignored
+        this(pos, blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());
     }
 
     public InstantSpellParticle(Vector3 pos, int r, int g, int b) {

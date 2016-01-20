@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.level.Level;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -28,13 +30,23 @@ public class Ice extends Transparent {
     }
 
     @Override
+    public double getResistance() {
+        return 2.5;
+    }
+
+    @Override
     public double getHardness() {
         return 0.5;
     }
 
     @Override
+    public double getFrictionFactor() {
+        return 0.98;
+    }
+
+    @Override
     public int getToolType() {
-        return Tool.TYPE_NONE;
+        return Tool.TYPE_PICKAXE;
     }
 
     @Override
@@ -44,7 +56,23 @@ public class Ice extends Transparent {
     }
 
     @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_RANDOM) {
+            if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12) {
+                this.getLevel().setBlock(this, new Water(), true);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
+        }
+        return 0;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         return new int[0][0];
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.ICE_BLOCK_COLOR;
     }
 }

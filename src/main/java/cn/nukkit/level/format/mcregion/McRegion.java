@@ -323,7 +323,7 @@ public class McRegion extends BaseLevelProvider {
         this.chunks.put(index, (Chunk) chunk);
     }
 
-    public static ChunkSection createChunkSection(byte Y) {
+    public static ChunkSection createChunkSection(int Y) {
         return null;
     }
 

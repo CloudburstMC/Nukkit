@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -71,6 +72,11 @@ public class SnowLayer extends Flowable {
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
+        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+            if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 10) {
+                this.getLevel().setBlock(this, new Air(), true);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
         }
         return 0;
     }
@@ -83,6 +89,11 @@ public class SnowLayer extends Flowable {
             };
         }
         return new int[][]{};
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.SNOW_BLOCK_COLOR;
     }
 }
 

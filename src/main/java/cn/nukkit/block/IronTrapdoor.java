@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Pub4Game on 26.12.2015.
@@ -48,4 +49,8 @@ public class IronTrapdoor extends Trapdoor {
         };
     }
 
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.IRON_BLOCK_COLOR;
+    }
 }

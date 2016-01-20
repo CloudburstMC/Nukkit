@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * @author Nukkit Project Team
@@ -46,4 +47,8 @@ public class Clay extends Solid {
         return new int[][]{{Item.CLAY, 0, 4}};
     }
 
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.CLAY_BLOCK_COLOR;
+    }
 }

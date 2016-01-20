@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -27,13 +27,13 @@ public class Glowstone extends Transparent {
     }
 
     @Override
-    public double getHardness() {
-        return 0.3;
+    public double getResistance() {
+        return 1.5;
     }
 
     @Override
-    public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+    public double getHardness() {
+        return 0.3;
     }
 
     @Override
@@ -46,5 +46,10 @@ public class Glowstone extends Transparent {
         return new int[][]{
                 {Item.GLOWSTONE_DUST, 0, ((int) (2d * Math.random()) + 2)}
         };
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
     }
 }

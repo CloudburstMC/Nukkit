@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * @author Nukkit Project Team
@@ -23,7 +24,7 @@ public class Diamond extends Solid {
 
     @Override
     public double getResistance() {
-        return 10;
+        return 30;
     }
 
     @Override
@@ -45,8 +46,14 @@ public class Diamond extends Solid {
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() > Tool.TIER_IRON) {
             return new int[][]{{Item.DIAMOND_BLOCK, 0, 1}};
+        } else {
+            return new int[0][];
         }
-        return new int[0][];
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.DIAMOND_BLOCK_COLOR;
     }
 
 }

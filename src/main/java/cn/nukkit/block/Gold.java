@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: Angelic47
@@ -40,7 +41,7 @@ public class Gold extends Solid {
 
     @Override
     public double getResistance() {
-        return 10;
+        return 30;
     }
 
     @Override
@@ -50,5 +51,10 @@ public class Gold extends Solid {
         } else {
             return new int[0][];
         }
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.GOLD_BLOCK_COLOR;
     }
 }

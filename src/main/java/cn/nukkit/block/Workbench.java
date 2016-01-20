@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/5 by xtypr.
@@ -44,7 +45,7 @@ public class Workbench extends Solid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return Tool.TYPE_AXE;
     }
 
     @Override
@@ -60,5 +61,10 @@ public class Workbench extends Solid {
         return new int[][]{
                 {this.getId(), 0, 1}
         };
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 }

@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Pub4Game on 26.12.2015.
@@ -148,9 +149,15 @@ public class Trapdoor extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        this.meta ^= 0x04;
+        this.meta |= 0x04;
         this.getLevel().setBlock(this, this, true);
         this.level.addSound(new DoorSound(this));
         return true;
     }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
+    }
+
 }

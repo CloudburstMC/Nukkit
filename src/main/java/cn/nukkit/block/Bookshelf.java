@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * @author Nukkit Project Team
@@ -46,6 +47,11 @@ public class Bookshelf extends Solid {
         return new int[][]{
                 {Item.BOOK, 0, 3}
         };
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 
 }

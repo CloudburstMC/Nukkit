@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Pub4Game on 27.12.2015.
@@ -50,7 +51,7 @@ public class Anvil extends Fallable {
 
     @Override
     public String getName() {
-        String[] names = new String[] {
+        String[] names = new String[]{
                 "Anvil",
                 "Anvil",
                 "Anvil",
@@ -113,4 +114,10 @@ public class Anvil extends Fallable {
         }
         return new int[0][];
     }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.IRON_BLOCK_COLOR;
+    }
+
 }

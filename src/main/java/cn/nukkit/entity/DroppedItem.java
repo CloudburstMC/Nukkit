@@ -153,9 +153,9 @@ public class DroppedItem extends Entity {
     public void saveNBT() {
         super.saveNBT();
         this.namedTag.putCompound("Item", new CompoundTag()
-                        .putShort("id", this.item.getId())
-                        .putShort("Damage", this.item.getDamage())
-                        .putByte("Count", (byte) this.item.getCount())
+                .putShort("id", this.item.getId())
+                .putShort("Damage", this.item.getDamage())
+                .putByte("Count", (byte) this.item.getCount())
         );
 
         this.namedTag.putShort("Health", this.getHealth());
