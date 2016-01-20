@@ -33,9 +33,20 @@ public class Chunk extends BaseFullChunk {
         this(level, null);
     }
 
+    public Chunk(Class<? extends LevelProvider> providerClass) {
+        this((LevelProvider) null, null);
+        this.providerClass = providerClass;
+    }
+
+    public Chunk(Class<? extends LevelProvider> providerClass, CompoundTag nbt) {
+        this((LevelProvider) null, nbt);
+        this.providerClass = providerClass;
+    }
+
     public Chunk(LevelProvider level, CompoundTag nbt) {
         if (nbt == null) {
             this.provider = level;
+            this.providerClass = level.getClass();
             this.nbt = new CompoundTag("Level");
             return;
         }
@@ -84,6 +95,7 @@ public class Chunk extends BaseFullChunk {
         }
 
         this.provider = level;
+        this.providerClass = level.getClass();
         this.x = this.nbt.getInt("xPos");
         this.z = this.nbt.getInt("zPos");
         this.blocks = this.nbt.getByteArray("Blocks");
@@ -480,7 +492,13 @@ public class Chunk extends BaseFullChunk {
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
         try {
-            Chunk chunk = new Chunk(provider, null);
+            Chunk chunk;
+            if (provider != null) {
+                chunk = new Chunk(provider, null);
+            } else {
+                chunk = new Chunk(McRegion.class, null);
+            }
+
             chunk.x = chunkX;
             chunk.z = chunkZ;
             chunk.data = new byte[16384];
