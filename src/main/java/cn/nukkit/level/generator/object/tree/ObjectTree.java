@@ -111,6 +111,7 @@ public abstract class ObjectTree {
                         continue;
                     }
                     if (!Block.solid[level.getBlockIdAt(xx, yy, zz)]) {
+
                         level.setBlockIdAt(xx, yy, zz, this.getLeafBlock());
                         level.setBlockDataAt(xx, yy, zz, this.getType());
                     }
