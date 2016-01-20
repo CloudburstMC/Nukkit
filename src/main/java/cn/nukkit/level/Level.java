@@ -350,6 +350,10 @@ public class Level implements ChunkManager, Metadatable {
         this.addSound(sound, (Player[]) null);
     }
 
+    public void addSound(Sound sound, Player player) {
+        this.addSound(sound, new Player[]{player});
+    }
+
     public void addSound(Sound sound, Player[] players) {
         DataPacket[] packets = sound.encode();
 
@@ -376,6 +380,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addParticle(Particle particle) {
         this.addParticle(particle, (Player[]) null);
+    }
+
+    public void addParticle(Particle particle, Player player) {
+        this.addParticle(particle, new Player[]{player});
     }
 
     public void addParticle(Particle particle, Player[] players) {
