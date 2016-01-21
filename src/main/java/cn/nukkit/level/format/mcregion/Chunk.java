@@ -357,6 +357,7 @@ public class Chunk extends BaseFullChunk {
     public static Chunk fromBinary(byte[] data, LevelProvider provider) {
         try {
             CompoundTag chunk = NBTIO.read(new ByteArrayInputStream(Zlib.inflate(data)), ByteOrder.BIG_ENDIAN);
+
             if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
                 return null;
             }

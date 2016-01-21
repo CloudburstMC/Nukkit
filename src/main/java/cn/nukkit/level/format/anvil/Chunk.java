@@ -13,6 +13,7 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Zlib;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -199,7 +200,7 @@ public class Chunk extends BaseChunk {
 
     public static Chunk fromBinary(byte[] data, LevelProvider provider) {
         try {
-            CompoundTag chunk = NBTIO.read(new InflaterInputStream(new ByteArrayInputStream(data)), ByteOrder.BIG_ENDIAN);
+            CompoundTag chunk = NBTIO.read(new ByteArrayInputStream(Zlib.inflate(data)), ByteOrder.BIG_ENDIAN);
 
             if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
                 return null;
