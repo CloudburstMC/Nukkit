@@ -123,8 +123,8 @@ public class PrimedTNT extends Entity implements Explosive {
             fuse -= tickDiff;
 
             if (fuse <= 0) {
-                kill();
                 explode();
+                kill();
             }
 
         }
@@ -134,13 +134,10 @@ public class PrimedTNT extends Entity implements Explosive {
     public void explode() {
         EntityExplosionPrimeEvent event = new EntityExplosionPrimeEvent(this, 4);
         server.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            Explosion explosion = new Explosion(this, event.getForce(), this);
-            if (event.isBlockBreaking()) {
-                explosion.explodeA();
-            }
-            explosion.explodeB();
-        }
+        if (event.isCancelled()) return;
+        Explosion explosion = new Explosion(this, event.getForce(), this);
+        if (event.isBlockBreaking()) explosion.explodeA();
+        explosion.explodeB();
     }
 
     public void spawnTo(Player player) {
