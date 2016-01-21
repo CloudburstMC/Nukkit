@@ -24,15 +24,6 @@ public class RegionLoader extends BaseRegionLoader {
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        if (this.randomAccessFile != null) {
-            this.writeLocationTable();
-            this.randomAccessFile.close();
-        }
-    }
-
-    @Override
     protected boolean isChunkGenerated(int index) {
         Integer[] array = this.locationTable.get(index);
         return !(array[0] == 0 || array[1] == 0);

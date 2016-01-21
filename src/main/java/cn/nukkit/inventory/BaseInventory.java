@@ -70,13 +70,6 @@ public abstract class BaseInventory implements Inventory {
     }
 
     @Override
-    public void finalize() throws Throwable {
-        this.holder = null;
-        this.slots = new HashMap<>();
-        super.finalize();
-    }
-
-    @Override
     public int getSize() {
         return size;
     }

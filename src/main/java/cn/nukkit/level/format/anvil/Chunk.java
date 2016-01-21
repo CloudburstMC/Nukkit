@@ -46,12 +46,16 @@ public class Chunk extends BaseChunk {
     }
 
     public Chunk(LevelProvider level, CompoundTag nbt) {
-        if (nbt == null) {
-            this.provider = level;
+        this.provider = level;
+        if (level != null) {
             this.providerClass = level.getClass();
+        }
+
+        if (nbt == null) {
             this.nbt = new CompoundTag("Level");
             return;
         }
+
         this.nbt = nbt;
 
         if (!(this.nbt.contains("Entities") && (this.nbt.get("Entities") instanceof ListTag))) {
@@ -106,8 +110,6 @@ public class Chunk extends BaseChunk {
             }
         }
 
-        this.provider = level;
-        this.providerClass = level.getClass();
         this.x = this.nbt.getInt("xPos");
         this.z = this.nbt.getInt("zPos");
         for (int Y = 0; Y < sections.length; ++Y) {

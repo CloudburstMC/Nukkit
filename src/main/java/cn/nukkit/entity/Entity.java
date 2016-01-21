@@ -1576,12 +1576,6 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        this.close();
-    }
-
-    @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
         this.server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
     }
