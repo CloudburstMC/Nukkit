@@ -48,6 +48,7 @@ public abstract class BaseFullChunk implements FullChunk {
     protected Map<Integer, Integer> extraData = new HashMap<>();
 
     protected LevelProvider provider;
+    protected Class<? extends LevelProvider> providerClass;
 
     protected int x;
     protected int z;

@@ -32,7 +32,7 @@ public class PlayerListPacket extends DataPacket {
                 this.putUUID(entry.uuid);
                 this.putLong(entry.entityId);
                 this.putString(entry.name);
-                this.putSkinData(entry.skin);
+                this.putSkin(entry.skin);
             } else {
                 this.putUUID(entry.uuid);
             }

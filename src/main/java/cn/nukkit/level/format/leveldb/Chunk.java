@@ -39,6 +39,11 @@ public class Chunk extends BaseFullChunk {
         this(level, chunkX, chunkZ, terrain, null);
     }
 
+    public Chunk(Class<? extends LevelProvider> providerClass, int chunkX, int chunkZ, byte[] terrain) {
+        this(null, chunkX, chunkZ, terrain, null);
+        this.providerClass = providerClass;
+    }
+
     public Chunk(LevelProvider level, int chunkX, int chunkZ, byte[] terrain, List<CompoundTag> entityData) {
         this(level, chunkX, chunkZ, terrain, entityData, null);
     }
@@ -73,6 +78,10 @@ public class Chunk extends BaseFullChunk {
         }
 
         this.provider = level;
+        if (level != null) {
+            this.providerClass = level.getClass();
+        }
+        
         this.x = chunkX;
         this.z = chunkZ;
 
@@ -505,7 +514,13 @@ public class Chunk extends BaseFullChunk {
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
         try {
-            Chunk chunk = new Chunk(provider, chunkX, chunkZ, new byte[DATA_LENGTH]);
+            Chunk chunk;
+            if (provider != null) {
+                chunk = new Chunk(provider, chunkX, chunkZ, new byte[DATA_LENGTH]);
+            } else {
+                chunk = new Chunk(LevelDB.class, chunkX, chunkZ, new byte[DATA_LENGTH]);
+            }
+
             byte[] skyLight = new byte[16384];
             Arrays.fill(skyLight, (byte) 0xff);
             chunk.skyLight = skyLight;

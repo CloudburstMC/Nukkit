@@ -33,12 +33,27 @@ public class Chunk extends BaseFullChunk {
         this(level, null);
     }
 
+    public Chunk(Class<? extends LevelProvider> providerClass) {
+        this((LevelProvider) null, null);
+        this.providerClass = providerClass;
+    }
+
+    public Chunk(Class<? extends LevelProvider> providerClass, CompoundTag nbt) {
+        this((LevelProvider) null, nbt);
+        this.providerClass = providerClass;
+    }
+
     public Chunk(LevelProvider level, CompoundTag nbt) {
+        this.provider = level;
+        if (level != null) {
+            this.providerClass = level.getClass();
+        }
+
         if (nbt == null) {
-            this.provider = level;
             this.nbt = new CompoundTag("Level");
             return;
         }
+
         this.nbt = nbt;
 
         if (!(this.nbt.contains("Entities") && (this.nbt.get("Entities") instanceof ListTag))) {
@@ -83,7 +98,6 @@ public class Chunk extends BaseFullChunk {
             }
         }
 
-        this.provider = level;
         this.x = this.nbt.getInt("xPos");
         this.z = this.nbt.getInt("zPos");
         this.blocks = this.nbt.getByteArray("Blocks");
@@ -343,6 +357,7 @@ public class Chunk extends BaseFullChunk {
     public static Chunk fromBinary(byte[] data, LevelProvider provider) {
         try {
             CompoundTag chunk = NBTIO.read(new ByteArrayInputStream(Zlib.inflate(data)), ByteOrder.BIG_ENDIAN);
+
             if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
                 return null;
             }
@@ -480,7 +495,13 @@ public class Chunk extends BaseFullChunk {
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
         try {
-            Chunk chunk = new Chunk(provider, null);
+            Chunk chunk;
+            if (provider != null) {
+                chunk = new Chunk(provider, null);
+            } else {
+                chunk = new Chunk(McRegion.class, null);
+            }
+
             chunk.x = chunkX;
             chunk.z = chunkZ;
             chunk.data = new byte[16384];

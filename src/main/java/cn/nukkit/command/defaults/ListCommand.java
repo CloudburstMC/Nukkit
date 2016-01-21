@@ -20,17 +20,22 @@ public class ListCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-        final String[] online = {""};
-        final int[] onlineCount = {0};
-        sender.getServer().getOnlinePlayers().forEach((s, player) -> {
+        String online = "";
+        int onlineCount = 0;
+        for (Player player : sender.getServer().getOnlinePlayers().values()) {
             if (player.isOnline() && (!(sender instanceof Player) || ((Player) sender).canSee(player))) {
-                online[0] += player.getDisplayName() + ", ";
-                ++onlineCount[0];
+                online += player.getDisplayName() + ", ";
+                ++onlineCount;
             }
-        });
+        }
+
+        if (online.length() > 0) {
+            online = online.substring(0, online.length() - 2);
+        }
+
         sender.sendMessage(new TranslationContainer("commands.players.list",
-                new String[]{String.valueOf(onlineCount[0]), String.valueOf(sender.getServer().getMaxPlayers())}));
-        sender.sendMessage(online[0]);
+                new String[]{String.valueOf(onlineCount), String.valueOf(sender.getServer().getMaxPlayers())}));
+        sender.sendMessage(online);
         return true;
     }
 }
