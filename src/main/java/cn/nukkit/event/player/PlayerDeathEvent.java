@@ -16,14 +16,17 @@ public class PlayerDeathEvent extends EntityDeathEvent implements Cancellable {
 
     private TextContainer deathMessage;
     private boolean keepInventory = false;
+    private boolean keepExperience = false;
+    private int experience;
 
-    public PlayerDeathEvent(Player player, Item[] drops, TextContainer deathMessage) {
+    public PlayerDeathEvent(Player player, Item[] drops, TextContainer deathMessage, int experience) {
         super(player, drops);
         this.deathMessage = deathMessage;
+        this.experience = experience;
     }
 
-    public PlayerDeathEvent(Player player, Item[] drops, String deathMessage) {
-        this(player, drops, new TextContainer(deathMessage));
+    public PlayerDeathEvent(Player player, Item[] drops, String deathMessage, int experience) {
+        this(player, drops, new TextContainer(deathMessage), experience);
     }
 
     @Override
@@ -45,5 +48,21 @@ public class PlayerDeathEvent extends EntityDeathEvent implements Cancellable {
 
     public void setKeepInventory(boolean keepInventory) {
         this.keepInventory = keepInventory;
+    }
+
+    public boolean getKeepExperience() {
+        return keepExperience;
+    }
+
+    public void setKeepExperience(boolean keepExperience) {
+        this.keepExperience = keepExperience;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
     }
 }
