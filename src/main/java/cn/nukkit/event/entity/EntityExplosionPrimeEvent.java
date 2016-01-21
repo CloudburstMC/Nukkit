@@ -21,6 +21,7 @@ public class EntityExplosionPrimeEvent extends EntityEvent implements Cancellabl
     public EntityExplosionPrimeEvent(Entity entity, float force) {
         this.entity = entity;
         this.force = force;
+        this.blockBreaking = true;
     }
 
     public float getForce() {

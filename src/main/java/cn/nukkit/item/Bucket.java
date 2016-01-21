@@ -22,7 +22,20 @@ public class Bucket extends Item {
     }
 
     public Bucket(Integer meta, int count) {
-        super(BUCKET, meta, count, "Bucket");
+        super(BUCKET, meta, count, getUnlocalizedBucketName(meta));
+    }
+
+    protected static String getUnlocalizedBucketName(int meta) {
+        switch (meta) {
+            case 1:
+                return "Milk";
+            case 8:
+                return "Water Bucket";
+            case 10:
+                return "Lava Bucket";
+            default:
+                return "Bucket";
+        }
     }
 
     @Override

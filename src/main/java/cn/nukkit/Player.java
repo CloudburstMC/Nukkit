@@ -44,6 +44,7 @@ import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.potion.Potion;
 import cn.nukkit.tile.Sign;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
@@ -2157,33 +2158,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                     }
                                 }
                             }
-                        } else if (this.inventory.getItemInHand().getId() == Item.BUCKET && this.inventory.getItemInHand().getDamage() == 1) {
-                            //牛奶！
-                            PlayerItemConsumeEvent itemConsumeEvent = new PlayerItemConsumeEvent(this, this.inventory.getItemInHand());
-                            this.server.getPluginManager().callEvent(itemConsumeEvent);
-                            if (itemConsumeEvent.isCancelled()) {
-                                this.inventory.sendContents(this);
-                                break;
-                            }
-
-                            EntityEventPacket pk = new EntityEventPacket();
-                            pk.eid = this.getId();
-                            pk.event = EntityEventPacket.USE_ITEM;
-                            this.dataPacket(pk);
-                            Server.broadcastPacket(this.getViewers().values(), pk);
-
-                            if (this.isSurvival()) {
-                                Item itemSlot = this.inventory.getItemInHand();
-                                itemSlot.count--;
-                                this.inventory.setItemInHand(itemSlot);
-                                this.inventory.addItem(Item.get(Item.BUCKET, 0, 1));
-                            }
-
-                            this.removeAllEffects();
-                        } else {
-                            this.inventory.sendContents(this);
                         }
-                        break;
+                        //milk removed here, see the section of food
 
                     case PlayerActionPacket.ACTION_STOP_SLEEPING:
                         this.stopSleep();
@@ -2485,7 +2461,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 }
                             }
 
-                            cn.nukkit.potion.Potion potion = cn.nukkit.potion.Potion.getPotion(itemInHand.getDamage());
+                            Potion potion = Potion.getPotion(itemInHand.getDamage());
                             if (potion != null) potion.applyTo(this);
 
                         } else {

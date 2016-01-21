@@ -18,9 +18,8 @@ import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * author: MagicDroidX
@@ -1304,13 +1303,22 @@ public class Item implements Cloneable {
     public static Item fromString(String str) {
         String[] b = str.trim().replace(' ', '_').replace("minecraft:", "").split(":");
 
-        int meta;
-        if (b.length == 1) {
-            meta = 0;
+        int id = 0;
+        int meta = 0;
+
+        Pattern integerPattern = Pattern.compile("^[1-9]\\d*$");
+        if (integerPattern.matcher(b[0]).matches()) {
+            id = Integer.valueOf(b[0]);
         } else {
-            meta = Integer.valueOf(b[1]) & 0xFFFF;
+            try {
+                id = Item.class.getField(b[0].toUpperCase()).getInt(null);
+            } catch (Exception ignore) {}
         }
-        return get(Integer.valueOf(b[0]) & 0xFFFF, meta);
+
+        id = id & 0xFFFF;
+        if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
+
+        return get(id, meta);
     }
 
     public static Item[] fromStringMultiple(String str) {

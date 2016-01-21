@@ -47,6 +47,7 @@ public abstract class Food {
     public static final Food chorus_fruit = registerDefaultFood(new FoodNormal(4, 2.4F));
     public static final Food cookie = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(Item.COOKIE));
     public static final Food melon_slice = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(Item.MELON_SLICE));
+    public static final Food milk = registerDefaultFood(new FoodMilk().addRelative(Item.BUCKET, 1));
     public static final Food mushroom_stew = registerDefaultFood(new FoodInBowl(6, 7.2F).addRelative(Item.MUSHROOM_STEW));
     public static final Food mutton_cooked = registerDefaultFood(new FoodNormal(6, 9.6F));
     public static final Food mutton_raw = registerDefaultFood(new FoodNormal(2, 1.2F));
