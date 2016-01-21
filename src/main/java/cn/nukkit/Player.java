@@ -168,6 +168,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     private float movementSpeed = 0.1f;
 
+    private Entity killer = null;
+
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
     }
@@ -1565,6 +1567,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
+        this.server.addOnlinePlayer(this);
+
         PlayerLoginEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerLoginEvent(this, "Plugin reason"));
         if (ev.isCancelled()) {
@@ -1627,8 +1631,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         SetDifficultyPacket setDifficultyPacket = new SetDifficultyPacket();
         setDifficultyPacket.difficulty = this.server.getDifficulty();
         this.dataPacket(setDifficultyPacket);
-
-        this.server.addOnlinePlayer(this);
 
         this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logIn", new String[]{
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
@@ -3188,6 +3190,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             case EntityDamageEvent.CAUSE_ENTITY_ATTACK:
                 if (cause instanceof EntityDamageByEntityEvent) {
                     Entity e = ((EntityDamageByEntityEvent) cause).getDamager();
+                    killer = e;
                     if (e instanceof Player) {
                         message = "death.attack.player";
                         params.add(((Player) e).getDisplayName());
@@ -3444,6 +3447,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     //@Override
     public float getMovementSpeed() {
         return this.movementSpeed;
+    }
+
+    public Entity getKiller() {
+        return killer;
     }
 
     @Override
