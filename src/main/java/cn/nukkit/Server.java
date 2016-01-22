@@ -505,7 +505,7 @@ public class Server {
         packet.encode();
         packet.isEncoded = true;
         if (Network.BATCH_THRESHOLD >= 0 && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
-            Server.getInstance().batchPackets(players, packet.getBuffer(), false);
+            Server.getInstance().batchPackets(players, new DataPacket[]{packet}, false);
             return;
         }
 
@@ -533,16 +533,9 @@ public class Server {
             payload[i * 2] = Binary.writeInt(buf.length);
             payload[i * 2 + 1] = buf;
         }
-        byte[] data = new byte[0];
-        data = Binary.appendBytes(data, payload);
-        this.batchPackets(players, data, forceSync);
-    }
+        byte[] data;
+        data = Binary.appendBytes(payload);
 
-    public void batchPackets(Player[] players, byte[] payload) {
-        this.batchPackets(players, payload, false);
-    }
-
-    public void batchPackets(Player[] players, byte[] payload, boolean forceSync) {
         List<String> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
@@ -551,10 +544,10 @@ public class Server {
         }
 
         if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
+            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel));
         } else {
             try {
-                this.broadcastPacketsCallback(Zlib.deflate(payload, this.networkCompressionLevel), targets);
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
