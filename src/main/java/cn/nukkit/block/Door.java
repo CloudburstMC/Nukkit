@@ -6,6 +6,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Doors;
 
 import java.util.Map;
 
@@ -269,31 +270,8 @@ public abstract class Door extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if ((this.getDamage() & 0x08) == 0x08) { //Top
-            Block down = this.getSide(0);
-            if (down.getId() == this.getId()) {
-                this.getLevel().setBlock(down, Block.get(this.getId(), down.getDamage() ^ 0x04), true);
-                Map<Integer, Player> players = this.getLevel().getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
-                if (player != null) {
-                    players.remove(player.getLoaderId());
-                }
-
-                this.level.addSound(new DoorSound(this));
-                return true;
-            }
-
-            return false;
-        } else {
-            this.meta ^= 0x04;
-            this.getLevel().setBlock(this, this, true);
-            Map<Integer, Player> players = this.getLevel().getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
-            if (player != null) {
-                players.remove(player.getLoaderId());
-            }
-
-            this.level.addSound(new DoorSound(this));
-        }
-
+        if (!Doors.toggleOpenState(this, player)) return false;
+        this.level.addSound(new DoorSound(this));
         return true;
     }
 }
