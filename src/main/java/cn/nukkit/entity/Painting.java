@@ -30,6 +30,7 @@ public class Painting extends Hanging {
         pk.z = (int) this.z;
         pk.direction = this.getDirection();
         pk.title = this.namedTag.getString("Motive");
+        player.dataPacket(pk);
 
         super.spawnTo(player);
     }
