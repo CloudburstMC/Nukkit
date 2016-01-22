@@ -34,50 +34,34 @@ public class Normal extends Generator {
     private ChunkManager level;
 
     private NukkitRandom random;
-    private int waterHeight = 62;
-    private int bedrockDepth = 5;
 
     private List<Populator> generationPopulators = new ArrayList<>();
 
     private Simplex noiseBase;
-    private Simplex noiseMountain;
-    private Simplex noiseOcean;
 
     private BiomeSelector selector;
 
-    private static Map<Integer, Map<Integer, Double>> GAUSSIAN_KERNEL;
-    private static int SMOOTH_SIZE = 2;
+    private int heightOffset;
+
+    private final int seaHeight = 62;
+    private final int seaFloorHeight = 55;
+    private final int beathStartHeight = 60;
+    private final int beathStopHeight = 64;
+    private final int landHeight = 66;
+    private final int heightRange = 20;
+    private final int bedrockDepth = 5;
 
     public Normal() {
         this(new HashMap<>());
     }
 
     public Normal(Map<String, Object> options) {
-        if (GAUSSIAN_KERNEL == null) {
-            generateKernel();
-        }
+        //Nothing here. Just used for future update.
     }
 
     @Override
     public ChunkManager getChunkManager() {
         return level;
-    }
-
-    public static void generateKernel() {
-        GAUSSIAN_KERNEL = new HashMap<>();
-
-        double bellSize = 1d / SMOOTH_SIZE;
-        double bellHeight = 2d * SMOOTH_SIZE;
-
-        for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; ++sx) {
-            GAUSSIAN_KERNEL.put(sx + SMOOTH_SIZE, new HashMap<>());
-
-            for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; ++sz) {
-                double bx = bellSize * sx;
-                double bz = bellSize * sz;
-                GAUSSIAN_KERNEL.get(sx + SMOOTH_SIZE).put(sz + SMOOTH_SIZE, bellHeight * Math.exp(-(bx * bx + bz * bz) / 2));
-            }
-        }
     }
 
     @Override
@@ -112,11 +96,10 @@ public class Normal extends Generator {
         this.level = level;
         this.random = random;
         this.random.setSeed(this.level.getSeed());
-        this.noiseBase = new Simplex(this.random, 4F, 1F / 4F, 1F / 64F);
-        this.noiseMountain = new Simplex(this.random, 4F, 1F / 4F, 1F / 110F);
-        this.noiseOcean = new Simplex(this.random, 4F, 1F / 4F, 1F / 64F);
+        this.noiseBase = new Simplex(this.random, 1F, 1F / 4F, 1F / 64F);
         this.random.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.random, Biome.getBiome(Biome.OCEAN));
+        this.heightOffset = random.nextRange(-5, 3);
 
         this.selector.addBiome(Biome.getBiome(Biome.OCEAN));
         this.selector.addBiome(Biome.getBiome(Biome.PLAINS));
@@ -153,31 +136,53 @@ public class Normal extends Generator {
     public void generateChunk(int chunkX, int chunkZ) {
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
 
-        double[][] baseNoise = Generator.getFastNoise2D(this.noiseBase, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-        double[][] oceanNoise = Generator.getFastNoise2D(this.noiseOcean, 16, 16, 8, chunkX * 16, 0, chunkZ * 16);
-        double[][] mountainNoise = Generator.getFastNoise2D(this.noiseMountain, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] baseNoise = Generator.getFastNoise2D(this.noiseBase, 16, 16, 1, chunkX * 16, 0, chunkZ * 16);
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
-        /*
-        for (int genx = 0; genx < 16; genx++) {
-            for (int genz = 0; genz < 16; genz++) {
-                int baseheight = (int) (waterHeight + waterHeight * baseNoise[genx][genz] * 0.05F + 3);
-                int oceanheight = (int) (oceanNoise[genx][genz] > 0.5 ? (oceanNoise[genx][genz] - 0.5) * 40 : 0);
-                int mountainheight = (int) (mountainNoise[genx][genz] > -0.2 ? (mountainNoise[genx][genz] + 0.2) / 1.2 * 25 : 0);
-                int height = baseheight + mountainheight - oceanheight;
-                int generatey = height > 127 ? 127 : height > waterHeight ? height : waterHeight;
-                Biome biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
-                chunk.setBiomeId(genx, genz, biome.getId());
 
-                for (int geny = 0; geny <= generatey; geny++) {
-                    int biomecolor = biome.getColor();
-                    //todo: smooth color
-                    chunk.setBiomeColor(genx, genz, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
+        /** todo generator:
+         * [CLEANED] 1. 我需要自动陆地高度，这可以随机生成海岛、孤岛生存等特殊地图
+         * [CLEANED] 2. 用一个simplex来生成海陆地形图
+         * todo [DEBUGGING] 3. 判断特殊高度来绘制海底、海岸、陆地
+         * [CLEANED] 4. populator出来，初步可玩
+         **/
+
+        for(int genx = 0; genx < 16; genx++) {
+            for(int genz = 0; genz < 16; genz++) {
+
+                Biome biome;
+                int genyHeight = seaHeight + (int) (baseNoise[genx][genz] * heightRange) + heightOffset;
+                //prepare for generate ocean, desert, and land
+                if(genyHeight < seaFloorHeight) {
+                    genyHeight = seaFloorHeight;
+                    biome = Biome.getBiome(Biome.OCEAN);
+                }
+                else if(genyHeight < beathStartHeight) {
+                    biome = Biome.getBiome(Biome.OCEAN);
+                }
+                else if(genyHeight <= beathStopHeight && genyHeight >= beathStartHeight) {
+                    //todo: there is no beach biome, use desert temporarily
+                    biome = Biome.getBiome(Biome.DESERT);
+                }
+                else {
+                    if(genyHeight > landHeight) {
+                        genyHeight = landHeight;
+                    }
+                    biome = Biome.getBiome(Biome.PLAINS);
+                }
+                chunk.setBiomeId(genx, genz, biome.getId());
+                //biome color
+                //todo: smooth chunk color
+                int biomecolor = biome.getColor();
+                chunk.setBiomeColor(genx, genz, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
+                //generating
+                int generateHeight = genyHeight > seaHeight ? genyHeight : seaHeight;
+                for(int geny = 0; geny <= generateHeight; geny++) {
                     if (geny <= bedrockDepth && (geny == 0 || random.nextRange(1, 5) == 1)) {
                         chunk.setBlock(genx, geny, genz, Block.BEDROCK);
-                    } else if (geny > height) {
-                        if ((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == waterHeight) {
+                    } else if (geny > genyHeight) {
+                        if ((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == seaHeight) {
                             chunk.setBlock(genx, geny, genz, Block.ICE);
                         } else {
                             chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
@@ -186,19 +191,18 @@ public class Normal extends Generator {
                         chunk.setBlock(genx, geny, genz, Block.STONE);
                     }
                 }
-
             }
         }
 
+        //populator chunk
         for (Populator populator : this.generationPopulators) {
             populator.populate(this.level, chunkX, chunkZ, this.random);
         }
-        */
+
     }
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
-        /*
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
             populator.populate(this.level, chunkX, chunkZ, this.random);
@@ -207,7 +211,6 @@ public class Normal extends Generator {
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         Biome biome = Biome.getBiome(chunk.getBiomeId(7, 7));
         biome.populateChunk(this.level, chunkX, chunkZ, this.random);
-        */
     }
 
     @Override
