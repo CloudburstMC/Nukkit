@@ -22,10 +22,10 @@ public class Bucket extends Item {
     }
 
     public Bucket(Integer meta, int count) {
-        super(BUCKET, meta, count, getUnlocalizedBucketName(meta));
+        super(BUCKET, meta, count, getName(meta));
     }
 
-    protected static String getUnlocalizedBucketName(int meta) {
+    protected static String getName(int meta) {
         switch (meta) {
             case 1:
                 return "Milk";

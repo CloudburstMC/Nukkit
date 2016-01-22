@@ -1,7 +1,6 @@
 package cn.nukkit.potion;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.utils.Potions;
 
 /**
  * Created by Snake1999 on 2016/1/11.
@@ -18,7 +17,7 @@ public class PotionEffective extends Potion {
 
     @Override
     protected void onApplyTo(Entity entity) {
-        Potions.applyPotion(potionType, isSplashPotion(), entity);
+        Potion.applyPotion(potionType, isSplashPotion(), entity);
     }
 
 }
