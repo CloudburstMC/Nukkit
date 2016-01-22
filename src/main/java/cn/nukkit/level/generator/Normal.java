@@ -159,6 +159,7 @@ public class Normal extends Generator {
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
+        /*
         for (int genx = 0; genx < 16; genx++) {
             for (int genz = 0; genz < 16; genz++) {
                 int baseheight = (int) (waterHeight + waterHeight * baseNoise[genx][genz] * 0.05F + 3);
@@ -192,10 +193,12 @@ public class Normal extends Generator {
         for (Populator populator : this.generationPopulators) {
             populator.populate(this.level, chunkX, chunkZ, this.random);
         }
+        */
     }
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
+        /*
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
             populator.populate(this.level, chunkX, chunkZ, this.random);
@@ -204,6 +207,7 @@ public class Normal extends Generator {
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         Biome biome = Biome.getBiome(chunk.getBiomeId(7, 7));
         biome.populateChunk(this.level, chunkX, chunkZ, this.random);
+        */
     }
 
     @Override
