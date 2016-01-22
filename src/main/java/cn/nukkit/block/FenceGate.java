@@ -6,6 +6,7 @@ import cn.nukkit.item.Tool;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Doors;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -96,33 +97,8 @@ public class FenceGate extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (player == null) {
-            return false;
-        }
-
-        double rotation = (player.yaw - 90) % 360;
-        if (rotation < 0) {
-            rotation += 360.0;
-        }
-
-        int originDirection = this.meta & 0x01;
-
-        int direction;
-        if (originDirection == 0) {
-            if (rotation >= 0 && rotation < 180) {
-                direction = 2;
-            } else {
-                direction = 0;
-            }
-        } else {
-            if (rotation >= 90 && rotation < 270) {
-                direction = 3;
-            } else {
-                direction = 1;
-            }
-        }
-
-        this.meta = direction | ((~this.meta) & 0x04);
+        if (player == null) return false;
+        if (!Doors.toggleOpenState(this, player)) return false;
         this.getLevel().setBlock(this, this, true);
         this.getLevel().addSound(new DoorSound(this));
         return true;
