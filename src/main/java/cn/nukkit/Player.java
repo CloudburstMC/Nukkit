@@ -169,6 +169,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     private float movementSpeed = 0.1f;
 
+    private Entity killer = null;
+
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
     }
@@ -1566,6 +1568,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
+        this.server.addOnlinePlayer(this);
+
         PlayerLoginEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerLoginEvent(this, "Plugin reason"));
         if (ev.isCancelled()) {
@@ -1628,8 +1632,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         SetDifficultyPacket setDifficultyPacket = new SetDifficultyPacket();
         setDifficultyPacket.difficulty = this.server.getDifficulty();
         this.dataPacket(setDifficultyPacket);
-
-        this.server.addOnlinePlayer(this);
 
         this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logIn", new String[]{
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
@@ -3164,6 +3166,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             case EntityDamageEvent.CAUSE_ENTITY_ATTACK:
                 if (cause instanceof EntityDamageByEntityEvent) {
                     Entity e = ((EntityDamageByEntityEvent) cause).getDamager();
+                    killer = e;
                     if (e instanceof Player) {
                         message = "death.attack.player";
                         params.add(((Player) e).getDisplayName());
@@ -3180,6 +3183,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             case EntityDamageEvent.CAUSE_PROJECTILE:
                 if (cause instanceof EntityDamageByEntityEvent) {
                     Entity e = ((EntityDamageByEntityEvent) cause).getDamager();
+                    killer = e;
                     if (e instanceof Player) {
                         message = "death.attack.arrow";
                         params.add(((Player) e).getDisplayName());
@@ -3240,6 +3244,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             case EntityDamageEvent.CAUSE_ENTITY_EXPLOSION:
                 if (cause instanceof EntityDamageByEntityEvent) {
                     Entity e = ((EntityDamageByEntityEvent) cause).getDamager();
+                    killer = e;
                     if (e instanceof Player) {
                         message = "death.attack.explosion.player";
                         params.add(((Player) e).getDisplayName());
@@ -3268,7 +3273,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.scheduleUpdate();
 
         PlayerDeathEvent ev;
-        this.server.getPluginManager().callEvent(ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.stream().toArray(String[]::new))));
+        this.server.getPluginManager().callEvent(ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.stream().toArray(String[]::new)), this.getExperienceLevel()));
 
         if (!ev.getKeepInventory()) {
             for (Item item : ev.getDrops()) {
@@ -3280,17 +3285,18 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             }
         }
 
-        //todo Can I add keep exp in PlayerDeathEvent?
-        if (this.isSurvival() || this.isAdventure()) {
-            int exp = this.getExperienceLevel() * 7;
-            if (exp > 100) exp = 100;
-            int add = 1;
-            for (int ii = 1; ii < exp; ii += add) {
-                this.getLevel().dropExpOrb(this, add);
-                add = new NukkitRandom().nextRange(1, 3);
+        if (!ev.getKeepExperience()) {
+            if (this.isSurvival() || this.isAdventure()) {
+                int exp = ev.getExperience() * 7;
+                if (exp > 100) exp = 100;
+                int add = 1;
+                for (int ii = 1; ii < exp; ii += add) {
+                    this.getLevel().dropExpOrb(this, add);
+                    add = new NukkitRandom().nextRange(1, 3);
+                }
             }
+            this.setExperience(0, 0);
         }
-        this.setExperience(0, 0);
 
         if (!Objects.equals(ev.getDeathMessage().toString(), "")) {
             this.server.broadcast(ev.getDeathMessage(), Server.BROADCAST_CHANNEL_USERS);
@@ -3420,6 +3426,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     //@Override
     public float getMovementSpeed() {
         return this.movementSpeed;
+    }
+
+    public Entity getKiller() {
+        return killer;
     }
 
     @Override
