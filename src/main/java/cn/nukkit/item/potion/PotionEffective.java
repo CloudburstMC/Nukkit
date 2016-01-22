@@ -1,10 +1,10 @@
-package cn.nukkit.potion;
+package cn.nukkit.item.potion;
 
 import cn.nukkit.entity.Entity;
 
 /**
  * Created by Snake1999 on 2016/1/11.
- * Package cn.nukkit.potion in project nukkit
+ * Package cn.nukkit.item.potion in project nukkit
  */
 public class PotionEffective extends Potion {
 

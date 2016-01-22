@@ -1,11 +1,11 @@
-package cn.nukkit.food;
+package cn.nukkit.item.food;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
 /**
  * Created by Snake1999 on 2016/1/14.
- * Package cn.nukkit.food in project nukkit.
+ * Package cn.nukkit.item.food in project nukkit.
  */
 public class FoodInBowl extends Food {
 

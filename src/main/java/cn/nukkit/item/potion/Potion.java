@@ -1,4 +1,4 @@
-package cn.nukkit.potion;
+package cn.nukkit.item.potion;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Effect;
@@ -20,7 +20,7 @@ import java.util.Objects;
 
 /**
  * Created by Snake1999 on 2016/1/11.
- * Package cn.nukkit.potion in project nukkit
+ * Package cn.nukkit.item.potion in project nukkit
  */
 public abstract class Potion {
 
