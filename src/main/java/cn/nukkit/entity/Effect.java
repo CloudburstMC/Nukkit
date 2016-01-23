@@ -83,8 +83,9 @@ public class Effect implements Cloneable {
     }
 
     public static Effect getEffectByName(String name) {
+        name = name.trim().replace(' ', '_').replace("minecraft:", "");
         try {
-            byte id = Effect.class.getField(name.toUpperCase()).getByte(null);
+            int id = Effect.class.getField(name.toUpperCase()).getInt(null);
             return getEffect(id);
         } catch (Exception e) {
             throw new RuntimeException(e);
