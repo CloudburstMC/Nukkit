@@ -18,9 +18,10 @@ import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
-import cn.nukkit.item.food.Food;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.food.Food;
+import cn.nukkit.item.potion.Potion;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -44,7 +45,6 @@ import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.item.potion.Potion;
 import cn.nukkit.tile.Sign;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
@@ -607,6 +607,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.server.sendRecipeList(this);
         this.sendSettings();
 
+        this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getDisplayName(), this.getSkin());
         this.server.sendFullPlayerListData(this, false);
 
         this.sendPotionEffects(this);
@@ -1568,7 +1569,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
-        this.server.addOnlinePlayer(this);
+        this.server.addOnlinePlayer(this, false);
 
         PlayerLoginEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerLoginEvent(this, "Plugin reason"));
@@ -2424,7 +2425,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 AnimatePacket animatePacket = new AnimatePacket();
                 animatePacket.eid = this.getId();
                 animatePacket.action = animationEvent.getAnimationType();
-                Server.broadcastPacket(this.getViewers().values(), packet);
+                Server.broadcastPacket(this.getViewers().values(), animatePacket);
                 break;
             case ProtocolInfo.SET_HEALTH_PACKET:
                 //use UpdateAttributePacket instead

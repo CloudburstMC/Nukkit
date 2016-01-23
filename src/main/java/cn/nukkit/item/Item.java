@@ -18,7 +18,9 @@ import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -1312,7 +1314,8 @@ public class Item implements Cloneable {
         } else {
             try {
                 id = Item.class.getField(b[0].toUpperCase()).getInt(null);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         }
 
         id = id & 0xFFFF;

@@ -766,9 +766,15 @@ public class Server {
     }
 
     public void addOnlinePlayer(Player player) {
+        this.addOnlinePlayer(player, true);
+    }
+
+    public void addOnlinePlayer(Player player, boolean update) {
         this.playerList.put(player.getUniqueId(), player);
 
-        this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin());
+        if (update) {
+            this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin());
+        }
     }
 
     public void removeOnlinePlayer(Player player) {
