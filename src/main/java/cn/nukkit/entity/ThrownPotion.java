@@ -2,8 +2,11 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.ShortEntityData;
-import cn.nukkit.item.potion.Potion;
+import cn.nukkit.event.potion.PotionCollideEvent;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.InstantSpellParticle;
+import cn.nukkit.level.particle.Particle;
+import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
@@ -81,16 +84,44 @@ public class ThrownPotion extends Projectile {
 
         if (this.isCollided) {
             this.kill();
-            Potion potion = Potion.getPotion(getPotionType()).setSplashPotion();
-            potion.thrownPotionCollide(this);
+
+            Potion potion = Potion.getPotion(getPotionType());
+
+            PotionCollideEvent event = new PotionCollideEvent(potion, this);
+            this.server.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return false;
+            }
+
+            potion = event.getPotion();
+
+            Particle particle;
+
+            Effect effect = Potion.getEffect(potion.getId(), true);
+
+            if (effect == null || potion == null) {
+                return false;
+            }
+
+            int[] colors = effect.getColor();
+            int r = colors[0];
+            int g = colors[1];
+            int b = colors[2];
+            if (Potion.isInstant(potion.getId())) {
+                particle = new InstantSpellParticle(this, r, g, b);
+            } else {
+                particle = new SpellParticle(this, r, g, b);
+            }
+
+            this.getLevel().addParticle(particle);
+
             hasUpdate = true;
             Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(8.25, 4.24, 8.25));
             for (Entity anEntity : entities) {
-                potion.applyTo(anEntity);
+                potion.applyPotion(anEntity);
             }
         }
-
-        //this.timings.stopTiming();
 
         return hasUpdate;
     }

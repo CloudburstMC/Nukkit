@@ -21,7 +21,6 @@ import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.food.Food;
-import cn.nukkit.item.potion.Potion;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -2463,7 +2462,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             }
 
                             Potion potion = Potion.getPotion(itemInHand.getDamage());
-                            if (potion != null) potion.applyTo(this);
+                            if (potion != null) {
+                                potion.applyPotion(this);
+                            }
 
                         } else {
                             EntityEventPacket pk = new EntityEventPacket();

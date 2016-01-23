@@ -367,7 +367,9 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addEffect(Effect effect) {
-        if (effect == null) return; //here add null means add nothing
+        if (effect == null) {
+            return; //here add null means add nothing
+        }
 
         if (this.effects.containsKey(effect.getId())) {
             Effect oldEffect = this.effects.get(effect.getId());
@@ -389,6 +391,10 @@ public abstract class Entity extends Location implements Metadatable {
         if (effect.getId() == Effect.HEALTH_BOOST) {
             this.setHealth(this.getHealth() + 4 * (effect.getAmplifier() + 1));
         }
+    }
+
+    public void addPotion(Potion potion) {
+
     }
 
     protected void recalculateEffectColor() {

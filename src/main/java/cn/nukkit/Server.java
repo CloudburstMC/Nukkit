@@ -343,6 +343,7 @@ public class Server {
         Item.init();
         Biome.init();
         Effect.init();
+        Potion.init();
         Enchantment.init();
         Attribute.init();
 

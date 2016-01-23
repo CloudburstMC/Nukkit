@@ -1,9 +1,9 @@
 package cn.nukkit.item.randomitem;
 
+import cn.nukkit.entity.Potion;
 import cn.nukkit.item.Dye;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.item.potion.Potion;
 
 import static cn.nukkit.item.randomitem.RandomItem.*;
 
