@@ -2461,7 +2461,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 }
                             }
 
-                            Potion potion = Potion.getPotion(itemInHand.getDamage());
+                            Potion potion = Potion.getPotion(itemInHand.getDamage()).setSplash(false);
+
                             if (potion != null) {
                                 potion.applyPotion(this);
                             }

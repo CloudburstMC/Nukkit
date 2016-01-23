@@ -121,7 +121,7 @@ public class Potion implements Cloneable {
     }
 
     public Potion(int id, int level) {
-        this(id, level, true);
+        this(id, level, false);
     }
 
     public Potion(int id, int level, boolean splash) {
@@ -131,7 +131,7 @@ public class Potion implements Cloneable {
     }
 
     public Effect getEffect() {
-        return getEffect(this.getId(), this.canSplash());
+        return getEffect(this.getId(), this.isSplash());
     }
 
     public int getId() {
@@ -142,8 +142,13 @@ public class Potion implements Cloneable {
         return level;
     }
 
-    public boolean canSplash() {
+    public boolean isSplash() {
         return splash;
+    }
+
+    public Potion setSplash(boolean splash) {
+        this.splash = splash;
+        return this;
     }
 
     public void applyPotion(Entity entity) {
@@ -151,7 +156,7 @@ public class Potion implements Cloneable {
             return;
         }
 
-        Effect applyEffect = getEffect(this.getId(), this.canSplash());
+        Effect applyEffect = getEffect(this.getId(), this.isSplash());
 
         if (applyEffect == null) {
             return;

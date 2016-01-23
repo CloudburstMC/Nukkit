@@ -393,10 +393,6 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public void addPotion(Potion potion) {
-
-    }
-
     protected void recalculateEffectColor() {
         int[] color = new int[3];
         int count = 0;
