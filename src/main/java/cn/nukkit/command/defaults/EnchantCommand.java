@@ -32,8 +32,15 @@ public class EnchantCommand extends VanillaCommand {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             return true;
         }
-        int enchantId = Integer.parseInt(args[1]);
-        int enchantLevel = args.length == 3 ? Integer.parseInt(args[2]) : 1;
+        int enchantId;
+        int enchantLevel;
+        try {
+            enchantId = Integer.parseInt(args[1]);
+            enchantLevel = args.length == 3 ? Integer.parseInt(args[2]) : 1;
+        } catch (Exception e) {
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            return true;
+        }
         Enchantment enchantment = Enchantment.getEnchantment(enchantId);
         if (enchantment.getId() == Enchantment.TYPE_INVALID) {
             sender.sendMessage(new TranslationContainer("commands.enchant.notFound", String.valueOf(enchantId)));
