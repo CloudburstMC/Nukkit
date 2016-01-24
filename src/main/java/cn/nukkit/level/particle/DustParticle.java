@@ -1,12 +1,17 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/21 by xtypr.
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class DustParticle extends GenericParticle {
+
+    public DustParticle(Vector3 pos, BlockColor blockColor) {
+        this(pos, blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue(), blockColor.getAlpha());
+    }
 
     public DustParticle(Vector3 pos, int r, int g, int b) {
         this(pos, r, g, b, 255);

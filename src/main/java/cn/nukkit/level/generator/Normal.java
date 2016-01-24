@@ -6,10 +6,11 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.biome.BiomeSelector;
 import cn.nukkit.level.generator.noise.Simplex;
-import cn.nukkit.level.generator.object.OreType;
+import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.level.generator.populator.PopulatorGroundCover;
 import cn.nukkit.level.generator.populator.PopulatorOre;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class Normal extends Generator {
 
     private ChunkManager level;
 
-    private cn.nukkit.utils.Random random;
+    private NukkitRandom random;
     private int waterHeight = 62;
     private int bedrockDepth = 5;
 
@@ -107,7 +108,7 @@ public class Normal extends Generator {
     }
 
     @Override
-    public void init(ChunkManager level, cn.nukkit.utils.Random random) {
+    public void init(ChunkManager level, NukkitRandom random) {
         this.level = level;
         this.random = random;
         this.random.setSeed(this.level.getSeed());

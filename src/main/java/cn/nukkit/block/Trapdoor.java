@@ -1,10 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Pub4Game on 26.12.2015.
@@ -16,7 +19,7 @@ public class Trapdoor extends Transparent {
     }
 
     public Trapdoor(int meta) {
-        super(0);
+        super(meta);
     }
 
     @Override
@@ -120,23 +123,35 @@ public class Trapdoor extends Transparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent()) {
-            int[] faces = {
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    5
-            };
-            this.meta = faces[face] & 0x03;
-            if (fy > 0.5) {
-                this.meta |= 0x08;
-            }
-            this.getLevel().setBlock(block, this, true, true);
-            return true;
+        if (target.isTransparent()) return false;
+        int faceBit = 0b00;
+        int upDownBit = 0b000;
+        if (fy > 0.5) upDownBit = 0b100;
+        switch (face) {
+            case Vector3.SIDE_NORTH:
+                faceBit = 0b11;
+                break;
+            case Vector3.SIDE_SOUTH:
+                faceBit = 0b10;
+                break;
+            case Vector3.SIDE_WEST:
+                faceBit = 0b01;
+                break;
+            case Vector3.SIDE_EAST:
+                faceBit = 0b00;
+                break;
+            //todo correct the faceBit according to player yaw when side is up or down
+            case Vector3.SIDE_UP:
+                upDownBit = 0b000;
+                break;
+            case Vector3.SIDE_DOWN:
+                upDownBit = 0b100;
+                break;
         }
-        return false;
+        this.meta |= upDownBit;
+        this.meta |= faceBit;
+        this.getLevel().setBlock(block, this, true, true);
+        return true;
     }
 
     @Override
@@ -148,9 +163,38 @@ public class Trapdoor extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        this.meta |= 0x04;
+        if (!this.toggle(player)) {
+            return false;
+        }
+
         this.getLevel().setBlock(this, this, true);
         this.level.addSound(new DoorSound(this));
         return true;
     }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
+    }
+
+    public boolean toggle(Player player) {
+        DoorToggleEvent event = new DoorToggleEvent(this, player);
+        this.getLevel().getServer().getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        int sideBit = this.meta & 0b0111;
+        int openBit = this.meta & 0b1000;
+        openBit = (~openBit) & 0b1000;
+        this.meta = sideBit | openBit;
+
+        return true;
+    }
+
+    public boolean isOpen() {
+        return (this.meta & 0x08) > 0;
+    }
+
 }

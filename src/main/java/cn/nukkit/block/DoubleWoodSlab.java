@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -29,7 +30,7 @@ public class DoubleWoodSlab extends Solid {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 15;
     }
 
     @Override
@@ -56,5 +57,10 @@ public class DoubleWoodSlab extends Solid {
         return new int[][]{
                 {Item.WOOD_SLAB, this.meta & 0x07, 2}
         };
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 }

@@ -49,7 +49,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new SaveCommand("save-all"));
         this.register("nukkit", new GiveCommand("give"));
         //this.register("nukkit", new EffectCommand("effect"));
-        //this.register("nukkit", new EnchantCommand("enchant"));
+        this.register("nukkit", new EnchantCommand("enchant"));
         this.register("nukkit", new ParticleCommand("particle"));
         this.register("nukkit", new GamemodeCommand("gamemode"));
         this.register("nukkit", new KillCommand("kill"));
@@ -92,7 +92,7 @@ public class SimpleCommandMap implements CommandMap {
 
         List<String> aliases = new ArrayList<>(Arrays.asList(command.getAliases()));
 
-        for (Iterator<String> iterator = aliases.iterator(); iterator.hasNext();) {
+        for (Iterator<String> iterator = aliases.iterator(); iterator.hasNext(); ) {
             String alias = iterator.next();
             if (!this.registerAlias(command, true, fallbackPrefix, alias)) {
                 iterator.remove();

@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Cookie extends Item {
+public class Cookie extends EdibleItem {
 
     public Cookie() {
         this(0, 1);

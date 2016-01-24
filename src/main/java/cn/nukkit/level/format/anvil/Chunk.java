@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.InflaterInputStream;
 
 /**
  * author: MagicDroidX
@@ -35,12 +34,27 @@ public class Chunk extends BaseChunk {
         this(level, null);
     }
 
+    public Chunk(Class<? extends LevelProvider> providerClass) {
+        this((LevelProvider) null, null);
+        this.providerClass = providerClass;
+    }
+
+    public Chunk(Class<? extends LevelProvider> providerClass, CompoundTag nbt) {
+        this((LevelProvider) null, nbt);
+        this.providerClass = providerClass;
+    }
+
     public Chunk(LevelProvider level, CompoundTag nbt) {
+        this.provider = level;
+        if (level != null) {
+            this.providerClass = level.getClass();
+        }
+
         if (nbt == null) {
-            this.provider = level;
             this.nbt = new CompoundTag("Level");
             return;
         }
+
         this.nbt = nbt;
 
         if (!(this.nbt.contains("Entities") && (this.nbt.get("Entities") instanceof ListTag))) {
@@ -70,7 +84,7 @@ public class Chunk extends BaseChunk {
         cn.nukkit.level.format.ChunkSection[] sections = new cn.nukkit.level.format.ChunkSection[8];
         for (Tag section : this.nbt.getList("Sections").getAll()) {
             if (section instanceof CompoundTag) {
-                int y = ((CompoundTag) section).getByte("Y");
+                int y = ((CompoundTag) section).getByte("Y") & 0xff;
                 if (y < 8) {
                     sections[y] = new ChunkSection((CompoundTag) section);
                 }
@@ -95,7 +109,6 @@ public class Chunk extends BaseChunk {
             }
         }
 
-        this.provider = level;
         this.x = this.nbt.getInt("xPos");
         this.z = this.nbt.getInt("zPos");
         for (int Y = 0; Y < sections.length; ++Y) {
@@ -126,8 +139,8 @@ public class Chunk extends BaseChunk {
 
         this.extraData = extraData;
 
-        this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).getAll();
-        this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).getAll();
+        this.NBTentities = this.nbt.getList("Entities", CompoundTag.class).getAll();
+        this.NBTtiles = this.nbt.getList("TileEntities", CompoundTag.class).getAll();
 
         if (this.nbt.contains("Biomes")) {
             this.checkOldBiomes(this.nbt.getByteArray("Biomes"));
@@ -185,7 +198,7 @@ public class Chunk extends BaseChunk {
 
     public static Chunk fromBinary(byte[] data, LevelProvider provider) {
         try {
-            CompoundTag chunk = NBTIO.read(new InflaterInputStream(new ByteArrayInputStream(data)), ByteOrder.BIG_ENDIAN);
+            CompoundTag chunk = NBTIO.read(new ByteArrayInputStream(Zlib.inflate(data)), ByteOrder.BIG_ENDIAN);
 
             if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
                 return null;
@@ -236,7 +249,7 @@ public class Chunk extends BaseChunk {
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
             s.putByteArray("SkyLight", section.getSkyLightArray());
-            nbt.getList("Sections", new ListTag<>()).add(section.getY(), s);
+            nbt.getList("Sections", CompoundTag.class).add(section.getY(), s);
         }
 
         ArrayList<CompoundTag> entities = new ArrayList<>();
@@ -351,8 +364,13 @@ public class Chunk extends BaseChunk {
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
         try {
-            //Chunk chunk = new Chunk(provider != null ? provider : Anvil.class.newInstance(), null);
-            Chunk chunk = new Chunk(provider, null);
+            Chunk chunk;
+            if (provider != null) {
+                chunk = new Chunk(provider, null);
+            } else {
+                chunk = new Chunk(Anvil.class, null);
+            }
+
             chunk.x = chunkX;
             chunk.z = chunkZ;
 

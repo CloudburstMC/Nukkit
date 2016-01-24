@@ -88,9 +88,9 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
     }
 
     protected int getSlotIndex(int index) {
-        ListTag<CompoundTag> list = this.namedTag.getList("Items", new ListTag<>());
+        ListTag<CompoundTag> list = this.namedTag.getList("Items", CompoundTag.class);
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getByte("Slot") == index) {
+            if ((list.get(i).getByte("Slot") & 0xff) == index) {
                 return i;
             }
         }
@@ -105,7 +105,7 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
             return Item.get(Item.AIR, 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
-            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count"));
+            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count") & 0xff);
         }
     }
 
@@ -126,9 +126,9 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
         } else if (i < 0) {
             i = this.namedTag.getList("Items").getAll().size();
             i = Math.max(i, this.getSize());
-            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
+            (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
         } else {
-            (this.namedTag.getList("Items", new ListTag<>())).add(i, d);
+            (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
         }
     }
 

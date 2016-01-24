@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
 
@@ -39,7 +40,7 @@ public abstract class Crops extends Flowable {
     }
 
     @Override
-    public boolean onActivate(Item item) {
+    public boolean onActivate(Item item, Player player) {
         //Bone meal
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
             Crops block = (Crops) this.clone();
@@ -89,5 +90,10 @@ public abstract class Crops extends Flowable {
         }
 
         return 0;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
 }

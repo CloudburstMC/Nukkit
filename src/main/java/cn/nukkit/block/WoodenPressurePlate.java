@@ -2,11 +2,12 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * @author Nukkit Project Team
  */
-public class WoodenPressurePlate extends Transparent {
+public class WoodenPressurePlate extends PressurePlate {
 
     public WoodenPressurePlate(int meta) {
         super(meta);
@@ -47,4 +48,10 @@ public class WoodenPressurePlate extends Transparent {
                 {Item.WOODEN_PRESSURE_PLATE, 0, 1}
         };
     }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
+    }
+
 }

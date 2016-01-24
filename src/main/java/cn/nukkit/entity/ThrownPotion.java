@@ -2,12 +2,13 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.ShortEntityData;
+import cn.nukkit.event.potion.PotionCollideEvent;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.EnchantParticle;
+import cn.nukkit.level.particle.InstantSpellParticle;
 import cn.nukkit.level.particle.Particle;
+import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.utils.Potions;
 
 /**
  * Created on 2015/12/27 by xtypr.
@@ -83,20 +84,55 @@ public class ThrownPotion extends Projectile {
 
         if (this.isCollided) {
             this.kill();
-            Particle particle1 = new EnchantParticle(this);
-            this.getLevel().addParticle(particle1);
-            Particle particle2 = Potions.getParticle(getPotionType(), this);
-            if (particle2 != null)
-            this.getLevel().addParticle(particle2);
-            hasUpdate = true;
 
+            Potion potion = Potion.getPotion(getPotionType());
+
+            PotionCollideEvent event = new PotionCollideEvent(potion, this);
+            this.server.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return false;
+            }
+
+            potion = event.getPotion();
+            if (potion == null) {
+                return false;
+            }
+
+            potion.setSplash(true);
+
+            Particle particle;
+            int r;
+            int g;
+            int b;
+
+            Effect effect = Potion.getEffect(potion.getId(), true);
+
+            if (effect == null) {
+                r = 40;
+                g = 40;
+                b = 255;
+            } else {
+                int[] colors = effect.getColor();
+                r = colors[0];
+                g = colors[1];
+                b = colors[2];
+            }
+
+            if (Potion.isInstant(potion.getId())) {
+                particle = new InstantSpellParticle(this, r, g, b);
+            } else {
+                particle = new SpellParticle(this, r, g, b);
+            }
+
+            this.getLevel().addParticle(particle);
+
+            hasUpdate = true;
             Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(8.25, 4.24, 8.25));
             for (Entity anEntity : entities) {
-                Potions.applyPotion(getPotionType(), true, anEntity);
+                potion.applyPotion(anEntity);
             }
         }
-
-        //this.timings.stopTiming();
 
         return hasUpdate;
     }

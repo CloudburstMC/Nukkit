@@ -21,15 +21,6 @@ public class RegionLoader extends BaseRegionLoader {
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        if (this.randomAccessFile != null) {
-            this.writeLocationTable();
-            this.randomAccessFile.close();
-        }
-    }
-
-    @Override
     protected boolean isChunkGenerated(int index) {
         Integer[] array = this.locationTable.get(index);
         return !(array[0] == 0 || array[1] == 0);
@@ -99,7 +90,7 @@ public class RegionLoader extends BaseRegionLoader {
         if (length + 4 > MAX_SECTOR_LENGTH) {
             throw new ChunkException("Chunk is too big! " + (length + 4) + " > " + MAX_SECTOR_LENGTH);
         }
-        int sectors = (int) Math.ceil(((double) (length + 4)) / 4096);
+        int sectors = (int) Math.ceil((length + 4) / 4096d);
         int index = getChunkOffset(x, z);
         boolean indexChanged = false;
         Integer[] table = this.locationTable.get(index);
@@ -114,7 +105,7 @@ public class RegionLoader extends BaseRegionLoader {
         }
 
         table[1] = sectors;
-        table[2] = (int) System.currentTimeMillis() / 1000;
+        table[2] = (int) (System.currentTimeMillis() / 1000d);
 
         this.locationTable.put(index, table);
         this.randomAccessFile.seek(table[0] << 12);
@@ -184,13 +175,13 @@ public class RegionLoader extends BaseRegionLoader {
                 this.locationTable.put(i, new Integer[]{0, 0, 0});
                 continue;
             }
-            chunk = Zlib.deflate(chunk);
+            chunk = Zlib.deflate(chunk, 9);
             ByteBuffer buffer = ByteBuffer.allocate(4 + 1 + chunk.length);
             buffer.put(Binary.writeInt(chunk.length + 1));
             buffer.put(COMPRESSION_ZLIB);
             buffer.put(chunk);
             chunk = buffer.array();
-            int sectors = (int) Math.ceil(chunk.length / 4096);
+            int sectors = (int) Math.ceil(chunk.length / 4096d);
             if (sectors > table[1]) {
                 table[0] = this.lastSector + 1;
                 this.lastSector += sectors;
@@ -248,9 +239,6 @@ public class RegionLoader extends BaseRegionLoader {
                 continue;
             }
             sectors.put(data[0], index);
-            /*for (int i = 0; i < data[1]; i++) {
-                sectors.put(data[0], index);
-            }*/
         }
 
         if (sectors.size() == (this.lastSector - 2)) {
@@ -297,7 +285,7 @@ public class RegionLoader extends BaseRegionLoader {
         this.randomAccessFile.seek(0);
         this.randomAccessFile.setLength(0);
         this.lastSector = 1;
-        int time = (int) (System.currentTimeMillis() / 1000);
+        int time = (int) (System.currentTimeMillis() / 1000d);
         for (int i = 0; i < 1024; ++i) {
             this.locationTable.put(i, new Integer[]{0, 0, time});
             this.randomAccessFile.writeInt(0);

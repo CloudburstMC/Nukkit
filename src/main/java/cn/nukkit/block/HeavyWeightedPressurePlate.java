@@ -6,7 +6,7 @@ import cn.nukkit.item.Tool;
 /**
  * @author Nukkit Project Team
  */
-public class HeavyWeightedPressurePlate extends Transparent {
+public class HeavyWeightedPressurePlate extends WeightedPressurePlate {
 
     public HeavyWeightedPressurePlate(int meta) {
         super(meta);
@@ -43,9 +43,9 @@ public class HeavyWeightedPressurePlate extends Transparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isPickaxe()){
+        if (item.isPickaxe()) {
             return new int[][]{
-                {Item.HEAVY_WEIGHTED_PRESSURE_PLATE, 0, 1}
+                    {Item.HEAVY_WEIGHTED_PRESSURE_PLATE, 0, 1}
             };
         }
         return new int[][]{{}};

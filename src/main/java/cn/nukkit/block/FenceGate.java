@@ -1,10 +1,12 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -37,7 +39,7 @@ public class FenceGate extends Transparent {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 15;
     }
 
     @Override
@@ -99,14 +101,45 @@ public class FenceGate extends Transparent {
             return false;
         }
 
-        double rotation = (player.yaw - 90) % 360;
+        if (!this.toggle(player)) {
+            return false;
+        }
+
+        this.getLevel().setBlock(this, this, true);
+        this.getLevel().addSound(new DoorSound(this));
+
+        return true;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
+    }
+
+    public boolean toggle(Player player) {
+        DoorToggleEvent event = new DoorToggleEvent(this, player);
+        this.getLevel().getServer().getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        player = event.getPlayer();
+
+        if (player == null) {
+            return false;
+        }
+
+        double yaw = player.yaw;
+        double rotation = (yaw - 90) % 360;
+
         if (rotation < 0) {
             rotation += 360.0;
         }
 
-        int originDirection = this.meta & 0x01;
-
+        int originDirection = this.getDamage() & 0x01;
         int direction;
+
         if (originDirection == 0) {
             if (rotation >= 0 && rotation < 180) {
                 direction = 2;
@@ -121,9 +154,12 @@ public class FenceGate extends Transparent {
             }
         }
 
-        this.meta = direction | ((~this.meta) & 0x04);
-        this.getLevel().setBlock(this, this, true);
-        this.getLevel().addSound(new DoorSound(this));
+        this.setDamage(direction | ((~this.getDamage()) & 0x04));
         return true;
     }
+
+    public boolean isOpen() {
+        return (this.meta & 0x04) > 0;
+    }
+
 }

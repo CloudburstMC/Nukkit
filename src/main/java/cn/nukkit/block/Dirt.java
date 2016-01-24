@@ -3,13 +3,13 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class Dirt extends Solid {
-
 
     public Dirt() {
         this(0);
@@ -27,6 +27,16 @@ public class Dirt extends Solid {
     @Override
     public boolean canBeActivated() {
         return true;
+    }
+
+    @Override
+    public double getResistance() {
+        return 2.5;
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        return new int[][]{new int[]{Item.DIRT, 0, 1}};
     }
 
     @Override
@@ -60,4 +70,10 @@ public class Dirt extends Solid {
 
         return false;
     }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.DIRT_BLOCK_COLOR;
+    }
+
 }

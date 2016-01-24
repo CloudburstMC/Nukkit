@@ -195,7 +195,7 @@ abstract public class PluginBase implements Plugin {
 
         File out = new File(dataFolder, outputName);
         if (!out.exists() || replace) {
-            try (InputStream resource = getResource(filename);) {
+            try (InputStream resource = getResource(filename)) {
                 if (resource != null) {
                     File outFolder = out.getParentFile();
                     if (!outFolder.exists()) {

@@ -6,7 +6,7 @@ import cn.nukkit.block.Block;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Carrot extends Item {
+public class Carrot extends EdibleItem {
 
     public Carrot() {
         this(0, 1);

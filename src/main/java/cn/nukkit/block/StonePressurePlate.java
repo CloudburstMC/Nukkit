@@ -2,11 +2,13 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * @author Nukkit Project Team
  */
-public class StonePressurePlate extends Transparent{
+public class StonePressurePlate extends PressurePlate {
+
     public StonePressurePlate(int meta) {
         super(meta);
     }
@@ -42,11 +44,17 @@ public class StonePressurePlate extends Transparent{
 
     @Override
     public int[][] getDrops(Item item) {
-        if(item.isPickaxe()){
+        if (item.isPickaxe()) {
             return new int[][]{
                     {Item.STONE_PRESSURE_PLATE, 0, 1}
             };
         }
         return new int[][]{{}};
     }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.STONE_BLOCK_COLOR;
+    }
+
 }

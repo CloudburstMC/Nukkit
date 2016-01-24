@@ -33,13 +33,35 @@ public class DroppedItem extends Entity {
 
     protected int pickupDelay = 0;
 
-    public float width = 0.25f;
-    public float length = 0.25f;
-    public float height = 0.25f;
-    protected float gravity = 0.04f;
-    protected float drag = 0.02f;
+    @Override
+    public float getWidth() {
+        return 0.25f;
+    }
 
-    public boolean canCollide = false;
+    @Override
+    public float getLength() {
+        return 0.25f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 0.25f;
+    }
+
+    @Override
+    public float getGravity() {
+        return 0.04f;
+    }
+
+    @Override
+    public float getDrag() {
+        return 0.02f;
+    }
+
+    @Override
+    public boolean canCollide() {
+        return false;
+    }
 
     @Override
     protected void initEntity() {
@@ -110,7 +132,7 @@ public class DroppedItem extends Entity {
                 }
             }
 
-            this.motionY -= this.gravity;
+            this.motionY -= this.getGravity();
 
             if (this.checkObstruction(this.x, this.y, this.z)) {
                 hasUpdate = true;
@@ -118,14 +140,14 @@ public class DroppedItem extends Entity {
 
             this.move(this.motionX, this.motionY, this.motionZ);
 
-            double friction = 1 - this.drag;
+            double friction = 1 - this.getDrag();
 
             if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
                 friction *= this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
             }
 
             this.motionX *= friction;
-            this.motionY *= 1 - this.drag;
+            this.motionY *= 1 - this.getDrag();
             this.motionZ *= friction;
 
             if (this.onGround) {
@@ -153,9 +175,9 @@ public class DroppedItem extends Entity {
     public void saveNBT() {
         super.saveNBT();
         this.namedTag.putCompound("Item", new CompoundTag()
-                        .putShort("id", this.item.getId())
-                        .putShort("Damage", this.item.getDamage())
-                        .putByte("Count", (byte) this.item.getCount())
+                .putShort("id", this.item.getId())
+                .putShort("Damage", this.item.getDamage())
+                .putByte("Count", (byte) this.item.getCount())
         );
 
         this.namedTag.putShort("Health", this.getHealth());

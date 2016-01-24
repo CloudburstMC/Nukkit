@@ -27,6 +27,11 @@ public class Glass extends Transparent {
     }
 
     @Override
+    public double getResistance() {
+        return 1.5;
+    }
+
+    @Override
     public double getHardness() {
         return 0.3;
     }

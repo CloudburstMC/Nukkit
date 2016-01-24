@@ -8,6 +8,8 @@ import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -40,7 +42,9 @@ public class Lava extends Liquid {
 
     @Override
     public int tickRate() {
-        //todo if getLevel is nether, set to 5
+        if (this.getLevel().getDimension() == Level.DIMENSION_NETHER) {
+            return 5;
+        }
         return 30;
     }
 
@@ -73,4 +77,10 @@ public class Lava extends Liquid {
 
         return ret;
     }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.LAVA_BLOCK_COLOR;
+    }
+
 }

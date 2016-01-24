@@ -4,9 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.utils.Random;
 
 /**
  * author: MagicDroidX
@@ -79,7 +79,7 @@ public class Arrow extends Projectile {
         boolean hasUpdate = super.onUpdate(currentTick);
 
         if (!this.hadCollision && this.isCritical) {
-            Random random = new Random();
+            NukkitRandom random = new NukkitRandom();
             this.level.addParticle(new CriticalParticle(this.add(
                     this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
                     this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,

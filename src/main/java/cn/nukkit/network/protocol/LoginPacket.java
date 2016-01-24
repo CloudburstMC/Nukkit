@@ -44,7 +44,7 @@ public class LoginPacket extends DataPacket {
         this.serverAddress = this.getString();
         this.clientSecret = this.getString();
 
-        this.skin = this.getSkinData();
+        this.skin = this.getSkin();
     }
 
 

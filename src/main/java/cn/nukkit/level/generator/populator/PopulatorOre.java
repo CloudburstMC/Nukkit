@@ -1,10 +1,10 @@
 package cn.nukkit.level.generator.populator;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.generator.object.ObjectOre;
-import cn.nukkit.level.generator.object.OreType;
+import cn.nukkit.level.generator.object.ore.ObjectOre;
+import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.utils.Random;
+import cn.nukkit.math.NukkitRandom;
 
 /**
  * author: MagicDroidX
@@ -14,7 +14,7 @@ public class PopulatorOre extends Populator {
     private OreType[] oreTypes = new OreType[0];
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, Random random) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
         for (OreType type : this.oreTypes) {
             ObjectOre ore = new ObjectOre(random, type);
             for (int i = 0; i < ore.type.clusterCount; ++i) {
