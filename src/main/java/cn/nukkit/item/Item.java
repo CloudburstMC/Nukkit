@@ -1543,6 +1543,7 @@ public class Item implements Cloneable {
         CompoundTag tag;
         if (!this.hasCompoundTag()) {
             tag = new CompoundTag();
+            this.setNamedTag(tag);
         } else {
             tag = this.getNamedTag();
         }

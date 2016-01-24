@@ -9,8 +9,8 @@ import cn.nukkit.math.NukkitRandom;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class JungleTree extends ObjectTree {
-    private int treeHeight = 8;
+public class ObjectOakTree extends ObjectTree {
+    private int treeHeight = 7;
 
     @Override
     public int getTrunkBlock() {
@@ -24,7 +24,7 @@ public class JungleTree extends ObjectTree {
 
     @Override
     public int getType() {
-        return Wood.JUNGLE;
+        return Wood.OAK;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class JungleTree extends ObjectTree {
 
     @Override
     public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        this.treeHeight = random.nextBoundedInt(6) + 4;
+        this.treeHeight = random.nextBoundedInt(3) + 4;
         super.placeObject(level, x, y, z, random);
     }
 }

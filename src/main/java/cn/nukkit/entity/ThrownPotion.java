@@ -95,19 +95,30 @@ public class ThrownPotion extends Projectile {
             }
 
             potion = event.getPotion();
-
-            Particle particle;
-
-            Effect effect = Potion.getEffect(potion.getId(), true);
-
-            if (effect == null || potion == null) {
+            if (potion == null) {
                 return false;
             }
 
-            int[] colors = effect.getColor();
-            int r = colors[0];
-            int g = colors[1];
-            int b = colors[2];
+            potion.setSplash(true);
+
+            Particle particle;
+            int r;
+            int g;
+            int b;
+
+            Effect effect = Potion.getEffect(potion.getId(), true);
+
+            if (effect == null) {
+                r = 40;
+                g = 40;
+                b = 255;
+            } else {
+                int[] colors = effect.getColor();
+                r = colors[0];
+                g = colors[1];
+                b = colors[2];
+            }
+
             if (Potion.isInstant(potion.getId())) {
                 particle = new InstantSpellParticle(this, r, g, b);
             } else {
