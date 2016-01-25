@@ -2845,6 +2845,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 if (this.currentTransaction.canExecute()) {
                     //todo achievement
 
+                    this.currentTransaction.execute();
+
                     this.currentTransaction = null;
                 }
 

@@ -101,7 +101,7 @@ public class EnchantingTable extends Solid {
                 return false;
             }
 
-            player.addWindow(new EnchantInventory(this));
+            player.addWindow(new EnchantInventory(this.getLocation()));
         }
 
         return true;

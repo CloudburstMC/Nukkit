@@ -219,6 +219,7 @@ public class EnchantInventory extends ContainerInventory {
             int windowId = player.getWindowId(this);
             if (windowId > 0) {
 
+                //this may be wrong
                 for(int i = 0; i < enchLevelCosts.length; i++) {
                     pk.windowid = (byte) windowId;
 
