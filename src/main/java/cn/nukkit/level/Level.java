@@ -561,12 +561,24 @@ public class Level implements ChunkManager, Metadatable {
         //Tick Weather
         this.rainTime--;
         if (this.rainTime <= 0) {
-            this.setRaining(!this.raining);
+            if (!this.setRaining(!this.raining)) {
+                if (this.raining) {
+                    setRainTime(rand.nextInt(12000) + 12000);
+                } else {
+                    setRainTime(rand.nextInt(168000) + 12000);
+                }
+            }
         }
 
         this.thunderTime--;
         if (this.thunderTime <= 0) {
-            this.setThundering(!this.thundering);
+            if (!this.setThundering(!this.thundering)) {
+                if (this.thundering) {
+                    setThunderTime(rand.nextInt(12000) + 3600);
+                } else {
+                    setThunderTime(rand.nextInt(168000) + 12000);
+                }
+            }
         }
 
         this.levelCurrentTick++;
@@ -2551,14 +2563,19 @@ public class Level implements ChunkManager, Metadatable {
         return this.raining;
     }
 
-    public void setRaining(boolean raining) {
-        WeatherChangeEvent weather = new WeatherChangeEvent(this, raining);
-        this.getServer().getPluginManager().callEvent(weather);
+    public boolean setRaining(boolean raining) {
+        WeatherChangeEvent ev = new WeatherChangeEvent(this, raining);
+        this.getServer().getPluginManager().callEvent(ev);
+
+        if (ev.isCancelled()) {
+            return false;
+        }
 
         this.raining = raining;
 
         LevelEventPacket pk = new LevelEventPacket();
         // These numbers are from Minecraft
+
         if (raining) {
             pk.evid = LevelEventPacket.EVENT_START_RAIN;
             pk.data = rand.nextInt(50000) + 10000;
@@ -2569,6 +2586,8 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         Server.broadcastPacket(this.getPlayers().values(), pk);
+
+        return true;
     }
 
     public int getRainTime() {
@@ -2583,13 +2602,17 @@ public class Level implements ChunkManager, Metadatable {
         return isRaining() && this.thundering;
     }
 
-    public void setThundering(boolean thundering) {
+    public boolean setThundering(boolean thundering) {
+        ThunderChangeEvent ev = new ThunderChangeEvent(this, thundering);
+        this.getServer().getPluginManager().callEvent(ev);
+
+        if (ev.isCancelled()) {
+            return false;
+        }
+
         if (thundering && !isRaining()) {
             setRaining(true);
         }
-
-        ThunderChangeEvent thunder = new ThunderChangeEvent(this, thundering);
-        this.getServer().getPluginManager().callEvent(thunder);
 
         this.thundering = thundering;
 
@@ -2605,6 +2628,8 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         Server.broadcastPacket(this.getPlayers().values(), pk);
+
+        return true;
     }
 
     public int getThunderTime() {
