@@ -67,6 +67,8 @@ public class EnchantingTable extends Solid {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        this.getLevel().setBlock(block, this, true, true);
+
         CompoundTag nbt = new CompoundTag()
                 .putString("id", Tile.ENCHANT_TABLE)
                 .putInt("x", (int) this.x)
@@ -94,24 +96,6 @@ public class EnchantingTable extends Solid {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            Tile t = getLevel().getTile(this);
-            EnchantTable enchant;
-            if (t instanceof EnchantTable) {
-                enchant = (EnchantTable) t;
-            } else {
-                CompoundTag nbt = new CompoundTag()
-                        .putString("id", Tile.ENCHANT_TABLE)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                enchant = new EnchantTable(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-            }
-
-            if (enchant.namedTag.contains("Lock") && enchant.namedTag.get("Lock") instanceof StringTag) {
-                if (!enchant.namedTag.getString("Lock").equals(item.getCustomName())) {
-                    return false;
-                }
-            }
 
             if (player.isCreative()) {
                 return false;
