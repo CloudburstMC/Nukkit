@@ -22,4 +22,9 @@ public class Shears extends Tool {
     public int getMaxDurability() {
         return Tool.DURABILITY_SHEARS;
     }
+
+    @Override
+    public boolean isShears(){
+        return true;
+    }
 }

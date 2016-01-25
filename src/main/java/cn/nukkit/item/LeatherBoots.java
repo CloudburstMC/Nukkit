@@ -17,4 +17,12 @@ public class LeatherBoots extends Armor {
     public LeatherBoots(Integer meta, int count) {
         super(LEATHER_BOOTS, meta, count, "Leather Boots");
     }
+
+    @Override
+    public int getTier() { return Armor.TIER_LEATHER; }
+
+    @Override
+    public boolean isBoots(){
+        return true;
+    }
 }

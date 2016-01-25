@@ -17,4 +17,12 @@ public class DiamondHelmet extends Armor {
     public DiamondHelmet(Integer meta, int count) {
         super(DIAMOND_HELMET, meta, count, "Diamond Helmet");
     }
+
+    @Override
+    public int getTier() { return Armor.TIER_DIAMOND; }
+
+    @Override
+    public boolean isHelmet(){
+        return true;
+    }
 }

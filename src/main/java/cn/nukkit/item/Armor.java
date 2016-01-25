@@ -6,6 +6,12 @@ package cn.nukkit.item;
  */
 abstract public class Armor extends Item {
 
+    public static final int TIER_LEATHER = 1;
+    public static final int TIER_IRON = 2;
+    public static final int TIER_CHAIN = 3;
+    public static final int TIER_GOLD = 4;
+    public static final int TIER_DIAMOND = 5;
+
     public Armor(int id) {
         super(id);
     }
@@ -27,4 +33,8 @@ abstract public class Armor extends Item {
         return 1;
     }
 
+    @Override
+    public boolean isArmor(){
+        return true;
+    }
 }

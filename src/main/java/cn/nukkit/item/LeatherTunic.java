@@ -17,4 +17,12 @@ public class LeatherTunic extends Armor {
     public LeatherTunic(Integer meta, int count) {
         super(LEATHER_TUNIC, meta, count, "Leather Tunic");
     }
+
+    @Override
+    public int getTier() { return Armor.TIER_LEATHER; }
+
+    @Override
+    public boolean isChestplate(){
+        return true;
+    }
 }
