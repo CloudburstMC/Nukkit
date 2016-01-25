@@ -1417,9 +1417,10 @@ public class Server {
             return;
         }
 
-        for (Map.Entry<String, Player> entry : this.players.entrySet()) {
-            if (player.equals(entry.getValue())) {
-                this.players.remove(entry.getKey());
+        for (String identifier : new ArrayList<>(this.players.keySet())) {
+            Player p = this.players.get(identifier);
+            if (player.equals(p)) {
+                this.players.remove(identifier);
                 this.identifier.remove(player);
                 break;
             }

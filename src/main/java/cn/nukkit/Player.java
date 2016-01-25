@@ -1487,7 +1487,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.close(this.getLeaveMessage(), "Server is white-listed");
 
             return;
-        } else if (this.server.getNameBans().isBanned((this.getName()).toLowerCase()) || this.server.getIPBans().isBanned(this.getAddress())) {
+        } else if (this.server.getNameBans().isBanned(this.getName().toLowerCase()) || this.server.getIPBans().isBanned(this.getAddress())) {
             this.close(this.getLeaveMessage(), "You are banned");
 
             return;
@@ -1501,7 +1501,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         for (Player p : new ArrayList<>(this.server.getOnlinePlayers().values())) {
-            if (p != this && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
+            if (p != this && p.getName() != null && this.getName() != null && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
                 if (!p.kick("logged in from another location")) {
                     this.close(this.getLeaveMessage(), "Logged in from another location");
                     return;
