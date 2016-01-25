@@ -1,5 +1,6 @@
 package cn.nukkit.event.level;
 
+import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 
@@ -7,7 +8,7 @@ import cn.nukkit.level.Level;
  * author: funcraft
  * Nukkit Project
  */
-public class ThunderChangeEvent extends WeatherEvent {
+public class ThunderChangeEvent extends WeatherEvent implements Cancellable{
 
     private static final HandlerList handlers = new HandlerList();
 
