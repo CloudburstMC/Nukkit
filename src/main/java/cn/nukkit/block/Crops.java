@@ -40,6 +40,11 @@ public abstract class Crops extends Flowable {
     }
 
     @Override
+    public boolean onActivate(Item item) {
+        return this.onActivate(item, null);
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         //Bone meal
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
