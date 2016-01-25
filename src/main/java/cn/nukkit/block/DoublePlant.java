@@ -1,7 +1,9 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -44,9 +46,18 @@ public class DoublePlant extends Flowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(0).isTransparent()) { //Replace with common break method
-                this.getLevel().setBlock(this, new Air(), false, false);
-                return Level.BLOCK_UPDATE_NORMAL;
+            if ((this.meta & 0x08) == 8) {
+                //top
+                if (!(this.getSide(0).getId() == DOUBLE_PLANT)) {
+                    this.getLevel().useBreakOn(this);
+                    return Level.BLOCK_UPDATE_NORMAL;
+                }
+            } else {
+                //botom
+                if (this.getSide(0).isTransparent() || !(this.getSide(1).getId() == DOUBLE_PLANT)) {
+                    this.getLevel().useBreakOn(this);
+                    return Level.BLOCK_UPDATE_NORMAL;
+                }
             }
         }
         return 0;

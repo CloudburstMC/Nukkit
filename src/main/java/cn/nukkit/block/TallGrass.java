@@ -78,15 +78,14 @@ public class TallGrass extends Flowable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
-            if (this.getLevel().getBlock(new Vector3(this.x, this.y + 1, this.z)).getId() == AIR) {
+            Block top = this.getLevel().getBlock(new Vector3(this.x, this.y + 1, this.z));
+            if (top.getId() == AIR) {
                 if (this.meta == 1) {
                     this.getLevel().setBlock(this, Block.get(DOUBLE_PLANT, 2), true, true);
-
                     item.count--;
                     return true;
                 } else if (this.meta == 2) {
                     this.getLevel().setBlock(this, Block.get(DOUBLE_PLANT, 3), true, true);
-                    item.count--;
                     return true;
                 }
             }
