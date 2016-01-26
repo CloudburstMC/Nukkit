@@ -5,7 +5,7 @@ import cn.nukkit.entity.Effect;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
-import cn.nukkit.food.Food;
+import cn.nukkit.item.food.Food;
 import cn.nukkit.network.protocol.UpdateAttributesPacket;
 
 /**

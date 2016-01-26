@@ -17,4 +17,14 @@ public class ChainChestplate extends Armor {
     public ChainChestplate(Integer meta, int count) {
         super(CHAIN_CHESTPLATE, meta, count, "Chain Chestplate");
     }
+
+    @Override
+    public int getTier() {
+        return Armor.TIER_CHAIN;
+    }
+
+    @Override
+    public boolean isChestplate() {
+        return true;
+    }
 }

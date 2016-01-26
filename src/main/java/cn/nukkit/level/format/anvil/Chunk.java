@@ -13,7 +13,6 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Zlib;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.InflaterInputStream;
 
 /**
  * author: MagicDroidX
@@ -251,7 +249,7 @@ public class Chunk extends BaseChunk {
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
             s.putByteArray("SkyLight", section.getSkyLightArray());
-            nbt.getList("Sections", CompoundTag.class).add(section.getY(), s);
+            nbt.getList("Sections", CompoundTag.class).add(s);
         }
 
         ArrayList<CompoundTag> entities = new ArrayList<>();
@@ -313,7 +311,7 @@ public class Chunk extends BaseChunk {
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
             s.putByteArray("SkyLight", section.getSkyLightArray());
-            sectionList.add(section.getY(), s);
+            sectionList.add(s);
         }
         nbt.putList(sectionList);
 

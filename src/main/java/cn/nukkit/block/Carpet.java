@@ -1,11 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.item.Dye;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Dyes;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -42,7 +42,7 @@ public class Carpet extends Flowable {
 
     @Override
     public String getName() {
-        return Dyes.getUnlocalizedColorName(meta) + " Carpet";
+        return Dye.getColorName(meta) + " Carpet";
     }
 
     @Override

@@ -9,7 +9,7 @@ import cn.nukkit.math.NukkitRandom;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class MatchstickSpruceTree extends ObjectTree {
+public class ObjectMatchstickSpruceTree extends ObjectTree {
     private int treeHeight = 15;
 
     @Override

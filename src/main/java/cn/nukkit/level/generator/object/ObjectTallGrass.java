@@ -10,7 +10,7 @@ import cn.nukkit.math.Vector3;
  * Nukkit Project
  */
 
-public class TallGrass {
+public class ObjectTallGrass {
     public static void growGrass(ChunkManager level, Vector3 pos, NukkitRandom random, int count, int radius) {
         int[][] arr = {
                 {Block.DANDELION, 0},

@@ -1,5 +1,7 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.item.Dye;
+
 /**
  * Created by Snake1999 on 2016/1/10.
  * Package cn.nukkit.utils in project nukkit
@@ -77,7 +79,7 @@ public class BlockColor extends java.awt.Color {
     }
 
     public static BlockColor getDyeColor(int dyeColorMeta) {
-        return Dyes.getDyeColor(dyeColorMeta);
+        return Dye.getColor(dyeColorMeta);
     }
 
 }

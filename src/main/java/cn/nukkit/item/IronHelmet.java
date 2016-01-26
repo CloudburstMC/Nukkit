@@ -17,4 +17,14 @@ public class IronHelmet extends Armor {
     public IronHelmet(Integer meta, int count) {
         super(IRON_HELMET, meta, count, "Iron Helmet");
     }
+
+    @Override
+    public int getTier() {
+        return Armor.TIER_IRON;
+    }
+
+    @Override
+    public boolean isHelmet() {
+        return true;
+    }
 }

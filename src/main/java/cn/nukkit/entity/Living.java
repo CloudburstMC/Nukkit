@@ -191,7 +191,7 @@ public abstract class Living extends Entity implements Damageable {
                     this.setDataProperty(DATA_AIR, new ShortEntityData(300));
                 } else {
                     hasUpdate = true;
-                    int airTicks = this.getDataPropertyInt(DATA_AIR).data - tickDiff;
+                    int airTicks = this.getDataPropertyShort(DATA_AIR).data - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
