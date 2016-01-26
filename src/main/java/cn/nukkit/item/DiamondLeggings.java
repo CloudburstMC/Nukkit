@@ -17,4 +17,12 @@ public class DiamondLeggings extends Armor {
     public DiamondLeggings(Integer meta, int count) {
         super(DIAMOND_LEGGINGS, meta, count, "Diamond Leggings");
     }
+
+    @Override
+    public boolean isLeggings(){
+        return true;
+    }
+
+    @Override
+    public int getTier() { return Armor.TIER_DIAMOND; }
 }

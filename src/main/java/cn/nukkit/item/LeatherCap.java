@@ -17,4 +17,12 @@ public class LeatherCap extends Armor {
     public LeatherCap(Integer meta, int count) {
         super(LEATHER_CAP, meta, count, "Leather Cap");
     }
+
+    @Override
+    public int getTier() { return Armor.TIER_LEATHER; }
+
+    @Override
+    public boolean isHelmet(){
+        return true;
+    }
 }
