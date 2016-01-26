@@ -144,7 +144,7 @@ public class Chest extends Transparent {
             }
 
             Tile t = this.getLevel().getTile(this);
-            cn.nukkit.tile.Chest chest = null;
+            cn.nukkit.tile.Chest chest;
             if (t instanceof cn.nukkit.tile.Chest) {
                 chest = (cn.nukkit.tile.Chest) t;
             } else {
