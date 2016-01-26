@@ -1540,9 +1540,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
             nbt.getList("Pos", DoubleTag.class)
-                    .add(0, new DoubleTag("0", this.level.getSpawnLocation().x))
-                    .add(1, new DoubleTag("1", this.level.getSpawnLocation().y))
-                    .add(2, new DoubleTag("2", this.level.getSpawnLocation().z));
+                    .add(new DoubleTag("0", this.level.getSpawnLocation().x))
+                    .add(new DoubleTag("1", this.level.getSpawnLocation().y))
+                    .add(new DoubleTag("2", this.level.getSpawnLocation().z));
         } else {
             this.setLevel(level);
         }
