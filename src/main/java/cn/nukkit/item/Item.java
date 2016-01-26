@@ -18,7 +18,9 @@ import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -1312,7 +1314,8 @@ public class Item implements Cloneable {
         } else {
             try {
                 id = Item.class.getField(b[0].toUpperCase()).getInt(null);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         }
 
         id = id & 0xFFFF;
@@ -1540,6 +1543,7 @@ public class Item implements Cloneable {
         CompoundTag tag;
         if (!this.hasCompoundTag()) {
             tag = new CompoundTag();
+            this.setNamedTag(tag);
         } else {
             tag = this.getNamedTag();
         }
@@ -1701,6 +1705,26 @@ public class Item implements Cloneable {
     }
 
     public boolean isShears() {
+        return false;
+    }
+
+    public boolean isArmor() {
+        return false;
+    }
+
+    public boolean isHelmet() {
+        return false;
+    }
+
+    public boolean isChestplate() {
+        return false;
+    }
+
+    public boolean isLeggings() {
+        return false;
+    }
+
+    public boolean isBoots() {
         return false;
     }
 

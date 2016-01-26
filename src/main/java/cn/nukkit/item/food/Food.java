@@ -1,4 +1,4 @@
-package cn.nukkit.food;
+package cn.nukkit.item.food;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
@@ -11,7 +11,7 @@ import java.util.*;
 
 /**
  * Created by Snake1999 on 2016/1/13.
- * Package cn.nukkit.food in project nukkit.
+ * Package cn.nukkit.item.food in project nukkit.
  */
 public abstract class Food {
 

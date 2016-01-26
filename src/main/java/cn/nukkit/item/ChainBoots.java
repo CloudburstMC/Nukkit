@@ -17,4 +17,14 @@ public class ChainBoots extends Armor {
     public ChainBoots(Integer meta, int count) {
         super(CHAIN_BOOTS, meta, count, "Chainmail Boots");
     }
+
+    @Override
+    public int getTier() {
+        return Armor.TIER_CHAIN;
+    }
+
+    @Override
+    public boolean isBoots() {
+        return true;
+    }
 }

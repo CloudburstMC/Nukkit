@@ -18,9 +18,9 @@ import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
-import cn.nukkit.food.Food;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.food.Food;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -44,7 +44,6 @@ import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.potion.Potion;
 import cn.nukkit.tile.Sign;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
@@ -607,6 +606,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.server.sendRecipeList(this);
         this.sendSettings();
 
+        this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getDisplayName(), this.getSkin());
         this.server.sendFullPlayerListData(this, false);
 
         this.sendPotionEffects(this);
@@ -1487,7 +1487,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.close(this.getLeaveMessage(), "Server is white-listed");
 
             return;
-        } else if (this.server.getNameBans().isBanned((this.getName()).toLowerCase()) || this.server.getIPBans().isBanned(this.getAddress())) {
+        } else if (this.server.getNameBans().isBanned(this.getName().toLowerCase()) || this.server.getIPBans().isBanned(this.getAddress())) {
             this.close(this.getLeaveMessage(), "You are banned");
 
             return;
@@ -1501,7 +1501,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         for (Player p : new ArrayList<>(this.server.getOnlinePlayers().values())) {
-            if (p != this && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
+            if (p != this && p.getName() != null && this.getName() != null && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
                 if (!p.kick("logged in from another location")) {
                     this.close(this.getLeaveMessage(), "Logged in from another location");
                     return;
@@ -1540,9 +1540,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
             nbt.getList("Pos", DoubleTag.class)
-                    .add(0, new DoubleTag("0", this.level.getSpawnLocation().x))
-                    .add(1, new DoubleTag("1", this.level.getSpawnLocation().y))
-                    .add(2, new DoubleTag("2", this.level.getSpawnLocation().z));
+                    .add(new DoubleTag("0", this.level.getSpawnLocation().x))
+                    .add(new DoubleTag("1", this.level.getSpawnLocation().y))
+                    .add(new DoubleTag("2", this.level.getSpawnLocation().z));
         } else {
             this.setLevel(level);
         }
@@ -1568,7 +1568,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
-        this.server.addOnlinePlayer(this);
+        this.server.addOnlinePlayer(this, false);
 
         PlayerLoginEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerLoginEvent(this, "Plugin reason"));
@@ -2424,7 +2424,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 AnimatePacket animatePacket = new AnimatePacket();
                 animatePacket.eid = this.getId();
                 animatePacket.action = animationEvent.getAnimationType();
-                Server.broadcastPacket(this.getViewers().values(), packet);
+                Server.broadcastPacket(this.getViewers().values(), animatePacket);
                 break;
             case ProtocolInfo.SET_HEALTH_PACKET:
                 //use UpdateAttributePacket instead
@@ -2461,8 +2461,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 }
                             }
 
-                            Potion potion = Potion.getPotion(itemInHand.getDamage());
-                            if (potion != null) potion.applyTo(this);
+                            Potion potion = Potion.getPotion(itemInHand.getDamage()).setSplash(false);
+
+                            if (potion != null) {
+                                potion.applyPotion(this);
+                            }
 
                         } else {
                             EntityEventPacket pk = new EntityEventPacket();
@@ -2841,6 +2844,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                 if (this.currentTransaction.canExecute()) {
                     //todo achievement
+
+                    this.currentTransaction.execute();
 
                     this.currentTransaction = null;
                 }

@@ -50,24 +50,24 @@ public abstract class ObjectTree {
         switch (type) {
             case Sapling.SPRUCE:
                 if (random.nextBoundedInt(39) == 0) {
-                    tree = new MatchstickSpruceTree();
+                    tree = new ObjectMatchstickSpruceTree();
                 } else {
-                    tree = new SpruceTree();
+                    tree = new ObjectSpruceTree();
                 }
                 break;
             case Sapling.BIRCH:
                 if (random.nextBoundedInt(39) == 0) {
-                    tree = new TallBirchTree();
+                    tree = new ObjectTallBirchTree();
                 } else {
-                    tree = new BirchTree();
+                    tree = new ObjectBirchTree();
                 }
                 break;
             case Sapling.JUNGLE:
-                tree = new JungleTree();
+                tree = new ObjectJungleTree();
                 break;
             case Sapling.OAK:
             default:
-                tree = new OakTree();
+                tree = new ObjectOakTree();
                 //todo: more complex treeeeeeeeeeeeeeeee
                 break;
         }

@@ -82,7 +82,7 @@ public class BrewingStand extends Solid {
             }
         }
 
-        Tile.createTile("BrewingStand", getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        new cn.nukkit.tile.BrewingStand(getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
         return true;
     }

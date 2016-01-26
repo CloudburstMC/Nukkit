@@ -11,7 +11,7 @@ public class FakeBlockMenu extends Position implements InventoryHolder {
     private Inventory inventory;
 
     public FakeBlockMenu(Inventory inventory, Position pos) {
-        super(pos.x, pos.y, pos.z);
+        super(pos.x, pos.y, pos.z, pos.level);
         this.inventory = inventory;
     }
 

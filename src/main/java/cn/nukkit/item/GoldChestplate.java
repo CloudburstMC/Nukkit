@@ -17,4 +17,14 @@ public class GoldChestplate extends Armor {
     public GoldChestplate(Integer meta, int count) {
         super(GOLD_CHESTPLATE, meta, count, "Gold Chestplate");
     }
+
+    @Override
+    public int getTier() {
+        return Armor.TIER_GOLD;
+    }
+
+    @Override
+    public boolean isChestplate() {
+        return true;
+    }
 }

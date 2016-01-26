@@ -343,6 +343,7 @@ public class Server {
         Item.init();
         Biome.init();
         Effect.init();
+        Potion.init();
         Enchantment.init();
         Attribute.init();
 
@@ -505,7 +506,7 @@ public class Server {
         packet.encode();
         packet.isEncoded = true;
         if (Network.BATCH_THRESHOLD >= 0 && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
-            Server.getInstance().batchPackets(players, packet.getBuffer(), false);
+            Server.getInstance().batchPackets(players, new DataPacket[]{packet}, false);
             return;
         }
 
@@ -533,16 +534,9 @@ public class Server {
             payload[i * 2] = Binary.writeInt(buf.length);
             payload[i * 2 + 1] = buf;
         }
-        byte[] data = new byte[0];
-        data = Binary.appendBytes(data, payload);
-        this.batchPackets(players, data, forceSync);
-    }
+        byte[] data;
+        data = Binary.appendBytes(payload);
 
-    public void batchPackets(Player[] players, byte[] payload) {
-        this.batchPackets(players, payload, false);
-    }
-
-    public void batchPackets(Player[] players, byte[] payload, boolean forceSync) {
         List<String> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
@@ -551,10 +545,10 @@ public class Server {
         }
 
         if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
+            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel));
         } else {
             try {
-                this.broadcastPacketsCallback(Zlib.deflate(payload, this.networkCompressionLevel), targets);
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -773,9 +767,15 @@ public class Server {
     }
 
     public void addOnlinePlayer(Player player) {
+        this.addOnlinePlayer(player, true);
+    }
+
+    public void addOnlinePlayer(Player player, boolean update) {
         this.playerList.put(player.getUniqueId(), player);
 
-        this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin());
+        if (update) {
+            this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin());
+        }
     }
 
     public void removeOnlinePlayer(Player player) {
@@ -1029,8 +1029,8 @@ public class Server {
                 " | Online " + this.players.size() + "/" + this.getMaxPlayers() +
                 " | Memory " + usage;
         if (!Nukkit.shortTitle) {
-            title += " | U " + NukkitMath.round((this.network.getUpload()) / 1024, 2)
-                    + " D " + NukkitMath.round((this.network.getDownload()) / 1024, 2) + " kB/s";
+            title += " | U " + NukkitMath.round((this.network.getUpload() / 1024 * 1000), 2)
+                    + " D " + NukkitMath.round((this.network.getDownload() / 1024 * 1000), 2) + " kB/s";
         }
         title += " | TPS " + this.getTicksPerSecond() +
                 " | Load " + this.getTickUsage() + "%" + (char) 0x07;
@@ -1417,9 +1417,10 @@ public class Server {
             return;
         }
 
-        for (Map.Entry<String, Player> entry : this.players.entrySet()) {
-            if (player.equals(entry.getValue())) {
-                this.players.remove(entry.getKey());
+        for (String identifier : new ArrayList<>(this.players.keySet())) {
+            Player p = this.players.get(identifier);
+            if (player.equals(p)) {
+                this.players.remove(identifier);
                 this.identifier.remove(player);
                 break;
             }

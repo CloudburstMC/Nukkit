@@ -114,9 +114,9 @@ public class Chest extends Transparent {
             }
         }
 
-        Tile tile = Tile.createTile("Chest", this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        Tile tile = new cn.nukkit.tile.Chest(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
-        if (chest != null && tile instanceof cn.nukkit.tile.Chest) {
+        if (chest != null) {
             chest.pairWith(((cn.nukkit.tile.Chest) tile));
             ((cn.nukkit.tile.Chest) tile).pairWith(chest);
         }
@@ -144,7 +144,7 @@ public class Chest extends Transparent {
             }
 
             Tile t = this.getLevel().getTile(this);
-            cn.nukkit.tile.Chest chest = null;
+            cn.nukkit.tile.Chest chest;
             if (t instanceof cn.nukkit.tile.Chest) {
                 chest = (cn.nukkit.tile.Chest) t;
             } else {
