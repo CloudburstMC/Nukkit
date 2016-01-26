@@ -19,10 +19,12 @@ public class IronBoots extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_IRON; }
+    public int getTier() {
+        return Armor.TIER_IRON;
+    }
 
     @Override
-    public boolean isBoots(){
+    public boolean isBoots() {
         return true;
     }
 }

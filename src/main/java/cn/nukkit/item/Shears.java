@@ -24,7 +24,7 @@ public class Shears extends Tool {
     }
 
     @Override
-    public boolean isShears(){
+    public boolean isShears() {
         return true;
     }
 }

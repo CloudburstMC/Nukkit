@@ -19,10 +19,12 @@ public class LeatherPants extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_LEATHER; }
+    public int getTier() {
+        return Armor.TIER_LEATHER;
+    }
 
     @Override
-    public boolean isLeggings(){
+    public boolean isLeggings() {
         return true;
     }
 }

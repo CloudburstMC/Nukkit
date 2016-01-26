@@ -75,8 +75,8 @@ public class Location extends Position {
     }
 
     @Override
-    public Location getLocation(){
-        if (this.isValid()) return new Location (this.x,this.y,this.z,this.yaw,this.pitch,this.level);
+    public Location getLocation() {
+        if (this.isValid()) return new Location(this.x, this.y, this.z, this.yaw, this.pitch, this.level);
         else throw new LevelException("Undefined Level reference");
     }
 
@@ -132,27 +132,27 @@ public class Location extends Position {
 
     @Override
     public Location divide(double number) {
-        return new Location(this.x / number, this.y / number, this.z / number, this.yaw, this.pitch,this.level);
+        return new Location(this.x / number, this.y / number, this.z / number, this.yaw, this.pitch, this.level);
     }
 
     @Override
     public Location ceil() {
-        return new Location ((int) Math.ceil(this.x), (int) Math.ceil(this.y), (int) Math.ceil(this.z), this.yaw, this.pitch,this.level);
+        return new Location((int) Math.ceil(this.x), (int) Math.ceil(this.y), (int) Math.ceil(this.z), this.yaw, this.pitch, this.level);
     }
 
     @Override
     public Location floor() {
-        return new Location(this.getFloorX(), this.getFloorY(), this.getFloorZ(), this.yaw, this.pitch,this.level);
+        return new Location(this.getFloorX(), this.getFloorY(), this.getFloorZ(), this.yaw, this.pitch, this.level);
     }
 
     @Override
     public Location round() {
-        return new Location(Math.round(this.x), Math.round(this.y), Math.round(this.z), this.yaw, this.pitch,this.level);
+        return new Location(Math.round(this.x), Math.round(this.y), Math.round(this.z), this.yaw, this.pitch, this.level);
     }
 
     @Override
     public Location abs() {
-        return new Location((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z), this.yaw, this.pitch,this.level);
+        return new Location((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z), this.yaw, this.pitch, this.level);
     }
 
 }

@@ -19,10 +19,12 @@ public class DiamondLeggings extends Armor {
     }
 
     @Override
-    public boolean isLeggings(){
+    public boolean isLeggings() {
         return true;
     }
 
     @Override
-    public int getTier() { return Armor.TIER_DIAMOND; }
+    public int getTier() {
+        return Armor.TIER_DIAMOND;
+    }
 }

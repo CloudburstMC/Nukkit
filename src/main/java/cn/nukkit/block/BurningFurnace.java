@@ -86,7 +86,8 @@ public class BurningFurnace extends Solid {
                 nbt.put((String) tag.getKey(), (Tag) tag.getValue());
             }
         }
-        Tile.createTile("Furnace", this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+
+        new Furnace(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
         return true;
     }

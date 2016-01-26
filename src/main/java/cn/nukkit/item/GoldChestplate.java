@@ -19,10 +19,12 @@ public class GoldChestplate extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_GOLD; }
+    public int getTier() {
+        return Armor.TIER_GOLD;
+    }
 
     @Override
-    public boolean isChestplate(){
+    public boolean isChestplate() {
         return true;
     }
 }

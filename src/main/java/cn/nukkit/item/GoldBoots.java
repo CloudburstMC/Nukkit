@@ -19,10 +19,12 @@ public class GoldBoots extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_GOLD; }
+    public int getTier() {
+        return Armor.TIER_GOLD;
+    }
 
     @Override
-    public boolean isBoots(){
+    public boolean isBoots() {
         return true;
     }
 }

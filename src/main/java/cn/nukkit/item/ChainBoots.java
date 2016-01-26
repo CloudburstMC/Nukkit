@@ -19,10 +19,12 @@ public class ChainBoots extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_CHAIN; }
+    public int getTier() {
+        return Armor.TIER_CHAIN;
+    }
 
     @Override
-    public boolean isBoots(){
+    public boolean isBoots() {
         return true;
     }
 }

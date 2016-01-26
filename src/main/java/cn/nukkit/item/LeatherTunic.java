@@ -19,10 +19,12 @@ public class LeatherTunic extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_LEATHER; }
+    public int getTier() {
+        return Armor.TIER_LEATHER;
+    }
 
     @Override
-    public boolean isChestplate(){
+    public boolean isChestplate() {
         return true;
     }
 }

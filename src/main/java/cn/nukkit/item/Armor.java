@@ -34,7 +34,7 @@ abstract public class Armor extends Item {
     }
 
     @Override
-    public boolean isArmor(){
+    public boolean isArmor() {
         return true;
     }
 }

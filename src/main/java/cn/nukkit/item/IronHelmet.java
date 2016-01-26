@@ -19,10 +19,12 @@ public class IronHelmet extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_IRON; }
+    public int getTier() {
+        return Armor.TIER_IRON;
+    }
 
     @Override
-    public boolean isHelmet(){
+    public boolean isHelmet() {
         return true;
     }
 }

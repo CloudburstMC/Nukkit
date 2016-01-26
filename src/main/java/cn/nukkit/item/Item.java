@@ -1716,15 +1716,15 @@ public class Item implements Cloneable {
         return false;
     }
 
-    public boolean isChestplate(){
+    public boolean isChestplate() {
         return false;
     }
 
-    public boolean isLeggings(){
+    public boolean isLeggings() {
         return false;
     }
 
-    public boolean isBoots(){
+    public boolean isBoots() {
         return false;
     }
 

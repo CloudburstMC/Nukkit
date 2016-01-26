@@ -7,7 +7,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
-import cn.nukkit.network.protocol.BlockEntityDataPacket;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
 
 import java.util.HashSet;
@@ -54,19 +53,19 @@ public class EnchantInventory extends ContainerInventory {
         this.checkItems();
     }
 
-    public void checkItems(){
+    public void checkItems() {
         Item tool = this.getItem(0);
         Item lapis = this.getItem(1);
 
-        if(((tool.isTool() && !tool.hasEnchantments()) || tool.isArmor() || tool.getId() == Item.BOOK) && lapis.getId() == Item.DYE && lapis.getDamage() == Dye.BLUE && lapis.getCount() > 0){
+        if (((tool.isTool() && !tool.hasEnchantments()) || tool.isArmor() || tool.getId() == Item.BOOK) && lapis.getId() == Item.DYE && lapis.getDamage() == Dye.BLUE && lapis.getCount() > 0) {
             this.calculateNewEnchantsAndLevels();
         }
     }
 
-    public void calculateNewEnchantsAndLevels(){
+    public void calculateNewEnchantsAndLevels() {
         int bookshelfCount = 15; //TODO: check for bookshelfs
 
-        for(int i = 0; i < enchLevelCosts.length; i++){
+        for (int i = 0; i < enchLevelCosts.length; i++) {
             this.enchLevelCosts[i] = calculateLevelCost(i, bookshelfCount);
             this.enchLevel[i] = 0;
             this.enchId[i] = 0;
@@ -140,22 +139,22 @@ public class EnchantInventory extends ContainerInventory {
         return 0;
     }
 
-    public void onEnchant(int clicked){
-        if(clicked < 0 || clicked > 2){
+    public void onEnchant(int clicked) {
+        if (clicked < 0 || clicked > 2) {
             return;
         }
 
         HashSet<Integer> enchantments = this.getAvalaibleEnchantments();
 
-        for(int i = 0; i < enchLevelCosts.length; i++){
+        for (int i = 0; i < enchLevelCosts.length; i++) {
             int amount = (i == 0 ? 1 : i) + (random.nextInt(3) == 0 ? 1 : 0);
 
             HashSet<Integer> rndEnch = new HashSet<>();
 
-            for(i = amount; i >= 0;){
+            for (i = amount; i >= 0; ) {
                 int rnd = random.nextInt(enchantments.size());
 
-                if(rndEnch.contains(rnd)){
+                if (rndEnch.contains(rnd)) {
                     continue;
                 }
 
@@ -165,46 +164,46 @@ public class EnchantInventory extends ContainerInventory {
         }
     }
 
-    public HashSet<Integer> getAvalaibleEnchantments(){
+    public HashSet<Integer> getAvalaibleEnchantments() {
         Item item = this.getItem(0);
 
         int specific = 0;
         int slot = 0;
 
-        if(item.isTool()){
+        if (item.isTool()) {
             slot = Enchantment.SLOT_TOOL;
 
-            if(item.isSword()){
+            if (item.isSword()) {
                 specific = Enchantment.SLOT_SWORD;
-            }else if(item.isPickaxe()){
+            } else if (item.isPickaxe()) {
                 specific = Enchantment.SLOT_PICKAXE;
-            } else if (item.isAxe()){
+            } else if (item.isAxe()) {
                 specific = Enchantment.SLOT_AXE;
-            } else if(item.isShovel()){
+            } else if (item.isShovel()) {
                 specific = Enchantment.SLOT_SHOVEL;
-            } else if(item.getId() == Item.BOW){
+            } else if (item.getId() == Item.BOW) {
                 specific = Enchantment.SLOT_BOW;
             }
-        } else if(item.isArmor()){
+        } else if (item.isArmor()) {
             slot = Enchantment.SLOT_ARMOR;
 
-            if(item.isHelmet()){
+            if (item.isHelmet()) {
                 specific = Enchantment.SLOT_HEAD;
-            }else if (item.isChestplate()){
+            } else if (item.isChestplate()) {
                 specific = Enchantment.SLOT_TORSO;
-            }else if(item.isLeggings()){
+            } else if (item.isLeggings()) {
                 specific = Enchantment.SLOT_LEGS;
-            }else if(item.isBoots()){
+            } else if (item.isBoots()) {
                 specific = Enchantment.SLOT_FEET;
             }
         }
 
         HashSet<Integer> enchantments = new HashSet<>();
 
-        for(int i = 0; i < 25; i++){
+        for (int i = 0; i < 25; i++) {
             Enchantment ench = Enchantment.getEnchantment(i);
 
-            if(ench.getSlot() == slot || ench.getSlot() == specific || ench.getSlot() == Enchantment.SLOT_ALL){
+            if (ench.getSlot() == slot || ench.getSlot() == specific || ench.getSlot() == Enchantment.SLOT_ALL) {
                 enchantments.add(i);
             }
         }
@@ -212,15 +211,15 @@ public class EnchantInventory extends ContainerInventory {
         return enchantments;
     }
 
-    public void update(){
+    public void update() {
         ContainerSetDataPacket pk = new ContainerSetDataPacket();
 
-        for(Player player : this.getViewers()){
+        for (Player player : this.getViewers()) {
             int windowId = player.getWindowId(this);
             if (windowId > 0) {
 
                 //this may be wrong
-                for(int i = 0; i < enchLevelCosts.length; i++) {
+                for (int i = 0; i < enchLevelCosts.length; i++) {
                     pk.windowid = (byte) windowId;
 
                     pk.property = 0;

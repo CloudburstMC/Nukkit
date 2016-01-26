@@ -19,10 +19,12 @@ public class DiamondChestplate extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_DIAMOND; }
+    public int getTier() {
+        return Armor.TIER_DIAMOND;
+    }
 
     @Override
-    public boolean isChestplate(){
+    public boolean isChestplate() {
         return true;
     }
 }

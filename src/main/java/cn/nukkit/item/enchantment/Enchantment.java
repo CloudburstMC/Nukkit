@@ -165,7 +165,7 @@ public class Enchantment implements Cloneable {
         return this;
     }
 
-    public int getMaxLevel(){
+    public int getMaxLevel() {
         return this.maxLevel;
     }
 

@@ -19,10 +19,12 @@ public class ChainHelmet extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_CHAIN; }
+    public int getTier() {
+        return Armor.TIER_CHAIN;
+    }
 
     @Override
-    public boolean isHelmet(){
+    public boolean isHelmet() {
         return true;
     }
 }

@@ -19,10 +19,12 @@ public class LeatherCap extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_LEATHER; }
+    public int getTier() {
+        return Armor.TIER_LEATHER;
+    }
 
     @Override
-    public boolean isHelmet(){
+    public boolean isHelmet() {
         return true;
     }
 }

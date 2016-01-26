@@ -19,10 +19,12 @@ public class ChainChestplate extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_CHAIN; }
+    public int getTier() {
+        return Armor.TIER_CHAIN;
+    }
 
     @Override
-    public boolean isChestplate(){
+    public boolean isChestplate() {
         return true;
     }
 }

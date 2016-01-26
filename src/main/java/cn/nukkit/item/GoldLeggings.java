@@ -19,10 +19,12 @@ public class GoldLeggings extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_GOLD; }
+    public int getTier() {
+        return Armor.TIER_GOLD;
+    }
 
     @Override
-    public boolean isLeggings(){
+    public boolean isLeggings() {
         return true;
     }
 }

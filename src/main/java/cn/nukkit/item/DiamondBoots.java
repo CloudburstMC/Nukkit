@@ -19,10 +19,12 @@ public class DiamondBoots extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_DIAMOND; }
+    public int getTier() {
+        return Armor.TIER_DIAMOND;
+    }
 
     @Override
-    public boolean isBoots(){
+    public boolean isBoots() {
         return true;
     }
 }

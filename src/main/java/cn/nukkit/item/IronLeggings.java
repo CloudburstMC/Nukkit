@@ -19,10 +19,12 @@ public class IronLeggings extends Armor {
     }
 
     @Override
-    public int getTier() { return Armor.TIER_IRON; }
+    public int getTier() {
+        return Armor.TIER_IRON;
+    }
 
     @Override
-    public boolean isLeggings(){
+    public boolean isLeggings() {
         return true;
     }
 }
