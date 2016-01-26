@@ -17,4 +17,14 @@ public class IronBoots extends Armor {
     public IronBoots(Integer meta, int count) {
         super(IRON_BOOTS, meta, count, "Iron Boots");
     }
+
+    @Override
+    public int getTier() {
+        return Armor.TIER_IRON;
+    }
+
+    @Override
+    public boolean isBoots() {
+        return true;
+    }
 }

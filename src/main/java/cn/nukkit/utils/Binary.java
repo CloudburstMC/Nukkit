@@ -415,7 +415,7 @@ public class Binary {
     }
 
     public static byte[] appendBytes(byte[][] bytes) {
-        int length = 1;
+        int length = 0;
         for (byte[] b : bytes) {
             length += b.length;
         }

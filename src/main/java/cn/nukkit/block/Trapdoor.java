@@ -1,13 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Doors;
 
 /**
  * Created by Pub4Game on 26.12.2015.
@@ -163,7 +163,10 @@ public class Trapdoor extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (!Doors.toggleOpenState(this, player)) return false;
+        if (!this.toggle(player)) {
+            return false;
+        }
+
         this.getLevel().setBlock(this, this, true);
         this.level.addSound(new DoorSound(this));
         return true;
@@ -172,6 +175,26 @@ public class Trapdoor extends Transparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.WOOD_BLOCK_COLOR;
+    }
+
+    public boolean toggle(Player player) {
+        DoorToggleEvent event = new DoorToggleEvent(this, player);
+        this.getLevel().getServer().getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        int sideBit = this.meta & 0b0111;
+        int openBit = this.meta & 0b1000;
+        openBit = (~openBit) & 0b1000;
+        this.meta = sideBit | openBit;
+
+        return true;
+    }
+
+    public boolean isOpen() {
+        return (this.meta & 0x08) > 0;
     }
 
 }

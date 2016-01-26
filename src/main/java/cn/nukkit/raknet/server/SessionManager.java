@@ -105,7 +105,7 @@ public class SessionManager {
         this.ipSec.clear();
 
         if ((this.ticks & 0b1111) == 0) {
-            double diff = Math.max(50d, (double) time - this.lastMeasure);
+            double diff = Math.max(5d, (double) time - this.lastMeasure);
             this.streamOption("bandwidth", this.sendBytes / diff + ";" + this.receiveBytes / diff);
             this.lastMeasure = time;
             this.sendBytes = 0;

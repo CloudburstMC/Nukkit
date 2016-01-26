@@ -1,8 +1,8 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Dye;
 import cn.nukkit.item.Tool;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Dyes;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -20,7 +20,7 @@ public class StainedClay extends Solid {
 
     @Override
     public String getName() {
-        return Dyes.getUnlocalizedColorName(meta) + " Stained Clay";
+        return Dye.getColorName(meta) + " Stained Clay";
     }
 
     @Override

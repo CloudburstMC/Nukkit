@@ -17,4 +17,14 @@ public class ChainLeggings extends Armor {
     public ChainLeggings(Integer meta, int count) {
         super(CHAIN_LEGGINGS, meta, count, "Chain Leggings");
     }
+
+    @Override
+    public int getTier() {
+        return Armor.TIER_CHAIN;
+    }
+
+    @Override
+    public boolean isLeggings() {
+        return true;
+    }
 }

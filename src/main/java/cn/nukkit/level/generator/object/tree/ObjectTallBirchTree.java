@@ -7,7 +7,7 @@ import cn.nukkit.math.NukkitRandom;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class TallBirchTree extends BirchTree {
+public class ObjectTallBirchTree extends ObjectBirchTree {
 
     @Override
     public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {

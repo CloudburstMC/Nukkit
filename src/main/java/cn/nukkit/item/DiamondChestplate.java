@@ -17,4 +17,14 @@ public class DiamondChestplate extends Armor {
     public DiamondChestplate(Integer meta, int count) {
         super(DIAMOND_CHESTPLATE, meta, count, "Diamond Chestplate");
     }
+
+    @Override
+    public int getTier() {
+        return Armor.TIER_DIAMOND;
+    }
+
+    @Override
+    public boolean isChestplate() {
+        return true;
+    }
 }

@@ -724,17 +724,40 @@ public class CraftingManager {
 
         for (int block : ingots.keySet()) {
             int ingot = ingots.get(block);
-            this.registerRecipe((new BigShapelessRecipe(Item.get(block, 0, 1))).addIngredient(Item.get(ingot, 0, 9)));
-            this.registerRecipe((new ShapelessRecipe(Item.get(ingot, 0, 9))).addIngredient(Item.get(block, 0, 1)));
+
+            this.registerRecipe((new ShapedRecipe(Item.get(block, 0, 1),
+                    " X",
+                    "  "
+            )).setIngredient("X", Item.get(ingot, 0, 9)));
+
+            this.registerRecipe((new BigShapedRecipe(Item.get(ingot, 0, 9),
+                    "XXX",
+                    "XXX",
+                    "XXX"
+            )).setIngredient("X", Item.get(block, 0, 1)));
         }
 
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.LAPIS_BLOCK, 0, 1),
+                "XXX",
+                "XXX",
+                "XXX"
+        )).setIngredient("X", Item.get(Item.DYE, 4, 9)));
 
-        this.registerRecipe((new BigShapelessRecipe(Item.get(Item.LAPIS_BLOCK, 0, 1))).addIngredient(Item.get(Item.DYE, 4, 9)));
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.DYE, 4, 9))).addIngredient(Item.get(Item.LAPIS_BLOCK, 0, 1)));
+        this.registerRecipe((new ShapedRecipe(Item.get(Item.DYE, 4, 9),
+                " X",
+                "  "
+        )).setIngredient("X", Item.get(Item.LAPIS_BLOCK, 0, 1)));
 
-        this.registerRecipe((new BigShapelessRecipe(Item.get(Item.GOLD_INGOT, 0, 1))).addIngredient(Item.get(Item.GOLD_NUGGET, 0, 9)));
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.GOLD_NUGGET, 0, 9))).addIngredient(Item.get(Item.GOLD_INGOT, 0, 1)));
+        this.registerRecipe((new ShapedRecipe(Item.get(Item.GOLD_INGOT, 0, 1),
+                " X",
+                "  "
+        )).setIngredient("X", Item.get(Item.GOLD_NUGGET, 0, 9)));
 
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GOLD_NUGGET, 0, 9),
+                "XXX",
+                "XXX",
+                "XXX"
+        )).setIngredient("X", Item.get(Item.GOLD_INGOT, 0, 1)));
     }
 
     public final Comparator<Item> comparator = new Comparator<Item>() {

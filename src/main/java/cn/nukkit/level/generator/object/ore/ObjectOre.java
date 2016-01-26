@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.object;
+package cn.nukkit.level.generator.object.ore;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;

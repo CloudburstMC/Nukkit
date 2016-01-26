@@ -1,14 +1,12 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.DoorSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.Doors;
-
-import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -270,8 +268,38 @@ public abstract class Door extends Transparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (!Doors.toggleOpenState(this, player)) return false;
+        if (!this.toggle(player)) {
+            return false;
+        }
+
         this.level.addSound(new DoorSound(this));
         return true;
+    }
+
+    public boolean toggle(Player player) {
+        DoorToggleEvent event = new DoorToggleEvent(this, player);
+        this.getLevel().getServer().getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        if ((this.meta & 0x08) == 0x08) { //Top
+            Block down = this.getSide(Vector3.SIDE_DOWN);
+            if (down.getId() != this.getId()) {
+                return false;
+            }
+
+            this.getLevel().setBlock(down, Block.get(this.getId(), down.getDamage() ^ 0x04), true);
+        } else { //Down
+            this.meta ^= 0x04;
+            this.getLevel().setBlock(this, this, true);
+        }
+
+        return true;
+    }
+
+    public boolean isOpen() {
+        return (this.meta & 0x04) > 0;
     }
 }

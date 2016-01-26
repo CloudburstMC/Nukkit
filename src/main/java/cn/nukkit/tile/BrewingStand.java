@@ -124,9 +124,7 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
                 this.namedTag.getList("Items").getAll().remove(i);
             }
         } else if (i < 0) {
-            i = this.namedTag.getList("Items").getAll().size();
-            i = Math.max(i, this.getSize());
-            (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
+            (this.namedTag.getList("Items", CompoundTag.class)).add(d);
         } else {
             (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
         }
