@@ -37,19 +37,20 @@ public class Normal extends Generator {
 
     private List<Populator> generationPopulators = new ArrayList<>();
 
-    private Simplex noiseBase;
+    private Simplex noiseSeaFloor;
 
     private BiomeSelector selector;
 
     private int heightOffset;
 
     private final int seaHeight = 62;
-    private final int seaFloorHeight = 55;
+    private final int seaFloorHeight = 48;
     private final int beathStartHeight = 60;
     private final int beathStopHeight = 64;
     private final int landHeight = 66;
     private final int heightRange = 20;
     private final int bedrockDepth = 5;
+    private final int seaFloorGenerateRange = 5;
 
     public Normal() {
         this(new HashMap<>());
@@ -96,7 +97,7 @@ public class Normal extends Generator {
         this.level = level;
         this.random = random;
         this.random.setSeed(this.level.getSeed());
-        this.noiseBase = new Simplex(this.random, 1F, 1F / 4F, 1F / 64F);
+        this.noiseSeaFloor = new Simplex(this.random, 1F, 1F / 23F, 1F / 30F);
         this.random.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.random, Biome.getBiome(Biome.OCEAN));
         this.heightOffset = random.nextRange(-5, 3);
@@ -136,25 +137,17 @@ public class Normal extends Generator {
     public void generateChunk(int chunkX, int chunkZ) {
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
 
-        double[][] baseNoise = Generator.getFastNoise2D(this.noiseBase, 16, 16, 1, chunkX * 16, 0, chunkZ * 16);
+        double[][] baseNoise = Generator.getFastNoise2D(this.noiseSeaFloor, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
-
-
-        /** todo generator:
-         * [CLEANED] 1. 我需要自动陆地高度，这可以随机生成海岛、孤岛生存等特殊地图
-         * [CLEANED] 2. 用一个simplex来生成海陆地形图
-         * todo [DEBUGGING] 3. 判断特殊高度来绘制海底、海岸、陆地
-         * [CLEANED] 4. populator出来，初步可玩
-         **/
 
         for(int genx = 0; genx < 16; genx++) {
             for(int genz = 0; genz < 16; genz++) {
 
                 Biome biome;
-                int genyHeight = seaHeight + (int) (baseNoise[genx][genz] * heightRange) + heightOffset;
+                int genyHeight = seaFloorHeight + (int) (seaFloorGenerateRange * baseNoise[genx][genz]);
                 //prepare for generate ocean, desert, and land
-                if(genyHeight < seaFloorHeight) {
+                if(genyHeight < seaFloorHeight - seaFloorGenerateRange) {
                     genyHeight = seaFloorHeight;
                     biome = Biome.getBiome(Biome.OCEAN);
                 }
