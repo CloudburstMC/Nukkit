@@ -373,12 +373,12 @@ public class Server {
 
         for (String name : ((Map<String, Object>) this.getConfig("worlds", new HashMap<>())).keySet()) {
             if (!this.loadLevel(name)) {
-                int seed = (int) this.getConfig("worlds." + name + ".seed", System.currentTimeMillis());
+                long seed = (long) this.getConfig("worlds." + name + ".seed", System.currentTimeMillis());
 
                 Map<String, Object> options = new HashMap<>();
                 String[] opts = ((String) this.getConfig("worlds." + name + ".generator", Generator.getGenerator("default").getSimpleName())).split(":");
                 Class<? extends Generator> generator = Generator.getGenerator(opts[0]);
-                if (opts.length > 0) {
+                if (opts.length > 1) {
                     String preset = "";
                     for (int i = 1; i < opts.length; i++) {
                         preset += opts[i] + ":";
