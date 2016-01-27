@@ -144,7 +144,7 @@ public class EnchantInventory extends ContainerInventory {
             return;
         }
 
-        HashSet<Integer> enchantments = this.getAvalaibleEnchantments();
+        HashSet<Integer> enchantments = this.getAvailableEnchantments();
 
         for (int i = 0; i < enchLevelCosts.length; i++) {
             int amount = (i == 0 ? 1 : i) + (random.nextInt(3) == 0 ? 1 : 0);
@@ -164,7 +164,7 @@ public class EnchantInventory extends ContainerInventory {
         }
     }
 
-    public HashSet<Integer> getAvalaibleEnchantments() {
+    public HashSet<Integer> getAvailableEnchantments() {
         Item item = this.getItem(0);
 
         int specific = 0;

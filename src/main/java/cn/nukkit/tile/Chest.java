@@ -110,7 +110,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
             this.checkPairing();
         }
 
-        return this.doubleInventory instanceof DoubleChestInventory ? this.doubleInventory : this.inventory;
+        return this.doubleInventory != null ? this.doubleInventory : this.inventory;
     }
 
     public ChestInventory getRealInventory() {

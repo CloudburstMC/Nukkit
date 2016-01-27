@@ -377,7 +377,7 @@ public class Binary {
             return null;
         }
         String str = "0123456789ABCDEF";
-        hexString = hexString.toUpperCase();
+        hexString = hexString.toUpperCase().replace(" ", "");
         int length = hexString.length() / 2;
         char[] hexChars = hexString.toCharArray();
         byte[] d = new byte[length];

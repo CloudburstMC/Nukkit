@@ -2927,7 +2927,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (!ev.isCancelled()) {
             String message;
             if (isAdmin) {
-                message = "Kicked by admin." + (!"".equals(reason) ? " Reason: " + reason : "");
+                if (!this.isBanned()) {
+                    message = "Kicked by admin." + (!"".equals(reason) ? " Reason: " + reason : "");
+                } else {
+                    message = reason;
+                }
             } else {
                 if ("".equals(reason)) {
                     message = "disconnectionScreen.noReason";
