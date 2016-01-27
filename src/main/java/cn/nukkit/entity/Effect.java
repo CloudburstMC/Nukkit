@@ -187,7 +187,7 @@ public class Effect implements Cloneable {
                 return true;
             case Effect.SPEED:
             case Effect.SLOWNESS:
-                return true;
+                return (this.duration % 20) == 0;
         }
         return false;
     }
@@ -247,6 +247,14 @@ public class Effect implements Cloneable {
             }
 
             ((Player) entity).dataPacket(pk);
+            
+            if (this.id == Effect.SPEED) {
+                ((Player) entity).setMovementSpeed(0.1f + (this.amplifier + 1) * 0.01f);
+            }
+
+            if (this.id == Effect.SLOWNESS) {
+                ((Player) entity).setMovementSpeed(0.1f - (this.amplifier + 1) * 0.01f);
+            }
         }
 
         if (this.id == Effect.INVISIBILITY) {
@@ -263,6 +271,10 @@ public class Effect implements Cloneable {
             pk.eventId = MobEffectPacket.EVENT_REMOVE;
 
             ((Player) entity).dataPacket(pk);
+            
+            if (this.id == Effect.SPEED || this.id == Effect.SLOWNESS) {
+                ((Player) entity).setMovementSpeed(0.1f);
+            }
         }
 
         if (this.id == Effect.INVISIBILITY) {
