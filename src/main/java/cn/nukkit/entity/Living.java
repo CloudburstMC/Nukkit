@@ -248,17 +248,15 @@ public abstract class Living extends Entity implements Damageable {
         }
 
         List<Block> blocks = new ArrayList<>();
-        int nextIndex = 0;
 
         BlockIterator itr = new BlockIterator(this.level, this.getPosition(), this.getDirectionVector(), this.getEyeHeight(), maxDistance);
 
         while (itr.hasNext()) {
             Block block = itr.next();
-            blocks.add(nextIndex++, block);
+            blocks.add(block);
 
             if (maxLength != 0 && blocks.size() > maxLength) {
                 blocks.remove(0);
-                --nextIndex;
             }
 
             int id = block.getId();
