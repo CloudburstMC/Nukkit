@@ -17,4 +17,14 @@ public class GoldHelmet extends Armor {
     public GoldHelmet(Integer meta, int count) {
         super(GOLD_HELMET, meta, count, "Gold Helmet");
     }
+
+    @Override
+    public int getTier() {
+        return Armor.TIER_GOLD;
+    }
+
+    @Override
+    public boolean isHelmet() {
+        return true;
+    }
 }

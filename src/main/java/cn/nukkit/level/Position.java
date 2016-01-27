@@ -87,13 +87,13 @@ public class Position extends Vector3 {
         return this;
     }
 
-    public Block getLevelBlock(){
+    public Block getLevelBlock() {
         if (this.isValid()) return this.level.getBlock(this);
         else throw new LevelException("Undefined Level reference");
     }
 
-    public Location getLocation(){
-        if (this.isValid()) return new Location (this.x,this.y,this.z,0,0,this.level);
+    public Location getLocation() {
+        if (this.isValid()) return new Location(this.x, this.y, this.z, 0, 0, this.level);
         else throw new LevelException("Undefined Level reference");
     }
 
@@ -109,12 +109,12 @@ public class Position extends Vector3 {
 
     @Override
     public Position add(double x, double y, double z) {
-        return new Position(this.x + x, this.y + y, this.z + z,this.level);
+        return new Position(this.x + x, this.y + y, this.z + z, this.level);
     }
 
     @Override
     public Position add(Vector3 x) {
-        return new Position(this.x + x.getX(), this.y + x.getY(), this.z + x.getZ(),this.level);
+        return new Position(this.x + x.getX(), this.y + x.getY(), this.z + x.getZ(), this.level);
     }
 
     @Override
@@ -144,32 +144,32 @@ public class Position extends Vector3 {
 
     @Override
     public Position multiply(double number) {
-        return new Position(this.x * number, this.y * number, this.z * number,this.level);
+        return new Position(this.x * number, this.y * number, this.z * number, this.level);
     }
 
     @Override
     public Position divide(double number) {
-        return new Position(this.x / number, this.y / number, this.z / number,this.level);
+        return new Position(this.x / number, this.y / number, this.z / number, this.level);
     }
 
     @Override
     public Position ceil() {
-        return new Position ((int) Math.ceil(this.x), (int) Math.ceil(this.y), (int) Math.ceil(this.z),this.level);
+        return new Position((int) Math.ceil(this.x), (int) Math.ceil(this.y), (int) Math.ceil(this.z), this.level);
     }
 
     @Override
     public Position floor() {
-        return new Position(this.getFloorX(), this.getFloorY(), this.getFloorZ(),this.level);
+        return new Position(this.getFloorX(), this.getFloorY(), this.getFloorZ(), this.level);
     }
 
     @Override
     public Position round() {
-        return new Position(Math.round(this.x), Math.round(this.y), Math.round(this.z),this.level);
+        return new Position(Math.round(this.x), Math.round(this.y), Math.round(this.z), this.level);
     }
 
     @Override
     public Position abs() {
-        return new Position((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z),this.level);
+        return new Position((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z), this.level);
     }
 
 }

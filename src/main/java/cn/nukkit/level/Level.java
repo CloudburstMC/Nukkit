@@ -542,7 +542,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void checkTime() {
         if (!this.stopTime) {
-            this.time += 1.25;
+            this.time += 1;
         }
     }
 

@@ -1029,8 +1029,8 @@ public class Server {
                 " | Online " + this.players.size() + "/" + this.getMaxPlayers() +
                 " | Memory " + usage;
         if (!Nukkit.shortTitle) {
-            title += " | U " + NukkitMath.round((this.network.getUpload()) / 1024, 2)
-                    + " D " + NukkitMath.round((this.network.getDownload()) / 1024, 2) + " kB/s";
+            title += " | U " + NukkitMath.round((this.network.getUpload() / 1024 * 1000), 2)
+                    + " D " + NukkitMath.round((this.network.getDownload() / 1024 * 1000), 2) + " kB/s";
         }
         title += " | TPS " + this.getTicksPerSecond() +
                 " | Load " + this.getTickUsage() + "%" + (char) 0x07;
@@ -1417,9 +1417,10 @@ public class Server {
             return;
         }
 
-        for (Map.Entry<String, Player> entry : this.players.entrySet()) {
-            if (player.equals(entry.getValue())) {
-                this.players.remove(entry.getKey());
+        for (String identifier : new ArrayList<>(this.players.keySet())) {
+            Player p = this.players.get(identifier);
+            if (player.equals(p)) {
+                this.players.remove(identifier);
                 this.identifier.remove(player);
                 break;
             }

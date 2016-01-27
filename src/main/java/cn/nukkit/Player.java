@@ -1487,7 +1487,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.close(this.getLeaveMessage(), "Server is white-listed");
 
             return;
-        } else if (this.server.getNameBans().isBanned((this.getName()).toLowerCase()) || this.server.getIPBans().isBanned(this.getAddress())) {
+        } else if (this.server.getNameBans().isBanned(this.getName().toLowerCase()) || this.server.getIPBans().isBanned(this.getAddress())) {
             this.close(this.getLeaveMessage(), "You are banned");
 
             return;
@@ -1501,7 +1501,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         for (Player p : new ArrayList<>(this.server.getOnlinePlayers().values())) {
-            if (p != this && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
+            if (p != this && p.getName() != null && this.getName() != null && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
                 if (!p.kick("logged in from another location")) {
                     this.close(this.getLeaveMessage(), "Logged in from another location");
                     return;
@@ -1540,9 +1540,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
             nbt.getList("Pos", DoubleTag.class)
-                    .add(0, new DoubleTag("0", this.level.getSpawnLocation().x))
-                    .add(1, new DoubleTag("1", this.level.getSpawnLocation().y))
-                    .add(2, new DoubleTag("2", this.level.getSpawnLocation().z));
+                    .add(new DoubleTag("0", this.level.getSpawnLocation().x))
+                    .add(new DoubleTag("1", this.level.getSpawnLocation().y))
+                    .add(new DoubleTag("2", this.level.getSpawnLocation().z));
         } else {
             this.setLevel(level);
         }
@@ -2845,6 +2845,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 if (this.currentTransaction.canExecute()) {
                     //todo achievement
 
+                    this.currentTransaction.execute();
+
                     this.currentTransaction = null;
                 }
 
@@ -2925,7 +2927,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (!ev.isCancelled()) {
             String message;
             if (isAdmin) {
-                message = "Kicked by admin." + (!"".equals(reason) ? " Reason: " + reason : "");
+                if (!this.isBanned()) {
+                    message = "Kicked by admin." + (!"".equals(reason) ? " Reason: " + reason : "");
+                } else {
+                    message = reason;
+                }
             } else {
                 if ("".equals(reason)) {
                     message = "disconnectionScreen.noReason";

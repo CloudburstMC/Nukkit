@@ -17,4 +17,14 @@ public class LeatherPants extends Armor {
     public LeatherPants(Integer meta, int count) {
         super(LEATHER_PANTS, meta, count, "Leather Pants");
     }
+
+    @Override
+    public int getTier() {
+        return Armor.TIER_LEATHER;
+    }
+
+    @Override
+    public boolean isLeggings() {
+        return true;
+    }
 }

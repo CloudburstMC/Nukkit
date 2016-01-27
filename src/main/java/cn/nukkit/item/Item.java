@@ -1708,6 +1708,26 @@ public class Item implements Cloneable {
         return false;
     }
 
+    public boolean isArmor() {
+        return false;
+    }
+
+    public boolean isHelmet() {
+        return false;
+    }
+
+    public boolean isChestplate() {
+        return false;
+    }
+
+    public boolean isLeggings() {
+        return false;
+    }
+
+    public boolean isBoots() {
+        return false;
+    }
+
     @Override
     final public String toString() {
         return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
