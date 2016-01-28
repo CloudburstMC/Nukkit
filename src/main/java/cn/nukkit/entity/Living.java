@@ -10,6 +10,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ShortTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.network.protocol.UpdateAttributesPacket;
 import cn.nukkit.utils.BlockIterator;
 
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public abstract class Living extends Entity implements Damageable {
     protected int attackTime = 0;
 
     protected boolean invisible = false;
+
+    protected float movementSpeed = 0.1f;
 
     @Override
     protected void initEntity() {
@@ -274,4 +277,13 @@ public abstract class Living extends Entity implements Damageable {
 
         return blocks.stream().toArray(Block[]::new);
     }
+
+    public void setMovementSpeed(float speed) {
+        this.movementSpeed = speed;
+    }
+
+    public float getMovementSpeed() {
+        return this.movementSpeed;
+    }
+
 }

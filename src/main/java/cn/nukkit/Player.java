@@ -28,6 +28,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.level.sound.ClickSound;
 import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.math.*;
@@ -165,8 +166,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     private int expLevel = 0;
 
     private PlayerFood foodData = null;
-
-    private float movementSpeed = 0.1f;
 
     private Entity killer = null;
 
@@ -3345,21 +3344,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         int now = this.getExperience();
         int added = now + add;
         int level = this.getExperienceLevel();
-        int most = this.getNeedExpToNextLevel(level);
+        int most = this.calculateRequireExperience(level);
         while (added >= most) {  //Level Up!
             added = added - most;
             level++;
             this.sendExperienceLevelUp();
             getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
-            most = this.getNeedExpToNextLevel(level);
+            most = this.calculateRequireExperience(level);
         }
         getServer().getLogger().debug("Added " + add + " EXP to " + getName() + ", now lv:" + level + " (" + added + "/" + most + ") .");
         this.setExperience(added, level);
-        //$sound = new ZombieInfectSound($this);
-        //$this->getLevel()->addSound($sound);
     }
 
-    public int getNeedExpToNextLevel(int level) {
+    public int calculateRequireExperience(int level) {
         if (level < 16) {
             return 2 * level + 7;
         } else if (level >= 17 && level <= 31) {
@@ -3378,35 +3375,26 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void setExperience(int exp, int level) {
         this.exp = exp;
         this.expLevel = level;
-        sendExperienceLevel(level);
-        sendExperience(exp);
+
+        this.sendExperienceLevel(level);
+        this.sendExperience(exp);
     }
 
     public void sendExperience() {
-        sendExperience(0);
+        sendExperience(this.getExperience());
     }
 
     public void sendExperience(int exp) {
-        UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        pk.entityId = 0;
-        float ee = ((float) exp) / (float) this.getNeedExpToNextLevel(this.getExperienceLevel());
-        pk.entries = new Attribute[]{
-                Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, ee, true).setValue(ee)
-        };
-        this.dataPacket(pk);
+        float precent = ((float) exp) / this.calculateRequireExperience(this.getExperienceLevel());
+        this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, precent, true).setValue(precent));
     }
 
     public void sendExperienceLevel() {
-        sendExperienceLevel(0);
+        sendExperienceLevel(this.getExperienceLevel());
     }
 
     public void sendExperienceLevel(int level) {
-        UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        pk.entityId = 0;
-        pk.entries = new Attribute[]{
-                Attribute.addAttribute(Attribute.EXPERIENCE_LEVEL, "player.level", 0, 24791, level, true).setValue(level)
-        };
-        this.dataPacket(pk);
+        this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setValue(level));
     }
 
     public void sendExperienceLevelUp() {
@@ -3420,21 +3408,20 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         //this.dataPacket(pk);
     }
 
-    //@Override
-    public void setMovementSpeed(float speed) {
-        this.movementSpeed = speed;
-        Attribute attr = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
-        if (this.spawned) {
-            UpdateAttributesPacket pk = new UpdateAttributesPacket();
-            pk.entries = new Attribute[]{attr};
-            pk.entityId = 0;
-            this.dataPacket(pk);
-        }
+    public void setAttribute(Attribute attribute) {
+        UpdateAttributesPacket pk = new UpdateAttributesPacket();
+        pk.entries = new Attribute[]{attribute};
+        pk.entityId = 0;
+        this.dataPacket(pk);
     }
 
-    //@Override
-    public float getMovementSpeed() {
-        return this.movementSpeed;
+    @Override
+    public void setMovementSpeed(float speed) {
+        super.setMovementSpeed(speed);
+        if (this.spawned) {
+            Attribute attribute = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
+            this.setAttribute(attribute);
+        }
     }
 
     public Entity getKiller() {
@@ -3465,12 +3452,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             //暴击
             boolean add = false;
             if (!damager.onGround) {
-                /* TODO
-                for (int i = 0; i < 5); i++) {
-                    CriticalParticle par = new CriticalPartice(new Vector3(this.x + mt_rand(-15, 15) / 10, this.y + mt_rand(0, 20) / 10, this.z + mt_rand(-15, 15) / 10));
+                NukkitRandom random = new NukkitRandom();
+                for (int i = 0; i < 5; i++) {
+                    CriticalParticle par = new CriticalParticle(new Vector3(this.x + random.nextRange(-15, 15) / 10, this.y + random.nextRange(0, 20) / 10, this.z + random.nextRange(-15, 15) / 10));
                     this.getLevel().addParticle(par);
                 }
-                */
+
                 add = true;
             }
             if (add) source.setDamage((float) (source.getDamage() * 1.5));
