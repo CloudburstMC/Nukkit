@@ -1,6 +1,8 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.EnchantParticle;
 import cn.nukkit.level.particle.Particle;
@@ -13,7 +15,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
  * Created on 2015/12/25 by xtypr.
  * Package cn.nukkit.entity in project Nukkit .
  */
-public class ThrownExpBottle extends Projectile {
+public class EntityExpBottle extends EntityProjectile {
 
     public static final int NETWORK_ID = 68;
 
@@ -47,11 +49,11 @@ public class ThrownExpBottle extends Projectile {
         return 0.01f;
     }
 
-    public ThrownExpBottle(FullChunk chunk, CompoundTag nbt) {
+    public EntityExpBottle(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public ThrownExpBottle(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityExpBottle(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 
@@ -95,7 +97,7 @@ public class ThrownExpBottle extends Projectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = ThrownExpBottle.NETWORK_ID;
+        pk.type = EntityExpBottle.NETWORK_ID;
         pk.eid = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;

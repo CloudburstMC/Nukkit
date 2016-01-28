@@ -1,9 +1,9 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.entity.DroppedItem;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.StringEntityData;
+import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.DataPacket;
@@ -69,7 +69,7 @@ public class FloatingTextParticle extends Particle {
         if (!this.invisible) {
             AddEntityPacket pk = new AddEntityPacket();
             pk.eid = this.entityId;
-            pk.type = DroppedItem.NETWORK_ID;
+            pk.type = EntityItem.NETWORK_ID;
             pk.x = (float) this.x;
             pk.y = (float) (this.y - 0.75);
             pk.z = (float) this.z;

@@ -21,7 +21,7 @@ import java.util.UUID;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Human extends Creature implements InventoryHolder {
+public class EntityHuman extends EntityCreature implements InventoryHolder {
 
     public static final int DATA_PLAYER_FLAG_SLEEP = 1;
     public static final int DATA_PLAYER_FLAG_DEAD = 2;
@@ -61,7 +61,7 @@ public class Human extends Creature implements InventoryHolder {
         return -1;
     }
 
-    public Human(FullChunk chunk, CompoundTag nbt) {
+    public EntityHuman(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

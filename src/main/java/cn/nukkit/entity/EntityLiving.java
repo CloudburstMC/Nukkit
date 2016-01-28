@@ -3,6 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.data.ShortEntityData;
+import cn.nukkit.entity.passive.EntityWaterAnimal;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -10,7 +11,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ShortTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
-import cn.nukkit.network.protocol.UpdateAttributesPacket;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockIterator;
 
 import java.util.ArrayList;
@@ -22,8 +23,8 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Living extends Entity implements Damageable {
-    public Living(FullChunk chunk, CompoundTag nbt) {
+public abstract class EntityLiving extends Entity implements EntityDamageable {
+    public EntityLiving(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -85,8 +86,8 @@ public abstract class Living extends Entity implements Damageable {
     }
 
     @Override
-    public void heal(float amount, EntityRegainHealthEvent source) {
-        super.heal(amount, source);
+    public void heal(EntityRegainHealthEvent source) {
+        super.heal(source);
         if (source.isCancelled()) {
             return;
         }
@@ -190,7 +191,7 @@ public abstract class Living extends Entity implements Damageable {
             }
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
-                if (this instanceof WaterAnimal) {
+                if (this instanceof EntityWaterAnimal) {
                     this.setDataProperty(DATA_AIR, new ShortEntityData(300));
                 } else {
                     hasUpdate = true;
@@ -205,7 +206,7 @@ public abstract class Living extends Entity implements Damageable {
                     this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
                 }
             } else {
-                if (this instanceof WaterAnimal) {
+                if (this instanceof EntityWaterAnimal) {
                     hasUpdate = true;
                     int airTicks = this.getDataPropertyInt(DATA_AIR).data - tickDiff;
 

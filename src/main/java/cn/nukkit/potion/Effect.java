@@ -1,6 +1,7 @@
-package cn.nukkit.entity;
+package cn.nukkit.potion;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityEvent;
@@ -208,7 +209,7 @@ public class Effect implements Cloneable {
             case Effect.REGENERATION: //REGENERATION
                 if (entity.getHealth() < entity.getMaxHealth()) {
                     ev = new EntityRegainHealthEvent(entity, 1, EntityRegainHealthEvent.CAUSE_MAGIC);
-                    entity.heal(((EntityRegainHealthEvent) ev).getAmount(), (EntityRegainHealthEvent) ev);
+                    entity.heal((EntityRegainHealthEvent) ev);
                 }
                 break;
             case Effect.SPEED:

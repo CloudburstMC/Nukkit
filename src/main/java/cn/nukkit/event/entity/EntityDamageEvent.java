@@ -1,9 +1,9 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.EventException;
 
 import java.util.HashMap;

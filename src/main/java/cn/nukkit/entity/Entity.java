@@ -24,6 +24,7 @@ import cn.nukkit.network.protocol.MobEffectPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.ChunkException;
 
 import java.lang.reflect.Constructor;
@@ -662,7 +663,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, damage));
     }
 
-    public void heal(float amount, EntityRegainHealthEvent source) {
+    public void heal(EntityRegainHealthEvent source) {
         this.server.getPluginManager().callEvent(source);
         if (source.isCancelled()) {
             return;
@@ -670,6 +671,10 @@ public abstract class Entity extends Location implements Metadatable {
         float targetHealth = this.getHealth() + source.getAmount();
         if (targetHealth > getMaxHealth()) targetHealth = getMaxHealth();
         this.setHealth(targetHealth);
+    }
+
+    public void heal(float amount) {
+        this.heal(new EntityRegainHealthEvent(this, amount, EntityRegainHealthEvent.CAUSE_REGEN));
     }
 
     public int getHealth() {
@@ -1003,7 +1008,7 @@ public abstract class Entity extends Location implements Metadatable {
     protected void updateFallState(float distanceThisTick, boolean onGround) {
         if (onGround) {
             if (this.fallDistance > 0) {
-                if (this instanceof Living) {
+                if (this instanceof EntityLiving) {
                     this.fall(this.fallDistance);
                 }
                 this.resetFallDistance();
@@ -1033,7 +1038,7 @@ public abstract class Entity extends Location implements Metadatable {
         //todo
     }
 
-    public void onCollideWithPlayer(Human entityPlayer) {
+    public void onCollideWithPlayer(EntityHuman entityPlayer) {
 
     }
 

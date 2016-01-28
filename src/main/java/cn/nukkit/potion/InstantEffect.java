@@ -1,4 +1,4 @@
-package cn.nukkit.entity;
+package cn.nukkit.potion;
 
 /**
  * author: MagicDroidX

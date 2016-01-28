@@ -1,6 +1,7 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.EntityHanging;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPaintingPacket;
@@ -9,10 +10,10 @@ import cn.nukkit.network.protocol.AddPaintingPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Painting extends Hanging {
+public class EntityPainting extends EntityHanging {
     public static final int NETWORK_ID = 83;
 
-    public Painting(FullChunk chunk, CompoundTag nbt) {
+    public EntityPainting(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

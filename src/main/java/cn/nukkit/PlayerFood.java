@@ -1,12 +1,11 @@
 package cn.nukkit;
 
 import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.Effect;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.item.food.Food;
-import cn.nukkit.network.protocol.UpdateAttributesPacket;
+import cn.nukkit.potion.Effect;
 
 /**
  * Created by funcraft on 2015/11/11.
@@ -30,24 +29,33 @@ public class PlayerFood {
         return this.player;
     }
 
-    public int getFoodLevel() {
+    public int getLevel() {
         return this.foodLevel;
     }
 
-    public void setFoodLevel(int foodLevel) {
-        this.setFoodLevel(foodLevel, -1);
+    public void setLevel(int foodLevel) {
+        this.setLevel(foodLevel, -1);
     }
 
-    public void setFoodLevel(int foodLevel, float FSL) {
-        if (foodLevel > 20) foodLevel = 20;
-        if (foodLevel < 0) foodLevel = 0;
-        if (foodLevel <= 6 && !(this.getFoodLevel() <= 6)) {
-            this.getPlayer().setSprinting(false);
+    public void setLevel(int foodLevel, float saturationLevel) {
+        if (foodLevel > 20) {
+            foodLevel = 20;
         }
-        PlayerFoodLevelChangeEvent ev = new PlayerFoodLevelChangeEvent(this.getPlayer(), foodLevel, FSL);
+
+        if (foodLevel < 0) {
+            foodLevel = 0;
+        }
+
+        if (foodLevel <= 6 && !(this.getLevel() <= 6)) {
+            if (this.getPlayer().isSprinting()) {
+                this.getPlayer().setSprinting(false);
+            }
+        }
+
+        PlayerFoodLevelChangeEvent ev = new PlayerFoodLevelChangeEvent(this.getPlayer(), foodLevel, saturationLevel);
         this.getPlayer().getServer().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
-            this.sendFoodLevel(this.getFoodLevel());
+            this.sendFoodLevel(this.getLevel());
             return;
         }
         int foodLevel0 = ev.getFoodLevel();
@@ -58,7 +66,7 @@ public class PlayerFood {
             this.foodSaturationLevel = fsl;
         }
         this.foodLevel = foodLevel0;
-        this.getPlayer().getServer().getLogger().debug(this.getPlayer().getName() + " set foodLevel: foodLevel = " + String.valueOf(this.getFoodLevel()) + "  FSL = " + this.getFoodSaturationLevel());
+        this.getPlayer().getServer().getLogger().debug(this.getPlayer().getName() + " set foodLevel: foodLevel = " + String.valueOf(this.getLevel()) + "  saturationLevel = " + this.getFoodSaturationLevel());
         this.sendFoodLevel();
     }
 
@@ -67,9 +75,9 @@ public class PlayerFood {
     }
 
     public void setFoodSaturationLevel(float fsl) {
-        if (fsl > this.getFoodLevel()) fsl = this.getFoodLevel();
+        if (fsl > this.getLevel()) fsl = this.getLevel();
         if (fsl < 0) fsl = 0;
-        PlayerFoodLevelChangeEvent ev = new PlayerFoodLevelChangeEvent(this.getPlayer(), this.getFoodLevel(), fsl);
+        PlayerFoodLevelChangeEvent ev = new PlayerFoodLevelChangeEvent(this.getPlayer(), this.getLevel(), fsl);
         this.getPlayer().getServer().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
@@ -84,13 +92,13 @@ public class PlayerFood {
 
     public void useHunger(int amount) {
         float sfl = this.getFoodSaturationLevel();
-        int foodLevel = this.getFoodLevel();
+        int foodLevel = this.getLevel();
         if (sfl > 0) {
             float newSfl = sfl - amount;
             if (newSfl < 0) newSfl = 0;
             this.setFoodSaturationLevel(newSfl);
         } else {
-            this.setFoodLevel(foodLevel - amount);
+            this.setLevel(foodLevel - amount);
         }
     }
 
@@ -99,14 +107,14 @@ public class PlayerFood {
     }
 
     public void addFoodLevel(int foodLevel, float fsl) {
-        this.setFoodLevel(this.getFoodLevel() + foodLevel, this.getFoodSaturationLevel() + fsl);
+        this.setLevel(this.getLevel() + foodLevel, this.getFoodSaturationLevel() + fsl);
     }
 
     public void sendFoodLevel() {
-        this.sendFoodLevel(this.getFoodLevel());
+        this.sendFoodLevel(this.getLevel());
     }
 
-    public void resetFoodLevel() {
+    public void reset() {
         this.foodLevel = 20;
         this.foodSaturationLevel = 20;
         this.foodExpLevel = 0;
@@ -115,28 +123,23 @@ public class PlayerFood {
     }
 
     public void sendFoodLevel(int foodLevel) {
-        UpdateAttributesPacket updateAttributesPacket = new UpdateAttributesPacket();
-        updateAttributesPacket.entityId = 0;
-        updateAttributesPacket.entries = new Attribute[]{
-                Attribute.getAttribute(Attribute.MAX_HUNGER).setMaxValue(20).setValue(foodLevel)
-        };
-        this.getPlayer().dataPacket(updateAttributesPacket);
+        this.getPlayer().setAttribute(Attribute.getAttribute(Attribute.MAX_HUNGER).setValue(foodLevel));
     }
 
-    public void updateFoodTickTimer(int tickDiff) {
+    public void update(int tickDiff) {
         if (!this.getPlayer().isFoodEnabled()) return;
         int diff = Server.getInstance().getDifficulty();
-        if (this.getFoodLevel() > 17) {
+        if (this.getLevel() > 17) {
             this.foodTickTimer += tickDiff;
             if (this.foodTickTimer >= 80) {
                 if (this.getPlayer().getHealth() < this.getPlayer().getMaxHealth()) {
                     EntityRegainHealthEvent ev = new EntityRegainHealthEvent(this.getPlayer(), 1, EntityRegainHealthEvent.CAUSE_EATING);
-                    this.getPlayer().heal(1, ev);
+                    this.getPlayer().heal(ev);
                     //this.updateFoodExpLevel(3);
                 }
                 this.foodTickTimer = 0;
             }
-        } else if (this.getFoodLevel() == 0) {
+        } else if (this.getLevel() == 0) {
             this.foodTickTimer += tickDiff;
             if (this.foodTickTimer >= 80) {
                 EntityDamageEvent ev = new EntityDamageEvent(this.getPlayer(), EntityDamageEvent.CAUSE_VOID, 1);
