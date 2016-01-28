@@ -27,7 +27,6 @@ public class Trapdoor extends Transparent {
         return TRAPDOOR;
     }
 
-
     @Override
     public String getName() {
         return "Wooden Trapdoor";
@@ -123,35 +122,30 @@ public class Trapdoor extends Transparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (target.isTransparent()) return false;
-        int faceBit = 0b00;
-        int upDownBit = 0b000;
-        if (fy > 0.5) upDownBit = 0b100;
-        switch (face) {
-            case Vector3.SIDE_NORTH:
-                faceBit = 0b11;
-                break;
-            case Vector3.SIDE_SOUTH:
-                faceBit = 0b10;
-                break;
-            case Vector3.SIDE_WEST:
-                faceBit = 0b01;
-                break;
-            case Vector3.SIDE_EAST:
-                faceBit = 0b00;
-                break;
-            //todo correct the faceBit according to player yaw when side is up or down
-            case Vector3.SIDE_UP:
-                upDownBit = 0b000;
-                break;
-            case Vector3.SIDE_DOWN:
-                upDownBit = 0b100;
-                break;
+        if((!target.isTransparent() || target.getId() == SLAB) && face != 0 && face != 1){
+            int faceBit = 0b00;
+            int upDownBit = 0b000;
+            if (fy > 0.5) upDownBit = 0b100;
+            switch (face) {
+                case Vector3.SIDE_NORTH:
+                    faceBit = 0b11;
+                    break;
+                case Vector3.SIDE_SOUTH:
+                    faceBit = 0b10;
+                    break;
+                case Vector3.SIDE_WEST:
+                    faceBit = 0b01;
+                    break;
+                case Vector3.SIDE_EAST:
+                    faceBit = 0b00;
+                    break;
+            }
+            this.meta |= upDownBit;
+            this.meta |= faceBit;
+            this.getLevel().setBlock(block, this, true, true);
+            return true;
         }
-        this.meta |= upDownBit;
-        this.meta |= faceBit;
-        this.getLevel().setBlock(block, this, true, true);
-        return true;
+        return false;
     }
 
     @Override
