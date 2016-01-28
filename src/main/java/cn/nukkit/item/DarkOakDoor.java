@@ -16,8 +16,4 @@ public class DarkOakDoor extends Item {
         this.block = Block.get(Item.DARK_OAK_DOOR_BLOCK);
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

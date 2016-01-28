@@ -21,8 +21,4 @@ public class WoodenDoor extends Item {
         this.block = Block.get(Item.WOODEN_DOOR_BLOCK);
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

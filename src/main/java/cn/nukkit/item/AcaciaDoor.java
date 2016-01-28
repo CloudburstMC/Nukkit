@@ -16,8 +16,4 @@ public class AcaciaDoor extends Item {
         this.block = Block.get(Item.ACACIA_DOOR_BLOCK);
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

@@ -16,8 +16,4 @@ public class SpruceDoor extends Item {
         this.block = Block.get(Item.SPRUCE_DOOR_BLOCK);
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

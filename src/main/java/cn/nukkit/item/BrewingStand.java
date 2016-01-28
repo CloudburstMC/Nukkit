@@ -14,8 +14,4 @@ public class BrewingStand extends Item {
         this.block = Block.get(BREWING_STAND_BLOCK);
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

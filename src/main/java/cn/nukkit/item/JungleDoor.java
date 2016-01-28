@@ -16,8 +16,4 @@ public class JungleDoor extends Item {
         this.block = Block.get(Item.JUNGLE_DOOR_BLOCK);
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }
