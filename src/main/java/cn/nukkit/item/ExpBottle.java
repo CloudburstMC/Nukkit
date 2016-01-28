@@ -18,8 +18,4 @@ public class ExpBottle extends Item {
         super(EXPERIENCE_BOTTLE, meta, count, "Exp Bottle");
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 64;
-    }
 }

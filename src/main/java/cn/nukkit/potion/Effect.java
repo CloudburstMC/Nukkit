@@ -1,6 +1,7 @@
-package cn.nukkit.entity;
+package cn.nukkit.potion;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityEvent;
@@ -187,7 +188,7 @@ public class Effect implements Cloneable {
                 return true;
             case Effect.SPEED:
             case Effect.SLOWNESS:
-                return true;
+                return (this.duration % 20) == 0;
         }
         return false;
     }
@@ -208,14 +209,18 @@ public class Effect implements Cloneable {
             case Effect.REGENERATION: //REGENERATION
                 if (entity.getHealth() < entity.getMaxHealth()) {
                     ev = new EntityRegainHealthEvent(entity, 1, EntityRegainHealthEvent.CAUSE_MAGIC);
-                    entity.heal(((EntityRegainHealthEvent) ev).getAmount(), (EntityRegainHealthEvent) ev);
+                    entity.heal((EntityRegainHealthEvent) ev);
                 }
                 break;
             case Effect.SPEED:
-                if (entity instanceof Player) ((Player) entity).setMovementSpeed(0.1f + (this.amplifier + 1) * 0.01f);
+                if (entity instanceof Player) {
+                    ((Player) entity).setMovementSpeed((float) (((this.amplifier + 1) * 0.2 + 1) * 0.1));
+                }
                 break;
             case Effect.SLOWNESS:
-                if (entity instanceof Player) ((Player) entity).setMovementSpeed(0.1f - (this.amplifier + 1) * 0.01f);
+                if (entity instanceof Player) {
+                    ((Player) entity).setMovementSpeed((float) (((this.amplifier + 1) * -0.15 + 1) * 0.1));
+                }
                 break;
         }
     }
@@ -247,6 +252,14 @@ public class Effect implements Cloneable {
             }
 
             ((Player) entity).dataPacket(pk);
+
+            if (this.id == Effect.SPEED) {
+                ((Player) entity).setMovementSpeed((float) (((this.amplifier + 1) * 0.2 + 1) * 0.1));
+            }
+
+            if (this.id == Effect.SLOWNESS) {
+                ((Player) entity).setMovementSpeed((float) (((this.amplifier + 1) * -0.15 + 1) * 0.1));
+            }
         }
 
         if (this.id == Effect.INVISIBILITY) {
@@ -263,6 +276,10 @@ public class Effect implements Cloneable {
             pk.eventId = MobEffectPacket.EVENT_REMOVE;
 
             ((Player) entity).dataPacket(pk);
+
+            if (this.id == Effect.SPEED || this.id == Effect.SLOWNESS) {
+                ((Player) entity).setMovementSpeed(0.1f);
+            }
         }
 
         if (this.id == Effect.INVISIBILITY) {

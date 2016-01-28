@@ -1,7 +1,7 @@
 package cn.nukkit.event.entity;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.Living;
+import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 
@@ -18,11 +18,11 @@ public class EntityDeathEvent extends EntityEvent {
 
     private Item[] drops = new Item[0];
 
-    public EntityDeathEvent(Living entity) {
+    public EntityDeathEvent(EntityLiving entity) {
         this(entity, new Item[0]);
     }
 
-    public EntityDeathEvent(Living entity, Item[] drops) {
+    public EntityDeathEvent(EntityLiving entity, Item[] drops) {
         this.entity = entity;
         this.drops = drops;
     }

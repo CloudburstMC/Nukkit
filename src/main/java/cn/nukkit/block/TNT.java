@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.PrimedTNT;
+import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -69,7 +69,7 @@ public class TNT extends Solid {
                             .add(new FloatTag("", 0))
                             .add(new FloatTag("", 0)))
                     .putByte("Fuse", (byte) 80);
-            Entity tnt = new PrimedTNT(
+            Entity tnt = new EntityPrimedTNT(
                     this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
                     nbt
             );

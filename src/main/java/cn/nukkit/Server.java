@@ -2,8 +2,13 @@ package cn.nukkit;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.command.*;
-import cn.nukkit.entity.*;
+import cn.nukkit.entity.Attribute;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.item.*;
+import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
@@ -52,6 +57,8 @@ import cn.nukkit.plugin.JavaPluginLoader;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginLoadOrder;
 import cn.nukkit.plugin.PluginManager;
+import cn.nukkit.potion.Effect;
+import cn.nukkit.potion.Potion;
 import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.tile.*;
@@ -1790,19 +1797,19 @@ public class Server {
     }
 
     private void registerEntities() {
-        Entity.registerEntity(Arrow.class);
-        Entity.registerEntity(DroppedItem.class);
-        Entity.registerEntity(FallingSand.class);
-        Entity.registerEntity(PrimedTNT.class);
-        Entity.registerEntity(Snowball.class);
-        Entity.registerEntity(Painting.class);
+        Entity.registerEntity(EntityArrow.class);
+        Entity.registerEntity(EntityItem.class);
+        Entity.registerEntity(EntityFallingBlock.class);
+        Entity.registerEntity(EntityPrimedTNT.class);
+        Entity.registerEntity(EntitySnowball.class);
+        Entity.registerEntity(EntityPainting.class);
         //todo mobs
 
-        Entity.registerEntity(ThrownExpBottle.class);
-        Entity.registerEntity(XPOrb.class);
-        Entity.registerEntity(ThrownPotion.class);
+        Entity.registerEntity(EntityExpBottle.class);
+        Entity.registerEntity(EntityXPOrb.class);
+        Entity.registerEntity(EntityPotion.class);
 
-        Entity.registerEntity(Human.class, true);
+        Entity.registerEntity(EntityHuman.class, true);
     }
 
     private void registerTiles() {

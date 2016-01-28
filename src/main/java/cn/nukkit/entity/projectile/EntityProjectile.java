@@ -1,5 +1,7 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.projectile;
 
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.level.MovingObjectPosition;
@@ -14,7 +16,7 @@ import java.util.Random;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Projectile extends Entity {
+public abstract class EntityProjectile extends Entity {
 
     public static final int DATA_SHOOTER_ID = 17;
 
@@ -26,11 +28,11 @@ public abstract class Projectile extends Entity {
 
     public boolean hadCollision = false;
 
-    public Projectile(FullChunk chunk, CompoundTag nbt) {
+    public EntityProjectile(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public Projectile(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityProjectile(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt);
         this.shootingEntity = shootingEntity;
         if (shootingEntity != null) {
@@ -57,7 +59,7 @@ public abstract class Projectile extends Entity {
 
     @Override
     public boolean canCollideWith(Entity entity) {
-        return entity instanceof Living && !this.onGround;
+        return entity instanceof EntityLiving && !this.onGround;
     }
 
     @Override
@@ -130,10 +132,10 @@ public abstract class Projectile extends Entity {
                     double motion = Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
                     double damage = Math.ceil(motion * this.getDamage());
 
-                    if (this instanceof Arrow && ((Arrow) this).isCritical) {
+                    if (this instanceof EntityArrow && ((EntityArrow) this).isCritical) {
                         damage += new Random().nextInt((int) (damage / 2) + 1);
                     }
-                    if (this instanceof Snowball || this instanceof Egg) {
+                    if (this instanceof EntitySnowball || this instanceof EntityEgg) {
                         damage = 0;
                     }
 

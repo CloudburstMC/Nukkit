@@ -1,6 +1,7 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
@@ -14,10 +15,10 @@ import cn.nukkit.network.protocol.AddItemEntityPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class DroppedItem extends Entity {
+public class EntityItem extends Entity {
     public static final int NETWORK_ID = 64;
 
-    public DroppedItem(FullChunk chunk, CompoundTag nbt) {
+    public EntityItem(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

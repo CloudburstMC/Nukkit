@@ -1,6 +1,7 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -12,7 +13,7 @@ import java.util.HashMap;
  * Created on 2015/12/26 by xtypr.
  * Package cn.nukkit.entity in project Nukkit .
  */
-public class XPOrb extends Entity {
+public class EntityXPOrb extends Entity {
 
     public static final int NETWORK_ID = 69;
 
@@ -51,7 +52,7 @@ public class XPOrb extends Entity {
         return false;
     }
 
-    public XPOrb(FullChunk chunk, CompoundTag nbt) {
+    public EntityXPOrb(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

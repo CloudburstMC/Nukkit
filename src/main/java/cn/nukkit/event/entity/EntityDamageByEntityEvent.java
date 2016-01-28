@@ -1,7 +1,7 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.potion.Effect;
 
 import java.util.Map;
 

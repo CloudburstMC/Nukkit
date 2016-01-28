@@ -1,6 +1,6 @@
 package cn.nukkit.event.inventory;
 
-import cn.nukkit.entity.DroppedItem;
+import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Inventory;
@@ -17,14 +17,14 @@ public class InventoryPickupItemEvent extends InventoryEvent implements Cancella
         return handlers;
     }
 
-    private DroppedItem item;
+    private EntityItem item;
 
-    public InventoryPickupItemEvent(Inventory inventory, DroppedItem item) {
+    public InventoryPickupItemEvent(Inventory inventory, EntityItem item) {
         super(inventory);
         this.item = item;
     }
 
-    public DroppedItem getItem() {
+    public EntityItem getItem() {
         return item;
     }
 }

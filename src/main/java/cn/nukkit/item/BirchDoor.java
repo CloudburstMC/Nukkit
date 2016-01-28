@@ -16,8 +16,4 @@ public class BirchDoor extends Item {
         this.block = Block.get(Item.BIRCH_DOOR_BLOCK);
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

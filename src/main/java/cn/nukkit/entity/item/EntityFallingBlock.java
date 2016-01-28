@@ -1,8 +1,9 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Liquid;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -15,7 +16,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 /**
  * Created on 15-10-26.
  */
-public class FallingSand extends Entity {
+public class EntityFallingBlock extends Entity {
 
     public static final int NETWORK_ID = 66;
 
@@ -54,7 +55,7 @@ public class FallingSand extends Entity {
     protected int blockId;
     protected int damage;
 
-    public FallingSand(FullChunk chunk, CompoundTag nbt) {
+    public EntityFallingBlock(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -178,7 +179,7 @@ public class FallingSand extends Entity {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
-        packet.type = FallingSand.NETWORK_ID;
+        packet.type = EntityFallingBlock.NETWORK_ID;
         packet.eid = getId();
         packet.x = (float) x;
         packet.y = (float) y;

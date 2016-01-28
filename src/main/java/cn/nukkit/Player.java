@@ -2,11 +2,22 @@ package cn.nukkit;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.entity.*;
+import cn.nukkit.entity.Attribute;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.data.PositionEntityData;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.item.EntityExpBottle;
+import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.item.EntityPotion;
+import cn.nukkit.entity.item.EntityXPOrb;
+import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityEgg;
+import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.block.SignChangeEvent;
@@ -28,6 +39,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.level.sound.ClickSound;
 import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.math.*;
@@ -44,6 +56,8 @@ import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.potion.Effect;
+import cn.nukkit.potion.Potion;
 import cn.nukkit.tile.Sign;
 import cn.nukkit.tile.Spawnable;
 import cn.nukkit.tile.Tile;
@@ -62,7 +76,7 @@ import java.util.*;
  * author: MagicDroidX & Box
  * Nukkit Project
  */
-public class Player extends Human implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {
+public class Player extends EntityHuman implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {
 
     public static final int SURVIVAL = 0;
     public static final int CREATIVE = 1;
@@ -165,8 +179,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     private int expLevel = 0;
 
     private PlayerFood foodData = null;
-
-    private float movementSpeed = 0.1f;
 
     private Entity killer = null;
 
@@ -1084,14 +1096,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 continue;
             }
 
-            if (entity instanceof Arrow && ((Arrow) entity).hadCollision) {
+            if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision) {
                 Item item = Item.get(Item.ARROW, 0, 1);
                 if (this.isSurvival() && !this.inventory.canAddItem(item)) {
                     continue;
                 }
 
                 InventoryPickupArrowEvent ev;
-                this.server.getPluginManager().callEvent(ev = new InventoryPickupArrowEvent(this.inventory, (Arrow) entity));
+                this.server.getPluginManager().callEvent(ev = new InventoryPickupArrowEvent(this.inventory, (EntityArrow) entity));
                 if (ev.isCancelled()) {
                     continue;
                 }
@@ -1108,9 +1120,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                 this.inventory.addItem(item.clone());
                 entity.kill();
-            } else if (entity instanceof DroppedItem) {
-                if (((DroppedItem) entity).getPickupDelay() <= 0) {
-                    Item item = ((DroppedItem) entity).getItem();
+            } else if (entity instanceof EntityItem) {
+                if (((EntityItem) entity).getPickupDelay() <= 0) {
+                    Item item = ((EntityItem) entity).getItem();
 
                     if (item != null) {
                         if (this.isSurvival() && !this.inventory.canAddItem(item)) {
@@ -1118,7 +1130,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         }
 
                         InventoryPickupItemEvent ev;
-                        this.server.getPluginManager().callEvent(ev = new InventoryPickupItemEvent(this.inventory, (DroppedItem) entity));
+                        this.server.getPluginManager().callEvent(ev = new InventoryPickupItemEvent(this.inventory, (EntityItem) entity));
                         if (ev.isCancelled()) {
                             continue;
                         }
@@ -1155,8 +1167,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             if (!entity.isAlive()) {
                 continue;
             }
-            if (entity instanceof XPOrb) {
-                XPOrb xpOrb = (XPOrb) entity;
+            if (entity instanceof EntityXPOrb) {
+                EntityXPOrb xpOrb = (EntityXPOrb) entity;
                 if (xpOrb.getPickupDelay() <= 0) {
                     int exp = xpOrb.getExp();
                     this.addExperience(exp);
@@ -1415,7 +1427,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
 
                 if (this.isSurvival() || this.isAdventure()) {
-                    if (this.getFoodData() != null) this.getFoodData().updateFoodTickTimer(tickDiff);
+                    if (this.getFoodData() != null) this.getFoodData().update(tickDiff);
                 }
             }
         }
@@ -1944,7 +1956,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                         .add(new FloatTag("", (float) pitch)));
 
                         float f = 1.5f;
-                        Snowball snowball = new Snowball(this.chunk, nbt, this);
+                        EntitySnowball snowball = new EntitySnowball(this.chunk, nbt, this);
 
                         snowball.setMotion(snowball.getMotion().multiply(f));
                         if (this.isSurvival()) {
@@ -1978,7 +1990,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                         .add(new FloatTag("", (float) pitch)));
 
                         float f = 1.5f;
-                        Egg egg = new Egg(this.chunk, nbt, this);
+                        EntityEgg egg = new EntityEgg(this.chunk, nbt, this);
 
                         egg.setMotion(egg.getMotion().multiply(f));
                         if (this.isSurvival()) {
@@ -2009,14 +2021,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                         .add(new FloatTag("", (float) pitch)))
                                 .putInt("Potion", item.getDamage());
                         double f = 1.5;
-                        Entity bottle = Entity.createEntity("ThrownExpBottle", this.chunk, nbt, this);
+                        Entity bottle = new EntityExpBottle(this.chunk, nbt, this);
                         bottle.setMotion(bottle.getMotion().multiply(f));
                         if (this.isSurvival()) {
                             item.setCount(item.getCount() - 1);
                             this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
                         }
-                        if (bottle instanceof Projectile) {
-                            Projectile bottleEntity = (Projectile) bottle;
+                        if (bottle instanceof EntityProjectile) {
+                            EntityProjectile bottleEntity = (EntityProjectile) bottle;
                             ProjectileLaunchEvent projectileEv = new ProjectileLaunchEvent(bottleEntity);
                             this.server.getPluginManager().callEvent(projectileEv);
                             if (projectileEv.isCancelled()) {
@@ -2043,14 +2055,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                         .add(new FloatTag("", (float) pitch)))
                                 .putInt("Potion", item.getDamage());
                         double f = 1.5;
-                        Entity bottle = Entity.createEntity("ThrownPotion", this.chunk, nbt, this);
+                        Entity bottle = Entity.createEntity("EntityPotion", this.chunk, nbt, this);
                         bottle.setMotion(bottle.getMotion().multiply(f));
                         if (this.isSurvival()) {
                             item.setCount(item.getCount() - 1);
                             this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
                         }
-                        if (bottle instanceof ThrownPotion) {
-                            ThrownPotion bottleEntity = (ThrownPotion) bottle;
+                        if (bottle instanceof EntityPotion) {
+                            EntityPotion bottleEntity = (EntityPotion) bottle;
                             ProjectileLaunchEvent projectileEv = new ProjectileLaunchEvent(bottleEntity);
                             this.server.getPluginManager().callEvent(projectileEv);
                             if (projectileEv.isCancelled()) {
@@ -2123,7 +2135,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 double p = (double) diff / 20;
 
                                 double f = Math.min((p * p + p * 2) / 3, 1) * 2;
-                                EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(this, bow, new Arrow(this.chunk, nbt, this, f == 2), f);
+                                EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(this, bow, new EntityArrow(this.chunk, nbt, this, f == 2), f);
 
                                 if (f < 0.1 || diff < 5) {
                                     entityShootBowEvent.setCancelled();
@@ -2144,7 +2156,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                             this.inventory.setItemInHand(bow);
                                         }
                                     }
-                                    if (entityShootBowEvent.getProjectile() instanceof Projectile) {
+                                    if (entityShootBowEvent.getProjectile() instanceof EntityProjectile) {
                                         ProjectileLaunchEvent projectev = new ProjectileLaunchEvent(entityShootBowEvent.getProjectile());
                                         this.server.getPluginManager().callEvent(projectev);
                                         if (projectev.isCancelled()) {
@@ -2191,7 +2203,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.noDamageTicks = 60;
 
                         this.setHealth(this.getMaxHealth());
-                        this.getFoodData().setFoodLevel(20, 20);
+                        this.getFoodData().setLevel(20, 20);
 
                         this.removeAllEffects();
                         this.sendData(this);
@@ -2309,7 +2321,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                 if (targetEntity != null && this.getGamemode() != Player.VIEW && this.isAlive() && targetEntity.isAlive()) {
 
-                    if (targetEntity instanceof DroppedItem || targetEntity instanceof Arrow) {
+                    if (targetEntity instanceof EntityItem || targetEntity instanceof EntityArrow) {
                         this.kick("Attempting to attack an invalid entity");
                         this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
                         break;
@@ -3145,7 +3157,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.namedTag.putInt("EXP", this.getExperience());
             this.namedTag.putInt("expLevel", this.getExperienceLevel());
 
-            this.namedTag.putInt("foodLevel", this.getFoodData().getFoodLevel());
+            this.namedTag.putInt("foodLevel", this.getFoodData().getLevel());
             this.namedTag.putFloat("foodSaturationLevel", this.getFoodData().getFoodSaturationLevel());
 
             if (!"".equals(this.username) && this.namedTag != null) {
@@ -3180,9 +3192,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         message = "death.attack.player";
                         params.add(((Player) e).getDisplayName());
                         break;
-                    } else if (e instanceof Living) {
+                    } else if (e instanceof EntityLiving) {
                         message = "death.attack.mob";
-                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((Living) e).getName());
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((EntityLiving) e).getName());
                         break;
                     } else {
                         params.add("Unknown");
@@ -3196,9 +3208,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     if (e instanceof Player) {
                         message = "death.attack.arrow";
                         params.add(((Player) e).getDisplayName());
-                    } else if (e instanceof Living) {
+                    } else if (e instanceof EntityLiving) {
                         message = "death.attack.arrow";
-                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((Living) e).getName());
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((EntityLiving) e).getName());
                         break;
                     } else {
                         params.add("Unknown");
@@ -3257,9 +3269,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     if (e instanceof Player) {
                         message = "death.attack.explosion.player";
                         params.add(((Player) e).getDisplayName());
-                    } else if (e instanceof Living) {
+                    } else if (e instanceof EntityLiving) {
                         message = "death.attack.explosion.player";
-                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((Living) e).getName());
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((EntityLiving) e).getName());
                         break;
                     }
                 } else {
@@ -3345,21 +3357,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         int now = this.getExperience();
         int added = now + add;
         int level = this.getExperienceLevel();
-        int most = this.getNeedExpToNextLevel(level);
+        int most = this.calculateRequireExperience(level);
         while (added >= most) {  //Level Up!
             added = added - most;
             level++;
             this.sendExperienceLevelUp();
             getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
-            most = this.getNeedExpToNextLevel(level);
+            most = this.calculateRequireExperience(level);
         }
         getServer().getLogger().debug("Added " + add + " EXP to " + getName() + ", now lv:" + level + " (" + added + "/" + most + ") .");
         this.setExperience(added, level);
-        //$sound = new ZombieInfectSound($this);
-        //$this->getLevel()->addSound($sound);
     }
 
-    public int getNeedExpToNextLevel(int level) {
+    public int calculateRequireExperience(int level) {
         if (level < 16) {
             return 2 * level + 7;
         } else if (level >= 17 && level <= 31) {
@@ -3378,35 +3388,26 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void setExperience(int exp, int level) {
         this.exp = exp;
         this.expLevel = level;
-        sendExperienceLevel(level);
-        sendExperience(exp);
+
+        this.sendExperienceLevel(level);
+        this.sendExperience(exp);
     }
 
     public void sendExperience() {
-        sendExperience(0);
+        sendExperience(this.getExperience());
     }
 
     public void sendExperience(int exp) {
-        UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        pk.entityId = 0;
-        float ee = ((float) exp) / (float) this.getNeedExpToNextLevel(this.getExperienceLevel());
-        pk.entries = new Attribute[]{
-                Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, ee, true).setValue(ee)
-        };
-        this.dataPacket(pk);
+        float precent = ((float) exp) / this.calculateRequireExperience(this.getExperienceLevel());
+        this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, precent, true).setValue(precent));
     }
 
     public void sendExperienceLevel() {
-        sendExperienceLevel(0);
+        sendExperienceLevel(this.getExperienceLevel());
     }
 
     public void sendExperienceLevel(int level) {
-        UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        pk.entityId = 0;
-        pk.entries = new Attribute[]{
-                Attribute.addAttribute(Attribute.EXPERIENCE_LEVEL, "player.level", 0, 24791, level, true).setValue(level)
-        };
-        this.dataPacket(pk);
+        this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setValue(level));
     }
 
     public void sendExperienceLevelUp() {
@@ -3420,21 +3421,20 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         //this.dataPacket(pk);
     }
 
-    //@Override
-    public void setMovementSpeed(float speed) {
-        this.movementSpeed = speed;
-        Attribute attr = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
-        if (this.spawned) {
-            UpdateAttributesPacket pk = new UpdateAttributesPacket();
-            pk.entries = new Attribute[]{attr};
-            pk.entityId = 0;
-            this.dataPacket(pk);
-        }
+    public void setAttribute(Attribute attribute) {
+        UpdateAttributesPacket pk = new UpdateAttributesPacket();
+        pk.entries = new Attribute[]{attribute};
+        pk.entityId = 0;
+        this.dataPacket(pk);
     }
 
-    //@Override
-    public float getMovementSpeed() {
-        return this.movementSpeed;
+    @Override
+    public void setMovementSpeed(float speed) {
+        super.setMovementSpeed(speed);
+        if (this.spawned) {
+            Attribute attribute = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
+            this.setAttribute(attribute);
+        }
     }
 
     public Entity getKiller() {
@@ -3465,12 +3465,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             //暴击
             boolean add = false;
             if (!damager.onGround) {
-                /* TODO
-                for (int i = 0; i < 5); i++) {
-                    CriticalParticle par = new CriticalPartice(new Vector3(this.x + mt_rand(-15, 15) / 10, this.y + mt_rand(0, 20) / 10, this.z + mt_rand(-15, 15) / 10));
+                NukkitRandom random = new NukkitRandom();
+                for (int i = 0; i < 5; i++) {
+                    CriticalParticle par = new CriticalParticle(new Vector3(this.x + random.nextRange(-15, 15) / 10, this.y + random.nextRange(0, 20) / 10, this.z + random.nextRange(-15, 15) / 10));
                     this.getLevel().addParticle(par);
                 }
-                */
+
                 add = true;
             }
             if (add) source.setDamage((float) (source.getDamage() * 1.5));

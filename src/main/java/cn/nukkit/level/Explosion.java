@@ -2,7 +2,7 @@ package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.PrimedTNT;
+import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -171,7 +171,7 @@ public class Explosion {
             Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
                 float mot = (float) (Math.random() * Math.PI * 2);
-                PrimedTNT tnt = new PrimedTNT(this.level.getChunk((int) block.x >> 4, (int) block.z >> 4),
+                EntityPrimedTNT tnt = new EntityPrimedTNT(this.level.getChunk((int) block.x >> 4, (int) block.z >> 4),
                         new CompoundTag()
                                 .putList(new ListTag<DoubleTag>("Pos")
                                         .add(new DoubleTag("", block.x + 0.5))
