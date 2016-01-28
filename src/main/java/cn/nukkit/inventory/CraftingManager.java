@@ -710,54 +710,34 @@ public class CraftingManager {
     }
 
     protected void registerIngots() {
-        Map<Integer, Integer> ingots = new HashMap<Integer, Integer>() {
-            {
-                put(Item.GOLD_BLOCK, Item.GOLD_INGOT);
-                put(Item.IRON_BLOCK, Item.IRON_INGOT);
-                put(Item.DIAMOND_BLOCK, Item.DIAMOND);
-                put(Item.EMERALD_BLOCK, Item.EMERALD);
-                put(Item.REDSTONE_BLOCK, Item.REDSTONE_DUST);
-                put(Item.COAL_BLOCK, Item.COAL);
-                put(Item.HAY_BALE, Item.WHEAT);
-            }
+        int[][] ingots = new int[][]{
+                {Item.GOLD_BLOCK, Item.GOLD_INGOT},
+                {Item.GOLD_INGOT, Item.GOLD_NUGGET},
+                {Item.IRON_BLOCK, Item.IRON_INGOT},
+                {Item.DIAMOND_BLOCK, Item.DIAMOND},
+                {Item.EMERALD_BLOCK, Item.EMERALD},
+                {Item.REDSTONE_BLOCK, Item.REDSTONE_DUST},
+                {Item.COAL_BLOCK, Item.COAL},
+                {Item.HAY_BALE, Item.WHEAT},
+                {Item.LAPIS_BLOCK, Item.DYE, 4}
         };
 
-        for (int block : ingots.keySet()) {
-            int ingot = ingots.get(block);
+        for (int[] e : ingots) {
+            int block = e[0];
+            int ingot = e[1];
+            int ingot_meta = e.length > 2 ? e[2] : 0;
 
-            this.registerRecipe((new ShapedRecipe(Item.get(block, 0, 1),
-                    " X",
-                    "  "
-            )).setIngredient("X", Item.get(ingot, 0, 9)));
+            this.registerRecipe((new ShapedRecipe(Item.get(ingot, ingot_meta, 9),
+                    "X"
+            )).setIngredient("X", Item.get(block, 0, 1)));
 
-            this.registerRecipe((new BigShapedRecipe(Item.get(ingot, 0, 9),
+            this.registerRecipe((new BigShapedRecipe(Item.get(block, 0, 1),
                     "XXX",
                     "XXX",
                     "XXX"
-            )).setIngredient("X", Item.get(block, 0, 1)));
+            )).setIngredient("X", Item.get(ingot, ingot_meta, 1)));
         }
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.LAPIS_BLOCK, 0, 1),
-                "XXX",
-                "XXX",
-                "XXX"
-        )).setIngredient("X", Item.get(Item.DYE, 4, 9)));
-
-        this.registerRecipe((new ShapedRecipe(Item.get(Item.DYE, 4, 9),
-                " X",
-                "  "
-        )).setIngredient("X", Item.get(Item.LAPIS_BLOCK, 0, 1)));
-
-        this.registerRecipe((new ShapedRecipe(Item.get(Item.GOLD_INGOT, 0, 1),
-                " X",
-                "  "
-        )).setIngredient("X", Item.get(Item.GOLD_NUGGET, 0, 9)));
-
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GOLD_NUGGET, 0, 9),
-                "XXX",
-                "XXX",
-                "XXX"
-        )).setIngredient("X", Item.get(Item.GOLD_INGOT, 0, 1)));
     }
 
     public final Comparator<Item> comparator = new Comparator<Item>() {
