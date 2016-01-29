@@ -38,6 +38,9 @@ public class Normal extends Generator {
     private List<Populator> generationPopulators = new ArrayList<>();
 
     private Simplex noiseSeaFloor;
+    private Simplex noiseLand;
+    private Simplex noiseMountains;
+    private Simplex noiseBaseGround;
 
     private BiomeSelector selector;
 
@@ -47,10 +50,11 @@ public class Normal extends Generator {
     private final int seaFloorHeight = 48;
     private final int beathStartHeight = 60;
     private final int beathStopHeight = 64;
-    private final int landHeight = 66;
-    private final int heightRange = 20;
     private final int bedrockDepth = 5;
     private final int seaFloorGenerateRange = 5;
+    private final int landHeightRange = 18; // 36 / 2
+    private final int mountainHeight = 13; // 26 / 2
+    private final int basegroundHeight = 3;
 
     public Normal() {
         this(new HashMap<>());
@@ -97,7 +101,10 @@ public class Normal extends Generator {
         this.level = level;
         this.random = random;
         this.random.setSeed(this.level.getSeed());
-        this.noiseSeaFloor = new Simplex(this.random, 1F, 1F / 23F, 1F / 30F);
+        this.noiseSeaFloor = new Simplex(this.random, 1F, 1F / 8F, 1F / 64F);
+        this.noiseLand = new Simplex(this.random, 2F, 1F / 8F, 1F / 512F);
+        this.noiseMountains = new Simplex(this.random, 4F, 1F, 1F / 500F);
+        this.noiseBaseGround = new Simplex(this.random, 4F, 1F / 4F, 1F / 64F);
         this.random.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.random, Biome.getBiome(Biome.OCEAN));
         this.heightOffset = random.nextRange(-5, 3);
@@ -137,7 +144,10 @@ public class Normal extends Generator {
     public void generateChunk(int chunkX, int chunkZ) {
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
 
-        double[][] baseNoise = Generator.getFastNoise2D(this.noiseSeaFloor, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] seaFloorNoise = Generator.getFastNoise2D(this.noiseSeaFloor, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] landNoise = Generator.getFastNoise2D(this.noiseLand, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] mountainNoise = Generator.getFastNoise2D(this.noiseMountains, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] baseNoise = Generator.getFastNoise2D(this.noiseBaseGround, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
@@ -145,24 +155,53 @@ public class Normal extends Generator {
             for(int genz = 0; genz < 16; genz++) {
 
                 Biome biome;
-                int genyHeight = seaFloorHeight + (int) (seaFloorGenerateRange * baseNoise[genx][genz]);
-                //prepare for generate ocean, desert, and land
-                if(genyHeight < seaFloorHeight - seaFloorGenerateRange) {
-                    genyHeight = seaFloorHeight;
-                    biome = Biome.getBiome(Biome.OCEAN);
+                boolean canBaseGround = false;
+
+                //using a quadratic function which smooth the world
+                double landHeightNoise = landNoise[genx][genz] + 1F;
+                landHeightNoise *= 2.956;
+                landHeightNoise = landHeightNoise * landHeightNoise;
+                landHeightNoise = landHeightNoise - 0.6;
+                landHeightNoise = landHeightNoise > 0 ? landHeightNoise : 0;
+
+                //generate mountains
+                double mountainHeightGenerate = mountainNoise[genx][genz] - 0.2F;
+                mountainHeightGenerate = mountainHeightGenerate > 0 ? mountainHeightGenerate : 0;
+                int mountainGenerate = (int) (mountainHeight * mountainHeightGenerate);
+
+                int landHeightGenerate = (int) (landHeightRange * landHeightNoise);
+                if(landHeightGenerate > landHeightRange) {
+                    if(landHeightGenerate > landHeightRange) {
+                        canBaseGround = true;
+                    }
+                    landHeightGenerate = landHeightRange;
                 }
-                else if(genyHeight < beathStartHeight) {
+
+                int genyHeight = seaFloorHeight + landHeightGenerate;
+                genyHeight += mountainGenerate;
+
+                //prepare for generate ocean, desert, and land
+                if(genyHeight < beathStartHeight) {
+                    if(genyHeight < beathStartHeight - 5) {
+                        genyHeight += (int) (seaFloorGenerateRange * seaFloorNoise[genx][genz]);
+                    }
                     biome = Biome.getBiome(Biome.OCEAN);
+                    if(genyHeight < seaFloorHeight - seaFloorGenerateRange) {
+                        genyHeight = seaFloorHeight;
+                    }
                 }
                 else if(genyHeight <= beathStopHeight && genyHeight >= beathStartHeight) {
                     //todo: there is no beach biome, use desert temporarily
                     biome = Biome.getBiome(Biome.DESERT);
                 }
                 else {
-                    if(genyHeight > landHeight) {
-                        genyHeight = landHeight;
+                    biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
+                    if(canBaseGround) {
+                        int baseGroundHeight = (int) (landHeightRange * landHeightNoise) - landHeightRange;
+                        int baseGroundHeight2 = (int) (basegroundHeight * (baseNoise[genx][genz] + 1F));
+                        if(baseGroundHeight2 > baseGroundHeight) baseGroundHeight2 = baseGroundHeight;
+                        genyHeight += baseGroundHeight2;
                     }
-                    biome = Biome.getBiome(Biome.PLAINS);
                 }
                 chunk.setBiomeId(genx, genz, biome.getId());
                 //biome color
