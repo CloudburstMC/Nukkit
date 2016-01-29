@@ -2829,6 +2829,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 } else if (this.windowIndex.containsKey(containerSetSlotPacket.windowid)) {
                     this.craftingType = 0;
                     Inventory inv = this.windowIndex.get(containerSetSlotPacket.windowid);
+
+                    if (inv instanceof EnchantInventory && containerSetSlotPacket.item.hasEnchantments()) {
+                        ((EnchantInventory) inv).onEnchant(this, inv.getItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
+                    }
+
                     transaction = new BaseTransaction(inv, containerSetSlotPacket.slot, inv.getItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
                 } else {
                     break;

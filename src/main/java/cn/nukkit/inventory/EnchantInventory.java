@@ -1,16 +1,23 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.item.Armor;
+import cn.nukkit.Server;
+import cn.nukkit.item.BookEnchanted;
 import cn.nukkit.item.Dye;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.item.enchantment.EnchantmentEntry;
+import cn.nukkit.item.enchantment.EnchantmentLevelTable;
+import cn.nukkit.item.enchantment.EnchantmentList;
 import cn.nukkit.level.Position;
-import cn.nukkit.network.protocol.ContainerSetDataPacket;
+import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.network.protocol.CraftingDataPacket;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -20,11 +27,10 @@ public class EnchantInventory extends ContainerInventory {
 
     private final Random random = new Random();
 
-    private final int[] enchLevelCosts = new int[3];
-    private final int[] enchId = new int[3];
-    private final int[] enchLevel = new int[3];
+    private int bookshelfAmount = 0;
 
-    private int xpSeed;
+    private int[] levels = null;
+    private EnchantmentEntry[] entries = null;
 
     public EnchantInventory(Position position) {
         super(null, InventoryType.get(InventoryType.ENCHANT_TABLE));
@@ -37,6 +43,127 @@ public class EnchantInventory extends ContainerInventory {
     }
 
     @Override
+    public void onOpen(Player who) {
+        super.onOpen(who);
+
+        if (this.levels == null) {
+            this.levels = new int[3];
+            this.bookshelfAmount = this.countBookshelf();
+
+            if (this.bookshelfAmount < 0) {
+                this.bookshelfAmount = 0;
+            }
+
+            if (this.bookshelfAmount > 15) {
+                this.bookshelfAmount = 15;
+            }
+
+            NukkitRandom random = new NukkitRandom();
+
+            double base = (double) random.nextRange(1, 8) + (bookshelfAmount / 2d) + (double) random.nextRange(0, bookshelfAmount);
+            this.levels[0] = (int) Math.max(base / 3, 1);
+            this.levels[1] = (int) ((base * 2) / 3 + 1);
+            this.levels[2] = (int) Math.max(base, bookshelfAmount * 2);
+        }
+
+    }
+
+    @Override
+    public void onSlotChange(int index, Item before) {
+        super.onSlotChange(index, before);
+
+        if (index == 0) {
+            Item item = this.getItem(0);
+            if (item.getId() == Item.AIR) {
+                this.entries = null;
+            } else if (before.getId() == Item.AIR && !item.hasEnchantments()) {
+                //before enchant
+                if (this.entries == null) {
+                    int enchantAbility = Enchantment.getEnchantAbility(item);
+                    this.entries = new EnchantmentEntry[3];
+                    for (int i = 0; i < 3; i++) {
+                        ArrayList<Enchantment> result = new ArrayList<>();
+
+                        int level = this.levels[i];
+                        int k = level + ThreadLocalRandom.current().nextInt(0, Math.round(Math.round(enchantAbility / 4f) * 2f)) + 1;
+                        float bonus = (ThreadLocalRandom.current().nextFloat() + ThreadLocalRandom.current().nextFloat() - 1) * 0.15f + 1;
+                        int modifiedLevel = (int) (k * (1 + bonus) + 0.5f);
+
+                        ArrayList<Enchantment> possible = EnchantmentLevelTable.getPossibleEnchantments(item, modifiedLevel);
+                        int[] weights = new int[possible.size()];
+                        int total = 0;
+
+                        for (int j = 0; j < weights.length; j++) {
+                            int id = possible.get(j).getId();
+                            int weight = Enchantment.getEnchantWeight(id);
+                            weights[j] = weight;
+                            total += weight;
+                        }
+
+                        int v = ThreadLocalRandom.current().nextInt(total + 1);
+
+                        int sum = 0;
+                        int key;
+                        for (key = 0; key < weights.length; ++key) {
+                            sum += weights[key];
+                            if (sum >= v) {
+                                key++;
+                                break;
+                            }
+                        }
+                        key--;
+
+                        Enchantment enchantment = possible.get(key);
+                        result.add(enchantment);
+                        possible.remove(key);
+
+                        //Extra enchantment
+                        while (!possible.isEmpty()) {
+                            modifiedLevel = Math.round(modifiedLevel / 2f);
+                            v = ThreadLocalRandom.current().nextInt(0, 51);
+                            if (v <= (modifiedLevel + 1)) {
+
+                                removeConflictEnchantment(enchantment, possible);
+
+                                weights = new int[possible.size()];
+                                total = 0;
+
+                                for (int j = 0; j < weights.length; j++) {
+                                    int id = possible.get(j).getId();
+                                    int weight = Enchantment.getEnchantWeight(id);
+                                    weights[j] = weight;
+                                    total += weight;
+                                }
+
+                                v = ThreadLocalRandom.current().nextInt(total + 1);
+                                sum = 0;
+                                for (key = 0; key < weights.length; ++key) {
+                                    sum += weights[key];
+                                    if (sum >= v) {
+                                        key++;
+                                        break;
+                                    }
+                                }
+                                key--;
+
+                                enchantment = possible.get(key);
+                                result.add(enchantment);
+                                possible.remove(key);
+                            } else {
+                                break;
+                            }
+                        }
+
+                        this.entries[i] = new EnchantmentEntry(result.stream().toArray(Enchantment[]::new), level, Enchantment.generateName());
+                    }
+                }
+
+                this.sendEnchantmentList();
+            }
+        }
+    }
+
+    @Override
     public void onClose(Player who) {
         super.onClose(who);
 
@@ -44,196 +171,80 @@ public class EnchantInventory extends ContainerInventory {
             this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
             this.clear(i);
         }
-    }
 
-    @Override
-    public void onSlotChange(int index, Item before) {
-        super.onSlotChange(index, before);
-
-        this.checkItems();
-    }
-
-    public void checkItems() {
-        Item tool = this.getItem(0);
-        Item lapis = this.getItem(1);
-
-        if (((tool.isTool() && !tool.hasEnchantments()) || tool.isArmor() || tool.getId() == Item.BOOK) && lapis.getId() == Item.DYE && lapis.getDamage() == Dye.BLUE && lapis.getCount() > 0) {
-            this.calculateNewEnchantsAndLevels();
+        if (this.getViewers().size() == 0) {
+            this.levels = null;
+            this.entries = null;
+            this.bookshelfAmount = 0;
         }
     }
 
-    public void calculateNewEnchantsAndLevels() {
-        int bookshelfCount = 15; //TODO: check for bookshelfs
-
-        for (int i = 0; i < enchLevelCosts.length; i++) {
-            this.enchLevelCosts[i] = calculateLevelCost(i, bookshelfCount);
-            this.enchLevel[i] = 0;
-            this.enchId[i] = 0;
-        }
-
-        this.update();
-    }
-
-    private int calculateLevelCost(int stage, int countBookshelf) {
-        int modifier = calculateModifier(this.getItem(0));
-        if (modifier <= 0) return 0;
-
-        int rand = random.nextInt(8) + random.nextInt(countBookshelf + 1);
-        rand += 1;
-        rand += countBookshelf / 2;
-
-        int result;
-        if (stage == 0) {
-            result = Math.max(rand / 3, 1);
-        } else if (stage == 1) {
-            result = rand * 2 / 3 + 1;
-        } else {
-            result = Math.max(rand, countBookshelf * 2);
-        }
-
-        if (result < stage + 1)
-            return 0;
-        else
-            return result;
-    }
-
-    private static int calculateModifier(Item item) {
-
-        switch (item.getId()) {
-            case Item.BOOK:
-            case Item.BOW:
-            case Item.FISHING_ROD:
-                return 1;
-        }
-
-        if (item.isArmor()) {
-            switch (item.getTier()) {
-                case Armor.TIER_CHAIN:
-                    return 12;
-                case Armor.TIER_IRON:
-                    return 9;
-                case Armor.TIER_DIAMOND:
-                    return 10;
-                case Armor.TIER_LEATHER:
-                    return 15;
-                case Armor.TIER_GOLD:
-                    return 25;
-            }
-        }
-
-        if (item.isTool()) {
-            switch (item.getTier()) {
-                case Tool.TIER_WOODEN:
-                    return 15;
-                case Tool.TIER_STONE:
-                    return 5;
-                case Tool.TIER_DIAMOND:
-                    return 10;
-                case Tool.TIER_IRON:
-                    return 14;
-                case Tool.TIER_GOLD:
-                    return 22;
-            }
-        }
-
-        return 0;
-    }
-
-    public void onEnchant(int clicked) {
-        if (clicked < 0 || clicked > 2) {
-            return;
-        }
-
-        HashSet<Integer> enchantments = this.getAvailableEnchantments();
-
-        for (int i = 0; i < enchLevelCosts.length; i++) {
-            int amount = (i == 0 ? 1 : i) + (random.nextInt(3) == 0 ? 1 : 0);
-
-            HashSet<Integer> rndEnch = new HashSet<>();
-
-            for (i = amount; i >= 0; ) {
-                int rnd = random.nextInt(enchantments.size());
-
-                if (rndEnch.contains(rnd)) {
-                    continue;
+    public void onEnchant(Player who, Item before, Item after) {
+        Item result = (before.getId() == Item.BOOK) ? new BookEnchanted() : before;
+        if (!before.hasEnchantments() && after.hasEnchantments() && after.getId() == result.getId() && this
+                .levels != null && this.entries != null) {
+            System.out.println("here");
+            Enchantment[] enchantments = after.getEnchantments();
+            for (int i = 0; i < 3; i++) {
+                if (Arrays.equals(enchantments, this.entries[i].getEnchantments())) {
+                    Item lapis = this.getItem(1);
+                    int level = who.getExperienceLevel();
+                    int exp = who.getExperience();
+                    int cost = this.entries[i].getCost();
+                    if (lapis.getId() == Item.DYE && lapis.getDamage() == Dye.BLUE && lapis.getCount() > i && level >= cost) {
+                        result.addEnchantment(enchantments);
+                        this.setItem(0, result);
+                        lapis.setCount(lapis.getCount() - i - 1);
+                        this.setItem(1, lapis);
+                        who.setExperience(exp, level - cost);
+                        break;
+                    }
                 }
-
-                rndEnch.add(rnd);
-                i--;
             }
         }
     }
 
-    public HashSet<Integer> getAvailableEnchantments() {
-        Item item = this.getItem(0);
-
-        int specific = 0;
-        int slot = 0;
-
-        if (item.isTool()) {
-            slot = Enchantment.SLOT_TOOL;
-
-            if (item.isSword()) {
-                specific = Enchantment.SLOT_SWORD;
-            } else if (item.isPickaxe()) {
-                specific = Enchantment.SLOT_PICKAXE;
-            } else if (item.isAxe()) {
-                specific = Enchantment.SLOT_AXE;
-            } else if (item.isShovel()) {
-                specific = Enchantment.SLOT_SHOVEL;
-            } else if (item.getId() == Item.BOW) {
-                specific = Enchantment.SLOT_BOW;
-            }
-        } else if (item.isArmor()) {
-            slot = Enchantment.SLOT_ARMOR;
-
-            if (item.isHelmet()) {
-                specific = Enchantment.SLOT_HEAD;
-            } else if (item.isChestplate()) {
-                specific = Enchantment.SLOT_TORSO;
-            } else if (item.isLeggings()) {
-                specific = Enchantment.SLOT_LEGS;
-            } else if (item.isBoots()) {
-                specific = Enchantment.SLOT_FEET;
-            }
-        }
-
-        HashSet<Integer> enchantments = new HashSet<>();
-
-        for (int i = 0; i < 25; i++) {
-            Enchantment ench = Enchantment.getEnchantment(i);
-
-            if (ench.getSlot() == slot || ench.getSlot() == specific || ench.getSlot() == Enchantment.SLOT_ALL) {
-                enchantments.add(i);
-            }
-        }
-
-        return enchantments;
+    public int countBookshelf() {
+        return 15;
+        //todo calculate bookshelf
     }
 
-    public void update() {
-        ContainerSetDataPacket pk = new ContainerSetDataPacket();
+    public void sendEnchantmentList() {
+        CraftingDataPacket pk = new CraftingDataPacket();
+        if (this.entries != null && this.levels != null) {
+            EnchantmentList list = new EnchantmentList(this.entries.length);
+            for (int i = 0; i < list.getSize(); i++) {
+                list.setSlot(i, this.entries[i]);
+            }
+            pk.addEnchantList(list);
+        }
 
-        for (Player player : this.getViewers()) {
-            int windowId = player.getWindowId(this);
-            if (windowId > 0) {
+        Server.broadcastPacket(this.getViewers(), pk);
+    }
 
-                //this may be wrong
-                for (int i = 0; i < enchLevelCosts.length; i++) {
-                    pk.windowid = (byte) windowId;
+    private void removeConflictEnchantment(Enchantment enchantment, List<Enchantment> enchantments) {
+        for (Enchantment e : new ArrayList<>(enchantments)) {
+            int id = e.getId();
+            if (id == enchantment.getId()) {
+                enchantments.remove(e);
+                continue;
+            }
 
-                    pk.property = 0;
-                    pk.value = enchId[i];
-                    player.dataPacket(pk);
+            if (id >= 0 && id <= 4 && enchantment.getId() >= 0 && enchantment.getId() <= 4) {
+                //Protection
+                enchantments.remove(e);
+                continue;
+            }
 
-                    pk.property = 1;
-                    pk.value = enchLevel[i];
-                    player.dataPacket(pk);
+            if (id >= 9 && id <= 14 && enchantment.getId() >= 9 && enchantment.getId() <= 14) {
+                //Weapon
+                enchantments.remove(e);
+                continue;
+            }
 
-                    pk.property = 2;
-                    pk.value = enchLevelCosts[i];
-                    player.dataPacket(pk);
-                }
+            if ((id == Enchantment.TYPE_MINING_SILK_TOUCH && enchantment.getId() == Enchantment.TYPE_MINING_FORTUNE) || (id == Enchantment.TYPE_MINING_FORTUNE && enchantment.getId() == Enchantment.TYPE_MINING_SILK_TOUCH)) {
+                enchantments.remove(e);
+                continue;
             }
         }
     }

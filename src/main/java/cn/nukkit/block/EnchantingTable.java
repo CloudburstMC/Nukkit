@@ -60,7 +60,9 @@ public class EnchantingTable extends Solid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe()) {
-            return new int[][]{{Item.ENCHANTING_TABLE, 0, 1}};
+            return new int[][]{
+                    {Item.ENCHANTING_TABLE, 0, 1}
+            };
         }
         return new int[][]{{}};
     }
