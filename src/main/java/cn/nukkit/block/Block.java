@@ -459,6 +459,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[JUNGLE_DOOR_BLOCK] = JungleDoor.class;
             list[DAYLIGHT_DETECTOR] = DaylightDetector.class;
             list[DAYLIGHT_DETECTOR_INVERTED] = DaylightDetectorInverted.class;
+            list[RAIL] = Rail.class;
             list[ACTIVATOR_RAIL] = RailActivator.class;
             list[DETECTOR_RAIL] = RailDetector.class;
             list[POWERED_RAIL] = RailPowered.class;

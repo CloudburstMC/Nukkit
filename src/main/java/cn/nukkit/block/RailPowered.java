@@ -6,7 +6,7 @@ import cn.nukkit.item.Item;
  * Created by Snake1999 on 2016/1/11.
  * Package cn.nukkit.block in project nukkit
  */
-public class RailPowered extends Transparent {
+public class RailPowered extends Rail {
     public RailPowered() {
         this(0);
     }
