@@ -352,6 +352,7 @@ public class Level implements ChunkManager, Metadatable {
         this.blockMetadata = null;
         this.blockCache.clear();
         this.temporalPosition = null;
+        this.server.getLevels().remove(this.levelId);
     }
 
     public void addSound(Sound sound) {
