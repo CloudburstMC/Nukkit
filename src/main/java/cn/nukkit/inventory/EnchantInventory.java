@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.item.BookEnchanted;
+import cn.nukkit.item.EnchantedBook;
 import cn.nukkit.item.Dye;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -180,7 +180,7 @@ public class EnchantInventory extends ContainerInventory {
     }
 
     public void onEnchant(Player who, Item before, Item after) {
-        Item result = (before.getId() == Item.BOOK) ? new BookEnchanted() : before;
+        Item result = (before.getId() == Item.BOOK) ? new EnchantedBook() : before;
         if (!before.hasEnchantments() && after.hasEnchantments() && after.getId() == result.getId() && this
                 .levels != null && this.entries != null) {
             System.out.println("here");

@@ -122,7 +122,7 @@ public class Trapdoor extends Transparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if((!target.isTransparent() || target.getId() == SLAB) && face != 0 && face != 1){
+        if ((!target.isTransparent() || target.getId() == SLAB) && face != 0 && face != 1) {
             int faceBit = 0b00;
             int upDownBit = 0b000;
             if (fy > 0.5) upDownBit = 0b100;

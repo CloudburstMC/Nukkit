@@ -60,6 +60,13 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_AMBIENT = 8;
     public static final int DATA_NO_AI = 15;
     public static final int DATA_POTION_TYPE = 16;
+    public static final int DATA_VEHICLE_HURT_TIME = 17;
+    public static final int DATA_VEHICLE_HURT_DIRECTION = 18;
+    public static final int DATA_VEHICLE_DAMAGE = 19;
+    public static final int DATA_VEHICLE_DISPLAY_BLOCK = 20;
+    public static final int DATA_VEHICLE_DISPLAY_DATA = 21;
+    public static final int DATA_VEHICLE_DISPLAY_OFFSET = 22;
+    public static final int DATA_VEHICLE_CUSTOM_DISPLAY = 23;
 
     public static final int DATA_FLAG_ONFIRE = 0;
     public static final int DATA_FLAG_SNEAKING = 1;
