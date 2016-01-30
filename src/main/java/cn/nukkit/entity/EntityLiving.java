@@ -121,7 +121,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             }
 
             double deltaX = this.x - e.x;
-            double deltaZ = this.z = e.z;
+            double deltaZ = this.z - e.z;
             this.knockBack(e, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
         }
 
@@ -133,11 +133,11 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         this.attackTime = 10;
     }
 
-    public void knockBack(Entity attacker, float damage, double x, double z) {
-        this.knockBack(attacker, damage, x, z, 0.4f);
+    public void knockBack(Entity attacker, double damage, double x, double z) {
+        this.knockBack(attacker, damage, x, z, 0.4);
     }
 
-    public void knockBack(Entity attacker, float damage, double x, double z, float base) {
+    public void knockBack(Entity attacker, double damage, double x, double z, double base) {
         double f = Math.sqrt(x * x + z * z);
         if (f <= 0) {
             return;
@@ -147,9 +147,9 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
         Vector3 motion = new Vector3(this.motionX, this.motionY, this.motionZ);
 
-        motion.x /= 2;
-        motion.y /= 2;
-        motion.z /= 2;
+        motion.x /= 2d;
+        motion.y /= 2d;
+        motion.z /= 2d;
         motion.x += x * f * base;
         motion.y += base;
         motion.z += z * f * base;
