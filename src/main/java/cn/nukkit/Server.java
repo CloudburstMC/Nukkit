@@ -1810,6 +1810,9 @@ public class Server {
         Entity.registerEntity(EntityPotion.class);
 
         Entity.registerEntity(EntityHuman.class, true);
+
+        Entity.registerEntity(EntityMinecart.class);
+        // TODO: 2016/1/30 all finds of minecart
     }
 
     private void registerTiles() {
