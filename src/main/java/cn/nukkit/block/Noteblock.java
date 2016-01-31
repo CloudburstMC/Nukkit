@@ -86,7 +86,7 @@ public class Noteblock extends Solid {
         return this.onActivate(item, null);
     }
 
-    public boolean onActivate(Item $item, Player $player){
+    public boolean onActivate(Item item, Player player){
         Block up = this.getSide(Vector3.SIDE_UP);
         if(up.getId() == 0){
             this.getLevel().addSound(new NoteBoxSound(this,this.getInstrument(),this.getStrength()));
