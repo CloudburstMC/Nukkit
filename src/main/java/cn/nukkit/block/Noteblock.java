@@ -11,6 +11,7 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.block in project nukkit.
  */
 public class Noteblock extends Solid {
+
     public Noteblock() {
         this(0);
     }
@@ -44,18 +45,20 @@ public class Noteblock extends Solid {
         return 4D;
     }
 
-    public boolean canBeActivated(){ return true; }
+    public boolean canBeActivated() {
+        return true;
+    }
 
-    public int getStrength(){
-        if(this.meta < 24) this.meta++;
+    public int getStrength() {
+        if (this.meta < 24) this.meta++;
         else this.meta = 0;
-        this.getLevel().setBlock(this,this);
+        this.getLevel().setBlock(this, this);
         return this.meta;
     }
 
-    public int getInstrument(){
+    public int getInstrument() {
         Block below = this.getSide(Vector3.SIDE_DOWN);
-        switch (below.getId()){
+        switch (below.getId()) {
             case WOODEN_PLANK:
             case NOTEBLOCK:
             case CRAFTING_TABLE:
@@ -86,12 +89,12 @@ public class Noteblock extends Solid {
         return this.onActivate(item, null);
     }
 
-    public boolean onActivate(Item item, Player player){
+    public boolean onActivate(Item item, Player player) {
         Block up = this.getSide(Vector3.SIDE_UP);
-        if(up.getId() == 0){
-            this.getLevel().addSound(new NoteBoxSound(this,this.getInstrument(),this.getStrength()));
+        if (up.getId() == Block.AIR) {
+            this.getLevel().addSound(new NoteBoxSound(this, this.getInstrument(), this.getStrength()));
             return true;
-        }else{
+        } else {
             return false;
         }
     }
