@@ -3,7 +3,7 @@ package cn.nukkit.entity;
 /**
  * @author Nukkit Project Team
  */
-public interface Explosive {
+public interface EntityExplosive {
 
     void explode();
 

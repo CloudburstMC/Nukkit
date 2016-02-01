@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.item.EntityPainting;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -89,7 +90,7 @@ public class Painting extends Item {
                             .add(new FloatTag("0", faces[face - 2] * 90))
                             .add(new FloatTag("1", 0)));
 
-            cn.nukkit.entity.Painting entity = new cn.nukkit.entity.Painting(chunk, nbt);
+            EntityPainting entity = new EntityPainting(chunk, nbt);
 
             if (player.isSurvival()) {
                 --this.count;

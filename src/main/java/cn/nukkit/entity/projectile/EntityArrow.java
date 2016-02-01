@@ -1,6 +1,7 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.math.NukkitMath;
@@ -12,8 +13,10 @@ import cn.nukkit.network.protocol.AddEntityPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Arrow extends Projectile {
+public class EntityArrow extends EntityProjectile {
     public static final int NETWORK_ID = 80;
+
+    public static final int DATA_SOURCE_ID = 17;
 
     @Override
     public int getNetworkId() {
@@ -57,15 +60,15 @@ public class Arrow extends Projectile {
 
     protected boolean isCritical;
 
-    public Arrow(FullChunk chunk, CompoundTag nbt) {
+    public EntityArrow(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public Arrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         this(chunk, nbt, shootingEntity, false);
     }
 
-    public Arrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
+    public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
         super(chunk, nbt, shootingEntity);
         this.isCritical = critical;
     }
@@ -99,7 +102,7 @@ public class Arrow extends Projectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = Arrow.NETWORK_ID;
+        pk.type = EntityArrow.NETWORK_ID;
         pk.eid = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;

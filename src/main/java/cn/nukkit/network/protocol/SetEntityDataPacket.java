@@ -1,9 +1,7 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.data.EntityData;
+import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.utils.Binary;
-
-import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -18,7 +16,7 @@ public class SetEntityDataPacket extends DataPacket {
     }
 
     public long eid;
-    public Map<Integer, EntityData> metadata;
+    public EntityMetadata metadata;
 
     @Override
     public void decode() {

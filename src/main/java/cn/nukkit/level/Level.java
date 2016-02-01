@@ -3,7 +3,10 @@ package cn.nukkit.level;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
-import cn.nukkit.entity.*;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.item.EntityXPOrb;
+import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
@@ -32,6 +35,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.redstone.Redstone;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.tile.Chest;
@@ -348,6 +352,7 @@ public class Level implements ChunkManager, Metadatable {
         this.blockMetadata = null;
         this.blockCache.clear();
         this.temporalPosition = null;
+        this.server.getLevels().remove(this.levelId);
     }
 
     public void addSound(Sound sound) {
@@ -1334,7 +1339,7 @@ public class Level implements ChunkManager, Metadatable {
         itemTag.setName("Item");
 
         if (item.getId() > 0 && item.getCount() > 0) {
-            DroppedItem itemEntity = new DroppedItem(this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true), new CompoundTag()
+            EntityItem itemEntity = new EntityItem(this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true), new CompoundTag()
                     .putList(new ListTag<DoubleTag>("Pos")
                             .add(new DoubleTag("", source.getX()))
                             .add(new DoubleTag("", source.getY()))
@@ -1536,9 +1541,9 @@ public class Level implements ChunkManager, Metadatable {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", 0))
                         .add(new FloatTag("", 0)));
-        Entity entity = Entity.createEntity("XPOrb", this.getChunk(source.getFloorX() >> 4, source.getFloorZ() >> 4), nbt);
-        if (entity instanceof XPOrb) {
-            XPOrb xpOrb = (XPOrb) entity;
+        Entity entity = new EntityXPOrb(this.getChunk(source.getFloorX() >> 4, source.getFloorZ() >> 4), nbt);
+        if (entity instanceof EntityXPOrb) {
+            EntityXPOrb xpOrb = (EntityXPOrb) entity;
             xpOrb.setExp(exp);
             xpOrb.setPickupDelay(delay);
             xpOrb.saveNBT();
@@ -1622,7 +1627,7 @@ public class Level implements ChunkManager, Metadatable {
             Entity[] entities = this.getCollidingEntities(hand.getBoundingBox());
             int realCount = 0;
             for (Entity e : entities) {
-                if (e instanceof Arrow || e instanceof DroppedItem) {
+                if (e instanceof EntityArrow || e instanceof EntityItem) {
                     continue;
                 }
                 ++realCount;

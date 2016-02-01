@@ -1,6 +1,6 @@
 package cn.nukkit.event.inventory;
 
-import cn.nukkit.entity.Arrow;
+import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Inventory;
@@ -17,14 +17,14 @@ public class InventoryPickupArrowEvent extends InventoryEvent implements Cancell
         return handlers;
     }
 
-    private Arrow arrow;
+    private EntityArrow arrow;
 
-    public InventoryPickupArrowEvent(Inventory inventory, Arrow arrow) {
+    public InventoryPickupArrowEvent(Inventory inventory, EntityArrow arrow) {
         super(inventory);
         this.arrow = arrow;
     }
 
-    public Arrow getArrow() {
+    public EntityArrow getArrow() {
         return arrow;
     }
 }

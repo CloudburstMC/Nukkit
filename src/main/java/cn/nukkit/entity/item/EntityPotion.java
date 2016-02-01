@@ -1,7 +1,9 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ShortEntityData;
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.potion.PotionCollideEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.InstantSpellParticle;
@@ -9,12 +11,14 @@ import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+import cn.nukkit.potion.Effect;
+import cn.nukkit.potion.Potion;
 
 /**
  * Created on 2015/12/27 by xtypr.
  * Package cn.nukkit.entity in project Nukkit .
  */
-public class ThrownPotion extends Projectile {
+public class EntityPotion extends EntityProjectile {
 
     public static final int NETWORK_ID = 86;
 
@@ -48,11 +52,11 @@ public class ThrownPotion extends Projectile {
         return 0.01f;
     }
 
-    public ThrownPotion(FullChunk chunk, CompoundTag nbt) {
+    public EntityPotion(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public ThrownPotion(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityPotion(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
         setPotionType(getPotionType()); //in order to set data property.
     }
@@ -63,7 +67,7 @@ public class ThrownPotion extends Projectile {
 
     public void setPotionType(int potionType) {
         namedTag.putInt("Potion", potionType);
-        setDataProperty(DATA_POTION_TYPE, new ShortEntityData(potionType));
+        setDataProperty(new ShortEntityData(DATA_POTION_TYPE, potionType));
     }
 
     @Override
@@ -140,7 +144,7 @@ public class ThrownPotion extends Projectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = ThrownPotion.NETWORK_ID;
+        pk.type = EntityPotion.NETWORK_ID;
         pk.eid = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;

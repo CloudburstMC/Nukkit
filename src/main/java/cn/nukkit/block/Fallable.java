@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.FallingSand;
+import cn.nukkit.entity.item.EntityFallingBlock;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
@@ -51,7 +51,7 @@ public abstract class Fallable extends Solid {
                         .putInt("TileID", this.getId())
                         .putByte("Data", (byte) this.getDamage());
 
-                FallingSand fall = new FallingSand(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+                EntityFallingBlock fall = new EntityFallingBlock(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
                 fall.spawnToAll();
             }

@@ -1,9 +1,7 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.data.EntityData;
+import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.utils.Binary;
-
-import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -27,7 +25,7 @@ public class AddEntityPacket extends DataPacket {
     public float speedZ;
     public float yaw;
     public float pitch;
-    public Map<Integer, EntityData> metadata;
+    public EntityMetadata metadata;
     public Object[][] links = new Object[0][3];
 
     @Override

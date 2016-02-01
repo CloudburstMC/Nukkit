@@ -15,4 +15,5 @@ public class BirchDoor extends Item {
         super(BIRCH_DOOR, 0, count, "Birch Door");
         this.block = Block.get(Item.BIRCH_DOOR_BLOCK);
     }
+
 }

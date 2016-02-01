@@ -34,7 +34,7 @@ public abstract class ContainerInventory extends BaseInventory {
         super.onOpen(who);
         ContainerOpenPacket pk = new ContainerOpenPacket();
         pk.windowid = (byte) who.getWindowId(this);
-        pk.type = this.getType().getNetworkType();
+        pk.type = (byte) this.getType().getNetworkType();
         pk.slots = this.getSize();
         InventoryHolder holder = this.getHolder();
         if (holder instanceof Vector3) {

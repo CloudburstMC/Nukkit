@@ -1,6 +1,8 @@
-package cn.nukkit.entity;
+package cn.nukkit.potion;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.potion.PotionApplyEvent;
@@ -152,7 +154,7 @@ public class Potion implements Cloneable {
     }
 
     public void applyPotion(Entity entity) {
-        if (!(entity instanceof Living)) {
+        if (!(entity instanceof EntityLiving)) {
             return;
         }
 
@@ -177,10 +179,10 @@ public class Potion implements Cloneable {
 
         switch (this.getId()) {
             case INSTANT_HEALTH:
-                entity.heal(4, new EntityRegainHealthEvent(entity, 4, EntityRegainHealthEvent.CAUSE_EATING));
+                entity.heal(new EntityRegainHealthEvent(entity, 4, EntityRegainHealthEvent.CAUSE_EATING));
                 break;
             case INSTANT_HEALTH_II:
-                entity.heal(8, new EntityRegainHealthEvent(entity, 8, EntityRegainHealthEvent.CAUSE_EATING));
+                entity.heal(new EntityRegainHealthEvent(entity, 8, EntityRegainHealthEvent.CAUSE_EATING));
                 break;
             case HARMING:
                 entity.attack(new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 6));

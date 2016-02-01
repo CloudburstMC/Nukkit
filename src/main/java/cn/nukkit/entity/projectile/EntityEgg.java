@@ -1,6 +1,7 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -9,7 +10,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Egg extends Projectile {
+public class EntityEgg extends EntityProjectile {
     public static final int NETWORK_ID = 82;
 
     @Override
@@ -42,11 +43,11 @@ public class Egg extends Projectile {
         return 0.01f;
     }
 
-    public Egg(FullChunk chunk, CompoundTag nbt) {
+    public EntityEgg(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public Egg(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityEgg(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 
@@ -69,7 +70,7 @@ public class Egg extends Projectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = Egg.NETWORK_ID;
+        pk.type = EntityEgg.NETWORK_ID;
         pk.eid = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;

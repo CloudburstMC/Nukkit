@@ -1,7 +1,7 @@
 package cn.nukkit.item.food;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.Effect;
+import cn.nukkit.potion.Effect;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;

@@ -15,4 +15,5 @@ public class AcaciaDoor extends Item {
         super(ACACIA_DOOR, 0, count, "Acacia Door");
         this.block = Block.get(Item.ACACIA_DOOR_BLOCK);
     }
+
 }

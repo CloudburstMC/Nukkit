@@ -100,7 +100,7 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public Map<Integer, Item> getContents() {
-        return this.slots;
+        return new HashMap<>(this.slots);
     }
 
     @Override

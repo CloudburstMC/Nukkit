@@ -20,4 +20,5 @@ public class IronDoor extends Item {
         super(IRON_DOOR, 0, count, "Iron Door");
         this.block = Block.get(Item.IRON_DOOR_BLOCK);
     }
+
 }
