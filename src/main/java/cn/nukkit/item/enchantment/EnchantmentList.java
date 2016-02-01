@@ -15,8 +15,9 @@ public class EnchantmentList {
      * @param slot  The index of enchantment.
      * @param entry The given enchantment entry.
      */
-    public void setSlot(int slot, EnchantmentEntry entry) {
+    public EnchantmentList setSlot(int slot, EnchantmentEntry entry) {
         enchantments[slot] = entry;
+        return this;
     }
 
     public EnchantmentEntry getSlot(int slot) {

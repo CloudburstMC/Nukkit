@@ -90,7 +90,7 @@ public class EntityHuman extends EntityCreature implements InventoryHolder {
     protected void initEntity() {
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
 
-        this.setDataProperty(DATA_PLAYER_BED_POSITION, new PositionEntityData(0, 0, 0));
+        this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0));
 
         this.inventory = new PlayerInventory(this);
         if (this instanceof Player) {

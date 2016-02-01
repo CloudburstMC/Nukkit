@@ -19,7 +19,7 @@ public abstract class EntityAnimal extends EntityCreature implements EntityAgeab
     protected void initEntity() {
         super.initEntity();
         if (this.getDataProperty(DATA_AGEABLE_FLAGS) == null) {
-            this.setDataProperty(DATA_AGEABLE_FLAGS, new ByteEntityData((byte) 0));
+            this.setDataProperty(new ByteEntityData(DATA_AGEABLE_FLAGS, 0));
         }
     }
 

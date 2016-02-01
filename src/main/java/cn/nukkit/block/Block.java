@@ -148,6 +148,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int STONE_BRICKS = 98;
     public static final int STONE_BRICK = 98;
 
+    public static final int BROWN_MUSHROOM_BLOCK = 99;
+    public static final int RED_MUSHROOM_BLOCK = 100;
+
     public static final int IRON_BAR = 101;
     public static final int IRON_BARS = 101;
     public static final int GLASS_PANE = 102;
@@ -381,6 +384,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             list[STONE_BRICKS] = StoneBricks.class;
 
+            list[RED_MUSHROOM_BLOCK] = RedMushroomBlock.class;
+            list[BROWN_MUSHROOM_BLOCK] = BrownMushroomBlock.class;
+
             list[IRON_BARS] = IronBars.class;
             list[GLASS_PANE] = GlassPane.class;
             list[MELON_BLOCK] = Melon.class;
@@ -459,6 +465,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[JUNGLE_DOOR_BLOCK] = JungleDoor.class;
             list[DAYLIGHT_DETECTOR] = DaylightDetector.class;
             list[DAYLIGHT_DETECTOR_INVERTED] = DaylightDetectorInverted.class;
+            list[RAIL] = Rail.class;
             list[ACTIVATOR_RAIL] = RailActivator.class;
             list[DETECTOR_RAIL] = RailDetector.class;
             list[POWERED_RAIL] = RailPowered.class;

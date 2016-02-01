@@ -7,25 +7,20 @@ import cn.nukkit.math.Vector3;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PositionEntityData implements EntityData<Vector3> {
+public class PositionEntityData extends EntityData<Vector3> {
     public int x;
     public int y;
     public int z;
 
-    public PositionEntityData() {
-
-    }
-
-    public PositionEntityData(int x, int y, int z) {
+    public PositionEntityData(int id, int x, int y, int z) {
+        super(id);
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public PositionEntityData(Vector3 pos) {
-        this.x = (int) pos.x;
-        this.y = (int) pos.y;
-        this.z = (int) pos.z;
+    public PositionEntityData(int id, Vector3 pos) {
+        this(id, (int) pos.x, (int) pos.y, (int) pos.z);
     }
 
     @Override

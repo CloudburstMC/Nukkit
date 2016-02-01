@@ -6,10 +6,7 @@ import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityLiving;
-import cn.nukkit.entity.data.EntityData;
-import cn.nukkit.entity.data.PositionEntityData;
-import cn.nukkit.entity.data.ShortEntityData;
-import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.EntityExpBottle;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityPotion;
@@ -874,7 +871,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sleeping = pos.clone();
         this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level));
 
-        this.setDataProperty(DATA_PLAYER_BED_POSITION, new PositionEntityData((int) pos.x, (int) pos.y, (int) pos.z));
+        this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
 
         this.setSpawn(pos);
@@ -904,7 +901,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().callEvent(new PlayerBedLeaveEvent(this, this.level.getBlock(this.sleeping)));
 
             this.sleeping = null;
-            this.setDataProperty(DATA_PLAYER_BED_POSITION, new PositionEntityData(0, 0, 0));
+            this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0));
             this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
 
 
@@ -1056,13 +1053,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public boolean setDataProperty(int id, EntityData dataEntry) {
-        if (super.setDataProperty(id, dataEntry)) {
-            this.sendData(this, new HashMap<Integer, EntityData>() {
-                {
-                    put(id, dataProperties.get(id));
-                }
-            });
+    public boolean setDataProperty(EntityData data) {
+        if (super.setDataProperty(data)) {
+            this.sendData(this, new EntityMetadata().put(this.getDataProperty(data.getId())));
             return true;
         }
 
@@ -1409,7 +1402,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     this.inAirTicks = 0;
                 } else {
-                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && this.getDataPropertyByte(DATA_NO_AI).data != 1) {
+                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && this.getDataPropertyBoolean(DATA_NO_AI)) {
                         double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                         double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
@@ -2198,7 +2191,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.setSneaking(false);
 
                         this.extinguish();
-                        this.setDataProperty(Player.DATA_AIR, new ShortEntityData(300));
+                        this.setDataProperty(new ShortEntityData(Player.DATA_AIR, 300));
                         this.deadTicks = 0;
                         this.noDamageTicks = 60;
 
@@ -2829,6 +2822,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 } else if (this.windowIndex.containsKey(containerSetSlotPacket.windowid)) {
                     this.craftingType = 0;
                     Inventory inv = this.windowIndex.get(containerSetSlotPacket.windowid);
+
+                    if (inv instanceof EnchantInventory && containerSetSlotPacket.item.hasEnchantments()) {
+                        ((EnchantInventory) inv).onEnchant(this, inv.getItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
+                    }
+
                     transaction = new BaseTransaction(inv, containerSetSlotPacket.slot, inv.getItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
                 } else {
                     break;
@@ -3335,7 +3333,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     public void setHealth(float health) {
         super.setHealth(health);
-        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? health : 0);
+        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0);
         if (this.spawned) {
             UpdateAttributesPacket pk = new UpdateAttributesPacket();
             pk.entries = new Attribute[]{attr};
@@ -3357,19 +3355,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int now = this.getExperience();
         int added = now + add;
         int level = this.getExperienceLevel();
-        int most = this.calculateRequireExperience(level);
+        int most = calculateRequireExperience(level);
         while (added >= most) {  //Level Up!
             added = added - most;
             level++;
-            this.sendExperienceLevelUp();
             getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
-            most = this.calculateRequireExperience(level);
+            most = calculateRequireExperience(level);
         }
         getServer().getLogger().debug("Added " + add + " EXP to " + getName() + ", now lv:" + level + " (" + added + "/" + most + ") .");
         this.setExperience(added, level);
     }
 
-    public int calculateRequireExperience(int level) {
+    public static int calculateRequireExperience(int level) {
         if (level < 16) {
             return 2 * level + 7;
         } else if (level >= 17 && level <= 31) {
@@ -3398,8 +3395,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendExperience(int exp) {
-        float precent = ((float) exp) / this.calculateRequireExperience(this.getExperienceLevel());
-        this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, precent, true).setValue(precent));
+        float percent = ((float) exp) / calculateRequireExperience(this.getExperienceLevel());
+        this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, percent, true).setValue(percent));
     }
 
     public void sendExperienceLevel() {
@@ -3408,17 +3405,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendExperienceLevel(int level) {
         this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setValue(level));
-    }
-
-    public void sendExperienceLevelUp() {
-        //todo 似乎没用？需要抓包Attribute
-        //UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        //pk.entityId = 0;
-        //float secret = this.expLevel > 30 ? 1.0F : (float)this.expLevel / 30.0F;
-        //pk.entries = new Attribute[]{
-        //        Attribute.addAttribute(Attribute.EXPERIENCE_LEVEL, "random.levelup", 0, 1, secret, true).setValue(secret)
-        //};
-        //this.dataPacket(pk);
     }
 
     public void setAttribute(Attribute attribute) {

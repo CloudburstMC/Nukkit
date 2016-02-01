@@ -6,14 +6,11 @@ import cn.nukkit.entity.Entity;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ShortEntityData implements EntityData<Integer> {
+public class ShortEntityData extends EntityData<Integer> {
     public int data;
 
-    public ShortEntityData() {
-
-    }
-
-    public ShortEntityData(int data) {
+    public ShortEntityData(int id, int data) {
+        super(id);
         this.data = data;
     }
 

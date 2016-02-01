@@ -67,7 +67,7 @@ public class EntityPotion extends EntityProjectile {
 
     public void setPotionType(int potionType) {
         namedTag.putInt("Potion", potionType);
-        setDataProperty(DATA_POTION_TYPE, new ShortEntityData(potionType));
+        setDataProperty(new ShortEntityData(DATA_POTION_TYPE, potionType));
     }
 
     @Override

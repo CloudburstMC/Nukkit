@@ -94,7 +94,7 @@ public class Grass extends Dirt {
                 }
             }
 
-            if (!(this.getSide(Vector3.SIDE_UP) instanceof Transparent)) {
+            if (!(this.getSide(Vector3.SIDE_UP) instanceof Transparent) || (this.getSide(Vector3.SIDE_UP) instanceof Liquid)) {
                 BlockUpdateEvent ev = new BlockUpdateEvent(new Dirt());
                 getLevel().getServer().getPluginManager().callEvent(ev);
                 if (!ev.isCancelled()) {

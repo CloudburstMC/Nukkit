@@ -214,22 +214,8 @@ public class Config {
         }
     }
 
-    public Object get(String k) {
-        return this.get(k, true);
-    }
-
     @SuppressWarnings("unchecked")
-    public <T> T get(String k, T defaultValue) {
-        return (this.correct && this.config.containsKey(k)) ? (T) this.config.get(k) : defaultValue;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> T getAs(String k, Class<T> type) {
-        return (T) this.get(k);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void setNested(final String key, final Object value) {
+    public void set(final String key, Object value) {
         final String[] vars = key.split("\\.");
 
         Map<String, Object> map = this.config;
@@ -245,14 +231,22 @@ public class Config {
         map.put(vars[vars.length - 1], value);
     }
 
-    public Object getNested(String key) {
-        return this.getNested(key, null);
+    public Object get(String key) {
+        return this.get(key, null);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getNested(String key, T defaultValue) {
+    public <T> T get(String key, T defaultValue) {
+        if (!this.correct) {
+            return defaultValue;
+        }
+
         if (this.nestedCache.containsKey(key)) {
-            return (T) this.nestedCache.get(key);
+            try {
+                return (T) this.nestedCache.get(key);
+            } catch (ClassCastException e) {
+                return defaultValue;
+            }
         }
         String[] vars = key.split("\\.");
 
@@ -265,52 +259,351 @@ public class Config {
             map = (Map<String, Object>) map.get(k);
         }
 
-        return (T) map.getOrDefault(vars[vars.length - 1], defaultValue);
+        try {
+            return (T) map.getOrDefault(vars[vars.length - 1], defaultValue);
+        } catch (ClassCastException e) {
+            return defaultValue;
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getNestedAs(String key, Class<T> type) {
-        return (T) this.getNested(key);
+    public int getInt(String key) {
+        return this.getInt(key, 0);
     }
 
-    public void set(String k) {
-        this.set(k, false);
+    public int getInt(String key, int defaultValue) {
+        return this.get(key, ((Number) defaultValue)).intValue();
     }
 
-    public void set(String k, Object v) {
-        this.config.put(k, v);
+    public long getLong(String key) {
+        return this.getLong(key, 0);
     }
+
+    public long getLong(String key, long defaultValue) {
+        return this.get(key, ((Number) defaultValue)).longValue();
+    }
+
+    public double getDouble(String key) {
+        return this.getDouble(key, 0);
+    }
+
+    public double getDouble(String key, double defaultValue) {
+        return this.get(key, ((Number) defaultValue)).doubleValue();
+    }
+
+    public String getString(String key) {
+        return this.getString(key, "");
+    }
+
+    public String getString(String key, String defaultValue) {
+        return this.get(key, defaultValue);
+    }
+
+    public boolean getBoolean(String key) {
+        return this.getBoolean(key, false);
+    }
+
+    public boolean getBoolean(String key, boolean defaultValue) {
+        return this.get(key, defaultValue);
+    }
+
+    public List getList(String key) {
+        return this.getList(key, null);
+    }
+
+    public List getList(String key, List defaultList) {
+        return this.get(key, defaultList);
+    }
+
+    private List<String> getStringList(String key) {
+        List value = this.getList(key);
+
+        if (value == null) {
+            return new ArrayList<>(0);
+        }
+
+        List<String> result = new ArrayList<>();
+
+        for (Object o : value) {
+            if (o instanceof String || o instanceof Number || o instanceof Boolean || o instanceof Character) {
+                result.add(String.valueOf(o));
+            }
+        }
+
+        return result;
+    }
+
+    public List<Integer> getIntegerList(String key) {
+        List<?> list = getList(key);
+
+        if (list == null) {
+            return new ArrayList<>(0);
+        }
+
+        List<Integer> result = new ArrayList<>();
+
+        for (Object object : list) {
+            if (object instanceof Integer) {
+                result.add((Integer) object);
+            } else if (object instanceof String) {
+                try {
+                    result.add(Integer.valueOf((String) object));
+                } catch (Exception ex) {
+                    //ignore
+                }
+            } else if (object instanceof Character) {
+                result.add((int) (Character) object);
+            } else if (object instanceof Number) {
+                result.add(((Number) object).intValue());
+            }
+        }
+
+        return result;
+    }
+
+    public List<Boolean> getBooleanList(String key) {
+        List<?> list = getList(key);
+
+        if (list == null) {
+            return new ArrayList<>(0);
+        }
+
+        List<Boolean> result = new ArrayList<>();
+
+        for (Object object : list) {
+            if (object instanceof Boolean) {
+                result.add((Boolean) object);
+            } else if (object instanceof String) {
+                if (Boolean.TRUE.toString().equals(object)) {
+                    result.add(true);
+                } else if (Boolean.FALSE.toString().equals(object)) {
+                    result.add(false);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public List<Double> getDoubleList(String path) {
+        List<?> list = getList(path);
+
+        if (list == null) {
+            return new ArrayList<>(0);
+        }
+
+        List<Double> result = new ArrayList<>();
+
+        for (Object object : list) {
+            if (object instanceof Double) {
+                result.add((Double) object);
+            } else if (object instanceof String) {
+                try {
+                    result.add(Double.valueOf((String) object));
+                } catch (Exception ex) {
+                    //ignore
+                }
+            } else if (object instanceof Character) {
+                result.add((double) (Character) object);
+            } else if (object instanceof Number) {
+                result.add(((Number) object).doubleValue());
+            }
+        }
+
+        return result;
+    }
+
+    public List<Float> getFloatList(String path) {
+        List<?> list = getList(path);
+
+        if (list == null) {
+            return new ArrayList<>(0);
+        }
+
+        List<Float> result = new ArrayList<>();
+
+        for (Object object : list) {
+            if (object instanceof Float) {
+                result.add((Float) object);
+            } else if (object instanceof String) {
+                try {
+                    result.add(Float.valueOf((String) object));
+                } catch (Exception ex) {
+                    //ignore
+                }
+            } else if (object instanceof Character) {
+                result.add((float) (Character) object);
+            } else if (object instanceof Number) {
+                result.add(((Number) object).floatValue());
+            }
+        }
+
+        return result;
+    }
+
+    public List<Long> getLongList(String path) {
+        List<?> list = getList(path);
+
+        if (list == null) {
+            return new ArrayList<>(0);
+        }
+
+        List<Long> result = new ArrayList<>();
+
+        for (Object object : list) {
+            if (object instanceof Long) {
+                result.add((Long) object);
+            } else if (object instanceof String) {
+                try {
+                    result.add(Long.valueOf((String) object));
+                } catch (Exception ex) {
+                    //ignore
+                }
+            } else if (object instanceof Character) {
+                result.add((long) (Character) object);
+            } else if (object instanceof Number) {
+                result.add(((Number) object).longValue());
+            }
+        }
+
+        return result;
+    }
+
+    public List<Byte> getByteList(String path) {
+        List<?> list = getList(path);
+
+        if (list == null) {
+            return new ArrayList<Byte>(0);
+        }
+
+        List<Byte> result = new ArrayList<Byte>();
+
+        for (Object object : list) {
+            if (object instanceof Byte) {
+                result.add((Byte) object);
+            } else if (object instanceof String) {
+                try {
+                    result.add(Byte.valueOf((String) object));
+                } catch (Exception ex) {
+                    //ignore
+                }
+            } else if (object instanceof Character) {
+                result.add((byte) ((Character) object).charValue());
+            } else if (object instanceof Number) {
+                result.add(((Number) object).byteValue());
+            }
+        }
+
+        return result;
+    }
+
+    public List<Character> getCharacterList(String path) {
+        List<?> list = getList(path);
+
+        if (list == null) {
+            return new ArrayList<>(0);
+        }
+
+        List<Character> result = new ArrayList<>();
+
+        for (Object object : list) {
+            if (object instanceof Character) {
+                result.add((Character) object);
+            } else if (object instanceof String) {
+                String str = (String) object;
+
+                if (str.length() == 1) {
+                    result.add(str.charAt(0));
+                }
+            } else if (object instanceof Number) {
+                result.add((char) ((Number) object).intValue());
+            }
+        }
+
+        return result;
+    }
+
+    public List<Short> getShortList(String path) {
+        List<?> list = getList(path);
+
+        if (list == null) {
+            return new ArrayList<>(0);
+        }
+
+        List<Short> result = new ArrayList<>();
+
+        for (Object object : list) {
+            if (object instanceof Short) {
+                result.add((Short) object);
+            } else if (object instanceof String) {
+                try {
+                    result.add(Short.valueOf((String) object));
+                } catch (Exception ex) {
+                    //ignore
+                }
+            } else if (object instanceof Character) {
+                result.add((short) ((Character) object).charValue());
+            } else if (object instanceof Number) {
+                result.add(((Number) object).shortValue());
+            }
+        }
+
+        return result;
+    }
+
+    public List<Map> getMapList(String path) {
+        List<Map> list = getList(path);
+        List<Map> result = new ArrayList<>();
+
+        if (list == null) {
+            return result;
+        }
+
+        for (Object object : list) {
+            if (object instanceof Map) {
+                result.add((Map) object);
+            }
+        }
+
+        return result;
+    }
+
 
     public void setAll(LinkedHashMap<String, Object> map) {
         this.config = map;
     }
 
-    public boolean exists(String k) {
-        return this.exists(k, false);
-    }
-
-    public boolean exists(String k, boolean lowercase) {
-        if (lowercase) {
-            k = k.toLowerCase();
-            for (Object o : this.config.entrySet()) {
-                Map.Entry entry = (Map.Entry) o;
-                if (entry.getKey().toString().toLowerCase().equals(k)) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            return this.config.containsKey(k);
-        }
-    }
-
-    public void remove(String k) {
-        this.config.remove(k);
+    public boolean exists(String key) {
+        return this.exists(key, false);
     }
 
     @SuppressWarnings("unchecked")
-    public void removeNested(String key) {
-        final String[] vars = key.split("\\.");
+    public boolean exists(String key, boolean lowercase) {
+        if (lowercase) {
+            key = key.toLowerCase();
+
+            String[] vars = key.split("\\.");
+
+            Map<String, Object> map = this.config;
+
+            for (int i = 0; i < vars.length - 1; i++) {
+                String k = vars[i];
+                for (String s : map.keySet()) {
+                    if (s.toLowerCase().equals(k)) {
+                        map = (Map<String, Object>) map.get(k);
+                        continue;
+                    }
+                    return false;
+                }
+
+            }
+        }
+
+        return this.get(key) != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void remove(String key) {
+        String[] vars = key.split("\\.");
 
         Map<String, Object> map = this.config;
 
@@ -334,11 +627,10 @@ public class Config {
         return this.config.size() - size;
     }
 
-
-    private LinkedHashMap<String, Object> fillDefaults(LinkedHashMap<String, Object> default_map, LinkedHashMap<String, Object> data) {
-        for (Map.Entry<String, Object> entry : default_map.entrySet()) {
-            if (!data.containsKey(entry.getKey())) {
-                data.put(entry.getKey(), entry.getValue());
+    private LinkedHashMap<String, Object> fillDefaults(LinkedHashMap<String, Object> defaultMap, LinkedHashMap<String, Object> data) {
+        for (String key : defaultMap.keySet()) {
+            if (!data.containsKey(key)) {
+                data.put(key, defaultMap.get(key));
             }
         }
         return data;
@@ -396,4 +688,30 @@ public class Config {
             }
         }
     }
+
+    /** @deprecated use {@link #get(String)} instead */
+    @Deprecated
+    public Object getNested(String key) {
+        return get(key);
+    }
+
+    /** @deprecated use {@link #get(String, T)} instead */
+    @Deprecated
+    public <T> T getNested(String key, T defaultValue) {
+        return get(key, defaultValue);
+    }
+
+    /** @deprecated use {@link #get(String)} instead */
+    @Deprecated
+    @SuppressWarnings("unchecked")
+    public <T> T getNestedAs(String key, Class<T> type) {
+        return (T) get(key);
+    }
+
+    /** @deprecated use {@link #remove(String)} instead */
+    @Deprecated
+    public void removeNested(String key) {
+        remove(key);
+    }
+
 }

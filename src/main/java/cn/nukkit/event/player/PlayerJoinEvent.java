@@ -31,4 +31,8 @@ public class PlayerJoinEvent extends PlayerEvent implements Cancellable {
     public void setJoinMessage(TextContainer joinMessage) {
         this.joinMessage = joinMessage;
     }
+
+    public void setJoinMessage(String joinMessage) {
+        this.setJoinMessage(new TextContainer(joinMessage));
+    }
 }

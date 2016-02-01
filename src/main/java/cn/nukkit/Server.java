@@ -1648,7 +1648,7 @@ public class Server {
     }
 
     public Object getConfig(String variable, Object defaultValue) {
-        Object value = this.config.getNested(variable);
+        Object value = this.config.get(variable);
         return value == null ? defaultValue : value;
     }
 
@@ -1810,6 +1810,9 @@ public class Server {
         Entity.registerEntity(EntityPotion.class);
 
         Entity.registerEntity(EntityHuman.class, true);
+
+        Entity.registerEntity(EntityMinecart.class);
+        // TODO: 2016/1/30 all finds of minecart
     }
 
     private void registerTiles() {

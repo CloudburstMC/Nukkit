@@ -16,6 +16,8 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 public class EntityArrow extends EntityProjectile {
     public static final int NETWORK_ID = 80;
 
+    public static final int DATA_SOURCE_ID = 17;
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
