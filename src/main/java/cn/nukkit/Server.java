@@ -1648,7 +1648,7 @@ public class Server {
     }
 
     public Object getConfig(String variable, Object defaultValue) {
-        Object value = this.config.getNested(variable);
+        Object value = this.config.get(variable);
         return value == null ? defaultValue : value;
     }
 

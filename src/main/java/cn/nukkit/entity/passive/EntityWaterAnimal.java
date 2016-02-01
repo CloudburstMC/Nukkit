@@ -19,7 +19,7 @@ public abstract class EntityWaterAnimal extends EntityCreature implements Entity
     protected void initEntity() {
         super.initEntity();
         if (this.getDataProperty(DATA_AGEABLE_FLAGS) == null) {
-            this.setDataProperty(new ByteEntityData(DATA_AGEABLE_FLAGS,  0));
+            this.setDataProperty(new ByteEntityData(DATA_AGEABLE_FLAGS, 0));
         }
     }
 
