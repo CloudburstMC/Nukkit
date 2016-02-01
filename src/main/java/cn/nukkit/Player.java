@@ -3333,7 +3333,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     public void setHealth(float health) {
         super.setHealth(health);
-        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? health : 0);
+        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0);
         if (this.spawned) {
             UpdateAttributesPacket pk = new UpdateAttributesPacket();
             pk.entries = new Attribute[]{attr};
@@ -3355,19 +3355,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int now = this.getExperience();
         int added = now + add;
         int level = this.getExperienceLevel();
-        int most = this.calculateRequireExperience(level);
+        int most = calculateRequireExperience(level);
         while (added >= most) {  //Level Up!
             added = added - most;
             level++;
-            this.sendExperienceLevelUp();
             getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
-            most = this.calculateRequireExperience(level);
+            most = calculateRequireExperience(level);
         }
         getServer().getLogger().debug("Added " + add + " EXP to " + getName() + ", now lv:" + level + " (" + added + "/" + most + ") .");
         this.setExperience(added, level);
     }
 
-    public int calculateRequireExperience(int level) {
+    public static int calculateRequireExperience(int level) {
         if (level < 16) {
             return 2 * level + 7;
         } else if (level >= 17 && level <= 31) {
@@ -3396,8 +3395,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendExperience(int exp) {
-        float precent = ((float) exp) / this.calculateRequireExperience(this.getExperienceLevel());
-        this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, precent, true).setValue(precent));
+        float percent = ((float) exp) / calculateRequireExperience(this.getExperienceLevel());
+        this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, percent, true).setValue(percent));
     }
 
     public void sendExperienceLevel() {
@@ -3406,17 +3405,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendExperienceLevel(int level) {
         this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setValue(level));
-    }
-
-    public void sendExperienceLevelUp() {
-        //todo 似乎没用？需要抓包Attribute
-        //UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        //pk.entityId = 0;
-        //float secret = this.expLevel > 30 ? 1.0F : (float)this.expLevel / 30.0F;
-        //pk.entries = new Attribute[]{
-        //        Attribute.addAttribute(Attribute.EXPERIENCE_LEVEL, "random.levelup", 0, 1, secret, true).setValue(secret)
-        //};
-        //this.dataPacket(pk);
     }
 
     public void setAttribute(Attribute attribute) {
