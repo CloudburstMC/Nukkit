@@ -96,7 +96,7 @@ public abstract class Generator {
         return noiseArray;
     }
 
-    public static double[][] getFastNoise2D(Noise noise, int xSize, int zSize, int samplingRate, int x, int y, int z) {
+    public static double[][] getFastNoise2D(Noise noise, int xSize, int zSize, int samplingRate, int x, int y, int z, int xZoom, int zZoom) {
         if (samplingRate == 0) {
             throw new IllegalArgumentException("samplingRate cannot be 0");
         }
@@ -112,7 +112,7 @@ public abstract class Generator {
         for (int xx = 0; xx <= xSize; xx += samplingRate) {
             noiseArray[xx] = new double[zSize + 1];
             for (int zz = 0; zz <= zSize; zz += samplingRate) {
-                noiseArray[xx][zz] = noise.noise3D(x + xx, y, z + zz);
+                noiseArray[xx][zz] = noise.noise3D((x + xx) >> xZoom, y, (z + zz) >> zZoom);
             }
         }
 
@@ -134,6 +134,10 @@ public abstract class Generator {
             }
         }
         return noiseArray;
+    }
+
+    public static double[][] getFastNoise2D(Noise noise, int xSize, int zSize, int samplingRate, int x, int y, int z) {
+        return Generator.getFastNoise2D(noise, xSize, zSize, samplingRate, x, y, z, 0, 0);
     }
 
     public static double[][][] getFastNoise3D(Noise noise, int xSize, int ySize, int zSize, int xSamplingRate, int ySamplingRate, int zSamplingRate, int x, int y, int z) {

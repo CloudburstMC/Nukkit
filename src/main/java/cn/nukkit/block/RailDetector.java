@@ -6,7 +6,7 @@ import cn.nukkit.item.Item;
  * Created on 2015/11/22 by CreeperFace.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class RailDetector extends Transparent {
+public class RailDetector extends Rail {
     public RailDetector() {
         this(0);
     }
