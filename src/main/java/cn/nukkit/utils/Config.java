@@ -688,4 +688,30 @@ public class Config {
             }
         }
     }
+
+    /** @deprecated use {@link #get(String)} instead */
+    @Deprecated
+    public Object getNested(String key) {
+        return get(key);
+    }
+
+    /** @deprecated use {@link #get(String, T)} instead */
+    @Deprecated
+    public <T> T getNested(String key, T defaultValue) {
+        return get(key, defaultValue);
+    }
+
+    /** @deprecated use {@link #get(String)} instead */
+    @Deprecated
+    @SuppressWarnings("unchecked")
+    public <T> T getNestedAs(String key, Class<T> type) {
+        return (T) get(key);
+    }
+
+    /** @deprecated use {@link #remove(String)} instead */
+    @Deprecated
+    public void removeNested(String key) {
+        remove(key);
+    }
+
 }
