@@ -7,7 +7,7 @@ import cn.nukkit.level.generator.populator.PopulatorTallGrass;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class OceanBiome extends GrassyBiome {
+public class OceanBiome extends WateryBiome {
 
     public OceanBiome() {
         super();
@@ -17,13 +17,6 @@ public class OceanBiome extends GrassyBiome {
         this.temperature = 0.5;
         this.rainfall = 0.5;
 
-        this.setGroundCover(new Block[]{
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0)
-        });
     }
 
     @Override

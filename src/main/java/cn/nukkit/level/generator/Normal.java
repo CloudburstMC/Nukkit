@@ -41,6 +41,7 @@ public class Normal extends Generator {
     private Simplex noiseLand;
     private Simplex noiseMountains;
     private Simplex noiseBaseGround;
+    private Simplex noiseRiver;
 
     private BiomeSelector selector;
 
@@ -105,6 +106,7 @@ public class Normal extends Generator {
         this.noiseLand = new Simplex(this.random, 2F, 1F / 8F, 1F / 512F);
         this.noiseMountains = new Simplex(this.random, 4F, 1F, 1F / 500F);
         this.noiseBaseGround = new Simplex(this.random, 4F, 1F / 4F, 1F / 64F);
+        this.noiseRiver = new Simplex(this.random, 4F, 1F / 4F, 1F / 128F);
         this.random.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.random, Biome.getBiome(Biome.OCEAN));
         this.heightOffset = random.nextRange(-5, 3);
@@ -148,6 +150,7 @@ public class Normal extends Generator {
         double[][] landNoise = Generator.getFastNoise2D(this.noiseLand, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
         double[][] mountainNoise = Generator.getFastNoise2D(this.noiseMountains, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
         double[][] baseNoise = Generator.getFastNoise2D(this.noiseBaseGround, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        double[][] riverNoise = Generator.getFastNoise2D(this.noiseRiver, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
@@ -156,12 +159,14 @@ public class Normal extends Generator {
 
                 Biome biome;
                 boolean canBaseGround = false;
+                boolean canRiver = true;
 
                 //using a quadratic function which smooth the world
+                //y = (2.956x)^2 - 0.6,  (0 <= x <= 2)
                 double landHeightNoise = landNoise[genx][genz] + 1F;
                 landHeightNoise *= 2.956;
                 landHeightNoise = landHeightNoise * landHeightNoise;
-                landHeightNoise = landHeightNoise - 0.6;
+                landHeightNoise = landHeightNoise - 0.6F;
                 landHeightNoise = landHeightNoise > 0 ? landHeightNoise : 0;
 
                 //generate mountains
@@ -189,6 +194,7 @@ public class Normal extends Generator {
                     if(genyHeight < seaFloorHeight - seaFloorGenerateRange) {
                         genyHeight = seaFloorHeight;
                     }
+                    canRiver=false;
                 }
                 else if(genyHeight <= beathStopHeight && genyHeight >= beathStartHeight) {
                     //todo: there is no beach biome, use desert temporarily
@@ -196,11 +202,34 @@ public class Normal extends Generator {
                 }
                 else {
                     biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
-                    if(canBaseGround) {
+                    if (canBaseGround) {
                         int baseGroundHeight = (int) (landHeightRange * landHeightNoise) - landHeightRange;
                         int baseGroundHeight2 = (int) (basegroundHeight * (baseNoise[genx][genz] + 1F));
-                        if(baseGroundHeight2 > baseGroundHeight) baseGroundHeight2 = baseGroundHeight;
+                        if (baseGroundHeight2 > baseGroundHeight) baseGroundHeight2 = baseGroundHeight;
                         genyHeight += baseGroundHeight2;
+                    }
+                }
+                if(canRiver && genyHeight <= seaHeight - 5) {
+                    canRiver = false;
+                }
+                //generate river
+                if(canRiver) {
+                    double riverGenerate = riverNoise[genx][genz];
+                    if(riverGenerate > -0.25F && riverGenerate < 0.25F) {
+                        riverGenerate = riverGenerate > 0 ? riverGenerate : -riverGenerate;
+                        riverGenerate = 0.25F - riverGenerate;
+                        //y=x^2 * 63.33
+                        riverGenerate = riverGenerate * riverGenerate * 4F;
+                        //smooth again
+                        riverGenerate = riverGenerate - 0.0000001F;
+                        riverGenerate = riverGenerate > 0 ? riverGenerate : 0;
+                        genyHeight -= riverGenerate * 64;
+                        if(genyHeight < seaHeight) {
+                            biome = Biome.getBiome(Biome.RIVER);
+                            if(genyHeight < seaHeight - 5) {
+                                genyHeight = seaHeight - 5;
+                            }
+                        }
                     }
                 }
                 chunk.setBiomeId(genx, genz, biome.getId());

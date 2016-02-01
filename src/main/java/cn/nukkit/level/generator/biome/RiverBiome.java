@@ -7,7 +7,7 @@ import cn.nukkit.level.generator.populator.PopulatorTallGrass;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class RiverBiome extends GrassyBiome {
+public class RiverBiome extends WateryBiome {
 
     public RiverBiome() {
         super();
