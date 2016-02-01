@@ -3,6 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.data.ShortEntityData;
+import cn.nukkit.entity.passive.EntityWaterAnimal;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -10,6 +11,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ShortTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockIterator;
 
 import java.util.ArrayList;
@@ -21,8 +23,8 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Living extends Entity implements Damageable {
-    public Living(FullChunk chunk, CompoundTag nbt) {
+public abstract class EntityLiving extends Entity implements EntityDamageable {
+    public EntityLiving(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -39,6 +41,8 @@ public abstract class Living extends Entity implements Damageable {
     protected int attackTime = 0;
 
     protected boolean invisible = false;
+
+    protected float movementSpeed = 0.1f;
 
     @Override
     protected void initEntity() {
@@ -82,8 +86,8 @@ public abstract class Living extends Entity implements Damageable {
     }
 
     @Override
-    public void heal(float amount, EntityRegainHealthEvent source) {
-        super.heal(amount, source);
+    public void heal(EntityRegainHealthEvent source) {
+        super.heal(source);
         if (source.isCancelled()) {
             return;
         }
@@ -117,7 +121,7 @@ public abstract class Living extends Entity implements Damageable {
             }
 
             double deltaX = this.x - e.x;
-            double deltaZ = this.z = e.z;
+            double deltaZ = this.z - e.z;
             this.knockBack(e, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
         }
 
@@ -129,11 +133,11 @@ public abstract class Living extends Entity implements Damageable {
         this.attackTime = 10;
     }
 
-    public void knockBack(Entity attacker, float damage, double x, double z) {
-        this.knockBack(attacker, damage, x, z, 0.4f);
+    public void knockBack(Entity attacker, double damage, double x, double z) {
+        this.knockBack(attacker, damage, x, z, 0.4);
     }
 
-    public void knockBack(Entity attacker, float damage, double x, double z, float base) {
+    public void knockBack(Entity attacker, double damage, double x, double z, double base) {
         double f = Math.sqrt(x * x + z * z);
         if (f <= 0) {
             return;
@@ -143,9 +147,9 @@ public abstract class Living extends Entity implements Damageable {
 
         Vector3 motion = new Vector3(this.motionX, this.motionY, this.motionZ);
 
-        motion.x /= 2;
-        motion.y /= 2;
-        motion.z /= 2;
+        motion.x /= 2d;
+        motion.y /= 2d;
+        motion.z /= 2d;
         motion.x += x * f * base;
         motion.y += base;
         motion.z += z * f * base;
@@ -187,11 +191,11 @@ public abstract class Living extends Entity implements Damageable {
             }
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
-                if (this instanceof WaterAnimal) {
-                    this.setDataProperty(DATA_AIR, new ShortEntityData(300));
+                if (this instanceof EntityWaterAnimal) {
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
                 } else {
                     hasUpdate = true;
-                    int airTicks = this.getDataPropertyShort(DATA_AIR).data - tickDiff;
+                    int airTicks = this.getDataPropertyShort(DATA_AIR) - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
@@ -199,12 +203,12 @@ public abstract class Living extends Entity implements Damageable {
                         this.attack(ev);
                     }
 
-                    this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
                 }
             } else {
-                if (this instanceof WaterAnimal) {
+                if (this instanceof EntityWaterAnimal) {
                     hasUpdate = true;
-                    int airTicks = this.getDataPropertyInt(DATA_AIR).data - tickDiff;
+                    int airTicks = this.getDataPropertyInt(DATA_AIR) - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
@@ -212,9 +216,9 @@ public abstract class Living extends Entity implements Damageable {
                         this.attack(ev);
                     }
 
-                    this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
                 } else {
-                    this.setDataProperty(DATA_AIR, new ShortEntityData(300));
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
                 }
             }
         }
@@ -248,17 +252,15 @@ public abstract class Living extends Entity implements Damageable {
         }
 
         List<Block> blocks = new ArrayList<>();
-        int nextIndex = 0;
 
         BlockIterator itr = new BlockIterator(this.level, this.getPosition(), this.getDirectionVector(), this.getEyeHeight(), maxDistance);
 
         while (itr.hasNext()) {
             Block block = itr.next();
-            blocks.add(nextIndex++, block);
+            blocks.add(block);
 
             if (maxLength != 0 && blocks.size() > maxLength) {
                 blocks.remove(0);
-                --nextIndex;
             }
 
             int id = block.getId();
@@ -276,4 +278,13 @@ public abstract class Living extends Entity implements Damageable {
 
         return blocks.stream().toArray(Block[]::new);
     }
+
+    public void setMovementSpeed(float speed) {
+        this.movementSpeed = speed;
+    }
+
+    public float getMovementSpeed() {
+        return this.movementSpeed;
+    }
+
 }

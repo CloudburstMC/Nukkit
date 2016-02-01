@@ -6,6 +6,8 @@ package cn.nukkit.entity;
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 
+import cn.nukkit.utils.ServerException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +47,10 @@ public class Attribute implements Cloneable {
     }
 
     public static Attribute getAttribute(int id) {
-        return attributes.containsKey(id) ? attributes.get(id).clone() : null;
+        if (attributes.containsKey(id)) {
+            return attributes.get(id).clone();
+        }
+        throw new ServerException("Attribute id: " + id + " not found");
     }
 
     /**

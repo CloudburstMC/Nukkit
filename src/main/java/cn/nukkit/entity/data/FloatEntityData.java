@@ -6,14 +6,11 @@ import cn.nukkit.entity.Entity;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class FloatEntityData implements EntityData<Float> {
+public class FloatEntityData extends EntityData<Float> {
     public float data;
 
-    public FloatEntityData() {
-
-    }
-
-    public FloatEntityData(float data) {
+    public FloatEntityData(int id, float data) {
+        super(id);
         this.data = data;
     }
 

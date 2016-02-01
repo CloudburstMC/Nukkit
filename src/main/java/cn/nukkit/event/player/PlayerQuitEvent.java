@@ -41,6 +41,10 @@ public class PlayerQuitEvent extends PlayerEvent implements Cancellable {
         this.quitMessage = quitMessage;
     }
 
+    public void setQuitMessage(String joinMessage) {
+        this.setQuitMessage(new TextContainer(joinMessage));
+    }
+
     public boolean getAutoSave() {
         return this.autoSave;
     }

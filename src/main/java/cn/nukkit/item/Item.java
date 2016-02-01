@@ -466,6 +466,9 @@ public class Item implements Cloneable {
 
     public static final int PUMPKIN_PIE = 400;
 
+    public static final int ENCHANTED_BOOK = 403;
+    public static final int ENCHANT_BOOK = 403;
+
     public static final int NETHER_BRICK = 405;
     public static final int QUARTZ = 406;
     public static final int NETHER_QUARTZ = 406;
@@ -1447,7 +1450,7 @@ public class Item implements Cloneable {
         return null;
     }
 
-    public void addEnchantment(Enchantment enchantment) {
+    public void addEnchantment(Enchantment... enchantments) {
         CompoundTag tag;
         if (!this.hasCompoundTag()) {
             tag = new CompoundTag();
@@ -1461,26 +1464,28 @@ public class Item implements Cloneable {
             tag.putList(ench);
         }
 
-        boolean found = false;
+        for (Enchantment enchantment : enchantments) {
+            boolean found = false;
 
-        ench = tag.getList("ench", CompoundTag.class);
-        for (int k = 0; k < ench.size(); k++) {
-            CompoundTag entry = ench.get(k);
-            if (entry.getShort("id") == enchantment.getId()) {
-                ench.add(k, new CompoundTag()
+            ench = tag.getList("ench", CompoundTag.class);
+            for (int k = 0; k < ench.size(); k++) {
+                CompoundTag entry = ench.get(k);
+                if (entry.getShort("id") == enchantment.getId()) {
+                    ench.add(k, new CompoundTag()
+                            .putShort("id", enchantment.getId())
+                            .putShort("lvl", enchantment.getLevel())
+                    );
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                ench.add(new CompoundTag()
                         .putShort("id", enchantment.getId())
                         .putShort("lvl", enchantment.getLevel())
                 );
-                found = true;
-                break;
             }
-        }
-
-        if (!found) {
-            ench.add(new CompoundTag()
-                    .putShort("id", enchantment.getId())
-                    .putShort("lvl", enchantment.getLevel())
-            );
         }
 
         this.setNamedTag(tag);

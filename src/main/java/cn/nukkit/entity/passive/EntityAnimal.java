@@ -1,5 +1,7 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.passive;
 
+import cn.nukkit.entity.EntityAgeable;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -8,8 +10,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Animal extends Creature implements Ageable {
-    public Animal(FullChunk chunk, CompoundTag nbt) {
+public abstract class EntityAnimal extends EntityCreature implements EntityAgeable {
+    public EntityAnimal(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -17,7 +19,7 @@ public abstract class Animal extends Creature implements Ageable {
     protected void initEntity() {
         super.initEntity();
         if (this.getDataProperty(DATA_AGEABLE_FLAGS) == null) {
-            this.setDataProperty(DATA_AGEABLE_FLAGS, new ByteEntityData((byte) 0));
+            this.setDataProperty(new ByteEntityData(DATA_AGEABLE_FLAGS, 0));
         }
     }
 

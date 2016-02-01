@@ -7,8 +7,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Vehicle extends Entity implements Rideable {
-    public Vehicle(FullChunk chunk, CompoundTag nbt) {
+public abstract class EntityHanging extends Entity {
+    public EntityHanging(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 }

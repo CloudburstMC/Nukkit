@@ -198,12 +198,12 @@ public abstract class Door extends Transparent {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(0).getId() == AIR) { //Replace with common break method
-                this.getLevel().setBlock(this, new Air(), false);
+            if (this.getSide(0).getId() == AIR) {
                 if (this.getSide(1) instanceof Door) {
                     this.getLevel().setBlock(this.getSide(1), new Air(), false);
                 }
 
+                this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }

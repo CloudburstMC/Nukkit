@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.entity.Human;
+import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityArmorChangeEvent;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
@@ -25,7 +25,7 @@ public class PlayerInventory extends BaseInventory {
 
     protected int[] hotbar;
 
-    public PlayerInventory(Human player) {
+    public PlayerInventory(EntityHuman player) {
         super(player, InventoryType.get(InventoryType.PLAYER));
         this.hotbar = new int[this.getHotbarSize()];
         Arrays.fill(this.hotbar, -1);
@@ -144,7 +144,7 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public void onSlotChange(int index, Item before) {
-        Human holder = this.getHolder();
+        EntityHuman holder = this.getHolder();
         if (holder instanceof Player && !((Player) holder).spawned) {
             return;
         }
@@ -452,7 +452,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     @Override
-    public Human getHolder() {
-        return (Human) super.getHolder();
+    public EntityHuman getHolder() {
+        return (EntityHuman) super.getHolder();
     }
 }

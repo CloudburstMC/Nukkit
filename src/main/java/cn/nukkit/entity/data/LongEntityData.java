@@ -6,14 +6,11 @@ import cn.nukkit.entity.Entity;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class LongEntityData implements EntityData<Long> {
+public class LongEntityData extends EntityData<Long> {
     public long data;
 
-    public LongEntityData() {
-
-    }
-
-    public LongEntityData(long data) {
+    public LongEntityData(int id, long data) {
+        super(id);
         this.data = data;
     }
 

@@ -34,6 +34,7 @@ public class XpCommand extends Command {
             }
             amountString = args[0];
             playerName = args[1];
+            player = sender.getServer().getPlayer(playerName);
         } else {
             if (args.length == 1) {
                 amountString = args[0];
@@ -41,34 +42,36 @@ public class XpCommand extends Command {
             } else if (args.length == 2) {
                 amountString = args[0];
                 playerName = args[1];
+                player = sender.getServer().getPlayer(playerName);
             } else {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
             }
         }
+
         if (player == null) {
-            player = sender.getServer().getPlayer(playerName);
-            if (player == null) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
-                return true;
-            }
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+            return true;
         }
+
         int amount;
         boolean isLevel = false;
         if (amountString.endsWith("l") || amountString.endsWith("L")) {
             amountString = amountString.substring(0, amountString.length() - 1);
             isLevel = true;
         }
+
         try {
             amount = Integer.parseInt(amountString);
         } catch (NumberFormatException e1) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
+
         if (isLevel) {
             int newLevel = player.getExperienceLevel();
             newLevel += amount;
-            if (newLevel > 24791)  newLevel = 24791;
+            if (newLevel > 24791) newLevel = 24791;
             if (newLevel < 0) {
                 player.setExperience(0, 0);
             } else {
@@ -77,12 +80,12 @@ public class XpCommand extends Command {
             if (amount > 0) {
                 sender.sendMessage(new TranslationContainer("commands.xp.success.levels", new String[]{String.valueOf(amount), player.getName()}));
             } else {
-                sender.sendMessage(new TranslationContainer("commands.xp.success.negative.levels", new String[]{String.valueOf(amount), player.getName()}));
+                sender.sendMessage(new TranslationContainer("commands.xp.success.levels.minus", new String[]{String.valueOf(-amount), player.getName()}));
             }
             return true;
         } else {
             if (amount < 0) {
-                sender.sendMessage(new TranslationContainer("commands.xp.failure.widthdrawXp"));
+                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
             }
             player.addExperience(amount);

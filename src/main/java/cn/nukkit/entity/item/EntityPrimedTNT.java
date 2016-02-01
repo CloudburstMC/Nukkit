@@ -1,6 +1,8 @@
-package cn.nukkit.entity;
+package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
@@ -11,7 +13,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 /**
  * Created on 15-10-27.
  */
-public class PrimedTNT extends Entity implements Explosive {
+public class EntityPrimedTNT extends Entity implements EntityExplosive {
 
     public static final int NETWORK_ID = 65;
 
@@ -47,7 +49,7 @@ public class PrimedTNT extends Entity implements Explosive {
 
     protected int fuse;
 
-    public PrimedTNT(FullChunk chunk, CompoundTag nbt) {
+    public EntityPrimedTNT(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -142,7 +144,7 @@ public class PrimedTNT extends Entity implements Explosive {
 
     public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
-        packet.type = PrimedTNT.NETWORK_ID;
+        packet.type = EntityPrimedTNT.NETWORK_ID;
         packet.eid = getId();
         packet.x = (float) x;
         packet.y = (float) y;

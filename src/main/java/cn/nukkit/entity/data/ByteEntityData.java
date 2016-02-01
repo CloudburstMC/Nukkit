@@ -6,22 +6,19 @@ import cn.nukkit.entity.Entity;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ByteEntityData implements EntityData<Byte> {
-    public byte data;
+public class ByteEntityData extends EntityData<Integer> {
+    public int data;
 
-    public ByteEntityData() {
-
-    }
-
-    public ByteEntityData(byte data) {
+    public ByteEntityData(int id, int data) {
+        super(id);
         this.data = data;
     }
 
-    public Byte getData() {
+    public Integer getData() {
         return data;
     }
 
-    public void setData(Byte data) {
+    public void setData(Integer data) {
         if (data == null) {
             this.data = 0;
         } else {
