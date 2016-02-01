@@ -2,12 +2,11 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-
-import java.util.HashMap;
 
 /**
  * Created on 2015/12/26 by xtypr.
@@ -184,7 +183,7 @@ public class EntityXPOrb extends Entity {
         packet.speedX = (float) this.motionX;
         packet.speedY = (float) this.motionY;
         packet.speedZ = (float) this.motionZ;
-        packet.metadata = new HashMap<>();
+        packet.metadata = new EntityMetadata();
         player.dataPacket(packet);
         //this.sendData(player);
 

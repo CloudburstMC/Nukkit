@@ -192,10 +192,10 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
                 if (this instanceof EntityWaterAnimal) {
-                    this.setDataProperty(DATA_AIR, new ShortEntityData(300));
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
                 } else {
                     hasUpdate = true;
-                    int airTicks = this.getDataPropertyShort(DATA_AIR).data - tickDiff;
+                    int airTicks = this.getDataPropertyShort(DATA_AIR) - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
@@ -203,12 +203,12 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                         this.attack(ev);
                     }
 
-                    this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
                 }
             } else {
                 if (this instanceof EntityWaterAnimal) {
                     hasUpdate = true;
-                    int airTicks = this.getDataPropertyInt(DATA_AIR).data - tickDiff;
+                    int airTicks = this.getDataPropertyInt(DATA_AIR) - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
@@ -216,9 +216,9 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                         this.attack(ev);
                     }
 
-                    this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
                 } else {
-                    this.setDataProperty(DATA_AIR, new ShortEntityData(300));
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
                 }
             }
         }

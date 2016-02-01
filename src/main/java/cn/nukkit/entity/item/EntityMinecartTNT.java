@@ -18,8 +18,4 @@ public class EntityMinecartTNT extends EntityMinecart {
     // TODO: 2016/1/30 on update, if activator rail downsiade, make a explosion
 
 
-    @Override
-    public String getSaveId() {
-        return "MinecartTNT";
-    }
 }

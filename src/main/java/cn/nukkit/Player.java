@@ -6,10 +6,7 @@ import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityLiving;
-import cn.nukkit.entity.data.EntityData;
-import cn.nukkit.entity.data.PositionEntityData;
-import cn.nukkit.entity.data.ShortEntityData;
-import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.EntityExpBottle;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityPotion;
@@ -874,7 +871,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sleeping = pos.clone();
         this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level));
 
-        this.setDataProperty(DATA_PLAYER_BED_POSITION, new PositionEntityData((int) pos.x, (int) pos.y, (int) pos.z));
+        this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
 
         this.setSpawn(pos);
@@ -904,7 +901,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().callEvent(new PlayerBedLeaveEvent(this, this.level.getBlock(this.sleeping)));
 
             this.sleeping = null;
-            this.setDataProperty(DATA_PLAYER_BED_POSITION, new PositionEntityData(0, 0, 0));
+            this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0));
             this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
 
 
@@ -1056,13 +1053,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public boolean setDataProperty(int id, EntityData dataEntry) {
-        if (super.setDataProperty(id, dataEntry)) {
-            this.sendData(this, new HashMap<Integer, EntityData>() {
-                {
-                    put(id, dataProperties.get(id));
-                }
-            });
+    public boolean setDataProperty(EntityData data) {
+        if (super.setDataProperty(data)) {
+            this.sendData(this, new EntityMetadata().put(this.getDataProperty(data.getId())));
             return true;
         }
 
@@ -1409,7 +1402,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     this.inAirTicks = 0;
                 } else {
-                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && this.getDataPropertyByte(DATA_NO_AI).data != 1) {
+                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && this.getDataPropertyBoolean(DATA_NO_AI)) {
                         double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                         double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
@@ -2198,7 +2191,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.setSneaking(false);
 
                         this.extinguish();
-                        this.setDataProperty(Player.DATA_AIR, new ShortEntityData(300));
+                        this.setDataProperty(new ShortEntityData(Player.DATA_AIR, 300));
                         this.deadTicks = 0;
                         this.noDamageTicks = 60;
 

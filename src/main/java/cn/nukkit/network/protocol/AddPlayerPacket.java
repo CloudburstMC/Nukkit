@@ -1,10 +1,9 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.data.EntityData;
+import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Binary;
 
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -31,7 +30,7 @@ public class AddPlayerPacket extends DataPacket {
     public float pitch;
     public float yaw;
     public Item item;
-    public Map<Integer, EntityData> metadata;
+    public EntityMetadata metadata;
 
     @Override
     public void decode() {

@@ -4,7 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.item.EntityMinecart;
 import cn.nukkit.level.Level;
-import cn.nukkit.nbt.tag.*;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
 
 /**
  * author: MagicDroidX
@@ -32,7 +35,7 @@ public class Minecart extends Item {
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
         Block secret = level.getBlock(block.add(0, -1, 0));
-        // TODO: 2016/1/30 check if id of secret is a rail
+        // TODO: 2016/1/30 check if blockId of secret is a rail
 
         EntityMinecart minecart = new EntityMinecart(
                 level.getChunk(block.getFloorX() >> 4, block.getFloorZ() >> 4), new CompoundTag("")

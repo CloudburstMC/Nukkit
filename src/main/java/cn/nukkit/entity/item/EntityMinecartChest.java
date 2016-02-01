@@ -17,8 +17,4 @@ public class EntityMinecartChest extends EntityMinecart {
 
     // TODO: 2016/1/30 inventory
 
-    @Override
-    public String getSaveId() {
-        return "MinecartChest";
-    }
 }

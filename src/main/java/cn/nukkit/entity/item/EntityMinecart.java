@@ -15,6 +15,11 @@ public class EntityMinecart extends EntityVehicle {
 
     public static final int NETWORK_ID = 84;
 
+    public static final int DATA_VEHICLE_DISPLAY_BLOCK = 20;
+    public static final int DATA_VEHICLE_DISPLAY_DATA = 20;
+    public static final int DATA_VEHICLE_DISPLAY_OFFSET = 21;
+    public static final int DATA_VEHICLE_CUSTOM_DISPLAY = 22;
+
     // TODO: 2016/1/30 check if these numbers correct
     @Override
     public float getHeight() {
@@ -85,13 +90,9 @@ public class EntityMinecart extends EntityVehicle {
         EntityEventPacket pk = new EntityEventPacket();
         pk.eid = this.id;
         pk.event = EntityEventPacket.HURT_ANIMATION;
-        for(Player aPlayer : this.getLevel().getPlayers().values()) {
+        for (Player aPlayer : this.getLevel().getPlayers().values()) {
             aPlayer.dataPacket(pk);
         }
     }
 
-    @Override
-    public String getSaveId() {
-        return "MinecartRideable";
-    }
 }

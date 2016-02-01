@@ -264,7 +264,7 @@ public class Effect implements Cloneable {
 
         if (this.id == Effect.INVISIBILITY) {
             entity.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_INVISIBLE, true);
-            entity.setDataProperty(Entity.DATA_SHOW_NAMETAG, new ByteEntityData((byte) 0));
+            entity.setDataProperty(new ByteEntityData(Entity.DATA_SHOW_NAMETAG, 0));
         }
     }
 
@@ -284,7 +284,7 @@ public class Effect implements Cloneable {
 
         if (this.id == Effect.INVISIBILITY) {
             entity.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_INVISIBLE, false);
-            entity.setDataProperty(Entity.DATA_SHOW_NAMETAG, new ByteEntityData((byte) 1));
+            entity.setDataProperty(new ByteEntityData(Entity.DATA_SHOW_NAMETAG, 1));
         }
     }
 

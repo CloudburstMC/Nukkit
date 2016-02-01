@@ -1,9 +1,7 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.entity.data.EntityData;
-import cn.nukkit.entity.data.StringEntityData;
+import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -12,8 +10,6 @@ import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -25,7 +21,7 @@ public class FloatingTextParticle extends Particle {
     protected String title;
     protected long entityId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
     protected boolean invisible = false;
-    protected Map<Integer, EntityData> metadata = new HashMap<>();
+    protected EntityMetadata metadata = new EntityMetadata();
 
     protected boolean updated = false;
     protected boolean spawned = false;
@@ -39,9 +35,9 @@ public class FloatingTextParticle extends Particle {
         this.text = text;
         this.title = title;
 
-        this.metadata.put(Entity.DATA_FLAGS, new ByteEntityData((byte) (1 << Entity.DATA_FLAG_INVISIBLE)));
-        this.metadata.put(Entity.DATA_SHOW_NAMETAG, new ByteEntityData((byte) 1));
-        this.metadata.put(Entity.DATA_NO_AI, new ByteEntityData((byte) 1));
+        this.metadata.putByte(Entity.DATA_FLAGS, (byte) (1 << Entity.DATA_FLAG_INVISIBLE));
+        this.metadata.putBoolean(Entity.DATA_SHOW_NAMETAG, true);
+        this.metadata.putBoolean(Entity.DATA_NO_AI, true);
         updateNameTag();
     }
 
@@ -56,7 +52,7 @@ public class FloatingTextParticle extends Particle {
     }
 
     private void updateNameTag() {
-        this.metadata.put(Entity.DATA_NAMETAG, new StringEntityData(this.title + (!"".equals(this.text) ? "\n" + this.text : "")));
+        this.metadata.putString(Entity.DATA_NAMETAG, this.title + (!"".equals(this.text) ? "\n" + this.text : ""));
         this.updated = true;
     }
 

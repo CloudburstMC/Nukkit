@@ -81,7 +81,7 @@ public class EntityFallingBlock extends Entity {
             return;
         }
 
-        setDataProperty(DATA_BLOCK_INFO, new IntEntityData(this.getBlock() | this.getDamage() << 8));
+        setDataProperty(new IntEntityData(DATA_BLOCK_INFO, this.getBlock() | this.getDamage() << 8));
     }
 
     public boolean canCollideWith(Entity entity) {
