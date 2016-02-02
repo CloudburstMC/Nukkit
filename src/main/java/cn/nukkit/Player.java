@@ -2052,7 +2052,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         .add(new FloatTag("", (float) pitch)))
                                 .putInt("Potion", item.getDamage());
                         double f = 1.5;
-                        Entity bottle = Entity.createEntity("EntityPotion", this.chunk, nbt, this);
+                        Entity bottle = new EntityPotion(this.chunk, nbt, this);
                         bottle.setMotion(bottle.getMotion().multiply(f));
                         if (this.isSurvival()) {
                             item.setCount(item.getCount() - 1);
