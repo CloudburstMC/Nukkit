@@ -3,10 +3,12 @@ package cn.nukkit.tile;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Air;
 import cn.nukkit.inventory.BrewingInventory;
 import cn.nukkit.inventory.BrewingRecipe;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -102,7 +104,7 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
     public Item getItem(int index) {
         int i = this.getSlotIndex(index);
         if (i < 0) {
-            return Item.get(Item.AIR, 0, 0);
+            return new ItemBlock(new Air(), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
             return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count") & 0xff);

@@ -15,6 +15,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
@@ -1382,7 +1383,7 @@ public class Level implements ChunkManager, Metadatable {
         Block target = this.getBlock(vector);
         Item[] drops;
         if (item == null) {
-            item = Item.get(Item.AIR, 0, 0);
+            item = new ItemBlock(new Air(), 0, 0);
         }
 
         if (player != null) {
@@ -1493,7 +1494,7 @@ public class Level implements ChunkManager, Metadatable {
         if (item != null) {
             item.useOn(target);
             if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
-                item = Item.get(Item.AIR, 0, 0);
+                item = new ItemBlock(new Air(), 0, 0);
             }
         }
 
@@ -1592,7 +1593,7 @@ public class Level implements ChunkManager, Metadatable {
 
                 if (!player.isSneaking() && item.canBeActivated() && item.onActivate(this, player, block, target, face, fx, fy, fz)) {
                     if (item.getCount() <= 0) {
-                        item = Item.get(Item.AIR, 0, 0);
+                        item = new ItemBlock(new Air(), 0, 0);
                         return item;
                     }
                 }
@@ -1714,7 +1715,7 @@ public class Level implements ChunkManager, Metadatable {
 
         item.setCount(item.getCount() - 1);
         if (item.getCount() <= 0) {
-            item = Item.get(Item.AIR, 0, 0);
+            item = new ItemBlock(new Air(), 0, 0);
         }
         return item;
     }

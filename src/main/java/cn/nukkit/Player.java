@@ -1,5 +1,6 @@
 package cn.nukkit;
 
+import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Attribute;
@@ -27,7 +28,10 @@ import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.*;
+import cn.nukkit.item.Arrow;
+import cn.nukkit.item.GlassBottle;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
@@ -1090,7 +1094,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision) {
-                Item item = Item.get(Item.ARROW, 0, 1);
+                Arrow item = new Arrow();
                 if (this.isSurvival() && !this.inventory.canAddItem(item)) {
                     continue;
                 }
@@ -2105,7 +2109,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (this.inventory.getItemInHand().getId() == Item.BOW) {
 
                                 Item bow = this.inventory.getItemInHand();
-                                if (this.isSurvival() && !this.inventory.contains(Item.get(Item.ARROW, 0, 1))) {
+                                Arrow arrow = new Arrow();
+                                if (this.isSurvival() && !this.inventory.contains(arrow)) {
                                     this.inventory.sendContents(this);
                                     break;
                                 }
@@ -2141,10 +2146,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 } else {
                                     entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
                                     if (this.isSurvival()) {
-                                        this.inventory.removeItem(Item.get(Item.ARROW, 0, 1));
+                                        this.inventory.removeItem(arrow);
                                         bow.setDamage(bow.getDamage() + 1);
                                         if (bow.getDamage() >= 385) {
-                                            this.inventory.setItemInHand(Item.get(Item.AIR, 0, 0));
+                                            this.inventory.setItemInHand(new ItemBlock(new Air(), 0, 0));
                                         } else {
                                             this.inventory.setItemInHand(bow);
                                         }
@@ -2407,7 +2412,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     if (item.isTool() && this.isSurvival()) {
                         if (item.useOn(targetEntity) && item.getDamage() >= item.getMaxDurability()) {
-                            this.inventory.setItemInHand(Item.get(Item.AIR, 0, 1));
+                            this.inventory.setItemInHand(new ItemBlock(new Air()));
                         } else {
                             this.inventory.setItemInHand(item);
                         }
@@ -2457,12 +2462,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (itemInHand.getId() == Item.POTION) {
                             if (this.getGamemode() == SURVIVAL) {
                                 if (itemInHand.getCount() > 1) {
-                                    if (this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))) {
-                                        this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
+                                    GlassBottle bottle = new GlassBottle();
+                                    if (this.inventory.canAddItem(bottle)) {
+                                        this.inventory.addItem(bottle);
                                     }
                                     --itemInHand.count;
                                 } else {
-                                    itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
+                                    itemInHand = new GlassBottle();
                                 }
                             }
 
@@ -2502,7 +2508,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 }
 
-                this.inventory.setItemInHand(Item.get(Item.AIR, 0, 1));
+                this.inventory.setItemInHand(new ItemBlock(new Air()));
                 Vector3 motion = this.getDirectionVector().multiply(0.4);
 
                 this.level.dropItem(this.add(0, 1.3, 0), item, motion, 40);
@@ -2776,7 +2782,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         newItem = item.clone();
                         newItem.setCount(item.getCount() - count);
                     } else {
-                        newItem = Item.get(Item.AIR, 0, 0);
+                        newItem = new ItemBlock(new Air(), 0, 0);
                     }
 
                     this.inventory.setItem(i, newItem);

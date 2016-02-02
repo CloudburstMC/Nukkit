@@ -1,11 +1,13 @@
 package cn.nukkit.tile;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Air;
 import cn.nukkit.inventory.BaseInventory;
 import cn.nukkit.inventory.ChestInventory;
 import cn.nukkit.inventory.DoubleChestInventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -76,7 +78,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
     public Item getItem(int index) {
         int i = this.getSlotIndex(index);
         if (i < 0) {
-            return Item.get(Item.AIR, 0, 0);
+            return new ItemBlock(new Air(), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
             return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count") & 0xff);

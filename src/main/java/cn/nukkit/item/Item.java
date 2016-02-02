@@ -1782,7 +1782,9 @@ public class Item implements Cloneable {
     @Override
     public Item clone() {
         try {
-            return (Item) super.clone();
+            Item item = (Item) super.clone();
+            item.tags = this.tags.clone();
+            return item;
         } catch (CloneNotSupportedException e) {
             return null;
         }

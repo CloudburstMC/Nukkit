@@ -1,6 +1,7 @@
 package cn.nukkit.tile;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.inventory.FurnaceBurnEvent;
 import cn.nukkit.event.inventory.FurnaceSmeltEvent;
@@ -8,6 +9,7 @@ import cn.nukkit.inventory.FurnaceInventory;
 import cn.nukkit.inventory.FurnaceRecipe;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -114,7 +116,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
     public Item getItem(int index) {
         int i = this.getSlotIndex(index);
         if (i < 0) {
-            return Item.get(Item.AIR, 0, 0);
+            return new ItemBlock(new Air(), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
             return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count") & 0xff);
@@ -165,7 +167,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
         if (this.namedTag.getShort("BurnTime") > 0 && ev.isBurning()) {
             fuel.setCount(fuel.getCount() - 1);
             if (fuel.getCount() == 0) {
-                fuel = Item.get(Item.AIR, 0, 0);
+                fuel = new ItemBlock(new Air(), 0, 0);
             }
             this.inventory.setFuel(fuel);
         }
@@ -203,7 +205,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
                         this.inventory.setResult(ev.getResult());
                         raw.setCount(raw.getCount() - 1);
                         if (raw.getCount() == 0) {
-                            raw = Item.get(Item.AIR, 0, 0);
+                            raw = new ItemBlock(new Air(), 0, 0);
                         }
                         this.inventory.setSmelting(raw);
                     }
