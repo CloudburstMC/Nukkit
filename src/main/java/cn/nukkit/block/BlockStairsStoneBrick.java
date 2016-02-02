@@ -6,7 +6,7 @@ import cn.nukkit.item.Tool;
  * Created on 2015/11/25 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockStairsStoneBrick extends BlockStair {
+public class BlockStairsStoneBrick extends BlockStairs {
     public BlockStairsStoneBrick() {
         this(0);
     }

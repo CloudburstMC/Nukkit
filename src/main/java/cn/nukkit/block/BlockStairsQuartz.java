@@ -7,7 +7,7 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/11/25 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockStairsQuartz extends BlockStair {
+public class BlockStairsQuartz extends BlockStairs {
     public BlockStairsQuartz() {
         this(0);
     }
