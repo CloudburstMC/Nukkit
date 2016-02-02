@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.generator.populator.PopulatorTallGrass;
 
 /**
  * author: MagicDroidX

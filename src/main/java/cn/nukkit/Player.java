@@ -4,6 +4,7 @@ import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
@@ -61,7 +62,6 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
-import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
@@ -2292,7 +2292,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 this.inventory.sendContents(this);
                 Block target = this.level.getBlock(vector);
-                BlockEntity blockEntity = this.level.getTile(vector);
+                BlockEntity blockEntity = this.level.getBlockEntity(vector);
 
                 this.level.sendBlocks(new Player[]{this}, new Block[]{target}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
 
@@ -2879,7 +2879,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 }
 
-                BlockEntity t = this.level.getTile(pos);
+                BlockEntity t = this.level.getBlockEntity(pos);
                 if (t instanceof BlockEntitySign) {
                     CompoundTag nbt;
                     try {

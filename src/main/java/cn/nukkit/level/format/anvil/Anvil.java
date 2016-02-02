@@ -1,6 +1,7 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
@@ -9,7 +10,6 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.FullChunkDataPacket;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -117,19 +117,19 @@ public class Anvil extends BaseLevelProvider {
             throw new ChunkException("Invalid Chunk Set");
         }
 
-        byte[] tiles = new byte[0];
+        byte[] blockEntities = new byte[0];
 
-        if (!chunk.getTiles().isEmpty()) {
+        if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
 
-            for (BlockEntity blockEntity : chunk.getTiles().values()) {
+            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
                 if (blockEntity instanceof BlockEntitySpawnable) {
                     tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
                 }
             }
 
             try {
-                tiles = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN);
+                blockEntities = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -154,7 +154,7 @@ public class Anvil extends BaseLevelProvider {
             stream.put(Binary.writeInt(color));
         }
         stream.put(extraData.getBuffer());
-        stream.put(tiles);
+        stream.put(blockEntities);
 
         this.getLevel().chunkRequestCallback(x, z, stream.getBuffer(), FullChunkDataPacket.ORDER_LAYERED);
 

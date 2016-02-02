@@ -2,7 +2,6 @@ package cn.nukkit.item.food;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Bowl;
-import cn.nukkit.item.Item;
 
 /**
  * Created by Snake1999 on 2016/1/14.

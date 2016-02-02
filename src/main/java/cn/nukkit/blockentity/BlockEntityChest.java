@@ -167,7 +167,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     public BlockEntityChest getPair() {
         if (this.isPaired()) {
-            BlockEntity blockEntity = this.getLevel().getTile(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
+            BlockEntity blockEntity = this.getLevel().getBlockEntity(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
             if (blockEntity instanceof BlockEntityChest) {
                 return (BlockEntityChest) blockEntity;
             }
@@ -176,25 +176,25 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
         return null;
     }
 
-    public boolean pairWith(BlockEntityChest tile) {
-        if (this.isPaired() || tile.isPaired()) {
+    public boolean pairWith(BlockEntityChest chest) {
+        if (this.isPaired() || chest.isPaired()) {
             return false;
         }
 
-        this.createPair(tile);
+        this.createPair(chest);
 
-        tile.spawnToAll();
+        chest.spawnToAll();
         this.spawnToAll();
         this.checkPairing();
 
         return true;
     }
 
-    public void createPair(BlockEntityChest tile) {
-        this.namedTag.putInt("pairx", (int) tile.x);
-        this.namedTag.putInt("pairz", (int) tile.z);
-        tile.namedTag.putInt("pairx", (int) this.x);
-        tile.namedTag.putInt("pairz", (int) this.z);
+    public void createPair(BlockEntityChest chest) {
+        this.namedTag.putInt("pairx", (int) chest.x);
+        this.namedTag.putInt("pairz", (int) chest.z);
+        chest.namedTag.putInt("pairx", (int) this.x);
+        chest.namedTag.putInt("pairz", (int) this.z);
     }
 
     public boolean unpair() {
@@ -202,18 +202,18 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
             return false;
         }
 
-        BlockEntityChest tile = this.getPair();
+        BlockEntityChest chest = this.getPair();
 
         this.namedTag.remove("pairx");
         this.namedTag.remove("pairz");
 
         this.spawnToAll();
 
-        if (tile != null) {
-            tile.namedTag.remove("pairx");
-            tile.namedTag.remove("pairz");
-            tile.checkPairing();
-            tile.spawnToAll();
+        if (chest != null) {
+            chest.namedTag.remove("pairx");
+            chest.namedTag.remove("pairz");
+            chest.checkPairing();
+            chest.spawnToAll();
         }
         this.checkPairing();
 

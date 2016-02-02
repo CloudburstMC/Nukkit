@@ -30,12 +30,12 @@ public class GarbageCollectorCommand extends VanillaCommand {
         for (Level level : sender.getServer().getLevels().values()) {
             int chunksCount = level.getChunks().size();
             int entitiesCount = level.getEntities().length;
-            int tilesCount = level.getTiles().size();
+            int tilesCount = level.getBlockEntities().size();
             level.doChunkGarbageCollection();
             level.unloadChunks(true);
             chunksCollected += chunksCount - level.getChunks().size();
             entitiesCollected += entitiesCount - level.getEntities().length;
-            tilesCollected += tilesCount - level.getTiles().size();
+            tilesCollected += tilesCount - level.getBlockEntities().size();
             level.clearCache(true);
         }
 
@@ -46,7 +46,7 @@ public class GarbageCollectorCommand extends VanillaCommand {
         sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Garbage collection result" + TextFormat.GREEN + " ----");
         sender.sendMessage(TextFormat.GOLD + "Chunks: " + TextFormat.RED + chunksCollected);
         sender.sendMessage(TextFormat.GOLD + "Entities: " + TextFormat.RED + entitiesCollected);
-        sender.sendMessage(TextFormat.GOLD + "Tiles: " + TextFormat.RED + tilesCollected);
+        sender.sendMessage(TextFormat.GOLD + "Block Entities: " + TextFormat.RED + tilesCollected);
         sender.sendMessage(TextFormat.GOLD + "Memory freed: " + TextFormat.RED + NukkitMath.round((freedMemory / 1024d / 1024d), 2) + " MB");
         return true;
     }

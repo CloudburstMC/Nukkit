@@ -30,9 +30,9 @@ public abstract class BlockEntity extends Position {
     public static final String MUSIC = "Music";
 
 
-    public static long tileCount = 1;
+    public static long count = 1;
 
-    private static Map<String, Class<? extends BlockEntity>> knownTiles = new HashMap<>();
+    private static Map<String, Class<? extends BlockEntity>> knownBlockEntities = new HashMap<>();
     private static Map<String, String> shortNames = new HashMap<>();
 
     public FullChunk chunk;
@@ -55,20 +55,20 @@ public abstract class BlockEntity extends Position {
         this.namedTag = nbt;
         this.name = "";
         this.lastUpdate = System.currentTimeMillis();
-        this.id = BlockEntity.tileCount++;
+        this.id = BlockEntity.count++;
         this.x = this.namedTag.getInt("x");
         this.y = this.namedTag.getInt("y");
         this.z = this.namedTag.getInt("z");
 
-        this.chunk.addTile(this);
-        this.getLevel().addTile(this);
+        this.chunk.addBlockEntity(this);
+        this.getLevel().addBlockEntity(this);
     }
 
-    public static BlockEntity createTile(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
+    public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
         BlockEntity blockEntity = null;
 
-        if (knownTiles.containsKey(type)) {
-            Class<? extends BlockEntity> clazz = knownTiles.get(type);
+        if (knownBlockEntities.containsKey(type)) {
+            Class<? extends BlockEntity> clazz = knownBlockEntities.get(type);
 
             if (clazz == null) {
                 return null;
@@ -105,12 +105,12 @@ public abstract class BlockEntity extends Position {
         return blockEntity;
     }
 
-    public static boolean registerTile(Class<? extends BlockEntity> c) {
+    public static boolean registerBlockEntities(Class<? extends BlockEntity> c) {
         if (c == null) {
             return false;
         }
 
-        knownTiles.put(c.getSimpleName(), c);
+        knownBlockEntities.put(c.getSimpleName(), c);
         shortNames.put(c.getName(), c.getSimpleName());
         return true;
     }
@@ -139,18 +139,18 @@ public abstract class BlockEntity extends Position {
     }
 
     public final void scheduleUpdate() {
-        this.level.updateTiles.put(this.id, this);
+        this.level.updateBlockEntities.put(this.id, this);
     }
 
     public void close() {
         if (!this.closed) {
             this.closed = true;
-            this.level.updateTiles.remove(this.id);
+            this.level.updateBlockEntities.remove(this.id);
             if (this.chunk != null) {
-                this.chunk.removeTile(this);
+                this.chunk.removeBlockEntity(this);
             }
             if (this.level != null) {
-                this.level.removeTile(this);
+                this.level.removeBlockEntity(this);
             }
             this.level = null;
         }

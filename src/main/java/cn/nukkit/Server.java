@@ -1,6 +1,7 @@
 package cn.nukkit;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
@@ -61,7 +62,6 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.blockentity.*;
 import cn.nukkit.utils.*;
 
 import java.io.*;
@@ -343,7 +343,7 @@ public class Server {
         this.commandMap = new SimpleCommandMap(this);
 
         this.registerEntities();
-        this.registerTiles();
+        this.registerBlockEntities();
 
         InventoryType.init();
         Block.init();
@@ -1820,12 +1820,12 @@ public class Server {
         // TODO: 2016/1/30 all finds of minecart
     }
 
-    private void registerTiles() {
-        BlockEntity.registerTile(BlockEntityChest.class);
-        BlockEntity.registerTile(BlockEntityFurnace.class);
-        BlockEntity.registerTile(BlockEntitySign.class);
-        BlockEntity.registerTile(BlockEntityEnchantTable.class);
-        BlockEntity.registerTile(BlockEntityBrewingStand.class);
+    private void registerBlockEntities() {
+        BlockEntity.registerBlockEntities(BlockEntityChest.class);
+        BlockEntity.registerBlockEntities(BlockEntityFurnace.class);
+        BlockEntity.registerBlockEntities(BlockEntitySign.class);
+        BlockEntity.registerBlockEntities(BlockEntityEnchantTable.class);
+        BlockEntity.registerBlockEntities(BlockEntityBrewingStand.class);
     }
 
     public static Server getInstance() {

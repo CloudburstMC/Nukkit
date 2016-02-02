@@ -68,10 +68,10 @@ public class Rail extends Flowable {
         int[][] arrayXZ = new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         int[] arrayY = new int[]{0, 1, -1};
         List<Vector3> connected = new ArrayList<>();
-        for (int[] xz: arrayXZ) {
+        for (int[] xz : arrayXZ) {
             int x = xz[0];
             int z = xz[1];
-            for (int y: arrayY) {
+            for (int y : arrayY) {
                 Vector3 v3 = new Vector3(x, y, z).add(this);
                 Block v3block = this.getLevel().getBlock(v3);
                 if (v3block == null) continue;
@@ -91,13 +91,13 @@ public class Rail extends Flowable {
             for (int i = 0; i < connected.size(); i++) {
                 subtract[i] = connected.get(i).subtract(this);
             }
-            if(Math.abs(subtract[0].x) == Math.abs(subtract[1].z) && Math.abs(subtract[1].x) == Math.abs(subtract[0].z)){
+            if (Math.abs(subtract[0].x) == Math.abs(subtract[1].z) && Math.abs(subtract[1].x) == Math.abs(subtract[0].z)) {
                 Vector3 v3 = connected.get(0).subtract(this).add(connected.get(1).subtract(this));
                 this.meta = v3.x == 1 ? (v3.z == 1 ? 6 : 9) : (v3.z == 1 ? 7 : 8);
-            }else if(subtract[0].y == 1 || subtract[1].y == 1){
+            } else if (subtract[0].y == 1 || subtract[1].y == 1) {
                 Vector3 v3 = subtract[0].y == 1 ? subtract[0] : subtract[1];
                 this.meta = v3.x == 0 ? (v3.z == -1 ? 4 : 5) : (v3.x == 1 ? 2 : 3);
-            }else{
+            } else {
                 this.meta = subtract[0].x == 0 ? 0 : 1;
             }
         }
@@ -106,7 +106,9 @@ public class Rail extends Flowable {
     }
 
     /************ Rail Connecting Part ***********/
-    /**** todo: too complex, need to simplify ****/
+    /****
+     * todo: too complex, need to simplify
+     ****/
 
     protected Vector3[] canConnectRail(Block block) {
         if (!(block instanceof Rail)) return null;
@@ -127,13 +129,13 @@ public class Rail extends Flowable {
             for (int i = 0; i < connected.length; i++) {
                 subtract[i] = connected[i].subtract(this);
             }
-            if(Math.abs(subtract[0].x) == Math.abs(subtract[1].z) && Math.abs(subtract[1].x) == Math.abs(subtract[0].z)){
+            if (Math.abs(subtract[0].x) == Math.abs(subtract[1].z) && Math.abs(subtract[1].x) == Math.abs(subtract[0].z)) {
                 Vector3 v3 = connected[0].subtract(this).add(connected[1].subtract(this));
                 this.meta = v3.x == 1 ? (v3.z == 1 ? 6 : 9) : (v3.z == 1 ? 7 : 8);
-            }else if(subtract[0].y == 1 || subtract[1].y == 1){
+            } else if (subtract[0].y == 1 || subtract[1].y == 1) {
                 Vector3 v3 = subtract[0].y == 1 ? subtract[0] : subtract[1];
                 this.meta = v3.x == 0 ? (v3.z == -1 ? 4 : 5) : (v3.x == 1 ? 2 : 3);
-            }else{
+            } else {
                 this.meta = subtract[0].x == 0 ? 0 : 1;
             }
         }
@@ -145,16 +147,16 @@ public class Rail extends Flowable {
         int damage = rail.getDamage();
         if (damage < 0 || damage > 10) return null;
         int[][][] delta = new int[][][]{
-            {{0, 1}, {0, -1}},
-            {{1, 0}, {-1, 0}},
-            {{1, 0}, {-1, 0}},
-            {{1, 0}, {-1, 0}},
-            {{0, 1}, {0, -1}},
-            {{0, 1}, {0, -1}},
-            {{1, 0}, {0, 1}},
-            {{0, 1}, {-1, 0}},
-            {{-1, 0}, {0, -1}},
-            {{0, -1}, {1, 0}}
+                {{0, 1}, {0, -1}},
+                {{1, 0}, {-1, 0}},
+                {{1, 0}, {-1, 0}},
+                {{1, 0}, {-1, 0}},
+                {{0, 1}, {0, -1}},
+                {{0, 1}, {0, -1}},
+                {{1, 0}, {0, 1}},
+                {{0, 1}, {-1, 0}},
+                {{-1, 0}, {0, -1}},
+                {{0, -1}, {1, 0}}
         };
         int[] deltaY = new int[]{0, 1, -1};
         int[][] blocks = delta[damage];
@@ -170,7 +172,7 @@ public class Rail extends Flowable {
             if (!isRailBlock(idToConnect) || !isValidRailMeta(metaToConnect)) continue;
             int xDiff = damage - v3.getFloorX();
             int zDiff = damage - v3.getFloorZ();
-            for (int[] xz: blocks) {
+            for (int[] xz : blocks) {
                 if (xz[0] != xDiff || xz[1] != zDiff) continue;
                 connected.add(v3);
             }
@@ -186,7 +188,7 @@ public class Rail extends Flowable {
             if (!isRailBlock(idToConnect) || !isValidRailMeta(metaToConnect)) continue;
             int xDiff = damage - v3.getFloorX();
             int zDiff = damage - v3.getFloorZ();
-            for (int[] xz: blocks) {
+            for (int[] xz : blocks) {
                 if (xz[0] != xDiff || xz[1] != zDiff) continue;
                 connected.add(v3);
             }

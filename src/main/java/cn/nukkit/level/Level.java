@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
@@ -41,7 +42,6 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.redstone.Redstone;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.utils.*;
 
 import java.util.*;
@@ -74,7 +74,7 @@ public class Level implements ChunkManager, Metadatable {
     public static final int DIMENSION_OVERWORLD = 0;
     public static final int DIMENSION_NETHER = 1;
 
-    private Map<Long, BlockEntity> tiles = new HashMap<>();
+    private Map<Long, BlockEntity> blockEntities = new HashMap<>();
 
     private Map<String, Map<Long, SetEntityMotionPacket.Entry>> motionToSend = new HashMap<>();
     private Map<String, Map<Long, MoveEntityPacket.Entry>> moveToSend = new HashMap<>();
@@ -85,7 +85,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public Map<Long, Entity> updateEntities = new HashMap<>();
 
-    public Map<Long, BlockEntity> updateTiles = new HashMap<>();
+    public Map<Long, BlockEntity> updateBlockEntities = new HashMap<>();
 
     private Map<String, Block> blockCache = new HashMap<>();
 
@@ -608,10 +608,10 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        if (!this.updateTiles.isEmpty()) {
-            for (long id : new ArrayList<>(this.updateTiles.keySet())) {
-                if (!this.updateTiles.get(id).onUpdate()) {
-                    this.updateTiles.remove(id);
+        if (!this.updateBlockEntities.isEmpty()) {
+            for (long id : new ArrayList<>(this.updateBlockEntities.keySet())) {
+                if (!this.updateBlockEntities.get(id).onUpdate()) {
+                    this.updateBlockEntities.remove(id);
                 }
             }
         }
@@ -1476,7 +1476,7 @@ public class Level implements ChunkManager, Metadatable {
 
         target.onBreak(item);
 
-        BlockEntity blockEntity = this.getTile(target);
+        BlockEntity blockEntity = this.getBlockEntity(target);
         if (blockEntity != null) {
             if (blockEntity instanceof InventoryHolder) {
                 if (blockEntity instanceof BlockEntityChest) {
@@ -1782,12 +1782,12 @@ public class Level implements ChunkManager, Metadatable {
         return nearby.stream().toArray(Entity[]::new);
     }
 
-    public Map<Long, BlockEntity> getTiles() {
-        return tiles;
+    public Map<Long, BlockEntity> getBlockEntities() {
+        return blockEntities;
     }
 
-    public BlockEntity getTileById(long tileId) {
-        return this.tiles.containsKey(tileId) ? this.tiles.get(tileId) : null;
+    public BlockEntity getBlockEntityById(long blockEntityId) {
+        return this.blockEntities.containsKey(blockEntityId) ? this.blockEntities.get(blockEntityId) : null;
     }
 
     public Map<Long, Player> getPlayers() {
@@ -1798,7 +1798,7 @@ public class Level implements ChunkManager, Metadatable {
         return loaders;
     }
 
-    public BlockEntity getTile(Vector3 pos) {
+    public BlockEntity getBlockEntity(Vector3 pos) {
         FullChunk chunk = this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, false);
 
         if (chunk != null) {
@@ -1813,9 +1813,9 @@ public class Level implements ChunkManager, Metadatable {
         return (chunk = this.getChunk(X, Z)) != null ? chunk.getEntities() : new HashMap<>();
     }
 
-    public Map<Long, BlockEntity> getChunkTiles(int X, int Z) {
+    public Map<Long, BlockEntity> getChunkBlockEntities(int X, int Z) {
         FullChunk chunk;
-        return (chunk = this.getChunk(X, Z)) != null ? chunk.getTiles() : new HashMap<>();
+        return (chunk = this.getChunk(X, Z)) != null ? chunk.getBlockEntities() : new HashMap<>();
     }
 
     @Override
@@ -1985,7 +1985,7 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             Map<Long, Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : new HashMap<>();
 
-            Map<Long, BlockEntity> oldTiles = oldChunk != null ? oldChunk.getTiles() : new HashMap<>();
+            Map<Long, BlockEntity> oldBlockEntities = oldChunk != null ? oldChunk.getBlockEntities() : new HashMap<>();
 
             this.provider.setChunk(chunkX, chunkZ, chunk);
             this.chunks.put(index, chunk);
@@ -1995,8 +1995,8 @@ public class Level implements ChunkManager, Metadatable {
                 entity.chunk = chunk;
             }
 
-            for (BlockEntity blockEntity : oldTiles.values()) {
-                chunk.addTile(blockEntity);
+            for (BlockEntity blockEntity : oldBlockEntities.values()) {
+                chunk.addBlockEntity(blockEntity);
                 blockEntity.chunk = chunk;
             }
         }
@@ -2153,20 +2153,20 @@ public class Level implements ChunkManager, Metadatable {
         this.entities.put(entity.getId(), entity);
     }
 
-    public void addTile(BlockEntity blockEntity) {
+    public void addBlockEntity(BlockEntity blockEntity) {
         if (!blockEntity.getLevel().equals(this)) {
             throw new LevelException("Invalid Block Entity level");
         }
-        tiles.put(blockEntity.getId(), blockEntity);
+        blockEntities.put(blockEntity.getId(), blockEntity);
         this.clearChunkCache((int) blockEntity.getX() >> 4, (int) blockEntity.getZ() >> 4);
     }
 
-    public void removeTile(BlockEntity blockEntity) {
+    public void removeBlockEntity(BlockEntity blockEntity) {
         if (!blockEntity.getLevel().equals(this)) {
             throw new LevelException("Invalid Block Entity level");
         }
-        tiles.remove(blockEntity.getId());
-        updateTiles.remove(blockEntity.getId());
+        blockEntities.remove(blockEntity.getId());
+        updateBlockEntities.remove(blockEntity.getId());
         this.clearChunkCache((int) blockEntity.getX() >> 4, (int) blockEntity.getZ() >> 4);
     }
 
@@ -2284,7 +2284,7 @@ public class Level implements ChunkManager, Metadatable {
                         ++entities;
                     }
 
-                    if (chunk.hasChanged() || !chunk.getTiles().isEmpty() || entities > 0) {
+                    if (chunk.hasChanged() || !chunk.getBlockEntities().isEmpty() || entities > 0) {
                         this.provider.setChunk(x, z, chunk);
                         this.provider.saveChunk(x, z);
                     }

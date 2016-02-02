@@ -2,10 +2,10 @@ package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class ChunkRequestTask extends AsyncTask {
     protected int chunkX;
     protected int chunkZ;
 
-    protected byte[] tiles;
+    protected byte[] blockEntities;
 
     public ChunkRequestTask(Level level, Chunk chunk) {
         this.levelId = level.getId();
@@ -33,7 +33,7 @@ public class ChunkRequestTask extends AsyncTask {
 
         byte[] buffer = new byte[0];
 
-        for (BlockEntity blockEntity : chunk.getTiles().values()) {
+        for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
             if (blockEntity instanceof BlockEntitySpawnable) {
                 try {
                     buffer = Binary.appendBytes(buffer, NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), ByteOrder.BIG_ENDIAN));
@@ -44,7 +44,7 @@ public class ChunkRequestTask extends AsyncTask {
             }
         }
 
-        this.tiles = buffer;
+        this.blockEntities = buffer;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ChunkRequestTask extends AsyncTask {
                 16 * 16 * (128 + 64 + 64 + 64)
                         + 256
                         + 256
-                        + this.tiles.length
+                        + this.blockEntities.length
         );
 
         ByteBuffer orderedIds = ByteBuffer.allocate(16 * 16 * 128);
@@ -94,7 +94,7 @@ public class ChunkRequestTask extends AsyncTask {
                         .put(orderedLight)
                         .put(orderedHeightMap)
                         .put(orderedBiomeColors)
-                        .put(this.tiles)
+                        .put(this.blockEntities)
                         .array()
         );
     }

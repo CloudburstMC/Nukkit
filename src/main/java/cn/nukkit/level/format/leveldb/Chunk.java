@@ -371,13 +371,13 @@ public class Chunk extends BaseFullChunk {
                     }
                 }
 
-                /*if (!entities.isEmpty() || !tiles.isEmpty()) {
+                /*if (!entities.isEmpty() || !blockEntities.isEmpty()) {
                     CompoundTag ct = new CompoundTag();
                     ListTag<CompoundTag> entityList = new ListTag<>("entities");
-                    ListTag<CompoundTag> tileList = new ListTag<>("tiles");
+                    ListTag<CompoundTag> tileList = new ListTag<>("blockEntities");
 
                     entityList.list = entities;
-                    tileList.list = tiles;
+                    tileList.list = blockEntities;
                     ct.putList(entityList);
                     ct.putList(tileList);
                     NBTIO.write(ct, new File(Nukkit.DATA_PATH + chunkX + "_" + chunkZ + ".dat"));
@@ -447,7 +447,7 @@ public class Chunk extends BaseFullChunk {
 
                 List<CompoundTag> tiles = new ArrayList<>();
 
-                for (BlockEntity blockEntity : this.getTiles().values()) {
+                for (BlockEntity blockEntity : this.getBlockEntities().values()) {
                     if (!blockEntity.closed) {
                         blockEntity.saveNBT();
                         entities.add(blockEntity.namedTag);
@@ -566,7 +566,7 @@ public class Chunk extends BaseFullChunk {
                             changed = true;
                             continue;
                         }
-                        BlockEntity blockEntity = BlockEntity.createTile(nbt.getString("id"), this, nbt);
+                        BlockEntity blockEntity = BlockEntity.createBlockEntity(nbt.getString("id"), this, nbt);
                         if (blockEntity == null) {
                             changed = true;
                             continue;

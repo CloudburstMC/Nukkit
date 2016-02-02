@@ -101,7 +101,7 @@ public class BurningFurnace extends Solid {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getTile(this);
+            BlockEntity t = this.getLevel().getBlockEntity(this);
             BlockEntityFurnace furnace;
             if (t instanceof BlockEntityFurnace) {
                 furnace = (BlockEntityFurnace) t;

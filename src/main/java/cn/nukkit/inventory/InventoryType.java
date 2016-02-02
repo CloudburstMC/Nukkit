@@ -47,9 +47,9 @@ public class InventoryType {
         defaults.put(ANVIL, new InventoryType(3, "Anvil", 6)); //2 INPUT, 1 OUTPUT
     }
 
-    public InventoryType(int defaultSize, String defaultTile, int typeId) {
+    public InventoryType(int defaultSize, String defaultBlockEntity, int typeId) {
         this.size = defaultSize;
-        this.title = defaultTile;
+        this.title = defaultBlockEntity;
         this.typeId = typeId;
     }
 

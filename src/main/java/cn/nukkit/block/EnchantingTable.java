@@ -90,7 +90,7 @@ public class EnchantingTable extends Solid {
             }
         }
 
-        BlockEntity.createTile(BlockEntity.ENCHANT_TABLE, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
         return true;
     }
@@ -98,7 +98,7 @@ public class EnchantingTable extends Solid {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getTile(this);
+            BlockEntity t = this.getLevel().getBlockEntity(this);
             BlockEntityEnchantTable enchantTable;
             if (t instanceof BlockEntityEnchantTable) {
                 enchantTable = (BlockEntityEnchantTable) t;

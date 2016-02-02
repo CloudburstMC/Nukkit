@@ -1,6 +1,8 @@
 package cn.nukkit.level.format.leveldb;
 
 import cn.nukkit.Server;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
@@ -13,8 +15,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.blockentity.BlockEntitySpawnable;
-import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.utils.*;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
@@ -163,10 +163,10 @@ public class LevelDB implements LevelProvider {
 
         byte[] tiles = new byte[0];
 
-        if (!chunk.getTiles().isEmpty()) {
+        if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
 
-            for (BlockEntity blockEntity : chunk.getTiles().values()) {
+            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
                 if (blockEntity instanceof BlockEntitySpawnable) {
                     tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
                 }

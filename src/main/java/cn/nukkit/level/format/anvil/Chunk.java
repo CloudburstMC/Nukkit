@@ -1,13 +1,13 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
-import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -264,7 +264,7 @@ public class Chunk extends BaseChunk {
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (BlockEntity blockEntity : this.getTiles().values()) {
+        for (BlockEntity blockEntity : this.getBlockEntities().values()) {
             blockEntity.saveNBT();
             tiles.add(blockEntity.namedTag);
         }
@@ -330,7 +330,7 @@ public class Chunk extends BaseChunk {
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (BlockEntity blockEntity : this.getTiles().values()) {
+        for (BlockEntity blockEntity : this.getBlockEntities().values()) {
             blockEntity.saveNBT();
             tiles.add(blockEntity.namedTag);
         }

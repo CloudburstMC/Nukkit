@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
@@ -9,7 +10,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Iterator;
@@ -102,7 +102,7 @@ public class BrewingStand extends Solid {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = getLevel().getTile(this);
+            BlockEntity t = getLevel().getBlockEntity(this);
             BlockEntityBrewingStand brewing = null;
             if (t instanceof BlockEntityBrewingStand) {
                 brewing = (BlockEntityBrewingStand) t;

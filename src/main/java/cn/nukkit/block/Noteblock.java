@@ -50,8 +50,9 @@ public class Noteblock extends Solid {
     }
 
     public int getStrength() {
-        if (this.meta < 24) this.meta++; else this.meta = 0;
-        this.getLevel().setBlock(this,this);
+        if (this.meta < 24) this.meta++;
+        else this.meta = 0;
+        this.getLevel().setBlock(this, this);
         return this.meta;
     }
 

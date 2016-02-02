@@ -154,8 +154,8 @@ public class Normal extends Generator {
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
-        for(int genx = 0; genx < 16; genx++) {
-            for(int genz = 0; genz < 16; genz++) {
+        for (int genx = 0; genx < 16; genx++) {
+            for (int genz = 0; genz < 16; genz++) {
 
                 Biome biome;
                 boolean canBaseGround = false;
@@ -175,8 +175,8 @@ public class Normal extends Generator {
                 int mountainGenerate = (int) (mountainHeight * mountainHeightGenerate);
 
                 int landHeightGenerate = (int) (landHeightRange * landHeightNoise);
-                if(landHeightGenerate > landHeightRange) {
-                    if(landHeightGenerate > landHeightRange) {
+                if (landHeightGenerate > landHeightRange) {
+                    if (landHeightGenerate > landHeightRange) {
                         canBaseGround = true;
                     }
                     landHeightGenerate = landHeightRange;
@@ -186,21 +186,19 @@ public class Normal extends Generator {
                 genyHeight += mountainGenerate;
 
                 //prepare for generate ocean, desert, and land
-                if(genyHeight < beathStartHeight) {
-                    if(genyHeight < beathStartHeight - 5) {
+                if (genyHeight < beathStartHeight) {
+                    if (genyHeight < beathStartHeight - 5) {
                         genyHeight += (int) (seaFloorGenerateRange * seaFloorNoise[genx][genz]);
                     }
                     biome = Biome.getBiome(Biome.OCEAN);
-                    if(genyHeight < seaFloorHeight - seaFloorGenerateRange) {
+                    if (genyHeight < seaFloorHeight - seaFloorGenerateRange) {
                         genyHeight = seaFloorHeight;
                     }
-                    canRiver=false;
-                }
-                else if(genyHeight <= beathStopHeight && genyHeight >= beathStartHeight) {
+                    canRiver = false;
+                } else if (genyHeight <= beathStopHeight && genyHeight >= beathStartHeight) {
                     //todo: there is no beach biome, use desert temporarily
                     biome = Biome.getBiome(Biome.DESERT);
-                }
-                else {
+                } else {
                     biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
                     if (canBaseGround) {
                         int baseGroundHeight = (int) (landHeightRange * landHeightNoise) - landHeightRange;
@@ -209,13 +207,13 @@ public class Normal extends Generator {
                         genyHeight += baseGroundHeight2;
                     }
                 }
-                if(canRiver && genyHeight <= seaHeight - 5) {
+                if (canRiver && genyHeight <= seaHeight - 5) {
                     canRiver = false;
                 }
                 //generate river
-                if(canRiver) {
+                if (canRiver) {
                     double riverGenerate = riverNoise[genx][genz];
-                    if(riverGenerate > -0.25F && riverGenerate < 0.25F) {
+                    if (riverGenerate > -0.25F && riverGenerate < 0.25F) {
                         riverGenerate = riverGenerate > 0 ? riverGenerate : -riverGenerate;
                         riverGenerate = 0.25F - riverGenerate;
                         //y=x^2 * 63.33
@@ -224,9 +222,9 @@ public class Normal extends Generator {
                         riverGenerate = riverGenerate - 0.0000001F;
                         riverGenerate = riverGenerate > 0 ? riverGenerate : 0;
                         genyHeight -= riverGenerate * 64;
-                        if(genyHeight < seaHeight) {
+                        if (genyHeight < seaHeight) {
                             biome = Biome.getBiome(Biome.RIVER);
-                            if(genyHeight < seaHeight - 5) {
+                            if (genyHeight < seaHeight - 5) {
                                 genyHeight = seaHeight - 5;
                             }
                         }
@@ -239,7 +237,7 @@ public class Normal extends Generator {
                 chunk.setBiomeColor(genx, genz, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
                 //generating
                 int generateHeight = genyHeight > seaHeight ? genyHeight : seaHeight;
-                for(int geny = 0; geny <= generateHeight; geny++) {
+                for (int geny = 0; geny <= generateHeight; geny++) {
                     if (geny <= bedrockDepth && (geny == 0 || random.nextRange(1, 5) == 1)) {
                         chunk.setBlock(genx, geny, genz, Block.BEDROCK);
                     } else if (geny > genyHeight) {

@@ -457,7 +457,7 @@ public class Chunk extends BaseFullChunk {
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (BlockEntity blockEntity : this.getTiles().values()) {
+        for (BlockEntity blockEntity : this.getBlockEntities().values()) {
             blockEntity.saveNBT();
             tiles.add(blockEntity.namedTag);
         }

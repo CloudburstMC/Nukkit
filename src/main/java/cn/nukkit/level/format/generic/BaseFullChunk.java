@@ -139,7 +139,7 @@ public abstract class BaseFullChunk implements FullChunk {
                             changed = true;
                             continue;
                         }
-                        BlockEntity blockEntity = BlockEntity.createTile(nbt.getString("id"), this, nbt);
+                        BlockEntity blockEntity = BlockEntity.createBlockEntity(nbt.getString("id"), this, nbt);
                         if (blockEntity == null) {
                             changed = true;
                             continue;
@@ -307,7 +307,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public void addTile(BlockEntity blockEntity) {
+    public void addBlockEntity(BlockEntity blockEntity) {
         this.tiles.put(blockEntity.getId(), blockEntity);
         int index = (((int) blockEntity.z & 0x0f) << 12) | (((int) blockEntity.x & 0x0f) << 8) | ((int) blockEntity.y & 0xff);
         if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(blockEntity)) {
@@ -320,7 +320,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public void removeTile(BlockEntity blockEntity) {
+    public void removeBlockEntity(BlockEntity blockEntity) {
         this.tiles.remove(blockEntity.getId());
         int index = ((blockEntity.getFloorZ()) & 0x0f << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
         this.tileList.remove(index);
@@ -335,7 +335,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public Map<Long, BlockEntity> getTiles() {
+    public Map<Long, BlockEntity> getBlockEntities() {
         return tiles;
     }
 
@@ -398,7 +398,7 @@ public abstract class BaseFullChunk implements FullChunk {
             entity.close();
         }
 
-        for (BlockEntity blockEntity : new ArrayList<>(this.getTiles().values())) {
+        for (BlockEntity blockEntity : new ArrayList<>(this.getBlockEntities().values())) {
             blockEntity.close();
         }
         this.provider = null;

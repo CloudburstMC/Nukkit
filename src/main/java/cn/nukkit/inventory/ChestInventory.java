@@ -1,9 +1,9 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.blockentity.BlockEntityChest;
 
 /**
  * author: MagicDroidX
@@ -11,8 +11,8 @@ import cn.nukkit.blockentity.BlockEntityChest;
  */
 public class ChestInventory extends ContainerInventory {
 
-    public ChestInventory(BlockEntityChest tile) {
-        super(tile, InventoryType.get(InventoryType.CHEST));
+    public ChestInventory(BlockEntityChest chest) {
+        super(chest, InventoryType.get(InventoryType.CHEST));
     }
 
     @Override

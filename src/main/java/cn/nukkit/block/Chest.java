@@ -86,7 +86,7 @@ public class Chest extends Transparent {
             }
             Block c = this.getSide(side);
             if (c instanceof Chest && c.getDamage() == this.meta) {
-                BlockEntity blockEntity = this.getLevel().getTile(c);
+                BlockEntity blockEntity = this.getLevel().getBlockEntity(c);
                 if (blockEntity instanceof BlockEntityChest && !((BlockEntityChest) blockEntity).isPaired()) {
                     chest = (BlockEntityChest) blockEntity;
                     break;
@@ -127,7 +127,7 @@ public class Chest extends Transparent {
 
     @Override
     public boolean onBreak(Item item) {
-        BlockEntity t = this.getLevel().getTile(this);
+        BlockEntity t = this.getLevel().getBlockEntity(this);
         if (t instanceof BlockEntityChest) {
             ((BlockEntityChest) t).unpair();
         }
@@ -144,7 +144,7 @@ public class Chest extends Transparent {
                 return true;
             }
 
-            BlockEntity t = this.getLevel().getTile(this);
+            BlockEntity t = this.getLevel().getBlockEntity(this);
             BlockEntityChest chest;
             if (t instanceof BlockEntityChest) {
                 chest = (BlockEntityChest) t;

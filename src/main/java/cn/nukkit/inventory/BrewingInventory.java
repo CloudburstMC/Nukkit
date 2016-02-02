@@ -5,8 +5,8 @@ import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.item.Item;
 
 public class BrewingInventory extends ContainerInventory {
-    public BrewingInventory(BlockEntityBrewingStand tile) {
-        super(tile, InventoryType.get(InventoryType.BREWING_STAND));
+    public BrewingInventory(BlockEntityBrewingStand brewingStand) {
+        super(brewingStand, InventoryType.get(InventoryType.BREWING_STAND));
     }
 
     @Override

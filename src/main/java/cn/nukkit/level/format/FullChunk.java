@@ -102,13 +102,13 @@ public interface FullChunk extends Cloneable {
 
     void removeEntity(Entity entity);
 
-    void addTile(BlockEntity blockEntity);
+    void addBlockEntity(BlockEntity blockEntity);
 
-    void removeTile(BlockEntity blockEntity);
+    void removeBlockEntity(BlockEntity blockEntity);
 
     Map<Long, Entity> getEntities();
 
-    Map<Long, BlockEntity> getTiles();
+    Map<Long, BlockEntity> getBlockEntities();
 
     BlockEntity getTile(int x, int y, int z);
 
