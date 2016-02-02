@@ -23,7 +23,7 @@ public class BlockBedrockInvisible extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Invisible BlockBedrock";
+        return "Invisible Bedrock";
     }
 
     @Override

@@ -15,7 +15,7 @@ public class Beetroot extends EdibleItem {
     }
 
     public Beetroot(Integer meta, int count) {
-        super(BEETROOT, meta, count, "BlockBeetroot");
+        super(BEETROOT, meta, count, "Beetroot");
     }
 
 }

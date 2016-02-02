@@ -17,7 +17,7 @@ public class BeetrootSeeds extends Item {
     }
 
     public BeetrootSeeds(Integer meta, int count) {
-        super(BEETROOT_SEEDS, 0, count, "BlockBeetroot Seeds");
+        super(BEETROOT_SEEDS, 0, count, "Beetroot Seeds");
         this.block = new BlockBeetroot();
     }
 }
