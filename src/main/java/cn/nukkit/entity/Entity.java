@@ -3,7 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.Water;
+import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.item.Item;
@@ -1077,8 +1077,8 @@ public abstract class Entity extends Location implements Metadatable {
         double y = this.y + this.getEyeHeight();
         Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
 
-        if (block instanceof Water) {
-            double f = (block.y + 1) - (((Water) block).getFluidHeightPercent() - 0.1111111);
+        if (block instanceof BlockWater) {
+            double f = (block.y + 1) - (((BlockWater) block).getFluidHeightPercent() - 0.1111111);
             return y < f;
         }
 

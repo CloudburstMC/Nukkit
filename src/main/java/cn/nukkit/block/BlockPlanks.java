@@ -1,0 +1,65 @@
+package cn.nukkit.block;
+
+import cn.nukkit.item.Tool;
+import cn.nukkit.utils.BlockColor;
+
+/**
+ * author: MagicDroidX
+ * Nukkit Project
+ */
+public class BlockPlanks extends BlockSolid {
+    public static final int OAK = 0;
+    public static final int SPRUCE = 1;
+    public static final int BIRCH = 2;
+    public static final int JUNGLE = 3;
+    public static final int ACACIA = 4;
+    public static final int DARK_OAK = 5;
+
+
+    public BlockPlanks() {
+        this(0);
+    }
+
+    public BlockPlanks(int meta) {
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return WOODEN_PLANKS;
+    }
+
+    @Override
+    public double getHardness() {
+        return 2;
+    }
+
+    @Override
+    public double getResistance() {
+        return 15;
+    }
+
+    @Override
+    public String getName() {
+        String[] names = new String[]{
+                "Oak Wood Planks",
+                "Spruce Wood Planks",
+                "Birch Wood Planks",
+                "Jungle Wood Planks",
+                "Acacia Wood Planks",
+                "Dark Oak Wood Planks",
+        };
+
+        return names[this.meta & 0x07];
+    }
+
+    @Override
+    public int getToolType() {
+        return Tool.TYPE_AXE;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
+    }
+}

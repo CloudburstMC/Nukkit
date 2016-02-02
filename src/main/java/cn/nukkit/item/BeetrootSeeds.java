@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.Beetroot;
+import cn.nukkit.block.BlockBeetroot;
 
 /**
  * author: MagicDroidX
@@ -17,7 +17,7 @@ public class BeetrootSeeds extends Item {
     }
 
     public BeetrootSeeds(Integer meta, int count) {
-        super(BEETROOT_SEEDS, 0, count, "Beetroot Seeds");
-        this.block = new Beetroot();
+        super(BEETROOT_SEEDS, 0, count, "BlockBeetroot Seeds");
+        this.block = new BlockBeetroot();
     }
 }

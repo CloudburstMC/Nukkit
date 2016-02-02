@@ -153,24 +153,24 @@ public class Level implements ChunkManager, Metadatable {
     private int chunksPerTicks;
     private boolean clearChunksOnTick;
     private HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {{
-        put(Block.GRASS, Grass.class);
-        put(Block.SAPLING, Sapling.class);
-        put(Block.LEAVES, Leaves.class);
-        put(Block.WHEAT_BLOCK, Wheat.class);
-        put(Block.FARMLAND, Farmland.class);
-        put(Block.SNOW_LAYER, SnowLayer.class);
-        put(Block.ICE, Ice.class);
-        put(Block.CACTUS, Cactus.class);
-        put(Block.SUGARCANE_BLOCK, Sugarcane.class);
-        put(Block.RED_MUSHROOM, RedMushroom.class);
-        put(Block.BROWN_MUSHROOM, BrownMushroom.class);
+        put(Block.GRASS, BlockGrass.class);
+        put(Block.SAPLING, BlockSapling.class);
+        put(Block.LEAVES, BlockLeaves.class);
+        put(Block.WHEAT_BLOCK, BlockWheat.class);
+        put(Block.FARMLAND, BlockFarmland.class);
+        put(Block.SNOW_LAYER, BlockSnowLayer.class);
+        put(Block.ICE, BlockIce.class);
+        put(Block.CACTUS, BlockCactus.class);
+        put(Block.SUGARCANE_BLOCK, BlockSugarcane.class);
+        put(Block.RED_MUSHROOM, BlockMushroomRed.class);
+        put(Block.BROWN_MUSHROOM, BlockMushroomBrown.class);
         //put(Block.PUMPKIN_STEM, PumpkinStem.class);
         //put(Block.MELON_STEM, MelonStem.class);
-        put(Block.MYCELIUM, Mycelium.class);
-        put(Block.CARROT_BLOCK, Carrot.class);
+        put(Block.MYCELIUM, BlockMycelium.class);
+        put(Block.CARROT_BLOCK, BlockCarrot.class);
         //put(Block.POTATO_BLOCK, Potato.class);
-        put(Block.LEAVES2, Leaves2.class);
-        put(Block.BEETROOT_BLOCK, Beetroot.class);
+        put(Block.LEAVES2, BlockLeaves2.class);
+        put(Block.BEETROOT_BLOCK, BlockBeetroot.class);
     }};
 
     private int tickRate;
@@ -1301,8 +1301,8 @@ public class Level implements ChunkManager, Metadatable {
                     this.server.getPluginManager().callEvent(rsEv);
                     if (!rsEv.isCancelled()) {
                         Block redstoneWire = rsEv.getBlock().getSide(Vector3.SIDE_DOWN);
-                        if (redstoneWire instanceof RedstoneWire) {
-                            if (rsEv.getBlock() instanceof Solid) {
+                        if (redstoneWire instanceof BlockRedstoneWire) {
+                            if (rsEv.getBlock() instanceof BlockSolid) {
                                 int level = redstoneWire.getPowerLevel();
                                 redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
                                 redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
@@ -1383,7 +1383,7 @@ public class Level implements ChunkManager, Metadatable {
         Block target = this.getBlock(vector);
         Item[] drops;
         if (item == null) {
-            item = new ItemBlock(new Air(), 0, 0);
+            item = new ItemBlock(new BlockAir(), 0, 0);
         }
 
         if (player != null) {
@@ -1439,7 +1439,7 @@ public class Level implements ChunkManager, Metadatable {
         Block above = this.getBlock(new Vector3(target.x, target.y + 1, target.z));
         if (above != null) {
             if (above.getId() == Item.FIRE) {
-                this.setBlock(above, new Air(), true);
+                this.setBlock(above, new BlockAir(), true);
             }
         }
 
@@ -1494,7 +1494,7 @@ public class Level implements ChunkManager, Metadatable {
         if (item != null) {
             item.useOn(target);
             if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
-                item = new ItemBlock(new Air(), 0, 0);
+                item = new ItemBlock(new BlockAir(), 0, 0);
             }
         }
 
@@ -1593,7 +1593,7 @@ public class Level implements ChunkManager, Metadatable {
 
                 if (!player.isSneaking() && item.canBeActivated() && item.onActivate(this, player, block, target, face, fx, fy, fz)) {
                     if (item.getCount() <= 0) {
-                        item = new ItemBlock(new Air(), 0, 0);
+                        item = new ItemBlock(new BlockAir(), 0, 0);
                         return item;
                     }
                 }
@@ -1608,7 +1608,7 @@ public class Level implements ChunkManager, Metadatable {
             hand = item.getBlock();
             hand.position(block);
         } else if (block.getId() == Item.FIRE) {
-            this.setBlock(block, new Air(), true);
+            this.setBlock(block, new BlockAir(), true);
 
             return null;
         } else {
@@ -1715,7 +1715,7 @@ public class Level implements ChunkManager, Metadatable {
 
         item.setCount(item.getCount() - 1);
         if (item.getCount() <= 0) {
-            item = new ItemBlock(new Air(), 0, 0);
+            item = new ItemBlock(new BlockAir(), 0, 0);
         }
         return item;
     }

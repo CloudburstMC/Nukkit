@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockCake;
 import cn.nukkit.level.Level;
 
 /**
@@ -34,7 +35,7 @@ public class Cake extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
-        level.setBlock(block, new cn.nukkit.block.Cake(), true);
+        level.setBlock(block, new BlockCake(), true);
         return true;
     }
 
