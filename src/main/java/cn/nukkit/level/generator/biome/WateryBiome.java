@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.Dirt;
 
 /**
  * author: Angelic47
@@ -9,11 +10,11 @@ import cn.nukkit.block.Block;
 public abstract class WateryBiome extends NormalBiome {
     public WateryBiome() {
         this.setGroundCover(new Block[]{
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0)
+                new Dirt(),
+                new Dirt(),
+                new Dirt(),
+                new Dirt(),
+                new Dirt()
         });
     }
 }
