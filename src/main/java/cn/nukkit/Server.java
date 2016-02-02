@@ -380,7 +380,12 @@ public class Server {
 
         for (String name : ((Map<String, Object>) this.getConfig("worlds", new HashMap<>())).keySet()) {
             if (!this.loadLevel(name)) {
-                long seed = (long) this.getConfig("worlds." + name + ".seed", System.currentTimeMillis());
+                long seed;
+                try {
+                    seed = ((Integer) this.getConfig("worlds." + name + ".seed")).longValue();
+                } catch (Exception e) {
+                    seed = System.currentTimeMillis();
+                }
 
                 Map<String, Object> options = new HashMap<>();
                 String[] opts = ((String) this.getConfig("worlds." + name + ".generator", Generator.getGenerator("default").getSimpleName())).split(":");
