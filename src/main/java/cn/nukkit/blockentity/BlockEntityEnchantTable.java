@@ -1,4 +1,4 @@
-package cn.nukkit.tile;
+package cn.nukkit.blockentity;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -7,9 +7,9 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class EnchantTable extends Spawnable implements Nameable {
+public class BlockEntityEnchantTable extends BlockEntitySpawnable implements BlockEntityNameable {
 
-    public EnchantTable(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityEnchantTable(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -36,7 +36,7 @@ public class EnchantTable extends Spawnable implements Nameable {
     @Override
     public CompoundTag getSpawnCompound() {
         CompoundTag c = new CompoundTag()
-                .putString("id", Tile.ENCHANT_TABLE)
+                .putString("id", BlockEntity.ENCHANT_TABLE)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);

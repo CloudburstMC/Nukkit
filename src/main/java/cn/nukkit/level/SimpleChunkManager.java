@@ -5,13 +5,14 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class SimpleChunkManager implements ChunkManager {
-    protected Map<String, FullChunk> chunks = new HashMap<>();
+    protected Map<String, FullChunk> chunks = new ConcurrentHashMap<>();
 
     protected long seed;
 

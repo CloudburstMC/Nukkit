@@ -1,4 +1,4 @@
-package cn.nukkit.tile;
+package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Air;
@@ -19,11 +19,11 @@ import cn.nukkit.network.protocol.ContainerSetDataPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Furnace extends Spawnable implements InventoryHolder, Container, Nameable {
+public class BlockEntityFurnace extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
     protected FurnaceInventory inventory;
 
-    public Furnace(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityFurnace(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         this.inventory = new FurnaceInventory(this);
 
@@ -254,7 +254,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
     @Override
     public CompoundTag getSpawnCompound() {
         CompoundTag c = new CompoundTag()
-                .putString("id", Tile.FURNACE)
+                .putString("id", BlockEntity.FURNACE)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)

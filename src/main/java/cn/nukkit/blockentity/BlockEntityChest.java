@@ -1,4 +1,4 @@
-package cn.nukkit.tile;
+package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Air;
@@ -17,13 +17,13 @@ import cn.nukkit.nbt.tag.ListTag;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Chest extends Spawnable implements InventoryHolder, Container, Nameable {
+public class BlockEntityChest extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
     protected ChestInventory inventory;
 
     protected DoubleChestInventory doubleInventory = null;
 
-    public Chest(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityChest(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         this.inventory = new ChestInventory(this);
 
@@ -120,7 +120,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
     }
 
     protected void checkPairing() {
-        Chest pair = this.getPair();
+        BlockEntityChest pair = this.getPair();
         if (pair != null) {
             if (!pair.isPaired()) {
                 pair.createPair(this);
@@ -165,18 +165,18 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
         return this.namedTag.contains("pairx") && this.namedTag.contains("pairz");
     }
 
-    public Chest getPair() {
+    public BlockEntityChest getPair() {
         if (this.isPaired()) {
-            Tile tile = this.getLevel().getTile(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
-            if (tile instanceof Chest) {
-                return (Chest) tile;
+            BlockEntity blockEntity = this.getLevel().getTile(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
+            if (blockEntity instanceof BlockEntityChest) {
+                return (BlockEntityChest) blockEntity;
             }
         }
 
         return null;
     }
 
-    public boolean pairWith(Chest tile) {
+    public boolean pairWith(BlockEntityChest tile) {
         if (this.isPaired() || tile.isPaired()) {
             return false;
         }
@@ -190,7 +190,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
         return true;
     }
 
-    public void createPair(Chest tile) {
+    public void createPair(BlockEntityChest tile) {
         this.namedTag.putInt("pairx", (int) tile.x);
         this.namedTag.putInt("pairz", (int) tile.z);
         tile.namedTag.putInt("pairx", (int) this.x);
@@ -202,7 +202,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
             return false;
         }
 
-        Chest tile = this.getPair();
+        BlockEntityChest tile = this.getPair();
 
         this.namedTag.remove("pairx");
         this.namedTag.remove("pairz");
@@ -225,7 +225,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
         CompoundTag c;
         if (this.isPaired()) {
             c = new CompoundTag()
-                    .putString("id", Tile.CHEST)
+                    .putString("id", BlockEntity.CHEST)
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z)
@@ -233,7 +233,7 @@ public class Chest extends Spawnable implements InventoryHolder, Container, Name
                     .putInt("pairz", this.namedTag.getInt("pairz"));
         } else {
             c = new CompoundTag()
-                    .putString("id", Tile.CHEST)
+                    .putString("id", BlockEntity.CHEST)
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z);

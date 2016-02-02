@@ -7,7 +7,7 @@ import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
-import cn.nukkit.tile.Tile;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -264,9 +264,9 @@ public class Chunk extends BaseChunk {
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (Tile tile : this.getTiles().values()) {
-            tile.saveNBT();
-            tiles.add(tile.namedTag);
+        for (BlockEntity blockEntity : this.getTiles().values()) {
+            blockEntity.saveNBT();
+            tiles.add(blockEntity.namedTag);
         }
         ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
         tileListTag.setAll(tiles);
@@ -330,9 +330,9 @@ public class Chunk extends BaseChunk {
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (Tile tile : this.getTiles().values()) {
-            tile.saveNBT();
-            tiles.add(tile.namedTag);
+        for (BlockEntity blockEntity : this.getTiles().values()) {
+            blockEntity.saveNBT();
+            tiles.add(blockEntity.namedTag);
         }
         ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
         tileListTag.setAll(tiles);

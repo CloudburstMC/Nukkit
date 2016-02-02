@@ -1,17 +1,17 @@
 package cn.nukkit.inventory;
 
 
+import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.item.Item;
-import cn.nukkit.tile.BrewingStand;
 
 public class BrewingInventory extends ContainerInventory {
-    public BrewingInventory(BrewingStand tile) {
+    public BrewingInventory(BlockEntityBrewingStand tile) {
         super(tile, InventoryType.get(InventoryType.BREWING_STAND));
     }
 
     @Override
-    public BrewingStand getHolder() {
-        return (BrewingStand) this.holder;
+    public BlockEntityBrewingStand getHolder() {
+        return (BlockEntityBrewingStand) this.holder;
     }
 
     public Item getIngredient() {

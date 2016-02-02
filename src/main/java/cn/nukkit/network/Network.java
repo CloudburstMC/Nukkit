@@ -22,7 +22,7 @@ public class Network {
     public static final byte CHANNEL_WORLD_CHUNKS = 2; //Chunk sending
     public static final byte CHANNEL_MOVEMENT = 3; //Movement sending
     public static final byte CHANNEL_BLOCKS = 4; //Block updates or explosions
-    public static final byte CHANNEL_WORLD_EVENTS = 5; //Entity, level or tile entity events
+    public static final byte CHANNEL_WORLD_EVENTS = 5; //Entity, level or blockentity entity events
     public static final byte CHANNEL_ENTITY_SPAWNING = 6; //Entity spawn/despawn channel
     public static final byte CHANNEL_TEXT = 7; //Chat and other text stuff
     public static final byte CHANNEL_END = 31;

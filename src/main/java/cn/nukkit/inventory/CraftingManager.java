@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.block.*;
+import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Potion;
 import cn.nukkit.utils.Utils;
@@ -364,7 +365,7 @@ public class CraftingManager {
 
     protected void registerBrewing() {
         for (int ingredient : new int[]{Item.NETHER_WART, Item.GOLD_NUGGET, Item.GHAST_TEAR, Item.GLOWSTONE_DUST, Item.REDSTONE_DUST, Item.GUNPOWDER, Item.MAGMA_CREAM, Item.BLAZE_POWDER, Item.GOLDEN_CARROT, Item.SPIDER_EYE, Item.FERMENTED_SPIDER_EYE, Item.GLISTERING_MELON, Item.SUGAR, Item.RAW_FISH}) {
-            cn.nukkit.tile.BrewingStand.ingredients.add(ingredient); //temporally solution for ingredients
+            BlockEntityBrewingStand.ingredients.add(ingredient); //temporally solution for ingredients
         }
 
         registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, Potion.AWKWARD, 1), Item.get(Item.NETHER_WART, 0, 1), Item.get(Item.POTION, Potion.NO_EFFECTS, 1)));

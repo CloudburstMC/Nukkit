@@ -2,6 +2,8 @@ package cn.nukkit;
 
 import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
@@ -59,9 +61,7 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
-import cn.nukkit.tile.Sign;
-import cn.nukkit.tile.Spawnable;
-import cn.nukkit.tile.Tile;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
@@ -2292,14 +2292,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 this.inventory.sendContents(this);
                 Block target = this.level.getBlock(vector);
-                Tile tile = this.level.getTile(vector);
+                BlockEntity blockEntity = this.level.getTile(vector);
 
                 this.level.sendBlocks(new Player[]{this}, new Block[]{target}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
 
                 this.inventory.sendHeldItem(this);
 
-                if (tile instanceof Spawnable) {
-                    ((Spawnable) tile).spawnTo(this);
+                if (blockEntity instanceof BlockEntitySpawnable) {
+                    ((BlockEntitySpawnable) blockEntity).spawnTo(this);
                 }
                 break;
 
@@ -2879,8 +2879,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 }
 
-                Tile t = this.level.getTile(pos);
-                if (t instanceof Sign) {
+                BlockEntity t = this.level.getTile(pos);
+                if (t instanceof BlockEntitySign) {
                     CompoundTag nbt;
                     try {
                         nbt = NBTIO.read(blockEntityDataPacket.namedTag, ByteOrder.LITTLE_ENDIAN);
@@ -2888,8 +2888,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         throw new RuntimeException(e);
                     }
 
-                    if (!Tile.SIGN.equals(nbt.getString("id"))) {
-                        ((Sign) t).spawnTo(this);
+                    if (!BlockEntity.SIGN.equals(nbt.getString("id"))) {
+                        ((BlockEntitySign) t).spawnTo(this);
                     } else {
                         SignChangeEvent signChangeEvent = new SignChangeEvent(t.getBlock(), this, new String[]{
                                 TextFormat.clean(nbt.getString("Text1"), this.removeFormat),
@@ -2911,9 +2911,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.server.getPluginManager().callEvent(signChangeEvent);
 
                         if (!signChangeEvent.isCancelled()) {
-                            ((Sign) t).setText(signChangeEvent.getLine(0), signChangeEvent.getLine(1), signChangeEvent.getLine(2), signChangeEvent.getLine(3));
+                            ((BlockEntitySign) t).setText(signChangeEvent.getLine(0), signChangeEvent.getLine(1), signChangeEvent.getLine(2), signChangeEvent.getLine(3));
                         } else {
-                            ((Sign) t).spawnTo(this);
+                            ((BlockEntitySign) t).spawnTo(this);
                         }
 
                     }

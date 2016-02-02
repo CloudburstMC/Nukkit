@@ -1,14 +1,14 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityFurnace;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.tile.Furnace;
-import cn.nukkit.tile.Tile;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -69,7 +69,7 @@ public class BurningFurnace extends Solid {
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
-                .putString("id", Tile.FURNACE)
+                .putString("id", BlockEntity.FURNACE)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
@@ -87,7 +87,7 @@ public class BurningFurnace extends Solid {
             }
         }
 
-        new Furnace(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        new BlockEntityFurnace(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
         return true;
     }
@@ -101,18 +101,18 @@ public class BurningFurnace extends Solid {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            Tile t = this.getLevel().getTile(this);
-            Furnace furnace;
-            if (t instanceof Furnace) {
-                furnace = (Furnace) t;
+            BlockEntity t = this.getLevel().getTile(this);
+            BlockEntityFurnace furnace;
+            if (t instanceof BlockEntityFurnace) {
+                furnace = (BlockEntityFurnace) t;
             } else {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
-                        .putString("id", Tile.FURNACE)
+                        .putString("id", BlockEntity.FURNACE)
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                furnace = new Furnace(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                furnace = new BlockEntityFurnace(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
             }
 
             if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {

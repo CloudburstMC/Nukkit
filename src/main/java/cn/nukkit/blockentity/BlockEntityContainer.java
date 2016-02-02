@@ -1,4 +1,4 @@
-package cn.nukkit.tile;
+package cn.nukkit.blockentity;
 
 import cn.nukkit.item.Item;
 
@@ -6,16 +6,16 @@ import cn.nukkit.item.Item;
  * 表达一个容器的接口。<br>
  * An interface describes a container.
  * <p>
- * <p>{@code Container}容器必须包含物品的{@code Item}对象。<br>
- * A {@code Container} must contain items as {@code Item} objects.</p>
+ * <p>{@code BlockEntityContainer}容器必须包含物品的{@code Item}对象。<br>
+ * A {@code BlockEntityContainer} must contain items as {@code Item} objects.</p>
  *
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
- * @see cn.nukkit.tile.Chest
- * @see cn.nukkit.tile.Furnace
+ * @see BlockEntityChest
+ * @see BlockEntityFurnace
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
-public interface Container {
+public interface BlockEntityContainer {
 
     /**
      * 返回一个存储在容器里的物品的{@code Item}对象。<br>

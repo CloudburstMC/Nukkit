@@ -1,6 +1,7 @@
 package cn.nukkit.level.format.leveldb;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
@@ -13,7 +14,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 
@@ -447,10 +447,10 @@ public class Chunk extends BaseFullChunk {
 
                 List<CompoundTag> tiles = new ArrayList<>();
 
-                for (Tile tile : this.getTiles().values()) {
-                    if (!tile.closed) {
-                        tile.saveNBT();
-                        entities.add(tile.namedTag);
+                for (BlockEntity blockEntity : this.getTiles().values()) {
+                    if (!blockEntity.closed) {
+                        blockEntity.saveNBT();
+                        entities.add(blockEntity.namedTag);
                     }
                 }
 
@@ -566,8 +566,8 @@ public class Chunk extends BaseFullChunk {
                             changed = true;
                             continue;
                         }
-                        Tile tile = Tile.createTile(nbt.getString("id"), this, nbt);
-                        if (tile == null) {
+                        BlockEntity blockEntity = BlockEntity.createTile(nbt.getString("id"), this, nbt);
+                        if (blockEntity == null) {
                             changed = true;
                             continue;
                         }

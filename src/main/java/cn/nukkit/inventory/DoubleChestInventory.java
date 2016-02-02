@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.tile.Chest;
+import cn.nukkit.blockentity.BlockEntityChest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     private ChestInventory left;
     private ChestInventory right;
 
-    public DoubleChestInventory(Chest left, Chest right) {
+    public DoubleChestInventory(BlockEntityChest left, BlockEntityChest right) {
         super(null, InventoryType.get(InventoryType.DOUBLE_CHEST));
         this.holder = this;
 
@@ -42,7 +42,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     }
 
     @Override
-    public Chest getHolder() {
+    public BlockEntityChest getHolder() {
         return this.left.getHolder();
     }
 

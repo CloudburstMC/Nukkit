@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityEnchantTable;
 import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
@@ -8,8 +10,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.tile.EnchantTable;
-import cn.nukkit.tile.Tile;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -72,7 +72,7 @@ public class EnchantingTable extends Solid {
         this.getLevel().setBlock(block, this, true, true);
 
         CompoundTag nbt = new CompoundTag()
-                .putString("id", Tile.ENCHANT_TABLE)
+                .putString("id", BlockEntity.ENCHANT_TABLE)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
@@ -90,7 +90,7 @@ public class EnchantingTable extends Solid {
             }
         }
 
-        Tile.createTile(Tile.ENCHANT_TABLE, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        BlockEntity.createTile(BlockEntity.ENCHANT_TABLE, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
         return true;
     }
@@ -98,18 +98,18 @@ public class EnchantingTable extends Solid {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            Tile t = this.getLevel().getTile(this);
-            EnchantTable enchantTable;
-            if (t instanceof EnchantTable) {
-                enchantTable = (EnchantTable) t;
+            BlockEntity t = this.getLevel().getTile(this);
+            BlockEntityEnchantTable enchantTable;
+            if (t instanceof BlockEntityEnchantTable) {
+                enchantTable = (BlockEntityEnchantTable) t;
             } else {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
-                        .putString("id", Tile.ENCHANT_TABLE)
+                        .putString("id", BlockEntity.ENCHANT_TABLE)
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                enchantTable = new EnchantTable(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                enchantTable = new BlockEntityEnchantTable(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
             }
 
             if (enchantTable.namedTag.contains("Lock") && enchantTable.namedTag.get("Lock") instanceof StringTag) {

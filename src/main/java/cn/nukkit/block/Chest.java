@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.math.AxisAlignedBB;
@@ -8,7 +10,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Iterator;
@@ -74,7 +75,7 @@ public class Chest extends Transparent {
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         int[] faces = {4, 2, 5, 3};
 
-        cn.nukkit.tile.Chest chest = null;
+        BlockEntityChest chest = null;
         this.meta = faces[player != null ? player.getDirection() : 0];
 
         for (int side = 2; side <= 5; ++side) {
@@ -85,9 +86,9 @@ public class Chest extends Transparent {
             }
             Block c = this.getSide(side);
             if (c instanceof Chest && c.getDamage() == this.meta) {
-                Tile tile = this.getLevel().getTile(c);
-                if (tile instanceof cn.nukkit.tile.Chest && !((cn.nukkit.tile.Chest) tile).isPaired()) {
-                    chest = (cn.nukkit.tile.Chest) tile;
+                BlockEntity blockEntity = this.getLevel().getTile(c);
+                if (blockEntity instanceof BlockEntityChest && !((BlockEntityChest) blockEntity).isPaired()) {
+                    chest = (BlockEntityChest) blockEntity;
                     break;
                 }
             }
@@ -96,7 +97,7 @@ public class Chest extends Transparent {
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag("")
                 .putList(new ListTag<>("Items"))
-                .putString("id", Tile.CHEST)
+                .putString("id", BlockEntity.CHEST)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
@@ -114,11 +115,11 @@ public class Chest extends Transparent {
             }
         }
 
-        Tile tile = new cn.nukkit.tile.Chest(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        BlockEntity blockEntity = new BlockEntityChest(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
         if (chest != null) {
-            chest.pairWith(((cn.nukkit.tile.Chest) tile));
-            ((cn.nukkit.tile.Chest) tile).pairWith(chest);
+            chest.pairWith(((BlockEntityChest) blockEntity));
+            ((BlockEntityChest) blockEntity).pairWith(chest);
         }
 
         return true;
@@ -126,9 +127,9 @@ public class Chest extends Transparent {
 
     @Override
     public boolean onBreak(Item item) {
-        Tile t = this.getLevel().getTile(this);
-        if (t instanceof cn.nukkit.tile.Chest) {
-            ((cn.nukkit.tile.Chest) t).unpair();
+        BlockEntity t = this.getLevel().getTile(this);
+        if (t instanceof BlockEntityChest) {
+            ((BlockEntityChest) t).unpair();
         }
         this.getLevel().setBlock(this, new Air(), true, true);
 
@@ -143,18 +144,18 @@ public class Chest extends Transparent {
                 return true;
             }
 
-            Tile t = this.getLevel().getTile(this);
-            cn.nukkit.tile.Chest chest;
-            if (t instanceof cn.nukkit.tile.Chest) {
-                chest = (cn.nukkit.tile.Chest) t;
+            BlockEntity t = this.getLevel().getTile(this);
+            BlockEntityChest chest;
+            if (t instanceof BlockEntityChest) {
+                chest = (BlockEntityChest) t;
             } else {
                 CompoundTag nbt = new CompoundTag("")
                         .putList(new ListTag<>("Items"))
-                        .putString("id", Tile.CHEST)
+                        .putString("id", BlockEntity.CHEST)
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                chest = new cn.nukkit.tile.Chest(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                chest = new BlockEntityChest(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
             }
 
             if (chest.namedTag.contains("Lock") && chest.namedTag.get("Lock") instanceof StringTag) {

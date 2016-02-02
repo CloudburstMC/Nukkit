@@ -2,13 +2,14 @@ package cn.nukkit.block;
 
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.Tool;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.tile.Tile;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Iterator;
@@ -64,7 +65,7 @@ public class BrewingStand extends Solid {
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
-                .putString("id", Tile.BREWING_STAND)
+                .putString("id", BlockEntity.BREWING_STAND)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
@@ -82,7 +83,7 @@ public class BrewingStand extends Solid {
             }
         }
 
-        new cn.nukkit.tile.BrewingStand(getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        new BlockEntityBrewingStand(getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
         return true;
     }
@@ -101,18 +102,18 @@ public class BrewingStand extends Solid {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            Tile t = getLevel().getTile(this);
-            cn.nukkit.tile.BrewingStand brewing = null;
-            if (t instanceof cn.nukkit.tile.BrewingStand) {
-                brewing = (cn.nukkit.tile.BrewingStand) t;
+            BlockEntity t = getLevel().getTile(this);
+            BlockEntityBrewingStand brewing = null;
+            if (t instanceof BlockEntityBrewingStand) {
+                brewing = (BlockEntityBrewingStand) t;
             } else {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
-                        .putString("id", Tile.BREWING_STAND)
+                        .putString("id", BlockEntity.BREWING_STAND)
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                brewing = new cn.nukkit.tile.BrewingStand(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                brewing = new BlockEntityBrewingStand(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
             }
 
             if (brewing.namedTag.contains("Lock") && brewing.namedTag.get("Lock") instanceof StringTag) {

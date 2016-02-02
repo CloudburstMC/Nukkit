@@ -1,11 +1,11 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.Server;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.level.Level;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.tile.Spawnable;
-import cn.nukkit.tile.Tile;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
@@ -33,10 +33,10 @@ public class ChunkRequestTask extends AsyncTask {
 
         byte[] buffer = new byte[0];
 
-        for (Tile tile : chunk.getTiles().values()) {
-            if (tile instanceof Spawnable) {
+        for (BlockEntity blockEntity : chunk.getTiles().values()) {
+            if (blockEntity instanceof BlockEntitySpawnable) {
                 try {
-                    buffer = Binary.appendBytes(buffer, NBTIO.write(((Spawnable) tile).getSpawnCompound(), ByteOrder.BIG_ENDIAN));
+                    buffer = Binary.appendBytes(buffer, NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), ByteOrder.BIG_ENDIAN));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

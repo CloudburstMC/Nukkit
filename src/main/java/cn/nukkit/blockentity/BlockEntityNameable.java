@@ -1,4 +1,4 @@
-package cn.nukkit.tile;
+package cn.nukkit.blockentity;
 
 /**
  * 表达一个能被命名的事物的接口。<br>
@@ -8,7 +8,7 @@ package cn.nukkit.tile;
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
-public interface Nameable {
+public interface BlockEntityNameable {
 
     /**
      * 返回这个事物的名字。<br>

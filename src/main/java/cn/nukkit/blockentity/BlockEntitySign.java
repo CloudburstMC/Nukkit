@@ -1,4 +1,4 @@
-package cn.nukkit.tile;
+package cn.nukkit.blockentity;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -7,9 +7,9 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Sign extends Spawnable {
+public class BlockEntitySign extends BlockEntitySpawnable {
 
-    public Sign(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntitySign(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         if (!nbt.contains("Text1")) {
             nbt.putString("Text1", "");
@@ -75,7 +75,7 @@ public class Sign extends Spawnable {
     @Override
     public CompoundTag getSpawnCompound() {
         return new CompoundTag()
-                .putString("id", Tile.SIGN)
+                .putString("id", BlockEntity.SIGN)
                 .putString("Text1", this.namedTag.getString("Text1"))
                 .putString("Text2", this.namedTag.getString("Text2"))
                 .putString("Text3", this.namedTag.getString("Text3"))

@@ -1,4 +1,4 @@
-package cn.nukkit.tile;
+package cn.nukkit.blockentity;
 
 
 import cn.nukkit.Player;
@@ -17,7 +17,7 @@ import cn.nukkit.network.protocol.ContainerSetDataPacket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BrewingStand extends Spawnable implements InventoryHolder, Container, Nameable {
+public class BlockEntityBrewingStand extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
     protected BrewingInventory inventory;
 
@@ -25,7 +25,7 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
 
     public static List<Integer> ingredients = new ArrayList<>();
 
-    public BrewingStand(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityBrewingStand(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         inventory = new BrewingInventory(this);
 
@@ -210,7 +210,7 @@ public class BrewingStand extends Spawnable implements InventoryHolder, Containe
     @Override
     public CompoundTag getSpawnCompound() {
         CompoundTag nbt = new CompoundTag()
-                .putString("id", Tile.BREWING_STAND)
+                .putString("id", BlockEntity.BREWING_STAND)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)

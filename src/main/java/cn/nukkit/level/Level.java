@@ -3,6 +3,8 @@ package cn.nukkit.level;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -39,9 +41,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.redstone.Redstone;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.tile.Chest;
-import cn.nukkit.tile.Sign;
-import cn.nukkit.tile.Tile;
+import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.utils.*;
 
 import java.util.*;
@@ -74,7 +74,7 @@ public class Level implements ChunkManager, Metadatable {
     public static final int DIMENSION_OVERWORLD = 0;
     public static final int DIMENSION_NETHER = 1;
 
-    private Map<Long, Tile> tiles = new HashMap<>();
+    private Map<Long, BlockEntity> tiles = new HashMap<>();
 
     private Map<String, Map<Long, SetEntityMotionPacket.Entry>> motionToSend = new HashMap<>();
     private Map<String, Map<Long, MoveEntityPacket.Entry>> moveToSend = new HashMap<>();
@@ -85,7 +85,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public Map<Long, Entity> updateEntities = new HashMap<>();
 
-    public Map<Long, Tile> updateTiles = new HashMap<>();
+    public Map<Long, BlockEntity> updateTiles = new HashMap<>();
 
     private Map<String, Block> blockCache = new HashMap<>();
 
@@ -1476,19 +1476,19 @@ public class Level implements ChunkManager, Metadatable {
 
         target.onBreak(item);
 
-        Tile tile = this.getTile(target);
-        if (tile != null) {
-            if (tile instanceof InventoryHolder) {
-                if (tile instanceof Chest) {
-                    ((Chest) tile).unpair();
+        BlockEntity blockEntity = this.getTile(target);
+        if (blockEntity != null) {
+            if (blockEntity instanceof InventoryHolder) {
+                if (blockEntity instanceof BlockEntityChest) {
+                    ((BlockEntityChest) blockEntity).unpair();
                 }
 
-                for (Item chestItem : ((InventoryHolder) tile).getInventory().getContents().values()) {
+                for (Item chestItem : ((InventoryHolder) blockEntity).getInventory().getContents().values()) {
                     this.dropItem(target, chestItem);
                 }
             }
 
-            tile.close();
+            blockEntity.close();
         }
 
         if (item != null) {
@@ -1691,7 +1691,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (hand.getId() == Item.SIGN_POST || hand.getId() == Item.WALL_SIGN) {
             CompoundTag nbt = new CompoundTag()
-                    .putString("id", Tile.SIGN)
+                    .putString("id", BlockEntity.SIGN)
                     .putInt("x", (int) block.x)
                     .putInt("y", (int) block.y)
                     .putInt("z", (int) block.z)
@@ -1710,7 +1710,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-            new Sign(this.getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+            new BlockEntitySign(this.getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
         }
 
         item.setCount(item.getCount() - 1);
@@ -1782,11 +1782,11 @@ public class Level implements ChunkManager, Metadatable {
         return nearby.stream().toArray(Entity[]::new);
     }
 
-    public Map<Long, Tile> getTiles() {
+    public Map<Long, BlockEntity> getTiles() {
         return tiles;
     }
 
-    public Tile getTileById(long tileId) {
+    public BlockEntity getTileById(long tileId) {
         return this.tiles.containsKey(tileId) ? this.tiles.get(tileId) : null;
     }
 
@@ -1798,7 +1798,7 @@ public class Level implements ChunkManager, Metadatable {
         return loaders;
     }
 
-    public Tile getTile(Vector3 pos) {
+    public BlockEntity getTile(Vector3 pos) {
         FullChunk chunk = this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, false);
 
         if (chunk != null) {
@@ -1813,7 +1813,7 @@ public class Level implements ChunkManager, Metadatable {
         return (chunk = this.getChunk(X, Z)) != null ? chunk.getEntities() : new HashMap<>();
     }
 
-    public Map<Long, Tile> getChunkTiles(int X, int Z) {
+    public Map<Long, BlockEntity> getChunkTiles(int X, int Z) {
         FullChunk chunk;
         return (chunk = this.getChunk(X, Z)) != null ? chunk.getTiles() : new HashMap<>();
     }
@@ -1985,7 +1985,7 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             Map<Long, Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : new HashMap<>();
 
-            Map<Long, Tile> oldTiles = oldChunk != null ? oldChunk.getTiles() : new HashMap<>();
+            Map<Long, BlockEntity> oldTiles = oldChunk != null ? oldChunk.getTiles() : new HashMap<>();
 
             this.provider.setChunk(chunkX, chunkZ, chunk);
             this.chunks.put(index, chunk);
@@ -1995,9 +1995,9 @@ public class Level implements ChunkManager, Metadatable {
                 entity.chunk = chunk;
             }
 
-            for (Tile tile : oldTiles.values()) {
-                chunk.addTile(tile);
-                tile.chunk = chunk;
+            for (BlockEntity blockEntity : oldTiles.values()) {
+                chunk.addTile(blockEntity);
+                blockEntity.chunk = chunk;
             }
         }
 
@@ -2153,21 +2153,21 @@ public class Level implements ChunkManager, Metadatable {
         this.entities.put(entity.getId(), entity);
     }
 
-    public void addTile(Tile tile) {
-        if (!tile.getLevel().equals(this)) {
-            throw new LevelException("Invalid Tile level");
+    public void addTile(BlockEntity blockEntity) {
+        if (!blockEntity.getLevel().equals(this)) {
+            throw new LevelException("Invalid Block Entity level");
         }
-        tiles.put(tile.getId(), tile);
-        this.clearChunkCache((int) tile.getX() >> 4, (int) tile.getZ() >> 4);
+        tiles.put(blockEntity.getId(), blockEntity);
+        this.clearChunkCache((int) blockEntity.getX() >> 4, (int) blockEntity.getZ() >> 4);
     }
 
-    public void removeTile(Tile tile) {
-        if (!tile.getLevel().equals(this)) {
-            throw new LevelException("Invalid Tile level");
+    public void removeTile(BlockEntity blockEntity) {
+        if (!blockEntity.getLevel().equals(this)) {
+            throw new LevelException("Invalid Block Entity level");
         }
-        tiles.remove(tile.getId());
-        updateTiles.remove(tile.getId());
-        this.clearChunkCache((int) tile.getX() >> 4, (int) tile.getZ() >> 4);
+        tiles.remove(blockEntity.getId());
+        updateTiles.remove(blockEntity.getId());
+        this.clearChunkCache((int) blockEntity.getX() >> 4, (int) blockEntity.getZ() >> 4);
     }
 
     public boolean isChunkInUse(int x, int z) {

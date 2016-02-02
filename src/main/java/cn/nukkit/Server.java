@@ -61,7 +61,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.tile.*;
+import cn.nukkit.blockentity.*;
 import cn.nukkit.utils.*;
 
 import java.io.*;
@@ -1821,11 +1821,11 @@ public class Server {
     }
 
     private void registerTiles() {
-        Tile.registerTile(Chest.class);
-        Tile.registerTile(Furnace.class);
-        Tile.registerTile(Sign.class);
-        Tile.registerTile(EnchantTable.class);
-        Tile.registerTile(BrewingStand.class);
+        BlockEntity.registerTile(BlockEntityChest.class);
+        BlockEntity.registerTile(BlockEntityFurnace.class);
+        BlockEntity.registerTile(BlockEntitySign.class);
+        BlockEntity.registerTile(BlockEntityEnchantTable.class);
+        BlockEntity.registerTile(BlockEntityBrewingStand.class);
     }
 
     public static Server getInstance() {

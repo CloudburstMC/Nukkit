@@ -22,9 +22,9 @@ public class EntityExplodeEvent extends EntityEvent implements Cancellable {
 
     protected Position position;
     protected HashMap<String, Block> blocks;
-    protected float yield;
+    protected double yield;
 
-    public EntityExplodeEvent(Entity entity, Position position, HashMap<String, Block> blocks, float yield) {
+    public EntityExplodeEvent(Entity entity, Position position, HashMap<String, Block> blocks, double yield) {
         this.entity = entity;
         this.position = position;
         this.blocks = blocks;
@@ -43,11 +43,11 @@ public class EntityExplodeEvent extends EntityEvent implements Cancellable {
         this.blocks = blocks;
     }
 
-    public float getYield() {
+    public double getYield() {
         return this.yield;
     }
 
-    public void setYield(float yield) {
+    public void setYield(double yield) {
         this.yield = yield;
     }
 

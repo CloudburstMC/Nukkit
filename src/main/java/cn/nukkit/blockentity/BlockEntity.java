@@ -1,4 +1,4 @@
-package cn.nukkit.tile;
+package cn.nukkit.blockentity;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -15,19 +15,24 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Tile extends Position {
-    public static final String SIGN = "Sign";
+public abstract class BlockEntity extends Position {
+    //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
     public static final String CHEST = "Chest";
     public static final String FURNACE = "Furnace";
-    public static final String FLOWER_POT = "FlowerPot";
+    public static final String NETHER_REACTOR = "NetherReactor";
+    public static final String SIGN = "Sign";
     public static final String MOB_SPAWNER = "MobSpawner";
-    public static final String SKULL = "Skull";
-    public static final String BREWING_STAND = "BrewingStand";
     public static final String ENCHANT_TABLE = "EnchantTable";
+    public static final String SKULL = "Skull";
+    public static final String FLOWER_POT = "FlowerPot";
+    public static final String BREWING_STAND = "BrewingStand";
+    public static final String DAYLIGHT_DETECTOR = "DaylightDetector";
+    public static final String MUSIC = "Music";
+
 
     public static long tileCount = 1;
 
-    private static Map<String, Class<? extends Tile>> knownTiles = new HashMap<>();
+    private static Map<String, Class<? extends BlockEntity>> knownTiles = new HashMap<>();
     private static Map<String, String> shortNames = new HashMap<>();
 
     public FullChunk chunk;
@@ -39,9 +44,9 @@ public abstract class Tile extends Position {
     protected long lastUpdate;
     protected Server server;
 
-    public Tile(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntity(FullChunk chunk, CompoundTag nbt) {
         if (chunk == null || chunk.getProvider() == null) {
-            throw new ChunkException("Invalid garbage Chunk given to Tile");
+            throw new ChunkException("Invalid garbage Chunk given to Block Entity");
         }
 
         this.server = chunk.getProvider().getLevel().getServer();
@@ -50,7 +55,7 @@ public abstract class Tile extends Position {
         this.namedTag = nbt;
         this.name = "";
         this.lastUpdate = System.currentTimeMillis();
-        this.id = Tile.tileCount++;
+        this.id = BlockEntity.tileCount++;
         this.x = this.namedTag.getInt("x");
         this.y = this.namedTag.getInt("y");
         this.z = this.namedTag.getInt("z");
@@ -59,18 +64,18 @@ public abstract class Tile extends Position {
         this.getLevel().addTile(this);
     }
 
-    public static Tile createTile(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
-        Tile tile = null;
+    public static BlockEntity createTile(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
+        BlockEntity blockEntity = null;
 
         if (knownTiles.containsKey(type)) {
-            Class<? extends Tile> clazz = knownTiles.get(type);
+            Class<? extends BlockEntity> clazz = knownTiles.get(type);
 
             if (clazz == null) {
                 return null;
             }
 
             for (Constructor constructor : clazz.getConstructors()) {
-                if (tile != null) {
+                if (blockEntity != null) {
                     break;
                 }
 
@@ -80,14 +85,14 @@ public abstract class Tile extends Position {
 
                 try {
                     if (args == null || args.length == 0) {
-                        tile = (Tile) constructor.newInstance(chunk, nbt);
+                        blockEntity = (BlockEntity) constructor.newInstance(chunk, nbt);
                     } else {
                         Object[] objects = new Object[args.length + 2];
 
                         objects[0] = chunk;
                         objects[1] = nbt;
                         System.arraycopy(args, 0, objects, 2, args.length);
-                        tile = (Tile) constructor.newInstance(objects);
+                        blockEntity = (BlockEntity) constructor.newInstance(objects);
 
                     }
                 } catch (Exception e) {
@@ -97,10 +102,10 @@ public abstract class Tile extends Position {
             }
         }
 
-        return tile;
+        return blockEntity;
     }
 
-    public static boolean registerTile(Class<? extends Tile> c) {
+    public static boolean registerTile(Class<? extends BlockEntity> c) {
         if (c == null) {
             return false;
         }

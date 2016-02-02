@@ -1,4 +1,4 @@
-package cn.nukkit.tile;
+package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
@@ -13,8 +13,8 @@ import java.nio.ByteOrder;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Spawnable extends Tile {
-    public Spawnable(FullChunk chunk, CompoundTag nbt) {
+public abstract class BlockEntitySpawnable extends BlockEntity {
+    public BlockEntitySpawnable(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         this.spawnToAll();
     }
