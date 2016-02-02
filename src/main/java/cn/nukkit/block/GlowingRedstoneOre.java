@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 
 //和pm源码有点出入，这里参考了wiki
@@ -37,7 +36,7 @@ public class GlowingRedstoneOre extends RedstoneOre {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED || type == Level.BLOCK_UPDATE_RANDOM) {
-            this.getLevel().setBlock(this, Block.get(Item.REDSTONE_ORE, this.meta), false, false);
+            this.getLevel().setBlock(this, new RedstoneOre(this.meta), false, false);
 
             return Level.BLOCK_UPDATE_WEAK;
         }

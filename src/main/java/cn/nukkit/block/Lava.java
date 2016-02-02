@@ -83,4 +83,8 @@ public class Lava extends Liquid {
         return BlockColor.LAVA_BLOCK_COLOR;
     }
 
+    @Override
+    public Liquid getBlock(int meta) {
+        return new Lava(meta);
+    }
 }

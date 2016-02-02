@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.Liquid;
 import cn.nukkit.entity.Entity;
@@ -122,7 +123,7 @@ public class EntityFallingBlock extends Entity {
                     kill();
                     return true;
                 }
-                level.setBlock(pos, Block.get(0), true);
+                level.setBlock(pos, new Air(), true);
             }
 
             motionY -= getGravity();

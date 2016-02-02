@@ -236,7 +236,7 @@ public abstract class Liquid extends Transparent {
                     if (decay < 0) {
                         this.getLevel().setBlock(this, new Air(), true);
                     } else {
-                        this.getLevel().setBlock(this, Block.get(this.getId(), decay), true);
+                        this.getLevel().setBlock(this, this.getBlock(decay), true);
                         this.getLevel().scheduleUpdate(this, this.tickRate());
                     }
                 } else if (flag) {
@@ -251,15 +251,15 @@ public abstract class Liquid extends Transparent {
 
             if (bottomBlock.canBeFlowedInto() || bottomBlock instanceof Liquid) {
                 if (this instanceof Lava && bottomBlock instanceof Water) {
-                    this.getLevel().setBlock(bottomBlock, Block.get(Item.STONE), true);
+                    this.getLevel().setBlock(bottomBlock, new Stone(), true);
                     return 0;
                 }
 
                 if (decay >= 8) {
-                    this.getLevel().setBlock(bottomBlock, Block.get(this.getId(), decay), true);
+                    this.getLevel().setBlock(bottomBlock, this.getBlock(decay), true);
                     this.getLevel().scheduleUpdate(bottomBlock, this.tickRate());
                 } else {
-                    this.getLevel().setBlock(bottomBlock, Block.get(this.getId(), decay + 8), true);
+                    this.getLevel().setBlock(bottomBlock, this.getBlock(decay + 8), true);
                     this.getLevel().scheduleUpdate(bottomBlock, this.tickRate());
                 }
             } else if (decay >= 0 && (decay == 0 || !bottomBlock.canBeFlowedInto())) {
@@ -306,7 +306,7 @@ public abstract class Liquid extends Transparent {
                 this.getLevel().useBreakOn(block);
             }
 
-            this.getLevel().setBlock(block, Block.get(this.getId(), newFlowDecay), true);
+            this.getLevel().setBlock(block, this.getBlock(newFlowDecay), true);
             this.getLevel().scheduleUpdate(block, this.tickRate());
         }
     }
@@ -436,9 +436,9 @@ public abstract class Liquid extends Transparent {
 
             if (colliding) {
                 if (this.getDamage() == 0) {
-                    this.getLevel().setBlock(this, Block.get(Item.OBSIDIAN), true);
+                    this.getLevel().setBlock(this, new Obsidian(), true);
                 } else if (this.getDamage() <= 4) {
-                    this.getLevel().setBlock(this, Block.get(Item.COBBLESTONE), true);
+                    this.getLevel().setBlock(this, new Cobblestone(), true);
                 }
             }
         }
@@ -453,4 +453,6 @@ public abstract class Liquid extends Transparent {
     public int[][] getDrops(Item item) {
         return new int[0][];
     }
+
+    public abstract Liquid getBlock(int meta);
 }

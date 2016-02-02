@@ -1,7 +1,5 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.Block;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -18,7 +16,7 @@ public class Bed extends Item {
 
     public Bed(Integer meta, int count) {
         super(BED, 0, count, "Bed");
-        this.block = Block.get(Item.BED_BLOCK);
+        this.block = new cn.nukkit.block.Bed();
     }
 
     @Override

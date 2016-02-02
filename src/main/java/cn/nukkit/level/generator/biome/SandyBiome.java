@@ -1,6 +1,8 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.Sand;
+import cn.nukkit.block.Sandstone;
 
 /**
  * author: MagicDroidX
@@ -9,11 +11,11 @@ import cn.nukkit.block.Block;
 public abstract class SandyBiome extends NormalBiome {
     public SandyBiome() {
         this.setGroundCover(new Block[]{
-                Block.get(Block.SAND, 0),
-                Block.get(Block.SAND, 0),
-                Block.get(Block.SANDSTONE, 0),
-                Block.get(Block.SANDSTONE, 0),
-                Block.get(Block.SANDSTONE, 0)
+                new Sand(),
+                new Sand(),
+                new Sandstone(),
+                new Sandstone(),
+                new Sandstone()
         });
     }
 }

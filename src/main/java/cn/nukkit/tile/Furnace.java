@@ -2,7 +2,7 @@ package cn.nukkit.tile;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Air;
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BurningFurnace;
 import cn.nukkit.event.inventory.FurnaceBurnEvent;
 import cn.nukkit.event.inventory.FurnaceSmeltEvent;
 import cn.nukkit.inventory.FurnaceInventory;
@@ -161,7 +161,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
         this.namedTag.putShort("BurnTime", ev.getBurnTime());
         this.namedTag.putShort("BurnDuration", 0);
         if (this.getBlock().getId() == Item.FURNACE) {
-            this.getLevel().setBlock(this, Block.get(Item.BURNING_FURNACE, this.getBlock().getDamage()), true);
+            this.getLevel().setBlock(this, new BurningFurnace(this.getBlock().getDamage()), true);
         }
 
         if (this.namedTag.getShort("BurnTime") > 0 && ev.isBurning()) {
@@ -222,7 +222,7 @@ public class Furnace extends Spawnable implements InventoryHolder, Container, Na
             ret = true;
         } else {
             if (this.getBlock().getId() == Item.BURNING_FURNACE) {
-                this.getLevel().setBlock(this, Block.get(Item.FURNACE, this.getBlock().getDamage()), true);
+                this.getLevel().setBlock(this, new cn.nukkit.block.Furnace(this.getBlock().getDamage()), true);
             }
             this.namedTag.putShort("BurnTime", 0);
             this.namedTag.putShort("CookTime", 0);

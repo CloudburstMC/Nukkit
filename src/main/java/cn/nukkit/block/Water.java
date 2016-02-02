@@ -62,4 +62,9 @@ public class Water extends Liquid {
     public BlockColor getColor() {
         return BlockColor.WATER_BLOCK_COLOR;
     }
+
+    @Override
+    public Liquid getBlock(int meta) {
+        return new Water(meta);
+    }
 }

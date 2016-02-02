@@ -1,10 +1,7 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.Fence;
-import cn.nukkit.block.Flower;
-import cn.nukkit.block.RedstoneTorch;
+import cn.nukkit.block.*;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -1635,7 +1632,7 @@ public class Item implements Cloneable {
         if (this.block != null) {
             return this.block.clone();
         } else {
-            return Block.get(AIR);
+            return new Air();
         }
     }
 

@@ -55,12 +55,12 @@ public class SignPost extends Transparent {
         if (face != 0) {
             if (face < 2 || face > 5) {
                 meta = (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f;
-                getLevel().setBlock(block, Block.get(Item.SIGN_POST, meta), true);
+                getLevel().setBlock(block, new SignPost(meta), true);
 
                 return true;
             } else {
                 meta = face;
-                getLevel().setBlock(block, Block.get(Item.WALL_SIGN, meta), true);
+                getLevel().setBlock(block, new WallSign(meta), true);
 
                 return true;
             }

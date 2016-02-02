@@ -34,7 +34,7 @@ public class Cake extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
-        level.setBlock(block, Block.get(Block.CAKE_BLOCK), true);
+        level.setBlock(block, new cn.nukkit.block.Cake(), true);
         return true;
     }
 

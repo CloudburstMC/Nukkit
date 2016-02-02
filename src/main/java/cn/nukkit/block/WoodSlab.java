@@ -74,11 +74,11 @@ public class WoodSlab extends Slab {
         this.meta &= 0x07;
         if (face == 0) {
             if (target.getId() == WOOD_SLAB && (target.getDamage() & 0x08) == 0x08 && (target.getDamage() & 0x07) == (this.meta & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(Item.DOUBLE_WOOD_SLAB, this.meta), true);
+                this.getLevel().setBlock(target, new DoubleWoodSlab(this.meta), true);
 
                 return true;
             } else if (block.getId() == WOOD_SLAB && (block.getDamage() & 0x07) == (this.meta & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(Item.DOUBLE_WOOD_SLAB, this.meta), true);
+                this.getLevel().setBlock(block, new DoubleWoodSlab(this.meta), true);
 
                 return true;
             } else {
@@ -86,11 +86,11 @@ public class WoodSlab extends Slab {
             }
         } else if (face == 1) {
             if (target.getId() == WOOD_SLAB && (target.getDamage() & 0x08) == 0 && (target.getDamage() & 0x07) == (this.meta & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(Item.DOUBLE_WOOD_SLAB, this.meta), true);
+                this.getLevel().setBlock(target, new DoubleWoodSlab(this.meta), true);
 
                 return true;
             } else if (block.getId() == WOOD_SLAB && (block.getDamage() & 0x07) == (this.meta & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(Item.DOUBLE_WOOD_SLAB, this.meta), true);
+                this.getLevel().setBlock(block, new DoubleWoodSlab(this.meta), true);
 
                 return true;
             }
@@ -98,7 +98,7 @@ public class WoodSlab extends Slab {
         } else {
             if (block.getId() == WOOD_SLAB) {
                 if ((block.getDamage() & 0x07) == (this.meta & 0x07)) {
-                    this.getLevel().setBlock(block, Block.get(Item.DOUBLE_WOOD_SLAB, this.meta), true);
+                    this.getLevel().setBlock(block, new DoubleWoodSlab(this.meta), true);
 
                     return true;
                 }

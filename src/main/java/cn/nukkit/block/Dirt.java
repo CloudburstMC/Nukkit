@@ -63,7 +63,7 @@ public class Dirt extends Solid {
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, Block.get(Item.FARMLAND, 0), true);
+            this.getLevel().setBlock(this, new Farmland(), true);
 
             return true;
         }

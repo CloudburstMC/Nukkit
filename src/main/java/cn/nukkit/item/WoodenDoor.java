@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.block.WoodDoor;
 
 /**
  * author: MagicDroidX
@@ -18,7 +18,7 @@ public class WoodenDoor extends Item {
 
     public WoodenDoor(Integer meta, int count) {
         super(WOODEN_DOOR, 0, count, "Oak Door");
-        this.block = Block.get(Item.WOODEN_DOOR_BLOCK);
+        this.block = new WoodDoor();
     }
 
 }

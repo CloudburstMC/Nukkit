@@ -90,11 +90,11 @@ public class Slab extends Transparent {
         this.meta &= 0x07;
         if (face == 0) {
             if (target.getId() == SLAB && (target.getDamage() & 0x08) == 0x08 && (target.getDamage() & 0x07) == (this.meta & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(Item.DOUBLE_SLAB, this.meta), true);
+                this.getLevel().setBlock(target, new DoubleSlab(this.meta), true);
 
                 return true;
             } else if (block.getId() == SLAB && (block.getDamage() & 0x07) == (this.meta & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(Item.DOUBLE_SLAB, this.meta), true);
+                this.getLevel().setBlock(block, new DoubleSlab(this.meta), true);
 
                 return true;
             } else {
@@ -102,11 +102,11 @@ public class Slab extends Transparent {
             }
         } else if (face == 1) {
             if (target.getId() == SLAB && (target.getDamage() & 0x08) == 0 && (target.getDamage() & 0x07) == (this.meta & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(Item.DOUBLE_SLAB, this.meta), true);
+                this.getLevel().setBlock(target, new DoubleSlab(this.meta), true);
 
                 return true;
             } else if (block.getId() == SLAB && (block.getDamage() & 0x07) == (this.meta & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(Item.DOUBLE_SLAB, this.meta), true);
+                this.getLevel().setBlock(block, new DoubleSlab(this.meta), true);
 
                 return true;
             }
@@ -114,7 +114,7 @@ public class Slab extends Transparent {
         } else {
             if (block.getId() == SLAB) {
                 if ((block.getDamage() & 0x07) == (this.meta & 0x07)) {
-                    this.getLevel().setBlock(block, Block.get(Item.DOUBLE_SLAB, this.meta), true);
+                    this.getLevel().setBlock(block, new DoubleSlab(this.meta), true);
 
                     return true;
                 }
