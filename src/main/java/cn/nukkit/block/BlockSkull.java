@@ -60,6 +60,7 @@ public class BlockSkull extends BlockTransparent{
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        // TODO: 2016/2/3 blockentity
         short[] faces = new short[]{
                 0,75,
                 0,5,
@@ -80,6 +81,7 @@ public class BlockSkull extends BlockTransparent{
     }
     @Override
     public int[][] getDrops(Item item) {
+        // TODO: 2016/2/3 blockentity
         return new int[][]{new int[]{this.getId(), this.meta & 0x04, 1}};
     }
 
