@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.item.Dye;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -42,7 +42,7 @@ public class BlockCarpet extends BlockFlowable {
 
     @Override
     public String getName() {
-        return Dye.getColorName(meta) + " Carpet";
+        return ItemDye.getColorName(meta) + " Carpet";
     }
 
     @Override

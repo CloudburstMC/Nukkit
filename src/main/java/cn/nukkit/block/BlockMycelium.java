@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
@@ -34,7 +34,7 @@ public class BlockMycelium extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_SHOVEL;
+        return ItemTool.TYPE_SHOVEL;
     }
 
     @Override

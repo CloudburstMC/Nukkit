@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -56,7 +56,7 @@ public class BlockChest extends BlockTransparent {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_AXE;
+        return ItemTool.TYPE_AXE;
     }
 
     @Override

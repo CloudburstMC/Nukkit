@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -46,7 +46,7 @@ public class BlockDirt extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_SHOVEL;
+        return ItemTool.TYPE_SHOVEL;
     }
 
     @Override

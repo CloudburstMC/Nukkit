@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -34,7 +34,7 @@ public class BlockSand extends BlockFallable {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_SHOVEL;
+        return ItemTool.TYPE_SHOVEL;
     }
 
     @Override

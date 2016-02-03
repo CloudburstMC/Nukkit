@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -31,7 +31,7 @@ public class BlockLapis extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class BlockLapis extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= Tool.TIER_STONE) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
             return new int[][]{new int[]{Item.LAPIS_BLOCK, 0, 1}};
         } else {
             return new int[0][];

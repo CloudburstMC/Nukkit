@@ -2,8 +2,8 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.item.Dye;
-import cn.nukkit.item.EnchantedBook;
+import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemBookEnchanted;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.enchantment.EnchantmentEntry;
@@ -180,7 +180,7 @@ public class EnchantInventory extends ContainerInventory {
     }
 
     public void onEnchant(Player who, Item before, Item after) {
-        Item result = (before.getId() == Item.BOOK) ? new EnchantedBook() : before;
+        Item result = (before.getId() == Item.BOOK) ? new ItemBookEnchanted() : before;
         if (!before.hasEnchantments() && after.hasEnchantments() && after.getId() == result.getId() && this
                 .levels != null && this.entries != null) {
             System.out.println("here");
@@ -191,7 +191,7 @@ public class EnchantInventory extends ContainerInventory {
                     int level = who.getExperienceLevel();
                     int exp = who.getExperience();
                     int cost = this.entries[i].getCost();
-                    if (lapis.getId() == Item.DYE && lapis.getDamage() == Dye.BLUE && lapis.getCount() > i && level >= cost) {
+                    if (lapis.getId() == Item.DYE && lapis.getDamage() == ItemDye.BLUE && lapis.getCount() > i && level >= cost) {
                         result.addEnchantment(enchantments);
                         this.setItem(0, result);
                         lapis.setCount(lapis.getCount() - i - 1);

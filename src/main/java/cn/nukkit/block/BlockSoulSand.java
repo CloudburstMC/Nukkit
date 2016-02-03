@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
@@ -40,7 +40,7 @@ public class BlockSoulSand extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_SHOVEL;
+        return ItemTool.TYPE_SHOVEL;
     }
 
     @Override
