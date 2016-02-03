@@ -6,6 +6,7 @@ import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.blockentity.BlockEntitySign;
+import cn.nukkit.blockentity.BlockEntitySkull;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -1687,30 +1688,6 @@ public class Level implements ChunkManager, Metadatable {
 
         if (!hand.place(item, block, target, face, fx, fy, fz, player)) {
             return null;
-        }
-
-        if (hand.getId() == Item.SIGN_POST || hand.getId() == Item.WALL_SIGN) {
-            CompoundTag nbt = new CompoundTag()
-                    .putString("id", BlockEntity.SIGN)
-                    .putInt("x", (int) block.x)
-                    .putInt("y", (int) block.y)
-                    .putInt("z", (int) block.z)
-                    .putString("Text1", "")
-                    .putString("Text2", "")
-                    .putString("Text3", "")
-                    .putString("Text4", "");
-
-            if (player != null) {
-                nbt.putString("Creator", player.getUniqueId().toString());
-            }
-
-            if (item.hasCustomBlockData()) {
-                for (Tag atag : item.getCustomBlockData().getAllTags()) {
-                    nbt.put(atag.getName(), atag);
-                }
-            }
-
-            new BlockEntitySign(this.getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
         }
 
         item.setCount(item.getCount() - 1);

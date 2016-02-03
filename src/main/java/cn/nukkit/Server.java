@@ -1821,11 +1821,12 @@ public class Server {
     }
 
     private void registerBlockEntities() {
+        BlockEntity.registerBlockEntities(BlockEntityBrewingStand.class);
         BlockEntity.registerBlockEntities(BlockEntityChest.class);
+        BlockEntity.registerBlockEntities(BlockEntityEnchantTable.class);
         BlockEntity.registerBlockEntities(BlockEntityFurnace.class);
         BlockEntity.registerBlockEntities(BlockEntitySign.class);
-        BlockEntity.registerBlockEntities(BlockEntityEnchantTable.class);
-        BlockEntity.registerBlockEntities(BlockEntityBrewingStand.class);
+        BlockEntity.registerBlockEntities(BlockEntitySkull.class);
     }
 
     public static Server getInstance() {
