@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.SignPost;
+import cn.nukkit.block.BlockSignPost;
 
 /**
  * author: MagicDroidX
@@ -18,7 +18,7 @@ public class Sign extends Item {
 
     public Sign(Integer meta, int count) {
         super(SIGN, 0, count, "Sign");
-        this.block = new SignPost();
+        this.block = new BlockSignPost();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package cn.nukkit.item;
 
+import cn.nukkit.block.BlockPotato;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -16,7 +18,7 @@ public class Potato extends EdibleItem {
 
     public Potato(Integer meta, int count) {
         super(POTATO, meta, count, "Potato");
-        this.block = new cn.nukkit.block.Potato();
+        this.block = new BlockPotato();
     }
 
     protected Potato(int id, Integer meta, int count, String name) {

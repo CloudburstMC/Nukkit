@@ -3,7 +3,7 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.Air;
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.inventory.BrewingInventory;
 import cn.nukkit.inventory.BrewingRecipe;
 import cn.nukkit.inventory.InventoryHolder;
@@ -104,7 +104,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
     public Item getItem(int index) {
         int i = this.getSlotIndex(index);
         if (i < 0) {
-            return new ItemBlock(new Air(), 0, 0);
+            return new ItemBlock(new BlockAir(), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
             return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count") & 0xff);

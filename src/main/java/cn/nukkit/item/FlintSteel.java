@@ -2,9 +2,9 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.Fire;
-import cn.nukkit.block.NetherPortalBlock;
-import cn.nukkit.block.Solid;
+import cn.nukkit.block.BlockFire;
+import cn.nukkit.block.BlockNetherPortal;
+import cn.nukkit.block.BlockSolid;
 import cn.nukkit.level.Level;
 
 /**
@@ -36,12 +36,12 @@ public class FlintSteel extends Tool {
             player.getInventory().setItemInHand(new Item(Item.AIR, 0, 0));
         }
 
-        if (block.getId() == AIR && (target instanceof Solid)) {
+        if (block.getId() == AIR && (target instanceof BlockSolid)) {
             if (target.getId() == OBSIDIAN) {
                 //todo construct the nether portal
-                level.setBlock(block, new NetherPortalBlock(), true);
+                level.setBlock(block, new BlockNetherPortal(), true);
             } else {
-                level.setBlock(block, new Fire(), true);
+                level.setBlock(block, new BlockFire(), true);
             }
             return true;
         }

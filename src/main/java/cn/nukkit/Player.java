@@ -1,6 +1,6 @@
 package cn.nukkit;
 
-import cn.nukkit.block.Air;
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
@@ -2149,7 +2149,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         this.inventory.removeItem(arrow);
                                         bow.setDamage(bow.getDamage() + 1);
                                         if (bow.getDamage() >= 385) {
-                                            this.inventory.setItemInHand(new ItemBlock(new Air(), 0, 0));
+                                            this.inventory.setItemInHand(new ItemBlock(new BlockAir(), 0, 0));
                                         } else {
                                             this.inventory.setItemInHand(bow);
                                         }
@@ -2412,7 +2412,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     if (item.isTool() && this.isSurvival()) {
                         if (item.useOn(targetEntity) && item.getDamage() >= item.getMaxDurability()) {
-                            this.inventory.setItemInHand(new ItemBlock(new Air()));
+                            this.inventory.setItemInHand(new ItemBlock(new BlockAir()));
                         } else {
                             this.inventory.setItemInHand(item);
                         }
@@ -2508,7 +2508,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 }
 
-                this.inventory.setItemInHand(new ItemBlock(new Air()));
+                this.inventory.setItemInHand(new ItemBlock(new BlockAir()));
                 Vector3 motion = this.getDirectionVector().multiply(0.4);
 
                 this.level.dropItem(this.add(0, 1.3, 0), item, motion, 40);
@@ -2782,7 +2782,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         newItem = item.clone();
                         newItem.setCount(item.getCount() - count);
                     } else {
-                        newItem = new ItemBlock(new Air(), 0, 0);
+                        newItem = new ItemBlock(new BlockAir(), 0, 0);
                     }
 
                     this.inventory.setItem(i, newItem);

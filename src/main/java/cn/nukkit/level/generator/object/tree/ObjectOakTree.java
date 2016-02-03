@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.Wood;
+import cn.nukkit.block.BlockWood;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 
@@ -24,7 +24,7 @@ public class ObjectOakTree extends ObjectTree {
 
     @Override
     public int getType() {
-        return Wood.OAK;
+        return BlockWood.OAK;
     }
 
     @Override
