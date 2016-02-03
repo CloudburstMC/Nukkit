@@ -1,10 +1,15 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -52,27 +57,45 @@ public class BlockSignPost extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (face != 0) {
-            if (face < 2 || face > 5) {
-                meta = (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f;
-                getLevel().setBlock(block, new BlockSignPost(meta), true);
+        if (face == 0) return false;
 
-                return true;
-            } else {
-                meta = face;
-                getLevel().setBlock(block, new BlockWallSign(meta), true);
+        if (face < 2 || face > 5) {
+            meta = (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f;
+            getLevel().setBlock(block, new BlockSignPost(meta), true);
+        } else {
+            meta = face;
+            getLevel().setBlock(block, new BlockWallSign(meta), true);
+        }
 
-                return true;
+        CompoundTag nbt = new CompoundTag()
+                .putString("id", BlockEntity.SIGN)
+                .putInt("x", (int) block.x)
+                .putInt("y", (int) block.y)
+                .putInt("z", (int) block.z)
+                .putString("Text1", "")
+                .putString("Text2", "")
+                .putString("Text3", "")
+                .putString("Text4", "");
+
+        if (player != null) {
+            nbt.putString("Creator", player.getUniqueId().toString());
+        }
+
+        if (item.hasCustomBlockData()) {
+            for (Tag aTag : item.getCustomBlockData().getAllTags()) {
+                nbt.put(aTag.getName(), aTag);
             }
         }
 
-        return false;
+        new BlockEntitySign(getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+
+        return true;
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (getSide(0).getId() == Block.AIR) {
+            if (getSide(Vector3.SIDE_DOWN).getId() == Block.AIR) {
                 getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;

@@ -10,7 +10,12 @@ import cn.nukkit.nbt.tag.CompoundTag;
 public class BlockEntitySkull extends BlockEntitySpawnable {
     public BlockEntitySkull(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        nbt.putString("SkullType", "0");
+        if (!nbt.contains("SkullType")) {
+            nbt.putByte("SkullType", (byte) 0);
+        }
+        if (!nbt.contains("Rot")) {
+            nbt.putByte("Rot", (byte) 0);
+        }
         this.namedTag = nbt;
     }
 
