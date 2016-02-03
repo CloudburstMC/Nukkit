@@ -5,7 +5,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityEnchantTable;
 import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
@@ -39,7 +39,7 @@ public class BlockEnchantingTable extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override

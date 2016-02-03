@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
@@ -43,7 +43,7 @@ public class BlockFence extends BlockTransparent {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_AXE;
+        return ItemTool.TYPE_AXE;
     }
 
     @Override

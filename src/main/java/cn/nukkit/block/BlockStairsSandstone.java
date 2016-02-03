@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -33,7 +33,7 @@ public class BlockStairsSandstone extends BlockStairs {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override

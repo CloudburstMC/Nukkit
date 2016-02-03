@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 
 /**
  * Created on 2015/11/25 by xtypr.
@@ -22,7 +22,7 @@ public class BlockStairsStoneBrick extends BlockStairs {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override

@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
@@ -592,7 +592,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     public int getToolType() {
-        return Tool.TYPE_NONE;
+        return ItemTool.TYPE_NONE;
     }
 
     public double getFrictionFactor() {
@@ -676,28 +676,28 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public double getBreakTime(Item item) {
         double base = this.getHardness() * 1.5;
         if (this.canBeBrokenWith(item)) {
-            if (this.getToolType() == Tool.TYPE_SHEARS && item.isShears()) {
+            if (this.getToolType() == ItemTool.TYPE_SHEARS && item.isShears()) {
                 base /= 15;
             } else if (
-                    (this.getToolType() == Tool.TYPE_PICKAXE && item.isPickaxe()) ||
-                            (this.getToolType() == Tool.TYPE_AXE && item.isAxe()) ||
-                            (this.getToolType() == Tool.TYPE_SHOVEL && item.isShovel())
+                    (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
+                            (this.getToolType() == ItemTool.TYPE_AXE && item.isAxe()) ||
+                            (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel())
                     ) {
                 int tier = item.getTier();
                 switch (tier) {
-                    case Tool.TIER_WOODEN:
+                    case ItemTool.TIER_WOODEN:
                         base /= 2;
                         break;
-                    case Tool.TIER_STONE:
+                    case ItemTool.TIER_STONE:
                         base /= 4;
                         break;
-                    case Tool.TIER_IRON:
+                    case ItemTool.TIER_IRON:
                         base /= 6;
                         break;
-                    case Tool.TIER_DIAMOND:
+                    case ItemTool.TIER_DIAMOND:
                         base /= 8;
                         break;
-                    case Tool.TIER_GOLD:
+                    case ItemTool.TIER_GOLD:
                         base /= 12;
                         break;
                 }

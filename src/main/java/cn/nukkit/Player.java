@@ -31,8 +31,8 @@ import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.*;
-import cn.nukkit.item.Arrow;
-import cn.nukkit.item.GlassBottle;
+import cn.nukkit.item.ItemArrow;
+import cn.nukkit.item.ItemGlassBottle;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.food.Food;
@@ -1094,7 +1094,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision) {
-                Arrow item = new Arrow();
+                ItemArrow item = new ItemArrow();
                 if (this.isSurvival() && !this.inventory.canAddItem(item)) {
                     continue;
                 }
@@ -2109,8 +2109,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (this.inventory.getItemInHand().getId() == Item.BOW) {
 
                                 Item bow = this.inventory.getItemInHand();
-                                Arrow arrow = new Arrow();
-                                if (this.isSurvival() && !this.inventory.contains(arrow)) {
+                                ItemArrow itemArrow = new ItemArrow();
+                                if (this.isSurvival() && !this.inventory.contains(itemArrow)) {
                                     this.inventory.sendContents(this);
                                     break;
                                 }
@@ -2146,7 +2146,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 } else {
                                     entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
                                     if (this.isSurvival()) {
-                                        this.inventory.removeItem(arrow);
+                                        this.inventory.removeItem(itemArrow);
                                         bow.setDamage(bow.getDamage() + 1);
                                         if (bow.getDamage() >= 385) {
                                             this.inventory.setItemInHand(new ItemBlock(new BlockAir(), 0, 0));
@@ -2462,13 +2462,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (itemInHand.getId() == Item.POTION) {
                             if (this.getGamemode() == SURVIVAL) {
                                 if (itemInHand.getCount() > 1) {
-                                    GlassBottle bottle = new GlassBottle();
+                                    ItemGlassBottle bottle = new ItemGlassBottle();
                                     if (this.inventory.canAddItem(bottle)) {
                                         this.inventory.addItem(bottle);
                                     }
                                     --itemInHand.count;
                                 } else {
-                                    itemInHand = new GlassBottle();
+                                    itemInHand = new ItemGlassBottle();
                                 }
                             }
 

@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Dye;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -20,7 +20,7 @@ public class BlockClayStained extends BlockSolid {
 
     @Override
     public String getName() {
-        return Dye.getColorName(meta) + " Stained Clay";
+        return ItemDye.getColorName(meta) + " Stained Clay";
     }
 
     @Override
@@ -40,7 +40,7 @@ public class BlockClayStained extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override

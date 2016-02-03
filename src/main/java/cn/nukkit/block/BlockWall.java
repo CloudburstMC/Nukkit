@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 
@@ -87,6 +87,6 @@ public class BlockWall extends BlockTransparent {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 }

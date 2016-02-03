@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 
 /**
  * Created by Pub4Game on 27.12.2015.
@@ -28,7 +28,7 @@ public class BlockMobSpawner extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override

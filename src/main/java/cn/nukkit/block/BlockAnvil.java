@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -46,7 +46,7 @@ public class BlockAnvil extends BlockFallable {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class BlockAnvil extends BlockFallable {
     @Override
     public int[][] getDrops(Item item) {
         int damage = this.getDamage();
-        if (item.isPickaxe() && item.getTier() >= Tool.TIER_WOODEN) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             if (damage >= 0 && damage <= 3) { //Anvil
                 return new int[][]{new int[]{this.getId(), 0, 1}};
             } else if (damage >= 4 && damage <= 7) { //Slightly Anvil

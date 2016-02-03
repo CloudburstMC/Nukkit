@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.NukkitRandom;
 
 import java.util.Random;
@@ -38,7 +38,7 @@ public class BlockOreLapis extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class BlockOreLapis extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= Tool.TIER_STONE) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
             return new int[][]{new int[]{Item.DYE, 4, new Random().nextInt(4) + 4}};
         } else {
             return new int[0][];

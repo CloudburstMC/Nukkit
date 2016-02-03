@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
@@ -110,7 +110,7 @@ public class BlockTallGrass extends BlockFlowable {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_SHEARS;
+        return ItemTool.TYPE_SHEARS;
     }
 
     @Override

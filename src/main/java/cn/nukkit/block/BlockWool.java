@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Dye;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -20,7 +20,7 @@ public class BlockWool extends BlockSolid {
 
     @Override
     public String getName() {
-        return Dye.getColorName(meta) + " Wool";
+        return ItemDye.getColorName(meta) + " Wool";
     }
 
     @Override
@@ -30,7 +30,7 @@ public class BlockWool extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_SHEARS;
+        return ItemTool.TYPE_SHEARS;
     }
 
     @Override

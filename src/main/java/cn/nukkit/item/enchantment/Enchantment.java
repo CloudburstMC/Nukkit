@@ -1,8 +1,8 @@
 package cn.nukkit.item.enchantment;
 
-import cn.nukkit.item.Armor;
+import cn.nukkit.item.ItemArmor;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 
 import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
@@ -116,30 +116,30 @@ public class Enchantment implements Cloneable {
 
         if (item.isArmor()) {
             switch (item.getTier()) {
-                case Armor.TIER_CHAIN:
+                case ItemArmor.TIER_CHAIN:
                     return 12;
-                case Armor.TIER_IRON:
+                case ItemArmor.TIER_IRON:
                     return 9;
-                case Armor.TIER_DIAMOND:
+                case ItemArmor.TIER_DIAMOND:
                     return 10;
-                case Armor.TIER_LEATHER:
+                case ItemArmor.TIER_LEATHER:
                     return 15;
-                case Armor.TIER_GOLD:
+                case ItemArmor.TIER_GOLD:
                     return 25;
             }
         }
 
         if (item.isTool()) {
             switch (item.getTier()) {
-                case Tool.TIER_WOODEN:
+                case ItemTool.TIER_WOODEN:
                     return 15;
-                case Tool.TIER_STONE:
+                case ItemTool.TIER_STONE:
                     return 5;
-                case Tool.TIER_DIAMOND:
+                case ItemTool.TIER_DIAMOND:
                     return 10;
-                case Tool.TIER_IRON:
+                case ItemTool.TIER_IRON:
                     return 14;
-                case Tool.TIER_GOLD:
+                case ItemTool.TIER_GOLD:
                     return 22;
             }
         }

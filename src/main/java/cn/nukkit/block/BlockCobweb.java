@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -40,7 +40,7 @@ public class BlockCobweb extends BlockFlowable {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_SWORD;
+        return ItemTool.TYPE_SWORD;
     }
 
     @Override

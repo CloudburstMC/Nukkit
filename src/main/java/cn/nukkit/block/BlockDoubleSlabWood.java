@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -35,7 +35,7 @@ public class BlockDoubleSlabWood extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return Tool.TYPE_AXE;
+        return ItemTool.TYPE_AXE;
     }
 
     @Override
