@@ -8,6 +8,7 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySkull;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemSkull;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -15,11 +16,6 @@ import cn.nukkit.nbt.tag.Tag;
 
 
 public class BlockSkull extends BlockTransparent{
-    public static final int SKELETON_SKULL = 0;
-    public static final int WITHER_SKELETON_SKULL = 1;
-    public static final int ZOMBIE_HEAD = 2;
-    public static final int HEAD = 3;
-    public static final int CREEPER_HEAD = 4;
 
     public BlockSkull() {
         this(0);
@@ -46,19 +42,10 @@ public class BlockSkull extends BlockTransparent{
 
     @Override
     public String getName() {
-        switch (meta) {
-            case 1:
-                return "Wither Skeleton Skull";
-            case 2:
-                return "Zombie Head";
-            case 3:
-                return "Head";
-            case 4:
-                return "Creeper Head";
-            case 0:
-            default:
-                return "Skeleton Skull";
-        }
+        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        int itemMeta = 0;
+        if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
+        return ItemSkull.getItemSkullName(itemMeta);
     }
 
     @Override
@@ -88,13 +75,15 @@ public class BlockSkull extends BlockTransparent{
                 .putInt("x", block.getFloorX())
                 .putInt("y", block.getFloorY())
                 .putInt("z", block.getFloorZ())
-                .putByte("Rot", (byte) ((int) Math.floor((player.yaw * 16 / 360) + 0.5) & 0x0f)); // TODO: 2016/2/3 VERIFY
+                .putByte("Rot", (byte) ((int) Math.floor((player.yaw * 16 / 360) + 0.5) & 0x0f));
         if (item.hasCustomBlockData()) {
             for (Tag aTag : item.getCustomBlockData().getAllTags()) {
                 nbt.put(aTag.getName(), aTag);
             }
         }
         new BlockEntitySkull(getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+
+        // TODO: 2016/2/3 SPAWN WITHER
 
         return true;
     }

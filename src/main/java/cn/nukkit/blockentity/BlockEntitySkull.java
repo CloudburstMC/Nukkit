@@ -36,10 +36,4 @@ public class BlockEntitySkull extends BlockEntitySpawnable {
                 .put("Rot", this.namedTag.get("Rot"));
     }
 
-    // TODO: 2016/2/3 Keep or remove this?
-    /*protected String[] getSkullType() {
-        return new String[]{
-                this.namedTag.getString("SkullType"),
-        };
-    }*/
 }
