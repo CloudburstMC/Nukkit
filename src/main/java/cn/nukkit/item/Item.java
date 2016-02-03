@@ -234,7 +234,6 @@ public class Item implements Cloneable {
     public static final int WOODEN_BUTTON = 143;
 
     public static final int SKULL_BLOCK = 144;
-
     public static final int ANVIL = 145;
     public static final int TRAPPED_CHEST = 146;
     public static final int LIGHT_WEIGHTED_PRESSURE_PLATE = 147;
@@ -692,6 +691,8 @@ public class Item implements Cloneable {
             list[RABBIT_STEW] = ItemRabbitStew.class;
             list[POISONOUS_POTATO] = ItemPotatoPoisonous.class;
             list[ROTTEN_FLESH] = ItemRottenFlesh.class;
+
+            list[SKULL] = ItemSkull.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
