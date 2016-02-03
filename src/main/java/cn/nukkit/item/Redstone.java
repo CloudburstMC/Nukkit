@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.RedstoneWire;
+import cn.nukkit.block.BlockRedstoneWire;
 
 /**
  * author: MagicDroidX
@@ -18,7 +18,7 @@ public class Redstone extends Item {
 
     public Redstone(Integer meta, int count) {
         super(REDSTONE, meta, count, "Redstone");
-        this.block = new RedstoneWire();
+        this.block = new BlockRedstoneWire();
     }
 
 }

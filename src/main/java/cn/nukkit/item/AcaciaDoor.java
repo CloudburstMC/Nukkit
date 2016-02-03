@@ -1,5 +1,7 @@
 package cn.nukkit.item;
 
+import cn.nukkit.block.BlockDoorAcacia;
+
 public class AcaciaDoor extends Item {
     public AcaciaDoor() {
         this(0, 1);
@@ -11,7 +13,7 @@ public class AcaciaDoor extends Item {
 
     public AcaciaDoor(Integer meta, int count) {
         super(ACACIA_DOOR, 0, count, "Acacia Door");
-        this.block = new cn.nukkit.block.AcaciaDoor();
+        this.block = new BlockDoorAcacia();
     }
 
 }

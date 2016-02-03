@@ -1,6 +1,6 @@
 package cn.nukkit.entity.data;
 
-import cn.nukkit.block.Air;
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.Vector3;
@@ -65,7 +65,7 @@ public class EntityMetadata {
     }
 
     public Item getSlot(int id) {
-        return (Item) this.getOrDefault(id, new SlotEntityData(id, new ItemBlock(new Air()))).getData();
+        return (Item) this.getOrDefault(id, new SlotEntityData(id, new ItemBlock(new BlockAir()))).getData();
     }
 
     public String getString(int id) {

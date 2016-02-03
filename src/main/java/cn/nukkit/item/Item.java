@@ -669,7 +669,7 @@ public class Item implements Cloneable {
             list[BEETROOT] = Beetroot.class;
             list[BEETROOT_SEEDS] = BeetrootSeeds.class;
             list[BEETROOT_SOUP] = BeetrootSoup.class;
-            list[REDSTONE_TORCH] = RedstoneTorch.class;
+            list[REDSTONE_TORCH] = BlockRedstoneTorch.class;
             list[BREWING_STAND] = BrewingStand.class;
             list[GLASS_BOTTLE] = GlassBottle.class;
             list[POTION] = Potion.class;
@@ -838,12 +838,12 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.IRON_DOOR, 0));
         addCreativeItem(Item.get(Item.TRAPDOOR, 0));
         addCreativeItem(Item.get(Item.IRON_TRAPDOOR, 0));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_OAK));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_SPRUCE));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_BIRCH));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_JUNGLE));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_ACACIA));
-        addCreativeItem(Item.get(Item.FENCE, Fence.FENCE_DARK_OAK));
+        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_OAK));
+        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_SPRUCE));
+        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_BIRCH));
+        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_JUNGLE));
+        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_ACACIA));
+        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_DARK_OAK));
         addCreativeItem(Item.get(Item.NETHER_BRICK_FENCE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_SPRUCE, 0));
@@ -867,15 +867,15 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.ANVIL, 4));
         addCreativeItem(Item.get(Item.ANVIL, 8));
         addCreativeItem(Item.get(Item.DANDELION, 0));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_POPPY));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_BLUE_ORCHID));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ALLIUM));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_AZURE_BLUET));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_RED_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_ORANGE_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_WHITE_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_PINK_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, Flower.TYPE_OXEYE_DAISY));
+        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_POPPY));
+        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_BLUE_ORCHID));
+        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_ALLIUM));
+        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_AZURE_BLUET));
+        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_RED_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_ORANGE_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_WHITE_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_PINK_TULIP));
+        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_OXEYE_DAISY));
         addCreativeItem(Item.get(Item.DOUBLE_PLANT, 0)); // SUNFLOWER
         addCreativeItem(Item.get(Item.DOUBLE_PLANT, 1)); // Lilac
         addCreativeItem(Item.get(Item.DOUBLE_PLANT, 2)); // Double Tall Grass
@@ -1632,7 +1632,7 @@ public class Item implements Cloneable {
         if (this.block != null) {
             return this.block.clone();
         } else {
-            return new Air();
+            return new BlockAir();
         }
     }
 

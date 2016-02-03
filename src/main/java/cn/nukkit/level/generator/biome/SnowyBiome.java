@@ -1,9 +1,9 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.Dirt;
-import cn.nukkit.block.Grass;
-import cn.nukkit.block.SnowLayer;
+import cn.nukkit.block.BlockDirt;
+import cn.nukkit.block.BlockGrass;
+import cn.nukkit.block.BlockSnowLayer;
 
 /**
  * author: MagicDroidX
@@ -12,11 +12,11 @@ import cn.nukkit.block.SnowLayer;
 public abstract class SnowyBiome extends NormalBiome {
     public SnowyBiome() {
         this.setGroundCover(new Block[]{
-                new SnowLayer(),
-                new Grass(),
-                new Dirt(),
-                new Dirt(),
-                new Dirt()
+                new BlockSnowLayer(),
+                new BlockGrass(),
+                new BlockDirt(),
+                new BlockDirt(),
+                new BlockDirt()
         });
     }
 }
