@@ -1824,6 +1824,7 @@ public class Server {
         BlockEntity.registerBlockEntities(BlockEntityBrewingStand.class);
         BlockEntity.registerBlockEntities(BlockEntityChest.class);
         BlockEntity.registerBlockEntities(BlockEntityEnchantTable.class);
+        BlockEntity.registerBlockEntities(BlockEntityFlowerPot.class);
         BlockEntity.registerBlockEntities(BlockEntityFurnace.class);
         BlockEntity.registerBlockEntities(BlockEntitySign.class);
         BlockEntity.registerBlockEntities(BlockEntitySkull.class);

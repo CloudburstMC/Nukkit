@@ -1,6 +1,7 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockFurnace;
 import cn.nukkit.block.BlockFurnaceBurning;
@@ -95,6 +96,12 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         for (int index = 0; index < this.getSize(); index++) {
             this.setItem(index, this.inventory.getItem(index));
         }
+    }
+
+    @Override
+    public boolean isBlockEntityValid() {
+        int blockID = getBlock().getId();
+        return blockID == Block.FURNACE || blockID == Block.BURNING_FURNACE;
     }
 
     @Override

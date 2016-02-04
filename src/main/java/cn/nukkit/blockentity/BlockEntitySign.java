@@ -1,5 +1,6 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -30,6 +31,12 @@ public class BlockEntitySign extends BlockEntitySpawnable {
     public void saveNBT() {
         super.saveNBT();
         this.namedTag.remove("Creator");
+    }
+
+    @Override
+    public boolean isBlockEntityValid() {
+        int blockID = getBlock().getId();
+        return blockID == Block.SIGN_POST || blockID == Block.WALL_SIGN;
     }
 
     public boolean setText() {
