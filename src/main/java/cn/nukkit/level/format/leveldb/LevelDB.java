@@ -50,9 +50,7 @@ public class LevelDB implements LevelProvider {
 
         try (FileInputStream stream = new FileInputStream(this.getPath() + "level.dat")) {
             stream.skip(8);
-            byte[] b = new byte[stream.available()];
-            stream.read(b);
-            CompoundTag levelData = NBTIO.read(b, ByteOrder.LITTLE_ENDIAN);
+            CompoundTag levelData = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
             if (levelData != null) {
                 this.levelData = levelData;
             } else {
@@ -127,7 +125,7 @@ public class LevelDB implements LevelProvider {
                 .putLong("Time", 0)
                 .putLong("worldStartCount", ((long) Integer.MAX_VALUE) & 0xffffffffL);
 
-        byte[] data = NBTIO.writeGZIPCompressed(levelData, ByteOrder.BIG_ENDIAN);
+        byte[] data = NBTIO.write(levelData, ByteOrder.LITTLE_ENDIAN);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         outputStream.write(Binary.writeLInt(3));
         outputStream.write(Binary.writeLInt(data.length));
@@ -142,7 +140,7 @@ public class LevelDB implements LevelProvider {
     @Override
     public void saveLevelData() {
         try {
-            byte[] data = NBTIO.writeGZIPCompressed(levelData, ByteOrder.BIG_ENDIAN);
+            byte[] data = NBTIO.write(levelData, ByteOrder.LITTLE_ENDIAN);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             outputStream.write(Binary.writeLInt(3));
             outputStream.write(Binary.writeLInt(data.length));

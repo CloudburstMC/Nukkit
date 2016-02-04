@@ -116,7 +116,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public void setBlockId(int x, int y, int z, int id) {
-        this.blocks[(x << 11) | (z << 7) | y] = (byte) (id & 0xff);
+        this.blocks[(x << 11) | (z << 7) | y] = (byte) (id);
         this.hasChanged = true;
     }
 
@@ -135,9 +135,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.data[i] & 0xff;
         if ((y & 1) == 0) {
-            this.data[i] = (byte) (((old & 0xf0) | (old & 0x0f)) & 0xff);
+            this.data[i] = (byte) ((old & 0xf0) | (old & 0x0f));
         } else {
-            this.data[i] = (byte) ((((data & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+            this.data[i] = (byte) (((data & 0x0f) << 4) | (old & 0x0f));
         }
         this.hasChanged = true;
     }
@@ -213,9 +213,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.skyLight[i] & 0xff;
         if ((y & 1) == 0) {
-            this.skyLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
+            this.skyLight[i] = (byte) ((old & 0xf0) | (level & 0x0f));
         } else {
-            this.skyLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+            this.skyLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
         this.hasChanged = true;
     }
@@ -235,9 +235,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.blockLight[i] & 0xff;
         if ((y & 1) == 0) {
-            this.blockLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
+            this.blockLight[i] = (byte) ((old & 0xf0) | (level & 0x0f));
         } else {
-            this.blockLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+            this.blockLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
         this.hasChanged = true;
     }
