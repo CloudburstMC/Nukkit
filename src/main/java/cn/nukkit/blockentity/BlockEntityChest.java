@@ -1,6 +1,7 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.inventory.BaseInventory;
 import cn.nukkit.inventory.ChestInventory;
@@ -56,6 +57,12 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
         for (int index = 0; index < this.getSize(); index++) {
             this.setItem(index, this.inventory.getItem(index));
         }
+    }
+
+    @Override
+    public boolean isBlockEntityValid() {
+        // TODO: 2016/2/4 TRAPPED_CHEST?
+        return getBlock().getId() == Block.CHEST;
     }
 
     @Override

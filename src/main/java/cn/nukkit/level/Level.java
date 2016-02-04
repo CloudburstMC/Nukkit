@@ -2451,6 +2451,17 @@ public class Level implements ChunkManager, Metadatable {
 
     public void doChunkGarbageCollection() {
 
+        //remove all invaild block entities.
+        List<BlockEntity> toClose = new ArrayList<>();
+        for (BlockEntity anBlockEntity: blockEntities.values()) {
+            if (anBlockEntity == null) continue;
+            if (anBlockEntity.isBlockEntityValid()) continue;
+            toClose.add(anBlockEntity);
+        }
+        for (BlockEntity be: toClose.toArray(new BlockEntity[toClose.size()])) {
+            be.close();
+        }
+
         for (String index : this.chunks.keySet()) {
 
             if (!this.unloadQueue.containsKey(index)) {

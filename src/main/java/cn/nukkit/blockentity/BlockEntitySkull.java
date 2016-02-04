@@ -1,5 +1,6 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -23,6 +24,11 @@ public class BlockEntitySkull extends BlockEntitySpawnable {
     public void saveNBT() {
         super.saveNBT();
         this.namedTag.remove("Creator");
+    }
+
+    @Override
+    public boolean isBlockEntityValid() {
+        return getBlock().getId() == Block.SKULL_BLOCK;
     }
 
     @Override

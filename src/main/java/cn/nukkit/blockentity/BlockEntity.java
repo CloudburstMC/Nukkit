@@ -134,6 +134,8 @@ public abstract class BlockEntity extends Position {
         return this.level.getBlock(this);
     }
 
+    public abstract boolean isBlockEntityValid();
+
     public boolean onUpdate() {
         return false;
     }

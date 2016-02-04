@@ -36,6 +36,11 @@ public class BlockSkull extends BlockTransparent{
     }
 
     @Override
+    public double getResistance(){
+        return 5;
+    }
+
+    @Override
     public boolean isSolid(){
         return false;
     }
@@ -86,10 +91,6 @@ public class BlockSkull extends BlockTransparent{
         // TODO: 2016/2/3 SPAWN WITHER
 
         return true;
-    }
-
-    public double getResistance(){
-        return 5;
     }
 
     @Override

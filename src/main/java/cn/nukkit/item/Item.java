@@ -693,6 +693,7 @@ public class Item implements Cloneable {
             list[ROTTEN_FLESH] = ItemRottenFlesh.class;
 
             list[SKULL] = ItemSkull.class;
+            list[FLOWER_POT] = ItemFlowerPot.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
