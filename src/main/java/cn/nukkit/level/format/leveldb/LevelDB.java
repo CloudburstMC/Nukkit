@@ -1,6 +1,8 @@
 package cn.nukkit.level.format.leveldb;
 
 import cn.nukkit.Server;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
@@ -13,8 +15,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.tile.Spawnable;
-import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.*;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
@@ -50,9 +50,7 @@ public class LevelDB implements LevelProvider {
 
         try (FileInputStream stream = new FileInputStream(this.getPath() + "level.dat")) {
             stream.skip(8);
-            byte[] b = new byte[stream.available()];
-            stream.read(b);
-            CompoundTag levelData = NBTIO.read(b, ByteOrder.LITTLE_ENDIAN);
+            CompoundTag levelData = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
             if (levelData != null) {
                 this.levelData = levelData;
             } else {
@@ -127,7 +125,7 @@ public class LevelDB implements LevelProvider {
                 .putLong("Time", 0)
                 .putLong("worldStartCount", ((long) Integer.MAX_VALUE) & 0xffffffffL);
 
-        byte[] data = NBTIO.writeGZIPCompressed(levelData, ByteOrder.BIG_ENDIAN);
+        byte[] data = NBTIO.write(levelData, ByteOrder.LITTLE_ENDIAN);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         outputStream.write(Binary.writeLInt(3));
         outputStream.write(Binary.writeLInt(data.length));
@@ -142,7 +140,7 @@ public class LevelDB implements LevelProvider {
     @Override
     public void saveLevelData() {
         try {
-            byte[] data = NBTIO.writeGZIPCompressed(levelData, ByteOrder.BIG_ENDIAN);
+            byte[] data = NBTIO.write(levelData, ByteOrder.LITTLE_ENDIAN);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             outputStream.write(Binary.writeLInt(3));
             outputStream.write(Binary.writeLInt(data.length));
@@ -163,12 +161,12 @@ public class LevelDB implements LevelProvider {
 
         byte[] tiles = new byte[0];
 
-        if (!chunk.getTiles().isEmpty()) {
+        if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
 
-            for (Tile tile : chunk.getTiles().values()) {
-                if (tile instanceof Spawnable) {
-                    tagList.add(((Spawnable) tile).getSpawnCompound());
+            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                if (blockEntity instanceof BlockEntitySpawnable) {
+                    tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
                 }
             }
 

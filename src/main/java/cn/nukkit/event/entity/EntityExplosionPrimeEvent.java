@@ -15,20 +15,20 @@ public class EntityExplosionPrimeEvent extends EntityEvent implements Cancellabl
         return handlers;
     }
 
-    private float force;
+    private double force;
     private boolean blockBreaking;
 
-    public EntityExplosionPrimeEvent(Entity entity, float force) {
+    public EntityExplosionPrimeEvent(Entity entity, double force) {
         this.entity = entity;
         this.force = force;
         this.blockBreaking = true;
     }
 
-    public float getForce() {
+    public double getForce() {
         return force;
     }
 
-    public void setForce(float force) {
+    public void setForce(double force) {
         this.force = force;
     }
 

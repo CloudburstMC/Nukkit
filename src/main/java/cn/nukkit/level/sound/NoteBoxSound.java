@@ -29,7 +29,7 @@ public class NoteBoxSound extends GenericSound {
     }
 
     public NoteBoxSound(Vector3 pos, int instrument, int pitch) {
-        super(pos,instrument,pitch);
+        super(pos, instrument, pitch);
         this.instrument = instrument;
         this.pitch = pitch;
     }

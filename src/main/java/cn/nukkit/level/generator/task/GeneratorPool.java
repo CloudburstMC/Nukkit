@@ -2,15 +2,15 @@ package cn.nukkit.level.generator.task;
 
 import cn.nukkit.level.generator.Generator;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class GeneratorPool {
-    private static Map<Integer, Generator> generators = new HashMap<>();
+    private static Map<Integer, Generator> generators = new ConcurrentHashMap<>();
 
     public static void put(int levelId, Generator generator) {
         generators.put(levelId, generator);

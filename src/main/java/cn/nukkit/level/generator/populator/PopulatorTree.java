@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.Sapling;
+import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.object.tree.ObjectTree;
 import cn.nukkit.math.NukkitMath;
@@ -19,7 +19,7 @@ public class PopulatorTree extends Populator {
     private int type;
 
     public PopulatorTree() {
-        this(Sapling.OAK);
+        this(BlockSapling.OAK);
     }
 
     public PopulatorTree(int type) {

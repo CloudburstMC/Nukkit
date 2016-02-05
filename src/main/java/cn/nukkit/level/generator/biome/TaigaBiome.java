@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.biome;
 
-import cn.nukkit.block.Sapling;
+import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.generator.populator.PopulatorGrass;
 import cn.nukkit.level.generator.populator.PopulatorTallGrass;
 import cn.nukkit.level.generator.populator.PopulatorTree;
@@ -18,7 +18,7 @@ public class TaigaBiome extends SnowyBiome {
         grass.setBaseAmount(6);
         this.addPopulator(grass);
 
-        PopulatorTree trees = new PopulatorTree(Sapling.SPRUCE);
+        PopulatorTree trees = new PopulatorTree(BlockSapling.SPRUCE);
         trees.setBaseAmount(10);
         this.addPopulator(trees);
 

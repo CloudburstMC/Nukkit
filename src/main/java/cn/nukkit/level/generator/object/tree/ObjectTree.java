@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.Sapling;
+import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 
@@ -48,24 +48,24 @@ public abstract class ObjectTree {
     public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random, int type) {
         ObjectTree tree;
         switch (type) {
-            case Sapling.SPRUCE:
+            case BlockSapling.SPRUCE:
                 if (random.nextBoundedInt(39) == 0) {
                     tree = new ObjectMatchstickSpruceTree();
                 } else {
                     tree = new ObjectSpruceTree();
                 }
                 break;
-            case Sapling.BIRCH:
+            case BlockSapling.BIRCH:
                 if (random.nextBoundedInt(39) == 0) {
                     tree = new ObjectTallBirchTree();
                 } else {
                     tree = new ObjectBirchTree();
                 }
                 break;
-            case Sapling.JUNGLE:
+            case BlockSapling.JUNGLE:
                 tree = new ObjectJungleTree();
                 break;
-            case Sapling.OAK:
+            case BlockSapling.OAK:
             default:
                 tree = new ObjectOakTree();
                 //todo: more complex treeeeeeeeeeeeeeeee
