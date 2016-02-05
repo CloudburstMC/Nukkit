@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.Tool;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
@@ -205,6 +205,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int CARROT_BLOCK = 141;
     public static final int POTATO_BLOCK = 142;
 
+    public static final int SKULL_BLOCK = 144;
     public static final int ANVIL = 145;
     public static final int TRAPPED_CHEST = 146;
     public static final int LIGHT_WEIGHTED_PRESSURE_PLATE = 147;
@@ -293,189 +294,191 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             hardness = new double[256];
             transparent = new boolean[256];
 
-            list[AIR] = Air.class;
-            list[STONE] = Stone.class;
-            list[GRASS] = Grass.class;
-            list[DIRT] = Dirt.class;
-            list[COBBLESTONE] = Cobblestone.class;
-            list[PLANKS] = Planks.class;
-            list[SAPLING] = Sapling.class;
-            list[BEDROCK] = Bedrock.class;
-            list[WATER] = Water.class;
-            list[STILL_WATER] = StillWater.class;
-            list[LAVA] = Lava.class;
-            list[STILL_LAVA] = StillLava.class;
-            list[SAND] = Sand.class;
-            list[GRAVEL] = Gravel.class;
-            list[GOLD_ORE] = GoldOre.class;
-            list[IRON_ORE] = IronOre.class;
-            list[COAL_ORE] = CoalOre.class;
-            list[WOOD] = Wood.class;
-            list[LEAVES] = Leaves.class;
-            list[SPONGE] = Sponge.class;
-            list[GLASS] = Glass.class;
-            list[LAPIS_ORE] = LapisOre.class;
-            list[LAPIS_BLOCK] = Lapis.class;
-            list[SANDSTONE] = Sandstone.class;
-            list[NOTEBLOCK] = Noteblock.class;
-            list[BED_BLOCK] = Bed.class;
-            list[COBWEB] = Cobweb.class;
-            list[TALL_GRASS] = TallGrass.class;
-            list[DEAD_BUSH] = DeadBush.class;
-            list[WOOL] = Wool.class;
-            list[DANDELION] = Dandelion.class;
+            list[AIR] = BlockAir.class;
+            list[STONE] = BlockStone.class;
+            list[GRASS] = BlockGrass.class;
+            list[DIRT] = BlockDirt.class;
+            list[COBBLESTONE] = BlockCobblestone.class;
+            list[PLANKS] = BlockPlanks.class;
+            list[SAPLING] = BlockSapling.class;
+            list[BEDROCK] = BlockBedrock.class;
+            list[WATER] = BlockWater.class;
+            list[STILL_WATER] = BlockWaterStill.class;
+            list[LAVA] = BlockLava.class;
+            list[STILL_LAVA] = BlockLavaStill.class;
+            list[SAND] = BlockSand.class;
+            list[GRAVEL] = BlockGravel.class;
+            list[GOLD_ORE] = BlockOreGold.class;
+            list[IRON_ORE] = BlockOreIron.class;
+            list[COAL_ORE] = BlockOreCoal.class;
+            list[WOOD] = BlockWood.class;
+            list[LEAVES] = BlockLeaves.class;
+            list[SPONGE] = BlockSponge.class;
+            list[GLASS] = BlockGlass.class;
+            list[LAPIS_ORE] = BlockOreLapis.class;
+            list[LAPIS_BLOCK] = BlockLapis.class;
+            list[SANDSTONE] = BlockSandstone.class;
+            list[NOTEBLOCK] = BlockNoteblock.class;
+            list[BED_BLOCK] = BlockBed.class;
+            list[COBWEB] = BlockCobweb.class;
+            list[TALL_GRASS] = BlockTallGrass.class;
+            list[DEAD_BUSH] = BlockDeadBush.class;
+            list[WOOL] = BlockWool.class;
+            list[DANDELION] = BlockDandelion.class;
 
-            list[FLOWER] = Flower.class;
+            list[FLOWER] = BlockFlower.class;
 
-            list[BROWN_MUSHROOM] = BrownMushroom.class;
-            list[RED_MUSHROOM] = RedMushroom.class;
-            list[GOLD_BLOCK] = Gold.class;
-            list[IRON_BLOCK] = Iron.class;
-            list[DOUBLE_SLAB] = DoubleSlab.class;
-            list[SLAB] = Slab.class;
-            list[BRICKS_BLOCK] = Bricks.class;
-            list[TNT] = TNT.class;
-            list[BOOKSHELF] = Bookshelf.class;
-            list[MOSS_STONE] = MossStone.class;
-            list[OBSIDIAN] = Obsidian.class;
-            list[TORCH] = Torch.class;
-            list[FIRE] = Fire.class;
-            list[MONSTER_SPAWNER] = MonsterSpawner.class;
-            list[WOOD_STAIRS] = WoodStairs.class;
-            list[CHEST] = Chest.class;
-            list[REDSTONE_WIRE] = RedstoneWire.class;
-            list[DIAMOND_ORE] = DiamondOre.class;
-            list[DIAMOND_BLOCK] = Diamond.class;
-            list[WORKBENCH] = Workbench.class;
-            list[WHEAT_BLOCK] = Wheat.class;
-            list[FARMLAND] = Farmland.class;
-            list[FURNACE] = Furnace.class;
-            list[BURNING_FURNACE] = BurningFurnace.class;
-            list[SIGN_POST] = SignPost.class;
-            list[WOOD_DOOR_BLOCK] = WoodDoor.class;
-            list[LADDER] = Ladder.class;
+            list[BROWN_MUSHROOM] = BlockMushroomBrown.class;
+            list[RED_MUSHROOM] = BlockMushroomRed.class;
+            list[GOLD_BLOCK] = BlockGold.class;
+            list[IRON_BLOCK] = BlockIron.class;
+            list[DOUBLE_SLAB] = BlockDoubleSlab.class;
+            list[SLAB] = BlockSlab.class;
+            list[BRICKS_BLOCK] = BlockBricks.class;
+            list[TNT] = BlockTNT.class;
+            list[BOOKSHELF] = BlockBookshelf.class;
+            list[MOSS_STONE] = BlockMossStone.class;
+            list[OBSIDIAN] = BlockObsidian.class;
+            list[TORCH] = BlockTorch.class;
+            list[FIRE] = BlockFire.class;
+            list[MONSTER_SPAWNER] = BlockMobSpawner.class;
+            list[WOOD_STAIRS] = BlockStairsWood.class;
+            list[CHEST] = BlockChest.class;
+            list[REDSTONE_WIRE] = BlockRedstoneWire.class;
+            list[DIAMOND_ORE] = BlockOreDiamond.class;
+            list[DIAMOND_BLOCK] = BlockDiamond.class;
+            list[WORKBENCH] = BlockWorkbench.class;
+            list[WHEAT_BLOCK] = BlockWheat.class;
+            list[FARMLAND] = BlockFarmland.class;
+            list[FURNACE] = BlockFurnace.class;
+            list[BURNING_FURNACE] = BlockFurnaceBurning.class;
+            list[SIGN_POST] = BlockSignPost.class;
+            list[WOOD_DOOR_BLOCK] = BlockDoorWood.class;
+            list[LADDER] = BlockLadder.class;
 
-            list[COBBLESTONE_STAIRS] = CobblestoneStairs.class;
-            list[WALL_SIGN] = WallSign.class;
+            list[COBBLESTONE_STAIRS] = BlockStairsCobblestone.class;
+            list[WALL_SIGN] = BlockWallSign.class;
 
-            list[IRON_DOOR_BLOCK] = IronDoor.class;
-            list[REDSTONE_ORE] = RedstoneOre.class;
-            list[GLOWING_REDSTONE_ORE] = GlowingRedstoneOre.class;
+            list[IRON_DOOR_BLOCK] = BlockDoorIron.class;
+            list[REDSTONE_ORE] = BlockOreRedstone.class;
+            list[GLOWING_REDSTONE_ORE] = BlockOreRedstoneGlowing.class;
 
-            list[REDSTONE_TORCH] = RedstoneTorch.class;
+            list[REDSTONE_TORCH] = BlockRedstoneTorch.class;
 
-            list[SNOW_LAYER] = SnowLayer.class;
-            list[ICE] = Ice.class;
-            list[SNOW_BLOCK] = SnowBlock.class;
-            list[CACTUS] = Cactus.class;
-            list[CLAY_BLOCK] = Clay.class;
-            list[SUGARCANE_BLOCK] = Sugarcane.class;
-            list[FENCE] = Fence.class;
-            list[PUMPKIN] = Pumpkin.class;
-            list[NETHERRACK] = Netherrack.class;
-            list[SOUL_SAND] = SoulSand.class;
-            list[GLOWSTONE_BLOCK] = Glowstone.class;
-            list[NETHER_PORTAL] = NetherPortalBlock.class;
-            list[LIT_PUMPKIN] = LitPumpkin.class;
-            list[CAKE_BLOCK] = Cake.class;
+            list[SNOW_LAYER] = BlockSnowLayer.class;
+            list[ICE] = BlockIce.class;
+            list[SNOW_BLOCK] = BlockSnow.class;
+            list[CACTUS] = BlockCactus.class;
+            list[CLAY_BLOCK] = BlockClay.class;
+            list[SUGARCANE_BLOCK] = BlockSugarcane.class;
+            list[FENCE] = BlockFence.class;
+            list[PUMPKIN] = BlockPumpkin.class;
+            list[NETHERRACK] = BlockNetherrack.class;
+            list[SOUL_SAND] = BlockSoulSand.class;
+            list[GLOWSTONE_BLOCK] = BlockGlowstone.class;
+            list[NETHER_PORTAL] = BlockNetherPortal.class;
+            list[LIT_PUMPKIN] = BlockPumpkinLit.class;
+            list[CAKE_BLOCK] = BlockCake.class;
 
-            list[INVISIBLE_BEDROCK] = InvisibleBedrock.class;
-            list[TRAPDOOR] = Trapdoor.class;
+            list[INVISIBLE_BEDROCK] = BlockBedrockInvisible.class;
+            list[TRAPDOOR] = BlockTrapdoor.class;
 
-            list[STONE_BRICKS] = StoneBricks.class;
+            list[STONE_BRICKS] = BlockBricksStone.class;
 
-            list[RED_MUSHROOM_BLOCK] = RedMushroomBlock.class;
-            list[BROWN_MUSHROOM_BLOCK] = BrownMushroomBlock.class;
+            list[RED_MUSHROOM_BLOCK] = BlockHugeMushroomRed.class;
+            list[BROWN_MUSHROOM_BLOCK] = BlockHugeMushroomBrown.class;
 
-            list[IRON_BARS] = IronBars.class;
-            list[GLASS_PANE] = GlassPane.class;
-            list[MELON_BLOCK] = Melon.class;
-            list[PUMPKIN_STEM] = PumpkinStem.class;
-            list[MELON_STEM] = MelonStem.class;
-            list[VINE] = Vine.class;
-            list[FENCE_GATE] = FenceGate.class;
+            list[IRON_BARS] = BlockIronBars.class;
+            list[GLASS_PANE] = BlockGlassPane.class;
+            list[MELON_BLOCK] = BlockMelon.class;
+            list[PUMPKIN_STEM] = BlockStemPumpkin.class;
+            list[MELON_STEM] = BlockStemMelon.class;
+            list[VINE] = BlockVine.class;
+            list[FENCE_GATE] = BlockFenceGate.class;
 
-            list[BRICK_STAIRS] = BrickStairs.class;
-            list[STONE_BRICK_STAIRS] = StoneBrickStairs.class;
+            list[BRICK_STAIRS] = BlockStairsBrick.class;
+            list[STONE_BRICK_STAIRS] = BlockStairsStoneBrick.class;
 
-            list[MYCELIUM] = Mycelium.class;
-            list[WATER_LILY] = WaterLily.class;
-            list[NETHER_BRICKS] = NetherBrick.class;
-            list[NETHER_BRICK_FENCE] = NetherBrickFence.class;
-            list[NETHER_BRICKS_STAIRS] = NetherBrickStairs.class;
+            list[MYCELIUM] = BlockMycelium.class;
+            list[WATER_LILY] = BlockWaterLily.class;
+            list[NETHER_BRICKS] = BlockNetherBrick.class;
+            list[NETHER_BRICK_FENCE] = BlockFenceNetherBrick.class;
+            list[NETHER_BRICKS_STAIRS] = BlockStairsNetherBrick.class;
 
-            list[ENCHANTING_TABLE] = EnchantingTable.class;
+            list[ENCHANTING_TABLE] = BlockEnchantingTable.class;
 
-            list[END_PORTAL_FRAME] = EndPortalFrame.class;
-            list[END_STONE] = EndStone.class;
+            list[END_PORTAL_FRAME] = BlockEndPortalFrame.class;
+            list[END_STONE] = BlockEndStone.class;
 
-            list[SANDSTONE_STAIRS] = SandstoneStairs.class;
+            list[SANDSTONE_STAIRS] = BlockStairsSandstone.class;
 
-            list[EMERALD_ORE] = EmeraldOre.class;
-            list[EMERALD_BLOCK] = Emerald.class;
+            list[EMERALD_ORE] = BlockOreEmerald.class;
+            list[EMERALD_BLOCK] = BlockEmerald.class;
 
-            list[SPRUCE_WOOD_STAIRS] = SpruceWoodStairs.class;
-            list[BIRCH_WOOD_STAIRS] = BirchWoodStairs.class;
-            list[JUNGLE_WOOD_STAIRS] = JungleWoodStairs.class;
-            list[STONE_WALL] = StoneWall.class;
+            list[SPRUCE_WOOD_STAIRS] = BlockStairsSpruce.class;
+            list[BIRCH_WOOD_STAIRS] = BlockStairsBirch.class;
+            list[JUNGLE_WOOD_STAIRS] = BlockStairsJungle.class;
+            list[STONE_WALL] = BlockWall.class;
 
-            list[CARROT_BLOCK] = Carrot.class;
-            list[POTATO_BLOCK] = Potato.class;
-            list[ANVIL] = Anvil.class;
+            list[CARROT_BLOCK] = BlockCarrot.class;
+            list[POTATO_BLOCK] = BlockPotato.class;
+            list[ANVIL] = BlockAnvil.class;
 
-            list[REDSTONE_BLOCK] = Redstone.class;
+            list[REDSTONE_BLOCK] = BlockRedstone.class;
 
-            list[QUARTZ_ORE] = QuartzOre.class;
-            list[QUARTZ_BLOCK] = Quartz.class;
-            list[QUARTZ_STAIRS] = QuartzStairs.class;
-            list[DOUBLE_WOOD_SLAB] = DoubleWoodSlab.class;
-            list[WOOD_SLAB] = WoodSlab.class;
-            list[STAINED_CLAY] = StainedClay.class;
+            list[QUARTZ_ORE] = BlockOreQuartz.class;
+            list[QUARTZ_BLOCK] = BlockQuartz.class;
+            list[QUARTZ_STAIRS] = BlockStairsQuartz.class;
+            list[DOUBLE_WOOD_SLAB] = BlockDoubleSlabWood.class;
+            list[WOOD_SLAB] = BlockSlabWood.class;
+            list[STAINED_CLAY] = BlockClayStained.class;
 
-            list[LEAVES2] = Leaves2.class;
-            list[WOOD2] = Wood2.class;
-            list[ACACIA_WOOD_STAIRS] = AcaciaWoodStairs.class;
-            list[DARK_OAK_WOOD_STAIRS] = DarkOakWoodStairs.class;
+            list[LEAVES2] = BlockLeaves2.class;
+            list[WOOD2] = BlockWood2.class;
+            list[ACACIA_WOOD_STAIRS] = BlockStairsAcacia.class;
+            list[DARK_OAK_WOOD_STAIRS] = BlockStairsDarkOak.class;
 
-            list[IRON_TRAPDOOR] = IronTrapdoor.class;
-            list[HAY_BALE] = HayBale.class;
-            list[CARPET] = Carpet.class;
-            list[HARDENED_CLAY] = HardenedClay.class;
-            list[COAL_BLOCK] = Coal.class;
-            list[PACKED_ICE] = PackedIce.class;
-            list[DOUBLE_PLANT] = DoublePlant.class;
+            list[IRON_TRAPDOOR] = BlockTrapdoorIron.class;
+            list[HAY_BALE] = BlockHayBale.class;
+            list[CARPET] = BlockCarpet.class;
+            list[HARDENED_CLAY] = BlockClayHardened.class;
+            list[COAL_BLOCK] = BlockCoal.class;
+            list[PACKED_ICE] = BlockPackedIce.class;
+            list[DOUBLE_PLANT] = BlockDoublePlant.class;
 
-            list[FENCE_GATE_SPRUCE] = FenceGateSpruce.class;
-            list[FENCE_GATE_BIRCH] = FenceGateBirch.class;
-            list[FENCE_GATE_JUNGLE] = FenceGateJungle.class;
-            list[FENCE_GATE_DARK_OAK] = FenceGateDarkOak.class;
-            list[FENCE_GATE_ACACIA] = FenceGateAcacia.class;
+            list[FENCE_GATE_SPRUCE] = BlockFenceGateSpruce.class;
+            list[FENCE_GATE_BIRCH] = BlockFenceGateBirch.class;
+            list[FENCE_GATE_JUNGLE] = BlockFenceGateJungle.class;
+            list[FENCE_GATE_DARK_OAK] = BlockFenceGateDarkOak.class;
+            list[FENCE_GATE_ACACIA] = BlockFenceGateAcacia.class;
 
-            list[GRASS_PATH] = GrassPath.class;
+            list[GRASS_PATH] = BlockGrassPath.class;
 
-            list[PODZOL] = Podzol.class;
-            list[BEETROOT_BLOCK] = Beetroot.class;
-            list[STONECUTTER] = Stonecutter.class;
-            list[GLOWING_OBSIDIAN] = GlowingObsidian.class;
-            list[BREWING_STAND_BLOCK] = BrewingStand.class;
-            list[ACACIA_DOOR_BLOCK] = AcaciaDoor.class;
-            list[SPRUCE_DOOR_BLOCK] = SpruceDoor.class;
-            list[DARK_OAK_DOOR_BLOCK] = DarkOakDoor.class;
-            list[BIRCH_DOOR_BLOCK] = BirchDoor.class;
-            list[JUNGLE_DOOR_BLOCK] = JungleDoor.class;
-            list[DAYLIGHT_DETECTOR] = DaylightDetector.class;
-            list[DAYLIGHT_DETECTOR_INVERTED] = DaylightDetectorInverted.class;
-            list[RAIL] = Rail.class;
-            list[ACTIVATOR_RAIL] = RailActivator.class;
-            list[DETECTOR_RAIL] = RailDetector.class;
-            list[POWERED_RAIL] = RailPowered.class;
-            list[FLOWER_POT_BLOCK] = FlowerPot.class;
-            list[LEVER] = Lever.class;
-            list[HEAVY_WEIGHTED_PRESSURE_PLATE] = HeavyWeightedPressurePlate.class;
-            list[LIGHT_WEIGHTED_PRESSURE_PLATE] = LightWeightedPressurePlate.class;
-            list[REDSTONE_LAMP] = RedstoneLamp.class;
-            list[STONE_PRESSURE_PLATE] = StonePressurePlate.class;
-            list[WOODEN_PRESSURE_PLATE] = WoodenPressurePlate.class;
+            list[PODZOL] = BlockPodzol.class;
+            list[BEETROOT_BLOCK] = BlockBeetroot.class;
+            list[STONECUTTER] = BlockStonecutter.class;
+            list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class;
+            list[BREWING_STAND_BLOCK] = BlockBrewingStand.class;
+            list[ACACIA_DOOR_BLOCK] = BlockDoorAcacia.class;
+            list[SPRUCE_DOOR_BLOCK] = BlockDoorSpruce.class;
+            list[DARK_OAK_DOOR_BLOCK] = BlockDoorDarkOak.class;
+            list[BIRCH_DOOR_BLOCK] = BlockDoorBirch.class;
+            list[JUNGLE_DOOR_BLOCK] = BlockDoorJungle.class;
+            list[DAYLIGHT_DETECTOR] = BlockDaylightDetector.class;
+            list[DAYLIGHT_DETECTOR_INVERTED] = BlockDaylightDetectorInverted.class;
+            list[RAIL] = BlockRail.class;
+            list[ACTIVATOR_RAIL] = BlockRailActivator.class;
+            list[DETECTOR_RAIL] = BlockRailDetector.class;
+            list[POWERED_RAIL] = BlockRailPowered.class;
+            list[FLOWER_POT_BLOCK] = BlockFlowerPot.class;
+            list[LEVER] = BlockLever.class;
+            list[HEAVY_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateHeavy.class;
+            list[LIGHT_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateLight.class;
+            list[REDSTONE_LAMP] = BlockRedstoneLamp.class;
+            list[STONE_PRESSURE_PLATE] = BlockPressurePlateStone.class;
+            list[WOODEN_PRESSURE_PLATE] = BlockPressurePlateWood.class;
+
+            list[SKULL_BLOCK] = BlockSkull.class;
 
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];
@@ -501,7 +504,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
                     if (block.isSolid()) {
                         if (block.isTransparent()) {
-                            if (block instanceof Liquid || block instanceof Ice) {
+                            if (block instanceof BlockLiquid || block instanceof BlockIce) {
                                 lightFilter[id] = 2;
                             } else {
                                 lightFilter[id] = 1;
@@ -515,7 +518,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                 } else {
                     lightFilter[id] = 1;
                     for (int data = 0; data < 16; ++data) {
-                        fullList[(id) << 4 | data] = new UnknownBlock(id, data);
+                        fullList[(id) << 4 | data] = new BlockUnknown(id, data);
                     }
                 }
             }
@@ -540,10 +543,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                 constructor.setAccessible(true);
                 block = (Block) constructor.newInstance(meta);
             } else {
-                block = new UnknownBlock(id, meta);
+                block = new BlockUnknown(id, meta);
             }
         } catch (Exception e) {
-            block = new UnknownBlock(id, meta);
+            block = new BlockUnknown(id, meta);
         }
 
         if (pos != null) {
@@ -568,7 +571,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this, new Air(), true, true);
+        return this.getLevel().setBlock(this, new BlockAir(), true, true);
     }
 
     public int onUpdate(int type) {
@@ -592,7 +595,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     public int getToolType() {
-        return Tool.TYPE_NONE;
+        return ItemTool.TYPE_NONE;
     }
 
     public double getFrictionFactor() {
@@ -676,28 +679,28 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public double getBreakTime(Item item) {
         double base = this.getHardness() * 1.5;
         if (this.canBeBrokenWith(item)) {
-            if (this.getToolType() == Tool.TYPE_SHEARS && item.isShears()) {
+            if (this.getToolType() == ItemTool.TYPE_SHEARS && item.isShears()) {
                 base /= 15;
             } else if (
-                    (this.getToolType() == Tool.TYPE_PICKAXE && item.isPickaxe()) ||
-                            (this.getToolType() == Tool.TYPE_AXE && item.isAxe()) ||
-                            (this.getToolType() == Tool.TYPE_SHOVEL && item.isShovel())
+                    (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
+                            (this.getToolType() == ItemTool.TYPE_AXE && item.isAxe()) ||
+                            (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel())
                     ) {
                 int tier = item.getTier();
                 switch (tier) {
-                    case Tool.TIER_WOODEN:
+                    case ItemTool.TIER_WOODEN:
                         base /= 2;
                         break;
-                    case Tool.TIER_STONE:
+                    case ItemTool.TIER_STONE:
                         base /= 4;
                         break;
-                    case Tool.TIER_IRON:
+                    case ItemTool.TIER_IRON:
                         base /= 6;
                         break;
-                    case Tool.TIER_DIAMOND:
+                    case ItemTool.TIER_DIAMOND:
                         base /= 8;
                         break;
-                    case Tool.TIER_GOLD:
+                    case ItemTool.TIER_GOLD:
                         base /= 12;
                         break;
                 }

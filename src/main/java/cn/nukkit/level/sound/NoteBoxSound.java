@@ -9,7 +9,7 @@ import cn.nukkit.network.protocol.DataPacket;
  * Nukkit Project
  */
 
-public class NoteBoxSound extends Sound {
+public class NoteBoxSound extends GenericSound {
 
     private int instrument;
     private int pitch;
@@ -24,13 +24,12 @@ public class NoteBoxSound extends Sound {
         this(pos, 0);
     }
 
-
     public NoteBoxSound(Vector3 pos, int instrument) {
         this(pos, instrument, 0);
     }
 
-
     public NoteBoxSound(Vector3 pos, int instrument, int pitch) {
+        super(pos, instrument, pitch);
         this.instrument = instrument;
         this.pitch = pitch;
     }

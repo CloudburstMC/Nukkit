@@ -1,5 +1,7 @@
 package cn.nukkit.level.format.mcregion;
 
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
@@ -9,8 +11,6 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.tile.Spawnable;
-import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -123,12 +123,12 @@ public class McRegion extends BaseLevelProvider {
 
         byte[] tiles = new byte[0];
 
-        if (!chunk.getTiles().isEmpty()) {
+        if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
 
-            for (Tile tile : chunk.getTiles().values()) {
-                if (tile instanceof Spawnable) {
-                    tagList.add(((Spawnable) tile).getSpawnCompound());
+            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                if (blockEntity instanceof BlockEntitySpawnable) {
+                    tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
                 }
             }
 

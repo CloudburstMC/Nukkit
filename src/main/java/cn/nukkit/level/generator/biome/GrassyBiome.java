@@ -1,6 +1,8 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockDirt;
+import cn.nukkit.block.BlockGrass;
 
 /**
  * author: MagicDroidX
@@ -9,11 +11,11 @@ import cn.nukkit.block.Block;
 public abstract class GrassyBiome extends NormalBiome {
     public GrassyBiome() {
         this.setGroundCover(new Block[]{
-                Block.get(Block.GRASS, 0),
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0),
-                Block.get(Block.DIRT, 0)
+                new BlockGrass(),
+                new BlockDirt(),
+                new BlockDirt(),
+                new BlockDirt(),
+                new BlockDirt()
         });
     }
 }

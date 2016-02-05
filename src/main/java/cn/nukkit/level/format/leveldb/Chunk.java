@@ -1,6 +1,7 @@
 package cn.nukkit.level.format.leveldb;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
@@ -13,7 +14,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 
@@ -116,7 +116,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public void setBlockId(int x, int y, int z, int id) {
-        this.blocks[(x << 11) | (z << 7) | y] = (byte) (id & 0xff);
+        this.blocks[(x << 11) | (z << 7) | y] = (byte) (id);
         this.hasChanged = true;
     }
 
@@ -135,9 +135,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.data[i] & 0xff;
         if ((y & 1) == 0) {
-            this.data[i] = (byte) (((old & 0xf0) | (old & 0x0f)) & 0xff);
+            this.data[i] = (byte) ((old & 0xf0) | (old & 0x0f));
         } else {
-            this.data[i] = (byte) ((((data & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+            this.data[i] = (byte) (((data & 0x0f) << 4) | (old & 0x0f));
         }
         this.hasChanged = true;
     }
@@ -213,9 +213,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.skyLight[i] & 0xff;
         if ((y & 1) == 0) {
-            this.skyLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
+            this.skyLight[i] = (byte) ((old & 0xf0) | (level & 0x0f));
         } else {
-            this.skyLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+            this.skyLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
         this.hasChanged = true;
     }
@@ -235,9 +235,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.blockLight[i] & 0xff;
         if ((y & 1) == 0) {
-            this.blockLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
+            this.blockLight[i] = (byte) ((old & 0xf0) | (level & 0x0f));
         } else {
-            this.blockLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+            this.blockLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
         this.hasChanged = true;
     }
@@ -371,13 +371,13 @@ public class Chunk extends BaseFullChunk {
                     }
                 }
 
-                /*if (!entities.isEmpty() || !tiles.isEmpty()) {
+                /*if (!entities.isEmpty() || !blockEntities.isEmpty()) {
                     CompoundTag ct = new CompoundTag();
                     ListTag<CompoundTag> entityList = new ListTag<>("entities");
-                    ListTag<CompoundTag> tileList = new ListTag<>("tiles");
+                    ListTag<CompoundTag> tileList = new ListTag<>("blockEntities");
 
                     entityList.list = entities;
-                    tileList.list = tiles;
+                    tileList.list = blockEntities;
                     ct.putList(entityList);
                     ct.putList(tileList);
                     NBTIO.write(ct, new File(Nukkit.DATA_PATH + chunkX + "_" + chunkZ + ".dat"));
@@ -447,10 +447,10 @@ public class Chunk extends BaseFullChunk {
 
                 List<CompoundTag> tiles = new ArrayList<>();
 
-                for (Tile tile : this.getTiles().values()) {
-                    if (!tile.closed) {
-                        tile.saveNBT();
-                        entities.add(tile.namedTag);
+                for (BlockEntity blockEntity : this.getBlockEntities().values()) {
+                    if (!blockEntity.closed) {
+                        blockEntity.saveNBT();
+                        entities.add(blockEntity.namedTag);
                     }
                 }
 
@@ -566,8 +566,8 @@ public class Chunk extends BaseFullChunk {
                             changed = true;
                             continue;
                         }
-                        Tile tile = Tile.createTile(nbt.getString("id"), this, nbt);
-                        if (tile == null) {
+                        BlockEntity blockEntity = BlockEntity.createBlockEntity(nbt.getString("id"), this, nbt);
+                        if (blockEntity == null) {
                             changed = true;
                             continue;
                         }

@@ -1,6 +1,10 @@
 package cn.nukkit;
 
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.Block;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySign;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
@@ -27,7 +31,10 @@ import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.*;
+import cn.nukkit.item.ItemArrow;
+import cn.nukkit.item.ItemGlassBottle;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
@@ -55,9 +62,6 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
-import cn.nukkit.tile.Sign;
-import cn.nukkit.tile.Spawnable;
-import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
@@ -1090,7 +1094,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision) {
-                Item item = Item.get(Item.ARROW, 0, 1);
+                ItemArrow item = new ItemArrow();
                 if (this.isSurvival() && !this.inventory.canAddItem(item)) {
                     continue;
                 }
@@ -2048,7 +2052,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         .add(new FloatTag("", (float) pitch)))
                                 .putInt("Potion", item.getDamage());
                         double f = 1.5;
-                        Entity bottle = Entity.createEntity("EntityPotion", this.chunk, nbt, this);
+                        Entity bottle = new EntityPotion(this.chunk, nbt, this);
                         bottle.setMotion(bottle.getMotion().multiply(f));
                         if (this.isSurvival()) {
                             item.setCount(item.getCount() - 1);
@@ -2105,7 +2109,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (this.inventory.getItemInHand().getId() == Item.BOW) {
 
                                 Item bow = this.inventory.getItemInHand();
-                                if (this.isSurvival() && !this.inventory.contains(Item.get(Item.ARROW, 0, 1))) {
+                                ItemArrow itemArrow = new ItemArrow();
+                                if (this.isSurvival() && !this.inventory.contains(itemArrow)) {
                                     this.inventory.sendContents(this);
                                     break;
                                 }
@@ -2141,10 +2146,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 } else {
                                     entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
                                     if (this.isSurvival()) {
-                                        this.inventory.removeItem(Item.get(Item.ARROW, 0, 1));
+                                        this.inventory.removeItem(itemArrow);
                                         bow.setDamage(bow.getDamage() + 1);
                                         if (bow.getDamage() >= 385) {
-                                            this.inventory.setItemInHand(Item.get(Item.AIR, 0, 0));
+                                            this.inventory.setItemInHand(new ItemBlock(new BlockAir(), 0, 0));
                                         } else {
                                             this.inventory.setItemInHand(bow);
                                         }
@@ -2287,14 +2292,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 this.inventory.sendContents(this);
                 Block target = this.level.getBlock(vector);
-                Tile tile = this.level.getTile(vector);
+                BlockEntity blockEntity = this.level.getBlockEntity(vector);
 
                 this.level.sendBlocks(new Player[]{this}, new Block[]{target}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
 
                 this.inventory.sendHeldItem(this);
 
-                if (tile instanceof Spawnable) {
-                    ((Spawnable) tile).spawnTo(this);
+                if (blockEntity instanceof BlockEntitySpawnable) {
+                    ((BlockEntitySpawnable) blockEntity).spawnTo(this);
                 }
                 break;
 
@@ -2407,7 +2412,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     if (item.isTool() && this.isSurvival()) {
                         if (item.useOn(targetEntity) && item.getDamage() >= item.getMaxDurability()) {
-                            this.inventory.setItemInHand(Item.get(Item.AIR, 0, 1));
+                            this.inventory.setItemInHand(new ItemBlock(new BlockAir()));
                         } else {
                             this.inventory.setItemInHand(item);
                         }
@@ -2457,12 +2462,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (itemInHand.getId() == Item.POTION) {
                             if (this.getGamemode() == SURVIVAL) {
                                 if (itemInHand.getCount() > 1) {
-                                    if (this.inventory.canAddItem(Item.get(Item.GLASS_BOTTLE, 0, 1))) {
-                                        this.inventory.addItem(Item.get(Item.GLASS_BOTTLE, 0, 1));
+                                    ItemGlassBottle bottle = new ItemGlassBottle();
+                                    if (this.inventory.canAddItem(bottle)) {
+                                        this.inventory.addItem(bottle);
                                     }
                                     --itemInHand.count;
                                 } else {
-                                    itemInHand = Item.get(Item.GLASS_BOTTLE, 0, 1);
+                                    itemInHand = new ItemGlassBottle();
                                 }
                             }
 
@@ -2502,7 +2508,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 }
 
-                this.inventory.setItemInHand(Item.get(Item.AIR, 0, 1));
+                this.inventory.setItemInHand(new ItemBlock(new BlockAir()));
                 Vector3 motion = this.getDirectionVector().multiply(0.4);
 
                 this.level.dropItem(this.add(0, 1.3, 0), item, motion, 40);
@@ -2776,7 +2782,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         newItem = item.clone();
                         newItem.setCount(item.getCount() - count);
                     } else {
-                        newItem = Item.get(Item.AIR, 0, 0);
+                        newItem = new ItemBlock(new BlockAir(), 0, 0);
                     }
 
                     this.inventory.setItem(i, newItem);
@@ -2873,8 +2879,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 }
 
-                Tile t = this.level.getTile(pos);
-                if (t instanceof Sign) {
+                BlockEntity t = this.level.getBlockEntity(pos);
+                if (t instanceof BlockEntitySign) {
                     CompoundTag nbt;
                     try {
                         nbt = NBTIO.read(blockEntityDataPacket.namedTag, ByteOrder.LITTLE_ENDIAN);
@@ -2882,8 +2888,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         throw new RuntimeException(e);
                     }
 
-                    if (!Tile.SIGN.equals(nbt.getString("id"))) {
-                        ((Sign) t).spawnTo(this);
+                    if (!BlockEntity.SIGN.equals(nbt.getString("id"))) {
+                        ((BlockEntitySign) t).spawnTo(this);
                     } else {
                         SignChangeEvent signChangeEvent = new SignChangeEvent(t.getBlock(), this, new String[]{
                                 TextFormat.clean(nbt.getString("Text1"), this.removeFormat),
@@ -2905,9 +2911,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.server.getPluginManager().callEvent(signChangeEvent);
 
                         if (!signChangeEvent.isCancelled()) {
-                            ((Sign) t).setText(signChangeEvent.getLine(0), signChangeEvent.getLine(1), signChangeEvent.getLine(2), signChangeEvent.getLine(3));
+                            ((BlockEntitySign) t).setText(signChangeEvent.getLine(0), signChangeEvent.getLine(1), signChangeEvent.getLine(2), signChangeEvent.getLine(3));
                         } else {
-                            ((Sign) t).spawnTo(this);
+                            ((BlockEntitySign) t).spawnTo(this);
                         }
 
                     }
@@ -3333,7 +3339,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     public void setHealth(float health) {
         super.setHealth(health);
-        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? health : 0);
+        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0);
         if (this.spawned) {
             UpdateAttributesPacket pk = new UpdateAttributesPacket();
             pk.entries = new Attribute[]{attr};
@@ -3355,19 +3361,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int now = this.getExperience();
         int added = now + add;
         int level = this.getExperienceLevel();
-        int most = this.calculateRequireExperience(level);
+        int most = calculateRequireExperience(level);
         while (added >= most) {  //Level Up!
             added = added - most;
             level++;
-            this.sendExperienceLevelUp();
             getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
-            most = this.calculateRequireExperience(level);
+            most = calculateRequireExperience(level);
         }
         getServer().getLogger().debug("Added " + add + " EXP to " + getName() + ", now lv:" + level + " (" + added + "/" + most + ") .");
         this.setExperience(added, level);
     }
 
-    public int calculateRequireExperience(int level) {
+    public static int calculateRequireExperience(int level) {
         if (level < 16) {
             return 2 * level + 7;
         } else if (level >= 17 && level <= 31) {
@@ -3396,8 +3401,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendExperience(int exp) {
-        float precent = ((float) exp) / this.calculateRequireExperience(this.getExperienceLevel());
-        this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, precent, true).setValue(precent));
+        float percent = ((float) exp) / calculateRequireExperience(this.getExperienceLevel());
+        this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, percent, true).setValue(percent));
     }
 
     public void sendExperienceLevel() {
@@ -3406,17 +3411,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendExperienceLevel(int level) {
         this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setValue(level));
-    }
-
-    public void sendExperienceLevelUp() {
-        //todo 似乎没用？需要抓包Attribute
-        //UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        //pk.entityId = 0;
-        //float secret = this.expLevel > 30 ? 1.0F : (float)this.expLevel / 30.0F;
-        //pk.entries = new Attribute[]{
-        //        Attribute.addAttribute(Attribute.EXPERIENCE_LEVEL, "random.levelup", 0, 1, secret, true).setValue(secret)
-        //};
-        //this.dataPacket(pk);
     }
 
     public void setAttribute(Attribute attribute) {

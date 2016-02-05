@@ -2,6 +2,7 @@ package cn.nukkit.level.format.generic;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
@@ -10,7 +11,6 @@ import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
-import cn.nukkit.tile.Tile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,9 +25,9 @@ import java.util.Map;
 public abstract class BaseFullChunk implements FullChunk {
     protected Map<Long, Entity> entities = new HashMap<>();
 
-    protected Map<Long, Tile> tiles = new HashMap<>();
+    protected Map<Long, BlockEntity> tiles = new HashMap<>();
 
-    protected Map<Integer, Tile> tileList = new HashMap<>();
+    protected Map<Integer, BlockEntity> tileList = new HashMap<>();
 
     protected int[] biomeColors;
 
@@ -139,8 +139,8 @@ public abstract class BaseFullChunk implements FullChunk {
                             changed = true;
                             continue;
                         }
-                        Tile tile = Tile.createTile(nbt.getString("id"), this, nbt);
-                        if (tile == null) {
+                        BlockEntity blockEntity = BlockEntity.createBlockEntity(nbt.getString("id"), this, nbt);
+                        if (blockEntity == null) {
                             changed = true;
                             continue;
                         }
@@ -307,22 +307,22 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public void addTile(Tile tile) {
-        this.tiles.put(tile.getId(), tile);
-        int index = (((int) tile.z & 0x0f) << 12) | (((int) tile.x & 0x0f) << 8) | ((int) tile.y & 0xff);
-        if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(tile)) {
+    public void addBlockEntity(BlockEntity blockEntity) {
+        this.tiles.put(blockEntity.getId(), blockEntity);
+        int index = (((int) blockEntity.z & 0x0f) << 12) | (((int) blockEntity.x & 0x0f) << 8) | ((int) blockEntity.y & 0xff);
+        if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(blockEntity)) {
             this.tileList.get(index).close();
         }
-        this.tileList.put(index, tile);
+        this.tileList.put(index, blockEntity);
         if (this.isInit) {
             this.hasChanged = true;
         }
     }
 
     @Override
-    public void removeTile(Tile tile) {
-        this.tiles.remove(tile.getId());
-        int index = ((tile.getFloorZ()) & 0x0f << 12) | ((tile.getFloorX() & 0x0f) << 8) | (tile.getFloorY() & 0xff);
+    public void removeBlockEntity(BlockEntity blockEntity) {
+        this.tiles.remove(blockEntity.getId());
+        int index = ((blockEntity.getFloorZ()) & 0x0f << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
         this.tileList.remove(index);
         if (this.isInit) {
             this.hasChanged = true;
@@ -335,7 +335,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public Map<Long, Tile> getTiles() {
+    public Map<Long, BlockEntity> getBlockEntities() {
         return tiles;
     }
 
@@ -345,7 +345,7 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public Tile getTile(int x, int y, int z) {
+    public BlockEntity getTile(int x, int y, int z) {
         int index = (z << 12) | (x << 8) | y;
         return this.tileList.containsKey(index) ? this.tileList.get(index) : null;
     }
@@ -398,8 +398,8 @@ public abstract class BaseFullChunk implements FullChunk {
             entity.close();
         }
 
-        for (Tile tile : new ArrayList<>(this.getTiles().values())) {
-            tile.close();
+        for (BlockEntity blockEntity : new ArrayList<>(this.getBlockEntities().values())) {
+            blockEntity.close();
         }
         this.provider = null;
         return true;
