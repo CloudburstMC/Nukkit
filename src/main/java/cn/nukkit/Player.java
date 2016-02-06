@@ -593,7 +593,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             ++count;
 
             this.usedChunks.put(index, false);
-            this.level.registerChunkLoader(this, chunkX, chunkZ, false);
+            this.level.registerChunkLoader(this, chunkX, chunkZ, true);
 
             if (!this.level.populateChunk(chunkX, chunkZ)) {
                 if (this.spawned && this.teleportPosition == null) {
