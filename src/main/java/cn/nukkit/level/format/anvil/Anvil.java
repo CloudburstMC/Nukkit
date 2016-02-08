@@ -1,15 +1,15 @@
 package cn.nukkit.level.format.anvil;
 
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.nbt.CompoundTag;
-import cn.nukkit.nbt.NbtIo;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.FullChunkDataPacket;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.tile.Spawnable;
-import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -56,7 +57,7 @@ public class Anvil extends BaseLevelProvider {
                     return Pattern.matches("^.+\\.mc[r|a]$", name);
                 }
             })) {
-                if (!file.getName().endsWith(".mcr")) {
+                if (!file.getName().endsWith(".mca")) {
                     isValid = false;
                     break;
                 }
@@ -65,34 +66,40 @@ public class Anvil extends BaseLevelProvider {
         return isValid;
     }
 
-    public static void generate(String path, String name, int seed, Class generator) throws IOException {
+    public static void generate(String path, String name, long seed, Class<? extends Generator> generator) throws IOException {
         generate(path, name, seed, generator, new HashMap<>());
     }
 
-    public static void generate(String path, String name, int seed, Class generator, Map<String, String> options) throws IOException {
+    public static void generate(String path, String name, long seed, Class<? extends Generator> generator, Map<String, String> options) throws IOException {
         if (!new File(path + "/region").exists()) {
             new File(path + "/region").mkdirs();
         }
 
-        CompoundTag levelData = new CompoundTag("Data");
-        levelData.putBoolean("hardcore", false);
-        levelData.putBoolean("initialized", true);
-        levelData.putInt("GameType", 0);
-        levelData.putInt("generatorVersion", 1);
-        levelData.putInt("SpawnX", 128);
-        levelData.putInt("SpawnY", 70);
-        levelData.putInt("SpawnZ", 128);
-        levelData.putInt("version", 19133);
-        levelData.putLong("Time", 0);
-        levelData.putLong("LastPlayed", System.currentTimeMillis());
-        levelData.putLong("RandomSeed", seed);
-        levelData.putLong("SizeOnDisk", 0);
-        levelData.putLong("Time", 0);
-        levelData.putString("generatorName", Generator.getGeneratorName(generator));
-        levelData.putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "");
-        levelData.putString("LevelName", name);
-        levelData.putCompound("GameRules", new CompoundTag());
-        NbtIo.writeCompressed(levelData, new FileOutputStream(path + "level.dat"));
+        CompoundTag levelData = new CompoundTag("Data")
+                .putCompound("GameRules", new CompoundTag())
+
+                .putLong("DayTime", 0)
+                .putInt("GameType", 0)
+                .putString("generatorName", Generator.getGeneratorName(generator))
+                .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
+                .putInt("generatorVersion", 1)
+                .putBoolean("hardcore", false)
+                .putBoolean("initialized", true)
+                .putLong("LastPlayed", System.currentTimeMillis() / 1000)
+                .putString("LevelName", name)
+                .putBoolean("raining", false)
+                .putInt("rainTime", 0)
+                .putLong("RandomSeed", seed)
+                .putInt("SpawnX", 128)
+                .putInt("SpawnY", 70)
+                .putInt("SpawnZ", 128)
+                .putBoolean("thundering", false)
+                .putInt("thunderTime", 0)
+                .putInt("version", 19133)
+                .putLong("Time", 0)
+                .putLong("SizeOnDisk", 0);
+
+        NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
     }
 
     public static int getRegionIndexX(int chunkX) {
@@ -110,19 +117,19 @@ public class Anvil extends BaseLevelProvider {
             throw new ChunkException("Invalid Chunk Set");
         }
 
-        byte[] tiles = new byte[0];
+        byte[] blockEntities = new byte[0];
 
-        if (!chunk.getTiles().isEmpty()) {
+        if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
 
-            for (Tile tile : chunk.getTiles().values()) {
-                if (tile instanceof Spawnable) {
-                    tagList.add(((Spawnable) tile).getSpawnCompound());
+            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                if (blockEntity instanceof BlockEntitySpawnable) {
+                    tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
                 }
             }
 
             try {
-                tiles = NbtIo.write(tagList);
+                blockEntities = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -135,7 +142,7 @@ public class Anvil extends BaseLevelProvider {
             extraData.putLShort(chunk.getBlockExtraDataArray().get(key));
         }
 
-        BinaryStream stream = new BinaryStream(new byte[65536]);
+        BinaryStream stream = new BinaryStream();
         stream.put(chunk.getBlockIdArray());
         stream.put(chunk.getBlockDataArray());
         stream.put(chunk.getBlockSkyLightArray());
@@ -147,7 +154,7 @@ public class Anvil extends BaseLevelProvider {
             stream.put(Binary.writeInt(color));
         }
         stream.put(extraData.getBuffer());
-        stream.put(tiles);
+        stream.put(blockEntities);
 
         this.getLevel().chunkRequestCallback(x, z, stream.getBuffer(), FullChunkDataPacket.ORDER_LAYERED);
 
@@ -156,7 +163,7 @@ public class Anvil extends BaseLevelProvider {
 
     @Override
     public void unloadChunks() {
-        for (Chunk chunk : this.chunks.values()) {
+        for (Chunk chunk : new ArrayList<>(this.chunks.values())) {
             this.unloadChunk(chunk.getX(), chunk.getZ(), false);
         }
         this.chunks = new HashMap<>();
@@ -308,9 +315,9 @@ public class Anvil extends BaseLevelProvider {
         this.chunks.put(index, (Chunk) chunk);
     }
 
-    public static ChunkSection createChunkSection(byte Y) {
+    public static ChunkSection createChunkSection(int Y) {
         CompoundTag nbt = new CompoundTag();
-        nbt.putByte("Y", Y);
+        nbt.putByte("Y", (byte) Y);
         nbt.putByteArray("Blocks", new byte[4096]);
         nbt.putByteArray("Data", new byte[2048]);
         byte[] sl = new byte[2048];
@@ -346,9 +353,8 @@ public class Anvil extends BaseLevelProvider {
     @Override
     public void close() {
         this.unloadChunks();
-        for (Map.Entry entry : this.regions.entrySet()) {
-            String index = (String) entry.getKey();
-            RegionLoader region = (RegionLoader) entry.getValue();
+        for (String index : new ArrayList<>(this.regions.keySet())) {
+            RegionLoader region = this.regions.get(index);
             try {
                 region.close();
             } catch (IOException e) {

@@ -19,7 +19,7 @@ public class PlayerCreationEvent extends Event {
 
     private SourceInterface interfaz;
 
-    private long clientId;
+    private Long clientId;
 
     private String address;
 
@@ -51,7 +51,7 @@ public class PlayerCreationEvent extends Event {
         return port;
     }
 
-    public long getClientId() {
+    public Long getClientId() {
         return clientId;
     }
 

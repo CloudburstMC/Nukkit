@@ -32,13 +32,6 @@ public class PermissibleBase implements Permissible {
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        this.parent = null;
-        this.opable = null;
-    }
-
-    @Override
     public boolean isOp() {
         return this.opable != null && this.opable.isOp();
     }

@@ -4,33 +4,33 @@ import cn.nukkit.raknet.protocol.EncapsulatedPacket;
 import cn.nukkit.utils.BinaryStream;
 
 /**
- * @author Nukkit Project Team
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     public boolean isEncoded = false;
     private int channel = 0;
+
     public EncapsulatedPacket encapsulatedPacket;
     public byte reliability;
     public Integer orderIndex = null;
     public Integer orderChannel = null;
 
+    public abstract byte pid();
+
     public abstract void decode();
 
     public abstract void encode();
 
-    public abstract byte pid();
-
     @Override
     public void reset() {
         super.reset();
-        putByte(pid());
+        this.putByte(this.pid());
     }
 
-    @Deprecated
-    public DataPacket setChannel(int channel) {
+    public void setChannel(int channel) {
         this.channel = channel;
-        return this;
     }
 
     public int getChannel() {
@@ -53,5 +53,4 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
             return null;
         }
     }
-
 }

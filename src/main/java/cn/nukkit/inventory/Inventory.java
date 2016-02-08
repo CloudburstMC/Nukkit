@@ -33,7 +33,7 @@ public interface Inventory {
 
     boolean canAddItem(Item item);
 
-    public Item[] removeItem(Item... slots);
+    Item[] removeItem(Item... slots);
 
     Map<Integer, Item> getContents();
 
@@ -65,7 +65,7 @@ public interface Inventory {
 
     void clearAll();
 
-    public Set<Player> getViewers();
+    Set<Player> getViewers();
 
     InventoryType getType();
 

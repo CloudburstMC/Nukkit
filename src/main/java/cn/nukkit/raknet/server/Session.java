@@ -6,11 +6,10 @@ import cn.nukkit.raknet.protocol.EncapsulatedPacket;
 import cn.nukkit.raknet.protocol.Packet;
 import cn.nukkit.raknet.protocol.packet.*;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -52,24 +51,24 @@ public class Session {
 
     private boolean isActive;
 
-    private List<Integer> ACKQueue = new ArrayList<>();
-    private List<Integer> NACKQueue = new ArrayList<>();
+    private Map<Integer, Integer> ACKQueue = new HashMap<>();
+    private Map<Integer, Integer> NACKQueue = new HashMap<>();
 
-    private Map<Integer, DataPacket> recoveryQueue = new ConcurrentHashMap<>();
+    private Map<Integer, DataPacket> recoveryQueue = new TreeMap<>();
 
-    private Map<Short, Map<Integer, EncapsulatedPacket>> splitPackets = new ConcurrentHashMap<>();
+    private Map<Integer, Map<Integer, EncapsulatedPacket>> splitPackets = new HashMap<>();
 
-    private Map<Integer, Map<Integer, Integer>> needACK = new ConcurrentHashMap<>();
+    private Map<Integer, Map<Integer, Integer>> needACK = new TreeMap<>();
 
     private DataPacket sendQueue;
 
     private int windowStart;
-    private Map<Integer, Integer> receivedWindow = new ConcurrentHashMap<>();
+    private Map<Integer, Integer> receivedWindow = new TreeMap<>();
     private int windowEnd;
 
     private int reliableWindowStart;
     private int reliableWindowEnd;
-    private Map<Integer, EncapsulatedPacket> reliableWindow = new ConcurrentHashMap<>();
+    private Map<Integer, EncapsulatedPacket> reliableWindow = new TreeMap<>();
     private int lastReliableIndex = -1;
 
     public Session(SessionManager sessionManager, String address, int port) {
@@ -113,16 +112,16 @@ public class Session {
 
         if (!this.ACKQueue.isEmpty()) {
             ACK pk = new ACK();
-            pk.packets = this.ACKQueue.stream().toArray(Integer[]::new);
+            pk.packets = new TreeMap<>(this.ACKQueue);
             this.sendPacket(pk);
-            this.ACKQueue.clear();
+            this.ACKQueue = new HashMap<>();
         }
 
         if (!this.NACKQueue.isEmpty()) {
             NACK pk = new NACK();
-            pk.packets = this.NACKQueue.stream().toArray(Integer[]::new);
+            pk.packets = new TreeMap<>(this.NACKQueue);
             this.sendPacket(pk);
-            this.NACKQueue.clear();
+            this.NACKQueue = new HashMap<>();
         }
 
         if (!this.packetToSend.isEmpty()) {
@@ -146,9 +145,8 @@ public class Session {
         }
 
         if (!this.needACK.isEmpty()) {
-            for (Map.Entry<Integer, Map<Integer, Integer>> entry : this.needACK.entrySet()) {
-                int identifierACK = entry.getKey();
-                Map<Integer, Integer> indexes = entry.getValue();
+            for (int identifierACK : new ArrayList<>(this.needACK.keySet())) {
+                Map<Integer, Integer> indexes = this.needACK.get(identifierACK);
                 if (indexes.isEmpty()) {
                     this.needACK.remove(identifierACK);
                     this.sessionManager.notifyACK(this, identifierACK);
@@ -156,9 +154,8 @@ public class Session {
             }
         }
 
-        for (Map.Entry<Integer, DataPacket> entry : this.recoveryQueue.entrySet()) {
-            int seq = entry.getKey();
-            DataPacket pk = entry.getValue();
+        for (int seq : new ArrayList<>(this.recoveryQueue.keySet())) {
+            DataPacket pk = this.recoveryQueue.get(seq);
             if (pk.sendTime < System.currentTimeMillis() - 8000) {
                 this.packetToSend.add(pk);
                 this.recoveryQueue.remove(seq);
@@ -167,7 +164,7 @@ public class Session {
             }
         }
 
-        for (Integer seq : this.receivedWindow.keySet()) {
+        for (int seq : new ArrayList<>(this.receivedWindow.keySet())) {
             if (seq < this.windowStart) {
                 this.receivedWindow.remove(seq);
             } else {
@@ -207,15 +204,10 @@ public class Session {
     private void addToQueue(EncapsulatedPacket pk, int flags) throws Exception {
         int priority = flags & 0b0000111;
         if (pk.needACK && pk.messageIndex != null) {
-            Map<Integer, Integer> map;
-            if (this.needACK.get(pk.identifierACK) != null) {
-                map = this.needACK.get(pk.identifierACK);
-                map.put(pk.messageIndex, pk.messageIndex);
-            } else {
-                map = new ConcurrentHashMap<>();
-                map.put(pk.messageIndex, pk.messageIndex);
+            if (!this.needACK.containsKey(pk.identifierACK)) {
+                this.needACK.put(pk.identifierACK, new HashMap<>());
             }
-            this.needACK.put(pk.identifierACK, map);
+            this.needACK.get(pk.identifierACK).put(pk.messageIndex, pk.messageIndex);
         }
 
         if (priority == RakNet.PRIORITY_IMMEDIATE) { //Skip queues
@@ -231,6 +223,7 @@ public class Session {
             this.sendPacket(packet);
             packet.sendTime = System.currentTimeMillis();
             this.recoveryQueue.put(packet.seqNumber, packet);
+
             return;
         }
         int length = this.sendQueue.length();
@@ -252,20 +245,20 @@ public class Session {
 
     public void addEncapsulatedToQueue(EncapsulatedPacket packet, int flags) throws Exception {
         if ((packet.needACK = (flags & RakNet.FLAG_NEED_ACK) > 0)) {
-            this.needACK.put(packet.identifierACK, new ConcurrentHashMap<>());
+            this.needACK.put(packet.identifierACK, new HashMap<>());
         }
 
         if (packet.reliability == 2 ||
                 packet.reliability == 3 ||
                 packet.reliability == 4 ||
                 packet.reliability == 6 ||
-                packet.reliability == 7
-                ) {
+                packet.reliability == 7) {
             packet.messageIndex = this.messageIndex++;
 
             if (packet.reliability == 3) {
-                this.channelIndex.put(packet.orderChannel, this.channelIndex.get(packet.orderChannel) + 1);
-                packet.orderIndex = this.channelIndex.get(packet.orderChannel);
+                int index = this.channelIndex.get(packet.orderChannel) + 1;
+                packet.orderIndex = index;
+                channelIndex.put(packet.orderChannel, index);
             }
         }
 
@@ -275,7 +268,7 @@ public class Session {
             for (int count = 0; count < buffers.length; count++) {
                 byte[] buffer = buffers[count];
                 EncapsulatedPacket pk = new EncapsulatedPacket();
-                pk.splitID = (short) splitID;
+                pk.splitID = splitID;
                 pk.hasSplit = true;
                 pk.splitCount = buffers.length;
                 pk.reliability = packet.reliability;
@@ -290,10 +283,10 @@ public class Session {
                     pk.orderChannel = packet.orderChannel;
                     pk.orderIndex = packet.orderIndex;
                 }
-                addToQueue(pk, flags | RakNet.PRIORITY_IMMEDIATE);
+                this.addToQueue(pk, flags | RakNet.PRIORITY_IMMEDIATE);
             }
         } else {
-            addToQueue(packet, flags);
+            this.addToQueue(packet, flags);
         }
     }
 
@@ -306,21 +299,20 @@ public class Session {
             if (this.splitPackets.size() >= MAX_SPLIT_COUNT) {
                 return;
             }
-            Map<Integer, EncapsulatedPacket> map = new ConcurrentHashMap<>();
-            map.put(packet.splitIndex, packet);
-            this.splitPackets.put(packet.splitID, map);
+            this.splitPackets.put(packet.splitID, new HashMap<Integer, EncapsulatedPacket>() {{
+                put(packet.splitIndex, packet);
+            }});
         } else {
-            Map<Integer, EncapsulatedPacket> map = this.splitPackets.get(packet.splitID);
-            map.put(packet.splitIndex, packet);
-            this.splitPackets.put(packet.splitID, map);
+            this.splitPackets.get(packet.splitID).put(packet.splitIndex, packet);
         }
 
-        if (this.splitPackets.get(packet.splitID).values().size() == packet.splitCount) {
+        if (this.splitPackets.get(packet.splitID).size() == packet.splitCount) {
             EncapsulatedPacket pk = new EncapsulatedPacket();
-            pk.buffer = new byte[0];
+            BinaryStream stream = new BinaryStream();
             for (int i = 0; i < packet.splitCount; i++) {
-                pk.buffer = Binary.appendBytes(pk.buffer, this.splitPackets.get(packet.splitID).get(i).buffer);
+                stream.put(this.splitPackets.get(packet.splitID).get(i).buffer);
             }
+            pk.buffer = stream.getBuffer();
             pk.length = pk.buffer.length;
             this.splitPackets.remove(packet.splitID);
 
@@ -343,14 +335,15 @@ public class Session {
                 this.handleEncapsulatedPacketRoute(packet);
 
                 if (!this.reliableWindow.isEmpty()) {
+                    TreeMap<Integer, EncapsulatedPacket> sortedMap = new TreeMap<>(this.reliableWindow);
 
-                    for (Map.Entry<Integer, EncapsulatedPacket> entry : this.reliableWindow.entrySet()) {
-                        Integer index = entry.getKey();
-                        EncapsulatedPacket pk = entry.getValue();
+                    for (int index : sortedMap.keySet()) {
+                        EncapsulatedPacket pk = this.reliableWindow.get(index);
 
                         if ((index - this.lastReliableIndex) != 1) {
                             break;
                         }
+
                         this.lastReliableIndex++;
                         this.reliableWindowStart++;
                         this.reliableWindowEnd++;
@@ -362,6 +355,7 @@ public class Session {
                 this.reliableWindow.put(packet.messageIndex, packet);
             }
         }
+
     }
 
     public int getState() {
@@ -385,7 +379,7 @@ public class Session {
         }
 
         byte id = packet.buffer[0];
-        if (id < (byte) 0x80) { //internal data packet
+        if ((id & 0xff) < 0x80) { //internal data packet
             if (state == STATE_CONNECTING_2) {
                 if (id == CLIENT_CONNECT_DataPacket.ID) {
                     CLIENT_CONNECT_DataPacket dataPacket = new CLIENT_CONNECT_DataPacket();
@@ -411,10 +405,6 @@ public class Session {
                         this.state = STATE_CONNECTED; //FINALLY!
                         this.isTemporal = false;
                         this.sessionManager.openSession(this);
-                        /*for (EncapsulatedPacket p : this.preJoinQueue) {
-                            this.sessionManager.streamEncapsulated(this, p);
-                        }
-                        this.preJoinQueue.clear();*/
                     }
                 }
             } else if (id == CLIENT_DISCONNECT_DataPacket.ID) {
@@ -433,12 +423,12 @@ public class Session {
                 sendPacket.buffer = pk.buffer;
                 this.addToQueue(sendPacket);
                 //TODO: add PING/PONG (0x00/0x03) automatic latency measure
-            } else if (state == STATE_CONNECTED) {
-                this.sessionManager.streamEncapsulated(this, packet);
-                //TODO: stream channels
-            } else {
-                //this.sessionManager.getLogger().notice("Received packet before connection: "+Binary.bytesToHexString(packet.buffer));
             }
+        } else if (state == STATE_CONNECTED) {
+            this.sessionManager.streamEncapsulated(this, packet);
+            //TODO: stream channels
+        } else {
+            //this.sessionManager.getLogger().notice("Received packet before connection: "+Binary.bytesToHexString(packet.buffer));
         }
     }
 
@@ -446,10 +436,10 @@ public class Session {
         this.isActive = true;
         this.lastUpdate = System.currentTimeMillis();
         if (this.state == STATE_CONNECTED || this.state == STATE_CONNECTING_2) {
-            if ((packet.buffer[0] >= (byte) 0x80 || packet.buffer[0] <= (byte) 0x8f) && packet instanceof DataPacket) {
-                packet.decode();
-
+            if (((packet.buffer[0] & 0xff) >= 0x80 || (packet.buffer[0] & 0xff) <= 0x8f) && packet instanceof DataPacket) {
                 DataPacket dp = (DataPacket) packet;
+                dp.decode();
+
                 if (dp.seqNumber < this.windowStart || dp.seqNumber > this.windowEnd || this.receivedWindow.containsKey(dp.seqNumber)) {
                     return;
                 }
@@ -457,13 +447,13 @@ public class Session {
                 int diff = dp.seqNumber - this.lastSeqNumber;
 
                 this.NACKQueue.remove(dp.seqNumber);
-                this.ACKQueue.add(dp.seqNumber);
+                this.ACKQueue.put(dp.seqNumber, dp.seqNumber);
                 this.receivedWindow.put(dp.seqNumber, dp.seqNumber);
 
                 if (diff != 1) {
                     for (int i = this.lastSeqNumber + 1; i < dp.seqNumber; i++) {
                         if (!this.receivedWindow.containsKey(i)) {
-                            this.NACKQueue.add(i);
+                            this.NACKQueue.put(i, i);
                         }
                     }
                 }
@@ -482,23 +472,21 @@ public class Session {
             } else {
                 if (packet instanceof ACK) {
                     packet.decode();
-                    for (int seq : ((ACK) packet).packets) {
+                    for (int seq : new ArrayList<>(((ACK) packet).packets.values())) {
                         if (this.recoveryQueue.containsKey(seq)) {
                             for (Object pk : this.recoveryQueue.get(seq).packets) {
                                 if (pk instanceof EncapsulatedPacket && ((EncapsulatedPacket) pk).needACK && ((EncapsulatedPacket) pk).messageIndex != null) {
                                     if (this.needACK.containsKey(((EncapsulatedPacket) pk).identifierACK)) {
-                                        Map<Integer, Integer> map = this.needACK.get(((EncapsulatedPacket) pk).identifierACK);
-                                        map.remove(((EncapsulatedPacket) pk).messageIndex);
-                                        this.needACK.put(((EncapsulatedPacket) pk).identifierACK, map);
+                                        this.needACK.get(((EncapsulatedPacket) pk).identifierACK).remove(((EncapsulatedPacket) pk).messageIndex);
                                     }
                                 }
-                                this.recoveryQueue.remove(seq);
                             }
+                            this.recoveryQueue.remove(seq);
                         }
                     }
                 } else if (packet instanceof NACK) {
                     packet.decode();
-                    for (Integer seq : ((NACK) packet).packets) {
+                    for (int seq : new ArrayList<>(((NACK) packet).packets.values())) {
                         if (this.recoveryQueue.containsKey(seq)) {
                             DataPacket pk = this.recoveryQueue.get(seq);
                             pk.seqNumber = this.sendSeqNumber++;
@@ -508,15 +496,8 @@ public class Session {
                     }
                 }
             }
-        } else if (packet.buffer[0] > (byte) 0x00 || packet.buffer[0] < (byte) 0x80) { //Not Data packet :)
+        } else if ((packet.buffer[0] & 0xff) > 0x00 || (packet.buffer[0] & 0xff) < 0x80) { //Not Data packet :)
             packet.decode();
-            /*if (packet instanceof UNCONNECTED_PING) {
-                UNCONNECTED_PONG pk = new UNCONNECTED_PONG();
-                pk.serverID = this.sessionManager.getID();
-                pk.pingID = ((UNCONNECTED_PING) packet).pingID;
-                pk.serverName = this.sessionManager.getName();
-                this.sendPacket(pk);
-            } else*/
             if (packet instanceof OPEN_CONNECTION_REQUEST_1) {
                 //TODO: check protocol number and refuse connections
                 OPEN_CONNECTION_REPLY_1 pk = new OPEN_CONNECTION_REPLY_1();

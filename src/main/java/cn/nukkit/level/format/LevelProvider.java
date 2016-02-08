@@ -1,6 +1,7 @@
 package cn.nukkit.level.format;
 
 import cn.nukkit.level.Level;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.AsyncTask;
 
@@ -22,9 +23,9 @@ public interface LevelProvider {
 
     Map<String, Object> getGeneratorOptions();
 
-    FullChunk getChunk(int X, int Z);
+    BaseFullChunk getChunk(int X, int Z);
 
-    FullChunk getChunk(int X, int Z, boolean create);
+    BaseFullChunk getChunk(int X, int Z, boolean create);
 
     void saveChunks();
 
@@ -50,13 +51,33 @@ public interface LevelProvider {
 
     String getName();
 
+    boolean isRaining();
+
+    void setRaining(boolean raining);
+
+    int getRainTime();
+
+    void setRainTime(int rainTime);
+
+    boolean isThundering();
+
+    void setThundering(boolean thundering);
+
+    int getThunderTime();
+
+    void setThunderTime(int thunderTime);
+
+    long getCurrentTick();
+
+    void setCurrentTick(long currentTick);
+
     long getTime();
 
-    void setTime(int value);
+    void setTime(long value);
 
-    int getSeed();
+    long getSeed();
 
-    void setSeed(int value);
+    void setSeed(long value);
 
     Vector3 getSpawn();
 
@@ -69,4 +90,6 @@ public interface LevelProvider {
     Level getLevel();
 
     void close();
+
+    void saveLevelData();
 }

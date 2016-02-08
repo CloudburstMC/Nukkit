@@ -33,25 +33,27 @@ public abstract class ContainerInventory extends BaseInventory {
     public void onOpen(Player who) {
         super.onOpen(who);
         ContainerOpenPacket pk = new ContainerOpenPacket();
-        pk.windowId = (byte) who.getWindowId(this);
-        pk.type = this.getType().getNetworkType();
-        pk.slots = (short) this.getSize();
+        pk.windowid = (byte) who.getWindowId(this);
+        pk.type = (byte) this.getType().getNetworkType();
+        pk.slots = this.getSize();
         InventoryHolder holder = this.getHolder();
         if (holder instanceof Vector3) {
-            pk.x = (int) ((Vector3) holder).x;
-            pk.y = (int) ((Vector3) holder).y;
-            pk.z = (int) ((Vector3) holder).z;
+            pk.x = (int) ((Vector3) holder).getX();
+            pk.y = (int) ((Vector3) holder).getY();
+            pk.z = (int) ((Vector3) holder).getZ();
         } else {
             pk.x = pk.y = pk.z = 0;
         }
 
         who.dataPacket(pk);
+
+        this.sendContents(who);
     }
 
     @Override
     public void onClose(Player who) {
         ContainerClosePacket pk = new ContainerClosePacket();
-        pk.windowId = (byte) who.getWindowId(this);
+        pk.windowid = (byte) who.getWindowId(this);
         who.dataPacket(pk);
         super.onClose(who);
     }

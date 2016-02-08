@@ -10,11 +10,10 @@ import java.util.zip.Inflater;
 public abstract class Zlib {
 
     public static byte[] deflate(byte[] data) throws Exception {
-        return deflate(data, -1);
+        return deflate(data, Deflater.DEFAULT_COMPRESSION);
     }
 
     public static byte[] deflate(byte[] data, int level) throws Exception {
-        byte[] output;
         Deflater deflater = new Deflater(level);
         deflater.reset();
         deflater.setInput(data);
@@ -25,15 +24,12 @@ public abstract class Zlib {
             int i = deflater.deflate(buf);
             bos.write(buf, 0, i);
         }
-        output = bos.toByteArray();
         deflater.end();
-        return output;
+        return bos.toByteArray();
     }
 
     public static byte[] inflate(byte[] data) throws DataFormatException, IOException {
-        byte[] output;
         Inflater inflater = new Inflater();
-        inflater.reset();
         inflater.setInput(data);
         ByteArrayOutputStream o = new ByteArrayOutputStream(data.length);
         byte[] buf = new byte[1024];
@@ -41,13 +37,12 @@ public abstract class Zlib {
             int i = inflater.inflate(buf);
             o.write(buf, 0, i);
         }
-        output = o.toByteArray();
         inflater.end();
-        return output;
+        return o.toByteArray();
     }
 
     public static byte[] inflate(byte[] data, int maxSize) throws DataFormatException, IOException {
-        return inflate(Binary.subBytes(data, 0, maxSize));
+        return Binary.subBytes(inflate(data), 0, maxSize);
     }
 
 }

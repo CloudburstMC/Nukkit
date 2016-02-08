@@ -3,27 +3,31 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.inventory.FurnaceRecipe;
 import cn.nukkit.inventory.ShapedRecipe;
 import cn.nukkit.inventory.ShapelessRecipe;
-import cn.nukkit.item.Enchantment;
-import cn.nukkit.item.EnchantmentEntry;
-import cn.nukkit.item.EnchantmentList;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.item.enchantment.EnchantmentEntry;
+import cn.nukkit.item.enchantment.EnchantmentList;
 import cn.nukkit.utils.BinaryStream;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Nukkit Project Team
  */
 public class CraftingDataPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.CRAFTING_DATA_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_DATA_PACKET;
 
-    public static final int ENTRY_SHAPELESS    = 0;
-    public static final int ENTRY_SHAPED       = 1;
-    public static final int ENTRY_FURNACE      = 2;
+    public static final int ENTRY_SHAPELESS = 0;
+    public static final int ENTRY_SHAPED = 1;
+    public static final int ENTRY_FURNACE = 2;
     public static final int ENTRY_FURNACE_DATA = 3;
     public static final int ENTRY_ENCHANT_LIST = 4;
 
-    public Object[] entries;
-    public boolean  cleanRecipes;
+    public List<Object> entries = new ArrayList<>();
+    public boolean cleanRecipes;
 
     private static int writeEntry(Object entry, BinaryStream stream) {
         if (entry instanceof ShapelessRecipe) {
@@ -38,7 +42,7 @@ public class CraftingDataPacket extends DataPacket {
         return -1;
     }
 
-    private static int writeShapelessRecipe(ShapelessRecipe recipe, BinaryStream stream){
+    private static int writeShapelessRecipe(ShapelessRecipe recipe, BinaryStream stream) {
         stream.putInt(recipe.getIngredientCount());
 
         for (Item item : recipe.getIngredientList()) {
@@ -52,11 +56,11 @@ public class CraftingDataPacket extends DataPacket {
         return CraftingDataPacket.ENTRY_SHAPELESS;
     }
 
-    private static int writeShapedRecipe(ShapedRecipe recipe, BinaryStream stream){
+    private static int writeShapedRecipe(ShapedRecipe recipe, BinaryStream stream) {
         stream.putInt(recipe.getWidth());
         stream.putInt(recipe.getHeight());
 
-        for(int z = 0; z < recipe.getHeight(); ++z) {
+        for (int z = 0; z < recipe.getHeight(); ++z) {
             for (int x = 0; x < recipe.getWidth(); ++x) {
                 stream.putSlot(recipe.getIngredient(x, z));
             }
@@ -85,11 +89,11 @@ public class CraftingDataPacket extends DataPacket {
     }
 
     private static int writeEnchantList(EnchantmentList list, BinaryStream stream) {
-        stream.putByte(list.getSize());
+        stream.putByte((byte) list.getSize());
         for (int i = 0; i < list.getSize(); ++i) {
             EnchantmentEntry entry = list.getSlot(i);
             stream.putInt(entry.getCost());
-            stream.putByte(entry.getEnchantments().length);
+            stream.putByte((byte) entry.getEnchantments().length);
             for (Enchantment enchantment : entry.getEnchantments()) {
                 stream.putInt(enchantment.getId());
                 stream.putInt(enchantment.getLevel());
@@ -100,24 +104,24 @@ public class CraftingDataPacket extends DataPacket {
     }
 
     public void addShapelessRecipe(ShapelessRecipe... recipe) {
-        entries = recipe;
+        Collections.addAll(entries, (ShapelessRecipe[]) recipe);
     }
 
     public void addShapedRecipe(ShapedRecipe... recipe) {
-        entries = recipe;
+        Collections.addAll(entries, (ShapedRecipe[]) recipe);
     }
 
     public void addFurnaceRecipe(FurnaceRecipe... recipe) {
-        entries = recipe;
+        Collections.addAll(entries, (FurnaceRecipe[]) recipe);
     }
 
     public void addEnchantList(EnchantmentList... list) {
-        entries = list;
+        Collections.addAll(entries, (EnchantmentList[]) list);
     }
 
     @Override
     public DataPacket clean() {
-        entries = new Object[0];
+        entries = new ArrayList<>();
         return super.clean();
     }
 
@@ -129,13 +133,13 @@ public class CraftingDataPacket extends DataPacket {
     @Override
     public void encode() {
         reset();
-        putInt(entries.length);
+        putInt(entries.size());
 
         BinaryStream writer = new BinaryStream();
 
         for (Object entry : entries) {
             int entryType = writeEntry(entry, writer);
-            if (entryType != 0) {
+            if (entryType >= 0) {
                 putInt(entryType);
                 putInt(writer.getCount());
                 put(writer.getBuffer());
@@ -143,10 +147,11 @@ public class CraftingDataPacket extends DataPacket {
                 putInt(-1);
                 putInt(0);
             }
+
             writer.reset();
         }
 
-        putByte(cleanRecipes ? 1 : 0);
+        putByte((byte) (cleanRecipes ? 1 : 0));
     }
 
     @Override

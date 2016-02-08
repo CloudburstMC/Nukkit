@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class AddPaintingPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.ADD_PAINTING_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ADD_PAINTING_PACKET;
 
     public long eid;
     public int x;
@@ -16,18 +16,18 @@ public class AddPaintingPacket extends DataPacket {
 
     @Override
     public void decode() {
-        ;
+
     }
 
     @Override
     public void encode() {
-        reset();
-        putLong(eid);
-        putInt(x);
-        putInt(y);
-        putInt(z);
-        putInt(direction);
-        putString(title);
+        this.reset();
+        this.putLong(eid);
+        this.putInt(x);
+        this.putInt(y);
+        this.putInt(z);
+        this.putInt(direction);
+        this.putString(title);
     }
 
     @Override

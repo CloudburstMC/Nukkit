@@ -1,13 +1,15 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.entity.data.Skin;
+
 import java.util.UUID;
 
 /**
- * @author Nukkit Project Team
+ * Created by on 15-10-13.
  */
 public class LoginPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.LOGIN_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.LOGIN_PACKET;
 
     public String username;
 
@@ -20,8 +22,7 @@ public class LoginPacket extends DataPacket {
     public String serverAddress;
     public String clientSecret;
 
-    public boolean slim = false;
-    public String skin = null;
+    public Skin skin;
 
     @Override
     public byte pid() {
@@ -30,21 +31,20 @@ public class LoginPacket extends DataPacket {
 
     @Override
     public void decode() {
-        username = getString();
-        protocol1 = getInt();
-        protocol2 = getInt();
-        if (protocol1 < Info.CURRENT_PROTOCOL) {
-            setBuffer(null);
-            setOffset(0);
+        this.username = this.getString();
+        this.protocol1 = this.getInt();
+        this.protocol2 = this.getInt();
+        if (protocol1 < ProtocolInfo.CURRENT_PROTOCOL) {
+            this.setBuffer(null);
+            this.setOffset(0);
             return;
         }
-        clientId = getLong();
-        clientUUID = getUUID();
-        serverAddress = getString();
-        clientSecret = getString();
+        this.clientId = this.getLong();
+        this.clientUUID = this.getUUID();
+        this.serverAddress = this.getString();
+        this.clientSecret = this.getString();
 
-        slim = getByte() > 0;
-        skin = getString();
+        this.skin = this.getSkin();
     }
 
 

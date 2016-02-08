@@ -2,8 +2,8 @@ package cn.nukkit.raknet.protocol;
 
 import cn.nukkit.utils.Binary;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * author: MagicDroidX
@@ -11,14 +11,14 @@ import java.util.Arrays;
  */
 public class EncapsulatedPacket implements Cloneable {
 
-    public byte reliability;
+    public int reliability;
     public boolean hasSplit = false;
     public int length = 0;
     public Integer messageIndex = null;
     public Integer orderIndex = null;
     public Integer orderChannel = null;
     public Integer splitCount = null;
-    public Short splitID = null;
+    public Integer splitID = null;
     public Integer splitIndex = null;
     public byte[] buffer;
     public boolean needACK = false;
@@ -37,9 +37,9 @@ public class EncapsulatedPacket implements Cloneable {
     public static EncapsulatedPacket fromBinary(byte[] binary, boolean internal) {
         EncapsulatedPacket packet = new EncapsulatedPacket();
 
-        byte flags = binary[0];
+        int flags = binary[0] & 0xff;
 
-        packet.reliability = (byte) ((flags & 0b11100000) >> 5);
+        packet.reliability = ((flags & 0b11100000) >> 5);
         packet.hasSplit = (flags & 0b00010000) > 0;
         int length, offset;
         if (internal) {
@@ -47,7 +47,7 @@ public class EncapsulatedPacket implements Cloneable {
             packet.identifierACK = Binary.readInt(Binary.subBytes(binary, 5, 4));
             offset = 9;
         } else {
-            length = Binary.readShort(Binary.subBytes(binary, 1, 2)) / 8;
+            length = (int) Math.ceil(((double) Binary.readShort(Binary.subBytes(binary, 1, 2)) / 8));
             offset = 3;
             packet.identifierACK = null;
         }
@@ -55,13 +55,13 @@ public class EncapsulatedPacket implements Cloneable {
         if (packet.reliability > 0) {
             if (packet.reliability >= 2 && packet.reliability != 5) {
                 packet.messageIndex = Binary.readLTriad(Binary.subBytes(binary, offset, 3));
-                offset = offset + 3;
+                offset += 3;
             }
 
             if (packet.reliability <= 4 && packet.reliability != 2) {
                 packet.orderIndex = Binary.readLTriad(Binary.subBytes(binary, offset, 3));
-                offset = offset + 3;
-                packet.orderChannel = (int) binary[offset++];
+                offset += 3;
+                packet.orderChannel = binary[offset++] & 0xff;
             }
         }
 
@@ -90,33 +90,38 @@ public class EncapsulatedPacket implements Cloneable {
     }
 
     public byte[] toBinary(boolean internal) {
-        ByteBuffer bb = ByteBuffer.allocate(23 + buffer.length);
-        bb.put((byte) ((byte) (reliability << 5) | (hasSplit ? 0b00010000 : 0)));
-        if (internal) {
-            bb.put(Binary.writeInt(buffer.length));
-            bb.put(Binary.writeInt(identifierACK));
-        } else {
-            bb.put(Binary.writeShort((short) (buffer.length << 3)));
-        }
-
-        if (reliability > 0) {
-            if (reliability >= 2 && reliability != 5) {
-                bb.put(Binary.writeLTriad(messageIndex));
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            stream.write((reliability << 5) | (hasSplit ? 0b00010000 : 0));
+            if (internal) {
+                stream.write(Binary.writeInt(buffer.length));
+                stream.write(Binary.writeInt(identifierACK == null ? 0 : identifierACK));
+            } else {
+                stream.write(Binary.writeShort(buffer.length << 3));
             }
-            if (reliability <= 4 && reliability != 2) {
-                bb.put(Binary.writeLTriad(orderIndex));
-                bb.put(Binary.writeByte((byte) (orderChannel & 0xff)));
+
+            if (reliability > 0) {
+                if (reliability >= 2 && reliability != 5) {
+                    stream.write(Binary.writeLTriad(messageIndex == null ? 0 : messageIndex));
+                }
+                if (reliability <= 4 && reliability != 2) {
+                    stream.write(Binary.writeLTriad(orderIndex));
+                    stream.write((byte) (orderChannel & 0xff));
+                }
             }
+
+            if (hasSplit) {
+                stream.write(Binary.writeInt(splitCount));
+                stream.write(Binary.writeShort(splitID));
+                stream.write(Binary.writeInt(splitIndex));
+            }
+
+            stream.write(buffer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        if (hasSplit) {
-            bb.put(Binary.writeInt(splitCount));
-            bb.put(Binary.writeShort(splitID));
-            bb.put(Binary.writeInt(splitIndex));
-        }
-
-        bb.put(buffer);
-        return Arrays.copyOf(bb.array(), bb.position());
+        return stream.toByteArray();
     }
 
     @Override

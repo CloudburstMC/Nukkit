@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class CraftingEventPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.CRAFTING_EVENT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_EVENT_PACKET;
 
     public int windowId;
     public int type;

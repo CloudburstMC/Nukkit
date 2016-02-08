@@ -2,7 +2,7 @@ package cn.nukkit.raknet.protocol;
 
 import cn.nukkit.utils.Binary;
 
-import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * author: MagicDroidX
@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public abstract class DataPacket extends Packet {
 
-    public ArrayList<Object> packets = new ArrayList<>();
+    public ConcurrentLinkedQueue<Object> packets = new ConcurrentLinkedQueue<>();
 
     public Integer seqNumber;
 
@@ -24,7 +24,6 @@ public abstract class DataPacket extends Packet {
     }
 
     public int length() {
-        int len = 4;
         int length = 4;
         for (Object packet : this.packets) {
             length += packet instanceof EncapsulatedPacket ? ((EncapsulatedPacket) packet).getTotalLength() : ((byte[]) packet).length;
@@ -51,7 +50,7 @@ public abstract class DataPacket extends Packet {
 
     @Override
     public Packet clean() {
-        this.packets.clear();
+        this.packets = new ConcurrentLinkedQueue<>();
         this.seqNumber = null;
         return super.clean();
     }
@@ -59,7 +58,7 @@ public abstract class DataPacket extends Packet {
     @Override
     public DataPacket clone() throws CloneNotSupportedException {
         DataPacket packet = (DataPacket) super.clone();
-        packet.packets = (ArrayList<Object>) this.packets.clone();
+        packet.packets = new ConcurrentLinkedQueue<>(this.packets);
         return packet;
     }
 

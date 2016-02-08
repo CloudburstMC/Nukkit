@@ -1,13 +1,11 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.level.Level;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class SetTimePacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.SET_TIME_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.SET_TIME_PACKET;
 
     public int time;
     public boolean started = true;
@@ -25,7 +23,7 @@ public class SetTimePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putInt((this.time / Level.TIME_FULL) * 19200);
+        this.putInt(this.time);
         this.putByte((byte) (this.started ? 1 : 0));
     }
 

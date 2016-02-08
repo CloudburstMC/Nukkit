@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class SetEntityLinkPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.SET_ENTITY_LINK_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_LINK_PACKET;
 
     public long from;
     public long to;

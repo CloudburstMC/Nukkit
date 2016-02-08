@@ -27,7 +27,7 @@ public class PluginManager {
 
     private SimpleCommandMap commandMap;
 
-    protected Map<String, Plugin> plugins = new HashMap<>();
+    protected Map<String, Plugin> plugins = new LinkedHashMap<>();
 
     protected Map<String, Permission> permissions = new HashMap<>();
 
@@ -35,11 +35,11 @@ public class PluginManager {
 
     protected Map<String, Permission> defaultPermsOp = new HashMap<>();
 
-    protected Map<String, WeakHashMap<Integer, Permissible>> permSubs = new HashMap<>();
+    protected Map<String, WeakHashMap<Permissible, Permissible>> permSubs = new HashMap<>();
 
-    protected Map<Integer, Permissible> defSubs = new WeakHashMap<>();
+    protected Map<Permissible, Permissible> defSubs = new WeakHashMap<>();
 
-    protected Map<Integer, Permissible> defSubsOp = new WeakHashMap<>();
+    protected Map<Permissible, Permissible> defSubsOp = new WeakHashMap<>();
 
     protected Map<String, PluginLoader> fileAssociations = new HashMap<>();
 
@@ -129,11 +129,11 @@ public class PluginManager {
 
     public Map<String, Plugin> loadPlugins(File dictionary, List<String> newLoaders) {
         if (dictionary.isDirectory()) {
-            Map<String, File> plugins = new HashMap<>();
-            Map<String, Plugin> loadedPlugins = new HashMap<>();
-            Map<String, List<String>> dependencies = new HashMap<>();
-            Map<String, List<String>> softDependencies = new HashMap<>();
-            Map<String, PluginLoader> loaders = new HashMap<>();
+            Map<String, File> plugins = new LinkedHashMap<>();
+            Map<String, Plugin> loadedPlugins = new LinkedHashMap<>();
+            Map<String, List<String>> dependencies = new LinkedHashMap<>();
+            Map<String, List<String>> softDependencies = new LinkedHashMap<>();
+            Map<String, PluginLoader> loaders = new LinkedHashMap<>();
             if (newLoaders != null) {
                 for (String key : newLoaders) {
                     if (this.fileAssociations.containsKey(key)) {
@@ -236,11 +236,10 @@ public class PluginManager {
 
             while (!plugins.isEmpty()) {
                 boolean missingDependency = true;
-                for (Map.Entry entry : plugins.entrySet()) {
-                    String name = (String) entry.getKey();
-                    File file = (File) entry.getValue();
+                for (String name : new ArrayList<>(plugins.keySet())) {
+                    File file = plugins.get(name);
                     if (dependencies.containsKey(name)) {
-                        for (String dependency : dependencies.get(name)) {
+                        for (String dependency : new ArrayList<>(dependencies.get(name))) {
                             if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
                                 dependencies.get(name).remove(dependency);
                             } else if (!plugins.containsKey(dependency)) {
@@ -250,19 +249,19 @@ public class PluginManager {
                             }
                         }
 
-                        if (dependencies.get(name).size() == 0) {
+                        if (dependencies.get(name).isEmpty()) {
                             dependencies.remove(name);
                         }
                     }
 
                     if (softDependencies.containsKey(name)) {
-                        for (String dependency : softDependencies.get(name)) {
+                        for (String dependency : new ArrayList<>(softDependencies.get(name))) {
                             if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
                                 softDependencies.get(name).remove(dependency);
                             }
                         }
 
-                        if (softDependencies.get(name).size() == 0) {
+                        if (softDependencies.get(name).isEmpty()) {
                             softDependencies.remove(name);
                         }
                     }
@@ -274,17 +273,31 @@ public class PluginManager {
                         if (plugin != null) {
                             loadedPlugins.put(name, plugin);
                         } else {
-                            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit" +
-                                    ".plugin.genericLoadError", name));
+                            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.genericLoadError", name));
                         }
                     }
                 }
 
                 if (missingDependency) {
-                    for (Map.Entry entry : plugins.entrySet()) {
-                        String name = (String) entry.getKey();
-                        this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin" +
-                                ".loadError", new String[]{name, "%nukkit.plugin.circularDependency"}));
+                    for (String name : new ArrayList<>(plugins.keySet())) {
+                        File file = plugins.get(name);
+                        if (!dependencies.containsKey(name)) {
+                            softDependencies.remove(name);
+                            plugins.remove(name);
+                            missingDependency = false;
+                            Plugin plugin = this.loadPlugin(file, loaders);
+                            if (plugin != null) {
+                                loadedPlugins.put(name, plugin);
+                            } else {
+                                this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.genericLoadError", name));
+                            }
+                        }
+                    }
+
+                    if (missingDependency) {
+                        for (String name : plugins.keySet()) {
+                            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.loadError", new String[]{name, "%nukkit.plugin.circularDependency"}));
+                        }
                         plugins.clear();
                     }
                 }
@@ -360,12 +373,12 @@ public class PluginManager {
         if (!this.permSubs.containsKey(permission)) {
             this.permSubs.put(permission, new WeakHashMap<>());
         }
-        this.permSubs.get(permission).put(permissible.hashCode(), permissible);
+        this.permSubs.get(permission).put(permissible, permissible);
     }
 
     public void unsubscribeFromPermission(String permission, Permissible permissible) {
         if (this.permSubs.containsKey(permission)) {
-            this.permSubs.get(permission).remove(permissible.hashCode());
+            this.permSubs.get(permission).remove(permissible);
             if (this.permSubs.get(permission).size() == 0) {
                 this.permSubs.remove(permission);
             }
@@ -386,17 +399,17 @@ public class PluginManager {
 
     public void subscribeToDefaultPerms(boolean op, Permissible permissible) {
         if (op) {
-            this.defSubsOp.put(permissible.hashCode(), permissible);
+            this.defSubsOp.put(permissible, permissible);
         } else {
-            this.defSubs.put(permissible.hashCode(), permissible);
+            this.defSubs.put(permissible, permissible);
         }
     }
 
     public void unsubscribeFromDefaultPerms(boolean op, Permissible permissible) {
         if (op) {
-            this.defSubsOp.remove(permissible.hashCode());
+            this.defSubsOp.remove(permissible);
         } else {
-            this.defSubs.remove(permissible.hashCode());
+            this.defSubs.remove(permissible);
         }
     }
 
@@ -454,7 +467,7 @@ public class PluginManager {
                 continue;
             }
             if (data instanceof Map) {
-                PluginCommand newCmd = new PluginCommand(key, plugin);
+                PluginCommand newCmd = new PluginCommand<>(key, plugin);
 
                 if (((Map) data).containsKey("description")) {
                     newCmd.setDescription((String) ((Map) data).get("description"));
@@ -476,7 +489,7 @@ public class PluginManager {
                             aliasList.add(alias);
                         }
 
-                        newCmd.setAliases(aliasList);
+                        newCmd.setAliases(aliasList.stream().toArray(String[]::new));
                     }
                 }
 

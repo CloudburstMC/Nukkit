@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 
 import java.nio.charset.StandardCharsets;
@@ -7,7 +8,8 @@ import java.util.Arrays;
 import java.util.UUID;
 
 /**
- * @author Nukkit Project Team
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public class BinaryStream {
 
@@ -52,16 +54,16 @@ public class BinaryStream {
         return offset;
     }
 
-    public int getCount() {
-        return count;
-    }
-
     public byte[] getBuffer() {
         return Arrays.copyOf(buffer, count);
     }
 
+    public int getCount() {
+        return count;
+    }
+
     public byte[] get() {
-        return Arrays.copyOfRange(this.buffer, this.offset, this.count - 1);
+        return this.get(this.count - this.offset);
     }
 
     public byte[] get(int len) {
@@ -69,13 +71,18 @@ public class BinaryStream {
             this.offset = this.count - 1;
             return new byte[0];
         }
-        this.offset = Math.min(this.offset + len, this.count - 1);
+        this.offset += len;
         return Arrays.copyOfRange(this.buffer, this.offset - len, this.offset);
     }
 
     public void put(byte[] bytes) {
+        if (bytes == null) {
+            return;
+        }
+
         this.ensureCapacity(this.count + bytes.length);
-        System.arraycopy(bytes, 0, this.buffer, this.offset, bytes.length);
+
+        System.arraycopy(bytes, 0, this.buffer, this.count, bytes.length);
         this.count += bytes.length;
     }
 
@@ -175,12 +182,24 @@ public class BinaryStream {
         this.put(Binary.writeLTriad(triad));
     }
 
+    public byte getSignedByte() {
+        return this.buffer[this.offset++];
+    }
+
+    public boolean getBoolean() {
+        return this.getByte() == 0x01;
+    }
+
+    public void putBoolean(boolean bool) {
+        this.putByte((byte) (bool ? 1 : 0));
+    }
+
     public int getByte() {
         return this.buffer[this.offset++] & 0xff;
     }
 
-    public void putByte(int b) {
-        this.put(new byte[]{(byte) (b & 0xff)});
+    public void putByte(byte b) {
+        this.put(new byte[]{b});
     }
 
     public byte[][] getDataArray() {
@@ -210,6 +229,18 @@ public class BinaryStream {
         return Binary.readUUID(this.get(16));
     }
 
+    public void putSkin(Skin skin) {
+        this.putString(skin.getModel());
+        this.putShort(skin.getData().length);
+        this.put(skin.getData());
+    }
+
+    public Skin getSkin() {
+        String modelId = this.getString();
+        byte[] skinData = this.get(this.getShort());
+        return new Skin(skinData, modelId);
+    }
+
     public Item getSlot() {
         short id = this.getSignedShort();
 
@@ -233,14 +264,14 @@ public class BinaryStream {
     }
 
     public void putSlot(Item item) {
-        if (item.getId() == 0) {
+        if (item == null || item.getId() == 0) {
             this.putShort(0);
             return;
         }
 
         this.putShort(item.getId());
-        this.putByte(item.getCount());
-        this.putShort(item.getDamage() == null ? -1 : item.getDamage());
+        this.putByte((byte) (item.getCount() & 0xff));
+        this.putShort(!item.hasMeta() ? -1 : item.getDamage());
 
         byte[] nbt = item.getCompoundTag();
         this.putShort(nbt.length);
@@ -272,13 +303,15 @@ public class BinaryStream {
         // overflow-conscious code
         int oldCapacity = buffer.length;
         int newCapacity = oldCapacity << 1;
+
         if (newCapacity - minCapacity < 0) {
             newCapacity = minCapacity;
         }
+
         if (newCapacity - MAX_ARRAY_SIZE > 0) {
             newCapacity = hugeCapacity(minCapacity);
-            buffer = Arrays.copyOf(buffer, newCapacity);
         }
+        this.buffer = Arrays.copyOf(buffer, newCapacity);
     }
 
     private static int hugeCapacity(int minCapacity) {

@@ -7,35 +7,36 @@ import cn.nukkit.entity.Attribute;
  */
 public class UpdateAttributesPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.UPDATE_ATTRIBUTES_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_ATTRIBUTES_PACKET;
 
     public Attribute[] entries;
     public long entityId;
 
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
     public void decode() {
-        
+
     }
 
     public void encode() {
-        reset();
-        putLong(entityId);
-        if (entries == null) {
-            putShort(0);
+        this.reset();
+
+        this.putLong(this.entityId);
+
+        if (this.entries == null) {
+            this.putShort(0);
         } else {
-            putShort(entries.length);
-            for (Attribute entry : entries) {
-                putFloat(entry.getMinValue());
-                putFloat(entry.getMaxValue());
-                putFloat(entry.getValue());
-                putString(entry.getName());
+            this.putShort(this.entries.length);
+            for (Attribute entry : this.entries) {
+                this.putFloat(entry.getMinValue());
+                this.putFloat(entry.getMaxValue());
+                this.putFloat(entry.getValue());
+                this.putString(entry.getName());
             }
         }
-    }
-
-    @Override
-    public byte pid() {
-        return 0;
     }
 
 }

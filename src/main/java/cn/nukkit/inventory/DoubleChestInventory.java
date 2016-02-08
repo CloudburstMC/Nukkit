@@ -1,10 +1,10 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.TileEventPacket;
-import cn.nukkit.tile.Chest;
+import cn.nukkit.network.protocol.BlockEventPacket;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,11 +13,11 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class DoubleChestInventory extends BaseInventory implements InventoryHolder {
+public class DoubleChestInventory extends ContainerInventory implements InventoryHolder {
     private ChestInventory left;
     private ChestInventory right;
 
-    public DoubleChestInventory(Chest left, Chest right) {
+    public DoubleChestInventory(BlockEntityChest left, BlockEntityChest right) {
         super(null, InventoryType.get(InventoryType.DOUBLE_CHEST));
         this.holder = this;
 
@@ -42,7 +42,7 @@ public class DoubleChestInventory extends BaseInventory implements InventoryHold
     }
 
     @Override
-    public InventoryHolder getHolder() {
+    public BlockEntityChest getHolder() {
         return this.left.getHolder();
     }
 
@@ -102,16 +102,27 @@ public class DoubleChestInventory extends BaseInventory implements InventoryHold
         super.onOpen(who);
 
         if (this.getViewers().size() == 1) {
-            TileEventPacket pk = new TileEventPacket();
-            pk.x = (int) this.right.getHolder().getX();
-            pk.y = (int) this.right.getHolder().getY();
-            pk.z = (int) this.right.getHolder().getZ();
-            pk.case1 = 1;
-            pk.case2 = 2;
-
-            Level level = this.right.getHolder().getLevel();
+            BlockEventPacket pk1 = new BlockEventPacket();
+            pk1.x = (int) this.left.getHolder().getX();
+            pk1.y = (int) this.left.getHolder().getY();
+            pk1.z = (int) this.left.getHolder().getZ();
+            pk1.case1 = 1;
+            pk1.case2 = 2;
+            Level level = this.left.getHolder().getLevel();
             if (level != null) {
-                level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk);
+                level.addChunkPacket((int) this.left.getHolder().getX() >> 4, (int) this.left.getHolder().getZ() >> 4, pk1);
+            }
+
+            BlockEventPacket pk2 = new BlockEventPacket();
+            pk2.x = (int) this.right.getHolder().getX();
+            pk2.y = (int) this.right.getHolder().getY();
+            pk2.z = (int) this.right.getHolder().getZ();
+            pk2.case1 = 1;
+            pk2.case2 = 2;
+
+            level = this.right.getHolder().getLevel();
+            if (level != null) {
+                level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk2);
             }
         }
     }
@@ -119,16 +130,28 @@ public class DoubleChestInventory extends BaseInventory implements InventoryHold
     @Override
     public void onClose(Player who) {
         if (this.getViewers().size() == 1) {
-            TileEventPacket pk = new TileEventPacket();
-            pk.x = (int) this.right.getHolder().getX();
-            pk.y = (int) this.right.getHolder().getY();
-            pk.z = (int) this.right.getHolder().getZ();
-            pk.case1 = 1;
-            pk.case2 = 0;
+            BlockEventPacket pk1 = new BlockEventPacket();
+            pk1.x = (int) this.right.getHolder().getX();
+            pk1.y = (int) this.right.getHolder().getY();
+            pk1.z = (int) this.right.getHolder().getZ();
+            pk1.case1 = 1;
+            pk1.case2 = 0;
 
             Level level = this.right.getHolder().getLevel();
             if (level != null) {
-                level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk);
+                level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk1);
+            }
+
+            BlockEventPacket pk2 = new BlockEventPacket();
+            pk2.x = (int) this.left.getHolder().getX();
+            pk2.y = (int) this.left.getHolder().getY();
+            pk2.z = (int) this.left.getHolder().getZ();
+            pk2.case1 = 1;
+            pk2.case2 = 0;
+
+            level = this.left.getHolder().getLevel();
+            if (level != null) {
+                level.addChunkPacket((int) this.left.getHolder().getX() >> 4, (int) this.left.getHolder().getZ() >> 4, pk2);
             }
         }
 

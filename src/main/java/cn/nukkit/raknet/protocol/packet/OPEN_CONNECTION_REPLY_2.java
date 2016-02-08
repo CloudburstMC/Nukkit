@@ -40,6 +40,6 @@ public class OPEN_CONNECTION_REPLY_2 extends Packet {
         InetSocketAddress address = this.getAddress();
         this.clientAddress = address.getHostString();
         this.clientPort = address.getPort();
-        this.mtuSize = this.getShort();
+        this.mtuSize = this.getSignedShort();
     }
 }

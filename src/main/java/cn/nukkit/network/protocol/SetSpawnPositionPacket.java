@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class SetSpawnPositionPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.SET_SPAWN_POSITION_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.SET_SPAWN_POSITION_PACKET;
 
     public int y;
     public int z;
@@ -28,5 +28,5 @@ public class SetSpawnPositionPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
-    
+
 }

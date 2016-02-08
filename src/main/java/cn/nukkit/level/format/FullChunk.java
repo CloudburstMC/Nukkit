@@ -1,7 +1,7 @@
 package cn.nukkit.level.format;
 
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.tile.Tile;
 
 import java.io.IOException;
 import java.util.Map;
@@ -102,15 +102,15 @@ public interface FullChunk extends Cloneable {
 
     void removeEntity(Entity entity);
 
-    void addTile(Tile tile);
+    void addBlockEntity(BlockEntity blockEntity);
 
-    void removeTile(Tile tile);
+    void removeBlockEntity(BlockEntity blockEntity);
 
     Map<Long, Entity> getEntities();
 
-    Map<Long, Tile> getTiles();
+    Map<Long, BlockEntity> getBlockEntities();
 
-    Tile getTile(int x, int y, int z);
+    BlockEntity getTile(int x, int y, int z);
 
     boolean isLoaded();
 

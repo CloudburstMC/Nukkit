@@ -1,54 +1,53 @@
 package cn.nukkit.scheduler;
 
+import cn.nukkit.plugin.Plugin;
+
 /**
  * author: MagicDroidX
  * Nukkit
  */
 public class TaskHandler {
 
-    protected Task task;
-    protected int taskId;
-    protected int delay;
-    protected int period;
-    protected int nextRun;
-    protected boolean cancelled = false;
-    //todo TimingsHandler
-    protected String timingName;
+    private final int taskId;
+    private final boolean asynchronous;
 
-    public TaskHandler(String timingName, Task task, int taskId) {
-        this(timingName, task, taskId, -1, -1);
-    }
+    private final String timingName;
+    private final Plugin plugin;
+    private final Runnable task;
 
-    public TaskHandler(String timingName, Task task, int taskId, int delay) {
-        this(timingName, task, taskId, delay, -1);
-    }
+    private int delay;
+    private int period;
 
-    public TaskHandler(String timingName, Task task, int taskId, int delay, int period) {
+    private int lastRunTick;
+    private int nextRunTick;
+
+    private boolean cancelled;
+
+    public TaskHandler(Plugin plugin, String timingName, Runnable task, int taskId, boolean asynchronous) {
+        this.asynchronous = asynchronous;
+        this.plugin = plugin;
         this.task = task;
         this.taskId = taskId;
-        this.delay = delay;
-        this.period = period;
         this.timingName = timingName == null ? "Unknown" : timingName;
-        //todo getPluginTaskTimings
     }
 
     public boolean isCancelled() {
         return this.cancelled;
     }
 
-    public int getNextRun() {
-        return this.nextRun;
+    public int getNextRunTick() {
+        return this.nextRunTick;
     }
 
-    public void setNextRun(int ticks) {
-        this.nextRun = ticks;
+    public void setNextRunTick(int nextRunTick) {
+        this.nextRunTick = nextRunTick;
     }
 
     public int getTaskId() {
         return this.taskId;
     }
 
-    public Task getTask() {
+    public Runnable getTask() {
         return this.task;
     }
 
@@ -68,28 +67,46 @@ public class TaskHandler {
         return this.period;
     }
 
-    /**
-     * WARNING: Do not use this, it's only for internal use.
-     * Changes to this function won't be recorded on the version.
-     */
-    public void cancel() {
-        if (!this.isCancelled()) {
-            this.task.onCancel();
-        }
-        this.remove();
+    public Plugin getPlugin() {
+        return plugin;
     }
 
+    public int getLastRunTick() {
+        return lastRunTick;
+    }
+
+    public void setLastRunTick(int lastRunTick) {
+        this.lastRunTick = lastRunTick;
+    }
+
+    public void cancel() {
+        this.cancelled = true;
+    }
+
+    @Deprecated
     public void remove() {
         this.cancelled = true;
-        this.task.setHandler(null);
     }
 
     public void run(int currentTick) {
-        this.task.onRun(currentTick);
+        setLastRunTick(currentTick);
+        getTask().run();
     }
 
     public String getTaskName() {
         return this.timingName != null ? this.timingName : this.task.getClass().getName();
+    }
+
+    public boolean isAsynchronous() {
+        return asynchronous;
+    }
+
+    public void setDelay(int delay) {
+        this.delay = delay;
+    }
+
+    public void setPeriod(int period) {
+        this.period = period;
     }
 
 }

@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class AddItemEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.ADD_ITEM_ENTITY_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ADD_ITEM_ENTITY_PACKET;
 
     @Override
     public byte pid() {

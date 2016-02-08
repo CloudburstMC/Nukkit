@@ -5,22 +5,22 @@ package cn.nukkit.network.protocol;
  */
 public class AnimatePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.ANIMATE_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ANIMATE_PACKET;
 
-    public long entityId;
+    public long eid;
     public int action;
 
     @Override
     public void decode() {
-        action = getByte();
-        entityId = getLong();
+        this.action = this.getByte();
+        this.eid = getLong();
     }
 
     @Override
     public void encode() {
-        reset();
-        putByte(action);
-        putLong(entityId);
+        this.reset();
+        this.putByte((byte) action);
+        this.putLong(eid);
     }
 
     @Override

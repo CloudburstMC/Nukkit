@@ -1,7 +1,7 @@
 package cn.nukkit.event.entity;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.Projectile;
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.HandlerList;
 
 /**
@@ -15,7 +15,7 @@ public class ProjectileHitEvent extends EntityEvent {
         return handlers;
     }
 
-    public ProjectileHitEvent(Projectile entity) {
+    public ProjectileHitEvent(EntityProjectile entity) {
         this.entity = entity;
     }
 

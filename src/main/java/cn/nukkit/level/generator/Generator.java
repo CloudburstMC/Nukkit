@@ -2,49 +2,75 @@ package cn.nukkit.level.generator;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.noise.Noise;
-import cn.nukkit.level.generator.normal.Normal;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class Generator {
-    private static Map<String, Class<? extends Generator>> list = new HashMap<>();
+    public static final int TYPE_OLD = 0;
+    public static final int TYPE_INFINITE = 1;
+    public static final int TYPE_FLAT = 2;
 
-    public static boolean addGenerator(Class<? extends Generator> clazz, String name) {
+    public abstract int getId();
+
+    private static Map<String, Class<? extends Generator>> nameList = new HashMap<>();
+
+    private static Map<Integer, Class<? extends Generator>> typeList = new HashMap<>();
+
+    public static boolean addGenerator(Class<? extends Generator> clazz, String name, int type) {
         name = name.toLowerCase();
-        if (clazz != null && !Generator.list.containsKey(name)) {
-            Generator.list.put(name, clazz);
+        if (clazz != null && !Generator.nameList.containsKey(name)) {
+            Generator.nameList.put(name, clazz);
+            if (!Generator.typeList.containsKey(type)) {
+                Generator.typeList.put(type, clazz);
+            }
             return true;
         }
         return false;
     }
 
     public static String[] getGeneratorList() {
-        String[] keys = new String[Generator.list.size()];
-        return Generator.list.keySet().toArray(keys);
+        String[] keys = new String[Generator.nameList.size()];
+        return Generator.nameList.keySet().toArray(keys);
     }
 
     public static Class<? extends Generator> getGenerator(String name) {
         name = name.toLowerCase();
-        if (Generator.list.containsKey(name)) {
-            return Generator.list.get(name);
+        if (Generator.nameList.containsKey(name)) {
+            return Generator.nameList.get(name);
+        }
+        return Normal.class;
+    }
+
+    public static Class<? extends Generator> getGenerator(int type) {
+        if (Generator.typeList.containsKey(type)) {
+            return Generator.typeList.get(type);
         }
         return Normal.class;
     }
 
     public static String getGeneratorName(Class<? extends Generator> c) {
-        for (Map.Entry entry : Generator.list.entrySet()) {
-            if (entry.getValue().equals(c)) {
-                return (String) entry.getKey();
+        for (String key : Generator.nameList.keySet()) {
+            if (Generator.nameList.get(key).equals(c)) {
+                return key;
             }
         }
         return "unknown";
+    }
+
+    public static int getGeneratorType(Class<? extends Generator> c) {
+        for (int key : Generator.typeList.keySet()) {
+            if (Generator.typeList.get(key).equals(c)) {
+                return key;
+            }
+        }
+        return Generator.TYPE_INFINITE;
     }
 
     public static double[] getFastNoise1D(Noise noise, int xSize, int samplingRate, int x, int y, int z) {
@@ -70,7 +96,7 @@ public abstract class Generator {
         return noiseArray;
     }
 
-    public static double[][] getFastNoise2D(Noise noise, int xSize, int zSize, int samplingRate, int x, int y, int z) {
+    public static double[][] getFastNoise2D(Noise noise, int xSize, int zSize, int samplingRate, int x, int y, int z, int xZoom, int zZoom) {
         if (samplingRate == 0) {
             throw new IllegalArgumentException("samplingRate cannot be 0");
         }
@@ -86,7 +112,7 @@ public abstract class Generator {
         for (int xx = 0; xx <= xSize; xx += samplingRate) {
             noiseArray[xx] = new double[zSize + 1];
             for (int zz = 0; zz <= zSize; zz += samplingRate) {
-                noiseArray[xx][zz] = noise.noise3D(x + xx, y, z + zz);
+                noiseArray[xx][zz] = noise.noise3D((x + xx) >> xZoom, y, (z + zz) >> zZoom);
             }
         }
 
@@ -108,6 +134,10 @@ public abstract class Generator {
             }
         }
         return noiseArray;
+    }
+
+    public static double[][] getFastNoise2D(Noise noise, int xSize, int zSize, int samplingRate, int x, int y, int z) {
+        return Generator.getFastNoise2D(noise, xSize, zSize, samplingRate, x, y, z, 0, 0);
     }
 
     public static double[][][] getFastNoise3D(Noise noise, int xSize, int ySize, int zSize, int xSamplingRate, int ySamplingRate, int zSamplingRate, int x, int y, int z) {
@@ -177,7 +207,7 @@ public abstract class Generator {
         return noiseArray;
     }
 
-    public abstract void init(ChunkManager level, Random random);
+    public abstract void init(ChunkManager level, NukkitRandom random);
 
     public abstract void generateChunk(int chunkX, int chunkZ);
 
@@ -188,4 +218,6 @@ public abstract class Generator {
     public abstract String getName();
 
     public abstract Vector3 getSpawn();
+
+    public abstract ChunkManager getChunkManager();
 }

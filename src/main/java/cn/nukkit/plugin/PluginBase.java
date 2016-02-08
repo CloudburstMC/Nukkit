@@ -6,6 +6,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.PluginIdentifiableCommand;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
+import com.google.common.base.Preconditions;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -174,40 +175,41 @@ abstract public class PluginBase implements Plugin {
 
     @Override
     public InputStream getResource(String filename) {
-        return this.getClass().getClassLoader().getResourceAsStream("resources/" + filename);
+        return this.getClass().getClassLoader().getResourceAsStream(filename);
     }
 
     @Override
     public boolean saveResource(String filename) {
-        return this.saveResource(filename, false);
+        return saveResource(filename, false);
     }
 
     @Override
     public boolean saveResource(String filename, boolean replace) {
-        if (filename.trim().equals("")) {
-            return false;
-        }
+        return saveResource(filename, filename, replace);
+    }
 
-        InputStream resource = this.getResource(filename);
-        if (resource == null) {
-            return false;
-        }
+    @Override
+    public boolean saveResource(String filename, String outputName, boolean replace) {
+        Preconditions.checkArgument(filename != null && outputName != null, "Filename can not be null!");
+        Preconditions.checkArgument(filename.trim().length() != 0 && outputName.trim().length() != 0, "Filename can not be empty!");
 
-        if (!this.dataFolder.exists()) {
-            this.dataFolder.mkdirs();
-        }
+        File out = new File(dataFolder, outputName);
+        if (!out.exists() || replace) {
+            try (InputStream resource = getResource(filename)) {
+                if (resource != null) {
+                    File outFolder = out.getParentFile();
+                    if (!outFolder.exists()) {
+                        outFolder.mkdirs();
+                    }
+                    Utils.writeFile(out, resource);
 
-        File out = new File(this.dataFolder, filename);
-        if (out.exists() && !replace) {
-            return false;
+                    return true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        try {
-            Utils.writeFile(out, resource);
-        } catch (IOException e) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     @Override
@@ -278,7 +280,7 @@ abstract public class PluginBase implements Plugin {
      * 返回这个插件的文件{@code File}对象。对于jar格式的插件，就是jar文件本身。<br>
      * Returns the {@code File} object of this plugin itself. For jar-packed plugins, it is the jar file itself.
      *
-     * @return 这个插件的文件{@code File}对象。<br>The {@code File} object of this plugin itself.
+     * @return 这个插件的文件 {@code File}对象。<br>The {@code File} object of this plugin itself.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     protected File getFile() {

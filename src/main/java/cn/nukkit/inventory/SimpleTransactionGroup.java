@@ -17,7 +17,7 @@ import java.util.Set;
 public class SimpleTransactionGroup implements TransactionGroup {
 
     private long creationTime;
-    protected boolean hasExecuted = true;
+    protected boolean hasExecuted = false;
 
     protected Player source = null;
 
@@ -59,7 +59,7 @@ public class SimpleTransactionGroup implements TransactionGroup {
             return;
         }
 
-        for (Transaction tx : this.transactions) {
+        for (Transaction tx : new HashSet<>(this.transactions)) {
             if (tx.getInventory().equals(transaction.getInventory()) && tx.getSlot() == transaction.getSlot()) {
                 if (transaction.getCreationTime() >= tx.getCreationTime()) {
                     this.transactions.remove(tx);
@@ -88,8 +88,8 @@ public class SimpleTransactionGroup implements TransactionGroup {
             }
         }
 
-        for (Item needItem : needItems) {
-            for (Item haveItem : haveItems) {
+        for (Item needItem : new ArrayList<>(needItems)) {
+            for (Item haveItem : new ArrayList<>(haveItems)) {
                 if (needItem.deepEquals(haveItem)) {
                     int amount = Math.min(haveItem.getCount(), needItem.getCount());
                     needItem.setCount(needItem.getCount() - amount);

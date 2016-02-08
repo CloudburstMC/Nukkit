@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class MobEquipmentPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.MOB_EQUIPMENT_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.MOB_EQUIPMENT_PACKET;
 
     @Override
     public byte pid() {
@@ -32,7 +32,7 @@ public class MobEquipmentPacket extends DataPacket {
         this.reset();
         this.putLong(this.eid);
         this.putSlot(this.item);
-        this.putByte(this.slot);
-        this.putByte(this.selectedSlot);
+        this.putByte((byte) this.slot);
+        this.putByte((byte) this.selectedSlot);
     }
 }

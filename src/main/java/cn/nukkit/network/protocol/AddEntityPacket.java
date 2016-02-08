@@ -1,15 +1,14 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.utils.Binary;
-
-import java.util.Map;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class AddEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.ADD_ENTITY_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.ADD_ENTITY_PACKET;
 
     @Override
     public byte pid() {
@@ -26,7 +25,7 @@ public class AddEntityPacket extends DataPacket {
     public float speedZ;
     public float yaw;
     public float pitch;
-    public Map<Integer, Object[]> metadata;
+    public EntityMetadata metadata;
     public Object[][] links = new Object[0][3];
 
     @Override
@@ -48,7 +47,7 @@ public class AddEntityPacket extends DataPacket {
         this.putFloat(this.yaw);
         this.putFloat(this.pitch);
         this.put(Binary.writeMetadata(this.metadata));
-        this.putShort((short) this.links.length);
+        this.putShort(this.links.length);
         for (Object[] link : links) {
             this.putLong((Long) link[0]);
             this.putLong((Long) link[1]);

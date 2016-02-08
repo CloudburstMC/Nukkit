@@ -19,19 +19,31 @@ Nukkit
 __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Nukkit/Nukkit)
+[![Build Status](https://travis-ci.org/Nukkit/Nukkit.svg)](https://travis-ci.org/Nukkit/Nukkit)
+[![Circle CI](https://circleci.com/gh/Nukkit/Nukkit.svg?style=svg)](https://circleci.com/gh/Nukkit/Nukkit)
 
 -------------
+
+Get Nukkit
+-------------
+* __[Jenkins](http://ci.mengcraft.com:8080/job/nukkit/)__ powered by **MengCraft**
+* __[Circle CI](https://circleci.com/gh/Nukkit/Nukkit/tree/master/)__ (**login required**)
 
 Introduction
 -------------
-Nukkit is a nuclear-powered server software for Minecraft: Pocket Edtion.
+Nukkit is nuclear-powered server software for Minecraft: Pocket Edtion.
 It has a few key advantages over PocketMine-MP:
 
 * Written in Java, Nukkit is faster and more stable.
-* Having a similar structure with PocketMine-MP.
-* Because of it, it's easy to contribute to Nukkit's development. And it is also easy to rewrite the PocketMine-MP plugins into Nukkit plugins.
+* Having a similar structure with PocketMine-MP, because of this it's easy to contribute to Nukkit's development. And it is also easy to rewrite PocketMine-MP plugins into Nukkit plugins.
 
-However, Nukkit is **not finished** yet. We are welcome to your contribution.
+However, Nukkit is **not finished** yet. We welcome contributions.
+
+Build JAR file
+-------------
+- `git submodule update --init`
+- `mvn clean`
+- `mvn package`
 
 Running
 -------------
@@ -44,6 +56,7 @@ Example Plugin which shows the API of Nukkit.
 
 * __[Example Plugin](http://github.com/Nukkit/ExamplePlugin)__
 
-一起来讨论Nukkit！
+Discussion
 -------------
-* __欢迎加入[百度 Nukkit 吧](http://tieba.baidu.com/f?kw=nukkit)__
+* __[Forums](http://forums.nukkit.cn)__
+* __[百度 Nukkit 吧](http://tieba.baidu.com/f?kw=nukkit)__

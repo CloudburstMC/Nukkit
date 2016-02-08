@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class BatchPacket extends DataPacket {
-    public static final byte NETWORK_ID = Info.BATCH_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.BATCH_PACKET;
 
     public byte[] payload;
 

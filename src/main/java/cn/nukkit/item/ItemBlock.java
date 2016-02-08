@@ -16,12 +16,16 @@ public class ItemBlock extends Item {
     }
 
     public ItemBlock(Block block, Integer meta, int count) {
-        super(block.getId(), meta, count);
+        super(block.getId(), meta, count, block.getName());
         this.block = block;
     }
 
     public void setDamage(Integer meta) {
-        this.meta = meta != null ? (short) (meta & 0xf) : null;
+        if (meta != null) {
+            this.meta = meta & 0xffff;
+        } else {
+            this.hasMeta = false;
+        }
         this.block.setDamage(meta);
     }
 

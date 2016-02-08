@@ -1,12 +1,44 @@
 package cn.nukkit.utils;
 
 /**
- * author: MagicDroidX
- * Nukkit
+ * 一个帮助处理文字格颜色和样式的工具类。<br>
+ * A tool class that deals with text color and format.
+ * <ul>
+ * <li>{@link #toANSI(String)}可以把字符串的颜色转换为ANSI的形式.<br>
+ * {@link #toANSI(String)} can convert colorized string to ANSI format.</li>
+ * <p>
+ * <li>{@link #clean(String)}可以清除字符串中所有的颜色字符.<br>
+ * {@link #clean(String)} can remove all colors from a string.</li>
+ * <p>
+ * <li>{@link #colorize(String)}可以把以&加上数字或字母的形式转换为§开头的颜色格式.<br>
+ * {@link #colorize(String)} can convert format like "&+number/character" to the color format begins with "§".</li>
+ * <p>
+ * <li>{@link #getLastColors(String)}可以得到这个字符串尾端的颜色.<br>
+ * {@link #getLastColors(String)} can get the color of a string's tail.</li>
+ * </ul>
+ * <p>
+ * <p>如果想要你处理文字颜色或格式的代码变得更简洁，可以参考这个：<br>
+ * If you are dealing with colors and want to make code simple, refer to this:
+ * <pre>
+ * import cn.nukkit.plugin.PluginBase;
+ * import static cn.nukkit.utils.TextFormat.*;
+ *
+ * public class ExamplePlugin extends PluginBase {
+ *    {@code @Override}
+ *     public void onEnable() {
+ *         getLogger().info(BLUE + "Shorter" + GREEN + " code" + YELLOW +" using import static!");
+ *         getLogger().info(colorize("&eMore &6simpler &7with colorize!"));
+ *     }
+ * }
+ * </pre></p>
+ *
+ * @author MagicDroidX(code) @ Nukkit Project
+ * @author 粉鞋大妈(javadoc) @ Nukkit Project
+ * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
-public class TextFormat {
+public final class TextFormat {
 
-    public static final String ESCAPE = "\u00a7";
+    public static final char ESCAPE = '\u00a7';
 
     public static final String BLACK = TextFormat.ESCAPE + "0";
     public static final String DARK_BLUE = TextFormat.ESCAPE + "1";
@@ -33,7 +65,12 @@ public class TextFormat {
     public static final String RESET = TextFormat.ESCAPE + "r";
 
     public static String clean(String message) {
-        return message.replaceAll(ESCAPE + "+[0123456789abcdefklmnor]", "");
+        return clean(message, true);
+    }
+
+    public static String clean(String message, boolean removeFormat) {
+        message = message.replaceAll((char) 0x1b + "[0-9;\\[\\(]+[Bm]", "");
+        return removeFormat ? message.replaceAll(ESCAPE + "[0123456789abcdefklmnor]", "") : message;
     }
 
     public static String toANSI(String string) {
@@ -60,6 +97,40 @@ public class TextFormat {
         string = string.replace(TextFormat.YELLOW, (char) 0x1b + "[33;1m");
         string = string.replace(TextFormat.WHITE, (char) 0x1b + "[37;1m");
         return string;
+    }
+
+    public static String colorize(String textToColorize) {
+        char[] b = textToColorize.toCharArray();
+        for (int i = 0; i < b.length - 1; i++) {
+            if ((b[i] == '&') && ("0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[(i + 1)]) > -1)) {
+                b[i] = ESCAPE;
+                b[(i + 1)] = Character.toLowerCase(b[(i + 1)]);
+            }
+        }
+        return new String(b);
+    }
+
+    public static String getLastColors(String input) {
+        String result = "";
+        int length = input.length();
+        for (int index = length - 1; index > -1; index--) {
+            char section = input.charAt(index);
+            if (section == ESCAPE && index < length - 1) {
+                char c = input.charAt(index + 1);
+                String color = ESCAPE + c + "";
+                result = color + result;
+
+                if (isColor(c) || c == 'r' || c == 'R') {
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private static boolean isColor(char c) {
+        String colors = "0123456789AaBbCcDdEeFf";
+        return colors.indexOf(c) != -1;
     }
 
 }

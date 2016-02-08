@@ -5,17 +5,18 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class SimpleChunkManager implements ChunkManager {
-    protected Map<String, FullChunk> chunks = new HashMap<>();
+    protected Map<String, FullChunk> chunks = new ConcurrentHashMap<>();
 
-    protected int seed;
+    protected long seed;
 
-    public SimpleChunkManager(int seed) {
+    public SimpleChunkManager(long seed) {
         this.seed = seed;
     }
 
@@ -23,7 +24,7 @@ public class SimpleChunkManager implements ChunkManager {
     public int getBlockIdAt(int x, int y, int z) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            return chunk.getBlockId(x & 0xf, y & 0xf, z & 0xf);
+            return chunk.getBlockId(x & 0xf, y & 0x7f, z & 0xf);
         }
         return 0;
     }
@@ -32,7 +33,7 @@ public class SimpleChunkManager implements ChunkManager {
     public void setBlockIdAt(int x, int y, int z, int id) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            chunk.setBlockId(x & 0xf, y & 0xf, z & 0xf, id);
+            chunk.setBlockId(x & 0xf, y & 0x7f, z & 0xf, id);
         }
     }
 
@@ -40,7 +41,7 @@ public class SimpleChunkManager implements ChunkManager {
     public int getBlockDataAt(int x, int y, int z) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            return chunk.getBlockData(x & 0xf, y & 0xf, z & 0xf);
+            return chunk.getBlockData(x & 0xf, y & 0x7f, z & 0xf);
         }
         return 0;
     }
@@ -49,12 +50,12 @@ public class SimpleChunkManager implements ChunkManager {
     public void setBlockDataAt(int x, int y, int z, int data) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            chunk.setBlockData(x & 0xf, y & 0xf, z & 0xf, data);
+            chunk.setBlockData(x & 0xf, y & 0x7f, z & 0xf, data);
         }
     }
 
     @Override
-    public FullChunk getChunk(int chunkX, int chunkZ) {
+    public BaseFullChunk getChunk(int chunkX, int chunkZ) {
         String index = Level.chunkHash(chunkX, chunkZ);
         return this.chunks.containsKey(index) ? (BaseFullChunk) this.chunks.get(index) : null;
     }
@@ -65,16 +66,20 @@ public class SimpleChunkManager implements ChunkManager {
     }
 
     @Override
-    public void setChunk(int chunkX, int chunkZ, FullChunk chunk) {
+    public void setChunk(int chunkX, int chunkZ, BaseFullChunk chunk) {
         if (chunk == null) {
             this.chunks.remove(Level.chunkHash(chunkX, chunkZ));
             return;
         }
-        this.chunks.put(Level.chunkHash(chunkX, chunkZ), (BaseFullChunk) chunk);
+        this.chunks.put(Level.chunkHash(chunkX, chunkZ), chunk);
+    }
+
+    public void cleanChunks() {
+        this.chunks = new HashMap<>();
     }
 
     @Override
-    public int getSeed() {
+    public long getSeed() {
         return seed;
     }
 }

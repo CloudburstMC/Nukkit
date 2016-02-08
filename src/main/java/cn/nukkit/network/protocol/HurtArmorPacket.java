@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class HurtArmorPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.HURT_ARMOR_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.HURT_ARMOR_PACKET;
 
     public byte health;
 

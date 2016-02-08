@@ -1,27 +1,27 @@
 package cn.nukkit.network.protocol;
 
 /**
- * @author Nukkit Project Team
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public class ContainerClosePacket extends DataPacket {
-
-    public static final byte NETWORK_ID = Info.CONTAINER_CLOSE_PACKET;
-
-    public int windowId;
+    public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_CLOSE_PACKET;
 
     @Override
     public byte pid() {
         return NETWORK_ID;
     }
 
+    public int windowid;
+
     @Override
     public void decode() {
-        this.windowId = this.getByte();
+        this.windowid = this.getByte();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.windowId);
+        this.putByte((byte) this.windowid);
     }
 }

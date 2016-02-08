@@ -15,4 +15,12 @@ public interface Chunk extends FullChunk {
 
     ChunkSection[] getSections();
 
+    class Entry {
+        public int chunkX, chunkZ;
+
+        public Entry(int chunkX, int chunkZ) {
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+        }
+    }
 }

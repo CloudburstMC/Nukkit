@@ -20,6 +20,10 @@ public class FileWriteTask extends AsyncTask {
         this(new File(path), contents);
     }
 
+    public FileWriteTask(String path, byte[] contents) {
+        this(new File(path), contents);
+    }
+
     public FileWriteTask(String path, InputStream contents) {
         this.file = new File(path);
         this.contents = contents;
@@ -28,6 +32,11 @@ public class FileWriteTask extends AsyncTask {
     public FileWriteTask(File file, String contents) {
         this.file = file;
         this.contents = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public FileWriteTask(File file, byte[] contents) {
+        this.file = file;
+        this.contents = new ByteArrayInputStream(contents);
     }
 
     public FileWriteTask(File file, InputStream contents) {

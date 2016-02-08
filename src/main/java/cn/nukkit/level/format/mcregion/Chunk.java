@@ -1,17 +1,21 @@
 package cn.nukkit.level.format.mcregion;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
-import cn.nukkit.nbt.*;
-import cn.nukkit.tile.Tile;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.ByteArrayTag;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.IntArrayTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Zlib;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,12 +33,27 @@ public class Chunk extends BaseFullChunk {
         this(level, null);
     }
 
+    public Chunk(Class<? extends LevelProvider> providerClass) {
+        this((LevelProvider) null, null);
+        this.providerClass = providerClass;
+    }
+
+    public Chunk(Class<? extends LevelProvider> providerClass, CompoundTag nbt) {
+        this((LevelProvider) null, nbt);
+        this.providerClass = providerClass;
+    }
+
     public Chunk(LevelProvider level, CompoundTag nbt) {
+        this.provider = level;
+        if (level != null) {
+            this.providerClass = level.getClass();
+        }
+
         if (nbt == null) {
-            this.provider = level;
             this.nbt = new CompoundTag("Level");
             return;
         }
+
         this.nbt = nbt;
 
         if (!(this.nbt.contains("Entities") && (this.nbt.get("Entities") instanceof ListTag))) {
@@ -79,7 +98,6 @@ public class Chunk extends BaseFullChunk {
             }
         }
 
-        this.provider = level;
         this.x = this.nbt.getInt("xPos");
         this.z = this.nbt.getInt("zPos");
         this.blocks = this.nbt.getByteArray("Blocks");
@@ -101,8 +119,8 @@ public class Chunk extends BaseFullChunk {
 
         this.extraData = extraData;
 
-        this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).list;
-        this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).list;
+        this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).getAll();
+        this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).getAll();
 
         if (this.nbt.contains("Biomes")) {
             this.checkOldBiomes(this.nbt.getByteArray("Biomes"));
@@ -120,7 +138,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public int getBlockId(int x, int y, int z) {
-        return this.blocks[(x << 11) | (z << 7) | y];
+        return this.blocks[(x << 11) | (z << 7) | y] & 0xff;
     }
 
     @Override
@@ -131,7 +149,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public int getBlockData(int x, int y, int z) {
-        int b = this.data[(x << 10) | (z << 6) | (y >> 1)];
+        int b = this.data[(x << 10) | (z << 6) | (y >> 1)] & 0xff;
         if ((y & 1) == 0) {
             return b & 0x0f;
         } else {
@@ -142,9 +160,9 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockData(int x, int y, int z, int data) {
         int i = (x << 10) | (z << 6) | (y >> 1);
-        int old = this.data[i];
+        int old = this.data[i] & 0xff;
         if ((y & 1) == 0) {
-            this.data[i] = (byte) (((old & 0xf0) | (old & 0x0f)) & 0xff);
+            this.data[i] = (byte) (((old & 0xf0) | (data & 0x0f)) & 0xff);
         } else {
             this.data[i] = (byte) ((((data & 0x0f) << 4) | (old & 0x0f)) & 0xff);
         }
@@ -154,10 +172,12 @@ public class Chunk extends BaseFullChunk {
     @Override
     public int getFullBlock(int x, int y, int z) {
         int i = (x << 11) | (z << 7) | y;
+        int block = this.blocks[i] & 0xff;
+        int data = this.data[i >> 1] & 0xff;
         if ((y & 1) == 0) {
-            return (this.blocks[i] << 4) | (this.data[i >> 1] & 0x0f);
+            return (block << 4) | (data & 0x0f);
         } else {
-            return (this.blocks[i] << 4) | (this.data[i >> 1] >> 4);
+            return (block << 4) | (data >> 4);
         }
     }
 
@@ -185,14 +205,14 @@ public class Chunk extends BaseFullChunk {
 
         if (meta != null) {
             i >>= 1;
-            int old = this.data[i];
+            int old = this.data[i] & 0xff;
             if ((y & 1) == 0) {
-                this.data[i] = (byte) (((old & 0xf0) | (meta & 0x0f)) & 0xff);
+                this.data[i] = (byte) ((old & 0xf0) | (meta & 0x0f));
                 if ((old & 0x0f) != meta) {
                     changed = true;
                 }
             } else {
-                this.data[i] = (byte) ((((meta & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+                this.data[i] = (byte) (((meta & 0x0f) << 4) | (old & 0x0f));
                 if (!meta.equals((old & 0xf0) >> 4)) {
                     changed = true;
                 }
@@ -207,7 +227,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public int getBlockSkyLight(int x, int y, int z) {
-        int sl = this.skyLight[(x << 10) | (z << 6) | (y >> 1)];
+        int sl = this.skyLight[(x << 10) | (z << 6) | (y >> 1)] & 0xff;
         if ((y & 1) == 0) {
             return sl & 0x0f;
         } else {
@@ -218,7 +238,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockSkyLight(int x, int y, int z, int level) {
         int i = (x << 10) | (z << 6) | (y >> 1);
-        int old = this.skyLight[i];
+        int old = this.skyLight[i] & 0xff;
         if ((y & 1) == 0) {
             this.skyLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
         } else {
@@ -229,7 +249,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public int getBlockLight(int x, int y, int z) {
-        byte b = this.blockLight[(x << 10) | (z << 6) | (y >> 1)];
+        int b = this.blockLight[(x << 10) | (z << 6) | (y >> 1)] & 0xff;
         if ((y & 1) == 0) {
             return b & 0x0f;
         } else {
@@ -240,7 +260,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockLight(int x, int y, int z, int level) {
         int i = (x << 10) | (z << 6) | (y >> 1);
-        byte old = this.blockLight[i];
+        int old = this.blockLight[i] & 0xff;
         if ((y & 1) == 0) {
             this.blockLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
         } else {
@@ -336,7 +356,8 @@ public class Chunk extends BaseFullChunk {
 
     public static Chunk fromBinary(byte[] data, LevelProvider provider) {
         try {
-            CompoundTag chunk = NbtIo.read(new DataInputStream(new ByteArrayInputStream(Zlib.inflate(data))));
+            CompoundTag chunk = NBTIO.read(new ByteArrayInputStream(Zlib.inflate(data)), ByteOrder.BIG_ENDIAN);
+
             if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
                 return null;
             }
@@ -369,12 +390,12 @@ public class Chunk extends BaseFullChunk {
             offset += 16384;
             chunk.heightMap = new int[256];
             for (int i = 0; i < 256; i++) {
-                chunk.heightMap[i] = data[offset];
+                chunk.heightMap[i] = data[offset] & 0xff;
                 offset++;
             }
             chunk.biomeColors = new int[256];
             for (int i = 0; i < 256; i++) {
-                chunk.heightMap[i] = Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3));
+                chunk.biomeColors[i] = Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3));
                 offset += 4;
             }
             byte flags = data[offset++];
@@ -383,7 +404,7 @@ public class Chunk extends BaseFullChunk {
             chunk.nbt.putByte("LightPopulated", (byte) ((flags >> 2) & 0b1));
             return chunk;
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -410,8 +431,10 @@ public class Chunk extends BaseFullChunk {
     @Override
     public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
+
         nbt.putInt("xPos", this.x);
         nbt.putInt("zPos", this.z);
+
         if (this.isGenerated()) {
             nbt.putByteArray("Blocks", this.getBlockIdArray());
             nbt.putByteArray("Data", this.getBlockDataArray());
@@ -430,16 +453,16 @@ public class Chunk extends BaseFullChunk {
             }
         }
         ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
-        entityListTag.list = entities;
+        entityListTag.setAll(entities);
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (Tile tile : this.getTiles().values()) {
-            tile.saveNBT();
-            tiles.add(tile.namedTag);
+        for (BlockEntity blockEntity : this.getBlockEntities().values()) {
+            blockEntity.saveNBT();
+            tiles.add(blockEntity.namedTag);
         }
         ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
-        tileListTag.list = tiles;
+        tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
 
         BinaryStream extraData = new BinaryStream();
@@ -456,7 +479,7 @@ public class Chunk extends BaseFullChunk {
         chunk.putCompound("Level", nbt);
 
         try {
-            return Zlib.deflate(NbtIo.write(chunk), RegionLoader.COMPRESSION_LEVEL);
+            return Zlib.deflate(NBTIO.write(chunk, ByteOrder.BIG_ENDIAN), RegionLoader.COMPRESSION_LEVEL);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -472,7 +495,13 @@ public class Chunk extends BaseFullChunk {
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
         try {
-            Chunk chunk = new Chunk(provider != null ? provider : McRegion.class.newInstance(), null);
+            Chunk chunk;
+            if (provider != null) {
+                chunk = new Chunk(provider, null);
+            } else {
+                chunk = new Chunk(McRegion.class, null);
+            }
+
             chunk.x = chunkX;
             chunk.z = chunkZ;
             chunk.data = new byte[16384];
@@ -480,16 +509,20 @@ public class Chunk extends BaseFullChunk {
             byte[] skyLight = new byte[16384];
             Arrays.fill(skyLight, (byte) 0xff);
             chunk.skyLight = skyLight;
+            chunk.blockLight = chunk.data;
+
             chunk.heightMap = new int[256];
             chunk.biomeColors = new int[256];
+
             chunk.nbt.putByte("V", (byte) 1);
             chunk.nbt.putLong("InhabitedTime", 0);
             chunk.nbt.putBoolean("TerrainGenerated", false);
             chunk.nbt.putBoolean("TerrainPopulated", false);
             chunk.nbt.putBoolean("LightPopulated", false);
+
             return chunk;
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }

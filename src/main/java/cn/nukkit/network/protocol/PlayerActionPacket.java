@@ -5,7 +5,7 @@ package cn.nukkit.network.protocol;
  */
 public class PlayerActionPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = Info.PLAYER_ACTION_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ACTION_PACKET;
 
     public static final byte ACTION_START_BREAK = 0;
     public static final byte ACTION_ABORT_BREAK = 1;
@@ -21,6 +21,8 @@ public class PlayerActionPacket extends DataPacket {
     public static final byte ACTION_START_SNEAK = 11;
     public static final byte ACTION_STOP_SNEAK = 12;
     public static final byte ACTION_DIMENSION_CHANGE = 13;
+
+    public static final byte ACTION_NETHER_UNKNOWN = 14; //todo what's this?
 
     public long entityId;
     public int action;

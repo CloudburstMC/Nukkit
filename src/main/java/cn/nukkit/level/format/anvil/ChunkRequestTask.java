@@ -1,17 +1,16 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.Server;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
-import cn.nukkit.nbt.NbtIo;
+import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.tile.Spawnable;
-import cn.nukkit.tile.Tile;
 import cn.nukkit.utils.Binary;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * author: MagicDroidX
@@ -24,7 +23,7 @@ public class ChunkRequestTask extends AsyncTask {
     protected int chunkX;
     protected int chunkZ;
 
-    protected byte[] tiles;
+    protected byte[] blockEntities;
 
     public ChunkRequestTask(Level level, Chunk chunk) {
         this.levelId = level.getId();
@@ -34,20 +33,18 @@ public class ChunkRequestTask extends AsyncTask {
 
         byte[] buffer = new byte[0];
 
-        for (Tile tile : chunk.getTiles().values()) {
-            if (tile instanceof Spawnable) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                DataOutputStream outputStream = new DataOutputStream(baos);
+        for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+            if (blockEntity instanceof BlockEntitySpawnable) {
                 try {
-                    NbtIo.write(((Spawnable) tile).getSpawnCompound(), outputStream);
+                    buffer = Binary.appendBytes(buffer, NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), ByteOrder.BIG_ENDIAN));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                buffer = Binary.appendBytes(buffer, baos.toByteArray());
+
             }
         }
 
-        this.tiles = buffer;
+        this.blockEntities = buffer;
     }
 
     @Override
@@ -63,7 +60,7 @@ public class ChunkRequestTask extends AsyncTask {
                 16 * 16 * (128 + 64 + 64 + 64)
                         + 256
                         + 256
-                        + this.tiles.length
+                        + this.blockEntities.length
         );
 
         ByteBuffer orderedIds = ByteBuffer.allocate(16 * 16 * 128);
@@ -97,7 +94,7 @@ public class ChunkRequestTask extends AsyncTask {
                         .put(orderedLight)
                         .put(orderedHeightMap)
                         .put(orderedBiomeColors)
-                        .put(this.tiles)
+                        .put(this.blockEntities)
                         .array()
         );
     }
