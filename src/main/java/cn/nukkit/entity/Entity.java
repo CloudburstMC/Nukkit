@@ -912,13 +912,10 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    @Override
     public Vector3 getDirectionVector() {
-        double y = -Math.sin(Math.toRadians(this.pitch));
-        double xz = Math.sin(Math.toRadians(this.pitch));
-        double x = -xz * Math.sin(Math.toRadians(this.yaw));
-        double z = xz * Math.cos(Math.toRadians(this.yaw));
-
-        return this.temporalVector.setComponents(x, y, z).normalize();
+        Vector3 vector = super.getDirectionVector();
+        return this.temporalVector.setComponents(vector.x, vector.y, vector.z);
     }
 
     public Vector2 getDirectionPlane() {
