@@ -314,7 +314,7 @@ public class Config {
         return this.get(key, defaultList);
     }
 
-    private List<String> getStringList(String key) {
+    public List<String> getStringList(String key) {
         List value = this.getList(key);
 
         if (value == null) {
