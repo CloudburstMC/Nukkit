@@ -2,9 +2,9 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.item.ItemDye;
-import cn.nukkit.item.ItemBookEnchanted;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBookEnchanted;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.enchantment.EnchantmentEntry;
 import cn.nukkit.item.enchantment.EnchantmentLevelTable;

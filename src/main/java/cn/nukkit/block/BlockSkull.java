@@ -15,7 +15,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
 
-public class BlockSkull extends BlockTransparent{
+public class BlockSkull extends BlockTransparent {
 
     public BlockSkull() {
         this(0);
@@ -36,12 +36,12 @@ public class BlockSkull extends BlockTransparent{
     }
 
     @Override
-    public double getResistance(){
+    public double getResistance() {
         return 5;
     }
 
     @Override
-    public boolean isSolid(){
+    public boolean isSolid() {
         return false;
     }
 

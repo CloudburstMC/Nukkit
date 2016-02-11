@@ -92,4 +92,9 @@ public class BlockEntitySign extends BlockEntitySpawnable {
                 .putInt("z", (int) this.z);
 
     }
+
+    @Override
+    public String getSaveId() {
+        return SIGN;
+    }
 }

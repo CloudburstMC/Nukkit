@@ -276,4 +276,9 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
         return c;
     }
+
+    @Override
+    public String getSaveId() {
+        return FURNACE;
+    }
 }
