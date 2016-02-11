@@ -480,24 +480,22 @@ public abstract class Entity extends Location implements Metadatable {
         }
         try {
             int networkId = clazz.getField("NETWORK_ID").getInt(null);
-            if (networkId != -1) {
-                knownEntities.put(String.valueOf(networkId), clazz);
-            } else if (!force) {
+            knownEntities.put(String.valueOf(networkId), clazz);
+        } catch (Exception e) {
+            if (!force) {
                 return false;
             }
-
-            knownEntities.put(name, clazz);
-            shortNames.put(clazz.getSimpleName(), name);
-            return true;
-        } catch (Exception e) {
-            return false;
         }
+
+        knownEntities.put(name, clazz);
+        shortNames.put(clazz.getSimpleName(), name);
+        return true;
     }
 
     public void saveNBT() {
         if (!(this instanceof Player)) {
+            this.namedTag.putString("id", this.getSaveId());
             if (!this.getNameTag().equals("")) {
-                this.namedTag.putString("id", this.getSaveId());
                 this.namedTag.putString("CustomName", this.getNameTag());
                 this.namedTag.putString("CustomNameVisible", String.valueOf(this.isNameTagVisible()));
             } else {
@@ -545,6 +543,10 @@ public abstract class Entity extends Location implements Metadatable {
         } else {
             this.namedTag.remove("ActiveEffects");
         }
+    }
+
+    public final String getSaveId() {
+        return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
     }
 
     public void spawnTo(Player player) {
@@ -1565,9 +1567,5 @@ public abstract class Entity extends Location implements Metadatable {
 
     public Server getServer() {
         return server;
-    }
-
-    public final String getSaveId() {
-        return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
     }
 }
