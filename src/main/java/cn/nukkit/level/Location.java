@@ -155,4 +155,13 @@ public class Location extends Position {
         return new Location((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z), this.yaw, this.pitch, this.level);
     }
 
+    public Vector3 getDirectionVector() {
+        double pitch = ((getPitch() + 90) * Math.PI) / 180;
+        double yaw  = ((getYaw() + 90)  * Math.PI) / 180;
+        double x = Math.sin(pitch) * Math.cos(yaw);
+        double z = Math.sin(pitch) * Math.sin(yaw);
+        double y = Math.cos(pitch);
+        return new Vector3(x,y,z).normalize();
+    }
+
 }
