@@ -11,8 +11,6 @@ import cn.nukkit.level.format.leveldb.key.TilesKey;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
@@ -530,59 +528,4 @@ public class Chunk extends BaseFullChunk {
         }
     }
 
-    @Override
-    public void initChunk() {
-        if (this.getProvider() != null && !this.isInit) {
-            boolean changed = false;
-
-            if (this.NBTentities != null) {
-
-                for (CompoundTag nbt : NBTentities) {
-                    if (!nbt.contains("id")) {
-                        this.setChanged();
-                        continue;
-                    }
-                    ListTag pos = nbt.getList("Pos");
-                    if ((((NumberTag) pos.get(0)).getData().intValue() >> 4) != this.x || ((((NumberTag) pos.get(2)).getData().intValue() >> 4) != this.z)) {
-                        changed = true;
-                        continue;
-                    }
-                    Entity entity = Entity.createEntity(nbt.getInt("id"), this, nbt);
-                    if (entity != null) {
-                        entity.spawnToAll();
-                    } else {
-                        changed = true;
-                        continue;
-                    }
-                }
-
-                for (CompoundTag nbt : NBTtiles) {
-                    if (nbt != null) {
-                        if (!nbt.contains("id")) {
-                            changed = true;
-                            continue;
-                        }
-                        if ((nbt.getInt("x") >> 4) != this.x || ((nbt.getInt("z") >> 4) != this.z)) {
-                            changed = true;
-                            continue;
-                        }
-                        BlockEntity blockEntity = BlockEntity.createBlockEntity(nbt.getString("id"), this, nbt);
-                        if (blockEntity == null) {
-                            changed = true;
-                            continue;
-                        }
-                    }
-                }
-
-                this.NBTentities = null;
-                this.NBTtiles = null;
-
-
-            }
-
-            this.setChanged(changed);
-
-            this.isInit = true;
-        }
-    }
 }

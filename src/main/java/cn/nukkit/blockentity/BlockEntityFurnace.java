@@ -276,4 +276,5 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
         return c;
     }
+
 }

@@ -16,9 +16,8 @@ package cn.nukkit.scheduler;
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
  * @since Nukkit 1.0 | Nukkit API 1.0.0
- * @deprecated Use Java Runnable instead.
  */
-public abstract class Task {
+public abstract class Task implements Runnable {
     private TaskHandler taskHandler = null;
 
     public final TaskHandler getHandler() {
@@ -45,8 +44,17 @@ public abstract class Task {
      */
     public abstract void onRun(int currentTick);
 
+    @Override
+    public final void run() {
+
+    }
+
     public void onCancel() {
 
+    }
+
+    public void cancel() {
+        this.getHandler().cancel();
     }
 
 }

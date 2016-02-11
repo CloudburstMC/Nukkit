@@ -156,7 +156,11 @@ public class CompoundTag extends Tag {
 
     public String getString(String name) {
         if (!tags.containsKey(name)) return "";
-        return ((StringTag) tags.get(name)).data;
+        Tag tag = tags.get(name);
+        if (tag instanceof NumberTag) {
+            return String.valueOf(((NumberTag) tag).getData());
+        }
+        return ((StringTag) tag).data;
     }
 
     public byte[] getByteArray(String name) {

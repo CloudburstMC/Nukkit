@@ -228,4 +228,5 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
         return nbt;
     }
+
 }

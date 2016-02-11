@@ -1,7 +1,7 @@
 package cn.nukkit.item.enchantment;
 
-import cn.nukkit.item.ItemArmor;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArmor;
 import cn.nukkit.item.ItemTool;
 
 import java.util.HashSet;

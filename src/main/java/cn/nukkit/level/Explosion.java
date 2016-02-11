@@ -1,7 +1,7 @@
 package cn.nukkit.level;
 
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.event.block.BlockUpdateEvent;
