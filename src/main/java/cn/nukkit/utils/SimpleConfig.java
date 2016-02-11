@@ -1,16 +1,13 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.plugin.PluginBase;
+import cn.nukkit.plugin.Plugin;
 
 import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.List;
 
 /**
@@ -21,12 +18,16 @@ public abstract class SimpleConfig {
 
     private File configFile;
 
-    public SimpleConfig(PluginBase plugin){
-        this (plugin,"config.cfg");
+    public SimpleConfig(Plugin plugin){
+        this(plugin, "config.yml");
     }
 
-    public SimpleConfig(PluginBase plugin, String fileName){
-        this.configFile = new File(plugin.getDataFolder()+File.separator+fileName);
+    public SimpleConfig(Plugin plugin, String fileName){
+        this(new File(plugin.getDataFolder()+File.separator+fileName));
+    }
+
+    public SimpleConfig(File file) {
+        this.configFile = file;
         configFile.getParentFile().mkdirs();
     }
 
@@ -40,7 +41,7 @@ public abstract class SimpleConfig {
         for (Field field : this.getClass().getDeclaredFields()) {
             String path = getPath(field);
             try {
-                cfg.set(path,field.get(this));
+                cfg.set(path, field.get(this));
             } catch (Exception e) {
                 return false;
             }
@@ -55,15 +56,17 @@ public abstract class SimpleConfig {
         for (Field field : this.getClass().getDeclaredFields()) {
             if (field.getName().equals("configFile")) continue;
             String path = getPath(field);
+            if (path == null) continue;
+            if (path.isEmpty()) continue;
             try {
-                if (field.getType().equals(int.class)||field.getType().equals(Integer.class))
+                if (field.getType() == int.class || field.getType() == Integer.class)
                     field.set(this, cfg.getInt(path, field.getInt(this)));
-                else if (field.getType()==boolean.class||field.getType()==Boolean.class)
-                    field.set(this,cfg.getBoolean(path,field.getBoolean(this)));
-                else if (field.getType()==long.class||field.getType()==Long.class)
-                    field.set(this,cfg.getLong(path,field.getLong(this)));
-                else if (field.getType()==double.class||field.getType()==Double.class)
-                    field.set(this,cfg.getDouble(path,field.getDouble(this)));
+                else if (field.getType() == boolean.class || field.getType() == Boolean.class)
+                    field.set(this,cfg.getBoolean(path, field.getBoolean(this)));
+                else if (field.getType() == long.class || field.getType() == Long.class)
+                    field.set(this,cfg.getLong(path, field.getLong(this)));
+                else if (field.getType() == double.class || field.getType() == Double.class)
+                    field.set(this,cfg.getDouble(path, field.getDouble(this)));
                 else if (field.getType() == String.class)
                     field.set(this,cfg.getString(path, (String) field.get(this)));
                 else if (field.getType() == List.class){
@@ -89,13 +92,14 @@ public abstract class SimpleConfig {
         return true;
     }
 
-    private String getPath (Field field){
+    private String getPath(Field field){
         String path = null;
         if (field.isAnnotationPresent(Path.class)) {
             Path pathDefine = field.getAnnotation(Path.class);
             path = pathDefine.value();
         }
-        if (path == null||path.isEmpty()) field.getName().replaceAll("_", ".");
+        if (path == null || path.isEmpty()) path = field.getName().replaceAll("_", ".");
+        if (Modifier.isFinal(field.getModifiers())) return null;
         if (Modifier.isPrivate(field.getModifiers())) field.setAccessible(true);
         return path;
     }
