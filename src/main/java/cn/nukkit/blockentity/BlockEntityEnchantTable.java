@@ -54,8 +54,4 @@ public class BlockEntityEnchantTable extends BlockEntitySpawnable implements Blo
         return c;
     }
 
-    @Override
-    public String getSaveId() {
-        return ENCHANT_TABLE;
-    }
 }

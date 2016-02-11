@@ -253,8 +253,4 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
         return c;
     }
 
-    @Override
-    public String getSaveId() {
-        return CHEST;
-    }
 }

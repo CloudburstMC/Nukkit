@@ -37,8 +37,4 @@ public class BlockEntityFlowerPot extends BlockEntitySpawnable {
                 .put("mData", this.namedTag.get("mData"));
     }
 
-    @Override
-    public String getSaveId() {
-        return FLOWER_POT;
-    }
 }

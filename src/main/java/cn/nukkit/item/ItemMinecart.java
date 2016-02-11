@@ -2,7 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.entity.item.EntityMinecart;
+import cn.nukkit.entity.item.EntityMinecartEmpty;
 import cn.nukkit.level.Level;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -37,7 +37,7 @@ public class ItemMinecart extends Item {
         Block secret = level.getBlock(block.add(0, -1, 0));
         // TODO: 2016/1/30 check if blockId of secret is a rail
 
-        EntityMinecart minecart = new EntityMinecart(
+        EntityMinecartEmpty minecart = new EntityMinecartEmpty(
                 level.getChunk(block.getFloorX() >> 4, block.getFloorZ() >> 4), new CompoundTag("")
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", block.getX() + 0.5))

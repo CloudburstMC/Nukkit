@@ -11,7 +11,7 @@ import cn.nukkit.network.protocol.EntityEventPacket;
  * Created by Snake1999 on 2016/1/30.
  * Package cn.nukkit.entity.item in project Nukkit.
  */
-public class EntityMinecart extends EntityVehicle {
+public class EntityMinecartEmpty extends EntityVehicle {
 
     public static final int NETWORK_ID = 84;
 
@@ -46,7 +46,7 @@ public class EntityMinecart extends EntityVehicle {
         return NETWORK_ID;
     }
 
-    public EntityMinecart(FullChunk chunk, CompoundTag nbt) {
+    public EntityMinecartEmpty(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -67,7 +67,7 @@ public class EntityMinecart extends EntityVehicle {
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.eid = this.getId();
-        pk.type = EntityMinecart.NETWORK_ID;
+        pk.type = EntityMinecartEmpty.NETWORK_ID;
         pk.x = (float) this.x;
         pk.y = (float) this.y;
         pk.z = (float) this.z;

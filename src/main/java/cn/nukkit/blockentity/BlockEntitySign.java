@@ -93,8 +93,4 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     }
 
-    @Override
-    public String getSaveId() {
-        return SIGN;
-    }
 }

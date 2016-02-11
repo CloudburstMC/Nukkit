@@ -42,8 +42,4 @@ public class BlockEntitySkull extends BlockEntitySpawnable {
                 .put("Rot", this.namedTag.get("Rot"));
     }
 
-    @Override
-    public String getSaveId() {
-        return SKULL;
-    }
 }

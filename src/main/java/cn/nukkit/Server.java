@@ -1801,21 +1801,21 @@ public class Server {
     }
 
     private void registerEntities() {
-        Entity.registerEntity(EntityArrow.class);
-        Entity.registerEntity(EntityItem.class);
-        Entity.registerEntity(EntityFallingBlock.class);
-        Entity.registerEntity(EntityPrimedTNT.class);
-        Entity.registerEntity(EntitySnowball.class);
-        Entity.registerEntity(EntityPainting.class);
+        Entity.registerEntity("Arrow", EntityArrow.class);
+        Entity.registerEntity("Item", EntityItem.class);
+        Entity.registerEntity("FallingSand", EntityFallingBlock.class);
+        Entity.registerEntity("PrimedTnt", EntityPrimedTNT.class);
+        Entity.registerEntity("Snowball", EntitySnowball.class);
+        Entity.registerEntity("Painting", EntityPainting.class);
         //todo mobs
 
-        Entity.registerEntity(EntityExpBottle.class);
-        Entity.registerEntity(EntityXPOrb.class);
-        Entity.registerEntity(EntityPotion.class);
+        Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);
+        Entity.registerEntity("XpOrb", EntityXPOrb.class);
+        Entity.registerEntity("ThrownPotion", EntityPotion.class);
 
-        Entity.registerEntity(EntityHuman.class, true);
+        Entity.registerEntity("Human", EntityHuman.class, true);
 
-        Entity.registerEntity(EntityMinecart.class);
+        Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
         // TODO: 2016/1/30 all finds of minecart
     }
 

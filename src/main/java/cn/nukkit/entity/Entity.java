@@ -72,8 +72,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     public static long entityCount = 1;
 
-    private static Map<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
-    private static Map<String, Class<? extends Entity>> shortNames = new HashMap<>();
+    private static Map<String, Class<? extends Entity>> knownEntities = new HashMap<>();
+    private static Map<String, String> shortNames = new HashMap<>();
 
     protected Map<Integer, Player> hasSpawned = new HashMap<>();
 
@@ -428,8 +428,8 @@ public abstract class Entity extends Location implements Metadatable {
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
         Entity entity = null;
 
-        if (shortNames.containsKey(name)) {
-            Class<? extends Entity> clazz = shortNames.get(name);
+        if (knownEntities.containsKey(name)) {
+            Class<? extends Entity> clazz = knownEntities.get(name);
 
             if (clazz == null) {
                 return null;
@@ -467,63 +467,27 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public static Entity createEntity(int type, FullChunk chunk, CompoundTag nbt, Object... args) {
-        Entity entity = null;
-
-        if (knownEntities.containsKey(type)) {
-            Class<? extends Entity> clazz = knownEntities.get(type);
-
-            if (clazz == null) {
-                return null;
-            }
-
-            for (Constructor constructor : clazz.getConstructors()) {
-                if (entity != null) {
-                    break;
-                }
-
-                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
-                    continue;
-                }
-
-                try {
-                    if (args == null || args.length == 0) {
-                        entity = (Entity) constructor.newInstance(chunk, nbt);
-                    } else {
-                        Object[] objects = new Object[args.length + 2];
-
-                        objects[0] = chunk;
-                        objects[1] = nbt;
-                        System.arraycopy(args, 0, objects, 2, args.length);
-                        entity = (Entity) constructor.newInstance(objects);
-
-                    }
-                } catch (Exception e) {
-                    //ignore
-                }
-
-            }
-        }
-
-        return entity;
+        return createEntity(String.valueOf(type), chunk, nbt, args);
     }
 
-    public static boolean registerEntity(Class<? extends Entity> clazz) {
-        return registerEntity(clazz, false);
+    public static boolean registerEntity(String name, Class<? extends Entity> clazz) {
+        return registerEntity(name, clazz, false);
     }
 
-    public static boolean registerEntity(Class<? extends Entity> clazz, boolean force) {
+    public static boolean registerEntity(String name, Class<? extends Entity> clazz, boolean force) {
         if (clazz == null) {
             return false;
         }
         try {
             int networkId = clazz.getField("NETWORK_ID").getInt(null);
             if (networkId != -1) {
-                knownEntities.put(networkId, clazz);
+                knownEntities.put(String.valueOf(networkId), clazz);
             } else if (!force) {
                 return false;
             }
 
-            shortNames.put(clazz.getSimpleName(), clazz);
+            knownEntities.put(name, clazz);
+            shortNames.put(clazz.getSimpleName(), name);
             return true;
         } catch (Exception e) {
             return false;
@@ -533,7 +497,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void saveNBT() {
         if (!(this instanceof Player)) {
             if (!this.getNameTag().equals("")) {
-                this.namedTag.putString("id", this.getClass().getSimpleName());
+                this.namedTag.putString("id", this.getSaveId());
                 this.namedTag.putString("CustomName", this.getNameTag());
                 this.namedTag.putString("CustomNameVisible", String.valueOf(this.isNameTagVisible()));
             } else {
@@ -1607,4 +1571,7 @@ public abstract class Entity extends Location implements Metadatable {
         return server;
     }
 
+    public final String getSaveId() {
+        return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
+    }
 }
