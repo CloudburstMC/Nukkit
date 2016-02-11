@@ -5,8 +5,6 @@ import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
-import cn.nukkit.blockentity.BlockEntitySign;
-import cn.nukkit.blockentity.BlockEntitySkull;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -2453,12 +2451,12 @@ public class Level implements ChunkManager, Metadatable {
 
         //remove all invaild block entities.
         List<BlockEntity> toClose = new ArrayList<>();
-        for (BlockEntity anBlockEntity: blockEntities.values()) {
+        for (BlockEntity anBlockEntity : blockEntities.values()) {
             if (anBlockEntity == null) continue;
             if (anBlockEntity.isBlockEntityValid()) continue;
             toClose.add(anBlockEntity);
         }
-        for (BlockEntity be: toClose.toArray(new BlockEntity[toClose.size()])) {
+        for (BlockEntity be : toClose.toArray(new BlockEntity[toClose.size()])) {
             be.close();
         }
 

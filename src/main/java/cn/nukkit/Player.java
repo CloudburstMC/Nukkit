@@ -1,7 +1,7 @@
 package cn.nukkit;
 
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
@@ -31,10 +31,10 @@ import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.*;
-import cn.nukkit.item.ItemArrow;
-import cn.nukkit.item.ItemGlassBottle;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArrow;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemGlassBottle;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
@@ -69,7 +69,6 @@ import cn.nukkit.utils.Zlib;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 //import cn.nukkit.entity.Item;
 
@@ -183,8 +182,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private PlayerFood foodData = null;
 
     private Entity killer = null;
-
-    private final AtomicReference<Locale> locale = new AtomicReference<>(null);
 
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
@@ -596,7 +593,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             ++count;
 
             this.usedChunks.put(index, false);
-            this.level.registerChunkLoader(this, chunkX, chunkZ, true);
+            this.level.registerChunkLoader(this, chunkX, chunkZ, false);
 
             if (!this.level.populateChunk(chunkX, chunkZ)) {
                 if (this.spawned && this.teleportPosition == null) {
@@ -3866,14 +3863,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         ChangeDimensionPacket pk = new ChangeDimensionPacket();
         pk.dimension = (byte) (getLevel().getDimension() & 0xff);
         this.dataPacket(pk);
-    }
-
-    public synchronized void setLocale(Locale locale) {
-        this.locale.set(locale);
-    }
-
-    public synchronized Locale getLocale() {
-        return this.locale.get();
     }
 
 }

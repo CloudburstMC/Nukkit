@@ -1,8 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;

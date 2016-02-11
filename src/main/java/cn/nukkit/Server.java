@@ -1820,13 +1820,13 @@ public class Server {
     }
 
     private void registerBlockEntities() {
-        BlockEntity.registerBlockEntities(BlockEntityBrewingStand.class);
-        BlockEntity.registerBlockEntities(BlockEntityChest.class);
-        BlockEntity.registerBlockEntities(BlockEntityEnchantTable.class);
-        BlockEntity.registerBlockEntities(BlockEntityFlowerPot.class);
-        BlockEntity.registerBlockEntities(BlockEntityFurnace.class);
-        BlockEntity.registerBlockEntities(BlockEntitySign.class);
-        BlockEntity.registerBlockEntities(BlockEntitySkull.class);
+        BlockEntity.registerBlockEntity(BlockEntity.FURNACE, BlockEntityFurnace.class);
+        BlockEntity.registerBlockEntity(BlockEntity.CHEST, BlockEntityChest.class);
+        BlockEntity.registerBlockEntity(BlockEntity.SIGN, BlockEntitySign.class);
+        BlockEntity.registerBlockEntity(BlockEntity.ENCHANT_TABLE, BlockEntityEnchantTable.class);
+        BlockEntity.registerBlockEntity(BlockEntity.SKULL, BlockEntitySkull.class);
+        BlockEntity.registerBlockEntity(BlockEntity.FLOWER_POT, BlockEntityFlowerPot.class);
+        BlockEntity.registerBlockEntity(BlockEntity.BREWING_STAND, BlockEntityBrewingStand.class);
     }
 
     public static Server getInstance() {

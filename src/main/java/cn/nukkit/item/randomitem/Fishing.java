@@ -1,7 +1,7 @@
 package cn.nukkit.item.randomitem;
 
-import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.potion.Potion;
 

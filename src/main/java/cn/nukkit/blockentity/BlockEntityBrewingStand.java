@@ -228,4 +228,9 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
         return nbt;
     }
+
+    @Override
+    public String getSaveId() {
+        return BREWING_STAND;
+    }
 }
