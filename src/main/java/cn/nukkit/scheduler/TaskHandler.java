@@ -80,6 +80,9 @@ public class TaskHandler {
     }
 
     public void cancel() {
+        if (!this.isCancelled() && this.task instanceof Task) {
+            ((Task) this.task).onCancel();
+        }
         this.cancelled = true;
     }
 
@@ -94,7 +97,7 @@ public class TaskHandler {
     }
 
     public String getTaskName() {
-        return this.timingName != null ? this.timingName : this.task.getClass().getName();
+        return this.timingName;
     }
 
     public boolean isAsynchronous() {
