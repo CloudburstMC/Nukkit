@@ -1546,7 +1546,6 @@ public class Item implements Cloneable {
         CompoundTag tag;
         if (!this.hasCompoundTag()) {
             tag = new CompoundTag();
-            this.setNamedTag(tag);
         } else {
             tag = this.getNamedTag();
         }
@@ -1557,7 +1556,7 @@ public class Item implements Cloneable {
                     .putString("Name", name)
             );
         }
-
+        this.setNamedTag(tag);
         return this;
     }
 

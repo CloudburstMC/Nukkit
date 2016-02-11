@@ -69,6 +69,7 @@ import cn.nukkit.utils.Zlib;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 //import cn.nukkit.entity.Item;
 
@@ -182,6 +183,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private PlayerFood foodData = null;
 
     private Entity killer = null;
+
+    private final AtomicReference<Locale> locale = new AtomicReference<>(null);
 
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
@@ -3863,6 +3866,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         ChangeDimensionPacket pk = new ChangeDimensionPacket();
         pk.dimension = (byte) (getLevel().getDimension() & 0xff);
         this.dataPacket(pk);
+    }
+
+    public synchronized void setLocale(Locale locale) {
+        this.locale.set(locale);
+    }
+
+    public synchronized Locale getLocale() {
+        return this.locale.get();
     }
 
 }
