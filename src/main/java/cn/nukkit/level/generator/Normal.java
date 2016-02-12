@@ -8,6 +8,7 @@ import cn.nukkit.level.generator.biome.BiomeSelector;
 import cn.nukkit.level.generator.noise.Simplex;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.Populator;
+import cn.nukkit.level.generator.populator.PopulatorCaves;
 import cn.nukkit.level.generator.populator.PopulatorGroundCover;
 import cn.nukkit.level.generator.populator.PopulatorOre;
 import cn.nukkit.math.NukkitRandom;
@@ -128,6 +129,9 @@ public class Normal extends Generator {
         PopulatorGroundCover cover = new PopulatorGroundCover();
         this.generationPopulators.add(cover);
 
+        PopulatorCaves caves = new PopulatorCaves();
+        this.populators.add(caves);
+
         PopulatorOre ores = new PopulatorOre();
         ores.setOreTypes(new OreType[]{
                 new OreType(new BlockOreCoal(), 20, 16, 0, 128),
@@ -204,6 +208,8 @@ public class Normal extends Generator {
                         int baseGroundHeight = (int) (landHeightRange * landHeightNoise) - landHeightRange;
                         int baseGroundHeight2 = (int) (basegroundHeight * (baseNoise[genx][genz] + 1F));
                         if (baseGroundHeight2 > baseGroundHeight) baseGroundHeight2 = baseGroundHeight;
+                        if(baseGroundHeight2 > mountainGenerate) baseGroundHeight2 = baseGroundHeight2 - mountainGenerate;
+                        else baseGroundHeight2 = 0;
                         genyHeight += baseGroundHeight2;
                     }
                 }
@@ -216,7 +222,7 @@ public class Normal extends Generator {
                     if (riverGenerate > -0.25F && riverGenerate < 0.25F) {
                         riverGenerate = riverGenerate > 0 ? riverGenerate : -riverGenerate;
                         riverGenerate = 0.25F - riverGenerate;
-                        //y=x^2 * 63.33
+                        //y=x^2 * 4 - 0.0000001
                         riverGenerate = riverGenerate * riverGenerate * 4F;
                         //smooth again
                         riverGenerate = riverGenerate - 0.0000001F;
@@ -224,8 +230,9 @@ public class Normal extends Generator {
                         genyHeight -= riverGenerate * 64;
                         if (genyHeight < seaHeight) {
                             biome = Biome.getBiome(Biome.RIVER);
+                            //to generate river floor
                             if (genyHeight < seaHeight - 5) {
-                                genyHeight = seaHeight - 5;
+                                genyHeight = seaHeight - 8 + (int) (basegroundHeight * (baseNoise[genx][genz] + 1F));
                             }
                         }
                     }
