@@ -181,18 +181,18 @@ public abstract class Generator {
                         int nny = ny + ySamplingRate;
                         int nnz = nz + zSamplingRate;
 
-                        int dx1 = ((nnx - xx) / (nnx - nx));
-                        int dx2 = ((xx - nx) / (nnx - nx));
-                        int dy1 = ((nny - yy) / (nny - ny));
-                        int dy2 = ((yy - ny) / (nny - ny));
+                        double dx1 = ((double) (nnx - xx) / (double) (nnx - nx));
+                        double dx2 = ((double) (xx - nx) / (double) (nnx - nx));
+                        double dy1 = ((double) (nny - yy) / (double) (nny - ny));
+                        double dy2 = ((double) (yy - ny) / (double) (nny - ny));
 
-                        noiseArray[xx][zz][yy] = ((nnz - zz) / (nnz - nz)) * (
+                        noiseArray[xx][zz][yy] = ((double) (nnz - zz) / (double) (nnz - nz)) * (
                                 dy1 * (
                                         dx1 * noiseArray[nx][nz][ny] + dx2 * noiseArray[nnx][nz][ny]
                                 ) + dy2 * (
                                         dx1 * noiseArray[nx][nz][nny] + dx2 * noiseArray[nnx][nz][nny]
                                 )
-                        ) + ((zz - nz) / (nnz - nz)) * (
+                        ) + ((double) (zz - nz) / (double) (nnz - nz)) * (
                                 dy1 * (
                                         dx1 * noiseArray[nx][nnz][ny] + dx2 * noiseArray[nnx][nnz][ny]
                                 ) + dy2 * (
