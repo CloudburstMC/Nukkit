@@ -41,7 +41,7 @@ public abstract class SimpleConfig {
         for (Field field : this.getClass().getDeclaredFields()) {
             String path = getPath(field);
             try {
-                cfg.set(path, field.get(this));
+                if (path != null) cfg.set(path, field.get(this));
             } catch (Exception e) {
                 return false;
             }
