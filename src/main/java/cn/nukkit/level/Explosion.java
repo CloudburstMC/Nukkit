@@ -73,7 +73,7 @@ public class Explosion {
             for (int j = 0; j < this.rays; ++j) {
                 for (int k = 0; k < this.rays; ++k) {
                     if (i == 0 || i == mRays || j == 0 || j == mRays || k == 0 || k == mRays) {
-                        vector.setComponents(i / mRays * 2d - 1, j / mRays * 2d - 1, k / mRays * 2d - 1);
+                        vector.setComponents((double) i / (double) mRays * 2d - 1, (double) j / (double) mRays * 2d - 1, (double) k / (double) mRays * 2d - 1);
                         double len = vector.length();
                         vector.setComponents((vector.x / len) * this.stepLen, (vector.y / len) * this.stepLen, (vector.z / len) * this.stepLen);
                         double pointerX = this.source.x;

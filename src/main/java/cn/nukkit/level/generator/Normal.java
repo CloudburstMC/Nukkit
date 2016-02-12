@@ -231,8 +231,10 @@ public class Normal extends Generator {
                         if (genyHeight < seaHeight) {
                             biome = Biome.getBiome(Biome.RIVER);
                             //to generate river floor
-                            if (genyHeight < seaHeight - 5) {
-                                genyHeight = seaHeight - 8 + (int) (basegroundHeight * (baseNoise[genx][genz] + 1F));
+                            if (genyHeight <= seaHeight - 8) {
+                                int genyHeight1 = seaHeight - 9 + (int) (basegroundHeight * (baseNoise[genx][genz] + 1F));
+                                int genyHeight2 = genyHeight < seaHeight - 7 ? seaHeight - 7 : genyHeight;
+                                genyHeight = genyHeight1 > genyHeight2 ? genyHeight1 : genyHeight2;
                             }
                         }
                     }
