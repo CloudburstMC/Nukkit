@@ -208,7 +208,8 @@ public class Normal extends Generator {
                         int baseGroundHeight = (int) (landHeightRange * landHeightNoise) - landHeightRange;
                         int baseGroundHeight2 = (int) (basegroundHeight * (baseNoise[genx][genz] + 1F));
                         if (baseGroundHeight2 > baseGroundHeight) baseGroundHeight2 = baseGroundHeight;
-                        if(baseGroundHeight2 > mountainGenerate) baseGroundHeight2 = baseGroundHeight2 - mountainGenerate;
+                        if (baseGroundHeight2 > mountainGenerate)
+                            baseGroundHeight2 = baseGroundHeight2 - mountainGenerate;
                         else baseGroundHeight2 = 0;
                         genyHeight += baseGroundHeight2;
                     }

@@ -10,8 +10,6 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 
-import java.util.Random;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -44,40 +42,10 @@ public class ItemPainting extends Item {
         }
 
         if (!target.isTransparent() && face > 1 && !block.isSolid()) {
-            int[] faces = {1, 3, 0, 2};
-            Motive[] motives = new Motive[]{
-                    new Motive("Kebab", 1, 1),
-                    new Motive("Aztec", 1, 1),
-                    new Motive("Alban", 1, 1),
-                    new Motive("Aztec2", 1, 1),
-                    new Motive("Bomb", 1, 1),
-                    new Motive("Plant", 1, 1),
-                    new Motive("Wasteland", 1, 1),
-                    new Motive("Wanderer", 1, 2),
-                    new Motive("Graham", 1, 2),
-                    new Motive("Pool", 2, 1),
-                    new Motive("Courbet", 2, 1),
-                    new Motive("Sunset", 2, 1),
-                    new Motive("Sea", 2, 1),
-                    new Motive("Creebet", 2, 1),
-                    new Motive("Match", 2, 2),
-                    new Motive("Bust", 2, 2),
-                    new Motive("Stage", 2, 2),
-                    new Motive("Void", 2, 2),
-                    new Motive("SkullAndRoses", 2, 2),
-                    //new Motive("Wither", 2, 2),
-                    new Motive("Fighters", 4, 2),
-                    new Motive("Skeleton", 4, 3),
-                    new Motive("DonkeyKong", 4, 3),
-                    new Motive("Pointer", 4, 4),
-                    new Motive("Pigscene", 4, 4),
-                    new Motive("Flaming Skull", 4, 4)
-            };
-
-            Motive motive = motives[new Random().nextInt(motives.length - 1)];
+            int[] faces = {2, 0, 1, 3};
 
             CompoundTag nbt = new CompoundTag()
-                    .putString("Motive", motive.title)
+                    .putByte("Direction", faces[face - 2])
                     .putList(new ListTag<DoubleTag>("Pos")
                             .add(new DoubleTag("0", target.x))
                             .add(new DoubleTag("1", target.y))
@@ -103,15 +71,4 @@ public class ItemPainting extends Item {
         return false;
     }
 
-    static class Motive {
-        public String title;
-        public int width;
-        public int height;
-
-        public Motive(String title, int width, int height) {
-            this.title = title;
-            this.width = width;
-            this.height = height;
-        }
-    }
 }

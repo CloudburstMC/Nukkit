@@ -73,7 +73,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     protected int getSlotIndex(int index) {
         ListTag<CompoundTag> list = this.namedTag.getList("Items", CompoundTag.class);
         for (int i = 0; i < list.size(); i++) {
-            if ((list.get(i).getByte("Slot") & 0xff) == index) {
+            if (list.get(i).getByte("Slot") == index) {
                 return i;
             }
         }
@@ -88,7 +88,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
             return new ItemBlock(new BlockAir(), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
-            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count") & 0xff);
+            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count"));
         }
     }
 
@@ -97,8 +97,8 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
         int i = this.getSlotIndex(index);
 
         CompoundTag d = new CompoundTag()
-                .putByte("Count", (byte) item.getCount())
-                .putByte("Slot", (byte) index)
+                .putByte("Count", item.getCount())
+                .putByte("Slot", index)
                 .putShort("id", item.getId())
                 .putShort("Damage", item.getDamage());
 

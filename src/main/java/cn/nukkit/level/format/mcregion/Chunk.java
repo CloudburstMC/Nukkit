@@ -399,9 +399,9 @@ public class Chunk extends BaseFullChunk {
                 offset += 4;
             }
             byte flags = data[offset++];
-            chunk.nbt.putByte("TerrainGenerated", (byte) (flags & 0b1));
-            chunk.nbt.putByte("TerrainPopulated", (byte) ((flags >> 1) & 0b1));
-            chunk.nbt.putByte("LightPopulated", (byte) ((flags >> 2) & 0b1));
+            chunk.nbt.putByte("TerrainGenerated", (flags & 0b1));
+            chunk.nbt.putByte("TerrainPopulated", ((flags >> 1) & 0b1));
+            chunk.nbt.putByte("LightPopulated", ((flags >> 2) & 0b1));
             return chunk;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -514,7 +514,7 @@ public class Chunk extends BaseFullChunk {
             chunk.heightMap = new int[256];
             chunk.biomeColors = new int[256];
 
-            chunk.nbt.putByte("V", (byte) 1);
+            chunk.nbt.putByte("V", 1);
             chunk.nbt.putLong("InhabitedTime", 0);
             chunk.nbt.putBoolean("TerrainGenerated", false);
             chunk.nbt.putBoolean("TerrainPopulated", false);

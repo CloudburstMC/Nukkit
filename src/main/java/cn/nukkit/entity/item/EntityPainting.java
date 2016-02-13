@@ -2,9 +2,12 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.EntityHanging;
+import cn.nukkit.item.ItemPainting;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPaintingPacket;
+
+import java.util.Random;
 
 /**
  * author: MagicDroidX
@@ -13,13 +16,61 @@ import cn.nukkit.network.protocol.AddPaintingPacket;
 public class EntityPainting extends EntityHanging {
     public static final int NETWORK_ID = 83;
 
+    protected static Motive[] motives = new Motive[]{
+            new Motive("Kebab", 1, 1),
+            new Motive("Aztec", 1, 1),
+            new Motive("Alban", 1, 1),
+            new Motive("Aztec2", 1, 1),
+            new Motive("Bomb", 1, 1),
+            new Motive("Plant", 1, 1),
+            new Motive("Wasteland", 1, 1),
+            new Motive("Wanderer", 1, 2),
+            new Motive("Graham", 1, 2),
+            new Motive("Pool", 2, 1),
+            new Motive("Courbet", 2, 1),
+            new Motive("Sunset", 2, 1),
+            new Motive("Sea", 2, 1),
+            new Motive("Creebet", 2, 1),
+            new Motive("Match", 2, 2),
+            new Motive("Bust", 2, 2),
+            new Motive("Stage", 2, 2),
+            new Motive("Void", 2, 2),
+            new Motive("SkullAndRoses", 2, 2),
+            //new Motive("Wither", 2, 2),
+            new Motive("Fighters", 4, 2),
+            new Motive("Skeleton", 4, 3),
+            new Motive("DonkeyKong", 4, 3),
+            new Motive("Pointer", 4, 4),
+            new Motive("Pigscene", 4, 4),
+            new Motive("Flaming Skull", 4, 4)
+    };
+
+    @Override
+    public int getNetworkId() {
+        return NETWORK_ID;
+    }
+
+    private Motive motive;
+
     public EntityPainting(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
     @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
+    protected void initEntity() {
+        super.initEntity();
+
+        if (!this.namedTag.contains("Motive")) {
+            //todo: surface
+            Motive motive = motives[new Random().nextInt(motives.length - 1)];
+
+            this.namedTag.putString("Motive", motive.title);
+            this.motive = motive;
+        }
+
+        if (this.motive == null) {
+            this.motive = getMotive(this.namedTag.getString("Motive"));
+        }
     }
 
     @Override
@@ -31,8 +82,45 @@ public class EntityPainting extends EntityHanging {
         pk.z = (int) this.z;
         pk.direction = this.getDirection();
         pk.title = this.namedTag.getString("Motive");
+
         player.dataPacket(pk);
 
         super.spawnTo(player);
+    }
+
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+
+        this.namedTag.putString("Motive", this.motive.title);
+    }
+
+    @Override
+    public void close() {
+        super.close();
+
+        this.getLevel().dropItem(this, new ItemPainting());
+    }
+
+    static class Motive {
+        public String title;
+        public int width;
+        public int height;
+
+        public Motive(String title, int width, int height) {
+            this.title = title;
+            this.width = width;
+            this.height = height;
+        }
+    }
+
+    public static Motive getMotive(String name) {
+        for (Motive motive : motives) {
+            if (motive.title.equals(name)) {
+                return motive;
+            }
+        }
+
+        return motives[0];
     }
 }

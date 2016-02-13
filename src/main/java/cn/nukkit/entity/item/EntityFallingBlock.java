@@ -73,7 +73,7 @@ public class EntityFallingBlock extends Entity {
             }
 
             if (namedTag.contains("Data")) {
-                damage = namedTag.getByte("Data") & 0xff;
+                damage = namedTag.getByte("Data");
             }
         }
 
@@ -174,7 +174,7 @@ public class EntityFallingBlock extends Entity {
     @Override
     public void saveNBT() {
         namedTag.putInt("TileID", blockId);
-        namedTag.putByte("Data", (byte) damage);
+        namedTag.putByte("Data", damage);
     }
 
     @Override

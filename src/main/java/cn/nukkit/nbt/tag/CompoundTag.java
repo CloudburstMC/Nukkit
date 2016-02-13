@@ -51,7 +51,7 @@ public class CompoundTag extends Tag {
         return this;
     }
 
-    public CompoundTag putByte(String name, byte value) {
+    public CompoundTag putByte(String name, int value) {
         tags.put(name, new ByteTag(name, value));
         return this;
     }
@@ -107,7 +107,7 @@ public class CompoundTag extends Tag {
     }
 
     public CompoundTag putBoolean(String string, boolean val) {
-        putByte(string, val ? (byte) 1 : 0);
+        putByte(string, val ? 1 : 0);
         return this;
     }
 
@@ -124,9 +124,9 @@ public class CompoundTag extends Tag {
         return this;
     }
 
-    public byte getByte(String name) {
+    public int getByte(String name) {
         if (!tags.containsKey(name)) return (byte) 0;
-        return ((NumberTag) tags.get(name)).getData().byteValue();
+        return ((NumberTag) tags.get(name)).getData().intValue();
     }
 
     public int getShort(String name) {
@@ -196,8 +196,8 @@ public class CompoundTag extends Tag {
         return new HashMap<>(this.tags);
     }
 
-    public boolean getBoolean(String string) {
-        return getByte(string) != 0;
+    public boolean getBoolean(String name) {
+        return getByte(name) != 0;
     }
 
     public String toString() {
