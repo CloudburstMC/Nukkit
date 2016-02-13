@@ -3,8 +3,6 @@ package cn.nukkit.entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-import java.util.Random;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -41,6 +39,9 @@ public abstract class EntityHanging extends Entity {
         super.saveNBT();
 
         this.namedTag.putByte("Direction", this.getDirection());
+        this.namedTag.putInt("TileX", (int) this.x);
+        this.namedTag.putInt("TileY", (int) this.y);
+        this.namedTag.putInt("TileZ", (int) this.z);
     }
 
     @Override

@@ -7,8 +7,6 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPaintingPacket;
 
-import java.util.Random;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -16,7 +14,7 @@ import java.util.Random;
 public class EntityPainting extends EntityHanging {
     public static final int NETWORK_ID = 83;
 
-    protected static Motive[] motives = new Motive[]{
+    public final static Motive[] motives = new Motive[]{
             new Motive("Kebab", 1, 1),
             new Motive("Aztec", 1, 1),
             new Motive("Alban", 1, 1),
@@ -60,17 +58,7 @@ public class EntityPainting extends EntityHanging {
     protected void initEntity() {
         super.initEntity();
 
-        if (!this.namedTag.contains("Motive")) {
-            //todo: surface
-            Motive motive = motives[new Random().nextInt(motives.length - 1)];
-
-            this.namedTag.putString("Motive", motive.title);
-            this.motive = motive;
-        }
-
-        if (this.motive == null) {
-            this.motive = getMotive(this.namedTag.getString("Motive"));
-        }
+        this.motive = getMotive(this.namedTag.getString("Motive"));
     }
 
     @Override
@@ -102,12 +90,12 @@ public class EntityPainting extends EntityHanging {
         this.getLevel().dropItem(this, new ItemPainting());
     }
 
-    static class Motive {
+    public static class Motive {
         public String title;
         public int width;
         public int height;
 
-        public Motive(String title, int width, int height) {
+        protected Motive(String title, int width, int height) {
             this.title = title;
             this.width = width;
             this.height = height;
