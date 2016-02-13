@@ -65,6 +65,7 @@ public abstract class BlockEntity extends Position {
     }
 
     public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
+        type = type.replaceFirst("BlockEntity", ""); //TODO: Remove this after the first release
         BlockEntity blockEntity = null;
 
         if (knownBlockEntities.containsKey(type)) {
@@ -105,18 +106,18 @@ public abstract class BlockEntity extends Position {
         return blockEntity;
     }
 
-    public static boolean registerBlockEntities(Class<? extends BlockEntity> c) {
+    public static boolean registerBlockEntity(String name, Class<? extends BlockEntity> c) {
         if (c == null) {
             return false;
         }
 
-        knownBlockEntities.put(c.getSimpleName(), c);
-        shortNames.put(c.getName(), c.getSimpleName());
+        knownBlockEntities.put(name, c);
+        shortNames.put(c.getSimpleName(), name);
         return true;
     }
 
-    public String getSaveId() {
-        return shortNames.get(this.getClass().getName());
+    public final String getSaveId() {
+        return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
     }
 
     public long getId() {

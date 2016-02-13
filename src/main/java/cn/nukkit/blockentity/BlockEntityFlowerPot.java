@@ -36,4 +36,5 @@ public class BlockEntityFlowerPot extends BlockEntitySpawnable {
                 .put("item", this.namedTag.get("item"))
                 .put("mData", this.namedTag.get("mData"));
     }
+
 }

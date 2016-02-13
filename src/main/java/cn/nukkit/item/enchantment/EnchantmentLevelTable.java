@@ -174,6 +174,10 @@ public class EnchantmentLevelTable {
     }
 
     public static ArrayList<Enchantment> getPossibleEnchantments(Item item, int modifiedLevel) {
+        return getPossibleEnchantments(item, modifiedLevel, false);
+    }
+
+    public static ArrayList<Enchantment> getPossibleEnchantments(Item item, int modifiedLevel, boolean secondary) {
         Map<Integer, Enchantment> result = new HashMap<>();
 
         ArrayList<Integer> enchantmentIds = new ArrayList<>();
@@ -186,7 +190,8 @@ public class EnchantmentLevelTable {
             enchantmentIds.add(Enchantment.TYPE_ARMOR_FIRE_PROTECTION);
             enchantmentIds.add(Enchantment.TYPE_ARMOR_EXPLOSION_PROTECTION);
             enchantmentIds.add(Enchantment.TYPE_ARMOR_PROJECTILE_PROTECTION);
-            enchantmentIds.add(Enchantment.TYPE_ARMOR_THORNS);
+
+            enchantmentIds.add(Enchantment.TYPE_MINING_DURABILITY);
 
             if (item.isBoots()) {
                 enchantmentIds.add(Enchantment.TYPE_ARMOR_FALL_PROTECTION);
@@ -195,7 +200,14 @@ public class EnchantmentLevelTable {
             if (item.isHelmet()) {
                 enchantmentIds.add(Enchantment.TYPE_WATER_BREATHING);
                 enchantmentIds.add(Enchantment.TYPE_WATER_AFFINITY);
+            } else if (secondary) {
+                enchantmentIds.add(Enchantment.TYPE_ARMOR_THORNS);
             }
+
+            if (item.isChestplate()) {
+                enchantmentIds.add(Enchantment.TYPE_ARMOR_THORNS);
+            }
+
 
         } else if (item.isSword()) {
             enchantmentIds.add(Enchantment.TYPE_WEAPON_SHARPNESS);
@@ -205,10 +217,29 @@ public class EnchantmentLevelTable {
             enchantmentIds.add(Enchantment.TYPE_WEAPON_FIRE_ASPECT);
             enchantmentIds.add(Enchantment.TYPE_WEAPON_LOOTING);
 
-        } else if (item.isTool()) {
+            enchantmentIds.add(Enchantment.TYPE_MINING_DURABILITY);
+
+        } else if (item.isPickaxe() || item.isAxe() || item.isShovel()) {
             enchantmentIds.add(Enchantment.TYPE_MINING_EFFICIENCY);
             enchantmentIds.add(Enchantment.TYPE_MINING_SILK_TOUCH);
             enchantmentIds.add(Enchantment.TYPE_MINING_FORTUNE);
+            enchantmentIds.add(Enchantment.TYPE_MINING_DURABILITY);
+
+            if (item.isAxe() && secondary) {
+                enchantmentIds.add(Enchantment.TYPE_WEAPON_SHARPNESS);
+                enchantmentIds.add(Enchantment.TYPE_WEAPON_SMITE);
+                enchantmentIds.add(Enchantment.TYPE_WEAPON_ARTHROPODS);
+            }
+
+            if (item.isShears() && secondary) {
+                enchantmentIds.add(Enchantment.TYPE_MINING_EFFICIENCY);
+                enchantmentIds.add(Enchantment.TYPE_MINING_SILK_TOUCH);
+                enchantmentIds.add(Enchantment.TYPE_MINING_DURABILITY);
+            }
+
+            if (item.isHoe() && secondary) {
+                enchantmentIds.add(Enchantment.TYPE_MINING_DURABILITY);
+            }
 
         } else if (item.getId() == Item.BOW) {
             enchantmentIds.add(Enchantment.TYPE_BOW_POWER);
@@ -216,13 +247,15 @@ public class EnchantmentLevelTable {
             enchantmentIds.add(Enchantment.TYPE_BOW_FLAME);
             enchantmentIds.add(Enchantment.TYPE_BOW_INFINITY);
 
+            enchantmentIds.add(Enchantment.TYPE_MINING_DURABILITY);
+
         } else if (item.getId() == Item.FISHING_ROD) {
             enchantmentIds.add(Enchantment.TYPE_FISHING_FORTUNE);
             enchantmentIds.add(Enchantment.TYPE_FISHING_LURE);
 
-        }
+            enchantmentIds.add(Enchantment.TYPE_MINING_DURABILITY);
 
-        if (item.isTool() || item.isArmor()) {
+        } else if (item.getId() == Item.FLINT_AND_STEEL && secondary) {
             enchantmentIds.add(Enchantment.TYPE_MINING_DURABILITY);
         }
 

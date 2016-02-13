@@ -1,7 +1,7 @@
 package cn.nukkit;
 
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
@@ -31,10 +31,10 @@ import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.*;
-import cn.nukkit.item.ItemArrow;
-import cn.nukkit.item.ItemGlassBottle;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArrow;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemGlassBottle;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
@@ -596,7 +596,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             ++count;
 
             this.usedChunks.put(index, false);
-            this.level.registerChunkLoader(this, chunkX, chunkZ, true);
+            this.level.registerChunkLoader(this, chunkX, chunkZ, false);
 
             if (!this.level.populateChunk(chunkX, chunkZ)) {
                 if (this.spawned && this.teleportPosition == null) {
@@ -1789,7 +1789,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 if (this.teleportPosition != null || (this.forceMovement != null && newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
-                    this.sendPosition(this.forceMovement, movePlayerPacket.yaw, movePlayerPacket.pitch);
+                    this.sendPosition(this.teleportPosition == null ? this.forceMovement : this.teleportPosition, movePlayerPacket.yaw, movePlayerPacket.pitch);
                 } else {
 
                     movePlayerPacket.yaw %= 360;

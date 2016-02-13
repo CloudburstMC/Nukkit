@@ -1,8 +1,8 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.IntEntityData;
@@ -73,7 +73,7 @@ public class EntityFallingBlock extends Entity {
             }
 
             if (namedTag.contains("Data")) {
-                damage = namedTag.getByte("Data") & 0xff;
+                damage = namedTag.getByte("Data");
             }
         }
 
@@ -174,7 +174,7 @@ public class EntityFallingBlock extends Entity {
     @Override
     public void saveNBT() {
         namedTag.putInt("TileID", blockId);
-        namedTag.putByte("Data", (byte) damage);
+        namedTag.putByte("Data", damage);
     }
 
     @Override

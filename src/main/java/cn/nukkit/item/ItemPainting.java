@@ -5,12 +5,15 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.item.EntityPainting;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -44,40 +47,31 @@ public class ItemPainting extends Item {
         }
 
         if (!target.isTransparent() && face > 1 && !block.isSolid()) {
-            int[] faces = {1, 3, 0, 2};
-            Motive[] motives = new Motive[]{
-                    new Motive("Kebab", 1, 1),
-                    new Motive("Aztec", 1, 1),
-                    new Motive("Alban", 1, 1),
-                    new Motive("Aztec2", 1, 1),
-                    new Motive("Bomb", 1, 1),
-                    new Motive("Plant", 1, 1),
-                    new Motive("Wasteland", 1, 1),
-                    new Motive("Wanderer", 1, 2),
-                    new Motive("Graham", 1, 2),
-                    new Motive("Pool", 2, 1),
-                    new Motive("Courbet", 2, 1),
-                    new Motive("Sunset", 2, 1),
-                    new Motive("Sea", 2, 1),
-                    new Motive("Creebet", 2, 1),
-                    new Motive("Match", 2, 2),
-                    new Motive("Bust", 2, 2),
-                    new Motive("Stage", 2, 2),
-                    new Motive("Void", 2, 2),
-                    new Motive("SkullAndRoses", 2, 2),
-                    //new Motive("Wither", 2, 2),
-                    new Motive("Fighters", 4, 2),
-                    new Motive("Skeleton", 4, 3),
-                    new Motive("DonkeyKong", 4, 3),
-                    new Motive("Pointer", 4, 4),
-                    new Motive("Pigscene", 4, 4),
-                    new Motive("Flaming Skull", 4, 4)
-            };
+            int[] direction = {2, 0, 1, 3};
+            int[] right = {4, 5, 3, 2};
 
-            Motive motive = motives[new Random().nextInt(motives.length - 1)];
+            List<EntityPainting.Motive> validMotives = new ArrayList<>();
+            for (EntityPainting.Motive motive : EntityPainting.motives) {
+                boolean valid = true;
+                for (int x = 0; x < motive.width && valid; x++) {
+                    for (int z = 0; z < motive.height && valid; z++) {
+                        if (target.getSide(right[face - 2], x).isTransparent() ||
+                                target.getSide(Vector3.SIDE_UP, z).isTransparent() ||
+                                block.getSide(right[face - 2], x).isSolid() ||
+                                block.getSide(Vector3.SIDE_UP, z).isSolid()) {
+                            valid = false;
+                        }
+                    }
+                }
+
+                if (valid) {
+                    validMotives.add(motive);
+                }
+            }
 
             CompoundTag nbt = new CompoundTag()
-                    .putString("Motive", motive.title)
+                    .putByte("Direction", direction[face - 2])
+                    .putString("Motive", validMotives.get(ThreadLocalRandom.current().nextInt(validMotives.size())).title)
                     .putList(new ListTag<DoubleTag>("Pos")
                             .add(new DoubleTag("0", target.x))
                             .add(new DoubleTag("1", target.y))
@@ -87,7 +81,7 @@ public class ItemPainting extends Item {
                             .add(new DoubleTag("1", 0))
                             .add(new DoubleTag("2", 0)))
                     .putList(new ListTag<FloatTag>("Rotation")
-                            .add(new FloatTag("0", faces[face - 2] * 90))
+                            .add(new FloatTag("0", direction[face - 2] * 90))
                             .add(new FloatTag("1", 0)));
 
             EntityPainting entity = new EntityPainting(chunk, nbt);
@@ -103,15 +97,4 @@ public class ItemPainting extends Item {
         return false;
     }
 
-    static class Motive {
-        public String title;
-        public int width;
-        public int height;
-
-        public Motive(String title, int width, int height) {
-            this.title = title;
-            this.width = width;
-            this.height = height;
-        }
-    }
 }

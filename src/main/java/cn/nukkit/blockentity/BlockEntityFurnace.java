@@ -112,7 +112,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     protected int getSlotIndex(int index) {
         ListTag<CompoundTag> list = this.namedTag.getList("Items", CompoundTag.class);
         for (int i = 0; i < list.size(); i++) {
-            if ((list.get(i).getByte("Slot") & 0xff) == index) {
+            if (list.get(i).getByte("Slot") == index) {
                 return i;
             }
         }
@@ -127,7 +127,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
             return new ItemBlock(new BlockAir(), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
-            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count") & 0xff);
+            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count"));
         }
     }
 
@@ -136,8 +136,8 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         int i = this.getSlotIndex(index);
 
         CompoundTag d = new CompoundTag()
-                .putByte("Count", (byte) item.getCount())
-                .putByte("Slot", (byte) index)
+                .putByte("Count", item.getCount())
+                .putByte("Slot", index)
                 .putShort("id", item.getId())
                 .putShort("Damage", item.getDamage());
 
@@ -276,4 +276,5 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
         return c;
     }
+
 }

@@ -68,7 +68,7 @@ public class BlockTNT extends BlockSolid {
                     .putList(new ListTag<FloatTag>("Rotation")
                             .add(new FloatTag("", 0))
                             .add(new FloatTag("", 0)))
-                    .putByte("Fuse", (byte) 80);
+                    .putByte("Fuse", 80);
             Entity tnt = new EntityPrimedTNT(
                     this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
                     nbt

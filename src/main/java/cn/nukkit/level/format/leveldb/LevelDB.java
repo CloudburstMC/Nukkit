@@ -117,7 +117,7 @@ public class LevelDB implements LevelProvider {
                 .putFloat("rainLevel", 0)
                 .putInt("rainTime", new Random().nextInt())
                 .putLong("RandomSeed", seed)
-                .putByte("spawnMobs", (byte) 0)
+                .putByte("spawnMobs", 0)
                 .putInt("SpawnX", 128)
                 .putInt("SpawnY", 70)
                 .putInt("SpawnZ", 128)

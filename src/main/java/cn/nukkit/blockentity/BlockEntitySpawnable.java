@@ -8,7 +8,6 @@ import cn.nukkit.network.protocol.BlockEntityDataPacket;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.HashMap;
 
 /**
  * author: MagicDroidX

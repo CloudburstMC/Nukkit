@@ -15,7 +15,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
 
-public class BlockSkull extends BlockTransparent{
+public class BlockSkull extends BlockTransparent {
 
     public BlockSkull() {
         this(0);
@@ -36,12 +36,12 @@ public class BlockSkull extends BlockTransparent{
     }
 
     @Override
-    public double getResistance(){
+    public double getResistance() {
         return 5;
     }
 
     @Override
-    public boolean isSolid(){
+    public boolean isSolid() {
         return false;
     }
 
@@ -76,11 +76,11 @@ public class BlockSkull extends BlockTransparent{
 
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.SKULL)
-                .putByte("SkullType", (byte) item.getDamage())
+                .putByte("SkullType", item.getDamage())
                 .putInt("x", block.getFloorX())
                 .putInt("y", block.getFloorY())
                 .putInt("z", block.getFloorZ())
-                .putByte("Rot", (byte) ((int) Math.floor((player.yaw * 16 / 360) + 0.5) & 0x0f));
+                .putByte("Rot", (int) Math.floor((player.yaw * 16 / 360) + 0.5) & 0x0f);
         if (item.hasCustomBlockData()) {
             for (Tag aTag : item.getCustomBlockData().getAllTags()) {
                 nbt.put(aTag.getName(), aTag);

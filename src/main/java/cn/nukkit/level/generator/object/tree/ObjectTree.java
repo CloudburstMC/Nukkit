@@ -50,7 +50,7 @@ public abstract class ObjectTree {
         switch (type) {
             case BlockSapling.SPRUCE:
                 if (random.nextBoundedInt(39) == 0) {
-                    tree = new ObjectMatchstickSpruceTree();
+                    tree = new ObjectSpruceTree();
                 } else {
                     tree = new ObjectSpruceTree();
                 }
