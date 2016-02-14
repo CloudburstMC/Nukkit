@@ -1889,7 +1889,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     if (!this.canInteract(blockVector.add(0.5, 0.5, 0.5), 13) || this.isSpectator()) {
                     } else if (this.isCreative()) {
-                        if (this.level.useItemOn(blockVector, this.inventory.getItemInHand(), useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this) != null) {
+                        Item i = this.inventory.getItemInHand();
+                        if ((i = this.level.useItemOn(blockVector, i, useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this)) != null) {
+                            this.inventory.setItemInHand(i);
                             break;
                         }
                     } else if (!this.inventory.getItemInHand().deepEquals(useItemPacket.item)) {
@@ -1898,7 +1900,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         item = this.inventory.getItemInHand();
                         Item oldItem = item.clone();
                         //TODO: Implement adventure mode checks
-                        if (this.level.useItemOn(blockVector, item, useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this) != null) {
+                        if ((item = this.level.useItemOn(blockVector, item, useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this)) != null) {
                             if (!item.deepEquals(oldItem) || item.getCount() != oldItem.getCount()) {
                                 this.inventory.setItemInHand(item);
                                 this.inventory.sendHeldItem(this.hasSpawned.values());

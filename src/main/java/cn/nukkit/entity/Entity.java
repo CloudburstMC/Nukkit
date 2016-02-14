@@ -61,7 +61,6 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_COLOR = 7;
     public static final int DATA_POTION_AMBIENT = 8;
     public static final int DATA_NO_AI = 15;
-    public static final int DATA_POTION_TYPE = 16;
 
     public static final int DATA_FLAG_ONFIRE = 0;
     public static final int DATA_FLAG_SNEAKING = 1;

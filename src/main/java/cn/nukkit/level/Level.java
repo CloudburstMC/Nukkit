@@ -1542,13 +1542,12 @@ public class Level implements ChunkManager, Metadatable {
                         .add(new FloatTag("", 0))
                         .add(new FloatTag("", 0)));
         Entity entity = new EntityXPOrb(this.getChunk(source.getFloorX() >> 4, source.getFloorZ() >> 4), nbt);
-        if (entity instanceof EntityXPOrb) {
-            EntityXPOrb xpOrb = (EntityXPOrb) entity;
-            xpOrb.setExp(exp);
-            xpOrb.setPickupDelay(delay);
-            xpOrb.saveNBT();
-            xpOrb.spawnToAll();
-        }
+        EntityXPOrb xpOrb = (EntityXPOrb) entity;
+        xpOrb.setExp(exp);
+        xpOrb.setPickupDelay(delay);
+        xpOrb.saveNBT();
+
+        xpOrb.spawnToAll();
 
     }
 

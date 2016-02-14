@@ -22,4 +22,9 @@ public class ItemBow extends ItemTool {
     public int getMaxDurability() {
         return ItemTool.DURABILITY_BOW;
     }
+
+    @Override
+    public int getEnchantAbility() {
+        return 1;
+    }
 }

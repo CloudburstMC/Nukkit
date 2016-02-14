@@ -1730,6 +1730,10 @@ public class Item implements Cloneable {
         return false;
     }
 
+    public int getEnchantAbility() {
+        return 0;
+    }
+
     @Override
     final public String toString() {
         return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
