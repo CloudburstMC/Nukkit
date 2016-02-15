@@ -9,7 +9,7 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSand extends BlockFallable {
 
-    public static final int NORMAL = 0;
+    public static final int DEFAULT = 0;
     public static final int RED = 1;
 
     public BlockSand() {
