@@ -952,7 +952,7 @@ public class Server {
 
         this.checkTickUpdates(this.tickCounter, tickTime);
 
-        for (Player player : this.players.values()) {
+        for (Player player : new ArrayList<>(this.players.values())) {
             player.checkNetwork();
         }
 
@@ -1294,7 +1294,7 @@ public class Server {
     }
 
     public Map<String, Player> getOnlinePlayers() {
-        return players;
+        return new HashMap<>(players);
     }
 
     public void addRecipe(Recipe recipe) {
