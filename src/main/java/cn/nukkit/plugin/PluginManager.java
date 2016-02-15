@@ -128,6 +128,10 @@ public class PluginManager {
     }
 
     public Map<String, Plugin> loadPlugins(File dictionary, List<String> newLoaders) {
+        return this.loadPlugins(dictionary, newLoaders, false);
+    }
+
+    public Map<String, Plugin> loadPlugins(File dictionary, List<String> newLoaders, boolean includeDir) {
         if (dictionary.isDirectory()) {
             Map<String, File> plugins = new LinkedHashMap<>();
             Map<String, Plugin> loadedPlugins = new LinkedHashMap<>();
@@ -156,7 +160,7 @@ public class PluginManager {
                         return false;
                     }
                 })) {
-                    if (file.isDirectory()) {
+                    if (file.isDirectory() && !includeDir) {
                         continue;
                     }
                     try {
