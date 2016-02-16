@@ -1817,6 +1817,7 @@ public class Server {
 
         Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
         // TODO: 2016/1/30 all finds of minecart
+        Entity.registerEntity("Boat", EntityBoat.class);
     }
 
     private void registerBlockEntities() {
