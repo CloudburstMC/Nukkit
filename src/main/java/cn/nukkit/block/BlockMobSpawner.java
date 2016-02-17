@@ -38,6 +38,11 @@ public class BlockMobSpawner extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
+        if (item.isPickaxe()) {
+            return new int[][]{
+                    new int[]{Item.MONSTER_SPAWNER, 0, 1}
+            };
+        }
         return new int[][]{};
     }
 }
