@@ -1704,8 +1704,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.setNameTag(this.username);
                 this.iusername = this.username.toLowerCase();
 
-                if (this.server.getOnlinePlayers().size() > this.server.getMaxPlayers()) {
-                    this.close("", "disconnectionScreen.serverFull");
+                if (this.server.getOnlinePlayers().size() > this.server.getMaxPlayers() && this .kick("disconnectionScreen.serverFull", false)) {
                     break;
                 }
 
@@ -2940,10 +2939,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public boolean kick(String reason, boolean isAdmin) {
-        if (!this.loggedIn) {
-            return false;
-        }
-
         PlayerKickEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerKickEvent(this, reason, this.getLeaveMessage()));
         if (!ev.isCancelled()) {
