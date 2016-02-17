@@ -622,6 +622,7 @@ public class Item implements Cloneable {
             list[WOODEN_DOOR] = ItemDoorWood.class;
             list[BUCKET] = ItemBucket.class;
             list[MINECART] = ItemMinecart.class;
+            list[BOAT] = ItemBoat.class;
             list[IRON_DOOR] = ItemDoorIron.class;
             list[REDSTONE] = ItemRedstone.class;
             list[SNOWBALL] = ItemSnowball.class;
