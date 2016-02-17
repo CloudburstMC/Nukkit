@@ -606,7 +606,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             this.loadQueue.remove(index);
-            this.level.requestChunk(chunkX, chunkZ, this);
+			
+			PlayerChunkRequestEvent ev=new PlayerChunkRequestEvent(this, chunkX, chunkZ);
+			this.server.getPluginManager().callEvent(ev);
+			if(!ev.isCancelled()) {
+				this.level.requestChunk(chunkX, chunkZ, this);
+			}
         }
 
         if (this.chunkLoadCount >= this.spawnThreshold && !this.spawned && this.teleportPosition == null) {
