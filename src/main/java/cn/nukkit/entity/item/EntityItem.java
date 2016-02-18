@@ -180,7 +180,7 @@ public class EntityItem extends Entity {
         this.namedTag.putCompound("Item", new CompoundTag()
                 .putShort("id", this.item.getId())
                 .putShort("Damage", this.item.getDamage())
-                .putByte("Count", (byte) this.item.getCount())
+                .putByte("Count", this.item.getCount())
         );
 
         this.namedTag.putShort("Health", this.getHealth());

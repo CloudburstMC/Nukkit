@@ -33,6 +33,7 @@ public abstract class BlockEntity extends Position {
     public static long count = 1;
 
     private static Map<String, Class<? extends BlockEntity>> knownBlockEntities = new HashMap<>();
+    private static Map<String, String> shortNames = new HashMap<>();
 
     public FullChunk chunk;
     public String name;
@@ -111,10 +112,13 @@ public abstract class BlockEntity extends Position {
         }
 
         knownBlockEntities.put(name, c);
+        shortNames.put(c.getSimpleName(), name);
         return true;
     }
 
-    public abstract String getSaveId();
+    public final String getSaveId() {
+        return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
+    }
 
     public long getId() {
         return id;

@@ -84,7 +84,7 @@ public class Chunk extends BaseChunk {
         cn.nukkit.level.format.ChunkSection[] sections = new cn.nukkit.level.format.ChunkSection[8];
         for (Tag section : this.nbt.getList("Sections").getAll()) {
             if (section instanceof CompoundTag) {
-                int y = ((CompoundTag) section).getByte("Y") & 0xff;
+                int y = ((CompoundTag) section).getByte("Y");
                 if (y < 8) {
                     sections[y] = new ChunkSection((CompoundTag) section);
                 }
@@ -244,7 +244,7 @@ public class Chunk extends BaseChunk {
                 continue;
             }
             CompoundTag s = new CompoundTag(null);
-            s.putByte("Y", (byte) (section.getY() & 0xff));
+            s.putByte("Y", (section.getY() & 0xff));
             s.putByteArray("Blocks", section.getIdArray());
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
@@ -306,7 +306,7 @@ public class Chunk extends BaseChunk {
                 continue;
             }
             CompoundTag s = new CompoundTag(null);
-            s.putByte("Y", (byte) (section.getY()));
+            s.putByte("Y", (section.getY()));
             s.putByteArray("Blocks", section.getIdArray());
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
@@ -382,7 +382,7 @@ public class Chunk extends BaseChunk {
             chunk.heightMap = new int[256];
             chunk.biomeColors = new int[256];
 
-            chunk.nbt.putByte("V", (byte) 1);
+            chunk.nbt.putByte("V", 1);
             chunk.nbt.putLong("InhabitedTime", 0);
             chunk.nbt.putBoolean("TerrainGenerated", false);
             chunk.nbt.putBoolean("TerrainPopulated", false);

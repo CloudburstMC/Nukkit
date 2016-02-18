@@ -22,6 +22,8 @@ public class EntityPotion extends EntityProjectile {
 
     public static final int NETWORK_ID = 86;
 
+    public static final int DATA_POTION_ID = 16;
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
@@ -67,7 +69,7 @@ public class EntityPotion extends EntityProjectile {
 
     public void setPotionType(int potionType) {
         namedTag.putInt("Potion", potionType);
-        setDataProperty(new ShortEntityData(DATA_POTION_TYPE, potionType));
+        this.setDataProperty(new ShortEntityData(DATA_POTION_ID, potionType));
     }
 
     @Override

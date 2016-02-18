@@ -61,7 +61,6 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_COLOR = 7;
     public static final int DATA_POTION_AMBIENT = 8;
     public static final int DATA_NO_AI = 15;
-    public static final int DATA_POTION_TYPE = 16;
 
     public static final int DATA_FLAG_ONFIRE = 0;
     public static final int DATA_FLAG_SNEAKING = 1;
@@ -72,8 +71,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     public static long entityCount = 1;
 
-    private static Map<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
-    private static Map<String, Class<? extends Entity>> shortNames = new HashMap<>();
+    private static Map<String, Class<? extends Entity>> knownEntities = new HashMap<>();
+    private static Map<String, String> shortNames = new HashMap<>();
 
     protected Map<Integer, Player> hasSpawned = new HashMap<>();
 
@@ -202,12 +201,12 @@ public abstract class Entity extends Location implements Metadatable {
         if (this.namedTag.contains("ActiveEffects")) {
             ListTag<CompoundTag> effects = this.namedTag.getList("ActiveEffects", CompoundTag.class);
             for (CompoundTag e : effects.getAll()) {
-                Effect effect = Effect.getEffect(e.getByte("Id") & 0xff);
+                Effect effect = Effect.getEffect(e.getByte("Id"));
                 if (effect == null) {
                     continue;
                 }
 
-                effect.setAmplifier(e.getByte("Amplifier") & 0xff).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("showParticles"));
+                effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("showParticles"));
 
                 this.addEffect(effect);
             }
@@ -223,7 +222,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.scheduleUpdate();
     }
 
-    protected void init(FullChunk chunk, CompoundTag nbt) {
+    protected final void init(FullChunk chunk, CompoundTag nbt) {
         if ((chunk == null || chunk.getProvider() == null)) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
         }
@@ -428,8 +427,8 @@ public abstract class Entity extends Location implements Metadatable {
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
         Entity entity = null;
 
-        if (shortNames.containsKey(name)) {
-            Class<? extends Entity> clazz = shortNames.get(name);
+        if (knownEntities.containsKey(name)) {
+            Class<? extends Entity> clazz = knownEntities.get(name);
 
             if (clazz == null) {
                 return null;
@@ -467,73 +466,35 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public static Entity createEntity(int type, FullChunk chunk, CompoundTag nbt, Object... args) {
-        Entity entity = null;
-
-        if (knownEntities.containsKey(type)) {
-            Class<? extends Entity> clazz = knownEntities.get(type);
-
-            if (clazz == null) {
-                return null;
-            }
-
-            for (Constructor constructor : clazz.getConstructors()) {
-                if (entity != null) {
-                    break;
-                }
-
-                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
-                    continue;
-                }
-
-                try {
-                    if (args == null || args.length == 0) {
-                        entity = (Entity) constructor.newInstance(chunk, nbt);
-                    } else {
-                        Object[] objects = new Object[args.length + 2];
-
-                        objects[0] = chunk;
-                        objects[1] = nbt;
-                        System.arraycopy(args, 0, objects, 2, args.length);
-                        entity = (Entity) constructor.newInstance(objects);
-
-                    }
-                } catch (Exception e) {
-                    //ignore
-                }
-
-            }
-        }
-
-        return entity;
+        return createEntity(String.valueOf(type), chunk, nbt, args);
     }
 
-    public static boolean registerEntity(Class<? extends Entity> clazz) {
-        return registerEntity(clazz, false);
+    public static boolean registerEntity(String name, Class<? extends Entity> clazz) {
+        return registerEntity(name, clazz, false);
     }
 
-    public static boolean registerEntity(Class<? extends Entity> clazz, boolean force) {
+    public static boolean registerEntity(String name, Class<? extends Entity> clazz, boolean force) {
         if (clazz == null) {
             return false;
         }
         try {
             int networkId = clazz.getField("NETWORK_ID").getInt(null);
-            if (networkId != -1) {
-                knownEntities.put(networkId, clazz);
-            } else if (!force) {
+            knownEntities.put(String.valueOf(networkId), clazz);
+        } catch (Exception e) {
+            if (!force) {
                 return false;
             }
-
-            shortNames.put(clazz.getSimpleName(), clazz);
-            return true;
-        } catch (Exception e) {
-            return false;
         }
+
+        knownEntities.put(name, clazz);
+        shortNames.put(clazz.getSimpleName(), name);
+        return true;
     }
 
     public void saveNBT() {
         if (!(this instanceof Player)) {
+            this.namedTag.putString("id", this.getSaveId());
             if (!this.getNameTag().equals("")) {
-                this.namedTag.putString("id", this.getClass().getSimpleName());
                 this.namedTag.putString("CustomName", this.getNameTag());
                 this.namedTag.putString("CustomNameVisible", String.valueOf(this.isNameTagVisible()));
             } else {
@@ -569,8 +530,8 @@ public abstract class Entity extends Location implements Metadatable {
             ListTag<CompoundTag> list = new ListTag<>("ActiveEffects");
             for (Effect effect : this.effects.values()) {
                 list.add(new CompoundTag(String.valueOf(effect.getId()))
-                        .putByte("Id", (byte) effect.getId())
-                        .putByte("Amplifier", (byte) effect.getAmplifier())
+                        .putByte("Id", effect.getId())
+                        .putByte("Amplifier", effect.getAmplifier())
                         .putInt("Duration", effect.getDuration())
                         .putBoolean("Ambient", false)
                         .putBoolean("ShowParticles", effect.isVisible())
@@ -581,6 +542,10 @@ public abstract class Entity extends Location implements Metadatable {
         } else {
             this.namedTag.remove("ActiveEffects");
         }
+    }
+
+    public final String getSaveId() {
+        return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
     }
 
     public void spawnTo(Player player) {
@@ -913,12 +878,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public Vector3 getDirectionVector() {
-        double y = -Math.sin(Math.toRadians(this.pitch));
-        double xz = Math.sin(Math.toRadians(this.pitch));
-        double x = -xz * Math.sin(Math.toRadians(this.yaw));
-        double z = xz * Math.cos(Math.toRadians(this.yaw));
-
-        return this.temporalVector.setComponents(x, y, z).normalize();
+        Vector3 vector = super.getDirectionVector();
+        return this.temporalVector.setComponents(vector.x, vector.y, vector.z);
     }
 
     public Vector2 getDirectionPlane() {
@@ -1606,5 +1567,4 @@ public abstract class Entity extends Location implements Metadatable {
     public Server getServer() {
         return server;
     }
-
 }

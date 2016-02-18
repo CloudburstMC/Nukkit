@@ -42,7 +42,7 @@ public class EnchantCommand extends VanillaCommand {
             return true;
         }
         Enchantment enchantment = Enchantment.getEnchantment(enchantId);
-        if (enchantment.getId() == Enchantment.TYPE_INVALID) {
+        if (enchantment == null) {
             sender.sendMessage(new TranslationContainer("commands.enchant.notFound", String.valueOf(enchantId)));
             return true;
         }

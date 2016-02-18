@@ -49,7 +49,7 @@ public abstract class BlockFallable extends BlockSolid {
                                 .add(new FloatTag("", 0))
                                 .add(new FloatTag("", 0)))
                         .putInt("TileID", this.getId())
-                        .putByte("Data", (byte) this.getDamage());
+                        .putByte("Data", this.getDamage());
 
                 EntityFallingBlock fall = new EntityFallingBlock(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 

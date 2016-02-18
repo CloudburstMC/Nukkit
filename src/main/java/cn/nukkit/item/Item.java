@@ -622,6 +622,7 @@ public class Item implements Cloneable {
             list[WOODEN_DOOR] = ItemDoorWood.class;
             list[BUCKET] = ItemBucket.class;
             list[MINECART] = ItemMinecart.class;
+            list[BOAT] = ItemBoat.class;
             list[IRON_DOOR] = ItemDoorIron.class;
             list[REDSTONE] = ItemRedstone.class;
             list[SNOWBALL] = ItemSnowball.class;
@@ -1546,7 +1547,6 @@ public class Item implements Cloneable {
         CompoundTag tag;
         if (!this.hasCompoundTag()) {
             tag = new CompoundTag();
-            this.setNamedTag(tag);
         } else {
             tag = this.getNamedTag();
         }
@@ -1557,7 +1557,7 @@ public class Item implements Cloneable {
                     .putString("Name", name)
             );
         }
-
+        this.setNamedTag(tag);
         return this;
     }
 
@@ -1729,6 +1729,10 @@ public class Item implements Cloneable {
 
     public boolean isBoots() {
         return false;
+    }
+
+    public int getEnchantAbility() {
+        return 0;
     }
 
     @Override

@@ -12,10 +12,10 @@ public class BlockEntitySkull extends BlockEntitySpawnable {
     public BlockEntitySkull(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         if (!nbt.contains("SkullType")) {
-            nbt.putByte("SkullType", (byte) 0);
+            nbt.putByte("SkullType", 0);
         }
         if (!nbt.contains("Rot")) {
-            nbt.putByte("Rot", (byte) 0);
+            nbt.putByte("Rot", 0);
         }
         this.namedTag = nbt;
     }
@@ -42,8 +42,4 @@ public class BlockEntitySkull extends BlockEntitySpawnable {
                 .put("Rot", this.namedTag.get("Rot"));
     }
 
-    @Override
-    public String getSaveId() {
-        return SKULL;
-    }
 }

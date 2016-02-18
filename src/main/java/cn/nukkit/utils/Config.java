@@ -241,25 +241,21 @@ public class Config {
             return defaultValue;
         }
 
-        if (this.nestedCache.containsKey(key)) {
-            try {
-                return (T) this.nestedCache.get(key);
-            } catch (ClassCastException e) {
-                return defaultValue;
-            }
-        }
-        String[] vars = key.split("\\.");
-
-        Map map = this.config;
-        for (int i = 0; i < vars.length - 1; i++) {
-            String k = vars[i];
-            if (!map.containsKey(k)) {
-                return defaultValue;
-            }
-            map = (Map<String, Object>) map.get(k);
-        }
-
         try {
+            if (this.nestedCache.containsKey(key)) {
+                return (T) this.nestedCache.get(key);
+            }
+            String[] vars = key.split("\\.");
+
+            Map map = this.config;
+            for (int i = 0; i < vars.length - 1; i++) {
+                String k = vars[i];
+                if (!map.containsKey(k)) {
+                    return defaultValue;
+                }
+                map = (Map<String, Object>) map.get(k);
+            }
+
             return (T) map.getOrDefault(vars[vars.length - 1], defaultValue);
         } catch (ClassCastException e) {
             return defaultValue;
@@ -295,7 +291,8 @@ public class Config {
     }
 
     public String getString(String key, String defaultValue) {
-        return this.get(key, defaultValue);
+        Object result = this.get(key, defaultValue);
+        return String.valueOf(result);
     }
 
     public boolean getBoolean(String key) {
