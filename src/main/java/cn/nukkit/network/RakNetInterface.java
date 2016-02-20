@@ -224,7 +224,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                 if (packet.encapsulatedPacket == null) {
                     packet.encapsulatedPacket = new CacheEncapsulatedPacket();
                     packet.encapsulatedPacket.identifierACK = null;
-                    packet.encapsulatedPacket.buffer = buffer;
+                    packet.encapsulatedPacket.buffer = Binary.appendBytes((byte) 0x8e, buffer);
                     if (packet.getChannel() != 0) {
                         packet.encapsulatedPacket.reliability = 3;
                         packet.encapsulatedPacket.orderChannel = packet.getChannel();
@@ -244,7 +244,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
             if (pk == null) {
                 pk = new EncapsulatedPacket();
-                pk.buffer = buffer;
+                pk.buffer = Binary.appendBytes((byte) 0x8e, buffer);
                 if (packet.getChannel() != 0) {
                     packet.reliability = 3;
                     packet.orderChannel = packet.getChannel();
@@ -271,7 +271,8 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
     }
 
     private DataPacket getPacket(byte[] buffer) {
-        byte pid = buffer[0];
+        //TODO: CHECK AND REPLACE THIS HACK FOR 0.14
+        byte pid = buffer[1];
 
         DataPacket data = this.network.getPacket(pid);
 
@@ -280,7 +281,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
         }
 
         data.setBuffer(buffer);
-        data.setOffset(1);
+        data.setOffset(2);
 
         return data;
     }
