@@ -163,11 +163,11 @@ public class Level implements ChunkManager, Metadatable {
         put(Block.SUGARCANE_BLOCK, BlockSugarcane.class);
         put(Block.RED_MUSHROOM, BlockMushroomRed.class);
         put(Block.BROWN_MUSHROOM, BlockMushroomBrown.class);
-        //put(Block.PUMPKIN_STEM, PumpkinStem.class);
-        //put(Block.MELON_STEM, MelonStem.class);
+        put(Block.PUMPKIN_STEM, BlockStemPumpkin.class);
+        put(Block.MELON_STEM, BlockStemMelon.class);
         put(Block.MYCELIUM, BlockMycelium.class);
         put(Block.CARROT_BLOCK, BlockCarrot.class);
-        //put(Block.POTATO_BLOCK, Potato.class);
+        put(Block.POTATO_BLOCK, BlockPotato.class);
         put(Block.LEAVES2, BlockLeaves2.class);
         put(Block.BEETROOT_BLOCK, BlockBeetroot.class);
     }};

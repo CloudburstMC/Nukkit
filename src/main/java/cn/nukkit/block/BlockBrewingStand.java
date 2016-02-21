@@ -122,10 +122,6 @@ public class BlockBrewingStand extends BlockSolid {
                 }
             }
 
-            if (player.isCreative()) {
-                return false;
-            }
-
             player.addWindow(brewing.getInventory());
         }
 
