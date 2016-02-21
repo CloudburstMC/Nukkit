@@ -265,6 +265,8 @@ public class Item implements Cloneable {
     public static final int ACACIA_WOODEN_STAIRS = 163;
     public static final int DARK_OAK_WOOD_STAIRS = 164;
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
+    
+    public static final int SLIME_BLOCK = 165;
 
     public static final int IRON_TRAPDOOR = 167;
     public static final int HAY_BALE = 170;
@@ -923,6 +925,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.MONSTER_SPAWNER, 0));
         addCreativeItem(Item.get(Item.FLOWER_POT, 0));
         addCreativeItem(Item.get(Item.ENCHANTMENT_TABLE, 0));
+        addCreativeItem(Item.get(Item.SLIME_BLOCK, 0));
 
         addCreativeItem(Item.get(Item.WOOL, 0));
         addCreativeItem(Item.get(Item.WOOL, 8));
