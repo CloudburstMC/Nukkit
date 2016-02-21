@@ -662,7 +662,7 @@ public class Item implements Cloneable {
             list[CARROT] = ItemCarrot.class;
             list[POTATO] = ItemPotato.class;
             list[BAKED_POTATO] = ItemPotatoBaked.class;
-            //list[SKULL] = ItemSkull.class;
+            list[SKULL] = ItemSkull.class;
             list[PUMPKIN_PIE] = ItemPumpkinPie.class;
             list[NETHER_BRICK] = ItemNetherBrick.class;
             list[QUARTZ] = ItemQuartz.class;
@@ -695,7 +695,6 @@ public class Item implements Cloneable {
             list[POISONOUS_POTATO] = ItemPotatoPoisonous.class;
             list[ROTTEN_FLESH] = ItemRottenFlesh.class;
 
-            list[SKULL] = ItemSkull.class;
             list[FLOWER_POT] = ItemFlowerPot.class;
 
             for (int i = 0; i < 256; ++i) {
