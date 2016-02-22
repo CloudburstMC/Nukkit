@@ -2289,7 +2289,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 Item oldItem = item.clone();
 
-                if (this.canInteract(vector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 6) && this.level.useBreakOn(vector, item, this) != null) {
+                if (this.canInteract(vector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 6) && this.level.useBreakOn(vector, item, this, true) != null) {
                     if (this.isSurvival()) {
                         this.getFoodData().updateFoodExpLevel(0.025);
                         if (!item.deepEquals(oldItem) || item.getCount() != oldItem.getCount()) {
@@ -3489,6 +3489,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             source.setCancelled();
         } else if (this.allowFlight && source.getCause() == EntityDamageEvent.CAUSE_FALL) {
             source.setCancelled();
+        } else if (source.getCause() == EntityDamageEvent.CAUSE_FALL) {
+            if (this.getLevel().getBlock(this.getPosition().floor().add(0.5, -1, 0.5)).getId() == Block.SLIME_BLOCK) {
+                if (!this.isSneaking()) {
+                    source.setCancelled();
+                    this.resetFallDistance();
+                }
+           }
         }
 
         if (source instanceof EntityDamageByEntityEvent) {
