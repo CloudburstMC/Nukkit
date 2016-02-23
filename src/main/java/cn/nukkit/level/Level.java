@@ -1466,11 +1466,11 @@ public class Level implements ChunkManager, Metadatable {
         if (createParticles) {
             Map<Integer, Player> players = this.getChunkPlayers((int) target.x >> 4, (int) target.z >> 4);
 
+            this.addParticle(new DestroyBlockParticle(target.add(0.5), target), players.values());
+            
             if (player != null) {
                 players.remove(player.getLoaderId());
             }
-
-            this.addParticle(new DestroyBlockParticle(target.add(0.5), target), players.values());
         }
 
         target.onBreak(item);
