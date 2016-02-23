@@ -766,7 +766,7 @@ public abstract class Entity extends Location implements Metadatable {
             }
 
             if (direction == 5) {
-                this.motionY = force;
+                this.motionZ = force;
 
                 return true;
             }
