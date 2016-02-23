@@ -2551,7 +2551,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 if (!this.spawned || this.blocked || !this.isAlive()) {
                     break;
                 }
-                item = this.inventory.getItemInHand();
+                DropItemPacket dropItem = (DropItemPacket) packet;
+                item = this.inventory.contains(dropItem.item) ? dropItem.item : this.inventory.getItemInHand();
                 PlayerDropItemEvent dropItemEvent = new PlayerDropItemEvent(this, item);
                 this.server.getPluginManager().callEvent(dropItemEvent);
                 if (dropItemEvent.isCancelled()) {
@@ -2559,7 +2560,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 }
 
-                this.inventory.setItemInHand(new ItemBlock(new BlockAir()));
+                this.inventory.removeItem(item);
                 Vector3 motion = this.getDirectionVector().multiply(0.4);
 
                 this.level.dropItem(this.add(0, 1.3, 0), item, motion, 40);
