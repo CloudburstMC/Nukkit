@@ -183,7 +183,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private final AtomicReference<Locale> locale = new AtomicReference<>(null);
 
-    private Entity riding = null;
 
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
@@ -2418,14 +2417,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         switch (((InteractPacket) packet).action) {
                             case 1:
                                 pk = new SetEntityLinkPacket();
-                                pk.from = targetEntity.getId();
-                                pk.to = this.id;
+                                pk.rider = targetEntity.getId();
+                                pk.riding = this.id;
                                 pk.type = 2;
                                 Server.broadcastPacket(this.hasSpawned.values(), pk);
 
                                 pk = new SetEntityLinkPacket();
-                                pk.from = targetEntity.getId();
-                                pk.to = 0;
+                                pk.rider = targetEntity.getId();
+                                pk.riding = 0;
                                 pk.type = 2;
                                 dataPacket(pk);
 
@@ -2434,14 +2433,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 break;
                             case 3:
                                 pk = new SetEntityLinkPacket();
-                                pk.from = targetEntity.getId();
-                                pk.to = this.id;
+                                pk.rider = targetEntity.getId();
+                                pk.riding = this.id;
                                 pk.type = 3;
                                 Server.broadcastPacket(this.hasSpawned.values(), pk);
 
                                 pk = new SetEntityLinkPacket();
-                                pk.from = targetEntity.getId();
-                                pk.to = 0;
+                                pk.rider = targetEntity.getId();
+                                pk.riding = 0;
                                 pk.type = 3;
                                 dataPacket(pk);
 

@@ -90,9 +90,9 @@ public abstract class Entity extends Location implements Metadatable {
             .putBoolean(DATA_SILENT, false)
             .putBoolean(DATA_NO_AI, false);
 
-    public Entity passenger = null;
+    public Entity rider = null;
 
-    public Entity vehicle = null;
+    public Entity riding = null;
 
     public FullChunk chunk;
 
