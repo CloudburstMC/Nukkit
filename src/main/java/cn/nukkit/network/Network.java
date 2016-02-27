@@ -247,5 +247,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.SET_PLAYER_GAMETYPE_PACKET, SetPlayerGameTypePacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_LIST_PACKET, PlayerListPacket.class);
         this.registerPacket(ProtocolInfo.TELEMETRY_EVENT_PACKET, TelemetryEventPacket.class);
+        this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
+        this.registerPacket(ProtocolInfo.CHUNK_RADIUS_UPDATE_PACKET, ChunkRadiusUpdatePacket.class);
     }
 }
