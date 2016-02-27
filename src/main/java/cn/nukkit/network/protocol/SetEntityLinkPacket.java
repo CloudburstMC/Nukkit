@@ -7,8 +7,12 @@ public class SetEntityLinkPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_LINK_PACKET;
 
-    public long from;
-    public long to;
+    public static final byte TYPE_REMOVE = 0;
+    public static final byte TYPE_RIDE = 1;
+    public static final byte TYPE_PASSENGER = 2;
+
+    public long rider;
+    public long riding;
     public byte type;
 
     @Override
@@ -19,8 +23,8 @@ public class SetEntityLinkPacket extends DataPacket {
     @Override
     public void encode() {
         reset();
-        putLong(from);
-        putLong(to);
+        putLong(rider);
+        putLong(riding);
         putByte(type);
     }
 

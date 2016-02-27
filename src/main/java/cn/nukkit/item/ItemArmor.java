@@ -37,4 +37,22 @@ abstract public class ItemArmor extends Item {
     public boolean isArmor() {
         return true;
     }
+
+    @Override
+    public int getEnchantAbility() {
+        switch (this.getTier()) {
+            case TIER_CHAIN:
+                return 12;
+            case TIER_LEATHER:
+                return 15;
+            case TIER_DIAMOND:
+                return 10;
+            case TIER_GOLD:
+                return 25;
+            case TIER_IRON:
+                return 9;
+        }
+
+        return 0;
+    }
 }

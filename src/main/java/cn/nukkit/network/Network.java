@@ -140,13 +140,14 @@ public class Network {
                 offset += pkLen;
 
                 DataPacket pk;
-                if ((pk = this.getPacket(buf[0])) != null) {
+                //TODO: CHECK THIS HACK FOR 0.14
+                if ((pk = this.getPacket(buf[1])) != null) {
                     if (pk.pid() == ProtocolInfo.BATCH_PACKET) {
                         throw new IllegalStateException("Invalid BatchPacket inside BatchPacket");
                     }
 
                     pk.setBuffer(buf);
-                    pk.setOffset(1);
+                    pk.setOffset(2);
 
                     pk.decode();
                     p.handleDataPacket(pk);
@@ -240,11 +241,14 @@ public class Network {
         this.registerPacket(ProtocolInfo.CRAFTING_EVENT_PACKET, CraftingEventPacket.class);
         this.registerPacket(ProtocolInfo.ADVENTURE_SETTINGS_PACKET, AdventureSettingsPacket.class);
         this.registerPacket(ProtocolInfo.BLOCK_ENTITY_DATA_PACKET, BlockEntityDataPacket.class);
+        this.registerPacket(ProtocolInfo.PLAYER_INPUT_PACKET, PlayerInputPacket.class);
         this.registerPacket(ProtocolInfo.FULL_CHUNK_DATA_PACKET, FullChunkDataPacket.class);
         this.registerPacket(ProtocolInfo.SET_DIFFICULTY_PACKET, SetDifficultyPacket.class);
         this.registerPacket(ProtocolInfo.CHANGE_DIMENSION_PACKET, ChangeDimensionPacket.class);
         this.registerPacket(ProtocolInfo.SET_PLAYER_GAMETYPE_PACKET, SetPlayerGameTypePacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_LIST_PACKET, PlayerListPacket.class);
         this.registerPacket(ProtocolInfo.TELEMETRY_EVENT_PACKET, TelemetryEventPacket.class);
+        this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
+        this.registerPacket(ProtocolInfo.CHUNK_RADIUS_UPDATE_PACKET, ChunkRadiusUpdatePacket.class);
     }
 }

@@ -90,9 +90,6 @@ public class BlockAnvil extends BlockFallable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            if (player.isCreative()) {
-                return true;
-            }
             player.addWindow(new AnvilInventory(this));
         }
         return true;

@@ -17,4 +17,9 @@ public class ItemFishingRod extends Item {
     public ItemFishingRod(Integer meta, int count) {
         super(FISHING_ROD, meta, count, "Fishing Rod");
     }
+
+    @Override
+    public int getEnchantAbility() {
+        return 1;
+    }
 }

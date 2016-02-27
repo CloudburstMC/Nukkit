@@ -35,6 +35,7 @@ public class ItemCake extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
+
         level.setBlock(block, new BlockCake(), true);
         return true;
     }

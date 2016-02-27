@@ -43,8 +43,8 @@ public final class Fishing {
         int fortuneLevel = 0;
         int lureLevel = 0;
         if (rod != null) {
-            fortuneLevel = rod.getEnchantment(Enchantment.TYPE_FISHING_FORTUNE).getLevel();
-            lureLevel = rod.getEnchantment(Enchantment.TYPE_FISHING_LURE).getLevel();
+            fortuneLevel = rod.getEnchantment(Enchantment.ID_FORTUNE_FISHING).getLevel();
+            lureLevel = rod.getEnchantment(Enchantment.ID_LURE).getLevel();
         }
         return getFishingResult(fortuneLevel, lureLevel);
     }

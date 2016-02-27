@@ -54,6 +54,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int LAPIS_ORE = 21;
     public static final int LAPIS_BLOCK = 22;
 
+    public static final int DISPENSER = 23;
+
     public static final int SANDSTONE = 24;
     public static final int NOTEBLOCK = 25;
     public static final int BED_BLOCK = 26;
@@ -177,8 +179,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int ENCHANTMENT_TABLE = 116;
     public static final int BREWING_STAND_BLOCK = 117;
     public static final int BREWING_BLOCK = 117;
-
-    public static final int END_PORTAL = 120;
+    public static final int CAULDRON_BLOCK = 118;
+    public static final int END_PORTAL = 119;
     public static final int END_PORTAL_FRAME = 120;
     public static final int END_STONE = 121;
 
@@ -210,11 +212,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int TRAPPED_CHEST = 146;
     public static final int LIGHT_WEIGHTED_PRESSURE_PLATE = 147;
     public static final int HEAVY_WEIGHTED_PRESSURE_PLATE = 148;
-
+    public static final int UNPOWERED_COMPARATOR = 149;
+    public static final int POWERED_COMPARATOR = 150;
     public static final int DAYLIGHT_DETECTOR = 151;
     public static final int REDSTONE_BLOCK = 152;
     public static final int QUARTZ_ORE = 153;
 
+    public static final int HOPPER_BLOCK = 154;
     public static final int QUARTZ_BLOCK = 155;
     public static final int QUARTZ_STAIRS = 156;
     public static final int DOUBLE_WOOD_SLAB = 157;
@@ -237,6 +241,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int ACACIA_WOODEN_STAIRS = 163;
     public static final int DARK_OAK_WOOD_STAIRS = 164;
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
+    
+    public static final int SLIME_BLOCK = 165;
 
     public static final int IRON_TRAPDOOR = 167;
     public static final int HAY_BALE = 170;
@@ -437,6 +443,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[WOOD2] = BlockWood2.class;
             list[ACACIA_WOOD_STAIRS] = BlockStairsAcacia.class;
             list[DARK_OAK_WOOD_STAIRS] = BlockStairsDarkOak.class;
+
+            list[SLIME_BLOCK] = BlockSlime.class;
 
             list[IRON_TRAPDOOR] = BlockTrapdoorIron.class;
             list[HAY_BALE] = BlockHayBale.class;

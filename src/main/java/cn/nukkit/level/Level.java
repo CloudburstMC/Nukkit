@@ -163,11 +163,11 @@ public class Level implements ChunkManager, Metadatable {
         put(Block.SUGARCANE_BLOCK, BlockSugarcane.class);
         put(Block.RED_MUSHROOM, BlockMushroomRed.class);
         put(Block.BROWN_MUSHROOM, BlockMushroomBrown.class);
-        //put(Block.PUMPKIN_STEM, PumpkinStem.class);
-        //put(Block.MELON_STEM, MelonStem.class);
+        put(Block.PUMPKIN_STEM, BlockStemPumpkin.class);
+        put(Block.MELON_STEM, BlockStemMelon.class);
         put(Block.MYCELIUM, BlockMycelium.class);
         put(Block.CARROT_BLOCK, BlockCarrot.class);
-        //put(Block.POTATO_BLOCK, Potato.class);
+        put(Block.POTATO_BLOCK, BlockPotato.class);
         put(Block.LEAVES2, BlockLeaves2.class);
         put(Block.BEETROOT_BLOCK, BlockBeetroot.class);
     }};
@@ -1466,11 +1466,11 @@ public class Level implements ChunkManager, Metadatable {
         if (createParticles) {
             Map<Integer, Player> players = this.getChunkPlayers((int) target.x >> 4, (int) target.z >> 4);
 
+            this.addParticle(new DestroyBlockParticle(target.add(0.5), target), players.values());
+            
             if (player != null) {
                 players.remove(player.getLoaderId());
             }
-
-            this.addParticle(new DestroyBlockParticle(target.add(0.5), target), players.values());
         }
 
         target.onBreak(item);
@@ -1542,13 +1542,12 @@ public class Level implements ChunkManager, Metadatable {
                         .add(new FloatTag("", 0))
                         .add(new FloatTag("", 0)));
         Entity entity = new EntityXPOrb(this.getChunk(source.getFloorX() >> 4, source.getFloorZ() >> 4), nbt);
-        if (entity instanceof EntityXPOrb) {
-            EntityXPOrb xpOrb = (EntityXPOrb) entity;
-            xpOrb.setExp(exp);
-            xpOrb.setPickupDelay(delay);
-            xpOrb.saveNBT();
-            xpOrb.spawnToAll();
-        }
+        EntityXPOrb xpOrb = (EntityXPOrb) entity;
+        xpOrb.setExp(exp);
+        xpOrb.setPickupDelay(delay);
+        xpOrb.saveNBT();
+
+        xpOrb.spawnToAll();
 
     }
 
@@ -1606,10 +1605,6 @@ public class Level implements ChunkManager, Metadatable {
         if (item.canBePlaced()) {
             hand = item.getBlock();
             hand.position(block);
-        } else if (block.getId() == Item.FIRE) {
-            this.setBlock(block, new BlockAir(), true);
-
-            return null;
         } else {
             return null;
         }
