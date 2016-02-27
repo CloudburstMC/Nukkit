@@ -3735,6 +3735,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         //Weather
         this.getLevel().sendWeather(this);
+        //Update time
+        this.getLevel().sendTime(this);
     }
 
     public void teleportImmediate(Vector3 pos) {
