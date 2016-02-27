@@ -10,6 +10,7 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntitySnowball;
+import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
@@ -1818,6 +1819,8 @@ public class Server {
         Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
         // TODO: 2016/1/30 all finds of minecart
         Entity.registerEntity("Boat", EntityBoat.class);
+
+        Entity.registerEntity("Lightning", EntityLightning.class);
     }
 
     private void registerBlockEntities() {
