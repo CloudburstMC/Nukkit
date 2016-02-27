@@ -12,35 +12,35 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * Nukkit Project
  */
 public abstract class EntityVehicle extends Entity implements EntityRideable {
-    public static final int DATA_VEHICLE_HURT_TIME = 17;
-    public static final int DATA_VEHICLE_HURT_DIRECTION = 18;
-    public static final int DATA_VEHICLE_DAMAGE = 19;
+    public static final int DATA_HURT_TIME = 17;
+    public static final int DATA_HURT_DIRECTION = 18;
+    public static final int DATA_DAMAGE_TAKEN = 19;
 
     public EntityVehicle(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
     public int getHurtTime() {
-        return this.getDataPropertyInt(EntityVehicle.DATA_VEHICLE_HURT_TIME);
+        return this.getDataPropertyInt(EntityVehicle.DATA_HURT_TIME);
     }
 
     public void setHurtTime(int time) {
-        this.setDataProperty(new IntEntityData(EntityVehicle.DATA_VEHICLE_HURT_TIME, time));
+        this.setDataProperty(new IntEntityData(EntityVehicle.DATA_HURT_TIME, time));
     }
 
     public int getHurtDirection() {
-        return this.getDataPropertyInt(EntityVehicle.DATA_VEHICLE_HURT_DIRECTION);
+        return this.getDataPropertyInt(EntityVehicle.DATA_HURT_DIRECTION);
     }
 
     public void setHurtDirection(int direction) {
-        this.setDataProperty(new IntEntityData(EntityVehicle.DATA_VEHICLE_HURT_DIRECTION, direction));
+        this.setDataProperty(new IntEntityData(EntityVehicle.DATA_HURT_DIRECTION, direction));
     }
 
-    public float getDamage() {
-        return this.getDataPropertyInt(EntityVehicle.DATA_VEHICLE_DAMAGE);
+    public float getDamageTaken() {
+        return this.getDataPropertyFloat(EntityVehicle.DATA_DAMAGE_TAKEN);
     }
 
-    public void setDamage(float damage) {
-        this.setDataProperty(new FloatEntityData(EntityVehicle.DATA_VEHICLE_HURT_DIRECTION, damage));
+    public void setDamageTaken(float damage) {
+        this.setDataProperty(new FloatEntityData(EntityVehicle.DATA_DAMAGE_TAKEN, damage));
     }
 }
