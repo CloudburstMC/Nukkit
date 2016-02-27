@@ -606,10 +606,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             this.loadQueue.remove(index);
-            
-            PlayerChunkRequestEvent ev=new PlayerChunkRequestEvent(this, chunkX, chunkZ);
+
+            PlayerChunkRequestEvent ev = new PlayerChunkRequestEvent(this, chunkX, chunkZ);
             this.server.getPluginManager().callEvent(ev);
-            if(!ev.isCancelled()) {
+            if (!ev.isCancelled()) {
                 this.level.requestChunk(chunkX, chunkZ, this);
             }
         }
@@ -1708,7 +1708,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.setNameTag(this.username);
                 this.iusername = this.username.toLowerCase();
 
-                if (this.server.getOnlinePlayers().size() > this.server.getMaxPlayers() && this .kick("disconnectionScreen.serverFull", false)) {
+                if (this.server.getOnlinePlayers().size() > this.server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)) {
                     break;
                 }
 
@@ -2113,8 +2113,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                         }
                         Block block = target.getSide(((PlayerActionPacket) packet).face);
-                        if (block.getId() == Block.FIRE){
-                           this.level.setBlock(block, new BlockAir());
+                        if (block.getId() == Block.FIRE) {
+                            this.level.setBlock(block, new BlockAir());
                         }
                         this.lastBreak = System.currentTimeMillis();
                         break;
@@ -2975,6 +2975,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                 }
                 break;
+            case ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET:
+                RequestChunkRadiusPacket requestChunkRadiusPacket = (RequestChunkRadiusPacket) packet;
+                ChunkRadiusUpdatePacket chunkRadiusUpdatePacket = new ChunkRadiusUpdatePacket();
+                chunkRadiusUpdatePacket.radius = requestChunkRadiusPacket.radius;
+                this.dataPacket(chunkRadiusUpdatePacket);
             default:
                 break;
         }
@@ -3505,7 +3510,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     source.setCancelled();
                     this.resetFallDistance();
                 }
-           }
+            }
         }
 
         if (source instanceof EntityDamageByEntityEvent) {
