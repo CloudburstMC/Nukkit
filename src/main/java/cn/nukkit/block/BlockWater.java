@@ -31,11 +31,6 @@ public class BlockWater extends BlockLiquid {
     }
 
     @Override
-    public int tickRate() {
-        return 5;
-    }
-
-    @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
         if (entity.fireTicks > 0) {
