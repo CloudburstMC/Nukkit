@@ -75,6 +75,8 @@ public class Item implements Cloneable {
     public static final int LAPIS_ORE = 21;
     public static final int LAPIS_BLOCK = 22;
 
+    public static final int DISPENSER = 23;
+
     public static final int SANDSTONE = 24;
     public static final int NOTEBLOCK = 25;
 
@@ -201,8 +203,8 @@ public class Item implements Cloneable {
     public static final int ENCHANTMENT_TABLE = 116;
     public static final int BREWING_STAND_BLOCK = 117;
     public static final int BREWING_BLOCK = 117;
-
-    public static final int END_PORTAL = 120;
+    public static final int CAULDRON_BLOCK = 118;
+    public static final int END_PORTAL = 119;
     public static final int END_PORTAL_FRAME = 120;
     public static final int END_STONE = 121;
 
@@ -239,9 +241,13 @@ public class Item implements Cloneable {
     public static final int LIGHT_WEIGHTED_PRESSURE_PLATE = 147;
     public static final int HEAVY_WEIGHTED_PRESSURE_PLATE = 148;
 
+    public static final int UNPOWERED_COMPARATOR = 149;
+    public static final int POWERED_COMPARATOR = 150;
     public static final int DAYLIGHT_DETECTOR = 151;
     public static final int REDSTONE_BLOCK = 152;
     public static final int QUARTZ_ORE = 153;
+
+    public static final int HOPPER_BLOCK = 154;
 
     public static final int QUARTZ_BLOCK = 155;
     public static final int QUARTZ_STAIRS = 156;
@@ -397,6 +403,8 @@ public class Item implements Cloneable {
     public static final int BOOK = 340;
     public static final int SLIMEBALL = 341;
 
+    public static final int MINECART_WITH_CHEST = 342;
+
     public static final int EGG = 344;
     public static final int COMPASS = 345;
     public static final int FISHING_ROD = 346;
@@ -411,9 +419,11 @@ public class Item implements Cloneable {
     public static final int CAKE = 354;
     public static final int BED = 355;
 
+    public static final int REPEATER = 356;
 
     public static final int COOKIE = 357;
 
+    public static final int MAP = 358;
 
     public static final int SHEARS = 359;
     public static final int MELON = 360;
@@ -443,11 +453,15 @@ public class Item implements Cloneable {
     public static final int BREWING_STAND = 379;
     public static final int BREWING = 379;
 
+    public static final int CAULDRON = 380;
+
     public static final int GLISTERING_MELON = 382;
     public static final int SPAWN_EGG = 383;
     public static final int EXPERIENCE_BOTTLE = 384;
 
     public static final int EMERALD = 388;
+
+    public static final int ITEM_FRAME = 389;
 
     public static final int FLOWER_POT = 390;
     public static final int CARROT = 391;
@@ -458,6 +472,8 @@ public class Item implements Cloneable {
     public static final int BAKED_POTATOES = 393;
     public static final int POISONOUS_POTATO = 394;
 
+    public static final int EMPTY_MAP = 395;
+
     public static final int GOLDEN_CARROT = 396;
 
     public static final int SKULL = 397;
@@ -467,9 +483,16 @@ public class Item implements Cloneable {
     public static final int ENCHANTED_BOOK = 403;
     public static final int ENCHANT_BOOK = 403;
 
+    public static final int COMPARATOR = 404;
+
     public static final int NETHER_BRICK = 405;
     public static final int QUARTZ = 406;
     public static final int NETHER_QUARTZ = 406;
+
+    public static final int MINECART_WITH_TNT = 407;
+    public static final int MINECART_WITH_HOPPER = 408;
+
+    public static final int HOPPER = 410;
 
     public static final int RAW_RABBIT = 411;
     public static final int COOKED_RABBIT = 412;
@@ -857,13 +880,16 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.IRON_BARS, 0));
         addCreativeItem(Item.get(Item.BED, 0));
         addCreativeItem(Item.get(Item.BOOKSHELF, 0));
+        addCreativeItem(Item.get(Item.SIGN, 0));
         addCreativeItem(Item.get(Item.PAINTING, 0));
+        addCreativeItem(Item.get(Item.ITEM_FRAME, 0));
         addCreativeItem(Item.get(Item.WORKBENCH, 0));
         addCreativeItem(Item.get(Item.STONECUTTER, 0));
         addCreativeItem(Item.get(Item.CHEST, 0));
         addCreativeItem(Item.get(Item.TRAPPED_CHEST, 0));
         addCreativeItem(Item.get(Item.FURNACE, 0));
-        addCreativeItem(Item.get(Item.BREWING_STAND_BLOCK, 0));
+        addCreativeItem(Item.get(Item.BREWING_STAND, 0));
+        addCreativeItem(Item.get(Item.CAULDRON, 0));
         addCreativeItem(Item.get(Item.NOTEBLOCK, 0));
         addCreativeItem(Item.get(Item.END_PORTAL_FRAME, 0));
         addCreativeItem(Item.get(Item.ANVIL, 0));
@@ -920,7 +946,6 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SKULL, 3)); // Head (Steve)
         addCreativeItem(Item.get(Item.SKULL, 4)); // Creeper
 
-        addCreativeItem(Item.get(Item.SIGN, 0));
         addCreativeItem(Item.get(Item.MONSTER_SPAWNER, 0));
         addCreativeItem(Item.get(Item.FLOWER_POT, 0));
         addCreativeItem(Item.get(Item.ENCHANTMENT_TABLE, 0));
@@ -980,6 +1005,9 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.CLOCK, 0));
         addCreativeItem(Item.get(Item.COMPASS, 0));
         addCreativeItem(Item.get(Item.MINECART, 0));
+        addCreativeItem(Item.get(Item.MINECART_WITH_CHEST, 0));
+        addCreativeItem(Item.get(Item.MINECART_WITH_HOPPER, 0));
+        addCreativeItem(Item.get(Item.MINECART_WITH_TNT, 0));
         addCreativeItem(Item.get(Item.BOAT, 0)); // Oak
         addCreativeItem(Item.get(Item.BOAT, 1)); // Spruce
         addCreativeItem(Item.get(Item.BOAT, 2)); // Birch
@@ -1070,6 +1098,10 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.STONE_BUTTON, 5));
         addCreativeItem(Item.get(Item.DAYLIGHT_DETECTOR));
         addCreativeItem(Item.get(Item.TRIPWIRE_HOOK));
+        addCreativeItem(Item.get(Item.REPEATER));
+        addCreativeItem(Item.get(Item.COMPARATOR));
+        addCreativeItem(Item.get(Item.DISPENSER, 3));
+        addCreativeItem(Item.get(Item.HOPPER));
         addCreativeItem(Item.get(Item.SNOWBALL));
 
         //Seeds
@@ -1093,6 +1125,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.BOOK, 0));
         addCreativeItem(Item.get(Item.ARROW, 0));
         addCreativeItem(Item.get(Item.BONE, 0));
+        addCreativeItem(Item.get(Item.EMPTY_MAP, 0));
         addCreativeItem(Item.get(Item.SUGARCANE, 0));
         addCreativeItem(Item.get(Item.WHEAT, 0));
         addCreativeItem(Item.get(Item.SEEDS, 0));
