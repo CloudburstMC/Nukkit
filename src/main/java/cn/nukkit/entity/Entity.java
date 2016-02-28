@@ -295,6 +295,10 @@ public abstract class Entity extends Location implements Metadatable {
         this.scheduleUpdate();
     }
 
+    public boolean hasCustomName() {
+        return !this.getNameTag().isEmpty();
+    }
+
     public String getNameTag() {
         return this.getDataPropertyString(DATA_NAMETAG);
     }
@@ -392,12 +396,12 @@ public abstract class Entity extends Location implements Metadatable {
 
         Effect newEffect = this.effects.get(effect.getId());
         if (oldEffect != null) {
-            Server.getInstance().getLogger().debug(getNameTag()+" replace effect " + oldEffect.getName()+"(ID:" + oldEffect.getId() + ")" +
-                    " * " + oldEffect.getAmplifier()+ " -> " + newEffect.getAmplifier()+ ", " +
-                    "Ticks: " + oldEffect.getDuration()+ " -> " + newEffect.getDuration());
+            Server.getInstance().getLogger().debug(getNameTag() + " replace effect " + oldEffect.getName() + "(ID:" + oldEffect.getId() + ")" +
+                    " * " + oldEffect.getAmplifier() + " -> " + newEffect.getAmplifier() + ", " +
+                    "Ticks: " + oldEffect.getDuration() + " -> " + newEffect.getDuration());
         } else {
-            Server.getInstance().getLogger().debug(getNameTag()+" add effect " + newEffect.getName() + "(ID:" + newEffect.getId() + ")" +
-                    " * " + newEffect.getAmplifier() + ", Ticks: "+ newEffect.getDuration());
+            Server.getInstance().getLogger().debug(getNameTag() + " add effect " + newEffect.getName() + "(ID:" + newEffect.getId() + ")" +
+                    " * " + newEffect.getAmplifier() + ", Ticks: " + newEffect.getDuration());
         }
     }
 
@@ -548,6 +552,14 @@ public abstract class Entity extends Location implements Metadatable {
             this.namedTag.putList(list);
         } else {
             this.namedTag.remove("ActiveEffects");
+        }
+    }
+
+    public String getName() {
+        if (this.hasCustomName()) {
+            return this.getNameTag();
+        } else {
+            return this.getSaveId();
         }
     }
 

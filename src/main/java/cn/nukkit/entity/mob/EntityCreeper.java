@@ -1,8 +1,6 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -10,10 +8,10 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 /**
  * @author Box.
  */
-public class EntityCreeper extends Entity {
+public class EntityCreeper extends EntityMob {
     public static final int NETWORK_ID = 33;
 
-    public static final int POWERED = 19;
+    public static final int DATA_POWERED = 19;
 
     @Override
     public int getNetworkId() {
@@ -24,44 +22,23 @@ public class EntityCreeper extends Entity {
         super(chunk, nbt);
     }
 
-
-    public boolean isPowered() {
-        return getDataPropertyBoolean(POWERED);
-    }
-
-    public void setPowered(boolean powered) {
-        //TODO:call event
-        if(powered){
-            setDataProperty(new ByteEntityData(POWERED,1));
-        }
+    public final boolean isPowered() {
+        return getDataPropertyBoolean(DATA_POWERED);
     }
 
     @Override
     protected void initEntity() {
         super.initEntity();
-        if (namedTag.contains("powered")) {
-            setPowered(namedTag.getBoolean("powered"));
-        }
-    }
 
-    @Override
-    public void saveNBT() {
-        super.saveNBT();
-        if(isPowered()){
-            this.namedTag.putBoolean("powered",true);
+        if (this.namedTag.getBoolean("powered") || this.namedTag.getBoolean("IsPowered")) {
+            this.dataProperties.putBoolean(DATA_POWERED, true);
         }
-    }
-
-    @Override
-    public boolean onUpdate(int currentTick) {
-        //TODO:or deleted
-        return true;
     }
 
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = NETWORK_ID;
+        pk.type = this.getNetworkId();
         pk.eid = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;

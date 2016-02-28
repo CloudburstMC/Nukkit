@@ -78,8 +78,6 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         this.namedTag.putShort("Health", this.getHealth());
     }
 
-    public abstract String getName();
-
     public boolean hasLineOfSight(Entity entity) {
         //todo
         return true;
