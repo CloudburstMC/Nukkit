@@ -2423,7 +2423,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     } else if (targetEntity instanceof EntityVehicle) {
                         SetEntityLinkPacket pk;
                         switch (((InteractPacket) packet).action) {
-                            case 1:
+                            case InteractPacket.ACTION_RIGHT_CLICK:
                                 pk = new SetEntityLinkPacket();
                                 pk.rider = targetEntity.getId();
                                 pk.riding = this.id;
@@ -2439,7 +2439,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 cancelled = true;
                                 riding = targetEntity;
                                 break;
-                            case 3:
+                            case InteractPacket.ACTION_VEHICLE_EXIT:
                                 pk = new SetEntityLinkPacket();
                                 pk.rider = targetEntity.getId();
                                 pk.riding = this.id;

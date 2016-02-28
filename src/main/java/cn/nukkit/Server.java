@@ -414,10 +414,11 @@ public class Server {
 
             if (!this.loadLevel(defaultName)) {
                 long seed;
+                String seedString = String.valueOf(this.getProperty("level-seed", System.currentTimeMillis()));
                 try {
-                    seed = Long.valueOf((String) this.getProperty("level-seed", System.currentTimeMillis()));
+                    seed = Long.valueOf(seedString);
                 } catch (NumberFormatException e) {
-                    seed = System.currentTimeMillis();
+                    seed = seedString.hashCode();
                 }
                 this.generateLevel(defaultName, seed == 0 ? System.currentTimeMillis() : seed);
             }

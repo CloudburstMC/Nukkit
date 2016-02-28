@@ -1,6 +1,9 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.entity.weather.EntityLightningStrike;
+import cn.nukkit.event.entity.CreeperPowerEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -11,6 +14,9 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 public class EntityCreeper extends EntityMob {
     public static final int NETWORK_ID = 33;
 
+    public static final int DATA_SWELL_DIRECTION = 16;
+    public static final int DATA_SWELL = 17;
+    public static final int DATA_SWELL_OLD = 18;
     public static final int DATA_POWERED = 19;
 
     @Override
@@ -22,8 +28,28 @@ public class EntityCreeper extends EntityMob {
         super(chunk, nbt);
     }
 
-    public final boolean isPowered() {
+    public boolean isPowered() {
         return getDataPropertyBoolean(DATA_POWERED);
+    }
+
+    public void setPowered(EntityLightningStrike bolt) {
+        CreeperPowerEvent ev = new CreeperPowerEvent(this, bolt, CreeperPowerEvent.PowerCause.LIGHTNING);
+        this.getServer().getPluginManager().callEvent(ev);
+
+        if (!ev.isCancelled()) {
+            this.setDataProperty(new ByteEntityData(DATA_POWERED, 1));
+            this.namedTag.putBoolean("powered", true);
+        }
+    }
+
+    public void setPowered(boolean powered) {
+        CreeperPowerEvent ev = new CreeperPowerEvent(this, powered ? CreeperPowerEvent.PowerCause.SET_ON : CreeperPowerEvent.PowerCause.SET_OFF);
+        this.getServer().getPluginManager().callEvent(ev);
+
+        if (!ev.isCancelled()) {
+            this.setDataProperty(new ByteEntityData(DATA_POWERED, powered ? 1 : 0));
+            this.namedTag.putBoolean("powered", powered);
+        }
     }
 
     @Override

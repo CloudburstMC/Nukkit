@@ -616,7 +616,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (this.isThundering()) {
             synchronized (this) {
-                for (FullChunk chunk: this.getChunks().values()) {
+                for (FullChunk chunk : this.getChunks().values()) {
                     if (rand.nextInt(99999) == 1) {  //1/100000
                         int x = rand.nextInt(15);
                         int z = rand.nextInt(15);
@@ -1528,7 +1528,7 @@ public class Level implements ChunkManager, Metadatable {
             Map<Integer, Player> players = this.getChunkPlayers((int) target.x >> 4, (int) target.z >> 4);
 
             this.addParticle(new DestroyBlockParticle(target.add(0.5), target), players.values());
-            
+
             if (player != null) {
                 players.remove(player.getLoaderId());
             }
@@ -2350,7 +2350,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Position getSafeSpawn(Vector3 spawn) {
-        if (spawn == null || spawn.y <= 0) {
+        if (spawn == null || spawn.y < 1) {
             spawn = this.getSpawnLocation();
         }
 
