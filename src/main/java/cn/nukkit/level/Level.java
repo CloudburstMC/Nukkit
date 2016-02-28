@@ -617,12 +617,12 @@ public class Level implements ChunkManager, Metadatable {
         if (this.isThundering()) {
             synchronized (this) {
                 for (FullChunk chunk : this.getChunks().values()) {
-                    if (rand.nextInt(99999) == 1) {  //1/100000
-                        int x = rand.nextInt(15);
-                        int z = rand.nextInt(15);
+                    if (rand.nextInt(100000) == 0) {  //1/100000
+                        int x = rand.nextInt(16);
+                        int z = rand.nextInt(16);
                         int y = chunk.getHighestBlockAt(x, z);
                         int bId = chunk.getBlockId(x, y, z);
-                        if (bId != Block.TALL_GRASS) y += 1;
+                        if (bId != Block.TALL_GRASS && bId != Block.WATER) y += 1;
                         CompoundTag nbt = new CompoundTag()
                                 .putList(new ListTag<DoubleTag>("Pos")
                                         .add(new DoubleTag("", x + 16 * chunk.getX()))

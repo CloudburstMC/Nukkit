@@ -7,6 +7,7 @@ import cn.nukkit.block.BlockFire;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
@@ -85,7 +86,12 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                     if (e instanceof EntityLiving) {
                         e.attack(new EntityDamageByEntityEvent(this, e, EntityDamageEvent.CAUSE_LIGHTNING, 5));
                         e.setOnFire(5);  //how long?
-                        //TODO Creeper
+                        //Creeper
+                        if (e instanceof EntityCreeper) {
+                            if (!((EntityCreeper) e).isPowered()) {
+                                ((EntityCreeper) e).setPowered(this);
+                            }
+                        }
                         //TODO Pig
                         //TODO Villager
                     }
