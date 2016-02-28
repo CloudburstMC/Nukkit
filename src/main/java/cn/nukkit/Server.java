@@ -8,6 +8,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.*;
+import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.entity.weather.EntityLightning;
@@ -243,6 +244,7 @@ public class Server {
                 put("motd", "Nukkit Server For Minecraft: PE");
                 put("server-port", 19132);
                 put("server-ip", "0.0.0.0");
+                put("view-distance", 16);
                 put("white-list", false);
                 put("announce-player-achievements", true);
                 put("spawn-protection", 16);
@@ -1102,7 +1104,17 @@ public class Server {
     }
 
     public int getViewDistance() {
-        return Math.max(56, (Integer) this.getConfig("chunk-sending.max-chunks", 256));
+        int distance = this.getPropertyInt("view-distance", 10);
+
+        if (distance < 10) {
+            distance = 10;
+        } else if (distance > 22) {
+            distance = 22;
+        }
+
+        this.setPropertyInt("view-distance", distance);
+
+        return distance;
     }
 
     public String getIp() {
@@ -1810,6 +1822,7 @@ public class Server {
         Entity.registerEntity("Snowball", EntitySnowball.class);
         Entity.registerEntity("Painting", EntityPainting.class);
         //todo mobs
+        Entity.registerEntity("Creeper", EntityCreeper.class);
 
         Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);
         Entity.registerEntity("XpOrb", EntityXPOrb.class);

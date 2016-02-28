@@ -271,7 +271,7 @@ public class Item implements Cloneable {
     public static final int ACACIA_WOODEN_STAIRS = 163;
     public static final int DARK_OAK_WOOD_STAIRS = 164;
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
-    
+
     public static final int SLIME_BLOCK = 165;
 
     public static final int IRON_TRAPDOOR = 167;
@@ -1025,7 +1025,9 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SPAWN_EGG, 16)); //Mooshroom
         addCreativeItem(Item.get(Item.SPAWN_EGG, 19)); //Bat
         addCreativeItem(Item.get(Item.SPAWN_EGG, 18)); //Rabbit
+        */
         addCreativeItem(Item.get(Item.SPAWN_EGG, 33)); //Creeper
+        /*
         addCreativeItem(Item.get(Item.SPAWN_EGG, 38)); //Enderman
         addCreativeItem(Item.get(Item.SPAWN_EGG, 39)); //Silverfish
         addCreativeItem(Item.get(Item.SPAWN_EGG, 34)); //Skeleton

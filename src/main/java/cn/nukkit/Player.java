@@ -729,7 +729,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int x = 0;
         int z = 0;
 
-        for (int i = 0; i < viewDistance; ++i) {
+        for (int i = 0; i < this.viewDistance * this.viewDistance; ++i) {
 
             int chunkX = x + centerX;
             int chunkZ = z + centerZ;
@@ -2985,7 +2985,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             case ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET:
                 RequestChunkRadiusPacket requestChunkRadiusPacket = (RequestChunkRadiusPacket) packet;
                 ChunkRadiusUpdatePacket chunkRadiusUpdatePacket = new ChunkRadiusUpdatePacket();
-                chunkRadiusUpdatePacket.radius = requestChunkRadiusPacket.radius;
+                chunkRadiusUpdatePacket.radius = this.viewDistance;
                 this.dataPacket(chunkRadiusUpdatePacket);
             default:
                 break;
