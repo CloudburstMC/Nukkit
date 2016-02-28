@@ -9,12 +9,14 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
 import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.level.*;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
+import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -551,7 +553,29 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
+    public void sendTime(Player player) {
+        if (this.stopTime) {
+            SetTimePacket pk0 = new SetTimePacket();
+            pk0.time = (int) this.time;
+            pk0.started = true;
+            player.dataPacket(pk0);
+        }
+
+        SetTimePacket pk = new SetTimePacket();
+        pk.time = (int) this.time;
+        pk.started = !this.stopTime;
+
+        player.dataPacket(pk);
+    }
+
     public void sendTime() {
+        if (this.stopTime) {
+            SetTimePacket pk0 = new SetTimePacket();
+            pk0.time = (int) this.time;
+            pk0.started = true;
+            Server.broadcastPacket(this.players.values().stream().toArray(Player[]::new), pk0);
+        }
+
         SetTimePacket pk = new SetTimePacket();
         pk.time = (int) this.time;
         pk.started = !this.stopTime;
@@ -588,6 +612,43 @@ public class Level implements ChunkManager, Metadatable {
                     setThunderTime(rand.nextInt(168000) + 12000);
                 }
             }
+        }
+
+        if (this.isThundering()) {
+            synchronized (this) {
+                for (FullChunk chunk: this.getChunks().values()) {
+                    if (rand.nextInt(99999) == 1) {  //1/100000
+                        int x = rand.nextInt(15);
+                        int z = rand.nextInt(15);
+                        int y = chunk.getHighestBlockAt(x, z);
+                        int bId = chunk.getBlockId(x, y, z);
+                        if (bId != Block.TALL_GRASS) y += 1;
+                        CompoundTag nbt = new CompoundTag()
+                                .putList(new ListTag<DoubleTag>("Pos")
+                                        .add(new DoubleTag("", x + 16 * chunk.getX()))
+                                        .add(new DoubleTag("", y))
+                                        .add(new DoubleTag("", z + 16 * chunk.getZ())))
+                                .putList(new ListTag<DoubleTag>("Motion")
+                                        .add(new DoubleTag("", 0))
+                                        .add(new DoubleTag("", 0))
+                                        .add(new DoubleTag("", 0)))
+                                .putList(new ListTag<FloatTag>("Rotation")
+                                        .add(new FloatTag("", 0))
+                                        .add(new FloatTag("", 0)));
+
+                        EntityLightning bolt = new EntityLightning(chunk, nbt);
+                        LightningStrikeEvent ev = new LightningStrikeEvent(this, bolt);
+                        if (!ev.isCancelled()) {
+                            bolt.spawnToAll();
+                        } else {
+                            bolt.setEffect(false);
+                        }
+
+                    }
+
+                }
+            }
+
         }
 
         this.levelCurrentTick++;
@@ -2672,6 +2733,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public int getDimension() {
         return dimension;
+    }
+
+    public boolean canSeeSky(Vector3 pos) {
+        return this.getHighestBlockAt(pos.getFloorX(), pos.getFloorZ()) < pos.getY();
     }
 
 }
