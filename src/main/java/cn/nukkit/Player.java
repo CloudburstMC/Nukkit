@@ -25,6 +25,7 @@ import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
+import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.*;
@@ -684,7 +685,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendExperience(this.getExperience());
         this.sendExperienceLevel(this.getExperienceLevel());
 
-        this.teleport(pos);
+        this.teleport(pos,null);
 
         if (!this.isSpectator()) {
             this.spawnToAll();
@@ -879,7 +880,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.sleeping = pos.clone();
-        this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level));
+        this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level),null);
 
         this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
@@ -1289,7 +1290,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (!(revert = ev.isCancelled())) { //Yes, this is intended
                     if (to.distanceSquared(ev.getTo()) > 0.01) { //If plugins modify the destination
-                        this.teleport(ev.getTo());
+                        this.teleport(ev.getTo(),null);
                     } else {
                         this.level.addEntityMovement((int) this.x >> 4, (int) this.z >> 4, this.getId(), this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
                     }
@@ -2216,7 +2217,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
                         this.server.getPluginManager().callEvent(playerRespawnEvent);
 
-                        this.teleport(playerRespawnEvent.getRespawnPosition());
+                        this.teleport(playerRespawnEvent.getRespawnPosition(),null);
 
                         this.setSprinting(false);
                         this.setSneaking(false);
@@ -3647,40 +3648,63 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean teleport(Vector3 pos) {
+        return teleport(pos,TeleportCause.PLUGIN);
+    }
+
+    public boolean teleport(Vector3 pos, TeleportCause cause) {
         if (!this.isOnline()) {
             return false;
         }
-
+        if (cause != null) {
+            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
+            this.server.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return false;
+        }
         Position oldPos = this.getPosition();
         if (super.teleport(pos)) {
             this.resetAfterTeleport(oldPos);
             return true;
         }
-
         return false;
     }
 
     @Override
     public boolean teleport(Vector3 pos, double yaw, double pitch) {
+        return teleport(pos,yaw,pitch,TeleportCause.PLUGIN);
+    }
+
+    public boolean teleport(Vector3 pos, double yaw, double pitch, TeleportCause cause) {
         if (!this.isOnline()) {
             return false;
         }
-
+        if (cause != null) {
+            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
+            this.server.getPluginManager().callEvent(event);
+            if (event.isCancelled()) return false;
+        }
         Position oldPos = this.getPosition();
         if (super.teleport(pos, yaw, pitch)) {
             this.resetAfterTeleport(oldPos);
             return true;
         }
-
         return false;
     }
 
     @Override
     public boolean teleportYaw(Vector3 pos, double yaw) {
+        return teleportYaw(pos,yaw,TeleportCause.PLUGIN);
+    }
+
+    public boolean teleportYaw(Vector3 pos, double yaw, TeleportCause cause) {
         if (!this.isOnline()) {
             return false;
         }
 
+        if (cause != null) {
+            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
+            this.server.getPluginManager().callEvent(event);
+            if (event.isCancelled()) return false;
+        }
         Position oldPos = this.getPosition();
         if (super.teleportYaw(pos, yaw)) {
             this.resetAfterTeleport(oldPos);
@@ -3692,10 +3716,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean teleportPitch(Vector3 pos, double pitch) {
+        return teleportPitch(pos,pitch,TeleportCause.PLUGIN);
+    }
+
+    public boolean teleportPitch(Vector3 pos, double pitch, TeleportCause cause) {
         if (!this.isOnline()) {
             return false;
         }
-
+        if (cause != null) {
+            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
+            this.server.getPluginManager().callEvent(event);
+            if (event.isCancelled()) return false;
+        }
         Position oldPos = this.getPosition();
         if (super.teleportPitch(pos, pitch)) {
             this.resetAfterTeleport(oldPos);
@@ -3707,10 +3739,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
+        return teleportYawAndPitch (pos,yaw,pitch,TeleportCause.PLUGIN);
+    }
+
+    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch, TeleportCause cause) {
         if (!this.isOnline()) {
             return false;
         }
-
+        if (cause != null) {
+            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
+            this.server.getPluginManager().callEvent(event);
+            if (event.isCancelled()) return false;
+        }
         Position oldPos = this.getPosition();
         if (super.teleportYawAndPitch(pos, yaw, pitch)) {
             this.resetAfterTeleport(oldPos);
