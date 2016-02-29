@@ -224,7 +224,7 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public int firstEmpty(Item item) {
-        for (int i = 0; i < this.size; ++i) {
+        for (int i = 0; i < this.getSize(); ++i) {
             if (this.getItem(i).getId() == Item.AIR) {
                 return i;
             }
@@ -236,7 +236,7 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public boolean canAddItem(Item item) {
         item = item.clone();
-        boolean checkDamage = item.getDamage() != 0;
+        boolean checkDamage = item.hasMeta();
         boolean checkTag = item.getCompoundTag() != null;
         for (int i = 0; i < this.getSize(); ++i) {
             Item slot = this.getItem(i);
@@ -248,10 +248,12 @@ public abstract class BaseInventory implements Inventory {
             } else if (slot.getId() == Item.AIR) {
                 item.setCount(item.getCount() - this.getMaxStackSize());
             }
+
             if (item.getCount() <= 0) {
                 return true;
             }
         }
+
         return false;
     }
 
