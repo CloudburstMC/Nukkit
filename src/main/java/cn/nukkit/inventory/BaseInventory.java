@@ -238,7 +238,7 @@ public abstract class BaseInventory implements Inventory {
         item = item.clone();
         boolean checkDamage = item.hasMeta();
         boolean checkTag = item.getCompoundTag() != null;
-        for (int i = 0; i < this.size; ++i) {
+        for (int i = 0; i < this.getSize(); ++i) {
             Item slot = this.getItem(i);
             if (item.equals(slot, checkDamage, checkTag)) {
                 int diff;
