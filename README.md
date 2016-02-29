@@ -18,9 +18,9 @@ Nukkit
 
 __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Nukkit/Nukkit)
-[![Build Status](https://travis-ci.org/Nukkit/Nukkit.svg)](https://travis-ci.org/Nukkit/Nukkit)
-[![Circle CI](https://circleci.com/gh/Nukkit/Nukkit.svg?style=svg)](https://circleci.com/gh/Nukkit/Nukkit)
+[![Gitter](https://img.shields.io/gitter/room/Nukkit/Nukkit.js.svg?style=flat-square)](https://gitter.im/Nukkit/Nukkit)
+[![Travis](https://img.shields.io/travis/Nukkit/Nukkit.svg?style=flat-square)](https://travis-ci.org/Nukkit/Nukkit)
+[![CircleCI](https://img.shields.io/circleci/project/Nukkit/Nukkit.svg?style=flat-square)](https://circleci.com/gh/Nukkit/Nukkit)
 
 -------------
 
