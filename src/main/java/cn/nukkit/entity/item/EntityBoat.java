@@ -9,7 +9,6 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.network.protocol.EntityEventPacket;
 
 /**
  * Created by yescallop on 2016/2/13.
@@ -17,6 +16,18 @@ import cn.nukkit.network.protocol.EntityEventPacket;
 public class EntityBoat extends EntityVehicle {
 
     public static final int NETWORK_ID = 90;
+
+    public static final int DATA_WOOD_ID = 20;
+
+    @Override
+    protected void initEntity() {
+        super.initEntity();
+
+        this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
+
+        this.setHealth(4);
+        this.setMaxHealth(4);
+    }
 
     @Override
     public float getHeight() {
@@ -58,8 +69,8 @@ public class EntityBoat extends EntityVehicle {
         pk.speedX = 0;
         pk.speedY = 0;
         pk.speedZ = 0;
-        pk.yaw = 0;
-        pk.pitch = 0;
+        pk.yaw = (float) this.yaw;
+        pk.pitch = (float) this.pitch;
         pk.metadata = this.dataProperties;
         player.dataPacket(pk);
 
@@ -77,12 +88,7 @@ public class EntityBoat extends EntityVehicle {
         super.attack(source);
         if (source.isCancelled()) return;
 
-        EntityEventPacket pk = new EntityEventPacket();
-        pk.eid = this.id;
-        pk.event = EntityEventPacket.HURT_ANIMATION;
-        for (Player aPlayer : this.getLevel().getPlayers().values()) {
-            aPlayer.dataPacket(pk);
-        }
+        //TODO: HURT ANIMATION
     }
 
     @Override

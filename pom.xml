@@ -9,6 +9,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -33,6 +34,12 @@
             <version>2.13</version>
         </dependency>
 		<dependency>
+			<!-- This dependency doesn't seem to be available in public maven repos.
+			     The jar file is included with the project under the lib dir.
+			     You need to manually install it in your local maven repo.  
+			     The command below should work if mvn is on your path and you are in the lib dir:
+			     mvn install:install-file -Dfile=leveldb.jar -DgroupId=com.tinfoiled.mcpe.leveldb -DartifactId=leveldb -Dversion=0.8 -Dpackaging=jar 
+			 -->
             <groupId>com.tinfoiled.mcpe.leveldb</groupId>
             <artifactId>leveldb</artifactId>
             <version>0.8</version>
@@ -72,6 +79,24 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <configuration>
+                            <rules>
+                                <DependencyConvergence />
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.1</version>
                 <executions>
@@ -88,6 +113,7 @@
                             <mainClass>cn.nukkit.Nukkit</mainClass>
                         </transformer>
                     </transformers>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                 </configuration>
             </plugin>
         </plugins>

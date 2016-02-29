@@ -118,10 +118,6 @@ public class BlockEnchantingTable extends BlockSolid {
                 }
             }
 
-            if (player.isCreative()) {
-                return false;
-            }
-
             player.addWindow(new EnchantInventory(this.getLocation()));
         }
 

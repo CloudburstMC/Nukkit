@@ -32,10 +32,6 @@ public class ItemFlintSteel extends ItemTool {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
-        if ((player.gamemode & 0x01) == 0 && this.useOn(block) && this.getDamage() >= this.getMaxDurability()) {
-            player.getInventory().setItemInHand(new Item(Item.AIR, 0, 0));
-        }
-
         if (block.getId() == AIR && (target instanceof BlockSolid)) {
             if (target.getId() == OBSIDIAN) {
                 //todo construct the nether portal
@@ -45,7 +41,14 @@ public class ItemFlintSteel extends ItemTool {
             }
             return true;
         }
-
+        if ((player.gamemode & 0x01) == 0 && this.useOn(block)) {
+            if (this.getDamage() >= this.getMaxDurability()) {
+                player.getInventory().setItemInHand(new Item(Item.AIR, 0, 0));
+            } else {
+                this.meta++;
+                player.getInventory().setItemInHand(this);
+            }
+        }
         return false;
     }
 

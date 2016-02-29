@@ -142,6 +142,6 @@ public class BlockVine extends BlockTransparent {
 
     @Override
     public int getToolType() {
-        return ItemTool.TYPE_AXE;
+        return ItemTool.TYPE_SHEARS;
     }
 }

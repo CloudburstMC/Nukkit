@@ -18,6 +18,9 @@ public class InventoryType {
     public static final int BREWING_STAND = 7;
     public static final int ANVIL = 8;
     public static final int ENCHANT_TABLE = 9;
+    public static final int DISPENSER = 10;
+    public static final int DROPPER = 11;
+    public static final int HOPPER = 12;
 
 
     private static Map<Integer, InventoryType> defaults = new HashMap<>();
@@ -42,9 +45,12 @@ public class InventoryType {
         defaults.put(CRAFTING, new InventoryType(5, "Crafting", 1)); //4 CRAFTING slots, 1 RESULT
         defaults.put(WORKBENCH, new InventoryType(10, "Crafting", 1)); //9 CRAFTING slots, 1 RESULT
         defaults.put(STONECUTTER, new InventoryType(10, "Crafting", 1)); //9 CRAFTING slots, 1 RESULT
-        defaults.put(ENCHANT_TABLE, new InventoryType(2, "Enchant", 4)); //1 INPUT/OUTPUT, 1 LAPIS
-        defaults.put(BREWING_STAND, new InventoryType(4, "Brewing", 5)); //1 INPUT, 3 POTION
-        defaults.put(ANVIL, new InventoryType(3, "Anvil", 6)); //2 INPUT, 1 OUTPUT
+        defaults.put(ENCHANT_TABLE, new InventoryType(2, "Enchant", 3)); //1 INPUT/OUTPUT, 1 LAPIS
+        defaults.put(BREWING_STAND, new InventoryType(4, "Brewing", 4)); //1 INPUT, 3 POTION
+        defaults.put(ANVIL, new InventoryType(3, "Anvil", 5)); //2 INPUT, 1 OUTPUT
+        defaults.put(DISPENSER, new InventoryType(9, "Dispenser", 6)); //9 CONTAINER
+        defaults.put(DROPPER, new InventoryType(9, "Dropper", 7)); //9 CONTAINER
+        defaults.put(HOPPER, new InventoryType(5, "Hopper", 8)); //5 CONTAINER
     }
 
     public InventoryType(int defaultSize, String defaultBlockEntity, int typeId) {

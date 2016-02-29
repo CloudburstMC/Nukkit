@@ -41,14 +41,6 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    public int tickRate() {
-        if (this.getLevel().getDimension() == Level.DIMENSION_NETHER) {
-            return 5;
-        }
-        return 30;
-    }
-
-    @Override
     public void onEntityCollide(Entity entity) {
         entity.fallDistance *= 0.5;
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {

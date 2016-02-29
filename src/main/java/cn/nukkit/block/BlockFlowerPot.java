@@ -55,7 +55,7 @@ public class BlockFlowerPot extends BlockFlowable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
                 .putShort("item", 0)
-                .putInt("mData", 0);
+                .putInt("data", 0);
         if (item.hasCustomBlockData()) {
             for (Tag aTag : item.getCustomBlockData().getAllTags()) {
                 nbt.put(aTag.getName(), aTag);
@@ -85,16 +85,20 @@ public class BlockFlowerPot extends BlockFlowable {
         int itemID;
         int itemMeta;
         if (!canPlaceIntoFlowerPot(item.getId())) {
-            if (!canPlaceIntoFlowerPot(item.getBlock().getId())) return false;
+            if (!canPlaceIntoFlowerPot(item.getBlock().getId())) {
+                return false;
+            }
             itemID = item.getBlock().getId();
-            itemMeta = item.getBlock().getDamage();
+            itemMeta = item.getDamage();
         } else {
             itemID = item.getId();
             itemMeta = item.getDamage();
         }
         blockEntity.namedTag.putShort("item", itemID);
-        blockEntity.namedTag.putInt("mData", itemMeta);
-        // TODO: 2016/2/4 Didn't update to client in time, is it a client-side bug?
+        blockEntity.namedTag.putInt("data", itemMeta);
+
+        this.meta = 1;
+        this.getLevel().setBlock(this, this, true);
         ((BlockEntityFlowerPot) blockEntity).spawnToAll();
 
         if (player.isSurvival()) {
@@ -113,7 +117,7 @@ public class BlockFlowerPot extends BlockFlowable {
         if (blockEntity instanceof BlockEntityFlowerPot) {
             dropInside = true;
             insideID = blockEntity.namedTag.getShort("item");
-            insideMeta = blockEntity.namedTag.getInt("mData");
+            insideMeta = blockEntity.namedTag.getInt("data");
         }
 
         if (dropInside) {

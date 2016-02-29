@@ -195,6 +195,11 @@ public class EntityItem extends Entity {
         }
     }
 
+    @Override
+    public String getName() {
+        return this.hasCustomName() ? this.getNameTag() : (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
+    }
+
     public Item getItem() {
         return item;
     }

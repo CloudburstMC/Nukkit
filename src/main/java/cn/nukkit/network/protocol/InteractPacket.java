@@ -7,6 +7,11 @@ public class InteractPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.INTERACT_PACKET;
 
+    public static final byte ACTION_RIGHT_CLICK = 1;
+    public static final byte ACTION_LEFT_CLICK = 2;
+    public static final byte ACTION_VEHICLE_EXIT = 3;
+
+
     public long eid;
     public byte action;
     public long target;

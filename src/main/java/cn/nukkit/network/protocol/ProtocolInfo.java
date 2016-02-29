@@ -9,7 +9,7 @@ public interface ProtocolInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    byte CURRENT_PROTOCOL = 39;
+    byte CURRENT_PROTOCOL = 45;
     byte LOGIN_PACKET = (byte) 0x8f;
     byte PLAY_STATUS_PACKET = (byte) 0x90;
     byte DISCONNECT_PACKET = (byte) 0x91;
@@ -57,12 +57,19 @@ public interface ProtocolInfo {
     byte CRAFTING_EVENT_PACKET = (byte) 0xbb;
     byte ADVENTURE_SETTINGS_PACKET = (byte) 0xbc;
     byte BLOCK_ENTITY_DATA_PACKET = (byte) 0xbd;
-    //byte PLAYER_INPUT_PACKET = (byte) 0xbe;
+    byte PLAYER_INPUT_PACKET = (byte) 0xbe;
     byte FULL_CHUNK_DATA_PACKET = (byte) 0xbf;
     byte SET_DIFFICULTY_PACKET = (byte) 0xc0;
     byte CHANGE_DIMENSION_PACKET = (byte) 0xc1;
     byte SET_PLAYER_GAMETYPE_PACKET = (byte) 0xc2;
     byte PLAYER_LIST_PACKET = (byte) 0xc3;
     byte TELEMETRY_EVENT_PACKET = (byte) 0xc4;
+    byte SPAWN_EXPERIENCE_ORB_PACKET = (byte) 0xc5;
+    byte CLIENTBOUND_MAP_ITEM_DATA_PACKET = (byte) 0xc6;
+    byte MAP_INFO_REQUEST_PACKET = (byte) 0xc7;
+    byte REQUEST_CHUNK_RADIUS_PACKET = (byte) 0xc8;
+    byte CHUNK_RADIUS_UPDATE_PACKET = (byte) 0xc9;
+    byte ITEM_FRAME_DROP_ITEM_PACKET = (byte) 0xca;
+    byte REPLACE_SELECTED_ITEM_PACKET = (byte) 0xcb;
 
 }

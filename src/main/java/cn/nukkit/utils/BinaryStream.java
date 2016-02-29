@@ -251,7 +251,7 @@ public class BinaryStream {
 
         int data = this.getShort();
 
-        int nbtLen = this.getShort();
+        int nbtLen = this.getLShort();
 
         byte[] nbt = new byte[0];
         if (nbtLen > 0) {
@@ -274,7 +274,7 @@ public class BinaryStream {
         this.putShort(!item.hasMeta() ? -1 : item.getDamage());
 
         byte[] nbt = item.getCompoundTag();
-        this.putShort(nbt.length);
+        this.putLShort(nbt.length);
         this.put(nbt);
     }
 

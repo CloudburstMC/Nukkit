@@ -171,6 +171,9 @@ public abstract class BlockLiquid extends BlockTransparent {
         if (this instanceof BlockWater) {
             return 5;
         } else if (this instanceof BlockLava) {
+            if (this.getLevel().getDimension() == Level.DIMENSION_NETHER) {
+                return 5;
+            }
             return 30;
         }
 
