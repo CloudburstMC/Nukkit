@@ -5,6 +5,7 @@ import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.TextFormat;
@@ -123,17 +124,17 @@ public class TeleportCommand extends VanillaCommand {
             return true;
         }
         if (destination != null) {
-            origin.teleport(destination);
+            origin.teleport(destination, PlayerTeleportEvent.TeleportCause.COMMAND);
         } else if (dest != null) {
             if (hasRot) {
                 try {
-                    origin.teleport(dest, Double.valueOf(args[args.length - 1]), Double.valueOf(args[args.length - 2]));
+                    origin.teleport(dest, Double.valueOf(args[args.length - 1]), Double.valueOf(args[args.length - 2]), PlayerTeleportEvent.TeleportCause.COMMAND);
                 } catch (Exception e) {
                     sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                     return true;
                 }
             } else {
-                origin.teleport(dest);
+                origin.teleport(dest, PlayerTeleportEvent.TeleportCause.COMMAND);
             }
         } else {
             sender.sendMessage(new TranslationContainer("commands.generic.exception", this.usageMessage));
