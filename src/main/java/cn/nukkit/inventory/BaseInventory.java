@@ -224,7 +224,7 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public int firstEmpty(Item item) {
-        for (int i = 0; i < this.getSize(); ++i) {
+        for (int i = 0; i < this.size; ++i) {
             if (this.getItem(i).getId() == Item.AIR) {
                 return i;
             }
