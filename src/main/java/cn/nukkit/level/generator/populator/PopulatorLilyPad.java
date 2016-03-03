@@ -6,7 +6,11 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
 public class PopulatorLilyPad extends Populator {
-
+	
+	/**
+	 * Author: Niall Lindsay <Niall7459>
+	 */
+	
 	private ChunkManager level;
     private int randomAmount;
     private int baseAmount;

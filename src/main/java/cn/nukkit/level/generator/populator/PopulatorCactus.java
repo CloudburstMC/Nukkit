@@ -7,6 +7,10 @@ import cn.nukkit.math.NukkitRandom;
 
 public class PopulatorCactus extends Populator {
 	
+	/**
+	 * Author: Niall Lindsay <Niall7459>
+	 */
+	
 	private ChunkManager level;
     private int randomAmount;
     private int baseAmount;
