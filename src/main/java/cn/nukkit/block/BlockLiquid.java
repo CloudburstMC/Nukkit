@@ -122,6 +122,7 @@ public abstract class BlockLiquid extends BlockTransparent {
                     vector.z += (sideBlock.z - this.z) * realDecay;
                 }
 
+                continue;
             } else {
                 int realDecay = blockDecay - decay;
                 vector.x += (sideBlock.x - this.x) * realDecay;
