@@ -14,9 +14,16 @@ public class BlockEntityFlowerPot extends BlockEntitySpawnable {
         if (!nbt.contains("item")) {
             nbt.putShort("item", 0);
         }
-        if (!nbt.contains("mData")) {
-            nbt.putInt("mData", 0);
+
+        if (!nbt.contains("data")) {
+            if (nbt.contains("mData")) {
+                nbt.putInt("data", nbt.getInt("mData"));
+                nbt.remove("mData");
+            }else {
+                nbt.putInt("data", 0);
+            }
         }
+
         this.namedTag = nbt;
     }
 
@@ -33,8 +40,8 @@ public class BlockEntityFlowerPot extends BlockEntitySpawnable {
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .put("item", this.namedTag.get("item"))
-                .put("mData", this.namedTag.get("mData"));
+                .putShort("item", this.namedTag.getShort("item"))
+                .putInt("mData", this.namedTag.getInt("data"));
     }
 
 }

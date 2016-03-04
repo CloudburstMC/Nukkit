@@ -61,7 +61,6 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_COLOR = 7;
     public static final int DATA_POTION_AMBIENT = 8;
     public static final int DATA_NO_AI = 15;
-    public static final int DATA_POTION_TYPE = 16;
 
     public static final int DATA_FLAG_ONFIRE = 0;
     public static final int DATA_FLAG_SNEAKING = 1;
@@ -91,9 +90,9 @@ public abstract class Entity extends Location implements Metadatable {
             .putBoolean(DATA_SILENT, false)
             .putBoolean(DATA_NO_AI, false);
 
-    public Entity passenger = null;
+    public Entity rider = null;
 
-    public Entity vehicle = null;
+    public Entity riding = null;
 
     public FullChunk chunk;
 
@@ -202,12 +201,12 @@ public abstract class Entity extends Location implements Metadatable {
         if (this.namedTag.contains("ActiveEffects")) {
             ListTag<CompoundTag> effects = this.namedTag.getList("ActiveEffects", CompoundTag.class);
             for (CompoundTag e : effects.getAll()) {
-                Effect effect = Effect.getEffect(e.getByte("Id") & 0xff);
+                Effect effect = Effect.getEffect(e.getByte("Id"));
                 if (effect == null) {
                     continue;
                 }
 
-                effect.setAmplifier(e.getByte("Amplifier") & 0xff).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("showParticles"));
+                effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("showParticles"));
 
                 this.addEffect(effect);
             }
@@ -223,7 +222,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.scheduleUpdate();
     }
 
-    protected void init(FullChunk chunk, CompoundTag nbt) {
+    protected final void init(FullChunk chunk, CompoundTag nbt) {
         if ((chunk == null || chunk.getProvider() == null)) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
         }
@@ -294,6 +293,10 @@ public abstract class Entity extends Location implements Metadatable {
         this.server.getPluginManager().callEvent(new EntitySpawnEvent(this));
 
         this.scheduleUpdate();
+    }
+
+    public boolean hasCustomName() {
+        return !this.getNameTag().isEmpty();
     }
 
     public String getNameTag() {
@@ -373,14 +376,11 @@ public abstract class Entity extends Location implements Metadatable {
             return; //here add null means add nothing
         }
 
-        if (this.effects.containsKey(effect.getId())) {
-            Effect oldEffect = this.effects.get(effect.getId());
-            if (Math.abs(effect.getAmplifier()) <= (oldEffect.getAmplifier())
-                    || (Math.abs(effect.getAmplifier())) == Math.abs(oldEffect.getAmplifier())
-                    && effect.getDuration() < oldEffect.getDuration()) {
-                return;
-            }
-
+        Effect oldEffect = this.effects.getOrDefault(effect.getId(), null);
+        if (oldEffect != null) {
+            if (Math.abs(effect.getAmplifier()) < Math.abs(oldEffect.getAmplifier())) return;
+            if (Math.abs(effect.getAmplifier()) == Math.abs(oldEffect.getAmplifier())
+                    && effect.getDuration() < oldEffect.getDuration()) return;
             effect.add(this, true);
         } else {
             effect.add(this, false);
@@ -392,6 +392,16 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (effect.getId() == Effect.HEALTH_BOOST) {
             this.setHealth(this.getHealth() + 4 * (effect.getAmplifier() + 1));
+        }
+
+        Effect newEffect = this.effects.get(effect.getId());
+        if (oldEffect != null) {
+            Server.getInstance().getLogger().debug(getNameTag() + " replace effect " + oldEffect.getName() + "(ID:" + oldEffect.getId() + ")" +
+                    " * " + oldEffect.getAmplifier() + " -> " + newEffect.getAmplifier() + ", " +
+                    "Ticks: " + oldEffect.getDuration() + " -> " + newEffect.getDuration());
+        } else {
+            Server.getInstance().getLogger().debug(getNameTag() + " add effect " + newEffect.getName() + "(ID:" + newEffect.getId() + ")" +
+                    " * " + newEffect.getAmplifier() + ", Ticks: " + newEffect.getDuration());
         }
     }
 
@@ -531,8 +541,8 @@ public abstract class Entity extends Location implements Metadatable {
             ListTag<CompoundTag> list = new ListTag<>("ActiveEffects");
             for (Effect effect : this.effects.values()) {
                 list.add(new CompoundTag(String.valueOf(effect.getId()))
-                        .putByte("Id", (byte) effect.getId())
-                        .putByte("Amplifier", (byte) effect.getAmplifier())
+                        .putByte("Id", effect.getId())
+                        .putByte("Amplifier", effect.getAmplifier())
                         .putInt("Duration", effect.getDuration())
                         .putBoolean("Ambient", false)
                         .putBoolean("ShowParticles", effect.isVisible())
@@ -542,6 +552,14 @@ public abstract class Entity extends Location implements Metadatable {
             this.namedTag.putList(list);
         } else {
             this.namedTag.remove("ActiveEffects");
+        }
+    }
+
+    public String getName() {
+        if (this.hasCustomName()) {
+            return this.getNameTag();
+        } else {
+            return this.getSaveId();
         }
     }
 
@@ -767,7 +785,7 @@ public abstract class Entity extends Location implements Metadatable {
             }
 
             if (direction == 5) {
-                this.motionY = force;
+                this.motionZ = force;
 
                 return true;
             }

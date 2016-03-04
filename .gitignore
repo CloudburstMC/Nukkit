@@ -26,6 +26,12 @@ hs_err_pid*
 .idea
 .idea/*
 
+# Eclipse Platforms
+.classpath
+.project
+.settings
+.settings/*
+
 # Generated files
 banned-ips.json
 banned-players.json

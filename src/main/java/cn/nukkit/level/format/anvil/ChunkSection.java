@@ -17,7 +17,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     private byte[] skyLight;
 
     public ChunkSection(CompoundTag nbt) {
-        this.y = nbt.getByte("Y") & 0xff;
+        this.y = nbt.getByte("Y");
         this.blocks = nbt.getByteArray("Blocks");
         this.data = nbt.getByteArray("Data");
         this.blockLight = nbt.getByteArray("BlockLight");

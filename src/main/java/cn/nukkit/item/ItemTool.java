@@ -131,4 +131,22 @@ public abstract class ItemTool extends Item {
     public boolean isTool() {
         return (this.id == FLINT_STEEL || this.id == SHEARS || this.id == BOW || this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword());
     }
+
+    @Override
+    public int getEnchantAbility() {
+        switch (this.getTier()) {
+            case TIER_STONE:
+                return 5;
+            case TIER_WOODEN:
+                return 15;
+            case TIER_DIAMOND:
+                return 10;
+            case TIER_GOLD:
+                return 22;
+            case TIER_IRON:
+                return 14;
+        }
+
+        return 0;
+    }
 }

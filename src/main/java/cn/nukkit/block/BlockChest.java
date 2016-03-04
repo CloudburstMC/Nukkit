@@ -164,9 +164,6 @@ public class BlockChest extends BlockTransparent {
                 }
             }
 
-            if (player.isCreative()) {
-                return true;
-            }
             player.addWindow(chest.getInventory());
         }
 

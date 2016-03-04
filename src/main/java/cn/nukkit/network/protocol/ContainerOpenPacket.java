@@ -18,6 +18,7 @@ public class ContainerOpenPacket extends DataPacket {
     public int x;
     public int y;
     public int z;
+    public long entityId = -1;
 
     @Override
     public void decode() {
@@ -33,5 +34,6 @@ public class ContainerOpenPacket extends DataPacket {
         this.putInt(this.x);
         this.putInt(this.y);
         this.putInt(this.z);
+        this.putLong(this.entityId);
     }
 }

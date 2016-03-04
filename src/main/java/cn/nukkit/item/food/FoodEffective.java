@@ -37,7 +37,7 @@ public class FoodEffective extends Food {
         super.onEatenBy(player);
         List<Effect> toApply = new LinkedList<>();
         effects.forEach((effect, chance) -> {
-            if (chance >= Math.random()) toApply.add(effect);
+            if (chance >= Math.random()) toApply.add(effect.clone());
         });
         toApply.forEach(player::addEffect);
         return true;

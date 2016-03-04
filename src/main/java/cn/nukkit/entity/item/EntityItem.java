@@ -180,7 +180,7 @@ public class EntityItem extends Entity {
         this.namedTag.putCompound("Item", new CompoundTag()
                 .putShort("id", this.item.getId())
                 .putShort("Damage", this.item.getDamage())
-                .putByte("Count", (byte) this.item.getCount())
+                .putByte("Count", this.item.getCount())
         );
 
         this.namedTag.putShort("Health", this.getHealth());
@@ -193,6 +193,11 @@ public class EntityItem extends Entity {
         if (this.thrower != null) {
             this.namedTag.putString("Thrower", this.thrower);
         }
+    }
+
+    @Override
+    public String getName() {
+        return this.hasCustomName() ? this.getNameTag() : (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
     }
 
     public Item getItem() {

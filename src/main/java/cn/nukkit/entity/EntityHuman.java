@@ -116,12 +116,13 @@ public class EntityHuman extends EntityCreature implements InventoryHolder {
         if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
             ListTag<CompoundTag> inventoryList = this.namedTag.getList("Inventory", CompoundTag.class);
             for (CompoundTag item : inventoryList.getAll()) {
-                if ((item.getByte("Slot") & 0xff) >= 0 && (item.getByte("Slot") & 0xff) < 9) {
-                    this.inventory.setHotbarSlotIndex((item.getByte("Slot") & 0xff), item.contains("TrueSlot") ? (item.getByte("TrueSlot") & 0xff) : -1);
-                } else if ((item.getByte("Slot") & 0xff) >= 100 && (item.getByte("Slot") & 0xff) < 104) {
-                    this.inventory.setItem(this.inventory.getSize() + (item.getByte("Slot") & 0xff) - 100, NBTIO.getItemHelper(item));
+                int slot = item.getByte("Slot");
+                if (slot >= 0 && slot < 9) {
+                    this.inventory.setHotbarSlotIndex(slot, item.contains("TrueSlot") ? item.getByte("TrueSlot") : -1);
+                } else if (slot >= 100 && slot < 104) {
+                    this.inventory.setItem(this.inventory.getSize() + slot - 100, NBTIO.getItemHelper(item));
                 } else {
-                    this.inventory.setItem((item.getByte("Slot") & 0xff) - 9, NBTIO.getItemHelper(item));
+                    this.inventory.setItem(slot - 9, NBTIO.getItemHelper(item));
                 }
             }
         }
@@ -152,15 +153,15 @@ public class EntityHuman extends EntityCreature implements InventoryHolder {
                 if (hotbarSlot != -1) {
                     Item item = this.inventory.getItem(hotbarSlot);
                     if (item.getId() != 0 && item.getCount() > 0) {
-                        this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot).putByte("TrueSlot", (byte) hotbarSlot));
+                        this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot).putByte("TrueSlot", hotbarSlot));
                         continue;
                     }
                 }
                 this.namedTag.getList("Inventory", CompoundTag.class).add(new CompoundTag()
-                        .putByte("Count", (byte) 0)
+                        .putByte("Count", 0)
                         .putShort("Damage", 0)
-                        .putByte("Slot", (byte) slot)
-                        .putByte("TrueSlot", (byte) -1)
+                        .putByte("Slot", slot)
+                        .putByte("TrueSlot", -1)
                         .putShort("id", 0)
                 );
             }

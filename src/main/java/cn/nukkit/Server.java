@@ -8,8 +8,10 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.*;
+import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntitySnowball;
+import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
@@ -242,6 +244,7 @@ public class Server {
                 put("motd", "Nukkit Server For Minecraft: PE");
                 put("server-port", 19132);
                 put("server-ip", "0.0.0.0");
+                put("view-distance", 16);
                 put("white-list", false);
                 put("announce-player-achievements", true);
                 put("spawn-protection", 16);
@@ -413,10 +416,11 @@ public class Server {
 
             if (!this.loadLevel(defaultName)) {
                 long seed;
+                String seedString = String.valueOf(this.getProperty("level-seed", System.currentTimeMillis()));
                 try {
-                    seed = Long.valueOf((String) this.getProperty("level-seed", System.currentTimeMillis()));
+                    seed = Long.valueOf(seedString);
                 } catch (NumberFormatException e) {
-                    seed = System.currentTimeMillis();
+                    seed = seedString.hashCode();
                 }
                 this.generateLevel(defaultName, seed == 0 ? System.currentTimeMillis() : seed);
             }
@@ -952,7 +956,7 @@ public class Server {
 
         this.checkTickUpdates(this.tickCounter, tickTime);
 
-        for (Player player : this.players.values()) {
+        for (Player player : new ArrayList<>(this.players.values())) {
             player.checkNetwork();
         }
 
@@ -1100,7 +1104,17 @@ public class Server {
     }
 
     public int getViewDistance() {
-        return Math.max(56, (Integer) this.getConfig("chunk-sending.max-chunks", 256));
+        int distance = this.getPropertyInt("view-distance", 10);
+
+        if (distance < 10) {
+            distance = 10;
+        } else if (distance > 22) {
+            distance = 22;
+        }
+
+        this.setPropertyInt("view-distance", distance);
+
+        return distance;
     }
 
     public String getIp() {
@@ -1294,7 +1308,7 @@ public class Server {
     }
 
     public Map<String, Player> getOnlinePlayers() {
-        return players;
+        return new HashMap<>(players);
     }
 
     public void addRecipe(Recipe recipe) {
@@ -1808,6 +1822,7 @@ public class Server {
         Entity.registerEntity("Snowball", EntitySnowball.class);
         Entity.registerEntity("Painting", EntityPainting.class);
         //todo mobs
+        Entity.registerEntity("Creeper", EntityCreeper.class);
 
         Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);
         Entity.registerEntity("XpOrb", EntityXPOrb.class);
@@ -1817,6 +1832,9 @@ public class Server {
 
         Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
         // TODO: 2016/1/30 all finds of minecart
+        Entity.registerEntity("Boat", EntityBoat.class);
+
+        Entity.registerEntity("Lightning", EntityLightning.class);
     }
 
     private void registerBlockEntities() {

@@ -389,19 +389,10 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public void sendContents(Player[] players) {
         ContainerSetContentPacket pk = new ContainerSetContentPacket();
-        InventoryHolder holder = this.getHolder();
-        if (holder instanceof Player && ((Player) holder).isCreative()) {
-            pk.slots = new Item[Item.getCreativeItems().size()];
-            for (int i = 0; i < Item.getCreativeItems().size(); ++i) {
-                pk.slots[i] = Item.getCreativeItem(i);
-            }
-        } else {
-            pk.slots = new Item[this.getSize()];
-            for (int i = 0; i < this.getSize(); ++i) {
-                pk.slots[i] = this.getItem(i);
-            }
+        pk.slots = new Item[this.getSize()];
+        for (int i = 0; i < this.getSize(); ++i) {
+            pk.slots[i] = this.getItem(i);
         }
-
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
