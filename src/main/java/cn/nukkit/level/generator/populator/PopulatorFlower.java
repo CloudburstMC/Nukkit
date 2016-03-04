@@ -38,7 +38,7 @@ public class PopulatorFlower extends Populator {
     }
     
     public void addType(int a, int b) {
-    	int[] c = new int[1]; c[0] = a; c[1] = b;
+    	int[] c = new int[2]; c[0] = a; c[1] = b;
     	this.flowerTypes.add(c);
     }
   
@@ -66,7 +66,7 @@ public class PopulatorFlower extends Populator {
            
         
             if (y != -1 && this.canFlowerStay(x, y, z)) {
-            	 int[] type = getTypes().get(random.nextRange(0, endNum));
+            	 int[] type = this.flowerTypes.get(random.nextRange(0, endNum - 1));
             	 this.level.setBlockIdAt(x, y, z, type[0]);
                  this.level.setBlockDataAt(x, y, z, type[1]);
             }

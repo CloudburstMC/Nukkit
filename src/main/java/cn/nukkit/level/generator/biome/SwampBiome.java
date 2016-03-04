@@ -23,10 +23,11 @@ public class SwampBiome extends GrassyBiome {
         trees.setBaseAmount(2);
         
         PopulatorFlower flower = new PopulatorFlower();
-        flower.setBaseAmount(8);
+        flower.setBaseAmount(2);
         flower.addType(Block.RED_FLOWER, BlockFlower.TYPE_BLUE_ORCHID);
         
         this.addPopulator(trees); 
+        this.addPopulator(flower); 
         this.addPopulator(lilypad);
         
         this.setElevation(62, 63);
