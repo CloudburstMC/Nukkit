@@ -1,6 +1,9 @@
 package cn.nukkit.level.generator.biome;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockFlower;
 import cn.nukkit.block.BlockSapling;
+import cn.nukkit.level.generator.populator.PopulatorFlower;
 import cn.nukkit.level.generator.populator.PopulatorLilyPad;
 import cn.nukkit.level.generator.populator.PopulatorTree;
 
@@ -18,6 +21,10 @@ public class SwampBiome extends GrassyBiome {
         
         PopulatorTree trees = new PopulatorTree(BlockSapling.OAK);
         trees.setBaseAmount(2);
+        
+        PopulatorFlower flower = new PopulatorFlower();
+        flower.setBaseAmount(8);
+        flower.addType(Block.RED_FLOWER, BlockFlower.TYPE_BLUE_ORCHID);
         
         this.addPopulator(trees); 
         this.addPopulator(lilypad);
