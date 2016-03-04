@@ -685,7 +685,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendExperience(this.getExperience());
         this.sendExperienceLevel(this.getExperienceLevel());
 
-        this.teleport(pos,null);
+        this.teleport(pos, null);
 
         if (!this.isSpectator()) {
             this.spawnToAll();
@@ -730,7 +730,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int x = 0;
         int z = 0;
 
-        for (int i = 0; i < this.viewDistance * this.viewDistance; ++i) {
+        for (int i = 0; i < this.viewDistance * this.viewDistance * Math.PI; ++i) {
 
             int chunkX = x + centerX;
             int chunkZ = z + centerZ;
@@ -880,7 +880,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.sleeping = pos.clone();
-        this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level),null);
+        this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level), null);
 
         this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
@@ -1290,7 +1290,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (!(revert = ev.isCancelled())) { //Yes, this is intended
                     if (to.distanceSquared(ev.getTo()) > 0.01) { //If plugins modify the destination
-                        this.teleport(ev.getTo(),null);
+                        this.teleport(ev.getTo(), null);
                     } else {
                         this.level.addEntityMovement((int) this.x >> 4, (int) this.z >> 4, this.getId(), this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
                     }
@@ -2073,7 +2073,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 .putList(new ListTag<FloatTag>("Rotation")
                                         .add(new FloatTag("", (float) yaw))
                                         .add(new FloatTag("", (float) pitch)))
-                                .putInt("Potion", item.getDamage());
+                                .putShort("PotionId", item.getDamage());
                         double f = 1.5;
                         Entity bottle = new EntityPotion(this.chunk, nbt, this);
                         bottle.setMotion(bottle.getMotion().multiply(f));
@@ -2217,7 +2217,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
                         this.server.getPluginManager().callEvent(playerRespawnEvent);
 
-                        this.teleport(playerRespawnEvent.getRespawnPosition(),null);
+                        this.teleport(playerRespawnEvent.getRespawnPosition(), null);
 
                         this.setSprinting(false);
                         this.setSneaking(false);
@@ -3649,7 +3649,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean teleport(Vector3 pos) {
-        return teleport(pos,TeleportCause.PLUGIN);
+        return teleport(pos, TeleportCause.PLUGIN);
     }
 
     public boolean teleport(Vector3 pos, TeleportCause cause) {
@@ -3659,7 +3659,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (cause != null) {
             PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
             this.server.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return false;
+            if (event.isCancelled()) return false;
         }
         Position oldPos = this.getPosition();
         if (super.teleport(pos)) {
@@ -3671,7 +3671,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean teleport(Vector3 pos, double yaw, double pitch) {
-        return teleport(pos,yaw,pitch,TeleportCause.PLUGIN);
+        return teleport(pos, yaw, pitch, TeleportCause.PLUGIN);
     }
 
     public boolean teleport(Vector3 pos, double yaw, double pitch, TeleportCause cause) {
@@ -3693,7 +3693,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean teleportYaw(Vector3 pos, double yaw) {
-        return teleportYaw(pos,yaw,TeleportCause.PLUGIN);
+        return teleportYaw(pos, yaw, TeleportCause.PLUGIN);
     }
 
     public boolean teleportYaw(Vector3 pos, double yaw, TeleportCause cause) {
@@ -3717,7 +3717,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean teleportPitch(Vector3 pos, double pitch) {
-        return teleportPitch(pos,pitch,TeleportCause.PLUGIN);
+        return teleportPitch(pos, pitch, TeleportCause.PLUGIN);
     }
 
     public boolean teleportPitch(Vector3 pos, double pitch, TeleportCause cause) {
@@ -3740,7 +3740,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        return teleportYawAndPitch (pos,yaw,pitch,TeleportCause.PLUGIN);
+        return teleportYawAndPitch(pos, yaw, pitch, TeleportCause.PLUGIN);
     }
 
     public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch, TeleportCause cause) {

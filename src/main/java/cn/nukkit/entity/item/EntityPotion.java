@@ -2,7 +2,6 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.potion.PotionCollideEvent;
 import cn.nukkit.level.format.FullChunk;
@@ -23,6 +22,25 @@ public class EntityPotion extends EntityProjectile {
     public static final int NETWORK_ID = 86;
 
     public static final int DATA_POTION_ID = 16;
+
+    public int potionId;
+
+    public EntityPotion(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
+    public EntityPotion(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+        super(chunk, nbt, shootingEntity);
+    }
+
+    @Override
+    protected void initEntity() {
+        super.initEntity();
+
+        potionId = this.namedTag.getShort("PotionId");
+
+        this.dataProperties.putShort(DATA_POTION_ID, this.potionId);
+    }
 
     @Override
     public int getNetworkId() {
@@ -54,23 +72,6 @@ public class EntityPotion extends EntityProjectile {
         return 0.01f;
     }
 
-    public EntityPotion(FullChunk chunk, CompoundTag nbt) {
-        this(chunk, nbt, null);
-    }
-
-    public EntityPotion(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
-        super(chunk, nbt, shootingEntity);
-        setPotionType(getPotionType()); //in order to set data property.
-    }
-
-    public int getPotionType() {
-        return namedTag.getInt("Potion");
-    }
-
-    public void setPotionType(int potionType) {
-        namedTag.putInt("Potion", potionType);
-        this.setDataProperty(new ShortEntityData(DATA_POTION_ID, potionType));
-    }
 
     @Override
     public boolean onUpdate(int currentTick) {
@@ -91,7 +92,7 @@ public class EntityPotion extends EntityProjectile {
         if (this.isCollided) {
             this.kill();
 
-            Potion potion = Potion.getPotion(getPotionType());
+            Potion potion = Potion.getPotion(this.potionId);
 
             PotionCollideEvent event = new PotionCollideEvent(potion, this);
             this.server.getPluginManager().callEvent(event);

@@ -133,7 +133,7 @@ public abstract class Enchantment implements Cloneable {
             this.level = level;
             return;
         }
-        
+
         if (level > this.getMaxLevel()) {
             this.level = this.getMaxLevel();
         } else if (level < this.getMinLevel()) {

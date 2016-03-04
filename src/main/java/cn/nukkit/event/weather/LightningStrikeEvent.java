@@ -1,6 +1,5 @@
 package cn.nukkit.event.weather;
 
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
@@ -27,7 +26,9 @@ public class LightningStrikeEvent extends WeatherEvent implements Cancellable {
     /**
      * * Gets the bolt which is striking the earth.
      * * @return lightning entity
-     * */
-    public EntityLightningStrike getLightning() { return bolt; }
+     */
+    public EntityLightningStrike getLightning() {
+        return bolt;
+    }
 
 }

@@ -94,8 +94,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                         }
                         //TODO Pig
                         //TODO Villager
-                    }
-                    else if (e instanceof EntityItem) {
+                    } else if (e instanceof EntityItem) {
                         e.kill();
                     }
                 }
