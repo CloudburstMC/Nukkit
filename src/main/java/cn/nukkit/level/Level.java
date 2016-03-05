@@ -155,24 +155,33 @@ public class Level implements ChunkManager, Metadatable {
     private boolean clearChunksOnTick;
     private HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {{
         put(Block.GRASS, BlockGrass.class);
-        put(Block.SAPLING, BlockSapling.class);
-        put(Block.LEAVES, BlockLeaves.class);
-        put(Block.WHEAT_BLOCK, BlockWheat.class);
         put(Block.FARMLAND, BlockFarmland.class);
+        put(Block.MYCELIUM, BlockMycelium.class);
+
+        put(Block.SAPLING, BlockSapling.class);
+
+        put(Block.LEAVES, BlockLeaves.class);
+        put(Block.LEAVES2, BlockLeaves2.class);
+
         put(Block.SNOW_LAYER, BlockSnowLayer.class);
         put(Block.ICE, BlockIce.class);
+
         put(Block.CACTUS, BlockCactus.class);
+        put(Block.BEETROOT_BLOCK, BlockBeetroot.class);
+        put(Block.CARROT_BLOCK, BlockCarrot.class);
+        put(Block.POTATO_BLOCK, BlockPotato.class);
+        put(Block.MELON_STEM, BlockStemMelon.class);
+        put(Block.PUMPKIN_STEM, BlockStemPumpkin.class);
+        put(Block.WHEAT_BLOCK, BlockWheat.class);
         put(Block.SUGARCANE_BLOCK, BlockSugarcane.class);
         put(Block.RED_MUSHROOM, BlockMushroomRed.class);
         put(Block.BROWN_MUSHROOM, BlockMushroomBrown.class);
-        put(Block.PUMPKIN_STEM, BlockStemPumpkin.class);
-        put(Block.MELON_STEM, BlockStemMelon.class);
-        put(Block.MYCELIUM, BlockMycelium.class);
-        put(Block.CARROT_BLOCK, BlockCarrot.class);
-        put(Block.POTATO_BLOCK, BlockPotato.class);
-        put(Block.LEAVES2, BlockLeaves2.class);
-        put(Block.BEETROOT_BLOCK, BlockBeetroot.class);
+
+        put(Block.FIRE, BlockFire.class);
+        put(Block.GLOWING_REDSTONE_ORE, BlockOreRedstoneGlowing.class);
     }};
+
+    protected int updateLCG = (new Random()).nextInt();
 
     private int tickRate;
     public int tickRateTime = 0;
@@ -617,9 +626,11 @@ public class Level implements ChunkManager, Metadatable {
         if (this.isThundering()) {
             synchronized (this) {
                 for (FullChunk chunk : this.getChunks().values()) {
-                    if (rand.nextInt(100000) == 0) {  //1/100000
-                        int x = rand.nextInt(16);
-                        int z = rand.nextInt(16);
+                    if (rand.nextInt(100000) == 0) {
+                        this.updateLCG = this.updateLCG * 3 + 1013904223;
+                        int LCG = this.updateLCG >> 2;
+                        int x = LCG & 0x0f;
+                        int z = LCG >> 8 & 0x0f;
                         int y = chunk.getHighestBlockAt(x, z);
                         int bId = chunk.getBlockId(x, y, z);
                         if (bId != Block.TALL_GRASS && bId != Block.WATER) y += 1;
@@ -934,11 +945,12 @@ public class Level implements ChunkManager, Metadatable {
                 for (ChunkSection section : ((Chunk) chunk).getSections()) {
                     if (!(section instanceof EmptyChunkSection)) {
                         int Y = section.getY();
-                        int k = new java.util.Random().nextInt(0x7fffffff);
+                        this.updateLCG = this.updateLCG * 3 + 1013904223;
+                        int k = this.updateLCG >> 2;
                         for (int i = 0; i < 3; ++i, k >>= 10) {
                             int x = k & 0x0f;
-                            int y = (k >> 8) & 0x0f;
-                            int z = (k >> 16) & 0x0f;
+                            int y = k >> 8 & 0x0f;
+                            int z = k >> 16 & 0x0f;
 
                             blockId = section.getBlockId(x, y, z);
                             if (this.randomTickBlocks.containsKey(blockId)) {
@@ -960,11 +972,12 @@ public class Level implements ChunkManager, Metadatable {
             } else {
                 for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
                     blockTest = 0;
-                    int k = new java.util.Random().nextInt();
+                    this.updateLCG = this.updateLCG * 3 + 1013904223;
+                    int k = this.updateLCG >> 2;
                     for (int i = 0; i < 3; ++i, k >>= 10) {
                         int x = k & 0x0f;
-                        int y = (k >> 8) & 0x0f;
-                        int z = (k >> 16) & 0x0f;
+                        int y = k >> 8 & 0x0f;
+                        int z = k >> 16 & 0x0f;
 
                         blockTest |= blockId = chunk.getBlockId(x, y + (Y << 4), z);
                         if (this.randomTickBlocks.containsKey(blockId)) {
