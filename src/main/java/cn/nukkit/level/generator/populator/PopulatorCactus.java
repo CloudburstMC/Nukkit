@@ -41,7 +41,7 @@ public class PopulatorCactus extends Populator {
 
     private boolean canCactusStay(int x, int y, int z) {
         int b = this.level.getBlockIdAt(x, y, z);
-        return (b == Block.AIR && this.level.getBlockIdAt(x, y - 1, z) == Block.SAND);
+        return (b == Block.AIR && this.level.getBlockIdAt(x, y - 1, z) == Block.SAND && this.level.getBlockIdAt(x + 1, y, z) == Block.AIR && this.level.getBlockIdAt(x - 1, y, z) == Block.AIR && this.level.getBlockIdAt(x, y, z + 1) == Block.AIR && this.level.getBlockIdAt(x, y, z - 1) == Block.AIR);
     }
 
     private int getHighestWorkableBlock(int x, int z) {
