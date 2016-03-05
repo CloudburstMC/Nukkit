@@ -3,20 +3,19 @@ package cn.nukkit.block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.particle.SmokeParticle;
+import cn.nukkit.level.sound.FizzSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class BlockLiquid extends BlockTransparent {
-    public int adjacentSources = 0;
-    public boolean[] isOptimalFlowDirection = {false, false, false, false};
-    public int[] flowinCost = {0, 0, 0, 0};
-    private Vector3 temporalVector = null;
 
     protected BlockLiquid(int meta) {
         super(meta);
@@ -41,6 +40,21 @@ public abstract class BlockLiquid extends BlockTransparent {
     public boolean isSolid() {
         return false;
     }
+
+    @Override
+    public AxisAlignedBB getBoundingBox() {
+        return null;
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        return new int[0][];
+    }
+
+    public int adjacentSources = 0;
+    public boolean[] isOptimalFlowDirection = {false, false, false, false};
+    public int[] flowinCost = {0, 0, 0, 0};
+    private Vector3 temporalVector = null;
 
     public float getFluidHeightPercent() {
         float d = (float) this.meta;
@@ -256,15 +270,14 @@ public abstract class BlockLiquid extends BlockTransparent {
             if (bottomBlock.canBeFlowedInto() || bottomBlock instanceof BlockLiquid) {
                 if (this instanceof BlockLava && bottomBlock instanceof BlockWater) {
                     this.getLevel().setBlock(bottomBlock, new BlockStone(), true);
+                    this.triggerLavaMixEffects(bottomBlock);
                     return 0;
                 }
 
                 if (decay >= 8) {
-                    this.getLevel().setBlock(bottomBlock, this.getBlock(decay), true);
-                    this.getLevel().scheduleUpdate(bottomBlock, this.tickRate());
+                    this.flowIntoBlock(bottomBlock, decay);
                 } else {
-                    this.getLevel().setBlock(bottomBlock, this.getBlock(decay + 8), true);
-                    this.getLevel().scheduleUpdate(bottomBlock, this.tickRate());
+                    this.flowIntoBlock(bottomBlock, decay | 0x08);
                 }
             } else if (decay >= 0 && (decay == 0 || !bottomBlock.canBeFlowedInto())) {
                 boolean[] flags = this.getOptimalFlowDirections();
@@ -307,7 +320,11 @@ public abstract class BlockLiquid extends BlockTransparent {
     private void flowIntoBlock(Block block, int newFlowDecay) {
         if (block.canBeFlowedInto()) {
             if (block.getId() > 0) {
-                this.getLevel().useBreakOn(block);
+                if (this instanceof BlockLava) {
+                    this.triggerLavaMixEffects(block);
+                } else {
+                    this.getLevel().useBreakOn(block);
+                }
             }
 
             this.getLevel().setBlock(block, this.getBlock(newFlowDecay), true);
@@ -444,18 +461,21 @@ public abstract class BlockLiquid extends BlockTransparent {
                 } else if (this.getDamage() <= 4) {
                     this.getLevel().setBlock(this, new BlockCobblestone(), true);
                 }
+
+                this.triggerLavaMixEffects(this);
             }
         }
     }
 
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return null;
-    }
+    /**
+     * Creates fizzing sound and smoke. Used when lava flows over block or mixes with water.
+     */
+    protected void triggerLavaMixEffects(Vector3 pos) {
+        this.getLevel().addSound(new FizzSound(pos.add(0.5, 0.5, 0.5), 2.6F + (ThreadLocalRandom.current().nextFloat() - ThreadLocalRandom.current().nextFloat()) * 0.8F));
 
-    @Override
-    public int[][] getDrops(Item item) {
-        return new int[0][];
+        for (int i = 0; i < 8; ++i) {
+            this.getLevel().addParticle(new SmokeParticle(pos.add(Math.random(), 1.2, Math.random())));
+        }
     }
 
     public abstract BlockLiquid getBlock(int meta);
