@@ -12,6 +12,7 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_SHOOT = 1002;
     public static final int EVENT_SOUND_DOOR = 1003;
     public static final int EVENT_SOUND_FIZZ = 1004;
+    public static final int EVENT_SOUND_TNT = 1005;
 
     public static final int EVENT_SOUND_GHAST = 1007;
     public static final int EVENT_SOUND_GHAST_SHOOT = 1008;
