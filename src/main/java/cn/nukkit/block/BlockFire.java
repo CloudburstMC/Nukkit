@@ -120,20 +120,20 @@ public class BlockFire extends BlockFlowable {
                 } else if (!forever && !(this.getSide(Vector3.SIDE_DOWN).getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
                     this.getLevel().setBlock(this, new BlockAir(), true);
                 } else {
-                    int ticks = 0;
+                    int o = 0;
 
-                    //TODO: decrease the ticks if the rainfall values are high
+                    //TODO: decrease the o if the rainfall values are high
 
-                    this.tryToCatchBlockOnFire(this.getSide(SIDE_EAST), 300 + ticks, meta);
-                    this.tryToCatchBlockOnFire(this.getSide(SIDE_WEST), 300 + ticks, meta);
-                    this.tryToCatchBlockOnFire(this.getSide(SIDE_DOWN), 250 + ticks, meta);
-                    this.tryToCatchBlockOnFire(this.getSide(SIDE_UP), 250 + ticks, meta);
-                    this.tryToCatchBlockOnFire(this.getSide(SIDE_SOUTH), 300 + ticks, meta);
-                    this.tryToCatchBlockOnFire(this.getSide(SIDE_NORTH), 300 + ticks, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_EAST), 300 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_WEST), 300 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_DOWN), 250 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_UP), 250 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_SOUTH), 300 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_NORTH), 300 + o, meta);
 
-                    for (int x = (int) (this.x - 1); x <= this.x + 1; ++x) {
-                        for (int z = (int) (this.z - 1); z <= this.z + 1; ++z) {
-                            for (int y = (int) (this.y - 1); y <= this.y + 4; ++y) {
+                    for (int x = (int) (this.x - 1); x <= (int) (this.x + 1); ++x) {
+                        for (int z = (int) (this.z - 1); z <= (int) (this.z + 1); ++z) {
+                            for (int y = (int) (this.y - 1); y <= (int) (this.y + 4); ++y) {
                                 if (x != (int) this.x || y != (int) this.y || z != (int) this.z) {
                                     int k = 100;
 
@@ -155,8 +155,8 @@ public class BlockFire extends BlockFlowable {
                                                 damage = 15;
                                             }
 
-                                            this.getLevel().setBlock(this, new BlockFire(damage), true);
-                                            this.getLevel().scheduleUpdate(this, this.tickRate());
+                                            this.getLevel().setBlock(new Vector3(x, y, z), new BlockFire(damage), true);
+                                            this.getLevel().scheduleUpdate(new Vector3(x, y, z), this.tickRate());
                                         }
                                     }
                                 }
@@ -170,12 +170,12 @@ public class BlockFire extends BlockFlowable {
         return 0;
     }
 
-    private void tryToCatchBlockOnFire(Block block, int ticks, int damage) {
+    private void tryToCatchBlockOnFire(Block block, int bound, int damage) {
         int burnAbility = block.getBurnAbility();
 
         Random random = this.getLevel().rand;
 
-        if (random.nextInt(ticks) < burnAbility) {
+        if (random.nextInt(bound) < burnAbility) {
 
             if (random.nextInt(damage + 10) < 5) {
                 int meta = damage + random.nextInt(5) / 4;
@@ -185,7 +185,7 @@ public class BlockFire extends BlockFlowable {
                 }
 
                 this.getLevel().setBlock(block, new BlockFire(meta), true);
-                this.getLevel().scheduleUpdate(block, block.tickRate());
+                this.getLevel().scheduleUpdate(block, this.tickRate());
             } else {
                 this.getLevel().setBlock(block, new BlockAir(), true);
             }
@@ -197,24 +197,23 @@ public class BlockFire extends BlockFlowable {
     }
 
     private int getChanceOfNeighborsEncouragingFire(Block block) {
-        int c = 0;
-
         if (block.getId() != AIR) {
             return 0;
         } else {
-            int chance = Math.max(c, this.getSide(SIDE_EAST).getBurnChance());
-            chance = Math.max(chance, this.getSide(SIDE_WEST).getBurnChance());
-            chance = Math.max(chance, this.getSide(SIDE_DOWN).getBurnChance());
-            chance = Math.max(chance, this.getSide(SIDE_UP).getBurnChance());
-            chance = Math.max(chance, this.getSide(SIDE_SOUTH).getBurnChance());
-            chance = Math.max(chance, this.getSide(SIDE_NORTH).getBurnChance());
+            int chance = 0;
+            chance = Math.max(chance, block.getSide(SIDE_EAST).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_WEST).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_DOWN).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_UP).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_SOUTH).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_NORTH).getBurnChance());
             return chance;
         }
     }
 
     public boolean canNeighborBurn() {
         for (int face = 0; face <= 5; face++) {
-            if (this.getSide(face).getBurnAbility() > 0) {
+            if (this.getSide(face).getBurnChance() > 0) {
                 return true;
             }
         }
