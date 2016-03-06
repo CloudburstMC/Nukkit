@@ -11,6 +11,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 
+import java.util.Random;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -22,7 +24,7 @@ public class BlockFire extends BlockFlowable {
     }
 
     public BlockFire(int meta) {
-        super(0);
+        super(meta);
     }
 
     @Override
@@ -76,25 +78,177 @@ public class BlockFire extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
-            for (int s = 0; s <= 5; ++s) {
-                Block side = this.getSide(s);
-                if (side.getId() != AIR && !(side instanceof BlockLiquid)) {
-                    return 0;
-                }
+        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_RANDOM) {
+            if (!this.isBlockTopFacingSurfaceSolid(this.getSide(Vector3.SIDE_DOWN)) && !this.canNeighborBurn()) {
+                this.getLevel().setBlock(this, new BlockAir(), true);
             }
-            this.getLevel().setBlock(this, new BlockAir(), true);
 
             return Level.BLOCK_UPDATE_NORMAL;
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getSide(Vector3.SIDE_DOWN).getId() != NETHERRACK) {
-                this.getLevel().setBlock(this, new BlockAir(), true);
+        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+            boolean forever = this.getSide(Vector3.SIDE_DOWN).getId() == Block.NETHERRACK;
 
-                return Level.BLOCK_UPDATE_NORMAL;
+            Random random = this.getLevel().rand;
+
+            //TODO: END
+
+            if (!this.isBlockTopFacingSurfaceSolid(this.getSide(Vector3.SIDE_DOWN)) && !this.canNeighborBurn()) {
+                this.getLevel().setBlock(this, new BlockAir(), true);
+            }
+
+            if (!forever && this.getLevel().isRaining() &&
+                    (this.getLevel().canBlockSeeSky(this) ||
+                            this.getLevel().canBlockSeeSky(this.getSide(SIDE_EAST)) ||
+                            this.getLevel().canBlockSeeSky(this.getSide(SIDE_WEST)) ||
+                            this.getLevel().canBlockSeeSky(this.getSide(SIDE_SOUTH)) ||
+                            this.getLevel().canBlockSeeSky(this.getSide(SIDE_NORTH)))
+                    ) {
+                this.getLevel().setBlock(this, new BlockAir(), true);
+            } else {
+                int meta = this.getDamage();
+
+                if (meta < 15) {
+                    this.meta = meta + random.nextInt(3);
+                    this.getLevel().setBlock(this, this, true);
+                }
+
+                this.getLevel().scheduleUpdate(this, this.tickRate() + random.nextInt(10));
+
+                if (!forever && !this.canNeighborBurn()) {
+                    if (!this.isBlockTopFacingSurfaceSolid(this.getSide(Vector3.SIDE_DOWN)) || meta > 3) {
+                        this.getLevel().setBlock(this, new BlockAir(), true);
+                    }
+                } else if (!forever && !(this.getSide(Vector3.SIDE_DOWN).getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
+                    this.getLevel().setBlock(this, new BlockAir(), true);
+                } else {
+                    int ticks = 0;
+
+                    //TODO: decrease the ticks if the rainfall values are high
+
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_EAST), 300 + ticks, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_WEST), 300 + ticks, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_DOWN), 250 + ticks, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_UP), 250 + ticks, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_SOUTH), 300 + ticks, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_NORTH), 300 + ticks, meta);
+
+                    for (int x = (int) (this.x - 1); x <= this.x + 1; ++x) {
+                        for (int z = (int) (this.z - 1); z <= this.z + 1; ++z) {
+                            for (int y = (int) (this.y - 1); y <= this.y + 4; ++y) {
+                                if (x != (int) this.x || y != (int) this.y || z != (int) this.z) {
+                                    int k = 100;
+
+                                    if (y > this.y + 1) {
+                                        k += (y - (this.y + 1)) * 100;
+                                    }
+
+                                    int chance = this.getChanceOfNeighborsEncouragingFire(this.getLevel().getBlock(new Vector3(x, y, z)));
+
+                                    if (chance > 0) {
+                                        int t = (chance + 40 + this.getLevel().getServer().getDifficulty() * 7) / (meta + 30);
+
+                                        //TODO: decrease the t if the rainfall values are high
+
+                                        if (t > 0 && random.nextInt(k) <= t) {
+                                            int damage = meta + random.nextInt(5) / 4;
+
+                                            if (damage > 15) {
+                                                damage = 15;
+                                            }
+
+                                            this.getLevel().setBlock(this, new BlockFire(damage), true);
+                                            this.getLevel().scheduleUpdate(this, this.tickRate());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
         return 0;
+    }
+
+    private void tryToCatchBlockOnFire(Block block, int ticks, int damage) {
+        int burnAbility = block.getBurnAbility();
+
+        Random random = this.getLevel().rand;
+
+        if (random.nextInt(ticks) < burnAbility) {
+
+            if (random.nextInt(damage + 10) < 5) {
+                int meta = damage + random.nextInt(5) / 4;
+
+                if (meta > 15) {
+                    meta = 15;
+                }
+
+                this.getLevel().setBlock(block, new BlockFire(meta), true);
+                this.getLevel().scheduleUpdate(block, block.tickRate());
+            } else {
+                this.getLevel().setBlock(block, new BlockAir(), true);
+            }
+
+            if (block instanceof BlockTNT) {
+                ((BlockTNT) block).prime();
+            }
+        }
+    }
+
+    private int getChanceOfNeighborsEncouragingFire(Block block) {
+        int c = 0;
+
+        if (block.getId() != AIR) {
+            return 0;
+        } else {
+            int chance = Math.max(c, this.getSide(SIDE_EAST).getBurnChance());
+            chance = Math.max(chance, this.getSide(SIDE_WEST).getBurnChance());
+            chance = Math.max(chance, this.getSide(SIDE_DOWN).getBurnChance());
+            chance = Math.max(chance, this.getSide(SIDE_UP).getBurnChance());
+            chance = Math.max(chance, this.getSide(SIDE_SOUTH).getBurnChance());
+            chance = Math.max(chance, this.getSide(SIDE_NORTH).getBurnChance());
+            return chance;
+        }
+    }
+
+    public boolean canNeighborBurn() {
+        for (int face = 0; face <= 5; face++) {
+            if (this.getSide(face).getBurnAbility() > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isBlockTopFacingSurfaceSolid(Block block) {
+        if (block != null) {
+            if (block.isSolid()) {
+                return true;
+            } else {
+                if (block instanceof BlockStairs &&
+                        (block.getDamage() & 4) == 4) {
+
+                    return true;
+                } else if (block instanceof BlockSlab &&
+                        (block.getDamage() & 8) == 8) {
+
+                    return true;
+                } else if (block instanceof BlockSnowLayer &&
+                        (block.getDamage() & 7) == 7) {
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public int tickRate() {
+        return 30;
     }
 
     @Override

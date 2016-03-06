@@ -42,6 +42,16 @@ public class BlockSlabWood extends BlockSlab {
     }
 
     @Override
+    public int getBurnChance() {
+        return 5;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 20;
+    }
+
+    @Override
     protected AxisAlignedBB recalculateBoundingBox() {
         if ((this.meta & 0x08) > 0) {
             return new AxisAlignedBB(

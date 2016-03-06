@@ -43,6 +43,16 @@ public class BlockBookshelf extends BlockSolid {
     }
 
     @Override
+    public int getBurnChance() {
+        return 30;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 20;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
                 {Item.BOOK, 0, 3}

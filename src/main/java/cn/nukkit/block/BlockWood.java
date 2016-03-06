@@ -54,6 +54,16 @@ public class BlockWood extends BlockSolid {
     }
 
     @Override
+    public int getBurnChance() {
+        return 5;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 10;
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }

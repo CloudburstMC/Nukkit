@@ -1408,7 +1408,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             if (this.isOnFire() || this.lastUpdate % 10 == 0) {
                 if (this.getLevel().isRaining()) {
-                    if (this.getLevel().canSeeSky(this)) {
+                    if (this.getLevel().canBlockSeeSky(this)) {
                         this.extinguish();
                     }
                 }
@@ -2122,7 +2122,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                         Block block = target.getSide(((PlayerActionPacket) packet).face);
                         if (block.getId() == Block.FIRE) {
-                            this.level.setBlock(block, new BlockAir());
+                            this.level.setBlock(block, new BlockAir(), true);
                         }
                         this.lastBreak = System.currentTimeMillis();
                         break;

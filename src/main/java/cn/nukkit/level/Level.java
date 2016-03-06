@@ -190,7 +190,7 @@ public class Level implements ChunkManager, Metadatable {
     private Class<? extends Generator> generator;
     private Generator generatorInstance;
 
-    private java.util.Random rand = new java.util.Random();
+    public java.util.Random rand = new java.util.Random();
     private boolean raining = false;
     private int rainTime = 0;
     private boolean thundering = false;
@@ -2748,7 +2748,7 @@ public class Level implements ChunkManager, Metadatable {
         return dimension;
     }
 
-    public boolean canSeeSky(Vector3 pos) {
+    public boolean canBlockSeeSky(Vector3 pos) {
         return this.getHighestBlockAt(pos.getFloorX(), pos.getFloorZ()) < pos.getY();
     }
 

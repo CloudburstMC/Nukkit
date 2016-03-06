@@ -6,6 +6,7 @@ import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockNetherPortal;
 import cn.nukkit.block.BlockSolid;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.Vector3;
 
 /**
  * author: MagicDroidX
@@ -37,7 +38,16 @@ public class ItemFlintSteel extends ItemTool {
                 //todo construct the nether portal
                 level.setBlock(block, new BlockNetherPortal(), true);
             } else {
-                level.setBlock(block, new BlockFire(), true);
+                BlockFire fire = new BlockFire();
+                fire.x = block.x;
+                fire.y = block.y;
+                fire.z = block.z;
+                fire.level = level;
+                if (fire.isBlockTopFacingSurfaceSolid(fire.getSide(Vector3.SIDE_DOWN)) || fire.canNeighborBurn()) {
+                    level.setBlock(fire, fire, true);
+                    level.scheduleUpdate(fire, fire.tickRate() + level.rand.nextInt(10));
+                    return true;
+                }
             }
             return true;
         }

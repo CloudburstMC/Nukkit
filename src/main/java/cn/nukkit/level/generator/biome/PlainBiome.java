@@ -19,7 +19,7 @@ public class PlainBiome extends GrassyBiome {
         grass.setBaseAmount(40);
         PopulatorTallGrass tallGrass = new PopulatorTallGrass();
         tallGrass.setBaseAmount(7);
-        PopulatorFlower flower = new PopulatorFlower();      
+        PopulatorFlower flower = new PopulatorFlower();
         flower.setBaseAmount(10);
         flower.addType(Block.DANDELION, 0);
         flower.addType(Block.RED_FLOWER, BlockFlower.TYPE_POPPY);
@@ -29,7 +29,7 @@ public class PlainBiome extends GrassyBiome {
         flower.addType(Block.RED_FLOWER, BlockFlower.TYPE_WHITE_TULIP);
         flower.addType(Block.RED_FLOWER, BlockFlower.TYPE_PINK_TULIP);
         flower.addType(Block.RED_FLOWER, BlockFlower.TYPE_OXEYE_DAISY);
-        
+
 
         this.addPopulator(grass);
         this.addPopulator(tallGrass);

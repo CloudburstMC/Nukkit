@@ -578,6 +578,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return true;
     }
 
+    public int tickRate() {
+        return 10;
+    }
+
     public boolean onBreak(Item item) {
         return this.getLevel().setBlock(this, new BlockAir(), true, true);
     }
@@ -600,6 +604,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     public double getResistance() {
         return 1;
+    }
+
+    public int getBurnChance() {
+        return 0;
+    }
+
+    public int getBurnAbility() {
+        return 0;
     }
 
     public int getToolType() {

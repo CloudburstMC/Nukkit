@@ -182,6 +182,7 @@ public abstract class BlockLiquid extends BlockTransparent {
         vector.z += flow.z;
     }
 
+    @Override
     public int tickRate() {
         if (this instanceof BlockWater) {
             return 5;

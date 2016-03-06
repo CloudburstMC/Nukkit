@@ -48,6 +48,16 @@ public class BlockStairsWood extends BlockStairs {
     }
 
     @Override
+    public int getBurnChance() {
+        return 5;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 20;
+    }
+
+    @Override
     public BlockColor getColor() {
         return BlockColor.WOOD_BLOCK_COLOR;
     }
