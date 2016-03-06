@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.block.BlockBurnEvent;
 import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -187,7 +188,12 @@ public class BlockFire extends BlockFlowable {
                 this.getLevel().setBlock(block, new BlockFire(meta), true);
                 this.getLevel().scheduleUpdate(block, this.tickRate());
             } else {
-                this.getLevel().setBlock(block, new BlockAir(), true);
+                BlockBurnEvent ev = new BlockBurnEvent(block);
+                this.getLevel().getServer().getPluginManager().callEvent(ev);
+
+                if (!ev.isCancelled()) {
+                    this.getLevel().setBlock(block, new BlockAir(), true);
+                }
             }
 
             if (block instanceof BlockTNT) {
