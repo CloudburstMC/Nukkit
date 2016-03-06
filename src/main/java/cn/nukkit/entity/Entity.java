@@ -3,6 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.entity.*;
@@ -1080,6 +1081,15 @@ public abstract class Entity extends Location implements Metadatable {
 
     }
 
+    public boolean isInsideOfFire() {
+        for (Block block : this.getBlocksAround()) {
+            if (block instanceof BlockFire) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public boolean fastMove(double dx, double dy, double dz) {
         if (dx == 0 && dy == 0 && dz == 0) {

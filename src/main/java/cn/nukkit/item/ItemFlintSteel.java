@@ -44,8 +44,8 @@ public class ItemFlintSteel extends ItemTool {
                 fire.z = block.z;
                 fire.level = level;
 
-                level.setBlock(fire, fire, true);
                 if (fire.isBlockTopFacingSurfaceSolid(fire.getSide(Vector3.SIDE_DOWN)) || fire.canNeighborBurn()) {
+                    level.setBlock(fire, fire, true);
                     level.scheduleUpdate(fire, fire.tickRate() + level.rand.nextInt(10));
                     return true;
                 }
