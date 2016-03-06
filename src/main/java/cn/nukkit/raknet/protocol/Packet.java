@@ -36,7 +36,11 @@ public abstract class Packet implements Cloneable {
     }
 
     protected byte[] get() {
-        return Arrays.copyOfRange(this.buffer, this.offset, this.buffer.length - 1);
+        try {
+            return Arrays.copyOfRange(this.buffer, this.offset, this.buffer.length - 1);
+        } catch (Exception e) {
+            return new byte[0];
+        }
     }
 
     protected long getLong() {
