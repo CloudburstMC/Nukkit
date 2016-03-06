@@ -107,7 +107,7 @@ public class Normal extends Generator {
         this.noiseLand = new Simplex(this.random, 2F, 1F / 8F, 1F / 512F);
         this.noiseMountains = new Simplex(this.random, 4F, 1F, 1F / 500F);
         this.noiseBaseGround = new Simplex(this.random, 4F, 1F / 4F, 1F / 64F);
-        this.noiseRiver = new Simplex(this.random, 4F, 1F / 4F, 1F / 128F);
+        this.noiseRiver = new Simplex(this.random, 2F, 1F, 1F / 512F);
         this.random.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.random, Biome.getBiome(Biome.OCEAN));
         this.heightOffset = random.nextRange(-5, 3);
