@@ -843,7 +843,7 @@ public abstract class Entity extends Location implements Metadatable {
                     this.fireTicks = 0;
                 }
             } else {
-                if (!this.hasEffect(Effect.FIRE_RESISTANCE) && (this.fireTicks % 20) == 0 || tickDiff > 20) {
+                if (!this.hasEffect(Effect.FIRE_RESISTANCE) && ((this.fireTicks % 20) == 0 || tickDiff > 20)) {
                     EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FIRE_TICK, 1);
                     this.attack(ev);
                 }
