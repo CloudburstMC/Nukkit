@@ -230,7 +230,7 @@ public class CraftingManager {
         )).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 6)));
         
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 0, 1),
-        "PSP",
+                "PSP",
                 "PPP",
                 "   "
         )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.OAK, 5)));
