@@ -266,15 +266,15 @@ public class CraftingManager {
         )).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.CLOCK, 0, 1),
-                " G",
-                "GR",
-                " G"
+                " G ",
+                "GRG",
+                " G "
         )).setIngredient("G", Item.get(Item.GOLD_INGOT, 0, 1)).setIngredient("R", Item.get(Item.REDSTONE_DUST, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.COMPASS, 0, 1),
                 " I ",
                 "IRI",
-                " I"
+                " I "
         )).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 1)).setIngredient("R", Item.get(Item.REDSTONE_DUST, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.TNT, 0, 1),
@@ -299,9 +299,9 @@ public class CraftingManager {
         )).setIngredient("P", Item.get(Item.PAPER, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOOKSHELF, 0, 1),
-                "PBP",
-                "PBP",
-                "PBP"
+                "PPP",
+                "BBB",
+                "PPP"
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, null, 1)).setIngredient("B", Item.get(Item.BOOK, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.PAINTING, 0, 1),
