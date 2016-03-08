@@ -299,9 +299,9 @@ public class CraftingManager {
         )).setIngredient("P", Item.get(Item.PAPER, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOOKSHELF, 0, 1),
-                "PBP",
-                "PBP",
-                "PBP"
+                "PPP",
+                "BBB",
+                "PPP"
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, null, 1)).setIngredient("B", Item.get(Item.BOOK, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.PAINTING, 0, 1),
