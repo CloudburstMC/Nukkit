@@ -228,37 +228,37 @@ public class CraftingManager {
                 "II ",
                 "II "
         )).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 6)));
-        
+
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 0, 1),
                 "PSP",
                 "PPP",
                 "   "
         )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.OAK, 5)));
-        
+
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 1, 1),
                 "PSP",
                 "PPP",
                 "   "
         )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.SPRUCE, 5)));
-        
+
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 2, 1),
                 "PSP",
                 "PPP",
                 "   "
         )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.BIRCH, 5)));
-        
+
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 3, 1),
                 "PSP",
                 "PPP",
                 "   "
         )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.JUNGLE, 5)));
-        
+
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 4, 1),
                 "PSP",
                 "PPP",
                 "   "
         )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.ACACIA, 5)));
-        
+
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 5, 1),
                 "PSP",
                 "PPP",
@@ -408,7 +408,8 @@ public class CraftingManager {
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.GLASS_BOTTLE, 0, 3),
                 "I I",
-                " I "
+                " I ",
+                "   "
         )).setIngredient("I", Item.get(Item.GLASS, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BREWING_STAND, 0, 1),
