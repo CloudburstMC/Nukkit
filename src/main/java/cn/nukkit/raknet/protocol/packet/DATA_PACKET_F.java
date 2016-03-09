@@ -1,6 +1,7 @@
 package cn.nukkit.raknet.protocol.packet;
 
 import cn.nukkit.raknet.protocol.DataPacket;
+import cn.nukkit.raknet.protocol.Packet;
 
 /**
  * author: MagicDroidX
@@ -12,6 +13,16 @@ public class DATA_PACKET_F extends DataPacket {
     @Override
     public byte getID() {
         return ID;
+    }
+    
+    public static final class Factory implements Packet.PacketFactory
+    {
+
+		@Override
+		public Packet create() {
+			return new DATA_PACKET_F();
+		}
+    	
     }
 
 }

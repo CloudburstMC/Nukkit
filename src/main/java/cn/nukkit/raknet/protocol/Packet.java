@@ -173,4 +173,13 @@ public abstract class Packet implements Cloneable {
         packet.buffer = this.buffer.clone();
         return packet;
     }
+    
+    /**
+     * A factory to create new packet instances
+     */
+    public interface PacketFactory
+    {
+    	/** Creates the packet */
+    	Packet create();
+    }
 }
