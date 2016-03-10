@@ -33,7 +33,12 @@ public class WeatherCommand extends VanillaCommand {
         Level level;
         int seconds;
         if (args.length > 1) {
-            seconds = Integer.parseInt(args[1]);
+            try {
+                seconds = Integer.parseInt(args[1]);
+            } catch (Exception e) {
+                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                return true;
+            }
         } else {
             seconds = 600 * 20;
         }
