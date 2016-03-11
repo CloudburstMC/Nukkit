@@ -1758,8 +1758,13 @@ public class Level implements ChunkManager, Metadatable {
         if (!hand.place(item, block, target, face, fx, fy, fz, player)) {
             return null;
         }
-
-        item.setCount(item.getCount() - 1);
+        
+        if (player != null && !player.isCreative()) {
+            item.setCount(item.getCount() - 1);
+        } else {
+            item.setCount(item.getCount());
+        }
+        
         if (item.getCount() <= 0) {
             item = new ItemBlock(new BlockAir(), 0, 0);
         }
