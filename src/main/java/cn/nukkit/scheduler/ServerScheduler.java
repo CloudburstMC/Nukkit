@@ -118,7 +118,7 @@ public class ServerScheduler {
         		taskMap.remove(taskId).cancel();
         	}
         	catch (RuntimeException ex) {
-        		Server.getInstance().getLogger().critical("Exception while invoking onCancel " + ex.getMessage());
+        		Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
         	}
         }
     }
@@ -134,7 +134,7 @@ public class ServerScheduler {
             		taskHandler.cancel(); /* It will remove from task map automatic in next main heartbeat. */
             	}
             	catch (RuntimeException ex) {
-            		Server.getInstance().getLogger().critical("Exception while invoking onCancel " + ex.getMessage());
+            		Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
             	}
             }
         }
@@ -146,7 +146,7 @@ public class ServerScheduler {
         		entry.getValue().cancel();
         	}
         	catch (RuntimeException ex) {
-        		Server.getInstance().getLogger().critical("Exception while invoking onCancel " + ex.getMessage());
+        		Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
         	}
         }
         this.taskMap.clear();
@@ -211,7 +211,7 @@ public class ServerScheduler {
             		taskMap.remove(taskHandler.getTaskId()).cancel();
             	}
             	catch (RuntimeException ex) {
-            		Server.getInstance().getLogger().critical("Exception while invoking onCancel " + ex.getMessage());
+            		Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
             	}
             }
         }

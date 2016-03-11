@@ -765,7 +765,7 @@ public class Server {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+            	Server.getInstance().getLogger().logException(e);
             }
         }
     }
@@ -1383,7 +1383,7 @@ public class Server {
             }
         } catch (Exception e) {
             this.logger.critical(this.getLanguage().translateString("nukkit.data.saveError", new String[]{name, e.getMessage()}));
-            if (Nukkit.DEBUG > 1 && this.logger != null) {
+            if (Nukkit.DEBUG > 1) {
                 this.logger.logException(e);
             }
         }
@@ -1527,9 +1527,7 @@ public class Server {
             level = new Level(this, name, path, provider);
         } catch (Exception e) {
             this.logger.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
-            if (this.logger instanceof MainLogger) {
-                this.logger.logException(e);
-            }
+            this.logger.logException(e);
             return false;
         }
 
@@ -1590,9 +1588,7 @@ public class Server {
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
             this.logger.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
-            if (this.logger instanceof MainLogger) {
-                this.logger.logException(e);
-            }
+            this.logger.logException(e);
             return false;
         }
 

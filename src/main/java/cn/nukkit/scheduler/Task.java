@@ -60,7 +60,7 @@ public abstract class Task implements Runnable {
     		this.getHandler().cancel();
     	}
     	catch (RuntimeException ex) {
-    		Server.getInstance().getLogger().critical("Exception while invoking onCancel " + ex.getMessage());
+    		Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
     	}
     }
 

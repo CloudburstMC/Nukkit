@@ -1,5 +1,6 @@
 package cn.nukkit.plugin;
 
+import cn.nukkit.Server;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.Listener;
 
@@ -23,7 +24,7 @@ public class MethodEventExecutor implements EventExecutor {
         try {
             method.invoke(listener, event);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        	Server.getInstance().getLogger().logException(e);
         }
     }
 }

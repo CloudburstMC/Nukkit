@@ -98,7 +98,7 @@ public class TaskHandler {
 	        getTask().run();
     	}
     	catch (RuntimeException ex) {
-    		Server.getInstance().getLogger().critical("Exception while invoking run " + ex.getMessage());
+    		Server.getInstance().getLogger().critical("Exception while invoking run", ex);
     	}
     }
 

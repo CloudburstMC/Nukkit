@@ -33,7 +33,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
             reader.setPrompt("> ");
             instance = this;
         } catch (IOException e) {
-            Server.getInstance().getLogger().error("Unable to start Console Reader");
+            Server.getInstance().getLogger().error("Unable to start Console Reader", e);
         }
         this.setName("Console");
     }
@@ -74,7 +74,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
                 try {
                     sleep(40);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                	Server.getInstance().getLogger().logException(e);
                 }
             }
             lastLine = System.currentTimeMillis();

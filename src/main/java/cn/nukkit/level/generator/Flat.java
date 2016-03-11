@@ -160,7 +160,7 @@ public class Flat extends Generator {
             }
 
         } catch (Exception e) {
-            Server.getInstance().getLogger().error("error while parsing the preset");
+            Server.getInstance().getLogger().error("error while parsing the preset", e);
             throw new RuntimeException(e);
         }
     }
