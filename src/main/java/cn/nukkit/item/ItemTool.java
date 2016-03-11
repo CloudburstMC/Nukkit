@@ -75,9 +75,6 @@ public abstract class ItemTool extends Item {
         } else {
             this.meta++;
         }
-        if (meta >= this.getMaxDurability()) {
-            this.count--;
-        }
         return true;
     }
 
