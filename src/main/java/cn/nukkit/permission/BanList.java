@@ -115,7 +115,7 @@ public class BanList {
                 }
             }
         } catch (IOException e) {
-            MainLogger.getLogger().error("Could not load ban list: " + e.getMessage());
+            MainLogger.getLogger().error("Could not load ban list: ", e);
         }
 
     }
@@ -135,7 +135,7 @@ public class BanList {
             }
             Utils.writeFile(this.file, new ByteArrayInputStream(new GsonBuilder().setPrettyPrinting().create().toJson(list).getBytes(StandardCharsets.UTF_8)));
         } catch (IOException e) {
-            MainLogger.getLogger().error("Could not save ban list: " + e.getMessage());
+            MainLogger.getLogger().error("Could not save ban list ", e);
         }
     }
 }

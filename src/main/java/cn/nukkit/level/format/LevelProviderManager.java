@@ -16,7 +16,7 @@ public abstract class LevelProviderManager {
         try {
             providers.put((String) clazz.getMethod("getProviderName").invoke(null), clazz);
         } catch (Exception e) {
-            e.printStackTrace();
+        	Server.getInstance().getLogger().logException(e);
         }
     }
 
@@ -27,7 +27,7 @@ public abstract class LevelProviderManager {
                     return provider;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+            	Server.getInstance().getLogger().logException(e);
             }
         }
         return null;

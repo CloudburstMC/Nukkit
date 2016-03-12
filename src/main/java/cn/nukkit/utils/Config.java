@@ -103,7 +103,7 @@ public class Config {
             try {
                 this.file.createNewFile();
             } catch (IOException e) {
-                MainLogger.getLogger().error("Could not create Config " + this.file.toString() + ": " + e.getMessage());
+                MainLogger.getLogger().error("Could not create Config " + this.file.toString(), e);
             }
             this.config = defaultMap;
             this.save();
@@ -205,7 +205,7 @@ public class Config {
                 try {
                     Utils.writeFile(this.file, content);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                	Server.getInstance().getLogger().logException(e);
                 }
             }
             return true;
