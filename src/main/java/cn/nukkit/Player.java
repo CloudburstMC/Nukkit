@@ -1984,14 +1984,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             item.setCount(item.getCount() - 1);
                             this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
                         }
-
-                        ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(snowball);
-                        this.server.getPluginManager().callEvent(projectileLaunchEvent);
-                        if (projectileLaunchEvent.isCancelled()) {
-                            snowball.kill();
+                        if (snowball instanceof EntityProjectile) {
+                            ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(snowball);
+                            this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                            if (projectileLaunchEvent.isCancelled()) {
+                                snowball.kill();
+                            } else {
+                                snowball.spawnToAll();
+                                this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                            }
                         } else {
                             snowball.spawnToAll();
-                            this.level.addSound(new LaunchSound(this), this.getViewers().values());
                         }
                     } else if (item.getId() == Item.EGG) {
                         CompoundTag nbt = new CompoundTag()
@@ -2018,14 +2021,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             item.setCount(item.getCount() - 1);
                             this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
                         }
-
-                        ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(egg);
-                        this.server.getPluginManager().callEvent(projectileLaunchEvent);
-                        if (projectileLaunchEvent.isCancelled()) {
-                            egg.kill();
+                        if (egg instanceof EntityProjectile) {
+                            ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(egg);
+                            this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                            if (projectileLaunchEvent.isCancelled()) {
+                                egg.kill();
+                            } else {
+                                egg.spawnToAll();
+                                this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                            }
                         } else {
                             egg.spawnToAll();
-                            this.level.addSound(new LaunchSound(this), this.getViewers().values());
                         }
                     } else if (item.getId() == Item.EXPERIENCE_BOTTLE) {
                         CompoundTag nbt = new CompoundTag()
