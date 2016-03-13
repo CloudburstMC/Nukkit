@@ -676,6 +676,9 @@ public class Server {
             if (!this.isRunning) {
                 //todo sendUsage
             }
+            
+            // clean shutdown of console thread asap
+            this.console.shutdown();
 
             this.hasStopped = true;
 

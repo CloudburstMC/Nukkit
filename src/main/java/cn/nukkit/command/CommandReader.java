@@ -20,6 +20,8 @@ public class CommandReader extends Thread implements InterruptibleThread {
 
     private CursorBuffer stashed;
 
+    private boolean running = true;
+
     public static CommandReader getInstance() {
         return instance;
     }
@@ -50,14 +52,14 @@ public class CommandReader extends Thread implements InterruptibleThread {
 
     public void run() {
         Long lastLine = System.currentTimeMillis();
-        while (true) {
+        while (this.running) {
             if (Server.getInstance().getConsoleSender() == null || Server.getInstance().getPluginManager() == null) {
                 continue;
             }
 
             String line = readLine();
 
-            if (!line.trim().equals("")) {
+            if (line != null && !line.trim().equals("")) {
                 //todo 将即时执行指令改为每tick执行
                 try {
                     ServerCommandEvent event = new ServerCommandEvent(Server.getInstance().getConsoleSender(), line);
@@ -79,6 +81,11 @@ public class CommandReader extends Thread implements InterruptibleThread {
             }
             lastLine = System.currentTimeMillis();
         }
+    }
+
+    public void shutdown()
+    {
+    	this.running = false;
     }
 
     public void stashLine() {
