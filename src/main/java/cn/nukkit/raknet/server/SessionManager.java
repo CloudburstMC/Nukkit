@@ -84,16 +84,9 @@ public class SessionManager {
                 }
                 catch (Exception e) {
                     if (currentSource != "") {
-                        this.getLogger().notice("Error while processing data packet from " + currentSource);
-                        //todo: printStackTrace? Or logException?
-                        e.printStackTrace();
                         this.blockAddress(currentSource);
                     }
-                    else {
-                        this.getLogger().notice("Error while processing data packet.");
-                        //todo: printStackTrace? Or logException?
-                        e.printStackTrace();
-                    }
+                    // else ignore
                 }
             }
             while (this.receiveStream()) ;
