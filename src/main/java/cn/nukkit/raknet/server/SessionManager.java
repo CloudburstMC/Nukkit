@@ -46,6 +46,8 @@ public class SessionManager {
 
     public long serverId;
 
+    protected String currentSource = "";
+
     public SessionManager(RakNetServer server, UDPServerSocket socket) throws Exception {
         this.server = server;
         this.socket = socket;
@@ -73,8 +75,26 @@ public class SessionManager {
         while (!this.shutdown) {
             long start = System.currentTimeMillis();
             int max = 5000;
-            while (max > 0 && this.receivePacket()) {
-                --max;
+            while (max > 0) {
+                try {
+                    if(!this.receivePacket()) {
+                        break;
+                    }
+                    --max;
+                }
+                catch (Exception e) {
+                    if (currentSource != "") {
+                        this.getLogger().notice("Error while processing data packet from " + currentSource);
+                        //todo: printStackTrace? Or logException?
+                        e.printStackTrace();
+                        this.blockAddress(currentSource);
+                    }
+                    else {
+                        this.getLogger().notice("Error while processing data packet.");
+                        //todo: printStackTrace? Or logException?
+                        e.printStackTrace();
+                    }
+                }
             }
             while (this.receiveStream()) ;
 
@@ -134,6 +154,7 @@ public class SessionManager {
             int len = datagramPacket.getLength();
             byte[] buffer = datagramPacket.getData();
             String source = datagramPacket.getAddress().getHostAddress();
+            currentSource = source; //in order to block address
             int port = datagramPacket.getPort();
             if (len > 0) {
                 this.receiveBytes += len;
