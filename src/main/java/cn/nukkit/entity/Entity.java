@@ -849,7 +849,8 @@ public abstract class Entity extends Location implements Metadatable {
                 }
                 this.fireTicks -= tickDiff;
             }
-            if (this.fireTicks <= 0 || this.server.getPlayer(this.getName()) != null && this.getServer().getPlayer(this.getName()).getGamemode() == 1) {
+            Player player = this.server.getPlayer(this.getName());
+            if (this.fireTicks <= 0 || player != null && player.getGamemode() == 1) {
                 this.extinguish();
             } else {
                 this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, true);
