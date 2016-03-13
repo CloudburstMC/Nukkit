@@ -211,7 +211,7 @@ public class CraftingManager {
                 "   "
         )).setIngredient("G", Item.get(Item.GLASS, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.LADDER, 0, 2),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.LADDER, 0, 3),
                 "S S",
                 "SSS",
                 "S S"
@@ -389,19 +389,20 @@ public class CraftingManager {
                 "SSS"
         )).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("W", Item.get(Item.WOOL, null, 1)));
 
-        this.registerRecipe((new ShapedRecipe(Item.get(Item.PAPER, 0, 3),
-                "SS",
-                "S"
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.PAPER, 0, 3),
+                "   ",
+                "SSS",
+                "   "
         )).setIngredient("S", Item.get(Item.SUGARCANE, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.SIGN, 0, 3),
                 "PPP",
                 "PPP",
-                " S"
+                " S "
         )).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANKS, null, 1))); //TODO: check if it gives one sign or three
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.IRON_BARS, 0, 16),
-                "III",
+                "   ",
                 "III",
                 "III"
         )).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 1)));
@@ -618,15 +619,70 @@ public class CraftingManager {
     }
 
     protected void registerFood() {
-        //TODO: check COOKIES
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.MELON_SEEDS, 0, 1))).addIngredient(Item.get(Item.MELON_SLICE, 0, 1)));
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.PUMPKIN_SEEDS, 0, 4))).addIngredient(Item.get(Item.PUMPKIN, 0, 1)));
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.PUMPKIN_PIE, 0, 1))).addIngredient(Item.get(Item.PUMPKIN, 0, 1)).addIngredient(Item.get(Item.EGG, 0, 1)).addIngredient(Item.get(Item.SUGAR, 0, 1)));
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.MUSHROOM_STEW, 0, 1))).addIngredient(Item.get(Item.BOWL, 0, 1)).addIngredient(Item.get(Item.BROWN_MUSHROOM, 0, 1)).addIngredient(Item.get(Item.RED_MUSHROOM, 0, 1)));
-        this.registerRecipe((new BigShapelessRecipe(Item.get(Item.MELON_BLOCK, 0, 1))).addIngredient(Item.get(Item.MELON_SLICE, 0, 9)));
-        this.registerRecipe((new BigShapelessRecipe(Item.get(Item.BEETROOT_SOUP, 0, 1))).addIngredient(Item.get(Item.BEETROOT, 0, 4)).addIngredient(Item.get(Item.BOWL, 0, 1)));
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.BREAD, 0, 1))).addIngredient(Item.get(Item.WHEAT, 0, 3)));
-        this.registerRecipe((new BigShapelessRecipe(Item.get(Item.CAKE, 0, 1))).addIngredient(Item.get(Item.WHEAT, 0, 3)).addIngredient(Item.get(Item.BUCKET, 1, 3)).addIngredient(Item.get(Item.EGG, 0, 1)).addIngredient(Item.get(Item.SUGAR, 0, 2)));
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.MELON_BLOCK, 0, 1),
+                "XXX",
+                "XXX",
+                "XXX"
+        )).setIngredient("X", Item.get(Item.MELON_SLICE, 0, 9)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.BEETROOT_SOUP, 0, 1),
+                "XXX",
+                "XXX",
+                " Y "
+        )).setIngredient("X", Item.get(Item.BEETROOT, 0, 6)).setIngredient("Y", Item.get(Item.BOWL, 0, 1)));
+
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.BREAD, 0, 1),
+                "   ",
+                "   ",
+                "XXX"
+        )).setIngredient("X", Item.get(Item.WHEAT, 0, 3)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.CAKE, 0, 1),
+                "XXX",
+                "YZY",
+                "AAA"
+        )).setIngredient("X", Item.get(Item.BUCKET, 1, 3)).setIngredient("Y", Item.get(Item.SUGAR, 0, 2)).setIngredient("Z", Item.get(Item.EGG, 0, 1)).setIngredient("A", Item.get(Item.WHEAT, 0, 3)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.COOKIE, 0, 1),
+                "   ",
+                "   ",
+                "XYX"
+        )).setIngredient("X", Item.get(Item.WHEAT, 0, 2)).setIngredient("Y", Item.get(Item.DYE, 3, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GOLDEN_APPLE, 0, 1),
+                "XXX",
+                "XYX",
+                "XXX"
+        )).setIngredient("X", Item.get(Item.GOLD_NUGGET, 0, 9)).setIngredient("Y", Item.get(Item.APPLE, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GOLDEN_APPLE, 1, 1),
+                "XXX",
+                "XYX",
+                "XXX"
+        )).setIngredient("X", Item.get(Item.GOLD_BLOCK, 0, 9)).setIngredient("Y", Item.get(Item.APPLE, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.MUSHROOM_STEW, 0, 1),
+                " X ",
+                " Y ",
+                " Z "
+        )).setIngredient("X", Item.get(Item.RED_MUSHROOM, 0, 1)).setIngredient("Y", Item.get(Item.BROWN_MUSHROOM, 0, 1)).setIngredient("Z", Item.get(Item.BOWL, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.PUMPKIN_PIE, 0, 1),
+                "   ",
+                "XY ",
+                "Z  "
+        )).setIngredient("X", Item.get(Item.PUMPKIN, 0, 1)).setIngredient("Y", Item.get(Item.EGG, 0, 1)).setIngredient("Z", Item.get(Item.SUGAR, 0, 1)));
+
+        this.registerRecipe((new ShapedRecipe(Item.get(Item.MELON_SEEDS, 0, 1),
+                "X ",
+                "  "
+        )).setIngredient("X", Item.get(Item.MELON_SLICE, 0, 1)));
+
+        this.registerRecipe((new ShapedRecipe(Item.get(Item.PUMPKIN_SEEDS, 0, 4),
+                "X ",
+                "  "
+        )).setIngredient("X", Item.get(Item.PUMPKIN, 0, 1)));
     }
 
     protected void registerArmor() {
@@ -749,7 +805,7 @@ public class CraftingManager {
         int[] items = new int[]{Item.WOODEN_DOOR, Item.SPRUCE_DOOR, Item.BIRCH_DOOR, Item.JUNGLE_DOOR, Item.ACACIA_DOOR, Item.DARK_OAK_DOOR};
 
         for (int i = 0; i < 6; i++) {
-            this.registerRecipe((new BigShapedRecipe(Item.get(items[i], 0, 1),
+            this.registerRecipe((new BigShapedRecipe(Item.get(items[i], 0, 3),
                     "XX ",
                     "XX ",
                     "XX "
