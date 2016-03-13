@@ -211,7 +211,7 @@ public class CraftingManager {
                 "   "
         )).setIngredient("G", Item.get(Item.GLASS, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.LADDER, 0, 2),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.LADDER, 0, 3),
                 "S S",
                 "SSS",
                 "S S"
@@ -805,7 +805,7 @@ public class CraftingManager {
         int[] items = new int[]{Item.WOODEN_DOOR, Item.SPRUCE_DOOR, Item.BIRCH_DOOR, Item.JUNGLE_DOOR, Item.ACACIA_DOOR, Item.DARK_OAK_DOOR};
 
         for (int i = 0; i < 6; i++) {
-            this.registerRecipe((new BigShapedRecipe(Item.get(items[i], 0, 1),
+            this.registerRecipe((new BigShapedRecipe(Item.get(items[i], 0, 3),
                     "XX ",
                     "XX ",
                     "XX "
