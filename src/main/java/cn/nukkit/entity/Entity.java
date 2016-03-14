@@ -849,7 +849,6 @@ public abstract class Entity extends Location implements Metadatable {
                 }
                 this.fireTicks -= tickDiff;
             }
-
             if (this.fireTicks <= 0) {
                 this.extinguish();
             } else {
