@@ -1407,7 +1407,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.entityBaseTick(tickDiff);
 
             if (this.isOnFire() && this.lastUpdate % 10 == 0) {
-                if (this.getLevel().isRaining()) {
+                if (this.isCreative() && !this.isInsideOfFire()) {
+                    this.extinguish();
+                } else if (this.getLevel().isRaining()) {
                     if (this.getLevel().canBlockSeeSky(this)) {
                         this.extinguish();
                     }
