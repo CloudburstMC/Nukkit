@@ -68,7 +68,7 @@ public class BlockFire extends BlockFlowable {
 
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 8);
         Server.getInstance().getPluginManager().callEvent(ev);
-        if (!ev.isCancelled() && entity instanceof Player && ((Player) entity).isCreative()) {
+        if (!ev.isCancelled() && entity instanceof Player && !((Player) entity).isCreative()) {
             entity.setOnFire(ev.getDuration());
         }
     }
