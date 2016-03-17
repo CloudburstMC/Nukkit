@@ -89,6 +89,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected SourceInterface interfaz;
 
+    public boolean playedBefore;
     public boolean spawned = false;
     public boolean loggedIn = false;
     public int gamemode;
@@ -239,7 +240,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean hasPlayedBefore() {
-        return this.namedTag != null;
+        return this.playedBefore;
     }
 
     public void setAllowFlight(boolean value) {
@@ -1546,6 +1547,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             return;
         }
+
+        this.playedBefore = (nbt.getLong("lastPlayed") - nbt.getLong("firstPlayed")) > 1;
 
         nbt.putString("NameTag", this.username);
 
