@@ -5,7 +5,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TextContainer;
 
-public class PlayerQuitEvent extends PlayerEvent implements Cancellable {
+public class PlayerQuitEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {
