@@ -59,9 +59,9 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
+    public void attack(float damage, EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(source);
+            super.attack(damage, source);
         }
     }
 
