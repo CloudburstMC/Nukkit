@@ -100,13 +100,13 @@ public class EntityItem extends Entity {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
+    public void attack(float damage, EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID ||
                 source.getCause() == EntityDamageEvent.CAUSE_FIRE_TICK ||
                 source.getCause() == EntityDamageEvent.CAUSE_ENTITY_EXPLOSION ||
                 source.getCause() == EntityDamageEvent.CAUSE_BLOCK_EXPLOSION
                 ) {
-            super.attack(source);
+            super.attack(damage, source);
         }
     }
 
