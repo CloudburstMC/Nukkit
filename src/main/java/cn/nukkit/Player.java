@@ -2474,7 +2474,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         entityDamageByEntityEvent.setCancelled();
                     }
 
-                    targetEntity.attack(entityDamageByEntityEvent.getFinalDamage());
+                    targetEntity.attack(entityDamageByEntityEvent.getFinalDamage(), entityDamageByEntityEvent);
 
                     if (ev.isCancelled()) {
                         if (item.isTool() && this.isSurvival()) {
@@ -3510,7 +3510,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
+    public void attack(float damage, EntityDamageEvent source) {
         if (!this.isAlive()) {
             return;
         }
@@ -3551,7 +3551,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (add) source.setDamage((float) (source.getDamage() * 1.5));
         }
 
-        super.attack(source);
+        super.attack(damage, source);
 
         if (!source.isCancelled() && this.getLastDamageCause() == source && this.spawned) {
             this.getFoodData().updateFoodExpLevel(0.3);
