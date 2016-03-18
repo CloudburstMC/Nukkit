@@ -90,9 +90,9 @@ public class EntityFallingBlock extends Entity {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
+    public void attack(float damage, EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(source);
+            super.attack(damage, source);
         }
     }
 
