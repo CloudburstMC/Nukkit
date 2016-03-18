@@ -142,36 +142,14 @@ public class Redstone {
                     updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, block.getSide(Vector3.SIDE_WEST)));
                 }
             }
-            block = location.getSide(Vector3.SIDE_NORTH);
-            if (!(block instanceof BlockSolid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_SOUTH);
-            if (!(block instanceof BlockSolid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_EAST);
-            if (!(block instanceof BlockSolid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_WEST);
-            if (!(block instanceof BlockSolid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
+            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST, Vector3.SIDE_SOUTH}) {
+                block = location.getSide(side);
+                if (!(block instanceof BlockSolid)) {
+                    Block blockDown;
+                    blockDown = block.getSide(Vector3.SIDE_DOWN);
+                    if (blockDown instanceof BlockRedstoneWire) {
+                        updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
+                    }
                 }
             }
         }
