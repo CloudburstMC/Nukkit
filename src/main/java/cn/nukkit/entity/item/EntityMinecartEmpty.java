@@ -83,8 +83,8 @@ public class EntityMinecartEmpty extends EntityVehicle {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        super.attack(source);
+    public void attack(float damage, EntityDamageEvent source) {
+        super.attack(damage, source);
         if (source.isCancelled()) return;
 
         EntityEventPacket pk = new EntityEventPacket();
