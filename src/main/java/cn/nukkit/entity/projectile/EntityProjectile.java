@@ -40,9 +40,9 @@ public abstract class EntityProjectile extends Entity {
         }
     }
 
-    public void attack(EntityDamageEvent source) {
+    public void attack(float damage, EntityDamageEvent source) {
         if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(source);
+            super.attack(damage, source);
         }
     }
 
@@ -143,7 +143,7 @@ public abstract class EntityProjectile extends Entity {
                         ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
                     }
 
-                    movingObjectPosition.entityHit.attack(ev);
+                    movingObjectPosition.entityHit.attack(ev.getFinalDamage(), ev);
 
                     this.hadCollision = true;
 
