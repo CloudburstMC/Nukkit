@@ -59,7 +59,8 @@ public class BlockCactus extends BlockTransparent {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.CAUSE_CONTACT, 1));
+        EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.CAUSE_CONTACT, 1);
+        entity.attack(ev.getFinalDamage(), ev);
     }
 
     @Override
