@@ -78,14 +78,14 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
+    public void attack(float damage, EntityDamageEvent source) {
         if (source instanceof EntityDamageByEntityEvent) {
             Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
             if (damager instanceof Player && ((Player) damager).isCreative()) {
                 source.setDamage(this.health);
             }
         }
-        super.attack(source);
+        super.attack(damage, source);
         if (source.isCancelled()) return;
 
         //TODO: HURT ANIMATION
