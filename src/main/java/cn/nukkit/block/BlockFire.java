@@ -64,7 +64,7 @@ public class BlockFire extends BlockFlowable {
     public void onEntityCollide(Entity entity) {
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
             EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.CAUSE_FIRE, 1);
-            entity.attack(ev);
+            entity.attack(ev.getFinalDamage(), ev);
         }
 
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 8);
