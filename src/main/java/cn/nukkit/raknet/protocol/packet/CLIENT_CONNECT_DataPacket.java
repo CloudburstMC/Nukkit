@@ -33,4 +33,14 @@ public class CLIENT_CONNECT_DataPacket extends Packet {
         this.sendPing = this.getLong();
         this.useSecurity = this.getByte() > 0;
     }
+    
+    public static final class Factory implements Packet.PacketFactory
+    {
+
+		@Override
+		public Packet create() {
+			return new CLIENT_CONNECT_DataPacket();
+		}
+    	
+    }
 }

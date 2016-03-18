@@ -19,7 +19,7 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
     private Location from;
     private Location to;
 
-    private PlayerTeleportEvent(Player player){
+    private PlayerTeleportEvent(Player player) {
         this.player = player;
     }
 
@@ -31,9 +31,9 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
     }
 
     public PlayerTeleportEvent(Player player, Vector3 from, Vector3 to, TeleportCause cause) {
-        this (player);
-        this.from = vectorToLocation(player.getLevel(),from);
-        this.from = vectorToLocation(player.getLevel(),to);
+        this(player);
+        this.from = vectorToLocation(player.getLevel(), from);
+        this.from = vectorToLocation(player.getLevel(), to);
         this.cause = cause;
     }
 
@@ -45,14 +45,14 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         return to;
     }
 
-    private Location vectorToLocation (Level baseLevel, Vector3 vector){
+    private Location vectorToLocation(Level baseLevel, Vector3 vector) {
         if (vector instanceof Location) return (Location) vector;
         if (vector instanceof Position) return ((Position) vector).getLocation();
-        return new Location (vector.getX(),vector.getY(),vector.getZ(),0,0,baseLevel);
+        return new Location(vector.getX(), vector.getY(), vector.getZ(), 0, 0, baseLevel);
     }
 
 
-    public enum TeleportCause{
+    public enum TeleportCause {
         COMMAND,       // For Nukkit tp command only
         PLUGIN,        // Every plugin
         NETHER_PORTAL, // Teleport using Nether portal

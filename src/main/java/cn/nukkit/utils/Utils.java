@@ -72,7 +72,7 @@ public class Utils {
         return stringBuilder.toString();
     }
 
-    public static String getExceptionMessage(Exception e) {
+    public static String getExceptionMessage(Throwable e) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         e.printStackTrace(printWriter);

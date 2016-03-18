@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 
 import java.io.File;
@@ -89,7 +90,7 @@ public abstract class SimpleConfig {
                 } else
                     throw new IllegalStateException("SimpleConfig did not supports class: " + field.getType().getName() + " for config field " + configFile.getName());
             } catch (Exception e) {
-                e.printStackTrace();
+            	Server.getInstance().getLogger().logException(e);
                 return false;
             }
         }

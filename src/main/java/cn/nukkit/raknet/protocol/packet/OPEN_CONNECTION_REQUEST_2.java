@@ -41,4 +41,14 @@ public class OPEN_CONNECTION_REQUEST_2 extends Packet {
         this.mtuSize = this.getSignedShort();
         this.clientID = this.getLong();
     }
+    
+    public static final class Factory implements Packet.PacketFactory
+    {
+
+		@Override
+		public Packet create() {
+			return new OPEN_CONNECTION_REQUEST_2();
+		}
+    	
+    }
 }

@@ -37,6 +37,16 @@ public class BlockCoal extends BlockSolid {
     }
 
     @Override
+    public int getBurnChance() {
+        return 5;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 5;
+    }
+
+    @Override
     public String getName() {
         return "Coal Block";
     }

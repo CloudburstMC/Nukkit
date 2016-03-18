@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.sound.TNTPrimeSound;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -51,29 +52,45 @@ public class BlockTNT extends BlockSolid {
     }
 
     @Override
+    public int getBurnChance() {
+        return 15;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 100;
+    }
+
+    public void prime() {
+        this.meta = 1;
+        double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
+        CompoundTag nbt = new CompoundTag()
+                .putList(new ListTag<DoubleTag>("Pos")
+                        .add(new DoubleTag("", this.x + 0.5))
+                        .add(new DoubleTag("", this.y))
+                        .add(new DoubleTag("", this.z + 0.5)))
+                .putList(new ListTag<DoubleTag>("Motion")
+                        .add(new DoubleTag("", -Math.sin(mot) * 0.02))
+                        .add(new DoubleTag("", 0.2))
+                        .add(new DoubleTag("", -Math.cos(mot) * 0.02)))
+                .putList(new ListTag<FloatTag>("Rotation")
+                        .add(new FloatTag("", 0))
+                        .add(new FloatTag("", 0)))
+                .putByte("Fuse", 80);
+        Entity tnt = new EntityPrimedTNT(
+                this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
+                nbt
+        );
+        tnt.spawnToAll();
+        this.level.addSound(new TNTPrimeSound(this));
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.FLINT_STEEL) {
-            item.useOn(this);
+            this.prime();
             this.getLevel().setBlock(this, new BlockAir(), true);
-            double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
-            CompoundTag nbt = new CompoundTag()
-                    .putList(new ListTag<DoubleTag>("Pos")
-                            .add(new DoubleTag("", this.x + 0.5))
-                            .add(new DoubleTag("", this.y))
-                            .add(new DoubleTag("", this.z + 0.5)))
-                    .putList(new ListTag<DoubleTag>("Motion")
-                            .add(new DoubleTag("", -Math.sin(mot) * 0.02))
-                            .add(new DoubleTag("", 0.2))
-                            .add(new DoubleTag("", -Math.cos(mot) * 0.02)))
-                    .putList(new ListTag<FloatTag>("Rotation")
-                            .add(new FloatTag("", 0))
-                            .add(new FloatTag("", 0)))
-                    .putByte("Fuse", 80);
-            Entity tnt = new EntityPrimedTNT(
-                    this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
-                    nbt
-            );
-            tnt.spawnToAll();
+            item.useOn(this);
             return true;
         }
         return false;

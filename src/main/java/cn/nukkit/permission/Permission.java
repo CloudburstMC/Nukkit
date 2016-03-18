@@ -136,10 +136,12 @@ public class Permission {
 
     public static List<Permission> loadPermissions(Map<String, Object> data, String defaultValue) {
         List<Permission> result = new ArrayList<>();
-        for (Map.Entry e : data.entrySet()) {
-            String key = (String) e.getKey();
-            Map<String, Object> entry = (Map<String, Object>) e.getValue();
-            result.add(loadPermission(key, entry, defaultValue, result));
+        if (data != null) {
+	        for (Map.Entry e : data.entrySet()) {
+	            String key = (String) e.getKey();
+	            Map<String, Object> entry = (Map<String, Object>) e.getValue();
+	            result.add(loadPermission(key, entry, defaultValue, result));
+	        }
         }
         return result;
     }

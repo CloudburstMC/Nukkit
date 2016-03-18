@@ -87,15 +87,17 @@ public class BlockCake extends BlockTransparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (player == null) return false;
-        if (meta <= 0x06) meta++;
-        if (meta >= 0x06) {
-            getLevel().setBlock(this, new BlockAir(), true);
-        } else {
-            Food.getByRelative(this).eatenBy(player);
-            getLevel().setBlock(this, this, true);
+        if (player != null && player.getFoodData().getLevel() < player.getFoodData().getMaxLevel()) {
+            if (meta <= 0x06) meta++;
+            if (meta >= 0x06) {
+                getLevel().setBlock(this, new BlockAir(), true);
+            } else {
+                Food.getByRelative(this).eatenBy(player);
+                getLevel().setBlock(this, this, true);
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override

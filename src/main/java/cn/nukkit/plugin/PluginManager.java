@@ -564,7 +564,7 @@ public class PluginManager {
                 }
             }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        	Server.getInstance().getLogger().logException(e);
         }
     }
 
@@ -632,7 +632,7 @@ public class PluginManager {
         try {
             this.getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        	Server.getInstance().getLogger().logException(e);
         }
     }
 
@@ -642,7 +642,7 @@ public class PluginManager {
             method.setAccessible(true);
             return (HandlerList) method.invoke(null);
         } catch (Exception e) {
-            throw new IllegalAccessException(e.toString());
+            throw new IllegalAccessException(Utils.getExceptionMessage(e));
         }
     }
 

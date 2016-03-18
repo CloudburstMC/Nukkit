@@ -33,6 +33,16 @@ public class BlockHayBale extends BlockSolid {
     }
 
     @Override
+    public int getBurnChance() {
+        return 60;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 20;
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         int[] faces = new int[]{
                 0,

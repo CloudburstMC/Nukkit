@@ -241,7 +241,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int ACACIA_WOODEN_STAIRS = 163;
     public static final int DARK_OAK_WOOD_STAIRS = 164;
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
-    
+
     public static final int SLIME_BLOCK = 165;
 
     public static final int IRON_TRAPDOOR = 167;
@@ -500,8 +500,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                             fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        Server.getInstance().getLogger().error("Error while registering " + c.getName());
+                        Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
                         return;
                     }
 
@@ -578,6 +577,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return true;
     }
 
+    public int tickRate() {
+        return 10;
+    }
+
     public boolean onBreak(Item item) {
         return this.getLevel().setBlock(this, new BlockAir(), true, true);
     }
@@ -600,6 +603,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     public double getResistance() {
         return 1;
+    }
+
+    public int getBurnChance() {
+        return 0;
+    }
+
+    public int getBurnAbility() {
+        return 0;
     }
 
     public int getToolType() {

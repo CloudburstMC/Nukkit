@@ -22,7 +22,7 @@ public class ServerKiller extends Thread {
         try {
             sleep(this.time * 1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            // ignore
         }
         System.out.println("\nTook too long to stop, server was killed forcefully!\n");
         System.exit(1);

@@ -120,7 +120,7 @@ public class BlockFurnaceBurning extends BlockSolid {
                     return true;
                 }
             }
-            
+
             player.addWindow(furnace.getInventory());
         }
 
