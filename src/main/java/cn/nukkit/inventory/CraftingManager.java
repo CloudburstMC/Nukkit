@@ -623,26 +623,26 @@ public class CraftingManager {
                 "XXX",
                 "XXX",
                 "XXX"
-        )).setIngredient("X", Item.get(Item.MELON_SLICE, 0, 9)));
+        )).setIngredient("X", Item.get(Item.MELON_SLICE, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BEETROOT_SOUP, 0, 1),
                 "XXX",
                 "XXX",
                 " Y "
-        )).setIngredient("X", Item.get(Item.BEETROOT, 0, 6)).setIngredient("Y", Item.get(Item.BOWL, 0, 1)));
+        )).setIngredient("X", Item.get(Item.BEETROOT, 0, 1)).setIngredient("Y", Item.get(Item.BOWL, 0, 1)));
 
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BREAD, 0, 1),
                 "   ",
                 "   ",
                 "XXX"
-        )).setIngredient("X", Item.get(Item.WHEAT, 0, 3)));
+        )).setIngredient("X", Item.get(Item.WHEAT, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.CAKE, 0, 1),
                 "XXX",
                 "YZY",
                 "AAA"
-        )).setIngredient("X", Item.get(Item.BUCKET, 1, 3)).setIngredient("Y", Item.get(Item.SUGAR, 0, 2)).setIngredient("Z", Item.get(Item.EGG, 0, 1)).setIngredient("A", Item.get(Item.WHEAT, 0, 3)));
+        )).setIngredient("X", Item.get(Item.BUCKET, 1, 1)).setIngredient("Y", Item.get(Item.SUGAR, 0, 1)).setIngredient("Z", Item.get(Item.EGG, 0, 1)).setIngredient("A", Item.get(Item.WHEAT, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.COOKIE, 0, 1),
                 "   ",

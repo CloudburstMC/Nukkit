@@ -84,8 +84,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     @Override
-    public void heal(EntityRegainHealthEvent source) {
-        super.heal(source);
+    public void heal(float amount, EntityRegainHealthEvent source) {
+        super.heal(amount, source);
         if (source.isCancelled()) {
             return;
         }
@@ -94,7 +94,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
+    public void attack(float damage, EntityDamageEvent source) {
         if (this.attackTime > 0 || this.noDamageTicks > 0) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
             if (lastCause != null && lastCause.getDamage() >= source.getDamage()) {
@@ -102,7 +102,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             }
         }
 
-        super.attack(source);
+        super.attack(damage, source);
 
         if (source.isCancelled()) {
             return;
@@ -120,7 +120,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
             double deltaX = this.x - e.x;
             double deltaZ = this.z - e.z;
-            this.knockBack(e, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
+            this.knockBack(e, damage, deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
         }
 
         EntityEventPacket pk = new EntityEventPacket();
@@ -185,7 +185,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             if (this.isInsideOfSolid()) {
                 hasUpdate = true;
                 EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1);
-                this.attack(ev);
+                this.attack(ev.getFinalDamage(), ev);
             }
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
@@ -198,7 +198,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                     if (airTicks <= -20) {
                         airTicks = 0;
                         EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2);
-                        this.attack(ev);
+                        this.attack(ev.getFinalDamage(), ev);
                     }
 
                     this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
@@ -211,7 +211,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                     if (airTicks <= -20) {
                         airTicks = 0;
                         EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 2);
-                        this.attack(ev);
+                        this.attack(ev.getFinalDamage(), ev);
                     }
 
                     this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
