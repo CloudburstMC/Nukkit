@@ -35,12 +35,12 @@ public class PlayerFood {
         return this.foodLevel;
     }
 
-    public int getMaxLevel() {
-        return this.maxFoodLevel;
-    }
-
     public void setLevel(int foodLevel) {
         this.setLevel(foodLevel, -1);
+    }
+
+    public int getMaxLevel() {
+        return this.maxFoodLevel;
     }
 
     public void setLevel(int foodLevel, float saturationLevel) {
@@ -140,7 +140,7 @@ public class PlayerFood {
             if (this.foodTickTimer >= 80) {
                 if (this.getPlayer().getHealth() < this.getPlayer().getMaxHealth()) {
                     EntityRegainHealthEvent ev = new EntityRegainHealthEvent(this.getPlayer(), 1, EntityRegainHealthEvent.CAUSE_EATING);
-                    this.getPlayer().heal(ev);
+                    this.getPlayer().heal(ev.getAmount(), ev);
                     //this.updateFoodExpLevel(3);
                 }
                 this.foodTickTimer = 0;
@@ -151,11 +151,11 @@ public class PlayerFood {
                 EntityDamageEvent ev = new EntityDamageEvent(this.getPlayer(), EntityDamageEvent.CAUSE_VOID, 1);
                 int now = this.getPlayer().getHealth();
                 if (diff == 1) {
-                    if (now > 10) this.getPlayer().attack(ev);
+                    if (now > 10) this.getPlayer().attack(ev.getFinalDamage(), ev);
                 } else if (diff == 2) {
-                    if (now > 1) this.getPlayer().attack(ev);
+                    if (now > 1) this.getPlayer().attack(ev.getFinalDamage(), ev);
                 } else {
-                    this.getPlayer().attack(ev);
+                    this.getPlayer().attack(ev.getFinalDamage(), ev);
                 }
 
                 this.foodTickTimer = 0;

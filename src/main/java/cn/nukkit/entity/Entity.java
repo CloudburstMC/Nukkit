@@ -625,7 +625,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public void attack(EntityDamageEvent source) {
+    public void attack(float damage, EntityDamageEvent source) {
         if (hasEffect(Effect.FIRE_RESISTANCE)
                 && (source.getCause() == EntityDamageEvent.CAUSE_FIRE
                 || source.getCause() == EntityDamageEvent.CAUSE_FIRE_TICK
@@ -641,22 +641,12 @@ public abstract class Entity extends Location implements Metadatable {
         setHealth(getHealth() - source.getFinalDamage());
     }
 
-    public void attack(float damage) {
-        this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, damage));
-    }
-
-    public void heal(EntityRegainHealthEvent source) {
+    public void heal(float amount, EntityRegainHealthEvent source) {
         this.server.getPluginManager().callEvent(source);
         if (source.isCancelled()) {
             return;
         }
-        float targetHealth = this.getHealth() + source.getAmount();
-        if (targetHealth > getMaxHealth()) targetHealth = getMaxHealth();
-        this.setHealth(targetHealth);
-    }
-
-    public void heal(float amount) {
-        this.heal(new EntityRegainHealthEvent(this, amount, EntityRegainHealthEvent.CAUSE_REGEN));
+        setHealth(getHealth() + source.getAmount());
     }
 
     public int getHealth() {
@@ -832,7 +822,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (this.y <= -16 && this.isAlive()) {
             EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, 10);
-            this.attack(ev);
+            this.attack(ev.getFinalDamage(), ev);
             hasUpdate = true;
         }
 
@@ -845,7 +835,8 @@ public abstract class Entity extends Location implements Metadatable {
             } else {
                 if (!this.hasEffect(Effect.FIRE_RESISTANCE) && ((this.fireTicks % 20) == 0 || tickDiff > 20)) {
                     EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FIRE_TICK, 1);
-                    this.attack(ev);
+                    this.attack(ev.getFinalDamage(), ev);
+
                 }
                 this.fireTicks -= tickDiff;
             }
@@ -1003,7 +994,7 @@ public abstract class Entity extends Location implements Metadatable {
         float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
         if (damage > 0) {
             EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FALL, damage);
-            this.attack(ev);
+            this.attack(ev.getFinalDamage(), ev);
         }
     }
 
