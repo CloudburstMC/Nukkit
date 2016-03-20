@@ -48,7 +48,7 @@ public class BlockLava extends BlockLiquid {
         entity.fallDistance *= 0.5;
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
             EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.CAUSE_LAVA, 4);
-            entity.attack(ev.getFinalDamage(), ev);
+            entity.attack(ev);
         }
 
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 15);
