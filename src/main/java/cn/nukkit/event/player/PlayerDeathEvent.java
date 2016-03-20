@@ -1,13 +1,12 @@
 package cn.nukkit.event.player;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.Item;
 
-public class PlayerDeathEvent extends EntityDeathEvent implements Cancellable {
+public class PlayerDeathEvent extends EntityDeathEvent {
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {

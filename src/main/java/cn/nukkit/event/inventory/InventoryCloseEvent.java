@@ -1,7 +1,6 @@
 package cn.nukkit.event.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Inventory;
 
@@ -9,7 +8,7 @@ import cn.nukkit.inventory.Inventory;
  * author: Box
  * Nukkit Project
  */
-public class InventoryCloseEvent extends InventoryEvent implements Cancellable {
+public class InventoryCloseEvent extends InventoryEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
