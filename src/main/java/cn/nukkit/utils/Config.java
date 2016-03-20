@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -126,33 +127,8 @@ public class Config {
                 } catch (IOException e) {
                     Server.getInstance().getLogger().logException(e);
                 }
-                switch (this.type) {
-                    case Config.PROPERTIES:
-                        this.parseProperties(content);
-                        break;
-                    case Config.JSON:
-                        GsonBuilder builder = new GsonBuilder();
-                        Gson gson = builder.create();
-                        this.config = gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
-                        }.getType());
-                        break;
-                    case Config.YAML:
-                        DumperOptions dumperOptions = new DumperOptions();
-                        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                        Yaml yaml = new Yaml(dumperOptions);
-                        this.config = yaml.loadAs(content, LinkedHashMap.class);
-                        if (this.config == null) {
-                            this.config = new LinkedHashMap<>();
-                        }
-                        break;
-                    // case Config.SERIALIZED
-                    case Config.ENUM:
-                        this.parseList(content);
-                        break;
-                    default:
-                        this.correct = false;
-                        return false;
-                }
+                this.parseContent(content);
+                if (!this.correct) return false;
                 if (this.setDefault(defaultMap) > 0) {
                     this.save();
                 }
@@ -161,6 +137,20 @@ public class Config {
             }
         }
         return true;
+    }
+    public boolean load (InputStream inputStream){
+        if (inputStream == null) return false;
+        if (this.correct) {
+            String content = "";
+            try {
+                content = Utils.readFile(inputStream);
+            } catch (IOException e) {
+                Server.getInstance().getLogger().logException(e);
+                return false;
+            }
+            this.parseContent(content);
+        }
+        return correct;
     }
 
     public boolean check() {
@@ -717,6 +707,35 @@ public class Config {
     @Deprecated
     public void removeNested(String key) {
         remove(key);
+    }
+
+    private void parseContent(String content){
+        switch (this.type) {
+            case Config.PROPERTIES:
+                this.parseProperties(content);
+                break;
+            case Config.JSON:
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                this.config = gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
+                }.getType());
+                break;
+            case Config.YAML:
+                DumperOptions dumperOptions = new DumperOptions();
+                dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                Yaml yaml = new Yaml(dumperOptions);
+                this.config = yaml.loadAs(content, LinkedHashMap.class);
+                if (this.config == null) {
+                    this.config = new LinkedHashMap<>();
+                }
+                break;
+            // case Config.SERIALIZED
+            case Config.ENUM:
+                this.parseList(content);
+                break;
+            default:
+                this.correct = false;
+        }
     }
 
 }
