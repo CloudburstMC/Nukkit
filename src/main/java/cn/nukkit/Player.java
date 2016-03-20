@@ -2474,9 +2474,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         entityDamageByEntityEvent.setCancelled();
                     }
 
-                    targetEntity.attack(entityDamageByEntityEvent.getFinalDamage());
+                    targetEntity.attack(entityDamageByEntityEvent);
 
-                    if (ev.isCancelled()) {
+                    if (entityDamageByEntityEvent.isCancelled()) {
                         if (item.isTool() && this.isSurvival()) {
                             this.inventory.sendContents(this);
                         }
@@ -2604,7 +2604,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (msg.startsWith("/")) { //Command
                                 PlayerCommandPreprocessEvent commandPreprocessEvent = new PlayerCommandPreprocessEvent(this, msg);
                                 if (commandPreprocessEvent.getMessage().length() > 320) {
-                                    ev.setCancelled();
+                                    commandPreprocessEvent.setCancelled();
                                 }
                                 this.server.getPluginManager().callEvent(commandPreprocessEvent);
                                 if (commandPreprocessEvent.isCancelled()) {
