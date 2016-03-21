@@ -64,6 +64,7 @@ public abstract class SimpleConfig {
             String path = getPath(field);
             if (path == null) continue;
             if (path.isEmpty()) continue;
+            field.setAccessible(true);
             try {
                 if (field.getType() == int.class || field.getType() == Integer.class)
                     field.set(this, cfg.getInt(path, field.getInt(this)));
