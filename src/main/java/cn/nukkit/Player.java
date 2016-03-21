@@ -2474,9 +2474,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         entityDamageByEntityEvent.setCancelled();
                     }
 
-                    targetEntity.attack(entityDamageByEntityEvent.getFinalDamage(), entityDamageByEntityEvent);
+                    targetEntity.attack(entityDamageByEntityEvent);
 
-                    if (ev.isCancelled()) {
+                    if (entityDamageByEntityEvent.isCancelled()) {
                         if (item.isTool() && this.isSurvival()) {
                             this.inventory.sendContents(this);
                         }
@@ -2604,7 +2604,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (msg.startsWith("/")) { //Command
                                 PlayerCommandPreprocessEvent commandPreprocessEvent = new PlayerCommandPreprocessEvent(this, msg);
                                 if (commandPreprocessEvent.getMessage().length() > 320) {
-                                    ev.setCancelled();
+                                    commandPreprocessEvent.setCancelled();
                                 }
                                 this.server.getPluginManager().callEvent(commandPreprocessEvent);
                                 if (commandPreprocessEvent.isCancelled()) {
@@ -3510,7 +3510,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         if (!this.isAlive()) {
             return;
         }
@@ -3551,7 +3551,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (add) source.setDamage((float) (source.getDamage() * 1.5));
         }
 
-        super.attack(damage, source);
+        super.attack(source);
 
         if (!source.isCancelled() && this.getLastDamageCause() == source && this.spawned) {
             this.getFoodData().updateFoodExpLevel(0.3);

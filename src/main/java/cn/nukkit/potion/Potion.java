@@ -177,24 +177,18 @@ public class Potion implements Cloneable {
             return;
         }
 
-        EntityDamageEvent ev;
-        EntityRegainHealthEvent e;
         switch (this.getId()) {
             case INSTANT_HEALTH:
-                e = new EntityRegainHealthEvent(entity, 4, EntityRegainHealthEvent.CAUSE_EATING);
-                entity.heal(e.getAmount(), e);
+                entity.heal(new EntityRegainHealthEvent(entity, 4, EntityRegainHealthEvent.CAUSE_EATING));
                 break;
             case INSTANT_HEALTH_II:
-                e = new EntityRegainHealthEvent(entity, 8, EntityRegainHealthEvent.CAUSE_EATING);
-                entity.heal(e.getAmount(), e);
+                entity.heal(new EntityRegainHealthEvent(entity, 8, EntityRegainHealthEvent.CAUSE_EATING));
                 break;
             case HARMING:
-                ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 6);
-                entity.attack(ev.getFinalDamage(), ev);
+                entity.attack(new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 6));
                 break;
             case HARMING_II:
-                ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 12);
-                entity.attack(ev.getFinalDamage(), ev);
+                entity.attack(new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 12));
                 break;
             default:
                 entity.addEffect(applyEffect);

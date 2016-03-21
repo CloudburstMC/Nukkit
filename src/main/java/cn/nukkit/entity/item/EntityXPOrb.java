@@ -77,13 +77,13 @@ public class EntityXPOrb extends Entity {
     }
 
     @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         switch (source.getCause()) {
             case EntityDamageEvent.CAUSE_VOID:
             case EntityDamageEvent.CAUSE_FIRE_TICK:
             case EntityDamageEvent.CAUSE_ENTITY_EXPLOSION:
             case EntityDamageEvent.CAUSE_BLOCK_EXPLOSION:
-                super.attack(damage, source);
+                super.attack(source);
         }
     }
 

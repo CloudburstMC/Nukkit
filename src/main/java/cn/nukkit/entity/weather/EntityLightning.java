@@ -69,9 +69,9 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
     }
 
     @Override
-    public void attack(float damage, EntityDamageEvent source) {
+    public void attack(EntityDamageEvent source) {
         source.setDamage(0);
-        super.attack(damage, source);
+        super.attack(source);
         if (source.isCancelled()) return;
     }
 
@@ -85,8 +85,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
             if (this.isEffect()) {
                 for (Entity e : this.level.getNearbyEntities(this.boundingBox.grow(6, 12, 6), this)) {
                     if (e instanceof EntityLiving) {
-                        EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(this, e, EntityDamageEvent.CAUSE_LIGHTNING, 5);
-                        e.attack(ev.getFinalDamage(), ev);
+                        e.attack(new EntityDamageByEntityEvent(this, e, EntityDamageEvent.CAUSE_LIGHTNING, 5));
                         e.setOnFire(5);  //how long?
                         //Creeper
                         if (e instanceof EntityCreeper) {
