@@ -35,14 +35,13 @@ public class OPEN_CONNECTION_REPLY_1 extends Packet {
         this.getByte(); //skip security
         this.mtuSize = this.getSignedShort();
     }
-    
-    public static final class Factory implements Packet.PacketFactory
-    {
 
-		@Override
-		public Packet create() {
-			return new OPEN_CONNECTION_REPLY_1();
-		}
-    	
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new OPEN_CONNECTION_REPLY_1();
+        }
+
     }
 }

@@ -12,7 +12,6 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * author: MagicDroidX
@@ -77,12 +76,11 @@ public class SessionManager {
             int max = 5000;
             while (max > 0) {
                 try {
-                    if(!this.receivePacket()) {
+                    if (!this.receivePacket()) {
                         break;
                     }
                     --max;
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     if (currentSource != "") {
                         this.blockAddress(currentSource);
                     }
@@ -456,14 +454,14 @@ public class SessionManager {
     }
 
     private void registerPackets() {
-    	// fill with dummy returning null
-    	Arrays.fill(this.packetPool, new Packet.PacketFactory() {
-			
-			@Override
-			public Packet create() {
-		        return null;
-		    }
-		});
+        // fill with dummy returning null
+        Arrays.fill(this.packetPool, new Packet.PacketFactory() {
+
+            @Override
+            public Packet create() {
+                return null;
+            }
+        });
 
         //this.registerPacket(UNCONNECTED_PING.ID, UNCONNECTED_PING.class);
         this.registerPacket(UNCONNECTED_PING_OPEN_CONNECTIONS.ID, new UNCONNECTED_PING_OPEN_CONNECTIONS.Factory());

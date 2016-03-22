@@ -50,7 +50,7 @@ public class FileWriteTask extends AsyncTask {
         try {
             Utils.writeFile(file, contents);
         } catch (IOException e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
         }
     }
 

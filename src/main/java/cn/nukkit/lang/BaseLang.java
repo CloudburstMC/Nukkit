@@ -80,7 +80,7 @@ public class BaseLang {
             }
             return d;
         } catch (IOException e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
             return null;
         }
     }
@@ -111,7 +111,7 @@ public class BaseLang {
             }
             return d;
         } catch (IOException e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
             return null;
         }
     }

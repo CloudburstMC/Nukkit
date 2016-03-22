@@ -138,7 +138,8 @@ public class Config {
         }
         return true;
     }
-    public boolean load (InputStream inputStream){
+
+    public boolean load(InputStream inputStream) {
         if (inputStream == null) return false;
         if (this.correct) {
             String content = "";
@@ -195,7 +196,7 @@ public class Config {
                 try {
                     Utils.writeFile(this.file, content);
                 } catch (IOException e) {
-                	Server.getInstance().getLogger().logException(e);
+                    Server.getInstance().getLogger().logException(e);
                 }
             }
             return true;
@@ -709,7 +710,7 @@ public class Config {
         remove(key);
     }
 
-    private void parseContent(String content){
+    private void parseContent(String content) {
         switch (this.type) {
             case Config.PROPERTIES:
                 this.parseProperties(content);

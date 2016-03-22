@@ -304,7 +304,7 @@ public class AxisAlignedBB implements Cloneable {
         try {
             return (AxisAlignedBB) super.clone();
         } catch (CloneNotSupportedException e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
         }
         return null;
     }

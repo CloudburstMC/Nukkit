@@ -676,7 +676,7 @@ public class Server {
             if (!this.isRunning) {
                 //todo sendUsage
             }
-            
+
             // clean shutdown of console thread asap
             this.console.shutdown();
 
@@ -768,7 +768,7 @@ public class Server {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
-            	Server.getInstance().getLogger().logException(e);
+                Server.getInstance().getLogger().logException(e);
             }
         }
     }

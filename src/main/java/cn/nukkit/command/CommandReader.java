@@ -76,16 +76,15 @@ public class CommandReader extends Thread implements InterruptibleThread {
                 try {
                     sleep(40);
                 } catch (InterruptedException e) {
-                	Server.getInstance().getLogger().logException(e);
+                    Server.getInstance().getLogger().logException(e);
                 }
             }
             lastLine = System.currentTimeMillis();
         }
     }
 
-    public void shutdown()
-    {
-    	this.running = false;
+    public void shutdown() {
+        this.running = false;
     }
 
     public void stashLine() {

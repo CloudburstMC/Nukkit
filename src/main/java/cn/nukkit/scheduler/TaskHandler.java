@@ -93,13 +93,12 @@ public class TaskHandler {
     }
 
     public void run(int currentTick) {
-    	try {
-	        setLastRunTick(currentTick);
-	        getTask().run();
-    	}
-    	catch (RuntimeException ex) {
-    		Server.getInstance().getLogger().critical("Exception while invoking run", ex);
-    	}
+        try {
+            setLastRunTick(currentTick);
+            getTask().run();
+        } catch (RuntimeException ex) {
+            Server.getInstance().getLogger().critical("Exception while invoking run", ex);
+        }
     }
 
     public String getTaskName() {

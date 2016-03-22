@@ -14,15 +14,14 @@ public class DATA_PACKET_F extends DataPacket {
     public byte getID() {
         return ID;
     }
-    
-    public static final class Factory implements Packet.PacketFactory
-    {
 
-		@Override
-		public Packet create() {
-			return new DATA_PACKET_F();
-		}
-    	
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new DATA_PACKET_F();
+        }
+
     }
 
 }

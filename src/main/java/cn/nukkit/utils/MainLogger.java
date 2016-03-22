@@ -1,5 +1,9 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Nukkit;
+import cn.nukkit.command.CommandReader;
+import org.fusesource.jansi.AnsiConsole;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,11 +11,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.fusesource.jansi.AnsiConsole;
-
-import cn.nukkit.Nukkit;
-import cn.nukkit.command.CommandReader;
 
 /**
  * author: MagicDroidX
@@ -202,49 +201,49 @@ public class MainLogger extends ThreadedLogger {
         }
     }
 
-	@Override
-	public void emergency(String message, Throwable t) {
-		this.emergency(message + "\r\n" + Utils.getExceptionMessage(t));
-	}
+    @Override
+    public void emergency(String message, Throwable t) {
+        this.emergency(message + "\r\n" + Utils.getExceptionMessage(t));
+    }
 
-	@Override
-	public void alert(String message, Throwable t) {
-		this.alert(message + "\r\n" + Utils.getExceptionMessage(t));
-	}
+    @Override
+    public void alert(String message, Throwable t) {
+        this.alert(message + "\r\n" + Utils.getExceptionMessage(t));
+    }
 
-	@Override
-	public void critical(String message, Throwable t) {
-		this.critical(message + "\r\n" + Utils.getExceptionMessage(t));
-	}
+    @Override
+    public void critical(String message, Throwable t) {
+        this.critical(message + "\r\n" + Utils.getExceptionMessage(t));
+    }
 
-	@Override
-	public void error(String message, Throwable t) {
-		this.error(message + "\r\n" + Utils.getExceptionMessage(t));
-	}
+    @Override
+    public void error(String message, Throwable t) {
+        this.error(message + "\r\n" + Utils.getExceptionMessage(t));
+    }
 
-	@Override
-	public void warning(String message, Throwable t) {
-		this.warning(message + "\r\n" + Utils.getExceptionMessage(t));
-	}
+    @Override
+    public void warning(String message, Throwable t) {
+        this.warning(message + "\r\n" + Utils.getExceptionMessage(t));
+    }
 
-	@Override
-	public void notice(String message, Throwable t) {
-		this.notice(message + "\r\n" + Utils.getExceptionMessage(t));
-	}
+    @Override
+    public void notice(String message, Throwable t) {
+        this.notice(message + "\r\n" + Utils.getExceptionMessage(t));
+    }
 
-	@Override
-	public void info(String message, Throwable t) {
-		this.info(message + "\r\n" + Utils.getExceptionMessage(t));
-	}
+    @Override
+    public void info(String message, Throwable t) {
+        this.info(message + "\r\n" + Utils.getExceptionMessage(t));
+    }
 
-	@Override
-	public void debug(String message, Throwable t) {
-		this.debug(message + "\r\n" + Utils.getExceptionMessage(t));
-	}
+    @Override
+    public void debug(String message, Throwable t) {
+        this.debug(message + "\r\n" + Utils.getExceptionMessage(t));
+    }
 
-	@Override
-	public void log(LogLevel level, String message, Throwable t) {
-		this.log(level, message + "\r\n" + Utils.getExceptionMessage(t));
-	}
+    @Override
+    public void log(LogLevel level, String message, Throwable t) {
+        this.log(level, message + "\r\n" + Utils.getExceptionMessage(t));
+    }
 
 }

@@ -13,14 +13,13 @@ public class ADVERTISE_SYSTEM extends UNCONNECTED_PONG {
     public byte getID() {
         return ID;
     }
-    
-    public static final class Factory implements Packet.PacketFactory
-    {
 
-		@Override
-		public Packet create() {
-			return new ADVERTISE_SYSTEM();
-		}
-    	
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new ADVERTISE_SYSTEM();
+        }
+
     }
 }
