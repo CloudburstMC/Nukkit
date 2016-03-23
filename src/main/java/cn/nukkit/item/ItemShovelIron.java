@@ -15,12 +15,12 @@ public class ItemShovelIron extends ItemTool {
     }
 
     public ItemShovelIron(Integer meta, int count) {
-        super(IRON_SHOVEL, meta, count, "Gold Shovel");
+        super(IRON_SHOVEL, meta, count, "Iron Shovel");
     }
 
     @Override
     public int getMaxDurability() {
-        return ItemTool.DURABILITY_GOLD;
+        return ItemTool.DURABILITY_IRON;
     }
 
     @Override
