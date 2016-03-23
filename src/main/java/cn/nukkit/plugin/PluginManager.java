@@ -564,7 +564,7 @@ public class PluginManager {
                 }
             }
         } catch (IllegalAccessException e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
         }
     }
 
@@ -632,7 +632,7 @@ public class PluginManager {
         try {
             this.getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
         } catch (IllegalAccessException e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
         }
     }
 

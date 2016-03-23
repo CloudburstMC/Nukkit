@@ -207,7 +207,7 @@ public class Chunk extends BaseChunk {
 
             return new Chunk(provider, chunk.getCompound("Level"));
         } catch (Exception e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
             return null;
         }
     }

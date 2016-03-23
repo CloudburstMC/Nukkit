@@ -584,7 +584,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         int count = 0;
 
-        for (String index : new ArrayList<>(this.loadQueue.keySet())) {
+        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(this.loadQueue.entrySet());
+        entryList.sort(new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o1.getValue() - o2.getValue();
+            }
+        });
+
+        for (Map.Entry<String, Integer> entry : entryList) {
+            String index = entry.getKey();
             if (count >= this.chunksPerTick) {
                 break;
             }
@@ -731,14 +740,32 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int x = 0;
         int z = 0;
 
-        for (int i = 0; i < this.viewDistance * this.viewDistance * Math.PI; ++i) {
+        int count = 0;
+
+        for (x = -this.viewDistance; x <= this.viewDistance; x++) {
+            for (z = -this.viewDistance; z <= this.viewDistance; z++) {
+                int chunkX = x + centerX;
+                int chunkZ = z + centerZ;
+                int distance = Math.abs(x) + Math.abs(z);
+                if (distance <= this.viewDistance) {
+                    String index;
+                    if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
+                        newOrder.put(index, distance);
+                        count++;
+                    }
+                    lastChunk.remove(index);
+                }
+            }
+        }
+
+        /*for (int i = 0; i < this.viewDistance * this.viewDistance * Math.PI; ++i) {
 
             int chunkX = x + centerX;
             int chunkZ = z + centerZ;
 
             String index;
             if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
-                newOrder.put(index, Math.abs(((int) this.x >> 4) - chunkX) + Math.abs(((int) this.z >> 4) - chunkZ));
+                newOrder.put(index, Math.abs((centerX - chunkX)) + Math.abs((centerZ - chunkZ)));
             }
             lastChunk.remove(index);
 
@@ -769,7 +796,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     break;
             }
-        }
+        }*/
 
         for (String index : new ArrayList<>(lastChunk.keySet())) {
             Chunk.Entry entry = Level.getChunkXZ(index);

@@ -125,7 +125,7 @@ public class Network {
         try {
             data = Zlib.inflate(packet.payload, 64 * 1024 * 1024);
         } catch (Exception e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
             return;
         }
 
@@ -171,7 +171,7 @@ public class Network {
             try {
                 return clazz.newInstance();
             } catch (Exception e) {
-            	Server.getInstance().getLogger().logException(e);
+                Server.getInstance().getLogger().logException(e);
             }
         }
         return null;

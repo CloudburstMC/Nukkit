@@ -399,7 +399,7 @@ public class Chunk extends BaseFullChunk {
                 return chunk;
             }
         } catch (Exception e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
         }
         return null;
     }

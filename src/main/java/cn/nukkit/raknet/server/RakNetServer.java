@@ -100,7 +100,7 @@ public class RakNetServer extends Thread {
         try {
             new SessionManager(this, socket);
         } catch (Exception e) {
-        	Server.getInstance().getLogger().logException(e);
+            Server.getInstance().getLogger().logException(e);
         }
     }
 }

@@ -112,12 +112,12 @@ public abstract class SimpleConfig {
         return path;
     }
 
-    private boolean skipSave(Field field){
+    private boolean skipSave(Field field) {
         if (!field.isAnnotationPresent(Skip.class)) return false;
         return field.getAnnotation(Skip.class).skipSave();
     }
 
-    private boolean skipLoad(Field field){
+    private boolean skipLoad(Field field) {
         if (!field.isAnnotationPresent(Skip.class)) return false;
         return field.getAnnotation(Skip.class).skipLoad();
     }
@@ -132,6 +132,7 @@ public abstract class SimpleConfig {
     @Target(ElementType.FIELD)
     public @interface Skip {
         boolean skipSave() default true;
+
         boolean skipLoad() default true;
     }
 }

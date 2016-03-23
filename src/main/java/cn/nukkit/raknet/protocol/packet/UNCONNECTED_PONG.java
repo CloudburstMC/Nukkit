@@ -36,14 +36,13 @@ public class UNCONNECTED_PONG extends Packet {
         this.offset += 16; //skip magic bytes todo:check magic?
         this.serverName = this.getString();
     }
-    
-    public static final class Factory implements Packet.PacketFactory
-    {
 
-		@Override
-		public Packet create() {
-			return new UNCONNECTED_PONG();
-		}
-    	
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new UNCONNECTED_PONG();
+        }
+
     }
 }

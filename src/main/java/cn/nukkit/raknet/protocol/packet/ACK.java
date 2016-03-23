@@ -15,14 +15,13 @@ public class ACK extends AcknowledgePacket {
     public byte getID() {
         return ID;
     }
-    
-    public static final class Factory implements Packet.PacketFactory
-    {
 
-		@Override
-		public Packet create() {
-			return new ACK();
-		}
-    	
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new ACK();
+        }
+
     }
 }

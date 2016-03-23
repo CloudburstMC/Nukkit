@@ -51,15 +51,14 @@ public class SERVER_HANDSHAKE_DataPacket extends Packet {
     public void decode() {
         super.decode();
     }
-    
-    public static final class Factory implements Packet.PacketFactory
-    {
 
-		@Override
-		public Packet create() {
-			return new SERVER_HANDSHAKE_DataPacket();
-		}
-    	
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new SERVER_HANDSHAKE_DataPacket();
+        }
+
     }
 
 }

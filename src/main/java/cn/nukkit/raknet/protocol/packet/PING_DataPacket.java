@@ -27,14 +27,13 @@ public class PING_DataPacket extends Packet {
         super.decode();
         this.pingID = this.getLong();
     }
-    
-    public static final class Factory implements Packet.PacketFactory
-    {
 
-		@Override
-		public Packet create() {
-			return new PING_DataPacket();
-		}
-    	
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new PING_DataPacket();
+        }
+
     }
 }

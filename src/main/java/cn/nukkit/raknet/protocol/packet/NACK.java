@@ -15,14 +15,13 @@ public class NACK extends AcknowledgePacket {
     public byte getID() {
         return ID;
     }
-    
-    public static final class Factory implements Packet.PacketFactory
-    {
 
-		@Override
-		public Packet create() {
-			return new NACK();
-		}
-    	
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new NACK();
+        }
+
     }
 }
