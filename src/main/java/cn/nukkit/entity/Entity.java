@@ -7,6 +7,7 @@ import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.entity.*;
+import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -1391,37 +1392,37 @@ public abstract class Entity extends Location implements Metadatable {
         this.scheduleUpdate();
     }
 
+    @Deprecated
     public boolean teleport(Vector3 pos) {
-        if (pos instanceof Location) {
-            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleportYawAndPitch(pos, this.yaw, this.pitch);
-        }
+        return this.teleport(pos, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
+    @Deprecated
+    public boolean teleport(Vector3 pos, PlayerTeleportEvent.TeleportCause cause) {
+        return this.teleport(pos, this.pitch, this.yaw, cause);
+    }
+
+    @Deprecated
     public boolean teleport(Vector3 pos, double yaw, double pitch) {
-        return this.teleportYawAndPitch(pos, yaw, pitch);
+        return this.teleport(pos, yaw, pitch, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
-    public boolean teleportYaw(Vector3 pos, double yaw) {
-        if (pos instanceof Location) {
-            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleportYawAndPitch(pos, yaw, this.pitch);
-        }
+    @Deprecated
+    public boolean teleport(Vector3 pos, double yaw, double pitch, PlayerTeleportEvent.TeleportCause cause) {
+        return this.teleport(Location.fromObject(pos, this.level, yaw, pitch), cause);
     }
 
-    public boolean teleportPitch(Vector3 pos, double pitch) {
-        if (pos instanceof Location) {
-            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleportYawAndPitch(pos, this.yaw, pitch);
-        }
+    public boolean teleport(Location location) {
+        return this.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
-    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        Position from = Position.fromObject(this, this.level);
-        Position to = Position.fromObject(pos, pos instanceof Position ? ((Position) pos).getLevel() : this.level);
+    public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
+        double yaw = location.yaw;
+        double pitch = location.pitch;
+
+        Location from = this.getLocation();
+        Location to = location;
+
         EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to);
         this.server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -1429,7 +1430,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         this.ySize = 0;
-        pos = ev.getTo();
+        Position pos = ev.getTo();
 
         this.setMotion(this.temporalVector.setComponents(0, 0, 0));
 

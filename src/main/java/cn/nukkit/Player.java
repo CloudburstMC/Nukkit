@@ -695,7 +695,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendExperience(this.getExperience());
         this.sendExperienceLevel(this.getExperienceLevel());
 
-        this.teleport(pos, null);
+        this.teleport(pos);
 
         if (!this.isSpectator()) {
             this.spawnToAll();
@@ -908,7 +908,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.sleeping = pos.clone();
-        this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level), null);
+        this.teleport(new Location(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level));
 
         this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
@@ -2624,6 +2624,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 this.craftingType = 0;
                 TextPacket textPacket = (TextPacket) packet;
+                if (textPacket.message.equals("t")) {
+                    this.teleport(this.getLevel().getSafeSpawn());
+                    break;
+                }
+
+                if (textPacket.message.equals("i")) {
+                    this.teleportImmediate(Location.fromObject(this.getLevel().getSafeSpawn(), this.getLevel()));
+                    break;
+                }
+
                 if (textPacket.type == TextPacket.TYPE_CHAT) {
                     textPacket.message = this.removeFormat ? TextFormat.clean(textPacket.message) : textPacket.message;
                     for (String msg : textPacket.message.split("\n")) {
@@ -3685,173 +3695,75 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public boolean teleport(Vector3 pos) {
-        return teleport(pos, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleport(Vector3 pos, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleport(pos)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean teleport(Vector3 pos, double yaw, double pitch) {
-        return teleport(pos, yaw, pitch, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleport(Vector3 pos, double yaw, double pitch, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleport(pos, yaw, pitch)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean teleportYaw(Vector3 pos, double yaw) {
-        return teleportYaw(pos, yaw, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleportYaw(Vector3 pos, double yaw, TeleportCause cause) {
+    public boolean teleport(Location location, TeleportCause cause) {
         if (!this.isOnline()) {
             return false;
         }
 
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
+        Location from = this.getLocation();
+        Location to = location;
+
+        PlayerTeleportEvent event = new PlayerTeleportEvent(this, from, to, cause);
+        this.server.getPluginManager().callEvent(event);
+
         Position oldPos = this.getPosition();
-        if (super.teleportYaw(pos, yaw)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
+        if (super.teleport(location, cause)) {
 
-        return false;
-    }
-
-    @Override
-    public boolean teleportPitch(Vector3 pos, double pitch) {
-        return teleportPitch(pos, pitch, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleportPitch(Vector3 pos, double pitch, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleportPitch(pos, pitch)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        return teleportYawAndPitch(pos, yaw, pitch, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-
-        return false;
-    }
-
-    private void resetAfterTeleport(Position oldPos) {
-        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
-            if (Objects.equals(window, this.inventory)) {
-                continue;
+            for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+                if (Objects.equals(window, this.inventory)) {
+                    continue;
+                }
+                this.removeWindow(window);
             }
-            this.removeWindow(window);
+
+            this.teleportPosition = new Vector3(this.x, this.y, this.z);
+
+            if (!this.checkTeleportPosition()) {
+                this.forceMovement = oldPos;
+            } else {
+                this.spawnToAll();
+            }
+
+            this.resetFallDistance();
+            this.nextChunkOrderRun = 0;
+            this.newPosition = null;
+
+            //Weather
+            this.getLevel().sendWeather(this);
+            //Update time
+            this.getLevel().sendTime(this);
+            return true;
         }
 
-        this.teleportPosition = new Vector3(this.x, this.y, this.z);
-
-        if (!this.checkTeleportPosition()) {
-            this.forceMovement = oldPos;
-        } else {
-            this.spawnToAll();
-        }
-
-
-        this.resetFallDistance();
-        this.nextChunkOrderRun = 0;
-        this.newPosition = null;
-
-        //Weather
-        this.getLevel().sendWeather(this);
-        //Update time
-        this.getLevel().sendTime(this);
+        return false;
     }
 
-    public void teleportImmediate(Vector3 pos) {
-        if (super.teleport(pos)) {
-            resetAfterTeleportImmediate();
-        }
+    public void teleportImmediate(Location location) {
+        this.teleportImmediate(location, TeleportCause.PLUGIN);
     }
 
-    public void teleportImmediate(Vector3 pos, double yaw, double pitch) {
-        if (super.teleport(pos, yaw, pitch)) {
-            resetAfterTeleportImmediate();
-        }
-    }
+    public void teleportImmediate(Location location, TeleportCause cause) {
+        if (super.teleport(location, cause)) {
 
-    public void teleportImmediateYaw(Vector3 pos, double yaw) {
-        if (super.teleportYaw(pos, yaw)) {
-            resetAfterTeleportImmediate();
-        }
-    }
+            for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+                if (Objects.equals(window, this.inventory)) {
+                    continue;
+                }
+                this.removeWindow(window);
+            }
 
-    public void teleportImmediatePitch(Vector3 pos, double pitch) {
-        if (super.teleportPitch(pos, pitch)) {
-            resetAfterTeleportImmediate();
-        }
-    }
+            this.forceMovement = new Vector3(this.x, this.y, this.z);
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
 
-    public void teleportImmediateYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
-            resetAfterTeleportImmediate();
+            this.resetFallDistance();
+            this.orderChunks();
+            this.nextChunkOrderRun = 0;
+            this.newPosition = null;
+
+            //Weather
+            this.getLevel().sendWeather(this);
+            //Update time
+            this.getLevel().sendTime(this);
         }
     }
 
