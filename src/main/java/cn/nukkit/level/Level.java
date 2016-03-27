@@ -1577,11 +1577,13 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        if (player != null && !player.isCreative()) {
-            int dropExp = target.getDropExp();
+        int dropExp = target.getDropExp();
+        if (player != null) {
             player.addExperience(dropExp);
-            for (int ii = 1; ii <= dropExp; ii++) {
-                this.dropExpOrb(target, 1);
+            if (!player.isCreative()) {
+                for (int ii = 1; ii <= dropExp; ii++) {
+                    this.dropExpOrb(target, 1);
+                }
             }
         }
 
