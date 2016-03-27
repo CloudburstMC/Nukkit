@@ -7,6 +7,7 @@ import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.entity.*;
+import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -395,15 +396,6 @@ public abstract class Entity extends Location implements Metadatable {
             this.setHealth(this.getHealth() + 4 * (effect.getAmplifier() + 1));
         }
 
-        Effect newEffect = this.effects.get(effect.getId());
-        if (oldEffect != null) {
-            Server.getInstance().getLogger().debug(getNameTag() + " replace effect " + oldEffect.getName() + "(ID:" + oldEffect.getId() + ")" +
-                    " * " + oldEffect.getAmplifier() + " -> " + newEffect.getAmplifier() + ", " +
-                    "Ticks: " + oldEffect.getDuration() + " -> " + newEffect.getDuration());
-        } else {
-            Server.getInstance().getLogger().debug(getNameTag() + " add effect " + newEffect.getName() + "(ID:" + newEffect.getId() + ")" +
-                    " * " + newEffect.getAmplifier() + ", Ticks: " + newEffect.getDuration());
-        }
     }
 
     protected void recalculateEffectColor() {
@@ -884,7 +876,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
 
-            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+            this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
         }
 
         if (diffMotion > 0.0025 || (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.0001)) { //0.05 ** 2
@@ -892,8 +884,16 @@ public abstract class Entity extends Location implements Metadatable {
             this.lastMotionY = this.motionY;
             this.lastMotionZ = this.motionZ;
 
-            this.level.addEntityMotion(this.chunk.getX(), this.chunk.getZ(), this.id, this.motionX, this.motionY, this.motionZ);
+            this.addMotion(this.motionX, this.motionY, this.motionZ);
         }
+    }
+
+    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, x, y, z, yaw, pitch, headYaw);
+    }
+
+    public void addMotion(double motionX, double motionY, double motionZ) {
+        this.level.addEntityMotion(this.chunk.getX(), this.chunk.getZ(), this.id, motionX, motionY, motionZ);
     }
 
     public Vector3 getDirectionVector() {
@@ -1392,36 +1392,32 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean teleport(Vector3 pos) {
-        if (pos instanceof Location) {
-            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleportYawAndPitch(pos, this.yaw, this.pitch);
-        }
+        return this.teleport(pos, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
-    public boolean teleport(Vector3 pos, double yaw, double pitch) {
-        return this.teleportYawAndPitch(pos, yaw, pitch);
+    public boolean teleport(Vector3 pos, PlayerTeleportEvent.TeleportCause cause) {
+        return this.teleport(Location.fromObject(pos, this.level, this.yaw, this.pitch), cause);
     }
 
-    public boolean teleportYaw(Vector3 pos, double yaw) {
-        if (pos instanceof Location) {
-            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleportYawAndPitch(pos, yaw, this.pitch);
-        }
+    public boolean teleport(Position pos) {
+        return this.teleport(pos, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
-    public boolean teleportPitch(Vector3 pos, double pitch) {
-        if (pos instanceof Location) {
-            return this.teleportYawAndPitch(pos, ((Location) pos).yaw, ((Location) pos).pitch);
-        } else {
-            return this.teleportYawAndPitch(pos, this.yaw, pitch);
-        }
+    public boolean teleport(Position pos, PlayerTeleportEvent.TeleportCause cause) {
+        return this.teleport(Location.fromObject(pos, pos.level, this.yaw, this.pitch), cause);
     }
 
-    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        Position from = Position.fromObject(this, this.level);
-        Position to = Position.fromObject(pos, pos instanceof Position ? ((Position) pos).getLevel() : this.level);
+    public boolean teleport(Location location) {
+        return this.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+    }
+
+    public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
+        double yaw = location.yaw;
+        double pitch = location.pitch;
+
+        Location from = this.getLocation();
+        Location to = location;
+
         EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to);
         this.server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -1429,20 +1425,13 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         this.ySize = 0;
-        pos = ev.getTo();
+        Position pos = ev.getTo();
 
         this.setMotion(this.temporalVector.setComponents(0, 0, 0));
 
         if (this.setPositionAndRotation(pos, yaw, pitch)) {
             this.resetFallDistance();
             this.onGround = true;
-
-            this.lastX = this.x;
-            this.lastY = this.y;
-            this.lastZ = this.z;
-
-            this.lastYaw = this.yaw;
-            this.lastPitch = this.pitch;
 
             this.updateMovement();
 

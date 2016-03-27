@@ -6,8 +6,8 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.player.PlayerTeleportEvent;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.TextFormat;
 
 
@@ -93,7 +93,7 @@ public class TeleportCommand extends VanillaCommand {
                 yaw = Integer.parseInt(args[pos++]);
                 pitch = Integer.parseInt(args[pos++]);
             }
-            ((Player) target).teleport(new Vector3(x, y, z), yaw, pitch, PlayerTeleportEvent.TeleportCause.COMMAND);
+            ((Player) target).teleport(new Location(x, y, z, yaw, pitch, ((Player) target).getLevel()), PlayerTeleportEvent.TeleportCause.COMMAND);
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success.coordinates", new String[]{target.getName(), String.valueOf(NukkitMath.round(x, 2)), String.valueOf(NukkitMath.round(y, 2)), String.valueOf(NukkitMath.round(z, 2))}));
             return true;
         }

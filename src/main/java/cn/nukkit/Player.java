@@ -695,7 +695,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendExperience(this.getExperience());
         this.sendExperienceLevel(this.getExperienceLevel());
 
-        this.teleport(pos, null);
+        this.teleport(pos);
 
         if (!this.isSpectator()) {
             this.spawnToAll();
@@ -908,7 +908,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.sleeping = pos.clone();
-        this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level), null);
+        this.teleport(new Location(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level));
 
         this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
@@ -1401,8 +1401,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    protected void updateMovement() {
-
+    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.level.addPlayerMovement(this.chunk.getX(), this.chunk.getZ(), this.id, x, y, z, yaw, pitch, this.isOnGround());
     }
 
     @Override
@@ -1832,7 +1832,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.forceMovement = new Vector3(this.x, this.y, this.z);
                 }
 
-                if (this.teleportPosition != null || (this.forceMovement != null && newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
+                if (this.teleportPosition != null || this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
                     this.sendPosition(this.teleportPosition == null ? this.forceMovement : this.teleportPosition, movePlayerPacket.yaw, movePlayerPacket.pitch);
                 } else {
 
@@ -2624,6 +2624,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 this.craftingType = 0;
                 TextPacket textPacket = (TextPacket) packet;
+
                 if (textPacket.type == TextPacket.TYPE_CHAT) {
                     textPacket.message = this.removeFormat ? TextFormat.clean(textPacket.message) : textPacket.message;
                     for (String msg : textPacket.message.split("\n")) {
@@ -3246,9 +3247,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         super.saveNBT();
 
         if (this.level != null) {
-            this.namedTag.putString("Level", this.level.getName());
+            this.namedTag.putString("Level", this.level.getFolderName());
             if (this.spawnPosition != null && this.spawnPosition.getLevel() != null) {
-                this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getName());
+                this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getFolderName());
                 this.namedTag.putInt("SpawnX", (int) this.spawnPosition.x);
                 this.namedTag.putInt("SpawnY", (int) this.spawnPosition.y);
                 this.namedTag.putInt("SpawnZ", (int) this.spawnPosition.z);
@@ -3468,10 +3469,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         while (added >= most) {  //Level Up!
             added = added - most;
             level++;
-            getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
             most = calculateRequireExperience(level);
         }
-        getServer().getLogger().debug("Added " + add + " EXP to " + getName() + ", now lv:" + level + " (" + added + "/" + most + ") .");
         this.setExperience(added, level);
     }
 
@@ -3685,191 +3684,76 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public boolean teleport(Vector3 pos) {
-        return teleport(pos, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleport(Vector3 pos, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleport(pos)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean teleport(Vector3 pos, double yaw, double pitch) {
-        return teleport(pos, yaw, pitch, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleport(Vector3 pos, double yaw, double pitch, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleport(pos, yaw, pitch)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean teleportYaw(Vector3 pos, double yaw) {
-        return teleportYaw(pos, yaw, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleportYaw(Vector3 pos, double yaw, TeleportCause cause) {
+    public boolean teleport(Location location, TeleportCause cause) {
         if (!this.isOnline()) {
             return false;
         }
 
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
+        Location from = this.getLocation();
+        Location to = location;
+
+        PlayerTeleportEvent event = new PlayerTeleportEvent(this, from, to, cause);
+        this.server.getPluginManager().callEvent(event);
+
         Position oldPos = this.getPosition();
-        if (super.teleportYaw(pos, yaw)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
+        if (super.teleport(location, cause)) {
 
-        return false;
-    }
-
-    @Override
-    public boolean teleportPitch(Vector3 pos, double pitch) {
-        return teleportPitch(pos, pitch, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleportPitch(Vector3 pos, double pitch, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleportPitch(pos, pitch)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        return teleportYawAndPitch(pos, yaw, pitch, TeleportCause.PLUGIN);
-    }
-
-    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-
-        return false;
-    }
-
-    private void resetAfterTeleport(Position oldPos) {
-        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
-            if (Objects.equals(window, this.inventory)) {
-                continue;
+            for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+                if (Objects.equals(window, this.inventory)) {
+                    continue;
+                }
+                this.removeWindow(window);
             }
-            this.removeWindow(window);
-        }
 
-        this.teleportPosition = new Vector3(this.x, this.y, this.z);
+            this.teleportPosition = new Vector3(this.x, this.y, this.z);
 
-        if (!this.checkTeleportPosition()) {
-            this.forceMovement = oldPos;
-        } else {
-            this.spawnToAll();
-        }
-
-
-        this.resetFallDistance();
-        this.nextChunkOrderRun = 0;
-        this.newPosition = null;
-
-        //Weather
-        this.getLevel().sendWeather(this);
-        //Update time
-        this.getLevel().sendTime(this);
-    }
-
-    public void teleportImmediate(Vector3 pos) {
-        if (super.teleport(pos)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    public void teleportImmediate(Vector3 pos, double yaw, double pitch) {
-        if (super.teleport(pos, yaw, pitch)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    public void teleportImmediateYaw(Vector3 pos, double yaw) {
-        if (super.teleportYaw(pos, yaw)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    public void teleportImmediatePitch(Vector3 pos, double pitch) {
-        if (super.teleportPitch(pos, pitch)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    public void teleportImmediateYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    private void resetAfterTeleportImmediate() {
-        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
-            if (Objects.equals(window, this.inventory)) {
-                continue;
+            if (!this.checkTeleportPosition()) {
+                this.forceMovement = oldPos;
+            } else {
+                this.spawnToAll();
             }
-            this.removeWindow(window);
+
+            this.resetFallDistance();
+            this.nextChunkOrderRun = 0;
+            this.newPosition = null;
+
+            //Weather
+            this.getLevel().sendWeather(this);
+            //Update time
+            this.getLevel().sendTime(this);
+            return true;
         }
 
-        this.forceMovement = new Vector3(this.x, this.y, this.z);
-        this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+        return false;
+    }
 
-        this.resetFallDistance();
-        this.orderChunks();
-        this.nextChunkOrderRun = 0;
-        this.newPosition = null;
+    public void teleportImmediate(Location location) {
+        this.teleportImmediate(location, TeleportCause.PLUGIN);
+    }
+
+    public void teleportImmediate(Location location, TeleportCause cause) {
+        if (super.teleport(location, cause)) {
+
+            for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+                if (Objects.equals(window, this.inventory)) {
+                    continue;
+                }
+                this.removeWindow(window);
+            }
+
+            this.forceMovement = new Vector3(this.x, this.y, this.z);
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+
+            this.resetFallDistance();
+            this.orderChunks();
+            this.nextChunkOrderRun = 0;
+            this.newPosition = null;
+
+            //Weather
+            this.getLevel().sendWeather(this);
+            //Update time
+            this.getLevel().sendTime(this);
+        }
     }
 
     public int getWindowId(Inventory inventory) {
