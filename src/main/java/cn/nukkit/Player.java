@@ -2624,15 +2624,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 this.craftingType = 0;
                 TextPacket textPacket = (TextPacket) packet;
-                if (textPacket.message.equals("t")) {
-                    this.teleport(this.getLevel().getSafeSpawn());
-                    break;
-                }
-
-                if (textPacket.message.equals("i")) {
-                    this.teleportImmediate(Location.fromObject(this.getLevel().getSafeSpawn(), this.getLevel()));
-                    break;
-                }
 
                 if (textPacket.type == TextPacket.TYPE_CHAT) {
                     textPacket.message = this.removeFormat ? TextFormat.clean(textPacket.message) : textPacket.message;
