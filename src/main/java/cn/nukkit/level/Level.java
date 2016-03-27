@@ -460,7 +460,7 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading", TextFormat.GREEN + this.getName() + TextFormat.WHITE));
         Level defaultLevel = this.server.getDefaultLevel();
 
-        for (Player player : this.getPlayers().values()) {
+        for (Player player : new ArrayList<>(this.getPlayers().values())) {
             if (this.equals(defaultLevel) || defaultLevel == null) {
                 player.close(player.getLeaveMessage(), "Forced default level unload");
             } else {
