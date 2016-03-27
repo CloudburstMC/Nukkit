@@ -3469,10 +3469,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         while (added >= most) {  //Level Up!
             added = added - most;
             level++;
-            getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
             most = calculateRequireExperience(level);
         }
-        getServer().getLogger().debug("Added " + add + " EXP to " + getName() + ", now lv:" + level + " (" + added + "/" + most + ") .");
         this.setExperience(added, level);
     }
 

@@ -72,7 +72,6 @@ public class PlayerFood {
             this.foodSaturationLevel = fsl;
         }
         this.foodLevel = foodLevel0;
-        this.getPlayer().getServer().getLogger().debug(this.getPlayer().getName() + " set foodLevel: foodLevel = " + String.valueOf(this.getLevel()) + "  saturationLevel = " + this.getFoodSaturationLevel());
         this.sendFoodLevel();
     }
 

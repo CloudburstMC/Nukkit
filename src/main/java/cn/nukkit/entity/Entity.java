@@ -396,15 +396,6 @@ public abstract class Entity extends Location implements Metadatable {
             this.setHealth(this.getHealth() + 4 * (effect.getAmplifier() + 1));
         }
 
-        Effect newEffect = this.effects.get(effect.getId());
-        if (oldEffect != null) {
-            Server.getInstance().getLogger().debug(getNameTag() + " replace effect " + oldEffect.getName() + "(ID:" + oldEffect.getId() + ")" +
-                    " * " + oldEffect.getAmplifier() + " -> " + newEffect.getAmplifier() + ", " +
-                    "Ticks: " + oldEffect.getDuration() + " -> " + newEffect.getDuration());
-        } else {
-            Server.getInstance().getLogger().debug(getNameTag() + " add effect " + newEffect.getName() + "(ID:" + newEffect.getId() + ")" +
-                    " * " + newEffect.getAmplifier() + ", Ticks: " + newEffect.getDuration());
-        }
     }
 
     protected void recalculateEffectColor() {
