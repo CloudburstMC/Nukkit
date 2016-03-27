@@ -77,8 +77,8 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<Long, BlockEntity> blockEntities = new HashMap<>();
 
-    private Map<String, Map<Long, SetEntityMotionPacket.Entry>> motionToSend = new HashMap<>();
-    private Map<String, Map<Long, MoveEntityPacket.Entry>> moveToSend = new HashMap<>();
+    private Map<Long, SetEntityMotionPacket.Entry> motionToSend = new HashMap<>();
+    private Map<Long, MoveEntityPacket.Entry> moveToSend = new HashMap<>();
 
     private Map<Long, Player> players = new HashMap<>();
 
@@ -192,7 +192,7 @@ public class Level implements ChunkManager, Metadatable {
     private Class<? extends Generator> generator;
     private Generator generatorInstance;
 
-    public java.util.Random rand = new java.util.Random();
+    public Random rand = new Random();
     private boolean raining = false;
     private int rainTime = 0;
     private boolean thundering = false;
@@ -721,23 +721,17 @@ public class Level implements ChunkManager, Metadatable {
             this.checkSleep();
         }
 
-        for (String key : this.moveToSend.keySet()) {
-            Chunk.Entry chunkEntry = Level.getChunkXZ(key);
-            int chunkX = chunkEntry.chunkX;
-            int chunkZ = chunkEntry.chunkZ;
+        {
             MoveEntityPacket pk = new MoveEntityPacket();
-            pk.entities = this.moveToSend.get(key).values().stream().toArray(MoveEntityPacket.Entry[]::new);
-            this.addChunkPacket(chunkX, chunkZ, pk);
+            pk.entities = this.moveToSend.values().stream().toArray(MoveEntityPacket.Entry[]::new);
+            Server.broadcastPacket(this.getPlayers().values(), pk);
         }
         this.moveToSend = new HashMap<>();
 
-        for (String key : this.motionToSend.keySet()) {
-            Chunk.Entry chunkEntry = Level.getChunkXZ(key);
-            int chunkX = chunkEntry.chunkX;
-            int chunkZ = chunkEntry.chunkZ;
+        {
             SetEntityMotionPacket pk = new SetEntityMotionPacket();
-            pk.entities = this.motionToSend.get(key).values().stream().toArray(SetEntityMotionPacket.Entry[]::new);
-            this.addChunkPacket(chunkX, chunkZ, pk);
+            pk.entities = this.motionToSend.values().stream().toArray(SetEntityMotionPacket.Entry[]::new);
+            Server.broadcastPacket(this.getPlayers().values(), pk);
         }
         this.motionToSend = new HashMap<>();
 
@@ -912,8 +906,8 @@ public class Level implements ChunkManager, Metadatable {
             int existingLoaders = Math.max(0, this.chunkTickList.containsKey(index) ? this.chunkTickList.get(index) : 0);
             this.chunkTickList.put(index, existingLoaders + 1);
             for (int chunk = 0; chunk < chunksPerLoader; ++chunk) {
-                int dx = new java.util.Random().nextInt(2 * randRange) - randRange;
-                int dz = new java.util.Random().nextInt(2 * randRange) - randRange;
+                int dx = new Random().nextInt(2 * randRange) - randRange;
+                int dz = new Random().nextInt(2 * randRange) - randRange;
                 String hash = Level.chunkHash(dx + chunkX, dz + chunkZ);
                 if (!this.chunkTickList.containsKey(hash) && this.chunks.containsKey(hash)) {
                     this.chunkTickList.put(hash, -1);
@@ -1409,7 +1403,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropItem(Vector3 source, Item item, Vector3 motion, int delay) {
-        motion = motion == null ? new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2, new java.util.Random().nextDouble() * 0.2 - 0.1) : motion;
+        motion = motion == null ? new Vector3(new Random().nextDouble() * 0.2 - 0.1, 0.2, new Random().nextDouble() * 0.2 - 0.1) : motion;
 
         CompoundTag itemTag = NBTIO.putItemHelper(item);
         itemTag.setName("Item");
@@ -1427,7 +1421,7 @@ public class Level implements ChunkManager, Metadatable {
                             .add(new DoubleTag("", motion.z)))
 
                     .putList(new ListTag<FloatTag>("Rotation")
-                            .add(new FloatTag("", new java.util.Random().nextFloat() * 360))
+                            .add(new FloatTag("", new Random().nextFloat() * 360))
                             .add(new FloatTag("", 0)))
 
                     .putShort("Health", 5)
@@ -1601,7 +1595,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropExpOrb(Vector3 source, int exp, Vector3 motion, int delay) {
-        motion = (motion == null) ? new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2, new java.util.Random().nextDouble() * 0.2 - 0.1) : motion;
+        motion = (motion == null) ? new Vector3(new Random().nextDouble() * 0.2 - 0.1, 0.2, new Random().nextDouble() * 0.2 - 0.1) : motion;
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", source.getX()))
@@ -1839,7 +1833,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Map<Long, Player> getPlayers() {
-        return players;
+        return new HashMap<>(players);
     }
 
     public Map<Integer, ChunkLoader> getLoaders() {
@@ -2607,12 +2601,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addEntityMotion(int chunkX, int chunkZ, long entityId, double x, double y, double z) {
-        String index = Level.chunkHash(chunkX, chunkZ);
-        if (!this.motionToSend.containsKey(index)) {
-            this.motionToSend.put(index, new HashMap<>());
-        }
-
-        this.motionToSend.get(index).put(entityId, new SetEntityMotionPacket.Entry(entityId, x, y, z));
+        this.motionToSend.put(entityId, new SetEntityMotionPacket.Entry(entityId, x, y, z));
     }
 
     public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch) {
@@ -2620,12 +2609,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch, double headYaw) {
-        String index = Level.chunkHash(chunkX, chunkZ);
-        if (!this.moveToSend.containsKey(index)) {
-            this.moveToSend.put(index, new HashMap<>());
-        }
-
-        this.moveToSend.get(index).put(entityId, new MoveEntityPacket.Entry(entityId, x, y, z, yaw, headYaw, pitch));
+        this.moveToSend.put(entityId, new MoveEntityPacket.Entry(entityId, x, y, z, yaw, headYaw, pitch));
     }
 
     public boolean isRaining() {
