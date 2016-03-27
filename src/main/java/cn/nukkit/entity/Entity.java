@@ -1392,24 +1392,20 @@ public abstract class Entity extends Location implements Metadatable {
         this.scheduleUpdate();
     }
 
-    @Deprecated
     public boolean teleport(Vector3 pos) {
         return this.teleport(pos, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
-    @Deprecated
     public boolean teleport(Vector3 pos, PlayerTeleportEvent.TeleportCause cause) {
-        return this.teleport(pos, this.pitch, this.yaw, cause);
+        return this.teleport(Location.fromObject(pos, this.level, this.yaw, this.pitch), cause);
     }
 
-    @Deprecated
-    public boolean teleport(Vector3 pos, double yaw, double pitch) {
-        return this.teleport(pos, yaw, pitch, PlayerTeleportEvent.TeleportCause.PLUGIN);
+    public boolean teleport(Position pos) {
+        return this.teleport(pos, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
-    @Deprecated
-    public boolean teleport(Vector3 pos, double yaw, double pitch, PlayerTeleportEvent.TeleportCause cause) {
-        return this.teleport(Location.fromObject(pos, this.level, yaw, pitch), cause);
+    public boolean teleport(Position pos, PlayerTeleportEvent.TeleportCause cause) {
+        return this.teleport(Location.fromObject(pos, pos.level, this.yaw, this.pitch), cause);
     }
 
     public boolean teleport(Location location) {

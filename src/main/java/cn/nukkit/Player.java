@@ -1832,7 +1832,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.forceMovement = new Vector3(this.x, this.y, this.z);
                 }
 
-                if (this.teleportPosition != null || (this.forceMovement != null && newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
+                if (this.teleportPosition != null || this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
                     this.sendPosition(this.teleportPosition == null ? this.forceMovement : this.teleportPosition, movePlayerPacket.yaw, movePlayerPacket.pitch);
                 } else {
 
