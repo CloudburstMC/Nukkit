@@ -1762,8 +1762,6 @@ public class Level implements ChunkManager, Metadatable {
 
         if (player != null && !player.isCreative()) {
             item.setCount(item.getCount() - 1);
-        } else {
-            item.setCount(item.getCount());
         }
 
         if (item.getCount() <= 0) {
