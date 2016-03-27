@@ -3256,9 +3256,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         super.saveNBT();
 
         if (this.level != null) {
-            this.namedTag.putString("Level", this.level.getName());
+            this.namedTag.putString("Level", this.level.getFolderName());
             if (this.spawnPosition != null && this.spawnPosition.getLevel() != null) {
-                this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getName());
+                this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getFolderName());
                 this.namedTag.putInt("SpawnX", (int) this.spawnPosition.x);
                 this.namedTag.putInt("SpawnY", (int) this.spawnPosition.y);
                 this.namedTag.putInt("SpawnZ", (int) this.spawnPosition.z);
