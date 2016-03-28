@@ -1401,8 +1401,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    protected void updateMovement() {
-
+    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.level.addPlayerMovement(this.chunk.getX(), this.chunk.getZ(), this.id, x, y, z, yaw, pitch, this.isOnGround());
     }
 
     @Override
@@ -3754,23 +3754,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             //Update time
             this.getLevel().sendTime(this);
         }
-    }
-
-    private void resetAfterTeleportImmediate() {
-        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
-            if (Objects.equals(window, this.inventory)) {
-                continue;
-            }
-            this.removeWindow(window);
-        }
-
-        this.forceMovement = new Vector3(this.x, this.y, this.z);
-        this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
-
-        this.resetFallDistance();
-        this.orderChunks();
-        this.nextChunkOrderRun = 0;
-        this.newPosition = null;
     }
 
     public int getWindowId(Inventory inventory) {

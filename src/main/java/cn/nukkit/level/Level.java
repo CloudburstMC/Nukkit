@@ -79,6 +79,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<Long, SetEntityMotionPacket.Entry> motionToSend = new HashMap<>();
     private Map<Long, MoveEntityPacket.Entry> moveToSend = new HashMap<>();
+    private Map<Long, MovePlayerPacket> playerMoveToSend = new HashMap<>();
 
     private Map<Long, Player> players = new HashMap<>();
 
@@ -192,7 +193,7 @@ public class Level implements ChunkManager, Metadatable {
     private Class<? extends Generator> generator;
     private Generator generatorInstance;
 
-    public Random rand = new Random();
+    public java.util.Random rand = new java.util.Random();
     private boolean raining = false;
     private int rainTime = 0;
     private boolean thundering = false;
@@ -460,7 +461,7 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading", TextFormat.GREEN + this.getName() + TextFormat.WHITE));
         Level defaultLevel = this.server.getDefaultLevel();
 
-        for (Player player : this.getPlayers().values()) {
+        for (Player player : new ArrayList<>(this.getPlayers().values())) {
             if (this.equals(defaultLevel) || defaultLevel == null) {
                 player.close(player.getLeaveMessage(), "Forced default level unload");
             } else {
@@ -721,19 +722,28 @@ public class Level implements ChunkManager, Metadatable {
             this.checkSleep();
         }
 
+        List<DataPacket> movementPackets = new ArrayList<>();
+
         {
             MoveEntityPacket pk = new MoveEntityPacket();
             pk.entities = this.moveToSend.values().stream().toArray(MoveEntityPacket.Entry[]::new);
-            Server.broadcastPacket(this.getPlayers().values(), pk);
+            movementPackets.add(pk);
         }
         this.moveToSend = new HashMap<>();
 
         {
             SetEntityMotionPacket pk = new SetEntityMotionPacket();
             pk.entities = this.motionToSend.values().stream().toArray(SetEntityMotionPacket.Entry[]::new);
-            Server.broadcastPacket(this.getPlayers().values(), pk);
+            movementPackets.add(pk);
         }
         this.motionToSend = new HashMap<>();
+
+        {
+            movementPackets.addAll(this.playerMoveToSend.values());
+        }
+        this.playerMoveToSend = new HashMap<>();
+
+        this.getServer().batchPackets(this.getPlayers().values().stream().toArray(Player[]::new), movementPackets.stream().toArray(DataPacket[]::new), true);
 
         for (String key : this.chunkPackets.keySet()) {
             Chunk.Entry chunkEntry = Level.getChunkXZ(key);
@@ -906,8 +916,8 @@ public class Level implements ChunkManager, Metadatable {
             int existingLoaders = Math.max(0, this.chunkTickList.containsKey(index) ? this.chunkTickList.get(index) : 0);
             this.chunkTickList.put(index, existingLoaders + 1);
             for (int chunk = 0; chunk < chunksPerLoader; ++chunk) {
-                int dx = new Random().nextInt(2 * randRange) - randRange;
-                int dz = new Random().nextInt(2 * randRange) - randRange;
+                int dx = new java.util.Random().nextInt(2 * randRange) - randRange;
+                int dz = new java.util.Random().nextInt(2 * randRange) - randRange;
                 String hash = Level.chunkHash(dx + chunkX, dz + chunkZ);
                 if (!this.chunkTickList.containsKey(hash) && this.chunks.containsKey(hash)) {
                     this.chunkTickList.put(hash, -1);
@@ -1403,7 +1413,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropItem(Vector3 source, Item item, Vector3 motion, int delay) {
-        motion = motion == null ? new Vector3(new Random().nextDouble() * 0.2 - 0.1, 0.2, new Random().nextDouble() * 0.2 - 0.1) : motion;
+        motion = motion == null ? new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2, new java.util.Random().nextDouble() * 0.2 - 0.1) : motion;
 
         CompoundTag itemTag = NBTIO.putItemHelper(item);
         itemTag.setName("Item");
@@ -1421,7 +1431,7 @@ public class Level implements ChunkManager, Metadatable {
                             .add(new DoubleTag("", motion.z)))
 
                     .putList(new ListTag<FloatTag>("Rotation")
-                            .add(new FloatTag("", new Random().nextFloat() * 360))
+                            .add(new FloatTag("", new java.util.Random().nextFloat() * 360))
                             .add(new FloatTag("", 0)))
 
                     .putShort("Health", 5)
@@ -1570,8 +1580,10 @@ public class Level implements ChunkManager, Metadatable {
         int dropExp = target.getDropExp();
         if (player != null) {
             player.addExperience(dropExp);
-            for (int ii = 1; ii <= dropExp; ii++) {
-                this.dropExpOrb(target, 1);
+            if (player.isSurvival()) {
+                for (int ii = 1; ii <= dropExp; ii++) {
+                    this.dropExpOrb(target, 1);
+                }
             }
         }
 
@@ -1595,7 +1607,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropExpOrb(Vector3 source, int exp, Vector3 motion, int delay) {
-        motion = (motion == null) ? new Vector3(new Random().nextDouble() * 0.2 - 0.1, 0.2, new Random().nextDouble() * 0.2 - 0.1) : motion;
+        motion = (motion == null) ? new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2, new java.util.Random().nextDouble() * 0.2 - 0.1) : motion;
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", source.getX()))
@@ -1752,8 +1764,6 @@ public class Level implements ChunkManager, Metadatable {
 
         if (player != null && !player.isCreative()) {
             item.setCount(item.getCount() - 1);
-        } else {
-            item.setCount(item.getCount());
         }
 
         if (item.getCount() <= 0) {
@@ -1833,7 +1843,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Map<Long, Player> getPlayers() {
-        return new HashMap<>(players);
+        return players;
     }
 
     public Map<Integer, ChunkLoader> getLoaders() {
@@ -2604,12 +2614,19 @@ public class Level implements ChunkManager, Metadatable {
         this.motionToSend.put(entityId, new SetEntityMotionPacket.Entry(entityId, x, y, z));
     }
 
-    public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch) {
-        this.addEntityMovement(chunkX, chunkZ, entityId, x, y, z, yaw, pitch, yaw);
-    }
-
     public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch, double headYaw) {
         this.moveToSend.put(entityId, new MoveEntityPacket.Entry(entityId, x, y, z, yaw, headYaw, pitch));
+    }
+
+    public void addPlayerMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch, boolean onGround) {
+        MovePlayerPacket pk = new MovePlayerPacket();
+        pk.x = (float) x;
+        pk.y = (float) y;
+        pk.z = (float) z;
+        pk.yaw = (float) yaw;
+        pk.pitch = (float) pitch;
+        pk.onGround = onGround;
+        this.playerMoveToSend.put(entityId, pk);
     }
 
     public boolean isRaining() {

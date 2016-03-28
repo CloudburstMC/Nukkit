@@ -876,7 +876,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
 
-            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+            this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
         }
 
         if (diffMotion > 0.0025 || (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.0001)) { //0.05 ** 2
@@ -884,8 +884,16 @@ public abstract class Entity extends Location implements Metadatable {
             this.lastMotionY = this.motionY;
             this.lastMotionZ = this.motionZ;
 
-            this.level.addEntityMotion(this.chunk.getX(), this.chunk.getZ(), this.id, this.motionX, this.motionY, this.motionZ);
+            this.addMotion(this.motionX, this.motionY, this.motionZ);
         }
+    }
+
+    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, x, y, z, yaw, pitch, headYaw);
+    }
+
+    public void addMotion(double motionX, double motionY, double motionZ) {
+        this.level.addEntityMotion(this.chunk.getX(), this.chunk.getZ(), this.id, motionX, motionY, motionZ);
     }
 
     public Vector3 getDirectionVector() {
