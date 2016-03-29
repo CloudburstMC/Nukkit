@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.TNTPrimeSound;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -83,6 +84,18 @@ public class BlockTNT extends BlockSolid {
         );
         tnt.spawnToAll();
         this.level.addSound(new TNTPrimeSound(this));
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.getNeighborPowerLevel() > 0) {
+                this.prime();
+                this.getLevel().setBlock(this, new BlockAir(), true);
+            }
+            return Level.BLOCK_UPDATE_NORMAL;
+        }
+        return 0;
     }
 
     @Override
