@@ -1,0 +1,40 @@
+package cn.nukkit.block;
+
+import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
+
+/**
+ * Created by Pub4Game on 30.03.2016.
+ */
+public class BlockLitRedstoneLamp extends BlockRedstoneLamp {
+
+    public BlockLitRedstoneLamp(int meta) {
+        super(meta);
+    }
+
+    public BlockLitRedstoneLamp() {
+        this(0);
+    }
+
+    @Override
+    public String getName() {
+        return "Lit Redstone Lamp";
+    }
+
+    @Override
+    public int getId() {
+        return LIT_REDSTONE_LAMP;
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.getNeighborPowerLevel() <= 0) {
+                this.getLevel().setBlock(this, new BlockRedstoneLamp(), false, false);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
+        }
+        return 0;
+    }
+
+}
