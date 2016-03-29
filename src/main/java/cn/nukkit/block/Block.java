@@ -920,14 +920,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         energy = tempLevel > energy ? tempLevel : energy;
         tempLevel = this.getSide(SIDE_UP).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_NORTH).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_SOUTH).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_EAST).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_WEST).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            tempLevel = this.getSide(side).getPowerLevel();
+            energy = tempLevel > energy ? tempLevel : energy;
+        }
         return energy;
     }
 
