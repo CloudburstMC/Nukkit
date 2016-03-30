@@ -57,7 +57,7 @@ public class BlockRedstone extends BlockSolid {
     @Override
     public boolean onBreak(Item item) {
         int level = this.getPowerLevel();
-        this.getLevel().setBlock(this, new BlockAir(), true, false);
+        this.getLevel().setBlock(this, new BlockAir(), true, true);
         Redstone.deactive(this, level);
         return true;
     }
