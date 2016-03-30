@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.TNTPrimeSound;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -62,7 +63,7 @@ public class BlockTNT extends BlockSolid {
     }
 
     public void prime() {
-        this.meta = 1;
+        this.getLevel().setBlock(this, new BlockAir(), true);
         double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
@@ -86,11 +87,18 @@ public class BlockTNT extends BlockSolid {
     }
 
     @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL && this.getNeighborPowerLevel() > 0) {
+            this.prime();
+        }
+        return 0;
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.FLINT_STEEL) {
-            this.prime();
-            this.getLevel().setBlock(this, new BlockAir(), true);
             item.useOn(this);
+            this.prime();
             return true;
         }
         return false;

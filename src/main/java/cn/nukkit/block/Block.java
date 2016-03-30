@@ -397,6 +397,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[IRON_BARS] = BlockIronBars.class;
             list[GLASS_PANE] = BlockGlassPane.class;
             list[MELON_BLOCK] = BlockMelon.class;
+            list[LIT_REDSTONE_LAMP] = BlockLitRedstoneLamp.class;
             list[PUMPKIN_STEM] = BlockStemPumpkin.class;
             list[MELON_STEM] = BlockStemMelon.class;
             list[VINE] = BlockVine.class;
@@ -920,14 +921,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         energy = tempLevel > energy ? tempLevel : energy;
         tempLevel = this.getSide(SIDE_UP).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_NORTH).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_SOUTH).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_EAST).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_WEST).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            tempLevel = this.getSide(side).getPowerLevel();
+            energy = tempLevel > energy ? tempLevel : energy;
+        }
         return energy;
     }
 
