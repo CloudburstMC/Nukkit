@@ -33,7 +33,12 @@ public class WeatherCommand extends VanillaCommand {
         Level level;
         int seconds;
         if (args.length > 1) {
-            seconds = Integer.parseInt(args[1]);
+            try {
+                seconds = Integer.parseInt(args[1]);
+            } catch (Exception e) {
+                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                return true;
+            }
         } else {
             seconds = 600 * 20;
         }
@@ -49,6 +54,7 @@ public class WeatherCommand extends VanillaCommand {
                 level.setRaining(false);
                 level.setThundering(false);
                 level.setRainTime(seconds * 20);
+                level.setThunderTime(seconds * 20);
                 Command.broadcastCommandMessage(sender,
                         new TranslationContainer("commands.weather.clear"));
                 return true;

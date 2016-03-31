@@ -27,4 +27,13 @@ public class PONG_DataPacket extends Packet {
         super.decode();
         this.pingID = this.getLong();
     }
+
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new PONG_DataPacket();
+        }
+
+    }
 }

@@ -44,6 +44,16 @@ public class BlockWool extends BlockSolid {
     }
 
     @Override
+    public int getBurnChance() {
+        return 30;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 60;
+    }
+
+    @Override
     public BlockColor getColor() {
         return BlockColor.getDyeColor(meta);
     }

@@ -206,7 +206,7 @@ abstract public class PluginBase implements Plugin {
                     return true;
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Server.getInstance().getLogger().logException(e);
             }
         }
         return false;
@@ -245,7 +245,7 @@ abstract public class PluginBase implements Plugin {
             try {
                 this.config.setDefault(yaml.loadAs(Utils.readFile(this.configFile), LinkedHashMap.class));
             } catch (IOException e) {
-                e.printStackTrace();
+                Server.getInstance().getLogger().logException(e);
             }
         }
     }

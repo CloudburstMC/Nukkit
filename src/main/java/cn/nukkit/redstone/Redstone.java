@@ -114,64 +114,28 @@ public class Redstone {
         if (location.getPowerLevel() <= 0) {
             return;
         }
-        if (location.getSide(Vector3.SIDE_NORTH) instanceof BlockRedstoneWire) {
-            updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, location.getSide(Vector3.SIDE_NORTH)));
-        }
-        if (location.getSide(Vector3.SIDE_SOUTH) instanceof BlockRedstoneWire) {
-            updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, location.getSide(Vector3.SIDE_SOUTH)));
-        }
-        if (location.getSide(Vector3.SIDE_EAST) instanceof BlockRedstoneWire) {
-            updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, location.getSide(Vector3.SIDE_EAST)));
-        }
-        if (location.getSide(Vector3.SIDE_WEST) instanceof BlockRedstoneWire) {
-            updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, location.getSide(Vector3.SIDE_WEST)));
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            if (location.getSide(side) instanceof BlockRedstoneWire) {
+                updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, location.getSide(side)));
+            }
         }
         if (location instanceof BlockRedstoneWire) {
             Block block = location.getSide(Vector3.SIDE_UP);
             if (!(block instanceof BlockSolid)) {
-                if (block.getSide(Vector3.SIDE_NORTH) instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, block.getSide(Vector3.SIDE_NORTH)));
-                }
-                if (block.getSide(Vector3.SIDE_SOUTH) instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, block.getSide(Vector3.SIDE_SOUTH)));
-                }
-                if (block.getSide(Vector3.SIDE_EAST) instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, block.getSide(Vector3.SIDE_EAST)));
-                }
-                if (block.getSide(Vector3.SIDE_WEST) instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, block.getSide(Vector3.SIDE_WEST)));
+                for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+                    if (location.getSide(side) instanceof BlockRedstoneWire) {
+                        updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, block.getSide(side)));
+                    }
                 }
             }
-            block = location.getSide(Vector3.SIDE_NORTH);
-            if (!(block instanceof BlockSolid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_SOUTH);
-            if (!(block instanceof BlockSolid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_EAST);
-            if (!(block instanceof BlockSolid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_WEST);
-            if (!(block instanceof BlockSolid)) {
-                Block blockDown;
-                blockDown = block.getSide(Vector3.SIDE_DOWN);
-                if (blockDown instanceof BlockRedstoneWire) {
-                    updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
+            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+                block = location.getSide(side);
+                if (!(block instanceof BlockSolid)) {
+                    Block blockDown;
+                    blockDown = block.getSide(Vector3.SIDE_DOWN);
+                    if (blockDown instanceof BlockRedstoneWire) {
+                        updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, blockDown));
+                    }
                 }
             }
         }
@@ -181,98 +145,37 @@ public class Redstone {
         if (updateLevel < 0) {
             return;
         }
-        if (location.getSide(Vector3.SIDE_NORTH).isPowerSource() || (updateLevel == 0 && location.getSide(Vector3.SIDE_NORTH).isPowered())) {
-            sourceList.add(new UpdateObject(location.getPowerLevel(Vector3.SIDE_NORTH), location.getSide(Vector3.SIDE_NORTH)));
-        } else if (location.getSide(Vector3.SIDE_NORTH) instanceof BlockRedstoneWire) {
-            if (!closedMap.containsKey(location.getSide(Vector3.SIDE_NORTH).getLocationHash())) {
-                closedMap.put(location.getSide(Vector3.SIDE_NORTH).getLocationHash(), location.getSide(Vector3.SIDE_NORTH));
-                updateQueue.add(new UpdateObject(updateLevel - 1, location.getSide(Vector3.SIDE_NORTH)));
-            }
-        }
-        if (location.getSide(Vector3.SIDE_SOUTH).isPowerSource() || (updateLevel == 0 && location.getSide(Vector3.SIDE_SOUTH).isPowered())) {
-            sourceList.add(new UpdateObject(location.getPowerLevel(Vector3.SIDE_SOUTH), location.getSide(Vector3.SIDE_SOUTH)));
-        } else if (location.getSide(Vector3.SIDE_SOUTH) instanceof BlockRedstoneWire) {
-            if (!closedMap.containsKey(location.getSide(Vector3.SIDE_SOUTH).getLocationHash())) {
-                closedMap.put(location.getSide(Vector3.SIDE_SOUTH).getLocationHash(), location.getSide(Vector3.SIDE_SOUTH));
-                updateQueue.add(new UpdateObject(updateLevel - 1, location.getSide(Vector3.SIDE_SOUTH)));
-            }
-        }
-        if (location.getSide(Vector3.SIDE_EAST).isPowerSource() || (updateLevel == 0 && location.getSide(Vector3.SIDE_EAST).isPowered())) {
-            sourceList.add(new UpdateObject(location.getPowerLevel(Vector3.SIDE_EAST), location.getSide(Vector3.SIDE_EAST)));
-        } else if (location.getSide(Vector3.SIDE_EAST) instanceof BlockRedstoneWire) {
-            if (!closedMap.containsKey(location.getSide(Vector3.SIDE_EAST).getLocationHash())) {
-                closedMap.put(location.getSide(Vector3.SIDE_EAST).getLocationHash(), location.getSide(Vector3.SIDE_EAST));
-                updateQueue.add(new UpdateObject(updateLevel - 1, location.getSide(Vector3.SIDE_EAST)));
-            }
-        }
-        if (location.getSide(Vector3.SIDE_WEST).isPowerSource() || (updateLevel == 0 && location.getSide(Vector3.SIDE_WEST).isPowered())) {
-            sourceList.add(new UpdateObject(location.getPowerLevel(Vector3.SIDE_WEST), location.getSide(Vector3.SIDE_WEST)));
-        } else if (location.getSide(Vector3.SIDE_WEST) instanceof BlockRedstoneWire) {
-            if (!closedMap.containsKey(location.getSide(Vector3.SIDE_WEST).getLocationHash())) {
-                closedMap.put(location.getSide(Vector3.SIDE_WEST).getLocationHash(), location.getSide(Vector3.SIDE_WEST));
-                updateQueue.add(new UpdateObject(updateLevel - 1, location.getSide(Vector3.SIDE_WEST)));
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            if (location.getSide(side).isPowerSource() || (updateLevel == 0 && location.getSide(side).isPowered())) {
+                sourceList.add(new UpdateObject(location.getPowerLevel(side), location.getSide(side)));
+            } else if (location.getSide(side) instanceof BlockRedstoneWire) {
+                if (!closedMap.containsKey(location.getSide(side).getLocationHash())) {
+                    closedMap.put(location.getSide(side).getLocationHash(), location.getSide(side));
+                    updateQueue.add(new UpdateObject(updateLevel - 1, location.getSide(side)));
+                }
             }
         }
         if (location instanceof BlockRedstoneWire) {
-            Block block = location.getSide(Vector3.SIDE_UP);
-            if (block.getSide(Vector3.SIDE_NORTH) instanceof BlockRedstoneWire) {
-                if (!closedMap.containsKey(block.getSide(Vector3.SIDE_NORTH).getLocationHash())) {
-                    closedMap.put(block.getSide(Vector3.SIDE_NORTH).getLocationHash(), block.getSide(Vector3.SIDE_NORTH));
-                    updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_NORTH)));
+            Block block;
+            block = location.getSide(Vector3.SIDE_UP);
+            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+                if (block.getSide(side) instanceof BlockRedstoneWire) {
+                    if (!closedMap.containsKey(block.getSide(side).getLocationHash())) {
+                        closedMap.put(block.getSide(side).getLocationHash(), block.getSide(side));
+                        updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(side)));
+                    }
                 }
             }
-            if (block.getSide(Vector3.SIDE_SOUTH) instanceof BlockRedstoneWire) {
-                if (!closedMap.containsKey(block.getSide(Vector3.SIDE_SOUTH).getLocationHash())) {
-                    closedMap.put(block.getSide(Vector3.SIDE_SOUTH).getLocationHash(), block.getSide(Vector3.SIDE_SOUTH));
-                    updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_SOUTH)));
-                }
-            }
-            if (block.getSide(Vector3.SIDE_EAST) instanceof BlockRedstoneWire) {
-                if (!closedMap.containsKey(block.getSide(Vector3.SIDE_EAST).getLocationHash())) {
-                    closedMap.put(block.getSide(Vector3.SIDE_EAST).getLocationHash(), block.getSide(Vector3.SIDE_EAST));
-                    updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_EAST)));
-                }
-            }
-            if (block.getSide(Vector3.SIDE_WEST) instanceof BlockRedstoneWire) {
-                if (!closedMap.containsKey(block.getSide(Vector3.SIDE_WEST).getLocationHash())) {
-                    closedMap.put(block.getSide(Vector3.SIDE_WEST).getLocationHash(), block.getSide(Vector3.SIDE_WEST));
-                    updateQueue.add(new UpdateObject(updateLevel - 1, block.getSide(Vector3.SIDE_WEST)));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_NORTH);
-            Block blockDown;
-            blockDown = block.getSide(Vector3.SIDE_DOWN);
-            if (blockDown instanceof BlockRedstoneWire) {
-                if (!closedMap.containsKey(blockDown.getLocationHash())) {
-                    closedMap.put(blockDown.getLocationHash(), blockDown);
-                    updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_SOUTH);
-            blockDown = block.getSide(Vector3.SIDE_DOWN);
-            if (blockDown instanceof BlockRedstoneWire) {
-                if (!closedMap.containsKey(blockDown.getLocationHash())) {
-                    closedMap.put(blockDown.getLocationHash(), blockDown);
-                    updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_EAST);
-            blockDown = block.getSide(Vector3.SIDE_DOWN);
-            if (blockDown instanceof BlockRedstoneWire) {
-                if (!closedMap.containsKey(blockDown.getLocationHash())) {
-                    closedMap.put(blockDown.getLocationHash(), blockDown);
-                    updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
-                }
-            }
-            block = location.getSide(Vector3.SIDE_WEST);
-            blockDown = block.getSide(Vector3.SIDE_DOWN);
-            if (blockDown instanceof BlockRedstoneWire) {
-                if (!closedMap.containsKey(blockDown.getLocationHash())) {
-                    closedMap.put(blockDown.getLocationHash(), blockDown);
-                    updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
+            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+                block = location.getSide(side);
+                Block blockDown = block.getSide(Vector3.SIDE_DOWN);
+                if (blockDown instanceof BlockRedstoneWire) {
+                    if (!closedMap.containsKey(blockDown.getLocationHash())) {
+                        closedMap.put(blockDown.getLocationHash(), blockDown);
+                        updateQueue.add(new UpdateObject(updateLevel - 1, blockDown));
+                    }
                 }
             }
         }
     }
-
 }

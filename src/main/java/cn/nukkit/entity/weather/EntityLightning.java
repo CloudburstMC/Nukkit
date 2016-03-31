@@ -11,6 +11,7 @@ import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
@@ -94,15 +95,23 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                         }
                         //TODO Pig
                         //TODO Villager
-                    }
-                    else if (e instanceof EntityItem) {
+                    } else if (e instanceof EntityItem) {
                         e.kill();
                     }
                 }
                 if (Server.getInstance().getDifficulty() >= 2) {
                     Block block = this.getLevelBlock();
                     if (block.getId() == 0 || block.getId() == Block.TALL_GRASS) {
-                        this.getLevel().setBlock(block, new BlockFire());
+                        BlockFire fire = new BlockFire();
+                        fire.x = block.x;
+                        fire.y = block.y;
+                        fire.z = block.z;
+                        fire.level = level;
+                        this.getLevel().setBlock(fire, fire, true);
+                        if (fire.isBlockTopFacingSurfaceSolid(fire.getSide(Vector3.SIDE_DOWN)) || fire.canNeighborBurn()) {
+                            level.setBlock(fire, fire, true);
+                            level.scheduleUpdate(fire, fire.tickRate() + level.rand.nextInt(10));
+                        }
                     }
                 }
             }
@@ -117,10 +126,11 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
 
         this.lastUpdate = currentTick;
 
-        boolean hasUpdate = this.entityBaseTick(tickDiff);
+        boolean hasUpdate = true;
+        this.entityBaseTick(tickDiff);
 
         if (this.isAlive()) {
-            if (this.age >= 10) {
+            if (this.age >= 1) {
                 this.close();
                 hasUpdate = false;
             }

@@ -48,74 +48,30 @@ public class BlockRedstoneWire extends BlockFlowable {
         power = tempLevel > power ? tempLevel : power;
         tempLevel = this.getSide(SIDE_UP).getPowerLevel();
         power = tempLevel > power ? tempLevel : power;
-        Block block = this.getSide(SIDE_NORTH);
-        tempLevel = block.getPowerLevel();
-        power = tempLevel > power ? tempLevel : power;
-        if (!(block instanceof BlockSolid)) {
-            Block blockDown;
-            blockDown = block.getSide(SIDE_DOWN);
-            if (blockDown instanceof BlockRedstoneWire) {
-                tempLevel = blockDown.getPowerLevel();
-                power = tempLevel > power ? tempLevel : power;
-            }
-        }
-        block = this.getSide(SIDE_SOUTH);
-        tempLevel = block.getPowerLevel();
-        power = tempLevel > power ? tempLevel : power;
-        if (!(block instanceof BlockSolid)) {
-            Block blockDown;
-            blockDown = block.getSide(SIDE_DOWN);
-            if (blockDown instanceof BlockRedstoneWire) {
-                tempLevel = blockDown.getPowerLevel();
-                power = tempLevel > power ? tempLevel : power;
-            }
-        }
-        block = this.getSide(SIDE_EAST);
-        tempLevel = block.getPowerLevel();
-        power = tempLevel > power ? tempLevel : power;
-        if (!(block instanceof BlockSolid)) {
-            Block blockDown;
-            blockDown = block.getSide(SIDE_DOWN);
-            if (blockDown instanceof BlockRedstoneWire) {
-                tempLevel = blockDown.getPowerLevel();
-                power = tempLevel > power ? tempLevel : power;
-            }
-        }
-        block = this.getSide(SIDE_WEST);
-        tempLevel = block.getPowerLevel();
-        power = tempLevel > power ? tempLevel : power;
-        if (!(block instanceof BlockSolid)) {
-            Block blockDown;
-            blockDown = block.getSide(SIDE_DOWN);
-            if (blockDown instanceof BlockRedstoneWire) {
-                tempLevel = blockDown.getPowerLevel();
-                power = tempLevel > power ? tempLevel : power;
+        Block block;
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            block = this.getSide(side);
+            tempLevel = block.getPowerLevel();
+            power = tempLevel > power ? tempLevel : power;
+            if (!(block instanceof BlockSolid)) {
+                Block blockDown;
+                blockDown = block.getSide(SIDE_DOWN);
+                if (blockDown instanceof BlockRedstoneWire) {
+                    tempLevel = blockDown.getPowerLevel();
+                    power = tempLevel > power ? tempLevel : power;
+                }
             }
         }
         Block topBlock = this.getSide(SIDE_UP);
         if (!(topBlock instanceof BlockSolid)) {
-            block = topBlock.getSide(SIDE_NORTH);
-            if (block instanceof BlockRedstoneWire) {
-                tempLevel = block.getPowerLevel();
-                power = tempLevel > power ? tempLevel : power;
-            }
-            block = topBlock.getSide(SIDE_SOUTH);
-            if (block instanceof BlockRedstoneWire) {
-                tempLevel = block.getPowerLevel();
-                power = tempLevel > power ? tempLevel : power;
-            }
-            block = topBlock.getSide(SIDE_EAST);
-            if (block instanceof BlockRedstoneWire) {
-                tempLevel = block.getPowerLevel();
-                power = tempLevel > power ? tempLevel : power;
-            }
-            block = topBlock.getSide(SIDE_WEST);
-            if (block instanceof BlockRedstoneWire) {
-                tempLevel = block.getPowerLevel();
-                power = tempLevel > power ? tempLevel : power;
+            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+                block = topBlock.getSide(side);
+                if (block instanceof BlockRedstoneWire) {
+                    tempLevel = block.getPowerLevel();
+                    power = tempLevel > power ? tempLevel : power;
+                }
             }
         }
-
         return power;
     }
 

@@ -9,6 +9,7 @@ import cn.nukkit.level.generator.populator.PopulatorTree;
  * author: MagicDroidX
  * Nukkit Project
  */
+
 public class ForestBiome extends GrassyBiome {
     public static final int TYPE_NORMAL = 0;
     public static final int TYPE_BIRCH = 1;

@@ -21,7 +21,8 @@ public class PopulatorCaves extends Populator {
         if (this.cavesSimplex != null) {
             return;
         }
-        this.cavesSimplex = new Simplex(random, 4F, 1F / 2F, 1F / 30F);
+        this.cavesSimplex = new Simplex(random, 4.1F, 15F, 1F / 200F);
+        //实在太密啦啦啦
     }
 
     @Override
@@ -39,7 +40,7 @@ public class PopulatorCaves extends Populator {
                     hasWater = true;
                     heightestBlock = false;
                 }
-                for (int y = 127; y >= 25; y--) {
+                for (int y = 127; y >= 20; y--) {
                     if (chunk.getBlockId(x, y, z) == Block.AIR) {
                         continue;
                     }
@@ -54,7 +55,23 @@ public class PopulatorCaves extends Populator {
                         continue;
                     }
                     if (cavesGenerate[x][z][y] > 0.35F) {
-                        chunk.setBlock(x, y, z, Block.AIR);
+                        if (y > 20) {
+                            chunk.setBlock(x, y, z, Block.AIR);
+                            int highest = chunk.getHighestBlockAt(x, z);
+                            /*int light = y < highest ? (highest - y < 10 ? highest - y : 1)  : 10;
+                            chunk.setBlockSkyLight(x, y, z, light);
+                            int bl = 0;
+                            if (y < 25) {
+                                bl = (25 - y) * 2;
+                            }
+                            chunk.setBlockLight(x, y, z, bl);*/
+                        } else {
+                            //LAVA
+                            chunk.setBlock(x, y, z, Block.LAVA);
+                            /*chunk.setBlockSkyLight(x, y, z, 0);
+                            chunk.setBlockLight(x, y, z, 15);*/
+                        }
+
                     } else if (heightestBlock) {
                         if (chunk.getBlockId(x, y, z) == Block.DIRT) {
                             chunk.setBlock(x, y, z, Block.GRASS);

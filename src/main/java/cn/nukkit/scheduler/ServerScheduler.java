@@ -114,7 +114,11 @@ public class ServerScheduler {
 
     public void cancelTask(int taskId) {
         if (taskMap.containsKey(taskId)) {
-            taskMap.remove(taskId).cancel();
+            try {
+                taskMap.remove(taskId).cancel();
+            } catch (RuntimeException ex) {
+                Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+            }
         }
     }
 
@@ -125,14 +129,22 @@ public class ServerScheduler {
         for (Map.Entry<Integer, TaskHandler> entry : taskMap.entrySet()) {
             TaskHandler taskHandler = entry.getValue();
             if (plugin.equals(taskHandler.getPlugin())) {
-                taskHandler.cancel(); /* It will remove from task map automatic in next main heartbeat. */
+                try {
+                    taskHandler.cancel(); /* It will remove from task map automatic in next main heartbeat. */
+                } catch (RuntimeException ex) {
+                    Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+                }
             }
         }
     }
 
     public void cancelAllTasks() {
         for (Map.Entry<Integer, TaskHandler> entry : this.taskMap.entrySet()) {
-            entry.getValue().cancel();
+            try {
+                entry.getValue().cancel();
+            } catch (RuntimeException ex) {
+                Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+            }
         }
         this.taskMap.clear();
         this.queue.clear();
@@ -192,7 +204,11 @@ public class ServerScheduler {
                 taskHandler.setNextRunTick(currentTick + taskHandler.getPeriod());
                 pending.offer(taskHandler);
             } else {
-                taskMap.remove(taskHandler.getTaskId()).cancel();
+                try {
+                    taskMap.remove(taskHandler.getTaskId()).cancel();
+                } catch (RuntimeException ex) {
+                    Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+                }
             }
         }
         AsyncTask.collectTask();

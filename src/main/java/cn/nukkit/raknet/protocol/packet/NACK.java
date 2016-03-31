@@ -1,6 +1,7 @@
 package cn.nukkit.raknet.protocol.packet;
 
 import cn.nukkit.raknet.protocol.AcknowledgePacket;
+import cn.nukkit.raknet.protocol.Packet;
 
 /**
  * author: MagicDroidX
@@ -13,5 +14,14 @@ public class NACK extends AcknowledgePacket {
     @Override
     public byte getID() {
         return ID;
+    }
+
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new NACK();
+        }
+
     }
 }

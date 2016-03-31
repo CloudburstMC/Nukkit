@@ -241,7 +241,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int ACACIA_WOODEN_STAIRS = 163;
     public static final int DARK_OAK_WOOD_STAIRS = 164;
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
-    
+
     public static final int SLIME_BLOCK = 165;
 
     public static final int IRON_TRAPDOOR = 167;
@@ -397,6 +397,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[IRON_BARS] = BlockIronBars.class;
             list[GLASS_PANE] = BlockGlassPane.class;
             list[MELON_BLOCK] = BlockMelon.class;
+            list[LIT_REDSTONE_LAMP] = BlockLitRedstoneLamp.class;
             list[PUMPKIN_STEM] = BlockStemPumpkin.class;
             list[MELON_STEM] = BlockStemMelon.class;
             list[VINE] = BlockVine.class;
@@ -500,8 +501,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                             fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        Server.getInstance().getLogger().error("Error while registering " + c.getName());
+                        Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
                         return;
                     }
 
@@ -578,6 +578,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return true;
     }
 
+    public int tickRate() {
+        return 10;
+    }
+
     public boolean onBreak(Item item) {
         return this.getLevel().setBlock(this, new BlockAir(), true, true);
     }
@@ -600,6 +604,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     public double getResistance() {
         return 1;
+    }
+
+    public int getBurnChance() {
+        return 0;
+    }
+
+    public int getBurnAbility() {
+        return 0;
     }
 
     public int getToolType() {
@@ -909,14 +921,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         energy = tempLevel > energy ? tempLevel : energy;
         tempLevel = this.getSide(SIDE_UP).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_NORTH).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_SOUTH).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_EAST).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_WEST).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            tempLevel = this.getSide(side).getPowerLevel();
+            energy = tempLevel > energy ? tempLevel : energy;
+        }
         return energy;
     }
 

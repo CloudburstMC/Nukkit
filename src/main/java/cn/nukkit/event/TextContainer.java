@@ -1,5 +1,7 @@
 package cn.nukkit.event;
 
+import cn.nukkit.Server;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -29,7 +31,7 @@ public class TextContainer implements Cloneable {
         try {
             return (TextContainer) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            Server.getInstance().getLogger().logException(e);
         }
         return null;
     }

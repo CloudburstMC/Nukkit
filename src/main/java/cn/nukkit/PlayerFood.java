@@ -13,6 +13,7 @@ import cn.nukkit.potion.Effect;
 public class PlayerFood {
 
     private int foodLevel = 20;
+    private int maxFoodLevel;
     private float foodSaturationLevel = 20f;
     private int foodTickTimer = 0;
     private double foodExpLevel = 0;
@@ -22,6 +23,7 @@ public class PlayerFood {
     public PlayerFood(Player player, int foodLevel, float foodSaturationLevel) {
         this.player = player;
         this.foodLevel = foodLevel;
+        this.maxFoodLevel = 20;
         this.foodSaturationLevel = foodSaturationLevel;
     }
 
@@ -31,6 +33,10 @@ public class PlayerFood {
 
     public int getLevel() {
         return this.foodLevel;
+    }
+
+    public int getMaxLevel() {
+        return this.maxFoodLevel;
     }
 
     public void setLevel(int foodLevel) {
@@ -66,7 +72,6 @@ public class PlayerFood {
             this.foodSaturationLevel = fsl;
         }
         this.foodLevel = foodLevel0;
-        this.getPlayer().getServer().getLogger().debug(this.getPlayer().getName() + " set foodLevel: foodLevel = " + String.valueOf(this.getLevel()) + "  saturationLevel = " + this.getFoodSaturationLevel());
         this.sendFoodLevel();
     }
 

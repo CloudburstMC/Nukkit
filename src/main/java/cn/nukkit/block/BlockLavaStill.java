@@ -23,4 +23,10 @@ public class BlockLavaStill extends BlockLava {
     public String getName() {
         return "Still Lava";
     }
+
+    @Override
+    public BlockLiquid getBlock(int meta) {
+        return new BlockLavaStill(meta);
+    }
+
 }

@@ -29,4 +29,13 @@ public class UNCONNECTED_PING extends Packet {
         super.decode();
         this.pingID = this.getLong();
     }
+
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new UNCONNECTED_PING();
+        }
+
+    }
 }

@@ -63,7 +63,7 @@ public class JavaPluginLoader implements PluginLoader {
                 } catch (ClassCastException e) {
                     throw new PluginException("main class `" + description.getMain() + "' does not extend PluginBase");
                 } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
+                    Server.getInstance().getLogger().logException(e);
                 }
 
             } catch (ClassNotFoundException e) {

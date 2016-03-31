@@ -1,5 +1,6 @@
 package cn.nukkit.lang;
 
+import cn.nukkit.Server;
 import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.utils.Utils;
@@ -79,7 +80,7 @@ public class BaseLang {
             }
             return d;
         } catch (IOException e) {
-            e.printStackTrace();
+            Server.getInstance().getLogger().logException(e);
             return null;
         }
     }
@@ -110,7 +111,7 @@ public class BaseLang {
             }
             return d;
         } catch (IOException e) {
-            e.printStackTrace();
+            Server.getInstance().getLogger().logException(e);
             return null;
         }
     }

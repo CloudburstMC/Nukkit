@@ -18,19 +18,15 @@ Nukkit
 
 __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
-[![Gitter](https://img.shields.io/gitter/room/Nukkit/Nukkit.js.svg?style=flat-square)](https://gitter.im/Nukkit/Nukkit)
-[![GitHub stars](https://img.shields.io/github/stars/Nukkit/Nukkit.svg?style=flat-square&label=Star)]()
-[![GitHub forks](https://img.shields.io/github/forks/Nukkit/Nukkit.svg?style=flat-square&label=Fork)]()
-[![GitHub watchers](https://img.shields.io/github/watchers/Nukkit/Nukkit.svg?style=flat-square&label=Watch)]()
-
-[![Travis](https://img.shields.io/travis/Nukkit/Nukkit.svg?style=flat-square)](https://travis-ci.org/Nukkit/Nukkit)
-[![CircleCI](https://img.shields.io/circleci/project/Nukkit/Nukkit.svg?style=flat-square)](https://circleci.com/gh/Nukkit/Nukkit)
+[![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=1323471525%40qq%2ecom&lc=US&item_name=Nukkit&currency_code=USD&bn=PP%2dDonationsBF%3apaypal%2ddonate%2dyellow%2esvg%3aNonHostedGuest)
+[![Gitter](https://img.shields.io/gitter/room/Nukkit/Nukkit.js.svg?style=flat)](https://gitter.im/Nukkit/Nukkit)
+[![Travis](https://img.shields.io/travis/Nukkit/Nukkit.svg?style=flat)](https://travis-ci.org/Nukkit/Nukkit)
 
 -------------
 
 Get Nukkit
 -------------
-* __[Jenkins](http://ci.mengcraft.com:8080/job/nukkit/)__ powered by **MengCraft**
+* __[Official Site](http://nukkit.cn)__
 * __[Circle CI](https://circleci.com/gh/Nukkit/Nukkit/tree/master/)__ (**login required**)
 
 Introduction

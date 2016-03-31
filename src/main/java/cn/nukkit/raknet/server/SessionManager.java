@@ -12,14 +12,13 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class SessionManager {
-    protected Map<Byte, Class<? extends Packet>> packetPool = new ConcurrentHashMap<>();
+    protected final Packet.PacketFactory[] packetPool = new Packet.PacketFactory[256];
 
     protected RakNetServer server;
 
@@ -77,12 +76,11 @@ public class SessionManager {
             int max = 5000;
             while (max > 0) {
                 try {
-                    if(!this.receivePacket()) {
+                    if (!this.receivePacket()) {
                         break;
                     }
                     --max;
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     if (currentSource != "") {
                         this.blockAddress(currentSource);
                     }
@@ -447,47 +445,49 @@ public class SessionManager {
         return this.serverId;
     }
 
-    private void registerPacket(byte id, Class<? extends Packet> clazz) {
-        this.packetPool.put(id, clazz);
+    private void registerPacket(byte id, Packet.PacketFactory factory) {
+        this.packetPool[id & 0xFF] = factory;
     }
 
     public Packet getPacketFromPool(byte id) {
-        if (this.packetPool.containsKey(id)) {
-            try {
-                return this.packetPool.get(id).newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
+        return this.packetPool[id & 0xFF].create();
     }
 
     private void registerPackets() {
+        // fill with dummy returning null
+        Arrays.fill(this.packetPool, new Packet.PacketFactory() {
+
+            @Override
+            public Packet create() {
+                return null;
+            }
+        });
+
         //this.registerPacket(UNCONNECTED_PING.ID, UNCONNECTED_PING.class);
-        this.registerPacket(UNCONNECTED_PING_OPEN_CONNECTIONS.ID, UNCONNECTED_PING_OPEN_CONNECTIONS.class);
-        this.registerPacket(OPEN_CONNECTION_REQUEST_1.ID, OPEN_CONNECTION_REQUEST_1.class);
-        this.registerPacket(OPEN_CONNECTION_REPLY_1.ID, OPEN_CONNECTION_REPLY_1.class);
-        this.registerPacket(OPEN_CONNECTION_REQUEST_2.ID, OPEN_CONNECTION_REQUEST_2.class);
-        this.registerPacket(OPEN_CONNECTION_REPLY_2.ID, OPEN_CONNECTION_REPLY_2.class);
-        this.registerPacket(UNCONNECTED_PONG.ID, UNCONNECTED_PONG.class);
-        this.registerPacket(ADVERTISE_SYSTEM.ID, ADVERTISE_SYSTEM.class);
-        this.registerPacket(DATA_PACKET_0.ID, DATA_PACKET_0.class);
-        this.registerPacket(DATA_PACKET_1.ID, DATA_PACKET_1.class);
-        this.registerPacket(DATA_PACKET_2.ID, DATA_PACKET_2.class);
-        this.registerPacket(DATA_PACKET_3.ID, DATA_PACKET_3.class);
-        this.registerPacket(DATA_PACKET_4.ID, DATA_PACKET_4.class);
-        this.registerPacket(DATA_PACKET_5.ID, DATA_PACKET_5.class);
-        this.registerPacket(DATA_PACKET_6.ID, DATA_PACKET_6.class);
-        this.registerPacket(DATA_PACKET_7.ID, DATA_PACKET_7.class);
-        this.registerPacket(DATA_PACKET_8.ID, DATA_PACKET_8.class);
-        this.registerPacket(DATA_PACKET_9.ID, DATA_PACKET_9.class);
-        this.registerPacket(DATA_PACKET_A.ID, DATA_PACKET_A.class);
-        this.registerPacket(DATA_PACKET_B.ID, DATA_PACKET_B.class);
-        this.registerPacket(DATA_PACKET_C.ID, DATA_PACKET_C.class);
-        this.registerPacket(DATA_PACKET_D.ID, DATA_PACKET_D.class);
-        this.registerPacket(DATA_PACKET_E.ID, DATA_PACKET_E.class);
-        this.registerPacket(DATA_PACKET_F.ID, DATA_PACKET_F.class);
-        this.registerPacket(NACK.ID, NACK.class);
-        this.registerPacket(ACK.ID, ACK.class);
+        this.registerPacket(UNCONNECTED_PING_OPEN_CONNECTIONS.ID, new UNCONNECTED_PING_OPEN_CONNECTIONS.Factory());
+        this.registerPacket(OPEN_CONNECTION_REQUEST_1.ID, new OPEN_CONNECTION_REQUEST_1.Factory());
+        this.registerPacket(OPEN_CONNECTION_REPLY_1.ID, new OPEN_CONNECTION_REPLY_1.Factory());
+        this.registerPacket(OPEN_CONNECTION_REQUEST_2.ID, new OPEN_CONNECTION_REQUEST_2.Factory());
+        this.registerPacket(OPEN_CONNECTION_REPLY_2.ID, new OPEN_CONNECTION_REPLY_2.Factory());
+        this.registerPacket(UNCONNECTED_PONG.ID, new UNCONNECTED_PONG.Factory());
+        this.registerPacket(ADVERTISE_SYSTEM.ID, new ADVERTISE_SYSTEM.Factory());
+        this.registerPacket(DATA_PACKET_0.ID, new DATA_PACKET_0.Factory());
+        this.registerPacket(DATA_PACKET_1.ID, new DATA_PACKET_1.Factory());
+        this.registerPacket(DATA_PACKET_2.ID, new DATA_PACKET_2.Factory());
+        this.registerPacket(DATA_PACKET_3.ID, new DATA_PACKET_3.Factory());
+        this.registerPacket(DATA_PACKET_4.ID, new DATA_PACKET_4.Factory());
+        this.registerPacket(DATA_PACKET_5.ID, new DATA_PACKET_5.Factory());
+        this.registerPacket(DATA_PACKET_6.ID, new DATA_PACKET_6.Factory());
+        this.registerPacket(DATA_PACKET_7.ID, new DATA_PACKET_7.Factory());
+        this.registerPacket(DATA_PACKET_8.ID, new DATA_PACKET_8.Factory());
+        this.registerPacket(DATA_PACKET_9.ID, new DATA_PACKET_9.Factory());
+        this.registerPacket(DATA_PACKET_A.ID, new DATA_PACKET_A.Factory());
+        this.registerPacket(DATA_PACKET_B.ID, new DATA_PACKET_B.Factory());
+        this.registerPacket(DATA_PACKET_C.ID, new DATA_PACKET_C.Factory());
+        this.registerPacket(DATA_PACKET_D.ID, new DATA_PACKET_D.Factory());
+        this.registerPacket(DATA_PACKET_E.ID, new DATA_PACKET_E.Factory());
+        this.registerPacket(DATA_PACKET_F.ID, new DATA_PACKET_F.Factory());
+        this.registerPacket(NACK.ID, new NACK.Factory());
+        this.registerPacket(ACK.ID, new ACK.Factory());
     }
 }

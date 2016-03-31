@@ -1,16 +1,14 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockSpreadEvent;
-import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.ObjectTallGrass;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.Random;
 
 /**
  * author: Angelic47
@@ -78,27 +76,24 @@ public class BlockGrass extends BlockDirt {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            //todo: light levels
-            Random random = new Random();
-            int x = ((int) this.x) - 1 + random.nextInt() % 3;
-            int y = ((int) this.y) - 2 + random.nextInt() % 5;
-            int z = ((int) this.z) - 1 + random.nextInt() % 3;
-            Block block = this.getLevel().getBlock(new Vector3(x, y, z));
-            if (block.getId() == Block.DIRT) {
-                if ((block.getSide(Vector3.SIDE_UP) instanceof BlockTransparent) && !(block.getSide(Vector3.SIDE_UP) instanceof BlockLiquid)) {
-                    BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockGrass());
-                    getLevel().getServer().getPluginManager().callEvent(ev);
-                    if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(block, ev.getNewState(), true, true);
+            Block block = this.getLevel().getBlock(new Vector3(this.x, this.y, this.z));
+            if (block.getSide(1).getLightLevel() < 4) {
+                BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockDirt());
+                Server.getInstance().getPluginManager().callEvent(ev);
+            } else if (block.getSide(1).getLightLevel() >= 9) {
+                for (int l = 0; l < 4; ++l) {
+                    NukkitRandom random = new NukkitRandom();
+                    int x = random.nextRange((int) this.x - 1, (int) this.x + 1);
+                    int y = random.nextRange((int) this.y - 2, (int) this.y + 2);
+                    int z = random.nextRange((int) this.z - 1, (int) this.z + 1);
+                    Block blocks = this.getLevel().getBlock(new Vector3(x, y, z));
+                    if (blocks.getId() == Block.DIRT && blocks.getDamage() == 0x0F && blocks.getSide(1).getLightLevel() >= 4 && blocks.z <= 2) {
+                        BlockSpreadEvent ev = new BlockSpreadEvent(blocks, this, new BlockGrass());
+                        Server.getInstance().getPluginManager().callEvent(ev);
+                        if (!ev.isCancelled()) {
+                            this.getLevel().setBlock(blocks, ev.getNewState());
+                        }
                     }
-                }
-            }
-
-            if (!(this.getSide(Vector3.SIDE_UP) instanceof BlockTransparent) || (this.getSide(Vector3.SIDE_UP) instanceof BlockLiquid)) {
-                BlockUpdateEvent ev = new BlockUpdateEvent(new BlockDirt());
-                getLevel().getServer().getPluginManager().callEvent(ev);
-                if (!ev.isCancelled()) {
-                    this.getLevel().setBlock(this, ev.getBlock(), true, true);
                 }
             }
         }

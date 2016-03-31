@@ -42,4 +42,13 @@ public class OPEN_CONNECTION_REPLY_2 extends Packet {
         this.clientPort = address.getPort();
         this.mtuSize = this.getSignedShort();
     }
+
+    public static final class Factory implements Packet.PacketFactory {
+
+        @Override
+        public Packet create() {
+            return new OPEN_CONNECTION_REPLY_2();
+        }
+
+    }
 }

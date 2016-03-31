@@ -1,5 +1,6 @@
 package cn.nukkit.math;
 
+import cn.nukkit.Server;
 import cn.nukkit.level.MovingObjectPosition;
 
 /**
@@ -303,7 +304,7 @@ public class AxisAlignedBB implements Cloneable {
         try {
             return (AxisAlignedBB) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            Server.getInstance().getLogger().logException(e);
         }
         return null;
     }

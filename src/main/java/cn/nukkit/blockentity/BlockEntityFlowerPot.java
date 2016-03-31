@@ -19,7 +19,7 @@ public class BlockEntityFlowerPot extends BlockEntitySpawnable {
             if (nbt.contains("mData")) {
                 nbt.putInt("data", nbt.getInt("mData"));
                 nbt.remove("mData");
-            }else {
+            } else {
                 nbt.putInt("data", 0);
             }
         }

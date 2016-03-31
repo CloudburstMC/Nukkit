@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 
 import java.io.File;
@@ -42,6 +43,7 @@ public abstract class SimpleConfig {
         }
         Config cfg = new Config(configFile, Config.YAML);
         for (Field field : this.getClass().getDeclaredFields()) {
+            if (skipSave(field)) continue;
             String path = getPath(field);
             try {
                 if (path != null) cfg.set(path, field.get(this));
@@ -58,9 +60,11 @@ public abstract class SimpleConfig {
         Config cfg = new Config(configFile, Config.YAML);
         for (Field field : this.getClass().getDeclaredFields()) {
             if (field.getName().equals("configFile")) continue;
+            if (skipSave(field)) continue;
             String path = getPath(field);
             if (path == null) continue;
             if (path.isEmpty()) continue;
+            field.setAccessible(true);
             try {
                 if (field.getType() == int.class || field.getType() == Integer.class)
                     field.set(this, cfg.getInt(path, field.getInt(this)));
@@ -89,7 +93,7 @@ public abstract class SimpleConfig {
                 } else
                     throw new IllegalStateException("SimpleConfig did not supports class: " + field.getType().getName() + " for config field " + configFile.getName());
             } catch (Exception e) {
-                e.printStackTrace();
+                Server.getInstance().getLogger().logException(e);
                 return false;
             }
         }
@@ -108,9 +112,27 @@ public abstract class SimpleConfig {
         return path;
     }
 
+    private boolean skipSave(Field field) {
+        if (!field.isAnnotationPresent(Skip.class)) return false;
+        return field.getAnnotation(Skip.class).skipSave();
+    }
+
+    private boolean skipLoad(Field field) {
+        if (!field.isAnnotationPresent(Skip.class)) return false;
+        return field.getAnnotation(Skip.class).skipLoad();
+    }
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     public @interface Path {
         String value() default "";
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface Skip {
+        boolean skipSave() default true;
+
+        boolean skipLoad() default true;
     }
 }

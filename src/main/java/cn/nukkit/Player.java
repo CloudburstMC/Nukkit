@@ -89,6 +89,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected SourceInterface interfaz;
 
+    public boolean playedBefore;
     public boolean spawned = false;
     public boolean loggedIn = false;
     public int gamemode;
@@ -239,7 +240,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean hasPlayedBefore() {
-        return this.namedTag != null;
+        return this.playedBefore;
     }
 
     public void setAllowFlight(boolean value) {
@@ -583,7 +584,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         int count = 0;
 
-        for (String index : new ArrayList<>(this.loadQueue.keySet())) {
+        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(this.loadQueue.entrySet());
+        entryList.sort(new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o1.getValue() - o2.getValue();
+            }
+        });
+
+        for (Map.Entry<String, Integer> entry : entryList) {
+            String index = entry.getKey();
             if (count >= this.chunksPerTick) {
                 break;
             }
@@ -685,7 +695,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendExperience(this.getExperience());
         this.sendExperienceLevel(this.getExperienceLevel());
 
-        this.teleport(pos,null);
+        this.teleport(pos);
 
         if (!this.isSpectator()) {
             this.spawnToAll();
@@ -730,14 +740,32 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int x = 0;
         int z = 0;
 
-        for (int i = 0; i < this.viewDistance * this.viewDistance; ++i) {
+        int count = 0;
+
+        for (x = -this.viewDistance; x <= this.viewDistance; x++) {
+            for (z = -this.viewDistance; z <= this.viewDistance; z++) {
+                int chunkX = x + centerX;
+                int chunkZ = z + centerZ;
+                int distance = Math.abs(x) + Math.abs(z);
+                if (distance <= this.viewDistance) {
+                    String index;
+                    if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
+                        newOrder.put(index, distance);
+                        count++;
+                    }
+                    lastChunk.remove(index);
+                }
+            }
+        }
+
+        /*for (int i = 0; i < this.viewDistance * this.viewDistance * Math.PI; ++i) {
 
             int chunkX = x + centerX;
             int chunkZ = z + centerZ;
 
             String index;
             if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
-                newOrder.put(index, Math.abs(((int) this.x >> 4) - chunkX) + Math.abs(((int) this.z >> 4) - chunkZ));
+                newOrder.put(index, Math.abs((centerX - chunkX)) + Math.abs((centerZ - chunkZ)));
             }
             lastChunk.remove(index);
 
@@ -768,7 +796,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     break;
             }
-        }
+        }*/
 
         for (String index : new ArrayList<>(lastChunk.keySet())) {
             Chunk.Entry entry = Level.getChunkXZ(index);
@@ -880,7 +908,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.sleeping = pos.clone();
-        this.teleport(new Position(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.level),null);
+        this.teleport(new Location(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level));
 
         this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
@@ -1196,7 +1224,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         boolean revert = false;
 
-        if ((distanceSquared / ((double) (tickDiff * tickDiff))) > 100) {
+        if ((distanceSquared / ((double) (tickDiff * tickDiff))) > 100 && this.getGamemode() < 3) {
             revert = true;
         } else {
             if (this.chunk == null || !this.chunk.isGenerated()) {
@@ -1290,7 +1318,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (!(revert = ev.isCancelled())) { //Yes, this is intended
                     if (to.distanceSquared(ev.getTo()) > 0.01) { //If plugins modify the destination
-                        this.teleport(ev.getTo(),null);
+                        this.teleport(ev.getTo(), null);
                     } else {
                         this.level.addEntityMovement((int) this.x >> 4, (int) this.z >> 4, this.getId(), this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
                     }
@@ -1373,8 +1401,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    protected void updateMovement() {
-
+    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.level.addPlayerMovement(this.chunk.getX(), this.chunk.getZ(), this.id, x, y, z, yaw, pitch, this.isOnGround());
     }
 
     @Override
@@ -1406,9 +1434,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.entityBaseTick(tickDiff);
 
-            if (this.isOnFire() || this.lastUpdate % 10 == 0) {
-                if (this.getLevel().isRaining()) {
-                    if (this.getLevel().canSeeSky(this)) {
+            if (this.isOnFire() && this.lastUpdate % 10 == 0) {
+                if (this.isCreative() && !this.isInsideOfFire()) {
+                    this.extinguish();
+                } else if (this.getLevel().isRaining()) {
+                    if (this.getLevel().canBlockSeeSky(this)) {
                         this.extinguish();
                     }
                 }
@@ -1544,6 +1574,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             return;
         }
+
+        this.playedBefore = (nbt.getLong("lastPlayed") - nbt.getLong("firstPlayed")) > 1;
 
         nbt.putString("NameTag", this.username);
 
@@ -1800,7 +1832,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.forceMovement = new Vector3(this.x, this.y, this.z);
                 }
 
-                if (this.teleportPosition != null || (this.forceMovement != null && newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
+                if (this.teleportPosition != null || this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
                     this.sendPosition(this.teleportPosition == null ? this.forceMovement : this.teleportPosition, movePlayerPacket.yaw, movePlayerPacket.pitch);
                 } else {
 
@@ -1908,8 +1940,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.canInteract(blockVector.add(0.5, 0.5, 0.5), 13) || this.isSpectator()) {
                     } else if (this.isCreative()) {
                         Item i = this.inventory.getItemInHand();
-                        if ((i = this.level.useItemOn(blockVector, i, useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this)) != null) {
-                            this.inventory.setItemInHand(i);
+                        if (this.level.useItemOn(blockVector, i, useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this) != null) {
                             break;
                         }
                     } else if (!this.inventory.getItemInHand().deepEquals(useItemPacket.item)) {
@@ -1983,14 +2014,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             item.setCount(item.getCount() - 1);
                             this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
                         }
-
-                        ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(snowball);
-                        this.server.getPluginManager().callEvent(projectileLaunchEvent);
-                        if (projectileLaunchEvent.isCancelled()) {
-                            snowball.kill();
+                        if (snowball instanceof EntityProjectile) {
+                            ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(snowball);
+                            this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                            if (projectileLaunchEvent.isCancelled()) {
+                                snowball.kill();
+                            } else {
+                                snowball.spawnToAll();
+                                this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                            }
                         } else {
                             snowball.spawnToAll();
-                            this.level.addSound(new LaunchSound(this), this.getViewers().values());
                         }
                     } else if (item.getId() == Item.EGG) {
                         CompoundTag nbt = new CompoundTag()
@@ -2017,14 +2051,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             item.setCount(item.getCount() - 1);
                             this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
                         }
-
-                        ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(egg);
-                        this.server.getPluginManager().callEvent(projectileLaunchEvent);
-                        if (projectileLaunchEvent.isCancelled()) {
-                            egg.kill();
+                        if (egg instanceof EntityProjectile) {
+                            ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(egg);
+                            this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                            if (projectileLaunchEvent.isCancelled()) {
+                                egg.kill();
+                            } else {
+                                egg.spawnToAll();
+                                this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                            }
                         } else {
                             egg.spawnToAll();
-                            this.level.addSound(new LaunchSound(this), this.getViewers().values());
                         }
                     } else if (item.getId() == Item.EXPERIENCE_BOTTLE) {
                         CompoundTag nbt = new CompoundTag()
@@ -2073,7 +2110,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 .putList(new ListTag<FloatTag>("Rotation")
                                         .add(new FloatTag("", (float) yaw))
                                         .add(new FloatTag("", (float) pitch)))
-                                .putInt("Potion", item.getDamage());
+                                .putShort("PotionId", item.getDamage());
                         double f = 1.5;
                         Entity bottle = new EntityPotion(this.chunk, nbt, this);
                         bottle.setMotion(bottle.getMotion().multiply(f));
@@ -2122,7 +2159,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                         Block block = target.getSide(((PlayerActionPacket) packet).face);
                         if (block.getId() == Block.FIRE) {
-                            this.level.setBlock(block, new BlockAir());
+                            this.level.setBlock(block, new BlockAir(), true);
                         }
                         this.lastBreak = System.currentTimeMillis();
                         break;
@@ -2217,7 +2254,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
                         this.server.getPluginManager().callEvent(playerRespawnEvent);
 
-                        this.teleport(playerRespawnEvent.getRespawnPosition(),null);
+                        this.teleport(playerRespawnEvent.getRespawnPosition(), null);
 
                         this.setSprinting(false);
                         this.setSneaking(false);
@@ -2466,7 +2503,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     targetEntity.attack(entityDamageByEntityEvent);
 
-                    if (ev.isCancelled()) {
+                    if (entityDamageByEntityEvent.isCancelled()) {
                         if (item.isTool() && this.isSurvival()) {
                             this.inventory.sendContents(this);
                         }
@@ -2587,6 +2624,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 this.craftingType = 0;
                 TextPacket textPacket = (TextPacket) packet;
+
                 if (textPacket.type == TextPacket.TYPE_CHAT) {
                     textPacket.message = this.removeFormat ? TextFormat.clean(textPacket.message) : textPacket.message;
                     for (String msg : textPacket.message.split("\n")) {
@@ -2594,7 +2632,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (msg.startsWith("/")) { //Command
                                 PlayerCommandPreprocessEvent commandPreprocessEvent = new PlayerCommandPreprocessEvent(this, msg);
                                 if (commandPreprocessEvent.getMessage().length() > 320) {
-                                    ev.setCancelled();
+                                    commandPreprocessEvent.setCancelled();
                                 }
                                 this.server.getPluginManager().callEvent(commandPreprocessEvent);
                                 if (commandPreprocessEvent.isCancelled()) {
@@ -3209,9 +3247,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         super.saveNBT();
 
         if (this.level != null) {
-            this.namedTag.putString("Level", this.level.getName());
+            this.namedTag.putString("Level", this.level.getFolderName());
             if (this.spawnPosition != null && this.spawnPosition.getLevel() != null) {
-                this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getName());
+                this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getFolderName());
                 this.namedTag.putInt("SpawnX", (int) this.spawnPosition.x);
                 this.namedTag.putInt("SpawnY", (int) this.spawnPosition.y);
                 this.namedTag.putInt("SpawnZ", (int) this.spawnPosition.z);
@@ -3431,10 +3469,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         while (added >= most) {  //Level Up!
             added = added - most;
             level++;
-            getServer().getLogger().debug("Level of " + getName() + " has been risen to " + level + " .");
             most = calculateRequireExperience(level);
         }
-        getServer().getLogger().debug("Added " + add + " EXP to " + getName() + ", now lv:" + level + " (" + added + "/" + most + ") .");
         this.setExperience(added, level);
     }
 
@@ -3648,191 +3684,76 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public boolean teleport(Vector3 pos) {
-        return teleport(pos,TeleportCause.PLUGIN);
-    }
-
-    public boolean teleport(Vector3 pos, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleport(pos)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean teleport(Vector3 pos, double yaw, double pitch) {
-        return teleport(pos,yaw,pitch,TeleportCause.PLUGIN);
-    }
-
-    public boolean teleport(Vector3 pos, double yaw, double pitch, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleport(pos, yaw, pitch)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean teleportYaw(Vector3 pos, double yaw) {
-        return teleportYaw(pos,yaw,TeleportCause.PLUGIN);
-    }
-
-    public boolean teleportYaw(Vector3 pos, double yaw, TeleportCause cause) {
+    public boolean teleport(Location location, TeleportCause cause) {
         if (!this.isOnline()) {
             return false;
         }
 
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
+        Location from = this.getLocation();
+        Location to = location;
+
+        PlayerTeleportEvent event = new PlayerTeleportEvent(this, from, to, cause);
+        this.server.getPluginManager().callEvent(event);
+
         Position oldPos = this.getPosition();
-        if (super.teleportYaw(pos, yaw)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
+        if (super.teleport(location, cause)) {
 
-        return false;
-    }
-
-    @Override
-    public boolean teleportPitch(Vector3 pos, double pitch) {
-        return teleportPitch(pos,pitch,TeleportCause.PLUGIN);
-    }
-
-    public boolean teleportPitch(Vector3 pos, double pitch, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleportPitch(pos, pitch)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        return teleportYawAndPitch (pos,yaw,pitch,TeleportCause.PLUGIN);
-    }
-
-    public boolean teleportYawAndPitch(Vector3 pos, double yaw, double pitch, TeleportCause cause) {
-        if (!this.isOnline()) {
-            return false;
-        }
-        if (cause != null) {
-            PlayerTeleportEvent event = new PlayerTeleportEvent(this, this.getLocation(), pos, cause);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
-        }
-        Position oldPos = this.getPosition();
-        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
-            this.resetAfterTeleport(oldPos);
-            return true;
-        }
-
-        return false;
-    }
-
-    private void resetAfterTeleport(Position oldPos) {
-        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
-            if (Objects.equals(window, this.inventory)) {
-                continue;
+            for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+                if (Objects.equals(window, this.inventory)) {
+                    continue;
+                }
+                this.removeWindow(window);
             }
-            this.removeWindow(window);
-        }
 
-        this.teleportPosition = new Vector3(this.x, this.y, this.z);
+            this.teleportPosition = new Vector3(this.x, this.y, this.z);
 
-        if (!this.checkTeleportPosition()) {
-            this.forceMovement = oldPos;
-        } else {
-            this.spawnToAll();
-        }
-
-
-        this.resetFallDistance();
-        this.nextChunkOrderRun = 0;
-        this.newPosition = null;
-
-        //Weather
-        this.getLevel().sendWeather(this);
-        //Update time
-        this.getLevel().sendTime(this);
-    }
-
-    public void teleportImmediate(Vector3 pos) {
-        if (super.teleport(pos)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    public void teleportImmediate(Vector3 pos, double yaw, double pitch) {
-        if (super.teleport(pos, yaw, pitch)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    public void teleportImmediateYaw(Vector3 pos, double yaw) {
-        if (super.teleportYaw(pos, yaw)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    public void teleportImmediatePitch(Vector3 pos, double pitch) {
-        if (super.teleportPitch(pos, pitch)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    public void teleportImmediateYawAndPitch(Vector3 pos, double yaw, double pitch) {
-        if (super.teleportYawAndPitch(pos, yaw, pitch)) {
-            resetAfterTeleportImmediate();
-        }
-    }
-
-    private void resetAfterTeleportImmediate() {
-        for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
-            if (Objects.equals(window, this.inventory)) {
-                continue;
+            if (!this.checkTeleportPosition()) {
+                this.forceMovement = oldPos;
+            } else {
+                this.spawnToAll();
             }
-            this.removeWindow(window);
+
+            this.resetFallDistance();
+            this.nextChunkOrderRun = 0;
+            this.newPosition = null;
+
+            //Weather
+            this.getLevel().sendWeather(this);
+            //Update time
+            this.getLevel().sendTime(this);
+            return true;
         }
 
-        this.forceMovement = new Vector3(this.x, this.y, this.z);
-        this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+        return false;
+    }
 
-        this.resetFallDistance();
-        this.orderChunks();
-        this.nextChunkOrderRun = 0;
-        this.newPosition = null;
+    public void teleportImmediate(Location location) {
+        this.teleportImmediate(location, TeleportCause.PLUGIN);
+    }
+
+    public void teleportImmediate(Location location, TeleportCause cause) {
+        if (super.teleport(location, cause)) {
+
+            for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+                if (Objects.equals(window, this.inventory)) {
+                    continue;
+                }
+                this.removeWindow(window);
+            }
+
+            this.forceMovement = new Vector3(this.x, this.y, this.z);
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+
+            this.resetFallDistance();
+            this.orderChunks();
+            this.nextChunkOrderRun = 0;
+            this.newPosition = null;
+
+            //Weather
+            this.getLevel().sendWeather(this);
+            //Update time
+            this.getLevel().sendTime(this);
+        }
     }
 
     public int getWindowId(Inventory inventory) {

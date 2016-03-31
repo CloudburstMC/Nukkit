@@ -80,6 +80,16 @@ public class BlockFence extends BlockTransparent {
         );
     }
 
+    @Override
+    public int getBurnChance() {
+        return 5;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 20;
+    }
+
     public boolean canConnect(Block block) {
         return (block instanceof BlockFence || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
     }

@@ -77,8 +77,9 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<Long, BlockEntity> blockEntities = new HashMap<>();
 
-    private Map<String, Map<Long, SetEntityMotionPacket.Entry>> motionToSend = new HashMap<>();
-    private Map<String, Map<Long, MoveEntityPacket.Entry>> moveToSend = new HashMap<>();
+    private Map<Long, SetEntityMotionPacket.Entry> motionToSend = new HashMap<>();
+    private Map<Long, MoveEntityPacket.Entry> moveToSend = new HashMap<>();
+    private Map<Long, MovePlayerPacket> playerMoveToSend = new HashMap<>();
 
     private Map<Long, Player> players = new HashMap<>();
 
@@ -155,24 +156,35 @@ public class Level implements ChunkManager, Metadatable {
     private boolean clearChunksOnTick;
     private HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {{
         put(Block.GRASS, BlockGrass.class);
-        put(Block.SAPLING, BlockSapling.class);
-        put(Block.LEAVES, BlockLeaves.class);
-        put(Block.WHEAT_BLOCK, BlockWheat.class);
         put(Block.FARMLAND, BlockFarmland.class);
+        put(Block.MYCELIUM, BlockMycelium.class);
+
+        put(Block.SAPLING, BlockSapling.class);
+
+        put(Block.LEAVES, BlockLeaves.class);
+        put(Block.LEAVES2, BlockLeaves2.class);
+
         put(Block.SNOW_LAYER, BlockSnowLayer.class);
         put(Block.ICE, BlockIce.class);
+        put(Block.LAVA, BlockLava.class);
+        put(Block.STILL_LAVA, BlockLavaStill.class);
+
         put(Block.CACTUS, BlockCactus.class);
+        put(Block.BEETROOT_BLOCK, BlockBeetroot.class);
+        put(Block.CARROT_BLOCK, BlockCarrot.class);
+        put(Block.POTATO_BLOCK, BlockPotato.class);
+        put(Block.MELON_STEM, BlockStemMelon.class);
+        put(Block.PUMPKIN_STEM, BlockStemPumpkin.class);
+        put(Block.WHEAT_BLOCK, BlockWheat.class);
         put(Block.SUGARCANE_BLOCK, BlockSugarcane.class);
         put(Block.RED_MUSHROOM, BlockMushroomRed.class);
         put(Block.BROWN_MUSHROOM, BlockMushroomBrown.class);
-        put(Block.PUMPKIN_STEM, BlockStemPumpkin.class);
-        put(Block.MELON_STEM, BlockStemMelon.class);
-        put(Block.MYCELIUM, BlockMycelium.class);
-        put(Block.CARROT_BLOCK, BlockCarrot.class);
-        put(Block.POTATO_BLOCK, BlockPotato.class);
-        put(Block.LEAVES2, BlockLeaves2.class);
-        put(Block.BEETROOT_BLOCK, BlockBeetroot.class);
+
+        put(Block.FIRE, BlockFire.class);
+        put(Block.GLOWING_REDSTONE_ORE, BlockOreRedstoneGlowing.class);
     }};
+
+    protected int updateLCG = (new Random()).nextInt();
 
     private int tickRate;
     public int tickRateTime = 0;
@@ -181,7 +193,7 @@ public class Level implements ChunkManager, Metadatable {
     private Class<? extends Generator> generator;
     private Generator generatorInstance;
 
-    private java.util.Random rand = new java.util.Random();
+    public java.util.Random rand = new java.util.Random();
     private boolean raining = false;
     private int rainTime = 0;
     private boolean thundering = false;
@@ -449,11 +461,11 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading", TextFormat.GREEN + this.getName() + TextFormat.WHITE));
         Level defaultLevel = this.server.getDefaultLevel();
 
-        for (Player player : this.getPlayers().values()) {
+        for (Player player : new ArrayList<>(this.getPlayers().values())) {
             if (this.equals(defaultLevel) || defaultLevel == null) {
                 player.close(player.getLeaveMessage(), "Forced default level unload");
             } else {
-                player.teleport(this.server.getDefaultLevel().getSafeSpawn(), null);
+                player.teleport(this.server.getDefaultLevel().getSafeSpawn());
             }
         }
 
@@ -617,9 +629,11 @@ public class Level implements ChunkManager, Metadatable {
         if (this.isThundering()) {
             synchronized (this) {
                 for (FullChunk chunk : this.getChunks().values()) {
-                    if (rand.nextInt(100000) == 0) {  //1/100000
-                        int x = rand.nextInt(16);
-                        int z = rand.nextInt(16);
+                    if (rand.nextInt(100000) == 0) {
+                        this.updateLCG = this.updateLCG * 3 + 1013904223;
+                        int LCG = this.updateLCG >> 2;
+                        int x = LCG & 0x0f;
+                        int z = LCG >> 8 & 0x0f;
                         int y = chunk.getHighestBlockAt(x, z);
                         int bId = chunk.getBlockId(x, y, z);
                         if (bId != Block.TALL_GRASS && bId != Block.WATER) y += 1;
@@ -708,25 +722,28 @@ public class Level implements ChunkManager, Metadatable {
             this.checkSleep();
         }
 
-        for (String key : this.moveToSend.keySet()) {
-            Chunk.Entry chunkEntry = Level.getChunkXZ(key);
-            int chunkX = chunkEntry.chunkX;
-            int chunkZ = chunkEntry.chunkZ;
+        List<DataPacket> movementPackets = new ArrayList<>();
+
+        {
             MoveEntityPacket pk = new MoveEntityPacket();
-            pk.entities = this.moveToSend.get(key).values().stream().toArray(MoveEntityPacket.Entry[]::new);
-            this.addChunkPacket(chunkX, chunkZ, pk);
+            pk.entities = this.moveToSend.values().stream().toArray(MoveEntityPacket.Entry[]::new);
+            movementPackets.add(pk);
         }
         this.moveToSend = new HashMap<>();
 
-        for (String key : this.motionToSend.keySet()) {
-            Chunk.Entry chunkEntry = Level.getChunkXZ(key);
-            int chunkX = chunkEntry.chunkX;
-            int chunkZ = chunkEntry.chunkZ;
+        {
             SetEntityMotionPacket pk = new SetEntityMotionPacket();
-            pk.entities = this.motionToSend.get(key).values().stream().toArray(SetEntityMotionPacket.Entry[]::new);
-            this.addChunkPacket(chunkX, chunkZ, pk);
+            pk.entities = this.motionToSend.values().stream().toArray(SetEntityMotionPacket.Entry[]::new);
+            movementPackets.add(pk);
         }
         this.motionToSend = new HashMap<>();
+
+        {
+            movementPackets.addAll(this.playerMoveToSend.values());
+        }
+        this.playerMoveToSend = new HashMap<>();
+
+        this.getServer().batchPackets(this.getPlayers().values().stream().toArray(Player[]::new), movementPackets.stream().toArray(DataPacket[]::new), true);
 
         for (String key : this.chunkPackets.keySet()) {
             Chunk.Entry chunkEntry = Level.getChunkXZ(key);
@@ -934,11 +951,12 @@ public class Level implements ChunkManager, Metadatable {
                 for (ChunkSection section : ((Chunk) chunk).getSections()) {
                     if (!(section instanceof EmptyChunkSection)) {
                         int Y = section.getY();
-                        int k = new java.util.Random().nextInt(0x7fffffff);
+                        this.updateLCG = this.updateLCG * 3 + 1013904223;
+                        int k = this.updateLCG >> 2;
                         for (int i = 0; i < 3; ++i, k >>= 10) {
                             int x = k & 0x0f;
-                            int y = (k >> 8) & 0x0f;
-                            int z = (k >> 16) & 0x0f;
+                            int y = k >> 8 & 0x0f;
+                            int z = k >> 16 & 0x0f;
 
                             blockId = section.getBlockId(x, y, z);
                             if (this.randomTickBlocks.containsKey(blockId)) {
@@ -960,11 +978,12 @@ public class Level implements ChunkManager, Metadatable {
             } else {
                 for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
                     blockTest = 0;
-                    int k = new java.util.Random().nextInt();
+                    this.updateLCG = this.updateLCG * 3 + 1013904223;
+                    int k = this.updateLCG >> 2;
                     for (int i = 0; i < 3; ++i, k >>= 10) {
                         int x = k & 0x0f;
-                        int y = (k >> 8) & 0x0f;
-                        int z = (k >> 16) & 0x0f;
+                        int y = k >> 8 & 0x0f;
+                        int z = k >> 16 & 0x0f;
 
                         blockTest |= blockId = chunk.getBlockId(x, y + (Y << 4), z);
                         if (this.randomTickBlocks.containsKey(blockId)) {
@@ -1560,9 +1579,8 @@ public class Level implements ChunkManager, Metadatable {
 
         int dropExp = target.getDropExp();
         if (player != null) {
+            player.addExperience(dropExp);
             if (player.isSurvival()) {
-                player.addExperience(dropExp);
-
                 for (int ii = 1; ii <= dropExp; ii++) {
                     this.dropExpOrb(target, 1);
                 }
@@ -1744,7 +1762,10 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        item.setCount(item.getCount() - 1);
+        if (player != null && !player.isCreative()) {
+            item.setCount(item.getCount() - 1);
+        }
+
         if (item.getCount() <= 0) {
             item = new ItemBlock(new BlockAir(), 0, 0);
         }
@@ -2590,25 +2611,23 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addEntityMotion(int chunkX, int chunkZ, long entityId, double x, double y, double z) {
-        String index = Level.chunkHash(chunkX, chunkZ);
-        if (!this.motionToSend.containsKey(index)) {
-            this.motionToSend.put(index, new HashMap<>());
-        }
-
-        this.motionToSend.get(index).put(entityId, new SetEntityMotionPacket.Entry(entityId, x, y, z));
-    }
-
-    public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch) {
-        this.addEntityMovement(chunkX, chunkZ, entityId, x, y, z, yaw, pitch, yaw);
+        this.motionToSend.put(entityId, new SetEntityMotionPacket.Entry(entityId, x, y, z));
     }
 
     public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch, double headYaw) {
-        String index = Level.chunkHash(chunkX, chunkZ);
-        if (!this.moveToSend.containsKey(index)) {
-            this.moveToSend.put(index, new HashMap<>());
-        }
+        this.moveToSend.put(entityId, new MoveEntityPacket.Entry(entityId, x, y, z, yaw, headYaw, pitch));
+    }
 
-        this.moveToSend.get(index).put(entityId, new MoveEntityPacket.Entry(entityId, x, y, z, yaw, headYaw, pitch));
+    public void addPlayerMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch, boolean onGround) {
+        MovePlayerPacket pk = new MovePlayerPacket();
+        pk.eid = entityId;
+        pk.x = (float) x;
+        pk.y = (float) y;
+        pk.z = (float) z;
+        pk.yaw = (float) yaw;
+        pk.pitch = (float) pitch;
+        pk.onGround = onGround;
+        this.playerMoveToSend.put(entityId, pk);
     }
 
     public boolean isRaining() {
@@ -2735,7 +2754,7 @@ public class Level implements ChunkManager, Metadatable {
         return dimension;
     }
 
-    public boolean canSeeSky(Vector3 pos) {
+    public boolean canBlockSeeSky(Vector3 pos) {
         return this.getHighestBlockAt(pos.getFloorX(), pos.getFloorZ()) < pos.getY();
     }
 

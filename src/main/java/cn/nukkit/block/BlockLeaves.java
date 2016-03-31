@@ -52,6 +52,16 @@ public class BlockLeaves extends BlockTransparent {
     }
 
     @Override
+    public int getBurnChance() {
+        return 30;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 60;
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         this.meta |= 0x04;
         this.getLevel().setBlock(this, this, true);
