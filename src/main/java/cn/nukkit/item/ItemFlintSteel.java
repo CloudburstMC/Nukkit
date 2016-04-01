@@ -80,8 +80,8 @@ public class ItemFlintSteel extends ItemTool {
                                 level.setBlock(new Vector3(targetX, block_y, block_z), new BlockNetherPortal());
                             }
                         }
+                        return true;
                     }
-                    return true;
                 }
             }
             BlockFire fire = new BlockFire();
