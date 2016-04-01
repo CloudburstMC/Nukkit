@@ -49,8 +49,11 @@ public class BlockRedstone extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(block, this, true, false);
         Redstone.active(this);
+        this.getLevel().updateAllLight(this);
+        this.getLevel().updateAroundRedstone(this);
+        this.getLevel().updateAround(block);
         return true;
     }
 
