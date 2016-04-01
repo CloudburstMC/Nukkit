@@ -114,7 +114,7 @@ public class Redstone {
         if (location.getPowerLevel() <= 0) {
             return;
         }
-        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_EAST, Vector3.SIDE_WEST}) {
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_EAST, Vector3.SIDE_WEST, Vector3.SIDE_UP, Vector3.SIDE_DOWN}) {
             if (location.getSide(side) instanceof BlockRedstoneWire) {
                 updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, location.getSide(side)));
             }
@@ -145,7 +145,7 @@ public class Redstone {
         if (updateLevel < 0) {
             return;
         }
-        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_EAST, Vector3.SIDE_WEST}) {
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_EAST, Vector3.SIDE_WEST, Vector3.SIDE_UP, Vector3.SIDE_DOWN}) {
             if (location.getSide(side).isPowerSource() || (updateLevel == 0 && location.getSide(side).isPowered())) {
                 sourceList.add(new UpdateObject(location.getPowerLevel(side), location.getSide(side)));
             } else if (location.getSide(side) instanceof BlockRedstoneWire) {
