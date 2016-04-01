@@ -748,7 +748,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
         }
-        
+
         for (String index : new ArrayList<>(lastChunk.keySet())) {
             Chunk.Entry entry = Level.getChunkXZ(index);
             this.unloadChunk(entry.chunkX, entry.chunkZ);

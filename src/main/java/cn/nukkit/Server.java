@@ -539,6 +539,10 @@ public class Server {
     }
 
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
+        if (players == null || packets == null || players.length == 0 || packets.length == 0) {
+            return;
+        }
+
         byte[][] payload = new byte[packets.length * 2][];
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
