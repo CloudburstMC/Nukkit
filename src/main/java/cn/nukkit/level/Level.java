@@ -448,7 +448,7 @@ public class Level implements ChunkManager, Metadatable {
     public boolean unload(boolean force) {
         LevelUnloadEvent ev = new LevelUnloadEvent(this);
 
-        if (this.equals(this.server.getDefaultLevel()) && !force) {
+        if (this == this.server.getDefaultLevel() && !force) {
             ev.setCancelled();
         }
 
@@ -462,14 +462,14 @@ public class Level implements ChunkManager, Metadatable {
         Level defaultLevel = this.server.getDefaultLevel();
 
         for (Player player : new ArrayList<>(this.getPlayers().values())) {
-            if (this.equals(defaultLevel) || defaultLevel == null) {
+            if (this == defaultLevel || defaultLevel == null) {
                 player.close(player.getLeaveMessage(), "Forced default level unload");
             } else {
                 player.teleport(this.server.getDefaultLevel().getSafeSpawn());
             }
         }
 
-        if (this.equals(defaultLevel)) {
+        if (this == defaultLevel) {
             this.server.setDefaultLevel(null);
         }
 
@@ -1797,7 +1797,7 @@ public class Level implements ChunkManager, Metadatable {
             for (int x = minX; x <= maxX; ++x) {
                 for (int z = minZ; z <= maxZ; ++z) {
                     for (Entity ent : this.getChunkEntities(x, z).values()) {
-                        if ((entity == null || (!ent.equals(entity) && entity.canCollideWith(ent))) && ent.boundingBox.intersectsWith(bb)) {
+                        if ((entity == null || (ent != entity && entity.canCollideWith(ent))) && ent.boundingBox.intersectsWith(bb)) {
                             nearby.add(ent);
                         }
                     }
@@ -1824,7 +1824,7 @@ public class Level implements ChunkManager, Metadatable {
             for (int x = minX; x <= maxX; ++x) {
                 for (int z = minZ; z <= maxZ; ++z) {
                     for (Entity ent : this.getChunkEntities(x, z).values()) {
-                        if (!Objects.equals(ent, entity) && ent.boundingBox.intersectsWith(bb)) {
+                        if (ent != entity && ent.boundingBox.intersectsWith(bb)) {
                             nearby.add(ent);
                         }
                     }
@@ -2180,7 +2180,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void removeEntity(Entity entity) {
-        if (!entity.getLevel().equals(this)) {
+        if (entity.getLevel() != this) {
             throw new LevelException("Invalid Entity level");
         }
 
@@ -2196,7 +2196,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addEntity(Entity entity) {
-        if (!entity.getLevel().equals(this)) {
+        if (entity.getLevel() != this) {
             throw new LevelException("Invalid Entity level");
         }
 
@@ -2207,7 +2207,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addBlockEntity(BlockEntity blockEntity) {
-        if (!blockEntity.getLevel().equals(this)) {
+        if (blockEntity.getLevel() != this) {
             throw new LevelException("Invalid Block Entity level");
         }
         blockEntities.put(blockEntity.getId(), blockEntity);
@@ -2215,7 +2215,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void removeBlockEntity(BlockEntity blockEntity) {
-        if (!blockEntity.getLevel().equals(this)) {
+        if (blockEntity.getLevel() != this) {
             throw new LevelException("Invalid Block Entity level");
         }
         blockEntities.remove(blockEntity.getId());

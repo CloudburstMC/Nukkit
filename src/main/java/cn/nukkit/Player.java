@@ -263,7 +263,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public void spawnTo(Player player) {
-        if (this.spawned && player.spawned && this.isAlive() && player.isAlive() && player.getLevel().equals(this.level) && player.canSee(this) && !this.isSpectator()) {
+        if (this.spawned && player.spawned && this.isAlive() && player.isAlive() && player.getLevel() == this.level && player.canSee(this) && !this.isSpectator()) {
             super.spawnTo(player);
         }
     }
@@ -290,7 +290,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void hidePlayer(Player player) {
-        if (this.equals(player)) {
+        if (this == player) {
             return;
         }
         this.hiddenPlayers.put(player.getUniqueId(), player);
@@ -298,7 +298,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void showPlayer(Player player) {
-        if (this.equals(player)) {
+        if (this == player) {
             return;
         }
         this.hiddenPlayers.remove(player.getUniqueId());
@@ -510,7 +510,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         String index = Level.chunkHash(x, z);
         if (this.usedChunks.containsKey(index)) {
             for (Entity entity : level.getChunkEntities(x, z).values()) {
-                if (!entity.equals(this)) {
+                if (entity != this) {
                     entity.despawnFrom(this);
                 }
             }
@@ -541,7 +541,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (this.spawned) {
             for (Entity entity : this.level.getChunkEntities(x, z).values()) {
-                if (!this.equals(entity) && !entity.closed && entity.isAlive()) {
+                if (this != entity && !entity.closed && entity.isAlive()) {
                     entity.spawnTo(this);
                 }
             }
@@ -570,7 +570,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (this.spawned) {
             for (Entity entity : this.level.getChunkEntities(x, z).values()) {
-                if (!this.equals(entity) && !entity.closed && entity.isAlive()) {
+                if (this != entity && !entity.closed && entity.isAlive()) {
                     entity.spawnTo(this);
                 }
             }
@@ -686,7 +686,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             int chunkX = chunkEntry.chunkX;
             int chunkZ = chunkEntry.chunkZ;
             for (Entity entity : this.level.getChunkEntities(chunkX, chunkZ).values()) {
-                if (!this.equals(entity) && !entity.closed && entity.isAlive()) {
+                if (this != entity && !entity.closed && entity.isAlive()) {
                     entity.spawnTo(this);
                 }
             }
@@ -3699,7 +3699,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (super.teleport(location, cause)) {
 
             for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
-                if (Objects.equals(window, this.inventory)) {
+                if (window == this.inventory) {
                     continue;
                 }
                 this.removeWindow(window);
@@ -3735,7 +3735,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (super.teleport(location, cause)) {
 
             for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
-                if (Objects.equals(window, this.inventory)) {
+                if (window == this.inventory) {
                     continue;
                 }
                 this.removeWindow(window);

@@ -33,7 +33,7 @@ public class BlockLitRedstoneLamp extends BlockRedstoneLamp {
         }
         return 0;
     }
-    
+
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{

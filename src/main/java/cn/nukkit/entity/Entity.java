@@ -590,7 +590,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void sendData(Player player, EntityMetadata data) {
         SetEntityDataPacket pk = new SetEntityDataPacket();
-        pk.eid = (player.equals(this) ? 0 : this.getId());
+        pk.eid = player == this ? 0 : this.getId();
         pk.metadata = data == null ? this.dataProperties : data;
 
         player.dataPacket(pk);
@@ -693,7 +693,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean canCollideWith(Entity entity) {
-        return !this.justCreated && !this.equals(entity);
+        return !this.justCreated && this != entity;
     }
 
     protected boolean checkObstruction(double x, double y, double z) {
@@ -1338,7 +1338,7 @@ public abstract class Entity extends Location implements Metadatable {
             return false;
         }
 
-        if (pos instanceof Position && ((Position) pos).level != null && !((Position) pos).level.equals(this.level)) {
+        if (pos instanceof Position && ((Position) pos).level != null && ((Position) pos).level != this.level) {
             if (!this.switchLevel(((Position) pos).getLevel())) {
                 return false;
             }

@@ -847,7 +847,7 @@ public class Server {
         pk.type = PlayerListPacket.TYPE_ADD;
         List<PlayerListPacket.Entry> entries = new ArrayList<>();
         for (Player p : this.playerList.values()) {
-            if (!self && p.equals(player)) {
+            if (!self && p == player) {
                 continue;
             }
 
@@ -1447,7 +1447,7 @@ public class Server {
 
         for (String identifier : new ArrayList<>(this.players.keySet())) {
             Player p = this.players.get(identifier);
-            if (player.equals(p)) {
+            if (player == p) {
                 this.players.remove(identifier);
                 this.identifier.remove(player);
                 break;
@@ -1464,7 +1464,7 @@ public class Server {
     }
 
     public void setDefaultLevel(Level defaultLevel) {
-        if (defaultLevel == null || (this.isLevelLoaded(defaultLevel.getFolderName()) && !defaultLevel.equals(this.defaultLevel))) {
+        if (defaultLevel == null || (this.isLevelLoaded(defaultLevel.getFolderName()) && defaultLevel != this.defaultLevel)) {
             this.defaultLevel = defaultLevel;
         }
     }
@@ -1495,7 +1495,7 @@ public class Server {
     }
 
     public boolean unloadLevel(Level level, boolean forceUnload) {
-        if (Objects.equals(level, this.getDefaultLevel()) && !forceUnload) {
+        if (level == this.getDefaultLevel() && !forceUnload) {
             throw new IllegalStateException("The default level cannot be unloaded while running, please switch levels.");
         }
 
