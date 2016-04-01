@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
@@ -46,6 +47,17 @@ public class BlockRail extends BlockFlowable {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.getSide(0).isTransparent()) {
+                this.getLevel().useBreakOn(this);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
+        }
+        return 0;
     }
 
     @Override

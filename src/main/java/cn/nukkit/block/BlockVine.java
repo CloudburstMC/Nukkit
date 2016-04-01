@@ -4,7 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.Vector3;
 
 /**
  * Created by Pub4Game on 15.01.2016.
@@ -46,6 +48,11 @@ public class BlockVine extends BlockTransparent {
 
     @Override
     public boolean hasEntityCollision() {
+        return true;
+    }
+
+    @Override
+    public boolean canBeReplaced() {
         return true;
     }
 
