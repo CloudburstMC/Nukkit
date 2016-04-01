@@ -35,7 +35,6 @@ public class ItemFlintSteel extends ItemTool {
     public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
         if (block.getId() == AIR && (target instanceof BlockSolid)) {
             if (target.getId() == OBSIDIAN) {
-                level.setBlock(block, new BlockFire(), true);
                 int targetX = target.getFloorX();
                 int targetY = target.getFloorY();
                 int targetZ = target.getFloorZ();
