@@ -81,19 +81,19 @@ public class ItemFlintSteel extends ItemTool {
                             }
                         }
                     }
-                }
-            } else {
-                BlockFire fire = new BlockFire();
-                fire.x = block.x;
-                fire.y = block.y;
-                fire.z = block.z;
-                fire.level = level;
-
-                if (fire.isBlockTopFacingSurfaceSolid(fire.getSide(Vector3.SIDE_DOWN)) || fire.canNeighborBurn()) {
-                    level.setBlock(fire, fire, true);
-                    level.scheduleUpdate(fire, fire.tickRate() + level.rand.nextInt(10));
                     return true;
                 }
+            }
+            BlockFire fire = new BlockFire();
+            fire.x = block.x;
+            fire.y = block.y;
+            fire.z = block.z;
+            fire.level = level;
+
+            if (fire.isBlockTopFacingSurfaceSolid(fire.getSide(Vector3.SIDE_DOWN)) || fire.canNeighborBurn()) {
+                level.setBlock(fire, fire, true);
+                level.scheduleUpdate(fire, fire.tickRate() + level.rand.nextInt(10));
+                return true;
             }
             if ((player.gamemode & 0x01) == 0 && this.useOn(block)) {
                 if (this.getDamage() >= this.getMaxDurability()) {
