@@ -1107,17 +1107,7 @@ public class Server {
     }
 
     public int getViewDistance() {
-        int distance = this.getPropertyInt("view-distance", 10);
-
-        if (distance < 10) {
-            distance = 10;
-        } else if (distance > 22) {
-            distance = 22;
-        }
-
-        this.setPropertyInt("view-distance", distance);
-
-        return distance;
+        return this.getPropertyInt("view-distance", 10);
     }
 
     public String getIp() {

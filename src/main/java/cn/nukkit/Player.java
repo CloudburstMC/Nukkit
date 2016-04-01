@@ -726,28 +726,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.nextChunkOrderRun = 200;
 
-        //todo: low memory triggle?
-        //viewDistance = this.server.getMemoryManager().getViewDistance(this.viewDistance);
-
         Map<String, Integer> newOrder = new HashMap<>();
         Map<String, Boolean> lastChunk = new HashMap<>(this.usedChunks);
 
         int centerX = (int) this.x >> 4;
         int centerZ = (int) this.z >> 4;
-
-        int layer = 1;
-        int leg = 0;
-        int x = 0;
-        int z = 0;
-
         int count = 0;
 
-        for (x = -this.viewDistance; x <= this.viewDistance; x++) {
-            for (z = -this.viewDistance; z <= this.viewDistance; z++) {
+        for (int x = -this.viewDistance; x <= this.viewDistance; x++) {
+            for (int z = -this.viewDistance; z <= this.viewDistance; z++) {
                 int chunkX = x + centerX;
                 int chunkZ = z + centerZ;
                 int distance = Math.abs(x) + Math.abs(z);
-                if (distance <= this.viewDistance) {
+                if (x * x + z * z <= this.viewDistance * this.viewDistance) {
                     String index;
                     if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
                         newOrder.put(index, distance);
@@ -757,47 +748,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
         }
-
-        /*for (int i = 0; i < this.viewDistance * this.viewDistance * Math.PI; ++i) {
-
-            int chunkX = x + centerX;
-            int chunkZ = z + centerZ;
-
-            String index;
-            if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
-                newOrder.put(index, Math.abs((centerX - chunkX)) + Math.abs((centerZ - chunkZ)));
-            }
-            lastChunk.remove(index);
-
-            switch (leg) {
-                case 0:
-                    ++x;
-                    if (x == layer) {
-                        ++leg;
-                    }
-                    break;
-                case 1:
-                    ++z;
-                    if (z == layer) {
-                        ++leg;
-                    }
-                    break;
-                case 2:
-                    --x;
-                    if (-x == layer) {
-                        ++leg;
-                    }
-                    break;
-                case 3:
-                    --z;
-                    if (-z == layer) {
-                        leg = 0;
-                        ++layer;
-                    }
-                    break;
-            }
-        }*/
-
+        
         for (String index : new ArrayList<>(lastChunk.keySet())) {
             Chunk.Entry entry = Level.getChunkXZ(index);
             this.unloadChunk(entry.chunkX, entry.chunkZ);
@@ -3165,7 +3116,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.connected = false;
             PlayerQuitEvent ev = null;
-            if (this.getName() != null && this.getName().length() > 0 && this.loggedIn) {
+            if (this.getName() != null && this.getName().length() > 0) {
                 this.server.getPluginManager().callEvent(ev = new PlayerQuitEvent(this, message, true));
                 if (this.loggedIn && ev.getAutoSave()) {
                     this.save();
