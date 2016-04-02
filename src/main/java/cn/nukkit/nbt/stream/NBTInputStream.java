@@ -8,7 +8,8 @@ import java.nio.charset.StandardCharsets;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class NBTInputStream extends FilterInputStream implements DataInput {
+public class NBTInputStream implements DataInput, AutoCloseable {
+    private final DataInputStream stream;
     private final ByteOrder endianness;
 
     public NBTInputStream(InputStream stream) {
@@ -16,7 +17,7 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
     }
 
     public NBTInputStream(InputStream stream, ByteOrder endianness) {
-        super(stream instanceof DataInputStream ? stream : new DataInputStream(stream));
+        this.stream = stream instanceof DataInputStream ? (DataInputStream)stream : new DataInputStream(stream);
         this.endianness = endianness;
     }
 
@@ -24,43 +25,39 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
         return endianness;
     }
 
-    protected DataInputStream getStream() {
-        return (DataInputStream) super.in;
-    }
-
     @Override
     public void readFully(byte[] b) throws IOException {
-        this.getStream().readFully(b);
+        this.stream.readFully(b);
     }
 
     @Override
     public void readFully(byte[] b, int off, int len) throws IOException {
-        this.getStream().readFully(b, off, len);
+        this.stream.readFully(b, off, len);
     }
 
     @Override
     public int skipBytes(int n) throws IOException {
-        return this.getStream().skipBytes(n);
+        return this.stream.skipBytes(n);
     }
 
     @Override
     public boolean readBoolean() throws IOException {
-        return this.getStream().readBoolean();
+        return this.stream.readBoolean();
     }
 
     @Override
     public byte readByte() throws IOException {
-        return this.getStream().readByte();
+        return this.stream.readByte();
     }
 
     @Override
     public int readUnsignedByte() throws IOException {
-        return this.getStream().readUnsignedByte();
+        return this.stream.readUnsignedByte();
     }
 
     @Override
     public short readShort() throws IOException {
-        short s = this.getStream().readShort();
+        short s = this.stream.readShort();
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             s = Short.reverseBytes(s);
         }
@@ -69,7 +66,7 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
 
     @Override
     public int readUnsignedShort() throws IOException {
-        int s = this.getStream().readUnsignedShort();
+        int s = this.stream.readUnsignedShort();
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             s = Integer.reverseBytes(s) >> 16;
         }
@@ -78,7 +75,7 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
 
     @Override
     public char readChar() throws IOException {
-        char c = this.getStream().readChar();
+        char c = this.stream.readChar();
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             c = Character.reverseBytes(c);
         }
@@ -87,7 +84,7 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
 
     @Override
     public int readInt() throws IOException {
-        int i = this.getStream().readInt();
+        int i = this.stream.readInt();
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             i = Integer.reverseBytes(i);
         }
@@ -96,7 +93,7 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
 
     @Override
     public long readLong() throws IOException {
-        long l = this.getStream().readLong();
+        long l = this.stream.readLong();
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             l = Long.reverseBytes(l);
         }
@@ -116,19 +113,23 @@ public class NBTInputStream extends FilterInputStream implements DataInput {
     @Override
     @Deprecated
     public String readLine() throws IOException {
-        return this.getStream().readLine();
+        return this.stream.readLine();
     }
 
     @Override
     public String readUTF() throws IOException {
         int length = this.readUnsignedShort();
         byte[] bytes = new byte[length];
-        this.read(bytes);
+        this.stream.read(bytes);
         return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    public int available() throws IOException {
+        return this.stream.available();
     }
 
     @Override
     public void close() throws IOException {
-        this.getStream().close();
+        this.stream.close();
     }
 }
