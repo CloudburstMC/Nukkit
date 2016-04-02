@@ -739,8 +739,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             for (int z = -this.viewDistance; z <= this.viewDistance; z++) {
                 int chunkX = x + centerX;
                 int chunkZ = z + centerZ;
-                int distance = Math.abs(x) + Math.abs(z);
-                if (x * x + z * z <= this.viewDistance * this.viewDistance) {
+                int distance = (int) Math.sqrt((double) x * x + (double) z * z);
+                if (distance <= this.viewDistance) {
                     String index;
                     if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
                         newOrder.put(index, distance);

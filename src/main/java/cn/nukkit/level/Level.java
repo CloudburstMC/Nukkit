@@ -716,26 +716,32 @@ public class Level implements ChunkManager, Metadatable {
 
         List<DataPacket> movementPackets = new ArrayList<>();
 
-        {
+        if (!this.moveToSend.isEmpty()) {
             MoveEntityPacket pk = new MoveEntityPacket();
             pk.entities = this.moveToSend.values().stream().toArray(MoveEntityPacket.Entry[]::new);
             movementPackets.add(pk);
-        }
-        this.moveToSend = new HashMap<>();
 
-        {
+            this.moveToSend = new HashMap<>();
+        }
+
+
+        if (!this.motionToSend.isEmpty()) {
             SetEntityMotionPacket pk = new SetEntityMotionPacket();
             pk.entities = this.motionToSend.values().stream().toArray(SetEntityMotionPacket.Entry[]::new);
             movementPackets.add(pk);
-        }
-        this.motionToSend = new HashMap<>();
 
-        {
+            this.motionToSend = new HashMap<>();
+        }
+
+        if (!this.playerMoveToSend.isEmpty()) {
             movementPackets.addAll(this.playerMoveToSend.values());
-        }
-        this.playerMoveToSend = new HashMap<>();
 
-        this.getServer().batchPackets(this.getPlayers().values().stream().toArray(Player[]::new), movementPackets.stream().toArray(DataPacket[]::new), true);
+            this.playerMoveToSend = new HashMap<>();
+        }
+
+        if (!movementPackets.isEmpty()){
+            this.getServer().batchPackets(this.getPlayers().values().stream().toArray(Player[]::new), movementPackets.stream().toArray(DataPacket[]::new), true);
+        }
 
         for (String key : this.chunkPackets.keySet()) {
             Chunk.Entry chunkEntry = Level.getChunkXZ(key);
