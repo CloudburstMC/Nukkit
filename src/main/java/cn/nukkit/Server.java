@@ -171,7 +171,7 @@ public class Server {
 
     private Map<UUID, Player> playerList = new HashMap<>();
 
-    private Map<Player, String> identifier = new HashMap<>();
+    private Map<Integer, String> identifier = new HashMap<>();
 
     private Map<Integer, Level> levels = new HashMap<>();
 
@@ -560,7 +560,7 @@ public class Server {
         List<String> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
-                targets.add(this.identifier.get(p));
+                targets.add(this.identifier.get(p.rawHashCode()));
             }
         }
 
@@ -786,7 +786,7 @@ public class Server {
 
     public void addPlayer(String identifier, Player player) {
         this.players.put(identifier, player);
-        this.identifier.put(player, identifier);
+        this.identifier.put(player.rawHashCode(), identifier);
     }
 
     public void addOnlinePlayer(Player player) {
@@ -1433,10 +1433,10 @@ public class Server {
     }
 
     public void removePlayer(Player player) {
-        if (this.identifier.containsKey(player)) {
-            String identifier = this.identifier.get(player);
+        if (this.identifier.containsKey(player.rawHashCode())) {
+            String identifier = this.identifier.get(player.rawHashCode());
             this.players.remove(identifier);
-            this.identifier.remove(player);
+            this.identifier.remove(player.rawHashCode());
             return;
         }
 
@@ -1444,7 +1444,7 @@ public class Server {
             Player p = this.players.get(identifier);
             if (player == p) {
                 this.players.remove(identifier);
-                this.identifier.remove(player);
+                this.identifier.remove(player.rawHashCode());
                 break;
             }
         }

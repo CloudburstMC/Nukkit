@@ -1584,4 +1584,23 @@ public abstract class Entity extends Location implements Metadatable {
     public Server getServer() {
         return server;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Entity other = (Entity) obj;
+        return this.getId() == other.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = (int) (29 * hash + this.getId());
+        return hash;
+    }
 }

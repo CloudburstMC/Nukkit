@@ -184,6 +184,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private Entity killer = null;
 
     private final AtomicReference<Locale> locale = new AtomicReference<>(null);
+    private String sessionId;
+    private int hash;
 
 
     public TranslationContainer getLeaveMessage() {
@@ -1509,11 +1511,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (p != this && p.getName() != null && this.getName() != null && Objects.equals(p.getName().toLowerCase(), this.getName().toLowerCase())) {
                 if (!p.kick("logged in from another location")) {
                     this.close(this.getLeaveMessage(), "Logged in from another location");
+
                     return;
                 }
             } else if (p.loggedIn && this.getUniqueId().equals(p.getUniqueId())) {
                 if (!p.kick("logged in from another location")) {
                     this.close(this.getLeaveMessage(), "Logged in from another location");
+
                     return;
                 }
             }
@@ -3859,4 +3863,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.locale.get();
     }
 
+    @Override
+    public int hashCode() {
+        if ((this.hash == 0) || (this.hash == 485)) {
+            this.hash = (485 + (getUniqueId() != null ? getUniqueId().hashCode() : 0));
+        }
+        return this.hash;
+    }
+
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Player)) {
+            return false;
+        }
+
+        Player other = (Player) obj;
+        return Objects.equals(this.getUniqueId(), other.getUniqueId()) && this.getId() == other.getId();
+    }
 }

@@ -236,10 +236,6 @@ public class Vector3 implements Cloneable {
         );
     }
 
-    public boolean equals(Vector3 v) {
-        return v != null && this.x == v.x && this.y == v.y && this.z == v.z;
-    }
-
     /**
      * Returns a new vector with x value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
@@ -307,6 +303,31 @@ public class Vector3 implements Cloneable {
     @Override
     public String toString() {
         return "Vector3(x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Vector3)) {
+            return false;
+        }
+
+        Vector3 other = (Vector3) obj;
+
+        return (Math.abs(this.x - other.x) < 1.0E-006D) && (Math.abs(this.y - other.y) < 1.0E-006D) && (Math.abs(this.z - other.z) < 1.0E-006D) && (getClass().equals(obj.getClass()));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.x) ^ Double.doubleToLongBits(this.x) >>> 32);
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.y) ^ Double.doubleToLongBits(this.y) >>> 32);
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.z) ^ Double.doubleToLongBits(this.z) >>> 32);
+        return hash;
+    }
+
+    public int rawHashCode() {
+        return super.hashCode();
     }
 
     @Override
