@@ -2556,6 +2556,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 }
                 DropItemPacket dropItem = (DropItemPacket) packet;
+
+                if (dropItem.item.getId() <= 0) {
+                    break;
+                }
+
                 item = this.inventory.contains(dropItem.item) ? dropItem.item : this.inventory.getItemInHand();
                 PlayerDropItemEvent dropItemEvent = new PlayerDropItemEvent(this, item);
                 this.server.getPluginManager().callEvent(dropItemEvent);
