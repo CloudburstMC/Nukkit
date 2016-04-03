@@ -89,7 +89,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public Map<Long, BlockEntity> updateBlockEntities = new HashMap<>();
 
-    private Map<Vector3, Block> blockCache = new HashMap<>();
+    private Map<String, Block> blockCache = new HashMap<>();
 
     private Map<String, DataPacket> chunkCache = new HashMap<>();
 
@@ -122,10 +122,10 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<String, BaseFullChunk> chunks = new HashMap<>();
 
-    private Map<String, Set<Vector3>> changedBlocks = new HashMap<>();
+    private Map<String, Map<String, Vector3>> changedBlocks = new HashMap<>();
 
     private PriorityQueue<PriorityObject> updateQueue;
-    private Map<Vector3, Integer> updateQueueIndex = new HashMap<>();
+    private Map<String, Integer> updateQueueIndex = new HashMap<>();
 
     private Map<String, Map<Integer, Player>> chunkSendQueue = new HashMap<>();
     private Map<String, Boolean> chunkSendTasks = new HashMap<>();
@@ -265,6 +265,14 @@ public class Level implements ChunkManager, Metadatable {
 
     public static String chunkHash(int x, int z) {
         return x + ":" + z;
+    }
+
+    public static String blockHash(Vector3 block) {
+        return blockHash(block.x, block.y, block.z);
+    }
+
+    public static String blockHash(double x, double y, double z) {
+        return (int) x + ":" + (int) y + ":" + (int) z;
     }
 
     public static int chunkBlockHash(int x, int y, int z) {
@@ -662,9 +670,8 @@ public class Level implements ChunkManager, Metadatable {
         this.unloadChunks();
 
         while (this.updateQueue.peek() != null && this.updateQueue.peek().priority <= currentTick) {
-            Vector3 pos = (Vector3) this.updateQueue.poll().data;
-            Block block = this.getBlock(pos);
-            this.updateQueueIndex.remove(pos);
+            Block block = this.getBlock((Vector3) this.updateQueue.poll().data);
+            this.updateQueueIndex.remove(Level.blockHash((int) block.x, (int) block.y, (int) block.z));
             block.onUpdate(BLOCK_UPDATE_SCHEDULED);
         }
 
@@ -688,7 +695,7 @@ public class Level implements ChunkManager, Metadatable {
         if (!this.changedBlocks.isEmpty()) {
             if (!this.players.isEmpty()) {
                 for (String index : new ArrayList<>(this.changedBlocks.keySet())) {
-                    Set<Vector3> blocks = this.changedBlocks.get(index);
+                    Map<String, Vector3> blocks = this.changedBlocks.get(index);
                     this.chunkCache.remove(index);
                     Chunk.Entry chunkEntry = Level.getChunkXZ(index);
                     int chunkX = chunkEntry.chunkX;
@@ -699,7 +706,7 @@ public class Level implements ChunkManager, Metadatable {
                             p.onChunkChanged(chunk);
                         }
                     } else {
-                        this.sendBlocks(this.getChunkPlayers(chunkX, chunkZ).values().stream().toArray(Player[]::new), blocks.stream().toArray(Vector3[]::new), UpdateBlockPacket.FLAG_ALL);
+                        this.sendBlocks(this.getChunkPlayers(chunkX, chunkZ).values().stream().toArray(Player[]::new), blocks.values().stream().toArray(Vector3[]::new), UpdateBlockPacket.FLAG_ALL);
                     }
                 }
             } else {
@@ -717,32 +724,26 @@ public class Level implements ChunkManager, Metadatable {
 
         List<DataPacket> movementPackets = new ArrayList<>();
 
-        if (!this.moveToSend.isEmpty()) {
+        {
             MoveEntityPacket pk = new MoveEntityPacket();
             pk.entities = this.moveToSend.values().stream().toArray(MoveEntityPacket.Entry[]::new);
             movementPackets.add(pk);
-
-            this.moveToSend = new HashMap<>();
         }
+        this.moveToSend = new HashMap<>();
 
-
-        if (!this.motionToSend.isEmpty()) {
+        {
             SetEntityMotionPacket pk = new SetEntityMotionPacket();
             pk.entities = this.motionToSend.values().stream().toArray(SetEntityMotionPacket.Entry[]::new);
             movementPackets.add(pk);
-
-            this.motionToSend = new HashMap<>();
         }
+        this.motionToSend = new HashMap<>();
 
-        if (!this.playerMoveToSend.isEmpty()) {
+        {
             movementPackets.addAll(this.playerMoveToSend.values());
-
-            this.playerMoveToSend = new HashMap<>();
         }
+        this.playerMoveToSend = new HashMap<>();
 
-        if (!movementPackets.isEmpty()) {
-            this.getServer().batchPackets(this.getPlayers().values().stream().toArray(Player[]::new), movementPackets.stream().toArray(DataPacket[]::new), true);
-        }
+        this.getServer().batchPackets(this.getPlayers().values().stream().toArray(Player[]::new), movementPackets.stream().toArray(DataPacket[]::new), true);
 
         for (String key : this.chunkPackets.keySet()) {
             Chunk.Entry chunkEntry = Level.getChunkXZ(key);
@@ -1113,12 +1114,12 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void scheduleUpdate(Vector3 pos, int delay) {
-        pos = pos.clone();
-        if (this.updateQueueIndex.containsKey(pos) && this.updateQueueIndex.get(pos) <= delay) {
+        String index = Level.blockHash((int) pos.x, (int) pos.y, (int) pos.z);
+        if (this.updateQueueIndex.containsKey(index) && this.updateQueueIndex.get(index) <= delay) {
             return;
         }
-        this.updateQueueIndex.put(pos, delay);
-        this.updateQueue.add(new PriorityObject(pos, delay + this.server.getTick()));
+        this.updateQueueIndex.put(index, delay);
+        this.updateQueue.add(new PriorityObject(new Vector3((int) pos.x, (int) pos.y, (int) pos.z), delay + this.server.getTick()));
     }
 
     public Block[] getCollisionBlocks(AxisAlignedBB bb) {
@@ -1234,11 +1235,11 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Block getBlock(Vector3 pos, boolean cached) {
-        pos = pos.clone();
         String chunkIndex = Level.chunkHash((int) pos.x >> 4, (int) pos.z >> 4);
+        String index = Level.blockHash((int) pos.x, (int) pos.y, (int) pos.z);
         int fullState = 0;
-        if (cached && this.blockCache.containsKey(pos)) {
-            return this.blockCache.get(pos);
+        if (cached && this.blockCache.containsKey(index)) {
+            return this.blockCache.get(index);
         } else if (pos.y >= 0 && pos.y < 128 && this.chunks.containsKey(chunkIndex)) {
             fullState = this.chunks.get(chunkIndex).getFullBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f, (int) pos.z & 0x0f);
         } else {
@@ -1252,7 +1253,7 @@ public class Level implements ChunkManager, Metadatable {
         block.z = pos.z;
         block.level = this;
 
-        this.blockCache.put(pos, block);
+        this.blockCache.put(index, block);
 
         return block;
     }
@@ -1267,11 +1268,10 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void updateBlockLight(int x, int y, int z) {
-        Vector3 pos = new Vector3(x, y, z);
         Queue<Vector3> lightPropagationQueue = new ConcurrentLinkedQueue<>();
         Queue<Object[]> lightRemovalQueue = new ConcurrentLinkedQueue<>();
-        Map<Vector3, Boolean> visited = new HashMap<>();
-        Map<Vector3, Boolean> removalVisited = new HashMap<>();
+        Map<String, Boolean> visited = new HashMap<>();
+        Map<String, Boolean> removalVisited = new HashMap<>();
 
         int oldLevel = this.getBlockLightAt(x, y, z);
         int newLevel = Block.light[this.getBlockIdAt(x, y, z)];
@@ -1280,10 +1280,10 @@ public class Level implements ChunkManager, Metadatable {
             this.setBlockLightAt(x, y, z, newLevel);
 
             if (newLevel < oldLevel) {
-                removalVisited.put(pos, true);
-                lightRemovalQueue.add(new Object[]{pos, oldLevel});
+                removalVisited.put(Level.blockHash(x, y, z), true);
+                lightRemovalQueue.add(new Object[]{new Vector3(x, y, z), oldLevel});
             } else {
-                visited.put(pos, true);
+                visited.put(Level.blockHash(x, y, z), true);
                 lightPropagationQueue.add(new Vector3(x, y, z));
             }
         }
@@ -1316,35 +1316,35 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    private void computeRemoveBlockLight(int x, int y, int z, int currentLight, Queue<Object[]> queue, Queue<Vector3> spreadQueue, Map<Vector3, Boolean> visited, Map<Vector3, Boolean> spreadVisited) {
+    private void computeRemoveBlockLight(int x, int y, int z, int currentLight, Queue<Object[]> queue, Queue<Vector3> spreadQueue, Map<String, Boolean> visited, Map<String, Boolean> spreadVisited) {
         int current = this.getBlockLightAt(x, y, z);
-        Vector3 pos = new Vector3(x, y, z);
+        String index = Level.blockHash(x, y, z);
         if (current != 0 && current < currentLight) {
             this.setBlockLightAt(x, y, z, 0);
 
-            if (!visited.containsKey(pos)) {
-                visited.put(pos, true);
+            if (!visited.containsKey(index)) {
+                visited.put(index, true);
                 if (current > 1) {
                     queue.add(new Object[]{new Vector3(x, y, z), current});
                 }
             }
         } else if (current >= currentLight) {
-            if (!spreadVisited.containsKey(pos)) {
-                spreadVisited.put(pos, true);
+            if (!spreadVisited.containsKey(index)) {
+                spreadVisited.put(index, true);
                 spreadQueue.add(new Vector3(x, y, z));
             }
         }
     }
 
-    private void computeSpreadBlockLight(int x, int y, int z, int currentLight, Queue<Vector3> queue, Map<Vector3, Boolean> visited) {
+    private void computeSpreadBlockLight(int x, int y, int z, int currentLight, Queue<Vector3> queue, Map<String, Boolean> visited) {
         int current = this.getBlockLightAt(x, y, z);
-        Vector3 pos = new Vector3(x, y, z);
+        String index = Level.blockHash(x, y, z);
 
         if (current < currentLight) {
             this.setBlockLightAt(x, y, z, currentLight);
 
-            if (!visited.containsKey(pos)) {
-                visited.put(pos, true);
+            if (!visited.containsKey(index)) {
+                visited.put(index, true);
                 if (currentLight > 1) {
                     queue.add(new Vector3(x, y, z));
                 }
@@ -1373,9 +1373,8 @@ public class Level implements ChunkManager, Metadatable {
                 position = (Position) pos;
             }
 
-            position = position.clone();
             block.position(position);
-            this.blockCache.remove(position);
+            this.blockCache.remove(Level.blockHash((int) position.x, (int) position.y, (int) position.z));
 
             String index = Level.chunkHash((int) position.x >> 4, (int) position.z >> 4);
 
@@ -1384,10 +1383,10 @@ public class Level implements ChunkManager, Metadatable {
                 this.chunkCache.remove(index);
             } else {
                 if (!this.changedBlocks.containsKey(index)) {
-                    this.changedBlocks.put(index, new HashSet<>());
+                    this.changedBlocks.put(index, new HashMap<>());
                 }
 
-                this.changedBlocks.get(index).add(block.clone());
+                this.changedBlocks.get(index).put(Level.blockHash((int) block.x, (int) block.y, (int) block.z), block.clone());
             }
 
             for (ChunkLoader loader : this.getChunkLoaders((int) position.x >> 4, (int) position.z >> 4)) {
@@ -1575,7 +1574,6 @@ public class Level implements ChunkManager, Metadatable {
         if (item != null) {
             item.useOn(target);
             if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
-                item.count--;
                 item = new ItemBlock(new BlockAir(), 0, 0);
             }
         }
@@ -1817,18 +1815,16 @@ public class Level implements ChunkManager, Metadatable {
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
         List<Entity> nearby = new ArrayList<>();
 
-        if (entity == null || entity.canCollide()) {
-            int minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
-            int maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
-            int minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);
-            int maxZ = NukkitMath.ceilDouble((bb.maxZ + 2) / 16);
+        int minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
+        int maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
+        int minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);
+        int maxZ = NukkitMath.ceilDouble((bb.maxZ + 2) / 16);
 
-            for (int x = minX; x <= maxX; ++x) {
-                for (int z = minZ; z <= maxZ; ++z) {
-                    for (Entity ent : this.getChunkEntities(x, z).values()) {
-                        if (ent != entity && ent.boundingBox.intersectsWith(bb)) {
-                            nearby.add(ent);
-                        }
+        for (int x = minX; x <= maxX; ++x) {
+            for (int z = minZ; z <= maxZ; ++z) {
+                for (Entity ent : this.getChunkEntities(x, z).values()) {
+                    if (ent != entity && ent.boundingBox.intersectsWith(bb)) {
+                        nearby.add(ent);
                     }
                 }
             }
@@ -1880,17 +1876,17 @@ public class Level implements ChunkManager, Metadatable {
 
     @Override
     public void setBlockIdAt(int x, int y, int z, int id) {
-        Vector3 pos = new Vector3(x, y, z);
-        this.blockCache.remove(pos);
+        this.blockCache.remove(Level.blockHash(x, y, z));
         this.getChunk(x >> 4, z >> 4, true).setBlockId(x & 0x0f, y & 0x7f, z & 0x0f, id & 0xff);
 
         String index = Level.chunkHash(x >> 4, z >> 4);
         if (!this.changedBlocks.containsKey(index)) {
-            this.changedBlocks.put(index, new HashSet<>());
+            this.changedBlocks.put(index, new HashMap<>());
         }
-        this.changedBlocks.get(index).add(pos);
+        Vector3 v;
+        this.changedBlocks.get(index).put(Level.blockHash(x, y, z), v = new Vector3(x, y, z));
         for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {
-            loader.onBlockChanged(pos);
+            loader.onBlockChanged(v);
         }
     }
 
@@ -1911,17 +1907,17 @@ public class Level implements ChunkManager, Metadatable {
 
     @Override
     public void setBlockDataAt(int x, int y, int z, int data) {
-        Vector3 pos = new Vector3(x, y, z);
-        this.blockCache.remove(pos);
+        this.blockCache.remove(Level.blockHash(x, y, z));
         this.getChunk(x >> 4, z >> 4, true).setBlockData(x & 0x0f, y & 0x7f, z & 0x0f, data & 0x0f);
 
         String index = Level.chunkHash(x >> 4, z >> 4);
         if (!this.changedBlocks.containsKey(index)) {
-            this.changedBlocks.put(index, new HashSet<>());
+            this.changedBlocks.put(index, new HashMap<>());
         }
-        this.changedBlocks.get(index).add(pos);
+        Vector3 v;
+        this.changedBlocks.get(index).put(Level.blockHash(x, y, z), v = new Vector3(x, y, z));
         for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {
-            loader.onBlockChanged(pos);
+            loader.onBlockChanged(v);
         }
     }
 

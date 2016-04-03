@@ -3,13 +3,13 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 
 /**
- * Author: BeYkeRYkt 
+ * Author: BeYkeRYkt
  * Nukkit Project
  */
 public interface EntityOwnable {
-	public String getOwnerName();
+    public String getOwnerName();
 
-	public void setOwnerName(String playerName);
+    public void setOwnerName(String playerName);
 
-	public Player getOwner();
+    public Player getOwner();
 }

@@ -18,7 +18,7 @@ import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.ExplodePacket;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -34,7 +34,7 @@ public class Explosion {
     private Position source;
     private double size;
 
-    private HashSet<Block> affectedBlocks = new HashSet<>();
+    private List<Block> affectedBlocks = new ArrayList<>();
     private double stepLen = 0.3d;
 
     private Object what;
@@ -95,6 +95,7 @@ public class Explosion {
                             if (block.getId() != 0) {
                                 blastForce -= (block.getResistance() / 5 + 0.3d) * this.stepLen;
                                 if (blastForce > 0) {
+                                    String index = Level.blockHash((int) block.x, (int) block.y, (int) block.z);
                                     if (!this.affectedBlocks.contains(block)) {
                                         this.affectedBlocks.add(block);
                                     }
@@ -114,20 +115,20 @@ public class Explosion {
 
     public boolean explodeB() {
 
-        List<Vector3> updateBlocks = new ArrayList<>();
+        HashMap<String, Boolean> updateBlocks = new HashMap<>();
         List<Vector3> send = new ArrayList<>();
 
         Vector3 source = (new Vector3(this.source.x, this.source.y, this.source.z)).floor();
         double yield = (1d / this.size) * 100d;
 
         if (this.what instanceof Entity) {
-            EntityExplodeEvent ev = new EntityExplodeEvent((Entity) this.what, this.source, new ArrayList<>(this.affectedBlocks), yield);
+            EntityExplodeEvent ev = new EntityExplodeEvent((Entity) this.what, this.source, this.affectedBlocks, yield);
             this.level.getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return false;
             } else {
                 yield = ev.getYield();
-                this.affectedBlocks = new HashSet<>(ev.getBlockList());
+                this.affectedBlocks = ev.getBlockList();
             }
         }
 
@@ -169,8 +170,10 @@ public class Explosion {
         ItemBlock air = new ItemBlock(new BlockAir());
 
         Iterator iter = this.affectedBlocks.iterator();
+        //Iterator iter = this.affectedBlocks.entrySet().iterator();
         while (iter.hasNext()) {
             Block block = (Block) iter.next();
+            //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
                 double mot = Math.random() * Math.PI * 2;
                 EntityPrimedTNT tnt = new EntityPrimedTNT(this.level.getChunk((int) block.x >> 4, (int) block.z >> 4),
@@ -197,15 +200,18 @@ public class Explosion {
 
             this.level.setBlockIdAt((int) block.x, (int) block.y, (int) block.z, 0);
 
+            Vector3 pos = new Vector3(block.x, block.y, block.z);
+
             for (int side = 0; side < 5; side++) {
-                Block sideBlock = block.getSide(side).clone();
-                if (!this.affectedBlocks.contains(sideBlock) && !updateBlocks.contains(sideBlock)) {
+                Vector3 sideBlock = pos.getSide(side);
+                String index = Level.blockHash((int) sideBlock.x, (int) sideBlock.y, (int) sideBlock.z);
+                if (!this.affectedBlocks.contains(sideBlock) && !updateBlocks.containsKey(index)) {
                     BlockUpdateEvent ev = new BlockUpdateEvent(this.level.getBlock(sideBlock));
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         ev.getBlock().onUpdate(Level.BLOCK_UPDATE_NORMAL);
                     }
-                    updateBlocks.add(sideBlock);
+                    updateBlocks.put(index, true);
                 }
             }
             send.add(new Vector3(block.x - source.x, block.y - source.y, block.z - source.z));
