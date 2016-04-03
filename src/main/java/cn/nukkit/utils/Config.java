@@ -261,6 +261,11 @@ public class Config {
         return this.get(key, ((Number) defaultValue)).intValue();
     }
 
+    public boolean isInt(String key) {
+        Object val = get(key);
+        return val instanceof Integer;
+    }
+
     public long getLong(String key) {
         return this.getLong(key, 0);
     }
@@ -269,12 +274,22 @@ public class Config {
         return this.get(key, ((Number) defaultValue)).longValue();
     }
 
+    public boolean isLong(String key) {
+        Object val = get(key);
+        return val instanceof Long;
+    }
+
     public double getDouble(String key) {
         return this.getDouble(key, 0);
     }
 
     public double getDouble(String key, double defaultValue) {
         return this.get(key, ((Number) defaultValue)).doubleValue();
+    }
+
+    public boolean isDouble(String key) {
+        Object val = get(key);
+        return val instanceof Double;
     }
 
     public String getString(String key) {
@@ -286,6 +301,11 @@ public class Config {
         return String.valueOf(result);
     }
 
+    public boolean isString(String key) {
+        Object val = get(key);
+        return val instanceof String;
+    }
+
     public boolean getBoolean(String key) {
         return this.getBoolean(key, false);
     }
@@ -294,12 +314,22 @@ public class Config {
         return this.get(key, defaultValue);
     }
 
+    public boolean isBoolean(String key) {
+        Object val = get(key);
+        return val instanceof Boolean;
+    }
+
     public List getList(String key) {
         return this.getList(key, null);
     }
 
     public List getList(String key, List defaultList) {
         return this.get(key, defaultList);
+    }
+
+    public boolean isList(String key) {
+        Object val = get(key);
+        return val instanceof List;
     }
 
     public List<String> getStringList(String key) {
