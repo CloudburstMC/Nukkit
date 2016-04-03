@@ -184,7 +184,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private Entity killer = null;
 
     private final AtomicReference<Locale> locale = new AtomicReference<>(null);
-    private String sessionId;
+
     private int hash;
 
 

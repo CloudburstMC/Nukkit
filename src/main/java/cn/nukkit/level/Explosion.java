@@ -18,6 +18,7 @@ import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.ExplodePacket;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,7 +34,7 @@ public class Explosion {
     private Position source;
     private double size;
 
-    private List<Block> affectedBlocks = new ArrayList<>();
+    private HashSet<Block> affectedBlocks = new HashSet<>();
     private double stepLen = 0.3d;
 
     private Object what;
@@ -120,13 +121,13 @@ public class Explosion {
         double yield = (1d / this.size) * 100d;
 
         if (this.what instanceof Entity) {
-            EntityExplodeEvent ev = new EntityExplodeEvent((Entity) this.what, this.source, this.affectedBlocks, yield);
+            EntityExplodeEvent ev = new EntityExplodeEvent((Entity) this.what, this.source, new ArrayList<>(this.affectedBlocks), yield);
             this.level.getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return false;
             } else {
                 yield = ev.getYield();
-                this.affectedBlocks = ev.getBlockList();
+                this.affectedBlocks = new HashSet<>(ev.getBlockList());
             }
         }
 
@@ -197,7 +198,7 @@ public class Explosion {
             this.level.setBlockIdAt((int) block.x, (int) block.y, (int) block.z, 0);
 
             for (int side = 0; side < 5; side++) {
-                Block sideBlock = block.getSide(side);
+                Block sideBlock = block.getSide(side).clone();
                 if (!this.affectedBlocks.contains(sideBlock) && !updateBlocks.contains(sideBlock)) {
                     BlockUpdateEvent ev = new BlockUpdateEvent(this.level.getBlock(sideBlock));
                     this.level.getServer().getPluginManager().callEvent(ev);

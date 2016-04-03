@@ -662,8 +662,9 @@ public class Level implements ChunkManager, Metadatable {
         this.unloadChunks();
 
         while (this.updateQueue.peek() != null && this.updateQueue.peek().priority <= currentTick) {
-            Block block = this.getBlock((Vector3) this.updateQueue.poll().data);
-            this.updateQueueIndex.remove(block);
+            Vector3 pos = (Vector3) this.updateQueue.poll().data;
+            Block block = this.getBlock(pos);
+            this.updateQueueIndex.remove(pos);
             block.onUpdate(BLOCK_UPDATE_SCHEDULED);
         }
 
@@ -739,7 +740,7 @@ public class Level implements ChunkManager, Metadatable {
             this.playerMoveToSend = new HashMap<>();
         }
 
-        if (!movementPackets.isEmpty()){
+        if (!movementPackets.isEmpty()) {
             this.getServer().batchPackets(this.getPlayers().values().stream().toArray(Player[]::new), movementPackets.stream().toArray(DataPacket[]::new), true);
         }
 
@@ -1112,6 +1113,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void scheduleUpdate(Vector3 pos, int delay) {
+        pos = pos.clone();
         if (this.updateQueueIndex.containsKey(pos) && this.updateQueueIndex.get(pos) <= delay) {
             return;
         }
@@ -1232,6 +1234,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Block getBlock(Vector3 pos, boolean cached) {
+        pos = pos.clone();
         String chunkIndex = Level.chunkHash((int) pos.x >> 4, (int) pos.z >> 4);
         int fullState = 0;
         if (cached && this.blockCache.containsKey(pos)) {
@@ -1370,6 +1373,7 @@ public class Level implements ChunkManager, Metadatable {
                 position = (Position) pos;
             }
 
+            position = position.clone();
             block.position(position);
             this.blockCache.remove(position);
 
