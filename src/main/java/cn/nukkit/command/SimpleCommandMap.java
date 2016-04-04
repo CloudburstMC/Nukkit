@@ -13,6 +13,7 @@ import java.util.*;
  * author: MagicDroidX
  * Nukkit Project
  */
+//(0000 1011).(0000 0000).(0000 0000).(0000 0000)
 public class SimpleCommandMap implements CommandMap {
     protected Map<String, Command> knownCommands = new HashMap<>();
 
@@ -112,13 +113,25 @@ public class SimpleCommandMap implements CommandMap {
 
     private boolean registerAlias(Command command, boolean isAlias, String fallbackPrefix, String label) {
         this.knownCommands.put(fallbackPrefix + ":" + label, command);
-        if ((command instanceof VanillaCommand || isAlias) && this.knownCommands.containsKey(label)) {
+
+        //if you're registering a command alias that is already registered, then return false
+        boolean alreadyRegistered = this.knownCommands.containsKey(label);
+        Command existingCommand = this.knownCommands.get(label);
+        boolean existingCommandIsNotVanilla = alreadyRegistered && !(existingCommand instanceof VanillaCommand);
+        //basically, if we're an alias and it's already registered, or we're a vanilla command, then we can't override it
+        if ((command instanceof VanillaCommand || isAlias) && alreadyRegistered && existingCommandIsNotVanilla) {
             return false;
         }
 
-        if (this.knownCommands.containsKey(label) && this.knownCommands.get(label).getLabel() != null && this.knownCommands.get(label).getLabel().equals(label)) {
+        //if you're registering a name (alias or label) which is identical to another command who's primary name is the same
+        //so basically we can't override the main name of a command, but we can override aliases if we're not an alias
+
+        //added the last statement which will allow us to override a VanillaCommand unconditionally
+        if (alreadyRegistered && existingCommand.getLabel() != null && existingCommand.getLabel().equals(label) && existingCommandIsNotVanilla) {
             return false;
         }
+
+        //you can now assume that the command is either uniquely named, or overriding another command's alias (and is not itself, an alias)
 
         if (!isAlias) {
             command.setLabel(label);
