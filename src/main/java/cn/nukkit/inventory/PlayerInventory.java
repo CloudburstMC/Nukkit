@@ -35,7 +35,7 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public int getSize() {
-        return super.getSize() - 4; //Remove armor slots
+        return super.getSize() - 4 - 9; //Remove armor slots and Hotbar!!
     }
 
     @Override
