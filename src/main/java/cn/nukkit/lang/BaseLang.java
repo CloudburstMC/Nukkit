@@ -186,7 +186,11 @@ public class BaseLang {
         for (int i = 0; i < len; ++i) {
             char c = text.charAt(i);
             if (replaceString != null) {
-                if (((int) c >= 0x30 && (int) c <= 0x39) || ((int) c >= 0x41 && (int) c <= 0x5a) || ((int) c >= 0x61 && (int) c <= 0x7a) || c == '.') {
+                int ord = c;
+                if ((ord >= 0x30 && ord <= 0x39) // 0-9
+                        || (ord >= 0x41 && ord <= 0x5a) // A-Z
+                        || (ord >= 0x61 && ord <= 0x7a) || // a-z
+                        c == '.' || c == '-') {
                     replaceString += String.valueOf(c);
                 } else {
                     String t = this.internalGet(replaceString.substring(1));
