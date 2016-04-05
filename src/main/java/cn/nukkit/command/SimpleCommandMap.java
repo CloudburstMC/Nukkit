@@ -13,7 +13,6 @@ import java.util.*;
  * author: MagicDroidX
  * Nukkit Project
  */
-//(0000 1011).(0000 0000).(0000 0000).(0000 0000)
 public class SimpleCommandMap implements CommandMap {
     protected Map<String, Command> knownCommands = new HashMap<>();
 
