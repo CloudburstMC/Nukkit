@@ -9,6 +9,7 @@ import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.EntityCreeper;
+import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.entity.weather.EntityLightning;
@@ -170,7 +171,7 @@ public class Server {
 
     private Map<UUID, Player> playerList = new HashMap<>();
 
-    private Map<Player, String> identifier = new HashMap<>();
+    private Map<Integer, String> identifier = new HashMap<>();
 
     private Map<Integer, Level> levels = new HashMap<>();
 
@@ -244,7 +245,7 @@ public class Server {
                 put("motd", "Nukkit Server For Minecraft: PE");
                 put("server-port", 19132);
                 put("server-ip", "0.0.0.0");
-                put("view-distance", 16);
+                put("view-distance", 10);
                 put("white-list", false);
                 put("announce-player-achievements", true);
                 put("spawn-protection", 16);
@@ -539,6 +540,10 @@ public class Server {
     }
 
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
+        if (players == null || packets == null || players.length == 0 || packets.length == 0) {
+            return;
+        }
+
         byte[][] payload = new byte[packets.length * 2][];
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
@@ -555,7 +560,7 @@ public class Server {
         List<String> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
-                targets.add(this.identifier.get(p));
+                targets.add(this.identifier.get(p.rawHashCode()));
             }
         }
 
@@ -781,7 +786,7 @@ public class Server {
 
     public void addPlayer(String identifier, Player player) {
         this.players.put(identifier, player);
-        this.identifier.put(player, identifier);
+        this.identifier.put(player.rawHashCode(), identifier);
     }
 
     public void addOnlinePlayer(Player player) {
@@ -847,7 +852,7 @@ public class Server {
         pk.type = PlayerListPacket.TYPE_ADD;
         List<PlayerListPacket.Entry> entries = new ArrayList<>();
         for (Player p : this.playerList.values()) {
-            if (!self && p.equals(player)) {
+            if (!self && p == player) {
                 continue;
             }
 
@@ -1107,17 +1112,7 @@ public class Server {
     }
 
     public int getViewDistance() {
-        int distance = this.getPropertyInt("view-distance", 10);
-
-        if (distance < 10) {
-            distance = 10;
-        } else if (distance > 22) {
-            distance = 22;
-        }
-
-        this.setPropertyInt("view-distance", distance);
-
-        return distance;
+        return this.getPropertyInt("view-distance", 10);
     }
 
     public String getIp() {
@@ -1438,18 +1433,18 @@ public class Server {
     }
 
     public void removePlayer(Player player) {
-        if (this.identifier.containsKey(player)) {
-            String identifier = this.identifier.get(player);
+        if (this.identifier.containsKey(player.rawHashCode())) {
+            String identifier = this.identifier.get(player.rawHashCode());
             this.players.remove(identifier);
-            this.identifier.remove(player);
+            this.identifier.remove(player.rawHashCode());
             return;
         }
 
         for (String identifier : new ArrayList<>(this.players.keySet())) {
             Player p = this.players.get(identifier);
-            if (player.equals(p)) {
+            if (player == p) {
                 this.players.remove(identifier);
-                this.identifier.remove(player);
+                this.identifier.remove(player.rawHashCode());
                 break;
             }
         }
@@ -1464,7 +1459,7 @@ public class Server {
     }
 
     public void setDefaultLevel(Level defaultLevel) {
-        if (defaultLevel == null || (this.isLevelLoaded(defaultLevel.getFolderName()) && !defaultLevel.equals(this.defaultLevel))) {
+        if (defaultLevel == null || (this.isLevelLoaded(defaultLevel.getFolderName()) && defaultLevel != this.defaultLevel)) {
             this.defaultLevel = defaultLevel;
         }
     }
@@ -1495,7 +1490,7 @@ public class Server {
     }
 
     public boolean unloadLevel(Level level, boolean forceUnload) {
-        if (Objects.equals(level, this.getDefaultLevel()) && !forceUnload) {
+        if (level == this.getDefaultLevel() && !forceUnload) {
             throw new IllegalStateException("The default level cannot be unloaded while running, please switch levels.");
         }
 
@@ -1822,6 +1817,14 @@ public class Server {
         Entity.registerEntity("Painting", EntityPainting.class);
         //todo mobs
         Entity.registerEntity("Creeper", EntityCreeper.class);
+        //TODO: more mobs
+        Entity.registerEntity("Chicken", EntityChicken.class);
+        Entity.registerEntity("Cow", EntityCow.class);
+        Entity.registerEntity("Pig", EntityPig.class);
+        Entity.registerEntity("Rabbit", EntityRabbit.class);
+        Entity.registerEntity("Sheep", EntitySheep.class);
+        Entity.registerEntity("Wolf", EntityWolf.class);
+        Entity.registerEntity("Ocelot", EntityOcelot.class);
 
         Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);
         Entity.registerEntity("XpOrb", EntityXPOrb.class);

@@ -34,7 +34,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
     private Map<String, Player> players = new ConcurrentHashMap<>();
 
-    private Map<Player, String> identifiers;
+    private Map<Integer, String> identifiers;
 
     private Map<String, Integer> identifiersACK = new ConcurrentHashMap<>();
 
@@ -72,7 +72,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
     public void closeSession(String identifier, String reason) {
         if (this.players.containsKey(identifier)) {
             Player player = this.players.get(identifier);
-            this.identifiers.remove(player);
+            this.identifiers.remove(player.rawHashCode());
             this.players.remove(identifier);
             this.identifiersACK.remove(identifier);
             player.close(player.getLeaveMessage(), reason);
@@ -86,12 +86,12 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
     @Override
     public void close(Player player, String reason) {
-        if (this.identifiers.containsKey(player)) {
-            String id = this.identifiers.get(player);
+        if (this.identifiers.containsKey(player.rawHashCode())) {
+            String id = this.identifiers.get(player.rawHashCode());
             this.players.remove(id);
             this.identifiersACK.remove(id);
             this.closeSession(id, reason);
-            this.identifiers.remove(player);
+            this.identifiers.remove(player.rawHashCode());
         }
     }
 
@@ -116,7 +116,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
             Player player = (Player) constructor.newInstance(this, ev.getClientId(), ev.getAddress(), ev.getPort());
             this.players.put(identifier, player);
             this.identifiersACK.put(identifier, 0);
-            this.identifiers.put(player, identifier);
+            this.identifiers.put(player.rawHashCode(), identifier);
             this.server.addPlayer(identifier, player);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             Server.getInstance().getLogger().logException(e);
@@ -213,9 +213,9 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
     @Override
     public Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
-        if (this.identifiers.containsKey(player)) {
+        if (this.identifiers.containsKey(player.rawHashCode())) {
             byte[] buffer = packet.getBuffer();
-            String identifier = this.identifiers.get(player);
+            String identifier = this.identifiers.get(player.rawHashCode());
             EncapsulatedPacket pk = null;
             if (!packet.isEncoded) {
                 packet.encode();

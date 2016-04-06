@@ -114,7 +114,7 @@ public class Redstone {
         if (location.getPowerLevel() <= 0) {
             return;
         }
-        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_EAST, Vector3.SIDE_WEST, Vector3.SIDE_UP, Vector3.SIDE_DOWN}) {
             if (location.getSide(side) instanceof BlockRedstoneWire) {
                 updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, location.getSide(side)));
             }
@@ -122,13 +122,13 @@ public class Redstone {
         if (location instanceof BlockRedstoneWire) {
             Block block = location.getSide(Vector3.SIDE_UP);
             if (!(block instanceof BlockSolid)) {
-                for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
-                    if (location.getSide(side) instanceof BlockRedstoneWire) {
+                for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_EAST, Vector3.SIDE_WEST}) {
+                    if (block.getSide(side) instanceof BlockRedstoneWire) {
                         updateQueue.add(new UpdateObject(location.getPowerLevel() - 1, block.getSide(side)));
                     }
                 }
             }
-            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST, Vector3.SIDE_SOUTH}) {
                 block = location.getSide(side);
                 if (!(block instanceof BlockSolid)) {
                     Block blockDown;
@@ -145,7 +145,7 @@ public class Redstone {
         if (updateLevel < 0) {
             return;
         }
-        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_EAST, Vector3.SIDE_WEST, Vector3.SIDE_UP, Vector3.SIDE_DOWN}) {
             if (location.getSide(side).isPowerSource() || (updateLevel == 0 && location.getSide(side).isPowered())) {
                 sourceList.add(new UpdateObject(location.getPowerLevel(side), location.getSide(side)));
             } else if (location.getSide(side) instanceof BlockRedstoneWire) {
@@ -156,9 +156,8 @@ public class Redstone {
             }
         }
         if (location instanceof BlockRedstoneWire) {
-            Block block;
-            block = location.getSide(Vector3.SIDE_UP);
-            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            Block block = location.getSide(Vector3.SIDE_UP);
+            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_EAST, Vector3.SIDE_WEST}) {
                 if (block.getSide(side) instanceof BlockRedstoneWire) {
                     if (!closedMap.containsKey(block.getSide(side).getLocationHash())) {
                         closedMap.put(block.getSide(side).getLocationHash(), block.getSide(side));
@@ -166,9 +165,10 @@ public class Redstone {
                     }
                 }
             }
-            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            Block blockDown;
+            for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_EAST, Vector3.SIDE_WEST}) {
                 block = location.getSide(side);
-                Block blockDown = block.getSide(Vector3.SIDE_DOWN);
+                blockDown = block.getSide(Vector3.SIDE_DOWN);
                 if (blockDown instanceof BlockRedstoneWire) {
                     if (!closedMap.containsKey(blockDown.getLocationHash())) {
                         closedMap.put(blockDown.getLocationHash(), blockDown);
@@ -178,4 +178,5 @@ public class Redstone {
             }
         }
     }
+
 }

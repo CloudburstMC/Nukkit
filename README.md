@@ -26,7 +26,7 @@ __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
 Get Nukkit
 -------------
-* __[Jenkins](http://ci.mengcraft.com:8080/job/nukkit/)__ powered by **MengCraft**
+* __[Official Site](http://nukkit.cn)__
 * __[Circle CI](https://circleci.com/gh/Nukkit/Nukkit/tree/master/)__ (**login required**)
 
 Introduction

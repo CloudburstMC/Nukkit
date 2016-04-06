@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
+import cn.nukkit.redstone.Redstone;
 
 /**
  * @author Nukkit Project Team
@@ -39,6 +41,16 @@ public class BlockRedstoneLamp extends BlockSolid {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_SCHEDULED) && this.getNeighborPowerLevel() > 0) {
+            int level = this.getPowerLevel();
+            Redstone.deactive(this, level);
+            this.getLevel().setBlock(this, new BlockLitRedstoneLamp());
+        }
+        return 0;
     }
 
     @Override

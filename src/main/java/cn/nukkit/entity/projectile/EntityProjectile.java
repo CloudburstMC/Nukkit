@@ -100,7 +100,7 @@ public abstract class EntityProjectile extends Entity {
 
             for (Entity entity : list) {
                 if (/*!entity.canCollideWith(this) or */
-                        (entity.equals(this.shootingEntity) && this.ticksLived < 5)
+                        (entity == this.shootingEntity && this.ticksLived < 5)
                         ) {
                     continue;
                 }
