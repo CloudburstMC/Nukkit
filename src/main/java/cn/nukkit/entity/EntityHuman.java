@@ -190,7 +190,7 @@ public class EntityHuman extends EntityCreature implements InventoryHolder {
 
     @Override
     public void spawnTo(Player player) {
-        if (!this.equals(player) && !this.hasSpawned.containsKey(player.getLoaderId())) {
+        if (this != player && !this.hasSpawned.containsKey(player.getLoaderId())) {
             this.hasSpawned.put(player.getLoaderId(), player);
 
             if (this.skin.getData().length < 64 * 32 * 4) {

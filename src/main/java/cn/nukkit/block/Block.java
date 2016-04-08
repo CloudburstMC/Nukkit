@@ -397,6 +397,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[IRON_BARS] = BlockIronBars.class;
             list[GLASS_PANE] = BlockGlassPane.class;
             list[MELON_BLOCK] = BlockMelon.class;
+            list[LIT_REDSTONE_LAMP] = BlockLitRedstoneLamp.class;
             list[PUMPKIN_STEM] = BlockStemPumpkin.class;
             list[MELON_STEM] = BlockStemMelon.class;
             list[VINE] = BlockVine.class;
@@ -847,17 +848,17 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
         int f = -1;
 
-        if (vector.equals(v1)) {
+        if (vector == v1) {
             f = 4;
-        } else if (vector.equals(v2)) {
+        } else if (vector == v2) {
             f = 5;
-        } else if (vector.equals(v3)) {
+        } else if (vector == v3) {
             f = 0;
-        } else if (vector.equals(v4)) {
+        } else if (vector == v4) {
             f = 1;
-        } else if (vector.equals(v5)) {
+        } else if (vector == v5) {
             f = 2;
-        } else if (vector.equals(v6)) {
+        } else if (vector == v6) {
             f = 3;
         }
 
@@ -920,14 +921,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         energy = tempLevel > energy ? tempLevel : energy;
         tempLevel = this.getSide(SIDE_UP).getPowerLevel();
         energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_NORTH).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_SOUTH).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_EAST).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_WEST).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
+        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
+            tempLevel = this.getSide(side).getPowerLevel();
+            energy = tempLevel > energy ? tempLevel : energy;
+        }
         return energy;
     }
 

@@ -172,4 +172,8 @@ public class Position extends Vector3 {
         return new Position((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z), this.level);
     }
 
+    @Override
+    public Position clone() {
+        return (Position) super.clone();
+    }
 }

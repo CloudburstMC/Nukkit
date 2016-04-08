@@ -8,7 +8,8 @@ import java.nio.charset.StandardCharsets;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class NBTOutputStream extends FilterOutputStream implements DataOutput {
+public class NBTOutputStream implements DataOutput, AutoCloseable {
+    private final DataOutputStream stream;
     private final ByteOrder endianness;
 
     public NBTOutputStream(OutputStream stream) {
@@ -16,7 +17,7 @@ public class NBTOutputStream extends FilterOutputStream implements DataOutput {
     }
 
     public NBTOutputStream(OutputStream stream, ByteOrder endianness) {
-        super(stream instanceof DataOutputStream ? stream : new DataOutputStream(stream));
+        this.stream = stream instanceof DataOutputStream ? (DataOutputStream)stream : new DataOutputStream(stream);
         this.endianness = endianness;
     }
 
@@ -24,18 +25,29 @@ public class NBTOutputStream extends FilterOutputStream implements DataOutput {
         return endianness;
     }
 
-    protected DataOutputStream getStream() {
-        return (DataOutputStream) super.out;
+    @Override
+    public void write(byte[] bytes) throws IOException {
+        this.stream.write(bytes);
+    }
+
+    @Override
+    public void write(byte b[], int off, int len) throws IOException {
+        this.stream.write(b, off, len);
+    }
+
+    @Override
+    public void write(int b) throws IOException {
+        this.stream.write(b);
     }
 
     @Override
     public void writeBoolean(boolean v) throws IOException {
-        this.getStream().writeBoolean(v);
+        this.stream.writeBoolean(v);
     }
 
     @Override
     public void writeByte(int v) throws IOException {
-        this.getStream().writeByte(v);
+        this.stream.writeByte(v);
     }
 
     @Override
@@ -43,7 +55,7 @@ public class NBTOutputStream extends FilterOutputStream implements DataOutput {
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             v = Integer.reverseBytes(v) >> 16;
         }
-        this.getStream().writeShort(v);
+        this.stream.writeShort(v);
     }
 
     @Override
@@ -51,7 +63,7 @@ public class NBTOutputStream extends FilterOutputStream implements DataOutput {
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             v = Character.reverseBytes((char) v);
         }
-        this.getStream().writeChar(v);
+        this.stream.writeChar(v);
     }
 
     @Override
@@ -59,7 +71,7 @@ public class NBTOutputStream extends FilterOutputStream implements DataOutput {
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             v = Integer.reverseBytes(v);
         }
-        this.getStream().writeInt(v);
+        this.stream.writeInt(v);
     }
 
     @Override
@@ -67,7 +79,7 @@ public class NBTOutputStream extends FilterOutputStream implements DataOutput {
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             v = Long.reverseBytes(v);
         }
-        this.getStream().writeLong(v);
+        this.stream.writeLong(v);
     }
 
     @Override
@@ -82,23 +94,23 @@ public class NBTOutputStream extends FilterOutputStream implements DataOutput {
 
     @Override
     public void writeBytes(String s) throws IOException {
-        this.getStream().writeBytes(s);
+        this.stream.writeBytes(s);
     }
 
     @Override
     public void writeChars(String s) throws IOException {
-        this.getStream().writeChars(s);
+        this.stream.writeChars(s);
     }
 
     @Override
     public void writeUTF(String s) throws IOException {
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
         this.writeShort(bytes.length);
-        this.getStream().write(bytes);
+        this.stream.write(bytes);
     }
 
     @Override
     public void close() throws IOException {
-        this.getStream().close();
+        this.stream.close();
     }
 }

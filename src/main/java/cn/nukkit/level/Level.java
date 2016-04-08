@@ -448,7 +448,7 @@ public class Level implements ChunkManager, Metadatable {
     public boolean unload(boolean force) {
         LevelUnloadEvent ev = new LevelUnloadEvent(this);
 
-        if (this.equals(this.server.getDefaultLevel()) && !force) {
+        if (this == this.server.getDefaultLevel() && !force) {
             ev.setCancelled();
         }
 
@@ -462,14 +462,14 @@ public class Level implements ChunkManager, Metadatable {
         Level defaultLevel = this.server.getDefaultLevel();
 
         for (Player player : new ArrayList<>(this.getPlayers().values())) {
-            if (this.equals(defaultLevel) || defaultLevel == null) {
+            if (this == defaultLevel || defaultLevel == null) {
                 player.close(player.getLeaveMessage(), "Forced default level unload");
             } else {
                 player.teleport(this.server.getDefaultLevel().getSafeSpawn());
             }
         }
 
-        if (this.equals(defaultLevel)) {
+        if (this == defaultLevel) {
             this.server.setDefaultLevel(null);
         }
 
@@ -1084,6 +1084,35 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
+    public void updateAroundRedstone(Block block) {
+        BlockUpdateEvent ev = new BlockUpdateEvent(block);
+        this.server.getPluginManager().callEvent(ev);
+        if (!ev.isCancelled()) {
+            for (Entity entity : this.getNearbyEntities(new AxisAlignedBB(block.x - 1, block.y - 1, block.z - 1, block.x + 1, block.y + 1, block.z + 1))) {
+                entity.scheduleUpdate();
+            }
+            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+
+            RedstoneUpdateEvent rsEv = new RedstoneUpdateEvent(ev.getBlock());
+            this.server.getPluginManager().callEvent(rsEv);
+            if (!rsEv.isCancelled()) {
+                Block redstoneWire = rsEv.getBlock().getSide(Vector3.SIDE_DOWN);
+                if (redstoneWire instanceof BlockRedstoneWire) {
+                    if (rsEv.getBlock() instanceof BlockSolid) {
+                        int level = redstoneWire.getPowerLevel();
+                        redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
+                        redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
+                        Redstone.deactive(redstoneWire, level);
+                    } else {
+                        redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
+                        redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
+                        Redstone.active(redstoneWire);
+                    }
+                }
+            }
+        }
+    }
+
     public void scheduleUpdate(Vector3 pos, int delay) {
         String index = Level.blockHash((int) pos.x, (int) pos.y, (int) pos.z);
         if (this.updateQueueIndex.containsKey(index) && this.updateQueueIndex.get(index) <= delay) {
@@ -1366,35 +1395,7 @@ public class Level implements ChunkManager, Metadatable {
 
             if (update) {
                 this.updateAllLight(block);
-
-                BlockUpdateEvent ev = new BlockUpdateEvent(block);
-                this.server.getPluginManager().callEvent(ev);
-                if (!ev.isCancelled()) {
-                    for (Entity entity : this.getNearbyEntities(new AxisAlignedBB(block.x - 1, block.y - 1, block.z - 1, block.x + 1, block.y + 1, block.z + 1))) {
-                        entity.scheduleUpdate();
-                    }
-                    ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
-
-                    //added for redstone support
-                    RedstoneUpdateEvent rsEv = new RedstoneUpdateEvent(ev.getBlock());
-                    this.server.getPluginManager().callEvent(rsEv);
-                    if (!rsEv.isCancelled()) {
-                        Block redstoneWire = rsEv.getBlock().getSide(Vector3.SIDE_DOWN);
-                        if (redstoneWire instanceof BlockRedstoneWire) {
-                            if (rsEv.getBlock() instanceof BlockSolid) {
-                                int level = redstoneWire.getPowerLevel();
-                                redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
-                                redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
-                                Redstone.deactive(redstoneWire, level);
-                            } else {
-                                redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
-                                redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
-                                Redstone.active(redstoneWire);
-                            }
-                        }
-                    }
-                }
-
+                this.updateAroundRedstone(block);
                 this.updateAround(position);
             }
 
@@ -1580,8 +1581,10 @@ public class Level implements ChunkManager, Metadatable {
         int dropExp = target.getDropExp();
         if (player != null) {
             player.addExperience(dropExp);
-            for (int ii = 1; ii <= dropExp; ii++) {
-                this.dropExpOrb(target, 1);
+            if (player.isSurvival()) {
+                for (int ii = 1; ii <= dropExp; ii++) {
+                    this.dropExpOrb(target, 1);
+                }
             }
         }
 
@@ -1762,8 +1765,6 @@ public class Level implements ChunkManager, Metadatable {
 
         if (player != null && !player.isCreative()) {
             item.setCount(item.getCount() - 1);
-        } else {
-            item.setCount(item.getCount());
         }
 
         if (item.getCount() <= 0) {
@@ -1796,7 +1797,7 @@ public class Level implements ChunkManager, Metadatable {
             for (int x = minX; x <= maxX; ++x) {
                 for (int z = minZ; z <= maxZ; ++z) {
                     for (Entity ent : this.getChunkEntities(x, z).values()) {
-                        if ((entity == null || (!ent.equals(entity) && entity.canCollideWith(ent))) && ent.boundingBox.intersectsWith(bb)) {
+                        if ((entity == null || (ent != entity && entity.canCollideWith(ent))) && ent.boundingBox.intersectsWith(bb)) {
                             nearby.add(ent);
                         }
                     }
@@ -1814,18 +1815,16 @@ public class Level implements ChunkManager, Metadatable {
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
         List<Entity> nearby = new ArrayList<>();
 
-        if (entity == null || entity.canCollide()) {
-            int minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
-            int maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
-            int minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);
-            int maxZ = NukkitMath.ceilDouble((bb.maxZ + 2) / 16);
+        int minX = NukkitMath.floorDouble((bb.minX - 2) / 16);
+        int maxX = NukkitMath.ceilDouble((bb.maxX + 2) / 16);
+        int minZ = NukkitMath.floorDouble((bb.minZ - 2) / 16);
+        int maxZ = NukkitMath.ceilDouble((bb.maxZ + 2) / 16);
 
-            for (int x = minX; x <= maxX; ++x) {
-                for (int z = minZ; z <= maxZ; ++z) {
-                    for (Entity ent : this.getChunkEntities(x, z).values()) {
-                        if (!Objects.equals(ent, entity) && ent.boundingBox.intersectsWith(bb)) {
-                            nearby.add(ent);
-                        }
+        for (int x = minX; x <= maxX; ++x) {
+            for (int z = minZ; z <= maxZ; ++z) {
+                for (Entity ent : this.getChunkEntities(x, z).values()) {
+                    if (ent != entity && ent.boundingBox.intersectsWith(bb)) {
+                        nearby.add(ent);
                     }
                 }
             }
@@ -2179,7 +2178,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void removeEntity(Entity entity) {
-        if (!entity.getLevel().equals(this)) {
+        if (entity.getLevel() != this) {
             throw new LevelException("Invalid Entity level");
         }
 
@@ -2195,7 +2194,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addEntity(Entity entity) {
-        if (!entity.getLevel().equals(this)) {
+        if (entity.getLevel() != this) {
             throw new LevelException("Invalid Entity level");
         }
 
@@ -2206,7 +2205,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addBlockEntity(BlockEntity blockEntity) {
-        if (!blockEntity.getLevel().equals(this)) {
+        if (blockEntity.getLevel() != this) {
             throw new LevelException("Invalid Block Entity level");
         }
         blockEntities.put(blockEntity.getId(), blockEntity);
@@ -2214,7 +2213,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void removeBlockEntity(BlockEntity blockEntity) {
-        if (!blockEntity.getLevel().equals(this)) {
+        if (blockEntity.getLevel() != this) {
             throw new LevelException("Invalid Block Entity level");
         }
         blockEntities.remove(blockEntity.getId());
@@ -2620,6 +2619,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addPlayerMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw, double pitch, boolean onGround) {
         MovePlayerPacket pk = new MovePlayerPacket();
+        pk.eid = entityId;
         pk.x = (float) x;
         pk.y = (float) y;
         pk.z = (float) z;

@@ -50,6 +50,11 @@ public class BlockVine extends BlockTransparent {
     }
 
     @Override
+    public boolean canBeReplaced() {
+        return true;
+    }
+
+    @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
     }
