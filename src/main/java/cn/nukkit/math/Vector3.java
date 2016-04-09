@@ -313,7 +313,7 @@ public class Vector3 implements Cloneable {
 
         Vector3 other = (Vector3) obj;
 
-        return (Math.abs(this.x - other.x) < 1.0E-006D) && (Math.abs(this.y - other.y) < 1.0E-006D) && (Math.abs(this.z - other.z) < 1.0E-006D) && (getClass().equals(obj.getClass()));
+        return this.x == other.x && this.y == other.y && this.z == other.z;
     }
 
     @Override
