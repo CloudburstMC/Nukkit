@@ -14,5 +14,11 @@ public abstract class BlockPressurePlate extends BlockTransparent {
         super(meta);
     }
 
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
+
     //todo redstone here?
+    //todo bounding box
 }
