@@ -2336,8 +2336,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     cancelled = true;
                 }
 
-                if (targetEntity != null && this.getGamemode() != Player.VIEW && this.isAlive() && targetEntity.isAlive()) {
-
+                if (targetEntity != null && this.isAlive() && targetEntity.isAlive()) {
+                    if (this.getGamemode() == Player.VIEW) {
+                        cancelled = true;
+                    }
                     if (targetEntity instanceof EntityItem || targetEntity instanceof EntityArrow) {
                         this.kick("Attempting to attack an invalid entity");
                         this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
