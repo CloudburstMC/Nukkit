@@ -18,6 +18,11 @@ public abstract class BlockFlowable extends BlockTransparent {
     }
 
     @Override
+    public boolean canPassThrough() {
+        return true;
+    }
+
+    @Override
     public double getHardness() {
         return 0;
     }

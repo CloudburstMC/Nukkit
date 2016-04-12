@@ -1404,7 +1404,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     this.inAirTicks = 0;
                 } else {
-                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && this.getDataPropertyBoolean(DATA_NO_AI)) {
+                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && !this.getDataPropertyBoolean(DATA_NO_AI)) {
                         double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                         double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
@@ -2336,8 +2336,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     cancelled = true;
                 }
 
-                if (targetEntity != null && this.getGamemode() != Player.VIEW && this.isAlive() && targetEntity.isAlive()) {
-
+                if (targetEntity != null && this.isAlive() && targetEntity.isAlive()) {
+                    if (this.getGamemode() == Player.VIEW) {
+                        cancelled = true;
+                    }
                     if (targetEntity instanceof EntityItem || targetEntity instanceof EntityArrow) {
                         this.kick("Attempting to attack an invalid entity");
                         this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
