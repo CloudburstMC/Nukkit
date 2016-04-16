@@ -15,7 +15,7 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    private TeleportCause cause;
+    private TeleportCause cause = TeleportCause.UNKNOWN;
     private Location from;
     private Location to;
 
