@@ -195,6 +195,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public String getClientSecret() {
         return clientSecret;
     }
+    
+    public Long getClientId(){
+        return clientID;
+    }
 
     @Override
     public boolean isBanned() {
