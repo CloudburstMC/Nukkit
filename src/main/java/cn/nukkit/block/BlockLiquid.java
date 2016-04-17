@@ -480,4 +480,9 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     public abstract BlockLiquid getBlock(int meta);
+
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
 }

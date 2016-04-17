@@ -14,5 +14,8 @@ public abstract class BlockWeightedPressurePlate extends BlockTransparent {
         this(0);
     }
 
-
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
 }
