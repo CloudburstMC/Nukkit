@@ -697,7 +697,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendExperience(this.getExperience());
         this.sendExperienceLevel(this.getExperienceLevel());
 
-        this.teleport(pos);
+        this.teleport(pos,null); // Prevent PlayerTeleportEvent during player spawn
 
         if (!this.isSpectator()) {
             this.spawnToAll();
@@ -861,7 +861,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.sleeping = pos.clone();
-        this.teleport(new Location(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level));
+        this.teleport(new Location(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level),null);
 
         this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
@@ -3654,11 +3654,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Location from = this.getLocation();
         Location to = location;
 
-        PlayerTeleportEvent event = new PlayerTeleportEvent(this, from, to, cause);
-        this.server.getPluginManager().callEvent(event);
+        if (cause != null) {
+            PlayerTeleportEvent event = new PlayerTeleportEvent(this, from, to, cause);
+            this.server.getPluginManager().callEvent(event);
+            if (event.isCancelled()) return false;
+            to = event.getTo();
+        }
 
         Position oldPos = this.getPosition();
-        if (super.teleport(location, cause)) {
+        if (super.teleport(to, null)) { // null to prevent fire of duplicate EntityTeleportEvent
 
             for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
                 if (window == this.inventory) {
@@ -3878,11 +3882,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.hash;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Player)) {
             return false;
         }
-
         Player other = (Player) obj;
         return Objects.equals(this.getUniqueId(), other.getUniqueId()) && this.getId() == other.getId();
     }
