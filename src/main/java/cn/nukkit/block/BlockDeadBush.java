@@ -58,7 +58,7 @@ public class BlockDeadBush extends BlockFlowable {
         if (item.isShears()) {
             return new int[][]{{Item.DEAD_BUSH, 0, 1}};
         } else {
-            return new int[][]{{Item.STICK, 0, new Random().nextInt(1) + 2}};
+            return new int[][]{{Item.STICK, 0, new Random().nextInt(3)}};
         }
     }
 
