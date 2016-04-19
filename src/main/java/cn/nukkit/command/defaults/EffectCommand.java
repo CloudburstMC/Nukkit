@@ -5,11 +5,11 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.potion.Effect;
-
-import java.util.Objects;
+import cn.nukkit.potion.InstantEffect;
+import cn.nukkit.utils.TextFormat;
 
 /**
- * Created by Snake1999 on 2016/1/23.
+ * Created by Snake1999 and Pub4Game on 2016/1/23.
  * Package cn.nukkit.command.defaults in project nukkit.
  */
 public class EffectCommand extends Command {
@@ -23,62 +23,78 @@ public class EffectCommand extends Command {
         if (!this.testPermission(sender)) {
             return true;
         }
-        /*  /effect <player> clear (removes all effects)
-            /effect <player> <effect> [seconds] [amplifier] [hideParticles] (gives an effect)
-        */
-        if (args.length < 2 || args.length > 5) {
+        if (args.length < 2) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
-        Player target;
-        target = sender.getServer().getPlayer(args[0]);
-        if (target == null) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+        Player player = sender.getServer().getPlayer(args[0]);
+        if (player == null) {
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             return true;
         }
-
-        if (Objects.equals(args[1], "clear")) {
-            target.removeAllEffects();
-            sender.sendMessage(new TranslationContainer("commands.effect.success.removed.all", args[0]));
+        if (args[1].equalsIgnoreCase("clear")) {
+            for (Effect effect : player.getEffects().values()) {
+                player.removeEffect(effect.getId());
+            }
+            sender.sendMessage(new TranslationContainer("commands.effect.success.removed.all", player.getDisplayName()));
             return true;
-        } else {
-            int seconds = 30;
-            int amplifier = 0;
-            boolean hideParticles = false;
+        }
+        Effect effect;
+        try {
+            effect = Effect.getEffect(Integer.parseInt(args[1]));
+        } catch (NumberFormatException a) {
             try {
-                if (args.length >= 3) seconds = Integer.parseInt(args[2]);
-                if (args.length >= 4) amplifier = Integer.parseInt(args[3]);
-                if (args.length >= 5) hideParticles = Boolean.getBoolean(args[4]);
-            } catch (NumberFormatException e0) {
+                effect = Effect.getEffectByName(args[1]);
+            } catch (Exception e) {
+                sender.sendMessage(new TranslationContainer("commands.effect.notFound", args[1]));
+                return true;
+            }
+        }
+        int duration = 300;
+        int amplification = 0;
+        if (args.length >= 3) {
+            try {
+                duration = Integer.valueOf(args[2]);
+            } catch (NumberFormatException a) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
             }
-            if (seconds < 0 || amplifier < 0) {
+            if (!(effect instanceof InstantEffect)) {
+                duration *= 20;
+            }
+        } else if (effect instanceof InstantEffect) {
+            duration = 1;
+        }
+        if (args.length >= 4) {
+            try {
+                amplification = Integer.valueOf(args[3]);
+            } catch (NumberFormatException a) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
             }
-            Effect effect;
-            try {
-                effect = Effect.getEffect(Integer.parseInt(args[1]));
-            } catch (NumberFormatException e1) {
-                try {
-                    effect = Effect.getEffectByName(args[1]);
-                } catch (Exception e) {
-                    sender.sendMessage(new TranslationContainer("commands.effect.notFound", args[1]));
-                    return true;
+        }
+        if (args.length >= 5) {
+            String v = args[4].toLowerCase();
+            if (v.matches("(?i)|on|true|t|1")) {
+                effect.setVisible(false);
+            }
+        }
+        if (duration == 0) {
+            if (!player.hasEffect(effect.getId())) {
+                if (player.getEffects().size() == 0) {
+                    sender.sendMessage(new TranslationContainer("commands.effect.failure.notActive.all", player.getDisplayName()));
+                } else {
+                    sender.sendMessage(new TranslationContainer("commands.effect.failure.notActive", new String[]{effect.getName(), player.getDisplayName()}));
                 }
+                return true;
             }
-            effect = effect.setDuration(seconds * 20).setAmplifier(amplifier).setVisible(!hideParticles);
-            target.addEffect(effect);
-
-            sender.sendMessage(new TranslationContainer("commands.effect.success", new String[]{
-                    effect.getName(),
-                    String.valueOf(effect.getId()),
-                    String.valueOf(effect.getAmplifier()),
-                    target.getName(),
-                    String.valueOf(seconds)}));
-            return true;
+            player.removeEffect(effect.getId());
+            sender.sendMessage(new TranslationContainer("commands.effect.success.removed", new String[]{effect.getName(), player.getDisplayName()}));
+        } else {
+            effect.setDuration(duration).setAmplifier(amplification);
+            player.addEffect(effect);
+            Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.effect.success", new String[]{effect.getName(), String.valueOf(effect.getId()), String.valueOf(effect.getAmplifier()), player.getDisplayName(), String.valueOf(effect.getDuration() / 20)}));
         }
+        return true;
     }
-
 }
