@@ -1417,19 +1417,20 @@ public abstract class Entity extends Location implements Metadatable {
 
         Location from = this.getLocation();
         Location to = location;
-
-        EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to);
-        this.server.getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) {
-            return false;
+        if (cause != null) {
+            EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to);
+            this.server.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return false;
+            }
+            to = ev.getTo();
         }
 
         this.ySize = 0;
-        Position pos = ev.getTo();
 
         this.setMotion(this.temporalVector.setComponents(0, 0, 0));
 
-        if (this.setPositionAndRotation(pos, yaw, pitch)) {
+        if (this.setPositionAndRotation(to, yaw, pitch)) {
             this.resetFallDistance();
             this.onGround = true;
 
