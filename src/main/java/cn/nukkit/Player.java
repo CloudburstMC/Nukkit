@@ -1892,7 +1892,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 if (useItemPacket.face >= 0 && useItemPacket.face <= 5) {
                     this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
 
-                    if (!this.canInteract(blockVector.add(0.5, 0.5, 0.5), 13) || this.isSpectator()) {
+                    if (!this.canInteract(blockVector.add(0.5, 0.5, 0.5), 13)) {
                     } else if (this.isCreative()) {
                         Item i = this.inventory.getItemInHand();
                         if (this.level.useItemOn(blockVector, i, useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this) != null) {
