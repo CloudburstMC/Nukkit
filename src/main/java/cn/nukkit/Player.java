@@ -1703,7 +1703,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.setNameTag(this.username);
                 this.iusername = this.username.toLowerCase();
 
-                if (this.server.getOnlinePlayers().size() > this.server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)) {
+                if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)) {
                     break;
                 }
 
@@ -1892,7 +1892,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 if (useItemPacket.face >= 0 && useItemPacket.face <= 5) {
                     this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
 
-                    if (!this.canInteract(blockVector.add(0.5, 0.5, 0.5), 13) || this.isSpectator()) {
+                    if (!this.canInteract(blockVector.add(0.5, 0.5, 0.5), 13)) {
                     } else if (this.isCreative()) {
                         Item i = this.inventory.getItemInHand();
                         if (this.level.useItemOn(blockVector, i, useItemPacket.face, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this) != null) {
@@ -3127,7 +3127,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.connected = false;
             PlayerQuitEvent ev = null;
-            if (this.getName() != null && this.getName().length() > 0 && this.loggedIn) {
+            if (this.getName() != null && this.getName().length() > 0) {
                 this.server.getPluginManager().callEvent(ev = new PlayerQuitEvent(this, message, true));
                 if (this.loggedIn && ev.getAutoSave()) {
                     this.save();
