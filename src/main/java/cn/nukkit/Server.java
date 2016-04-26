@@ -1305,8 +1305,8 @@ public class Server {
         return commandMap;
     }
 
-    public Map<String, Player> getOnlinePlayers() {
-        return new HashMap<>(players);
+    public Map<UUID, Player> getOnlinePlayers() {
+        return new HashMap<>(playerList);
     }
 
     public void addRecipe(Recipe recipe) {
@@ -1392,7 +1392,7 @@ public class Server {
         name = name.toLowerCase();
         int delta = Integer.MAX_VALUE;
         for (Player player : this.getOnlinePlayers().values()) {
-            if (player.getName() != null && player.getName().toLowerCase().startsWith(name)) {
+            if (player.getName().toLowerCase().startsWith(name)) {
                 int curDelta = player.getName().length() - name.length();
                 if (curDelta < delta) {
                     found = player;
@@ -1410,7 +1410,7 @@ public class Server {
     public Player getPlayerExact(String name) {
         name = name.toLowerCase();
         for (Player player : this.getOnlinePlayers().values()) {
-            if (player.getName() != null && player.getName().toLowerCase().equals(name)) {
+            if (player.getName().toLowerCase().equals(name)) {
                 return player;
             }
         }

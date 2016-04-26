@@ -1636,10 +1636,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Item useItemOn(Vector3 vector, Item item, int face, float fx, float fy, float fz, Player player) {
-        if (player != null && player.getGamemode() > 1) {
-            return null;
-        }
-
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
 
@@ -1653,6 +1649,11 @@ public class Level implements ChunkManager, Metadatable {
 
         if (player != null) {
             PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face, target.getId() == 0 ? PlayerInteractEvent.RIGHT_CLICK_AIR : PlayerInteractEvent.RIGHT_CLICK_BLOCK);
+
+            if(player.getGamemode() > 1){
+                ev.setCancelled();
+            }
+
             int distance = this.server.getSpawnRadius();
             if (!player.isOp() && distance > -1) {
                 Vector2 t = new Vector2(target.x, target.z);
