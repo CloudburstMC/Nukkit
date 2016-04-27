@@ -1016,6 +1016,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         AdventureSettingsPacket pk = new AdventureSettingsPacket();
         pk.flags = flags;
+        pk.userPermission = 0x2;
+        pk.globalPermission = 0x2;
         this.dataPacket(pk);
     }
 
@@ -1619,6 +1621,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
         startGamePacket.gamemode = this.gamemode & 0x01;
         startGamePacket.eid = 0; //Always use EntityID as zero for the actual player
+        startGamePacket.b1 = true;
+        startGamePacket.b2 = true;
+        startGamePacket.b3 = false;
+        startGamePacket.unknownstr = "";
         this.dataPacket(startGamePacket);
 
         SetTimePacket setTimePacket = new SetTimePacket();

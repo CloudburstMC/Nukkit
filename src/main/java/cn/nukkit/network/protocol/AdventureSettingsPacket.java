@@ -8,6 +8,8 @@ public class AdventureSettingsPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
 
     public int flags;
+    public int userPermission;
+    public int globalPermission;
 
     @Override
     public void decode() {
@@ -18,6 +20,8 @@ public class AdventureSettingsPacket extends DataPacket {
     public void encode() {
         reset();
         putInt(flags);
+        putInt(userPermission);
+        putInt(globalPermission);
     }
 
     @Override
