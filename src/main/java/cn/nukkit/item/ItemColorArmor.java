@@ -27,26 +27,26 @@ abstract public class ItemColorArmor extends ItemArmor {
     /**
      * Set leather armor color
      *
-     * @param dyeColor  - BlockColor
-     * @return          - Return colored item
+     * @param dyeColor - BlockColor
+     * @return - Return colored item
      */
-    public ItemColorArmor setColor(int dyeColor){
+    public ItemColorArmor setColor(int dyeColor) {
         BlockColor blockColor = BlockColor.getDyeColor(dyeColor);
-        return setColor(blockColor.getRed(),blockColor.getGreen(),blockColor.getBlue());
+        return setColor(blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());
     }
 
     /**
      * Set leather armor color
      *
-     * @param r         - red
-     * @param g         - green
-     * @param b         - blue
-     * @return          - Return colored item
+     * @param r - red
+     * @param g - green
+     * @param b - blue
+     * @return - Return colored item
      */
-    public ItemColorArmor setColor(int r, int g, int b){
+    public ItemColorArmor setColor(int r, int g, int b) {
         int rgb = r << 16 | g << 8 | b << 0;
         CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        tag.putInt("customColor",rgb);
+        tag.putInt("customColor", rgb);
         this.setNamedTag(tag);
         return this;
     }
@@ -54,9 +54,9 @@ abstract public class ItemColorArmor extends ItemArmor {
     /**
      * Get color of Leather Item
      *
-     * @return      - BlockColor, or null if item has no color
+     * @return - BlockColor, or null if item has no color
      */
-    public BlockColor getColor(){
+    public BlockColor getColor() {
         if (!this.hasCompoundTag()) return null;
         CompoundTag tag = this.getNamedTag();
         if (!tag.exist("customColor")) return null;
