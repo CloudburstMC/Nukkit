@@ -32,7 +32,7 @@ Get Nukkit
 Introduction
 -------------
 
-Nukkit is nuclear-powered server software for Minecraft: Pocket Edtion.
+Nukkit is nuclear-powered server software for Minecraft: Pocket Edition.
 It has a few key advantages over PocketMine-MP:
 
 * Written in Java, Nukkit is faster and more stable.

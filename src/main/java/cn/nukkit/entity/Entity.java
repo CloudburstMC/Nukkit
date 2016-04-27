@@ -983,7 +983,7 @@ public abstract class Entity extends Location implements Metadatable {
     protected void updateFallState(float distanceThisTick, boolean onGround) {
         if (onGround) {
             if (this.fallDistance > 0) {
-                if (this instanceof EntityLiving) {
+                if (this instanceof EntityLiving && !this.isInsideOfWater()) {
                     this.fall(this.fallDistance);
                 }
                 this.resetFallDistance();

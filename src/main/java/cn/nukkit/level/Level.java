@@ -884,7 +884,7 @@ public class Level implements ChunkManager, Metadatable {
             this.chunkCache = new HashMap<>();
             this.blockCache = new HashMap<>();
         } else {
-            if (this.chunkCache.size() > 768) {
+            if (this.chunkCache.size() > 2048) {
                 this.chunkCache = new HashMap<>();
             }
 
@@ -1395,6 +1395,14 @@ public class Level implements ChunkManager, Metadatable {
 
             if (update) {
                 this.updateAllLight(block);
+                BlockUpdateEvent ev = new BlockUpdateEvent(block);
+                this.server.getPluginManager().callEvent(ev);
+                if (!ev.isCancelled()) {
+                    for (Entity entity : this.getNearbyEntities(new AxisAlignedBB(block.x - 1, block.y - 1, block.z - 1, block.x + 1, block.y + 1, block.z + 1))) {
+                        entity.scheduleUpdate();
+                    }
+                    ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+                }
                 this.updateAroundRedstone(block);
                 this.updateAround(position);
             }
@@ -2160,7 +2168,7 @@ public class Level implements ChunkManager, Metadatable {
     public void chunkRequestCallback(int x, int z, byte[] payload, byte ordering) {
         String index = Level.chunkHash(x, z);
 
-        if (this.chunkCache.containsKey(index) && this.cacheChunks) {
+        if (this.cacheChunks && !this.chunkCache.containsKey(index)) {
             this.chunkCache.put(index, Player.getChunkCacheFromData(x, z, payload, ordering));
             this.sendChunkFromCache(x, z);
             return;
