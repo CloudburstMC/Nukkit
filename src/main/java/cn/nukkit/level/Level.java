@@ -884,7 +884,7 @@ public class Level implements ChunkManager, Metadatable {
             this.chunkCache = new HashMap<>();
             this.blockCache = new HashMap<>();
         } else {
-            if (this.chunkCache.size() > 768) {
+            if (this.chunkCache.size() > 2048) {
                 this.chunkCache = new HashMap<>();
             }
 
@@ -2168,7 +2168,7 @@ public class Level implements ChunkManager, Metadatable {
     public void chunkRequestCallback(int x, int z, byte[] payload, byte ordering) {
         String index = Level.chunkHash(x, z);
 
-        if (this.chunkCache.containsKey(index) && this.cacheChunks) {
+        if (this.cacheChunks && !this.chunkCache.containsKey(index)) {
             this.chunkCache.put(index, Player.getChunkCacheFromData(x, z, payload, ordering));
             this.sendChunkFromCache(x, z);
             return;

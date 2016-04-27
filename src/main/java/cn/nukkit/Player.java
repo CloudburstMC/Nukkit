@@ -3827,8 +3827,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.encode();
 
         BatchPacket batch = new BatchPacket();
+        byte[][] batchPayload = new byte[2][];
+        byte[] buf = pk.getBuffer();
+        batchPayload[0] = Binary.writeInt(buf.length);
+        batchPayload[1] = buf;
+        byte[] data = Binary.appendBytes(batchPayload);
         try {
-            batch.payload = Zlib.deflate(pk.getBuffer(), Server.getInstance().networkCompressionLevel);
+            batch.payload = Zlib.deflate(data, Server.getInstance().networkCompressionLevel);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
