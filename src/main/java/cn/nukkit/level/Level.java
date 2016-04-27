@@ -1395,6 +1395,14 @@ public class Level implements ChunkManager, Metadatable {
 
             if (update) {
                 this.updateAllLight(block);
+                BlockUpdateEvent ev = new BlockUpdateEvent(block);
+                this.server.getPluginManager().callEvent(ev);
+                if (!ev.isCancelled()) {
+                    for (Entity entity : this.getNearbyEntities(new AxisAlignedBB(block.x - 1, block.y - 1, block.z - 1, block.x + 1, block.y + 1, block.z + 1))) {
+                        entity.scheduleUpdate();
+                    }
+                    ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+                }
                 this.updateAroundRedstone(block);
                 this.updateAround(position);
             }
