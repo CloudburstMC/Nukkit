@@ -56,7 +56,6 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(b2);
         this.putBoolean(b3);
         this.putString(unknownstr);
-        this.putByte((byte) 0);
     }
 
 }
