@@ -642,7 +642,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (source.isCancelled()) {
             return;
         }
-        this.setHealth(source.getAmount());
+        this.setHealth(this.getHealth() + source.getAmount());
     }
 
     public void heal(float amount) {
