@@ -1,6 +1,6 @@
 Nukkit
 ===================
-![nukkit](https://github.com/MagicDroidX/Nukkit/raw/master/images/banner.png)
+![nukkit](https://github.com/Nukkit/Nukkit/blob/master/images/banner.png)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by
