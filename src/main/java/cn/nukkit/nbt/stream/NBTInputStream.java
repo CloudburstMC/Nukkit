@@ -1,6 +1,9 @@
 package cn.nukkit.nbt.stream;
 
-import java.io.*;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
@@ -17,7 +20,7 @@ public class NBTInputStream implements DataInput, AutoCloseable {
     }
 
     public NBTInputStream(InputStream stream, ByteOrder endianness) {
-        this.stream = stream instanceof DataInputStream ? (DataInputStream)stream : new DataInputStream(stream);
+        this.stream = stream instanceof DataInputStream ? (DataInputStream) stream : new DataInputStream(stream);
         this.endianness = endianness;
     }
 

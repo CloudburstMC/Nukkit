@@ -58,9 +58,10 @@ public class Config {
 
     /**
      * Constructor for Config instance with undefined file object
-     * @param type  - Config type
+     *
+     * @param type - Config type
      */
-    public Config (int type){
+    public Config(int type) {
         this.type = type;
         this.correct = true;
         this.config = new ConfigSection();
@@ -69,8 +70,8 @@ public class Config {
     /**
      * Constructor for Config (YAML) instance with undefined file object
      */
-    public Config (){
-        this (Config.YAML);
+    public Config() {
+        this(Config.YAML);
     }
 
     public Config(String file) {
@@ -108,7 +109,7 @@ public class Config {
         this.nestedCache.clear();
         this.correct = false;
         //this.load(this.file.toString());
-        if (this.file==null) throw new IllegalStateException("Failed to reload Config. File object is undefined.");
+        if (this.file == null) throw new IllegalStateException("Failed to reload Config. File object is undefined.");
         this.load(this.file.toString(), this.type);
 
     }
@@ -190,16 +191,17 @@ public class Config {
 
     /**
      * Save configuration into provided file. Internal file object will be set to new file.
+     *
      * @param file
      * @param async
      * @return
      */
-    public boolean save(File file, boolean async){
+    public boolean save(File file, boolean async) {
         this.file = file;
         return save(async);
     }
 
-    public boolean save(File file){
+    public boolean save(File file) {
         this.file = file;
         return save();
     }
@@ -249,7 +251,7 @@ public class Config {
     }
 
     public void set(final String key, Object value) {
-        this.config.set(key,value);
+        this.config.set(key, value);
     }
 
     public Object get(String key) {
@@ -258,22 +260,22 @@ public class Config {
 
     @SuppressWarnings("unchecked")
     public <T> T get(String key, T defaultValue) {
-        return this.correct ? this.config.get(key,defaultValue) : defaultValue;
+        return this.correct ? this.config.get(key, defaultValue) : defaultValue;
     }
 
-    public ConfigSection getSection(String key){
+    public ConfigSection getSection(String key) {
         return this.correct ? this.config.getSection(key) : new ConfigSection();
     }
 
-    public boolean isSection(String key){
+    public boolean isSection(String key) {
         return config.isSection(key);
     }
 
-    public ConfigSection getSections(String key){
+    public ConfigSection getSections(String key) {
         return this.correct ? this.config.getSections(key) : new ConfigSection();
     }
 
-    public ConfigSection getSections(){
+    public ConfigSection getSections() {
         return this.correct ? this.config.getSections() : new ConfigSection();
     }
 
@@ -282,7 +284,7 @@ public class Config {
     }
 
     public int getInt(String key, int defaultValue) {
-        return this.correct ? this.config.getInt(key,defaultValue) : defaultValue;
+        return this.correct ? this.config.getInt(key, defaultValue) : defaultValue;
     }
 
     public boolean isInt(String key) {
@@ -294,7 +296,7 @@ public class Config {
     }
 
     public long getLong(String key, long defaultValue) {
-        return this.correct ? this.config.getLong(key,defaultValue) : defaultValue;
+        return this.correct ? this.config.getLong(key, defaultValue) : defaultValue;
     }
 
     public boolean isLong(String key) {
@@ -306,7 +308,7 @@ public class Config {
     }
 
     public double getDouble(String key, double defaultValue) {
-        return this.correct ? this.config.getDouble(key,defaultValue) : defaultValue;
+        return this.correct ? this.config.getDouble(key, defaultValue) : defaultValue;
     }
 
     public boolean isDouble(String key) {
@@ -318,7 +320,8 @@ public class Config {
     }
 
     public String getString(String key, String defaultValue) {
-        return this.correct ? this.config.getString(key,defaultValue) : defaultValue;    }
+        return this.correct ? this.config.getString(key, defaultValue) : defaultValue;
+    }
 
     public boolean isString(String key) {
         return config.isString(key);
@@ -329,7 +332,7 @@ public class Config {
     }
 
     public boolean getBoolean(String key, boolean defaultValue) {
-        return this.correct ? this.config.getBoolean(key,defaultValue) : defaultValue;
+        return this.correct ? this.config.getBoolean(key, defaultValue) : defaultValue;
     }
 
     public boolean isBoolean(String key) {
@@ -341,7 +344,7 @@ public class Config {
     }
 
     public List getList(String key, List defaultList) {
-        return this.correct ? this.config.getList(key,defaultList) : defaultList;
+        return this.correct ? this.config.getList(key, defaultList) : defaultList;
     }
 
     public boolean isList(String key) {
@@ -401,7 +404,7 @@ public class Config {
     }
 
     public boolean exists(String key, boolean ignoreCase) {
-        return config.exists(key,ignoreCase);
+        return config.exists(key, ignoreCase);
     }
 
     public void remove(String key) {
@@ -547,11 +550,12 @@ public class Config {
         }
     }
 
-    public Set<String> getKeys(){
+    public Set<String> getKeys() {
         if (this.correct) return config.getKeys();
         return new HashSet<>();
     }
-    public Set<String> getKeys(boolean child){
+
+    public Set<String> getKeys(boolean child) {
         if (this.correct) return config.getKeys(child);
         return new HashSet<>();
     }

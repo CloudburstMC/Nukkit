@@ -240,9 +240,9 @@ public class CompoundTag extends Tag {
      * Check existence of NBT tag
      *
      * @param name - NBT tag Id.
-     * @return     - true, if tag exists
+     * @return - true, if tag exists
      */
-    public boolean exist(String name){
+    public boolean exist(String name) {
         return tags.containsKey(name);
     }
 }
