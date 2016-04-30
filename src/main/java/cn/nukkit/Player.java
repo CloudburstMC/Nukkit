@@ -187,7 +187,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private int hash;
 
-
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
     }
@@ -321,6 +320,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.startAirTicks = 5;
         }
         this.inAirTicks = 0;
+        this.highestPosition = this.y;
     }
 
     @Override
@@ -1405,6 +1405,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.startAirTicks = 5;
                     }
                     this.inAirTicks = 0;
+                    this.highestPosition = this.y;
                 } else {
                     if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && !this.getDataPropertyBoolean(DATA_NO_AI)) {
                         double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
@@ -1418,6 +1419,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 return false;
                             }
                         }
+                    }
+
+                    if(this.y > highestPosition){
+                        this.highestPosition = this.y;
                     }
 
                     ++this.inAirTicks;

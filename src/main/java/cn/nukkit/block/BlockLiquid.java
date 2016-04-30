@@ -485,4 +485,13 @@ public abstract class BlockLiquid extends BlockTransparent {
     public boolean canPassThrough() {
         return true;
     }
+
+    @Override
+    public void onEntityCollide(Entity entity) {
+        entity.resetFallDistance();
+
+        if (entity.fireTicks > 0) {
+            entity.extinguish();
+        }
+    }
 }
