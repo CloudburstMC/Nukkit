@@ -697,7 +697,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendExperience(this.getExperience());
         this.sendExperienceLevel(this.getExperienceLevel());
 
-        this.teleport(pos,null); // Prevent PlayerTeleportEvent during player spawn
+        this.teleport(pos, null); // Prevent PlayerTeleportEvent during player spawn
 
         if (!this.isSpectator()) {
             this.spawnToAll();
@@ -861,7 +861,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.sleeping = pos.clone();
-        this.teleport(new Location(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level),null);
+        this.teleport(new Location(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level), null);
 
         this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
@@ -1016,6 +1016,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         AdventureSettingsPacket pk = new AdventureSettingsPacket();
         pk.flags = flags;
+        pk.userPermission = 0x2;
+        pk.globalPermission = 0x2;
         this.dataPacket(pk);
     }
 
@@ -1077,7 +1079,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(1, 0.5, 1), this)) {
             entity.scheduleUpdate();
 
-            if (!entity.isAlive()) {
+            if (!entity.isAlive() || !this.isAlive()) {
                 continue;
             }
 
@@ -1149,7 +1151,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(3.5, 2, 3.5), this)) {
             entity.scheduleUpdate();
 
-            if (!entity.isAlive()) {
+            if (!entity.isAlive() || !this.isAlive()) {
                 continue;
             }
             if (entity instanceof EntityXPOrb) {
@@ -1619,6 +1621,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
         startGamePacket.gamemode = this.gamemode & 0x01;
         startGamePacket.eid = 0; //Always use EntityID as zero for the actual player
+        startGamePacket.b1 = true;
+        startGamePacket.b2 = true;
+        startGamePacket.b3 = false;
+        startGamePacket.unknownstr = "";
         this.dataPacket(startGamePacket);
 
         SetTimePacket setTimePacket = new SetTimePacket();
@@ -3827,8 +3833,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.encode();
 
         BatchPacket batch = new BatchPacket();
+        byte[][] batchPayload = new byte[2][];
+        byte[] buf = pk.getBuffer();
+        batchPayload[0] = Binary.writeInt(buf.length);
+        batchPayload[1] = buf;
+        byte[] data = Binary.appendBytes(batchPayload);
         try {
-            batch.payload = Zlib.deflate(pk.getBuffer(), Server.getInstance().networkCompressionLevel);
+            batch.payload = Zlib.deflate(data, Server.getInstance().networkCompressionLevel);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
