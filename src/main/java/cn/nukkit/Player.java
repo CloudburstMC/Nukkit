@@ -1063,8 +1063,29 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             bb.maxY = bb.minY + 0.5;
             bb.minY -= 1;
 
-            this.onGround = this.level.getCollisionBlocks(bb, true).length > 0;
+            AxisAlignedBB realBB = this.boundingBox.clone();
+            realBB.maxY = bb.minY + 0.5;
+            realBB.minY -= 0.2; //0.2 compensation
+
+            int minX = NukkitMath.floorDouble(bb.minX);
+            int minY = NukkitMath.floorDouble(bb.minY);
+            int minZ = NukkitMath.floorDouble(bb.minZ);
+            int maxX = NukkitMath.ceilDouble(bb.maxX);
+            int maxY = NukkitMath.ceilDouble(bb.maxY);
+            int maxZ = NukkitMath.ceilDouble(bb.maxZ);
+
+            for (int z = minZ; z <= maxZ; ++z) {
+                for (int x = minX; x <= maxX; ++x) {
+                    for (int y = minY; y <= maxY; ++y) {
+                        Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
+                        if (block.getId() != 0 && block.collidesWithBB(realBB)) {
+                            this.onGround = true;
+                        }
+                    }
+                }
+            }
         }
+
         this.isCollided = this.onGround;
     }
 
