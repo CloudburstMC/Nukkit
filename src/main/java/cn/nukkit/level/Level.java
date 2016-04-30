@@ -884,7 +884,7 @@ public class Level implements ChunkManager, Metadatable {
             this.chunkCache = new HashMap<>();
             this.blockCache = new HashMap<>();
         } else {
-            if (this.chunkCache.size() > 768) {
+            if (this.chunkCache.size() > 2048) {
                 this.chunkCache = new HashMap<>();
             }
 
@@ -1395,6 +1395,14 @@ public class Level implements ChunkManager, Metadatable {
 
             if (update) {
                 this.updateAllLight(block);
+                BlockUpdateEvent ev = new BlockUpdateEvent(block);
+                this.server.getPluginManager().callEvent(ev);
+                if (!ev.isCancelled()) {
+                    for (Entity entity : this.getNearbyEntities(new AxisAlignedBB(block.x - 1, block.y - 1, block.z - 1, block.x + 1, block.y + 1, block.z + 1))) {
+                        entity.scheduleUpdate();
+                    }
+                    ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+                }
                 this.updateAroundRedstone(block);
                 this.updateAround(position);
             }
@@ -1636,10 +1644,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Item useItemOn(Vector3 vector, Item item, int face, float fx, float fy, float fz, Player player) {
-        if (player != null && player.getGamemode() > 1) {
-            return null;
-        }
-
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
 
@@ -1653,6 +1657,11 @@ public class Level implements ChunkManager, Metadatable {
 
         if (player != null) {
             PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face, target.getId() == 0 ? PlayerInteractEvent.RIGHT_CLICK_AIR : PlayerInteractEvent.RIGHT_CLICK_BLOCK);
+
+            if (player.getGamemode() > 1) {
+                ev.setCancelled();
+            }
+
             int distance = this.server.getSpawnRadius();
             if (!player.isOp() && distance > -1) {
                 Vector2 t = new Vector2(target.x, target.z);
@@ -2159,7 +2168,7 @@ public class Level implements ChunkManager, Metadatable {
     public void chunkRequestCallback(int x, int z, byte[] payload, byte ordering) {
         String index = Level.chunkHash(x, z);
 
-        if (this.chunkCache.containsKey(index) && this.cacheChunks) {
+        if (this.cacheChunks && !this.chunkCache.containsKey(index)) {
             this.chunkCache.put(index, Player.getChunkCacheFromData(x, z, payload, ordering));
             this.sendChunkFromCache(x, z);
             return;

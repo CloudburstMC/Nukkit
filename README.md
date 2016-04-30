@@ -1,6 +1,6 @@
 Nukkit
 ===================
-![nukkit](https://github.com/MagicDroidX/Nukkit/raw/master/images/banner.png)
+![nukkit](https://github.com/Nukkit/Nukkit/blob/master/images/banner.png)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by
@@ -32,7 +32,7 @@ Get Nukkit
 Introduction
 -------------
 
-Nukkit is nuclear-powered server software for Minecraft: Pocket Edtion.
+Nukkit is nuclear-powered server software for Minecraft: Pocket Edition.
 It has a few key advantages over PocketMine-MP:
 
 * Written in Java, Nukkit is faster and more stable.

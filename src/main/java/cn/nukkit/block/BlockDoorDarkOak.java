@@ -25,7 +25,7 @@ public class BlockDoorDarkOak extends BlockDoorWood {
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
-                {Item.ACACIA_DOOR, 0, 1}
+                {Item.DARK_OAK_DOOR, 0, 1}
         };
     }
 }
