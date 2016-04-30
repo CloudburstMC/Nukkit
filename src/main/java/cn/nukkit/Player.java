@@ -1079,7 +1079,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(1, 0.5, 1), this)) {
             entity.scheduleUpdate();
 
-            if (!entity.isAlive()) {
+            if (!entity.isAlive() || !this.isAlive()) {
                 continue;
             }
 
@@ -1151,7 +1151,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(3.5, 2, 3.5), this)) {
             entity.scheduleUpdate();
 
-            if (!entity.isAlive()) {
+            if (!entity.isAlive() || !this.isAlive()) {
                 continue;
             }
             if (entity instanceof EntityXPOrb) {
