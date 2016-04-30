@@ -51,29 +51,6 @@ public class BlockBricksStone extends BlockSolid {
     }
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
-        if ((this.meta & 0x08) > 0) {
-            return new AxisAlignedBB(
-                    this.x,
-                    this.y + 0.5,
-                    this.z,
-                    this.x + 1,
-                    this.y + 1,
-                    this.z + 1
-            );
-        } else {
-            return new AxisAlignedBB(
-                    this.x,
-                    this.y,
-                    this.z,
-                    this.x + 1,
-                    this.y + 0.5,
-                    this.z + 1
-            );
-        }
-    }
-
-    @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{new int[]{Item.STONE_BRICKS, this.meta & 0x03, 1}};
