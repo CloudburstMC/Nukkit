@@ -16,6 +16,8 @@ public abstract class EntityVehicle extends Entity implements EntityRideable {
     public static final int DATA_HURT_DIRECTION = 18;
     public static final int DATA_DAMAGE_TAKEN = 19;
 
+    public Entity linkedEntity = null;
+
     public EntityVehicle(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -42,5 +44,13 @@ public abstract class EntityVehicle extends Entity implements EntityRideable {
 
     public void setDamageTaken(float damage) {
         this.setDataProperty(new FloatEntityData(EntityVehicle.DATA_DAMAGE_TAKEN, damage));
+    }
+
+    public Entity getLinkedEntity(){
+        return linkedEntity;
+    }
+
+    public void setLinkedEntity(Entity entity){
+        linkedEntity = entity;
     }
 }

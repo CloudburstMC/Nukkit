@@ -2425,6 +2425,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         SetEntityLinkPacket pk;
                         switch (((InteractPacket) packet).action) {
                             case InteractPacket.ACTION_RIGHT_CLICK:
+                                cancelled = true;
+
+                                if(((EntityVehicle) targetEntity).linkedEntity != null){
+                                    break;
+                                }
                                 pk = new SetEntityLinkPacket();
                                 pk.rider = targetEntity.getId();
                                 pk.riding = this.id;
@@ -2437,8 +2442,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 pk.type = 2;
                                 dataPacket(pk);
 
-                                cancelled = true;
                                 riding = targetEntity;
+                                ((EntityVehicle) targetEntity).linkedEntity = this;
 
                                 this.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
                                 break;
@@ -2457,6 +2462,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                 cancelled = true;
                                 riding = null;
+                                ((EntityVehicle) targetEntity).linkedEntity = null;
                                 this.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, false);
                                 break;
                         }
