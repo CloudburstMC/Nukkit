@@ -1811,9 +1811,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (riding != null) {
                     if (riding instanceof EntityBoat) {
-                        double yaw = (movePlayerPacket.bodyYaw + 90) % 360;
-                        System.out.println("\nyaw: " + yaw + "    original yaw: " + movePlayerPacket.bodyYaw % 360);
-                        riding.setPositionAndRotation(this.temporalVector.setComponents(movePlayerPacket.x, movePlayerPacket.y - 1, movePlayerPacket.z), yaw, 0);
+                        riding.setPositionAndRotation(this.temporalVector.setComponents(movePlayerPacket.x, movePlayerPacket.y - 1, movePlayerPacket.z), (movePlayerPacket.bodyYaw + 90) % 360, 0);
                     }
                 }
 
@@ -3191,6 +3189,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.loadQueue = new HashMap<>();
             this.hasSpawned = new HashMap<>();
             this.spawnPosition = null;
+
+            if(this.riding instanceof EntityVehicle){
+                ((EntityVehicle) this.riding).linkedEntity = null;
+            }
+
+            this.riding = null;
         }
 
         if (this.perm != null) {
