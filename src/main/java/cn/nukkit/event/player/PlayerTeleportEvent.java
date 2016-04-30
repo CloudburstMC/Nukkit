@@ -45,6 +45,10 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         return to;
     }
 
+    public TeleportCause getCause() {
+        return cause;
+    }
+
     private Location vectorToLocation(Level baseLevel, Vector3 vector) {
         if (vector instanceof Location) return (Location) vector;
         if (vector instanceof Position) return ((Position) vector).getLocation();

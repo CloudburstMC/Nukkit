@@ -28,6 +28,11 @@ public class StartGamePacket extends DataPacket {
     public float y;
     public float z;
 
+    public boolean b1;
+    public boolean b2;
+    public boolean b3;
+    public String unknownstr;
+
     @Override
     public void decode() {
 
@@ -47,7 +52,10 @@ public class StartGamePacket extends DataPacket {
         this.putFloat(x);
         this.putFloat(y);
         this.putFloat(z);
-        this.putByte((byte) 0);
+        this.putBoolean(b1);
+        this.putBoolean(b2);
+        this.putBoolean(b3);
+        this.putString(unknownstr);
     }
 
 }

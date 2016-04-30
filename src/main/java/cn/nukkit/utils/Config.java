@@ -31,7 +31,8 @@ public class Config {
     public static final int ENUM = 5; // .txt, .list, .enum
     public static final int ENUMERATION = Config.ENUM;
 
-    private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
+    //private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
+    private ConfigSection config = new ConfigSection();
     private Map<String, Object> nestedCache = new HashMap<>();
     private File file;
     private boolean correct = false;
@@ -55,6 +56,24 @@ public class Config {
         format.put("enum", Config.ENUM);
     }
 
+    /**
+     * Constructor for Config instance with undefined file object
+     *
+     * @param type - Config type
+     */
+    public Config(int type) {
+        this.type = type;
+        this.correct = true;
+        this.config = new ConfigSection();
+    }
+
+    /**
+     * Constructor for Config (YAML) instance with undefined file object
+     */
+    public Config() {
+        this(Config.YAML);
+    }
+
     public Config(String file) {
         this(file, Config.DETECT);
     }
@@ -64,19 +83,25 @@ public class Config {
     }
 
     public Config(String file, int type) {
-        this(file, type, new LinkedHashMap<>());
+        this(file, type, new ConfigSection());
     }
 
     public Config(File file, int type) {
-        this(file.toString(), type, new LinkedHashMap<>());
+        this(file.toString(), type, new ConfigSection());
     }
 
+    @Deprecated
     public Config(String file, int type, LinkedHashMap<String, Object> defaultMap) {
+        this.load(file, type, new ConfigSection(defaultMap));
+    }
+
+    public Config(String file, int type, ConfigSection defaultMap) {
         this.load(file, type, defaultMap);
     }
 
+    @Deprecated
     public Config(File file, int type, LinkedHashMap<String, Object> defaultMap) {
-        this(file.toString(), type, defaultMap);
+        this(file.toString(), type, new ConfigSection(defaultMap));
     }
 
     public void reload() {
@@ -84,7 +109,9 @@ public class Config {
         this.nestedCache.clear();
         this.correct = false;
         //this.load(this.file.toString());
+        if (this.file == null) throw new IllegalStateException("Failed to reload Config. File object is undefined.");
         this.load(this.file.toString(), this.type);
+
     }
 
     public boolean load(String file) {
@@ -92,11 +119,11 @@ public class Config {
     }
 
     public boolean load(String file, int type) {
-        return this.load(file, type, new LinkedHashMap<>());
+        return this.load(file, type, new ConfigSection());
     }
 
     @SuppressWarnings("unchecked")
-    public boolean load(String file, int type, LinkedHashMap<String, Object> defaultMap) {
+    public boolean load(String file, int type, ConfigSection defaultMap) {
         this.correct = true;
         this.type = type;
         this.file = new File(file);
@@ -162,11 +189,29 @@ public class Config {
         return correct;
     }
 
+    /**
+     * Save configuration into provided file. Internal file object will be set to new file.
+     *
+     * @param file
+     * @param async
+     * @return
+     */
+    public boolean save(File file, boolean async) {
+        this.file = file;
+        return save(async);
+    }
+
+    public boolean save(File file) {
+        this.file = file;
+        return save();
+    }
+
     public boolean save() {
         return this.save(false);
     }
 
     public boolean save(Boolean async) {
+        if (this.file == null) throw new IllegalStateException("Failed to save Config. File object is undefined.");
         if (this.correct) {
             String content = "";
             switch (this.type) {
@@ -205,21 +250,8 @@ public class Config {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void set(final String key, Object value) {
-        final String[] vars = key.split("\\.");
-
-        Map<String, Object> map = this.config;
-
-        for (int i = 0; i < vars.length - 1; i++) {
-            String k = vars[i];
-            if (!map.containsKey(k)) {
-                map.put(k, new LinkedHashMap<>());
-            }
-            map = (Map<String, Object>) map.get(k);
-        }
-
-        map.put(vars[vars.length - 1], value);
+        this.config.set(key, value);
     }
 
     public Object get(String key) {
@@ -228,29 +260,23 @@ public class Config {
 
     @SuppressWarnings("unchecked")
     public <T> T get(String key, T defaultValue) {
-        if (!this.correct) {
-            return defaultValue;
-        }
+        return this.correct ? this.config.get(key, defaultValue) : defaultValue;
+    }
 
-        try {
-            if (this.nestedCache.containsKey(key)) {
-                return (T) this.nestedCache.get(key);
-            }
-            String[] vars = key.split("\\.");
+    public ConfigSection getSection(String key) {
+        return this.correct ? this.config.getSection(key) : new ConfigSection();
+    }
 
-            Map map = this.config;
-            for (int i = 0; i < vars.length - 1; i++) {
-                String k = vars[i];
-                if (!map.containsKey(k)) {
-                    return defaultValue;
-                }
-                map = (Map<String, Object>) map.get(k);
-            }
+    public boolean isSection(String key) {
+        return config.isSection(key);
+    }
 
-            return (T) map.getOrDefault(vars[vars.length - 1], defaultValue);
-        } catch (ClassCastException e) {
-            return defaultValue;
-        }
+    public ConfigSection getSections(String key) {
+        return this.correct ? this.config.getSections(key) : new ConfigSection();
+    }
+
+    public ConfigSection getSections() {
+        return this.correct ? this.config.getSections() : new ConfigSection();
     }
 
     public int getInt(String key) {
@@ -258,12 +284,11 @@ public class Config {
     }
 
     public int getInt(String key, int defaultValue) {
-        return this.get(key, ((Number) defaultValue)).intValue();
+        return this.correct ? this.config.getInt(key, defaultValue) : defaultValue;
     }
 
     public boolean isInt(String key) {
-        Object val = get(key);
-        return val instanceof Integer;
+        return config.isInt(key);
     }
 
     public long getLong(String key) {
@@ -271,12 +296,11 @@ public class Config {
     }
 
     public long getLong(String key, long defaultValue) {
-        return this.get(key, ((Number) defaultValue)).longValue();
+        return this.correct ? this.config.getLong(key, defaultValue) : defaultValue;
     }
 
     public boolean isLong(String key) {
-        Object val = get(key);
-        return val instanceof Long;
+        return config.isLong(key);
     }
 
     public double getDouble(String key) {
@@ -284,12 +308,11 @@ public class Config {
     }
 
     public double getDouble(String key, double defaultValue) {
-        return this.get(key, ((Number) defaultValue)).doubleValue();
+        return this.correct ? this.config.getDouble(key, defaultValue) : defaultValue;
     }
 
     public boolean isDouble(String key) {
-        Object val = get(key);
-        return val instanceof Double;
+        return config.isDouble(key);
     }
 
     public String getString(String key) {
@@ -297,13 +320,11 @@ public class Config {
     }
 
     public String getString(String key, String defaultValue) {
-        Object result = this.get(key, defaultValue);
-        return String.valueOf(result);
+        return this.correct ? this.config.getString(key, defaultValue) : defaultValue;
     }
 
     public boolean isString(String key) {
-        Object val = get(key);
-        return val instanceof String;
+        return config.isString(key);
     }
 
     public boolean getBoolean(String key) {
@@ -311,12 +332,11 @@ public class Config {
     }
 
     public boolean getBoolean(String key, boolean defaultValue) {
-        return this.get(key, defaultValue);
+        return this.correct ? this.config.getBoolean(key, defaultValue) : defaultValue;
     }
 
     public boolean isBoolean(String key) {
-        Object val = get(key);
-        return val instanceof Boolean;
+        return config.isBoolean(key);
     }
 
     public List getList(String key) {
@@ -324,328 +344,89 @@ public class Config {
     }
 
     public List getList(String key, List defaultList) {
-        return this.get(key, defaultList);
+        return this.correct ? this.config.getList(key, defaultList) : defaultList;
     }
 
     public boolean isList(String key) {
-        Object val = get(key);
-        return val instanceof List;
+        return config.isList(key);
     }
 
     public List<String> getStringList(String key) {
-        List value = this.getList(key);
-
-        if (value == null) {
-            return new ArrayList<>(0);
-        }
-
-        List<String> result = new ArrayList<>();
-
-        for (Object o : value) {
-            if (o instanceof String || o instanceof Number || o instanceof Boolean || o instanceof Character) {
-                result.add(String.valueOf(o));
-            }
-        }
-
-        return result;
+        return config.getStringList(key);
     }
 
     public List<Integer> getIntegerList(String key) {
-        List<?> list = getList(key);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
-        List<Integer> result = new ArrayList<>();
-
-        for (Object object : list) {
-            if (object instanceof Integer) {
-                result.add((Integer) object);
-            } else if (object instanceof String) {
-                try {
-                    result.add(Integer.valueOf((String) object));
-                } catch (Exception ex) {
-                    //ignore
-                }
-            } else if (object instanceof Character) {
-                result.add((int) (Character) object);
-            } else if (object instanceof Number) {
-                result.add(((Number) object).intValue());
-            }
-        }
-
-        return result;
+        return config.getIntegerList(key);
     }
 
     public List<Boolean> getBooleanList(String key) {
-        List<?> list = getList(key);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
-        List<Boolean> result = new ArrayList<>();
-
-        for (Object object : list) {
-            if (object instanceof Boolean) {
-                result.add((Boolean) object);
-            } else if (object instanceof String) {
-                if (Boolean.TRUE.toString().equals(object)) {
-                    result.add(true);
-                } else if (Boolean.FALSE.toString().equals(object)) {
-                    result.add(false);
-                }
-            }
-        }
-
-        return result;
+        return config.getBooleanList(key);
     }
 
-    public List<Double> getDoubleList(String path) {
-        List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
-        List<Double> result = new ArrayList<>();
-
-        for (Object object : list) {
-            if (object instanceof Double) {
-                result.add((Double) object);
-            } else if (object instanceof String) {
-                try {
-                    result.add(Double.valueOf((String) object));
-                } catch (Exception ex) {
-                    //ignore
-                }
-            } else if (object instanceof Character) {
-                result.add((double) (Character) object);
-            } else if (object instanceof Number) {
-                result.add(((Number) object).doubleValue());
-            }
-        }
-
-        return result;
+    public List<Double> getDoubleList(String key) {
+        return config.getDoubleList(key);
     }
 
-    public List<Float> getFloatList(String path) {
-        List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
-        List<Float> result = new ArrayList<>();
-
-        for (Object object : list) {
-            if (object instanceof Float) {
-                result.add((Float) object);
-            } else if (object instanceof String) {
-                try {
-                    result.add(Float.valueOf((String) object));
-                } catch (Exception ex) {
-                    //ignore
-                }
-            } else if (object instanceof Character) {
-                result.add((float) (Character) object);
-            } else if (object instanceof Number) {
-                result.add(((Number) object).floatValue());
-            }
-        }
-
-        return result;
+    public List<Float> getFloatList(String key) {
+        return config.getFloatList(key);
     }
 
-    public List<Long> getLongList(String path) {
-        List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
-        List<Long> result = new ArrayList<>();
-
-        for (Object object : list) {
-            if (object instanceof Long) {
-                result.add((Long) object);
-            } else if (object instanceof String) {
-                try {
-                    result.add(Long.valueOf((String) object));
-                } catch (Exception ex) {
-                    //ignore
-                }
-            } else if (object instanceof Character) {
-                result.add((long) (Character) object);
-            } else if (object instanceof Number) {
-                result.add(((Number) object).longValue());
-            }
-        }
-
-        return result;
+    public List<Long> getLongList(String key) {
+        return config.getLongList(key);
     }
 
-    public List<Byte> getByteList(String path) {
-        List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<Byte>(0);
-        }
-
-        List<Byte> result = new ArrayList<Byte>();
-
-        for (Object object : list) {
-            if (object instanceof Byte) {
-                result.add((Byte) object);
-            } else if (object instanceof String) {
-                try {
-                    result.add(Byte.valueOf((String) object));
-                } catch (Exception ex) {
-                    //ignore
-                }
-            } else if (object instanceof Character) {
-                result.add((byte) ((Character) object).charValue());
-            } else if (object instanceof Number) {
-                result.add(((Number) object).byteValue());
-            }
-        }
-
-        return result;
+    public List<Byte> getByteList(String key) {
+        return config.getByteList(key);
     }
 
-    public List<Character> getCharacterList(String path) {
-        List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
-        List<Character> result = new ArrayList<>();
-
-        for (Object object : list) {
-            if (object instanceof Character) {
-                result.add((Character) object);
-            } else if (object instanceof String) {
-                String str = (String) object;
-
-                if (str.length() == 1) {
-                    result.add(str.charAt(0));
-                }
-            } else if (object instanceof Number) {
-                result.add((char) ((Number) object).intValue());
-            }
-        }
-
-        return result;
+    public List<Character> getCharacterList(String key) {
+        return config.getCharacterList(key);
     }
 
-    public List<Short> getShortList(String path) {
-        List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
-        List<Short> result = new ArrayList<>();
-
-        for (Object object : list) {
-            if (object instanceof Short) {
-                result.add((Short) object);
-            } else if (object instanceof String) {
-                try {
-                    result.add(Short.valueOf((String) object));
-                } catch (Exception ex) {
-                    //ignore
-                }
-            } else if (object instanceof Character) {
-                result.add((short) ((Character) object).charValue());
-            } else if (object instanceof Number) {
-                result.add(((Number) object).shortValue());
-            }
-        }
-
-        return result;
+    public List<Short> getShortList(String key) {
+        return config.getShortList(key);
     }
 
-    public List<Map> getMapList(String path) {
-        List<Map> list = getList(path);
-        List<Map> result = new ArrayList<>();
-
-        if (list == null) {
-            return result;
-        }
-
-        for (Object object : list) {
-            if (object instanceof Map) {
-                result.add((Map) object);
-            }
-        }
-
-        return result;
+    public List<Map> getMapList(String key) {
+        return config.getMapList(key);
     }
-
 
     public void setAll(LinkedHashMap<String, Object> map) {
-        this.config = map;
+        this.config = new ConfigSection(map);
+    }
+
+    public void setAll(ConfigSection section) {
+        this.config = section;
     }
 
     public boolean exists(String key) {
-        return this.exists(key, false);
+        return config.exists(key);
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean exists(String key, boolean lowercase) {
-        if (lowercase) {
-            key = key.toLowerCase();
-
-            String[] vars = key.split("\\.");
-
-            Map<String, Object> map = this.config;
-
-            for (int i = 0; i < vars.length - 1; i++) {
-                String k = vars[i];
-                for (String s : map.keySet()) {
-                    if (s.toLowerCase().equals(k)) {
-                        map = (Map<String, Object>) map.get(k);
-                        continue;
-                    }
-                    return false;
-                }
-
-            }
-        }
-
-        return this.get(key) != null;
+    public boolean exists(String key, boolean ignoreCase) {
+        return config.exists(key, ignoreCase);
     }
 
-    @SuppressWarnings("unchecked")
     public void remove(String key) {
-        String[] vars = key.split("\\.");
-
-        Map<String, Object> map = this.config;
-
-        for (int i = 0; i < vars.length - 1; i++) {
-            String k = vars[i];
-            if (!map.containsKey(k)) {
-                return;
-            }
-            map = (Map<String, Object>) map.get(k);
-        }
-        map.remove(vars[vars.length - 1]);
+        config.remove(key);
     }
 
     public Map<String, Object> getAll() {
-        return new LinkedHashMap<>(this.config);
+        return this.config.getAllMap();
     }
 
     public int setDefault(LinkedHashMap<String, Object> map) {
+        return setDefault(new ConfigSection(map));
+    }
+
+    public int setDefault(ConfigSection map) {
         int size = this.config.size();
         this.config = this.fillDefaults(map, this.config);
         return this.config.size() - size;
     }
 
-    private LinkedHashMap<String, Object> fillDefaults(LinkedHashMap<String, Object> defaultMap, LinkedHashMap<String, Object> data) {
+
+    private ConfigSection fillDefaults(ConfigSection defaultMap, ConfigSection data) {
         for (String key : defaultMap.keySet()) {
             if (!data.containsKey(key)) {
                 data.put(key, defaultMap.get(key));
@@ -748,16 +529,16 @@ public class Config {
             case Config.JSON:
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
-                this.config = gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
-                }.getType());
+                this.config = new ConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
+                }.getType()));
                 break;
             case Config.YAML:
                 DumperOptions dumperOptions = new DumperOptions();
                 dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                 Yaml yaml = new Yaml(dumperOptions);
-                this.config = yaml.loadAs(content, LinkedHashMap.class);
+                this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
                 if (this.config == null) {
-                    this.config = new LinkedHashMap<>();
+                    this.config = new ConfigSection();
                 }
                 break;
             // case Config.SERIALIZED
@@ -769,4 +550,13 @@ public class Config {
         }
     }
 
+    public Set<String> getKeys() {
+        if (this.correct) return config.getKeys();
+        return new HashSet<>();
+    }
+
+    public Set<String> getKeys(boolean child) {
+        if (this.correct) return config.getKeys(child);
+        return new HashSet<>();
+    }
 }
