@@ -489,9 +489,5 @@ public abstract class BlockLiquid extends BlockTransparent {
     @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
-
-        if (entity.fireTicks > 0) {
-            entity.extinguish();
-        }
     }
 }

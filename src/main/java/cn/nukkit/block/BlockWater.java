@@ -52,4 +52,13 @@ public class BlockWater extends BlockLiquid {
     public BlockLiquid getBlock(int meta) {
         return new BlockWater(meta);
     }
+
+    @Override
+    public void onEntityCollide(Entity entity) {
+        super.onEntityCollide(entity);
+
+        if (entity.fireTicks > 0) {
+            entity.extinguish();
+        }
+    }
 }
