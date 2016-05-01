@@ -265,6 +265,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.namedTag.putFloat("FallDistance", 0);
         }
         this.fallDistance = this.namedTag.getFloat("FallDistance");
+        this.highestPosition = this.y + this.namedTag.getFloat("FallDistance");
 
         if (!this.namedTag.contains("Fire")) {
             this.namedTag.putShort("Fire", 0);
@@ -982,7 +983,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected void updateFallState(boolean onGround) {
         if (onGround) {
-            float fallDistance = (float) (this.highestPosition - this.y);
+            fallDistance = (float) (this.highestPosition - this.y);
 
             if (fallDistance > 0) {
                 if (this instanceof EntityLiving && !this.isInsideOfWater()) {
@@ -1004,13 +1005,11 @@ public abstract class Entity extends Location implements Metadatable {
             this.attack(ev);
         }
 
-        System.out.println("\ndistance: "+fallDistance);
-
         if(fallDistance > 1){
-            Block down = this.level.getBlock(this.temporalVector.setComponents(x, y - 1, z));
+            Block down = this.level.getBlock(this.temporalVector.setComponents(getFloorX(), getFloorY() - 1, getFloorZ()));
 
             if(down.getId() == Item.FARMLAND){
-                this.level.setBlock(this.temporalVector.setComponents(down.x, down.y + 1, down.z), new BlockDirt(), true, true);
+                this.level.setBlock(this.temporalVector.setComponents(down.x, down.y, down.z), new BlockDirt(), true, true);
             }
         }
     }

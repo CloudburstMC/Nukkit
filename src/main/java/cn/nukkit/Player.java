@@ -3,6 +3,7 @@ package cn.nukkit;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockFlowable;
+import cn.nukkit.block.BlockSlab;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
@@ -1060,13 +1061,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     protected void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
         if (!this.onGround || movY != 0) {
+            boolean onGround = false;
+
             AxisAlignedBB bb = this.boundingBox.clone();
             bb.maxY = bb.minY + 0.5;
             bb.minY -= 1;
 
             AxisAlignedBB realBB = this.boundingBox.clone();
-            realBB.maxY = bb.minY + 0.5;
-            realBB.minY -= 0.2; //0.2 compensation
+            realBB.maxY = realBB.minY + 0.1;
+            realBB.minY -= 0.1;
 
             int minX = NukkitMath.floorDouble(bb.minX);
             int minY = NukkitMath.floorDouble(bb.minY);
@@ -1079,13 +1082,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 for (int x = minX; x <= maxX; ++x) {
                     for (int y = minY; y <= maxY; ++y) {
                         Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
-                        if (block.getId() != 0 && !(block instanceof BlockFlowable) && block.collidesWithBB(realBB)) {
-                            this.onGround = true;
-                            System.out.println("\nonGround");
+                        if (!block.canPassThrough() && block.collidesWithBB(realBB)) {
+                            onGround = true;
+                            break;
                         }
                     }
                 }
             }
+
+            this.onGround = onGround;
         }
 
         this.isCollided = this.onGround;
