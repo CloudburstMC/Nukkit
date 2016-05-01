@@ -137,6 +137,7 @@ public abstract class Entity extends Location implements Metadatable {
     public int lastUpdate;
     public int maxFireTicks;
     public int fireTicks = 0;
+    public int inPortalTicks = 0;
 
     public CompoundTag namedTag;
 

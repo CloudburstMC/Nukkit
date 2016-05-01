@@ -1082,9 +1082,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 for (int x = minX; x <= maxX; ++x) {
                     for (int y = minY; y <= maxY; ++y) {
                         Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
+
                         if (!block.canPassThrough() && block.collidesWithBB(realBB)) {
-                            onGround = true;
-                            break;
+
                         }
                     }
                 }
@@ -1449,7 +1449,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if (this.y > highestPosition) {
+                    if(this.y > highestPosition){
                         this.highestPosition = this.y;
                     }
 
