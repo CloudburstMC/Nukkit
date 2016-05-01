@@ -1005,10 +1005,10 @@ public abstract class Entity extends Location implements Metadatable {
             this.attack(ev);
         }
 
-        if(fallDistance > 1){
+        if (fallDistance > 1) {
             Block down = this.level.getBlock(this.temporalVector.setComponents(getFloorX(), getFloorY() - 1, getFloorZ()));
 
-            if(down.getId() == Item.FARMLAND){
+            if (down.getId() == Item.FARMLAND) {
                 this.level.setBlock(this.temporalVector.setComponents(down.x, down.y, down.z), new BlockDirt(), true, true);
             }
         }

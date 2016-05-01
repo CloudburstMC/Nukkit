@@ -1449,7 +1449,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if(this.y > highestPosition){
+                    if (this.y > highestPosition) {
                         this.highestPosition = this.y;
                     }
 
