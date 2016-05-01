@@ -2,6 +2,7 @@ package cn.nukkit;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockFlowable;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
@@ -1078,8 +1079,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 for (int x = minX; x <= maxX; ++x) {
                     for (int y = minY; y <= maxY; ++y) {
                         Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
-                        if (block.getId() != 0 && block.collidesWithBB(realBB)) {
+                        if (block.getId() != 0 && !(block instanceof BlockFlowable) && block.collidesWithBB(realBB)) {
                             this.onGround = true;
+                            System.out.println("\nonGround");
                         }
                     }
                 }

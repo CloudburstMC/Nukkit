@@ -1004,6 +1004,8 @@ public abstract class Entity extends Location implements Metadatable {
             this.attack(ev);
         }
 
+        System.out.println("\ndistance: "+fallDistance);
+
         if(fallDistance > 1){
             Block down = this.level.getBlock(this.temporalVector.setComponents(x, y - 1, z));
 
