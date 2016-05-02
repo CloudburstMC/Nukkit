@@ -1058,7 +1058,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     protected void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
-        if (!this.onGround || movY != 0) {
+        if (!this.onGround || movX != 0 || movY != 0 || movZ != 0) {
             boolean onGround = false;
 
             AxisAlignedBB bb = this.boundingBox.clone();
