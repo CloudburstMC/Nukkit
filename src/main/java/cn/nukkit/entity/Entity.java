@@ -2,9 +2,7 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockFire;
-import cn.nukkit.block.BlockWater;
+import cn.nukkit.block.*;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.player.PlayerTeleportEvent;
@@ -139,6 +137,7 @@ public abstract class Entity extends Location implements Metadatable {
     public int lastUpdate;
     public int maxFireTicks;
     public int fireTicks = 0;
+    public int inPortalTicks = 0;
 
     public CompoundTag namedTag;
 
@@ -154,6 +153,8 @@ public abstract class Entity extends Location implements Metadatable {
     public boolean invulnerable;
 
     protected Server server;
+
+    public double highestPosition;
 
     public boolean closed = false;
 
@@ -265,6 +266,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.namedTag.putFloat("FallDistance", 0);
         }
         this.fallDistance = this.namedTag.getFloat("FallDistance");
+        this.highestPosition = this.y + this.namedTag.getFloat("FallDistance");
 
         if (!this.namedTag.contains("Fire")) {
             this.namedTag.putShort("Fire", 0);
@@ -977,19 +979,19 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void resetFallDistance() {
-        this.fallDistance = 0;
+        this.highestPosition = 0;
     }
 
-    protected void updateFallState(float distanceThisTick, boolean onGround) {
+    protected void updateFallState(boolean onGround) {
         if (onGround) {
-            if (this.fallDistance > 0) {
+            fallDistance = (float) (this.highestPosition - this.y);
+
+            if (fallDistance > 0) {
                 if (this instanceof EntityLiving && !this.isInsideOfWater()) {
-                    this.fall(this.fallDistance);
+                    this.fall(fallDistance);
                 }
                 this.resetFallDistance();
             }
-        } else if (distanceThisTick < 0) {
-            this.fallDistance -= distanceThisTick;
         }
     }
 
@@ -1002,6 +1004,14 @@ public abstract class Entity extends Location implements Metadatable {
         if (damage > 0) {
             EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FALL, damage);
             this.attack(ev);
+        }
+
+        if (fallDistance > 1) {
+            Block down = this.level.getBlock(this.temporalVector.setComponents(getFloorX(), getFloorY() - 1, getFloorZ()));
+
+            if (down.getId() == Item.FARMLAND) {
+                this.level.setBlock(this.temporalVector.setComponents(down.x, down.y, down.z), new BlockDirt(), true, true);
+            }
         }
     }
 
@@ -1114,7 +1124,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.onGround = this.level.getCollisionBlocks(bb).length > 0;
         }
         this.isCollided = this.onGround;
-        this.updateFallState((float) dy, this.onGround);
+        this.updateFallState(this.onGround);
 
         return true;
     }
@@ -1215,7 +1225,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.checkChunks();
 
             this.checkGroundState(movX, movY, movZ, dx, dy, dz);
-            this.updateFallState((float) dy, this.onGround);
+            this.updateFallState(this.onGround);
 
             if (movX != dx) {
                 this.motionX = 0;

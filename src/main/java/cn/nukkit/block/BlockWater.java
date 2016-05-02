@@ -31,16 +31,6 @@ public class BlockWater extends BlockLiquid {
     }
 
     @Override
-    public void onEntityCollide(Entity entity) {
-        entity.resetFallDistance();
-        if (entity.fireTicks > 0) {
-            entity.extinguish();
-        }
-
-        entity.resetFallDistance();
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
@@ -61,5 +51,14 @@ public class BlockWater extends BlockLiquid {
     @Override
     public BlockLiquid getBlock(int meta) {
         return new BlockWater(meta);
+    }
+
+    @Override
+    public void onEntityCollide(Entity entity) {
+        super.onEntityCollide(entity);
+
+        if (entity.fireTicks > 0) {
+            entity.extinguish();
+        }
     }
 }

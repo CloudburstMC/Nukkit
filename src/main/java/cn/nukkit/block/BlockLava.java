@@ -45,7 +45,7 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        entity.fallDistance *= 0.5;
+        entity.highestPosition -= (entity.highestPosition - entity.y) * 0.5;
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
             EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.CAUSE_LAVA, 4);
             entity.attack(ev);
@@ -57,7 +57,7 @@ public class BlockLava extends BlockLiquid {
             entity.setOnFire(ev.getDuration());
         }
 
-        entity.resetFallDistance();
+        super.onEntityCollide(entity);
     }
 
     @Override

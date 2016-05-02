@@ -2,7 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -54,6 +56,43 @@ public class BlockFarmland extends BlockSolid {
                 this.y + 0.9375,
                 this.z + 1
         );
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_RANDOM) {
+            boolean found = false;
+
+            Vector3 v = new Vector3();
+
+            for (int x = (int) this.x - 1; x <= this.x + 1; x++) {
+                for (int z = (int) this.z - 1; z <= this.x + 1; z++) {
+                    if (z == this.z && x == this.x) {
+                        continue;
+                    }
+
+                    Block block = this.level.getBlock(v.setComponents(x, this.y, z));
+
+                    if (block.getId() == WATER || block.getId() == STILL_WATER) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!found) {
+                Block block = this.level.getBlock(v.setComponents(x, y - 1, z));
+                if (block.getId() == WATER || block.getId() == STILL_WATER) {
+                    return Level.BLOCK_UPDATE_RANDOM;
+                }
+            }
+
+            this.level.setBlock(this, new BlockDirt(), true, true);
+
+            return Level.BLOCK_UPDATE_RANDOM;
+        }
+
+        return 0;
     }
 
     @Override
