@@ -73,18 +73,20 @@ public class BlockFarmland extends BlockSolid {
 
                     Block block = this.level.getBlock(v.setComponents(x, this.y, z));
 
-                    if (block.getId() == WATER || block.getId() == STILL_WATER) {
+                    if (block instanceof BlockWater) {
                         found = true;
                         break;
                     }
                 }
             }
 
-            if (!found) {
-                Block block = this.level.getBlock(v.setComponents(x, y - 1, z));
-                if (block.getId() == WATER || block.getId() == STILL_WATER) {
-                    return Level.BLOCK_UPDATE_RANDOM;
-                }
+            if (found) {
+                return Level.BLOCK_UPDATE_RANDOM;
+            }
+
+            Block block = this.level.getBlock(v.setComponents(x, y - 1, z));
+            if (block instanceof BlockWater) {
+                return Level.BLOCK_UPDATE_RANDOM;
             }
 
             this.level.setBlock(this, new BlockDirt(), true, true);
