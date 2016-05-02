@@ -6,7 +6,7 @@ import cn.nukkit.math.AxisAlignedBB;
 /**
  * Created by Pub4Game on 26.12.2015.
  */
-public class BlockEndPortalFrame extends BlockSolid {
+public class BlockEndPortalFrame extends BlockTransparent {
 
     public BlockEndPortalFrame() {
         this(0);
