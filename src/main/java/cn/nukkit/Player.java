@@ -1062,7 +1062,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     protected void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
-        if (!this.onGround || movY != 0) {
+        if (!this.onGround || movX != 0 || movY != 0 || movZ != 0) {
             boolean onGround = false;
 
             AxisAlignedBB bb = this.boundingBox.clone();
@@ -1071,7 +1071,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             AxisAlignedBB realBB = this.boundingBox.clone();
             realBB.maxY = realBB.minY + 0.1;
-            realBB.minY -= 0.1;
+            realBB.minY -= 0.2;
 
             int minX = NukkitMath.floorDouble(bb.minX);
             int minY = NukkitMath.floorDouble(bb.minY);
@@ -1086,7 +1086,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
 
                         if (!block.canPassThrough() && block.collidesWithBB(realBB)) {
-
+                            onGround = true;
+                            break;
                         }
                     }
                 }
