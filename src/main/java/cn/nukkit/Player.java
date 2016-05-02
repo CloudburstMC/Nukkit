@@ -1069,7 +1069,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             AxisAlignedBB realBB = this.boundingBox.clone();
             realBB.maxY = realBB.minY + 0.1;
-            realBB.minY -= 0.1;
+            realBB.minY -= 0.2;
 
             int minX = NukkitMath.floorDouble(bb.minX);
             int minY = NukkitMath.floorDouble(bb.minY);
@@ -1084,7 +1084,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
 
                         if (!block.canPassThrough() && block.collidesWithBB(realBB)) {
-
+                            onGround = true;
+                            break;
                         }
                     }
                 }
