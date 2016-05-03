@@ -80,12 +80,8 @@ public class BlockFarmland extends BlockSolid {
                 }
             }
 
-            if (found) {
-                return Level.BLOCK_UPDATE_RANDOM;
-            }
-
             Block block = this.level.getBlock(v.setComponents(x, y - 1, z));
-            if (block instanceof BlockWater) {
+            if (found || block instanceof BlockWater) {
                 return Level.BLOCK_UPDATE_RANDOM;
             }
 

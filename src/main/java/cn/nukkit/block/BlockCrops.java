@@ -57,10 +57,11 @@ public abstract class BlockCrops extends BlockFlowable {
             BlockGrowEvent ev = new BlockGrowEvent(this, block);
             Server.getInstance().getPluginManager().callEvent(ev);
 
-            if (!ev.isCancelled()) {
-                this.getLevel().setBlock(this, ev.getNewState(), true, true);
+            if (ev.isCancelled()) {
+                return false;
             }
 
+            this.getLevel().setBlock(this, ev.getNewState(), true, true);
             item.count--;
 
             return true;
