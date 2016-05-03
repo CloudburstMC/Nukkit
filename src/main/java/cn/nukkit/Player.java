@@ -486,6 +486,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.sleeping != null;
     }
 
+    public int getInAirTicks(){
+        return this.inAirTicks;
+    }
+
     @Override
     protected boolean switchLevel(Level targetLevel) {
         Level oldLevel = this.level;
@@ -3300,7 +3304,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     } else if (e instanceof EntityLiving) {
                         message = "death.attack.mob";
-                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((EntityLiving) e).getName());
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                         break;
                     } else {
                         params.add("Unknown");
@@ -3316,7 +3320,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         params.add(((Player) e).getDisplayName());
                     } else if (e instanceof EntityLiving) {
                         message = "death.attack.arrow";
-                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((EntityLiving) e).getName());
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                         break;
                     } else {
                         params.add("Unknown");
