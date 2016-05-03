@@ -32,7 +32,7 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
      */
     public ConfigSection(LinkedHashMap<String, Object> map) {
         this();
-        if (map==null||map.isEmpty()) return;
+        if (map == null || map.isEmpty()) return;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof LinkedHashMap) {
                 super.put(entry.getKey(), new ConfigSection((LinkedHashMap) entry.getValue()));

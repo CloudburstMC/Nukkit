@@ -6,9 +6,9 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- *  Nukkit Minecraft PE Server Software
- *  This class was written by Niall Lindsay <Niall7459>
-**/
+ * Nukkit Minecraft PE Server Software
+ * This class was written by Niall Lindsay <Niall7459>
+ **/
 
 public class PopulatorSugarcane extends Populator {
     private ChunkManager level;
@@ -38,21 +38,21 @@ public class PopulatorSugarcane extends Populator {
             }
         }
     }
-    
+
     private boolean findWater(int x, int y, int z) {
-    	int count = 0;
-    	for(int i = x - 4; i < (x + 4); i++) {
-    		for(int j = z - 4; j < (z + 4); j++) {
-    			int b = this.level.getBlockIdAt(i, y, j);
-    			if(b == Block.WATER || b == Block.STILL_WATER) {
-    				count++;
-    			}
-    			if(count > 10) {
-    				return true;
-    			}
-    		}
-    	}
-    	return (count > 10);
+        int count = 0;
+        for (int i = x - 4; i < (x + 4); i++) {
+            for (int j = z - 4; j < (z + 4); j++) {
+                int b = this.level.getBlockIdAt(i, y, j);
+                if (b == Block.WATER || b == Block.STILL_WATER) {
+                    count++;
+                }
+                if (count > 10) {
+                    return true;
+                }
+            }
+        }
+        return (count > 10);
     }
 
     private boolean canSugarcaneStay(int x, int y, int z) {

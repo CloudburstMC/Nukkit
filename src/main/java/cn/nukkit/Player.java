@@ -194,8 +194,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public String getClientSecret() {
         return clientSecret;
     }
-    
-    public Long getClientId(){
+
+    public Long getClientId() {
         return clientID;
     }
 
@@ -1452,7 +1452,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if(this.y > highestPosition){
+                    if (this.y > highestPosition) {
                         this.highestPosition = this.y;
                     }
 
