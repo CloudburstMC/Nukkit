@@ -187,7 +187,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private int hash;
 
-
     public TranslationContainer getLeaveMessage() {
         return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
     }
@@ -195,8 +194,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public String getClientSecret() {
         return clientSecret;
     }
-    
-    public Long getClientId(){
+
+    public Long getClientId() {
         return clientID;
     }
 
@@ -325,6 +324,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.startAirTicks = 5;
         }
         this.inAirTicks = 0;
+        this.highestPosition = this.y;
     }
 
     @Override
@@ -484,6 +484,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public boolean isSleeping() {
         return this.sleeping != null;
+    }
+
+    public int getInAirTicks(){
+        return this.inAirTicks;
     }
 
     @Override
@@ -1062,13 +1066,40 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     protected void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
-        if (!this.onGround || movY != 0) {
+        if (!this.onGround || movX != 0 || movY != 0 || movZ != 0) {
+            boolean onGround = false;
+
             AxisAlignedBB bb = this.boundingBox.clone();
             bb.maxY = bb.minY + 0.5;
             bb.minY -= 1;
 
-            this.onGround = this.level.getCollisionBlocks(bb, true).length > 0;
+            AxisAlignedBB realBB = this.boundingBox.clone();
+            realBB.maxY = realBB.minY + 0.1;
+            realBB.minY -= 0.2;
+
+            int minX = NukkitMath.floorDouble(bb.minX);
+            int minY = NukkitMath.floorDouble(bb.minY);
+            int minZ = NukkitMath.floorDouble(bb.minZ);
+            int maxX = NukkitMath.ceilDouble(bb.maxX);
+            int maxY = NukkitMath.ceilDouble(bb.maxY);
+            int maxZ = NukkitMath.ceilDouble(bb.maxZ);
+
+            for (int z = minZ; z <= maxZ; ++z) {
+                for (int x = minX; x <= maxX; ++x) {
+                    for (int y = minY; y <= maxY; ++y) {
+                        Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
+
+                        if (!block.canPassThrough() && block.collidesWithBB(realBB)) {
+                            onGround = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            this.onGround = onGround;
         }
+
         this.isCollided = this.onGround;
     }
 
@@ -1409,6 +1440,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.startAirTicks = 5;
                     }
                     this.inAirTicks = 0;
+                    this.highestPosition = this.y;
                 } else {
                     if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && !this.getDataPropertyBoolean(DATA_NO_AI)) {
                         double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
@@ -1422,6 +1454,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 return false;
                             }
                         }
+                    }
+
+                    if (this.y > highestPosition) {
+                        this.highestPosition = this.y;
                     }
 
                     ++this.inAirTicks;
@@ -3268,7 +3304,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     } else if (e instanceof EntityLiving) {
                         message = "death.attack.mob";
-                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((EntityLiving) e).getName());
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                         break;
                     } else {
                         params.add("Unknown");
@@ -3284,7 +3320,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         params.add(((Player) e).getDisplayName());
                     } else if (e instanceof EntityLiving) {
                         message = "death.attack.arrow";
-                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((EntityLiving) e).getName());
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                         break;
                     } else {
                         params.add("Unknown");

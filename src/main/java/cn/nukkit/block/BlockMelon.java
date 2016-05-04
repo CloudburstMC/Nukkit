@@ -11,7 +11,7 @@ import java.util.Random;
  * Package cn.nukkit.block in project Nukkit .
 */
 
-public class BlockMelon extends BlockTransparent {
+public class BlockMelon extends BlockSolid {
 
     public BlockMelon() {
         this(0);

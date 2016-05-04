@@ -201,9 +201,9 @@ public abstract class BlockDoor extends BlockTransparent {
             if (this.getSide(0).getId() == AIR) {
                 if (this.getSide(1) instanceof BlockDoor) {
                     this.getLevel().setBlock(this.getSide(1), new BlockAir(), false);
+                    this.getLevel().useBreakOn(this);
                 }
 
-                this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }

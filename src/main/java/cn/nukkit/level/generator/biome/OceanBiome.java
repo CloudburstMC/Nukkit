@@ -12,7 +12,7 @@ public class OceanBiome extends WateryBiome {
 
     public OceanBiome() {
         super();
-        
+
         PopulatorSugarcane sugarcane = new PopulatorSugarcane();
         sugarcane.setBaseAmount(6);
         PopulatorTallSugarcane tallSugarcane = new PopulatorTallSugarcane();
