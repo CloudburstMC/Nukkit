@@ -1851,7 +1851,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (riding != null) {
                     if (riding instanceof EntityBoat) {
-                        riding.setPositionAndRotation(this.temporalVector.setComponents(movePlayerPacket.x, movePlayerPacket.y - 0.3, movePlayerPacket.z), (movePlayerPacket.bodyYaw + 90) % 360, 0);
+                        riding.setPositionAndRotation(this.temporalVector.setComponents(movePlayerPacket.x, movePlayerPacket.y - 1, movePlayerPacket.z), (movePlayerPacket.bodyYaw + 90) % 360, 0);
                     }
                 }
 
@@ -2465,6 +2465,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         SetEntityLinkPacket pk;
                         switch (((InteractPacket) packet).action) {
                             case InteractPacket.ACTION_RIGHT_CLICK:
+                                cancelled = true;
+
+                                if(((EntityVehicle) targetEntity).linkedEntity != null){
+                                    break;
+                                }
                                 pk = new SetEntityLinkPacket();
                                 pk.rider = targetEntity.getId();
                                 pk.riding = this.id;
@@ -2477,8 +2482,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 pk.type = 2;
                                 dataPacket(pk);
 
-                                cancelled = true;
                                 riding = targetEntity;
+                                ((EntityVehicle) targetEntity).linkedEntity = this;
+
+                                this.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
                                 break;
                             case InteractPacket.ACTION_VEHICLE_EXIT:
                                 pk = new SetEntityLinkPacket();
@@ -2495,6 +2502,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                 cancelled = true;
                                 riding = null;
+                                ((EntityVehicle) targetEntity).linkedEntity = null;
+                                this.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, false);
                                 break;
                         }
                     }
@@ -3220,6 +3229,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.loadQueue = new HashMap<>();
             this.hasSpawned = new HashMap<>();
             this.spawnPosition = null;
+
+            if(this.riding instanceof EntityVehicle){
+                ((EntityVehicle) this.riding).linkedEntity = null;
+            }
+
+            this.riding = null;
         }
 
         if (this.perm != null) {

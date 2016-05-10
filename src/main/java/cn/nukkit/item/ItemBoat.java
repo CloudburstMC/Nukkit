@@ -38,7 +38,7 @@ public class ItemBoat extends Item {
                 level.getChunk(block.getFloorX() >> 4, block.getFloorZ() >> 4), new CompoundTag("")
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", block.getX() + 0.5))
-                        .add(new DoubleTag("", block.getY()))
+                        .add(new DoubleTag("", block.getY() - 0.0625))
                         .add(new DoubleTag("", block.getZ() + 0.5)))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("", 0))
