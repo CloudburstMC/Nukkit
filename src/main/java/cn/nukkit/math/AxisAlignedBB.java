@@ -192,7 +192,7 @@ public class AxisAlignedBB implements Cloneable {
     }
 
     public boolean isVectorInside(Vector3 vector) {
-        return !(vector.x <= this.minX || vector.x >= this.maxX) && !(vector.y <= this.minY || vector.y >= this.maxY) && vector.z > this.minZ && vector.z < this.maxZ;
+        return vector.x >= this.minX && vector.x <= this.maxX && vector.y >= this.minY && vector.y <= this.maxY && vector.z >= this.minZ && vector.z <= this.maxZ;
 
     }
 
