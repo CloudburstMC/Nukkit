@@ -25,7 +25,7 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean canBeReplaced() {
-        return true;
+    	return this.getName().equals("Double Tallgrass") || this.getName().equals("Large Fern");
     }
 
     @Override
