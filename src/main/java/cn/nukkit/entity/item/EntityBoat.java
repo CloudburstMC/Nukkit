@@ -1,14 +1,17 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.ItemBoat;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+import cn.nukkit.network.protocol.EntityEventPacket;
 
 /**
  * Created by yescallop on 2016/2/13.
@@ -88,16 +91,24 @@ public class EntityBoat extends EntityVehicle {
         super.attack(source);
         if (source.isCancelled()) return;
 
-        //TODO: HURT ANIMATION
+        EntityEventPacket pk = new EntityEventPacket();
+        pk.eid = this.getId();
+        pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
+        Server.broadcastPacket(this.hasSpawned.values(), pk);
     }
 
     @Override
     public void close() {
         super.close();
 
+        if(this.linkedEntity instanceof Player){
+            this.linkedEntity.riding = null;
+        }
+
         this.level.dropItem(this, new ItemBoat());
 
-        // TODO Add praticle
+        SmokeParticle particle = new SmokeParticle(this);
+        this.level.addParticle(particle);
     }
 
     @Override

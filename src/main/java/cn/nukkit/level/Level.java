@@ -20,6 +20,7 @@ import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
@@ -1475,23 +1476,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
-            BlockBreakEvent ev = new BlockBreakEvent(player, target, item, player.isCreative());
-            double distance;
-            if (player.isSurvival() && item != null && !target.isBreakable(item)) {
-                ev.setCancelled();
-            } else if (!player.isOp() && (distance = this.server.getSpawnRadius()) > -1) {
-                Vector2 t = new Vector2(target.x, target.z);
-                Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
-                if (!this.server.getOps().getAll().isEmpty() && t.distance(s) <= distance) {
-                    ev.setCancelled();
-                }
-            }
-            this.server.getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) {
-                return null;
-            }
-
-            double breakTime = target.getBreakTime(item);
+            double breakTime = target.getBreakTime(item) * 1000; //TODO: fix this in block class
 
             if (player.isCreative() && breakTime > 0.15) {
                 breakTime = 0.15;
@@ -1505,16 +1490,39 @@ public class Level implements ChunkManager, Metadatable {
                 breakTime *= 1 - (0.3 * (player.getEffect(Effect.MINING_FATIGUE).getAmplifier() + 1));
             }
 
-            breakTime -= 0.05;
+            Enchantment eff = item.getEnchantment(Enchantment.ID_EFFICIENCY);
 
-            if (!ev.getInstaBreak() && (player.lastBreak + breakTime) > System.currentTimeMillis()) {
+            if (eff != null && eff.getLevel() > 0) {
+                breakTime *= 1 - (0.3 * eff.getLevel());
+            }
+
+            breakTime -= 0.1;
+
+            BlockBreakEvent ev = new BlockBreakEvent(player, target, item, player.isCreative(), (player.lastBreak + breakTime) > System.currentTimeMillis());
+            double distance;
+            if (player.isSurvival() && !target.isBreakable(item)) {
+                ev.setCancelled();
+            } else if (!player.isOp() && (distance = this.server.getSpawnRadius()) > -1) {
+                Vector2 t = new Vector2(target.x, target.z);
+                Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
+                if (!this.server.getOps().getAll().isEmpty() && t.distance(s) <= distance) {
+                    ev.setCancelled();
+                }
+            }
+
+            this.server.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return null;
+            }
+
+            if (!ev.getInstaBreak() && ev.isFastBreak()) {
                 return null;
             }
 
             player.lastBreak = System.currentTimeMillis();
 
             drops = ev.getDrops();
-        } else if (item != null && !target.isBreakable(item)) {
+        } else if (!target.isBreakable(item)) {
             return null;
         } else {
             int[][] d = target.getDrops(item);
@@ -1531,23 +1539,21 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        if (item != null) {
-            Tag tag = item.getNamedTagEntry("CanDestroy");
-            if (tag instanceof ListTag) {
-                boolean canBreak = false;
-                for (Tag v : ((ListTag<Tag>) tag).getAll()) {
-                    if (v instanceof StringTag) {
-                        Item entry = Item.fromString(((StringTag) v).data);
-                        if (entry.getId() > 0 && entry.getBlock() != null && entry.getBlock().getId() == target.getId()) {
-                            canBreak = true;
-                            break;
-                        }
+        Tag tag = item.getNamedTagEntry("CanDestroy");
+        if (tag instanceof ListTag) {
+            boolean canBreak = false;
+            for (Tag v : ((ListTag<Tag>) tag).getAll()) {
+                if (v instanceof StringTag) {
+                    Item entry = Item.fromString(((StringTag) v).data);
+                    if (entry.getId() > 0 && entry.getBlock() != null && entry.getBlock().getId() == target.getId()) {
+                        canBreak = true;
+                        break;
                     }
                 }
+            }
 
-                if (!canBreak) {
-                    return null;
-                }
+            if (!canBreak) {
+                return null;
             }
         }
 
@@ -1579,11 +1585,9 @@ public class Level implements ChunkManager, Metadatable {
             blockEntity.close();
         }
 
-        if (item != null) {
-            item.useOn(target);
-            if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
-                item = new ItemBlock(new BlockAir(), 0, 0);
-            }
+        item.useOn(target);
+        if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
+            item.count--;
         }
 
         int dropExp = target.getDropExp();
@@ -1911,7 +1915,7 @@ public class Level implements ChunkManager, Metadatable {
 
     @Override
     public int getBlockDataAt(int x, int y, int z) {
-        return this.getChunk(x >> 4, z >> 4, true).getBlockId(x & 0x0f, y & 0x7f, z & 0x0f);
+        return this.getChunk(x >> 4, z >> 4, true).getBlockData(x & 0x0f, y & 0x7f, z & 0x0f);
     }
 
     @Override

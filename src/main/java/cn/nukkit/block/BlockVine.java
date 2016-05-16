@@ -57,6 +57,7 @@ public class BlockVine extends BlockTransparent {
     @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
+        entity.onGround = true;
     }
 
     @Override

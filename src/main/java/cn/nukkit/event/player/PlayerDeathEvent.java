@@ -42,6 +42,10 @@ public class PlayerDeathEvent extends EntityDeathEvent implements Cancellable {
         this.deathMessage = deathMessage;
     }
 
+    public void setDeathMessage(String deathMessage) {
+        this.deathMessage = new TextContainer(deathMessage);
+    }
+
     public boolean getKeepInventory() {
         return keepInventory;
     }

@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
@@ -56,10 +57,11 @@ public abstract class BlockCrops extends BlockFlowable {
             BlockGrowEvent ev = new BlockGrowEvent(this, block);
             Server.getInstance().getPluginManager().callEvent(ev);
 
-            if (!ev.isCancelled()) {
-                this.getLevel().setBlock(this, ev.getNewState(), true, true);
+            if (ev.isCancelled()) {
+                return false;
             }
 
+            this.getLevel().setBlock(this, ev.getNewState(), true, true);
             item.count--;
 
             return true;
@@ -71,7 +73,7 @@ public abstract class BlockCrops extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(0).isTransparent()) {
+            if (this.getSide(Vector3.SIDE_DOWN).getId() != FARMLAND) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
