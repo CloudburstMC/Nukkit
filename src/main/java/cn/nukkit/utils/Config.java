@@ -415,6 +415,14 @@ public class Config {
         return this.config.getAllMap();
     }
 
+    /**
+     * Get root (main) config section of the Config
+     * @return
+     */
+    public ConfigSection getRootSection(){
+        return config;
+    }
+
     public int setDefault(LinkedHashMap<String, Object> map) {
         return setDefault(new ConfigSection(map));
     }
