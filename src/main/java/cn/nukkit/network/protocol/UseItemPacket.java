@@ -23,6 +23,9 @@ public class UseItemPacket extends DataPacket {
     public float posY;
     public float posZ;
 
+    public short unknown;
+    public short slot;
+
     public Item item;
 
     @Override
@@ -42,7 +45,8 @@ public class UseItemPacket extends DataPacket {
         this.posX = this.getFloat();
         this.posY = this.getFloat();
         this.posZ = this.getFloat();
-
+        this.unknown = this.getSignedShort();
+        this.slot = this.getSignedShort();
         this.item = this.getSlot();
     }
 
