@@ -24,6 +24,7 @@ public class EntityInventoryChangeEvent extends EntityEvent implements Cancellab
         this.entity = entity;
         this.oldItem = oldItem;
         this.newItem = newItem;
+        this.slot = slot;
     }
 
     public int getSlot() {
