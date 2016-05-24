@@ -92,7 +92,7 @@ public class PermissionAttachment {
         }
     }
 
-    public void remmove() {
+    public void remove() {
         this.permissible.removeAttachment(this);
     }
 
