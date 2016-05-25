@@ -1587,7 +1587,7 @@ public class Level implements ChunkManager, Metadatable {
 
         item.useOn(target);
         if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
-            item.count--;
+            item = new ItemBlock(new BlockAir(), 0, 0);
         }
 
         int dropExp = target.getDropExp();
