@@ -389,7 +389,7 @@ public abstract class BlockLiquid extends BlockTransparent {
     @Override
     public double getResistance() {
     	return 500;
-    };
+    }
 
     private boolean[] getOptimalFlowDirections() {
         if (this.temporalVector == null) {
