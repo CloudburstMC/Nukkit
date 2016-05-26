@@ -76,6 +76,8 @@ public abstract class SimpleConfig {
                     field.set(this, cfg.getDouble(path, field.getDouble(this)));
                 else if (field.getType() == String.class)
                     field.set(this, cfg.getString(path, (String) field.get(this)));
+                else if (field.getType() == ConfigSection.class)
+                    field.set(this, cfg.getSection(path));
                 else if (field.getType() == List.class) {
                     Type genericFieldType = field.getGenericType();
                     if (genericFieldType instanceof ParameterizedType) {
