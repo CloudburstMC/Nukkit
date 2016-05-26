@@ -706,7 +706,7 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
      * @return
      */
     public Set<String> getKeys(boolean child) {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new LinkedHashSet<>();
         this.entrySet().forEach(entry -> {
             keys.add(entry.getKey());
             if (entry.getValue() instanceof ConfigSection) {
