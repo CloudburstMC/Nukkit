@@ -329,7 +329,6 @@ public abstract class BlockLiquid extends BlockTransparent {
             }
 
             this.getLevel().setBlock(block, this.getBlock(newFlowDecay), true);
-            this.getLevel().scheduleUpdate(block, this.tickRate());
         }
     }
 
