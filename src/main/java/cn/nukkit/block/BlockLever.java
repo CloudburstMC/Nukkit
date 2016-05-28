@@ -64,11 +64,9 @@ public class BlockLever extends BlockFlowable {
         this.getLevel().setBlock(this, this, true, false);
         this.getLevel().addSound(new LeverSound(this, this.isPowerOn()));
         if (this.isPowerOn()) {
-            //this.getLevel().getServer().getLogger().notice("power on");
             this.setPowerSource(true);
             Redstone.active(this);
         } else {
-            //this.getLevel().getServer().getLogger().notice("power off");
             Redstone.deactive(this, this.getPowerLevel());
         }
         return true;
