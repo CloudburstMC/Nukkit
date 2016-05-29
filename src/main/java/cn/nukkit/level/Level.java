@@ -2637,6 +2637,7 @@ public class Level implements ChunkManager, Metadatable {
         pk.y = (float) y;
         pk.z = (float) z;
         pk.yaw = (float) yaw;
+        pk.headYaw = (float) yaw;
         pk.pitch = (float) pitch;
         pk.onGround = onGround;
         this.playerMoveToSend.put(entityId, pk);
