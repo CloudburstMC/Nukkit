@@ -18,6 +18,11 @@ public class ItemGlassBottle extends Item {
     public ItemGlassBottle(int meta, int count) {
         super(GLASS_BOTTLE, meta, count, "Glass Bottle");
     }
+    
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
