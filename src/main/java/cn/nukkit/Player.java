@@ -935,8 +935,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.allowFlight = this.isCreative();
 
         if (this.isSpectator()) {
+            this.keepMovement = true;
             this.despawnFromAll();
         } else {
+            this.keepMovement = false;
             this.spawnToAll();
         }
 
@@ -1214,7 +1216,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         boolean revert = false;
 
-        if ((distanceSquared / ((double) (tickDiff * tickDiff))) > 100 && this.getGamemode() < 3) {
+        if ((distanceSquared / ((double) (tickDiff * tickDiff))) > 100 && (newPos.y - this.y) > -5) {
             revert = true;
         } else {
             if (this.chunk == null || !this.chunk.isGenerated()) {
@@ -1638,6 +1640,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         } else {
             this.inventory.setHeldItemSlot(this.inventory.getHotbarSlotIndex(0));
         }
+
+        if (this.isSpectator()) this.keepMovement = true;
 
         PlayStatusPacket statusPacket = new PlayStatusPacket();
         statusPacket.status = PlayStatusPacket.LOGIN_SUCCESS;
