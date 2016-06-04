@@ -2931,6 +2931,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (containerSetSlotPacket.slot >= this.inventory.getSize()) {
                         break;
                     }
+                    if (this.isCreative()) {
+                        if (Item.getCreativeItemIndex(containerSetSlotPacket.item) != -1) {
+                            this.inventory.setItem(containerSetSlotPacket.slot, containerSetSlotPacket.item);
+                            this.inventory.setHotbarSlotIndex(containerSetSlotPacket.slot, containerSetSlotPacket.slot); //links hotbar[packet.slot] to slots[packet.slot]
+                        }
+                    }
                     transaction = new BaseTransaction(this.inventory, containerSetSlotPacket.slot, this.inventory.getItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
                 } else if (containerSetSlotPacket.windowid == ContainerSetContentPacket.SPECIAL_ARMOR) { //Our armor
                     if (containerSetSlotPacket.slot >= 4) {
@@ -3134,6 +3140,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(pk);
     }
 
+    @Deprecated
     public void sendTip(String message) {
         TextPacket pk = new TextPacket();
         pk.type = TextPacket.TYPE_TIP;
