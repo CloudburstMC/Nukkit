@@ -2613,6 +2613,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
 
                         if (itemInHand.getId() == Item.POTION) {
+                            Potion potion = Potion.getPotion(itemInHand.getDamage()).setSplash(false);	
+                        	
                             if (this.getGamemode() == SURVIVAL) {
                                 if (itemInHand.getCount() > 1) {
                                     ItemGlassBottle bottle = new ItemGlassBottle();
@@ -2624,8 +2626,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     itemInHand = new ItemGlassBottle();
                                 }
                             }
-
-                            Potion potion = Potion.getPotion(itemInHand.getDamage()).setSplash(false);
 
                             if (potion != null) {
                                 potion.applyPotion(this);
