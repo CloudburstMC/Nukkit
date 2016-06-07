@@ -26,7 +26,7 @@ __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
 Get Nukkit
 -------------
-* __[Official Site](http://nukkit.cn)__
+* __[Official Site](https://nukkit.io)__
 * __[Circle CI](https://circleci.com/gh/Nukkit/Nukkit/tree/master/)__ (**login required**)
 
 Introduction
@@ -59,5 +59,5 @@ Example Plugin which shows the API of Nukkit.
 
 Discussion
 -------------
-* __[Forums](http://forums.nukkit.cn)__
+* __[Forums](https://forums.nukkit.io)__
 * __[百度 Nukkit 吧](http://tieba.baidu.com/f?kw=nukkit)__
