@@ -136,7 +136,7 @@ public class EntityFallingBlock extends Entity {
             motionY *= 1 - getDrag();
             motionZ *= friction;
 
-            pos = (new Vector3(x - 0.5, y, z - 0.5)).floor();
+            pos = (new Vector3(x - 0.5, y, z - 0.5)).round();
 
             if (onGround) {
                 kill();

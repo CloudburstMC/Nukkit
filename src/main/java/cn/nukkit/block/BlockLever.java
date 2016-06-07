@@ -2,6 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.sound.ButtonClickSound;
+import cn.nukkit.level.sound.LeverSound;
+import cn.nukkit.redstone.Redstone;
 
 /**
  * @author Nukkit Project Team
@@ -10,6 +13,8 @@ public class BlockLever extends BlockFlowable {
 
     public BlockLever(int meta) {
         super(meta);
+        this.setPowerSource(true);
+        this.setPowerLevel(Redstone.POWER_STRONGEST);
     }
 
     public BlockLever() {
@@ -48,10 +53,22 @@ public class BlockLever extends BlockFlowable {
         };
     }
 
+    public boolean isPowerOn() {
+        return this.meta >= 8;
+    }
+
     @Override
     public boolean onActivate(Item item, Player player) {
         this.meta ^= 0x08;
+
         this.getLevel().setBlock(this, this, true, false);
+        this.getLevel().addSound(new LeverSound(this, this.isPowerOn()));
+        if (this.isPowerOn()) {
+            this.setPowerSource(true);
+            Redstone.active(this);
+        } else {
+            Redstone.deactive(this, this.getPowerLevel());
+        }
         return true;
     }
 
@@ -82,6 +99,14 @@ public class BlockLever extends BlockFlowable {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean onBreak(Item item) {
+        super.onBreak(item);
+        int level = this.getPowerLevel();
+        Redstone.deactive(this, level);
+        return true;
     }
 
 }
