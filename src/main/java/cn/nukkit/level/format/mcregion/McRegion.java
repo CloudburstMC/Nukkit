@@ -1,16 +1,18 @@
 package cn.nukkit.level.format.mcregion;
 
+import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.task.RequestChunkTask;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -115,12 +117,64 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
-        BaseFullChunk chunk = this.getChunk(x, z, false);
-        if (chunk == null) {
+    public RequestChunkTask requestChunkTask(int x, int z) throws ChunkException {
+    	return this.requestChunkTask(x, z, true);
+    }
+
+	@Override
+	public RequestChunkTask requestChunkTask(int x, int z, boolean create) {
+        String index = Level.chunkHash(x, z);
+        
+        if (!this.chunks.containsKey(index)) {
+        	return new RequestChunkTask() {
+        		McRegion level;
+        		int chunkX, chunkZ, regionX, regionZ;
+        		BaseFullChunk chunk;
+        		
+				public RequestChunkTask setData(McRegion level, int chunkX, int chunkZ, int regionX, int regionZ){
+					this.level = level;
+					this.chunkX = chunkX;
+					this.chunkZ = chunkZ;
+					this.regionX = regionX;
+					this.regionZ = regionZ;
+					return this;
+				}
+        		
+				@Override
+				public void onRun() {
+					RegionLoader loader;
+					try {
+						loader = new RegionLoader((LevelProvider)level, regionX, regionZ);
+						this.chunk = loader.readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
+		            } catch (IOException e) {
+		                throw new RuntimeException(e);
+		            }
+				}
+
+				@Override
+				public void onCompletion(Server server) {
+		            if (this.chunk == null && create)
+		                this.chunk = level.getEmptyChunk(chunkX, chunkZ);
+					this.level.requestChunkCallback(x, z, this.chunk);
+				}
+
+				@Override
+				public BaseFullChunk getChunk() {
+					return this.chunk;
+				}
+			}.setData(this, x, z, getRegionIndexX(x), getRegionIndexZ(z));
+        }
+    	
+        FullChunk chunk = this.getChunk(x, z, false);
+        this.requestChunkCallback(x, z, chunk);
+        return null;
+	}
+	
+	public void requestChunkCallback(int x, int z, FullChunk chunk){
+		if (chunk == null) {
             throw new ChunkException("Invalid Chunk Sent");
         }
-
+        
         byte[] tiles = new byte[0];
 
         if (!chunk.getBlockEntities().isEmpty()) {
@@ -161,9 +215,7 @@ public class McRegion extends BaseLevelProvider {
         stream.put(tiles);
 
         this.getLevel().chunkRequestCallback(x, z, stream.getBuffer());
-
-        return null;
-    }
+	}
 
     @Override
     public void unloadChunks() {

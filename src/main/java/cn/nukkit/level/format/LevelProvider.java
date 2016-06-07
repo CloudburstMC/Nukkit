@@ -2,6 +2,7 @@ package cn.nukkit.level.format;
 
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.generator.task.RequestChunkTask;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.AsyncTask;
 
@@ -15,7 +16,8 @@ public interface LevelProvider {
     byte ORDER_YZX = 0;
     byte ORDER_ZXY = 1;
 
-    AsyncTask requestChunkTask(int x, int z);
+    RequestChunkTask requestChunkTask(int x, int z);
+    RequestChunkTask requestChunkTask(int x, int z, boolean create);
 
     String getPath();
 
