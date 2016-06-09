@@ -32,6 +32,8 @@ public interface LevelProvider {
     void saveChunks();
 
     void saveChunk(int X, int Z);
+    
+    void saveChunk(int X, int Z, boolean async);
 
     void unloadChunks();
 
