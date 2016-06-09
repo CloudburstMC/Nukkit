@@ -550,30 +550,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(packet);
 
         if (this.spawned) {
+            for (Entity entity : this.level.getChunkEntities(x, z).values()) {
+                if (this != entity && !entity.closed && entity.isAlive()) {
+                    entity.spawnTo(this);
                 }
-        	this.level.requestChunk(x, z, new ChunkHandler() {
-        		String username;
-        		
-        		public ChunkHandler setData(String username){
-        			this.username = username;
-        			return this;
-        		}
-        		
-				@Override
-				public void onRun(BaseFullChunk chunk, Server server) {
-					Player player = server.getPlayer(username);
-					if(!(player instanceof Player))
-						return;
-					
-					Map<Long, Entity> entities = chunk == null ? chunk.getEntities() : new HashMap<>() ;
-					
-					for (Entity entity : entities.values()) {
-		                if (player != entity && !entity.closed && entity.isAlive()) {
-		                    entity.spawnTo(player);
-		                }
-		            }
-				}
-			}.setData(this.getName()));
+            }
         }
     }
 
