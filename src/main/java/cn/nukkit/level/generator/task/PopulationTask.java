@@ -18,20 +18,11 @@ public class PopulationTask extends AsyncTask {
 
     public BaseFullChunk[] chunks = new BaseFullChunk[9];
 
-    public PopulationTask(Level level, BaseFullChunk chunk) {
+    public PopulationTask(int levelId, BaseFullChunk chunk, BaseFullChunk[] chunks) {
         this.state = true;
-        this.levelId = level.getId();
+        this.levelId = levelId;
         this.chunk = chunk;
-
-        for (int i = 0; i < 9; i++) {
-            if (i == 4) {
-                continue;
-            }
-            int xx = -1 + i % 3;
-            int zz = -1 + (i / 3);
-            BaseFullChunk ck = level.getChunk(chunk.getX() + xx, chunk.getZ() + zz, false);
-            this.chunks[i] = ck;
-        }
+        this.chunks = chunks;
     }
 
     @Override

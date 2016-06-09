@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.RegionPool;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
@@ -13,6 +14,7 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.task.RequestChunkTask;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -33,9 +35,6 @@ import java.util.regex.Pattern;
  * Nukkit Project
  */
 public class McRegion extends BaseLevelProvider {
-
-    protected Map<String, RegionLoader> regions = new HashMap<>();
-
     protected Map<String, Chunk> chunks = new HashMap<>();
 
     public McRegion(Level level, String path) throws IOException {
@@ -118,7 +117,7 @@ public class McRegion extends BaseLevelProvider {
 
     @Override
     public RequestChunkTask requestChunkTask(int x, int z) throws ChunkException {
-    	return this.requestChunkTask(x, z, true);
+    	return this.requestChunkTask(x, z, false);
     }
 
 	@Override
@@ -126,6 +125,7 @@ public class McRegion extends BaseLevelProvider {
         String index = Level.chunkHash(x, z);
         
         if (!this.chunks.containsKey(index)) {
+        	int levelId = this.getLevel().getId();
         	return new RequestChunkTask() {
         		McRegion level;
         		int chunkX, chunkZ, regionX, regionZ;
@@ -143,12 +143,17 @@ public class McRegion extends BaseLevelProvider {
 				@Override
 				public void onRun() {
 					RegionLoader loader;
-					try {
-						loader = new RegionLoader((LevelProvider)level, regionX, regionZ);
-						this.chunk = loader.readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
-		            } catch (IOException e) {
-		                throw new RuntimeException(e);
-		            }
+					synchronized (RegionPool.map) {
+						try {
+							loader = (RegionLoader) RegionPool.getRegion(levelId, regionX, regionZ);
+							if (loader == null) 
+								loader = new RegionLoader((LevelProvider) level, regionX, regionZ);
+							chunk = loader.readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
+							RegionPool.setRegion(levelId, regionX, regionZ, loader);
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
+					}
 				}
 
 				@Override
@@ -173,6 +178,9 @@ public class McRegion extends BaseLevelProvider {
 	public void requestChunkCallback(int x, int z, FullChunk chunk){
 		if (chunk == null) {
             throw new ChunkException("Invalid Chunk Sent");
+        }
+        if (chunk != null) {
+            this.chunks.put(Level.chunkHash(x, z), (Chunk) chunk);
         }
         
         byte[] tiles = new byte[0];
@@ -259,18 +267,24 @@ public class McRegion extends BaseLevelProvider {
     @Override
     public void doGarbageCollection() {
         int limit = (int) (System.currentTimeMillis() - 300);
-        for (Map.Entry entry : this.regions.entrySet()) {
-            String index = (String) entry.getKey();
-            RegionLoader region = (RegionLoader) entry.getValue();
-            if (region.lastUsed <= limit) {
-                try {
-                    region.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                this.regions.remove(index);
-            }
-        }
+		int levelId = this.level.getId();
+		synchronized (RegionPool.map) {
+			for (Map.Entry entry : RegionPool.map.entrySet()) {
+				String index = (String) entry.getKey();
+				if (!index.split(":")[0].equals(String.valueOf(levelId)))
+					continue;
+
+				RegionLoader region = (RegionLoader) entry.getValue();
+				if (region.lastUsed <= limit) {
+					try {
+						region.close();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+					RegionPool.map.remove(index);
+				}
+			}
+		}
     }
 
     @Override
@@ -293,11 +307,9 @@ public class McRegion extends BaseLevelProvider {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         if (chunk == null && create) {
             chunk = this.getEmptyChunk(chunkX, chunkZ);
         }
-
         if (chunk != null) {
             this.chunks.put(index, chunk);
             return true;
@@ -338,7 +350,12 @@ public class McRegion extends BaseLevelProvider {
 
     protected RegionLoader getRegion(int x, int z) {
         String index = Level.chunkHash(x, z);
-        return this.regions.containsKey(index) ? this.regions.get(index) : null;
+
+        RegionLoader loader;
+		synchronized (RegionPool.map) {
+	        loader = (RegionLoader) RegionPool.getRegion(this.getLevel().getId(), x, z);
+		}
+		return loader;
     }
 
     @Override
@@ -393,23 +410,37 @@ public class McRegion extends BaseLevelProvider {
 
     protected void loadRegion(int x, int z) {
         String index = Level.chunkHash(x, z);
-        if (!this.regions.containsKey(index)) {
-            this.regions.put(index, new RegionLoader(this, x, z));
-        }
+
+		synchronized (RegionPool.map) {
+			int levelId = this.getLevel().getId();
+			if(RegionPool.getRegion(levelId, x, z) != null)
+				return;
+			RegionPool.setRegion(levelId, x, z, new RegionLoader(this, x, z));
+		}
     }
 
     @Override
     public void close() {
-        this.unloadChunks();
-        for (String index : new ArrayList<>(this.regions.keySet())) {
-            RegionLoader region = this.regions.get(index);
-            try {
-                region.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            this.regions.remove(index);
-        }
-        this.level = null;
-    }
+		this.unloadChunks();
+		int limit = (int) (System.currentTimeMillis() - 300);
+		int levelId = this.level.getId();
+		synchronized (RegionPool.map) {
+			for (Map.Entry entry : RegionPool.map.entrySet()) {
+				String index = (String) entry.getKey();
+				if (!index.split(":")[0].equals(String.valueOf(levelId)))
+					continue;
+
+				RegionLoader region = (RegionLoader) entry.getValue();
+				if (region.lastUsed <= limit) {
+					try {
+						region.close();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+					RegionPool.map.remove(index);
+				}
+			}
+		}
+		this.level = null;
+	}
 }
