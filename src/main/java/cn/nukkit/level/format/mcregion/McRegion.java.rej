@@ -1,0 +1,10 @@
+diff a/src/main/java/cn/nukkit/level/format/mcregion/McRegion.java b/src/main/java/cn/nukkit/level/format/mcregion/McRegion.java	(rejected hunks)
+@@ -117,7 +117,7 @@
+ 
+     @Override
+     public RequestChunkTask requestChunkTask(int x, int z) throws ChunkException {
+-    	return this.requestChunkTask(x, z, true);
++    	return this.requestChunkTask(x, z, false);
+     }
+ 
+ 	@Override

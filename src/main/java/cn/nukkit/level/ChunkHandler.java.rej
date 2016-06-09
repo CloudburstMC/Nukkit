@@ -1,0 +1,8 @@
+diff a/src/main/java/cn/nukkit/level/ChunkHandler.java b/src/main/java/cn/nukkit/level/ChunkHandler.java	(rejected hunks)
+@@ -4,6 +4,5 @@
+ import cn.nukkit.level.format.generic.BaseFullChunk;
+ 
+ public abstract class ChunkHandler {
+-	
+ 	public abstract void onRun(BaseFullChunk chunk, Server server);
+ }

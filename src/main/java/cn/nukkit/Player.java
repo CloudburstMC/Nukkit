@@ -34,7 +34,6 @@ import cn.nukkit.item.ItemArrow;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemGlassBottle;
 import cn.nukkit.item.food.Food;
-import cn.nukkit.level.ChunkHandler;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -551,6 +550,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(packet);
 
         if (this.spawned) {
+                }
         	this.level.requestChunk(x, z, new ChunkHandler() {
         		String username;
         		
@@ -714,29 +714,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             Chunk.Entry chunkEntry = Level.getChunkXZ(index);
             int chunkX = chunkEntry.chunkX;
             int chunkZ = chunkEntry.chunkZ;
-            
-            this.level.requestChunk(chunkX, chunkZ, new ChunkHandler() {
-        		String username;
-        		
-        		public ChunkHandler setData(String username){
-        			this.username = username;
-        			return this;
-        		}
-        		
-				@Override
-				public void onRun(BaseFullChunk chunk, Server server) {
-					Player player = server.getPlayer(username);
-					if(!(player instanceof Player))
-						return;
-					Map<Long, Entity> entities = chunk == null ? chunk.getEntities() : new HashMap<>() ;
-					
-					for (Entity entity : entities.values()) {
-		                if (player != entity && !entity.closed && entity.isAlive()) {
-		                    entity.spawnTo(player);
-		                }
-		            }
-				}
-			}.setData(this.getName()));
+            for (Entity entity : this.level.getChunkEntities(chunkX, chunkZ).values()) {
+                if (this != entity && !entity.closed && entity.isAlive()) {
+                    entity.spawnTo(this);
+                }
+            }
         }
 
         this.sendExperience(this.getExperience());
