@@ -156,7 +156,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public RequestChunkTask requestChunkTask(int x, int z) {
-    	return this.requestChunkTask(x, z, true);
+    	return this.requestChunkTask(x, z, false);
     }
 
 	@Override
@@ -218,6 +218,9 @@ public class LevelDB implements LevelProvider {
 	public void requestChunkCallback(int x, int z, FullChunk chunk){
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk sent");
+        }
+        if (chunk != null) {
+            this.chunks.put(Level.chunkHash(x, z), (Chunk) chunk);
         }
 
         byte[] tiles = new byte[0];
