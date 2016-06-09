@@ -349,7 +349,7 @@ public class LevelDB implements LevelProvider {
                 , this);
     }
 
-    private void writeChunk(Chunk chunk) {
+    public void writeChunk(Chunk chunk) {
         byte[] binary = chunk.toBinary(true);
         this.db.put(TerrainKey.create(chunk.getX(), chunk.getZ()).toArray(), Binary.subBytes(binary, 8, binary.length - 1));
         this.db.put(FlagsKey.create(chunk.getX(), chunk.getZ()).toArray(), Binary.subBytes(binary, binary.length - 1));
@@ -375,10 +375,26 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public void saveChunk(int X, int Z) {
-        if (this.isChunkLoaded(X, Z)) {
-            this.writeChunk(this.getChunk(X, Z));
-        }
+    	this.saveChunk(X, Z, true);
     }
+    
+	@Override
+	public void saveChunk(int X, int Z, boolean async) {
+		if (this.isChunkLoaded(X, Z)) {
+			if (!async) {
+				this.writeChunk(this.getChunk(X, Z));
+			} else {
+				LevelDB level = this;
+				BaseFullChunk chunk = this.getChunk(X, Z);
+				this.getServer().getScheduler().scheduleAsyncTask(new AsyncTask() {
+					@Override
+					public void onRun() {
+						level.writeChunk((Chunk) chunk);
+					}
+				});
+			}
+		}
+	}
 
     @Override
     public Chunk getChunk(int chunkX, int chunkZ) {

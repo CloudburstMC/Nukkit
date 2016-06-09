@@ -154,13 +154,13 @@ public class McRegion extends BaseLevelProvider {
 							throw new RuntimeException(e);
 						}
 					}
+		            if (chunk == null && create)
+		                chunk = level.getEmptyChunk(chunkX, chunkZ);
 				}
 
 				@Override
 				public void onCompletion(Server server) {
-		            if (this.chunk == null && create)
-		                this.chunk = level.getEmptyChunk(chunkX, chunkZ);
-					this.level.requestChunkCallback(x, z, this.chunk);
+					this.level.requestChunkCallback(x, z, chunk);
 				}
 
 				@Override
@@ -339,14 +339,68 @@ public class McRegion extends BaseLevelProvider {
 
     @Override
     public void saveChunk(int X, int Z) {
-        if (this.isChunkLoaded(X, Z)) {
-            try {
-                this.getRegion(X >> 5, Z >> 5).writeChunk(this.getChunk(X, Z));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+    	this.saveChunk(X, Z, true);
     }
+
+	@Override
+	public void saveChunk(int X, int Z, boolean async) {
+		if (this.isChunkLoaded(X, Z)) {
+			if (!async) {
+				try {
+					this.getRegion(X >> 5, Z >> 5).writeChunk(this.getChunk(X, Z));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+				return;
+			}
+
+			String index = Level.chunkHash(X, Z);
+			BaseFullChunk chunk = null;
+			if (this.chunks.containsKey(index))
+				chunk = this.chunks.get(index);
+			RequestChunkTask task = this.requestChunkTask(X, Z);
+
+			int levelId = this.getLevel().getId();
+			LevelProvider level = this;
+			
+			this.getServer().getScheduler().scheduleAsyncTask(new AsyncTask() {
+				BaseFullChunk chunk;
+				RequestChunkTask task;
+
+				public AsyncTask setData(BaseFullChunk chunk, RequestChunkTask task) {
+					this.chunk = chunk;
+					this.task = task;
+					return this;
+				}
+
+				@Override
+				public void onRun() {
+					synchronized (RegionPool.map) {
+						RegionLoader loader = (RegionLoader) RegionPool.getRegion(levelId, X >> 5, Z >> 5);
+						if (loader == null)
+							loader = new RegionLoader(level, X, Z);
+						if (chunk == null && task != null) {
+							task.onRun();
+							chunk = task.getChunk();
+							if (chunk != null)
+								try {
+									loader.writeChunk(chunk);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+						} else if (chunk != null && task == null) {
+							try {
+								loader.writeChunk(chunk);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						RegionPool.setRegion(levelId, X, Z, loader);
+					}
+				}
+			}.setData(chunk, task));
+		}
+	}
 
     protected RegionLoader getRegion(int x, int z) {
         String index = Level.chunkHash(x, z);
