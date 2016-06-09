@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.RegionPool;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseChunk;
@@ -13,7 +14,6 @@ import cn.nukkit.level.generator.task.RequestChunkTask;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.FullChunkDataPacket;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -31,9 +31,6 @@ import java.util.regex.Pattern;
  * Nukkit Project
  */
 public class Anvil extends BaseLevelProvider {
-
-    protected Map<String, RegionLoader> regions = new HashMap<>();
-
     protected Map<String, Chunk> chunks = new HashMap<>();
 
     public Anvil(Level level, String path) throws IOException {
@@ -114,21 +111,22 @@ public class Anvil extends BaseLevelProvider {
         return chunkZ >> 5;
     }
 
-    @Override
-    public RequestChunkTask requestChunkTask(int x, int z) throws ChunkException {
-		return this.requestChunkTask(x, z, true);
-    }
+	@Override
+	public RequestChunkTask requestChunkTask(int x, int z) throws ChunkException {
+		return this.requestChunkTask(x, z, false);
+	}
 
-    public RequestChunkTask requestChunkTask(int x, int z, boolean create) throws ChunkException {
-        String index = Level.chunkHash(x, z);
-        
-        if (!this.chunks.containsKey(index)) {
-        	return new RequestChunkTask() {
-        		Anvil level;
-        		int chunkX, chunkZ, regionX, regionZ;
-        		BaseChunk chunk;
-        		
-				public RequestChunkTask setData(Anvil level, int chunkX, int chunkZ, int regionX, int regionZ){
+	public RequestChunkTask requestChunkTask(int x, int z, boolean create) throws ChunkException {
+		String index = Level.chunkHash(x, z);
+
+		if (!this.chunks.containsKey(index)) {
+			int levelId = this.getLevel().getId();
+			return new RequestChunkTask() {
+				Anvil level;
+				int chunkX, chunkZ, regionX, regionZ;
+				BaseChunk chunk;
+
+				public RequestChunkTask setData(Anvil level, int chunkX, int chunkZ, int regionX, int regionZ) {
 					this.level = level;
 					this.chunkX = chunkX;
 					this.chunkZ = chunkZ;
@@ -136,18 +134,24 @@ public class Anvil extends BaseLevelProvider {
 					this.regionZ = regionZ;
 					return this;
 				}
-        		
+
 				@Override
 				public void onRun() {
 					RegionLoader loader;
-					try {
-						loader = new RegionLoader((LevelProvider)level, regionX, regionZ);
-						chunk = loader.readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
-		            } catch (IOException e) {
-		                throw new RuntimeException(e);
-		            }
+					synchronized (RegionPool.map) {
+						try {
+							loader = (RegionLoader) RegionPool.getRegion(levelId, regionX, regionZ);
+							if (loader == null) {
+								loader = new RegionLoader((LevelProvider) level, regionX, regionZ);
+							}
+							chunk = loader.readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
+							RegionPool.setRegion(levelId, regionX, regionZ, loader);
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
+					}
 				}
-				
+
 				@Override
 				public BaseChunk getChunk() {
 					return chunk;
@@ -155,21 +159,24 @@ public class Anvil extends BaseLevelProvider {
 
 				@Override
 				public void onCompletion(Server server) {
-		            if (chunk == null && create)
-		                chunk = level.getEmptyChunk(chunkX, chunkZ);
+					if (chunk == null && create)
+						chunk = level.getEmptyChunk(chunkX, chunkZ);
 					level.requestChunkCallback(x, z, chunk);
 				}
 			}.setData(this, x, z, getRegionIndexX(x), getRegionIndexZ(z));
-        }
-    	
-        FullChunk chunk = this.getChunk(x, z, false);
-        this.requestChunkCallback(x, z, chunk);
-        return null;
-    }
-    
+		}
+
+		FullChunk chunk = this.getChunk(x, z, false);
+		this.requestChunkCallback(x, z, chunk);
+		return null;
+	}
+
     public void requestChunkCallback(int x, int z, FullChunk chunk){
     	if (chunk == null) {
             throw new ChunkException("Invalid Chunk Set");
+        }
+        if (chunk != null) {
+            this.chunks.put(Level.chunkHash(x, z), (Chunk) chunk);
         }
 
         byte[] blockEntities = new byte[0];
@@ -256,19 +263,25 @@ public class Anvil extends BaseLevelProvider {
     @Override
     public void doGarbageCollection() {
         int limit = (int) (System.currentTimeMillis() - 300);
-        for (Map.Entry entry : this.regions.entrySet()) {
-            String index = (String) entry.getKey();
-            RegionLoader region = (RegionLoader) entry.getValue();
-            if (region.lastUsed <= limit) {
-                try {
-                    region.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                this.regions.remove(index);
-            }
-        }
-    }
+		int levelId = this.level.getId();
+		synchronized (RegionPool.map) {
+			for (Map.Entry entry : RegionPool.map.entrySet()) {
+				String index = (String) entry.getKey();
+				if (!index.split(":")[0].equals(String.valueOf(levelId)))
+					continue;
+
+				RegionLoader region = (RegionLoader) entry.getValue();
+				if (region.lastUsed <= limit) {
+					try {
+						region.close();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+					RegionPool.map.remove(index);
+				}
+			}
+		}
+	}
 
     @Override
     public boolean loadChunk(int chunkX, int chunkZ) {
@@ -324,7 +337,8 @@ public class Anvil extends BaseLevelProvider {
     public void saveChunk(int X, int Z) {
         if (this.isChunkLoaded(X, Z)) {
             try {
-                this.getRegion(X >> 5, Z >> 5).writeChunk(this.getChunk(X, Z));
+            	RegionLoader region = this.getRegion(X >> 5, Z >> 5);
+                region.writeChunk(this.getChunk(X, Z));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -333,7 +347,12 @@ public class Anvil extends BaseLevelProvider {
 
     protected RegionLoader getRegion(int x, int z) {
         String index = Level.chunkHash(x, z);
-        return this.regions.containsKey(index) ? this.regions.get(index) : null;
+
+        RegionLoader loader;
+		synchronized (RegionPool.map) {
+	        loader = (RegionLoader) RegionPool.getRegion(this.getLevel().getId(), x, z);
+		}
+		return loader;
     }
 
     @Override
@@ -394,27 +413,41 @@ public class Anvil extends BaseLevelProvider {
 
     protected void loadRegion(int x, int z) {
         String index = Level.chunkHash(x, z);
-        if (!this.regions.containsKey(index)) {
-            try {
-                this.regions.put(index, new RegionLoader(this, x, z));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        
+		synchronized (RegionPool.map) {
+			int levelId = this.getLevel().getId();
+			if(RegionPool.getRegion(levelId, x, z) != null)
+				return;
+			try {
+				RegionPool.setRegion(levelId, x, z, new RegionLoader(this, x, z));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
     }
 
     @Override
     public void close() {
         this.unloadChunks();
-        for (String index : new ArrayList<>(this.regions.keySet())) {
-            RegionLoader region = this.regions.get(index);
-            try {
-                region.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            this.regions.remove(index);
-        }
+		int limit = (int) (System.currentTimeMillis() - 300);
+		int levelId = this.level.getId();
+		synchronized (RegionPool.map) {
+			for (Map.Entry entry : RegionPool.map.entrySet()) {
+				String index = (String) entry.getKey();
+				if (!index.split(":")[0].equals(String.valueOf(levelId)))
+					continue;
+
+				RegionLoader region = (RegionLoader) entry.getValue();
+				if (region.lastUsed <= limit) {
+					try {
+						region.close();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+					RegionPool.map.remove(index);
+				}
+			}
+		}
         this.level = null;
     }
 }
