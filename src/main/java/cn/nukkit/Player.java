@@ -250,6 +250,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void setAllowFlight(boolean value) {
         this.allowFlight = value;
+        this.inAirTicks = 0;
         this.sendSettings();
     }
 
