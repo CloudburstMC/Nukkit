@@ -2070,7 +2070,7 @@ public class Level implements ChunkManager, Metadatable {
 		if (chunk == null) {
 			return;
 		}
-		
+
 		String index = Level.chunkHash(chunkX, chunkZ);
 		FullChunk oldChunk = this.getChunk(chunkX, chunkZ, false);
 		if (unload && oldChunk != null) {

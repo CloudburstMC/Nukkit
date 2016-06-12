@@ -48,15 +48,27 @@ public class CraftingManager {
                 "XX"
         )).setIngredient("X", Item.get(Item.WOODEN_PLANK, null)));
 
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.GLOWSTONE_BLOCK, 0, 1))).addIngredient(Item.get(Item.GLOWSTONE_DUST, 0, 4)));
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.LIT_PUMPKIN, 0, 1))).addIngredient(Item.get(Item.PUMPKIN, 0, 1)).addIngredient(Item.get(Item.TORCH, 0, 1)));
-
-        this.registerRecipe((new ShapedRecipe(Item.get(Item.SNOW_BLOCK, 0, 1),
+        this.registerRecipe((new ShapedRecipe(Item.get(Item.GLOWSTONE_BLOCK, 0, 1),
                 "XX",
                 "XX"
-        )).setIngredient("X", Item.get(Item.SNOWBALL)));
+        )).setIngredient("X", Item.get(Item.GLOWSTONE_DUST, 0, 1)));
+        this.registerRecipe((new ShapedRecipe(Item.get(Item.LIT_PUMPKIN, 0, 1),
+                "X ",
+                "Y "
+        )).setIngredient("X", Item.get(Item.PUMPKIN, 0, 1)).setIngredient("Y", Item.get(Item.TORCH, 0, 1)));
 
-        this.registerRecipe((new ShapelessRecipe(Item.get(Item.SNOW_LAYER, 0, 6))).addIngredient(Item.get(Item.SNOW_BLOCK, 0, 3)));
+        this.registerRecipe((new ShapedRecipe(Item.get(Item.SNOW_BLOCK, 0, 1),
+                "   ",
+                "XX ",
+                "XX "
+        )).setIngredient("X", Item.get(Item.SNOWBALL, 0 , 1)));
+
+        this.registerRecipe((new ShapedRecipe(Item.get(Item.SNOW_LAYER, 0, 6),
+                "   ",
+                "XXX",
+                "   "
+        )).setIngredient("X", Item.get(Item.SNOW_BLOCK, 0, 1)));
+
 
         this.registerRecipe((new ShapedRecipe(Item.get(Item.STICK, 0, 4),
                 "X ",
@@ -127,7 +139,8 @@ public class CraftingManager {
                 "DOD",
                 "OOO"
         )).setIngredient("D", Item.get(Item.DIAMOND, 0, 2)).setIngredient("O", Item.get(Item.OBSIDIAN, 0, 4)).setIngredient("B", Item.get(Item.BOOK, 0, 1)));
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.FENCE, 0, 3),
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.FENCE, BlockPlanks.OAK, 3),
                 "PSP",
                 "PSP",
                 "   "
@@ -399,7 +412,7 @@ public class CraftingManager {
                 "PPP",
                 "PPP",
                 " S "
-        )).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANKS, null, 1))); //TODO: check if it gives one sign or three
+        )).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANKS, null, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.IRON_BARS, 0, 16),
                 "   ",

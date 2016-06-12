@@ -254,7 +254,7 @@ public class Normal extends Generator {
                         if ((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == seaHeight) {
                             chunk.setBlock(genx, geny, genz, Block.ICE);
                         } else {
-                            chunk.setBlock(genx, geny, genz, Block.WATER);
+                            chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
                         }
                     } else {
                         chunk.setBlock(genx, geny, genz, Block.STONE);

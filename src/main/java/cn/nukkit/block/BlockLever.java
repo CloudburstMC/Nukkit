@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.sound.ButtonClickSound;
 import cn.nukkit.level.sound.LeverSound;
 import cn.nukkit.redstone.Redstone;
 

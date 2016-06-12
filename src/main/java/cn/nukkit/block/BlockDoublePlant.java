@@ -25,7 +25,7 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean canBeReplaced() {
-    	return this.meta == 2 || this.meta == 3;
+        return this.meta == 2 || this.meta == 3;
     }
 
     @Override

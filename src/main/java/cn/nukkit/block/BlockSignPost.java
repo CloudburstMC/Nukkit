@@ -57,39 +57,41 @@ public class BlockSignPost extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (face == 0) return false;
+        if (face != 0) {
+            CompoundTag nbt = new CompoundTag()
+                    .putString("id", BlockEntity.SIGN)
+                    .putInt("x", (int) block.x)
+                    .putInt("y", (int) block.y)
+                    .putInt("z", (int) block.z)
+                    .putString("Text1", "")
+                    .putString("Text2", "")
+                    .putString("Text3", "")
+                    .putString("Text4", "");
 
-        if (face < 2 || face > 5) {
-            meta = (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f;
-            getLevel().setBlock(block, new BlockSignPost(meta), true);
-        } else {
-            meta = face;
-            getLevel().setBlock(block, new BlockWallSign(meta), true);
-        }
-
-        CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.SIGN)
-                .putInt("x", (int) block.x)
-                .putInt("y", (int) block.y)
-                .putInt("z", (int) block.z)
-                .putString("Text1", "")
-                .putString("Text2", "")
-                .putString("Text3", "")
-                .putString("Text4", "");
-
-        if (player != null) {
-            nbt.putString("Creator", player.getUniqueId().toString());
-        }
-
-        if (item.hasCustomBlockData()) {
-            for (Tag aTag : item.getCustomBlockData().getAllTags()) {
-                nbt.put(aTag.getName(), aTag);
+            if (face == 1) {
+                meta = (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f;
+                getLevel().setBlock(block, new BlockSignPost(meta), true);
+            } else {
+                meta = face;
+                getLevel().setBlock(block, new BlockWallSign(meta), true);
             }
+
+            if (player != null) {
+                nbt.putString("Creator", player.getUniqueId().toString());
+            }
+
+            if (item.hasCustomBlockData()) {
+                for (Tag aTag : item.getCustomBlockData().getAllTags()) {
+                    nbt.put(aTag.getName(), aTag);
+                }
+            }
+
+            new BlockEntitySign(getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+
+            return true;
         }
 
-        new BlockEntitySign(getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
-
-        return true;
+        return false;
     }
 
     @Override
@@ -103,13 +105,6 @@ public class BlockSignPost extends BlockTransparent {
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean onBreak(Item item) {
-        getLevel().setBlock(this, new BlockAir(), true, true);
-
-        return true;
     }
 
     @Override
