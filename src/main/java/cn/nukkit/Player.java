@@ -934,6 +934,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.gamemode = gamemode;
 
         this.allowFlight = this.isCreative();
+        this.inAirTicks = 0;
 
         if (this.isSpectator()) {
             this.keepMovement = true;
