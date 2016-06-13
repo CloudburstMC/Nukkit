@@ -25,10 +25,9 @@ public class CraftingManager {
     private static int RECIPE_COUNT = 0;
 
     public CraftingManager() {
-        this.registerStonecutter();
+        //this.registerStonecutter();
         this.registerFurnace();
         this.registerBrewing();
-
         this.registerDyes();
         this.registerIngots();
         this.registerTools();
@@ -134,6 +133,7 @@ public class CraftingManager {
                 "P P",
                 "PPP"
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, null, 1)));
+
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.ENCHANTMENT_TABLE, 0, 1),
                 " B ",
                 "DOD",
@@ -176,6 +176,12 @@ public class CraftingManager {
                 "   "
         )).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.DARK_OAK, 1)));
 
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.NETHER_BRICK_FENCE, 0, 3),
+                "PPP",
+                "PPP",
+                "   "
+        )).setIngredient("P", Item.get(Item.NETHER_BRICK_BLOCK, 0, 1)));
+
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.FENCE_GATE, 0, 1),
                 "SPS",
                 "SPS",
@@ -211,6 +217,18 @@ public class CraftingManager {
                 "SPS",
                 "   "
         )).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.ACACIA, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.COBBLESTONE_WALL, BlockWall.NONE_MOSSY_WALL, 6),
+                "CCC",
+                "CCC",
+                "   "
+        )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.COBBLESTONE_WALL, BlockWall.MOSSY_WALL, 6),
+                "MMM",
+                "MMM",
+                "   "
+        )).setIngredient("M", Item.get(Item.MOSS_STONE, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.FURNACE, 0, 1),
                 "CCC",
@@ -278,11 +296,89 @@ public class CraftingManager {
                 "   "
         )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.DARK_OAK, 5)));
 
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SANDSTONE_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.SANDSTONE, null, 1)));
+
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOODEN_STAIRS, 0, 4),
-                "  P",
-                " PP",
+                "P  ",
+                "PP ",
                 "PPP"
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.OAK, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SPRUCE_WOOD_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.SPRUCE, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.BIRCH_WOOD_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.BIRCH, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.JUNGLE_WOOD_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.JUNGLE, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.ACACIA_WOOD_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.ACACIA, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.DARK_OAK_WOOD_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.DARK_OAK, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.COBBLESTONE_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.COBBLESTONE, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.BRICK_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.BRICKS_BLOCK, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE_BRICK_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.STONE_BRICK, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.QUARTZ_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.QUARTZ_BLOCK, null, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.NETHER_BRICKS_STAIRS, 0, 4),
+                "P  ",
+                "PP ",
+                "PPP"
+        )).setIngredient("P", Item.get(Item.NETHER_BRICK_BLOCK, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.STONE, 6),
+                "PPP",
+                "   ",
+                "   "
+        )).setIngredient("P", Item.get(Item.STONE, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.SANDSTONE, 6),
+                "PPP",
+                "   ",
+                "   "
+        )).setIngredient("P", Item.get(Item.SANDSTONE, null, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOOD_SLAB, BlockPlanks.OAK, 6),
                 "PPP",
@@ -290,23 +386,11 @@ public class CraftingManager {
                 "   "
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.OAK, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SPRUCE_WOOD_STAIRS, 0, 4),
-                "  P",
-                " PP",
-                "PPP"
-        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.SPRUCE, 1)));
-
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOOD_SLAB, BlockPlanks.SPRUCE, 6),
                 "PPP",
                 "   ",
                 "   "
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.SPRUCE, 1)));
-
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.BIRCH_WOOD_STAIRS, 0, 4),
-                "  P",
-                " PP",
-                "PPP"
-        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.BIRCH, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOOD_SLAB, BlockPlanks.BIRCH, 6),
                 "PPP",
@@ -314,23 +398,11 @@ public class CraftingManager {
                 "   "
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.BIRCH, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.JUNGLE_WOOD_STAIRS, 0, 4),
-                "  P",
-                " PP",
-                "PPP"
-        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.JUNGLE, 1)));
-
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOOD_SLAB, BlockPlanks.JUNGLE, 6),
                 "PPP",
                 "   ",
                 "   "
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.JUNGLE, 1)));
-
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.ACACIA_WOOD_STAIRS, 0, 4),
-                "  P",
-                " PP",
-                "PPP"
-        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.ACACIA, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOOD_SLAB, BlockPlanks.ACACIA, 6),
                 "PPP",
@@ -338,17 +410,77 @@ public class CraftingManager {
                 "   "
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.ACACIA, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.DARK_OAK_WOOD_STAIRS, 0, 4),
-                "  P",
-                " PP",
-                "PPP"
-        )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.DARK_OAK, 1)));
-
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOOD_SLAB, BlockPlanks.DARK_OAK, 6),
                 "PPP",
                 "   ",
                 "   "
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.DARK_OAK, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.COBBLESTONE, 6),
+                "PPP",
+                "   ",
+                "   "
+        )).setIngredient("P", Item.get(Item.COBBLESTONE, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.BRICK, 6),
+                "PPP",
+                "   ",
+                "   "
+        )).setIngredient("P", Item.get(Item.BRICK, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.STONE_BRICK, 6),
+                "PPP",
+                "   ",
+                "   "
+        )).setIngredient("P", Item.get(Item.STONE_BRICK, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.QUARTZ, 6),
+                "PPP",
+                "   ",
+                "   "
+        )).setIngredient("P", Item.get(Item.QUARTZ_BLOCK, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.NETHER_BRICK, 6),
+                "PPP",
+                "   ",
+                "   "
+        )).setIngredient("P", Item.get(Item.NETHER_BRICK_BLOCK, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.QUARTZ_BLOCK, BlockQuartz.QUARTZ_NORMAL, 1),
+                "NN ",
+                "NN ",
+                "   "
+        )).setIngredient("N", Item.get(Item.NETHER_QUARTZ, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.QUARTZ_BLOCK, BlockQuartz.QUARTZ_PILLAR, 2),
+                "N  ",
+                "N  ",
+                "   "
+        )).setIngredient("N", Item.get(Item.QUARTZ_BLOCK, BlockQuartz.QUARTZ_NORMAL, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.QUARTZ_BLOCK, BlockQuartz.QUARTZ_CHISELED, 1),
+                "   ",
+                " N ",
+                " N "
+        )).setIngredient("N", Item.get(Item.SLAB, BlockSlab.QUARTZ, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SANDSTONE, BlockSandstone.NORMAL, 1),
+                "SS ",
+                "SS ",
+                "   "
+        )).setIngredient("S", Item.get(Item.SAND, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SANDSTONE, BlockSandstone.SMOOTH, 2),
+                "S  ",
+                "S  ",
+                "   "
+        )).setIngredient("S", Item.get(Item.SANDSTONE, BlockSandstone.NORMAL, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SANDSTONE, BlockSandstone.CHISELED, 1),
+                "   ",
+                " N ",
+                " N "
+        )).setIngredient("N", Item.get(Item.SLAB, BlockSlab.SANDSTONE, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BUCKET, 0, 1),
                 "I I",
@@ -430,8 +562,6 @@ public class CraftingManager {
                 " I ",
                 "CCC"
         )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("I", Item.get(Item.BLAZE_ROD, 0, 1)));
-
-
     }
 
     protected void registerFurnace() {
