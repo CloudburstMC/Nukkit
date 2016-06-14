@@ -72,12 +72,7 @@ public class CraftingManager {
                 "X ",
                 "X "
         )).setIngredient("X", Item.get(Item.WOODEN_PLANK, null)));
-
-        this.registerRecipe((new ShapedRecipe(Item.get(Item.STONECUTTER, 0, 1),
-                "XX",
-                "XX"
-        )).setIngredient("X", Item.get(Item.COBBLESTONE)));
-
+        
         this.registerRecipe((new ShapedRecipe(Item.get(Item.WOODEN_PLANK, BlockPlanks.OAK, 4),
                 "X"
         )).setIngredient("X", Item.get(Item.WOOD, BlockWood.OAK, 1)));
