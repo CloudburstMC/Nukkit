@@ -252,43 +252,43 @@ public class CraftingManager {
                 "II ",
                 "II ",
                 "II "
-        )).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 6)));
+        )).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 0, 1),
                 "PSP",
                 "PPP",
                 "   "
-        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.OAK, 5)));
+        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.OAK, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 1, 1),
                 "PSP",
                 "PPP",
                 "   "
-        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.SPRUCE, 5)));
+        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.SPRUCE, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 2, 1),
                 "PSP",
                 "PPP",
                 "   "
-        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.BIRCH, 5)));
+        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.BIRCH, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 3, 1),
                 "PSP",
                 "PPP",
                 "   "
-        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.JUNGLE, 5)));
+        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.JUNGLE, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 4, 1),
                 "PSP",
                 "PPP",
                 "   "
-        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.ACACIA, 5)));
+        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.ACACIA, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BOAT, 5, 1),
                 "PSP",
                 "PPP",
                 "   "
-        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.DARK_OAK, 5)));
+        )).setIngredient("S", Item.get(Item.WOODEN_SHOVEL, 0, 1)).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.DARK_OAK, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.SANDSTONE_STAIRS, 0, 4),
                 "P  ",
