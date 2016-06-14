@@ -5,11 +5,12 @@ package cn.nukkit.block;
  * Nukkit Project
  */
 public class BlockWood2 extends BlockWood {
-    public static final int ACACIA = 1;
-    public static final int DARK_OAK = 2;
+
+    public static final int ACACIA = 0;
+    public static final int DARK_OAK = 1;
 
     public BlockWood2() {
-        super();
+        this(0);
     }
 
     public BlockWood2(int meta) {
