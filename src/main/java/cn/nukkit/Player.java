@@ -34,7 +34,6 @@ import cn.nukkit.item.ItemArrow;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemGlassBottle;
 import cn.nukkit.item.food.Food;
-import cn.nukkit.level.ChunkHandler;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -251,6 +250,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void setAllowFlight(boolean value) {
         this.allowFlight = value;
+        this.inAirTicks = 0;
         this.sendSettings();
     }
 
@@ -487,7 +487,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.sleeping != null;
     }
 
-    public int getInAirTicks(){
+    public int getInAirTicks() {
         return this.inAirTicks;
     }
 
@@ -551,29 +551,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(packet);
 
         if (this.spawned) {
-        	this.level.requestChunk(x, z, new ChunkHandler() {
-        		String username;
-        		
-        		public ChunkHandler setData(String username){
-        			this.username = username;
-        			return this;
-        		}
-        		
-				@Override
-				public void onRun(BaseFullChunk chunk, Server server) {
-					Player player = server.getPlayer(username);
-					if(!(player instanceof Player))
-						return;
-					
-					Map<Long, Entity> entities = chunk == null ? chunk.getEntities() : new HashMap<>() ;
-					
-					for (Entity entity : entities.values()) {
-		                if (player != entity && !entity.closed && entity.isAlive()) {
-		                    entity.spawnTo(player);
-		                }
-		            }
-				}
-			}.setData(this.getName()));
+            for (Entity entity : this.level.getChunkEntities(x, z).values()) {
+                if (this != entity && !entity.closed && entity.isAlive()) {
+                    entity.spawnTo(this);
+                }
+            }
         }
     }
 
@@ -714,29 +696,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             Chunk.Entry chunkEntry = Level.getChunkXZ(index);
             int chunkX = chunkEntry.chunkX;
             int chunkZ = chunkEntry.chunkZ;
-            
-            this.level.requestChunk(chunkX, chunkZ, new ChunkHandler() {
-        		String username;
-        		
-        		public ChunkHandler setData(String username){
-        			this.username = username;
-        			return this;
-        		}
-        		
-				@Override
-				public void onRun(BaseFullChunk chunk, Server server) {
-					Player player = server.getPlayer(username);
-					if(!(player instanceof Player))
-						return;
-					Map<Long, Entity> entities = chunk == null ? chunk.getEntities() : new HashMap<>() ;
-					
-					for (Entity entity : entities.values()) {
-		                if (player != entity && !entity.closed && entity.isAlive()) {
-		                    entity.spawnTo(player);
-		                }
-		            }
-				}
-			}.setData(this.getName()));
+            for (Entity entity : this.level.getChunkEntities(chunkX, chunkZ).values()) {
+                if (this != entity && !entity.closed && entity.isAlive()) {
+                    entity.spawnTo(this);
+                }
+            }
         }
 
         this.sendExperience(this.getExperience());
@@ -970,6 +934,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.gamemode = gamemode;
 
         this.allowFlight = this.isCreative();
+        this.inAirTicks = 0;
 
         if (this.isSpectator()) {
             this.keepMovement = true;
@@ -1321,8 +1286,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.lastY,
                 this.lastZ,
                 this.lastYaw,
-                this.lastPitch
-                , this.level);
+                this.lastPitch,
+                this.level);
         Location to = this.getLocation();
 
         double delta = Math.pow(this.lastX - to.x, 2) + Math.pow(this.lastY - to.y, 2) + Math.pow(this.lastZ - to.z, 2);
@@ -1500,6 +1465,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     ++this.inAirTicks;
+
                 }
 
                 if (this.isSurvival() || this.isAdventure()) {
@@ -2508,7 +2474,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             case InteractPacket.ACTION_RIGHT_CLICK:
                                 cancelled = true;
 
-                                if(((EntityVehicle) targetEntity).linkedEntity != null){
+                                if (((EntityVehicle) targetEntity).linkedEntity != null) {
                                     break;
                                 }
                                 pk = new SetEntityLinkPacket();
@@ -2613,8 +2579,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
 
                         if (itemInHand.getId() == Item.POTION) {
-                            Potion potion = Potion.getPotion(itemInHand.getDamage()).setSplash(false);	
-                        	
+                            Potion potion = Potion.getPotion(itemInHand.getDamage()).setSplash(false);
+
                             if (this.getGamemode() == SURVIVAL) {
                                 if (itemInHand.getCount() > 1) {
                                     ItemGlassBottle bottle = new ItemGlassBottle();
@@ -3278,7 +3244,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.hasSpawned = new HashMap<>();
             this.spawnPosition = null;
 
-            if(this.riding instanceof EntityVehicle){
+            if (this.riding instanceof EntityVehicle) {
                 ((EntityVehicle) this.riding).linkedEntity = null;
             }
 

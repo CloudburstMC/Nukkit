@@ -18,7 +18,7 @@ public class ItemGlassBottle extends Item {
     public ItemGlassBottle(int meta, int count) {
         super(GLASS_BOTTLE, meta, count, "Glass Bottle");
     }
-    
+
     @Override
     public boolean canBeActivated() {
         return true;

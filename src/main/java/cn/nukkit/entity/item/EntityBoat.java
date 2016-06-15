@@ -22,6 +22,10 @@ public class EntityBoat extends EntityVehicle {
 
     public static final int DATA_WOOD_ID = 20;
 
+    public EntityBoat(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     protected void initEntity() {
         super.initEntity();
@@ -57,10 +61,6 @@ public class EntityBoat extends EntityVehicle {
         return NETWORK_ID;
     }
 
-    public EntityBoat(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-    }
-
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
@@ -82,14 +82,22 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public void attack(EntityDamageEvent source) {
-        if (source instanceof EntityDamageByEntityEvent) {
-            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-            if (damager instanceof Player && ((Player) damager).isCreative()) {
-                source.setDamage(this.health);
-            }
-        }
         super.attack(source);
         if (source.isCancelled()) return;
+        if (source instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+            if (damager instanceof Player) {
+                if (((Player) damager).isCreative()) {
+                    this.kill();
+                }
+                if (this.getHealth() <= 0) {
+                    if (((Player) damager).isSurvival()) {
+                        this.level.dropItem(this, new ItemBoat());
+                    }
+                    this.close();
+                }
+            }
+        }
 
         EntityEventPacket pk = new EntityEventPacket();
         pk.eid = this.getId();
@@ -101,11 +109,9 @@ public class EntityBoat extends EntityVehicle {
     public void close() {
         super.close();
 
-        if(this.linkedEntity instanceof Player){
+        if (this.linkedEntity instanceof Player) {
             this.linkedEntity.riding = null;
         }
-
-        this.level.dropItem(this, new ItemBoat());
 
         SmokeParticle particle = new SmokeParticle(this);
         this.level.addParticle(particle);

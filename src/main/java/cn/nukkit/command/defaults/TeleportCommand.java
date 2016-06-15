@@ -18,7 +18,7 @@ import cn.nukkit.utils.TextFormat;
 public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {
         super(name, "%nukkit.command.tp.description", "%commands.tp.usage");
-        this.setPermission("nukkit.command.tp");
+        this.setPermission("nukkit.command.teleport");
     }
 
     @Override

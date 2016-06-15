@@ -1,7 +1,10 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHanging;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.ItemPainting;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -12,6 +15,7 @@ import cn.nukkit.network.protocol.AddPaintingPacket;
  * Nukkit Project
  */
 public class EntityPainting extends EntityHanging {
+
     public static final int NETWORK_ID = 83;
 
     public final static Motive[] motives = new Motive[]{
@@ -42,22 +46,30 @@ public class EntityPainting extends EntityHanging {
             new Motive("Pigscene", 4, 4),
             new Motive("Flaming Skull", 4, 4)
     };
-
-    @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
-    }
-
     private Motive motive;
 
     public EntityPainting(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
+    public static Motive getMotive(String name) {
+        for (Motive motive : motives) {
+            if (motive.title.equals(name)) {
+                return motive;
+            }
+        }
+
+        return motives[0];
+    }
+
+    @Override
+    public int getNetworkId() {
+        return NETWORK_ID;
+    }
+
     @Override
     protected void initEntity() {
         super.initEntity();
-
         this.motive = getMotive(this.namedTag.getString("Motive"));
     }
 
@@ -77,17 +89,22 @@ public class EntityPainting extends EntityHanging {
     }
 
     @Override
-    public void saveNBT() {
-        super.saveNBT();
-
-        this.namedTag.putString("Motive", this.motive.title);
+    public void attack(EntityDamageEvent source) {
+        super.attack(source);
+        if (source.isCancelled()) return;
+        if (source instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+            if (damager instanceof Player && ((Player) damager).isSurvival()) {
+                this.level.dropItem(this, new ItemPainting());
+            }
+        }
+        this.close();
     }
 
     @Override
-    public void close() {
-        super.close();
-
-        this.getLevel().dropItem(this, new ItemPainting());
+    public void saveNBT() {
+        super.saveNBT();
+        this.namedTag.putString("Motive", this.motive.title);
     }
 
     public static class Motive {
@@ -100,15 +117,5 @@ public class EntityPainting extends EntityHanging {
             this.width = width;
             this.height = height;
         }
-    }
-
-    public static Motive getMotive(String name) {
-        for (Motive motive : motives) {
-            if (motive.title.equals(name)) {
-                return motive;
-            }
-        }
-
-        return motives[0];
     }
 }

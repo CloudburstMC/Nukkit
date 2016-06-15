@@ -62,10 +62,6 @@ public class PlayerInventory extends BaseInventory {
         if (index >= 0 && index < this.getHotbarSize()) {
             this.itemInHandIndex = index;
 
-            if (this.getHolder() instanceof Player) {
-                this.sendHeldItem(((Player) this.getHolder()));
-            }
-
             this.sendHeldItem(this.getHolder().getViewers().values());
         }
     }
