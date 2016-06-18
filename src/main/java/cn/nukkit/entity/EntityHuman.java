@@ -11,7 +11,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
-import cn.nukkit.network.protocol.RemovePlayerPacket;
+import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.utils.Utils;
 
 import java.nio.charset.StandardCharsets;
@@ -229,9 +229,8 @@ public class EntityHuman extends EntityCreature implements InventoryHolder {
     public void despawnFrom(Player player) {
         if (this.hasSpawned.containsKey(player.getLoaderId())) {
 
-            RemovePlayerPacket pk = new RemovePlayerPacket();
+            RemoveEntityPacket pk = new RemoveEntityPacket();
             pk.eid = this.getId();
-            pk.uuid = this.getUniqueId();
             player.dataPacket(pk);
             this.hasSpawned.remove(player.getLoaderId());
         }
