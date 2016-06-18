@@ -29,15 +29,14 @@ public class MoveEntityPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putInt(this.entities.length);
         for (Entry entry : this.entities) {
             this.putLong(entry.eid);
             this.putFloat((float) entry.x);
             this.putFloat((float) entry.y);
             this.putFloat((float) entry.z);
-            this.putFloat((float) entry.yaw);
-            this.putFloat((float) entry.headyaw);
-            this.putFloat((float) entry.pitch);
+            this.putByte((byte) (entry.pitch * 0.71));
+            this.putByte((byte) (entry.headyaw * 0.71));
+            this.putByte((byte) (entry.yaw * 0.71));
         }
     }
 

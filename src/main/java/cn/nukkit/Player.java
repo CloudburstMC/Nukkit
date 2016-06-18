@@ -1765,8 +1765,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 String message;
-                if (loginPacket.protocol != ProtocolInfo.CURRENT_PROTOCOL) {
-                    if (loginPacket.protocol < ProtocolInfo.CURRENT_PROTOCOL) {
+                if (loginPacket.getProtocol() != ProtocolInfo.CURRENT_PROTOCOL) {
+                    if (loginPacket.getProtocol() < ProtocolInfo.CURRENT_PROTOCOL) {
                         message = "disconnectionScreen.outdatedClient";
 
                         PlayStatusPacket pk = new PlayStatusPacket();
@@ -3004,7 +3004,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.craftingType = 0;
 
                 pos = new Vector3(blockEntityDataPacket.x, blockEntityDataPacket.y, blockEntityDataPacket.z);
-                if (pos.distanceSquared(this) > 10) {
+                if (pos.distanceSquared(this) > 10000) {
                     break;
                 }
 
@@ -3150,7 +3150,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(pk);
     }
 
-    @Deprecated
     public void sendTip(String message) {
         TextPacket pk = new TextPacket();
         pk.type = TextPacket.TYPE_TIP;
