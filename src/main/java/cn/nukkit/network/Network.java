@@ -140,14 +140,13 @@ public class Network {
                 offset += pkLen;
 
                 DataPacket pk;
-                //TODO: CHECK THIS HACK FOR 0.14
-                if ((pk = this.getPacket(buf[1])) != null) {
+
+                if ((pk = this.getPacket(buf[0])) != null) {
                     if (pk.pid() == ProtocolInfo.BATCH_PACKET) {
                         throw new IllegalStateException("Invalid BatchPacket inside BatchPacket");
                     }
 
-                    pk.setBuffer(buf);
-                    pk.setOffset(2);
+                    pk.setBuffer(buf, 1);
 
                     pk.decode();
                     p.handleDataPacket(pk);
@@ -204,7 +203,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.SET_TIME_PACKET, SetTimePacket.class);
         this.registerPacket(ProtocolInfo.START_GAME_PACKET, StartGamePacket.class);
         this.registerPacket(ProtocolInfo.ADD_PLAYER_PACKET, AddPlayerPacket.class);
-        this.registerPacket(ProtocolInfo.REMOVE_PLAYER_PACKET, RemovePlayerPacket.class);
         this.registerPacket(ProtocolInfo.ADD_ENTITY_PACKET, AddEntityPacket.class);
         this.registerPacket(ProtocolInfo.REMOVE_ENTITY_PACKET, RemoveEntityPacket.class);
         this.registerPacket(ProtocolInfo.ADD_ITEM_ENTITY_PACKET, AddItemEntityPacket.class);
@@ -249,7 +247,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.PLAYER_LIST_PACKET, PlayerListPacket.class);
         this.registerPacket(ProtocolInfo.TELEMETRY_EVENT_PACKET, TelemetryEventPacket.class);
         this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
-        this.registerPacket(ProtocolInfo.CHUNK_RADIUS_UPDATE_PACKET, ChunkRadiusUpdatePacket.class);
+        this.registerPacket(ProtocolInfo.CHUNK_RADIUS_UPDATED_PACKET, ChunkRadiusUpdatedPacket.class);
         this.registerPacket(ProtocolInfo.REPLACE_SELECTED_ITEM_PACKET, ReplaceSelectedItemPacket.class);
     }
 }

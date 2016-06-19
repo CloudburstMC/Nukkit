@@ -72,6 +72,9 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_ACTION = 4;
     public static final int DATA_FLAG_INVISIBLE = 5;
 
+    public static final int DATA_LEAD_HOLDER = 23;
+    public static final int DATA_LEAD = 24;
+
     public static long entityCount = 1;
 
     private static Map<String, Class<? extends Entity>> knownEntities = new HashMap<>();
@@ -91,7 +94,9 @@ public abstract class Entity extends Location implements Metadatable {
             .putString(DATA_NAMETAG, "")
             .putBoolean(DATA_SHOW_NAMETAG, true)
             .putBoolean(DATA_SILENT, false)
-            .putBoolean(DATA_NO_AI, false);
+            .putBoolean(DATA_NO_AI, false)
+            .putLong(DATA_LEAD_HOLDER, -1)
+            .putByte(DATA_LEAD, 0);
 
     public Entity rider = null;
 

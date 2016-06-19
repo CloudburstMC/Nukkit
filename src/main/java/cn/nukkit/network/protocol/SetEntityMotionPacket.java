@@ -29,7 +29,6 @@ public class SetEntityMotionPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putInt(this.entities.length);
         for (Entry entry : this.entities) {
             this.putLong(entry.entityId);
             this.putFloat((float) entry.motionX);
