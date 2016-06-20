@@ -34,12 +34,12 @@ public class ObjectSpruceTree extends ObjectTree {
 
     @Override
     public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        this.treeHeight = random.nextBoundedInt(10) + 5;
+        this.treeHeight = random.nextBoundedInt(4) + 6;
 
         int topSize = this.getTreeHeight() - (1 + random.nextBoundedInt(2));
-        int lRadius = 1 + random.nextBoundedInt(2);
+        int lRadius = 2 + random.nextBoundedInt(2);
 
-        this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - 1);
+        this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - random.nextBoundedInt(3));
 
         int radius = random.nextBoundedInt(2);
         int maxR = 1;
