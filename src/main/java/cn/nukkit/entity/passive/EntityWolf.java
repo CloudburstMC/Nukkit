@@ -8,7 +8,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * Author: BeYkeRYkt
  * Nukkit Project
  */
-public class EntityWolf extends EntityTameable {
+public class EntityWolf extends EntityAnimal {
 
     public static final int NETWORK_ID = 14;
 
@@ -60,10 +60,6 @@ public class EntityWolf extends EntityTameable {
     @Override
     public void initEntity() {
         super.initEntity();
-        if (isTamed()) {
-            setMaxHealth(20);
-        } else {
-            setMaxHealth(8);
-        }
+        setMaxHealth(8);
     }
 }
