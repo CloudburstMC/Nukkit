@@ -1825,6 +1825,7 @@ public class Server {
         Entity.registerEntity("Sheep", EntitySheep.class);
         Entity.registerEntity("Wolf", EntityWolf.class);
         Entity.registerEntity("Ocelot", EntityOcelot.class);
+        Entity.registerEntity("Villager", EntityVillager.class);
 
         Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);
         Entity.registerEntity("XpOrb", EntityXPOrb.class);

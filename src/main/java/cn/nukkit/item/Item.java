@@ -1020,8 +1020,8 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SPAWN_EGG, 13)); //Sheep
         addCreativeItem(Item.get(Item.SPAWN_EGG, 14)); //Wolf
         addCreativeItem(Item.get(Item.SPAWN_EGG, 18)); //Rabbit
-        /*
         addCreativeItem(Item.get(Item.SPAWN_EGG, 15)); //Villager
+        /*
         addCreativeItem(Item.get(Item.SPAWN_EGG, 16)); //Mooshroom
         addCreativeItem(Item.get(Item.SPAWN_EGG, 19)); //Bat
         */
