@@ -25,6 +25,7 @@ public class AddEntityPacket extends DataPacket {
     public float speedZ;
     public float yaw;
     public float pitch;
+    public int modifiers;
     public EntityMetadata metadata;
     public Object[][] links = new Object[0][3];
 
@@ -44,8 +45,9 @@ public class AddEntityPacket extends DataPacket {
         this.putFloat(this.speedX);
         this.putFloat(this.speedY);
         this.putFloat(this.speedZ);
-        this.putFloat(this.yaw);
-        this.putFloat(this.pitch);
+        this.putFloat(this.yaw * 0.71f);
+        this.putFloat(this.pitch * 0.71f);
+        this.putInt(modifiers);
         this.put(Binary.writeMetadata(this.metadata));
         this.putShort(this.links.length);
         for (Object[] link : links) {
