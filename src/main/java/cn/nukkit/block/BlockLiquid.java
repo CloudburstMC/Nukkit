@@ -268,7 +268,7 @@ public abstract class BlockLiquid extends BlockTransparent {
 
             Block bottomBlock = this.level.getBlock(this.temporalVector.setComponents(this.x, this.y - 1, this.z));
 
-            if (bottomBlock.canBeFlowedInto() || bottomBlock instanceof BlockLiquid) {
+            if (bottomBlock.canBeFlowedInto() || (bottomBlock instanceof BlockLiquid && !(this instanceof BlockWater && bottomBlock instanceof BlockWater))) {
                 if (this instanceof BlockLava && bottomBlock instanceof BlockWater) {
                     this.getLevel().setBlock(bottomBlock, new BlockStone(), true);
                     this.triggerLavaMixEffects(bottomBlock);
