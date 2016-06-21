@@ -1007,7 +1007,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 		*/
         int flags = 0;
 
-        flags |= 0x02; // Remove hit markers client-side
+        flags |= 0x02; // No PvP (Remove hit markers client-side).
+        flags |= 0x04; // No PvM (Remove hit markers client-side).
+        flags |= 0x08; // No PvE (Remove hit markers client-side).
 
         if (this.isAdventure()) {
             flags |= 0x01; //Do not allow placing/breaking blocks, adventure mode
