@@ -1006,6 +1006,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 		0x80000000 ?
 		*/
         int flags = 0;
+
+        flags |= 0x02; // No PvP (Remove hit markers client-side).
+        flags |= 0x04; // No PvM (Remove hit markers client-side).
+        flags |= 0x08; // No PvE (Remove hit markers client-side).
+
         if (this.isAdventure()) {
             flags |= 0x01; //Do not allow placing/breaking blocks, adventure mode
         }
@@ -1522,6 +1527,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void tryAuthenticate() {
+        PlayStatusPacket pk = new PlayStatusPacket();
+        pk.status = PlayStatusPacket.LOGIN_SUCCESS;
+        this.dataPacket(pk);
         this.authenticateCallback(true);
     }
 
@@ -1569,6 +1577,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
         }
+
+        this.setNameTag(this.username);
 
         CompoundTag nbt = this.server.getOfflinePlayerData(this.username);
         if (nbt == null) {
@@ -1753,7 +1763,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 LoginPacket loginPacket = (LoginPacket) packet;
                 this.username = TextFormat.clean(loginPacket.username);
                 this.displayName = this.username;
-                this.setNameTag(this.username);
                 this.iusername = this.username.toLowerCase();
 
                 if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)) {
@@ -1761,8 +1770,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 String message;
-                if (loginPacket.protocol1 != ProtocolInfo.CURRENT_PROTOCOL) {
-                    if (loginPacket.protocol1 < ProtocolInfo.CURRENT_PROTOCOL) {
+                if (loginPacket.getProtocol() != ProtocolInfo.CURRENT_PROTOCOL) {
+                    if (loginPacket.getProtocol() < ProtocolInfo.CURRENT_PROTOCOL) {
                         message = "disconnectionScreen.outdatedClient";
 
                         PlayStatusPacket pk = new PlayStatusPacket();
@@ -1783,7 +1792,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 this.uuid = loginPacket.clientUUID;
                 this.rawUUID = Binary.writeUUID(this.uuid);
-                this.clientSecret = loginPacket.clientSecret;
 
                 boolean valid = true;
                 int len = loginPacket.username.length();
@@ -1815,7 +1823,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 }
 
-                this.setSkin(loginPacket.skin);
+                this.setSkin(loginPacket.getSkin());
 
                 PlayerPreLoginEvent playerPreLoginEvent;
                 this.server.getPluginManager().callEvent(playerPreLoginEvent = new PlayerPreLoginEvent(this, "Plugin reason"));
@@ -3001,7 +3009,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.craftingType = 0;
 
                 pos = new Vector3(blockEntityDataPacket.x, blockEntityDataPacket.y, blockEntityDataPacket.z);
-                if (pos.distanceSquared(this) > 10) {
+                if (pos.distanceSquared(this) > 10000) {
                     break;
                 }
 
@@ -3047,7 +3055,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 break;
             case ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET:
                 RequestChunkRadiusPacket requestChunkRadiusPacket = (RequestChunkRadiusPacket) packet;
-                ChunkRadiusUpdatePacket chunkRadiusUpdatePacket = new ChunkRadiusUpdatePacket();
+                ChunkRadiusUpdatedPacket chunkRadiusUpdatePacket = new ChunkRadiusUpdatedPacket();
                 chunkRadiusUpdatePacket.radius = this.viewDistance;
                 this.dataPacket(chunkRadiusUpdatePacket);
                 break;
@@ -3147,7 +3155,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(pk);
     }
 
-    @Deprecated
     public void sendTip(String message) {
         TextPacket pk = new TextPacket();
         pk.type = TextPacket.TYPE_TIP;
@@ -3534,8 +3541,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendExperience(int exp) {
-        float percent = ((float) exp) / calculateRequireExperience(this.getExperienceLevel());
-        this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, percent, true).setValue(percent));
+        if (this.spawned) {
+            float percent = ((float) exp) / calculateRequireExperience(this.getExperienceLevel());
+            this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, percent, true).setValue(percent));
+        }
     }
 
     public void sendExperienceLevel() {
@@ -3543,7 +3552,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendExperienceLevel(int level) {
-        this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setValue(level));
+        if (this.spawned) {
+            this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setValue(level));
+        }
     }
 
     public void setAttribute(Attribute attribute) {

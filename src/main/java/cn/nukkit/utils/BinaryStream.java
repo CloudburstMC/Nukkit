@@ -46,12 +46,17 @@ public class BinaryStream {
         this.count = buffer == null ? -1 : buffer.length;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
+    public void setBuffer(byte[] buffer, int offset) {
+        this.setBuffer(buffer);
+        this.setOffset(offset);
     }
 
     public int getOffset() {
         return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     public byte[] getBuffer() {

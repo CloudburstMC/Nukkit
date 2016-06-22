@@ -160,6 +160,11 @@ public class SessionManager {
                 }
 
                 byte pid = buffer[0];
+
+                if (pid == UNCONNECTED_PONG.ID) {
+                    return false;
+                }
+
                 Packet packet = this.getPacketFromPool(pid);
                 if (packet != null) {
                     packet.buffer = buffer;
