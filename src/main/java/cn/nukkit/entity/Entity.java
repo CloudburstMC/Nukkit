@@ -284,7 +284,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (!this.namedTag.contains("Air")) {
             this.namedTag.putShort("Air", 300);
         }
-        this.setDataProperty(new ShortEntityData(DATA_AIR, this.namedTag.getShort("Air")));
+        this.setDataProperty(new ShortEntityData(DATA_AIR, this.namedTag.getShort("Air")), false);
 
         if (!this.namedTag.contains("OnGround")) {
             this.namedTag.putBoolean("OnGround", false);
@@ -1503,14 +1503,16 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean setDataProperty(EntityData data) {
+        return setDataProperty(data, true);
+    }
+
+    public boolean setDataProperty(EntityData data, boolean send) {
         if (!Objects.equals(data, this.getDataProperties().get(data.getId()))) {
             this.getDataProperties().put(data);
-
-            this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new EntityMetadata().put(this.dataProperties.get(data.getId())));
-
+            if (send)
+                this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new EntityMetadata().put(this.dataProperties.get(data.getId())));
             return true;
         }
-
         return false;
     }
 
