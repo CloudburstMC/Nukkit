@@ -76,6 +76,19 @@ public abstract class Biome {
         return biomes.containsKey(id) ? biomes.get(id) : biomes.get(OCEAN);
     }
 
+    /**
+     * Get Biome by name.
+     *
+     * @param name  Name of biome. Name could contain symbol "_" instead of space
+     * @return      Biome. Null - when biome was not found
+     */
+    public static Biome getBiome (String name){
+        for (Biome biome : biomes.values()){
+            if (biome.getName().equalsIgnoreCase(name.replace("_"," "))) return biome;
+        }
+        return null;
+    }
+
     public void clearPopulators() {
         this.populators.clear();
     }
