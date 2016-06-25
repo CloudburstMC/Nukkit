@@ -1070,7 +1070,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean setDataProperty(EntityData data, boolean send) {
-        if (super.setDataProperty(data)) {
+        if (super.setDataProperty(data, send)) {
             if (send) this.sendData(this, new EntityMetadata().put(this.getDataProperty(data.getId())));
             return true;
         }
