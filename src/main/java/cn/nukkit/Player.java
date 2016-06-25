@@ -161,7 +161,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected int chunksPerTick;
     protected int spawnThreshold;
 
-    private Position spawnPosition = null;
+    protected Position spawnPosition = null;
 
     protected int inAirTicks = 0;
     protected int startAirTicks = 5;
@@ -179,7 +179,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private int exp = 0;
     private int expLevel = 0;
 
-    private PlayerFood foodData = null;
+    protected PlayerFood foodData = null;
 
     private Entity killer = null;
 
