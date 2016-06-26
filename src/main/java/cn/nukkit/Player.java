@@ -1766,7 +1766,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.username = TextFormat.clean(loginPacket.username);
                 this.displayName = this.username;
                 this.iusername = this.username.toLowerCase();
-                this.setDataProperty(new StringEntityData(this.DATA_NAMETAG, this.username), false);
+                this.setDataProperty(new StringEntityData(DATA_NAMETAG, this.username), false);
 
                 if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)) {
                     break;
@@ -2661,7 +2661,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 TextPacket textPacket = (TextPacket) packet;
 
                 if (textPacket.type == TextPacket.TYPE_CHAT) {
-                    textPacket.message = this.removeFormat ? TextFormat.clean(textPacket.message) : textPacket.message;
+                    textPacket.message = TextFormat.clean(textPacket.message, this.removeFormat);
                     for (String msg : textPacket.message.split("\n")) {
                         if (!"".equals(msg.trim()) && msg.length() <= 255 && this.messageCounter-- > 0) {
                             if (msg.startsWith("/")) { //Command
@@ -3059,7 +3059,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             case ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET:
                 RequestChunkRadiusPacket requestChunkRadiusPacket = (RequestChunkRadiusPacket) packet;
                 ChunkRadiusUpdatedPacket chunkRadiusUpdatePacket = new ChunkRadiusUpdatedPacket();
-                chunkRadiusUpdatePacket.radius = this.viewDistance;
+                chunkRadiusUpdatePacket.radius = Math.max(5, Math.min(requestChunkRadiusPacket.radius, this.viewDistance));
                 this.dataPacket(chunkRadiusUpdatePacket);
                 break;
             default:
