@@ -8,7 +8,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSponge extends BlockSolid {
 
-
     public BlockSponge() {
         this(0);
     }

@@ -25,12 +25,12 @@ public class BlockAnvil extends BlockFallable {
     }
 
     @Override
-    public boolean isSolid() {
-        return false;
+    public boolean canBeActivated() {
+        return true;
     }
 
     @Override
-    public boolean canBeActivated() {
+    public boolean isTransparent() {
         return true;
     }
 
@@ -100,16 +100,20 @@ public class BlockAnvil extends BlockFallable {
         int damage = this.getDamage();
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             if (damage >= 0 && damage <= 3) { //Anvil
-                return new int[][]{new int[]{this.getId(), 0, 1}};
+                return new int[][]{
+                        {this.getId(), 0, 1}
+                };
             } else if (damage >= 4 && damage <= 7) { //Slightly Anvil
-                return new int[][]{new int[]{this.getId(), this.meta & 0x04, 1}};
+                return new int[][]{
+                        {this.getId(), this.meta & 0x04, 1}
+                };
             } else if (damage >= 8 && damage <= 11) { //Very Damaged Anvil
-                return new int[][]{new int[]{this.getId(), this.meta & 0x08, 1}};
+                return new int[][]{
+                        {this.getId(), this.meta & 0x08, 1}
+                };
             }
-        } else {
-            return new int[0][];
         }
-        return new int[0][];
+        return new int[0][0];
     }
 
     @Override

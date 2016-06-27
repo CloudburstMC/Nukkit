@@ -44,10 +44,13 @@ public class BlockBricks extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe()) {
-            return new int[][]{{Item.BRICKS_BLOCK, 0, 1}};
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+            return new int[][]{
+                    {Item.BRICKS_BLOCK, 0, 1}
+            };
+        } else {
+            return new int[0][0];
         }
-        return new int[][]{{}};
     }
 
     @Override

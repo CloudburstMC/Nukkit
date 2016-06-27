@@ -56,9 +56,13 @@ public class BlockDeadBush extends BlockFlowable {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isShears()) {
-            return new int[][]{{Item.DEAD_BUSH, 0, 1}};
+            return new int[][]{
+                    {Item.DEAD_BUSH, 0, 1}
+            };
         } else {
-            return new int[][]{{Item.STICK, 0, new Random().nextInt(3)}};
+            return new int[][]{
+                    {Item.STICK, 0, new Random().nextInt(3)}
+            };
         }
     }
 

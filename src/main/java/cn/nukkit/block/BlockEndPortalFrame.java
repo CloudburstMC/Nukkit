@@ -46,7 +46,6 @@ public class BlockEndPortalFrame extends BlockTransparent {
         return false;
     }
 
-
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
         return new AxisAlignedBB(

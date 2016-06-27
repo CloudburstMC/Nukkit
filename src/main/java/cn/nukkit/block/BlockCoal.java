@@ -48,17 +48,17 @@ public class BlockCoal extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Coal Block";
+        return "Block of Coal";
     }
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe()) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{
                     {Item.COAL_BLOCK, 0, 1}
             };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 }

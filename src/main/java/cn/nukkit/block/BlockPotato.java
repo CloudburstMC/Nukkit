@@ -24,16 +24,19 @@ public class BlockPotato extends BlockCrops {
 
     @Override
     public int getId() {
-        return Block.POTATO_BLOCK;
+        return POTATO_BLOCK;
     }
 
     @Override
     public int[][] getDrops(Item item) {
         if (meta >= 0x07) {
-            return new int[][]{{Item.POTATO, 0, new Random().nextInt(3) + 1}};
+            return new int[][]{
+                    {Item.POTATO, 0, new Random().nextInt(3) + 1}
+            };
+        } else {
+            return new int[][]{
+                    {Item.POTATO, 0, 1}
+            };
         }
-        return new int[][]{
-                {Item.POTATO, 0, 1}
-        };
     }
 }

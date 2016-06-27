@@ -41,11 +41,6 @@ public class BlockNetherPortal extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{};
-    }
-
-    @Override
     public double getHardness() {
         return -1;
     }

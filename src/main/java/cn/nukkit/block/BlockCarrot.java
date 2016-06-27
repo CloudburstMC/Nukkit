@@ -24,7 +24,7 @@ public class BlockCarrot extends BlockCrops {
 
     @Override
     public int getId() {
-        return Block.CARROT_BLOCK;
+        return CARROT_BLOCK;
     }
 
     @Override

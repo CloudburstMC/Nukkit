@@ -21,6 +21,6 @@ public class BlockFurnace extends BlockFurnaceBurning {
 
     @Override
     public int getId() {
-        return Block.FURNACE;
+        return FURNACE;
     }
 }

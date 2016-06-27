@@ -65,7 +65,7 @@ public class BlockDoublePlant extends BlockFlowable {
     public int[][] getDrops(Item item) {
         //todo
 
-        return new int[0][];
+        return new int[0][0];
     }
 
     @Override

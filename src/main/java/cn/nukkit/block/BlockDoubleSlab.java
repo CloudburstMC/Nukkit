@@ -61,9 +61,11 @@ public class BlockDoubleSlab extends BlockSolid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{new int[]{Item.SLAB, this.meta & 0x07, 2}};
+            return new int[][]{
+                    {Item.SLAB, this.meta & 0x07, 2}
+            };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 

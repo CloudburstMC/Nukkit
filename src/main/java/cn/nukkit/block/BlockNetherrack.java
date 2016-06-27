@@ -50,7 +50,7 @@ public class BlockNetherrack extends BlockSolid {
                     {Item.NETHERRACK, 0, 1}
             };
         } else {
-            return new int[][]{};
+            return new int[0][0];
         }
     }
 

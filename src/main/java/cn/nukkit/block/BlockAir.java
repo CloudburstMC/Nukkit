@@ -24,7 +24,7 @@ public class BlockAir extends BlockTransparent {
 
     @Override
     public String getName() {
-        return "AIR";
+        return "Air";
     }
 
     @Override

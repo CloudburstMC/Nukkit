@@ -47,9 +47,11 @@ public abstract class BlockStairs extends BlockTransparent {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{new int[]{this.getId(), 0, 1}};
+            return new int[][]{
+                    {this.getId(), 0, 1}
+            };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 }

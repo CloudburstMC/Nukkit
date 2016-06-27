@@ -79,7 +79,7 @@ public class BlockFire extends BlockFlowable {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[0][];
+        return new int[0][0];
     }
 
     @Override

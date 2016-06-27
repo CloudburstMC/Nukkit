@@ -26,7 +26,7 @@ public class BlockMushroomBrown extends BlockFlowable {
 
     @Override
     public int getId() {
-        return Block.BROWN_MUSHROOM;
+        return BROWN_MUSHROOM;
     }
 
     @Override

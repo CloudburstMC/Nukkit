@@ -36,7 +36,7 @@ public class BlockChest extends BlockTransparent {
 
     @Override
     public int getId() {
-        return Block.CHEST;
+        return CHEST;
     }
 
     @Override
@@ -172,7 +172,9 @@ public class BlockChest extends BlockTransparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{this.getId(), 0, 1}};
+        return new int[][]{
+                {this.getId(), 0, 1}
+        };
     }
 
     @Override

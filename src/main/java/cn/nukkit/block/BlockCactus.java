@@ -27,7 +27,7 @@ public class BlockCactus extends BlockTransparent {
 
     @Override
     public int getId() {
-        return Block.CACTUS;
+        return CACTUS;
     }
 
     @Override
@@ -120,7 +120,9 @@ public class BlockCactus extends BlockTransparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{this.getId(), 0, 1}};
+        return new int[][]{
+                {this.getId(), 0, 1}
+        };
     }
 
     @Override

@@ -34,7 +34,9 @@ public class BlockStairsWood extends BlockStairs {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{this.getId(), 0, 1}};
+        return new int[][]{
+                {this.getId(), 0, 1}
+        };
     }
 
     @Override

@@ -28,13 +28,14 @@ public class BlockSugarcane extends BlockFlowable {
 
     @Override
     public int getId() {
-        return Block.SUGARCANE_BLOCK;
+        return SUGARCANE_BLOCK;
     }
-
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{Item.SUGARCANE, 0, 1}};
+        return new int[][]{
+                {Item.SUGARCANE, 0, 1}
+        };
     }
 
     @Override

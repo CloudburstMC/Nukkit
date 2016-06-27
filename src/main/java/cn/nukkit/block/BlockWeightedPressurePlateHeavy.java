@@ -23,7 +23,7 @@ public class BlockWeightedPressurePlateHeavy extends BlockWeightedPressurePlate 
 
     @Override
     public int getId() {
-        return Block.HEAVY_WEIGHTED_PRESSURE_PLATE;
+        return HEAVY_WEIGHTED_PRESSURE_PLATE;
     }
 
     @Override
@@ -43,12 +43,13 @@ public class BlockWeightedPressurePlateHeavy extends BlockWeightedPressurePlate 
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe()) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{
                     {Item.HEAVY_WEIGHTED_PRESSURE_PLATE, 0, 1}
             };
+        } else {
+            return new int[0][0];
         }
-        return new int[][]{{}};
     }
 
 }

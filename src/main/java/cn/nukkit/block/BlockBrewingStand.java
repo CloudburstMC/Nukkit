@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class BlockBrewingStand extends BlockSolid {
-    protected int id = BREWING_STAND_BLOCK;
 
     public BlockBrewingStand() {
         this(0);
@@ -49,6 +48,11 @@ public class BlockBrewingStand extends BlockSolid {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public int getId() {
+        return BREWING_STAND_BLOCK;
     }
 
     @Override
@@ -89,17 +93,6 @@ public class BlockBrewingStand extends BlockSolid {
     }
 
     @Override
-    public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
-        return true;
-    }
-
-    @Override
-    public int getId() {
-        return Block.BREWING_STAND_BLOCK;
-    }
-
-    @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
             BlockEntity t = getLevel().getBlockEntity(this);
@@ -131,9 +124,11 @@ public class BlockBrewingStand extends BlockSolid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{new int[]{Item.BREWING_STAND, 0, 1}};
+            return new int[][]{
+                    {Item.BREWING_STAND, 0, 1}
+            };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 

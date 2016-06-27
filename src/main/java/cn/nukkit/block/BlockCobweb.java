@@ -55,7 +55,7 @@ public class BlockCobweb extends BlockFlowable {
                     {Item.STRING, 0, 1}
             };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 

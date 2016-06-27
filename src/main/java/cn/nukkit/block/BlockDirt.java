@@ -36,7 +36,9 @@ public class BlockDirt extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{Item.DIRT, 0, 1}};
+        return new int[][]{
+                {Item.DIRT, 0, 1}
+        };
     }
 
     @Override

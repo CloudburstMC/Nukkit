@@ -71,16 +71,22 @@ public class BlockLeaves extends BlockTransparent {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isShears()) {
-            return new int[][]{new int[]{Item.LEAVES, this.meta & 0x03, 1}};
+            return new int[][]{
+                    {Item.LEAVES, this.meta & 0x03, 1}
+            };
         } else {
             if ((int) ((Math.random()) * 200) == 0 && (this.meta & 0x03) == OAK) {
-                return new int[][]{new int[]{Item.APPLE, 0, 1}};
+                return new int[][]{
+                        {Item.APPLE, 0, 1}
+                };
             }
             if ((int) ((Math.random()) * 20) == 0) {
-                return new int[][]{new int[]{Item.SAPLING, this.meta & 0x03, 1}};
+                return new int[][]{
+                        {Item.SAPLING, this.meta & 0x03, 1}
+                };
             }
         }
-        return new int[0][];
+        return new int[0][0];
     }
 
     //todo:LeavesOnUpdate

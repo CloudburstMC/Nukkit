@@ -24,7 +24,7 @@ public class BlockHugeMushroomRed extends BlockSolid {
 
     @Override
     public int getId() {
-        return Block.RED_MUSHROOM_BLOCK;
+        return RED_MUSHROOM_BLOCK;
     }
 
     @Override
@@ -45,8 +45,11 @@ public class BlockHugeMushroomRed extends BlockSolid {
     @Override
     public int[][] getDrops(Item item) {
         if (new NukkitRandom().nextRange(1, 20) == 0) {
-            return new int[][]{{Item.RED_MUSHROOM, this.meta & 0x03, 1}};
+            return new int[][]{
+                    {Item.RED_MUSHROOM, this.meta & 0x03, 1}
+            };
+        } else {
+            return new int[0][0];
         }
-        return new int[][]{};
     }
 }

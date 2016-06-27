@@ -17,6 +17,11 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public abstract class BlockLiquid extends BlockTransparent {
 
+    public int adjacentSources = 0;
+    public boolean[] isOptimalFlowDirection = {false, false, false, false};
+    public int[] flowinCost = {0, 0, 0, 0};
+    private Vector3 temporalVector = null;
+
     protected BlockLiquid(int meta) {
         super(meta);
     }
@@ -45,16 +50,6 @@ public abstract class BlockLiquid extends BlockTransparent {
     public AxisAlignedBB getBoundingBox() {
         return null;
     }
-
-    @Override
-    public int[][] getDrops(Item item) {
-        return new int[0][];
-    }
-
-    public int adjacentSources = 0;
-    public boolean[] isOptimalFlowDirection = {false, false, false, false};
-    public int[] flowinCost = {0, 0, 0, 0};
-    private Vector3 temporalVector = null;
 
     public float getFluidHeightPercent() {
         float d = (float) this.meta;

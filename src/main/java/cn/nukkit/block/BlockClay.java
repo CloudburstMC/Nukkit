@@ -34,7 +34,7 @@ public class BlockClay extends BlockSolid {
 
     @Override
     public int getId() {
-        return Block.CLAY_BLOCK;
+        return CLAY_BLOCK;
     }
 
     @Override
@@ -44,7 +44,9 @@ public class BlockClay extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{Item.CLAY, 0, 4}};
+        return new int[][]{
+                {Item.CLAY, 0, 4}
+        };
     }
 
     @Override

@@ -45,12 +45,12 @@ public class BlockEmerald extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe()) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{
                     {Item.EMERALD_BLOCK, 0, 1}
             };
         } else {
-            return new int[][]{};
+            return new int[0][0];
         }
     }
 

@@ -27,6 +27,8 @@ public class BlockRailPowered extends BlockRail {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{Item.POWERED_RAIL, 0, 1}};
+        return new int[][]{
+                {Item.POWERED_RAIL, 0, 1}
+        };
     }
 }

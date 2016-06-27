@@ -74,6 +74,8 @@ public class BlockStemMelon extends BlockCrops {
     @Override
     public int[][] getDrops(Item item) {
         NukkitRandom random = new NukkitRandom();
-        return new int[][]{new int[]{Item.MELON_SEEDS, 0, random.nextRange(0, 2)}};
+        return new int[][]{
+                {Item.MELON_SEEDS, 0, random.nextRange(0, 2)}
+        };
     }
 }

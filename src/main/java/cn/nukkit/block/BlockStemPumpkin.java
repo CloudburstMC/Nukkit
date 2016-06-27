@@ -74,6 +74,8 @@ public class BlockStemPumpkin extends BlockCrops {
     @Override
     public int[][] getDrops(Item item) {
         NukkitRandom random = new NukkitRandom();
-        return new int[][]{new int[]{Item.PUMPKIN_SEEDS, 0, random.nextRange(0, 2)}};
+        return new int[][]{
+                {Item.PUMPKIN_SEEDS, 0, random.nextRange(0, 2)}
+        };
     }
 }

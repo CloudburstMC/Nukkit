@@ -41,7 +41,6 @@ public class BlockTrapdoorIron extends BlockTrapdoor {
         return ItemTool.TYPE_PICKAXE;
     }
 
-
     @Override
     public BlockColor getColor() {
         return BlockColor.IRON_BLOCK_COLOR;

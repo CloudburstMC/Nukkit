@@ -7,7 +7,7 @@ import cn.nukkit.item.ItemTool;
  * Created on 2015/11/22 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockObsidianGlowing extends BlockObsidian {
+public class BlockObsidianGlowing extends BlockSolid {
 
     public BlockObsidianGlowing() {
         this(0);
@@ -20,6 +20,11 @@ public class BlockObsidianGlowing extends BlockObsidian {
     @Override
     public int getId() {
         return GLOWING_OBSIDIAN;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override
@@ -40,9 +45,11 @@ public class BlockObsidianGlowing extends BlockObsidian {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() > ItemTool.DIAMOND_PICKAXE) {
-            return new int[][]{{Item.GLOWING_OBSIDIAN, 0, 1}};
+            return new int[][]{
+                    {Item.GLOWING_OBSIDIAN, 0, 1}
+            };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 }

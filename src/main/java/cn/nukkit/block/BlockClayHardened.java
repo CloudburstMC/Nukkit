@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -39,6 +40,17 @@ public class BlockClayHardened extends BlockSolid {
     @Override
     public double getResistance() {
         return 7;
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+            return new int[][]{
+                    {Item.HARDENED_CLAY, 0, 1}
+            };
+        } else {
+            return new int[0][0];
+        }
     }
 
     @Override

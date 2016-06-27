@@ -100,7 +100,9 @@ public class BlockSapling extends BlockFlowable {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{Item.SAPLING, this.getDamage(), 1}};
+        return new int[][]{
+                {Item.SAPLING, this.getDamage(), 1}
+        };
     }
 
     @Override

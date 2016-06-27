@@ -19,7 +19,6 @@ public class BlockSlabWood extends BlockSlab {
         super(meta);
     }
 
-
     @Override
     public String getName() {
         String[] names = new String[]{

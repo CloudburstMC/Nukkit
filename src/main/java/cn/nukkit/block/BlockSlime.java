@@ -27,6 +27,8 @@ public class BlockSlime extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{Item.SLIME_BLOCK, 0, 1}};
+        return new int[][]{
+                {Item.SLIME_BLOCK, 0, 1}
+        };
     }
 }

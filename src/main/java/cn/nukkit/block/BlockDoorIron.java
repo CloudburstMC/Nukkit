@@ -55,7 +55,7 @@ public class BlockDoorIron extends BlockDoor {
                     {Item.WOODEN_DOOR, 0, 1}
             };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 

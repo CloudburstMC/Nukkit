@@ -29,7 +29,7 @@ public class BlockFurnaceBurning extends BlockSolid {
 
     @Override
     public int getId() {
-        return Block.BURNING_FURNACE;
+        return BURNING_FURNACE;
     }
 
     @Override
@@ -130,9 +130,11 @@ public class BlockFurnaceBurning extends BlockSolid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{new int[]{Item.FURNACE, 0, 1}};
+            return new int[][]{
+                    {Item.FURNACE, 0, 1}
+            };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 }

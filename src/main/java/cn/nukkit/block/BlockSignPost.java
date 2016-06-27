@@ -109,7 +109,9 @@ public class BlockSignPost extends BlockTransparent {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{{Item.SIGN, 0, 1}};
+        return new int[][]{
+                {Item.SIGN, 0, 1}
+        };
     }
 
     @Override

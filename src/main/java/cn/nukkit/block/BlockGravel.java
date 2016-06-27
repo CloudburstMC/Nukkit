@@ -44,9 +44,13 @@ public class BlockGravel extends BlockFallable {
     @Override
     public int[][] getDrops(Item item) {
         if (new Random().nextInt(9) == 0) {
-            return new int[][]{new int[]{Item.FLINT, 0, 1}};
+            return new int[][]{
+                    {Item.FLINT, 0, 1}
+            };
         } else {
-            return new int[][]{new int[]{Item.GRAVEL, 0, 1}};
+            return new int[][]{
+                    {Item.GRAVEL, 0, 1}
+            };
         }
     }
 

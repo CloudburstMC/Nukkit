@@ -24,7 +24,7 @@ public class BlockBookshelf extends BlockSolid {
 
     @Override
     public int getId() {
-        return Block.BOOKSHELF;
+        return BOOKSHELF;
     }
 
     @Override

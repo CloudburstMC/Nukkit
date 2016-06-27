@@ -49,9 +49,11 @@ public class BlockOreRedstone extends BlockSolid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
-            return new int[][]{new int[]{Item.REDSTONE_DUST, 0, new Random().nextInt(1) + 4}};
+            return new int[][]{
+                    {Item.REDSTONE_DUST, 0, new Random().nextInt(1) + 4}
+            };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 

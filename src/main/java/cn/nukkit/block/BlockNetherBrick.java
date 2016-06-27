@@ -45,12 +45,12 @@ public class BlockNetherBrick extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{
                     {Item.NETHER_BRICKS, 0, 1}
             };
         } else {
-            return new int[][]{};
+            return new int[0][0];
         }
     }
 

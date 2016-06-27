@@ -43,12 +43,13 @@ public class BlockWeightedPressurePlateLight extends BlockWeightedPressurePlate 
 
     @Override
     public int[][] getDrops(Item item) {
-        if (item.isPickaxe()) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{
                     {Item.LIGHT_WEIGHTED_PRESSURE_PLATE, 0, 1}
             };
+        } else {
+            return new int[0][0];
         }
-        return new int[][]{{}};
     }
 
 }

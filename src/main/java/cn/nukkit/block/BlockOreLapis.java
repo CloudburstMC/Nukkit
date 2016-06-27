@@ -49,9 +49,11 @@ public class BlockOreLapis extends BlockSolid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
-            return new int[][]{new int[]{Item.DYE, 4, new Random().nextInt(4) + 4}};
+            return new int[][]{
+                    {Item.DYE, 4, new Random().nextInt(4) + 4}
+            };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 

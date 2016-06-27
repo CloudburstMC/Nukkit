@@ -51,9 +51,11 @@ public class BlockSandstone extends BlockSolid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{new int[]{Item.SANDSTONE, this.meta & 0x03, 1}};
+            return new int[][]{
+                    {Item.SANDSTONE, this.meta & 0x03, 1}
+            };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 

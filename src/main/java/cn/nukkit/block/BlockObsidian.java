@@ -41,7 +41,7 @@ public class BlockObsidian extends BlockSolid {
 
     @Override
     public double getResistance() {
-        return 2000;
+        return 6000;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class BlockObsidian extends BlockSolid {
                     {Item.OBSIDIAN, 0, 1}
             };
         } else {
-            return new int[][]{};
+            return new int[0][0];
         }
     }
 

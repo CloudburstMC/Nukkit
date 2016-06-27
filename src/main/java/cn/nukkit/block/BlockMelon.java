@@ -6,10 +6,10 @@ import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
 
-/*
+/**
  * Created on 2015/12/11 by Pub4Game.
  * Package cn.nukkit.block in project Nukkit .
-*/
+ */
 
 public class BlockMelon extends BlockSolid {
 
@@ -36,7 +36,9 @@ public class BlockMelon extends BlockSolid {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{Item.MELON_SLICE, 0, new Random().nextInt(4) + 3}};
+        return new int[][]{
+                {Item.MELON_SLICE, 0, new Random().nextInt(4) + 3}
+        };
     }
 
     @Override

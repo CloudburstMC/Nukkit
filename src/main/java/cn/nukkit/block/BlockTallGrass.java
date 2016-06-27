@@ -114,7 +114,7 @@ public class BlockTallGrass extends BlockFlowable {
                     {Item.SEEDS, 0, 1},
             };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 

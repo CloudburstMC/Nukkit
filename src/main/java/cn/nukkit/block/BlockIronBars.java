@@ -50,7 +50,7 @@ public class BlockIronBars extends BlockThin {
                     {Item.IRON_BARS, 0, 1}
             };
         } else {
-            return new int[][]{};
+            return new int[0][0];
         }
     }
 

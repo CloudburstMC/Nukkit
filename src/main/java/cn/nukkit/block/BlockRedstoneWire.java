@@ -29,7 +29,7 @@ public class BlockRedstoneWire extends BlockFlowable {
 
     @Override
     public int getId() {
-        return Block.REDSTONE_WIRE;
+        return REDSTONE_WIRE;
     }
 
     @Override

@@ -14,8 +14,6 @@ public class BlockWood extends BlockSolid {
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
-    //public static final int ACACIA = 4;
-    //public static final int DARK_OAK = 5;
 
 
     public BlockWood() {

@@ -34,12 +34,16 @@ public class BlockLeaves2 extends BlockLeaves {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isShears()) {
-            return new int[][]{new int[]{Item.LEAVES2, this.meta & 0x03, 1}};
+            return new int[][]{
+                    {Item.LEAVES2, this.meta & 0x03, 1}
+            };
         } else {
             if ((int) ((Math.random()) * 20) == 0) {
-                return new int[][]{new int[]{Item.SAPLING, this.meta & 0x03, 1}};
+                return new int[][]{
+                        {Item.SAPLING, this.meta & 0x03, 1}
+                };
             }
         }
-        return new int[0][];
+        return new int[0][0];
     }
 }

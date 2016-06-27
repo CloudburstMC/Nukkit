@@ -40,7 +40,7 @@ public class BlockGlassPane extends BlockThin {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][]{};
+        return new int[0][0];
     }
 
     @Override

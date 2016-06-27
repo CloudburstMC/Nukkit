@@ -34,7 +34,7 @@ public class BlockDiamond extends BlockSolid {
 
     @Override
     public int getId() {
-        return Block.DIAMOND_BLOCK;
+        return DIAMOND_BLOCK;
     }
 
     @Override
@@ -45,9 +45,11 @@ public class BlockDiamond extends BlockSolid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() > ItemTool.TIER_IRON) {
-            return new int[][]{{Item.DIAMOND_BLOCK, 0, 1}};
+            return new int[][]{
+                    {Item.DIAMOND_BLOCK, 0, 1}
+            };
         } else {
-            return new int[0][];
+            return new int[0][0];
         }
     }
 

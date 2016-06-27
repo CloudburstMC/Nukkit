@@ -43,7 +43,7 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
         this.item = item;
         this.player = player;
         this.instaBreak = instaBreak;
-        int[][] drops = player.isSurvival() ? block.getDrops(item) : new int[0][];
+        int[][] drops = player.isSurvival() ? block.getDrops(item) : new int[0][0];
         List<Item> list = new ArrayList<>();
         for (int[] i : drops) {
             list.add(Item.get(i[0], i[1], i[2]));
