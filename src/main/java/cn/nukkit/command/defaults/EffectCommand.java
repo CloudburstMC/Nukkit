@@ -6,6 +6,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.InstantEffect;
+import cn.nukkit.utils.ServerException;
 import cn.nukkit.utils.TextFormat;
 
 /**
@@ -42,7 +43,7 @@ public class EffectCommand extends Command {
         Effect effect;
         try {
             effect = Effect.getEffect(Integer.parseInt(args[1]));
-        } catch (NumberFormatException a) {
+        } catch (NumberFormatException | ServerException a) {
             try {
                 effect = Effect.getEffectByName(args[1]);
             } catch (Exception e) {

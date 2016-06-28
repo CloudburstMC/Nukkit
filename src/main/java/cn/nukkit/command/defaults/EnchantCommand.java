@@ -37,7 +37,7 @@ public class EnchantCommand extends VanillaCommand {
         try {
             enchantId = Integer.parseInt(args[1]);
             enchantLevel = args.length == 3 ? Integer.parseInt(args[2]) : 1;
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
