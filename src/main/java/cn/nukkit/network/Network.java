@@ -7,7 +7,9 @@ import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Zlib;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -120,7 +122,7 @@ public class Network {
         return server;
     }
 
-    public void processBatch(BatchPacket packet, Player p) {
+    public void processBatch(BatchPacket packet, Player player) {
         byte[] data;
         try {
             data = Zlib.inflate(packet.payload, 64 * 1024 * 1024);
@@ -132,6 +134,7 @@ public class Network {
         int len = data.length;
         int offset = 0;
         try {
+            List<DataPacket> packets = new ArrayList<>();
             while (offset < len) {
                 int pkLen = Binary.readInt(Binary.subBytes(data, offset, 4));
                 offset += 4;
@@ -149,13 +152,17 @@ public class Network {
                     pk.setBuffer(buf, 1);
 
                     pk.decode();
-                    p.handleDataPacket(pk);
+
+                    packets.add(pk);
 
                     if (pk.getOffset() <= 0) {
                         return;
                     }
                 }
             }
+
+            processPackets(player, packets);
+
         } catch (Exception e) {
             if (Nukkit.DEBUG > 0) {
                 this.server.getLogger().debug("BatchPacket 0x" + Binary.bytesToHexString(packet.payload));
@@ -163,6 +170,33 @@ public class Network {
             }
         }
     }
+
+    /**
+     * Process packets obtained from batch packets
+     * Required to perform additional analyses and filter unnecessary packets
+     *
+     * @param packets
+     */
+    public void processPackets (Player player, List<DataPacket> packets) {
+        if (packets.isEmpty()) return;
+        List<Byte> filter = new ArrayList<>();
+        for (DataPacket packet : packets){
+            switch (packet.pid()){
+                case ProtocolInfo.USE_ITEM_PACKET:
+                    // Prevent double fire of PlayerInteractEvent
+                    if (filter.contains(ProtocolInfo.USE_ITEM_PACKET)) {
+                        filter.remove((Byte) ProtocolInfo.USE_ITEM_PACKET);
+                    } else {
+                        player.handleDataPacket(packet);
+                        filter.add(ProtocolInfo.USE_ITEM_PACKET);
+                    }
+                    break;
+                default:
+                    player.handleDataPacket(packet);
+            }
+        }
+    }
+
 
     public DataPacket getPacket(byte id) {
         Class<? extends DataPacket> clazz = this.packetPool[id & 0xff];
