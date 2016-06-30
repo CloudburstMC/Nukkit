@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.SelectionKey;
@@ -99,6 +100,8 @@ public class RCONServer extends Thread {
                         this.write(key);
                     }
                 }
+            } catch (BufferUnderflowException exception) {
+                //Corrupted packet, ignore
             } catch (Exception exception) {
                 Server.getInstance().getLogger().logException(exception);
             }
