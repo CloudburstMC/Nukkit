@@ -17,6 +17,8 @@ import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.event.TextContainer;
+import cn.nukkit.event.Timings;
+import cn.nukkit.event.TimingsHandler;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.event.entity.*;
@@ -593,6 +595,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
+        Timings.playerChunkSendTimer.startTiming();
+
         int count = 0;
 
         List<Map.Entry<String, Integer>> entryList = new ArrayList<>(this.loadQueue.entrySet());
@@ -638,6 +642,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.chunkLoadCount >= this.spawnThreshold && !this.spawned && this.teleportPosition == null) {
             this.doFirstSpawn();
         }
+        Timings.playerChunkSendTimer.stopTiming();
     }
 
     protected void doFirstSpawn() {
@@ -735,6 +740,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return false;
         }
 
+        Timings.playerChunkOrderTimer.startTiming();
+
         this.nextChunkOrderRun = 200;
 
         Map<String, Integer> newOrder = new HashMap<>();
@@ -766,7 +773,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.loadQueue = newOrder;
-
+        Timings.playerChunkOrderTimer.stopTiming();
         return true;
     }
 
@@ -775,9 +782,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return false;
         }
 
+        TimingsHandler timings = Timings.getSendDataPacketTimings(packet);
+        timings.startTiming();
+
         DataPacketSendEvent event = new DataPacketSendEvent(this, packet);
         this.server.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
+            timings.stopTiming();
             return false;
         }
 
@@ -786,7 +797,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.batchedPackets.get(packet.getChannel()).add(packet.clone());
-
+        timings.stopTiming();
         return true;
     }
 
@@ -804,9 +815,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return -1;
         }
 
+        TimingsHandler timings = Timings.getSendDataPacketTimings(packet);
+        timings.startTiming();
+
         DataPacketSendEvent ev = new DataPacketSendEvent(this, packet);
         this.server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
+            timings.stopTiming();
             return -1;
         }
 
@@ -814,9 +829,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (needACK && identifier != null) {
             this.needACK.put(identifier, false);
+            timings.stopTiming();
             return identifier;
         }
-
+        timings.stopTiming();
         return 0;
     }
 
@@ -834,9 +850,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return -1;
         }
 
+        TimingsHandler timings = Timings.getSendDataPacketTimings(packet);
+        timings.startTiming();
+
         DataPacketSendEvent ev = new DataPacketSendEvent(this, packet);
         this.server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
+            timings.stopTiming();
             return -1;
         }
 
@@ -844,9 +864,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (needACK && identifier != null) {
             this.needACK.put(identifier, false);
+            timings.stopTiming();
             return identifier;
         }
-
+        timings.stopTiming();
         return 0;
     }
 
@@ -1749,9 +1770,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
+        TimingsHandler timings = Timings.getReceiveDataPacketTimings(packet);
+
+        timings.startTiming();
+
         DataPacketReceiveEvent ev = new DataPacketReceiveEvent(this, packet);
         this.server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
+            timings.stopTiming();
             return;
         }
 
@@ -2672,9 +2698,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 if (commandPreprocessEvent.isCancelled()) {
                                     break;
                                 }
-                                //Timings::playerCommandTimer.startTiming();
+                                Timings.playerCommandTimer.startTiming();
                                 this.server.dispatchCommand(commandPreprocessEvent.getPlayer(), commandPreprocessEvent.getMessage().substring(1));
-                                //Timings::playerCommandTimer.stopTiming();
+                                Timings.playerCommandTimer.stopTiming();
                             } else { //Chat
                                 PlayerChatEvent chatEvent = new PlayerChatEvent(this, msg);
                                 this.server.getPluginManager().callEvent(chatEvent);
@@ -3064,7 +3090,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             default:
                 break;
         }
-
+        timings.stopTiming();
     }
 
     public boolean kick() {

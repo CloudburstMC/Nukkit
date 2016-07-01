@@ -13,9 +13,7 @@ import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.entity.weather.EntityLightning;
-import cn.nukkit.event.HandlerList;
-import cn.nukkit.event.TextContainer;
-import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.event.*;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
@@ -349,6 +347,8 @@ public class Server {
         this.logger.info(this.getLanguage().translateString("nukkit.server.info", new String[]{this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()}));
         this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
+
+
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
 
@@ -363,11 +363,13 @@ public class Server {
         Potion.init();
         Enchantment.init();
         Attribute.init();
+        Timings.init();
 
         this.craftingManager = new CraftingManager();
 
         this.pluginManager = new PluginManager(this, this.commandMap);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
+        this.pluginManager.setUseTimings((Boolean) this.getProperty("settings.enable-profiling", false));
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
 
@@ -550,7 +552,7 @@ public class Server {
         if (players == null || packets == null || players.length == 0 || packets.length == 0) {
             return;
         }
-
+        Timings.playerNetworkTimer.startTiming();
         byte[][] payload = new byte[packets.length * 2][];
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
@@ -580,6 +582,7 @@ public class Server {
                 throw new RuntimeException(e);
             }
         }
+        Timings.playerNetworkTimer.stopTiming();
     }
 
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
@@ -669,6 +672,7 @@ public class Server {
         this.pluginManager.loadPlugins(this.pluginPath);
         this.enablePlugins(PluginLoadOrder.STARTUP);
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
+        TimingsHandler.reload();
     }
 
     public void shutdown() {
@@ -943,6 +947,7 @@ public class Server {
 
     public void doAutoSave() {
         if (this.getAutoSave()) {
+            Timings.worldSaveTimer.startTiming();
             for (Player player : new ArrayList<>(this.players.values())) {
                 if (player.isOnline()) {
                     player.save(true);
@@ -954,6 +959,7 @@ public class Server {
             for (Level level : this.getLevels().values()) {
                 level.save();
             }
+            Timings.worldSaveTimer.stopTiming();
         }
     }
 
@@ -964,7 +970,11 @@ public class Server {
             return false;
         }
 
+        Timings.serverTickTimer.startTiming();
+
         ++this.tickCounter;
+
+        Timings.connectionTimer.startTiming();
 
         this.network.processInterfaces();
 
@@ -972,8 +982,11 @@ public class Server {
             this.rcon.check();
         }
 
-        this.scheduler.mainThreadHeartbeat(this.tickCounter);
+        Timings.connectionTimer.stopTiming();
 
+        Timings.schedulerTimer.startTiming();
+        this.scheduler.mainThreadHeartbeat(this.tickCounter);
+        Timings.schedulerTimer.stopTiming();
         this.checkTickUpdates(this.tickCounter, tickTime);
 
         for (Player player : new ArrayList<>(this.players.values())) {
@@ -1018,6 +1031,8 @@ public class Server {
                 this.logger.warning(this.getLanguage().translateString("nukkit.server.tickOverload"));
             }
         }
+
+        Timings.serverTickTimer.stopTiming();
 
         //long now = System.currentTimeMillis();
         long nowNano = System.nanoTime();

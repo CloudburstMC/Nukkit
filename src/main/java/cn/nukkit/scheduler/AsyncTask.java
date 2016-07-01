@@ -1,6 +1,7 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
+import cn.nukkit.event.Timings;
 import cn.nukkit.utils.ThreadStore;
 
 import java.util.Queue;
@@ -75,9 +76,11 @@ public abstract class AsyncTask implements Runnable {
     }
 
     public static void collectTask() {
+        Timings.schedulerAsyncTimer.startTiming();
         while (!FINISHED_LIST.isEmpty()) {
             FINISHED_LIST.poll().onCompletion(Server.getInstance());
         }
+        Timings.schedulerAsyncTimer.stopTiming();
     }
 
 }

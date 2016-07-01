@@ -79,6 +79,8 @@ public class EntityArrow extends EntityProjectile {
             return false;
         }
 
+        this.timings.startTiming();
+
         boolean hasUpdate = super.onUpdate(currentTick);
 
         if (!this.hadCollision && this.isCritical) {
@@ -95,6 +97,8 @@ public class EntityArrow extends EntityProjectile {
             this.kill();
             hasUpdate = true;
         }
+
+        this.timings.stopTiming();
 
         return hasUpdate;
     }

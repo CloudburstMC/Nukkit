@@ -1,6 +1,8 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
+import cn.nukkit.event.Timings;
+import cn.nukkit.event.TimingsHandler;
 import cn.nukkit.plugin.Plugin;
 
 /**
@@ -12,7 +14,7 @@ public class TaskHandler {
     private final int taskId;
     private final boolean asynchronous;
 
-    private final String timingName;
+    public final String timingName;
     private final Plugin plugin;
     private final Runnable task;
 
@@ -24,12 +26,15 @@ public class TaskHandler {
 
     private boolean cancelled;
 
+    public TimingsHandler timings;
+
     public TaskHandler(Plugin plugin, String timingName, Runnable task, int taskId, boolean asynchronous) {
         this.asynchronous = asynchronous;
         this.plugin = plugin;
         this.task = task;
         this.taskId = taskId;
         this.timingName = timingName == null ? "Unknown" : timingName;
+        this.timings = Timings.getPluginTaskTimings(this, period);
     }
 
     public boolean isCancelled() {

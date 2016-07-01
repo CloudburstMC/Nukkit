@@ -79,7 +79,7 @@ public class EntityPotion extends EntityProjectile {
             return false;
         }
 
-        //this.timings.startTiming();
+        this.timings.startTiming();
 
         int tickDiff = currentTick - this.lastUpdate;
         boolean hasUpdate = super.onUpdate(currentTick);
@@ -140,7 +140,7 @@ public class EntityPotion extends EntityProjectile {
                 potion.applyPotion(anEntity);
             }
         }
-
+        this.timings.stopTiming();
         return hasUpdate;
     }
 

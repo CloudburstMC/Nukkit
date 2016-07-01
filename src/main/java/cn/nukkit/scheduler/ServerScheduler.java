@@ -193,12 +193,14 @@ public class ServerScheduler {
             } else if (taskHandler.isAsynchronous()) {
                 asyncPool.submitTask(taskHandler.getTask());
             } else {
+                taskHandler.timings.startTiming();
                 try {
                     taskHandler.run(currentTick);
                 } catch (Exception e) {
                     Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskName() + ": " + e.getMessage());
                     Server.getInstance().getLogger().logException(e);
                 }
+                taskHandler.timings.stopTiming();
             }
             if (taskHandler.isRepeating()) {
                 taskHandler.setNextRunTick(currentTick + taskHandler.getPeriod());

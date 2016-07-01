@@ -2,6 +2,7 @@ package cn.nukkit.command;
 
 import cn.nukkit.Server;
 import cn.nukkit.event.TextContainer;
+import cn.nukkit.event.TimingsHandler;
 import cn.nukkit.event.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.utils.TextFormat;
@@ -34,6 +35,8 @@ public abstract class Command {
 
     private String permissionMessage = null;
 
+    public TimingsHandler timings;
+
     public Command(String name) {
         this(name, "", null, new String[0]);
     }
@@ -54,6 +57,7 @@ public abstract class Command {
         this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
         this.aliases = aliases;
         this.activeAliases = aliases;
+        this.timings = new TimingsHandler("** Command: " + name);
     }
 
     public abstract boolean execute(CommandSender sender, String commandLabel, String[] args);
@@ -106,6 +110,7 @@ public abstract class Command {
     public boolean setLabel(String name) {
         this.nextLabel = name;
         if (!this.isRegistered()) {
+            this.timings = new TimingsHandler("** Command: " + name);
             this.label = name;
             return true;
         }

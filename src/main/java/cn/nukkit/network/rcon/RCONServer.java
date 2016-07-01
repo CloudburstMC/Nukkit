@@ -100,8 +100,8 @@ public class RCONServer extends Thread {
                         this.write(key);
                     }
                 }
-            } catch (BufferUnderflowException exception) {
-                //Corrupted packet, ignore
+			} catch (BufferUnderflowException exception) {
+				 //Corrupted packet, ignore
             } catch (Exception exception) {
                 Server.getInstance().getLogger().logException(exception);
             }

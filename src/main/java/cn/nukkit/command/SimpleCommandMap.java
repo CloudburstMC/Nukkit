@@ -57,7 +57,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new SetWorldSpawnCommand("setworldspawn"));
         this.register("nukkit", new TeleportCommand("tp"));
         this.register("nukkit", new TimeCommand("time"));
-        //this.register("nukkit", new TimingsCommand("timings"));
+        this.register("nukkit", new TimingsCommand("timings"));
         this.register("nukkit", new ReloadCommand("reload"));
         this.register("nukkit", new WeatherCommand("weather"));
         this.register("nukkit", new XpCommand("xp"));
@@ -159,6 +159,8 @@ public class SimpleCommandMap implements CommandMap {
             return false;
         }
 
+        target.timings.startTiming();
+
         try {
             target.execute(sender, sentCommandLabel, args);
         } catch (Exception e) {
@@ -169,6 +171,8 @@ public class SimpleCommandMap implements CommandMap {
                 logger.logException(e);
             }
         }
+
+        target.timings.stopTiming();
 
         return true;
     }

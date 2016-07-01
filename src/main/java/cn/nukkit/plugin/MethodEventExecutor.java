@@ -27,4 +27,8 @@ public class MethodEventExecutor implements EventExecutor {
             Server.getInstance().getLogger().logException(e);
         }
     }
+
+    public Method getMethod(){
+        return method;
+    }
 }

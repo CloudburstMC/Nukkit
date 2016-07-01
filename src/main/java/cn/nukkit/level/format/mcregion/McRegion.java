@@ -235,6 +235,7 @@ public class McRegion extends BaseLevelProvider {
         int regionX = getRegionIndexX(chunkX);
         int regionZ = getRegionIndexZ(chunkZ);
         this.loadRegion(regionX, regionZ);
+        this.level.timings.syncChunkLoadDataTimer.startTiming();
         Chunk chunk;
         try {
             chunk = this.getRegion(regionX, regionZ).readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
@@ -245,6 +246,7 @@ public class McRegion extends BaseLevelProvider {
         if (chunk == null && create) {
             chunk = this.getEmptyChunk(chunkX, chunkZ);
         }
+        this.level.timings.syncChunkLoadDataTimer.stopTiming();
 
         if (chunk != null) {
             this.chunks.put(index, chunk);

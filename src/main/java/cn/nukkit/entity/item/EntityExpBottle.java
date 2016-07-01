@@ -63,7 +63,7 @@ public class EntityExpBottle extends EntityProjectile {
             return false;
         }
 
-        //this.timings.startTiming();
+        this.timings.startTiming();
 
         int tickDiff = currentTick - this.lastUpdate;
         boolean hasUpdate = super.onUpdate(currentTick);
@@ -89,7 +89,7 @@ public class EntityExpBottle extends EntityProjectile {
             }
         }
 
-        //this.timings.stopTiming();
+        this.timings.stopTiming();
 
         return hasUpdate;
     }

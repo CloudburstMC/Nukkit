@@ -254,11 +254,12 @@ public class LevelDB implements LevelProvider {
             return true;
         }
 
+        this.level.timings.syncChunkLoadDataTimer.startTiming();
         Chunk chunk = this.readChunk(chunkX, chunkZ);
         if (chunk == null && create) {
             chunk = Chunk.getEmptyChunk(chunkX, chunkZ, this);
         }
-
+        this.level.timings.syncChunkLoadDataTimer.stopTiming();
         if (chunk != null) {
             this.chunks.put(index, chunk);
             return true;
