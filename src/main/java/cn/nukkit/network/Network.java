@@ -184,9 +184,7 @@ public class Network {
             switch (packet.pid()){
                 case ProtocolInfo.USE_ITEM_PACKET:
                     // Prevent double fire of PlayerInteractEvent
-                    if (filter.contains(ProtocolInfo.USE_ITEM_PACKET)) {
-                        filter.remove((Byte) ProtocolInfo.USE_ITEM_PACKET);
-                    } else {
+                    if (!filter.contains(ProtocolInfo.USE_ITEM_PACKET)) {
                         player.handleDataPacket(packet);
                         filter.add(ProtocolInfo.USE_ITEM_PACKET);
                     }
