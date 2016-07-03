@@ -1765,11 +1765,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-            this.server.getNetwork().processBatch((BatchPacket) packet, this);
-            return;
-        }
-
         TimingsHandler timings = Timings.getReceiveDataPacketTimings(packet);
 
         timings.startTiming();
@@ -1778,6 +1773,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             timings.stopTiming();
+            return;
+        }
+
+        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
+            timings.stopTiming();
+            this.server.getNetwork().processBatch((BatchPacket) packet, this);
             return;
         }
 
