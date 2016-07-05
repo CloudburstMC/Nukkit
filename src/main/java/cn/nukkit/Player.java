@@ -3,6 +3,7 @@ package cn.nukkit;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.CommandSender;
@@ -20,6 +21,7 @@ import cn.nukkit.event.TextContainer;
 import cn.nukkit.event.Timings;
 import cn.nukkit.event.TimingsHandler;
 import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.CraftItemEvent;
@@ -45,6 +47,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.level.sound.ExperienceOrbSound;
+import cn.nukkit.level.sound.ItemFrameItemRemovedSound;
 import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
@@ -3087,6 +3090,29 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 ChunkRadiusUpdatedPacket chunkRadiusUpdatePacket = new ChunkRadiusUpdatedPacket();
                 chunkRadiusUpdatePacket.radius = Math.max(5, Math.min(requestChunkRadiusPacket.radius, this.viewDistance));
                 this.dataPacket(chunkRadiusUpdatePacket);
+                break;
+            case ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET:
+                ItemFrameDropItemPacket itemFrameDropItemPacket = (ItemFrameDropItemPacket) packet;
+                Vector3 vector3 = this.temporalVector.setComponents(itemFrameDropItemPacket.x, itemFrameDropItemPacket.y, itemFrameDropItemPacket.z);
+                BlockEntity blockEntityItemFrame = this.level.getBlockEntity(vector3);
+                BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntityItemFrame;
+                if (itemFrame != null) {
+                    Block block = itemFrame.getBlock();
+                    Item itemDrop = itemFrame.getItem();
+                    ItemFrameDropItemEvent itemFrameDropItemEvent = new ItemFrameDropItemEvent(this, block, itemFrame, itemDrop);
+                    this.server.getPluginManager().callEvent(itemFrameDropItemEvent);
+                    if (!itemFrameDropItemEvent.isCancelled()) {
+                        if (itemDrop.getId() != Item.AIR) {
+                            vector3 = this.temporalVector.setComponents(itemFrame.x + 0.5, itemFrame.y, itemFrame.z + 0.5);
+                            this.level.dropItem(vector3, itemDrop);
+                            itemFrame.setItem(new ItemBlock(new BlockAir()));
+                            itemFrame.setItemRotation(0);
+                            this.getLevel().addSound(new ItemFrameItemRemovedSound(this));
+                        }
+                    } else {
+                        itemFrame.spawnTo(this);
+                    }
+                }
                 break;
             default:
                 break;

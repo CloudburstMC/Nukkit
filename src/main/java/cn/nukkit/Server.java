@@ -1878,6 +1878,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SKULL, BlockEntitySkull.class);
         BlockEntity.registerBlockEntity(BlockEntity.FLOWER_POT, BlockEntityFlowerPot.class);
         BlockEntity.registerBlockEntity(BlockEntity.BREWING_STAND, BlockEntityBrewingStand.class);
+        BlockEntity.registerBlockEntity(BlockEntity.ITEM_FRAME, BlockEntityItemFrame.class);
     }
 
     public static Server getInstance() {

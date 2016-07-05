@@ -616,6 +616,12 @@ public class CraftingManager {
                 " I ",
                 "CCC"
         )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("I", Item.get(Item.BLAZE_ROD, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.ITEM_FRAME, 0, 3),
+                "SSS",
+                "SLS",
+                "SSS"
+        )).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("L", Item.get(Item.LEATHER, 0, 1)));
     }
 
     protected void registerFurnace() {

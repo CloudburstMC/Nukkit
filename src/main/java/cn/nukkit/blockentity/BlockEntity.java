@@ -30,6 +30,7 @@ public abstract class BlockEntity extends Position {
     public static final String BREWING_STAND = "BrewingStand";
     public static final String DAYLIGHT_DETECTOR = "DaylightDetector";
     public static final String MUSIC = "Music";
+    public static final String ITEM_FRAME = "ItemFrame";
 
 
     public static long count = 1;
