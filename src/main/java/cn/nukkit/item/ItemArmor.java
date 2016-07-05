@@ -16,15 +16,15 @@ abstract public class ItemArmor extends Item {
         super(id);
     }
 
-    public ItemArmor(int id, int meta) {
+    public ItemArmor(int id, Integer meta) {
         super(id, meta);
     }
 
-    public ItemArmor(int id, int meta, int count) {
+    public ItemArmor(int id, Integer meta, int count) {
         super(id, meta, count);
     }
 
-    public ItemArmor(int id, int meta, int count, String name) {
+    public ItemArmor(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
 

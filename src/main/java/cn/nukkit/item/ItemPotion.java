@@ -43,11 +43,11 @@ public class ItemPotion extends Item {
         this(0, 1);
     }
 
-    public ItemPotion(int meta) {
+    public ItemPotion(Integer meta) {
         this(meta, 1);
     }
 
-    public ItemPotion(int meta, int count) {
+    public ItemPotion(Integer meta, int count) {
         super(POTION, meta, count, "Potion");
     }
 

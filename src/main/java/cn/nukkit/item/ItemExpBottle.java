@@ -10,12 +10,12 @@ public class ItemExpBottle extends Item {
         this(0, 1);
     }
 
-    public ItemExpBottle(int meta) {
+    public ItemExpBottle(Integer meta) {
         this(meta, 1);
     }
 
     public ItemExpBottle(Integer meta, int count) {
-        super(EXPERIENCE_BOTTLE, meta, count, "Exp Bottle");
+        super(EXPERIENCE_BOTTLE, meta, count, "Bottle o' Enchanting");
     }
 
 }

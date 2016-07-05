@@ -62,34 +62,34 @@ public class BlockBrewingStand extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        int faces[] = {4, 2, 5, 3};
+        if (!block.getSide(SIDE_DOWN).isTransparent()) {
+            getLevel().setBlock(block, this, true, true);
 
-        meta = faces[player != null ? player.getDirection() : 0];
-        getLevel().setBlock(block, this, true, true);
+            CompoundTag nbt = new CompoundTag()
+                    .putList(new ListTag<>("Items"))
+                    .putString("id", BlockEntity.BREWING_STAND)
+                    .putInt("x", (int) this.x)
+                    .putInt("y", (int) this.y)
+                    .putInt("z", (int) this.z);
 
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.BREWING_STAND)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
-
-        if (item.hasCustomName()) {
-            nbt.putString("CustomName", item.getCustomName());
-        }
-
-        if (item.hasCustomBlockData()) {
-            Map<String, Tag> customData = item.getCustomBlockData().getTags();
-            Iterator iter = customData.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry tag = (Map.Entry) iter.next();
-                nbt.put((String) tag.getKey(), (Tag) tag.getValue());
+            if (item.hasCustomName()) {
+                nbt.putString("CustomName", item.getCustomName());
             }
+
+            if (item.hasCustomBlockData()) {
+                Map<String, Tag> customData = item.getCustomBlockData().getTags();
+                Iterator iter = customData.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry tag = (Map.Entry) iter.next();
+                    nbt.put((String) tag.getKey(), (Tag) tag.getValue());
+                }
+            }
+
+            new BlockEntityBrewingStand(getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+
+            return true;
         }
-
-        new BlockEntityBrewingStand(getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-
-        return true;
+        return false;
     }
 
     @Override

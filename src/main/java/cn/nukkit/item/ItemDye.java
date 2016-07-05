@@ -8,18 +8,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class ItemDye extends Item {
 
-    public ItemDye() {
-        this(0, 1);
-    }
-
-    public ItemDye(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemDye(Integer meta, int count) {
-        super(DYE, meta, count, "Dye");
-    }
-
     public static final int WHITE = 0;
     public static final int ORANGE = 1;
     public static final int MAGENTA = 2;
@@ -36,6 +24,15 @@ public class ItemDye extends Item {
     public static final int GREEN = 13;
     public static final int RED = 14;
     public static final int BLACK = 15;
+    public ItemDye() {
+        this(0, 1);
+    }
+    public ItemDye(Integer meta) {
+        this(meta, 1);
+    }
+    public ItemDye(Integer meta, int count) {
+        super(DYE, meta, count, "Dye");
+    }
 
     public static BlockColor getColor(int meta) {
         switch (meta & 0x0f) {

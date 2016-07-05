@@ -6,11 +6,11 @@ package cn.nukkit.item;
  */
 public class ItemPotionSplash extends Item {
 
-    public ItemPotionSplash(int meta) {
+    public ItemPotionSplash(Integer meta) {
         this(meta, 1);
     }
 
-    public ItemPotionSplash(int meta, int count) {
+    public ItemPotionSplash(Integer meta, int count) {
         super(SPLASH_POTION, meta, count, "Splash Potion");
     }
 

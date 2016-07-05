@@ -36,15 +36,15 @@ public abstract class ItemTool extends Item {
         this(id, 0, 1, "Unknown");
     }
 
-    public ItemTool(int id, int meta) {
+    public ItemTool(int id, Integer meta) {
         this(id, meta, 1, "Unknown");
     }
 
-    public ItemTool(int id, int meta, int count) {
+    public ItemTool(int id, Integer meta, int count) {
         this(id, meta, count, "Unknown");
     }
 
-    public ItemTool(int id, int meta, int count, String name) {
+    public ItemTool(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
 
