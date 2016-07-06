@@ -348,7 +348,6 @@ public class Server {
         this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
 
-
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
 
@@ -369,7 +368,7 @@ public class Server {
 
         this.pluginManager = new PluginManager(this, this.commandMap);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
-        this.pluginManager.setUseTimings((Boolean) this.getProperty("settings.enable-profiling", false));
+        this.pluginManager.setUseTimings((Boolean) this.getConfig("settings.enable-profiling", false));
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
 
@@ -447,9 +446,11 @@ public class Server {
             return;
         }
 
-        this.enablePlugins(PluginLoadOrder.POSTWORLD);
+        if ((int) this.getConfig("ticks-per.autosave", 6000) > 0) {
+            this.autoSaveTicks = (int) this.getConfig("ticks-per.autosave", 6000);
+        }
 
-        this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
+        this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
         this.start();
     }
