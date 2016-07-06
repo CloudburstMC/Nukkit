@@ -2,6 +2,7 @@ package cn.nukkit;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockDoor;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.blockentity.BlockEntitySign;
@@ -2014,6 +2015,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     Block target = this.level.getBlock(blockVector);
                     Block block = target.getSide(useItemPacket.face);
+                    
+                    if (target instanceof BlockDoor) {
+                        BlockDoor door = (BlockDoor) target;
+
+                        Block part;
+
+                        if ((door.getDamage() & 0x08) > 0) { //up
+                            part = target.getSide(Vector3.SIDE_DOWN);
+
+                            if (part.getId() == target.getId()) {
+                                target = part;
+                            }
+                        }
+                    }
+                    
                     this.level.sendBlocks(new Player[]{this}, new Block[]{target, block}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
                     break;
                 } else if (useItemPacket.face == 0xff) {
