@@ -36,6 +36,7 @@ public class Utils {
             stream.write(buffer, 0, length);
         }
         stream.close();
+        content.close();
     }
 
     public static String readFile(File file) throws IOException {
@@ -69,6 +70,8 @@ public class Utils {
             stringBuilder.append(temp);
             temp = br.readLine();
         }
+        br.close();
+        reader.close();
         return stringBuilder.toString();
     }
 
