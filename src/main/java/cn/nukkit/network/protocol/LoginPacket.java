@@ -43,7 +43,6 @@ public class LoginPacket extends DataPacket {
         try {
             str = Zlib.inflate(this.get(this.getInt()), 1024 * 1024 * 64);
         } catch (Exception e) {
-            if (Nukkit.DEBUG > 1) Server.getInstance().getLogger().logException(e);
             return;
         }
         this.setBuffer(str, 0);
