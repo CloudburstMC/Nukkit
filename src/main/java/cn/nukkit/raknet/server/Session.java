@@ -422,11 +422,33 @@ public class Session {
                 sendPacket.reliability = 0;
                 sendPacket.buffer = pk.buffer;
                 this.addToQueue(sendPacket);
-                //TODO: add PING/PONG (0x00/0x03) automatic latency measure
+
+                //Latency measurement
+                PING_DataPacket pingPacket = new PING_DataPacket();
+                pingPacket.pingID = System.currentTimeMillis();
+                pingPacket.encode();
+
+                sendPacket = new EncapsulatedPacket();
+                sendPacket.reliability = 0;
+                sendPacket.buffer = pingPacket.buffer;
+                this.addToQueue(sendPacket);
+            } else if (id == PONG_DataPacket.ID) {
+                if (state == STATE_CONNECTED) {
+                    PONG_DataPacket dataPacket = new PONG_DataPacket();
+                    dataPacket.buffer = packet.buffer;
+                    dataPacket.decode();
+
+                    if (state == STATE_CONNECTED) {
+                        PING_DataPacket pingPacket = new PING_DataPacket();
+                        pingPacket.pingID = (System.currentTimeMillis() - dataPacket.pingID) / 10;
+                        pingPacket.encode();
+                        packet.buffer = pingPacket.buffer;
+                        this.sessionManager.streamEncapsulated(this, packet);
+                    }
+                }
             }
         } else if (state == STATE_CONNECTED) {
             this.sessionManager.streamEncapsulated(this, packet);
-            //TODO: stream channels
         } else {
             //this.sessionManager.getLogger().notice("Received packet before connection: "+Binary.bytesToHexString(packet.buffer));
         }

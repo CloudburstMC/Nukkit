@@ -9,6 +9,7 @@ import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.raknet.RakNet;
 import cn.nukkit.raknet.protocol.EncapsulatedPacket;
+import cn.nukkit.raknet.protocol.packet.PING_DataPacket;
 import cn.nukkit.raknet.server.RakNetServer;
 import cn.nukkit.raknet.server.ServerHandler;
 import cn.nukkit.raknet.server.ServerInstance;
@@ -34,7 +35,9 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
     private Map<String, Player> players = new ConcurrentHashMap<>();
 
-    private Map<Integer, String> identifiers;
+    private Map<String, Integer> networkLatency = new ConcurrentHashMap<>();
+
+    private Map<Integer, String> identifiers = new ConcurrentHashMap<>();
 
     private Map<String, Integer> identifiersACK = new ConcurrentHashMap<>();
 
@@ -44,7 +47,6 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
     public RakNetInterface(Server server) {
         this.server = server;
-        this.identifiers = new ConcurrentHashMap<>();
 
         this.raknet = new RakNetServer(this.server.getLogger(), this.server.getPort(), this.server.getIp().equals("") ? "0.0.0.0" : this.server.getIp());
         this.handler = new ServerHandler(this.raknet, this);
@@ -74,9 +76,15 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
             Player player = this.players.get(identifier);
             this.identifiers.remove(player.rawHashCode());
             this.players.remove(identifier);
+            this.networkLatency.remove(identifier);
             this.identifiersACK.remove(identifier);
             player.close(player.getLeaveMessage(), reason);
         }
+    }
+
+    @Override
+    public int getNetworkLatency(Player player) {
+        return this.networkLatency.get(this.identifiers.get(player.rawHashCode()));
     }
 
     @Override
@@ -89,6 +97,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
         if (this.identifiers.containsKey(player.rawHashCode())) {
             String id = this.identifiers.get(player.rawHashCode());
             this.players.remove(id);
+            this.networkLatency.remove(id);
             this.identifiersACK.remove(id);
             this.closeSession(id, reason);
             this.identifiers.remove(player.rawHashCode());
@@ -115,6 +124,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
             Constructor constructor = clazz.getConstructor(SourceInterface.class, Long.class, String.class, int.class);
             Player player = (Player) constructor.newInstance(this, ev.getClientId(), ev.getAddress(), ev.getPort());
             this.players.put(identifier, player);
+            this.networkLatency.put(identifier, 0);
             this.identifiersACK.put(identifier, 0);
             this.identifiers.put(player.rawHashCode(), identifier);
             this.server.addPlayer(identifier, player);
@@ -129,6 +139,15 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
             DataPacket pk = null;
             try {
                 if (packet.buffer.length > 0) {
+                    if (packet.buffer[0] == PING_DataPacket.ID) {
+                        PING_DataPacket pingPacket = new PING_DataPacket();
+                        pingPacket.buffer = packet.buffer;
+                        pingPacket.decode();
+
+                        this.networkLatency.put(identifier, (int) pingPacket.pingID);
+                        return;
+                    }
+
                     pk = this.getPacket(packet.buffer);
                     if (pk != null) {
                         pk.decode();
