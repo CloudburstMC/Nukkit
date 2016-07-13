@@ -1711,7 +1711,7 @@ public class Level implements ChunkManager, Metadatable {
 			PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face,
 					target.getId() == 0 ? PlayerInteractEvent.RIGHT_CLICK_AIR : PlayerInteractEvent.RIGHT_CLICK_BLOCK);
 
-			if (player.getGamemode() > 1) {
+			if (player.getGamemode() > 2) {
 				ev.setCancelled();
 			}
 
