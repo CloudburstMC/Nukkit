@@ -201,8 +201,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return clientSecret;
     }
 
+    /**
+     * This might disappear in the future.
+     * Please use getUniqueId() instead (IP + clientId + name combo, in the future it'll change to real UUID for online auth)
+     */
+    @Deprecated
     public Long getClientId() {
-        return clientID;
+        return randomClientId;
     }
 
     @Override
