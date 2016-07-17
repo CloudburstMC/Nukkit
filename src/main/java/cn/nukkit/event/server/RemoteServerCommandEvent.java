@@ -5,6 +5,7 @@ import cn.nukkit.event.HandlerList;
 
 /**
  * Called when an RCON command is executed.
+ *
  * @author Tee7even
  */
 public class RemoteServerCommandEvent extends ServerCommandEvent {

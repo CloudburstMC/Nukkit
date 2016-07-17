@@ -6,6 +6,7 @@ import java.nio.ByteOrder;
 
 /**
  * A data structure representing an RCON packet.
+ *
  * @author Tee7even
  */
 public class RCONPacket {
@@ -39,8 +40,8 @@ public class RCONPacket {
         buffer.putInt(this.type);
         buffer.put(this.payload);
 
-        buffer.put((byte)0);
-        buffer.put((byte)0);
+        buffer.put((byte) 0);
+        buffer.put((byte) 0);
 
         buffer.flip();
         return buffer;

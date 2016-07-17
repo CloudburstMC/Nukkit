@@ -43,10 +43,10 @@ public class TimingsHandler {
             long count = timings.count;
             if (count == 0) continue;
             long avg = time / count;
-            strings.add("   " + timings.name + " Time: " + time + " Count: "+count+" Avg: "+avg +" Violations: "+timings.violations);
+            strings.add("   " + timings.name + " Time: " + time + " Count: " + count + " Avg: " + avg + " Violations: " + timings.violations);
         }
-        strings.add("# Version "+Server.getInstance().getVersion());
-        strings.add("# "+Server.getInstance().getName()+" "+Server.getInstance().getNukkitVersion());
+        strings.add("# Version " + Server.getInstance().getVersion());
+        strings.add("# " + Server.getInstance().getName() + " " + Server.getInstance().getNukkitVersion());
         int entities = 0;
         int livingEntities = 0;
         for (Level level : Server.getInstance().getLevels().values()) {
@@ -54,7 +54,7 @@ public class TimingsHandler {
             for (Entity e : level.getEntities())
                 if (e instanceof EntityLiving) livingEntities++;
         }
-        strings.add("# Entities "+ entities);
+        strings.add("# Entities " + entities);
         strings.add("# LivingEntities " + livingEntities);
         return strings;
     }
@@ -75,8 +75,8 @@ public class TimingsHandler {
         if (Server.getInstance().getPluginManager().useTimings()) {
             if (measure) {
                 handlers.forEach(timings -> {
-                    if(timings.curTickTotal > 50000000L)
-                        timings.violations = (long)((double)timings.violations + Math.ceil((double)(timings.curTickTotal / 50000000L)));
+                    if (timings.curTickTotal > 50000000L)
+                        timings.violations = (long) ((double) timings.violations + Math.ceil((double) (timings.curTickTotal / 50000000L)));
                     timings.curTickTotal = 0;
                     timings.curCount = 0;
                     timings.timingDepth = 0;
@@ -94,7 +94,6 @@ public class TimingsHandler {
     }
 
 
-
     public void startTiming() {
         if (Server.getInstance().getPluginManager().useTimings() && (++this.timingDepth == 1)) {
             this.start = System.nanoTime();
@@ -105,7 +104,7 @@ public class TimingsHandler {
     }
 
     public void stopTiming() {
-        if (Server.getInstance().getPluginManager().useTimings()){
+        if (Server.getInstance().getPluginManager().useTimings()) {
             if (--this.timingDepth != 0 || this.start == 0) return;
             long diff = System.nanoTime() - this.start;
             this.totalTime += diff;
@@ -118,6 +117,7 @@ public class TimingsHandler {
             }
         }
     }
+
     public void reset() {
         this.count = 0;
         this.curCount = 0;

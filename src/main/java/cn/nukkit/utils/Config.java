@@ -417,9 +417,10 @@ public class Config {
 
     /**
      * Get root (main) config section of the Config
+     *
      * @return
      */
-    public ConfigSection getRootSection(){
+    public ConfigSection getRootSection() {
         return config;
     }
 

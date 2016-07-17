@@ -676,11 +676,11 @@ public class PluginManager {
         }
     }
 
-    public boolean useTimings(){
+    public boolean useTimings() {
         return useTimings;
     }
 
-    public void setUseTimings(boolean use){
+    public void setUseTimings(boolean use) {
         useTimings = use;
     }
 

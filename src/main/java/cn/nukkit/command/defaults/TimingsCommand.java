@@ -59,13 +59,12 @@ public class TimingsCommand extends VanillaCommand {
         } else if (mode.equals("merged") || mode.equals("report") || paste) {
             long sampleTime = System.nanoTime() - timingStart;
             List<String> timeStr = TimingsHandler.getTimings();
-            timeStr.add("Sample time "+sampleTime+" ("+String.format("%.3f",(double)sampleTime / 1.0E9D)+"s)");
+            timeStr.add("Sample time " + sampleTime + " (" + String.format("%.3f", (double) sampleTime / 1.0E9D) + "s)");
 
             new PasteThread(sender, timeStr, paste).run();
         }
         return true;
     }
-
 
 
     class PasteThread extends Thread {
@@ -83,7 +82,7 @@ public class TimingsCommand extends VanillaCommand {
         }
 
         public synchronized void start() {
-            if(this.sender instanceof RemoteConsoleCommandSender) {
+            if (this.sender instanceof RemoteConsoleCommandSender) {
                 this.run();
             } else {
                 super.start();
@@ -93,7 +92,7 @@ public class TimingsCommand extends VanillaCommand {
 
         public void run() {
             StringBuilder sb = new StringBuilder();
-            report.forEach(s-> sb.append(s).append("\n"));
+            report.forEach(s -> sb.append(s).append("\n"));
 
             if (paste) {
                 try {
@@ -118,13 +117,13 @@ public class TimingsCommand extends VanillaCommand {
                 }
             }
 
-            File timingFolder = new File(Server.getInstance().getDataPath()+File.separator+"timings");
+            File timingFolder = new File(Server.getInstance().getDataPath() + File.separator + "timings");
             timingFolder.mkdirs();
             File timingsFile = null;
             int index = 0;
-            while (timingsFile == null||timingsFile.exists()) {
-                index ++;
-                timingsFile = new File(timingFolder+File.separator+"timings_"+String.format("%03d", index)+".txt");
+            while (timingsFile == null || timingsFile.exists()) {
+                index++;
+                timingsFile = new File(timingFolder + File.separator + "timings_" + String.format("%03d", index) + ".txt");
             }
 
             try {

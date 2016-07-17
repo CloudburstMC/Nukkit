@@ -32,7 +32,7 @@ public class LevelTimings {
     public TimingsHandler syncChunkLoadTileTicksTimer;
     public TimingsHandler syncChunkLoadPostTimer;
 
-    public LevelTimings(Level level){
+    public LevelTimings(Level level) {
         String name = level.getFolderName() + " - ";
 
         this.mobSpawn = new TimingsHandler("** " + name + "mobSpawn");

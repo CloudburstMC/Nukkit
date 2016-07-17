@@ -181,9 +181,9 @@ public class EntityItem extends Entity {
 
     @Override
     public void saveNBT() {
-    	if(this.item == null){
-    		return;
-    	}
+        if (this.item == null) {
+            return;
+        }
         super.saveNBT();
         this.namedTag.putCompound("Item", new CompoundTag()
                 .putShort("id", this.item.getId())

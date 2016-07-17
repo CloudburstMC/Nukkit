@@ -177,11 +177,11 @@ public class Network {
      *
      * @param packets
      */
-    public void processPackets (Player player, List<DataPacket> packets) {
+    public void processPackets(Player player, List<DataPacket> packets) {
         if (packets.isEmpty()) return;
         List<Byte> filter = new ArrayList<>();
-        for (DataPacket packet : packets){
-            switch (packet.pid()){
+        for (DataPacket packet : packets) {
+            switch (packet.pid()) {
                 case ProtocolInfo.USE_ITEM_PACKET:
                     // Prevent double fire of PlayerInteractEvent
                     if (!filter.contains(ProtocolInfo.USE_ITEM_PACKET)) {

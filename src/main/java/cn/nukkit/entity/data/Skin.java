@@ -105,12 +105,12 @@ public class Skin {
     }
 
     public Skin(String base64) {
-        this (Base64.getDecoder().decode(base64));
+        this(Base64.getDecoder().decode(base64));
     }
 
     public Skin(String base64, String model) {
-        this (Base64.getDecoder().decode(base64), model);
-}
+        this(Base64.getDecoder().decode(base64), model);
+    }
 
     public void parseBufferedImage(BufferedImage image) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

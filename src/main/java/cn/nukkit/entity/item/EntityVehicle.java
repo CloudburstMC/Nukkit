@@ -46,11 +46,11 @@ public abstract class EntityVehicle extends Entity implements EntityRideable {
         this.setDataProperty(new FloatEntityData(EntityVehicle.DATA_DAMAGE_TAKEN, damage));
     }
 
-    public Entity getLinkedEntity(){
+    public Entity getLinkedEntity() {
         return linkedEntity;
     }
 
-    public void setLinkedEntity(Entity entity){
+    public void setLinkedEntity(Entity entity) {
         linkedEntity = entity;
     }
 }

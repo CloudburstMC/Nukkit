@@ -4,6 +4,7 @@ import cn.nukkit.event.TextContainer;
 
 /**
  * Represents an RCON command sender.
+ *
  * @author Tee7even
  */
 public class RemoteConsoleCommandSender extends ConsoleCommandSender {

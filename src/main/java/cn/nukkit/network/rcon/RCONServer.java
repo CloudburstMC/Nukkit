@@ -17,6 +17,7 @@ import java.util.*;
 
 /**
  * Thread that performs all RCON network work. A server.
+ *
  * @author Tee7even
  */
 public class RCONServer extends Thread {
@@ -72,7 +73,7 @@ public class RCONServer extends Thread {
     }
 
     public void run() {
-        while(this.running) {
+        while (this.running) {
             try {
                 synchronized (this.sendQueues) {
                     for (SocketChannel channel : this.sendQueues.keySet()) {
@@ -100,8 +101,8 @@ public class RCONServer extends Thread {
                         this.write(key);
                     }
                 }
-			} catch (BufferUnderflowException exception) {
-				 //Corrupted packet, ignore
+            } catch (BufferUnderflowException exception) {
+                //Corrupted packet, ignore
             } catch (Exception exception) {
                 Server.getInstance().getLogger().logException(exception);
             }

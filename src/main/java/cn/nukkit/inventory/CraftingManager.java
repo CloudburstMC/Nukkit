@@ -59,7 +59,7 @@ public class CraftingManager {
                 "   ",
                 "XX ",
                 "XX "
-        )).setIngredient("X", Item.get(Item.SNOWBALL, 0 , 1)));
+        )).setIngredient("X", Item.get(Item.SNOWBALL, 0, 1)));
 
         this.registerRecipe((new ShapedRecipe(Item.get(Item.SNOW_LAYER, 0, 6),
                 "   ",
@@ -72,7 +72,7 @@ public class CraftingManager {
                 "X ",
                 "X "
         )).setIngredient("X", Item.get(Item.WOODEN_PLANK, null)));
-        
+
         this.registerRecipe((new ShapedRecipe(Item.get(Item.WOODEN_PLANK, BlockPlanks.OAK, 4),
                 "X"
         )).setIngredient("X", Item.get(Item.WOOD, BlockWood.OAK, 1)));

@@ -28,7 +28,7 @@ public class MethodEventExecutor implements EventExecutor {
         }
     }
 
-    public Method getMethod(){
+    public Method getMethod() {
         return method;
     }
 }
