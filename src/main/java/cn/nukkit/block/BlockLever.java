@@ -12,7 +12,6 @@ public class BlockLever extends BlockFlowable {
 
     public BlockLever(int meta) {
         super(meta);
-        this.setPowerSource(true);
         this.setPowerLevel(Redstone.POWER_STRONGEST);
     }
 
@@ -37,12 +36,12 @@ public class BlockLever extends BlockFlowable {
 
     @Override
     public double getHardness() {
-        return 0.5D;
+        return 0.5;
     }
 
     @Override
     public double getResistance() {
-        return 2.5D;
+        return 2.5;
     }
 
     @Override
@@ -53,19 +52,20 @@ public class BlockLever extends BlockFlowable {
     }
 
     public boolean isPowerOn() {
-        return this.meta >= 8;
+        return (this.meta & 0x08) == 0x08;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         this.meta ^= 0x08;
 
-        this.getLevel().setBlock(this, this, true, false);
+        this.getLevel().setBlock(this, this, true, true);
         this.getLevel().addSound(new LeverSound(this, this.isPowerOn()));
         if (this.isPowerOn()) {
             this.setPowerSource(true);
             Redstone.active(this);
         } else {
+            this.setPowerSource(false);
             Redstone.deactive(this, this.getPowerLevel());
         }
         return true;
@@ -86,15 +86,14 @@ public class BlockLever extends BlockFlowable {
 
             if (face == 0) {
                 to = player != null ? player.getDirection() : 0;
-                this.meta = (to);
+                this.meta = (to % 2 != 1 ? 0 : 7);
             } else if (face == 1) {
                 to = player != null ? player.getDirection() : 0;
-                this.meta = (to ^ 6);
+                this.meta = (to % 2 != 1 ? 6 : 5);
             } else {
                 this.meta = faces[face];
             }
-
-            this.getLevel().setBlock(block, this, true, true);
+            this.getLevel().setBlock(block, this, true, false);
             return true;
         }
         return false;
@@ -103,8 +102,7 @@ public class BlockLever extends BlockFlowable {
     @Override
     public boolean onBreak(Item item) {
         super.onBreak(item);
-        int level = this.getPowerLevel();
-        Redstone.deactive(this, level);
+        Redstone.deactive(this, this.getPowerLevel());
         return true;
     }
 
