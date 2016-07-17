@@ -19,9 +19,9 @@ public abstract class Generator {
 
     public abstract int getId();
 
-    private static Map<String, Class<? extends Generator>> nameList = new HashMap<>();
+    private static final Map<String, Class<? extends Generator>> nameList = new HashMap<>();
 
-    private static Map<Integer, Class<? extends Generator>> typeList = new HashMap<>();
+    private static final Map<Integer, Class<? extends Generator>> typeList = new HashMap<>();
 
     public static boolean addGenerator(Class<? extends Generator> clazz, String name, int type) {
         name = name.toLowerCase();

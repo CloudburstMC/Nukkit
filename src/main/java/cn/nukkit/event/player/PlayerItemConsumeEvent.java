@@ -15,7 +15,7 @@ public class PlayerItemConsumeEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    private Item item;
+    private final Item item;
 
     public PlayerItemConsumeEvent(Player player, Item item) {
         this.player = player;

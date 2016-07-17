@@ -17,7 +17,7 @@ public class PotionCollideEvent extends PotionEvent implements Cancellable {
         return handlers;
     }
 
-    private EntityPotion thrownPotion;
+    private final EntityPotion thrownPotion;
 
     public PotionCollideEvent(Potion potion, EntityPotion thrownPotion) {
         super(potion);

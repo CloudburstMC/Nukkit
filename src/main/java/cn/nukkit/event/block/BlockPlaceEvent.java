@@ -18,12 +18,12 @@ public class BlockPlaceEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
-    protected Player player;
+    protected final Player player;
 
-    protected Item item;
+    protected final Item item;
 
-    protected Block blockReplace;
-    protected Block blockAgainst;
+    protected final Block blockReplace;
+    protected final Block blockAgainst;
 
     public BlockPlaceEvent(Player player, Block blockPlace, Block blockReplace, Block blockAgainst, Item item) {
         super(blockPlace);

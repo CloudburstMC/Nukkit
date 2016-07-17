@@ -13,7 +13,7 @@ public class FurnaceRecipe implements Recipe {
 
     private UUID uuid = null;
 
-    private Item output;
+    private final Item output;
 
     private Item ingredient;
 

@@ -8,7 +8,7 @@ import cn.nukkit.raknet.protocol.Packet;
  * Nukkit Project
  */
 public class DATA_PACKET_D extends DataPacket {
-    public static byte ID = (byte) 0x8d;
+    public static final byte ID = (byte) 0x8d;
 
     @Override
     public byte getID() {

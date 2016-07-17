@@ -16,7 +16,7 @@ public class InventoryCloseEvent extends InventoryEvent {
         return handlers;
     }
 
-    private Player who;
+    private final Player who;
 
     public InventoryCloseEvent(Inventory inventory, Player who) {
         super(inventory);

@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public class McRegion extends BaseLevelProvider {
 
-    protected Map<String, RegionLoader> regions = new HashMap<>();
+    protected final Map<String, RegionLoader> regions = new HashMap<>();
 
     protected Map<String, Chunk> chunks = new HashMap<>();
 

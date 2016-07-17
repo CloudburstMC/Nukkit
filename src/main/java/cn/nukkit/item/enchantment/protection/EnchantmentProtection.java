@@ -18,7 +18,7 @@ public abstract class EnchantmentProtection extends Enchantment {
         PROJECTILE
     }
 
-    protected TYPE protectionType;
+    protected final TYPE protectionType;
 
     protected EnchantmentProtection(int id, String name, int weight, EnchantmentProtection.TYPE type) {
         super(id, name, weight, EnchantmentType.ARMOR);

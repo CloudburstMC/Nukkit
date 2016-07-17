@@ -8,7 +8,7 @@ import cn.nukkit.level.format.FullChunk;
  */
 public abstract class ChunkEvent extends LevelEvent {
 
-    private FullChunk chunk;
+    private final FullChunk chunk;
 
     public ChunkEvent(FullChunk chunk) {
         super(chunk.getProvider().getLevel());

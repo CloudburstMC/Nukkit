@@ -16,9 +16,9 @@ public class EntityInventoryChangeEvent extends EntityEvent implements Cancellab
         return handlers;
     }
 
-    private Item oldItem;
+    private final Item oldItem;
     private Item newItem;
-    private int slot;
+    private final int slot;
 
     public EntityInventoryChangeEvent(Entity entity, Item oldItem, Item newItem, int slot) {
         this.entity = entity;

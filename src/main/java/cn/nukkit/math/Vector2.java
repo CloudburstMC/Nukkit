@@ -5,8 +5,8 @@ package cn.nukkit.math;
  * Nukkit Project
  */
 public class Vector2 {
-    public double x;
-    public double y;
+    public final double x;
+    public final double y;
 
     public Vector2() {
         this(0, 0);

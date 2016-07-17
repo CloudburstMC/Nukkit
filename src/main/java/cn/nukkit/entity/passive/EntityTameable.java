@@ -24,7 +24,7 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
     protected void initEntity() {
         super.initEntity();
         if (getDataProperty(DATA_TAMED_FLAG) == null) {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, Byte.valueOf((byte) 0)));
+            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) 0));
         }
 
         if (getDataProperty(DATA_OWNER_NAME) == null) {
@@ -88,9 +88,9 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
         int var = getDataPropertyByte(DATA_TAMED_FLAG); // ?
 
         if (flag) {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, Byte.valueOf((byte) (var | 4))));
+            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var | 4)));
         } else {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, Byte.valueOf((byte) (var & -5))));
+            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var & -5)));
         }
     }
 
@@ -102,9 +102,9 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
         int var = getDataPropertyByte(DATA_TAMED_FLAG); // ?
 
         if (flag) {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, Byte.valueOf((byte) (var | 1))));
+            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var | 1)));
         } else {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, Byte.valueOf((byte) (var & -2))));
+            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var & -2)));
         }
     }
 }

@@ -14,8 +14,8 @@ import java.nio.charset.StandardCharsets;
  * Nukkit Project
  */
 public class FileWriteTask extends AsyncTask {
-    private File file;
-    private InputStream contents;
+    private final File file;
+    private final InputStream contents;
 
     public FileWriteTask(String path, String contents) {
         this(new File(path), contents);

@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class UDPServerSocket {
 
     protected DatagramChannel channel;
-    protected ThreadedLogger logger;
+    protected final ThreadedLogger logger;
     protected DatagramSocket socket;
 
     public UDPServerSocket(ThreadedLogger logger) {

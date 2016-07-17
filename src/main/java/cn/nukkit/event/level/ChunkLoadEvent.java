@@ -15,7 +15,7 @@ public class ChunkLoadEvent extends ChunkEvent {
         return handlers;
     }
 
-    private boolean newChunk;
+    private final boolean newChunk;
 
     public ChunkLoadEvent(FullChunk chunk, boolean newChunk) {
         super(chunk);

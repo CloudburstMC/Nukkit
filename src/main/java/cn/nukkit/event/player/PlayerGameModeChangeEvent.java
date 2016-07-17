@@ -11,7 +11,7 @@ public class PlayerGameModeChangeEvent extends PlayerEvent implements Cancellabl
         return handlers;
     }
 
-    protected int gamemode;
+    protected final int gamemode;
 
     public PlayerGameModeChangeEvent(Player player, int newGameMode) {
         this.player = player;

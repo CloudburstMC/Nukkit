@@ -8,7 +8,7 @@ import cn.nukkit.raknet.protocol.Packet;
  * Nukkit Project
  */
 public class OPEN_CONNECTION_REPLY_1 extends Packet {
-    public static byte ID = (byte) 0x06;
+    public static final byte ID = (byte) 0x06;
 
     @Override
     public byte getID() {

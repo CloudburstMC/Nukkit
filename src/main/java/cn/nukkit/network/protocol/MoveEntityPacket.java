@@ -44,13 +44,13 @@ public class MoveEntityPacket extends DataPacket {
     }
 
     public static class Entry {
-        public long eid;
-        public double x;
-        public double y;
-        public double z;
-        public double yaw;
-        public double headyaw;
-        public double pitch;
+        public final long eid;
+        public final double x;
+        public final double y;
+        public final double z;
+        public final double yaw;
+        public final double headyaw;
+        public final double pitch;
 
         public Entry(long eid, double x, double y, double z, double yaw, double headyaw, double pitch) {
             this.eid = eid;

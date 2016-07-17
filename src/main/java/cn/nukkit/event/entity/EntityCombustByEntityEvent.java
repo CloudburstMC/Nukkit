@@ -8,7 +8,7 @@ import cn.nukkit.entity.Entity;
  */
 public class EntityCombustByEntityEvent extends EntityCombustEvent {
 
-    protected Entity combuster;
+    protected final Entity combuster;
 
     public EntityCombustByEntityEvent(Entity combuster, Entity combustee, int duration) {
         super(combustee, duration);

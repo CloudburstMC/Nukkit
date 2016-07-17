@@ -12,7 +12,7 @@ public class GenericParticle extends Particle {
 
     protected int id = 0;
 
-    protected int data;
+    protected final int data;
 
     public GenericParticle(Vector3 pos, int id) {
         this(pos, id, 0);

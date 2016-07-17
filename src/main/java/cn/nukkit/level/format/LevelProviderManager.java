@@ -10,7 +10,7 @@ import java.util.Map;
  * Nukkit Project
  */
 public abstract class LevelProviderManager {
-    protected static Map<String, Class<? extends LevelProvider>> providers = new HashMap<>();
+    protected static final Map<String, Class<? extends LevelProvider>> providers = new HashMap<>();
 
     public static void addProvider(Server server, Class<? extends LevelProvider> clazz) {
         try {

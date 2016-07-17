@@ -93,7 +93,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int SURVIVAL_SLOTS = 36;
     public static final int CREATIVE_SLOTS = 112;
 
-    protected SourceInterface interfaz;
+    protected final SourceInterface interfaz;
 
     public boolean playedBefore;
     public boolean spawned = false;
@@ -136,10 +136,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Vector3 teleportPosition = null;
 
     protected boolean connected = true;
-    protected String ip;
+    protected final String ip;
     protected boolean removeFormat = true;
 
-    protected int port;
+    protected final int port;
     protected String username;
     protected String iusername;
     protected String displayName;
@@ -163,9 +163,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected Vector3 newPosition = null;
 
-    protected int viewDistance;
-    protected int chunksPerTick;
-    protected int spawnThreshold;
+    protected final int viewDistance;
+    protected final int chunksPerTick;
+    protected final int spawnThreshold;
 
     protected Position spawnPosition = null;
 
@@ -176,7 +176,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected boolean allowFlight = false;
 
-    private Map<Integer, Boolean> needACK = new HashMap<>();
+    private final Map<Integer, Boolean> needACK = new HashMap<>();
 
     private Map<Integer, List<DataPacket>> batchedPackets = new TreeMap<>();
 
@@ -3497,7 +3497,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         params.add(((Player) e).getDisplayName());
                     } else if (e instanceof EntityLiving) {
                         message = "death.attack.explosion.player";
-                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : ((EntityLiving) e).getName());
+                        params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                         break;
                     }
                 } else {

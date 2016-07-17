@@ -22,7 +22,7 @@ public class Redstone {
     //At that time, the cobblestone's energy is 16, not 15. If you put a redstone wire next to it, the redstone wire will got 15 energy.
     //So, POWER_WEAKEST also means that energy in blocks, not redstone wire it self. So set it to 1.
 
-    private static Comparator<UpdateObject> orderIsdn = new Comparator<UpdateObject>() {
+    private static final Comparator<UpdateObject> orderIsdn = new Comparator<UpdateObject>() {
         @Override
         public int compare(UpdateObject o1, UpdateObject o2) {
             if (o1.getPopulation() > o2.getPopulation()) {

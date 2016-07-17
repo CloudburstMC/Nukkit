@@ -12,9 +12,9 @@ import java.nio.charset.StandardCharsets;
  */
 public class ServerHandler {
 
-    protected RakNetServer server;
+    protected final RakNetServer server;
 
-    protected ServerInstance instance;
+    protected final ServerInstance instance;
 
     public ServerHandler(RakNetServer server, ServerInstance instance) {
         this.server = server;

@@ -20,14 +20,14 @@ import java.util.*;
 public class SessionManager {
     protected final Packet.PacketFactory[] packetPool = new Packet.PacketFactory[256];
 
-    protected RakNetServer server;
+    protected final RakNetServer server;
 
-    protected UDPServerSocket socket;
+    protected final UDPServerSocket socket;
 
     protected int receiveBytes = 0;
     protected int sendBytes = 0;
 
-    protected Map<String, Session> sessions = new HashMap<>();
+    protected final Map<String, Session> sessions = new HashMap<>();
 
     protected String name = "";
 
@@ -38,12 +38,12 @@ public class SessionManager {
     protected long ticks = 0;
     protected long lastMeasure;
 
-    protected Map<String, Long> block = new HashMap<>();
-    protected Map<String, Integer> ipSec = new HashMap<>();
+    protected final Map<String, Long> block = new HashMap<>();
+    protected final Map<String, Integer> ipSec = new HashMap<>();
 
     public boolean portChecking = true;
 
-    public long serverId;
+    public final long serverId;
 
     protected String currentSource = "";
 
@@ -81,7 +81,7 @@ public class SessionManager {
                     }
                     --max;
                 } catch (Exception e) {
-                    if (currentSource != "") {
+                    if (!"".equals(currentSource)) {
                         this.blockAddress(currentSource);
                     }
                     // else ignore

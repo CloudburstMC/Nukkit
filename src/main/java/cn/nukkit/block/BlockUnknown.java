@@ -6,7 +6,7 @@ package cn.nukkit.block;
  */
 public class BlockUnknown extends Block {
 
-    private int id;
+    private final int id;
 
     public BlockUnknown(int id) {
         this(id, 0);

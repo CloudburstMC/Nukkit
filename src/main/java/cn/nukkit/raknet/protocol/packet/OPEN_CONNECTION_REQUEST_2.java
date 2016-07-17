@@ -10,7 +10,7 @@ import java.net.InetSocketAddress;
  * Nukkit Project
  */
 public class OPEN_CONNECTION_REQUEST_2 extends Packet {
-    public static byte ID = (byte) 0x07;
+    public static final byte ID = (byte) 0x07;
 
     @Override
     public byte getID() {

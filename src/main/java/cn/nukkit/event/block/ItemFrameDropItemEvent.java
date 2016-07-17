@@ -13,9 +13,9 @@ import cn.nukkit.item.Item;
 public class ItemFrameDropItemEvent extends BlockEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-    private Player player;
-    private Item item;
-    private BlockEntityItemFrame itemFrame;
+    private final Player player;
+    private final Item item;
+    private final BlockEntityItemFrame itemFrame;
 
     public ItemFrameDropItemEvent(Player player, Block block, BlockEntityItemFrame itemFrame, Item item) {
         super(block);

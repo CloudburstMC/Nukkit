@@ -8,7 +8,7 @@ import cn.nukkit.entity.Entity;
  */
 public class EntityDamageByChildEntityEvent extends EntityDamageByEntityEvent {
 
-    private Entity childEntity;
+    private final Entity childEntity;
 
     public EntityDamageByChildEntityEvent(Entity damager, Entity childEntity, Entity entity, int cause, float damage) {
         super(damager, entity, cause, damage);

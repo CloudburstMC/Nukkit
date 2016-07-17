@@ -23,11 +23,11 @@ public class InventoryType {
     public static final int HOPPER = 12;
 
 
-    private static Map<Integer, InventoryType> defaults = new HashMap<>();
+    private static final Map<Integer, InventoryType> defaults = new HashMap<>();
 
-    private int size;
-    private String title;
-    private int typeId;
+    private final int size;
+    private final String title;
+    private final int typeId;
 
     public static InventoryType get(int index) {
         return defaults.containsKey(index) ? defaults.get(index) : null;

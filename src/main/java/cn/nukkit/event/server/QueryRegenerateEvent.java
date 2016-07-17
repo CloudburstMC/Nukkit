@@ -32,15 +32,15 @@ public class QueryRegenerateEvent extends ServerEvent {
     private Plugin[] plugins;
     private Player[] players;
 
-    private String gameType;
-    private String version;
-    private String server_engine;
+    private final String gameType;
+    private final String version;
+    private final String server_engine;
     private String map;
     private int numPlayers;
     private int maxPlayers;
-    private String whitelist;
-    private int port;
-    private String ip;
+    private final String whitelist;
+    private final int port;
+    private final String ip;
 
     private Map<String, String> extraData = new HashMap<>();
 

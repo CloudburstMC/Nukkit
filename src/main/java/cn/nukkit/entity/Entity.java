@@ -79,18 +79,18 @@ public abstract class Entity extends Location implements Metadatable {
 
     public static long entityCount = 1;
 
-    private static Map<String, Class<? extends Entity>> knownEntities = new HashMap<>();
-    private static Map<String, String> shortNames = new HashMap<>();
+    private static final Map<String, Class<? extends Entity>> knownEntities = new HashMap<>();
+    private static final Map<String, String> shortNames = new HashMap<>();
 
     protected Map<Integer, Player> hasSpawned = new HashMap<>();
 
-    protected Map<Integer, Effect> effects = new ConcurrentHashMap<>();
+    protected final Map<Integer, Effect> effects = new ConcurrentHashMap<>();
 
     protected long id;
 
     protected int dataFlags = 0;
 
-    protected EntityMetadata dataProperties = new EntityMetadata()
+    protected final EntityMetadata dataProperties = new EntityMetadata()
             .putByte(DATA_FLAGS, 0)
             .putShort(DATA_AIR, 300)
             .putString(DATA_NAMETAG, "")

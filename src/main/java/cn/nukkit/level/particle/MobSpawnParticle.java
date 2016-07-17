@@ -10,8 +10,8 @@ import cn.nukkit.network.protocol.LevelEventPacket;
  */
 public class MobSpawnParticle extends Particle {
 
-    protected int width;
-    protected int height;
+    protected final int width;
+    protected final int height;
 
     public MobSpawnParticle(Vector3 pos, float width, float height) {
         super(pos.x, pos.y, pos.z);

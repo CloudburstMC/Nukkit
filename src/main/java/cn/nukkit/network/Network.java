@@ -31,11 +31,11 @@ public class Network {
 
     private Class<? extends DataPacket>[] packetPool = new Class[256];
 
-    private Server server;
+    private final Server server;
 
-    private Set<SourceInterface> interfaces = new HashSet<>();
+    private final Set<SourceInterface> interfaces = new HashSet<>();
 
-    private Set<AdvancedSourceInterface> advancedInterfaces = new HashSet<>();
+    private final Set<AdvancedSourceInterface> advancedInterfaces = new HashSet<>();
 
     private double upload = 0;
     private double download = 0;

@@ -12,7 +12,7 @@ public class PluginEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private Plugin plugin;
+    private final Plugin plugin;
 
     public PluginEvent(Plugin plugin) {
         this.plugin = plugin;

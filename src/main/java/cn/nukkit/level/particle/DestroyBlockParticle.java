@@ -11,7 +11,7 @@ import cn.nukkit.network.protocol.LevelEventPacket;
  */
 public class DestroyBlockParticle extends Particle {
 
-    protected int data;
+    protected final int data;
 
     public DestroyBlockParticle(Vector3 pos, Block block) {
         super(pos.x, pos.y, pos.z);

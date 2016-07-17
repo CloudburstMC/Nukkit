@@ -11,14 +11,14 @@ import java.util.Iterator;
  * Nukkit Project
  */
 public class BlockIterator implements Iterator<Block> {
-    private Level level;
-    private int maxDistance;
+    private final Level level;
+    private final int maxDistance;
 
-    private static int gridSize = 1 << 24;
+    private static final int gridSize = 1 << 24;
 
     private boolean end = false;
 
-    private Block[] blockQueue;
+    private final Block[] blockQueue;
     private int currentBlock = 0;
 
     private Block currentBlockObject = null;
@@ -28,8 +28,8 @@ public class BlockIterator implements Iterator<Block> {
     private int secondError;
     private int thirdError;
 
-    private int secondStep;
-    private int thirdStep;
+    private final int secondStep;
+    private final int thirdStep;
 
     private int mainFace;
     private int secondFace;

@@ -49,11 +49,11 @@ public abstract class Timings {
     public static TimingsHandler schedulerSyncTimer;
     public static TimingsHandler schedulerAsyncTimer;
     public static TimingsHandler playerCommandTimer;
-    private static HashMap<String, TimingsHandler> entityTypeTimingMap = new HashMap<>();
-    private static HashMap<String, TimingsHandler> blockEntityTypeTimingMap = new HashMap<>();
-    private static HashMap<Byte, TimingsHandler> packetReceiveTimingMap = new HashMap<>();
-    private static HashMap<Byte, TimingsHandler> packetSendTimingMap = new HashMap<>();
-    private static HashMap<String, TimingsHandler> pluginTaskTimingMap = new HashMap<>();
+    private static final HashMap<String, TimingsHandler> entityTypeTimingMap = new HashMap<>();
+    private static final HashMap<String, TimingsHandler> blockEntityTypeTimingMap = new HashMap<>();
+    private static final HashMap<Byte, TimingsHandler> packetReceiveTimingMap = new HashMap<>();
+    private static final HashMap<Byte, TimingsHandler> packetSendTimingMap = new HashMap<>();
+    private static final HashMap<String, TimingsHandler> pluginTaskTimingMap = new HashMap<>();
 
     public static void init() {
         if (serverTickTimer != null) {

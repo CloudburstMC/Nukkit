@@ -17,7 +17,7 @@ public class InventoryPickupArrowEvent extends InventoryEvent implements Cancell
         return handlers;
     }
 
-    private EntityArrow arrow;
+    private final EntityArrow arrow;
 
     public InventoryPickupArrowEvent(Inventory inventory, EntityArrow arrow) {
         super(inventory);

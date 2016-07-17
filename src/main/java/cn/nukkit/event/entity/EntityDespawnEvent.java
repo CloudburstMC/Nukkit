@@ -20,7 +20,7 @@ public class EntityDespawnEvent extends EntityEvent {
         return handlers;
     }
 
-    private int entityType;
+    private final int entityType;
 
     public EntityDespawnEvent(Entity entity) {
         this.entity = entity;

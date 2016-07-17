@@ -16,8 +16,8 @@ public class EntityLevelChangeEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
-    private Level originLevel;
-    private Level targetLevel;
+    private final Level originLevel;
+    private final Level targetLevel;
 
     public EntityLevelChangeEvent(Entity entity, Level originLevel, Level targetLevel) {
         this.entity = entity;

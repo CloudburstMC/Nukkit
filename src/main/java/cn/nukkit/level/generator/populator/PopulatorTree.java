@@ -16,7 +16,7 @@ public class PopulatorTree extends Populator {
     private int randomAmount;
     private int baseAmount;
 
-    private int type;
+    private final int type;
 
     public PopulatorTree() {
         this(BlockSapling.OAK);

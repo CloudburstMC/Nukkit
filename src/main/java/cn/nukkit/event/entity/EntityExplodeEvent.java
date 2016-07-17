@@ -20,7 +20,7 @@ public class EntityExplodeEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
-    protected Position position;
+    protected final Position position;
     protected List<Block> blocks;
     protected double yield;
 

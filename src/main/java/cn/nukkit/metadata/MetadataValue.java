@@ -10,7 +10,7 @@ import java.lang.ref.WeakReference;
  */
 public abstract class MetadataValue {
 
-    protected WeakReference<Plugin> owningPlugin;
+    protected final WeakReference<Plugin> owningPlugin;
 
     protected MetadataValue(Plugin owningPlugin) {
         this.owningPlugin = new WeakReference<>(owningPlugin);

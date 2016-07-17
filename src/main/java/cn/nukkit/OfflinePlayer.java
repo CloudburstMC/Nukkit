@@ -17,9 +17,9 @@ import java.util.List;
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 public class OfflinePlayer implements IPlayer {
-    private String name;
-    private Server server;
-    private CompoundTag namedTag;
+    private final String name;
+    private final Server server;
+    private final CompoundTag namedTag;
 
     /**
      * 初始化这个{@code OfflinePlayer}对象。<br>

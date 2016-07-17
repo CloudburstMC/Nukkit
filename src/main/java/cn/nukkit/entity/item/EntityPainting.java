@@ -108,9 +108,9 @@ public class EntityPainting extends EntityHanging {
     }
 
     public static class Motive {
-        public String title;
-        public int width;
-        public int height;
+        public final String title;
+        public final int width;
+        public final int height;
 
         protected Motive(String title, int width, int height) {
             this.title = title;

@@ -12,7 +12,7 @@ import cn.nukkit.utils.BlockColor;
  */
 public class SpellParticle extends Particle {
 
-    protected int data;
+    protected final int data;
 
     public SpellParticle(Vector3 pos) {
         this(pos, 0);

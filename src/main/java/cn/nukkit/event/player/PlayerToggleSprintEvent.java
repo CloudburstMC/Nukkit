@@ -11,7 +11,7 @@ public class PlayerToggleSprintEvent extends PlayerEvent implements Cancellable 
         return handlers;
     }
 
-    protected boolean isSprinting;
+    protected final boolean isSprinting;
 
     public PlayerToggleSprintEvent(Player player, boolean isSprinting) {
         this.player = player;

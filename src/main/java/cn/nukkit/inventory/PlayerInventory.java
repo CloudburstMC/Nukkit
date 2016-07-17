@@ -25,7 +25,7 @@ public class PlayerInventory extends BaseInventory {
 
     protected int itemInHandIndex = 0;
 
-    protected int[] hotbar;
+    protected final int[] hotbar;
 
     public PlayerInventory(EntityHuman player) {
         super(player, InventoryType.get(InventoryType.PLAYER));

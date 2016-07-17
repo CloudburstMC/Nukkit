@@ -16,7 +16,7 @@ public class BlockGrowEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
-    private Block newState;
+    private final Block newState;
 
     public BlockGrowEvent(Block block, Block newState) {
         super(block);

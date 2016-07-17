@@ -14,8 +14,8 @@ import java.util.Map;
  * Nukkit Project
  */
 public class DoubleChestInventory extends ContainerInventory implements InventoryHolder {
-    private ChestInventory left;
-    private ChestInventory right;
+    private final ChestInventory left;
+    private final ChestInventory right;
 
     public DoubleChestInventory(BlockEntityChest left, BlockEntityChest right) {
         super(null, InventoryType.get(InventoryType.DOUBLE_CHEST));

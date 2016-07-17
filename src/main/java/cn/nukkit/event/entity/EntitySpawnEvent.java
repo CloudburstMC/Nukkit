@@ -20,7 +20,7 @@ public class EntitySpawnEvent extends EntityEvent {
         return handlers;
     }
 
-    private int entityType;
+    private final int entityType;
 
     public EntitySpawnEvent(Entity entity) {
         this.entity = entity;

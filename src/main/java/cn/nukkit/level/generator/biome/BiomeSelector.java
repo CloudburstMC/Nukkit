@@ -11,11 +11,11 @@ import java.util.Map;
  * Nukkit Project
  */
 public class BiomeSelector {
-    private Biome fallback;
-    private Simplex temperature;
-    private Simplex rainfall;
+    private final Biome fallback;
+    private final Simplex temperature;
+    private final Simplex rainfall;
 
-    private Map<Integer, Biome> biomes = new HashMap<>();
+    private final Map<Integer, Biome> biomes = new HashMap<>();
 
     private int[] map = new int[64 * 64];
 

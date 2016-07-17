@@ -29,15 +29,15 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Explosion {
 
-    private int rays = 16; //Rays
-    private Level level;
-    private Position source;
-    private double size;
+    private final int rays = 16; //Rays
+    private final Level level;
+    private final Position source;
+    private final double size;
 
     private List<Block> affectedBlocks = new ArrayList<>();
-    private double stepLen = 0.3d;
+    private final double stepLen = 0.3d;
 
-    private Object what;
+    private final Object what;
 
     public Explosion(Position center, double size, Entity what) {
         this.level = center.getLevel();

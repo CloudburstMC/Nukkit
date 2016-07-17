@@ -281,7 +281,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public Block getTargetBlock(int maxDistance) {
-        return getTargetBlock(maxDistance, new HashMap<Integer, Object>());
+        return getTargetBlock(maxDistance, new HashMap<>());
     }
 
     public Block getTargetBlock(int maxDistance, Map<Integer, Object> transparent) {
@@ -291,7 +291,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             if (block instanceof Block) {
                 return block;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
 

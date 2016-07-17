@@ -30,13 +30,13 @@ public class Normal extends Generator {
         return TYPE_INFINITE;
     }
 
-    private List<Populator> populators = new ArrayList<>();
+    private final List<Populator> populators = new ArrayList<>();
 
     private ChunkManager level;
 
     private NukkitRandom random;
 
-    private List<Populator> generationPopulators = new ArrayList<>();
+    private final List<Populator> generationPopulators = new ArrayList<>();
 
     private Simplex noiseSeaFloor;
     private Simplex noiseLand;

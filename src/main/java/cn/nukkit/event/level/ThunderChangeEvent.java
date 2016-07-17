@@ -12,7 +12,7 @@ public class ThunderChangeEvent extends WeatherEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private boolean to;
+    private final boolean to;
 
     public static HandlerList getHandlers() {
         return handlers;

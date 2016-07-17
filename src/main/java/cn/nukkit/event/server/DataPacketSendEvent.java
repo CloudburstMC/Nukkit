@@ -17,8 +17,8 @@ public class DataPacketSendEvent extends ServerEvent implements Cancellable {
         return handlers;
     }
 
-    private DataPacket packet;
-    private Player player;
+    private final DataPacket packet;
+    private final Player player;
 
     public DataPacketSendEvent(Player player, DataPacket packet) {
         this.packet = packet;

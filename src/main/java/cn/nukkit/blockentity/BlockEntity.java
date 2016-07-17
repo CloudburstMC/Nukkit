@@ -35,8 +35,8 @@ public abstract class BlockEntity extends Position {
 
     public static long count = 1;
 
-    private static Map<String, Class<? extends BlockEntity>> knownBlockEntities = new HashMap<>();
-    private static Map<String, String> shortNames = new HashMap<>();
+    private static final Map<String, Class<? extends BlockEntity>> knownBlockEntities = new HashMap<>();
+    private static final Map<String, String> shortNames = new HashMap<>();
 
     public FullChunk chunk;
     public String name;

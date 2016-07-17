@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class EntityMetadata {
 
-    private Map<Integer, EntityData> map = new HashMap<>();
+    private final Map<Integer, EntityData> map = new HashMap<>();
 
     public EntityData get(int id) {
         return this.getOrDefault(id, null);

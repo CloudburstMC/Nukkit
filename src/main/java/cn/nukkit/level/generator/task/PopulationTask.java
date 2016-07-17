@@ -13,10 +13,10 @@ import cn.nukkit.scheduler.AsyncTask;
  */
 public class PopulationTask extends AsyncTask {
     public boolean state;
-    public int levelId;
+    public final int levelId;
     public BaseFullChunk chunk;
 
-    public BaseFullChunk[] chunks = new BaseFullChunk[9];
+    public final BaseFullChunk[] chunks = new BaseFullChunk[9];
 
     public PopulationTask(Level level, BaseFullChunk chunk) {
         this.state = true;

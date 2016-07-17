@@ -7,7 +7,7 @@ import cn.nukkit.raknet.protocol.Packet;
  * Nukkit Project
  */
 public class CLIENT_DISCONNECT_DataPacket extends Packet {
-    public static byte ID = (byte) 0x15;
+    public static final byte ID = (byte) 0x15;
 
     @Override
     public byte getID() {

@@ -7,7 +7,7 @@ import cn.nukkit.raknet.protocol.Packet;
  * Nukkit Project
  */
 public class ADVERTISE_SYSTEM extends UNCONNECTED_PONG {
-    public static byte ID = (byte) 0x1d;
+    public static final byte ID = (byte) 0x1d;
 
     @Override
     public byte getID() {

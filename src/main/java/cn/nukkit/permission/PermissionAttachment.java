@@ -15,7 +15,7 @@ public class PermissionAttachment {
 
     private PermissionRemovedExecutor removed = null;
 
-    private Map<String, Boolean> permissions = new HashMap<>();
+    private final Map<String, Boolean> permissions = new HashMap<>();
 
     private Permissible permissible;
 

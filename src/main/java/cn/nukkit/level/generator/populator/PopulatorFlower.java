@@ -22,7 +22,7 @@ public class PopulatorFlower extends Populator {
     private int randomAmount;
     private int baseAmount;
 
-    private List<int[]> flowerTypes = new ArrayList<int[]>();
+    private final List<int[]> flowerTypes = new ArrayList<>();
 
     public void setRandomAmount(int randomAmount) {
         this.randomAmount = randomAmount;

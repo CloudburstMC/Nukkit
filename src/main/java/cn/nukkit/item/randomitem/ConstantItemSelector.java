@@ -8,7 +8,7 @@ import cn.nukkit.item.Item;
  */
 public class ConstantItemSelector extends Selector {
 
-    protected Item item;
+    protected final Item item;
 
     public ConstantItemSelector(int id, Selector parent) {
         this(id, 0, parent);

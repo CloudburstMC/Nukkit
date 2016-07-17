@@ -16,10 +16,10 @@ import java.util.Map;
  */
 public class GeneratorRegisterTask extends AsyncTask {
 
-    public Class<? extends Generator> generator;
-    public Map<String, Object> settings;
-    public long seed;
-    public int levelId;
+    public final Class<? extends Generator> generator;
+    public final Map<String, Object> settings;
+    public final long seed;
+    public final int levelId;
 
     public GeneratorRegisterTask(Level level, Generator generator) {
         this.generator = generator.getClass();

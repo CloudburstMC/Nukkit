@@ -18,7 +18,7 @@ public class ContainerOpenPacket extends DataPacket {
     public int x;
     public int y;
     public int z;
-    public long entityId = -1;
+    public final long entityId = -1;
 
     @Override
     public void decode() {

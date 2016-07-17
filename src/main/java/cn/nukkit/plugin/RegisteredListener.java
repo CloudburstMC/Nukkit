@@ -8,17 +8,17 @@ import cn.nukkit.event.*;
  */
 public class RegisteredListener {
 
-    private Listener listener;
+    private final Listener listener;
 
-    private EventPriority priority;
+    private final EventPriority priority;
 
-    private Plugin plugin;
+    private final Plugin plugin;
 
-    private EventExecutor executor;
+    private final EventExecutor executor;
 
-    private boolean ignoreCancelled;
+    private final boolean ignoreCancelled;
 
-    private TimingsHandler timings;
+    private final TimingsHandler timings;
 
     public RegisteredListener(Listener listener, EventExecutor executor, EventPriority priority, Plugin plugin, boolean ignoreCancelled, TimingsHandler timings) {
         this.listener = listener;

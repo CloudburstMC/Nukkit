@@ -12,7 +12,7 @@ import java.util.*;
  */
 public abstract class MetadataStore {
 
-    private Map<String, Map<Plugin, MetadataValue>> metadataMap = new HashMap<>();
+    private final Map<String, Map<Plugin, MetadataValue>> metadataMap = new HashMap<>();
 
     public void setMetadata(Object subject, String metadataKey, MetadataValue newMetadataValue) {
         if (newMetadataValue == null) {

@@ -23,7 +23,7 @@ import cn.nukkit.network.protocol.ContainerSetDataPacket;
  */
 public class BlockEntityFurnace extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
-    protected FurnaceInventory inventory;
+    protected final FurnaceInventory inventory;
 
     public BlockEntityFurnace(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);

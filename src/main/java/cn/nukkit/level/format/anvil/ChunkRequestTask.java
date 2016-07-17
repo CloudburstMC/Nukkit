@@ -17,11 +17,11 @@ import java.nio.ByteOrder;
  * Nukkit Project
  */
 public class ChunkRequestTask extends AsyncTask {
-    protected int levelId;
+    protected final int levelId;
 
-    protected byte[] chunk;
-    protected int chunkX;
-    protected int chunkZ;
+    protected final byte[] chunk;
+    protected final int chunkX;
+    protected final int chunkZ;
 
     protected byte[] blockEntities;
 

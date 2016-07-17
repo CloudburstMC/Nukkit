@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CompoundTag extends Tag {
-    private Map<String, Tag> tags = new HashMap<>();
+    private final Map<String, Tag> tags = new HashMap<>();
 
     public CompoundTag() {
         super("");

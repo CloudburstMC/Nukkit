@@ -69,9 +69,9 @@ public class TimingsCommand extends VanillaCommand {
 
     class PasteThread extends Thread {
         private final CommandSender sender;
-        private List<String> report;
+        private final List<String> report;
         private String reportUrl;
-        private boolean paste;
+        private final boolean paste;
 
         public PasteThread(CommandSender sender, List<String> report, boolean paste) {
             super("Timings paste thread");

@@ -13,7 +13,7 @@ import java.util.Map;
  * Nukkit Project
  */
 public abstract class ObjectTree {
-    public Map<Integer, Boolean> overridable = new HashMap<Integer, Boolean>() {
+    public final Map<Integer, Boolean> overridable = new HashMap<Integer, Boolean>() {
         {
             put(Block.AIR, true);
             put(Block.SAPLING, true);

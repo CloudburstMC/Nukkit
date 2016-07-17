@@ -36,12 +36,12 @@ public abstract class Biome {
 
     public static final int MAX_BIOMES = 256;
 
-    private static Map<Integer, Biome> biomes = new HashMap<>();
+    private static final Map<Integer, Biome> biomes = new HashMap<>();
 
     private int id;
     private boolean registered = false;
 
-    private ArrayList<Populator> populators = new ArrayList<>();
+    private final ArrayList<Populator> populators = new ArrayList<>();
 
     private int minElevation;
     private int maxElevation;

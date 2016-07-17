@@ -15,11 +15,11 @@ public class ShapedRecipe implements Recipe {
 
     private UUID uuid = null;
 
-    private Map<Character, String> shapes = new HashMap<>();
+    private final Map<Character, String> shapes = new HashMap<>();
 
-    private Map<Integer, Map<Integer, Item>> ingredients = new HashMap<>();
+    private final Map<Integer, Map<Integer, Item>> ingredients = new HashMap<>();
 
-    private Map<Character, List<Entry>> shapeItems = new HashMap<>();
+    private final Map<Character, List<Entry>> shapeItems = new HashMap<>();
 
     public ShapedRecipe(Item result, String... shape) {
         if (shape.length == 0) {
@@ -148,8 +148,8 @@ public class ShapedRecipe implements Recipe {
     }
 
     public static class Entry {
-        public int x;
-        public int y;
+        public final int x;
+        public final int y;
 
         public Entry(int x, int y) {
             this.x = x;

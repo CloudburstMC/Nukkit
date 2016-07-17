@@ -27,21 +27,21 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RakNetInterface implements ServerInstance, AdvancedSourceInterface {
 
-    private Server server;
+    private final Server server;
 
     private Network network;
 
-    private RakNetServer raknet;
+    private final RakNetServer raknet;
 
-    private Map<String, Player> players = new ConcurrentHashMap<>();
+    private final Map<String, Player> players = new ConcurrentHashMap<>();
 
-    private Map<String, Integer> networkLatency = new ConcurrentHashMap<>();
+    private final Map<String, Integer> networkLatency = new ConcurrentHashMap<>();
 
-    private Map<Integer, String> identifiers = new ConcurrentHashMap<>();
+    private final Map<Integer, String> identifiers = new ConcurrentHashMap<>();
 
-    private Map<String, Integer> identifiersACK = new ConcurrentHashMap<>();
+    private final Map<String, Integer> identifiersACK = new ConcurrentHashMap<>();
 
-    private ServerHandler handler;
+    private final ServerHandler handler;
 
     private int[] channelCounts = new int[256];
 

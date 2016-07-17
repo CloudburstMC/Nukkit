@@ -19,19 +19,19 @@ import java.util.*;
  */
 public abstract class BaseInventory implements Inventory {
 
-    protected InventoryType type;
+    protected final InventoryType type;
 
     protected int maxStackSize = Inventory.MAX_STACK;
 
     protected int size;
 
-    protected String name;
+    protected final String name;
 
-    protected String title;
+    protected final String title;
 
-    protected Map<Integer, Item> slots = new HashMap<>();
+    protected final Map<Integer, Item> slots = new HashMap<>();
 
-    protected Set<Player> viewers = new HashSet<>();
+    protected final Set<Player> viewers = new HashSet<>();
 
     protected InventoryHolder holder;
 

@@ -20,7 +20,7 @@ import java.util.List;
  */
 public abstract class SimpleConfig {
 
-    private File configFile;
+    private final File configFile;
 
     public SimpleConfig(Plugin plugin) {
         this(plugin, "config.yml");

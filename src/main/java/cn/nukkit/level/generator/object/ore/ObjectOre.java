@@ -11,8 +11,8 @@ import cn.nukkit.math.VectorMath;
  */
 public class ObjectOre {
 
-    private NukkitRandom random;
-    public OreType type;
+    private final NukkitRandom random;
+    public final OreType type;
 
     public ObjectOre(NukkitRandom random, OreType type) {
         this.type = type;

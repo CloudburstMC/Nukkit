@@ -23,7 +23,7 @@ public abstract class EnchantmentDamage extends Enchantment {
         ARTHROPODS
     }
 
-    protected TYPE damageType;
+    protected final TYPE damageType;
 
     protected EnchantmentDamage(int id, String name, int weight, TYPE type) {
         super(id, name, weight, EnchantmentType.WEAPON);

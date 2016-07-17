@@ -23,11 +23,11 @@ import java.util.Map;
  * Nukkit Project
  */
 public abstract class BaseFullChunk implements FullChunk {
-    protected Map<Long, Entity> entities = new HashMap<>();
+    protected final Map<Long, Entity> entities = new HashMap<>();
 
-    protected Map<Long, BlockEntity> tiles = new HashMap<>();
+    protected final Map<Long, BlockEntity> tiles = new HashMap<>();
 
-    protected Map<Integer, BlockEntity> tileList = new HashMap<>();
+    protected final Map<Integer, BlockEntity> tileList = new HashMap<>();
 
     protected int[] biomeColors;
 

@@ -15,8 +15,8 @@ import java.util.*;
  */
 public abstract class Food {
 
-    private static Map<NodeIDMetaPlugin, Food> registryCustom = new LinkedHashMap<>();
-    private static Map<NodeIDMeta, Food> registryDefault = new LinkedHashMap<>();
+    private static final Map<NodeIDMetaPlugin, Food> registryCustom = new LinkedHashMap<>();
+    private static final Map<NodeIDMeta, Food> registryDefault = new LinkedHashMap<>();
 
     //some of following are not available yet in MCPE 0.13.1
     public static final Food apple = registerDefaultFood(new FoodNormal(4, 2.4F).addRelative(Item.APPLE));
@@ -119,7 +119,7 @@ public abstract class Food {
 
     protected int restoreFood = 0;
     protected float restoreSaturation = 0;
-    protected List<NodeIDMeta> relativeIDs = new ArrayList<>();
+    protected final List<NodeIDMeta> relativeIDs = new ArrayList<>();
 
     public final boolean eatenBy(Player player) {
         PlayerEatFoodEvent event = new PlayerEatFoodEvent(player, this);
@@ -166,8 +166,8 @@ public abstract class Food {
     }
 
     static class NodeIDMeta {
-        int id;
-        int meta;
+        final int id;
+        final int meta;
 
         NodeIDMeta(int id, int meta) {
             this.id = id;
@@ -176,7 +176,7 @@ public abstract class Food {
     }
 
     static class NodeIDMetaPlugin extends NodeIDMeta {
-        Plugin plugin;
+        final Plugin plugin;
 
         NodeIDMetaPlugin(int id, int meta, Plugin plugin) {
             super(id, meta);

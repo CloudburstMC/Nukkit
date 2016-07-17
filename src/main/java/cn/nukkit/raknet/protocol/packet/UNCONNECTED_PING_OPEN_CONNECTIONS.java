@@ -7,7 +7,7 @@ import cn.nukkit.raknet.protocol.Packet;
  * Nukkit Project
  */
 public class UNCONNECTED_PING_OPEN_CONNECTIONS extends UNCONNECTED_PING {
-    public static byte ID = (byte) 0x02;
+    public static final byte ID = (byte) 0x02;
 
     @Override
     public byte getID() {

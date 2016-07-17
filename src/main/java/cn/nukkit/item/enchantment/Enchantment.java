@@ -110,7 +110,7 @@ public abstract class Enchantment implements Cloneable {
 
     protected int level;
 
-    protected String name;
+    protected final String name;
 
     protected Enchantment(int id, String name, int weight, EnchantmentType type) {
         this.id = id;

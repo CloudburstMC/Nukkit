@@ -8,5 +8,5 @@ import java.util.concurrent.ConcurrentHashMap;
  * Nukkit Project
  */
 public class ThreadStore {
-    public static Map<String, Object> store = new ConcurrentHashMap<>();
+    public static final Map<String, Object> store = new ConcurrentHashMap<>();
 }

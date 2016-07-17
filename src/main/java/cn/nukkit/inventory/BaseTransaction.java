@@ -8,15 +8,15 @@ import cn.nukkit.item.Item;
  */
 public class BaseTransaction implements Transaction {
 
-    protected Inventory inventory;
+    protected final Inventory inventory;
 
-    protected int slot;
+    protected final int slot;
 
-    protected Item sourceItem;
+    protected final Item sourceItem;
 
-    protected Item targetItem;
+    protected final Item targetItem;
 
-    protected long creationTime;
+    protected final long creationTime;
 
     public BaseTransaction(Inventory inventory, int slot, Item sourceItem, Item targetItem) {
         this.inventory = inventory;

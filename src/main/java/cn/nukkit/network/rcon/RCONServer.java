@@ -32,7 +32,7 @@ public class RCONServer extends Thread {
     private Selector selector;
 
     private String password;
-    private Set<SocketChannel> rconSessions = new HashSet<>();
+    private final Set<SocketChannel> rconSessions = new HashSet<>();
 
     private final List<RCONCommand> receiveQueue = new ArrayList<>();
     private final Map<SocketChannel, List<RCONPacket>> sendQueues = new HashMap<>();

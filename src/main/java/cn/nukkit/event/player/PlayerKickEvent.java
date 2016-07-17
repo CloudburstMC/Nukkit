@@ -14,7 +14,7 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
 
     protected TextContainer quitMessage;
 
-    protected String reason;
+    protected final String reason;
 
     public PlayerKickEvent(Player player, String reason, TextContainer quitMessage) {
         this.player = player;

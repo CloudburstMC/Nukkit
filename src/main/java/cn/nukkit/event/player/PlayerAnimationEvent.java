@@ -13,7 +13,7 @@ public class PlayerAnimationEvent extends PlayerEvent implements Cancellable {
 
     public static final int ARM_SWING = 1;
 
-    private int animationType;
+    private final int animationType;
 
     public PlayerAnimationEvent(Player player) {
         this(player, ARM_SWING);

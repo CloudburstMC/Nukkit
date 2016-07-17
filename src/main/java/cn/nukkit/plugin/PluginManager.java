@@ -24,25 +24,25 @@ import java.util.regex.Pattern;
  */
 public class PluginManager {
 
-    private Server server;
+    private final Server server;
 
-    private SimpleCommandMap commandMap;
+    private final SimpleCommandMap commandMap;
 
-    protected Map<String, Plugin> plugins = new LinkedHashMap<>();
+    protected final Map<String, Plugin> plugins = new LinkedHashMap<>();
 
-    protected Map<String, Permission> permissions = new HashMap<>();
+    protected final Map<String, Permission> permissions = new HashMap<>();
 
-    protected Map<String, Permission> defaultPerms = new HashMap<>();
+    protected final Map<String, Permission> defaultPerms = new HashMap<>();
 
-    protected Map<String, Permission> defaultPermsOp = new HashMap<>();
+    protected final Map<String, Permission> defaultPermsOp = new HashMap<>();
 
-    protected Map<String, WeakHashMap<Permissible, Permissible>> permSubs = new HashMap<>();
+    protected final Map<String, WeakHashMap<Permissible, Permissible>> permSubs = new HashMap<>();
 
-    protected Map<Permissible, Permissible> defSubs = new WeakHashMap<>();
+    protected final Map<Permissible, Permissible> defSubs = new WeakHashMap<>();
 
-    protected Map<Permissible, Permissible> defSubsOp = new WeakHashMap<>();
+    protected final Map<Permissible, Permissible> defSubsOp = new WeakHashMap<>();
 
-    protected Map<String, PluginLoader> fileAssociations = new HashMap<>();
+    protected final Map<String, PluginLoader> fileAssociations = new HashMap<>();
 
     public static TimingsHandler pluginParentTimer;
 

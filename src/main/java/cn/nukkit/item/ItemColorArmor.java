@@ -44,7 +44,7 @@ abstract public class ItemColorArmor extends ItemArmor {
      * @return - Return colored item
      */
     public ItemColorArmor setColor(int r, int g, int b) {
-        int rgb = r << 16 | g << 8 | b << 0;
+        int rgb = r << 16 | g << 8 | b;
         CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
         tag.putInt("customColor", rgb);
         this.setNamedTag(tag);

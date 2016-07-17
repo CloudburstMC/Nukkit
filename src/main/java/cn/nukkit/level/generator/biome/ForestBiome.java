@@ -14,7 +14,7 @@ public class ForestBiome extends GrassyBiome {
     public static final int TYPE_NORMAL = 0;
     public static final int TYPE_BIRCH = 1;
 
-    public int type;
+    public final int type;
 
     public ForestBiome() {
         this(TYPE_NORMAL);

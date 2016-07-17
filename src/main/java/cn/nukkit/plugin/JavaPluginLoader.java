@@ -21,10 +21,10 @@ import java.util.regex.Pattern;
  */
 public class JavaPluginLoader implements PluginLoader {
 
-    private Server server;
+    private final Server server;
 
-    private Map<String, Class> classes = new HashMap<>();
-    private Map<String, PluginClassLoader> classLoaders = new HashMap<>();
+    private final Map<String, Class> classes = new HashMap<>();
+    private final Map<String, PluginClassLoader> classLoaders = new HashMap<>();
 
     public JavaPluginLoader(Server server) {
         this.server = server;

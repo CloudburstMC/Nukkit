@@ -76,19 +76,19 @@ public class Level implements ChunkManager, Metadatable {
     public static final int DIMENSION_OVERWORLD = 0;
     public static final int DIMENSION_NETHER = 1;
 
-    private Map<Long, BlockEntity> blockEntities = new HashMap<>();
+    private final Map<Long, BlockEntity> blockEntities = new HashMap<>();
 
     private Map<String, Map<Long, SetEntityMotionPacket.Entry>> motionToSend = new HashMap<>();
     private Map<String, Map<Long, MoveEntityPacket>> moveToSend = new HashMap<>();
     private Map<String, Map<Long, MovePlayerPacket>> playerMoveToSend = new HashMap<>();
 
-    private Map<Long, Player> players = new HashMap<>();
+    private final Map<Long, Player> players = new HashMap<>();
 
-    private Map<Long, Entity> entities = new HashMap<>();
+    private final Map<Long, Entity> entities = new HashMap<>();
 
-    public Map<Long, Entity> updateEntities = new HashMap<>();
+    public final Map<Long, Entity> updateEntities = new HashMap<>();
 
-    public Map<Long, BlockEntity> updateBlockEntities = new HashMap<>();
+    public final Map<Long, BlockEntity> updateBlockEntities = new HashMap<>();
 
     private Map<String, Block> blockCache = new HashMap<>();
 
@@ -98,42 +98,42 @@ public class Level implements ChunkManager, Metadatable {
 
     private int sendTimeTicker = 0;
 
-    private Server server;
+    private final Server server;
 
-    private int levelId;
+    private final int levelId;
 
     private LevelProvider provider;
 
-    private Map<Integer, ChunkLoader> loaders = new HashMap<>();
+    private final Map<Integer, ChunkLoader> loaders = new HashMap<>();
 
-    private Map<Integer, Integer> loaderCounter = new HashMap<>();
+    private final Map<Integer, Integer> loaderCounter = new HashMap<>();
 
-    private Map<String, Map<Integer, ChunkLoader>> chunkLoaders = new HashMap<>();
+    private final Map<String, Map<Integer, ChunkLoader>> chunkLoaders = new HashMap<>();
 
-    private Map<String, Map<Integer, Player>> playerLoaders = new HashMap<>();
+    private final Map<String, Map<Integer, Player>> playerLoaders = new HashMap<>();
 
     private Map<String, List<DataPacket>> chunkPackets = new HashMap<>();
 
-    private Map<String, Long> unloadQueue = new HashMap<>();
+    private final Map<String, Long> unloadQueue = new HashMap<>();
 
     private float time;
     public boolean stopTime;
 
     private String folderName;
 
-    private Map<String, BaseFullChunk> chunks = new HashMap<>();
+    private final Map<String, BaseFullChunk> chunks = new HashMap<>();
 
     private Map<String, Map<String, Vector3>> changedBlocks = new HashMap<>();
 
     private PriorityQueue<PriorityObject> updateQueue;
-    private Map<String, Integer> updateQueueIndex = new HashMap<>();
+    private final Map<String, Integer> updateQueueIndex = new HashMap<>();
 
-    private Map<String, Map<Integer, Player>> chunkSendQueue = new HashMap<>();
-    private Map<String, Boolean> chunkSendTasks = new HashMap<>();
+    private final Map<String, Map<Integer, Player>> chunkSendQueue = new HashMap<>();
+    private final Map<String, Boolean> chunkSendTasks = new HashMap<>();
 
-    private Map<String, Boolean> chunkPopulationQueue = new HashMap<>();
-    private Map<String, Boolean> chunkPopulationLock = new HashMap<>();
-    private Map<String, Boolean> chunkGenerationQueue = new HashMap<>();
+    private final Map<String, Boolean> chunkPopulationQueue = new HashMap<>();
+    private final Map<String, Boolean> chunkPopulationLock = new HashMap<>();
+    private final Map<String, Boolean> chunkGenerationQueue = new HashMap<>();
     private int chunkGenerationQueueSize = 8;
     private int chunkPopulationQueueSize = 2;
 
@@ -147,7 +147,7 @@ public class Level implements ChunkManager, Metadatable {
     private Position temporalPosition;
     private Vector3 temporalVector;
 
-    private Block[] blockStates;
+    private final Block[] blockStates;
 
     public int sleepTicks = 0;
 
@@ -155,7 +155,7 @@ public class Level implements ChunkManager, Metadatable {
     private Map<String, Integer> chunkTickList = new HashMap<>();
     private int chunksPerTicks;
     private boolean clearChunksOnTick;
-    private HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {
+    private final HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {
         {
             put(Block.GRASS, BlockGrass.class);
             put(Block.FARMLAND, BlockFarmland.class);
@@ -198,7 +198,7 @@ public class Level implements ChunkManager, Metadatable {
     private Class<? extends Generator> generator;
     private Generator generatorInstance;
 
-    public java.util.Random rand = new java.util.Random();
+    public final java.util.Random rand = new java.util.Random();
     private boolean raining = false;
     private int rainTime = 0;
     private boolean thundering = false;
@@ -206,7 +206,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private long levelCurrentTick = 0;
 
-    private int dimension = DIMENSION_OVERWORLD;
+    private final int dimension = DIMENSION_OVERWORLD;
 
     public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
         this.blockStates = Block.fullList;

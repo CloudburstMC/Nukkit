@@ -7,30 +7,30 @@ import cn.nukkit.level.Level;
  */
 public class LevelTimings {
 
-    public TimingsHandler mobSpawn;
-    public TimingsHandler doChunkUnload;
-    public TimingsHandler doPortalForcer;
-    public TimingsHandler doTickPending;
-    public TimingsHandler doTickTiles;
-    public TimingsHandler doVillages;
-    public TimingsHandler doChunkMap;
-    public TimingsHandler doChunkGC;
-    public TimingsHandler doSounds;
-    public TimingsHandler entityTick;
-    public TimingsHandler blockEntityTick;
-    public TimingsHandler blockEntityPending;
-    public TimingsHandler tracker;
-    public TimingsHandler doTick;
-    public TimingsHandler tickEntities;
-    public TimingsHandler syncChunkSendTimer;
-    public TimingsHandler syncChunkSendPrepareTimer;
-    public TimingsHandler syncChunkLoadTimer;
-    public TimingsHandler syncChunkLoadDataTimer;
-    public TimingsHandler syncChunkLoadStructuresTimer;
-    public TimingsHandler syncChunkLoadEntitiesTimer;
-    public TimingsHandler syncChunkLoadBlockEntitiesTimer;
-    public TimingsHandler syncChunkLoadTileTicksTimer;
-    public TimingsHandler syncChunkLoadPostTimer;
+    public final TimingsHandler mobSpawn;
+    public final TimingsHandler doChunkUnload;
+    public final TimingsHandler doPortalForcer;
+    public final TimingsHandler doTickPending;
+    public final TimingsHandler doTickTiles;
+    public final TimingsHandler doVillages;
+    public final TimingsHandler doChunkMap;
+    public final TimingsHandler doChunkGC;
+    public final TimingsHandler doSounds;
+    public final TimingsHandler entityTick;
+    public final TimingsHandler blockEntityTick;
+    public final TimingsHandler blockEntityPending;
+    public final TimingsHandler tracker;
+    public final TimingsHandler doTick;
+    public final TimingsHandler tickEntities;
+    public final TimingsHandler syncChunkSendTimer;
+    public final TimingsHandler syncChunkSendPrepareTimer;
+    public final TimingsHandler syncChunkLoadTimer;
+    public final TimingsHandler syncChunkLoadDataTimer;
+    public final TimingsHandler syncChunkLoadStructuresTimer;
+    public final TimingsHandler syncChunkLoadEntitiesTimer;
+    public final TimingsHandler syncChunkLoadBlockEntitiesTimer;
+    public final TimingsHandler syncChunkLoadTileTicksTimer;
+    public final TimingsHandler syncChunkLoadPostTimer;
 
     public LevelTimings(Level level) {
         String name = level.getFolderName() + " - ";

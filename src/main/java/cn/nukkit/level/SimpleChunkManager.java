@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SimpleChunkManager implements ChunkManager {
     protected Map<String, FullChunk> chunks = new ConcurrentHashMap<>();
 
-    protected long seed;
+    protected final long seed;
 
     public SimpleChunkManager(long seed) {
         this.seed = seed;

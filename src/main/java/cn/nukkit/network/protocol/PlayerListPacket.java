@@ -47,7 +47,7 @@ public class PlayerListPacket extends DataPacket {
 
     public static class Entry {
 
-        public UUID uuid;
+        public final UUID uuid;
         public long entityId = 0;
         public String name = "";
         public Skin skin;

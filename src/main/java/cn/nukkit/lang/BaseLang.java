@@ -17,7 +17,7 @@ import java.util.Map;
 public class BaseLang {
     public static final String FALLBACK_LANGUAGE = "eng";
 
-    protected String langName;
+    protected final String langName;
 
     protected Map<String, String> lang = new HashMap<>();
     protected Map<String, String> fallbackLang = new HashMap<>();

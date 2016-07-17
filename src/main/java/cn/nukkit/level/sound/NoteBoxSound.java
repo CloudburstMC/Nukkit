@@ -11,14 +11,14 @@ import cn.nukkit.network.protocol.DataPacket;
 
 public class NoteBoxSound extends GenericSound {
 
-    private int instrument;
-    private int pitch;
+    private final int instrument;
+    private final int pitch;
 
-    public static int INSTRUMENT_PIANO = 0;
-    public static int INSTRUMENT_BASS_DRUM = 1;
-    public static int INSTRUMENT_CLICK = 2;
-    public static int INSTRUMENT_TABOUR = 3;
-    public static int INSTRUMENT_BASS = 4;
+    public static final int INSTRUMENT_PIANO = 0;
+    public static final int INSTRUMENT_BASS_DRUM = 1;
+    public static final int INSTRUMENT_CLICK = 2;
+    public static final int INSTRUMENT_TABOUR = 3;
+    public static final int INSTRUMENT_BASS = 4;
 
     public NoteBoxSound(Vector3 pos) {
         this(pos, 0);

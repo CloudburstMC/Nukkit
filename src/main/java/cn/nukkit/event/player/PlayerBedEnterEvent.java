@@ -12,7 +12,7 @@ public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    private Block bed;
+    private final Block bed;
 
     public PlayerBedEnterEvent(Player player, Block bed) {
         this.player = player;

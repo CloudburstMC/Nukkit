@@ -17,13 +17,13 @@ public class PlayerCreationEvent extends Event {
         return handlers;
     }
 
-    private SourceInterface interfaz;
+    private final SourceInterface interfaz;
 
-    private Long clientId;
+    private final Long clientId;
 
-    private String address;
+    private final String address;
 
-    private int port;
+    private final int port;
 
     private Class<? extends Player> baseClass;
 

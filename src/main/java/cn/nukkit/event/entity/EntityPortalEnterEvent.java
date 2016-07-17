@@ -10,7 +10,7 @@ public class EntityPortalEnterEvent extends EntityEvent implements Cancellable {
     public static final int TYPE_NETHER = 0;
     public static final int TYPE_END = 1;
 
-    private int type;
+    private final int type;
 
     public static HandlerList getHandlers() {
         return handlers;

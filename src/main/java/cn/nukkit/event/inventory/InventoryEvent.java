@@ -10,7 +10,7 @@ import cn.nukkit.inventory.Inventory;
  */
 public abstract class InventoryEvent extends Event {
 
-    protected Inventory inventory;
+    protected final Inventory inventory;
 
     public InventoryEvent(Inventory inventory) {
         this.inventory = inventory;

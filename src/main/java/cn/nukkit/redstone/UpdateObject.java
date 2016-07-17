@@ -8,7 +8,7 @@ import cn.nukkit.block.Block;
  */
 public class UpdateObject {
 
-    private int population;
+    private final int population;
     private Block location = null;
 
     public UpdateObject(int blockPopulation, Block blockLocation) {

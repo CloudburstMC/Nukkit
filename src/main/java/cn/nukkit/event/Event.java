@@ -23,7 +23,7 @@ import cn.nukkit.utils.EventException;
  */
 public abstract class Event {
 
-    protected String eventName = null;
+    protected final String eventName = null;
     private boolean isCancelled = false;
 
     final public String getEventName() {

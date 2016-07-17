@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class TimingsHandler {
 
-    private static List<TimingsHandler> handlers = new ArrayList<>();
-    private String name;
-    private TimingsHandler parent;
+    private static final List<TimingsHandler> handlers = new ArrayList<>();
+    private final String name;
+    private final TimingsHandler parent;
     private long count;
     private long curCount;
     private long start;

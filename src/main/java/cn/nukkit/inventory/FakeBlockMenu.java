@@ -8,7 +8,7 @@ import cn.nukkit.level.Position;
  */
 public class FakeBlockMenu extends Position implements InventoryHolder {
 
-    private Inventory inventory;
+    private final Inventory inventory;
 
     public FakeBlockMenu(Inventory inventory, Position pos) {
         super(pos.x, pos.y, pos.z, pos.level);

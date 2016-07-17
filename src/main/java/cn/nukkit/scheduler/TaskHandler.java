@@ -26,7 +26,7 @@ public class TaskHandler {
 
     private boolean cancelled;
 
-    public TimingsHandler timings;
+    public final TimingsHandler timings;
 
     public TaskHandler(Plugin plugin, String timingName, Runnable task, int taskId, boolean asynchronous) {
         this.asynchronous = asynchronous;

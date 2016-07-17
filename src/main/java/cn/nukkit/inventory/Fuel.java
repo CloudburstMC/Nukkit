@@ -10,7 +10,7 @@ import java.util.TreeMap;
  * Nukkit Project
  */
 public abstract class Fuel {
-    public static Map<Integer, Short> duration = new TreeMap<>();
+    public static final Map<Integer, Short> duration = new TreeMap<>();
 
     static {
         duration.put(Item.COAL, (short) 1600);

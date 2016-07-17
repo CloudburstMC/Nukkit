@@ -16,7 +16,7 @@ public class SpawnChangeEvent extends LevelEvent {
         return handlers;
     }
 
-    private Position previousSpawn;
+    private final Position previousSpawn;
 
     public SpawnChangeEvent(Level level, Position previousSpawn) {
         super(level);

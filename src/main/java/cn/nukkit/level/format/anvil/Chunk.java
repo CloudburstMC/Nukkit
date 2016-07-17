@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class Chunk extends BaseChunk {
 
-    protected CompoundTag nbt;
+    protected final CompoundTag nbt;
 
     public Chunk(LevelProvider level) {
         this(level, null);

@@ -15,7 +15,7 @@ public class Permission {
     public final static String DEFAULT_TRUE = "true";
     public final static String DEFAULT_FALSE = "false";
 
-    public static String DEFAULT_PERMISSION = DEFAULT_OP;
+    public static final String DEFAULT_PERMISSION = DEFAULT_OP;
 
     public static String getByName(String value) {
         switch (value.toLowerCase()) {
@@ -43,7 +43,7 @@ public class Permission {
         }
     }
 
-    private String name;
+    private final String name;
 
     private String description;
 

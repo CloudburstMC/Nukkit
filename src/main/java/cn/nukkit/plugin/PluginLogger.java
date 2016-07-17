@@ -10,7 +10,7 @@ import cn.nukkit.utils.Logger;
  */
 public class PluginLogger implements Logger {
 
-    private String pluginName;
+    private final String pluginName;
 
     public PluginLogger(Plugin context) {
         String prefix = context.getDescription().getPrefix();

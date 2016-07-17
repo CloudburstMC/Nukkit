@@ -102,9 +102,9 @@ public class Server {
 
     private long nextTick;
 
-    private float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
+    private final float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
 
-    private float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    private final float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     private float maxTick = 20;
 
@@ -114,9 +114,9 @@ public class Server {
 
     private boolean dispatchSignals = false;
 
-    private MainLogger logger;
+    private final MainLogger logger;
 
-    private CommandReader console;
+    private final CommandReader console;
 
     private SimpleCommandMap commandMap;
 
@@ -155,11 +155,11 @@ public class Server {
 
     private UUID serverID;
 
-    private String filePath;
-    private String dataPath;
-    private String pluginPath;
+    private final String filePath;
+    private final String dataPath;
+    private final String pluginPath;
 
-    private Set<UUID> uniquePlayers = new HashSet<>();
+    private final Set<UUID> uniquePlayers = new HashSet<>();
 
     private QueryHandler queryHandler;
 
@@ -168,13 +168,13 @@ public class Server {
     private Config properties;
     private Config config;
 
-    private Map<String, Player> players = new HashMap<>();
+    private final Map<String, Player> players = new HashMap<>();
 
-    private Map<UUID, Player> playerList = new HashMap<>();
+    private final Map<UUID, Player> playerList = new HashMap<>();
 
-    private Map<Integer, String> identifier = new HashMap<>();
+    private final Map<Integer, String> identifier = new HashMap<>();
 
-    private Map<Integer, Level> levels = new HashMap<>();
+    private final Map<Integer, Level> levels = new HashMap<>();
 
     private Level defaultLevel = null;
 

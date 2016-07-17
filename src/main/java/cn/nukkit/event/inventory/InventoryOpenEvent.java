@@ -17,7 +17,7 @@ public class InventoryOpenEvent extends InventoryEvent implements Cancellable {
         return handlers;
     }
 
-    private Player who;
+    private final Player who;
 
     public InventoryOpenEvent(Inventory inventory, Player who) {
         super(inventory);

@@ -21,9 +21,9 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
-    protected Player player;
+    protected final Player player;
 
-    protected Item item;
+    protected final Item item;
 
     protected boolean instaBreak = false;
     protected Item[] blockDrops = new Item[0];

@@ -18,7 +18,7 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
-    private Item bow;
+    private final Item bow;
 
     private EntityProjectile projectile;
 

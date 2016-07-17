@@ -10,11 +10,11 @@ import java.nio.ByteBuffer;
  */
 public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
-    private int y;
-    private byte[] blocks;
-    private byte[] data;
-    private byte[] blockLight;
-    private byte[] skyLight;
+    private final int y;
+    private final byte[] blocks;
+    private final byte[] data;
+    private final byte[] blockLight;
+    private final byte[] skyLight;
 
     public ChunkSection(CompoundTag nbt) {
         this.y = nbt.getByte("Y");

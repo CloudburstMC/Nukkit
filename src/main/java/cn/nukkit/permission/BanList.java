@@ -20,7 +20,7 @@ public class BanList {
 
     private LinkedHashMap<String, BanEntry> list = new LinkedHashMap<>();
 
-    private String file;
+    private final String file;
 
     private boolean enable = true;
 

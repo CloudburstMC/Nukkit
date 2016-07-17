@@ -21,9 +21,9 @@ public class PermissibleBase implements Permissible {
 
     private Permissible parent = null;
 
-    private Set<PermissionAttachment> attachments = new HashSet<>();
+    private final Set<PermissionAttachment> attachments = new HashSet<>();
 
-    private Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
+    private final Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
 
     public PermissibleBase(ServerOperator opable) {
         this.opable = opable;

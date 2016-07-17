@@ -9,9 +9,9 @@ import java.util.UUID;
 public class BrewingRecipe implements Recipe {
     private UUID id;
 
-    private Item output;
+    private final Item output;
 
-    private Item potion;
+    private final Item potion;
 
     private Item ingredient;
 

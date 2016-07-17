@@ -16,9 +16,9 @@ import java.util.TreeMap;
  * Nukkit Project
  */
 public class BanEntry {
-    public static String format = "yyyy-MM-dd hh:mm:ss Z";
+    public static final String format = "yyyy-MM-dd hh:mm:ss Z";
 
-    private String name;
+    private final String name;
     private Date creationDate = null;
     private String source = "(Unknown)";
     private Date expirationDate = null;

@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class EntityDamageByEntityEvent extends EntityDamageEvent {
 
-    private Entity damager;
+    private final Entity damager;
 
     private float knockBack;
 

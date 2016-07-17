@@ -13,11 +13,11 @@ import java.util.UUID;
  */
 public class ShapelessRecipe implements Recipe {
 
-    private Item output;
+    private final Item output;
 
     private UUID uuid = null;
 
-    private List<Item> ingredients = new ArrayList<>();
+    private final List<Item> ingredients = new ArrayList<>();
 
     public ShapelessRecipe(Item result) {
         this.output = result.clone();

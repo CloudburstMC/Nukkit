@@ -16,7 +16,7 @@ public class BlockSpreadEvent extends BlockFormEvent implements Cancellable {
         return handlers;
     }
 
-    private Block source;
+    private final Block source;
 
     public BlockSpreadEvent(Block block, Block source, Block newState) {
         super(block, newState);

@@ -6,7 +6,7 @@ package cn.nukkit.utils;
  */
 public class ServerKiller extends Thread {
 
-    public int time;
+    public final int time;
 
     public ServerKiller() {
         this(15);

@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class FoodEffective extends Food {
 
-    protected Map<Effect, Float> effects = new LinkedHashMap<>();
+    protected final Map<Effect, Float> effects = new LinkedHashMap<>();
 
     public FoodEffective(int restoreFood, float restoreSaturation) {
         this.setRestoreFood(restoreFood);

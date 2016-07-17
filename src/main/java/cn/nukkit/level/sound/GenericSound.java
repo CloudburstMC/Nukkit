@@ -20,7 +20,7 @@ public class GenericSound extends Sound {
     }
 
     protected float pitch = 0f;
-    protected int id;
+    protected final int id;
 
     public float getPitch() {
         return this.pitch / 1000f;

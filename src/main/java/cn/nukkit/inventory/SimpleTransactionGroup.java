@@ -16,14 +16,14 @@ import java.util.Set;
  */
 public class SimpleTransactionGroup implements TransactionGroup {
 
-    private long creationTime;
+    private final long creationTime;
     protected boolean hasExecuted = false;
 
     protected Player source = null;
 
-    protected Set<Inventory> inventories = new HashSet<>();
+    protected final Set<Inventory> inventories = new HashSet<>();
 
-    protected Set<Transaction> transactions = new HashSet<>();
+    protected final Set<Transaction> transactions = new HashSet<>();
 
     public SimpleTransactionGroup() {
         this(null);

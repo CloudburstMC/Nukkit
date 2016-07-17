@@ -36,7 +36,7 @@ public class LevelDB implements LevelProvider {
 
     protected Level level;
 
-    protected String path;
+    protected final String path;
 
     protected CompoundTag levelData;
 

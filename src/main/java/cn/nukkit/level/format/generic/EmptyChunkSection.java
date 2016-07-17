@@ -10,7 +10,7 @@ import java.util.Arrays;
  * Nukkit Project
  */
 public class EmptyChunkSection implements ChunkSection {
-    private int y;
+    private final int y;
 
     public EmptyChunkSection(int y) {
         this.y = y;

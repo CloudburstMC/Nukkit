@@ -93,9 +93,9 @@ public class Effect implements Cloneable {
         }
     }
 
-    protected int id;
+    protected final int id;
 
-    protected String name;
+    protected final String name;
 
     protected int duration;
 
@@ -107,7 +107,7 @@ public class Effect implements Cloneable {
 
     protected boolean ambient = false;
 
-    protected boolean bad;
+    protected final boolean bad;
 
     public Effect(int id, String name, int r, int g, int b) {
         this(id, name, r, g, b, false);

@@ -9,7 +9,7 @@ import cn.nukkit.level.Level;
  */
 public abstract class WeatherEvent extends Event {
 
-    private Level level;
+    private final Level level;
 
     public WeatherEvent(Level level) {
         this.level = level;

@@ -20,7 +20,7 @@ import cn.nukkit.nbt.tag.ListTag;
  */
 public class BlockEntityChest extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
-    protected ChestInventory inventory;
+    protected final ChestInventory inventory;
 
     protected DoubleChestInventory doubleInventory = null;
 

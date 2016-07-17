@@ -11,7 +11,7 @@ import java.util.List;
  * Nukkit Project
  */
 public class BlockMetadataStore extends MetadataStore {
-    private Level owningLevel;
+    private final Level owningLevel;
 
     public BlockMetadataStore(Level owningLevel) {
         this.owningLevel = owningLevel;

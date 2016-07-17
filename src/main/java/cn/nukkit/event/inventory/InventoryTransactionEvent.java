@@ -17,7 +17,7 @@ public class InventoryTransactionEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    private TransactionGroup transaction;
+    private final TransactionGroup transaction;
 
     public InventoryTransactionEvent(TransactionGroup transaction) {
         this.transaction = transaction;

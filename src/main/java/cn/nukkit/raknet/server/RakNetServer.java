@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Nukkit Project
  */
 public class RakNetServer extends Thread {
-    protected int port;
+    protected final int port;
     protected String interfaz;
 
     protected ThreadedLogger logger;

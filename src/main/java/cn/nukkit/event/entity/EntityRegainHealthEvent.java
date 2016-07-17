@@ -21,7 +21,7 @@ public class EntityRegainHealthEvent extends EntityEvent implements Cancellable 
     public static final int CAUSE_CUSTOM = 3;
 
     private float amount;
-    private int reason;
+    private final int reason;
 
     public EntityRegainHealthEvent(Entity entity, float amount, int regainReason) {
         this.entity = entity;

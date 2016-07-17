@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Nukkit Project
  */
 public class GeneratorPool {
-    private static Map<Integer, Generator> generators = new ConcurrentHashMap<>();
+    private static final Map<Integer, Generator> generators = new ConcurrentHashMap<>();
 
     public static void put(int levelId, Generator generator) {
         generators.put(levelId, generator);

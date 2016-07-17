@@ -60,6 +60,6 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         COMMAND,       // For Nukkit tp command only
         PLUGIN,        // Every plugin
         NETHER_PORTAL, // Teleport using Nether portal
-        UNKNOWN;       // Unknown cause
+        UNKNOWN       // Unknown cause
     }
 }

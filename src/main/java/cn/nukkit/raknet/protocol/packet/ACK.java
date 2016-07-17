@@ -9,7 +9,7 @@ import cn.nukkit.raknet.protocol.Packet;
  */
 public class ACK extends AcknowledgePacket {
 
-    public static byte ID = (byte) 0xc0;
+    public static final byte ID = (byte) 0xc0;
 
     @Override
     public byte getID() {

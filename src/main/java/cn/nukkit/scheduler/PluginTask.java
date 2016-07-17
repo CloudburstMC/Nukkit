@@ -36,7 +36,7 @@ import cn.nukkit.plugin.Plugin;
  */
 public abstract class PluginTask<T extends Plugin> extends Task {
 
-    protected T owner;
+    protected final T owner;
 
     /**
      * 构造一个插件拥有的任务的方法。<br>Constructs a plugin-owned task.

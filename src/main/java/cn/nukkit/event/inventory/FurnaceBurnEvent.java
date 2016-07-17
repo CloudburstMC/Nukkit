@@ -18,8 +18,8 @@ public class FurnaceBurnEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
-    private BlockEntityFurnace furnace;
-    private Item fuel;
+    private final BlockEntityFurnace furnace;
+    private final Item fuel;
     private short burnTime;
     private boolean burning = true;
 

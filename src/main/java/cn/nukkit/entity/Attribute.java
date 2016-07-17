@@ -19,16 +19,16 @@ public class Attribute implements Cloneable {
     public static final int MAX_HUNGER = 3;
     public static final int MOVEMENT_SPEED = 4;
 
-    private int id;
+    private final int id;
     protected float minValue;
     protected float maxValue;
     protected float defaultValue;
     protected float currentValue;
-    protected String name;
-    protected boolean shouldSend;
+    protected final String name;
+    protected final boolean shouldSend;
 
 
-    protected static Map<Integer, Attribute> attributes = new HashMap<>();
+    protected static final Map<Integer, Attribute> attributes = new HashMap<>();
 
     public static void init() {
         addAttribute(MAX_HEALTH, "generic.health", 0, 0x7fffffff, 20, true);
