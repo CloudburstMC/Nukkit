@@ -128,26 +128,27 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
         return this.get(key, new ConfigSection());
     }
 
-
+    //@formatter:off
     /**
      * Get all ConfigSections in root path.
      * Example config:
-     * a1:
-     * b1:
-     * c1:
-     * c2:
-     * a2:
-     * b2:
-     * c3:
-     * c4:
-     * a3: true
-     * a4: "hello"
-     * a5: 100
+     *  a1:
+     *    b1:
+     *      c1:
+     *      c2:
+     *  a2:
+     *    b2:
+     *      c3:
+     *      c4:
+     *  a3: true
+     *  a4: "hello"
+     *  a5: 100
      * <p>
      * getSections() will return new ConfigSection, that contains sections a1 and a2 only.
      *
      * @return
      */
+    //@formatter:on
     public ConfigSection getSections() {
         return getSections(null);
     }
