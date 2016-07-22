@@ -3623,7 +3623,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void sendExperience(int exp) {
         if (this.spawned) {
             float percent = ((float) exp) / calculateRequireExperience(this.getExperienceLevel());
-            this.setAttribute(Attribute.addAttribute(Attribute.EXPERIENCE, "player.experience", 0, 1, percent, true).setValue(percent));
+            this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE).setValue(percent));
         }
     }
 
