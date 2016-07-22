@@ -13,29 +13,57 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Attribute implements Cloneable {
-    public static final int MAX_HEALTH = 0;
-    public static final int EXPERIENCE = 1;
-    public static final int EXPERIENCE_LEVEL = 2;
-    public static final int MAX_HUNGER = 3;
-    public static final int MOVEMENT_SPEED = 4;
 
-    private final int id;
+    public static final int ABSORPTION = 0;
+    public static final int SATURATION = 1;
+    public static final int EXHAUSTION = 2;
+    public static final int KNOCKBACK_RESISTANCE = 3;
+    public static final int MAX_HEALTH = 4;
+    public static final int MOVEMENT_SPEED = 5;
+    public static final int FOLLOW_RANGE = 6;
+    public static final int MAX_HUNGER = 7;
+    public static final int FOOD = 7;
+    public static final int ATTACK_DAMAGE = 8;
+    public static final int EXPERIENCE_LEVEL = 9;
+    public static final int EXPERIENCE = 10;
+
+    protected static Map<Integer, Attribute> attributes = new HashMap<>();
+    
     protected float minValue;
     protected float maxValue;
     protected float defaultValue;
     protected float currentValue;
-    protected final String name;
-    protected final boolean shouldSend;
+    protected String name;
+    protected boolean shouldSend;
+    private int id;
 
-
-    protected static final Map<Integer, Attribute> attributes = new HashMap<>();
+    private Attribute(int id, String name, float minValue, float maxValue, float defaultValue, boolean shouldSend) {
+        this.id = id;
+        this.name = name;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
+        this.defaultValue = defaultValue;
+        this.shouldSend = shouldSend;
+        this.currentValue = this.defaultValue;
+    }
 
     public static void init() {
-        addAttribute(MAX_HEALTH, "generic.health", 0, 0x7fffffff, 20, true);
-        addAttribute(EXPERIENCE, "player.experience", 0, 1, 0, true);
-        addAttribute(EXPERIENCE_LEVEL, "player.level", 0, 24791, 0, true);
-        addAttribute(MAX_HUNGER, "player.hunger", 0, 20, 20, true);
-        addAttribute(MOVEMENT_SPEED, "generic.movementSpeed", 0, 24791, 0.1f, true);
+        addAttribute(ABSORPTION, "generic.absorption", 0.00f, 340282346638528859811704183484516925440.00f, 0.00f);
+        addAttribute(SATURATION, "player.saturation", 0.00f, 20.00f, 5.00f);
+        addAttribute(EXHAUSTION, "player.exhaustion", 0.00f, 5.00f, 0.41f);
+        addAttribute(KNOCKBACK_RESISTANCE, "generic.knockbackResistance", 0.00f, 1.00f, 0.00f);
+        addAttribute(MAX_HEALTH, "generic.health", 0.00f, 20.00f, 20.00f);
+        addAttribute(MOVEMENT_SPEED, "generic.movementSpeed", 0.00f, 340282346638528859811704183484516925440.00f, 0.10f);
+        addAttribute(FOLLOW_RANGE, "generic.followRange", 0.00f, 2048.00f, 16.00f, false);
+        addAttribute(MAX_HUNGER, "player.hunger", 0.00f, 20.00f, 20.00f);
+        addAttribute(ATTACK_DAMAGE, "generic.attackDamage", 0.00f, 340282346638528859811704183484516925440.00f, 1.00f, false);
+        addAttribute(EXPERIENCE_LEVEL, "player.level", 0.00f, 24791.00f, 0.00f);
+        addAttribute(EXPERIENCE, "player.experience", 0.00f, 1.00f, 0.00f);
+
+    }
+
+    public static Attribute addAttribute(int id, String name, float minValue, float maxValue, float defaultValue) {
+        return addAttribute(id, name, minValue, maxValue, defaultValue, true);
     }
 
     public static Attribute addAttribute(int id, String name, float minValue, float maxValue, float defaultValue, boolean shouldSend) {
@@ -66,17 +94,6 @@ public class Attribute implements Cloneable {
         return null;
     }
 
-    private Attribute(int id, String name, float minValue, float maxValue, float defaultValue, boolean shouldSend) {
-        this.id = id;
-        this.name = name;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        this.defaultValue = defaultValue;
-        this.shouldSend = shouldSend;
-
-        this.currentValue = this.defaultValue;
-    }
-
     public float getMinValue() {
         return this.minValue;
     }
@@ -84,7 +101,6 @@ public class Attribute implements Cloneable {
     public Attribute setMinValue(float minValue) {
         if (minValue > this.getMaxValue()) {
             throw new IllegalArgumentException("Value " + minValue + " is bigger than the maxValue!");
-
         }
         this.minValue = minValue;
         return this;
@@ -97,9 +113,7 @@ public class Attribute implements Cloneable {
     public Attribute setMaxValue(float maxValue) {
         if (maxValue < this.getMinValue()) {
             throw new IllegalArgumentException("Value " + maxValue + " is bigger than the minValue!");
-
         }
-
         this.maxValue = maxValue;
         return this;
     }
@@ -111,7 +125,6 @@ public class Attribute implements Cloneable {
     public Attribute setDefaultValue(float defaultValue) {
         if (defaultValue > this.getMaxValue() || defaultValue < this.getMinValue()) {
             throw new IllegalArgumentException("Value " + defaultValue + " exceeds the range!");
-
         }
         this.defaultValue = defaultValue;
         return this;
@@ -122,12 +135,17 @@ public class Attribute implements Cloneable {
     }
 
     public Attribute setValue(float value) {
+        return setValue(value, false);
+    }
+
+    public Attribute setValue(float value, boolean fit) {
         if (value > this.getMaxValue() || value < this.getMinValue()) {
-            throw new IllegalArgumentException("Value " + value + " exceeds the range!");
+            if (!fit) {
+                throw new IllegalArgumentException("Value " + value + " exceeds the range!");
+            }
+            value = Math.min(Math.max(value, this.getMinValue()), this.getMaxValue());
         }
-
         this.currentValue = value;
-
         return this;
     }
 
@@ -152,4 +170,3 @@ public class Attribute implements Cloneable {
         }
     }
 }
-
