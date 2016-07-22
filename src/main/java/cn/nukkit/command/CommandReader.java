@@ -89,7 +89,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
         this.running = false;
     }
 
-    public void stashLine() {
+    public synchronized void stashLine() {
         this.stashed = reader.getCursorBuffer().copy();
         try {
             reader.getOutput().write("\u001b[1G\u001b[K");
@@ -99,7 +99,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
         }
     }
 
-    public void unstashLine() {
+    public synchronized void unstashLine() {
         try {
             reader.resetPromptLine("> ", this.stashed.toString(), this.stashed.cursor);
         } catch (IOException e) {
