@@ -57,6 +57,13 @@ Example Plugin which shows the API of Nukkit.
 
 * __[Example Plugin](http://github.com/Nukkit/ExamplePlugin)__
 
+Devtools
+-------------
+There's some developer's tools for Nukkit.
+
+* __[FDevTools](https://github.com/fengberd/FDevTools)__ (**Load source and pack them easily**)
+* __[PocketServer](https://github.com/fengberd/MinecraftPEServer)__ (**Run Nukkit on android devices**)
+
 Discussion
 -------------
 * __[Forums](https://forums.nukkit.io)__
