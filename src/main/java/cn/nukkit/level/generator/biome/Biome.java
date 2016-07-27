@@ -28,6 +28,9 @@ public abstract class Biome {
     public static final int ICE_PLAINS = 12;
 
 
+    public static final int BEACH = 16;
+
+
     public static final int SMALL_MOUNTAINS = 20;
 
 
@@ -70,6 +73,8 @@ public abstract class Biome {
         register(ICE_PLAINS, new IcePlainsBiome());
         register(SMALL_MOUNTAINS, new SmallMountainsBiome());
         register(BIRCH_FOREST, new ForestBiome(ForestBiome.TYPE_BIRCH));
+
+        register(BEACH, new BeachBiome());
     }
 
     public static Biome getBiome(int id) {
