@@ -1,6 +1,7 @@
 package cn.nukkit.plugin;
 
 import cn.nukkit.event.*;
+import cn.nukkit.utils.EventException;
 
 /**
  * author: MagicDroidX
@@ -41,7 +42,7 @@ public class RegisteredListener {
         return priority;
     }
 
-    public void callEvent(Event event) {
+    public void callEvent(Event event) throws EventException {
         if (event instanceof Cancellable) {
             if (event.isCancelled() && isIgnoringCancelled()) {
                 return;

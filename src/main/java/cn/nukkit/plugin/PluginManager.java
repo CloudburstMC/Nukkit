@@ -568,10 +568,7 @@ public class PluginManager {
                     registration.callEvent(event);
                 } catch (Exception e) {
                     this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.eventError", new String[]{event.getEventName(), registration.getPlugin().getDescription().getFullName(), e.getMessage(), registration.getListener().getClass().getName()}));
-                    MainLogger logger = this.server.getLogger();
-                    if (logger != null) {
-                        logger.logException(e);
-                    }
+                    this.server.getLogger().logException(e);
                 }
             }
         } catch (IllegalAccessException e) {
