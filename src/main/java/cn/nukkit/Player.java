@@ -1357,7 +1357,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (to.distanceSquared(ev.getTo()) > 0.01) { //If plugins modify the destination
                         this.teleport(ev.getTo(), null);
                     } else {
-                        this.level.addEntityMovement((int) this.x >> 4, (int) this.z >> 4, this.getId(), this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+                        this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
                     }
                 }
             }
