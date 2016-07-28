@@ -4,7 +4,7 @@ package cn.nukkit.utils;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class EventException extends Exception {
+public class EventException extends RuntimeException {
     private final Throwable cause;
 
     /**
