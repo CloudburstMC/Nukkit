@@ -57,7 +57,7 @@ public class EntitySnowball extends EntityProjectile {
             return false;
         }
 
-        this.timings.startTiming();
+        this.timing.startTiming();
 
         boolean hasUpdate = super.onUpdate(currentTick);
 
@@ -66,7 +66,7 @@ public class EntitySnowball extends EntityProjectile {
             hasUpdate = true;
         }
 
-        this.timings.stopTiming();
+        this.timing.stopTiming();
 
         return hasUpdate;
     }

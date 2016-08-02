@@ -1,7 +1,7 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
-import cn.nukkit.event.Timings;
+import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.ThreadStore;
 
 import java.util.Queue;

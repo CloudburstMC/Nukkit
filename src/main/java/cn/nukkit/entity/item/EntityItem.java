@@ -12,8 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX
  */
 public class EntityItem extends Entity {
     public static final int NETWORK_ID = 64;
@@ -124,7 +123,7 @@ public class EntityItem extends Entity {
 
         this.lastUpdate = currentTick;
 
-        this.timings.startTiming();
+        this.timing.startTiming();
 
 
         boolean hasUpdate = this.entityBaseTick(tickDiff);
@@ -174,7 +173,7 @@ public class EntityItem extends Entity {
             }
         }
 
-        this.timings.stopTiming();
+        this.timing.stopTiming();
 
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
     }

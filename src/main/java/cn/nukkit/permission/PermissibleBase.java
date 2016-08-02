@@ -1,8 +1,8 @@
 package cn.nukkit.permission;
 
 import cn.nukkit.Server;
-import cn.nukkit.event.Timings;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.ServerException;
 

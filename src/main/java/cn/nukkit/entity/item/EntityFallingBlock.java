@@ -15,7 +15,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * Created on 15-10-26.
+ * @author MagicDroidX
  */
 public class EntityFallingBlock extends Entity {
 
@@ -103,7 +103,7 @@ public class EntityFallingBlock extends Entity {
             return false;
         }
 
-        this.timings.startTiming();
+        this.timing.startTiming();
 
         int tickDiff = currentTick - lastUpdate;
         if (tickDiff <= 0 && !justCreated) {
@@ -156,7 +156,7 @@ public class EntityFallingBlock extends Entity {
             updateMovement();
         }
 
-        this.timings.stopTiming();
+        this.timing.stopTiming();
 
         return hasUpdate || !onGround || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
     }

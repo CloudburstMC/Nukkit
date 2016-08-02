@@ -63,6 +63,8 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
+import cn.nukkit.timings.Timings;
+import cn.nukkit.timings.TimingsManager;
 import cn.nukkit.utils.*;
 
 import java.io.*;
@@ -70,8 +72,8 @@ import java.nio.ByteOrder;
 import java.util.*;
 
 /**
- * author: MagicDroidX & Box
- * Nukkit
+ * @author MagicDroidX
+ * @author Box
  */
 public class Server {
 
@@ -362,13 +364,11 @@ public class Server {
         Potion.init();
         Enchantment.init();
         Attribute.init();
-        Timings.init();
 
         this.craftingManager = new CraftingManager();
 
         this.pluginManager = new PluginManager(this, this.commandMap);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
-        this.pluginManager.setUseTimings((Boolean) this.getConfig("settings.enable-profiling", false));
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
 
@@ -553,7 +553,8 @@ public class Server {
         if (players == null || packets == null || players.length == 0 || packets.length == 0) {
             return;
         }
-        Timings.playerNetworkTimer.startTiming();
+
+        Timings.playerNetworkSendTimer.startTiming();
         byte[][] payload = new byte[packets.length * 2][];
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
@@ -583,7 +584,7 @@ public class Server {
                 throw new RuntimeException(e);
             }
         }
-        Timings.playerNetworkTimer.stopTiming();
+        Timings.playerNetworkSendTimer.stopTiming();
     }
 
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
@@ -673,7 +674,7 @@ public class Server {
         this.pluginManager.loadPlugins(this.pluginPath);
         this.enablePlugins(PluginLoadOrder.STARTUP);
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
-        TimingsHandler.reload();
+        Timings.reset();
     }
 
     public void shutdown() {
@@ -733,6 +734,8 @@ public class Server {
                 this.network.unregisterInterface(interfaz);
             }
 
+            this.getLogger().debug("Disabling timings");
+            Timings.stopServer();
             //todo other things
         } catch (Exception e) {
             this.logger.logException(e); //todo remove this?
@@ -948,7 +951,7 @@ public class Server {
 
     public void doAutoSave() {
         if (this.getAutoSave()) {
-            Timings.worldSaveTimer.startTiming();
+            Timings.levelSaveTimer.startTiming();
             for (Player player : new ArrayList<>(this.players.values())) {
                 if (player.isOnline()) {
                     player.save(true);
@@ -960,7 +963,7 @@ public class Server {
             for (Level level : this.getLevels().values()) {
                 level.save();
             }
-            Timings.worldSaveTimer.stopTiming();
+            Timings.levelSaveTimer.stopTiming();
         }
     }
 
@@ -971,23 +974,22 @@ public class Server {
             return false;
         }
 
-        Timings.serverTickTimer.startTiming();
+        Timings.fullServerTickTimer.startTiming();
 
         ++this.tickCounter;
 
         Timings.connectionTimer.startTiming();
-
         this.network.processInterfaces();
 
         if (this.rcon != null) {
             this.rcon.check();
         }
-
         Timings.connectionTimer.stopTiming();
 
         Timings.schedulerTimer.startTiming();
         this.scheduler.mainThreadHeartbeat(this.tickCounter);
         Timings.schedulerTimer.stopTiming();
+
         this.checkTickUpdates(this.tickCounter, tickTime);
 
         for (Player player : new ArrayList<>(this.players.values())) {
@@ -1033,8 +1035,8 @@ public class Server {
             }
         }
 
-        Timings.serverTickTimer.stopTiming();
 
+        Timings.fullServerTickTimer.stopTiming();
         //long now = System.currentTimeMillis();
         long nowNano = System.nanoTime();
         //float tick = Math.min(20, 1000 / Math.max(1, now - tickTime));
@@ -1683,6 +1685,11 @@ public class Server {
         return network;
     }
 
+    //Revising later...
+    public Config getConfig() {
+        return this.config;
+    }
+
     public Object getConfig(String variable) {
         return this.getConfig(variable, null);
     }
@@ -1690,6 +1697,10 @@ public class Server {
     public Object getConfig(String variable, Object defaultValue) {
         Object value = this.config.get(variable);
         return value == null ? defaultValue : value;
+    }
+
+    public Config getProperties() {
+        return this.properties;
     }
 
     public Object getProperty(String variable) {

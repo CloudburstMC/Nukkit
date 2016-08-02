@@ -1,6 +1,7 @@
 package cn.nukkit.plugin;
 
 import cn.nukkit.event.*;
+import cn.nukkit.timings.Timing;
 import cn.nukkit.utils.EventException;
 
 /**
@@ -19,15 +20,15 @@ public class RegisteredListener {
 
     private final boolean ignoreCancelled;
 
-    private final TimingsHandler timings;
+    private final Timing timing;
 
-    public RegisteredListener(Listener listener, EventExecutor executor, EventPriority priority, Plugin plugin, boolean ignoreCancelled, TimingsHandler timings) {
+    public RegisteredListener(Listener listener, EventExecutor executor, EventPriority priority, Plugin plugin, boolean ignoreCancelled, Timing timing) {
         this.listener = listener;
         this.priority = priority;
         this.plugin = plugin;
         this.executor = executor;
         this.ignoreCancelled = ignoreCancelled;
-        this.timings = timings;
+        this.timing = timing;
     }
 
     public Listener getListener() {
@@ -48,13 +49,9 @@ public class RegisteredListener {
                 return;
             }
         }
-        this.timings.startTiming();
+        this.timing.startTiming();
         executor.execute(listener, event);
-        this.timings.stopTiming();
-    }
-
-    public void destruct() {
-        this.timings.remove();
+        this.timing.stopTiming();
     }
 
     public boolean isIgnoringCancelled() {

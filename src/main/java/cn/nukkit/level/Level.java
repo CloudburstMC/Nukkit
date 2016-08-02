@@ -10,8 +10,6 @@ import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.weather.EntityLightning;
-import cn.nukkit.event.LevelTimings;
-import cn.nukkit.event.Timings;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
@@ -46,6 +44,9 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.redstone.Redstone;
 import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.timings.LevelTimings;
+import cn.nukkit.timings.Timings;
+import cn.nukkit.timings.TimingsHistory;
 import cn.nukkit.utils.*;
 
 import java.util.*;
@@ -684,19 +685,18 @@ public class Level implements ChunkManager, Metadatable {
         }
         this.timings.doTickPending.stopTiming();
 
+        TimingsHistory.entityTicks += this.updateEntities.size();
         this.timings.entityTick.startTiming();
-        Timings.tickEntityTimer.startTiming();
         for (long id : new ArrayList<>(this.updateEntities.keySet())) {
             Entity entity = this.updateEntities.get(id);
             if (entity.closed || !entity.onUpdate(currentTick)) {
                 this.updateEntities.remove(id);
             }
         }
-        Timings.tickEntityTimer.stopTiming();
         this.timings.entityTick.stopTiming();
 
+        TimingsHistory.tileEntityTicks += this.updateBlockEntities.size();
         this.timings.blockEntityTick.startTiming();
-        Timings.tickBlockEntityTimer.startTiming();
         if (!this.updateBlockEntities.isEmpty()) {
             for (long id : new ArrayList<>(this.updateBlockEntities.keySet())) {
                 if (!this.updateBlockEntities.get(id).onUpdate()) {
@@ -704,12 +704,11 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
         }
-        Timings.tickBlockEntityTimer.stopTiming();
         this.timings.blockEntityTick.stopTiming();
 
-        this.timings.doTickTiles.startTiming();
+        this.timings.tickChunks.startTiming();
         this.tickChunks();
-        this.timings.doTickTiles.stopTiming();
+        this.timings.tickChunks.stopTiming();
 
         if (!this.changedBlocks.isEmpty()) {
             if (!this.players.isEmpty()) {

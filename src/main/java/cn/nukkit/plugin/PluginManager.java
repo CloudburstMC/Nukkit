@@ -3,10 +3,11 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.command.SimpleCommandMap;
-import cn.nukkit.command.defaults.TimingsCommand;
 import cn.nukkit.event.*;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.permission.Permission;
+import cn.nukkit.timings.Timing;
+import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
@@ -19,8 +20,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX
  */
 public class PluginManager {
 
@@ -43,10 +43,6 @@ public class PluginManager {
     protected final Map<Permissible, Permissible> defSubsOp = new WeakHashMap<>();
 
     protected final Map<String, PluginLoader> fileAssociations = new HashMap<>();
-
-    public static TimingsHandler pluginParentTimer;
-
-    public static boolean useTimings = false;
 
     public PluginManager(Server server, SimpleCommandMap commandMap) {
         this.server = server;
@@ -110,6 +106,7 @@ public class PluginManager {
                                 return plugin;
                             }
                         } catch (Exception e) {
+                            Server.getInstance().getLogger().debug("Could not load plugin", e);
                             return null;
                         }
                     }
@@ -312,12 +309,8 @@ public class PluginManager {
                 }
             }
 
-            TimingsCommand.timingStart = System.nanoTime();
-
             return loadedPlugins;
         } else {
-            TimingsCommand.timingStart = System.nanoTime();
-
             return new HashMap<>();
         }
     }
@@ -638,11 +631,8 @@ public class PluginManager {
         }
 
         try {
-            TimingsHandler timings = new TimingsHandler("Plugin: " + plugin.getDescription().getFullName()
-                    + " Event: " + listener.getClass().getName() + "."
-                    + (executor instanceof MethodEventExecutor ? ((MethodEventExecutor) executor).getMethod().getName() : "???")
-                    + "(" + event.getSimpleName() + ")", pluginParentTimer);
-            this.getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled, timings));
+            Timing timing = Timings.getPluginEventTiming(event, listener, executor, plugin);
+            this.getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled, timing));
         } catch (IllegalAccessException e) {
             Server.getInstance().getLogger().logException(e);
         }
@@ -672,13 +662,4 @@ public class PluginManager {
             }
         }
     }
-
-    public boolean useTimings() {
-        return useTimings;
-    }
-
-    public void setUseTimings(boolean use) {
-        useTimings = use;
-    }
-
 }

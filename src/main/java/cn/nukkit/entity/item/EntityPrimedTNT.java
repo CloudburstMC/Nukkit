@@ -11,7 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * Created on 15-10-27.
+ * @author MagicDroidX
  */
 public class EntityPrimedTNT extends Entity implements EntityExplosive {
 
@@ -91,7 +91,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
             return false;
         }
 
-        this.timings.startTiming();
+        this.timing.startTiming();
 
         int tickDiff = currentTick - lastUpdate;
 
@@ -131,7 +131,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
 
         }
 
-        this.timings.stopTiming();
+        this.timing.stopTiming();
 
         return hasUpdate || fuse >= 0 || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
     }

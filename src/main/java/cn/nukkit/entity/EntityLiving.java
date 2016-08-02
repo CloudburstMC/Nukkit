@@ -4,7 +4,6 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
-import cn.nukkit.event.Timings;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -13,6 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ShortTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.BlockIterator;
 
 import java.util.ArrayList;
@@ -180,7 +180,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     @Override
     public boolean entityBaseTick(int tickDiff) {
-        Timings.timerLivingEntityBaseTick.startTiming();
+        Timings.livingEntityBaseTickTimer.startTiming();
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
         if (this.isAlive()) {
@@ -226,7 +226,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         if (this.attackTime > 0) {
             this.attackTime -= tickDiff;
         }
-        Timings.timerLivingEntityBaseTick.stopTiming();
+        Timings.livingEntityBaseTickTimer.stopTiming();
 
         return hasUpdate;
     }

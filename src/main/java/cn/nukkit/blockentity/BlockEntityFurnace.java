@@ -18,8 +18,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX
  */
 public class BlockEntityFurnace extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
@@ -187,7 +186,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
             return false;
         }
 
-        this.timings.startTiming();
+        this.timing.startTiming();
 
         boolean ret = false;
         Item fuel = this.inventory.getFuel();
@@ -258,7 +257,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
         this.lastUpdate = System.currentTimeMillis();
 
-        this.timings.stopTiming();
+        this.timing.stopTiming();
 
         return ret;
     }

@@ -2,11 +2,11 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.event.Timings;
-import cn.nukkit.event.TimingsHandler;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.timings.Timing;
+import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.ChunkException;
 
 import java.lang.reflect.Constructor;
@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX
  */
 public abstract class BlockEntity extends Position {
     //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
@@ -46,15 +45,14 @@ public abstract class BlockEntity extends Position {
     public CompoundTag namedTag;
     protected long lastUpdate;
     protected Server server;
-    protected TimingsHandler timings;
-    public TimingsHandler tickTimer;
+    protected Timing timing;
 
     public BlockEntity(FullChunk chunk, CompoundTag nbt) {
         if (chunk == null || chunk.getProvider() == null) {
             throw new ChunkException("Invalid garbage Chunk given to Block Entity");
         }
 
-        this.timings = Timings.getBlockEntityTimings(this);
+        this.timing = Timings.getBlockEntityTiming(this);
         this.server = chunk.getProvider().getLevel().getServer();
         this.chunk = chunk;
         this.setLevel(chunk.getProvider().getLevel());
@@ -68,7 +66,6 @@ public abstract class BlockEntity extends Position {
 
         this.chunk.addBlockEntity(this);
         this.getLevel().addBlockEntity(this);
-        this.tickTimer = Timings.getBlockEntityTimings(this);
     }
 
     public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {

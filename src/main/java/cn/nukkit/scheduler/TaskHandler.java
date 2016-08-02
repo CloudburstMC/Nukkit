@@ -1,20 +1,17 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
-import cn.nukkit.event.Timings;
-import cn.nukkit.event.TimingsHandler;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.timings.Timing;
+import cn.nukkit.timings.Timings;
 
 /**
- * author: MagicDroidX
- * Nukkit
+ * @author MagicDroidX
  */
 public class TaskHandler {
-
     private final int taskId;
     private final boolean asynchronous;
 
-    public final String timingName;
     private final Plugin plugin;
     private final Runnable task;
 
@@ -26,15 +23,14 @@ public class TaskHandler {
 
     private boolean cancelled;
 
-    public final TimingsHandler timings;
+    public final Timing timing;
 
-    public TaskHandler(Plugin plugin, String timingName, Runnable task, int taskId, boolean asynchronous) {
+    public TaskHandler(Plugin plugin, Runnable task, int taskId, boolean asynchronous) {
         this.asynchronous = asynchronous;
         this.plugin = plugin;
         this.task = task;
         this.taskId = taskId;
-        this.timingName = timingName == null ? "Unknown" : timingName;
-        this.timings = Timings.getPluginTaskTimings(this, period);
+        this.timing = Timings.getTaskTiming(this, period);
     }
 
     public boolean isCancelled() {
@@ -106,8 +102,9 @@ public class TaskHandler {
         }
     }
 
+    @Deprecated
     public String getTaskName() {
-        return this.timingName;
+        return "Unknown";
     }
 
     public boolean isAsynchronous() {

@@ -7,8 +7,6 @@ import cn.nukkit.block.BlockDirt;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.data.*;
-import cn.nukkit.event.Timings;
-import cn.nukkit.event.TimingsHandler;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
@@ -31,6 +29,9 @@ import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.timings.Timing;
+import cn.nukkit.timings.Timings;
+import cn.nukkit.timings.TimingsHistory;
 import cn.nukkit.utils.ChunkException;
 
 import java.lang.reflect.Constructor;
@@ -38,8 +39,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX
  */
 public abstract class Entity extends Location implements Metadatable {
 
@@ -168,7 +168,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean closed = false;
 
-    protected TimingsHandler timings;
+    protected Timing timing;
 
     protected boolean isPlayer = false;
 
@@ -242,7 +242,7 @@ public abstract class Entity extends Location implements Metadatable {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
         }
 
-        this.timings = Timings.getEntityTimings(this);
+        this.timing = Timings.getEntityTiming(this);
 
         this.isPlayer = this instanceof Player;
         this.temporalVector = new Vector3();
@@ -806,7 +806,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean entityBaseTick(int tickDiff) {
-        Timings.timerEntityBaseTick.startTiming();
+        Timings.entityBaseTickTimer.startTiming();
         this.blocksAround = null;
         this.justCreated = false;
 
@@ -816,7 +816,7 @@ public abstract class Entity extends Location implements Metadatable {
             if (!this.isPlayer) {
                 this.close();
             }
-            Timings.timerEntityBaseTick.stopTiming();
+            Timings.entityBaseTickTimer.stopTiming();
             return false;
         }
 
@@ -873,9 +873,9 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.age += tickDiff;
         this.ticksLived += tickDiff;
+        TimingsHistory.activatedEntityTicks++;
 
-        Timings.timerEntityBaseTick.stopTiming();
-
+        Timings.entityBaseTickTimer.stopTiming();
         return hasUpdate;
     }
 

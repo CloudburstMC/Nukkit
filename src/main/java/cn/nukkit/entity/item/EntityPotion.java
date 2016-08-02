@@ -14,8 +14,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 
 /**
- * Created on 2015/12/27 by xtypr.
- * Package cn.nukkit.entity in project Nukkit .
+ * @author xtypr
  */
 public class EntityPotion extends EntityProjectile {
 
@@ -79,7 +78,7 @@ public class EntityPotion extends EntityProjectile {
             return false;
         }
 
-        this.timings.startTiming();
+        this.timing.startTiming();
 
         int tickDiff = currentTick - this.lastUpdate;
         boolean hasUpdate = super.onUpdate(currentTick);
@@ -140,7 +139,7 @@ public class EntityPotion extends EntityProjectile {
                 potion.applyPotion(anEntity);
             }
         }
-        this.timings.stopTiming();
+        this.timing.stopTiming();
         return hasUpdate;
     }
 

@@ -159,7 +159,7 @@ public class SimpleCommandMap implements CommandMap {
             return false;
         }
 
-        target.timings.startTiming();
+        target.timing.startTiming();
 
         try {
             target.execute(sender, sentCommandLabel, args);
@@ -172,7 +172,7 @@ public class SimpleCommandMap implements CommandMap {
             }
         }
 
-        target.timings.stopTiming();
+        target.timing.stopTiming();
 
         return true;
     }

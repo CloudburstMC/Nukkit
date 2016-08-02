@@ -167,7 +167,7 @@ public class ServerScheduler {
             throw new PluginException("Attempted to register a task with negative delay or period.");
         }
 
-        TaskHandler taskHandler = new TaskHandler(plugin, "Unknown", task, nextTaskId(), asynchronous);
+        TaskHandler taskHandler = new TaskHandler(plugin, task, nextTaskId(), asynchronous);
         taskHandler.setDelay(delay);
         taskHandler.setPeriod(period);
         taskHandler.setNextRunTick(taskHandler.isDelayed() ? currentTick + taskHandler.getDelay() : currentTick);
@@ -193,14 +193,14 @@ public class ServerScheduler {
             } else if (taskHandler.isAsynchronous()) {
                 asyncPool.submitTask(taskHandler.getTask());
             } else {
-                taskHandler.timings.startTiming();
+                taskHandler.timing.startTiming();
                 try {
                     taskHandler.run(currentTick);
                 } catch (Exception e) {
-                    Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskName() + ": " + e.getMessage());
+                    Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskId() + ": " + e.getMessage());
                     Server.getInstance().getLogger().logException(e);
                 }
-                taskHandler.timings.stopTiming();
+                taskHandler.timing.stopTiming();
             }
             if (taskHandler.isRepeating()) {
                 taskHandler.setNextRunTick(currentTick + taskHandler.getPeriod());
