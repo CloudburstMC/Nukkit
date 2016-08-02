@@ -2,7 +2,7 @@ package cn.nukkit.command;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.defaults.*;
-import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;

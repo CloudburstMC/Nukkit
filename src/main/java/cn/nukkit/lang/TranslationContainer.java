@@ -1,4 +1,4 @@
-package cn.nukkit.event;
+package cn.nukkit.lang;
 
 /**
  * author: MagicDroidX

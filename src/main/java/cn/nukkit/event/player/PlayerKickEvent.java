@@ -3,7 +3,7 @@ package cn.nukkit.event.player;
 import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.event.TextContainer;
+import cn.nukkit.lang.TextContainer;
 
 public class PlayerKickEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

@@ -1,6 +1,6 @@
 package cn.nukkit.command;
 
-import cn.nukkit.event.TextContainer;
+import cn.nukkit.lang.TextContainer;
 
 /**
  * Represents an RCON command sender.

@@ -4,7 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.command.RemoteConsoleCommandSender;
-import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

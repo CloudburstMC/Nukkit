@@ -1,8 +1,8 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
-import cn.nukkit.event.TextContainer;
-import cn.nukkit.event.TranslationContainer;
+import cn.nukkit.lang.TextContainer;
+import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.timings.Timing;
 import cn.nukkit.timings.Timings;
