@@ -141,24 +141,16 @@ public class SimpleCommandMap implements CommandMap {
         return true;
     }
 
-    private String[] parseArguments(String cmdLine) {
+    private ArrayList<String> parseArguments(String cmdLine) {
         StringBuilder sb = new StringBuilder(cmdLine);
-        Vector<String> args = new Vector<>();
+        ArrayList<String> args = new ArrayList<>();
         boolean notQuoted = true;
         int start = 0;
 
         for (int i = 0; i < sb.length(); i++) {
-            if (i != 0 && sb.charAt(i - 1) == '\\') {
-                if ((sb.charAt(i) == '"' || sb.charAt(i) == ' ')) {
-                    sb.deleteCharAt(i - 1);
-                    --i;
-                    continue;
-                }
-
-                if (sb.charAt(i) == '\\') {
-                    sb.deleteCharAt(i - 1);
-                    continue;
-                }
+            if (sb.charAt(i) == '\\') {
+                sb.deleteCharAt(i);
+                continue;
             }
 
             if (sb.charAt(i) == ' ' && notQuoted) {
@@ -178,21 +170,18 @@ public class SimpleCommandMap implements CommandMap {
         if (!arg.isEmpty()) {
             args.add(arg);
         }
-        return args.toArray(new String[0]);
+        return args;
     }
 
     @Override
     public boolean dispatch(CommandSender sender, String cmdLine) {
-        String[] args = parseArguments(cmdLine);
-
-        if (args.length == 0) {
+        ArrayList<String> parsed = parseArguments(cmdLine);
+        if (parsed.size() == 0) {
             return false;
         }
 
-        String sentCommandLabel = args[0].toLowerCase();
-        String[] newargs = new String[args.length - 1];
-        System.arraycopy(args, 1, newargs, 0, newargs.length);
-        args = newargs;
+        String sentCommandLabel = parsed.remove(0).toLowerCase();
+        String[] args = parsed.toArray(new String[parsed.size()]);
         Command target = this.getCommand(sentCommandLabel);
 
         if (target == null) {
@@ -200,7 +189,6 @@ public class SimpleCommandMap implements CommandMap {
         }
 
         target.timing.startTiming();
-
         try {
             target.execute(sender, sentCommandLabel, args);
         } catch (Exception e) {
@@ -211,7 +199,6 @@ public class SimpleCommandMap implements CommandMap {
                 logger.logException(e);
             }
         }
-
         target.timing.stopTiming();
 
         return true;
