@@ -318,12 +318,12 @@ public abstract class BlockLiquid extends BlockTransparent {
             if (block.getId() > 0) {
                 if (this instanceof BlockLava) {
                     this.triggerLavaMixEffects(block);
-                } else {
-                    this.getLevel().useBreakOn(block);
                 }
+                this.getLevel().useBreakOn(block);
             }
 
             this.getLevel().setBlock(block, this.getBlock(newFlowDecay), true);
+            this.getLevel().scheduleUpdate(block, this.tickRate());
         }
     }
 
