@@ -1837,7 +1837,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         char c = loginPacket.username.charAt(i);
                         if ((c >= 'a' && c <= 'z') ||
                                 (c >= 'A' && c <= 'Z') ||
-                                (c >= '0' && c <= '9') || c == '_'
+                                (c >= '0' && c <= '9') ||
+                                c == '_' || c == ' '
                                 ) {
                             continue;
                         }

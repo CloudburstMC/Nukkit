@@ -141,9 +141,49 @@ public class SimpleCommandMap implements CommandMap {
         return true;
     }
 
+    private String[] parseArguments(String cmdLine) {
+        StringBuilder sb = new StringBuilder(cmdLine);
+        Vector<String> args = new Vector<>();
+        boolean notQuoted = true;
+        int start = 0;
+
+        for (int i = 0; i < sb.length(); i++) {
+            if (i != 0 && sb.charAt(i - 1) == '\\') {
+                if ((sb.charAt(i) == '"' || sb.charAt(i) == ' ')) {
+                    sb.deleteCharAt(i - 1);
+                    --i;
+                    continue;
+                }
+
+                if (sb.charAt(i) == '\\') {
+                    sb.deleteCharAt(i - 1);
+                    continue;
+                }
+            }
+
+            if (sb.charAt(i) == ' ' && notQuoted) {
+                String arg = sb.substring(start, i);
+                if (!arg.isEmpty()) {
+                    args.add(arg);
+                }
+                start = i + 1;
+            } else if (sb.charAt(i) == '"') {
+                sb.deleteCharAt(i);
+                --i;
+                notQuoted = !notQuoted;
+            }
+        }
+
+        String arg = sb.substring(start);
+        if (!arg.isEmpty()) {
+            args.add(arg);
+        }
+        return args.toArray(new String[0]);
+    }
+
     @Override
     public boolean dispatch(CommandSender sender, String cmdLine) {
-        String[] args = cmdLine.split(" ");
+        String[] args = parseArguments(cmdLine);
 
         if (args.length == 0) {
             return false;
