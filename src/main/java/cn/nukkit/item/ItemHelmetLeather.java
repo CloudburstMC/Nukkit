@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ItemHelmetLeather extends ItemColorArmor {
+public class ItemHelmetLeather extends ItemArmor {
 
     public ItemHelmetLeather() {
         this(0, 1);
