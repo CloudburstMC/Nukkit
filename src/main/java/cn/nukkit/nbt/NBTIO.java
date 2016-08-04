@@ -17,10 +17,10 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class NBTIO {
+
     /**
      * A Named Binary Tag library for Nukkit Project
      */
-
     public static CompoundTag putItemHelper(Item item) {
         return putItemHelper(item, null);
     }
@@ -46,8 +46,7 @@ public class NBTIO {
             return Item.get(0);
         }
 
-        Item item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte
-                ("Count"));
+        Item item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
 
         if (tag.contains("tag") && tag.get("tag") instanceof CompoundTag) {
             item.setNamedTag(tag.getCompound("tag"));
@@ -70,15 +69,12 @@ public class NBTIO {
     }
 
     public static CompoundTag read(InputStream inputStream, ByteOrder endianness) throws IOException {
-        NBTInputStream stream = new NBTInputStream(inputStream, endianness);
-        try {
+        try (NBTInputStream stream = new NBTInputStream(inputStream, endianness)) {
             Tag tag = Tag.readNamedTag(stream);
             if (tag instanceof CompoundTag) {
                 return (CompoundTag) tag;
             }
             throw new IOException("Root tag must be a named compound tag");
-        } finally {
-            stream.close();
         }
     }
 
@@ -112,12 +108,9 @@ public class NBTIO {
 
     public static byte[] write(CompoundTag tag, ByteOrder endianness) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        NBTOutputStream stream = new NBTOutputStream(baos, endianness);
-        try {
+        try (NBTOutputStream stream = new NBTOutputStream(baos, endianness)) {
             Tag.writeNamedTag(tag, stream);
             return baos.toByteArray();
-        } finally {
-            stream.close();
         }
     }
 
@@ -127,14 +120,11 @@ public class NBTIO {
 
     public static byte[] write(Collection<CompoundTag> tags, ByteOrder endianness) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        NBTOutputStream stream = new NBTOutputStream(baos, endianness);
-        try {
+        try (NBTOutputStream stream = new NBTOutputStream(baos, endianness)) {
             for (CompoundTag tag : tags) {
                 Tag.writeNamedTag(tag, stream);
             }
             return baos.toByteArray();
-        } finally {
-            stream.close();
         }
     }
 
@@ -151,11 +141,8 @@ public class NBTIO {
     }
 
     public static void write(CompoundTag tag, OutputStream outputStream, ByteOrder endianness) throws IOException {
-        NBTOutputStream stream = new NBTOutputStream(outputStream, endianness);
-        try {
+        try (NBTOutputStream stream = new NBTOutputStream(outputStream, endianness)) {
             Tag.writeNamedTag(tag, stream);
-        } finally {
-            stream.close();
         }
     }
 
