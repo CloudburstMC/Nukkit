@@ -1,8 +1,5 @@
 package cn.nukkit.item;
 
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.BlockColor;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -57,45 +54,5 @@ abstract public class ItemArmor extends Item {
         }
 
         return 0;
-    }
-
-    /**
-     * Set leather armor color
-     *
-     * @param dyeColor - BlockColor
-     * @return - Return colored item
-     */
-    public ItemArmor setColor(int dyeColor) {
-        BlockColor blockColor = BlockColor.getDyeColor(dyeColor);
-        return setColor(blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());
-    }
-
-    /**
-     * Set leather armor color
-     *
-     * @param r - red
-     * @param g - green
-     * @param b - blue
-     * @return - Return colored item
-     */
-    public ItemArmor setColor(int r, int g, int b) {
-        int rgb = r << 16 | g << 8 | b;
-        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        tag.putInt("customColor", rgb);
-        this.setNamedTag(tag);
-        return this;
-    }
-
-    /**
-     * Get color of Leather Item
-     *
-     * @return - BlockColor, or null if item has no color
-     */
-    public BlockColor getColor() {
-        if (!this.hasCompoundTag()) return null;
-        CompoundTag tag = this.getNamedTag();
-        if (!tag.exist("customColor")) return null;
-        int rgb = tag.getInt("customColor");
-        return new BlockColor(rgb);
     }
 }
