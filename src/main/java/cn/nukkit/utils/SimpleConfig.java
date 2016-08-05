@@ -36,6 +36,10 @@ public abstract class SimpleConfig {
     }
 
     public boolean save() {
+        return save(false);
+    }
+
+    public boolean save(boolean async) {
         if (configFile.exists()) try {
             configFile.createNewFile();
         } catch (Exception e) {
@@ -51,7 +55,7 @@ public abstract class SimpleConfig {
                 return false;
             }
         }
-        cfg.save();
+        cfg.save(async);
         return true;
     }
 
