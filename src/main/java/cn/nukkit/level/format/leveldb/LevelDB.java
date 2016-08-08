@@ -497,4 +497,9 @@ public class LevelDB implements LevelProvider {
         return levelData;
     }
 
+    public void updateLevelName(String name){
+        if (!this.getName().equals(name)){
+            this.levelData.putString("LevelName",name);
+        }
+    }
 }
