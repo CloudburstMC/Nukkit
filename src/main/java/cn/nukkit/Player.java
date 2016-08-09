@@ -173,9 +173,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected int inAirTicks = 0;
     protected int startAirTicks = 5;
 
-    protected boolean autoJump = true;
-
-    protected boolean allowFlight = false;
+    protected AdventureSettings adventureSettings;
 
     private final Map<Integer, Boolean> needACK = new HashMap<>();
 
@@ -260,23 +258,39 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.playedBefore;
     }
 
-    public void setAllowFlight(boolean value) {
-        this.allowFlight = value;
+    public AdventureSettings getAdventureSettings() {
+        return adventureSettings;
+    }
+
+    public void setAdventureSettings(AdventureSettings adventureSettings) {
+        this.adventureSettings = adventureSettings;
+        this.adventureSettings.update();
+    }
+
+    public void resetInAirTicks() {
         this.inAirTicks = 0;
-        this.sendSettings();
     }
 
+    @Deprecated
+    public void setAllowFlight(boolean value) {
+        this.getAdventureSettings().setCanFly(value);
+        this.getAdventureSettings().update();
+    }
+
+    @Deprecated
     public boolean getAllowFlight() {
-        return allowFlight;
+        return this.getAdventureSettings().canFly();
     }
 
+    @Deprecated
     public void setAutoJump(boolean value) {
-        this.autoJump = value;
-        this.sendSettings();
+        this.getAdventureSettings().setAutoJump(value);
+        this.getAdventureSettings().update();
     }
 
+    @Deprecated
     public boolean hasAutoJump() {
-        return autoJump;
+        return this.getAdventureSettings().isAutoJumpEnabled();
     }
 
     @Override
@@ -953,8 +967,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return false;
         }
 
+        AdventureSettings newSettings = this.getAdventureSettings().clone(this);
+        newSettings.setCanDestroyBlock((gamemode & 0x02) > 0);
+        newSettings.setCanFly((gamemode & 0x01) > 0 && !(gamemode == 0x03));
+        newSettings.setFlying(gamemode == 0x03);
+
         PlayerGameModeChangeEvent ev;
-        this.server.getPluginManager().callEvent(ev = new PlayerGameModeChangeEvent(this, gamemode));
+        this.server.getPluginManager().callEvent(ev = new PlayerGameModeChangeEvent(this, gamemode, newSettings));
 
         if (ev.isCancelled()) {
             return false;
@@ -962,8 +981,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.gamemode = gamemode;
 
-        this.allowFlight = this.gamemode == 1; //Spectators are always flying
-        this.inAirTicks = 0;
+        this.setAdventureSettings(ev.getNewAdventureSettings());
 
         if (this.isSpectator()) {
             this.keepMovement = true;
@@ -998,50 +1016,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return true;
     }
 
+    @Deprecated
     public void sendSettings() {
-        /*
-         bit mask | flag name
-		0x00000001 world_immutable
-		0x00000002 no_pvp
-		0x00000004 no_pvm
-		0x00000008 no_mvp
-		0x00000010 static_time
-		0x00000020 nametags_visible
-		0x00000040 auto_jump
-		0x00000080 can_switch_between_walking_and_flying
-		0x00000100 is_flying
-		*/
-        int flags = 0;
-
-        flags |= 0x02; // No PvP (Remove hit markers client-side).
-        flags |= 0x04; // No PvM (Remove hit markers client-side).
-        flags |= 0x08; // No PvE (Remove hit markers client-side).
-
-        if (this.isAdventure()) {
-            flags |= 0x01; //Do not allow placing/breaking blocks, adventure mode
-        }
-
-		/*if(nametags !== false){
-            flags |= 0x20; //Show Nametags
-		}*/
-
-        if (this.autoJump) {
-            flags |= 0x40;
-        }
-
-        if (this.allowFlight) {
-            flags |= 0x80;
-        }
-
-        if (this.isSpectator()) {
-            flags |= 0x100;
-        }
-
-        AdventureSettingsPacket pk = new AdventureSettingsPacket();
-        pk.flags = flags;
-        pk.userPermission = 0x2;
-        pk.globalPermission = 0x2;
-        this.dataPacket(pk);
+        this.getAdventureSettings().update();
     }
 
     public boolean isSurvival() {
@@ -1460,7 +1437,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.inAirTicks = 0;
                     this.highestPosition = this.y;
                 } else {
-                    if (!this.allowFlight && this.inAirTicks > 10 && !this.isSleeping() && !this.getDataPropertyBoolean(DATA_NO_AI)) {
+                    if (!this.getAdventureSettings().canFly() && this.inAirTicks > 10 && !this.isSleeping() && !this.getDataPropertyBoolean(DATA_NO_AI)) {
                         double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                         double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
@@ -1608,7 +1585,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             nbt.putInt("playerGameType", this.gamemode);
         }
 
-        this.allowFlight = this.isCreative();
+        this.adventureSettings = new AdventureSettings.Builder(this)
+                .canDestroyBlock(isAdventure())
+                .autoJump(true)
+                .canFly(isCreative())
+                .isFlying(isSpectator())
+                .build();
 
         Level level;
         if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
@@ -3640,7 +3622,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 && source.getCause() != EntityDamageEvent.CAUSE_VOID
                 ) {
             source.setCancelled();
-        } else if (this.allowFlight && source.getCause() == EntityDamageEvent.CAUSE_FALL) {
+        } else if (this.getAdventureSettings().canFly() && source.getCause() == EntityDamageEvent.CAUSE_FALL) {
             source.setCancelled();
         } else if (source.getCause() == EntityDamageEvent.CAUSE_FALL) {
             if (this.getLevel().getBlock(this.getPosition().floor().add(0.5, -1, 0.5)).getId() == Block.SLIME_BLOCK) {
