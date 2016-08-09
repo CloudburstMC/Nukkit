@@ -263,7 +263,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void setAdventureSettings(AdventureSettings adventureSettings) {
-        this.adventureSettings = adventureSettings;
+        this.adventureSettings = adventureSettings.clone(this);
         this.adventureSettings.update();
     }
 
