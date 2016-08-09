@@ -18,8 +18,6 @@ import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.entity.projectile.EntitySnowball;
-import cn.nukkit.lang.TextContainer;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.event.entity.*;
@@ -37,6 +35,8 @@ import cn.nukkit.item.ItemArrow;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemGlassBottle;
 import cn.nukkit.item.food.Food;
+import cn.nukkit.lang.TextContainer;
+import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -962,7 +962,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.gamemode = gamemode;
 
-        this.allowFlight = this.isCreative();
+        this.allowFlight = this.gamemode == 1; //Spectators are always flying
         this.inAirTicks = 0;
 
         if (this.isSpectator()) {
@@ -1008,31 +1008,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 		0x00000010 static_time
 		0x00000020 nametags_visible
 		0x00000040 auto_jump
-		0x00000080 allow_fly
-		0x00000100 noclip
-		0x00000200 ?
-		0x00000400 ?
-		0x00000800 ?
-		0x00001000 ?
-		0x00002000 ?
-		0x00004000 ?
-		0x00008000 ?
-		0x00010000 ?
-		0x00020000 ?
-		0x00040000 ?
-		0x00080000 ?
-		0x00100000 ?
-		0x00200000 ?
-		0x00400000 ?
-		0x00800000 ?
-		0x01000000 ?
-		0x02000000 ?
-		0x04000000 ?
-		0x08000000 ?
-		0x10000000 ?
-		0x20000000 ?
-		0x40000000 ?
-		0x80000000 ?
+		0x00000080 can_switch_between_walking_and_flying
+		0x00000100 is_flying
 		*/
         int flags = 0;
 
