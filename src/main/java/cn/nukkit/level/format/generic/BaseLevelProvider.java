@@ -169,9 +169,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
         }
     }
 
-    public void updateLevelName(String name){
-        if (!this.getName().equals(name)){
-            this.levelData.putString("LevelName",name);
+    public void updateLevelName(String name) {
+        if (!this.getName().equals(name)) {
+            this.levelData.putString("LevelName", name);
         }
     }
 }

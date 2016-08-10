@@ -1,7 +1,7 @@
 package cn.nukkit.timings;
 
-import static cn.nukkit.timings.TimingsManager.*;
 import static cn.nukkit.timings.TimingIdentifier.DEFAULT_GROUP;
+import static cn.nukkit.timings.TimingsManager.*;
 
 /**
  * @author Tee7even

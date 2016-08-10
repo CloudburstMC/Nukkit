@@ -10,8 +10,8 @@ import java.util.function.Function;
 
 /**
  * @author Tee7even
- *
- * Various methods for more compact JSON object constructing
+ *         <p>
+ *         Various methods for more compact JSON object constructing
  */
 @SuppressWarnings("unchecked")
 public class JsonUtil {

@@ -3,7 +3,6 @@ package cn.nukkit.timings;
 import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.command.Command;
-import cn.nukkit.command.PluginCommand;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.Listener;
@@ -199,7 +198,7 @@ public final class Timings {
         if (handler.getTask() instanceof PluginTask) {
             String owner = ((PluginTask) handler.getTask()).getOwner().getName();
             return TimingsManager.getTiming(owner, "PluginTask: " + handler.getTaskId() + repeating, schedulerSyncTimer);
-        } else if (!handler.isAsynchronous()){
+        } else if (!handler.isAsynchronous()) {
             return TimingsManager.getTiming(DEFAULT_GROUP.name, "Task: " + handler.getTaskId() + repeating, schedulerSyncTimer);
         } else {
             return null;

@@ -196,7 +196,7 @@ public class TimingsExport extends Thread {
             response = getResponse(con);
 
             if (con.getResponseCode() != 302) {
-                this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.uploadError", new String[] {String.valueOf(con.getResponseCode()), con.getResponseMessage()}));
+                this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.uploadError", new String[]{String.valueOf(con.getResponseCode()), con.getResponseMessage()}));
                 if (response != null) {
                     Server.getInstance().getLogger().alert(response);
                 }

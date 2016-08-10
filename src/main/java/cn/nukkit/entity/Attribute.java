@@ -28,7 +28,7 @@ public class Attribute implements Cloneable {
     public static final int EXPERIENCE = 10;
 
     protected static Map<Integer, Attribute> attributes = new HashMap<>();
-    
+
     protected float minValue;
     protected float maxValue;
     protected float defaultValue;

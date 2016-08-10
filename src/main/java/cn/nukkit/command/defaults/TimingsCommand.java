@@ -45,17 +45,23 @@ public class TimingsCommand extends VanillaCommand {
             return true;
         }
 
-        if (mode.equals("verbon")) {
-            sender.sendMessage(new TranslationContainer("nukkit.command.timings.verboseEnable"));
-            Timings.setVerboseEnabled(true);
-        } else if (mode.equals("verboff")) {
-            sender.sendMessage(new TranslationContainer("nukkit.command.timings.verboseDisable"));
-            Timings.setVerboseEnabled(true);
-        } else if (mode.equals("reset")) {
-            Timings.reset();
-            sender.sendMessage(new TranslationContainer("nukkit.command.timings.reset"));
-        } else if (mode.equals("report") || mode.equals("paste")) {
-            TimingsExport.reportTimings(sender);
+        switch (mode) {
+            case "verbon":
+                sender.sendMessage(new TranslationContainer("nukkit.command.timings.verboseEnable"));
+                Timings.setVerboseEnabled(true);
+                break;
+            case "verboff":
+                sender.sendMessage(new TranslationContainer("nukkit.command.timings.verboseDisable"));
+                Timings.setVerboseEnabled(true);
+                break;
+            case "reset":
+                Timings.reset();
+                sender.sendMessage(new TranslationContainer("nukkit.command.timings.reset"));
+                break;
+            case "report":
+            case "paste":
+                TimingsExport.reportTimings(sender);
+                break;
         }
         return true;
     }

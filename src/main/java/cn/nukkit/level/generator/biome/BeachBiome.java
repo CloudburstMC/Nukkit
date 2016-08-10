@@ -3,7 +3,6 @@ package cn.nukkit.level.generator.biome;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSand;
 import cn.nukkit.block.BlockSandstone;
-import cn.nukkit.level.generator.biome.SandyBiome;
 
 /**
  * Author: PeratX

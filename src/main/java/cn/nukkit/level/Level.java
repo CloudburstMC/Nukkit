@@ -1528,7 +1528,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
-            double breakTime = target.getBreakTime(item) * 1000; // TODO: fix
+            double breakTime = target.getBreakTime(item); // TODO: fix
             // this in
             // block
             // class
@@ -1551,10 +1551,11 @@ public class Level implements ChunkManager, Metadatable {
                 breakTime *= 1 - (0.3 * eff.getLevel());
             }
 
-            breakTime -= 0.1;
+            //breakTime -= 0.1;
+            //TODO: Check if it's necessary to minus breakTime with 0.1.
 
             BlockBreakEvent ev = new BlockBreakEvent(player, target, item, player.isCreative(),
-                    (player.lastBreak + breakTime) > System.currentTimeMillis());
+                    (player.lastBreak + breakTime * 1000) > System.currentTimeMillis());
             double distance;
             if (player.isSurvival() && !target.isBreakable(item)) {
                 ev.setCancelled();
