@@ -11,6 +11,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 
@@ -88,7 +89,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
             return new ItemBlock(new BlockAir(), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
-            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count"));
+            return NBTIO.getItemHelper(data);
         }
     }
 
@@ -96,11 +97,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     public void setItem(int index, Item item) {
         int i = this.getSlotIndex(index);
 
-        CompoundTag d = new CompoundTag()
-                .putByte("Count", item.getCount())
-                .putByte("Slot", index)
-                .putShort("id", item.getId())
-                .putShort("Damage", item.getDamage());
+        CompoundTag d = NBTIO.putItemHelper(item, index);
 
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
             if (i >= 0) {

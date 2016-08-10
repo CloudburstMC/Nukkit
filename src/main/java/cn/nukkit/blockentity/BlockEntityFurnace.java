@@ -13,6 +13,7 @@ import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
@@ -126,7 +127,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
             return new ItemBlock(new BlockAir(), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
-            return Item.get(data.getShort("id"), data.getShort("Damage"), data.getByte("Count"));
+            return NBTIO.getItemHelper(data);
         }
     }
 
@@ -134,11 +135,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     public void setItem(int index, Item item) {
         int i = this.getSlotIndex(index);
 
-        CompoundTag d = new CompoundTag()
-                .putByte("Count", item.getCount())
-                .putByte("Slot", index)
-                .putShort("id", item.getId())
-                .putShort("Damage", item.getDamage());
+        CompoundTag d = NBTIO.putItemHelper(item, index);
 
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
             if (i >= 0) {
