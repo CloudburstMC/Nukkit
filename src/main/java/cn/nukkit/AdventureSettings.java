@@ -14,7 +14,7 @@ public class AdventureSettings implements Cloneable {
 
     private boolean canFly = false;
 
-    private boolean isFlying = false;
+    private boolean noclip = false;
 
     private Player player;
 
@@ -43,8 +43,8 @@ public class AdventureSettings implements Cloneable {
         this.canFly = canFly;
     }
 
-    public void setFlying(boolean flying) {
-        isFlying = flying;
+    public void setNoclip(boolean noclip) {
+        this.noclip = noclip;
     }
 
     public boolean canDestroyBlock() {
@@ -59,8 +59,8 @@ public class AdventureSettings implements Cloneable {
         return canFly;
     }
 
-    public boolean isFlying() {
-        return isFlying;
+    public boolean isNoclipEnabled() {
+        return noclip;
     }
 
     public void update() {
@@ -74,7 +74,7 @@ public class AdventureSettings implements Cloneable {
 		0x00000020 nametags_visible
 		0x00000040 auto_jump
 		0x00000080 can_switch_between_walking_and_flying
-		0x00000100 is_flying
+		0x00000100 noclip
 		*/
         int flags = 0;
 
@@ -82,7 +82,7 @@ public class AdventureSettings implements Cloneable {
         flags |= 0x04; // No PvM (Remove hit markers client-side).
         flags |= 0x08; // No PvE (Remove hit markers client-side).
 
-        if (this.canDestroyBlock()) {
+        if (!this.canDestroyBlock()) {
             flags |= 0x01;
         }
 
@@ -98,7 +98,7 @@ public class AdventureSettings implements Cloneable {
             flags |= 0x80;
         }
 
-        if (this.isFlying()) {
+        if (this.isNoclipEnabled()) {
             flags |= 0x100;
         }
 
@@ -127,8 +127,8 @@ public class AdventureSettings implements Cloneable {
             return this;
         }
 
-        public Builder isFlying(boolean flying) {
-            settings.isFlying = flying;
+        public Builder noclip(boolean noclip) {
+            settings.noclip = noclip;
             return this;
         }
 
