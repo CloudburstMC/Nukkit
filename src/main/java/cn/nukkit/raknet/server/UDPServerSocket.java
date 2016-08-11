@@ -4,8 +4,6 @@ import cn.nukkit.utils.ThreadedLogger;
 
 import java.io.IOException;
 import java.net.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
 import java.util.Arrays;
 
 /**
@@ -13,6 +11,7 @@ import java.util.Arrays;
  * Nukkit Project
  */
 public class UDPServerSocket {
+    
     protected final ThreadedLogger logger;
     protected DatagramSocket socket;
 
@@ -28,8 +27,10 @@ public class UDPServerSocket {
         this.logger = logger;
         try {
             this.socket = new DatagramSocket(new InetSocketAddress(interfaz, port));
-            this.socket.setReuseAddress(true);
-            this.setSendBuffer(1024 * 1024 * 8).setRecvBuffer(1024 * 1024 * 8);
+            socket.setBroadcast(true);
+            socket.setSendBufferSize(1024 * 1024 * 8);
+            socket.setReceiveBufferSize(1024 * 1024 * 8);
+            socket.setSoTimeout(1);
         } catch (IOException e) {
             this.logger.critical("**** FAILED TO BIND TO " + interfaz + ":" + port + "!");
             this.logger.critical("Perhaps a server is already running on that port?");
