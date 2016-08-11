@@ -1585,7 +1585,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.adventureSettings = new AdventureSettings.Builder(this)
-                .canDestroyBlock(isAdventure())
+                .canDestroyBlock(!isAdventure())
                 .autoJump(true)
                 .canFly(isCreative())
                 .noclip(isSpectator())
