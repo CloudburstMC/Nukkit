@@ -1,136 +1,263 @@
 package cn.nukkit.utils;
 
+import com.google.common.collect.Maps;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 /**
- * 一个帮助处理文字格颜色和样式的工具类。<br>
- * A tool class that deals with text color and format.
- * <ul>
- * <li>{@link #toANSI(String)}可以把字符串的颜色转换为ANSI的形式.<br>
- * {@link #toANSI(String)} can convert colorized string to ANSI format.</li>
- * <p>
- * <li>{@link #clean(String)}可以清除字符串中所有的颜色字符.<br>
- * {@link #clean(String)} can remove all colors from a string.</li>
- * <p>
- * <li>{@link #colorize(String)}可以把以&加上数字或字母的形式转换为§开头的颜色格式.<br>
- * {@link #colorize(String)} can convert format like "&+number/character" to the color format begins with "§".</li>
- * <p>
- * <li>{@link #getLastColors(String)}可以得到这个字符串尾端的颜色.<br>
- * {@link #getLastColors(String)} can get the color of a string's tail.</li>
- * </ul>
- * <p>
- * <p>如果想要你处理文字颜色或格式的代码变得更简洁，可以参考这个：<br>
- * If you are dealing with colors and want to make code simple, refer to this:
- * <pre>
- * import cn.nukkit.plugin.PluginBase;
- * import static cn.nukkit.utils.TextFormat.*;
- *
- * public class ExamplePlugin extends PluginBase {
- *    {@code @Override}
- *     public void onEnable() {
- *         getLogger().info(BLUE + "Shorter" + GREEN + " code" + YELLOW +" using import static!");
- *         getLogger().info(colorize("&eMore &6simpler &7with colorize!"));
- *     }
- * }
- * </pre></p>
- *
- * @author MagicDroidX(code) @ Nukkit Project
- * @author 粉鞋大妈(javadoc) @ Nukkit Project
- * @since Nukkit 1.0 | Nukkit API 1.0.0
+ * All supported color values for chat
  */
-public final class TextFormat {
+public enum TextFormat {
+    /**
+     * Represents black
+     */
+    BLACK('0', 0x00),
+    /**
+     * Represents dark blue
+     */
+    DARK_BLUE('1', 0x1),
+    /**
+     * Represents dark green
+     */
+    DARK_GREEN('2', 0x2),
+    /**
+     * Represents dark blue (aqua)
+     */
+    DARK_AQUA('3', 0x3),
+    /**
+     * Represents dark red
+     */
+    DARK_RED('4', 0x4),
+    /**
+     * Represents dark purple
+     */
+    DARK_PURPLE('5', 0x5),
+    /**
+     * Represents gold
+     */
+    GOLD('6', 0x6),
+    /**
+     * Represents gray
+     */
+    GRAY('7', 0x7),
+    /**
+     * Represents dark gray
+     */
+    DARK_GRAY('8', 0x8),
+    /**
+     * Represents blue
+     */
+    BLUE('9', 0x9),
+    /**
+     * Represents green
+     */
+    GREEN('a', 0xA),
+    /**
+     * Represents aqua
+     */
+    AQUA('b', 0xB),
+    /**
+     * Represents red
+     */
+    RED('c', 0xC),
+    /**
+     * Represents light purple
+     */
+    LIGHT_PURPLE('d', 0xD),
+    /**
+     * Represents yellow
+     */
+    YELLOW('e', 0xE),
+    /**
+     * Represents white
+     */
+    WHITE('f', 0xF),
+    /**
+     * Makes the text bold.
+     */
+    BOLD('l', 0x11, true),
+    /**
+     * Makes a line appear through the text.
+     */
+    STRIKETHROUGH('m', 0x12, true),
+    /**
+     * Makes the text appear underlined.
+     */
+    UNDERLINE('n', 0x13, true),
+    /**
+     * Makes the text italic.
+     */
+    ITALIC('o', 0x14, true),
+    /**
+     * Resets all previous chat colors or formats.
+     */
+    RESET('r', 0x15);
 
-    public static final char ESCAPE = '\u00a7';
+    /**
+     * The special character which prefixes all chat colour codes. Use this if
+     * you need to dynamically convert colour codes from your custom format.
+     */
+    public static final char ESCAPE = '\u00A7';
+    private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + String.valueOf(ESCAPE) + "[0-9A-FK-OR]");
+    private final static Map<Integer, TextFormat> BY_ID = Maps.newTreeMap();
+    private final static Map<Character, TextFormat> BY_CHAR = new HashMap<>();
 
-    public static final String BLACK = TextFormat.ESCAPE + "0";
-    public static final String DARK_BLUE = TextFormat.ESCAPE + "1";
-    public static final String DARK_GREEN = TextFormat.ESCAPE + "2";
-    public static final String DARK_AQUA = TextFormat.ESCAPE + "3";
-    public static final String DARK_RED = TextFormat.ESCAPE + "4";
-    public static final String DARK_PURPLE = TextFormat.ESCAPE + "5";
-    public static final String GOLD = TextFormat.ESCAPE + "6";
-    public static final String GRAY = TextFormat.ESCAPE + "7";
-    public static final String DARK_GRAY = TextFormat.ESCAPE + "8";
-    public static final String BLUE = TextFormat.ESCAPE + "9";
-    public static final String GREEN = TextFormat.ESCAPE + "a";
-    public static final String AQUA = TextFormat.ESCAPE + "b";
-    public static final String RED = TextFormat.ESCAPE + "c";
-    public static final String LIGHT_PURPLE = TextFormat.ESCAPE + "d";
-    public static final String YELLOW = TextFormat.ESCAPE + "e";
-    public static final String WHITE = TextFormat.ESCAPE + "f";
-
-    public static final String OBFUSCATED = TextFormat.ESCAPE + "k";
-    public static final String BOLD = TextFormat.ESCAPE + "l";
-    public static final String STRIKETHROUGH = TextFormat.ESCAPE + "m";
-    public static final String UNDERLINE = TextFormat.ESCAPE + "n";
-    public static final String ITALIC = TextFormat.ESCAPE + "o";
-    public static final String RESET = TextFormat.ESCAPE + "r";
-
-    public static String clean(String message) {
-        return clean(message, true);
+    static {
+        for (TextFormat color : values()) {
+            BY_ID.put(color.intCode, color);
+            BY_CHAR.put(color.code, color);
+        }
     }
 
-    public static String clean(String message, boolean removeFormat) {
-        message = message.replaceAll((char) 0x1b + "[0-9;\\[\\(]+[Bm]", "");
-        return removeFormat ? message.replaceAll(ESCAPE + "[0123456789abcdefklmnor]", "") : message;
+    private final int intCode;
+    private final char code;
+    private final boolean isFormat;
+    private final String toString;
+
+    TextFormat(char code, int intCode) {
+        this(code, intCode, false);
     }
 
-    public static String toANSI(String string) {
-        string = string.replace(TextFormat.BOLD, "");
-        string = string.replace(TextFormat.OBFUSCATED, (char) 0x1b + "[8m");
-        string = string.replace(TextFormat.ITALIC, (char) 0x1b + "[3m");
-        string = string.replace(TextFormat.UNDERLINE, (char) 0x1b + "[4m");
-        string = string.replace(TextFormat.STRIKETHROUGH, (char) 0x1b + "[9m");
-        string = string.replace(TextFormat.RESET, (char) 0x1b + "[0m");
-        string = string.replace(TextFormat.BLACK, (char) 0x1b + "[0;30m");
-        string = string.replace(TextFormat.DARK_BLUE, (char) 0x1b + "[0;34m");
-        string = string.replace(TextFormat.DARK_GREEN, (char) 0x1b + "[0;32m");
-        string = string.replace(TextFormat.DARK_AQUA, (char) 0x1b + "[0;36m");
-        string = string.replace(TextFormat.DARK_RED, (char) 0x1b + "[0;31m");
-        string = string.replace(TextFormat.DARK_PURPLE, (char) 0x1b + "[0;35m");
-        string = string.replace(TextFormat.GOLD, (char) 0x1b + "[0;33m");
-        string = string.replace(TextFormat.GRAY, (char) 0x1b + "[0;37m");
-        string = string.replace(TextFormat.DARK_GRAY, (char) 0x1b + "[30;1m");
-        string = string.replace(TextFormat.BLUE, (char) 0x1b + "[34;1m");
-        string = string.replace(TextFormat.GREEN, (char) 0x1b + "[32;1m");
-        string = string.replace(TextFormat.AQUA, (char) 0x1b + "[36;1m");
-        string = string.replace(TextFormat.RED, (char) 0x1b + "[31;1m");
-        string = string.replace(TextFormat.LIGHT_PURPLE, (char) 0x1b + "[35;1m");
-        string = string.replace(TextFormat.YELLOW, (char) 0x1b + "[33;1m");
-        string = string.replace(TextFormat.WHITE, (char) 0x1b + "[37;1m");
-        return string;
+    TextFormat(char code, int intCode, boolean isFormat) {
+        this.code = code;
+        this.intCode = intCode;
+        this.isFormat = isFormat;
+        this.toString = new String(new char[]{ESCAPE, code});
     }
 
-    public static String colorize(String textToColorize) {
-        char[] b = textToColorize.toCharArray();
+    /**
+     * Gets the color represented by the specified color code
+     *
+     * @param code Code to check
+     * @return Associative {@link TextFormat} with the given code,
+     * or null if it doesn't exist
+     */
+    public static TextFormat getByChar(char code) {
+        return BY_CHAR.get(code);
+    }
+
+    /**
+     * Gets the color represented by the specified color code
+     *
+     * @param code Code to check
+     * @return Associative {@link TextFormat} with the given code,
+     * or null if it doesn't exist
+     */
+    public static TextFormat getByChar(String code) {
+        if (code == null || code.length() <= 1) {
+            return null;
+        }
+
+        return BY_CHAR.get(code.charAt(0));
+    }
+
+    /**
+     * Strips the given message of all color codes
+     *
+     * @param input String to strip of color
+     * @return A copy of the input string, without any coloring
+     */
+    public static String clean(final String input) {
+        if (input == null) {
+            return null;
+        }
+
+        return STRIP_COLOR_PATTERN.matcher(input).replaceAll("");
+    }
+
+    /**
+     * Translates a string using an alternate color code character into a
+     * string that uses the internal TextFormat.ESCAPE color code
+     * character. The alternate color code character will only be replaced if
+     * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
+     *
+     * @param altColorChar    The alternate color code character to replace. Ex: &
+     * @param textToTranslate Text containing the alternate color code character.
+     * @return Text containing the TextFormat.ESCAPE color code character.
+     */
+    public static String colorize(char altColorChar, String textToTranslate) {
+        char[] b = textToTranslate.toCharArray();
         for (int i = 0; i < b.length - 1; i++) {
-            if ((b[i] == '&') && ("0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[(i + 1)]) > -1)) {
-                b[i] = ESCAPE;
-                b[(i + 1)] = Character.toLowerCase(b[(i + 1)]);
+            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
+                b[i] = TextFormat.ESCAPE;
+                b[i + 1] = Character.toLowerCase(b[i + 1]);
             }
         }
         return new String(b);
     }
 
+    /**
+     * Translates a string using an alternate color code character into a
+     * string that uses the internal TextFormat.ESCAPE color code
+     * character. The alternate color code character will only be replaced if
+     * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
+     *
+     * @param textToTranslate Text containing the alternate color code character.
+     * @return Text containing the TextFormat.ESCAPE color code character.
+     */
+    public static String colorize(String textToTranslate) {
+        return colorize('&', textToTranslate);
+    }
+
+    /**
+     * Gets the chat color used at the end of the given input string.
+     *
+     * @param input Input string to retrieve the colors from.
+     * @return Any remaining chat color to pass onto the next line.
+     */
     public static String getLastColors(String input) {
         String result = "";
         int length = input.length();
+
+        // Search backwards from the end as it is faster
         for (int index = length - 1; index > -1; index--) {
             char section = input.charAt(index);
             if (section == ESCAPE && index < length - 1) {
                 char c = input.charAt(index + 1);
-                String color = ESCAPE + c + "";
-                result = color + result;
+                TextFormat color = getByChar(c);
 
-                if (isColor(c) || c == 'r' || c == 'R') {
-                    break;
+                if (color != null) {
+                    result = color.toString() + result;
+
+                    // Once we find a color or reset we can stop searching
+                    if (color.isColor() || color.equals(RESET)) {
+                        break;
+                    }
                 }
             }
         }
+
         return result;
     }
 
-    private static boolean isColor(char c) {
-        String colors = "0123456789AaBbCcDdEeFf";
-        return colors.indexOf(c) != -1;
+    /**
+     * Gets the char value associated with this color
+     *
+     * @return A char value of this color code
+     */
+    public char getChar() {
+        return code;
+    }
+
+    @Override
+    public String toString() {
+        return toString;
+    }
+
+    /**
+     * Checks if this code is a format code as opposed to a color code.
+     */
+    public boolean isFormat() {
+        return isFormat;
+    }
+
+    /**
+     * Checks if this code is a color code as opposed to a format code.
+     */
+    public boolean isColor() {
+        return !isFormat && this != RESET;
     }
 
 }

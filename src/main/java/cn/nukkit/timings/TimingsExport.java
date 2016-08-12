@@ -224,7 +224,7 @@ public class TimingsExport extends Thread {
 
             Server.getInstance().getLogger().info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsWrite", fileName));
         } catch (IOException exception) {
-            this.sender.sendMessage(TextFormat.RED + new TranslationContainer("nukkit.command.timings.reportError"));
+            this.sender.sendMessage(TextFormat.RED + "" + new TranslationContainer("nukkit.command.timings.reportError"));
             if (response != null) {
                 Server.getInstance().getLogger().alert(response);
             }
@@ -246,7 +246,7 @@ public class TimingsExport extends Thread {
             return bos.toString();
 
         } catch (IOException exception) {
-            this.sender.sendMessage(TextFormat.RED + new TranslationContainer("nukkit.command.timings.reportError"));
+            this.sender.sendMessage(TextFormat.RED + "" + new TranslationContainer("nukkit.command.timings.reportError"));
             Server.getInstance().getLogger().warning(con.getResponseMessage(), exception);
             return null;
         } finally {

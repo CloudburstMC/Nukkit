@@ -188,7 +188,7 @@ public abstract class Command {
 
         TranslationContainer result = new TranslationContainer("chat.type.admin", new String[]{source.getName(), message});
 
-        TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + TextFormat.ITALIC + "%chat.type.admin", new String[]{source.getName(), message});
+        TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + "" + TextFormat.ITALIC + "%chat.type.admin", new String[]{source.getName(), message});
 
         if (sendToSource && !(source instanceof ConsoleCommandSender)) {
             source.sendMessage(message);
@@ -215,7 +215,7 @@ public abstract class Command {
 
         Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
 
-        String coloredStr = TextFormat.GRAY + TextFormat.ITALIC + resultStr;
+        String coloredStr = TextFormat.GRAY + "" + TextFormat.ITALIC + resultStr;
 
         m.setText(resultStr);
         TextContainer result = m.clone();

@@ -2666,7 +2666,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     TextPacket textPacket = (TextPacket) packet;
 
                     if (textPacket.type == TextPacket.TYPE_CHAT) {
-                        textPacket.message = TextFormat.clean(textPacket.message, this.removeFormat);
+                        textPacket.message = this.removeFormat ? TextFormat.clean(textPacket.message) : textPacket.message;
                         for (String msg : textPacket.message.split("\n")) {
                             if (!"".equals(msg.trim()) && msg.length() <= 255 && this.messageCounter-- > 0) {
                                 if (msg.startsWith("/")) { //Command
@@ -3034,10 +3034,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             ((BlockEntitySign) t).spawnTo(this);
                         } else {
                             SignChangeEvent signChangeEvent = new SignChangeEvent(t.getBlock(), this, new String[]{
-                                    TextFormat.clean(nbt.getString("Text1"), this.removeFormat),
-                                    TextFormat.clean(nbt.getString("Text2"), this.removeFormat),
-                                    TextFormat.clean(nbt.getString("Text3"), this.removeFormat),
-                                    TextFormat.clean(nbt.getString("Text4"), this.removeFormat)
+                                    this.removeFormat ? TextFormat.clean(nbt.getString("Text1")) : nbt.getString("Text1"),
+                                    this.removeFormat ? TextFormat.clean(nbt.getString("Text2")) : nbt.getString("Text2"),
+                                    this.removeFormat ? TextFormat.clean(nbt.getString("Text3")) : nbt.getString("Text3"),
+                                    this.removeFormat ? TextFormat.clean(nbt.getString("Text4")) : nbt.getString("Text4")
                             });
 
                             if (!t.namedTag.contains("Creator") || !Objects.equals(this.getUniqueId().toString(), t.namedTag.getString("Creator"))) {
