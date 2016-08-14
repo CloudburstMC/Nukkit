@@ -6,9 +6,10 @@ import cn.nukkit.raknet.protocol.Packet;
 import cn.nukkit.raknet.protocol.packet.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.ThreadedLogger;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.socket.DatagramPacket;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -142,11 +143,14 @@ public class SessionManager {
     private boolean receivePacket() throws Exception {
         DatagramPacket datagramPacket = this.socket.readPacket();
         if (datagramPacket != null) {
-            int len = datagramPacket.getLength();
-            byte[] buffer = datagramPacket.getData();
-            String source = datagramPacket.getAddress().getHostAddress();
+            ByteBuf byteBuf = datagramPacket.content();
+            byte[] buffer = new byte[byteBuf.readableBytes()];
+            byteBuf.readBytes(buffer);
+            byteBuf.release();
+            int len = buffer.length;
+            String source = datagramPacket.sender().getHostString();
             currentSource = source; //in order to block address
-            int port = datagramPacket.getPort();
+            int port = datagramPacket.sender().getPort();
             if (len > 0) {
                 this.receiveBytes += len;
                 if (this.block.containsKey(source)) {
