@@ -79,4 +79,9 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         this.packets.add((DatagramPacket) msg);
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        this.logger.warning(cause.getMessage(), cause);
+    }
 }
