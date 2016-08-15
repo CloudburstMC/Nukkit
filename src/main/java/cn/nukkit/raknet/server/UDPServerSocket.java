@@ -54,12 +54,12 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
     }
 
     public void close() {
+        this.group.shutdownGracefully();
         try {
             this.channel.closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.group.shutdownGracefully();
     }
 
     public DatagramPacket readPacket() throws IOException {
