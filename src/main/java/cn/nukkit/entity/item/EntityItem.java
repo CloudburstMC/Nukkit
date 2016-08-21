@@ -180,16 +180,8 @@ public class EntityItem extends Entity {
 
     @Override
     public void saveNBT() {
-        if (this.item == null) {
-            return;
-        }
         super.saveNBT();
-        this.namedTag.putCompound("Item", new CompoundTag()
-                .putShort("id", this.item.getId())
-                .putShort("Damage", this.item.getDamage())
-                .putByte("Count", this.item.getCount())
-        );
-
+        this.namedTag.putCompound("Item", NBTIO.putItemHelper(this.item));
         this.namedTag.putShort("Health", this.getHealth());
         this.namedTag.putShort("Age", this.age);
         this.namedTag.putShort("PickupDelay", this.pickupDelay);
