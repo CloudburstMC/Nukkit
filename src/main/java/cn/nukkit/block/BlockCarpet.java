@@ -2,10 +2,10 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -18,6 +18,10 @@ public class BlockCarpet extends BlockFlowable {
 
     public BlockCarpet(int meta) {
         super(meta);
+    }
+
+    public BlockCarpet(DyeColor dyeColor) {
+        this(dyeColor.getWoolData());
     }
 
     @Override
@@ -42,7 +46,7 @@ public class BlockCarpet extends BlockFlowable {
 
     @Override
     public String getName() {
-        return ItemDye.getColorName(meta) + " Carpet";
+        return DyeColor.getByWoolData(meta) + " Carpet";
     }
 
     @Override
@@ -83,7 +87,11 @@ public class BlockCarpet extends BlockFlowable {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.getDyeColor(meta);
+        return DyeColor.getByWoolData(meta).getColor();
+    }
+
+    public DyeColor getDyeColor() {
+        return DyeColor.getByWoolData(meta);
     }
 
 }

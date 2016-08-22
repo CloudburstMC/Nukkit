@@ -62,11 +62,11 @@ public class BlockFarmland extends BlockTransparent {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
             Vector3 v = new Vector3();
-            
+
             if (this.level.getBlock(v.setComponents(x, this.y + 1, z)) instanceof BlockCrops) {
                 return 0;
             }
-            
+
             boolean found = false;
 
             for (int x = (int) this.x - 1; x <= this.x + 1; x++) {

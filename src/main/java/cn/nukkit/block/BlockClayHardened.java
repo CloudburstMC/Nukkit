@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -15,6 +16,10 @@ public class BlockClayHardened extends BlockSolid {
 
     public BlockClayHardened(int meta) {
         super(0);
+    }
+
+    public BlockClayHardened(DyeColor dyeColor) {
+        this(dyeColor.getWoolData());
     }
 
     @Override
@@ -55,6 +60,10 @@ public class BlockClayHardened extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.ADOBE_BLOCK_COLOR;
+        return DyeColor.getByWoolData(meta).getColor();
+    }
+
+    public DyeColor getDyeColor() {
+        return DyeColor.getByWoolData(meta);
     }
 }

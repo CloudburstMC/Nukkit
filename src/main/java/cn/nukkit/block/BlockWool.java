@@ -1,8 +1,8 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -18,9 +18,13 @@ public class BlockWool extends BlockSolid {
         super(meta);
     }
 
+    public BlockWool(DyeColor dyeColor) {
+        this(dyeColor.getWoolData());
+    }
+
     @Override
     public String getName() {
-        return ItemDye.getColorName(meta) + " Wool";
+        return getDyeColor().getName() + " Wool";
     }
 
     @Override
@@ -55,6 +59,10 @@ public class BlockWool extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.getDyeColor(meta);
+        return DyeColor.getByWoolData(meta).getColor();
+    }
+
+    public DyeColor getDyeColor() {
+        return DyeColor.getByWoolData(meta);
     }
 }

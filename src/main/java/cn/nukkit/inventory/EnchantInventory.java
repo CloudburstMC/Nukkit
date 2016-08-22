@@ -4,13 +4,13 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBookEnchanted;
-import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.enchantment.EnchantmentEntry;
 import cn.nukkit.item.enchantment.EnchantmentList;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.network.protocol.CraftingDataPacket;
+import cn.nukkit.utils.DyeColor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -204,7 +204,7 @@ public class EnchantInventory extends ContainerInventory {
                     int level = who.getExperienceLevel();
                     int exp = who.getExperience();
                     int cost = this.entries[i].getCost();
-                    if (lapis.getId() == Item.DYE && lapis.getDamage() == ItemDye.BLUE && lapis.getCount() > i && level >= cost) {
+                    if (lapis.getId() == Item.DYE && lapis.getDamage() == DyeColor.BLUE.getDyeData() && lapis.getCount() > i && level >= cost) {
                         result.addEnchantment(enchantments);
                         this.setItem(0, result);
                         lapis.setCount(lapis.getCount() - i - 1);

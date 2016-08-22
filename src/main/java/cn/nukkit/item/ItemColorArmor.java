@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 
 /**
  * Created by fromgate on 27.03.2016.
@@ -27,12 +28,34 @@ abstract public class ItemColorArmor extends ItemArmor {
     /**
      * Set leather armor color
      *
-     * @param dyeColor - BlockColor
+     * @param dyeColor - Dye color data value
      * @return - Return colored item
      */
+    @Deprecated
     public ItemColorArmor setColor(int dyeColor) {
-        BlockColor blockColor = BlockColor.getDyeColor(dyeColor);
+        BlockColor blockColor = DyeColor.getByDyeData(dyeColor).getColor();
         return setColor(blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());
+    }
+
+    /**
+     * Set leather armor color
+     *
+     * @param dyeColor - DyeColor object
+     * @return - Return colored item
+     */
+    public ItemColorArmor setColor(DyeColor dyeColor) {
+        BlockColor blockColor = dyeColor.getColor();
+        return setColor(blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());
+    }
+
+    /**
+     * Set leather armor color
+     *
+     * @param color - BlockColor object
+     * @return - Return colored item
+     */
+    public ItemColorArmor setColor(BlockColor color) {
+        return setColor(color.getRed(), color.getGreen(), color.getBlue());
     }
 
     /**
