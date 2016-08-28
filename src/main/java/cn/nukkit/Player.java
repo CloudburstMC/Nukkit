@@ -1624,8 +1624,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
 
-        this.server.addOnlinePlayer(this, false);
-
         PlayerLoginEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerLoginEvent(this, "Plugin reason"));
         if (ev.isCancelled()) {
@@ -1634,6 +1632,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
+        this.server.addOnlinePlayer(this, false);
         this.loggedIn = true;
 
         if (this.isCreative()) {
