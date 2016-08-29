@@ -729,7 +729,7 @@ public class CraftingManager {
                 "XXX",
                 "XYX",
                 "XXX"
-        )).setIngredient("X", Item.get(Item.GOLD_NUGGET, 0, 1)).setIngredient("Y", Item.get(Item.APPLE, 0, 1)));
+        )).setIngredient("X", Item.get(Item.GOLD_INGOT, 0, 1)).setIngredient("Y", Item.get(Item.APPLE, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.GOLDEN_APPLE, 1, 1),
                 "XXX",
