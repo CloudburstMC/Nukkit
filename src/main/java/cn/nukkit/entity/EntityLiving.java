@@ -243,6 +243,11 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         return this.getLineOfSight(maxDistance, maxLength, new ArrayList<>());
     }
 
+    @Deprecated
+    public Block[] getLineOfSight(int maxDistance, int maxLength, Map<Integer, Object> transparent) {
+        return this.getLineOfSight(maxDistance, maxLength, new ArrayList<>(transparent.keySet()));
+    }
+
     public Block[] getLineOfSight(int maxDistance, int maxLength, List<Integer> transparent) {
         if (maxDistance > 120) {
             maxDistance = 120;
@@ -282,6 +287,11 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     public Block getTargetBlock(int maxDistance) {
         return getTargetBlock(maxDistance, new ArrayList<>());
+    }
+
+    @Deprecated
+    public Block getTargetBlock(int maxDistance, Map<Integer, Object> transparent) {
+        return getTargetBlock(maxDistance, new ArrayList<>(transparent.keySet()));
     }
 
     public Block getTargetBlock(int maxDistance, List<Integer> transparent) {
