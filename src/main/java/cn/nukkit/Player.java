@@ -3041,12 +3041,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             if (!t.namedTag.contains("Creator") || !Objects.equals(this.getUniqueId().toString(), t.namedTag.getString("Creator"))) {
                                 signChangeEvent.setCancelled();
-                            } else {
-                                for (String line : signChangeEvent.getLines()) {
-                                    if (line.length() > 16) {
-                                        signChangeEvent.setCancelled();
-                                    }
-                                }
                             }
 
                             this.server.getPluginManager().callEvent(signChangeEvent);
