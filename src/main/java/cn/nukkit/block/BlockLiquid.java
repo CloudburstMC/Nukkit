@@ -274,7 +274,9 @@ public abstract class BlockLiquid extends BlockTransparent {
                 } else {
                     this.flowIntoBlock(bottomBlock, decay | 0x08);
                 }
-            } else if (decay >= 0 && (decay == 0 || !bottomBlock.canBeFlowedInto())) {
+            }
+
+            if (decay >= 0 && ((decay == 0 && this.getDamage() == 0) || (!bottomBlock.canBeFlowedInto() && !(bottomBlock instanceof BlockLiquid)))) {
                 boolean[] flags = this.getOptimalFlowDirections();
 
                 int l = decay + multiplier;
