@@ -15,6 +15,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.BlockIterator;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -240,15 +241,20 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public Block[] getLineOfSight(int maxDistance, int maxLength) {
-        return this.getLineOfSight(maxDistance, maxLength, new HashMap<>());
+        return this.getLineOfSight(maxDistance, maxLength, new Integer[]{});
     }
 
+    @Deprecated
     public Block[] getLineOfSight(int maxDistance, int maxLength, Map<Integer, Object> transparent) {
+        return this.getLineOfSight(maxDistance, maxLength, transparent.keySet().stream().toArray(Integer[]::new));
+    }
+
+    public Block[] getLineOfSight(int maxDistance, int maxLength, Integer[] transparent) {
         if (maxDistance > 120) {
             maxDistance = 120;
         }
 
-        if (transparent != null && transparent.isEmpty()) {
+        if (transparent != null && transparent.length == 0) {
             transparent = null;
         }
 
@@ -271,7 +277,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                     break;
                 }
             } else {
-                if (!transparent.containsKey(id)) {
+                if (Arrays.binarySearch(transparent, id) == -1) {
                     break;
                 }
             }
@@ -281,14 +287,19 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public Block getTargetBlock(int maxDistance) {
-        return getTargetBlock(maxDistance, new HashMap<>());
+        return getTargetBlock(maxDistance, new Integer[]{});
     }
 
+    @Deprecated
     public Block getTargetBlock(int maxDistance, Map<Integer, Object> transparent) {
+        return getTargetBlock(maxDistance, transparent.keySet().stream().toArray(Integer[]::new));
+    }
+
+    public Block getTargetBlock(int maxDistance, Integer[] transparent) {
         try {
             Block[] blocks = this.getLineOfSight(maxDistance, 1, transparent);
             Block block = blocks[0];
-            if (block instanceof Block) {
+            if (block != null && Arrays.binarySearch(transparent, id) == -1) {
                 return block;
             }
         } catch (Exception ignored) {
