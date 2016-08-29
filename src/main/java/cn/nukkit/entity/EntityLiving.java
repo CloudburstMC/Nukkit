@@ -277,7 +277,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                     break;
                 }
             } else {
-                if (Arrays.binarySearch(transparent, id) == -1) {
+                if (Arrays.binarySearch(transparent, id) < 0) {
                     break;
                 }
             }
@@ -299,7 +299,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         try {
             Block[] blocks = this.getLineOfSight(maxDistance, 1, transparent);
             Block block = blocks[0];
-            if (block != null && Arrays.binarySearch(transparent, id) == -1) {
+            if (block != null && transparent.length != 0 && Arrays.binarySearch(transparent, block.getId()) < 0) {
                 return block;
             }
         } catch (Exception ignored) {
