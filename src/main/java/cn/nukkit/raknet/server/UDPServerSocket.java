@@ -46,7 +46,7 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
                     .channel(NioDatagramChannel.class)
                     .handler(this);
             channel = bootstrap.bind(interfaz, port).sync().channel();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             this.logger.critical("**** FAILED TO BIND TO " + interfaz + ":" + port + "!");
             this.logger.critical("Perhaps a server is already running on that port?");
             System.exit(1);
@@ -57,7 +57,7 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
         this.group.shutdownGracefully();
         try {
             this.channel.closeFuture().sync();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
