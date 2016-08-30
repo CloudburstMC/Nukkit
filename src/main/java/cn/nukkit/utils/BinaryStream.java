@@ -76,7 +76,7 @@ public class BinaryStream {
             this.offset = this.count - 1;
             return new byte[0];
         }
-        len = Math.min(len, this.getCount() - this.offset - 1);
+        len = Math.min(len, this.getCount() - this.offset);
         this.offset += len;
         return Arrays.copyOfRange(this.buffer, this.offset - len, this.offset);
     }

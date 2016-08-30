@@ -39,7 +39,7 @@ public class LoginPacket extends DataPacket {
         this.protocol = this.getInt();
         byte[] str;
         try {
-            str = Zlib.inflate(this.get(this.getInt()), 0xffff);
+            str = Zlib.inflate(this.get(this.getInt()), 64*1024*1024);
         } catch (Exception e) {
             return;
         }
