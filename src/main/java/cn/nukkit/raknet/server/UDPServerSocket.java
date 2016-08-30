@@ -83,5 +83,6 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         this.logger.warning(cause.getMessage(), cause);
+        ctx.close();
     }
 }
