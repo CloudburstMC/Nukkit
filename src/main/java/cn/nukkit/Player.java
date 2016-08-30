@@ -1751,14 +1751,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     LoginPacket loginPacket = (LoginPacket) packet;
-                    this.username = TextFormat.clean(loginPacket.username);
-                    this.displayName = this.username;
-                    this.iusername = this.username.toLowerCase();
-                    this.setDataProperty(new StringEntityData(DATA_NAMETAG, this.username), false);
-
-                    if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)) {
-                        break;
-                    }
 
                     String message;
                     if (loginPacket.getProtocol() != ProtocolInfo.CURRENT_PROTOCOL) {
@@ -1776,6 +1768,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.directDataPacket(pk);
                         }
                         this.close("", message, false);
+                        break;
+                    }
+
+                    this.username = TextFormat.clean(loginPacket.username);
+                    this.displayName = this.username;
+                    this.iusername = this.username.toLowerCase();
+                    this.setDataProperty(new StringEntityData(DATA_NAMETAG, this.username), false);
+
+                    if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick("disconnectionScreen.serverFull", false)) {
                         break;
                     }
 
