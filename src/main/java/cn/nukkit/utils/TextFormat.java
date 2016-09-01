@@ -7,73 +7,79 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * All supported color values for chat
+ * All supported formatting values for chat and console.
  */
 public enum TextFormat {
     /**
-     * Represents black
+     * Represents black.
      */
     BLACK('0', 0x00),
     /**
-     * Represents dark blue
+     * Represents dark blue.
      */
     DARK_BLUE('1', 0x1),
     /**
-     * Represents dark green
+     * Represents dark green.
      */
     DARK_GREEN('2', 0x2),
     /**
-     * Represents dark blue (aqua)
+     * Represents dark blue (aqua).
      */
     DARK_AQUA('3', 0x3),
     /**
-     * Represents dark red
+     * Represents dark red.
      */
     DARK_RED('4', 0x4),
     /**
-     * Represents dark purple
+     * Represents dark purple.
      */
     DARK_PURPLE('5', 0x5),
     /**
-     * Represents gold
+     * Represents gold.
      */
     GOLD('6', 0x6),
     /**
-     * Represents gray
+     * Represents gray.
      */
     GRAY('7', 0x7),
     /**
-     * Represents dark gray
+     * Represents dark gray.
      */
     DARK_GRAY('8', 0x8),
     /**
-     * Represents blue
+     * Represents blue.
      */
     BLUE('9', 0x9),
     /**
-     * Represents green
+     * Represents green.
      */
     GREEN('a', 0xA),
     /**
-     * Represents aqua
+     * Represents aqua.
      */
     AQUA('b', 0xB),
     /**
-     * Represents red
+     * Represents red.
      */
     RED('c', 0xC),
     /**
-     * Represents light purple
+     * Represents light purple.
      */
     LIGHT_PURPLE('d', 0xD),
     /**
-     * Represents yellow
+     * Represents yellow.
      */
     YELLOW('e', 0xE),
     /**
-     * Represents white
+     * Represents white.
      */
     WHITE('f', 0xF),
+    /**
+     * Makes the text obfuscated.
+     * Not present in the game yet, it's here for future versions and for
+     * compatibility with previous TextFormat version (ex-PM).
+     */
+    OBFUSCATED('k', 0x10, true),
     /**
      * Makes the text bold.
      */
@@ -96,11 +102,12 @@ public enum TextFormat {
     RESET('r', 0x15);
 
     /**
-     * The special character which prefixes all chat colour codes. Use this if
-     * you need to dynamically convert colour codes from your custom format.
+     * The special character which prefixes all format codes. Use this if
+     * you need to dynamically convert format codes from your custom format.
      */
     public static final char ESCAPE = '\u00A7';
-    private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + String.valueOf(ESCAPE) + "[0-9A-FK-OR]");
+
+    private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + String.valueOf(ESCAPE) + "[0-9A-FK-OR]");
     private final static Map<Integer, TextFormat> BY_ID = Maps.newTreeMap();
     private final static Map<Character, TextFormat> BY_CHAR = new HashMap<>();
 
@@ -128,7 +135,7 @@ public enum TextFormat {
     }
 
     /**
-     * Gets the color represented by the specified color code
+     * Gets the TextFormat represented by the specified format code.
      *
      * @param code Code to check
      * @return Associative {@link TextFormat} with the given code,
@@ -139,7 +146,7 @@ public enum TextFormat {
     }
 
     /**
-     * Gets the color represented by the specified color code
+     * Gets the TextFormat represented by the specified format code.
      *
      * @param code Code to check
      * @return Associative {@link TextFormat} with the given code,
@@ -154,33 +161,33 @@ public enum TextFormat {
     }
 
     /**
-     * Strips the given message of all color codes
+     * Cleans the given message of all format codes.
      *
-     * @param input String to strip of color
-     * @return A copy of the input string, without any coloring
+     * @param input String to clean.
+     * @return A copy of the input string, without any formatting.
      */
     public static String clean(final String input) {
         if (input == null) {
             return null;
         }
 
-        return STRIP_COLOR_PATTERN.matcher(input).replaceAll("");
+        return CLEAN_PATTERN.matcher(input).replaceAll("");
     }
 
     /**
-     * Translates a string using an alternate color code character into a
-     * string that uses the internal TextFormat.ESCAPE color code
-     * character. The alternate color code character will only be replaced if
+     * Translates a string using an alternate format code character into a
+     * string that uses the internal TextFormat.ESCAPE format code
+     * character. The alternate format code character will only be replaced if
      * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
      *
-     * @param altColorChar    The alternate color code character to replace. Ex: &
-     * @param textToTranslate Text containing the alternate color code character.
-     * @return Text containing the TextFormat.ESCAPE color code character.
+     * @param altFormatChar    The alternate format code character to replace. Ex: &
+     * @param textToTranslate Text containing the alternate format code character.
+     * @return Text containing the TextFormat.ESCAPE format code character.
      */
-    public static String colorize(char altColorChar, String textToTranslate) {
+    public static String colorize(char altFormatChar, String textToTranslate) {
         char[] b = textToTranslate.toCharArray();
         for (int i = 0; i < b.length - 1; i++) {
-            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
+            if (b[i] == altFormatChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
                 b[i] = TextFormat.ESCAPE;
                 b[i + 1] = Character.toLowerCase(b[i + 1]);
             }
@@ -189,13 +196,13 @@ public enum TextFormat {
     }
 
     /**
-     * Translates a string using an alternate color code character into a
-     * string that uses the internal TextFormat.ESCAPE color code
-     * character. The alternate color code character will only be replaced if
+     * Translates a string, using an ampersand (&) as an alternate format code
+     * character, into a string that uses the internal TextFormat.ESCAPE format
+     * code character. The alternate format code character will only be replaced if
      * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
      *
-     * @param textToTranslate Text containing the alternate color code character.
-     * @return Text containing the TextFormat.ESCAPE color code character.
+     * @param textToTranslate Text containing the alternate format code character.
+     * @return Text containing the TextFormat.ESCAPE format code character.
      */
     public static String colorize(String textToTranslate) {
         return colorize('&', textToTranslate);
@@ -259,5 +266,4 @@ public enum TextFormat {
     public boolean isColor() {
         return !isFormat && this != RESET;
     }
-
 }
