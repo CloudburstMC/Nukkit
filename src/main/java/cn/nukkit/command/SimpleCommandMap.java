@@ -3,6 +3,7 @@ package cn.nukkit.command;
 import cn.nukkit.Server;
 import cn.nukkit.command.defaults.*;
 import cn.nukkit.command.simple.Arguments;
+import cn.nukkit.command.simple.CommandPermission;
 import cn.nukkit.command.simple.ForbidConsole;
 import cn.nukkit.command.simple.SimpleCommand;
 import cn.nukkit.lang.TranslationContainer;
@@ -125,6 +126,11 @@ public class SimpleCommandMap implements CommandMap {
                 if (args != null) {
                     sc.setMaxArgs(args.max());
                     sc.setMinArgs(args.min());
+                }
+
+                CommandPermission perm = method.getAnnotation(CommandPermission.class);
+                if (perm != null) {
+                    sc.setPermission(perm.value());
                 }
 
                 if (method.isAnnotationPresent(ForbidConsole.class)) {
