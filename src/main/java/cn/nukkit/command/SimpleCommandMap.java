@@ -2,11 +2,16 @@ package cn.nukkit.command;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.defaults.*;
+import cn.nukkit.command.simple.Arguments;
+import cn.nukkit.command.simple.CommandPermission;
+import cn.nukkit.command.simple.ForbidConsole;
+import cn.nukkit.command.simple.SimpleCommand;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -110,6 +115,33 @@ public class SimpleCommandMap implements CommandMap {
         return registered;
     }
 
+    @Override
+    public void registerSimpleCommands(Object object) {
+        for (Method method : object.getClass().getDeclaredMethods()) {
+            cn.nukkit.command.simple.Command def = method.getAnnotation(cn.nukkit.command.simple.Command.class);
+            if (def != null) {
+                SimpleCommand sc = new SimpleCommand(object, method, def.name(), def.description(), def.usageMessage(), def.aliases());
+
+                Arguments args = method.getAnnotation(Arguments.class);
+                if (args != null) {
+                    sc.setMaxArgs(args.max());
+                    sc.setMinArgs(args.min());
+                }
+
+                CommandPermission perm = method.getAnnotation(CommandPermission.class);
+                if (perm != null) {
+                    sc.setPermission(perm.value());
+                }
+
+                if (method.isAnnotationPresent(ForbidConsole.class)) {
+                    sc.setForbidConsole(true);
+                }
+
+                this.register(def.name(), sc);
+            }
+        }
+    }
+
     private boolean registerAlias(Command command, boolean isAlias, String fallbackPrefix, String label) {
         this.knownCommands.put(fallbackPrefix + ":" + label, command);
 
@@ -193,7 +225,7 @@ public class SimpleCommandMap implements CommandMap {
             target.execute(sender, sentCommandLabel, args);
         } catch (Exception e) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
-            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.command.exception", new String[]{cmdLine, target.toString(), Utils.getExceptionMessage(e)}));
+            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.command.exception", cmdLine, target.toString(), Utils.getExceptionMessage(e)));
             MainLogger logger = sender.getServer().getLogger();
             if (logger != null) {
                 logger.logException(e);
