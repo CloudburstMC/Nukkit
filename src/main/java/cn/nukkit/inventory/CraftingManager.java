@@ -1115,6 +1115,10 @@ public class CraftingManager {
             this.registerFurnaceRecipe((FurnaceRecipe) recipe);
         }
     }
+    
+    public Recipe[] getRecipesByResult(Item result) {
+        return recipeLookup.get(result.getId() + ":" + result.getDamage()).values().stream().toArray(Recipe[]::new);
+    }
 
     public static class Entry {
         final int resultItemId;
