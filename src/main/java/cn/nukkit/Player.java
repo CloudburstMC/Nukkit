@@ -2709,17 +2709,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 case ProtocolInfo.CRAFTING_EVENT_PACKET:
                     CraftingEventPacket craftingEventPacket = (CraftingEventPacket) packet;
+
                     if (!this.spawned || !this.isAlive()) {
                         break;
-                    } else if (!this.windowIndex.containsKey(craftingEventPacket.windowId)) {
+                    }
+
+                    Recipe recipe = this.server.getCraftingManager().getRecipe(craftingEventPacket.id);
+
+                    if (!this.windowIndex.containsKey(craftingEventPacket.windowId)) {
                         this.inventory.sendContents(this);
                         containerClosePacket = new ContainerClosePacket();
                         containerClosePacket.windowid = craftingEventPacket.windowId;
                         this.dataPacket(containerClosePacket);
                         break;
                     }
-
-                    Recipe recipe = this.server.getCraftingManager().getRecipe(craftingEventPacket.id);
 
                     if ((recipe == null) || (((recipe instanceof BigShapelessRecipe) || (recipe instanceof BigShapedRecipe)) && this.craftingType == 0)) {
                         this.inventory.sendContents(this);
@@ -2739,62 +2742,91 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     boolean canCraft = true;
 
-                    if (recipe instanceof ShapedRecipe) {
-                        int offsetX = 0;
-                        int offsetY = 0;
+                    if(craftingEventPacket.input.length == 0) {
+                        Recipe[] recipes = getServer().getCraftingManager().getRecipesByResult(craftingEventPacket.output[0]);
 
-                        if (this.craftingType == 1) {
-                            int minX = -1, minY = -1, maxX = 0, maxY = 0;
-                            for (int x = 0; x < 3 && canCraft; ++x) {
-                                for (int y = 0; y < 3; ++y) {
-                                    Item readItem = craftingEventPacket.input[y * 3 + x];
-                                    if (readItem.getId() != Item.AIR) {
-                                        if (minY == -1 || minY > y) {
-                                            minY = y;
+                        recipe = null;
+
+                        ArrayList<Item> ingredientz = null;
+
+                        for (Recipe r : recipes) {
+                            if (r instanceof ShapedRecipe) {
+                                Map<Integer, Map<Integer, Item>> ingredients = ((ShapedRecipe) r).getIngredientMap();
+
+                                for (Map<Integer, Item> map : ingredients.values()) {
+                                    for (Item ingredient : map.values()) {
+                                        if (!this.inventory.contains(ingredient)) {
+                                            canCraft = false;
+                                            break;
                                         }
-                                        if (maxY < y) {
-                                            maxY = y;
-                                        }
-                                        if (minX == -1) {
-                                            minX = x;
-                                        }
-                                        if (maxX < x) {
-                                            maxX = x;
-                                        }
+
+                                        ingredientz.add(ingredient);
+                                        this.inventory.removeItem(ingredient);
                                     }
                                 }
-                            }
-                            if (maxX == minX) {
-                                offsetX = minX;
-                            }
-                            if (maxY == minY) {
-                                offsetY = minY;
-                            }
-                        }
 
-                        //To fix some items can't craft
-                        for (int x = 0; x < 3 - offsetX && canCraft; ++x) {
-                            for (int y = 0; y < 3 - offsetY; ++y) {
-                                item = craftingEventPacket.input[(y + offsetY) * 3 + (x + offsetX)];
-                                Item ingredient = ((ShapedRecipe) recipe).getIngredient(x, y);
-                                //todo: check this https://github.com/PocketMine/PocketMine-MP/commit/58709293cf4eee2e836a94226bbba4aca0f53908
-                                if (item.getCount() > 0) {
-                                    if (ingredient == null || !ingredient.deepEquals(item, ingredient.hasMeta(), ingredient.getCompoundTag() != null)) {
-                                        canCraft = false;
-                                        break;
-                                    }
-
+                                if (canCraft) {
+                                    recipe = r;
+                                    break;
                                 }
                             }
                         }
 
-                        //If can't craft by auto resize, will try to craft this item in another way
-                        if (!canCraft) {
-                            canCraft = true;
-                            for (int x = 0; x < 3 && canCraft; ++x) {
-                                for (int y = 0; y < 3; ++y) {
-                                    item = craftingEventPacket.input[y * 3 + x];
+                        if (recipe != null) {
+                            CraftItemEvent craftItemEvent = new CraftItemEvent(this, ingredientz.stream().toArray(Item[]::new), recipe);
+                            getServer().getPluginManager().callEvent(craftItemEvent);
+
+                            if (craftItemEvent.isCancelled()) {
+                                this.inventory.sendContents(this);
+                                break;
+                            }
+
+                            this.inventory.addItem(recipe.getResult());
+                        } else {
+                            this.server.getLogger().debug("Unmatched desktop recipe " + craftingEventPacket.id + " from player " + this.getName());
+                            this.inventory.sendContents(this);
+                        }
+                    } else {
+
+                        if (recipe instanceof ShapedRecipe) {
+                            int offsetX = 0;
+                            int offsetY = 0;
+
+                            if (this.craftingType == 1) {
+                                int minX = -1, minY = -1, maxX = 0, maxY = 0;
+                                for (int x = 0; x < 3 && canCraft; ++x) {
+                                    for (int y = 0; y < 3; ++y) {
+                                        Item readItem = craftingEventPacket.input[y * 3 + x];
+                                        if (readItem.getId() != Item.AIR) {
+                                            if (minY == -1 || minY > y) {
+                                                minY = y;
+                                            }
+                                            if (maxY < y) {
+                                                maxY = y;
+                                            }
+                                            if (minX == -1) {
+                                                minX = x;
+                                            }
+                                            if (maxX < x) {
+                                                maxX = x;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (maxX == minX) {
+                                    offsetX = minX;
+                                }
+                                if (maxY == minY) {
+                                    offsetY = minY;
+                                }
+                            }
+
+                            //To fix some items can't craft
+                            for (int x = 0; x < 3 - offsetX && canCraft; ++x) {
+                                for (int y = 0; y < 3 - offsetY; ++y) {
+                                    item = craftingEventPacket.input[(y + offsetY) * 3 + (x + offsetX)];
                                     Item ingredient = ((ShapedRecipe) recipe).getIngredient(x, y);
+                                    //todo: check this https://github.com/PocketMine/PocketMine-MP/commit/58709293cf4eee2e836a94226bbba4aca0f53908
                                     if (item.getCount() > 0) {
                                         if (ingredient == null || !ingredient.deepEquals(item, ingredient.hasMeta(), ingredient.getCompoundTag() != null)) {
                                             canCraft = false;
@@ -2804,136 +2836,154 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     }
                                 }
                             }
-                        }
 
-                    } else if (recipe instanceof ShapelessRecipe) {
-                        List<Item> needed = ((ShapelessRecipe) recipe).getIngredientList();
+                            //If can't craft by auto resize, will try to craft this item in another way
+                            if (!canCraft) {
+                                canCraft = true;
+                                for (int x = 0; x < 3 && canCraft; ++x) {
+                                    for (int y = 0; y < 3; ++y) {
+                                        item = craftingEventPacket.input[y * 3 + x];
+                                        Item ingredient = ((ShapedRecipe) recipe).getIngredient(x, y);
+                                        if (item.getCount() > 0) {
+                                            if (ingredient == null || !ingredient.deepEquals(item, ingredient.hasMeta(), ingredient.getCompoundTag() != null)) {
+                                                canCraft = false;
+                                                break;
+                                            }
 
-                        for (int x = 0; x < 3 && canCraft; ++x) {
-                            for (int y = 0; y < 3; ++y) {
-                                item = craftingEventPacket.input[y * 3 + x].clone();
-
-                                for (Item n : new ArrayList<>(needed)) {
-                                    if (n.deepEquals(item, n.hasMeta(), n.getCompoundTag() != null)) {
-                                        int remove = Math.min(n.getCount(), item.getCount());
-                                        n.setCount(n.getCount() - remove);
-                                        item.setCount(item.getCount() - remove);
-
-                                        if (n.getCount() == 0) {
-                                            needed.remove(n);
                                         }
                                     }
                                 }
+                            }
 
-                                if (item.getCount() > 0) {
-                                    canCraft = false;
-                                    break;
+                        } else if (recipe instanceof ShapelessRecipe) {
+                            List<Item> needed = ((ShapelessRecipe) recipe).getIngredientList();
+
+                            for (int x = 0; x < 3 && canCraft; ++x) {
+                                for (int y = 0; y < 3; ++y) {
+                                    item = craftingEventPacket.input[y * 3 + x].clone();
+
+                                    for (Item n : new ArrayList<>(needed)) {
+                                        if (n.deepEquals(item, n.hasMeta(), n.getCompoundTag() != null)) {
+                                            int remove = Math.min(n.getCount(), item.getCount());
+                                            n.setCount(n.getCount() - remove);
+                                            item.setCount(item.getCount() - remove);
+
+                                            if (n.getCount() == 0) {
+                                                needed.remove(n);
+                                            }
+                                        }
+                                    }
+
+                                    if (item.getCount() > 0) {
+                                        canCraft = false;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!needed.isEmpty()) {
+                                canCraft = false;
+                            }
+                        } else {
+                            canCraft = false;
+                        }
+
+                        List<Item> ingredientsList = new ArrayList<>();
+                        if (recipe instanceof ShapedRecipe) {
+                            for (int x = 0; x < 3; x++) {
+                                for (int y = 0; y < 3; y++) {
+                                    Item need = ((ShapedRecipe) recipe).getIngredient(x, y);
+                                    if (need.getId() == 0) {
+                                        continue;
+                                    }
+                                    for (int count = need.getCount(); count > 0; count--) {
+                                        Item needAdd = need.clone();
+                                        //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
+                                        needAdd.setCount(1);
+                                        ingredientsList.add(needAdd);
+                                    }
                                 }
                             }
                         }
-
-                        if (!needed.isEmpty()) {
-                            canCraft = false;
-                        }
-                    } else {
-                        canCraft = false;
-                    }
-
-                    List<Item> ingredientsList = new ArrayList<>();
-                    if (recipe instanceof ShapedRecipe) {
-                        for (int x = 0; x < 3; x++) {
-                            for (int y = 0; y < 3; y++) {
-                                Item need = ((ShapedRecipe) recipe).getIngredient(x, y);
+                        if (recipe instanceof ShapelessRecipe) {
+                            List<Item> recipeItem = ((ShapelessRecipe) recipe).getIngredientList();
+                            for (Item need : recipeItem) {
                                 if (need.getId() == 0) {
                                     continue;
                                 }
-                                for (int count = need.getCount(); count > 0; count--) {
-                                    Item needAdd = need.clone();
-                                    //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
-                                    needAdd.setCount(1);
-                                    ingredientsList.add(needAdd);
+                                Item needAdd = need.clone();
+                                //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
+                                needAdd.setCount(1);
+                                ingredientsList.add(needAdd);
+                            }
+                        }
+
+                        Item[] ingredients = ingredientsList.stream().toArray(Item[]::new);
+
+                        Item result = craftingEventPacket.output[0];
+
+                        if (!canCraft || !recipe.getResult().deepEquals(result)) {
+                            this.server.getLogger().debug("Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": expected " + recipe.getResult() + ", got " + result + ", using: " + Arrays.asList(ingredients).toString());
+                            this.inventory.sendContents(this);
+                            break;
+                        }
+
+                        int[] used = new int[this.inventory.getSize()];
+
+                        for (Item ingredient : ingredients) {
+                            slot = -1;
+                            for (int index : this.inventory.getContents().keySet()) {
+                                Item i = this.inventory.getContents().get(index);
+                                if (ingredient.getId() != 0 && ingredient.deepEquals(i, ingredient.hasMeta()) && (i.getCount() - used[index]) >= 1) {
+                                    slot = index;
+                                    used[index]++;
+                                    break;
                                 }
                             }
-                        }
-                    }
-                    if (recipe instanceof ShapelessRecipe) {
-                        List<Item> recipeItem = ((ShapelessRecipe) recipe).getIngredientList();
-                        for (Item need : recipeItem) {
-                            if (need.getId() == 0) {
-                                continue;
-                            }
-                            Item needAdd = need.clone();
-                            //todo: check if there need to set item's count to 1, I'm too tired to check that today =w=
-                            needAdd.setCount(1);
-                            ingredientsList.add(needAdd);
-                        }
-                    }
 
-                    Item[] ingredients = ingredientsList.stream().toArray(Item[]::new);
-
-                    Item result = craftingEventPacket.output[0];
-
-                    if (!canCraft || !recipe.getResult().deepEquals(result)) {
-                        this.server.getLogger().debug("Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": expected " + recipe.getResult() + ", got " + result + ", using: " + Arrays.asList(ingredients).toString());
-                        this.inventory.sendContents(this);
-                        break;
-                    }
-
-                    int[] used = new int[this.inventory.getSize()];
-
-                    for (Item ingredient : ingredients) {
-                        slot = -1;
-                        for (int index : this.inventory.getContents().keySet()) {
-                            Item i = this.inventory.getContents().get(index);
-                            if (ingredient.getId() != 0 && ingredient.deepEquals(i, ingredient.hasMeta()) && (i.getCount() - used[index]) >= 1) {
-                                slot = index;
-                                used[index]++;
+                            if (ingredient.getId() != 0 && slot == -1) {
+                                canCraft = false;
                                 break;
                             }
                         }
 
-                        if (ingredient.getId() != 0 && slot == -1) {
-                            canCraft = false;
+                        if (!canCraft) {
+                            this.server.getLogger().debug("Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": client does not have enough items, using: " + Arrays.asList(ingredients).toString());
+                            this.inventory.sendContents(this);
                             break;
                         }
-                    }
+                        CraftItemEvent craftItemEvent;
+                        this.server.getPluginManager().callEvent(craftItemEvent = new CraftItemEvent(this, ingredients, recipe));
 
-                    if (!canCraft) {
-                        this.server.getLogger().debug("Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": client does not have enough items, using: " + Arrays.asList(ingredients).toString());
-                        this.inventory.sendContents(this);
-                        break;
-                    }
-                    CraftItemEvent craftItemEvent;
-                    this.server.getPluginManager().callEvent(craftItemEvent = new CraftItemEvent(this, ingredients, recipe));
-
-                    if (craftItemEvent.isCancelled()) {
-                        this.inventory.sendContents(this);
-                        break;
-                    }
-
-                    for (int i = 0; i < used.length; i++) {
-                        int count = used[i];
-                        if (count == 0) {
-                            continue;
+                        if (craftItemEvent.isCancelled()) {
+                            this.inventory.sendContents(this);
+                            break;
                         }
 
-                        item = this.inventory.getItem(i);
+                        for (int i = 0; i < used.length; i++) {
+                            int count = used[i];
+                            if (count == 0) {
+                                continue;
+                            }
 
-                        Item newItem;
-                        if (item.getCount() > count) {
-                            newItem = item.clone();
-                            newItem.setCount(item.getCount() - count);
-                        } else {
-                            newItem = new ItemBlock(new BlockAir(), 0, 0);
+                            item = this.inventory.getItem(i);
+
+                            Item newItem;
+                            if (item.getCount() > count) {
+                                newItem = item.clone();
+                                newItem.setCount(item.getCount() - count);
+                            } else {
+                                newItem = new ItemBlock(new BlockAir(), 0, 0);
+                            }
+
+                            this.inventory.setItem(i, newItem);
                         }
 
-                        this.inventory.setItem(i, newItem);
-                    }
-
-                    Item[] extraItem = this.inventory.addItem(recipe.getResult());
-                    if (extraItem.length > 0) {
-                        for (Item i : extraItem) {
-                            this.level.dropItem(this, i);
+                        Item[] extraItem = this.inventory.addItem(recipe.getResult());
+                        if (extraItem.length > 0) {
+                            for (Item i : extraItem) {
+                                this.level.dropItem(this, i);
+                            }
                         }
                     }
                     //todo: achievement
