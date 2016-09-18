@@ -18,7 +18,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     private final ChestInventory right;
 
     public DoubleChestInventory(BlockEntityChest left, BlockEntityChest right) {
-        super(null, InventoryType.get(InventoryType.DOUBLE_CHEST));
+        super(null, InventoryType.DOUBLE_CHEST);
         this.holder = this;
 
         this.left = left.getRealInventory();

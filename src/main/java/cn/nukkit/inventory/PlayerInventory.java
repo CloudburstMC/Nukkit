@@ -28,7 +28,7 @@ public class PlayerInventory extends BaseInventory {
     protected final int[] hotbar;
 
     public PlayerInventory(EntityHuman player) {
-        super(player, InventoryType.get(InventoryType.PLAYER));
+        super(player, InventoryType.PLAYER);
         this.hotbar = new int[this.getHotbarSize()];
         Arrays.fill(this.hotbar, -1);
     }

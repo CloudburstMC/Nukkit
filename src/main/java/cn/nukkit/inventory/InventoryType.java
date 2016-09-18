@@ -1,59 +1,28 @@
 package cn.nukkit.inventory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class InventoryType {
-    public static final int CHEST = 0;
-    public static final int DOUBLE_CHEST = 1;
-    public static final int PLAYER = 2;
-    public static final int FURNACE = 3;
-    public static final int CRAFTING = 4;
-    public static final int WORKBENCH = 5;
-    public static final int STONECUTTER = 6;
-    public static final int BREWING_STAND = 7;
-    public static final int ANVIL = 8;
-    public static final int ENCHANT_TABLE = 9;
-    public static final int DISPENSER = 10;
-    public static final int DROPPER = 11;
-    public static final int HOPPER = 12;
-
-
-    private static final Map<Integer, InventoryType> defaults = new HashMap<>();
+public enum InventoryType {
+    CHEST(27, "Chest", 0),
+    DOUBLE_CHEST(27 + 27, "Double Chest", 0),
+    PLAYER(49, "Player", 0), //36 CONTAINER, 4 ARMOR (9 reference HOTBAR slots)
+    FURNACE(3, "Furnace", 2),
+    CRAFTING(5, "Crafting", 1), //4 CRAFTING slots, 1 RESULT
+    WORKBENCH(10, "Crafting", 1), //9 CRAFTING slots, 1 RESULT
+    BREWING_STAND(4, "Brewing", 4), //1 INPUT, 3 POTION
+    ANVIL(3, "Anvil", 5), //2 INPUT, 1 OUTPUT
+    ENCHANT_TABLE(2, "Enchant", 3), //1 INPUT/OUTPUT, 1 LAPIS
+    DISPENSER(0, "Dispenser", 6), //9 CONTAINER
+    DROPPER(9, "Dropper", 7), //9 CONTAINER
+    HOPPER(5, "Hopper", 8); //5 CONTAINER
 
     private final int size;
     private final String title;
     private final int typeId;
 
-    public static InventoryType get(int index) {
-        return defaults.containsKey(index) ? defaults.get(index) : null;
-    }
-
-    public static void init() {
-        if (!defaults.isEmpty()) {
-            return;
-        }
-
-        defaults.put(CHEST, new InventoryType(27, "Chest", 0));
-        defaults.put(DOUBLE_CHEST, new InventoryType((27 + 27), "Double Chest", 0));
-        defaults.put(PLAYER, new InventoryType(49, "Player", 0)); //36 CONTAINER, 4 ARMOR (9 reference HOTBAR slots)
-        defaults.put(FURNACE, new InventoryType(3, "Furnace", 2));
-        defaults.put(CRAFTING, new InventoryType(5, "Crafting", 1)); //4 CRAFTING slots, 1 RESULT
-        defaults.put(WORKBENCH, new InventoryType(10, "Crafting", 1)); //9 CRAFTING slots, 1 RESULT
-        defaults.put(STONECUTTER, new InventoryType(10, "Crafting", 1)); //9 CRAFTING slots, 1 RESULT
-        defaults.put(ENCHANT_TABLE, new InventoryType(2, "Enchant", 3)); //1 INPUT/OUTPUT, 1 LAPIS
-        defaults.put(BREWING_STAND, new InventoryType(4, "Brewing", 4)); //1 INPUT, 3 POTION
-        defaults.put(ANVIL, new InventoryType(3, "Anvil", 5)); //2 INPUT, 1 OUTPUT
-        defaults.put(DISPENSER, new InventoryType(9, "Dispenser", 6)); //9 CONTAINER
-        defaults.put(DROPPER, new InventoryType(9, "Dropper", 7)); //9 CONTAINER
-        defaults.put(HOPPER, new InventoryType(5, "Hopper", 8)); //5 CONTAINER
-    }
-
-    public InventoryType(int defaultSize, String defaultBlockEntity, int typeId) {
+    InventoryType(int defaultSize, String defaultBlockEntity, int typeId) {
         this.size = defaultSize;
         this.title = defaultBlockEntity;
         this.typeId = typeId;

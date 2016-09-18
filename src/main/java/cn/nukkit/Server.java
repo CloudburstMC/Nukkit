@@ -357,7 +357,6 @@ public class Server {
         this.registerEntities();
         this.registerBlockEntities();
 
-        InventoryType.init();
         Block.init();
         Item.init();
         Biome.init();
