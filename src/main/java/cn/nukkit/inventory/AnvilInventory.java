@@ -10,7 +10,7 @@ import cn.nukkit.level.Position;
 public class AnvilInventory extends ContainerInventory {
 
     public AnvilInventory(Position position) {
-        super(null, InventoryType.get(InventoryType.ANVIL));
+        super(null, InventoryType.ANVIL);
         this.holder = new FakeBlockMenu(this, position);
     }
 

@@ -31,7 +31,7 @@ public class EnchantInventory extends ContainerInventory {
     private EnchantmentEntry[] entries = null;
 
     public EnchantInventory(Position position) {
-        super(null, InventoryType.get(InventoryType.ENCHANT_TABLE));
+        super(null, InventoryType.ENCHANT_TABLE);
         this.holder = new FakeBlockMenu(this, position);
     }
 

@@ -12,7 +12,7 @@ import cn.nukkit.network.protocol.BlockEventPacket;
 public class ChestInventory extends ContainerInventory {
 
     public ChestInventory(BlockEntityChest chest) {
-        super(chest, InventoryType.get(InventoryType.CHEST));
+        super(chest, InventoryType.CHEST);
     }
 
     @Override
