@@ -35,12 +35,12 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public int getSize() {
-        return super.getSize() - 4;
+        return super.getSize() - 13;
     }
 
     @Override
     public void setSize(int size) {
-        super.setSize(size + 4);
+        super.setSize(size + 13);
         this.sendContents(this.getViewers());
     }
 
