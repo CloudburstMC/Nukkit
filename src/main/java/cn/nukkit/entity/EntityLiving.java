@@ -14,6 +14,7 @@ import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.BlockIterator;
+import cn.nukkit.Player;
 
 import java.util.Arrays;
 import java.util.ArrayList;
