@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -90,10 +91,17 @@ public class BlockLava extends BlockLiquid {
 
                     if (block.getId() == AIR) {
                         if (this.isSurroundingBlockFlammable(block)) {
-                            BlockFire fire = new BlockFire();
-                            this.getLevel().setBlock(v, fire, true);
-                            this.getLevel().scheduleUpdate(v, fire.tickRate());
-                            return Level.BLOCK_UPDATE_RANDOM;
+                            BlockIgniteEvent e = new BlockIgniteEvent(block, this, null, BlockIgniteEvent.BlockIgniteCause.LAVA);
+                            this.level.getServer().getPluginManager().callEvent(e);
+
+                            if (!e.isCancelled()) {
+                                BlockFire fire = new BlockFire();
+                                this.getLevel().setBlock(v, fire, true);
+                                this.getLevel().scheduleUpdate(v, fire.tickRate());
+                                return Level.BLOCK_UPDATE_RANDOM;
+                            }
+
+                            return 0;
                         }
                     } else if (block.isSolid()) {
                         return Level.BLOCK_UPDATE_RANDOM;

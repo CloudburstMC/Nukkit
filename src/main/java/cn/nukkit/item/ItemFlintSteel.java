@@ -5,6 +5,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockNetherPortal;
 import cn.nukkit.block.BlockSolid;
+import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 
@@ -91,8 +92,13 @@ public class ItemFlintSteel extends ItemTool {
             fire.level = level;
 
             if (fire.isBlockTopFacingSurfaceSolid(fire.getSide(Vector3.SIDE_DOWN)) || fire.canNeighborBurn()) {
-                level.setBlock(fire, fire, true);
-                level.scheduleUpdate(fire, fire.tickRate() + level.rand.nextInt(10));
+                BlockIgniteEvent e = new BlockIgniteEvent(block, null, player, BlockIgniteEvent.BlockIgniteCause.FLINT_AND_STEEL);
+                block.getLevel().getServer().getPluginManager().callEvent(e);
+
+                if (!e.isCancelled()) {
+                    level.setBlock(fire, fire, true);
+                    level.scheduleUpdate(fire, fire.tickRate() + level.rand.nextInt(10));
+                }
                 return true;
             }
             if ((player.gamemode & 0x01) == 0 && this.useOn(block)) {
