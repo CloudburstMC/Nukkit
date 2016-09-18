@@ -167,10 +167,9 @@ public class BlockFire extends BlockFlowable {
                                             this.level.getServer().getPluginManager().callEvent(e);
 
                                             if (!e.isCancelled()) {
-                                                this.getLevel().setBlock(new Vector3(x, y, z), new BlockFire(damage), true);
+                                                this.getLevel().setBlock(block, new BlockFire(damage), true);
+                                                this.getLevel().scheduleUpdate(block, this.tickRate());
                                             }
-
-                                            this.getLevel().scheduleUpdate(new Vector3(x, y, z), this.tickRate());
                                         }
                                     }
                                 }
@@ -203,9 +202,8 @@ public class BlockFire extends BlockFlowable {
 
                 if (!e.isCancelled()) {
                     this.getLevel().setBlock(block, new BlockFire(meta), true);
+                    this.getLevel().scheduleUpdate(block, this.tickRate());
                 }
-
-                this.getLevel().scheduleUpdate(block, this.tickRate());
             } else {
                 BlockBurnEvent ev = new BlockBurnEvent(block);
                 this.getLevel().getServer().getPluginManager().callEvent(ev);
