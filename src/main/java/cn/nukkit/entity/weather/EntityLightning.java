@@ -8,6 +8,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.mob.EntityCreeper;
+import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
@@ -93,6 +94,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                                 ((EntityCreeper) e).setPowered(this);
                             }
                         }
+
                         //TODO Pig
                         //TODO Villager
                     } else if (e instanceof EntityItem) {
@@ -109,8 +111,14 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                         fire.level = level;
                         this.getLevel().setBlock(fire, fire, true);
                         if (fire.isBlockTopFacingSurfaceSolid(fire.getSide(Vector3.SIDE_DOWN)) || fire.canNeighborBurn()) {
-                            level.setBlock(fire, fire, true);
-                            level.scheduleUpdate(fire, fire.tickRate() + level.rand.nextInt(10));
+
+                            BlockIgniteEvent e = new BlockIgniteEvent(block, null, this, BlockIgniteEvent.BlockIgniteCause.LIGHTNING);
+                            getServer().getPluginManager().callEvent(e);
+
+                            if (!e.isCancelled()) {
+                                level.setBlock(fire, fire, true);
+                                level.scheduleUpdate(fire, fire.tickRate() + level.rand.nextInt(10));
+                            }
                         }
                     }
                 }
