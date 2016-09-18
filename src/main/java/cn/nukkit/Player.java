@@ -2747,7 +2747,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         recipe = null;
 
-                        ArrayList<Item> ingredientz = null;
+                        ArrayList<Item> ingredientz = new ArrayList<>();
 
                         for (Recipe r : recipes) {
                             if (r instanceof ShapedRecipe) {
