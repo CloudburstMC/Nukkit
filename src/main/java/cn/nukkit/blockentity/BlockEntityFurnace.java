@@ -18,6 +18,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
 
+import java.util.HashSet;
+
 /**
  * @author MagicDroidX
  */
@@ -83,7 +85,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     @Override
     public void close() {
         if (!this.closed) {
-            for (Player player : this.getInventory().getViewers()) {
+            for (Player player : new HashSet<>(this.getInventory().getViewers())) {
                 player.removeWindow(this.getInventory());
             }
             super.close();

@@ -17,6 +17,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class BlockEntityBrewingStand extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
@@ -71,7 +72,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
     @Override
     public void close() {
         if (!closed) {
-            for (Player player : getInventory().getViewers()) {
+            for (Player player : new HashSet<>(getInventory().getViewers())) {
                 player.removeWindow(getInventory());
             }
             super.close();
