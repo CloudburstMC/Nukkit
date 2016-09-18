@@ -13,13 +13,26 @@ public class PlayerQuitEvent extends PlayerEvent {
 
     protected TextContainer quitMessage;
     protected boolean autoSave = true;
+    protected String reason;
+
+    public PlayerQuitEvent(Player player, TextContainer quitMessage, String reason) {
+        this(player, quitMessage, true, reason);
+    }
 
     public PlayerQuitEvent(Player player, TextContainer quitMessage) {
         this(player, quitMessage, true);
     }
 
+    public PlayerQuitEvent(Player player, String quitMessage, String reason) {
+        this(player, quitMessage, true, reason);
+    }
+
     public PlayerQuitEvent(Player player, String quitMessage) {
         this(player, quitMessage, true);
+    }
+
+    public PlayerQuitEvent(Player player, String quitMessage, boolean autoSave, String reason) {
+        this(player, new TextContainer(quitMessage), autoSave, reason);
     }
 
     public PlayerQuitEvent(Player player, String quitMessage, boolean autoSave) {
@@ -27,9 +40,14 @@ public class PlayerQuitEvent extends PlayerEvent {
     }
 
     public PlayerQuitEvent(Player player, TextContainer quitMessage, boolean autoSave) {
+        this(player, quitMessage, autoSave, "No reason");
+    }
+
+    public PlayerQuitEvent(Player player, TextContainer quitMessage, boolean autoSave, String reason) {
         this.player = player;
         this.quitMessage = quitMessage;
         this.autoSave = autoSave;
+        this.reason = reason;
     }
 
     public TextContainer getQuitMessage() {
@@ -54,5 +72,9 @@ public class PlayerQuitEvent extends PlayerEvent {
 
     public void setAutoSave(boolean autoSave) {
         this.autoSave = autoSave;
+    }
+
+    public String getReason() {
+        return reason;
     }
 }
