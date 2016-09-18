@@ -113,9 +113,14 @@ public class BlockLava extends BlockLiquid {
                     Block block = this.getLevel().getBlock(v);
 
                     if (block.getSide(SIDE_UP).getId() == AIR && block.getBurnChance() > 0) {
-                        BlockFire fire = new BlockFire();
-                        this.getLevel().setBlock(v, fire, true);
-                        this.getLevel().scheduleUpdate(v, fire.tickRate());
+                        BlockIgniteEvent e = new BlockIgniteEvent(block, this, null, BlockIgniteEvent.BlockIgniteCause.LAVA);
+                        this.level.getServer().getPluginManager().callEvent(e);
+
+                        if (!e.isCancelled()) {
+                            BlockFire fire = new BlockFire();
+                            this.getLevel().setBlock(v, fire, true);
+                            this.getLevel().scheduleUpdate(v, fire.tickRate());
+                        }
                     }
                 }
             }
