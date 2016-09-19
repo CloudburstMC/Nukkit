@@ -30,7 +30,13 @@ public class ServerScheduler {
     public ServerScheduler() {
         this.pending = new ConcurrentLinkedQueue<>();
         this.currentTaskId = new AtomicInteger();
-        this.queue = new PriorityQueue<>(11, (left, right) -> left.getNextRunTick() - right.getNextRunTick());
+        this.queue = new PriorityQueue<>(11, (left, right) -> {
+            int i = left.getNextRunTick() - right.getNextRunTick();
+            if (i == 0) {
+                return left.getTaskId() - right.getTaskId();
+            }
+            return i;
+        });
         this.taskMap = new ConcurrentHashMap<>();
         this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
