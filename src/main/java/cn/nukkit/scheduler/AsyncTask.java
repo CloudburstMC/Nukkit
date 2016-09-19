@@ -78,7 +78,14 @@ public abstract class AsyncTask implements Runnable {
     public static void collectTask() {
         Timings.schedulerAsyncTimer.startTiming();
         while (!FINISHED_LIST.isEmpty()) {
-            FINISHED_LIST.poll().onCompletion(Server.getInstance());
+            AsyncTask task = FINISHED_LIST.poll();
+            try {
+                task.onCompletion(Server.getInstance());
+            } catch (Exception e) {
+                Server.getInstance().getLogger().critical("Exception while async task "
+                        + task.getTaskId()
+                        + " invoking onCompletion", e);
+            }
         }
         Timings.schedulerAsyncTimer.stopTiming();
     }
