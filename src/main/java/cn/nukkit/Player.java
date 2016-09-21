@@ -2416,33 +2416,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
 
                         item = this.inventory.getItemInHand();
-                        HashMap<Integer, Float> damageTable = new HashMap<Integer, Float>() {
-                            {
-                                put(Item.WOODEN_SWORD, 4f);
-                                put(Item.GOLD_SWORD, 4f);
-                                put(Item.STONE_SWORD, 5f);
-                                put(Item.IRON_SWORD, 6f);
-                                put(Item.DIAMOND_SWORD, 7f);
-                                put(Item.WOODEN_AXE, 3f);
-                                put(Item.GOLD_AXE, 3f);
-                                put(Item.STONE_AXE, 3f);
-                                put(Item.IRON_AXE, 5f);
-                                put(Item.DIAMOND_AXE, 6f);
-                                put(Item.WOODEN_PICKAXE, 2f);
-                                put(Item.GOLD_PICKAXE, 2f);
-                                put(Item.STONE_PICKAXE, 3f);
-                                put(Item.IRON_PICKAXE, 4f);
-                                put(Item.DIAMOND_PICKAXE, 5f);
-                                put(Item.WOODEN_SHOVEL, 1f);
-                                put(Item.GOLD_SHOVEL, 1f);
-                                put(Item.STONE_SHOVEL, 2f);
-                                put(Item.IRON_SHOVEL, 3f);
-                                put(Item.DIAMOND_SHOVEL, 4f);
-                            }
-                        };
 
                         HashMap<Integer, Float> damage = new HashMap<>();
-                        damage.put(EntityDamageEvent.MODIFIER_BASE, damageTable.getOrDefault(item.getId(), 1f));
+                        damage.put(EntityDamageEvent.MODIFIER_BASE, (float) item.getAttackDamage());
 
                         if (!this.canInteract(targetEntity, 8)) {
                             cancelled = true;
@@ -2452,38 +2428,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             } else if (!this.server.getPropertyBoolean("pvp") || this.server.getDifficulty() == 0) {
                                 cancelled = true;
                             }
-
-                            HashMap<Integer, Float> armorValues = new HashMap<Integer, Float>() {
-                                {
-                                    put(Item.LEATHER_CAP, 1f);
-                                    put(Item.LEATHER_TUNIC, 3f);
-                                    put(Item.LEATHER_PANTS, 2f);
-                                    put(Item.LEATHER_BOOTS, 1f);
-                                    put(Item.CHAIN_HELMET, 1f);
-                                    put(Item.CHAIN_CHESTPLATE, 5f);
-                                    put(Item.CHAIN_LEGGINGS, 4f);
-                                    put(Item.CHAIN_BOOTS, 1f);
-                                    put(Item.GOLD_HELMET, 1f);
-                                    put(Item.GOLD_CHESTPLATE, 5f);
-                                    put(Item.GOLD_LEGGINGS, 3f);
-                                    put(Item.GOLD_BOOTS, 1f);
-                                    put(Item.IRON_HELMET, 2f);
-                                    put(Item.IRON_CHESTPLATE, 6f);
-                                    put(Item.IRON_LEGGINGS, 5f);
-                                    put(Item.IRON_BOOTS, 2f);
-                                    put(Item.DIAMOND_HELMET, 3f);
-                                    put(Item.DIAMOND_CHESTPLATE, 8f);
-                                    put(Item.DIAMOND_LEGGINGS, 6f);
-                                    put(Item.DIAMOND_BOOTS, 3f);
-                                }
-                            };
-
-                            float points = 0;
-                            for (Item i : ((Player) targetEntity).getInventory().getArmorContents()) {
-                                points += armorValues.getOrDefault(i.getId(), 0f);
-                            }
-
-                            damage.put(EntityDamageEvent.MODIFIER_ARMOR, (float) (damage.getOrDefault(EntityDamageEvent.MODIFIER_ARMOR, 0f) - Math.floor(damage.getOrDefault(EntityDamageEvent.MODIFIER_BASE, 1f) * points * 0.04)));
                         } else if (targetEntity instanceof EntityVehicle) {
                             SetEntityLinkPacket pk;
                             switch (((InteractPacket) packet).action) {

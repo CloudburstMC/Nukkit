@@ -32,4 +32,9 @@ public class ItemShovelWood extends ItemTool {
     public int getTier() {
         return ItemTool.TIER_WOODEN;
     }
+
+    @Override
+    public int getAttackDamage() {
+        return 1;
+    }
 }

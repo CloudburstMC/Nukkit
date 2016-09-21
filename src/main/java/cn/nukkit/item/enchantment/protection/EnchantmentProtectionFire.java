@@ -19,4 +19,9 @@ public class EnchantmentProtectionFire extends EnchantmentProtection {
     public int getMaxEnchantAbility(int level) {
         return this.getMinEnchantAbility(level) + 12;
     }
+
+    @Override
+    public double getTypeModifier() {
+        return 2;
+    }
 }

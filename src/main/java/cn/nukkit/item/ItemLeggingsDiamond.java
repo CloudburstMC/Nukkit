@@ -27,4 +27,14 @@ public class ItemLeggingsDiamond extends ItemArmor {
     public int getTier() {
         return ItemArmor.TIER_DIAMOND;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 6;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 496;
+    }
 }

@@ -31,7 +31,12 @@ public abstract class EnchantmentProtection extends Enchantment {
     @Override
     public int getDamageProtection(EntityDamageEvent event) {
         int level = this.level;
-        double f = (6d + level * level) / 3d;
+        int cause = event.getCause();
+
+        if (level <= 0 || cause == EntityDamageEvent.CAUSE_VOID || cause != EntityDamageEvent.CAUSE_CUSTOM) {
+            return 0;
+        }
+        /*double f = (6d + level * level) / 3d;
         switch (event.getCause()) {
             case EntityDamageEvent.CAUSE_PROJECTILE:
             case EntityDamageEvent.CAUSE_ENTITY_EXPLOSION:
@@ -48,7 +53,35 @@ public abstract class EnchantmentProtection extends Enchantment {
                 } else {
                     return 0;
                 }
+        }*/
+
+        boolean canProtect = false;
+
+        switch (this.getId()) {
+            case Enchantment.ID_PROTECTION_ALL:
+                canProtect = true;
+                break;
+            case Enchantment.ID_PROTECTION_FIRE:
+                if (cause == EntityDamageEvent.CAUSE_FIRE || cause == EntityDamageEvent.CAUSE_FIRE_TICK || cause == EntityDamageEvent.CAUSE_LAVA)
+                    canProtect = true;
+                break;
+            case Enchantment.ID_PROTECTION_FALL:
+                if (cause == EntityDamageEvent.CAUSE_FALL) canProtect = true;
+                break;
+            case Enchantment.ID_PROTECTION_EXPLOSION:
+                if (cause == EntityDamageEvent.CAUSE_ENTITY_EXPLOSION || cause == EntityDamageEvent.CAUSE_BLOCK_EXPLOSION)
+                    canProtect = true;
+                break;
+            case Enchantment.ID_PROTECTION_PROJECTILE:
+                if (cause == EntityDamageEvent.CAUSE_PROJECTILE) canProtect = true;
+                break;
         }
+
+        if (canProtect) {
+            return (int) (level * getTypeModifier());
+        }
+
+        return 0;
     }
 
     @Override
@@ -70,5 +103,9 @@ public abstract class EnchantmentProtection extends Enchantment {
     @Override
     public String getName() {
         return "%enchantment.protect." + this.name;
+    }
+
+    public double getTypeModifier() {
+        return 0;
     }
 }

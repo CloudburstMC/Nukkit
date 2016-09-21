@@ -27,4 +27,14 @@ public class ItemBootsIron extends ItemArmor {
     public boolean isBoots() {
         return true;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 2;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 196;
+    }
 }

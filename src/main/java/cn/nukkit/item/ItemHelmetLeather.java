@@ -27,4 +27,14 @@ public class ItemHelmetLeather extends ItemColorArmor {
     public boolean isHelmet() {
         return true;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 1;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 56;
+    }
 }

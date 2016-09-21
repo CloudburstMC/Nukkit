@@ -27,4 +27,14 @@ public class ItemHelmetDiamond extends ItemArmor {
     public boolean isHelmet() {
         return true;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 3;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 364;
+    }
 }

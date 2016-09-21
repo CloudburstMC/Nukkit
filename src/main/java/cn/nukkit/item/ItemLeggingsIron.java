@@ -27,4 +27,14 @@ public class ItemLeggingsIron extends ItemArmor {
     public boolean isLeggings() {
         return true;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 5;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 226;
+    }
 }

@@ -27,4 +27,14 @@ public class ItemHelmetGold extends ItemArmor {
     public boolean isHelmet() {
         return true;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 2;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 78;
+    }
 }

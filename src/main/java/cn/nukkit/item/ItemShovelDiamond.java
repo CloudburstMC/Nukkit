@@ -32,4 +32,9 @@ public class ItemShovelDiamond extends ItemTool {
     public int getTier() {
         return ItemTool.TIER_DIAMOND;
     }
+
+    @Override
+    public int getAttackDamage() {
+        return 4;
+    }
 }
