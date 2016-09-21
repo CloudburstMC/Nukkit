@@ -2209,6 +2209,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         break;
                                     }
 
+                                    double damage = 2;
+                                    boolean flame = false;
+
+                                    if(bow.hasEnchantments()) {
+                                        Enchantment bowDamage = bow.getEnchantment(Enchantment.ID_BOW_POWER);
+
+                                        if (bowDamage != null && bowDamage.getLevel() > 0) {
+                                            damage += 0.25 * (bowDamage.getLevel() + 1);
+                                        }
+
+                                        Enchantment flameEnchant = bow.getEnchantment(Enchantment.ID_BOW_FLAME);
+                                        flame = flameEnchant != null && flameEnchant.getLevel() > 0;
+                                    }
+
                                     CompoundTag nbt = new CompoundTag()
                                             .putList(new ListTag<DoubleTag>("Pos")
                                                     .add(new DoubleTag("", x))
@@ -2221,7 +2235,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             .putList(new ListTag<FloatTag>("Rotation")
                                                     .add(new FloatTag("", (float) yaw))
                                                     .add(new FloatTag("", (float) pitch)))
-                                            .putShort("Fire", this.isOnFire() ? 45 * 60 : 0);
+                                            .putShort("Fire", this.isOnFire() || flame ? 45 * 60 : 0)
+                                            .putDouble("damage", damage);
 
                                     int diff = (this.server.getTick() - this.startAction);
                                     double p = (double) diff / 20;
@@ -2241,11 +2256,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
                                         if (this.isSurvival()) {
                                             this.inventory.removeItem(itemArrow);
-                                            bow.setDamage(bow.getDamage() + 1);
-                                            if (bow.getDamage() >= 385) {
-                                                this.inventory.setItemInHand(new ItemBlock(new BlockAir(), 0, 0));
-                                            } else {
-                                                this.inventory.setItemInHand(bow);
+
+                                            if (!bow.isUnbreakable()) {
+                                                Enchantment durability = bow.getEnchantment(Enchantment.ID_DURABILITY);
+                                                if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))) {
+                                                    bow.setDamage(bow.getDamage() + 1);
+                                                    if (bow.getDamage() >= 385) {
+                                                        this.inventory.setItemInHand(new ItemBlock(new BlockAir(), 0, 0));
+                                                    } else {
+                                                        this.inventory.setItemInHand(bow);
+                                                    }
+                                                }
                                             }
                                         }
                                         if (entityShootBowEvent.getProjectile() instanceof EntityProjectile) {
@@ -4030,6 +4051,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if ((this.hash == 0) || (this.hash == 485)) {
             this.hash = (485 + (getUniqueId() != null ? getUniqueId().hashCode() : 0));
         }
+
         return this.hash;
     }
 

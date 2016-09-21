@@ -108,6 +108,7 @@ public abstract class ItemTool extends Item {
         return durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100);
     }
 
+    @Override
     public boolean isUnbreakable() {
         Tag tag = this.getNamedTagEntry("Unbreakable");
         return tag instanceof ByteTag && ((ByteTag) tag).data > 0;

@@ -1782,6 +1782,10 @@ public class Item implements Cloneable {
         return 0;
     }
 
+    public boolean isUnbreakable(){
+        return false;
+    }
+
     @Override
     final public String toString() {
         return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
