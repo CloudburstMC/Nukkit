@@ -21,4 +21,9 @@ public class EnchantmentProtectionAll extends EnchantmentProtection {
     public int getMaxEnchantAbility(int level) {
         return this.getMinEnchantAbility(level) + 20;
     }
+
+    @Override
+    public double getTypeModifier() {
+        return 1;
+    }
 }

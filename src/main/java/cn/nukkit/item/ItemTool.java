@@ -2,8 +2,14 @@ package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.item.enchantment.EnchantmentDurability;
+import cn.nukkit.item.enchantment.EnchantmentFireAspect;
 import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.Tag;
+
+import java.util.Random;
 
 /**
  * author: MagicDroidX
@@ -80,15 +86,26 @@ public abstract class ItemTool extends Item {
 
     @Override
     public boolean useOn(Entity entity) {
+        if(hasEnchantments()){
+            EnchantmentFireAspect fire = (EnchantmentFireAspect) getEnchantment(Enchantment.ID_FIRE_ASPECT);
+
+            if(fire != null && fire.getLevel() > 0){
+                entity.setOnFire(80 * fire.getLevel());
+            }
+        }
+
         if (this.isUnbreakable()) {
             return true;
         }
+
+        EnchantmentDurability ench = (EnchantmentDurability) getEnchantment(Enchantment.ID_DURABILITY);
 
         if ((entity != null) && !this.isSword()) {
             this.meta += 2;
         } else {
             this.meta++;
         }
+
         return true;
     }
 

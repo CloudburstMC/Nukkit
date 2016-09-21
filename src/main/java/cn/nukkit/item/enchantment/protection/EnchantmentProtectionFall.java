@@ -19,4 +19,9 @@ public class EnchantmentProtectionFall extends EnchantmentProtection {
     public int getMaxEnchantAbility(int level) {
         return this.getMinEnchantAbility(level) + 10;
     }
+
+    @Override
+    public double getTypeModifier() {
+        return 2;
+    }
 }

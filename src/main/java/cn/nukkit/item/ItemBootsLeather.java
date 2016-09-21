@@ -27,4 +27,14 @@ public class ItemBootsLeather extends ItemColorArmor {
     public boolean isBoots() {
         return true;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 1;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 66;
+    }
 }

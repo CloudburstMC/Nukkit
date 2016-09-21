@@ -27,4 +27,14 @@ public class ItemChestplateIron extends ItemArmor {
     public boolean isChestplate() {
         return true;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 6;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 241;
+    }
 }

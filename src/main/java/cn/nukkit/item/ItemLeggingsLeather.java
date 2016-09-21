@@ -27,4 +27,14 @@ public class ItemLeggingsLeather extends ItemColorArmor {
     public boolean isLeggings() {
         return true;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 2;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 76;
+    }
 }

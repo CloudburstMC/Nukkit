@@ -3,13 +3,8 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.PositionEntityData;
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.inventory.InventoryHolder;
-import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.utils.Utils;
@@ -21,15 +16,13 @@ import java.util.UUID;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class EntityHuman extends EntityCreature implements InventoryHolder {
+public class EntityHuman extends EntityHumanType {
 
     public static final int DATA_PLAYER_FLAG_SLEEP = 1;
     public static final int DATA_PLAYER_FLAG_DEAD = 2;
 
     public static final int DATA_PLAYER_FLAGS = 16;
     public static final int DATA_PLAYER_BED_POSITION = 17;
-
-    protected PlayerInventory inventory;
 
     protected UUID uuid;
     protected byte[] rawUUID;
@@ -82,20 +75,10 @@ public class EntityHuman extends EntityCreature implements InventoryHolder {
     }
 
     @Override
-    public PlayerInventory getInventory() {
-        return inventory;
-    }
-
-    @Override
     protected void initEntity() {
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
 
         this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0), false);
-
-        this.inventory = new PlayerInventory(this);
-        if (this instanceof Player) {
-            ((Player) this).addWindow(this.inventory, 0);
-        }
 
         if (!(this instanceof Player)) {
             if (this.namedTag.contains("NameTag")) {
@@ -113,21 +96,11 @@ public class EntityHuman extends EntityCreature implements InventoryHolder {
                     .getData(), this.getNameTag().getBytes(StandardCharsets.UTF_8));
         }
 
-        if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
-            ListTag<CompoundTag> inventoryList = this.namedTag.getList("Inventory", CompoundTag.class);
-            for (CompoundTag item : inventoryList.getAll()) {
-                int slot = item.getByte("Slot");
-                if (slot >= 0 && slot < 9) {
-                    this.inventory.setHotbarSlotIndex(slot, item.contains("TrueSlot") ? item.getByte("TrueSlot") : -1);
-                } else if (slot >= 100 && slot < 104) {
-                    this.inventory.setItem(this.inventory.getSize() + slot - 100, NBTIO.getItemHelper(item));
-                } else {
-                    this.inventory.setItem(slot - 9, NBTIO.getItemHelper(item));
-                }
-            }
-        }
-
         super.initEntity();
+
+        if (this instanceof Player) {
+            ((Player) this).addWindow(this.inventory, 0);
+        }
     }
 
     @Override
@@ -136,49 +109,8 @@ public class EntityHuman extends EntityCreature implements InventoryHolder {
     }
 
     @Override
-    public Item[] getDrops() {
-        if (this.inventory != null) {
-            return this.inventory.getContents().values().stream().toArray(Item[]::new);
-        }
-        return new Item[0];
-    }
-
-    @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putList(new ListTag<CompoundTag>("Inventory"));
-        if (this.inventory != null) {
-            for (int slot = 0; slot < 9; ++slot) {
-                int hotbarSlot = this.inventory.getHotbarSlotIndex(slot);
-                if (hotbarSlot != -1) {
-                    Item item = this.inventory.getItem(hotbarSlot);
-                    if (item.getId() != 0 && item.getCount() > 0) {
-                        this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot).putByte("TrueSlot", hotbarSlot));
-                        continue;
-                    }
-                }
-                this.namedTag.getList("Inventory", CompoundTag.class).add(new CompoundTag()
-                        .putByte("Count", 0)
-                        .putShort("Damage", 0)
-                        .putByte("Slot", slot)
-                        .putByte("TrueSlot", -1)
-                        .putShort("id", 0)
-                );
-            }
-
-            int slotCount = Player.SURVIVAL_SLOTS + 9;
-            for (int slot = 9; slot < slotCount; ++slot) {
-                Item item = this.inventory.getItem(slot - 9);
-                this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot));
-            }
-
-            for (int slot = 100; slot < 104; ++slot) {
-                Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
-                if (item != null && item.getId() != Item.AIR) {
-                    this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot));
-                }
-            }
-        }
 
         if (this.getSkin().getData().length > 0) {
             this.namedTag.putCompound("Skin", new CompoundTag()

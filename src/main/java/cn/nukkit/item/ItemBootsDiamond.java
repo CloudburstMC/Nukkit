@@ -27,4 +27,14 @@ public class ItemBootsDiamond extends ItemArmor {
     public boolean isBoots() {
         return true;
     }
+
+    @Override
+    public int getArmorPoints() {
+        return 3;
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return 430;
+    }
 }
