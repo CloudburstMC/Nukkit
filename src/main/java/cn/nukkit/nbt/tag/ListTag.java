@@ -75,7 +75,12 @@ public class ListTag<T extends Tag> extends Tag {
 
     public ListTag<T> add(int index, T tag) {
         type = tag.getId();
-        list.add(index, tag);
+
+        if (index >= list.size()) {
+            list.add(index, tag);
+        } else {
+            list.set(index, tag);
+        }
         return this;
     }
 
