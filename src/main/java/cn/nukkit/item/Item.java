@@ -1499,12 +1499,13 @@ public class Item implements Cloneable {
         if (!tag.contains("ench")) {
             ench = new ListTag<>("ench");
             tag.putList(ench);
+        } else {
+            ench = tag.getList("ench", CompoundTag.class);
         }
 
         for (Enchantment enchantment : enchantments) {
             boolean found = false;
 
-            ench = tag.getList("ench", CompoundTag.class);
             for (int k = 0; k < ench.size(); k++) {
                 CompoundTag entry = ench.get(k);
                 if (entry.getShort("id") == enchantment.getId()) {

@@ -34,6 +34,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemArrow;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemGlassBottle;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
@@ -93,6 +94,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int SURVIVAL_SLOTS = 36;
     public static final int CREATIVE_SLOTS = 112;
 
+    public static final int CRAFTING_SMALL = 0;
+    public static final int CRAFTING_BIG = 1;
+    public static final int CRAFTING_ANVIL = 2;
+    public static final int CRAFTING_ENCHANT = 3;
+
     protected final SourceInterface interfaz;
 
     public boolean playedBefore;
@@ -121,7 +127,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected SimpleTransactionGroup currentTransaction = null;
 
-    public int craftingType = 0; //0 = 2x2 crafting, 1 = 3x3 crafting, 2 = stonecutter
+    public int craftingType = CRAFTING_SMALL;
 
     protected boolean isCrafting = false;
 
@@ -1941,7 +1947,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     Vector3 blockVector = new Vector3(useItemPacket.x, useItemPacket.y, useItemPacket.z);
 
-                    this.craftingType = 0;
+                    this.craftingType = CRAFTING_SMALL;
 
                     if (useItemPacket.face >= 0 && useItemPacket.face <= 5) {
                         this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
@@ -2273,7 +2279,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 break;
                             }
 
-                            this.craftingType = 0;
+                            this.craftingType = CRAFTING_SMALL;
 
                             PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
                             this.server.getPluginManager().callEvent(playerRespawnEvent);
@@ -2355,7 +2361,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.spawned || this.blocked || !this.isAlive()) {
                         break;
                     }
-                    this.craftingType = 0;
+                    this.craftingType = CRAFTING_SMALL;
 
                     Vector3 vector = new Vector3(((RemoveBlockPacket) packet).x, ((RemoveBlockPacket) packet).y, ((RemoveBlockPacket) packet).z);
 
@@ -2398,7 +2404,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.spawned || !this.isAlive() || this.blocked) {
                         break;
                     }
-                    this.craftingType = 0;
+                    this.craftingType = CRAFTING_SMALL;
                     Entity targetEntity = this.level.getEntity(((InteractPacket) packet).target);
                     boolean cancelled = false;
                     if (targetEntity instanceof Player && !((boolean) this.server.getConfig("pvp", true))) {
@@ -2416,9 +2422,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
 
                         item = this.inventory.getItemInHand();
+                        float itemDamage = item.getAttackDamage();
+
+                        for (Enchantment enchantment : item.getEnchantments()) {
+                            itemDamage += enchantment.getDamageBonus(targetEntity);
+                        }
 
                         HashMap<Integer, Float> damage = new HashMap<>();
-                        damage.put(EntityDamageEvent.MODIFIER_BASE, (float) item.getAttackDamage());
+                        damage.put(EntityDamageEvent.MODIFIER_BASE, itemDamage);
 
                         if (!this.canInteract(targetEntity, 8)) {
                             cancelled = true;
@@ -2523,7 +2534,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.spawned || this.blocked || !this.isAlive()) {
                         break;
                     }
-                    this.craftingType = 0;
+                    this.craftingType = CRAFTING_SMALL;
 
                     this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false); //TODO: check if this should be true
                     EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
@@ -2606,7 +2617,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    this.craftingType = 0;
+                    this.craftingType = CRAFTING_SMALL;
                     TextPacket textPacket = (TextPacket) packet;
 
                     if (textPacket.type == TextPacket.TYPE_CHAT) {
@@ -2641,7 +2652,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.spawned || containerClosePacket.windowid == 0) {
                         break;
                     }
-                    this.craftingType = 0;
+                    this.craftingType = CRAFTING_SMALL;
                     this.currentTransaction = null;
                     if (this.windowIndex.containsKey(containerClosePacket.windowid)) {
                         this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windowIndex.get(containerClosePacket.windowid), this));
@@ -2660,7 +2671,39 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     Recipe recipe = this.server.getCraftingManager().getRecipe(craftingEventPacket.id);
 
-                    if (!this.windowIndex.containsKey(craftingEventPacket.windowId)) {
+                    if (this.craftingType == CRAFTING_ANVIL) {
+                        Inventory inv = this.windowIndex.get(craftingEventPacket.windowId);
+                        AnvilInventory anvilInventory = inv instanceof AnvilInventory ? (AnvilInventory) inv : null;
+
+                        if (anvilInventory == null) {
+                            anvilInventory = null;
+
+                            for (Inventory window : this.windowIndex.values()) {
+                                if (window instanceof AnvilInventory) {
+                                    anvilInventory = (AnvilInventory) window;
+                                    break;
+                                }
+                            }
+
+                            if (anvilInventory == null) { //If it'sf _still_ null, then the player doesn't have a valid anvil window, cannot proceed.
+                                this.getServer().getLogger().debug("Couldn't find an anvil window for " + this.getName() + ", exiting");
+                                this.inventory.sendContents(this);
+                                break;
+                            }
+                        }
+
+                        if (recipe == null) {
+                            //Item renamed
+
+                            if (!anvilInventory.onRename(this, craftingEventPacket.output[0])) {
+                                this.getServer().getLogger().debug(this.getName() + " failed to rename an item in an anvil");
+                                this.inventory.sendContents(this);
+                            }
+                        } else {
+                            //TODO: Anvil crafting recipes
+                        }
+                        break;
+                    } else if (!this.windowIndex.containsKey(craftingEventPacket.windowId)) {
                         this.inventory.sendContents(this);
                         containerClosePacket = new ContainerClosePacket();
                         containerClosePacket.windowid = craftingEventPacket.windowId;
@@ -2668,7 +2711,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    if ((recipe == null) || (((recipe instanceof BigShapelessRecipe) || (recipe instanceof BigShapedRecipe)) && this.craftingType == 0)) {
+                    if ((recipe == null) || (((recipe instanceof BigShapelessRecipe) || (recipe instanceof BigShapedRecipe)) && this.craftingType == CRAFTING_SMALL)) {
                         this.inventory.sendContents(this);
                         break;
                     }
@@ -2686,7 +2729,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     boolean canCraft = true;
 
-                    if(craftingEventPacket.input.length == 0) {
+                    if (craftingEventPacket.input.length == 0) {
                         Recipe[] recipes = getServer().getCraftingManager().getRecipesByResult(craftingEventPacket.output[0]);
 
                         recipe = null;
@@ -2736,7 +2779,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             int offsetX = 0;
                             int offsetY = 0;
 
-                            if (this.craftingType == 1) {
+                            if (this.craftingType == CRAFTING_BIG) {
                                 int minX = -1, minY = -1, maxX = 0, maxY = 0;
                                 for (int x = 0; x < 3 && canCraft; ++x) {
                                     for (int y = 0; y < 3; ++y) {
@@ -2962,8 +3005,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         transaction = new BaseTransaction(this.inventory, containerSetSlotPacket.slot + this.inventory.getSize(), this.inventory.getArmorItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
                     } else if (this.windowIndex.containsKey(containerSetSlotPacket.windowid)) {
-                        this.craftingType = 0;
                         Inventory inv = this.windowIndex.get(containerSetSlotPacket.windowid);
+
+                        if (!(inv instanceof AnvilInventory)) {
+                            this.craftingType = CRAFTING_SMALL;
+                        }
 
                         if (inv instanceof EnchantInventory && containerSetSlotPacket.item.hasEnchantments()) {
                             ((EnchantInventory) inv).onEnchant(this, inv.getItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
@@ -3008,7 +3054,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
                     BlockEntityDataPacket blockEntityDataPacket = (BlockEntityDataPacket) packet;
-                    this.craftingType = 0;
+                    this.craftingType = CRAFTING_SMALL;
 
                     pos = new Vector3(blockEntityDataPacket.x, blockEntityDataPacket.y, blockEntityDataPacket.z);
                     if (pos.distanceSquared(this) > 10000) {

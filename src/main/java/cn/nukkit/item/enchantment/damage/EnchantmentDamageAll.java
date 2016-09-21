@@ -19,4 +19,9 @@ public class EnchantmentDamageAll extends EnchantmentDamage {
     public int getMaxEnchantAbility(int level) {
         return this.getMinEnchantAbility(level) + 20;
     }
+
+    @Override
+    public int getMaxEnchantableLevel() {
+        return 4;
+    }
 }

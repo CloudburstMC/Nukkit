@@ -108,7 +108,7 @@ public abstract class Enchantment implements Cloneable {
     private final int weight;
     public EnchantmentType type;
 
-    protected int level;
+    protected int level = 1;
 
     protected final String name;
 
@@ -159,6 +159,10 @@ public abstract class Enchantment implements Cloneable {
         return 1;
     }
 
+    public int getMaxEnchantableLevel() {
+        return getMaxLevel();
+    }
+
     public int getMinEnchantAbility(int level) {
         return 1 + level * 10;
     }
@@ -193,6 +197,10 @@ public abstract class Enchantment implements Cloneable {
 
     public boolean canEnchant(Item item) {
         return this.type.canEnchantItem(item);
+    }
+
+    public boolean isMajor(){
+        return false;
     }
 
     @Override

@@ -9,7 +9,6 @@ import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.item.enchantment.EnchantmentFireAspect;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -104,7 +103,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             return;
         }
 
-        if (source.getCause() != EntityDamageEvent.CAUSE_VOID && source.getCause() != EntityDamageEvent.CAUSE_CUSTOM) {
+        if (source.getCause() != EntityDamageEvent.CAUSE_VOID && source.getCause() != EntityDamageEvent.CAUSE_CUSTOM && source.getCause() != EntityDamageEvent.CAUSE_MAGIC) {
             int points = 0;
             int epf = 0;
 
@@ -127,13 +126,13 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         super.attack(source);
 
         if (!source.isCancelled()) {
-            if(source instanceof EntityDamageByEntityEvent) {
+            if (source instanceof EntityDamageByEntityEvent) {
                 Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
                 int thornsDamage = 0;
                 Random rnd = new Random();
 
                 for (Item armor : inventory.getArmorContents()) {
-                    EnchantmentFireAspect thorns = (EnchantmentFireAspect) armor.getEnchantment(Enchantment.ID_THORNS);
+                    Enchantment thorns = armor.getEnchantment(Enchantment.ID_THORNS);
 
                     if (thorns != null && thorns.getLevel() > 0) {
                         int chance = thorns.getLevel() * 15;
@@ -146,20 +145,31 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                             thornsDamage += rnd.nextInt(4) + 1;
                         }
                     }
+
+                    Enchantment fireAspect = armor.getEnchantment(Enchantment.ID_FIRE_ASPECT);
+
+                    if (fireAspect != null && fireAspect.getLevel() > 0) {
+                        damager.setOnFire(4 * fireAspect.getLevel());
+                    }
                 }
 
-                if(thornsDamage > 0){
-                    damager.attack(new EntityDamageEvent(damager, EntityDamageEvent.CAUSE_CONTACT, rnd.nextInt(4) + 1));
+                if (thornsDamage > 0) {
+                    damager.attack(new EntityDamageEvent(damager, EntityDamageEvent.CAUSE_MAGIC, rnd.nextInt(4) + 1));
                 }
             }
 
-            for (int i = 0; i < 4; i++) {
-                Item armor = inventory.getItem(inventory.getSize() + i);
+            for (int slot = 0; slot < 4; slot++) {
+                Item armor = this.inventory.getArmorItem(slot);
 
+                if (armor.hasEnchantments()) {
+                    Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
+                    if (durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))
+                        continue;
+                }
                 armor.setDamage(armor.getDamage() - 1);
 
                 if (armor.getDamage() <= 0) {
-                    inventory.setItem(inventory.getSize() + i, new ItemBlock(new BlockAir()));
+                    inventory.setArmorItem(slot, new ItemBlock(new BlockAir()));
                 }
             }
         }
@@ -177,5 +187,22 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         }
 
         return reduction;
+    }
+
+    @Override
+    public void setOnFire(int seconds) {
+        int level = 0;
+
+        for(Item armor : this.inventory.getArmorContents()){
+            Enchantment fireProtection = armor.getEnchantment(Enchantment.ID_PROTECTION_FIRE);
+
+            if(fireProtection != null && fireProtection.getLevel() > 0){
+                level = Math.max(level, fireProtection.getLevel());
+            }
+        }
+
+        seconds = (int) (seconds * (1 - level * 0.15));
+
+        super.setOnFire(seconds);
     }
 }

@@ -26,13 +26,14 @@ public abstract class EnchantmentDamage extends Enchantment {
     protected final TYPE damageType;
 
     protected EnchantmentDamage(int id, String name, int weight, TYPE type) {
-        super(id, name, weight, EnchantmentType.WEAPON);
+        super(id, name, weight, EnchantmentType.SWORD);
         this.damageType = type;
     }
 
     @Override
     public double getDamageBonus(Entity entity) {
         int level = this.level;
+
         switch (this.damageType) {
             case ARTHROPODS:
                 if (entity instanceof EntityArthropod) {
@@ -77,5 +78,10 @@ public abstract class EnchantmentDamage extends Enchantment {
     @Override
     public String getName() {
         return "%enchantment.damage." + this.name;
+    }
+
+    @Override
+    public boolean isMajor() {
+        return true;
     }
 }
