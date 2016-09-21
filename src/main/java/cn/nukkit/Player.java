@@ -2212,7 +2212,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     double damage = 2;
                                     boolean flame = false;
 
-                                    if(bow.hasEnchantments()) {
+                                    if (bow.hasEnchantments()) {
                                         Enchantment bowDamage = bow.getEnchantment(Enchantment.ID_BOW_POWER);
 
                                         if (bowDamage != null && bowDamage.getLevel() > 0) {
@@ -2255,7 +2255,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     } else {
                                         entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
                                         if (this.isSurvival()) {
-                                            this.inventory.removeItem(itemArrow);
+                                            Enchantment infinity = null;
+
+                                            if (!bow.hasEnchantments() || (infinity = bow.getEnchantment(Enchantment.ID_BOW_INFINITY)) == null || infinity.getLevel() <= 0)
+                                                this.inventory.removeItem(itemArrow);
 
                                             if (!bow.isUnbreakable()) {
                                                 Enchantment durability = bow.getEnchantment(Enchantment.ID_DURABILITY);
