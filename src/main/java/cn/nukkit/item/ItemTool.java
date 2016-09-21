@@ -61,7 +61,7 @@ public abstract class ItemTool extends Item {
 
     @Override
     public boolean useOn(Block block) {
-        if (this.isUnbreakable()) {
+        if (this.isUnbreakable() || !canReduceDamage()) {
             return true;
         }
 
@@ -86,19 +86,9 @@ public abstract class ItemTool extends Item {
 
     @Override
     public boolean useOn(Entity entity) {
-        if(hasEnchantments()){
-            EnchantmentFireAspect fire = (EnchantmentFireAspect) getEnchantment(Enchantment.ID_FIRE_ASPECT);
-
-            if(fire != null && fire.getLevel() > 0){
-                entity.setOnFire(80 * fire.getLevel());
-            }
-        }
-
-        if (this.isUnbreakable()) {
+        if (this.isUnbreakable() || !canReduceDamage()) {
             return true;
         }
-
-        EnchantmentDurability ench = (EnchantmentDurability) getEnchantment(Enchantment.ID_DURABILITY);
 
         if ((entity != null) && !this.isSword()) {
             this.meta += 2;
@@ -107,6 +97,15 @@ public abstract class ItemTool extends Item {
         }
 
         return true;
+    }
+
+    private boolean canReduceDamage() {
+        if (!hasEnchantments()) {
+            return false;
+        }
+
+        Enchantment durability = getEnchantment(Enchantment.ID_DURABILITY);
+        return durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100);
     }
 
     public boolean isUnbreakable() {

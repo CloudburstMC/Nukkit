@@ -51,7 +51,7 @@ public class BlockWorkbench extends BlockSolid {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            player.craftingType = 1;
+            player.craftingType = Player.CRAFTING_BIG;
         }
         return true;
     }

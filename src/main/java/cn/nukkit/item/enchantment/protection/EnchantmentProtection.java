@@ -33,7 +33,7 @@ public abstract class EnchantmentProtection extends Enchantment {
         int level = this.level;
         int cause = event.getCause();
 
-        if (level <= 0 || cause == EntityDamageEvent.CAUSE_VOID || cause != EntityDamageEvent.CAUSE_CUSTOM) {
+        if (level <= 0 || cause == EntityDamageEvent.CAUSE_VOID || cause == EntityDamageEvent.CAUSE_CUSTOM || cause == EntityDamageEvent.CAUSE_MAGIC) {
             return 0;
         }
         /*double f = (6d + level * level) / 3d;
@@ -107,5 +107,10 @@ public abstract class EnchantmentProtection extends Enchantment {
 
     public double getTypeModifier() {
         return 0;
+    }
+
+    @Override
+    public boolean isMajor() {
+        return true;
     }
 }

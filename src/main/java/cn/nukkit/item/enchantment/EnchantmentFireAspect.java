@@ -6,7 +6,7 @@ package cn.nukkit.item.enchantment;
  */
 public class EnchantmentFireAspect extends Enchantment {
     protected EnchantmentFireAspect() {
-        super(ID_FIRE_ASPECT, "fire", 2, EnchantmentType.WEAPON);
+        super(ID_FIRE_ASPECT, "fire", 2, EnchantmentType.SWORD);
     }
 
     @Override
