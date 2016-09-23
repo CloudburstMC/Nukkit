@@ -50,7 +50,7 @@ public class EntityArrow extends EntityProjectile {
 
     @Override
     protected double getDamage() {
-        return 2;
+        return namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
     }
 
     protected float gravity = 0.05f;
