@@ -1578,8 +1578,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.playedBefore = (nbt.getLong("lastPlayed") - nbt.getLong("firstPlayed")) > 1;
 
+        boolean alive = true;
+        
         nbt.putString("NameTag", this.username);
 
+        if (0 >= nbt.getShort("Health")) {
+        	alive = false;
+        }
+        
         int exp = nbt.getInt("EXP");
         int expLevel = nbt.getInt("expLevel");
         this.setExperience(exp, expLevel);
@@ -1598,7 +1604,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 .build();
 
         Level level;
-        if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
+        if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null || !alive) {
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
             nbt.getList("Pos", DoubleTag.class)
