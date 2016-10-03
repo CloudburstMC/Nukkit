@@ -30,7 +30,7 @@ import java.util.*;
  */
 public class LevelDB implements LevelProvider {
 
-    protected Map<String, Chunk> chunks = new HashMap<>();
+    protected Map<Long, Chunk> chunks = new HashMap<>();
 
     protected DB db;
 
@@ -177,11 +177,17 @@ public class LevelDB implements LevelProvider {
             }
         }
 
-        BinaryStream extraData = new BinaryStream();
-        extraData.putLInt(chunk.getBlockExtraDataArray().size());
-        for (Integer key : chunk.getBlockExtraDataArray().values()) {
-            extraData.putLInt(key);
-            extraData.putLShort(chunk.getBlockExtraDataArray().get(key));
+        Map<Integer, Integer> extra = chunk.getBlockExtraDataArray();
+        BinaryStream extraData;
+        if (!extra.isEmpty()) {
+            extraData = new BinaryStream();
+            extraData.putLInt(extra.size());
+            for (Integer key : extra.values()) {
+                extraData.putLInt(key);
+                extraData.putLShort(extra.get(key));
+            }
+        } else {
+            extraData = null;
         }
 
         BinaryStream stream = new BinaryStream();
@@ -195,7 +201,9 @@ public class LevelDB implements LevelProvider {
         for (int color : chunk.getBiomeColorArray()) {
             stream.put(Binary.writeInt(color));
         }
-        stream.put(extraData.getBuffer());
+        if (extraData != null) {
+            stream.put(extraData.getBuffer());
+        }
         stream.put(tiles);
 
         this.getLevel().chunkRequestCallback(x, z, stream.getBuffer());
@@ -226,7 +234,7 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public Map<String, Chunk> getLoadedChunks() {
+    public Map<Long, Chunk> getLoadedChunks() {
         return this.chunks;
     }
 
@@ -249,7 +257,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public boolean loadChunk(int chunkX, int chunkZ, boolean create) {
-        String index = Level.chunkHash(chunkX, chunkZ);
+        long index = Level.chunkHash(chunkX, chunkZ);
         if (this.chunks.containsKey(index)) {
             return true;
         }
@@ -302,7 +310,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public boolean unloadChunk(int X, int Z, boolean safe) {
-        String index = Level.chunkHash(X, Z);
+        long index = Level.chunkHash(X, Z);
         Chunk chunk = this.chunks.containsKey(index) ? this.chunks.get(index) : null;
         if (chunk != null && chunk.unload(false, safe)) {
             this.chunks.remove(index);
@@ -326,7 +334,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public Chunk getChunk(int chunkX, int chunkZ, boolean create) {
-        String index = Level.chunkHash(chunkX, chunkZ);
+        long index = Level.chunkHash(chunkX, chunkZ);
         if (this.chunks.containsKey(index)) {
             return this.chunks.get(index);
         } else {
@@ -348,7 +356,7 @@ public class LevelDB implements LevelProvider {
 
         chunk.setX(chunkX);
         chunk.setZ(chunkZ);
-        String index = Level.chunkHash(chunkX, chunkZ);
+        long index = Level.chunkHash(chunkX, chunkZ);
 
         if (this.chunks.containsKey(index) && !this.chunks.get(index).equals(chunk)) {
             this.unloadChunk(chunkX, chunkZ, false);

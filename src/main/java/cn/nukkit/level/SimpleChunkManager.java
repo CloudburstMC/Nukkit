@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Nukkit Project
  */
 public class SimpleChunkManager implements ChunkManager {
-    protected Map<String, FullChunk> chunks = new ConcurrentHashMap<>();
+    protected Map<Long, FullChunk> chunks = new ConcurrentHashMap<>();
 
     protected final long seed;
 
@@ -56,7 +56,7 @@ public class SimpleChunkManager implements ChunkManager {
 
     @Override
     public BaseFullChunk getChunk(int chunkX, int chunkZ) {
-        String index = Level.chunkHash(chunkX, chunkZ);
+        long index = Level.chunkHash(chunkX, chunkZ);
         return this.chunks.containsKey(index) ? (BaseFullChunk) this.chunks.get(index) : null;
     }
 

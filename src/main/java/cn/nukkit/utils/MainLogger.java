@@ -204,7 +204,7 @@ public class MainLogger extends ThreadedLogger {
     @Override
     public void run() {
         this.shutdown = false;
-        while (!this.shutdown) {
+        while (!this.shutdown && Nukkit.DEBUG > 0) {
             while (this.logStream.length() > 0) {
                 String chunk = this.logStream;
                 this.logStream = "";

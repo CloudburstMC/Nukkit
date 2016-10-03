@@ -1124,9 +1124,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         AxisAlignedBB newBB = this.boundingBox.getOffsetBoundingBox(dx, dy, dz);
 
-        AxisAlignedBB[] list = this.level.getCollisionCubes(this, newBB, false);
-
-        if (list.length == 0) {
+        if (server.getAllowFlight() || !this.level.hasCollision(this, newBB, false)) {
             this.boundingBox = newBB;
         }
 
