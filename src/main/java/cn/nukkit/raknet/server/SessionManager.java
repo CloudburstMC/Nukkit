@@ -75,6 +75,7 @@ public class SessionManager {
         while (!this.shutdown) {
             long start = System.currentTimeMillis();
             int max = 5000;
+            this.socket.clearPacketQueue();
             while (max > 0) {
                 try {
                     if (!this.receivePacket()) {
