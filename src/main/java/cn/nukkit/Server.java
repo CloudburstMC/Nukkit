@@ -779,18 +779,24 @@ public class Server {
 
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
-        while (this.isRunning) {
-            try {
-                this.tick();
-            } catch (RuntimeException e) {
-                this.getLogger().logException(e);
-            }
+        try {
+            while (this.isRunning) {
+                try {
+                    this.tick();
+                } catch (RuntimeException e) {
+                    this.getLogger().logException(e);
+                }
 
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Server.getInstance().getLogger().logException(e);
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    Server.getInstance().getLogger().logException(e);
+                }
             }
+        } catch (Throwable e) {
+            this.logger.emergency("Exception happened while ticking server");
+            this.logger.alert(Utils.getExceptionMessage(e));
+            this.logger.alert(Utils.getAllThreadDumps());
         }
     }
 
