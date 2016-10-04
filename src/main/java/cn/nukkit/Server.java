@@ -148,6 +148,7 @@ public class Server {
     private int autoTickRateLimit = 20;
     private boolean alwaysTickPlayers = false;
     private int baseTickRate = 1;
+    private Boolean getAllowFlight = null;
 
     private int autoSaveTicker = 0;
     private int autoSaveTicks = 6000;
@@ -1034,13 +1035,9 @@ public class Server {
         if (this.tickCounter % 100 == 0) {
             for (Level level : this.levels.values()) {
                 level.clearCache();
-            }
-
-            if (this.getTicksPerSecondAverage() < 12) {
-                this.logger.warning(this.getLanguage().translateString("nukkit.server.tickOverload"));
+                level.doChunkGarbageCollection();
             }
         }
-
 
         Timings.fullServerTickTimer.stopTiming();
         //long now = System.currentTimeMillis();
@@ -1264,7 +1261,10 @@ public class Server {
     }
 
     public boolean getAllowFlight() {
-        return this.getPropertyBoolean("allow-flight", false);
+        if (getAllowFlight == null) {
+            getAllowFlight = this.getPropertyBoolean("allow-flight", false);
+        }
+        return getAllowFlight;
     }
 
     public boolean isHardcore() {

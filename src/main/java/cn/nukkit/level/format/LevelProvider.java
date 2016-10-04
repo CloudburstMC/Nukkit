@@ -83,7 +83,7 @@ public interface LevelProvider {
 
     void setSpawn(Vector3 pos);
 
-    Map<String, ? extends FullChunk> getLoadedChunks();
+    Map<Long, ? extends FullChunk> getLoadedChunks();
 
     void doGarbageCollection();
 
