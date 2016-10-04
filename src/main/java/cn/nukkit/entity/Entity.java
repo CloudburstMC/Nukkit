@@ -282,7 +282,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.fallDistance = this.namedTag.getFloat("FallDistance");
         this.highestPosition = this.y + this.namedTag.getFloat("FallDistance");
 
-        if (!this.namedTag.contains("Fire")) {
+        if (!this.namedTag.contains("Fire") || this.namedTag.getShort("Fire") > 32767) {
             this.namedTag.putShort("Fire", 0);
         }
         this.fireTicks = this.namedTag.getShort("Fire");
