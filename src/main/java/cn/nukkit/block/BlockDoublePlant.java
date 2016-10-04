@@ -6,8 +6,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
-import java.util.Vector;
-
 /**
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
@@ -49,15 +47,15 @@ public class BlockDoublePlant extends BlockFlowable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if ((this.meta & 0x08) == 8) {
-                //top
+                // top
                 if (!(this.getSide(0).getId() == DOUBLE_PLANT)) {
-                    this.getLevel().useBreakOn(this);
+                    this.getLevel().useBreakOn(this); // Using useBreakOn.getSide(Vector3.SIDE_DOWN) doesn't work... trust me I tried.
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             } else {
-                //botom
+                // bottom
                 if (this.getSide(0).isTransparent() || !(this.getSide(1).getId() == DOUBLE_PLANT)) {
-                    this.getLevel().useBreakOn(this);
+                    // this.getLevel().useBreakOn(this);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             }
@@ -70,9 +68,11 @@ public class BlockDoublePlant extends BlockFlowable {
         Block down = getSide(Vector3.SIDE_DOWN);
         Block up = getSide(Vector3.SIDE_UP);
 
+        // If physics are enabled, the double plant will drop two flowers on place
+        // TODO: Fixing without breaking physics
         if (up.getId() == 0 && (down.getId() == GRASS || down.getId() == DIRT)) {
-            this.getLevel().setBlock(block, this, true);
-            this.getLevel().setBlock(up, new BlockDoublePlant(meta ^ 0x08), true);
+            this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
+            this.getLevel().setBlock(up, new BlockDoublePlant(meta ^ 0x08), true, true);
             return true;
         }
 
@@ -89,6 +89,7 @@ public class BlockDoublePlant extends BlockFlowable {
                 this.getLevel().setBlock(up, new BlockAir(), true, true);
             } else if (down.getId() == this.getId() && down.meta != 0x08) {
                 this.getLevel().setBlock(down, new BlockAir(), true, true);
+                this.getLevel().dropItem(this, new Item(Item.DOUBLE_PLANT, down.meta, 1)); // So hacky...
             }
         } else { // Bottom Part
             if (up.getId() == this.getId() && (up.meta & 0x08) == 0x08) {
