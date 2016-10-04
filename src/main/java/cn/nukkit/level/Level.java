@@ -102,8 +102,6 @@ public class Level implements ChunkManager, Metadatable {
 
     private boolean cacheChunks = false;
 
-    private int sendTimeTicker = 0;
-
     private final Server server;
 
     private final int levelId;
@@ -606,7 +604,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void checkTime() {
         if (!this.stopTime) {
-            this.time += 1;
+            this.time += tickRate;
         }
     }
 
@@ -645,11 +643,6 @@ public class Level implements ChunkManager, Metadatable {
         this.timings.doTick.startTiming();
 
         this.checkTime();
-
-        if (++this.sendTimeTicker == 200) {
-            this.sendTime();
-            this.sendTimeTicker = 0;
-        }
 
         // Tick Weather
         this.rainTime--;
