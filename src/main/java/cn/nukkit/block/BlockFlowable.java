@@ -38,7 +38,7 @@ public abstract class BlockFlowable extends BlockTransparent {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox() {
+    protected AxisAlignedBB recalculateBoundingBox() {
         return null;
     }
 }
