@@ -26,7 +26,7 @@ public class BlockCauldron extends BlockSolid {
         super(0);
     }
 
-    public BlockCauldron(Integer meta) {
+    public BlockCauldron(int meta) {
         super(meta);
     }
 
