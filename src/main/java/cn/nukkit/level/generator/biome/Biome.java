@@ -55,6 +55,10 @@ public abstract class Biome {
     protected double temperature = 0.5;
     protected int grassColor = 0;
 
+    protected int stoneBlock = Block.GOLD_BLOCK;
+    protected int surfaceBlock = Block.DIAMOND_BLOCK;
+    protected int groundBlock = Block.IRON_BLOCK;
+
     protected static void register(int id, Biome biome) {
         biome.setId(id);
         biome.grassColor = generateBiomeColor(biome.getTemperature(), biome.getRainfall());
@@ -170,6 +174,19 @@ public abstract class Biome {
         double invs = 1 - s;
         return new double[]{a[0] * invs + b[0] * s, a[1] * invs + b[1] * s, a[2] * invs + b[2] * s};
     }
+
+    public int getStoneBlock() {
+        return this.stoneBlock;
+    }
+
+    public int getSurfaceBlock() {
+        return this.surfaceBlock;
+    }
+
+    public int getGroundBlock() {
+        return this.groundBlock;
+    }
+
 
     abstract public int getColor();
 }
