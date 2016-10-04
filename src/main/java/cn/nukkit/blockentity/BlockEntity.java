@@ -20,7 +20,6 @@ public abstract class BlockEntity extends Position {
     //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
     public static final String CHEST = "Chest";
     public static final String FURNACE = "Furnace";
-    public static final String NETHER_REACTOR = "NetherReactor";
     public static final String SIGN = "Sign";
     public static final String MOB_SPAWNER = "MobSpawner";
     public static final String ENCHANT_TABLE = "EnchantTable";
@@ -30,6 +29,7 @@ public abstract class BlockEntity extends Position {
     public static final String DAYLIGHT_DETECTOR = "DaylightDetector";
     public static final String MUSIC = "Music";
     public static final String ITEM_FRAME = "ItemFrame";
+    public static final String CAULDRON = "Cauldron";
 
 
     public static long count = 1;
