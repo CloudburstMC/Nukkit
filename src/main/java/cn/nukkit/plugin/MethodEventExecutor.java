@@ -19,10 +19,17 @@ public class MethodEventExecutor implements EventExecutor {
         this.method = method;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void execute(Listener listener, Event event) throws EventException {
         try {
-            method.invoke(listener, event);
+        	Class<Event>[] params = (Class<Event>[]) method.getParameterTypes();
+        	for (Class<Event> param : params) {
+        		if (param.isAssignableFrom(event.getClass())) {
+        			method.invoke(listener, event);
+        			break;
+        		}
+        	}
         } catch (InvocationTargetException ex) {
             throw new EventException(ex.getCause());
         } catch (Throwable t) {
