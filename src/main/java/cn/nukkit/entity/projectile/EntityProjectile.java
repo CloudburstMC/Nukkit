@@ -127,36 +127,40 @@ public abstract class EntityProjectile extends Entity {
             if (movingObjectPosition != null) {
                 if (movingObjectPosition.entityHit != null) {
 
-                    this.server.getPluginManager().callEvent(new ProjectileHitEvent(this));
+                    ProjectileHitEvent hitEvent;
+                    this.server.getPluginManager().callEvent(hitEvent = new ProjectileHitEvent(this, movingObjectPosition));
 
-                    double motion = Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-                    double damage = Math.ceil(motion * this.getDamage());
+                    if (!hitEvent.isCancelled()) {
+                        movingObjectPosition = hitEvent.getMovingObjectPosition();
+                        double motion = Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
+                        double damage = Math.ceil(motion * this.getDamage());
 
-                    if (this instanceof EntityArrow && ((EntityArrow) this).isCritical) {
-                        damage += new Random().nextInt((int) (damage / 2) + 1);
-                    }
-
-                    EntityDamageEvent ev;
-                    if (this.shootingEntity == null) {
-                        ev = new EntityDamageByEntityEvent(this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
-                    } else {
-                        ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
-                    }
-
-                    movingObjectPosition.entityHit.attack(ev);
-
-                    this.hadCollision = true;
-
-                    if (this.fireTicks > 0) {
-                        EntityCombustByEntityEvent ev2 = new EntityCombustByEntityEvent(this, movingObjectPosition.entityHit, 5);
-                        this.server.getPluginManager().callEvent(ev2);
-                        if (!ev2.isCancelled()) {
-                            movingObjectPosition.entityHit.setOnFire(ev2.getDuration());
+                        if (this instanceof EntityArrow && ((EntityArrow) this).isCritical) {
+                            damage += new Random().nextInt((int) (damage / 2) + 1);
                         }
-                    }
 
-                    this.kill();
-                    return true;
+                        EntityDamageEvent ev;
+                        if (this.shootingEntity == null) {
+                            ev = new EntityDamageByEntityEvent(this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
+                        } else {
+                            ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
+                        }
+
+                        movingObjectPosition.entityHit.attack(ev);
+
+                        this.hadCollision = true;
+
+                        if (this.fireTicks > 0) {
+                            EntityCombustByEntityEvent ev2 = new EntityCombustByEntityEvent(this, movingObjectPosition.entityHit, 5);
+                            this.server.getPluginManager().callEvent(ev2);
+                            if (!ev2.isCancelled()) {
+                                movingObjectPosition.entityHit.setOnFire(ev2.getDuration());
+                            }
+                        }
+
+                        this.kill();
+                        return true;
+                    }
                 }
             }
 
@@ -169,7 +173,7 @@ public abstract class EntityProjectile extends Entity {
                 this.motionY = 0;
                 this.motionZ = 0;
 
-                this.server.getPluginManager().callEvent(new ProjectileHitEvent(this));
+                this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
             } else if (!this.isCollided && this.hadCollision) {
                 this.hadCollision = false;
             }
