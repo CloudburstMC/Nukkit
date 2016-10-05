@@ -79,7 +79,7 @@ public class TimingsExport extends Thread {
 
         JsonObject timings = new JsonObject();
         for (TimingIdentifier.TimingGroup group : TimingIdentifier.GROUP_MAP.values()) {
-            for (Timing id : group.timings) {
+            for (Timing id : group.timings.stream().toArray(Timing[]::new)) {
                 if (!id.timed && !id.isSpecial()) {
                     continue;
                 }
