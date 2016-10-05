@@ -197,6 +197,7 @@ public abstract class EntityMoving extends EntityCreature {
         boolean hasUpdate = false;
 
         this.checkBlockCollision();
+        this.checkEntityCollision(); //TODO check this
 
         if (this.isInsideOfSolid()) {
             hasUpdate = true;

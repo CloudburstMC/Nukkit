@@ -72,6 +72,20 @@ public class MathHelper {private static float[] a = new float[65536];
         return check > max ? max : (check < min ? min : check);
     }
 
+    public static double getAirthmeticMean(double[] numbers) {
+        if (numbers.length == 0) {
+            return 0;
+        }
+
+        double count = 0;
+
+        for (double i : numbers) {
+            count += i;
+        }
+
+        return count / numbers.length;
+    }
+
     private MathHelper() {
     }
 }
