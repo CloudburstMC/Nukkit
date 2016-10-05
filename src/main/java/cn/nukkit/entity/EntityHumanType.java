@@ -145,12 +145,6 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                             thornsDamage += rnd.nextInt(4) + 1;
                         }
                     }
-
-                    Enchantment fireAspect = armor.getEnchantment(Enchantment.ID_FIRE_ASPECT);
-
-                    if (fireAspect != null && fireAspect.getLevel() > 0) {
-                        damager.setOnFire(4 * fireAspect.getLevel());
-                    }
                 }
 
                 if (thornsDamage > 0) {

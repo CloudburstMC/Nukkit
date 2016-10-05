@@ -560,10 +560,10 @@ public class Item implements Cloneable {
         }
         this.count = count;
         this.name = name;
-        if (this.block != null && this.id <= 0xff && Block.list[id] != null) {
+        /*f (this.block != null && this.id <= 0xff && Block.list[id] != null) { //probably useless
             this.block = Block.get(this.id, this.meta);
             this.name = this.block.getName();
-        }
+        }*/
     }
 
     public boolean hasMeta() {
@@ -720,6 +720,7 @@ public class Item implements Cloneable {
             list[ROTTEN_FLESH] = ItemRottenFlesh.class;
             list[ITEM_FRAME] = ItemItemFrame.class;
             list[FLOWER_POT] = ItemFlowerPot.class;
+            list[CAULDRON] = ItemCauldron.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -1707,6 +1708,12 @@ public class Item implements Cloneable {
     }
 
     public boolean useOn(Entity entity) {
+        Enchantment fireAspect = getEnchantment(Enchantment.ID_FIRE_ASPECT);
+        if (fireAspect != null && fireAspect.getLevel() > 0) {
+            entity.setOnFire(4 * fireAspect.getLevel());
+            return true;
+        }
+
         return false;
     }
 
