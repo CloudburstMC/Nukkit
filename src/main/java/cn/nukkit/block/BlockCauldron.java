@@ -215,7 +215,7 @@ public class BlockCauldron extends BlockSolid {
     @Override
     public int[][] getDrops(Item item) {
         if (item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[0][0];
+            return new int[][]{{Item.CAULDRON, 0, 1}};
         }
 
         return new int[0][0];
