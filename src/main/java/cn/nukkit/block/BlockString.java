@@ -29,4 +29,9 @@ public class BlockString extends BlockTransparent {
     public double getHardness() {
         return 0;
     }
+
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
 }
