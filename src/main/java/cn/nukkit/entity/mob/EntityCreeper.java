@@ -5,7 +5,6 @@ import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.entity.CreeperPowerEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -65,8 +64,6 @@ public class EntityCreeper extends EntityWalkingMonster implements EntityMob {
         if (this.namedTag.getBoolean("powered") || this.namedTag.getBoolean("IsPowered")) {
             this.dataProperties.putBoolean(DATA_POWERED, true);
         }
-
-        this.dataProperties.putShort(DATA_SWELL, this.namedTag.getShort("Fuse"));
     }
 
     public boolean isPowered() {
@@ -162,7 +159,7 @@ public class EntityCreeper extends EntityWalkingMonster implements EntityMob {
                     }
 
                     this.bombTime += tickDiff;
-                    this.setDataProperty(new ShortEntityData(DATA_SWELL_OLD, Math.max(0, 30 - bombTime)));
+                    //this.setDataProperty(new ShortEntityData(DATA_SWELL, Math.max(0, 30 - bombTime))); property ID is wrong?
                     if (this.bombTime >= 30) { //1.5 seconds
                         this.explode();
                         return false;
