@@ -192,6 +192,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int SANDSTONE_STAIRS = 128;
     public static final int EMERALD_ORE = 129;
 
+    public static final int TRIPWIRE = 132;
+    public static final int STRING_BLOCK = 132;
     public static final int EMERALD_BLOCK = 133;
     public static final int SPRUCE_WOOD_STAIRS = 134;
     public static final int SPRUCE_WOODEN_STAIRS = 134;
@@ -490,6 +492,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
             list[SKULL_BLOCK] = BlockSkull.class;
             list[CAULDRON_BLOCK] = BlockCauldron.class;
+            list[TRIPWIRE] = BlockString.class;
 
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];

@@ -953,6 +953,10 @@ public abstract class Entity extends Location implements Metadatable {
         return hasUpdate;
     }
 
+    public boolean onActivate(Item item, Player player) {
+        return false;
+    }
+
     public final void scheduleUpdate() {
         this.level.updateEntities.put(this.id, this);
     }

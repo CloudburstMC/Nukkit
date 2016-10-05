@@ -1,6 +1,7 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.entity.CreeperPowerEvent;
@@ -11,7 +12,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 /**
  * @author Box.
  */
-public class EntityCreeper extends EntityMob {
+public class EntityCreeper extends EntityCreature implements EntityMob {
     public static final int NETWORK_ID = 33;
 
     public static final int DATA_SWELL_DIRECTION = 16;
