@@ -62,6 +62,10 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
         }
     }
 
+    public void clearPacketQueue() {
+        this.packets.clear();
+    }
+
     public DatagramPacket readPacket() throws IOException {
         return this.packets.poll();
     }
@@ -83,6 +87,5 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         this.logger.warning(cause.getMessage(), cause);
-        ctx.close();
     }
 }

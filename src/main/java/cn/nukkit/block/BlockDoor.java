@@ -28,6 +28,11 @@ public abstract class BlockDoor extends BlockTransparent {
         return false;
     }
 
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
+    
     private int getFullDamage() {
         int damage = this.getDamage();
         boolean isUp = (damage & 0x08) > 0;

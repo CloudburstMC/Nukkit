@@ -1,6 +1,20 @@
 package cn.nukkit.utils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -74,6 +88,16 @@ public class Utils {
         reader.close();
         return stringBuilder.toString();
     }
+
+    public static String getAllThreadDumps() {
+        ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads(true, true);
+        StringBuilder builder = new StringBuilder();
+        for (ThreadInfo info : threads) {
+            builder.append('\n').append(info);
+        }
+        return builder.toString();
+    }
+
 
     public static String getExceptionMessage(Throwable e) {
         StringWriter stringWriter = new StringWriter();

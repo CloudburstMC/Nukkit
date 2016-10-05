@@ -282,7 +282,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.fallDistance = this.namedTag.getFloat("FallDistance");
         this.highestPosition = this.y + this.namedTag.getFloat("FallDistance");
 
-        if (!this.namedTag.contains("Fire")) {
+        if (!this.namedTag.contains("Fire") || this.namedTag.getShort("Fire") > 32767) {
             this.namedTag.putShort("Fire", 0);
         }
         this.fireTicks = this.namedTag.getShort("Fire");
@@ -1128,9 +1128,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         AxisAlignedBB newBB = this.boundingBox.getOffsetBoundingBox(dx, dy, dz);
 
-        AxisAlignedBB[] list = this.level.getCollisionCubes(this, newBB, false);
-
-        if (list.length == 0) {
+        if (server.getAllowFlight() || !this.level.hasCollision(this, newBB, false)) {
             this.boundingBox = newBB;
         }
 

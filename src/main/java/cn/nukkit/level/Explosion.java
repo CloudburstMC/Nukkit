@@ -12,6 +12,7 @@ import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.*;
@@ -95,7 +96,6 @@ public class Explosion {
                             if (block.getId() != 0) {
                                 blastForce -= (block.getResistance() / 5 + 0.3d) * this.stepLen;
                                 if (blastForce > 0) {
-                                    String index = Level.blockHash((int) block.x, (int) block.y, (int) block.z);
                                     if (!this.affectedBlocks.contains(block)) {
                                         this.affectedBlocks.add(block);
                                     }
@@ -115,7 +115,7 @@ public class Explosion {
 
     public boolean explodeB() {
 
-        HashMap<String, Boolean> updateBlocks = new HashMap<>();
+        HashMap<BlockVector3, Boolean> updateBlocks = new HashMap<>();
         List<Vector3> send = new ArrayList<>();
 
         Vector3 source = (new Vector3(this.source.x, this.source.y, this.source.z)).floor();
@@ -204,7 +204,7 @@ public class Explosion {
 
             for (int side = 0; side < 5; side++) {
                 Vector3 sideBlock = pos.getSide(side);
-                String index = Level.blockHash((int) sideBlock.x, (int) sideBlock.y, (int) sideBlock.z);
+                BlockVector3 index = Level.blockHash((int) sideBlock.x, (int) sideBlock.y, (int) sideBlock.z);
                 if (!this.affectedBlocks.contains(sideBlock) && !updateBlocks.containsKey(index)) {
                     BlockUpdateEvent ev = new BlockUpdateEvent(this.level.getBlock(sideBlock));
                     this.level.getServer().getPluginManager().callEvent(ev);

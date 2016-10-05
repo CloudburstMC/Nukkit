@@ -51,9 +51,9 @@ public class AddEntityPacket extends DataPacket {
         this.put(Binary.writeMetadata(this.metadata));
         this.putShort(this.links.length);
         for (Object[] link : links) {
-            this.putLong((Long) link[0]);
-            this.putLong((Long) link[1]);
-            this.putByte((Byte) link[2]);
+            this.putLong((long) link[0]);
+            this.putLong((long) link[1]);
+            this.putByte((byte) link[2]);
         }
     }
 }
