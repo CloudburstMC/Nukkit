@@ -32,6 +32,8 @@ public class MethodEventExecutor implements EventExecutor {
             }
         } catch (InvocationTargetException ex) {
             throw new EventException(ex.getCause());
+        } catch (ClassCastException ex) {
+            // We are going to ignore ClassCastException because EntityDamageEvent can't be cast to EntityDamageByEntityEvent
         } catch (Throwable t) {
             throw new EventException(t);
         }
