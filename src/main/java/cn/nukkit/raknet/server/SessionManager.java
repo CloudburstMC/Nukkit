@@ -143,25 +143,28 @@ public class SessionManager {
     private boolean receivePacket() throws Exception {
         DatagramPacket datagramPacket = this.socket.readPacket();
         if (datagramPacket != null) {
+            // Check this early
+            String source = datagramPacket.sender().getHostString();
+            currentSource = source; //in order to block address
+            if (this.block.containsKey(source)) {
+                datagramPacket.release();
+                return true;
+            }
+
+            if (this.ipSec.containsKey(source)) {
+                this.ipSec.put(source, this.ipSec.get(source) + 1);
+            } else {
+                this.ipSec.put(source, 1);
+            }
+
             ByteBuf byteBuf = datagramPacket.content();
             byte[] buffer = new byte[byteBuf.readableBytes()];
             byteBuf.readBytes(buffer);
-            byteBuf.release();
+            datagramPacket.release();
             int len = buffer.length;
-            String source = datagramPacket.sender().getHostString();
-            currentSource = source; //in order to block address
             int port = datagramPacket.sender().getPort();
             if (len > 0) {
                 this.receiveBytes += len;
-                if (this.block.containsKey(source)) {
-                    return true;
-                }
-
-                if (this.ipSec.containsKey(source)) {
-                    this.ipSec.put(source, this.ipSec.get(source) + 1);
-                } else {
-                    this.ipSec.put(source, 1);
-                }
 
                 byte pid = buffer[0];
 
@@ -190,6 +193,8 @@ public class SessionManager {
                 } else {
                     return false;
                 }
+            } else {
+                return true;
             }
         }
 
