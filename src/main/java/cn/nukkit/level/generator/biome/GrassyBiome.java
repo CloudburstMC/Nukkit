@@ -18,4 +18,19 @@ public abstract class GrassyBiome extends NormalBiome {
                 new BlockDirt()
         });
     }
+
+    @Override
+    public int getSurfaceBlock() {
+        return Block.GRASS;
+    }
+
+    @Override
+    public int getGroundBlock() {
+        return Block.DIRT;
+    }
+
+    @Override
+    public int getStoneBlock() {
+        return Block.STONE;
+    }
 }

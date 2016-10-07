@@ -30,4 +30,19 @@ public abstract class SandyBiome extends NormalBiome {
                 new BlockSandstone()
         });
     }
+
+    @Override
+    public int getSurfaceBlock() {
+        return Block.SAND;
+    }
+
+    @Override
+    public int getGroundBlock() {
+        return Block.SAND;
+    }
+
+    @Override
+    public int getStoneBlock() {
+        return Block.SANDSTONE;
+    }
 }

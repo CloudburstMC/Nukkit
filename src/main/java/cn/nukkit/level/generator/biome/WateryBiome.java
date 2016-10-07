@@ -17,4 +17,19 @@ public abstract class WateryBiome extends NormalBiome {
                 new BlockDirt()
         });
     }
+
+    @Override
+    public int getSurfaceBlock() {
+        return Block.DIRT;
+    }
+
+    @Override
+    public int getGroundBlock() {
+        return Block.DIRT;
+    }
+
+    @Override
+    public int getStoneBlock() {
+        return Block.STONE;
+    }
 }
