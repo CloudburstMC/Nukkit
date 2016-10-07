@@ -7,11 +7,17 @@ import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.biome.BiomeSelector;
 import cn.nukkit.level.generator.noise.Simplex;
 import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.*;
+import cn.nukkit.level.generator.populator.Populator;
+import cn.nukkit.level.generator.populator.PopulatorCaves;
+import cn.nukkit.level.generator.populator.PopulatorGroundCover;
+import cn.nukkit.level.generator.populator.PopulatorOre;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -28,11 +34,7 @@ public class Normal extends Generator {
 
     private ChunkManager level;
 
-    private Random random;
-    private NukkitRandom nukkitRandom;
-
-    private long worldLong1;
-    private long worldLong2;
+    private NukkitRandom random;
 
     private final List<Populator> generationPopulators = new ArrayList<>();
 
@@ -99,18 +101,15 @@ public class Normal extends Generator {
     @Override
     public void init(ChunkManager level, NukkitRandom random) {
         this.level = level;
-        this.nukkitRandom = random;
-        this.random = new Random();
-        this.nukkitRandom.setSeed(this.level.getSeed());
-        this.worldLong1 = this.random.nextLong();
-        this.worldLong2 = this.random.nextLong();
-        this.noiseSeaFloor = new Simplex(this.nukkitRandom, 1F, 1F / 8F, 1F / 64F);
-        this.noiseLand = new Simplex(this.nukkitRandom, 2F, 1F / 8F, 1F / 512F);
-        this.noiseMountains = new Simplex(this.nukkitRandom, 4F, 1F, 1F / 500F);
-        this.noiseBaseGround = new Simplex(this.nukkitRandom, 4F, 1F / 4F, 1F / 64F);
-        this.noiseRiver = new Simplex(this.nukkitRandom, 2F, 1F, 1F / 512F);
-        this.nukkitRandom.setSeed(this.level.getSeed());
-        this.selector = new BiomeSelector(this.nukkitRandom, Biome.getBiome(Biome.OCEAN));
+        this.random = random;
+        this.random.setSeed(this.level.getSeed());
+        this.noiseSeaFloor = new Simplex(this.random, 1F, 1F / 8F, 1F / 64F);
+        this.noiseLand = new Simplex(this.random, 2F, 1F / 8F, 1F / 512F);
+        this.noiseMountains = new Simplex(this.random, 4F, 1F, 1F / 500F);
+        this.noiseBaseGround = new Simplex(this.random, 4F, 1F / 4F, 1F / 64F);
+        this.noiseRiver = new Simplex(this.random, 2F, 1F, 1F / 512F);
+        this.random.setSeed(this.level.getSeed());
+        this.selector = new BiomeSelector(this.random, Biome.getBiome(Biome.OCEAN));
         this.heightOffset = random.nextRange(-5, 3);
 
         this.selector.addBiome(Biome.getBiome(Biome.OCEAN));
@@ -127,19 +126,11 @@ public class Normal extends Generator {
 
         this.selector.recalculate();
 
-
+        PopulatorGroundCover cover = new PopulatorGroundCover();
+        this.generationPopulators.add(cover);
 
         PopulatorCaves caves = new PopulatorCaves();
         this.populators.add(caves);
-
-        PopulatorRavines ravines = new PopulatorRavines();
-        this.populators.add(ravines);
-
-//        PopulatorDungeon dungeons = new PopulatorDungeon();
-//        this.populators.add(dungeons);
-
-        PopulatorGroundCover cover = new PopulatorGroundCover();
-        this.generationPopulators.add(cover);
 
         PopulatorOre ores = new PopulatorOre();
         ores.setOreTypes(new OreType[]{
@@ -157,7 +148,7 @@ public class Normal extends Generator {
 
     @Override
     public void generateChunk(int chunkX, int chunkZ) {
-        this.nukkitRandom.setSeed(chunkX * worldLong1 ^ chunkZ * worldLong2 ^ this.level.getSeed());
+        this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
 
         double[][] seaFloorNoise = Generator.getFastNoise2D(this.noiseSeaFloor, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
         double[][] landNoise = Generator.getFastNoise2D(this.noiseLand, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
@@ -256,7 +247,7 @@ public class Normal extends Generator {
                 //generating
                 int generateHeight = genyHeight > seaHeight ? genyHeight : seaHeight;
                 for (int geny = 0; geny <= generateHeight; geny++) {
-                    if (geny <= bedrockDepth && (geny == 0 || nukkitRandom.nextRange(1, 5) == 1)) {
+                    if (geny <= bedrockDepth && (geny == 0 || random.nextRange(1, 5) == 1)) {
                         chunk.setBlock(genx, geny, genz, Block.BEDROCK);
                     } else if (geny > genyHeight) {
                         if ((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == seaHeight) {
@@ -273,21 +264,21 @@ public class Normal extends Generator {
 
         //populator chunk
         for (Populator populator : this.generationPopulators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom);
+            populator.populate(this.level, chunkX, chunkZ, this.random);
         }
 
     }
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
-        this.nukkitRandom.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
+        this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom);
+            populator.populate(this.level, chunkX, chunkZ, this.random);
         }
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         Biome biome = Biome.getBiome(chunk.getBiomeId(7, 7));
-        biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
+        biome.populateChunk(this.level, chunkX, chunkZ, this.random);
     }
 
     @Override

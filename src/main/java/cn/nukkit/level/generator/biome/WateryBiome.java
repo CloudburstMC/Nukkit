@@ -16,9 +16,5 @@ public abstract class WateryBiome extends NormalBiome {
                 new BlockDirt(),
                 new BlockDirt()
         });
-
-        this.surfaceBlock = Block.DIRT;
-        this.groundBlock = Block.DIRT;
-        this.stoneBlock = Block.STONE;
     }
 }

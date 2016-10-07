@@ -8,7 +8,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * Author: BeYkeRYkt
  * Nukkit Project
  */
-public class EntityOcelot extends EntityTameable {
+public class EntityOcelot extends EntityAnimal {
 
     public static final int NETWORK_ID = 22;
 
