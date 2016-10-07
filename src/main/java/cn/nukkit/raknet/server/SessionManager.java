@@ -144,56 +144,57 @@ public class SessionManager {
         DatagramPacket datagramPacket = this.socket.readPacket();
         if (datagramPacket != null) {
             // Check this early
-            String source = datagramPacket.sender().getHostString();
-            currentSource = source; //in order to block address
-            if (this.block.containsKey(source)) {
+            try {
+                String source = datagramPacket.sender().getHostString();
+                currentSource = source; //in order to block address
+                if (this.block.containsKey(source)) {
+                    return true;
+                }
+
+                if (this.ipSec.containsKey(source)) {
+                    this.ipSec.put(source, this.ipSec.get(source) + 1);
+                } else {
+                    this.ipSec.put(source, 1);
+                }
+
+                ByteBuf byteBuf = datagramPacket.content();
+                if (byteBuf.readableBytes() == 0) {
+                    // Exit early to process another packet
+                    return true;
+                }
+                byte[] buffer = new byte[byteBuf.readableBytes()];
+                byteBuf.readBytes(buffer);
+                int len = buffer.length;
+                int port = datagramPacket.sender().getPort();
+
+                this.receiveBytes += len;
+
+                byte pid = buffer[0];
+
+                if (pid == UNCONNECTED_PONG.ID) {
+                    return false;
+                }
+
+                Packet packet = this.getPacketFromPool(pid);
+                if (packet != null) {
+                    packet.buffer = buffer;
+                    this.getSession(source, port).handlePacket(packet);
+                    return true;
+                } else if (pid == UNCONNECTED_PING.ID) {
+                    packet = new UNCONNECTED_PING();
+                    packet.buffer = buffer;
+                    packet.decode();
+
+                    UNCONNECTED_PONG pk = new UNCONNECTED_PONG();
+                    pk.serverID = this.getID();
+                    pk.pingID = ((UNCONNECTED_PING) packet).pingID;
+                    pk.serverName = this.getName();
+                    this.sendPacket(pk, source, port);
+                } else {
+                    return false;
+                }
+            } finally {
                 datagramPacket.release();
-                return true;
-            }
-
-            if (this.ipSec.containsKey(source)) {
-                this.ipSec.put(source, this.ipSec.get(source) + 1);
-            } else {
-                this.ipSec.put(source, 1);
-            }
-
-            ByteBuf byteBuf = datagramPacket.content();
-            if (byteBuf.readableBytes() == 0) {
-                // Exit early to process another packet
-                byteBuf.release();
-                return true;
-            }
-            byte[] buffer = new byte[byteBuf.readableBytes()];
-            byteBuf.readBytes(buffer);
-            byteBuf.release();
-            int len = buffer.length;
-            int port = datagramPacket.sender().getPort();
-
-            this.receiveBytes += len;
-
-            byte pid = buffer[0];
-
-            if (pid == UNCONNECTED_PONG.ID) {
-                return false;
-            }
-
-            Packet packet = this.getPacketFromPool(pid);
-            if (packet != null) {
-                packet.buffer = buffer;
-                this.getSession(source, port).handlePacket(packet);
-                return true;
-            } else if (pid == UNCONNECTED_PING.ID) {
-                packet = new UNCONNECTED_PING();
-                packet.buffer = buffer;
-                packet.decode();
-
-                UNCONNECTED_PONG pk = new UNCONNECTED_PONG();
-                pk.serverID = this.getID();
-                pk.pingID = ((UNCONNECTED_PING) packet).pingID;
-                pk.serverName = this.getName();
-                this.sendPacket(pk, source, port);
-            } else {
-                return false;
             }
         }
 
