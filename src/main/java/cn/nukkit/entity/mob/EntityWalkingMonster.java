@@ -173,7 +173,7 @@ public abstract class EntityWalkingMonster extends EntityWalking implements Enti
     }
 
     @Override
-    public boolean entityBaseTick(int tickDiff) {
+    protected boolean entityBaseTick(int tickDiff) {
         Timings.entityBaseTickTimer.startTiming();
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);

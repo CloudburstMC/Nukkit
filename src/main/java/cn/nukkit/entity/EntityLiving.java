@@ -176,12 +176,12 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     @Override
-    public boolean entityBaseTick() {
+    protected boolean entityBaseTick() {
         return this.entityBaseTick(1);
     }
 
     @Override
-    public boolean entityBaseTick(int tickDiff) {
+    protected boolean entityBaseTick(int tickDiff) {
         Timings.livingEntityBaseTickTimer.startTiming();
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
