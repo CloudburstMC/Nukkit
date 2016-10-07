@@ -57,7 +57,7 @@ public class PopulatorCaves extends Populator {
         generateCaveNode(seed, chunk, x, y, z, 1.0F + this.random.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
     }
 
-    protected void generateCaveNode(long seed, FullChunk chunk, double x, double y, double z, float paramFloat1, float paramFloat2, float paramFloat3, int angle, int maxAngle, double paramDouble4) {
+    protected void generateCaveNode(long seed, FullChunk chunk, double x, double y, double z, float radius, float angelOffset, float angel, int angle, int maxAngle, double paramDouble4) {
         int chunkX = chunk.getX();
         int chunkZ = chunk.getZ();
 
@@ -80,37 +80,35 @@ public class PopulatorCaves extends Populator {
             isLargeCave = true;
         }
 
-        int j = localRandom.nextInt(maxAngle / 2) + maxAngle / 4;
-        int k = localRandom.nextInt(6) == 0 ? 1 : 0;
+        int randomAngel = localRandom.nextInt(maxAngle / 2) + maxAngle / 4;
+        boolean bigAngel = localRandom.nextInt(6) == 0;
 
         for (; angle < maxAngle; angle++) {
-            double d3 = 1.5D + MathHelper.sin(angle * 3.141593F / maxAngle) * paramFloat1 * 1.0F;
-            double d4 = d3 * paramDouble4;
+            double offsetXZ = 1.5D + MathHelper.sin(angle * 3.141593F / maxAngle) * radius * 1.0F;
+            double d4 = offsetXZ * paramDouble4;
 
-            float f3 = MathHelper.cos(paramFloat3);
-            float f4 = MathHelper.sin(paramFloat3);
-            x += MathHelper.cos(paramFloat2) * f3;
-            y += f4;
-            z += MathHelper.sin(paramFloat2) * f3;
+            float cos = MathHelper.cos(angel);
+            float sin = MathHelper.sin(angel);
+            x += MathHelper.cos(angelOffset) * cos;
+            y += sin;
+            z += MathHelper.sin(angelOffset) * cos;
 
-            if (k != 0)
-                paramFloat3 *= 0.92F;
+            if (bigAngel)
+                angel *= 0.92F;
             else {
-                paramFloat3 *= 0.7F;
+                angel *= 0.7F;
             }
-            paramFloat3 += f2 * 0.1F;
-            paramFloat2 += f1 * 0.1F;
+            angel += f2 * 0.1F;
+            angelOffset += f1 * 0.1F;
 
             f2 *= 0.9F;
             f1 *= 0.75F;
             f2 += (localRandom.nextFloat() - localRandom.nextFloat()) * localRandom.nextFloat() * 2.0F;
             f1 += (localRandom.nextFloat() - localRandom.nextFloat()) * localRandom.nextFloat() * 4.0F;
 
-            if ((!isLargeCave) && (angle == j) && (paramFloat1 > 1.0F) && (maxAngle > 0)) {
-                generateCaveNode(localRandom.nextLong(), chunk, x, y, z, localRandom.nextFloat() * 0.5F + 0.5F,
-                        paramFloat2 - 1.570796F, paramFloat3 / 3.0F, angle, maxAngle, 1.0D);
-                generateCaveNode(localRandom.nextLong(), chunk, x, y, z, localRandom.nextFloat() * 0.5F + 0.5F,
-                        paramFloat2 + 1.570796F, paramFloat3 / 3.0F, angle, maxAngle, 1.0D);
+            if ((!isLargeCave) && (angle == randomAngel) && (radius > 1.0F) && (maxAngle > 0)) {
+                generateCaveNode(localRandom.nextLong(), chunk, x, y, z, localRandom.nextFloat() * 0.5F + 0.5F, angelOffset - 1.570796F, angel / 3.0F, angle, maxAngle, 1.0D);
+                generateCaveNode(localRandom.nextLong(), chunk, x, y, z, localRandom.nextFloat() * 0.5F + 0.5F, angelOffset + 1.570796F, angel / 3.0F, angle, maxAngle, 1.0D);
                 return;
             }
             if ((!isLargeCave) && (localRandom.nextInt(4) == 0)) {
@@ -118,97 +116,97 @@ public class PopulatorCaves extends Populator {
             }
 
             // Check if distance to working point (x and z) too larger than working radius (maybe ??)
-            double d5 = x - realX;
-            double d6 = z - realZ;
-            double d7 = maxAngle - angle;
-            double d8 = paramFloat1 + 2.0F + 16.0F;
-            if (d5 * d5 + d6 * d6 - d7 * d7 > d8 * d8) {
+            double distanceX = x - realX;
+            double distanceZ = z - realZ;
+            double angelDiff = maxAngle - angle;
+            double newRadius = radius + 2.0F + 16.0F;
+            if (distanceX * distanceX + distanceZ * distanceZ - angelDiff * angelDiff > newRadius * newRadius) {
                 return;
             }
 
             //Boundaries check.
-            if ((x < realX - 16.0D - d3 * 2.0D) || (z < realZ - 16.0D - d3 * 2.0D) || (x > realX + 16.0D + d3 * 2.0D) || (z > realZ + 16.0D + d3 * 2.0D))
+            if ((x < realX - 16.0D - offsetXZ * 2.0D) || (z < realZ - 16.0D - offsetXZ * 2.0D) || (x > realX + 16.0D + offsetXZ * 2.0D) || (z > realZ + 16.0D + offsetXZ * 2.0D))
                 continue;
 
 
-            int m = MathHelper.floor(x - d3) - chunkX * 16 - 1;
-            int n = MathHelper.floor(x + d3) - chunkX * 16 + 1;
+            int xFrom = MathHelper.floor(x - offsetXZ) - chunkX * 16 - 1;
+            int xTo = MathHelper.floor(x + offsetXZ) - chunkX * 16 + 1;
 
-            int i1 = MathHelper.floor(y - d4) - 1;
-            int i2 = MathHelper.floor(y + d4) + 1;
+            int yFrom = MathHelper.floor(y - d4) - 1;
+            int yTo = MathHelper.floor(y + d4) + 1;
 
-            int i3 = MathHelper.floor(z - d3) - chunkZ * 16 - 1;
-            int i4 = MathHelper.floor(z + d3) - chunkZ * 16 + 1;
+            int zFrom = MathHelper.floor(z - offsetXZ) - chunkZ * 16 - 1;
+            int zTo = MathHelper.floor(z + offsetXZ) - chunkZ * 16 + 1;
 
-            if (m < 0)
-                m = 0;
-            if (n > 16)
-                n = 16;
+            if (xFrom < 0)
+                xFrom = 0;
+            if (xTo > 16)
+                xTo = 16;
 
-            if (i1 < 1)
-                i1 = 1;
-            if (i2 > this.worldHeightCap - 8) {
-                i2 = this.worldHeightCap - 8;
+            if (yFrom < 1)
+                yFrom = 1;
+            if (yTo > this.worldHeightCap - 8) {
+                yTo = this.worldHeightCap - 8;
             }
-            if (i3 < 0)
-                i3 = 0;
-            if (i4 > 16)
-                i4 = 16;
+            if (zFrom < 0)
+                zFrom = 0;
+            if (zTo > 16)
+                zTo = 16;
 
             // Search for water
             boolean waterFound = false;
-            for (int local_x = m; (!waterFound) && (local_x < n); local_x++) {
-                for (int local_z = i3; (!waterFound) && (local_z < i4); local_z++) {
-                    for (int local_y = i2 + 1; (!waterFound) && (local_y >= i1 - 1); local_y--) {
-                        if (local_y >= 0 && local_y < this.worldHeightCap) {
-                            int material = chunk.getBlockId(local_x, local_y, local_z);
-                            if (material == Block.WATER
-                                    || material == Block.STILL_WATER) {
+            for (int xx = xFrom; (!waterFound) && (xx < xTo); xx++) {
+                for (int zz = zFrom; (!waterFound) && (zz < zTo); zz++) {
+                    for (int yy = yTo + 1; (!waterFound) && (yy >= yFrom - 1); yy--) {
+                        if (yy >= 0 && yy < this.worldHeightCap) {
+                            int block = chunk.getBlockId(xx, yy, zz);
+                            if (block == Block.WATER || block == Block.STILL_WATER) {
                                 waterFound = true;
                             }
-                            if ((local_y != i1 - 1) && (local_x != m) && (local_x != n - 1) && (local_z != i3) && (local_z != i4 - 1))
-                                local_y = i1;
+                            if ((yy != yFrom - 1) && (xx != xFrom) && (xx != xTo - 1) && (zz != zFrom) && (zz != zTo - 1))
+                                yy = yFrom;
                         }
                     }
                 }
             }
-            if (waterFound)
+
+            if (waterFound) {
                 continue;
+            }
 
             // Generate cave
-            for (int local_x = m; local_x < n; local_x++) {
-                double d9 = (local_x + chunkX * 16 + 0.5D - x) / d3;
-                for (int local_z = i3; local_z < i4; local_z++) {
-
-                    double d10 = (local_z + chunkZ * 16 + 0.5D - z) / d3;
-
+            for (int xx = xFrom; xx < xTo; xx++) {
+                double modX = (xx + chunkX * 16 + 0.5D - x) / offsetXZ;
+                for (int zz = zFrom; zz < zTo; zz++) {
+                    double modZ = (zz + chunkZ * 16 + 0.5D - z) / offsetXZ;
 
                     boolean grassFound = false;
-                    if (d9 * d9 + d10 * d10 < 1.0D) {
-                        for (int local_y = i2; local_y > i1; local_y--) {
-                            double d11 = ((local_y - 1) + 0.5D - y) / d4;
-                            if ((d11 > -0.7D) && (d9 * d9 + d11 * d11 + d10 * d10 < 1.0D)) {
-                                Biome biome = Biome.getBiome(chunk.getBiomeId(local_x, local_z));
+                    if (modX * modX + modZ * modZ < 1.0D) {
+                        for (int yy = yTo; yy > yFrom; yy--) {
+                            double modY = ((yy - 1) + 0.5D - y) / d4;
+                            if ((modY > -0.7D) && (modX * modX + modY * modY + modZ * modZ < 1.0D)) {
+                                Biome biome = Biome.getBiome(chunk.getBiomeId(xx, zz));
                                 if (!(biome instanceof CaveBiome)) {
                                     continue;
                                 }
 
-                                int material = chunk.getBlockId(local_x, local_y, local_z);
-                                int materialAbove = chunk.getBlockId(local_x, local_y + 1, local_z);
+                                int material = chunk.getBlockId(xx, yy, zz);
+                                int materialAbove = chunk.getBlockId(xx, yy + 1, zz);
                                 if (material == Block.GRASS || material == Block.MYCELIUM) {
                                     grassFound = true;
                                 }
+                                //TODO: check this
 //								if (this.isSuitableBlock(material, materialAbove, biome))
                                 {
-                                    if (local_y - 1 < 10) {
-                                        chunk.setBlock(local_x, local_y, local_z, Block.LAVA);
+                                    if (yy - 1 < 10) {
+                                        chunk.setBlock(xx, yy, zz, Block.LAVA);
                                     } else {
-                                        chunk.setBlock(local_x, local_y, local_z, Block.AIR);
+                                        chunk.setBlock(xx, yy, zz, Block.AIR);
 
                                         // If grass was just deleted, try to
                                         // move it down
-                                        if (grassFound && (chunk.getBlockId(local_x, local_y - 1, local_z) == Block.DIRT)) {
-                                            chunk.setBlock(local_x, local_y - 1, local_z, ((CaveBiome) biome).getSurfaceBlock());
+                                        if (grassFound && (chunk.getBlockId(xx, yy - 1, zz) == Block.DIRT)) {
+                                            chunk.setBlock(xx, yy - 1, zz, ((CaveBiome) biome).getSurfaceBlock());
                                         }
                                     }
                                 }
@@ -217,35 +215,47 @@ public class PopulatorCaves extends Populator {
                     }
                 }
             }
-            if (isLargeCave)
+
+            if (isLargeCave) {
                 break;
+            }
         }
     }
 
-    protected boolean isSuitableBlock(int material, int materialAbove, CaveBiome biome) {
-        if (material == biome.getStoneBlock()) {
+    protected boolean isSuitableBlock(int block, int blockAbove, Biome biome) {
+        if (!(biome instanceof CaveBiome)) {
+            return false;
+        }
+
+        CaveBiome caveBiome = (CaveBiome) biome;
+
+        if (block == caveBiome.getStoneBlock()) {
             return true;
         }
-        if (material == Block.SAND || material == Block.GRAVEL) {
-            return !(materialAbove == Block.WATER || materialAbove == Block.STILL_WATER ||
-                    materialAbove == Block.LAVA || materialAbove == Block.STILL_LAVA);
+
+        if (block == Block.SAND || block == Block.GRAVEL) {
+            return !(blockAbove == Block.WATER || blockAbove == Block.STILL_WATER || blockAbove == Block.LAVA || blockAbove == Block.STILL_LAVA);
         }
-        if (material == biome.getGroundBlock()) {
+
+        if (block == caveBiome.getGroundBlock()) {
             return true;
         }
-        if (material == biome.getSurfaceBlock()) {
+
+        if (block == caveBiome.getSurfaceBlock()) {
             return true;
         }
 
         // Few hardcoded cases
-        if (material == Block.HARDENED_CLAY) {
+        if (block == Block.HARDENED_CLAY) {
             return true;
         }
-        if (material == Block.SANDSTONE) {
+
+        if (block == Block.SANDSTONE) {
             return true;
         }
+
         // TODO: add red sandstone case in Minecraft 1.8
-        return material == Block.SNOW;
+        return block == Block.SNOW;
 
     }
 
