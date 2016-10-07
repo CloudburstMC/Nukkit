@@ -798,11 +798,11 @@ public abstract class Entity extends Location implements Metadatable {
         return false;
     }
 
-    public boolean entityBaseTick() {
+    protected boolean entityBaseTick() {
         return this.entityBaseTick(1);
     }
 
-    public boolean entityBaseTick(int tickDiff) {
+    protected boolean entityBaseTick(int tickDiff) {
         Timings.entityBaseTickTimer.startTiming();
         this.blocksAround = null;
         this.justCreated = false;

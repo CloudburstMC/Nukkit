@@ -165,7 +165,7 @@ public abstract class EntityFlyingMonster extends EntityFlying implements Entity
         return true;
     }
 
-    public boolean entityBaseTick(int tickDiff) {
+    protected boolean entityBaseTick(int tickDiff) {
         //Timings.timerEntityBaseTick.startTiming();
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
