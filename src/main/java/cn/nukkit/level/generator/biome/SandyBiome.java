@@ -29,9 +29,5 @@ public abstract class SandyBiome extends NormalBiome {
                 new BlockSandstone(),
                 new BlockSandstone()
         });
-
-        this.surfaceBlock = Block.SAND;
-        this.groundBlock = Block.SAND;
-        this.stoneBlock = Block.SANDSTONE;
     }
 }
