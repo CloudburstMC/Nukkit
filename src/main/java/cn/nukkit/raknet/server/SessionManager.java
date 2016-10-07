@@ -158,43 +158,42 @@ public class SessionManager {
             }
 
             ByteBuf byteBuf = datagramPacket.content();
+            if (byteBuf.readableBytes() == 0) {
+                // Exit early to process another packet
+                byteBuf.release();
+                return true;
+            }
             byte[] buffer = new byte[byteBuf.readableBytes()];
             byteBuf.readBytes(buffer);
-            datagramPacket.release();
+            byteBuf.release();
             int len = buffer.length;
             int port = datagramPacket.sender().getPort();
-            if (len > 0) {
-                this.receiveBytes += len;
 
-                byte pid = buffer[0];
+            this.receiveBytes += len;
 
-                if (pid == UNCONNECTED_PONG.ID) {
-                    return false;
-                }
+            byte pid = buffer[0];
 
-                Packet packet = this.getPacketFromPool(pid);
-                if (packet != null) {
-                    packet.buffer = buffer;
-                    this.getSession(source, port).handlePacket(packet);
-                    return true;
-                } else if (pid == UNCONNECTED_PING.ID) {
-                    packet = new UNCONNECTED_PING();
-                    packet.buffer = buffer;
-                    packet.decode();
+            if (pid == UNCONNECTED_PONG.ID) {
+                return false;
+            }
 
-                    UNCONNECTED_PONG pk = new UNCONNECTED_PONG();
-                    pk.serverID = this.getID();
-                    pk.pingID = ((UNCONNECTED_PING) packet).pingID;
-                    pk.serverName = this.getName();
-                    this.sendPacket(pk, source, port);
-                } else if (buffer.length != 0) {
-                    this.streamRAW(source, port, buffer);
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
+            Packet packet = this.getPacketFromPool(pid);
+            if (packet != null) {
+                packet.buffer = buffer;
+                this.getSession(source, port).handlePacket(packet);
                 return true;
+            } else if (pid == UNCONNECTED_PING.ID) {
+                packet = new UNCONNECTED_PING();
+                packet.buffer = buffer;
+                packet.decode();
+
+                UNCONNECTED_PONG pk = new UNCONNECTED_PONG();
+                pk.serverID = this.getID();
+                pk.pingID = ((UNCONNECTED_PING) packet).pingID;
+                pk.serverName = this.getName();
+                this.sendPacket(pk, source, port);
+            } else {
+                return false;
             }
         }
 
