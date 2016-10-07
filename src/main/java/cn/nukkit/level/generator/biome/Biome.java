@@ -172,10 +172,4 @@ public abstract class Biome {
     }
 
     abstract public int getColor();
-
-    abstract public int getStoneBlock();
-
-    abstract public int getSurfaceBlock();
-
-    abstract public int getGroundBlock();
 }
