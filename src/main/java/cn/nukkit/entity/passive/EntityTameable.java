@@ -11,7 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * Author: BeYkeRYkt
  * Nukkit Project
  */
-public abstract class EntityTameable extends EntityAnimal implements EntityOwnable {
+public abstract class EntityTameable extends EntityWalkingAnimal implements EntityOwnable, EntityAnimal {
 
     public static final int DATA_TAMED_FLAG = 16;
     public static final int DATA_OWNER_NAME = 17;

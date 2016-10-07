@@ -17,5 +17,9 @@ public abstract class GrassyBiome extends NormalBiome {
                 new BlockDirt(),
                 new BlockDirt()
         });
+
+        this.surfaceBlock = Block.GRASS;
+        this.groundBlock = Block.DIRT;
+        this.stoneBlock = Block.STONE;
     }
 }
