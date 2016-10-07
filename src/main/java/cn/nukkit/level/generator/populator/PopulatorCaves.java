@@ -57,7 +57,7 @@ public class PopulatorCaves extends Populator {
         generateCaveNode(seed, chunk, x, y, z, 1.0F + this.random.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
     }
 
-    protected void generateCaveNode(long seed, FullChunk chunk, double x, double y, double z, float radius, float angelOffset, float angel, int angle, int maxAngle, double paramDouble4) {
+    protected void generateCaveNode(long seed, FullChunk chunk, double x, double y, double z, float radius, float angelOffset, float angel, int angle, int maxAngle, double scale) {
         int chunkX = chunk.getX();
         int chunkZ = chunk.getZ();
 
@@ -85,7 +85,7 @@ public class PopulatorCaves extends Populator {
 
         for (; angle < maxAngle; angle++) {
             double offsetXZ = 1.5D + MathHelper.sin(angle * 3.141593F / maxAngle) * radius * 1.0F;
-            double d4 = offsetXZ * paramDouble4;
+            double offsetY = offsetXZ * scale;
 
             float cos = MathHelper.cos(angel);
             float sin = MathHelper.sin(angel);
@@ -132,8 +132,8 @@ public class PopulatorCaves extends Populator {
             int xFrom = MathHelper.floor(x - offsetXZ) - chunkX * 16 - 1;
             int xTo = MathHelper.floor(x + offsetXZ) - chunkX * 16 + 1;
 
-            int yFrom = MathHelper.floor(y - d4) - 1;
-            int yTo = MathHelper.floor(y + d4) + 1;
+            int yFrom = MathHelper.floor(y - offsetY) - 1;
+            int yTo = MathHelper.floor(y + offsetY) + 1;
 
             int zFrom = MathHelper.floor(z - offsetXZ) - chunkZ * 16 - 1;
             int zTo = MathHelper.floor(z + offsetXZ) - chunkZ * 16 + 1;
@@ -183,7 +183,7 @@ public class PopulatorCaves extends Populator {
                     boolean grassFound = false;
                     if (modX * modX + modZ * modZ < 1.0D) {
                         for (int yy = yTo; yy > yFrom; yy--) {
-                            double modY = ((yy - 1) + 0.5D - y) / d4;
+                            double modY = ((yy - 1) + 0.5D - y) / offsetY;
                             if ((modY > -0.7D) && (modX * modX + modY * modY + modZ * modZ < 1.0D)) {
                                 Biome biome = Biome.getBiome(chunk.getBiomeId(xx, zz));
                                 if (!(biome instanceof CaveBiome)) {
