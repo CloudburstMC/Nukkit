@@ -31,7 +31,7 @@ public abstract class EntityFlyingAnimal extends EntityFlying implements EntityA
     }
 
     @Override
-    protected boolean entityBaseTick(int tickDiff) {
+    public boolean entityBaseTick(int tickDiff) {
         //Timings.timerEntityBaseTick.startTiming();
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);

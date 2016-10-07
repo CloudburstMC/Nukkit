@@ -177,7 +177,7 @@ public abstract class EntityMoving extends EntityCreature {
     }
 
     @Override
-    protected boolean entityBaseTick(int tickDiff) {
+    public boolean entityBaseTick(int tickDiff) {
         this.blocksAround = null;
         this.justCreated = false;
 

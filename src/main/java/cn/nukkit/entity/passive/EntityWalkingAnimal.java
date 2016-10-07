@@ -37,7 +37,7 @@ public abstract class EntityWalkingAnimal extends EntityWalking implements Entit
     }
 
     @Override
-    protected boolean entityBaseTick(int tickDiff) {
+    public boolean entityBaseTick(int tickDiff) {
         Timings.entityBaseTickTimer.startTiming();
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
