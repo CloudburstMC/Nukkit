@@ -165,6 +165,8 @@ public class McRegion extends BaseLevelProvider {
         }
         if (extraData != null) {
             stream.put(extraData.getBuffer());
+        } else {
+            stream.putLInt(0);
         }
         stream.put(tiles);
 

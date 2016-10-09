@@ -2,13 +2,9 @@ package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.item.enchantment.EnchantmentDurability;
-import cn.nukkit.item.enchantment.EnchantmentFireAspect;
 import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.Tag;
-
 import java.util.Random;
 
 /**
@@ -101,7 +97,7 @@ public abstract class ItemTool extends Item {
 
     private boolean canReduceDamage() {
         if (!hasEnchantments()) {
-            return false;
+            return true;
         }
 
         Enchantment durability = getEnchantment(Enchantment.ID_DURABILITY);

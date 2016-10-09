@@ -39,9 +39,8 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     public DataPacket clean() {
         this.setBuffer(null);
-
+        this.setOffset(0);
         this.isEncoded = false;
-        this.offset = 0;
         return this;
     }
 

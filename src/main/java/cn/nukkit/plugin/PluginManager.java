@@ -454,10 +454,10 @@ public class PluginManager {
                     this.addPermission(permission);
                 }
                 plugin.getPluginLoader().enablePlugin(plugin);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 MainLogger logger = this.server.getLogger();
                 if (logger != null) {
-                    logger.logException(e);
+                    logger.logException(new RuntimeException(e));
                 }
                 this.disablePlugin(plugin);
             }
