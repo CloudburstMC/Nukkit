@@ -960,14 +960,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public boolean setGamemode(int gamemode) {
+        return this.setGamemode(gamemode, null);
+    }
+
+    public boolean setGamemode(int gamemode, AdventureSettings newSettings) {
         if (gamemode < 0 || gamemode > 3 || this.gamemode == gamemode) {
             return false;
         }
 
-        AdventureSettings newSettings = this.getAdventureSettings().clone(this);
-        newSettings.setCanDestroyBlock((gamemode & 0x02) == 0);
-        newSettings.setCanFly((gamemode & 0x01) > 0);
-        newSettings.setNoclip(gamemode == 0x03);
+        if (newSettings == null) {
+            newSettings = this.getAdventureSettings().clone(this);
+            newSettings.setCanDestroyBlock((gamemode & 0x02) == 0);
+            newSettings.setCanFly((gamemode & 0x01) > 0);
+            newSettings.setNoclip(gamemode == 0x03);
+        }
 
         PlayerGameModeChangeEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerGameModeChangeEvent(this, gamemode, newSettings));
