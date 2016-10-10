@@ -1002,7 +1002,7 @@ public class CraftingManager {
         String hash = "";
         for (Map<Integer, Item> v : ingredients.values()) {
             for (Item item : v.values()) {
-                if (item != null) {
+                if (item != null && item.getId() != Item.AIR) {
                     hash += item.getId() + ":" + (!item.hasMeta() ? "?" : item.getDamage()) + "x" + item.getCount() + ",";
                 }
             }
