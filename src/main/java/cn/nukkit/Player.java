@@ -69,6 +69,7 @@ import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
+
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -178,6 +179,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected int startAirTicks = 5;
 
     protected AdventureSettings adventureSettings;
+
+    protected boolean checkMovement = true;
 
     private final Map<Integer, Boolean> needACK = new HashMap<>();
 
@@ -1246,7 +1249,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             double diff = (diffX * diffX + diffY * diffY + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
 
-            if (!server.getAllowFlight() && this.isSurvival()) {
+            if (this.checkMovement && !server.getAllowFlight() && this.isSurvival()) {
                 if (!this.isSleeping()) {
                     if (diff > 0.125) {
                         PlayerInvalidMoveEvent ev;
@@ -1280,7 +1283,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.level);
         Location to = this.getLocation();
 
-        if (!revert && (Math.pow(this.lastX - to.x, 2) + Math.pow(this.lastY - to.y, 2) + Math.pow(this.lastZ - to.z, 2)) > (1/16) || (Math.abs(this.lastYaw - to.yaw) + Math.abs(this.lastPitch - to.pitch)) > 10) {
+        if (!revert && (Math.pow(this.lastX - to.x, 2) + Math.pow(this.lastY - to.y, 2) + Math.pow(this.lastZ - to.z, 2)) > (1d / 16d) || (Math.abs(this.lastYaw - to.yaw) + Math.abs(this.lastPitch - to.pitch)) > 10) {
             boolean isFirst = this.firstMove;
 
             this.firstMove = false;
@@ -1570,13 +1573,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.playedBefore = (nbt.getLong("lastPlayed") - nbt.getLong("firstPlayed")) > 1;
 
         boolean alive = true;
-        
+
         nbt.putString("NameTag", this.username);
 
         if (0 >= nbt.getShort("Health")) {
-        	alive = false;
+            alive = false;
         }
-        
+
         int exp = nbt.getInt("EXP");
         int expLevel = nbt.getInt("expLevel");
         this.setExperience(exp, expLevel);
@@ -4039,6 +4042,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         ChangeDimensionPacket pk = new ChangeDimensionPacket();
         pk.dimension = (byte) (getLevel().getDimension() & 0xff);
         this.dataPacket(pk);
+    }
+
+    public void setCheckMovement(boolean checkMovement) {
+        this.checkMovement = checkMovement;
     }
 
     public synchronized void setLocale(Locale locale) {

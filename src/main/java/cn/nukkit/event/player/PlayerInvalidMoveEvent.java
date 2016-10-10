@@ -8,8 +8,8 @@ import cn.nukkit.event.HandlerList;
  * call when a player moves wrongly
  *
  * @author WilliamGao
- * @version 0.1 (23/11/2015)
  */
+
 public class PlayerInvalidMoveEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -29,6 +29,10 @@ public class PlayerInvalidMoveEvent extends PlayerEvent implements Cancellable {
         return this.revert;
     }
 
+    /**
+     * @deprecated If you just simply want to disable the movement check, please use {@link Player#setCheckMovement(boolean)} instead.
+     */
+    @Deprecated
     public void setRevert(boolean revert) {
         this.revert = revert;
     }
