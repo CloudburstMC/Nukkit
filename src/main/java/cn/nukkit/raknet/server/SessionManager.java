@@ -143,16 +143,10 @@ public class SessionManager {
     private boolean receivePacket() throws Exception {
         DatagramPacket datagramPacket = this.socket.readPacket();
         if (datagramPacket != null) {
-            ByteBuf byteBuf = datagramPacket.content();
-            byte[] buffer = new byte[byteBuf.readableBytes()];
-            byteBuf.readBytes(buffer);
-            byteBuf.release();
-            int len = buffer.length;
-            String source = datagramPacket.sender().getHostString();
-            currentSource = source; //in order to block address
-            int port = datagramPacket.sender().getPort();
-            if (len > 0) {
-                this.receiveBytes += len;
+            // Check this early
+            try {
+                String source = datagramPacket.sender().getHostString();
+                currentSource = source; //in order to block address
                 if (this.block.containsKey(source)) {
                     return true;
                 }
@@ -162,6 +156,18 @@ public class SessionManager {
                 } else {
                     this.ipSec.put(source, 1);
                 }
+
+                ByteBuf byteBuf = datagramPacket.content();
+                if (byteBuf.readableBytes() == 0) {
+                    // Exit early to process another packet
+                    return true;
+                }
+                byte[] buffer = new byte[byteBuf.readableBytes()];
+                byteBuf.readBytes(buffer);
+                int len = buffer.length;
+                int port = datagramPacket.sender().getPort();
+
+                this.receiveBytes += len;
 
                 byte pid = buffer[0];
 
@@ -184,12 +190,11 @@ public class SessionManager {
                     pk.pingID = ((UNCONNECTED_PING) packet).pingID;
                     pk.serverName = this.getName();
                     this.sendPacket(pk, source, port);
-                } else if (buffer.length != 0) {
-                    this.streamRAW(source, port, buffer);
-                    return true;
                 } else {
                     return false;
                 }
+            } finally {
+                datagramPacket.release();
             }
         }
 

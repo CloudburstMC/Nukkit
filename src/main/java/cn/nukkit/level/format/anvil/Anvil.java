@@ -135,11 +135,17 @@ public class Anvil extends BaseLevelProvider {
             }
         }
 
-        BinaryStream extraData = new BinaryStream();
-        extraData.putLInt(chunk.getBlockExtraDataArray().size());
-        for (Integer key : chunk.getBlockExtraDataArray().values()) {
-            extraData.putLInt(key);
-            extraData.putLShort(chunk.getBlockExtraDataArray().get(key));
+        Map<Integer, Integer> extra = chunk.getBlockExtraDataArray();
+        BinaryStream extraData;
+        if (!extra.isEmpty()) {
+            extraData = new BinaryStream();
+            extraData.putLInt(extra.size());
+            for (Map.Entry<Integer, Integer> entry : extra.entrySet()) {
+                extraData.putLInt(entry.getKey());
+                extraData.putLShort(entry.getValue());
+            }
+        } else {
+            extraData = null;
         }
 
         BinaryStream stream = new BinaryStream();
@@ -153,7 +159,11 @@ public class Anvil extends BaseLevelProvider {
         for (int color : chunk.getBiomeColorArray()) {
             stream.put(Binary.writeInt(color));
         }
-        stream.put(extraData.getBuffer());
+        if (extraData != null) {
+            stream.put(extraData.getBuffer());
+        } else {
+            stream.putLInt(0);
+        }
         stream.put(blockEntities);
 
         this.getLevel().chunkRequestCallback(x, z, stream.getBuffer(), FullChunkDataPacket.ORDER_LAYERED);

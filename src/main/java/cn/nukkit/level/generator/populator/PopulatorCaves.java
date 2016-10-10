@@ -20,11 +20,11 @@ public class PopulatorCaves extends Populator {
 
     private Random random;
 
-    public static int caveRarity = 2;//7
-    public static int caveFrequency = 20;//40
+    public static int caveRarity = 7;//7
+    public static int caveFrequency = 40;//40
     public static int caveMinAltitude = 8;
     public static int caveMaxAltitude = 128;
-    public static int individualCaveRarity = 20;//25
+    public static int individualCaveRarity = 25;//25
     public static int caveSystemFrequency = 1;
     public static int caveSystemPocketChance = 0;
     public static int caveSystemPocketMinSize = 0;

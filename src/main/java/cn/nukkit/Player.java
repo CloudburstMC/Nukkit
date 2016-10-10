@@ -960,14 +960,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public boolean setGamemode(int gamemode) {
+        return this.setGamemode(gamemode, null);
+    }
+
+    public boolean setGamemode(int gamemode, AdventureSettings newSettings) {
         if (gamemode < 0 || gamemode > 3 || this.gamemode == gamemode) {
             return false;
         }
 
-        AdventureSettings newSettings = this.getAdventureSettings().clone(this);
-        newSettings.setCanDestroyBlock((gamemode & 0x02) == 0);
-        newSettings.setCanFly((gamemode & 0x01) > 0);
-        newSettings.setNoclip(gamemode == 0x03);
+        if (newSettings == null) {
+            newSettings = this.getAdventureSettings().clone(this);
+            newSettings.setCanDestroyBlock((gamemode & 0x02) == 0);
+            newSettings.setCanFly((gamemode & 0x01) > 0);
+            newSettings.setNoclip(gamemode == 0x03);
+        }
 
         PlayerGameModeChangeEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerGameModeChangeEvent(this, gamemode, newSettings));
@@ -2755,16 +2761,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         for (Recipe r : recipes) {
                             if (r instanceof ShapedRecipe) {
                                 Map<Integer, Map<Integer, Item>> ingredients = ((ShapedRecipe) r).getIngredientMap();
-
                                 for (Map<Integer, Item> map : ingredients.values()) {
                                     for (Item ingredient : map.values()) {
-                                        if (!this.inventory.contains(ingredient)) {
-                                            canCraft = false;
-                                            break;
-                                        }
+                                        if (ingredient != null && ingredient.getId() != Item.AIR) {
+                                            if (!this.inventory.contains(ingredient)) {
+                                                canCraft = false;
+                                                break;
+                                            }
 
-                                        ingredientz.add(ingredient);
-                                        this.inventory.removeItem(ingredient);
+                                            ingredientz.add(ingredient);
+                                            this.inventory.removeItem(ingredient);
+                                        }
                                     }
                                 }
 
@@ -2786,7 +2793,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             this.inventory.addItem(recipe.getResult());
                         } else {
-                            this.server.getLogger().debug("Unmatched desktop recipe " + craftingEventPacket.id + " from player " + this.getName());
+                            this.server.getLogger().debug("(1) Unmatched desktop recipe " + craftingEventPacket.id + " from player " + this.getName());
                             this.inventory.sendContents(this);
                         }
                     } else {
@@ -2926,7 +2933,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Item result = craftingEventPacket.output[0];
 
                         if (!canCraft || !recipe.getResult().deepEquals(result)) {
-                            this.server.getLogger().debug("Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": expected " + recipe.getResult() + ", got " + result + ", using: " + Arrays.asList(ingredients).toString());
+                            this.server.getLogger().debug("(2) Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": expected " + recipe.getResult() + ", got " + result + ", using: " + Arrays.asList(ingredients).toString());
                             this.inventory.sendContents(this);
                             break;
                         }
@@ -2951,7 +2958,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
 
                         if (!canCraft) {
-                            this.server.getLogger().debug("Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": client does not have enough items, using: " + Arrays.asList(ingredients).toString());
+                            this.server.getLogger().debug("(3) Unmatched recipe " + recipe.getId() + " from player " + this.getName() + ": client does not have enough items, using: " + Arrays.asList(ingredients).toString());
                             this.inventory.sendContents(this);
                             break;
                         }

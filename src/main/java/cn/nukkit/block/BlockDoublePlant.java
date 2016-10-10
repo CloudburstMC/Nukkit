@@ -47,15 +47,15 @@ public class BlockDoublePlant extends BlockFlowable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if ((this.meta & 0x08) == 8) {
-                // top
+                // Top
                 if (!(this.getSide(0).getId() == DOUBLE_PLANT)) {
-                    this.getLevel().useBreakOn(this); // Using useBreakOn.getSide(Vector3.SIDE_DOWN) doesn't work... trust me I tried.
+                    this.getLevel().setBlock(this, new BlockAir(), true, true);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             } else {
-                // bottom
+                // Bottom
                 if (this.getSide(0).isTransparent() || !(this.getSide(1).getId() == DOUBLE_PLANT)) {
-                    // this.getLevel().useBreakOn(this);
+                    this.getLevel().useBreakOn(this);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             }
@@ -68,8 +68,6 @@ public class BlockDoublePlant extends BlockFlowable {
         Block down = getSide(Vector3.SIDE_DOWN);
         Block up = getSide(Vector3.SIDE_UP);
 
-        // If physics are enabled, the double plant will drop two flowers on place
-        // TODO: Fixing without breaking physics
         if (up.getId() == 0 && (down.getId() == GRASS || down.getId() == DIRT)) {
             this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
             this.getLevel().setBlock(up, new BlockDoublePlant(meta ^ 0x08), true, true);
@@ -82,21 +80,11 @@ public class BlockDoublePlant extends BlockFlowable {
     @Override
     public boolean onBreak(Item item) {
         Block down = getSide(Vector3.SIDE_DOWN);
-        Block up = getSide(Vector3.SIDE_UP);
 
-        if ((this.meta & 0x08) == 0x08) { // top part
-            if (up.getId() == this.getId() && up.meta != 0x08) {
-                this.getLevel().setBlock(up, new BlockAir(), true, true);
-            } else if (down.getId() == this.getId() && down.meta != 0x08) {
-                this.getLevel().setBlock(down, new BlockAir(), true, true);
-                this.getLevel().dropItem(this, new Item(Item.DOUBLE_PLANT, down.meta, 1)); // So hacky...
-            }
-        } else { // Bottom Part
-            if (up.getId() == this.getId() && (up.meta & 0x08) == 0x08) {
-                this.getLevel().setBlock(up, new BlockAir(), true, true);
-            } else if (down.getId() == this.getId() && (down.meta & 0x08) == 0x08) {
-                this.getLevel().setBlock(down, new BlockAir(), true, true);
-            }
+        if ((this.meta & 0x08) == 0x08) { // Top half
+            this.getLevel().useBreakOn(down);
+        } else {
+            this.getLevel().setBlock(this, new BlockAir(), true, true);
         }
 
         return true;
