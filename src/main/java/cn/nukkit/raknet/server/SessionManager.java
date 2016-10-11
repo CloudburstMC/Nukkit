@@ -190,6 +190,9 @@ public class SessionManager {
                     pk.pingID = ((UNCONNECTED_PING) packet).pingID;
                     pk.serverName = this.getName();
                     this.sendPacket(pk, source, port);
+                } else if (buffer.length != 0) {
+                    this.streamRAW(source, port, buffer);
+                    return true;
                 } else {
                     return false;
                 }
