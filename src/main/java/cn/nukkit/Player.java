@@ -468,6 +468,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.gamemode = this.server.getGamemode();
         this.setLevel(this.server.getDefaultLevel());
         this.viewDistance = this.server.getViewDistance();
+        this.chunkRadius = viewDistance;
         //this.newPosition = new Vector3(0, 0, 0);
         this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
