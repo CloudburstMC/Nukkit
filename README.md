@@ -21,6 +21,7 @@ __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 [![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/MagicDroidX)
 [![Gitter](https://img.shields.io/gitter/room/Nukkit/Nukkit.js.svg?style=flat)](https://gitter.im/Nukkit/Nukkit)
 [![Travis](https://img.shields.io/travis/Nukkit/Nukkit.svg?style=flat)](https://travis-ci.org/Nukkit/Nukkit)
+[![Jenkins](https://img.shields.io/jenkins/s/https/ci.itxtech.org/Nukkit.svg)](https://ci.itxtech.org/job/Nukkit/lastSuccessfulBuild/)
 
 -------------
 
@@ -28,6 +29,7 @@ Get Nukkit
 -------------
 * __[Official Site](https://nukkit.io)__
 * __[Circle CI](https://circleci.com/gh/Nukkit/Nukkit/tree/master/)__ (**login required**)
+* __[Jenkins](https://ci.itxtech.org/job/Nukkit/lastSuccessfulBuild/)
 
 Introduction
 -------------
