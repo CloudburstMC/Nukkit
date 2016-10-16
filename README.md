@@ -29,7 +29,7 @@ Get Nukkit
 -------------
 * __[Official Site](https://nukkit.io)__
 * __[Circle CI](https://circleci.com/gh/Nukkit/Nukkit/tree/master/)__ (**login required**)
-* __[Jenkins](https://ci.itxtech.org/job/Nukkit/lastSuccessfulBuild/)
+* __[Jenkins](https://ci.itxtech.org/job/Nukkit/lastSuccessfulBuild/)__
 
 Introduction
 -------------
