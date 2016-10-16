@@ -398,8 +398,9 @@ public class Binary {
     }
 
     public static byte[][] splitBytes(byte[] bytes, int chunkSize) {
-        byte[][] splits = new byte[1024][chunkSize];
+        byte[][] splits = new byte[(bytes.length + chunkSize - 1) / chunkSize][chunkSize];
         int chunks = 0;
+
         for (int i = 0; i < bytes.length; i += chunkSize) {
             if ((bytes.length - i) > chunkSize) {
                 splits[chunks] = Arrays.copyOfRange(bytes, i, i + chunkSize);
@@ -408,8 +409,6 @@ public class Binary {
             }
             chunks++;
         }
-
-        splits = Arrays.copyOf(splits, chunks);
 
         return splits;
     }
