@@ -4,7 +4,7 @@ package cn.nukkit.level.format;
  * author: MagicDroidX
  * Nukkit Project
  */
-public interface ChunkSection {
+public interface ChunkSection extends Cloneable {
     int getY();
 
     int getBlockId(int x, int y, int z);
@@ -46,4 +46,6 @@ public interface ChunkSection {
     byte[] getSkyLightArray();
 
     byte[] getLightArray();
+
+    ChunkSection clone();
 }

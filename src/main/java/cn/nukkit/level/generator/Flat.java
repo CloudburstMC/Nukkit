@@ -3,14 +3,13 @@ package cn.nukkit.level.generator;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.level.generator.populator.PopulatorOre;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +29,6 @@ public class Flat extends Generator {
 
     private ChunkManager level;
 
-    private BaseFullChunk chunk;
-
     private NukkitRandom random;
 
     private final List<Populator> populators = new ArrayList<>();
@@ -43,6 +40,10 @@ public class Flat extends Generator {
     private int floorLevel;
 
     private String preset;
+
+    private boolean init = false;
+
+    private int biome;
 
     @Override
     public ChunkManager getChunkManager() {
@@ -66,7 +67,6 @@ public class Flat extends Generator {
     public Flat(Map<String, Object> options) {
         this.preset = "2;7,2x3,2;1;";
         this.options = options;
-        this.chunk = null;
 
         if (this.options.containsKey("decoration")) {
             PopulatorOre ores = new PopulatorOre();
@@ -90,7 +90,7 @@ public class Flat extends Generator {
             String[] presetArray = preset.split(";");
             int version = Integer.valueOf(presetArray[0]);
             String blocks = presetArray.length > 1 ? presetArray[1] : "";
-            int biome = presetArray.length > 2 ? Integer.valueOf(presetArray[2]) : 1;
+            this.biome = presetArray.length > 2 ? Integer.valueOf(presetArray[2]) : 1;
             String options = presetArray.length > 3 ? presetArray[1] : "";
             this.structure = new int[256][];
             int y = 0;
@@ -121,29 +121,10 @@ public class Flat extends Generator {
                     this.structure[cY] = new int[]{id, meta};
                 }
             }
-
             this.floorLevel = y;
             for (; y <= 0xFF; ++y) {
                 this.structure[y] = new int[]{0, 0};
             }
-
-            this.chunk = this.level.getChunk(chunkX, chunkZ).clone();
-            this.chunk.setGenerated();
-            int c = Biome.getBiome(biome).getColor();
-            int R = c >> 16;
-            int G = (c >> 8) & 0xff;
-            int B = c & 0xff;
-
-            for (int Z = 0; Z < 16; ++Z) {
-                for (int X = 0; X < 16; ++X) {
-                    this.chunk.setBiomeId(X, Z, biome);
-                    this.chunk.setBiomeColor(X, Z, R, G, B);
-                    for (y = 0; y < 128; ++y) {
-                        this.chunk.setBlock(X, y, Z, this.structure[y][0], this.structure[y][1]);
-                    }
-                }
-            }
-
             for (String option : options.split(",")) {
                 if (Pattern.matches("^[0-9a-z_]+$", option)) {
                     this.options.put(option, true);
@@ -158,7 +139,6 @@ public class Flat extends Generator {
                     this.options.put(name, map);
                 }
             }
-
         } catch (Exception e) {
             Server.getInstance().getLogger().error("error while parsing the preset", e);
             throw new RuntimeException(e);
@@ -173,17 +153,36 @@ public class Flat extends Generator {
 
     @Override
     public void generateChunk(int chunkX, int chunkZ) {
-        if (this.chunk == null) {
+        if (!this.init) {
+            init = true;
             if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
                 this.parsePreset((String) this.options.get("preset"), chunkX, chunkZ);
             } else {
                 this.parsePreset(this.preset, chunkX, chunkZ);
             }
         }
-        BaseFullChunk chunk = this.chunk.clone();
-        chunk.setX(chunkX);
-        chunk.setZ(chunkZ);
-        this.level.setChunk(chunkX, chunkZ, chunk);
+        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
+        this.generateChunk(chunk);
+    }
+
+    private void generateChunk(FullChunk chunk) {
+        chunk.setGenerated();
+        int c = Biome.getBiome(biome).getColor();
+        int R = c >> 16;
+        int G = (c >> 8) & 0xff;
+        int B = c & 0xff;
+
+        for (int Z = 0; Z < 16; ++Z) {
+            for (int X = 0; X < 16; ++X) {
+                chunk.setBiomeId(X, Z, biome);
+                chunk.setBiomeColor(X, Z, R, G, B);
+                for (int y = 0; y < 128; ++y) {
+                    int k = this.structure[y][0];
+                    int l = this.structure[y][1];
+                    chunk.setBlock(X, y, Z, this.structure[y][0], this.structure[y][1]);
+                }
+            }
+        }
     }
 
     @Override

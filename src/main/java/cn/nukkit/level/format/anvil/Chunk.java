@@ -8,6 +8,8 @@ import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.stream.NBTOutputStream;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
@@ -15,6 +17,7 @@ import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Zlib;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -29,7 +32,23 @@ import java.util.Map;
  */
 public class Chunk extends BaseChunk {
 
-    protected final CompoundTag nbt;
+    protected CompoundTag nbt;
+
+    @Override
+    public BaseChunk clone() {
+        Chunk chunk = (Chunk) super.clone();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        NBTOutputStream out = new NBTOutputStream(baos);
+        try {
+            nbt.write(out);
+            NBTInputStream in = new NBTInputStream(new ByteArrayInputStream(baos.toByteArray()));
+            chunk.nbt = new CompoundTag();
+            chunk.nbt.load(in);
+        } catch (IOException e) {
+
+        }
+        return chunk;
+    }
 
     public Chunk(LevelProvider level) {
         this(level, null);

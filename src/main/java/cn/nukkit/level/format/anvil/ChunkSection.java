@@ -11,10 +11,10 @@ import java.nio.ByteBuffer;
 public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     private final int y;
-    private final byte[] blocks;
-    private final byte[] data;
-    private final byte[] blockLight;
-    private final byte[] skyLight;
+    private byte[] blocks;
+    private byte[] data;
+    private byte[] blockLight;
+    private byte[] skyLight;
 
     public ChunkSection(CompoundTag nbt) {
         this.y = nbt.getByte("Y");
@@ -235,4 +235,19 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         return this.blockLight;
     }
 
+    @Override
+    public ChunkSection clone() {
+        ChunkSection section;
+        try {
+            section = (ChunkSection) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+        section.skyLight = this.skyLight.clone();
+        section.blockLight = this.blockLight.clone();
+        section.blocks = this.blocks.clone();
+        section.data = this.data.clone();
+        return section;
+    }
 }

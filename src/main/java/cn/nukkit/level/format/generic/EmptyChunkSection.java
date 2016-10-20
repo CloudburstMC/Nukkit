@@ -123,4 +123,8 @@ public class EmptyChunkSection implements ChunkSection {
         throw new ChunkException("Tried to modify an empty Chunk");
     }
 
+    @Override
+    public ChunkSection clone() {
+        return this;
+    }
 }
