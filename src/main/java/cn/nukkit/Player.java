@@ -680,7 +680,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.getAdventureSettings().update();
 
         this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getDisplayName(), this.getSkin());
-        this.server.sendFullPlayerListData(this, false);
+        this.server.sendFullPlayerListData(this);
 
         this.sendPotionEffects(this);
         this.sendData(this);
@@ -1639,7 +1639,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        this.server.addOnlinePlayer(this, false);
+        this.server.addOnlinePlayer(this);
         this.loggedIn = true;
 
         if (this.isCreative()) {

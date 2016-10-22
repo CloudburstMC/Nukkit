@@ -813,15 +813,8 @@ public class Server {
     }
 
     public void addOnlinePlayer(Player player) {
-        this.addOnlinePlayer(player, true);
-    }
-
-    public void addOnlinePlayer(Player player, boolean update) {
         this.playerList.put(player.getUniqueId(), player);
-
-        if (update) {
-            this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin());
-        }
+        this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin());
     }
 
     public void removeOnlinePlayer(Player player) {
@@ -867,22 +860,17 @@ public class Server {
     }
 
     public void sendFullPlayerListData(Player player) {
-        this.sendFullPlayerListData(player, false);
-    }
-
-    public void sendFullPlayerListData(Player player, boolean self) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        List<PlayerListPacket.Entry> entries = new ArrayList<>();
-        for (Player p : this.playerList.values()) {
-            if (!self && p == player) {
-                continue;
-            }
-
-            entries.add(new PlayerListPacket.Entry(p.getUniqueId(), p.getId(), p.getDisplayName(), p.getSkin()));
-        }
-
-        pk.entries = entries.stream().toArray(PlayerListPacket.Entry[]::new);
+        pk.entries = this.playerList
+                .values()
+                .stream()
+                .map(p -> new PlayerListPacket.Entry(
+                        p.getUniqueId(),
+                        p.getId(),
+                        p.getDisplayName(),
+                        p.getSkin()))
+                .toArray(PlayerListPacket.Entry[]::new);
 
         player.dataPacket(pk);
     }
