@@ -26,15 +26,15 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
     public static final int RIGHT_CLICK_AIR = 3;
     public static final int PHYSICAL = 4;
 
-    protected final Block blockTouched;
+    protected Block blockTouched;
 
-    protected final Vector3 touchVector;
+    protected Vector3 touchVector;
 
-    protected final int blockFace;
+    protected int blockFace;
 
-    protected final Item item;
+    protected Item item;
 
-    protected final int action;
+    protected int action;
 
     public PlayerInteractEvent(Player player, Item item, Vector3 block, int face) {
         this(player, item, block, face, RIGHT_CLICK_BLOCK);
@@ -73,5 +73,14 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
 
     public int getFace() {
         return blockFace;
+    }
+
+    public void reset(Player player, Item item, Block block, int face, int action) {
+        this.blockTouched = (Block) block;
+        this.player = player;
+        this.item = item;
+        this.blockFace = face;
+        this.action = action;
+        this.setCancelled(false);
     }
 }

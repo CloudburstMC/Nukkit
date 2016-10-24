@@ -125,6 +125,17 @@ public class HandlerList {
         return handlers;
     }
 
+    public ArrayList<RegisteredListener> getRegisteredListeners(EventPriority... priorities) {
+        ArrayList<RegisteredListener> result = new ArrayList<>();
+        for (EventPriority priority : priorities) {
+            ArrayList<RegisteredListener> list = handlerslots.get(priority);
+            if (list != null) {
+                result.addAll(list);
+            }
+        }
+        return result;
+    }
+
 
     public static ArrayList<RegisteredListener> getRegisteredListeners(Plugin plugin) {
         ArrayList<RegisteredListener> listeners = new ArrayList<>();

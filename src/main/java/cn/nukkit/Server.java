@@ -65,9 +65,9 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
+import cn.nukkit.service.ServiceManager;
 import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.*;
-
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -96,6 +96,8 @@ public class Server {
     private boolean hasStopped = false;
 
     private PluginManager pluginManager = null;
+
+    private ServiceManager serviceManager = null;
 
     private int profilingTickrate = 20;
 
@@ -367,6 +369,8 @@ public class Server {
         Attribute.init();
 
         this.craftingManager = new CraftingManager();
+
+        this.serviceManager = new ServiceManager();
 
         this.pluginManager = new PluginManager(this, this.commandMap);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
@@ -1281,6 +1285,10 @@ public class Server {
 
     public LevelMetadataStore getLevelMetadata() {
         return levelMetadata;
+    }
+
+    public ServiceManager getServiceManager() {
+        return this.serviceManager;
     }
 
     public PluginManager getPluginManager() {

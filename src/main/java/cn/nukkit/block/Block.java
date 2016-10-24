@@ -576,6 +576,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return this.getLevel().setBlock(this, this, true, true);
     }
 
+    @Override
+    public Block getLevelBlock() {
+        return this;
+    }
+
     public boolean isBreakable(Item item) {
         return true;
     }
