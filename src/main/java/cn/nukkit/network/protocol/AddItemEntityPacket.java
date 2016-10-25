@@ -31,13 +31,10 @@ public class AddItemEntityPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putLong(this.eid);
+        this.putEntityId(this.eid);
+        this.putEntityId(this.eid);
         this.putSlot(this.item);
-        this.putFloat(this.x);
-        this.putFloat(this.y);
-        this.putFloat(this.z);
-        this.putFloat(this.speedX);
-        this.putFloat(this.speedY);
-        this.putFloat(this.speedZ);
+        this.putVector3f(x, y, z);
+        this.putVector3f(speedX, speedY, speedZ);
     }
 }

@@ -567,7 +567,7 @@ public class Server {
                 p.encode();
             }
             byte[] buf = p.getBuffer();
-            payload[i * 2] = Binary.writeInt(buf.length);
+            payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
             payload[i * 2 + 1] = buf;
         }
         byte[] data;

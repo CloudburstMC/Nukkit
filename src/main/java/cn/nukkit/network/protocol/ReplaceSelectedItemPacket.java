@@ -1,11 +1,15 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.item.Item;
+
 /**
  * Created by Pub4Game on 29.04.2016.
  */
 public class ReplaceSelectedItemPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.REPLACE_SELECTED_ITEM_PACKET;
+
+    public Item item;
 
     @Override
     public void decode() {
@@ -14,7 +18,8 @@ public class ReplaceSelectedItemPacket extends DataPacket {
 
     @Override
     public void encode() {
-
+        this.reset();
+        this.putSlot(item);
     }
 
     @Override

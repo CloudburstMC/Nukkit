@@ -82,7 +82,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private final Map<Long, BlockEntity> blockEntities = new HashMap<>();
 
-    private Map<Long, Map<Long, SetEntityMotionPacket.Entry>> motionToSend = new HashMap<>();
+    private Map<Long, Map<Long, SetEntityMotionPacket>> motionToSend = new HashMap<>();
     private Map<Long, Map<Long, MoveEntityPacket>> moveToSend = new HashMap<>();
     private Map<Long, Map<Long, MovePlayerPacket>> playerMoveToSend = new HashMap<>();
 
@@ -792,11 +792,10 @@ public class Level implements ChunkManager, Metadatable {
         for (long index : this.motionToSend.keySet()) {
             int chunkX = getHashX(index);
             int chunkZ = getHashZ(index);
-            SetEntityMotionPacket pk = new SetEntityMotionPacket();
-            pk.entities = this.motionToSend.get(index).values().stream().toArray(SetEntityMotionPacket.Entry[]::new);
-            this.addChunkPacket(chunkX, chunkZ, pk);
+            for (SetEntityMotionPacket packet : this.motionToSend.get(index).values()) {
+                this.addChunkPacket(chunkX, chunkZ, packet);
+            }
         }
-
         this.motionToSend.clear();
 
         for (long index : this.playerMoveToSend.keySet()) {
@@ -885,14 +884,12 @@ public class Level implements ChunkManager, Metadatable {
 
     public void sendBlocks(Player[] target, Vector3[] blocks, int flags, boolean optimizeRebuilds) {
         List<UpdateBlockPacket> packets = new ArrayList<>();
-        UpdateBlockPacket packet = null;
         if (optimizeRebuilds) {
             Map<Long, Boolean> chunks = new HashMap<>();
             for (Vector3 b : blocks) {
                 if (b == null) {
                     continue;
                 }
-                packet = new UpdateBlockPacket();
                 boolean first = false;
 
                 long index = Level.chunkHash((int) b.x >> 4, (int) b.z >> 4);
@@ -902,40 +899,51 @@ public class Level implements ChunkManager, Metadatable {
                 }
 
                 if (b instanceof Block) {
-                    List<UpdateBlockPacket.Entry> list = new ArrayList<>();
-                    Collections.addAll(list, packet.records);
-                    list.add(new UpdateBlockPacket.Entry((int) ((Block) b).x, (int) ((Block) b).z, (int) ((Block) b).y,
-                            ((Block) b).getId(), ((Block) b).getDamage(), first ? flags : UpdateBlockPacket.FLAG_NONE));
-                    packet.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
+                    UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+                    updateBlockPacket.x = (int) ((Block) b).x;
+                    updateBlockPacket.y = (int) ((Block) b).y;
+                    updateBlockPacket.z = (int) ((Block) b).z;
+                    updateBlockPacket.blockId = ((Block) b).getId();
+                    updateBlockPacket.blockData = ((Block) b).getDamage();
+                    updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
+                    packets.add(updateBlockPacket);
                 } else {
                     int fullBlock = this.getFullBlock((int) b.x, (int) b.y, (int) b.z);
-                    List<UpdateBlockPacket.Entry> list = new ArrayList<>();
-                    Collections.addAll(list, packet.records);
-                    list.add(new UpdateBlockPacket.Entry((int) b.x, (int) b.z, (int) b.y, fullBlock >> 4,
-                            fullBlock & 0xf, first ? flags : UpdateBlockPacket.FLAG_NONE));
-                    packet.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
+                    UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+                    updateBlockPacket.x = (int) b.x;
+                    updateBlockPacket.y = (int) b.y;
+                    updateBlockPacket.z = (int) b.z;
+                    updateBlockPacket.blockId = fullBlock >> 4;
+                    updateBlockPacket.blockData = fullBlock & 0xf;
+                    updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
+                    packets.add(updateBlockPacket);
                 }
-                packets.add(packet);
             }
         } else {
             for (Vector3 b : blocks) {
                 if (b == null) {
                     continue;
                 }
-                packet = new UpdateBlockPacket();
+                UpdateBlockPacket packet = new UpdateBlockPacket();
                 if (b instanceof Block) {
-                    List<UpdateBlockPacket.Entry> list = new ArrayList<>();
-                    Collections.addAll(list, packet.records);
-                    list.add(new UpdateBlockPacket.Entry((int) ((Block) b).x, (int) ((Block) b).z, (int) ((Block) b).y,
-                            ((Block) b).getId(), ((Block) b).getDamage(), flags));
-                    packet.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
+                    UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+                    updateBlockPacket.x = (int) ((Block) b).x;
+                    updateBlockPacket.y = (int) ((Block) b).y;
+                    updateBlockPacket.z = (int) ((Block) b).z;
+                    updateBlockPacket.blockId = ((Block) b).getId();
+                    updateBlockPacket.blockData = ((Block) b).getDamage();
+                    updateBlockPacket.flags = flags;
+                    packets.add(updateBlockPacket);
                 } else {
                     int fullBlock = this.getFullBlock((int) b.x, (int) b.y, (int) b.z);
-                    List<UpdateBlockPacket.Entry> list = new ArrayList<>();
-                    Collections.addAll(list, packet.records);
-                    list.add(new UpdateBlockPacket.Entry((int) b.x, (int) b.z, (int) b.y, fullBlock >> 4,
-                            fullBlock & 0xf, flags));
-                    packet.records = list.stream().toArray(UpdateBlockPacket.Entry[]::new);
+                    UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+                    updateBlockPacket.x = (int) b.x;
+                    updateBlockPacket.y = (int) b.y;
+                    updateBlockPacket.z = (int) b.z;
+                    updateBlockPacket.blockId = fullBlock >> 4;
+                    updateBlockPacket.blockData = fullBlock & 0xf;
+                    updateBlockPacket.flags = flags;
+                    packets.add(updateBlockPacket);
                 }
                 packets.add(packet);
             }
@@ -2767,12 +2775,17 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getLevelMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 
-    public void addEntityMotion(int chunkX, int chunkZ, long entityId, double x, double y, double z) {
+    public void addEntityMotion(int chunkX, int chunkZ, long entityId, double x, double y, double z){
         Long index = Level.chunkHash(chunkX, chunkZ);
         if (!this.motionToSend.containsKey(index)) {
             this.motionToSend.put(index, new HashMap<>());
         }
-        this.motionToSend.get(index).put(entityId, new SetEntityMotionPacket.Entry(entityId, x, y, z));
+        SetEntityMotionPacket pk = new SetEntityMotionPacket();
+        pk.eid = entityId;
+        pk.motionX = (float) x;
+        pk.motionY = (float) y;
+        pk.motionZ = (float) z;
+        this.motionToSend.get(index).put(entityId, pk);
     }
 
     public void addEntityMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw,

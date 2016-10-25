@@ -23,8 +23,8 @@ public class SetTimePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putInt(this.time);
-        this.putByte((byte) (this.started ? 1 : 0));
+        this.putVarInt(this.time);
+        this.putBoolean(this.started);
     }
 
 }

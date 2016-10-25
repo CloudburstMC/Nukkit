@@ -32,7 +32,7 @@ public abstract class BlockEntitySpawnable extends BlockEntity {
         pk.y = (int) this.y;
         pk.z = (int) this.z;
         try {
-            pk.namedTag = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
+            pk.namedTag = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

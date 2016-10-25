@@ -53,7 +53,7 @@ public class EntityMetadata {
     }
 
     public long getLong(int id) {
-        return (long) this.getOrDefault(id, new IntEntityData(id, 0)).getData();
+        return (Long) this.getOrDefault(id, new LongEntityData(id, 0)).getData();
     }
 
     public float getFloat(int id) {

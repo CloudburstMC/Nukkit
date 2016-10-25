@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.math.BlockVector3;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -19,18 +21,17 @@ public class BlockEntityDataPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.x = this.getInt();
-        this.y = this.getInt();
-        this.z = this.getInt();
+        BlockVector3 v = this.getBlockCoords();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
         this.namedTag = this.get();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putInt(this.x);
-        this.putInt(this.y);
-        this.putInt(this.z);
+        this.putBlockCoords(x, y, z);
         this.put(this.namedTag);
     }
 }

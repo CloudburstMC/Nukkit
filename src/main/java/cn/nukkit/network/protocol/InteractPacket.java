@@ -19,14 +19,14 @@ public class InteractPacket extends DataPacket {
     @Override
     public void decode() {
         action = (byte) getByte();
-        target = getLong();
+        target = getEntityId();
     }
 
     @Override
     public void encode() {
         reset();
         putByte(action);
-        putLong(target);
+        putEntityId(target);
     }
 
     @Override

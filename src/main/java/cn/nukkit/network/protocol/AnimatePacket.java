@@ -13,14 +13,14 @@ public class AnimatePacket extends DataPacket {
     @Override
     public void decode() {
         this.action = this.getByte();
-        this.eid = getLong();
+        this.eid = getEntityId();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putByte((byte) action);
-        this.putLong(eid);
+        this.putEntityId(eid);
     }
 
     @Override

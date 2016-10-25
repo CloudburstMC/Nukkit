@@ -24,16 +24,17 @@ public class UpdateAttributesPacket extends DataPacket {
     public void encode() {
         this.reset();
 
-        this.putLong(this.entityId);
+        this.putEntityId(this.entityId);
 
         if (this.entries == null) {
-            this.putShort(0);
+            this.putUnsignedVarInt(0);
         } else {
-            this.putShort(this.entries.length);
+            this.putUnsignedVarInt(this.entries.length);
             for (Attribute entry : this.entries) {
-                this.putFloat(entry.getMinValue());
-                this.putFloat(entry.getMaxValue());
-                this.putFloat(entry.getValue());
+                this.putLFloat(entry.getMinValue());
+                this.putLFloat(entry.getMaxValue());
+                this.putLFloat(entry.getValue());
+                this.putLFloat(entry.getDefaultValue());
                 this.putString(entry.getName());
             }
         }
