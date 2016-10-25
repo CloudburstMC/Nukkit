@@ -17,8 +17,8 @@ public class TakeItemEntityPacket extends DataPacket {
     @Override
     public void encode() {
         reset();
-        putEntityId(target);
-        putEntityId(entityId);
+        putLong(target);
+        putLong(entityId);
     }
 
     @Override

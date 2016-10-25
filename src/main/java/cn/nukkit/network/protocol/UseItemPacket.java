@@ -1,7 +1,6 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.math.BlockVector3;
 
 /**
  * @author Nukkit Project Team
@@ -35,14 +34,17 @@ public class UseItemPacket extends DataPacket {
 
     @Override
     public void decode() {
-        BlockVector3 v = this.getBlockCoords();
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
-        this.face = this.getVarInt();
-        this.putVector3f(fx, fy, fz);
-        this.putVector3f(posX, posY, posZ);
-        this.slot = this.getVarInt();
+        this.x = this.getInt();
+        this.y = this.getInt();
+        this.z = this.getInt();
+        this.face = this.getByte();
+        this.fx = this.getFloat();
+        this.fy = this.getFloat();
+        this.fz = this.getFloat();
+        this.posX = this.getFloat();
+        this.posY = this.getFloat();
+        this.posZ = this.getFloat();
+        this.slot = this.getInt();
         this.item = this.getSlot();
     }
 

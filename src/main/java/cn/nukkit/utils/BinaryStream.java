@@ -2,8 +2,6 @@ package cn.nukkit.utils;
 
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
-import cn.nukkit.math.BlockVector3;
-import cn.nukkit.math.Vector3f;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -250,16 +248,17 @@ public class BinaryStream {
     }
 
     public Item getSlot() {
-        int id = this.getVarInt();
+        short id = this.getSignedShort();
 
         if (id <= 0) {
             return Item.get(0, 0, 0);
         }
-        int auxValue = this.getVarInt();
-        int data = auxValue >> 8;
-        int cnt = auxValue & 0xff;
+        int cnt = this.getByte();
+
+        int data = this.getShort();
 
         int nbtLen = this.getLShort();
+
         byte[] nbt = new byte[0];
         if (nbtLen > 0) {
             nbt = this.get(nbtLen);
@@ -272,94 +271,27 @@ public class BinaryStream {
 
     public void putSlot(Item item) {
         if (item == null || item.getId() == 0) {
-            this.putVarInt(0);
+            this.putShort(0);
             return;
         }
 
-        this.putVarInt(item.getId());
-        int auxValue = (item.getDamage() << 8) | item.getCount();
-        this.putVarInt(auxValue);
+        this.putShort(item.getId());
+        this.putByte((byte) (item.getCount() & 0xff));
+        this.putShort(!item.hasMeta() ? -1 : item.getDamage());
+
         byte[] nbt = item.getCompoundTag();
         this.putLShort(nbt.length);
         this.put(nbt);
     }
 
     public String getString() {
-        return new String(this.get((int) this.getUnsignedVarInt()), StandardCharsets.UTF_8);
+        return new String(this.get(this.getShort()), StandardCharsets.UTF_8);
     }
 
     public void putString(String string) {
         byte[] b = string.getBytes(StandardCharsets.UTF_8);
-        this.putUnsignedVarInt(b.length);
+        this.putShort(b.length);
         this.put(b);
-    }
-
-    public long getUnsignedVarInt() {
-        return Binary.readUnsignedVarInt(this);
-    }
-
-    public void putUnsignedVarInt(long v) {
-        this.put(Binary.writeUnsignedVarInt(v));
-    }
-
-    public int getVarInt() {
-        return Binary.readVarInt(this);
-    }
-
-    public void putVarInt(int v) {
-        this.put(Binary.writeVarInt(v));
-    }
-
-    public int getSignedVarInt() {
-        return VarInt.readSInt32(this);
-    }
-
-    public void putSignedVarInt(int v) {
-        VarInt.writeSInt32(this, v);
-    }
-
-    public long getVarLong() {
-        return VarInt.readRawVarInt64(this, 64);
-    }
-
-    public void putVarLong(long v) {
-        VarInt.writeRawVarInt64(this, v);
-    }
-
-    public long getSignedVarLong() {
-        return VarInt.readSInt64(this);
-    }
-
-    public void putSignedVarLong(long v) {
-        VarInt.writeSInt64(this, v);
-    }
-
-    public long getEntityId() {
-        return this.getVarLong();
-    }
-
-    public void putEntityId(long v) {
-        this.putVarLong(v); //varlong?
-    }
-
-    public BlockVector3 getBlockCoords() {
-        return new BlockVector3(this.getSignedVarInt(), (int)this.getUnsignedVarInt(), this.getSignedVarInt());
-    }
-
-    public void putBlockCoords(int x, int y, int z) {
-        this.putSignedVarInt(x);
-        this.putUnsignedVarInt(y);
-        this.putSignedVarInt(z);
-    }
-
-    public Vector3f getVector3f() {
-        return new Vector3f(this.getLFloat(), this.getLFloat(), this.getLFloat());
-    }
-
-    public void putVector3f(float x, float y, float z) {
-        this.putLFloat(x);
-        this.putLFloat(y);
-        this.putLFloat(z);
     }
 
     public boolean feof() {

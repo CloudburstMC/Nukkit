@@ -23,8 +23,8 @@ public class SetEntityLinkPacket extends DataPacket {
     @Override
     public void encode() {
         reset();
-        putEntityId(rider);
-        putEntityId(riding);
+        putLong(rider);
+        putLong(riding);
         putByte(type);
     }
 

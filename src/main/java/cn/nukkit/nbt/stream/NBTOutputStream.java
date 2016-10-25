@@ -1,7 +1,5 @@
 package cn.nukkit.nbt.stream;
 
-import cn.nukkit.utils.Binary;
-
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,28 +14,18 @@ import java.nio.charset.StandardCharsets;
 public class NBTOutputStream implements DataOutput, AutoCloseable {
     private final DataOutputStream stream;
     private final ByteOrder endianness;
-    private final boolean network;
 
     public NBTOutputStream(OutputStream stream) {
         this(stream, ByteOrder.BIG_ENDIAN);
     }
 
     public NBTOutputStream(OutputStream stream, ByteOrder endianness) {
-        this(stream, endianness, false);
-    }
-
-    public NBTOutputStream(OutputStream stream, ByteOrder endianness, boolean network) {
         this.stream = stream instanceof DataOutputStream ? (DataOutputStream) stream : new DataOutputStream(stream);
         this.endianness = endianness;
-        this.network = network;
     }
 
     public ByteOrder getEndianness() {
         return endianness;
-    }
-
-    public boolean isNetwork() {
-        return network;
     }
 
     @Override
@@ -83,14 +71,10 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
 
     @Override
     public void writeInt(int v) throws IOException {
-        if (network) {
-            this.stream.write(Binary.writeVarInt(v));
-        } else {
-            if (endianness == ByteOrder.LITTLE_ENDIAN) {
-                v = Integer.reverseBytes(v);
-            }
-            this.stream.writeInt(v);
+        if (endianness == ByteOrder.LITTLE_ENDIAN) {
+            v = Integer.reverseBytes(v);
         }
+        this.stream.writeInt(v);
     }
 
     @Override
@@ -124,11 +108,7 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
     @Override
     public void writeUTF(String s) throws IOException {
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
-        if (network) {
-            this.writeByte(bytes.length);
-        } else {
-            this.writeShort(bytes.length);
-        }
+        this.writeShort(bytes.length);
         this.stream.write(bytes);
     }
 

@@ -13,17 +13,17 @@ public class RespawnPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.x = getLFloat();
-        this.y = getLFloat();
-        this.z = getLFloat();
+        this.x = getFloat();
+        this.y = getFloat();
+        this.z = getFloat();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putLFloat(this.x);
-        this.putLFloat(this.y);
-        this.putLFloat(this.z);
+        this.putFloat(this.x);
+        this.putFloat(this.y);
+        this.putFloat(this.z);
     }
 
     @Override

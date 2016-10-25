@@ -28,10 +28,10 @@ public class FullChunkDataPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(this.chunkX);
-        this.putVarInt(this.chunkZ);
+        this.putInt(this.chunkX);
+        this.putInt(this.chunkZ);
         this.putByte(this.order);
-        this.putUnsignedVarInt(this.data.length);
+        this.putInt(this.data.length);
         this.put(this.data);
     }
 }

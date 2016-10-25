@@ -1,8 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.Vector3;
-import cn.nukkit.math.Vector3f;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -73,9 +70,9 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_ADD_PARTICLE_MASK = 0x4000;
 
     public int evid;
-    public float x = 0;
-    public float y = 0;
-    public float z = 0;
+    public float x;
+    public float y;
+    public float z;
     public int data;
 
     @Override
@@ -85,19 +82,20 @@ public class LevelEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-        evid = this.getVarInt();
-        Vector3f v = this.getVector3f();
-        x = v.x;
-        y = v.y;
-        z = v.z;
-        data = getVarInt();
+        evid = this.getShort();
+        x = this.getFloat();
+        y = this.getFloat();
+        z = this.getFloat();
+        data = this.getInt();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(this.evid);
-        this.putVector3f(this.x, this.y, this.z);
-        this.putVarInt(this.data);
+        this.putShort(this.evid);
+        this.putFloat(this.x);
+        this.putFloat(this.y);
+        this.putFloat(this.z);
+        this.putInt(this.data);
     }
 }

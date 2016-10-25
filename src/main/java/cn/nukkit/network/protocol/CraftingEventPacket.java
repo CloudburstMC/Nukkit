@@ -22,16 +22,16 @@ public class CraftingEventPacket extends DataPacket {
     @Override
     public void decode() {
         windowId = getByte();
-        type = getVarInt();
+        type = getInt();
         id = getUUID();
 
-        int inputSize = (int) getUnsignedVarInt();
+        int inputSize = getInt();
         input = new Item[inputSize];
         for (int i = 0; i < inputSize && i < 128; ++i) {
             input[i] = getSlot();
         }
 
-        int outputSize = (int) getUnsignedVarInt();
+        int outputSize = getInt();
         output = new Item[outputSize];
         for (int i = 0; i < outputSize && i < 128; ++i) {
             output[i] = getSlot();

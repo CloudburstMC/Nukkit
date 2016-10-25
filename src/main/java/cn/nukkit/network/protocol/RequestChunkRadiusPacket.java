@@ -12,7 +12,7 @@ public class RequestChunkRadiusPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.radius = this.getVarInt();
+        this.radius = this.getInt();
     }
 
     @Override

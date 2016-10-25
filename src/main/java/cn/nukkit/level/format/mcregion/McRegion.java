@@ -133,7 +133,7 @@ public class McRegion extends BaseLevelProvider {
             }
 
             try {
-                tiles = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN, true);
+                tiles = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

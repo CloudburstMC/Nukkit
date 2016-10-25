@@ -17,7 +17,7 @@ public class ContainerSetContentPacket extends DataPacket {
     public static final byte SPECIAL_INVENTORY = 0;
     public static final byte SPECIAL_ARMOR = 0x78;
     public static final byte SPECIAL_CREATIVE = 0x79;
-    public static final byte SPECIAL_HOTBAR = 0x7a;
+    public static final byte SPECIAL_CRAFTING = 0x7a;
 
     public int windowid;
     public Item[] slots = new Item[0];
@@ -33,7 +33,7 @@ public class ContainerSetContentPacket extends DataPacket {
     @Override
     public void decode() {
         this.windowid = this.getByte();
-        int count = (int) this.getUnsignedVarInt();
+        int count = this.getShort();
         this.slots = new Item[count];
 
         for (int s = 0; s < count && !this.feof(); ++s) {
@@ -41,10 +41,10 @@ public class ContainerSetContentPacket extends DataPacket {
         }
 
         if (this.windowid == SPECIAL_INVENTORY) {
-            count = (int) this.getUnsignedVarInt();
+            count = this.getShort();
             this.hotbar = new int[count];
             for (int s = 0; s < count && !this.feof(); ++s) {
-                this.hotbar[s] = this.getVarInt();
+                this.hotbar[s] = this.getInt();
             }
         }
     }
@@ -53,15 +53,15 @@ public class ContainerSetContentPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte((byte) this.windowid);
-        this.putUnsignedVarInt(this.slots.length);
+        this.putShort(this.slots.length);
         for (Item slot : this.slots) {
             this.putSlot(slot);
         }
 
         if (this.windowid == SPECIAL_INVENTORY && this.hotbar.length > 0) {
-            this.putUnsignedVarInt(this.hotbar.length);
+            this.putShort(this.hotbar.length);
             for (int slot : this.hotbar) {
-                this.putVarInt(slot);
+                this.putInt(slot);
             }
         } else {
             this.putShort(0);

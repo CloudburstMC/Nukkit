@@ -16,12 +16,7 @@ public class UpdateBlockPacket extends DataPacket {
     public static final int FLAG_ALL = (FLAG_NEIGHBORS | FLAG_NETWORK);
     public static final int FLAG_ALL_PRIORITY = (FLAG_ALL | FLAG_PRIORITY);
 
-    public int x;
-    public int z;
-    public int y;
-    public int blockId;
-    public int blockData;
-    public int flags;
+    public Entry[] records = new Entry[0];
 
     @Override
     public byte pid() {
@@ -36,9 +31,13 @@ public class UpdateBlockPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putBlockCoords(x, y, z);
-        this.putUnsignedVarInt(blockId);
-        this.putUnsignedVarInt((0xb << 4) | blockData & 0xf);
+        for (Entry entry : this.records) {
+            this.putInt(entry.x);
+            this.putInt(entry.z);
+            this.putByte((byte) entry.y);
+            this.putByte((byte) entry.blockId);
+            this.putByte((byte) ((entry.flags << 4) | entry.blockData));
+        }
     }
 
     public static class Entry {

@@ -22,8 +22,10 @@ public class AddPaintingPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityId(eid);
-        this.putBlockCoords(x, y, z);
+        this.putLong(eid);
+        this.putInt(x);
+        this.putInt(y);
+        this.putInt(z);
         this.putInt(direction);
         this.putString(title);
     }

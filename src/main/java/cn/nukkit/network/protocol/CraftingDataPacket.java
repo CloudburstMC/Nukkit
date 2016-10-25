@@ -43,13 +43,13 @@ public class CraftingDataPacket extends DataPacket {
     }
 
     private static int writeShapelessRecipe(ShapelessRecipe recipe, BinaryStream stream) {
-        stream.putUnsignedVarInt(recipe.getIngredientCount());
+        stream.putInt(recipe.getIngredientCount());
 
         for (Item item : recipe.getIngredientList()) {
             stream.putSlot(item);
         }
 
-        stream.putUnsignedVarInt(1);
+        stream.putInt(1);
         stream.putSlot(recipe.getResult());
         stream.putUUID(recipe.getId());
 
@@ -57,8 +57,8 @@ public class CraftingDataPacket extends DataPacket {
     }
 
     private static int writeShapedRecipe(ShapedRecipe recipe, BinaryStream stream) {
-        stream.putVarInt(recipe.getWidth());
-        stream.putVarInt(recipe.getHeight());
+        stream.putInt(recipe.getWidth());
+        stream.putInt(recipe.getHeight());
 
         for (int z = 0; z < recipe.getHeight(); ++z) {
             for (int x = 0; x < recipe.getWidth(); ++x) {
@@ -66,7 +66,7 @@ public class CraftingDataPacket extends DataPacket {
             }
         }
 
-        stream.putUnsignedVarInt(1);
+        stream.putInt(1);
         stream.putSlot(recipe.getResult());
 
         stream.putUUID(recipe.getId());
@@ -76,13 +76,12 @@ public class CraftingDataPacket extends DataPacket {
 
     private static int writeFurnaceRecipe(FurnaceRecipe recipe, BinaryStream stream) {
         if (recipe.getInput().getDamage() != 0) { //Data recipe
-            stream.putVarInt(recipe.getInput().getId());
-            stream.putVarInt(recipe.getInput().getDamage());
+            stream.putInt((recipe.getInput().getId() << 16) | (recipe.getInput().getDamage()));
             stream.putSlot(recipe.getResult());
 
             return CraftingDataPacket.ENTRY_FURNACE_DATA;
         } else {
-            stream.putVarInt(recipe.getInput().getId());
+            stream.putInt(recipe.getInput().getId());
             stream.putSlot(recipe.getResult());
 
             return CraftingDataPacket.ENTRY_FURNACE;
@@ -93,11 +92,11 @@ public class CraftingDataPacket extends DataPacket {
         stream.putByte((byte) list.getSize());
         for (int i = 0; i < list.getSize(); ++i) {
             EnchantmentEntry entry = list.getSlot(i);
-            stream.putUnsignedVarInt(entry.getCost());
-            stream.putUnsignedVarInt(entry.getEnchantments().length);
+            stream.putInt(entry.getCost());
+            stream.putByte((byte) entry.getEnchantments().length);
             for (Enchantment enchantment : entry.getEnchantments()) {
-                stream.putUnsignedVarInt(enchantment.getId());
-                stream.putUnsignedVarInt(enchantment.getLevel());
+                stream.putInt(enchantment.getId());
+                stream.putInt(enchantment.getLevel());
             }
             stream.putString(entry.getRandomName());
         }
@@ -134,23 +133,25 @@ public class CraftingDataPacket extends DataPacket {
     @Override
     public void encode() {
         reset();
-        putUnsignedVarInt(entries.size());
+        putInt(entries.size());
 
         BinaryStream writer = new BinaryStream();
 
         for (Object entry : entries) {
             int entryType = writeEntry(entry, writer);
             if (entryType >= 0) {
-                putVarInt(entryType);
+                putInt(entryType);
+                putInt(writer.getCount());
                 put(writer.getBuffer());
             } else {
-                putVarInt(-1);
+                putInt(-1);
+                putInt(0);
             }
 
             writer.reset();
         }
 
-        putBoolean(cleanRecipes);
+        putByte((byte) (cleanRecipes ? 1 : 0));
     }
 
     @Override

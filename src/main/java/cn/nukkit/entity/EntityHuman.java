@@ -18,11 +18,11 @@ import java.util.UUID;
  */
 public class EntityHuman extends EntityHumanType {
 
-    public static final int DATA_PLAYER_FLAG_SLEEP = 1; //TODO: CHECK
-    public static final int DATA_PLAYER_FLAG_DEAD = 2; //TODO: CHECK
+    public static final int DATA_PLAYER_FLAG_SLEEP = 1;
+    public static final int DATA_PLAYER_FLAG_DEAD = 2;
 
-    public static final int DATA_PLAYER_FLAGS = 16; //TODO: CHECK
-    public static final int DATA_PLAYER_BED_POSITION = 29;
+    public static final int DATA_PLAYER_FLAGS = 16;
+    public static final int DATA_PLAYER_BED_POSITION = 17;
 
     protected UUID uuid;
     protected byte[] rawUUID;

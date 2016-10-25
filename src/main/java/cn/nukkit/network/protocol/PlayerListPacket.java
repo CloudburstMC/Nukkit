@@ -26,11 +26,11 @@ public class PlayerListPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte(this.type);
-        this.putUnsignedVarInt(this.entries.length);
+        this.putInt(this.entries.length);
         for (Entry entry : this.entries) {
             if (type == TYPE_ADD) {
                 this.putUUID(entry.uuid);
-                this.putEntityId(entry.entityId);
+                this.putLong(entry.entityId);
                 this.putString(entry.name);
                 this.putSkin(entry.skin);
             } else {

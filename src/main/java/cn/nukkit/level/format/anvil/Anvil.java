@@ -129,7 +129,7 @@ public class Anvil extends BaseLevelProvider {
             }
 
             try {
-                blockEntities = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN, true);
+                blockEntities = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

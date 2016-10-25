@@ -48,18 +48,18 @@ public class Attribute implements Cloneable {
     }
 
     public static void init() {
-        addAttribute(ABSORPTION, "minecraft:absorption", 0.00f, 340282346638528859811704183484516925440.00f, 0.00f);
-        addAttribute(SATURATION, "minecraft:player.saturation", 0.00f, 20.00f, 5.00f);
-        addAttribute(EXHAUSTION, "minecraft:player.exhaustion", 0.00f, 5.00f, 0.41f);
-        addAttribute(KNOCKBACK_RESISTANCE, "minecraft:knockback_resistance", 0.00f, 1.00f, 0.00f);
-        addAttribute(MAX_HEALTH, "minecraft:health", 0.00f, 20.00f, 20.00f);
-        addAttribute(MOVEMENT_SPEED, "minecraft:movement", 0.00f, 340282346638528859811704183484516925440.00f, 0.10f);
-        addAttribute(FOLLOW_RANGE, "minecraft:follow_range", 0.00f, 2048.00f, 16.00f, false);
-        addAttribute(MAX_HUNGER, "minecraft:player.hunger", 0.00f, 20.00f, 20.00f);
-        addAttribute(ATTACK_DAMAGE, "minecraft:attack_damage", 0.00f, 340282346638528859811704183484516925440.00f, 1.00f, false);
-        addAttribute(EXPERIENCE_LEVEL, "minecraft:player.level", 0.00f, 24791.00f, 0.00f);
-        addAttribute(EXPERIENCE, "minecraft:player.experience", 0.00f, 1.00f, 0.00f);
-        //TODO: minecraft:luck (for fishing?)
+        addAttribute(ABSORPTION, "generic.absorption", 0.00f, 340282346638528859811704183484516925440.00f, 0.00f);
+        addAttribute(SATURATION, "player.saturation", 0.00f, 20.00f, 5.00f);
+        addAttribute(EXHAUSTION, "player.exhaustion", 0.00f, 5.00f, 0.41f);
+        addAttribute(KNOCKBACK_RESISTANCE, "generic.knockbackResistance", 0.00f, 1.00f, 0.00f);
+        addAttribute(MAX_HEALTH, "generic.health", 0.00f, 20.00f, 20.00f);
+        addAttribute(MOVEMENT_SPEED, "generic.movementSpeed", 0.00f, 340282346638528859811704183484516925440.00f, 0.10f);
+        addAttribute(FOLLOW_RANGE, "generic.followRange", 0.00f, 2048.00f, 16.00f, false);
+        addAttribute(MAX_HUNGER, "player.hunger", 0.00f, 20.00f, 20.00f);
+        addAttribute(ATTACK_DAMAGE, "generic.attackDamage", 0.00f, 340282346638528859811704183484516925440.00f, 1.00f, false);
+        addAttribute(EXPERIENCE_LEVEL, "player.level", 0.00f, 24791.00f, 0.00f);
+        addAttribute(EXPERIENCE, "player.experience", 0.00f, 1.00f, 0.00f);
+
     }
 
     public static Attribute addAttribute(int id, String name, float minValue, float maxValue, float defaultValue) {

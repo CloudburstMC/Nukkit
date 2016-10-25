@@ -31,20 +31,17 @@ public class EntityEventPacket extends DataPacket {
 
     public long eid;
     public byte event;
-    public int unknown;
 
     @Override
     public void decode() {
-        this.eid = this.getEntityId();
+        this.eid = this.getLong();
         this.event = (byte) this.getByte();
-        this.unknown = this.getVarInt();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityId(this.eid);
+        this.putLong(this.eid);
         this.putByte(event);
-        this.putVarInt(this.unknown);
     }
 }

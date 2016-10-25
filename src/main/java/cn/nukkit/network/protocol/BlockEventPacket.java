@@ -26,8 +26,10 @@ public class BlockEventPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putBlockCoords(x, y, z);
-        this.putVarInt(this.case1);
-        this.putVarInt(this.case2);
+        this.putInt(this.x);
+        this.putInt(this.y);
+        this.putInt(this.z);
+        this.putInt(this.case1);
+        this.putInt(this.case2);
     }
 }
