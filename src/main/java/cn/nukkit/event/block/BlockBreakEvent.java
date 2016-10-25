@@ -21,9 +21,9 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
-    protected Player player;
+    protected final Player player;
 
-    protected Item item;
+    protected final Item item;
 
     protected boolean instaBreak = false;
     protected Item[] blockDrops = new Item[0];
@@ -78,22 +78,5 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
 
     public boolean isFastBreak() {
         return this.fastBreak;
-    }
-
-    public void reset(Player player, Block block, Item item, boolean instaBreak, boolean fastBreak, boolean recalculateDrops) {
-        this.block = block;
-        this.item = item;
-        this.player = player;
-        this.instaBreak = instaBreak;
-        if (recalculateDrops) {
-            int[][] drops = player.isSurvival() ? block.getDrops(item) : new int[0][0];
-            List<Item> list = new ArrayList<>();
-            for (int[] i : drops) {
-                list.add(Item.get(i[0], i[1], i[2]));
-            }
-            this.blockDrops = list.toArray(new Item[list.size()]);
-        }
-        this.fastBreak = fastBreak;
-        this.setCancelled(false);
     }
 }

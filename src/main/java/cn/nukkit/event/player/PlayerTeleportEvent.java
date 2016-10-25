@@ -15,9 +15,9 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    protected TeleportCause cause;
-    protected Location from;
-    protected Location to;
+    private TeleportCause cause;
+    private Location from;
+    private Location to;
 
     private PlayerTeleportEvent(Player player) {
         this.player = player;
@@ -61,13 +61,5 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         PLUGIN,        // Every plugin
         NETHER_PORTAL, // Teleport using Nether portal
         UNKNOWN       // Unknown cause
-    }
-
-    public void reset(Player player, Location from, Location to, TeleportCause cause) {
-        this.player = player;
-        this.from = from;
-        this.to = to;
-        this.cause = cause;
-        this.setCancelled(false);
     }
 }
