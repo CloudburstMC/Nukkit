@@ -169,12 +169,6 @@ public class PluginManager {
                         PluginDescription description = loader.getPluginDescription(file);
                         if (description != null) {
                             String name = description.getName();
-                            if (name.toLowerCase().contains("nukkit") || name.toLowerCase().contains("minecraft") || name.toLowerCase().contains("mojang")) {
-                                this.server.getLogger().error(this.server.getLanguage().translateString("nukkit.plugin.loadError", new String[]{name, "%nukkit.plugin.restrictedName"}));
-                                continue;
-                            } else if (name.contains(" ")) {
-                                this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.plugin.spacesDiscouraged", name));
-                            }
 
                             if (plugins.containsKey(name) || this.getPlugin(name) != null) {
                                 this.server.getLogger().error(this.server.getLanguage().translateString("nukkit.plugin.duplicateError", name));
