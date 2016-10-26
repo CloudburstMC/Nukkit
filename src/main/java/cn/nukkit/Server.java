@@ -16,6 +16,7 @@ import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
+import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
@@ -896,9 +897,10 @@ public class Server {
 
     private void checkTickUpdates(int currentTick, long tickTime) {
         for (Player p : new ArrayList<>(this.players.values())) {
-            if (!p.loggedIn && (tickTime - p.creationTime) >= 10000) {
-                p.close("", "Login timeout");
-            } else if (this.alwaysTickPlayers) {
+            if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMOUT)) {
+                continue;
+            }
+            if (this.alwaysTickPlayers) {
                 p.onUpdate(currentTick);
             }
         }

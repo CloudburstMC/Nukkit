@@ -3,9 +3,8 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.lang.TranslationContainer;
-
-import java.util.Objects;
 
 /**
  * author: MagicDroidX
@@ -44,7 +43,7 @@ public class BanCommand extends VanillaCommand {
 
         Player player = sender.getServer().getPlayerExact(name);
         if (player != null) {
-            player.kick(!Objects.equals(reason, "") ? "Banned by admin. Reason: " + reason : "Banned by admin");
+            player.kick(PlayerKickEvent.Reason.NAME_BANNED, !reason.isEmpty() ? "Banned by admin. Reason: " + reason : "Banned by admin");
         }
 
         Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.ban.success", player != null ? player.getName() : name));
