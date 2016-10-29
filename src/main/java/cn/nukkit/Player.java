@@ -2621,7 +2621,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    item = this.inventory.contains(dropItem.item) ? dropItem.item : this.inventory.getItemInHand();
+
+                    item = (this.isCreative() || this.inventory.contains(dropItem.item)) ? dropItem.item : this.inventory.getItemInHand();
                     PlayerDropItemEvent dropItemEvent = new PlayerDropItemEvent(this, item);
                     this.server.getPluginManager().callEvent(dropItemEvent);
                     if (dropItemEvent.isCancelled()) {
@@ -2629,7 +2630,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    this.inventory.removeItem(item);
+                    if (!this.isCreative()) {
+                        this.inventory.removeItem(item);
+                    }
                     Vector3 motion = this.getDirectionVector().multiply(0.4);
 
                     this.level.dropItem(this.add(0, 1.3, 0), item, motion, 40);
@@ -3066,12 +3069,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     this.currentTransaction.addTransaction(transaction);
 
-                    if (this.currentTransaction.canExecute()) {
+                    if (this.currentTransaction.canExecute() || this.isCreative()) {
                         //todo achievement
-
-                        this.currentTransaction.execute();
+                        this.currentTransaction.execute(this.isCreative());
 
                         this.currentTransaction = null;
+                    } else {
+                        if (containerSetSlotPacket.item.getId() != 0) {
+                           inventory.sendSlot(containerSetSlotPacket.hotbarSlot, this);
+                           inventory.sendSlot(containerSetSlotPacket.slot, this);
+                        }
                     }
 
                     break;

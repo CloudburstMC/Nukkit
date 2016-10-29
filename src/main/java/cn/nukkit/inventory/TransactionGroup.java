@@ -20,5 +20,7 @@ public interface TransactionGroup {
 
     boolean execute();
 
+    boolean execute(boolean force);
+
     boolean hasExecuted();
 }
