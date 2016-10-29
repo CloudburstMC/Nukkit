@@ -4,10 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.math.NukkitRandom;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -25,6 +22,8 @@ public abstract class Biome {
     public static final int SWAMP = 6;
     public static final int RIVER = 7;
 
+    public static final int HELL = 8;
+
     public static final int ICE_PLAINS = 12;
 
 
@@ -39,7 +38,7 @@ public abstract class Biome {
 
     public static final int MAX_BIOMES = 256;
 
-    private static final Map<Integer, Biome> biomes = new HashMap<>();
+    private static final Biome[] biomes = new Biome[MAX_BIOMES];
 
     private int id;
     private boolean registered = false;
@@ -58,7 +57,7 @@ public abstract class Biome {
     protected static void register(int id, Biome biome) {
         biome.setId(id);
         biome.grassColor = generateBiomeColor(biome.getTemperature(), biome.getRainfall());
-        biomes.put(id, biome);
+        biomes[id] = biome;
     }
 
     public static void init() {
@@ -75,10 +74,13 @@ public abstract class Biome {
         register(BIRCH_FOREST, new ForestBiome(ForestBiome.TYPE_BIRCH));
 
         register(BEACH, new BeachBiome());
+
+        register(HELL, new HellBiome());
     }
 
     public static Biome getBiome(int id) {
-        return biomes.containsKey(id) ? biomes.get(id) : biomes.get(OCEAN);
+        Biome biome = biomes[id];
+        return biome != null ? biome : biomes[OCEAN];
     }
 
     /**
@@ -88,8 +90,10 @@ public abstract class Biome {
      * @return Biome. Null - when biome was not found
      */
     public static Biome getBiome(String name) {
-        for (Biome biome : biomes.values()) {
-            if (biome.getName().equalsIgnoreCase(name.replace("_", " "))) return biome;
+        for (Biome biome : biomes) {
+            if (biome != null) {
+                if (biome.getName().equalsIgnoreCase(name.replace("_", " "))) return biome;
+            }
         }
         return null;
     }
@@ -172,4 +176,14 @@ public abstract class Biome {
     }
 
     abstract public int getColor();
+
+    @Override
+    public int hashCode() {
+        return getId();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return hashCode() == obj.hashCode();
+    }
 }
