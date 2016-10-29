@@ -2,20 +2,15 @@ package cn.nukkit.utils;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.command.CommandReader;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.Ansi.Attribute;
-import org.fusesource.jansi.Ansi.Color;
-import org.fusesource.jansi.AnsiConsole;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 
 /**
  * author: MagicDroidX
@@ -23,8 +18,8 @@ import java.util.Map;
  */
 public class MainLogger extends ThreadedLogger {
 
-    protected File logFile;
-    protected String logStream = "";
+    protected final String logPath;
+    protected final ConcurrentLinkedQueue<String> logBuffer = new ConcurrentLinkedQueue<String>();
     protected boolean shutdown;
     protected boolean logDebug = false;
     private final Map<TextFormat, String> replacements = new EnumMap<>(TextFormat.class);
@@ -36,42 +31,12 @@ public class MainLogger extends ThreadedLogger {
         this(logFile, false);
     }
 
-    public MainLogger(String logFile, Boolean logDebug) {
-        AnsiConsole.systemInstall();
-
+    public MainLogger(String logFile, boolean logDebug) {
         if (logger != null) {
             throw new RuntimeException("MainLogger has been already created");
         }
         logger = this;
-        this.logFile = new File(logFile);
-        if (!this.logFile.exists()) {
-            try {
-                this.logFile.createNewFile();
-            } catch (IOException e) {
-                this.logException(e);
-            }
-        }
-        replacements.put(TextFormat.BLACK, Ansi.ansi().a(Attribute.RESET).fg(Color.BLACK).boldOff().toString());
-        replacements.put(TextFormat.DARK_BLUE, Ansi.ansi().a(Attribute.RESET).fg(Color.BLUE).boldOff().toString());
-        replacements.put(TextFormat.DARK_GREEN, Ansi.ansi().a(Attribute.RESET).fg(Color.GREEN).boldOff().toString());
-        replacements.put(TextFormat.DARK_AQUA, Ansi.ansi().a(Attribute.RESET).fg(Color.CYAN).boldOff().toString());
-        replacements.put(TextFormat.DARK_RED, Ansi.ansi().a(Attribute.RESET).fg(Color.RED).boldOff().toString());
-        replacements.put(TextFormat.DARK_PURPLE, Ansi.ansi().a(Attribute.RESET).fg(Color.MAGENTA).boldOff().toString());
-        replacements.put(TextFormat.GOLD, Ansi.ansi().a(Attribute.RESET).fg(Color.YELLOW).boldOff().toString());
-        replacements.put(TextFormat.GRAY, Ansi.ansi().a(Attribute.RESET).fg(Color.WHITE).boldOff().toString());
-        replacements.put(TextFormat.DARK_GRAY, Ansi.ansi().a(Attribute.RESET).fg(Color.BLACK).bold().toString());
-        replacements.put(TextFormat.BLUE, Ansi.ansi().a(Attribute.RESET).fg(Color.BLUE).bold().toString());
-        replacements.put(TextFormat.GREEN, Ansi.ansi().a(Attribute.RESET).fg(Color.GREEN).bold().toString());
-        replacements.put(TextFormat.AQUA, Ansi.ansi().a(Attribute.RESET).fg(Color.CYAN).bold().toString());
-        replacements.put(TextFormat.RED, Ansi.ansi().a(Attribute.RESET).fg(Color.RED).bold().toString());
-        replacements.put(TextFormat.LIGHT_PURPLE, Ansi.ansi().a(Attribute.RESET).fg(Color.MAGENTA).bold().toString());
-        replacements.put(TextFormat.YELLOW, Ansi.ansi().a(Attribute.RESET).fg(Color.YELLOW).bold().toString());
-        replacements.put(TextFormat.WHITE, Ansi.ansi().a(Attribute.RESET).fg(Color.WHITE).bold().toString());
-        replacements.put(TextFormat.BOLD, Ansi.ansi().a(Attribute.UNDERLINE_DOUBLE).toString());
-        replacements.put(TextFormat.STRIKETHROUGH, Ansi.ansi().a(Attribute.STRIKETHROUGH_ON).toString());
-        replacements.put(TextFormat.UNDERLINE, Ansi.ansi().a(Attribute.UNDERLINE).toString());
-        replacements.put(TextFormat.ITALIC, Ansi.ansi().a(Attribute.ITALIC).toString());
-        replacements.put(TextFormat.RESET, Ansi.ansi().a(Attribute.RESET).toString());
+        this.logPath = logFile;
         this.logDebug = logDebug;
         this.start();
     }
@@ -167,20 +132,13 @@ public class MainLogger extends ThreadedLogger {
 
     protected void send(String message) {
         this.send(message, -1);
-    }
-
-    protected void send(String message, int level) {
-        Date now = new Date();
-        message = TextFormat.AQUA + new SimpleDateFormat("HH:mm:ss").format(now) + TextFormat.RESET + " " + message + TextFormat.RESET;
-        CommandReader.getInstance().stashLine();
-        System.out.println(colorize(message));
-        CommandReader.getInstance().unstashLine();
-        String str = new SimpleDateFormat("Y-M-d").format(now) + " " + TextFormat.clean(message) + "" + "\r\n";
-        this.logStream += str;
-
         synchronized (this) {
             this.notify();
         }
+    }
+
+    protected void send(String message, int level) {
+        logBuffer.add(message);
     }
 
     private String colorize(String string) {
@@ -203,41 +161,80 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void run() {
-        this.shutdown = false;
-        while (!this.shutdown) {
-            while (this.logStream.length() > 0) {
-                String chunk = this.logStream;
-                this.logStream = "";
-                try {
-                    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(this.logFile, true), StandardCharsets.UTF_8);
-                    writer.write(chunk);
-                    writer.flush();
-                    writer.close();
-                } catch (Exception e) {
-                    this.logException(e);
-                }
-            }
-
+        AnsiConsole.systemInstall();
+        File logFile = new File(logPath);
+        if (!logFile.exists()) {
             try {
-                synchronized (this) {
-                    wait(25000);
-                }
-            } catch (InterruptedException e) {
-                //igonre
-            }
-        }
-
-        if (this.logStream.length() > 0) {
-            String chunk = this.logStream;
-            this.logStream = "";
-            try {
-                OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(this.logFile, true), StandardCharsets.UTF_8);
-                writer.write(chunk);
-                writer.flush();
-                writer.close();
-            } catch (Exception e) {
+                logFile.createNewFile();
+            } catch (IOException e) {
                 this.logException(e);
             }
+        } else {
+            try {
+                RandomAccessFile raf = new RandomAccessFile(logFile, "rw");
+                raf.setLength(0);
+                raf.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        replacements.put(TextFormat.BLACK, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString());
+        replacements.put(TextFormat.DARK_BLUE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLUE).boldOff().toString());
+        replacements.put(TextFormat.DARK_GREEN, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.GREEN).boldOff().toString());
+        replacements.put(TextFormat.DARK_AQUA, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.CYAN).boldOff().toString());
+        replacements.put(TextFormat.DARK_RED, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.RED).boldOff().toString());
+        replacements.put(TextFormat.DARK_PURPLE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.MAGENTA).boldOff().toString());
+        replacements.put(TextFormat.GOLD, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.YELLOW).boldOff().toString());
+        replacements.put(TextFormat.GRAY, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.WHITE).boldOff().toString());
+        replacements.put(TextFormat.DARK_GRAY, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLACK).bold().toString());
+        replacements.put(TextFormat.BLUE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLUE).bold().toString());
+        replacements.put(TextFormat.GREEN, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.GREEN).bold().toString());
+        replacements.put(TextFormat.AQUA, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.CYAN).bold().toString());
+        replacements.put(TextFormat.RED, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.RED).bold().toString());
+        replacements.put(TextFormat.LIGHT_PURPLE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.MAGENTA).bold().toString());
+        replacements.put(TextFormat.YELLOW, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.YELLOW).bold().toString());
+        replacements.put(TextFormat.WHITE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.WHITE).bold().toString());
+        replacements.put(TextFormat.BOLD, Ansi.ansi().a(Ansi.Attribute.UNDERLINE_DOUBLE).toString());
+        replacements.put(TextFormat.STRIKETHROUGH, Ansi.ansi().a(Ansi.Attribute.STRIKETHROUGH_ON).toString());
+        replacements.put(TextFormat.UNDERLINE, Ansi.ansi().a(Ansi.Attribute.UNDERLINE).toString());
+        replacements.put(TextFormat.ITALIC, Ansi.ansi().a(Ansi.Attribute.ITALIC).toString());
+        replacements.put(TextFormat.RESET, Ansi.ansi().a(Ansi.Attribute.RESET).toString());
+        this.shutdown = false;
+        do {
+            flushBuffer(logFile);
+        } while (!this.shutdown);
+        flushBuffer(logFile);
+    }
+
+    private void flushBuffer(File logFile) {
+        if (logBuffer.isEmpty()) {
+            try {
+                synchronized (this) {
+                    wait(25000); // Wait for next message
+                }
+                Thread.sleep(5); // Buffer for 5ms to reduce back and forth between disk
+            } catch (InterruptedException ignore) {}
+        }
+        try {
+            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024);
+            Date now = new Date();
+            String dateFormat = new SimpleDateFormat("Y-M-d").format(now);
+            int count = 0;
+            while (!logBuffer.isEmpty()) {
+                String message = logBuffer.poll();
+                if (message != null) {
+                    writer.write(dateFormat);
+                    writer.write(TextFormat.clean(message));
+                    writer.write("\r\n");
+                    CommandReader.getInstance().stashLine();
+                    System.out.println(colorize(TextFormat.AQUA + dateFormat + TextFormat.RESET + " " + message + TextFormat.RESET));
+                    CommandReader.getInstance().unstashLine();
+                }
+            }
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            this.logException(e);
         }
     }
 
