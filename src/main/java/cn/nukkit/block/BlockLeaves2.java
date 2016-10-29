@@ -38,6 +38,11 @@ public class BlockLeaves2 extends BlockLeaves {
                     {Item.LEAVES2, this.meta & 0x03, 1}
             };
         } else {
+            if ((int) ((Math.random()) * 200) == 0 && this.meta == DARK_OAK) {
+                return new int[][]{
+                        {Item.APPLE, 0, 1}
+                };
+            }
             if ((int) ((Math.random()) * 20) == 0) {
                 return new int[][]{
                         {Item.SAPLING, this.meta & 0x03, 1}
