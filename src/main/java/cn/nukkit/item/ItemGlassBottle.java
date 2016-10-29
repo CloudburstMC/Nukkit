@@ -34,6 +34,7 @@ public class ItemGlassBottle extends Item {
                 player.getInventory().setItemInHand(potion);
             } else if (this.count > 1) {
                 this.count--;
+                player.getInventory().setItemInHand(this);
                 if (player.getInventory().canAddItem(potion)) {
                     player.getInventory().addItem(potion);
                 } else {

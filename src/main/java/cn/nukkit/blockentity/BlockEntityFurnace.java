@@ -27,6 +27,11 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
     protected final FurnaceInventory inventory;
 
+    private int burnTime = 0;
+    private int burnDuration = 0;
+    private int cookTime = 0;
+    private int maxTime = 0;
+
     public BlockEntityFurnace(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         this.inventory = new FurnaceInventory(this);
@@ -40,24 +45,30 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         }
 
         if (!this.namedTag.contains("BurnTime") || this.namedTag.getShort("BurnTime") < 0) {
-            this.namedTag.putShort("BurnTime", 0);
+            burnTime = 0;
+        } else {
+            burnTime = this.namedTag.getShort("BurnTime");
         }
 
         if (!this.namedTag.contains("CookTime") || this.namedTag.getShort("CookTime") < 0 || (this.namedTag.getShort("BurnTime") == 0 && this.namedTag.getShort("CookTime") > 0)) {
-            this.namedTag.putShort("CookTime", 0);
+            cookTime = 0;
+        } else {
+            cookTime = this.namedTag.getShort("CookTime");
         }
 
         if (!this.namedTag.contains("MaxTime")) {
-            this.namedTag.putShort("MaxTime", this.namedTag.getShort("BurnTime"));
-            this.namedTag.putShort("BurnDuration", 0);
+            maxTime = burnTime;
+            burnDuration = 0;
+        } else {
+            maxTime = this.namedTag.getShort("MaxTime");
         }
 
         if (this.namedTag.contains("BurnTicks")) {
-            this.namedTag.putShort("BurnDuration", this.namedTag.getShort("BurnTicks"));
+            burnDuration = this.namedTag.getShort("BurnTicks");
             this.namedTag.remove("BurnTicks");
         }
 
-        if (this.namedTag.getShort("BurnTime") > 0) {
+        if (burnTime > 0) {
             this.scheduleUpdate();
         }
     }
@@ -98,6 +109,11 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         for (int index = 0; index < this.getSize(); index++) {
             this.setItem(index, this.inventory.getItem(index));
         }
+
+        this.namedTag.putShort("CookTime", cookTime);
+        this.namedTag.putShort("BurnTime", burnTime);
+        this.namedTag.putShort("BurnDuration", burnDuration);
+        this.namedTag.putShort("MaxTime", maxTime);
     }
 
     @Override
@@ -163,14 +179,14 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
             return;
         }
 
-        this.namedTag.putShort("MaxTime", ev.getBurnTime());
-        this.namedTag.putShort("BurnTime", ev.getBurnTime());
-        this.namedTag.putShort("BurnDuration", 0);
+        maxTime = ev.getBurnTime();
+        burnTime = ev.getBurnTime();
+        burnDuration = 0;
         if (this.getBlock().getId() == Item.FURNACE) {
             this.getLevel().setBlock(this, new BlockFurnaceBurning(this.getBlock().getDamage()), true);
         }
 
-        if (this.namedTag.getShort("BurnTime") > 0 && ev.isBurning()) {
+        if (burnTime > 0 && ev.isBurning()) {
             fuel.setCount(fuel.getCount() - 1);
             if (fuel.getCount() == 0) {
                 fuel = new ItemBlock(new BlockAir(), 0, 0);
@@ -194,17 +210,17 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         FurnaceRecipe smelt = this.server.getCraftingManager().matchFurnaceRecipe(raw);
         boolean canSmelt = (smelt != null && raw.getCount() > 0 && ((smelt.getResult().equals(product, true) && product.getCount() < product.getMaxStackSize()) || product.getId() == Item.AIR));
 
-        if (this.namedTag.getShort("BurnTime") <= 0 && canSmelt && fuel.getFuelTime() != null && fuel.getCount() > 0) {
+        if (burnTime <= 0 && canSmelt && fuel.getFuelTime() != null && fuel.getCount() > 0) {
             this.checkFuel(fuel);
         }
 
-        if (this.namedTag.getShort("BurnTime") > 0) {
-            this.namedTag.putShort("BurnTime", (this.namedTag.getShort("BurnTime") - 1));
-            this.namedTag.putShort("BurnDuration", (int) Math.ceil((double) this.namedTag.getShort("BurnTime") / (double) this.namedTag.getShort("MaxTime") * 200d));
+        if (burnTime > 0) {
+            burnTime--;
+            burnDuration = (int) Math.ceil(burnTime / maxTime * 200);
 
             if (smelt != null && canSmelt) {
-                this.namedTag.putShort("CookTime", (this.namedTag.getShort("CookTime") + 1));
-                if (this.namedTag.getShort("CookTime") >= 200) {
+                cookTime++;
+                if (cookTime >= 200) {
                     product = Item.get(smelt.getResult().getId(), smelt.getResult().getDamage(), product.getCount() + 1);
 
                     FurnaceSmeltEvent ev = new FurnaceSmeltEvent(this, raw, product);
@@ -218,23 +234,23 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
                         this.inventory.setSmelting(raw);
                     }
 
-                    this.namedTag.putShort("CookTime", (this.namedTag.getShort("CookTime") - 200));
+                    cookTime -= 200;
                 }
-            } else if (this.namedTag.getShort("BurnTime") <= 0) {
-                this.namedTag.putShort("BurnTime", 0);
-                this.namedTag.putShort("CookTime", 0);
-                this.namedTag.putShort("BurnDuration", 0);
+            } else if (burnTime <= 0) {
+                burnTime = 0;
+                cookTime = 0;
+                burnDuration = 0;
             } else {
-                this.namedTag.putShort("CookTime", 0);
+                cookTime = 0;
             }
             ret = true;
         } else {
             if (this.getBlock().getId() == Item.BURNING_FURNACE) {
                 this.getLevel().setBlock(this, new BlockFurnace(this.getBlock().getDamage()), true);
             }
-            this.namedTag.putShort("BurnTime", 0);
-            this.namedTag.putShort("CookTime", 0);
-            this.namedTag.putShort("BurnDuration", 0);
+            burnTime = 0;
+            cookTime = 0;
+            burnDuration = 0;
         }
 
         for (Player player : this.getInventory().getViewers()) {
@@ -243,13 +259,13 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
                 ContainerSetDataPacket pk = new ContainerSetDataPacket();
                 pk.windowid = (byte) windowId;
                 pk.property = 0;
-                pk.value = this.namedTag.getShort("CookTime");
+                pk.value = cookTime;
                 player.dataPacket(pk);
 
                 pk = new ContainerSetDataPacket();
                 pk.windowid = (byte) windowId;
                 pk.property = 1;
-                pk.value = this.namedTag.getShort("BurnDuration");
+                pk.value = burnDuration;
                 player.dataPacket(pk);
             }
         }
@@ -268,9 +284,9 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putShort("BurnDuration", this.namedTag.getShort("BurnDuration"))
-                .putShort("BurnTime", this.namedTag.getShort("BurnTime"))
-                .putShort("CookTime", this.namedTag.getShort("CookTime"));
+                .putShort("BurnDuration", burnDuration)
+                .putShort("BurnTime", burnTime)
+                .putShort("CookTime", cookTime);
 
         if (this.hasName()) {
             c.put("CustomName", this.namedTag.get("CustomName"));
