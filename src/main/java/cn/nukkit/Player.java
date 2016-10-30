@@ -1247,25 +1247,25 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 diffY = 0;
             }
 
-            double diff = (diffX * diffX + diffY * diffY + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
+            if (diffX != 0 || diffY != 0 || diffZ != 0) {
+                if (this.checkMovement && !server.getAllowFlight() && this.isSurvival()) {
+                    if (!this.isSleeping()) {
+                        double diffHorizontalSqr = (diffX * diffX + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
+                        if (diffHorizontalSqr > 0.125) {
+                            PlayerInvalidMoveEvent ev;
+                            this.getServer().getPluginManager().callEvent(ev = new PlayerInvalidMoveEvent(this, true));
+                            if (!ev.isCancelled()) {
+                                revert = ev.isRevert();
 
-            if (this.checkMovement && !server.getAllowFlight() && this.isSurvival()) {
-                if (!this.isSleeping()) {
-                    if (diff > 0.125) {
-                        PlayerInvalidMoveEvent ev;
-                        this.getServer().getPluginManager().callEvent(ev = new PlayerInvalidMoveEvent(this, true));
-                        if (!ev.isCancelled()) {
-                            revert = ev.isRevert();
-
-                            if (revert) {
-                                this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                                if (revert) {
+                                    this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            if (diff > 0) {
+
                 this.x = newPos.x;
                 this.y = newPos.y;
                 this.z = newPos.z;
