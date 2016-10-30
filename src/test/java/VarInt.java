@@ -1,3 +1,4 @@
+import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 
 import java.math.BigInteger;
@@ -69,13 +70,13 @@ public class VarInt {
         int b;
 
         do {
-            b = stream.getByte();
-            result = result.or(BigInteger.valueOf((b & 0x7f) << offset));
-            offset += 7;
-
             if (offset >= maxSize) {
                 throw new IllegalArgumentException("VarInt too big");
             }
+
+            b = stream.getByte();
+            result = result.or(BigInteger.valueOf((b & 0x7f) << offset));
+            offset += 7;
         } while ((b & 0x80) > 0);
 
         return result;
@@ -160,5 +161,19 @@ public class VarInt {
     public static void writeUnsignedVarLong(BinaryStream stream, BigInteger value) {
         _assert(value);
         _writeVarInt(stream, value);
+    }
+
+    public static void main(String[] args) {
+        BinaryStream stream = new BinaryStream();
+        VarInt.writeVarInt(stream, 7);
+        System.out.println(Binary.bytesToHexString(stream.getBuffer(), true));
+        System.out.println(VarInt.readVarInt(stream));
+        //System.out.println(VarInt.readUnsignedVarInt(stream));
+
+        stream = new BinaryStream();
+        VarInt.writeUnsignedVarInt(stream, 7);
+        System.out.println(Binary.bytesToHexString(stream.getBuffer(), true));
+        //System.out.println(VarInt.readVarInt(stream));
+        System.out.println(VarInt.readUnsignedVarInt(stream));
     }
 }
