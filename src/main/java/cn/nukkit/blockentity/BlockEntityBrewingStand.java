@@ -26,6 +26,8 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
     public static final int MAX_BREW_TIME = 400;
 
+    public int brewTime = MAX_BREW_TIME;
+
     public static final List<Integer> ingredients = new ArrayList<>();
 
     public BlockEntityBrewingStand(FullChunk chunk, CompoundTag nbt) {
@@ -41,10 +43,12 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         }
 
         if (!namedTag.contains("CookTime") || namedTag.getShort("CookTime") > MAX_BREW_TIME) {
-            namedTag.putShort("CookTime", MAX_BREW_TIME);
+            this.brewTime = MAX_BREW_TIME;
+        } else {
+            this.brewTime = namedTag.getShort("CookTime");
         }
 
-        if (namedTag.getShort("CookTime") < MAX_BREW_TIME) {
+        if (brewTime < MAX_BREW_TIME) {
             this.scheduleUpdate();
         }
     }
@@ -85,6 +89,8 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         for (int index = 0; index < getSize(); index++) {
             this.setItem(index, inventory.getItem(index));
         }
+
+        namedTag.putShort("CookTime", brewTime);
     }
 
     @Override
@@ -153,7 +159,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
         boolean ret = false;
 
-        Item ingredient = inventory.getIngredient();
+        Item ingredient = this.inventory.getIngredient();
         boolean canBrew = false;
 
         for (int i = 1; i <= 3; i++) {
@@ -162,7 +168,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
             }
         }
 
-        if (namedTag.getShort("CookTime") <= MAX_BREW_TIME && canBrew && ingredient.getCount() > 0) {
+        if (this.brewTime <= MAX_BREW_TIME && canBrew && ingredient.getCount() > 0) {
             if (!this.checkIngredient(ingredient)) {
                 canBrew = false;
             }
@@ -171,9 +177,20 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         }
 
         if (canBrew) {
-            namedTag.putShort("CookTime", namedTag.getShort("CookTime"));
+            this.brewTime--;
 
-            if (namedTag.getShort("CookTime") <= 0) { //20 seconds
+            for (Player player : this.inventory.getViewers()) {
+                int windowId = player.getWindowId(this.inventory);
+                if (windowId > 0) {
+                    ContainerSetDataPacket pk = new ContainerSetDataPacket();
+                    pk.windowid = (byte) windowId;
+                    pk.property = 0;
+                    pk.value = this.brewTime;
+                    player.dataPacket(pk);
+                }
+            }
+
+            if (this.brewTime <= 0) { //20 seconds
                 for (int i = 1; i <= 3; i++) {
                     Item potion = this.inventory.getItem(i);
                     BrewingRecipe recipe = Server.getInstance().getCraftingManager().matchBrewingRecipe(ingredient, potion);
@@ -186,24 +203,12 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
                 ingredient.count--;
                 this.inventory.setIngredient(ingredient);
 
-                namedTag.putShort("CookTime", namedTag.getShort("CookTime"));
-            }
-
-            for (Player player : getInventory().getViewers()) {
-                int windowId = player.getWindowId(getInventory());
-                if (windowId > 0) {
-                    ContainerSetDataPacket pk = new ContainerSetDataPacket();
-                    pk.windowid = (byte) windowId;
-                    pk.property = 0;
-                    pk.value = namedTag.getShort("CookTime");
-                    player.dataPacket(pk);
-                }
-
+                this.brewTime = MAX_BREW_TIME;
             }
 
             ret = true;
         } else {
-            namedTag.putShort("CookTime", MAX_BREW_TIME);
+            this.brewTime = MAX_BREW_TIME;
         }
 
         lastUpdate = System.currentTimeMillis();
@@ -218,7 +223,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putShort("CookTime", MAX_BREW_TIME);
+                .putShort("CookTime", 0);
 
         if (this.hasName()) {
             nbt.put("CustomName", namedTag.get("CustomName"));
@@ -226,5 +231,4 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
         return nbt;
     }
-
 }

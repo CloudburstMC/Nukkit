@@ -1,5 +1,6 @@
 package cn.nukkit.item;
 
+import cn.nukkit.block.BlockCocoa;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
@@ -60,6 +61,10 @@ public class ItemDye extends Item {
 
     public ItemDye(Integer meta, int amount) {
         super(DYE, meta, amount, "Dye");
+
+        if (this.meta == DyeColor.BROWN.getDyeData()) {
+            this.block = new BlockCocoa();
+        }
     }
 
     @Deprecated

@@ -118,7 +118,12 @@ public class SimpleTransactionGroup implements TransactionGroup {
 
     @Override
     public boolean execute() {
-        if (this.hasExecuted || !this.canExecute()) {
+        return execute(false);
+    }
+
+    @Override
+    public boolean execute(boolean force) {
+        if (this.hasExecuted || (!force && !this.canExecute())) {
             return false;
         }
 
@@ -131,7 +136,6 @@ public class SimpleTransactionGroup implements TransactionGroup {
                 }
                 inventory.sendContents(this.getSource());
             }
-
             return false;
         }
 

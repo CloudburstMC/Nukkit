@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator.object.ore;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector2;
@@ -13,10 +14,16 @@ public class ObjectOre {
 
     private final NukkitRandom random;
     public final OreType type;
+    private int replaceId;
 
     public ObjectOre(NukkitRandom random, OreType type) {
+        this(random, type, Block.STONE);
+    }
+
+    public ObjectOre(NukkitRandom random, OreType type, int replaceId) {
         this.type = type;
         this.random = random;
+        this.replaceId = replaceId;
     }
 
     public OreType getType() {
@@ -24,7 +31,7 @@ public class ObjectOre {
     }
 
     public boolean canPlaceObject(ChunkManager level, int x, int y, int z) {
-        return (level.getBlockIdAt(x, y, z) == 1);
+        return (level.getBlockIdAt(x, y, z) == replaceId);
     }
 
     public void placeObject(ChunkManager level, int x, int y, int z) {
@@ -64,7 +71,7 @@ public class ObjectOre {
                                 double sizeZ = (z + 0.5 - seedZ) / size;
                                 sizeZ *= sizeZ;
 
-                                if ((sizeX + sizeY + sizeZ) < 1 && level.getBlockIdAt(x, y, z) == 1) {
+                                if ((sizeX + sizeY + sizeZ) < 1 && level.getBlockIdAt(x, y, z) == replaceId) {
                                     level.setBlockIdAt(x, y, z, this.type.material.getId());
                                     if (this.type.material.getDamage() != 0) {
                                         level.setBlockDataAt(x, y, z, this.type.material.getDamage());

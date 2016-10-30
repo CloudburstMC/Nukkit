@@ -1247,25 +1247,25 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 diffY = 0;
             }
 
-            double diff = (diffX * diffX + diffY * diffY + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
+            if (diffX != 0 || diffY != 0 || diffZ != 0) {
+                if (this.checkMovement && !server.getAllowFlight() && this.isSurvival()) {
+                    if (!this.isSleeping()) {
+                        double diffHorizontalSqr = (diffX * diffX + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
+                        if (diffHorizontalSqr > 0.125) {
+                            PlayerInvalidMoveEvent ev;
+                            this.getServer().getPluginManager().callEvent(ev = new PlayerInvalidMoveEvent(this, true));
+                            if (!ev.isCancelled()) {
+                                revert = ev.isRevert();
 
-            if (this.checkMovement && !server.getAllowFlight() && this.isSurvival()) {
-                if (!this.isSleeping()) {
-                    if (diff > 0.125) {
-                        PlayerInvalidMoveEvent ev;
-                        this.getServer().getPluginManager().callEvent(ev = new PlayerInvalidMoveEvent(this, true));
-                        if (!ev.isCancelled()) {
-                            revert = ev.isRevert();
-
-                            if (revert) {
-                                this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                                if (revert) {
+                                    this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            if (diff > 0) {
+
                 this.x = newPos.x;
                 this.y = newPos.y;
                 this.z = newPos.z;
@@ -2621,7 +2621,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    item = this.inventory.contains(dropItem.item) ? dropItem.item : this.inventory.getItemInHand();
+
+                    item = (this.isCreative() || this.inventory.contains(dropItem.item)) ? dropItem.item : this.inventory.getItemInHand();
                     PlayerDropItemEvent dropItemEvent = new PlayerDropItemEvent(this, item);
                     this.server.getPluginManager().callEvent(dropItemEvent);
                     if (dropItemEvent.isCancelled()) {
@@ -2629,7 +2630,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    this.inventory.removeItem(item);
+                    if (!this.isCreative()) {
+                        this.inventory.removeItem(item);
+                    }
                     Vector3 motion = this.getDirectionVector().multiply(0.4);
 
                     this.level.dropItem(this.add(0, 1.3, 0), item, motion, 40);
@@ -3066,12 +3069,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     this.currentTransaction.addTransaction(transaction);
 
-                    if (this.currentTransaction.canExecute()) {
+                    if (this.currentTransaction.canExecute() || this.isCreative()) {
                         //todo achievement
-
-                        this.currentTransaction.execute();
+                        this.currentTransaction.execute(this.isCreative());
 
                         this.currentTransaction = null;
+                    } else {
+                        if (containerSetSlotPacket.item.getId() != 0) {
+                           inventory.sendSlot(containerSetSlotPacket.hotbarSlot, this);
+                           inventory.sendSlot(containerSetSlotPacket.slot, this);
+                        }
                     }
 
                     break;

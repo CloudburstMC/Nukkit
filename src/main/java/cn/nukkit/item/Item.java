@@ -212,7 +212,8 @@ public class Item implements Cloneable {
     public static final int LIT_REDSTONE_LAMP = 124;
 
     public static final int ACTIVATOR_RAIL = 126;
-
+    public static final int COCOA = 127;
+    public static final int COCOA_BLOCK = 127;
     public static final int SANDSTONE_STAIRS = 128;
     public static final int EMERALD_ORE = 129;
 

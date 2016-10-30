@@ -33,6 +33,7 @@ import cn.nukkit.level.format.leveldb.LevelDB;
 import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Flat;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.Nether;
 import cn.nukkit.level.generator.Normal;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.math.NukkitMath;
@@ -68,7 +69,6 @@ import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.*;
-
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -389,6 +389,7 @@ public class Server {
         Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
         Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
         Generator.addGenerator(Normal.class, "default", Generator.TYPE_INFINITE);
+        Generator.addGenerator(Nether.class, "nether", Generator.TYPE_NETHER);
         //todo: add old generator and hell generator
 
         for (String name : ((Map<String, Object>) this.getConfig("worlds", new HashMap<>())).keySet()) {
