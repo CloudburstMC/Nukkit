@@ -170,12 +170,20 @@ public class MainLogger extends ThreadedLogger {
                 this.logException(e);
             }
         } else {
-            try {
-                RandomAccessFile raf = new RandomAccessFile(logFile, "rw");
-                raf.setLength(0);
-                raf.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            long date = logFile.lastModified();
+            String newName = new SimpleDateFormat("Y-M-d HH.mm.ss").format(new Date(date)) + ".log";
+            File oldLogs = new File(Nukkit.DATA_PATH, "logs");
+            if (!oldLogs.exists()) {
+                oldLogs.mkdirs();
+            }
+            logFile.renameTo(new File(oldLogs, newName));
+            logFile = new File(logPath);
+            if (!logFile.exists()) {
+                try {
+                    logFile.createNewFile();
+                } catch (IOException e) {
+                    this.logException(e);
+                }
             }
         }
         replacements.put(TextFormat.BLACK, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString());
@@ -218,16 +226,17 @@ public class MainLogger extends ThreadedLogger {
         try {
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024);
             Date now = new Date();
-            String dateFormat = new SimpleDateFormat("Y-M-d").format(now);
+            String consoleDateFormat = new SimpleDateFormat("HH:mm:ss ").format(now);
+            String fileDateFormat = new SimpleDateFormat("Y-M-d HH:mm:ss ").format(now);
             int count = 0;
             while (!logBuffer.isEmpty()) {
                 String message = logBuffer.poll();
                 if (message != null) {
-                    writer.write(dateFormat);
+                    writer.write(fileDateFormat);
                     writer.write(TextFormat.clean(message));
                     writer.write("\r\n");
                     CommandReader.getInstance().stashLine();
-                    System.out.println(colorize(TextFormat.AQUA + dateFormat + TextFormat.RESET + " " + message + TextFormat.RESET));
+                    System.out.println(colorize(TextFormat.AQUA + consoleDateFormat + TextFormat.RESET + message + TextFormat.RESET));
                     CommandReader.getInstance().unstashLine();
                 }
             }
