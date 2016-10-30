@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 
 /**
@@ -13,6 +14,7 @@ public class SaveOnCommand extends VanillaCommand {
     public SaveOnCommand(String name) {
         super(name, "%nukkit.command.saveon.description", "%commands.save-on.usage");
         this.setPermission("nukkit.command.save.enable");
+        this.commandParameters = new CommandParameter[0];
     }
 
     @Override

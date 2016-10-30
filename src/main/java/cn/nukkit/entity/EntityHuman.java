@@ -1,7 +1,7 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.data.PositionEntityData;
+import cn.nukkit.entity.data.IntPositionEntityData;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -18,11 +18,12 @@ import java.util.UUID;
  */
 public class EntityHuman extends EntityHumanType {
 
-    public static final int DATA_PLAYER_FLAG_SLEEP = 1;
-    public static final int DATA_PLAYER_FLAG_DEAD = 2;
+    public static final int DATA_PLAYER_FLAG_SLEEP = 1; //TODO: CHECK
+    public static final int DATA_PLAYER_FLAG_DEAD = 2; //TODO: CHECK
 
-    public static final int DATA_PLAYER_FLAGS = 16;
+    public static final int DATA_PLAYER_FLAGS = 27;
     public static final int DATA_PLAYER_BED_POSITION = 17;
+    public static final int DATA_PLAYER_BUTTON_TEXT = 40;
 
     protected UUID uuid;
     protected byte[] rawUUID;
@@ -78,7 +79,7 @@ public class EntityHuman extends EntityHumanType {
     protected void initEntity() {
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
 
-        this.setDataProperty(new PositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0), false);
+        this.setDataProperty(new IntPositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0), false);
 
         if (!(this instanceof Player)) {
             if (this.namedTag.contains("NameTag")) {
@@ -136,7 +137,8 @@ public class EntityHuman extends EntityHumanType {
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = this.getUniqueId();
             pk.username = this.getName();
-            pk.eid = this.getId();
+            pk.entityUniqueId = this.getId();
+            pk.entityRuntimeId = this.getId();
             pk.x = (float) this.x;
             pk.y = (float) this.y;
             pk.z = (float) this.z;

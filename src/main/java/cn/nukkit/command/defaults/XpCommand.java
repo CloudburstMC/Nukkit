@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
@@ -14,6 +15,10 @@ public class XpCommand extends Command {
     public XpCommand(String name) {
         super(name, "%nukkit.command.xp.description", "%commands.xp.usage");
         this.setPermission("nukkit.command.xp");
+        this.commandParameters = new CommandParameter[]{
+                new CommandParameter("amount|level", CommandParameter.ARG_TYPE_INT, false),
+                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, true)
+        };
     }
 
     @Override

@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.math.Vector3f;
+
 /**
  * @author Nukkit Project Team
  */
@@ -13,17 +15,16 @@ public class RespawnPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.x = getFloat();
-        this.y = getFloat();
-        this.z = getFloat();
+        Vector3f v = this.getVector3f();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putFloat(this.x);
-        this.putFloat(this.y);
-        this.putFloat(this.z);
+        this.putVector3f(x, y, z);
     }
 
     @Override

@@ -76,7 +76,8 @@ public class EntityPainting extends EntityHanging {
     @Override
     public void spawnTo(Player player) {
         AddPaintingPacket pk = new AddPaintingPacket();
-        pk.eid = this.getId();
+        pk.entityUniqueId = this.getId();
+        pk.entityRuntimeId = this.getId();
         pk.x = (int) this.x;
         pk.y = (int) this.y;
         pk.z = (int) this.z;

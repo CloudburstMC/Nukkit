@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 
 /**
@@ -13,6 +14,7 @@ public class SeedCommand extends VanillaCommand {
     public SeedCommand(String name) {
         super(name, "%nukkit.command.seed.description", "%commands.seed.usage");
         this.setPermission("nukkit.command.seed");
+        this.commandParameters = new CommandParameter[0];
     }
 
     @Override

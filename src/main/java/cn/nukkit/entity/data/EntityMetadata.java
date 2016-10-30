@@ -53,7 +53,7 @@ public class EntityMetadata {
     }
 
     public long getLong(int id) {
-        return (long) this.getOrDefault(id, new IntEntityData(id, 0)).getData();
+        return (Long) this.getOrDefault(id, new LongEntityData(id, 0)).getData();
     }
 
     public float getFloat(int id) {
@@ -73,7 +73,7 @@ public class EntityMetadata {
     }
 
     public Vector3 getPosition(int id) {
-        return (Vector3) this.getOrDefault(id, new PositionEntityData(id, new Vector3())).getData();
+        return (Vector3) this.getOrDefault(id, new IntPositionEntityData(id, new Vector3())).getData();
     }
 
     public EntityMetadata putByte(int id, int value) {

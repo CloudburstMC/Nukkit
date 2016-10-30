@@ -1,6 +1,7 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
@@ -14,6 +15,7 @@ public class GarbageCollectorCommand extends VanillaCommand {
     public GarbageCollectorCommand(String name) {
         super(name, "%nukkit.command.gc.description", "%nukkit.command.gc.usage");
         this.setPermission("nukkit.command.gc");
+        this.commandParameters = new CommandParameter[0];
     }
 
     @Override

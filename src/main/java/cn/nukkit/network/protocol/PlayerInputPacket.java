@@ -10,16 +10,15 @@ public class PlayerInputPacket extends DataPacket {
     public float motionX;
     public float motionY;
 
-    public boolean jumping;
-    public boolean sneaking;
+    public boolean unknownBool1;
+    public boolean unknownBool2;
 
     @Override
     public void decode() {
-        this.motionX = this.getFloat();
-        this.motionY = this.getFloat();
-        int flags = this.getByte();
-        this.jumping = (flags & 0x80) > 0;
-        this.sneaking = (flags & 0x40) > 0;
+        this.motionX = this.getLFloat();
+        this.motionY = this.getLFloat();
+        this.unknownBool1 = this.getBoolean();
+        this.unknownBool2 = this.getBoolean();
     }
 
     @Override

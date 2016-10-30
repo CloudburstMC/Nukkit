@@ -1298,7 +1298,7 @@ public class Item implements Cloneable {
     }
 
     public static void addCreativeItem(Item item) {
-        Item.creative.add(Item.get(item.getId(), item.hasMeta ? item.getDamage() : null));
+        Item.creative.add(item.clone());
     }
 
     public static void removeCreativeItem(Item item) {

@@ -1,13 +1,26 @@
 package cn.nukkit.command;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.command.data.CommandData;
+import cn.nukkit.command.data.CommandDataVersions;
+import cn.nukkit.command.data.CommandOverload;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.Permissible;
+import cn.nukkit.permission.Permission;
 import cn.nukkit.timings.Timing;
 import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.TextFormat;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -15,6 +28,10 @@ import java.util.Set;
  * Nukkit Project
  */
 public abstract class Command {
+
+    private static CommandData defaultDataTemplate = null;
+
+    protected CommandData commandData;
 
     private final String name;
 
@@ -36,6 +53,8 @@ public abstract class Command {
 
     private String permissionMessage = null;
 
+    protected CommandParameter[] commandParameters = new CommandParameter[]{new CommandParameter("args", "rawtext", true)};
+
     public Timing timing;
 
     public Command(String name) {
@@ -51,6 +70,7 @@ public abstract class Command {
     }
 
     public Command(String name, String description, String usageMessage, String[] aliases) {
+        this.commandData = new CommandData();
         this.name = name;
         this.nextLabel = name;
         this.label = name;
@@ -59,6 +79,51 @@ public abstract class Command {
         this.aliases = aliases;
         this.activeAliases = aliases;
         this.timing = Timings.getCommandTiming(this);
+    }
+
+    /**
+     * Returns an CommandData containing command data
+     *
+     * @return CommandData
+     */
+    public CommandData getDefaultCommandData() {
+        return this.commandData;
+    }
+
+    public CommandParameter[] getCommandParameters() {
+        return commandParameters;
+    }
+
+    public void setCommandParameters(CommandParameter[] commandParameters) {
+        this.commandParameters = commandParameters;
+    }
+
+    /**
+     * Generates modified command data for the specified player
+     * for AvailableCommandsPacket.
+     *
+     * @return CommandData|null
+     */
+    public CommandDataVersions generateCustomCommandData(Player player){
+        if(!this.testPermission(player)){
+            return null;
+        }
+
+        CommandData customData = this.commandData.clone();
+        customData.aliases = this.getAliases();
+        customData.description = player.getServer().getLanguage().translateString(this.getDescription());
+        customData.permission = player.hasPermission(this.getPermission()) ? "any" : "false";
+        CommandOverload overload = new CommandOverload();
+        overload.input.parameters = this.commandParameters;
+        customData.overloads.put("default", overload);
+
+        CommandDataVersions versions = new CommandDataVersions();
+        versions.versions.add(customData);
+        return versions;
+    }
+
+    public Map<String, CommandOverload> getOverloads(){
+        return this.commandData.overloads;
     }
 
     public abstract boolean execute(CommandSender sender, String commandLabel, String[] args);
@@ -177,6 +242,13 @@ public abstract class Command {
 
     public void setUsage(String usageMessage) {
         this.usageMessage = usageMessage;
+    }
+
+    public static final CommandData generateDefaultData() {
+        if(defaultDataTemplate == null){
+            //defaultDataTemplate = new Gson().fromJson(new InputStreamReader(Server.class.getClassLoader().getResourceAsStream("command_default.json")));
+        }
+        return defaultDataTemplate.clone();
     }
 
     public static void broadcastCommandMessage(CommandSender source, String message) {

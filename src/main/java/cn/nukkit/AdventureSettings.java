@@ -8,13 +8,27 @@ import cn.nukkit.network.protocol.AdventureSettingsPacket;
  */
 public class AdventureSettings implements Cloneable {
 
+    public static final int PERMISSION_NORMAL = 0;
+    public static final int PERMISSION_OPERATOR = 1;
+    public static final int PERMISSION_HOST = 2;
+    public static final int PERMISSION_AUTOMATION = 3;
+    public static final int PERMISSION_ADMIN = 4;
+
     private boolean canDestroyBlock = true;
 
     private boolean autoJump = true;
 
     private boolean canFly = false;
 
+    private boolean flying = false;
+
     private boolean noclip = false;
+
+    private boolean noPvp = false;
+
+    private boolean noPvm = false;
+
+    private boolean noMvp = false;
 
     private Player player;
 
@@ -43,8 +57,24 @@ public class AdventureSettings implements Cloneable {
         this.canFly = canFly;
     }
 
+    public void setFlying(boolean flying) {
+        this.flying = flying;
+    }
+
     public void setNoclip(boolean noclip) {
         this.noclip = noclip;
+    }
+
+    public void setNoPvp(boolean noPvp) {
+        this.noPvp = noPvp;
+    }
+
+    public void setNoPvm(boolean noPvm) {
+        this.noPvm = noPvm;
+    }
+
+    public void setNoMvp(boolean noMvp) {
+        this.noMvp = noMvp;
     }
 
     public boolean canDestroyBlock() {
@@ -59,53 +89,38 @@ public class AdventureSettings implements Cloneable {
         return canFly;
     }
 
+    public boolean isFlying() {
+        return flying;
+    }
+
     public boolean isNoclipEnabled() {
         return noclip;
     }
 
+    public boolean isNoPvp() {
+        return noPvp;
+    }
+
+    public boolean isNoPvm() {
+        return noPvm;
+    }
+
+    public boolean isNoMvp() {
+        return noMvp;
+    }
+
     public void update() {
-        /*
-         bit mask | flag name
-		0x00000001 world_immutable
-		0x00000002 no_pvp
-		0x00000004 no_pvm
-		0x00000008 no_pve
-		0x00000010 static_time
-		0x00000020 nametags_visible
-		0x00000040 auto_jump
-		0x00000080 can_switch_between_walking_and_flying
-		0x00000100 noclip
-		*/
-        int flags = 0;
-
-        flags |= 0x02; // No PvP (Remove hit markers client-side).
-        flags |= 0x04; // No PvM (Remove hit markers client-side).
-        flags |= 0x08; // No PvE (Remove hit markers client-side).
-
-        if (!this.canDestroyBlock()) {
-            flags |= 0x01;
-        }
-
-		/*if(!nametags){
-            flags |= 0x20; //Show Nametags
-		}*/
-
-        if (this.isAutoJumpEnabled()) {
-            flags |= 0x40;
-        }
-
-        if (this.canFly()) {
-            flags |= 0x80;
-        }
-
-        if (this.isNoclipEnabled()) {
-            flags |= 0x100;
-        }
-
         AdventureSettingsPacket pk = new AdventureSettingsPacket();
-        pk.flags = flags;
-        pk.userPermission = 0x2;
-        pk.globalPermission = 0x2;
+        pk.flags = 0;
+        pk.worldImmutable = !canDestroyBlock;
+        pk.autoJump = autoJump;
+        pk.allowFlight = canFly;
+        pk.noClip = noclip;
+        pk.isFlying = flying;
+        pk.noPvp = noPvp;
+        pk.noPvm = noPvm;
+        pk.noMvp = noMvp;
+        pk.userPermission = (this.player.isOp() ? PERMISSION_OPERATOR : PERMISSION_NORMAL);;
         player.dataPacket(pk);
 
         player.resetInAirTicks();

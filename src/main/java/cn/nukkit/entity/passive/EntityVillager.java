@@ -1,6 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.level.format.FullChunk;
@@ -67,14 +68,15 @@ public class EntityVillager extends EntityCreature implements EntityNPC, EntityA
 
     @Override
     public boolean isBaby() {
-        return this.getDataFlag(DATA_AGEABLE_FLAGS, DATA_FLAG_BABY);
+        return this.getDataFlag(DATA_FLAGS, Entity.DATA_FLAG_BABY);
     }
 
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.type = this.getNetworkId();
-        pk.eid = this.getId();
+        pk.entityUniqueId = this.getId();
+        pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;
         pk.z = (float) this.z;

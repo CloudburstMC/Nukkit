@@ -14,6 +14,8 @@ public class ChangeDimensionPacket extends DataPacket {
     public float y;
     public float z;
 
+    public byte unknown;
+
     @Override
     public void decode() {
 
@@ -23,10 +25,8 @@ public class ChangeDimensionPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte(dimension);
-        this.putFloat(x);
-        this.putFloat(y);
-        this.putFloat(z);
-        this.putByte((byte) 0);
+        this.putVector3f(x, y, z);
+        this.putByte(unknown);
     }
 
     @Override

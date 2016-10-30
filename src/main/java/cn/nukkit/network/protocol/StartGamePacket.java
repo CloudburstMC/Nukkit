@@ -12,26 +12,28 @@ public class StartGamePacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    public int seed;
-
-    public byte dimension;
-    public int generator;
-    public int gamemode;
-
-    public long eid;
-
-    public int spawnX;
-    public int spawnY;
-    public int spawnZ;
-
+    public long entityUniqueId;
+    public long entityRuntimeId;
     public float x;
     public float y;
     public float z;
-
-    public boolean b1;
-    public boolean b2;
-    public boolean b3;
-    public String unknownstr;
+    public int seed;
+    public byte dimension;
+    public int generator = 1;
+    public int gamemode;
+    public int difficulty;
+    public int spawnX;
+    public int spawnY;
+    public int spawnZ;
+    public boolean hasAchievementsDisabled = true;
+    public int dayCycleStopTime = -1; //-1 = not stopped, any positive value = stopped at that time
+    public boolean eduMode = false;
+    public float rainLevel;
+    public float lightningLevel;
+    public boolean commandsEnabled;
+    public boolean isTexturePacksRequired = false;
+    public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
+    public String worldName;
 
     @Override
     public void decode() {
@@ -41,21 +43,29 @@ public class StartGamePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putInt(seed);
-        this.putByte(dimension);
-        this.putInt(generator);
-        this.putInt(gamemode);
-        this.putLong(eid);
-        this.putInt(spawnX);
-        this.putInt(spawnY);
-        this.putInt(spawnZ);
-        this.putFloat(x);
-        this.putFloat(y);
-        this.putFloat(z);
-        this.putBoolean(b1);
-        this.putBoolean(b2);
-        this.putBoolean(b3);
-        this.putString(unknownstr);
+        this.putVarLong(entityUniqueId);
+        this.putEntityId(entityRuntimeId);
+        this.putVector3f(this.x, this.y, this.z);
+        this.putLFloat(0);
+        this.putLFloat(0);
+        this.putVarInt(seed);
+        this.putVarInt(dimension);
+        this.putVarInt(generator);
+        this.putVarInt(gamemode);
+        this.putVarInt(difficulty);
+        //this.putBlockCoords(spawnX, spawnY, spawnZ);
+        this.putVarInt(spawnX);
+        this.putVarInt(spawnY);
+        this.putVarInt(spawnZ);
+        this.putBoolean(hasAchievementsDisabled);
+        this.putVarInt(dayCycleStopTime);
+        this.putBoolean(eduMode);
+        this.putLFloat(rainLevel);
+        this.putLFloat(lightningLevel);
+        this.putBoolean(commandsEnabled);
+        this.putBoolean(isTexturePacksRequired);
+        this.putString(levelId);
+        this.putString(worldName);
     }
 
 }

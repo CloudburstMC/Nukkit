@@ -176,7 +176,8 @@ public class EntityXPOrb extends Entity {
     public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
         packet.type = getNetworkId();
-        packet.eid = getId();
+        packet.entityUniqueId = this.getId();
+        packet.entityRuntimeId = getId();
         packet.x = (float) this.x;
         packet.y = (float) this.y;
         packet.z = (float) this.z;

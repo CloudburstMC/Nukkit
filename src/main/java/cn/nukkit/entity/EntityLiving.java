@@ -183,6 +183,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     @Override
     public boolean entityBaseTick(int tickDiff) {
         Timings.livingEntityBaseTickTimer.startTiming();
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_BREATHING, !this.isInsideOfWater());
+
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
         if (this.isAlive()) {
@@ -194,7 +196,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
                 if (this instanceof EntityWaterAnimal) {
-                    this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, 400));
                 } else {
                     hasUpdate = true;
                     int airTicks = this.getDataPropertyShort(DATA_AIR) - tickDiff;
@@ -220,7 +222,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
                     this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
                 } else {
-                    this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
+                    this.setDataProperty(new ShortEntityData(DATA_AIR, 400));
                 }
             }
         }

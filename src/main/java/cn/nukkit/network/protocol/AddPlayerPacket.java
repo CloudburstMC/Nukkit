@@ -20,7 +20,8 @@ public class AddPlayerPacket extends DataPacket {
 
     public UUID uuid;
     public String username;
-    public long eid;
+    public long entityUniqueId;
+    public long entityRuntimeId;
     public float x;
     public float y;
     public float z;
@@ -30,7 +31,7 @@ public class AddPlayerPacket extends DataPacket {
     public float pitch;
     public float yaw;
     public Item item;
-    public EntityMetadata metadata;
+    public EntityMetadata metadata = new EntityMetadata();
 
     @Override
     public void decode() {
@@ -42,16 +43,13 @@ public class AddPlayerPacket extends DataPacket {
         this.reset();
         this.putUUID(this.uuid);
         this.putString(this.username);
-        this.putLong(this.eid);
-        this.putFloat(this.x);
-        this.putFloat(this.y);
-        this.putFloat(this.z);
-        this.putFloat(this.speedX);
-        this.putFloat(this.speedY);
-        this.putFloat(this.speedZ);
-        this.putFloat(this.yaw);
-        this.putFloat(this.yaw); //TODO headrot
-        this.putFloat(this.pitch);
+        this.putVarLong(this.entityUniqueId);
+        this.putEntityId(this.entityRuntimeId);
+        this.putVector3f(x, y, z);
+        this.putVector3f(speedX, speedY, speedZ);
+        this.putLFloat(this.pitch);
+        this.putLFloat(this.yaw); //TODO headrot
+        this.putLFloat(this.yaw);
         this.putSlot(this.item);
 
         this.put(Binary.writeMetadata(this.metadata));

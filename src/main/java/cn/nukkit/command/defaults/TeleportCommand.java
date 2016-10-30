@@ -1,15 +1,14 @@
 package cn.nukkit.command.defaults;
 
-
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Location;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
-
 
 /**
  * Created on 2015/11/12 by Pub4Game and milkice.
@@ -19,6 +18,9 @@ public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {
         super(name, "%nukkit.command.tp.description", "%commands.tp.usage");
         this.setPermission("nukkit.command.teleport");
+        this.commandParameters = new CommandParameter[]{
+                new CommandParameter("args ...", false)
+        };
     }
 
     @Override

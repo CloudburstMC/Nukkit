@@ -189,7 +189,8 @@ public class EntityFallingBlock extends Entity {
     public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
         packet.type = EntityFallingBlock.NETWORK_ID;
-        packet.eid = getId();
+        packet.entityUniqueId = this.getId();
+        packet.entityRuntimeId = getId();
         packet.x = (float) x;
         packet.y = (float) y;
         packet.z = (float) z;

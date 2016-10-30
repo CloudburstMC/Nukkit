@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 
 import java.util.regex.Pattern;
@@ -16,6 +17,9 @@ public class PardonIpCommand extends VanillaCommand {
         super(name, "%nukkit.command.unban.ip.description", "%commands.unbanip.usage");
         this.setPermission("nukkit.command.unban.ip");
         this.setAliases(new String[]{"unbanip", "unban-ip", "pardonip"});
+        this.commandParameters = new CommandParameter[]{
+                new CommandParameter("ip")
+        };
     }
 
     @Override

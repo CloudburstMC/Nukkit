@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.math.Vector3f;
+
 /**
  * Created on 15-10-14.
  */
@@ -23,29 +25,31 @@ public class MovePlayerPacket extends DataPacket {
 
     @Override
     public void decode() {
-        eid = getLong();
-        x = getFloat();
-        y = getFloat();
-        z = getFloat();
-        yaw = getFloat();
-        headYaw = getFloat();
-        pitch = getFloat();
+        eid = this.getEntityId();
+        Vector3f v = this.getVector3f();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        pitch = getLFloat();
+        headYaw = getLFloat();
+        yaw = getLFloat();
         mode = (byte) getByte();
-        onGround = getByte() > 0;
+        onGround = getBoolean();
     }
 
     @Override
     public void encode() {
         reset();
-        putLong(eid);
-        putFloat(x);
-        putFloat(y);
-        putFloat(z);
-        putFloat(yaw);
-        putFloat(headYaw);
-        putFloat(pitch);
+        putEntityId(eid);
+        putVector3f(x, y, z);
+        //putLFloat(x);
+        //putLFloat(y);
+        //putLFloat(z);
+        putLFloat(pitch);
+        putLFloat(yaw);
+        putLFloat(headYaw);
         putByte(mode);
-        putByte(onGround ? (byte) 1 : 0);
+        putBoolean(onGround);
     }
 
     @Override

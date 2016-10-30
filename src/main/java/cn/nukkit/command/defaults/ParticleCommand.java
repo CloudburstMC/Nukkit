@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
@@ -20,6 +21,18 @@ public class ParticleCommand extends VanillaCommand {
     public ParticleCommand(String name) {
         super(name, "%nukkit.command.particle.description", "%nukkit.command.particle.usage");
         this.setPermission("nukkit.command.particle");
+        //<name> <x> <y> <z> <xd> <yd> <zd> [count] [data]
+        this.commandParameters = new CommandParameter[]{
+                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
+                new CommandParameter("x"),
+                new CommandParameter("y"),
+                new CommandParameter("z"),
+                new CommandParameter("zd"),
+                new CommandParameter("yd"),
+                new CommandParameter("zd"),
+                new CommandParameter("count", CommandParameter.ARG_TYPE_INT, true),
+                new CommandParameter("data", true)
+        };
     }
 
     @Override

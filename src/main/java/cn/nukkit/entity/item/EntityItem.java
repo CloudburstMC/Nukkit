@@ -237,7 +237,8 @@ public class EntityItem extends Entity {
     @Override
     public void spawnTo(Player player) {
         AddItemEntityPacket pk = new AddItemEntityPacket();
-        pk.eid = this.getId();
+        pk.entityUniqueId = this.getId();
+        pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;
         pk.z = (float) this.z;

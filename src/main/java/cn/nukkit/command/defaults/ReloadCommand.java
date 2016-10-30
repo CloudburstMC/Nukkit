@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
@@ -14,6 +15,7 @@ public class ReloadCommand extends VanillaCommand {
     public ReloadCommand(String name) {
         super(name, "%nukkit.command.reload.description", "%commands.reload.usage");
         this.setPermission("nukkit.command.reload");
+        this.commandParameters = new CommandParameter[0];
     }
 
     @Override

@@ -360,11 +360,11 @@ public class Server {
         this.registerBlockEntities();
 
         Block.init();
+        Enchantment.init();
         Item.init();
         Biome.init();
         Effect.init();
         Potion.init();
-        Enchantment.init();
         Attribute.init();
 
         this.craftingManager = new CraftingManager();
@@ -565,7 +565,7 @@ public class Server {
                 p.encode();
             }
             byte[] buf = p.getBuffer();
-            payload[i * 2] = Binary.writeInt(buf.length);
+            payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
             payload[i * 2 + 1] = buf;
         }
         byte[] data;
@@ -943,6 +943,7 @@ public class Server {
                 }
 
                 this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.toString()}));
+                this.logger.logException(e);
             }
         }
     }

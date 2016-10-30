@@ -10,23 +10,22 @@ public class InteractPacket extends DataPacket {
     public static final byte ACTION_RIGHT_CLICK = 1;
     public static final byte ACTION_LEFT_CLICK = 2;
     public static final byte ACTION_VEHICLE_EXIT = 3;
+    public static final byte ACTION_MOUSEOVER = 4;
 
-
-    public long eid;
     public byte action;
     public long target;
 
     @Override
     public void decode() {
         action = (byte) getByte();
-        target = getLong();
+        target = getEntityId();
     }
 
     @Override
     public void encode() {
         reset();
         putByte(action);
-        putLong(target);
+        putEntityId(target);
     }
 
     @Override

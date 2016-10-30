@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
@@ -18,6 +19,7 @@ public class HelpCommand extends VanillaCommand {
     public HelpCommand(String name) {
         super(name, "%nukkit.command.help.description", "%commands.help.usage", new String[]{"?"});
         this.setPermission("nukkit.command.help");
+        this.commandParameters = new CommandParameter[0];
     }
 
     @Override

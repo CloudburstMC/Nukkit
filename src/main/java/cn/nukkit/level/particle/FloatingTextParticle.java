@@ -70,7 +70,8 @@ public class FloatingTextParticle extends Particle {
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = UUID.randomUUID();
             pk.username = "";
-            pk.eid = this.entityId;
+            pk.entityUniqueId = this.entityId;
+            pk.entityRuntimeId = this.entityId;
             pk.x = (float) this.x;
             pk.y = (float) (this.y - 1.62);
             pk.z = (float) this.z;
@@ -79,11 +80,14 @@ public class FloatingTextParticle extends Particle {
             pk.speedZ = 0;
             pk.yaw = 0;
             pk.pitch = 0;
+            long flags = 0;
+            flags |= 1 << Entity.DATA_FLAG_INVISIBLE;
+            flags |= 1 << Entity.DATA_FLAG_CAN_SHOW_NAMETAG;
+            flags |= 1 << Entity.DATA_FLAG_ALWAYS_SHOW_NAMETAG;
+            flags |= 1 << Entity.DATA_FLAG_IMMOBILE;
             pk.metadata = new EntityMetadata()
-                    .putByte(Entity.DATA_FLAGS, 1 << Entity.DATA_FLAG_INVISIBLE)
+                    .putLong(Entity.DATA_FLAGS, flags)
                     .putString(Entity.DATA_NAMETAG, this.title + (!"".equals(this.text) ? "\n" + this.text : ""))
-                    .putBoolean(Entity.DATA_SHOW_NAMETAG, true)
-                    .putBoolean(Entity.DATA_NO_AI, true)
                     .putLong(Entity.DATA_LEAD_HOLDER, -1)
                     .putByte(Entity.DATA_LEAD, 0);
             pk.item = Item.get(Item.AIR);

@@ -65,7 +65,8 @@ public class EntityCreeper extends EntityMob {
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.type = this.getNetworkId();
-        pk.eid = this.getId();
+        pk.entityUniqueId = this.getId();
+        pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;
         pk.z = (float) this.z;
