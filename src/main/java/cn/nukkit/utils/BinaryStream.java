@@ -332,11 +332,11 @@ public class BinaryStream {
     }
 
     public long getEntityId() {
-        return this.getUnsignedVarLong().longValue();
+        return this.getVarLong();
     }
 
     public void putEntityId(long v) {
-        this.putUnsignedVarLong(BigInteger.valueOf(v));
+        this.putVarLong(v);
     }
 
     public BlockVector3 getBlockCoords() {

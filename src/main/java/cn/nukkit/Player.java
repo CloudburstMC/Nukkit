@@ -101,6 +101,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int CRAFTING_ANVIL = 2;
     public static final int CRAFTING_ENCHANT = 3;
 
+    public static final float DEFAULT_SPEED = 0.1f;
+    public static final float MAXIMUM_SPEED = 0.5f;
+
     protected final SourceInterface interfaz;
 
     public boolean playedBefore;
@@ -482,7 +485,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if(count > 0){
             //TODO: structure checking
             pk.commands = new Gson().toJson(data);
-            Server.getInstance().getLogger().warning(pk.commands);
             this.dataPacket(pk);
         }
     }
@@ -728,9 +730,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.server.sendRecipeList(this);
         this.getAdventureSettings().update();
-
-        this.server.sendFullPlayerListData(this);
-        this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getDisplayName(), this.getSkin());
 
         this.sendPotionEffects(this);
         this.sendData(this);
@@ -1777,6 +1776,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         setTimePacket.started = !this.level.stopTime;
         this.dataPacket(setTimePacket);
 
+        this.setMovementSpeed(DEFAULT_SPEED);
         this.sendAttributes(true);
         this.setNameTagVisible(true);
         this.setNameTagAlwaysVisible(true);
@@ -1808,6 +1808,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.setEnableClientCommand(true);
+
+        this.server.sendFullPlayerListData(this);
 
         this.forceMovement = this.teleportPosition = this.getPosition();
 
@@ -2413,7 +2415,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             this.teleport(playerRespawnEvent.getRespawnPosition(), null);
 
-                            this.setSprinting(false);
+                            this.setSprinting(false, true);
                             this.setSneaking(false);
 
                             this.extinguish();
@@ -2427,7 +2429,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.removeAllEffects();
                             this.sendData(this);
 
-                            this.setMovementSpeed(0.1f);
+                            this.setMovementSpeed(DEFAULT_SPEED);
 
                             this.getAdventureSettings().update();
                             this.inventory.sendContents(this);
@@ -2537,7 +2539,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         cancelled = true;
                     }
 
-                    if (((InteractPacket) packet).action != InteractPacket.ACTION_MOUSEOVER) {
+                    if (((InteractPacket) packet).action == InteractPacket.ACTION_MOUSEOVER) {
+                        this.getServer().getPluginManager().callEvent(new PlayerMouseOverEntityEvent(this, targetEntity));
+                    } else {
                         if (targetEntity != null && this.isAlive() && targetEntity.isAlive()) {
                             if (this.getGamemode() == Player.VIEW) {
                                 cancelled = true;
@@ -2635,8 +2639,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
                             }
                         }
-                    } else {
-                        //TODO: check ACTION_MOUSEOVER
                     }
 
                     break;
@@ -4244,6 +4246,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public synchronized Locale getLocale() {
         return this.locale.get();
+    }
+
+    public void setSprinting(boolean value, boolean setDefault) {
+        super.setSprinting(value);
+        if (setDefault) {
+            this.movementSpeed = DEFAULT_SPEED;
+        } else {
+            float sprintSpeedChange = DEFAULT_SPEED * 0.3f;
+            if (!value) sprintSpeedChange *= -1;
+            this.movementSpeed += sprintSpeedChange;
+        }
+        this.setMovementSpeed(this.movementSpeed);
     }
 
     @Override

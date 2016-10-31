@@ -22,6 +22,6 @@ public class RemoveEntityPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarLong(eid);
+        this.putEntityId(eid);
     }
 }
