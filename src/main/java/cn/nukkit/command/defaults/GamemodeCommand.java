@@ -17,10 +17,11 @@ public class GamemodeCommand extends VanillaCommand {
     public GamemodeCommand(String name) {
         super(name, "%nukkit.command.gamemode.description", "%commands.gamemode.usage");
         this.setPermission("nukkit.command.gamemode");
-        this.commandParameters = new CommandParameter[]{
+        this.commandParameters.clear();
+        this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("mode", CommandParameter.ARG_TYPE_INT, false),
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, true)
-        };
+        });
     }
 
     @Override

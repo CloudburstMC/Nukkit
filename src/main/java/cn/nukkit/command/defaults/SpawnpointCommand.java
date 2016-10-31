@@ -19,11 +19,10 @@ public class SpawnpointCommand extends VanillaCommand {
     public SpawnpointCommand(String name) {
         super(name, "%nukkit.command.spawnpoint.description", "%commands.spawnpoint.usage");
         this.setPermission("nukkit.command.spawnpoint");
-        this.commandParameters = new CommandParameter[]{
-                new CommandParameter("x", CommandParameter.ARG_TYPE_BLOCK_POS, true),
-                new CommandParameter("y", CommandParameter.ARG_TYPE_BLOCK_POS, true),
-                new CommandParameter("z", CommandParameter.ARG_TYPE_BLOCK_POS, true)
-        };
+        this.commandParameters.clear();
+        this.commandParameters.put("default", new CommandParameter[]{
+                new CommandParameter("pos", CommandParameter.ARG_TYPE_BLOCK_POS, true),
+        });
     }
 
     @Override

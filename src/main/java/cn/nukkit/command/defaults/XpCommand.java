@@ -15,10 +15,11 @@ public class XpCommand extends Command {
     public XpCommand(String name) {
         super(name, "%nukkit.command.xp.description", "%commands.xp.usage");
         this.setPermission("nukkit.command.xp");
-        this.commandParameters = new CommandParameter[]{
+        this.commandParameters.clear();
+        this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("amount|level", CommandParameter.ARG_TYPE_INT, false),
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, true)
-        };
+        });
     }
 
     @Override

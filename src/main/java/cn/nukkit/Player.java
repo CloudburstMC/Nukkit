@@ -2753,26 +2753,34 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Command command = this.getServer().getCommandMap().getCommand(commandText);
                     if (command != null) {
                         if(commandStepPacket.args != null && commandStepPacket.args.size() > 0) {
-                            int index = 0;
-                            CommandParameter[] pars = command.getCommandParameters();
-                            for (JsonElement arg : commandStepPacket.args.values()) {
-                                if (index < pars.length) {
-                                    CommandParameter par = pars[index];
-                                    switch (par.type) {
-                                        case CommandParameter.ARG_TYPE_TARGET:
-                                            CommandArg rules = new Gson().fromJson(arg, CommandArg.class);
-                                            commandText += " " + rules.getRules()[0].getValue();
-                                            break;
-                                        case CommandParameter.ARG_TYPE_BLOCK_POS:
-                                            CommandArgBlockVector bv = new Gson().fromJson(arg, CommandArgBlockVector.class);
-                                            commandText += " " + bv.getX() + " " + bv.getY() + " " + bv.getZ();
-                                            break;
-                                        default:
-                                            commandText += " " + arg.toString();
-                                            break;
+                            CommandParameter[] pars = command.getCommandParameters(commandStepPacket.overload);
+                            if (pars != null) {
+                                for (CommandParameter par: pars) {
+                                    JsonElement arg = commandStepPacket.args.get(par.name);
+                                    if (arg != null) {
+                                        switch (par.type) {
+                                            case CommandParameter.ARG_TYPE_TARGET:
+                                                CommandArg rules = new Gson().fromJson(arg, CommandArg.class);
+                                                commandText += " " + rules.getRules()[0].getValue();
+                                                break;
+                                            case CommandParameter.ARG_TYPE_BLOCK_POS:
+                                                CommandArgBlockVector bv = new Gson().fromJson(arg, CommandArgBlockVector.class);
+                                                commandText += " " + bv.getX() + " " + bv.getY() + " " + bv.getZ();
+                                                break;
+                                            case CommandParameter.ARG_TYPE_STRING:
+                                            case CommandParameter.ARG_TYPE_STRING_ENUM:
+                                            case CommandParameter.ARG_TYPE_RAW_TEXT:
+                                                String string = new Gson().fromJson(arg, String.class);
+                                                commandText += " " + string;
+                                                break;
+                                            default:
+                                                commandText += " " + arg.toString();
+                                                break;
+                                        }
                                     }
                                 }
-                                index++;
+                            } else {
+                                this.sendMessage(this.getServer().getLanguage().translateString(command.getUsage()));
                             }
                         }
                     }

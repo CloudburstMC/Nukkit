@@ -16,9 +16,10 @@ public class SayCommand extends VanillaCommand {
     public SayCommand(String name) {
         super(name, "%nukkit.command.say.description", "%commands.say.usage");
         this.setPermission("nukkit.command.say");
-        this.commandParameters = new CommandParameter[]{
+        this.commandParameters.clear();
+        this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("message")
-        };
+        });
     }
 
     @Override

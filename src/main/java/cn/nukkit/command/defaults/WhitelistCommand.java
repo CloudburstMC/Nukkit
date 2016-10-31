@@ -22,10 +22,14 @@ public class WhitelistCommand extends VanillaCommand {
                         "nukkit.command.whitelist.add;" +
                         "nukkit.command.whitelist.remove"
         );
-        this.commandParameters = new CommandParameter[]{
-                new CommandParameter("on|off|list|add|remove|reload"),
-                new CommandParameter("args", true)
-        };
+        this.commandParameters.clear();
+        this.commandParameters.put("1arg", new CommandParameter[]{
+                new CommandParameter("on|off|list|reload", CommandParameter.ARG_TYPE_STRING, false)
+        });
+        this.commandParameters.put("2args", new CommandParameter[]{
+                new CommandParameter("add|remove", CommandParameter.ARG_TYPE_STRING, false),
+                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false)
+        });
     }
 
 

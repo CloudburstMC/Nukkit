@@ -18,10 +18,7 @@ import com.google.gson.stream.JsonReader;
 
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -53,7 +50,7 @@ public abstract class Command {
 
     private String permissionMessage = null;
 
-    protected CommandParameter[] commandParameters = new CommandParameter[]{new CommandParameter("args", "rawtext", true)};
+    protected Map<String, CommandParameter[]> commandParameters = new HashMap<>();
 
     public Timing timing;
 
@@ -79,6 +76,7 @@ public abstract class Command {
         this.aliases = aliases;
         this.activeAliases = aliases;
         this.timing = Timings.getCommandTiming(this);
+        this.commandParameters.put("default", new CommandParameter[]{new CommandParameter("args", "rawtext", true)});
     }
 
     /**
@@ -90,12 +88,20 @@ public abstract class Command {
         return this.commandData;
     }
 
-    public CommandParameter[] getCommandParameters() {
+    public CommandParameter[] getCommandParameters(String key) {
+        return commandParameters.get(key);
+    }
+
+    public Map<String, CommandParameter[]> getCommandParameters() {
         return commandParameters;
     }
 
-    public void setCommandParameters(CommandParameter[] commandParameters) {
+    public void setCommandParameters(Map<String, CommandParameter[]> commandParameters) {
         this.commandParameters = commandParameters;
+    }
+
+    public void addCommandParameters(String key, CommandParameter[] parameters) {
+        this.commandParameters.put(key, parameters);
     }
 
     /**
@@ -113,10 +119,12 @@ public abstract class Command {
         customData.aliases = this.getAliases();
         customData.description = player.getServer().getLanguage().translateString(this.getDescription());
         customData.permission = player.hasPermission(this.getPermission()) ? "any" : "false";
-        CommandOverload overload = new CommandOverload();
-        overload.input.parameters = this.commandParameters;
-        customData.overloads.put("default", overload);
-
+        this.commandParameters.forEach((key, par) -> {
+            CommandOverload overload = new CommandOverload();
+            overload.input.parameters = par;
+            customData.overloads.put(key, overload);
+        });
+        if (customData.overloads.size() == 0) customData.overloads.put("default", new CommandOverload());
         CommandDataVersions versions = new CommandDataVersions();
         versions.versions.add(customData);
         return versions;

@@ -21,7 +21,7 @@ public class PluginsCommand extends VanillaCommand {
                 new String[]{"pl"}
         );
         this.setPermission("nukkit.command.plugins");
-        this.commandParameters = new CommandParameter[0];
+        this.commandParameters.clear();
     }
 
     @Override

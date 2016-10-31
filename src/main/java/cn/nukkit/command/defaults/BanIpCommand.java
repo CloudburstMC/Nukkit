@@ -24,10 +24,11 @@ public class BanIpCommand extends VanillaCommand {
         super(name, "%nukkit.command.ban.ip.description", "%commands.banip.usage");
         this.setPermission("nukkit.command.ban.ip");
         this.setAliases(new String[]{"banip"});
-        this.commandParameters = new CommandParameter[]{
+        this.commandParameters.clear();
+        this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
                 new CommandParameter("reason", true)
-        };
+        });
     }
 
     @Override

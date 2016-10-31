@@ -14,7 +14,7 @@ public class ListCommand extends VanillaCommand {
     public ListCommand(String name) {
         super(name, "%nukkit.command.list.description", "%commands.players.usage");
         this.setPermission("nukkit.command.list");
-        this.commandParameters = new CommandParameter[0];
+        this.commandParameters.clear();
     }
 
     @Override

@@ -16,9 +16,9 @@ public class DeopCommand extends VanillaCommand {
     public DeopCommand(String name) {
         super(name, "%nukkit.command.deop.description", "%commands.deop.usage");
         this.setPermission("nukkit.command.op.take");
-        this.commandParameters = new CommandParameter[]{
+        this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false)
-        };
+        });
     }
 
     @Override
