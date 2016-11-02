@@ -44,7 +44,7 @@ public class AddPlayerPacket extends DataPacket {
         this.putUUID(this.uuid);
         this.putString(this.username);
         this.putEntityId(this.entityUniqueId);
-        this.putUnsignedVarLong(this.entityRuntimeId);
+        this.putEntityId(this.entityRuntimeId);
         this.putVector3f(x, y, z);
         this.putVector3f(speedX, speedY, speedZ);
         this.putLFloat(this.pitch);
