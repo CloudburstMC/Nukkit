@@ -35,6 +35,42 @@ public class CraftingManager {
         this.registerFood();
         this.registerWoodenDoors();
 
+        this.registerRecipe((new ShapedRecipe(Item.get(Item.PRISMARINE, 0, 1),
+                "XX",
+                "XX"
+        )).setIngredient("X", Item.get(Item.PRISMARINE_SHARD)));
+        
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.PRISMARINE, 1, 1),
+                "XXX",
+                "XXX",
+                "XXX"
+        )).setIngredient("X", Item.get(Item.PRISMARINE_SHARD)));
+        
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.PRISMARINE, 2, 1),
+                "XXX",
+                "XIX",
+                "XXX"
+        )).setIngredient("X", Item.get(Item.PRISMARINE_SHARD)).setIngredient("I", Item.get(Item.DYE)));
+        
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.PRISMARINE, 2, 1),
+                "XXX",
+                "XIX",
+                "XXX"
+        )).setIngredient("X", Item.get(Item.PRISMARINE_SHARD)).setIngredient("I", Item.get(Item.DYE)));
+        
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SEA_LANTERN, 0, 1),
+                "XSX",
+                "SSS",
+                "XSX"
+        )).setIngredient("X", Item.get(Item.PRISMARINE_SHARD)).setIngredient("S", Item.get(Item.PRISMARINE_CRYSTALS)));
+        
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.BEACON, 0, 1),
+                "GGG",
+                "GSG",
+                "OOO"
+        )).setIngredient("G", Item.get(Item.GLASS)).setIngredient("S", Item.get(Item.NETHER_STAR)).setIngredient("O", Item.get(Item.OBSIDIAN)));
+        
+        
         this.registerRecipe((new ShapedRecipe(Item.get(Item.CLAY_BLOCK, 0, 1),
                 "XX ",
                 "XX ",
