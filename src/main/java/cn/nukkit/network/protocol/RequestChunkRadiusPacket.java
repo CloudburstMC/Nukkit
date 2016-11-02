@@ -8,11 +8,11 @@ public class RequestChunkRadiusPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET;
 
-    public long radius;
+    public int radius;
 
     @Override
     public void decode() {
-        this.radius = this.getUnsignedVarInt();
+        this.radius = this.getVarInt();
     }
 
     @Override
