@@ -140,7 +140,7 @@ public class VarInt {
      * @return Signed long
      */
     public static long readVarLong(BinaryStream stream) {
-        return decodeZigZag64(readUnsignedVarInt(stream)).longValue();
+        return decodeZigZag64(readUnsignedVarLong(stream)).longValue();
     }
 
     /**
@@ -148,7 +148,7 @@ public class VarInt {
      * @return Signed long
      */
     public static long readVarLong(InputStream stream) throws IOException {
-        return decodeZigZag64(readUnsignedVarInt(stream)).longValue();
+        return decodeZigZag64(readUnsignedVarLong(stream)).longValue();
     }
 
     /**
