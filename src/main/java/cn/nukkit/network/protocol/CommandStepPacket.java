@@ -42,7 +42,7 @@ public class CommandStepPacket extends DataPacket {
     }
 
     @Override
-    public void decode(){
+    public void decode() {
         this.command = this.getString();
         this.overload = this.getString();
         this.uvarint1 = this.getUnsignedVarInt();
@@ -50,16 +50,16 @@ public class CommandStepPacket extends DataPacket {
         this.bool = this.getBoolean();
         this.uvarint64 = this.getUnsignedVarLong();
         String argsString = this.getString();
-        Server.getInstance().getLogger().debug(argsString);
         this.args = new Gson().fromJson(argsString, CommandArgs.class);
         this.string4 = this.getString();
-        while(!this.feof()){
+        while (!this.feof()) {
             this.getByte(); //prevent assertion errors. TODO: find out why there are always 3 extra bytes at the end of this packet.
         }
 
     }
 
     @Override
-    public void encode(){}
+    public void encode() {
+    }
 
 }

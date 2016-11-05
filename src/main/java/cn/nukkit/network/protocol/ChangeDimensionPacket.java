@@ -8,13 +8,13 @@ public class ChangeDimensionPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.CHANGE_DIMENSION_PACKET;
 
-    public byte dimension;
+    public int dimension;
 
     public float x;
     public float y;
     public float z;
 
-    public byte unknown;
+    public boolean unknown;
 
     @Override
     public void decode() {
@@ -24,9 +24,9 @@ public class ChangeDimensionPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(dimension);
-        this.putVector3f(x, y, z);
-        this.putByte(unknown);
+        this.putVarInt(this.dimension);
+        this.putVector3f(this.x, this.y, this.z);
+        this.putBoolean(this.unknown);
     }
 
     @Override

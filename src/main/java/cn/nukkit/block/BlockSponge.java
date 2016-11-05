@@ -8,9 +8,9 @@ import cn.nukkit.utils.BlockColor;
  * Nukkit Project
  */
 public class BlockSponge extends BlockSolid {
-	
-	 public static final int DRY = 0;
-	 public static final int WET = 1;
+
+    public static final int DRY = 0;
+    public static final int WET = 1;
 
     public BlockSponge() {
         this(0);
@@ -34,7 +34,7 @@ public class BlockSponge extends BlockSolid {
     public double getResistance() {
         return 3;
     }
-    
+
     @Override
     public String getName() {
         String[] names = new String[]{
@@ -43,11 +43,11 @@ public class BlockSponge extends BlockSolid {
         };
         return names[this.meta & 0x07];
     }
-    
-	@Override
-	public int[][] getDrops(Item item) {
-		return new int[][] { { Item.SPONGE, this.getDamage(), 1 } };
-	}
+
+    @Override
+    public int[][] getDrops(Item item) {
+        return new int[][]{{Item.SPONGE, this.getDamage(), 1}};
+    }
 
     @Override
     public BlockColor getColor() {

@@ -4,7 +4,7 @@ public class ResourcePackInfoEntry {
 
     protected String packId;
     protected String version;
-    protected long uint64;
+    protected long packSize;
 
     public String getPackId() {
         return packId;
@@ -14,7 +14,7 @@ public class ResourcePackInfoEntry {
         return version;
     }
 
-    public long getUint64() {
-        return uint64;
+    public long getPackSize() {
+        return packSize;
     }
 }

@@ -43,29 +43,26 @@ public class StartGamePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarLong(entityUniqueId);
-        this.putEntityId(entityRuntimeId);
+        this.putVarLong(this.entityUniqueId);
+        this.putVarLong(this.entityRuntimeId);
         this.putVector3f(this.x, this.y, this.z);
         this.putLFloat(0);
         this.putLFloat(0);
-        this.putVarInt(seed);
-        this.putVarInt(dimension);
-        this.putVarInt(generator);
-        this.putVarInt(gamemode);
-        this.putVarInt(difficulty);
-        //this.putBlockCoords(spawnX, spawnY, spawnZ);
-        this.putVarInt(spawnX);
-        this.putVarInt(spawnY);
-        this.putVarInt(spawnZ);
-        this.putBoolean(hasAchievementsDisabled);
-        this.putVarInt(dayCycleStopTime);
-        this.putBoolean(eduMode);
-        this.putLFloat(rainLevel);
-        this.putLFloat(lightningLevel);
-        this.putBoolean(commandsEnabled);
-        this.putBoolean(isTexturePacksRequired);
-        this.putString(levelId);
-        this.putString(worldName);
+        this.putVarInt(this.seed);
+        this.putVarInt(this.dimension);
+        this.putVarInt(this.generator);
+        this.putVarInt(this.gamemode);
+        this.putVarInt(this.difficulty);
+        this.putBlockCoords(this.spawnX, this.spawnY, this.spawnZ);
+        this.putBoolean(this.hasAchievementsDisabled);
+        this.putVarInt(this.dayCycleStopTime);
+        this.putBoolean(this.eduMode);
+        this.putLFloat(this.rainLevel);
+        this.putLFloat(this.lightningLevel);
+        this.putBoolean(this.commandsEnabled);
+        this.putBoolean(this.isTexturePacksRequired);
+        this.putString(this.levelId);
+        this.putString(this.worldName);
     }
 
 }

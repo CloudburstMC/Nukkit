@@ -5,7 +5,7 @@ import cn.nukkit.item.ItemTool;
 
 
 public class BlockPrismarine extends BlockSolid {
-	
+
     public static final int NORMAL = 0;
     public static final int BRICKS = 1;
     public static final int DARK = 2;

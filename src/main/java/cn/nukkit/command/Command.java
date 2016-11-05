@@ -9,16 +9,13 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.Permissible;
-import cn.nukkit.permission.Permission;
 import cn.nukkit.timings.Timing;
 import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.TextFormat;
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -110,8 +107,8 @@ public abstract class Command {
      *
      * @return CommandData|null
      */
-    public CommandDataVersions generateCustomCommandData(Player player){
-        if(!this.testPermission(player)){
+    public CommandDataVersions generateCustomCommandData(Player player) {
+        if (!this.testPermission(player)) {
             return null;
         }
 
@@ -130,7 +127,7 @@ public abstract class Command {
         return versions;
     }
 
-    public Map<String, CommandOverload> getOverloads(){
+    public Map<String, CommandOverload> getOverloads() {
         return this.commandData.overloads;
     }
 
@@ -253,7 +250,7 @@ public abstract class Command {
     }
 
     public static final CommandData generateDefaultData() {
-        if(defaultDataTemplate == null){
+        if (defaultDataTemplate == null) {
             //defaultDataTemplate = new Gson().fromJson(new InputStreamReader(Server.class.getClassLoader().getResourceAsStream("command_default.json")));
         }
         return defaultDataTemplate.clone();

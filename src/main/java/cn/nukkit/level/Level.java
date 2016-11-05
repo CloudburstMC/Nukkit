@@ -48,6 +48,7 @@ import cn.nukkit.timings.LevelTimings;
 import cn.nukkit.timings.Timings;
 import cn.nukkit.timings.TimingsHistory;
 import cn.nukkit.utils.*;
+
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -134,7 +135,12 @@ public class Level implements ChunkManager, Metadatable {
     // Storing the vector is redundant
     private final Object changeBlocksPresent = new Object();
     // Storing extra blocks past 512 is redundant
-    private final Map<Short, Object> changeBlocksFullMap = new HashMap<Short, Object>() { @Override public int size() {return 32768;}};
+    private final Map<Short, Object> changeBlocksFullMap = new HashMap<Short, Object>() {
+        @Override
+        public int size() {
+            return 32768;
+        }
+    };
 
     private PriorityQueue<PriorityObject> updateQueue;
     private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
@@ -294,7 +300,7 @@ public class Level implements ChunkManager, Metadatable {
     public static short localBlockHash(double x, double y, double z) {
         byte hi = (byte) (((int) x & 15) + (((int) z & 15) << 4));
         byte lo = (byte) y;
-        return (short)( ((hi & 0xFF)<<8) | (lo & 0xFF) );
+        return (short) (((hi & 0xFF) << 8) | (lo & 0xFF));
     }
 
     public static Vector3 getBlockXYZ(long chunkHash, short blockHash) {
@@ -2776,7 +2782,7 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getLevelMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 
-    public void addEntityMotion(int chunkX, int chunkZ, long entityId, double x, double y, double z){
+    public void addEntityMotion(int chunkX, int chunkZ, long entityId, double x, double y, double z) {
         Long index = Level.chunkHash(chunkX, chunkZ);
         if (!this.motionToSend.containsKey(index)) {
             this.motionToSend.put(index, new HashMap<>());

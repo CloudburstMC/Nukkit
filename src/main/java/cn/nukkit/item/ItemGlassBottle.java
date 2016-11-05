@@ -4,7 +4,6 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3;
 
 public class ItemGlassBottle extends Item {
 

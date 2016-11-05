@@ -2,6 +2,9 @@ package cn.nukkit.utils;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.command.CommandReader;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -9,8 +12,6 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
 
 /**
  * author: MagicDroidX
@@ -221,7 +222,8 @@ public class MainLogger extends ThreadedLogger {
                     wait(25000); // Wait for next message
                 }
                 Thread.sleep(5); // Buffer for 5ms to reduce back and forth between disk
-            } catch (InterruptedException ignore) {}
+            } catch (InterruptedException ignore) {
+            }
         }
         try {
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024);

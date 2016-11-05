@@ -17,8 +17,8 @@ public class InventoryActionPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(unknown);
-        this.putSlot(item);
+        this.putUnsignedVarInt(this.unknown);
+        this.putSlot(this.item);
     }
 
     @Override

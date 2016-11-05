@@ -21,7 +21,7 @@ public class ItemFrameDropItemPacket extends DataPacket {
         this.z = v.x;
         this.y = v.y;
         this.x = v.z;
-        this.dropItem = getSlot();
+        this.dropItem = this.getSlot();
     }
 
     @Override

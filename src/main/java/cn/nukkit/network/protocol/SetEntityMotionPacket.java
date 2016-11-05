@@ -25,7 +25,7 @@ public class SetEntityMotionPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityId(eid);
+        this.putVarLong(this.eid);
         this.putVector3f(this.motionX, this.motionY, this.motionZ);
     }
 }

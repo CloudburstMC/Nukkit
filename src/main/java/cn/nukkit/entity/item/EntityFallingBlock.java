@@ -22,8 +22,6 @@ public class EntityFallingBlock extends Entity {
 
     public static final int NETWORK_ID = 66;
 
-    public static final int DATA_BLOCK_INFO = 20;
-
     @Override
     public float getWidth() {
         return 0.98f;
@@ -83,7 +81,7 @@ public class EntityFallingBlock extends Entity {
             return;
         }
 
-        setDataProperty(new IntEntityData(DATA_BLOCK_INFO, this.getBlock() | this.getDamage() << 8));
+        setDataProperty(new IntEntityData(DATA_VARIANT, this.getBlock() | this.getDamage() << 8));
     }
 
     public boolean canCollideWith(Entity entity) {
@@ -150,7 +148,7 @@ public class EntityFallingBlock extends Entity {
                     if (!event.isCancelled()) {
                         getLevel().setBlock(pos, event.getTo(), true);
 
-                        if(event.getTo().getId() == Item.ANVIL) {
+                        if (event.getTo().getId() == Item.ANVIL) {
                             getLevel().addSound(new AnvilFallSound(pos));
                         }
                     }

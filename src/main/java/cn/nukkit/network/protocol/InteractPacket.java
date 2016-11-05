@@ -17,15 +17,15 @@ public class InteractPacket extends DataPacket {
 
     @Override
     public void decode() {
-        action = (byte) getByte();
-        target = getEntityId();
+        this.action = (byte) this.getByte();
+        this.target = this.getVarLong();
     }
 
     @Override
     public void encode() {
-        reset();
-        putByte(action);
-        putEntityId(target);
+        this.reset();
+        this.putByte(this.action);
+        this.putVarLong(this.target);
     }
 
     @Override

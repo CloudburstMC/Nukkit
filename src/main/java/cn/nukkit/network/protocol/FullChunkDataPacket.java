@@ -31,7 +31,6 @@ public class FullChunkDataPacket extends DataPacket {
         this.putVarInt(this.chunkX);
         this.putVarInt(this.chunkZ);
         this.putByte(this.order);
-        this.putUnsignedVarInt(this.data.length);
-        this.put(this.data);
+        this.putByteArray(this.data);
     }
 }

@@ -10,17 +10,17 @@ public class PlayerGlassBottleFillEvent extends PlayerEvent implements Cancellab
     protected final Item item;
     protected final Block target;
 
-    public PlayerGlassBottleFillEvent(Player player, Block target, Item item){
+    public PlayerGlassBottleFillEvent(Player player, Block target, Item item) {
         this.player = player;
         this.target = target;
         this.item = item.clone();
     }
 
-    public Item getItem(){
+    public Item getItem() {
         return item;
     }
 
-    public Block getBlock(){
+    public Block getBlock() {
         return target;
     }
 }

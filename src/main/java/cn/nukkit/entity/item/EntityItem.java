@@ -182,17 +182,17 @@ public class EntityItem extends Entity {
     public void saveNBT() {
         super.saveNBT();
         if (this.item != null) { // Yes, a item can be null... I don't know what causes this, but it can happen.
-	        this.namedTag.putCompound("Item", NBTIO.putItemHelper(this.item));
-	        this.namedTag.putShort("Health", this.getHealth());
-	        this.namedTag.putShort("Age", this.age);
-	        this.namedTag.putShort("PickupDelay", this.pickupDelay);
-	        if (this.owner != null) {
-	            this.namedTag.putString("Owner", this.owner);
-	        }
-	
-	        if (this.thrower != null) {
-	            this.namedTag.putString("Thrower", this.thrower);
-	        }
+            this.namedTag.putCompound("Item", NBTIO.putItemHelper(this.item));
+            this.namedTag.putShort("Health", this.getHealth());
+            this.namedTag.putShort("Age", this.age);
+            this.namedTag.putShort("PickupDelay", this.pickupDelay);
+            if (this.owner != null) {
+                this.namedTag.putString("Owner", this.owner);
+            }
+
+            if (this.thrower != null) {
+                this.namedTag.putString("Thrower", this.thrower);
+            }
         }
     }
 

@@ -10,11 +10,14 @@ import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.*;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+
 import java.util.*;
 
 public class Nether extends Generator {
     private ChunkManager level;
-    /** @var Random */
+    /**
+     * @var Random
+     */
     private NukkitRandom nukkitRandom;
     private Random random;
     private double waterHeight = 32;
@@ -64,7 +67,7 @@ public class Nether extends Generator {
     }
 
     @Override
-    public void init(ChunkManager level, NukkitRandom random){
+    public void init(ChunkManager level, NukkitRandom random) {
         this.level = level;
         this.nukkitRandom = random;
         this.random = new Random();
@@ -99,8 +102,8 @@ public class Nether extends Generator {
         double[][][] noise = Generator.getFastNoise3D(this.noiseBase, 16, 128, 16, 4, 8, 4, chunkX * 16, 0, chunkZ * 16);
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
-        for(int x = 0; x < 16; ++x){
-            for(int z = 0; z < 16; ++z){
+        for (int x = 0; x < 16; ++x) {
+            for (int z = 0; z < 16; ++z) {
                 Biome biome = Biome.getBiome(Biome.HELL);
                 chunk.setBiomeId(x, z, Biome.HELL);
                 int biomecolor = biome.getColor();
@@ -115,19 +118,19 @@ public class Nether extends Generator {
                         chunk.setBlockId(x, 127 - y, z, Block.BEDROCK);
                     }
                 }
-                for(int y = 1; y < 127; ++y){
+                for (int y = 1; y < 127; ++y) {
                     double noiseValue = (Math.abs(this.emptyHeight - y) / this.emptyHeight) * this.emptyAmplitude - noise[x][z][y];
                     noiseValue -= 1 - this.density;
-                    if(noiseValue > 0){
+                    if (noiseValue > 0) {
                         chunk.setBlockId(x, y, z, Block.NETHERRACK);
-                    } else if(y <= this.waterHeight){
+                    } else if (y <= this.waterHeight) {
                         chunk.setBlockId(x, y, z, Block.STILL_LAVA);
                         chunk.setBlockLight(x, y + 1, z, 15);
                     }
                 }
             }
         }
-        for (Populator populator : this.generationPopulators){
+        for (Populator populator : this.generationPopulators) {
             populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom);
         }
     }
@@ -144,7 +147,7 @@ public class Nether extends Generator {
         biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
     }
 
-    public Vector3 getSpawn(){
+    public Vector3 getSpawn() {
         return new Vector3(0, 64, 0);
     }
 }

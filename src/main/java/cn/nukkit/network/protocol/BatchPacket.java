@@ -16,13 +16,12 @@ public class BatchPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.payload = this.get((int) this.getUnsignedVarInt());
+        this.payload = this.getByteArray();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(this.payload.length);
-        this.put(this.payload);
+        this.putByteArray(this.payload);
     }
 }

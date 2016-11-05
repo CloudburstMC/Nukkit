@@ -47,7 +47,7 @@ public class BlockLever extends BlockFlowable {
 
     @Override
     public int[][] getDrops(Item item) {
-        return new int[][] {
+        return new int[][]{
                 {Item.LEVER, 0, 1}
         };
     }

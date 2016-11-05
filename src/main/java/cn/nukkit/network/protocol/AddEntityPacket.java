@@ -38,19 +38,19 @@ public class AddEntityPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityId(this.entityUniqueId);
-        this.putEntityId(this.entityRuntimeId);
+        this.putVarLong(this.entityUniqueId);
+        this.putVarLong(this.entityRuntimeId);
         this.putUnsignedVarInt(this.type);
-        this.putVector3f(x, y, z);
-        this.putVector3f(speedX, speedY, speedZ);
+        this.putVector3f(this.x, this.y, this.z);
+        this.putVector3f(this.speedX, this.speedY, this.speedZ);
         this.putLFloat(this.yaw * (256f / 360f));
         this.putLFloat(this.pitch * (256f / 360f));
-        this.putUnsignedVarInt(modifiers);
+        this.putUnsignedVarInt(this.modifiers);
         this.put(Binary.writeMetadata(this.metadata));
         this.putUnsignedVarInt(this.links.length);
-        for (Object[] link : links) {
-            this.putEntityId((long) link[0]);
-            this.putEntityId((long) link[1]);
+        for (Object[] link : this.links) {
+            this.putVarLong((long) link[0]);
+            this.putVarLong((long) link[1]);
             this.putByte((byte) link[2]);
         }
     }

@@ -133,24 +133,24 @@ public class CraftingDataPacket extends DataPacket {
 
     @Override
     public void encode() {
-        reset();
-        putUnsignedVarInt(entries.size());
+        this.reset();
+        this.putUnsignedVarInt(entries.size());
 
         BinaryStream writer = new BinaryStream();
 
         for (Object entry : entries) {
             int entryType = writeEntry(entry, writer);
             if (entryType >= 0) {
-                putVarInt(entryType);
-                put(writer.getBuffer());
+                this.putVarInt(entryType);
+                this.put(writer.getBuffer());
             } else {
-                putVarInt(-1);
+                this.putVarInt(-1);
             }
 
             writer.reset();
         }
 
-        putBoolean(cleanRecipes);
+        this.putBoolean(cleanRecipes);
     }
 
     @Override

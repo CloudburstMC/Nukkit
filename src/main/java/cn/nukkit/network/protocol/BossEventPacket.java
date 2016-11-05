@@ -23,7 +23,7 @@ public class BossEventPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityId(eid);
-        this.putUnsignedVarInt(type);
+        this.putVarLong(this.eid);
+        this.putUnsignedVarInt(this.type);
     }
 }

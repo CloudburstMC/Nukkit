@@ -13,7 +13,7 @@ public class CommandData implements Cloneable {
     @Override
     public CommandData clone() {
         try {
-            return (CommandData)super.clone();
+            return (CommandData) super.clone();
         } catch (Exception e) {
             return new CommandData();
         }

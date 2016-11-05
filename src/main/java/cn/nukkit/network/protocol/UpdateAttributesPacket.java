@@ -24,7 +24,7 @@ public class UpdateAttributesPacket extends DataPacket {
     public void encode() {
         this.reset();
 
-        this.putEntityId(this.entityId);
+        this.putVarLong(this.entityId);
 
         if (this.entries == null) {
             this.putUnsignedVarInt(0);

@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-public class ItemPrismarineCrystals extends Item{
+public class ItemPrismarineCrystals extends Item {
 
     public ItemPrismarineCrystals() {
         this(0, 1);

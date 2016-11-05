@@ -10,6 +10,7 @@ import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.level.generator.populator.PopulatorOre;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

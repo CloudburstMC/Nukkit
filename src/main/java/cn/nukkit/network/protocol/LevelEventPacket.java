@@ -84,12 +84,12 @@ public class LevelEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-        evid = this.getVarInt();
+        this.evid = this.getVarInt();
         Vector3f v = this.getVector3f();
-        x = v.x;
-        y = v.y;
-        z = v.z;
-        data = getVarInt();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        this.data = this.getVarInt();
     }
 
     @Override

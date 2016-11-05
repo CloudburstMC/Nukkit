@@ -20,10 +20,10 @@ public class SetSpawnPositionPacket extends DataPacket {
 
     @Override
     public void encode() {
-        reset();
-        this.putUnsignedVarInt(unknown);
-        this.putBlockCoords(x, y, z);
-        this.putBoolean(unknownBool);
+        this.reset();
+        this.putUnsignedVarInt(this.unknown);
+        this.putBlockCoords(this.x, this.y, this.z);
+        this.putBoolean(this.unknownBool);
     }
 
     @Override

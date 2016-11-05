@@ -14,12 +14,13 @@ public class AvailableCommandsPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
-    
+
     @Override
-    public void decode(){}
-    
+    public void decode() {
+    }
+
     @Override
-    public void encode(){
+    public void encode() {
         this.reset();
         this.putString(this.commands);
         this.putString(this.unknown);

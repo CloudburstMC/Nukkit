@@ -18,7 +18,7 @@ public class SpawnExperienceOrbPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putVector3f(this.x, this.y, this.z);
-        this.putUnsignedVarInt(amount);
+        this.putUnsignedVarInt(this.amount);
     }
 
     @Override

@@ -19,9 +19,9 @@ public class BanCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("default",
                 new CommandParameter[]{
-                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
-                new CommandParameter("reason", true)
-        });
+                        new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
+                        new CommandParameter("reason", true)
+                });
     }
 
     @Override

@@ -1,9 +1,9 @@
 package cn.nukkit.block;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class BlockSeaLantern extends BlockTransparent {

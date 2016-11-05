@@ -10,7 +10,7 @@ import cn.nukkit.level.generator.populator.PopulatorDeadBush;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class SandyBiome extends NormalBiome implements CaveBiome{
+public abstract class SandyBiome extends NormalBiome implements CaveBiome {
     public SandyBiome() {
 
         PopulatorCactus cactus = new PopulatorCactus();

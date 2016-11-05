@@ -11,13 +11,13 @@ public class SetDifficultyPacket extends DataPacket {
 
     @Override
     public void decode() {
-        difficulty = (int) getUnsignedVarInt();
+        this.difficulty = (int) this.getUnsignedVarInt();
     }
 
     @Override
     public void encode() {
-        reset();
-        putUnsignedVarInt(difficulty);
+        this.reset();
+        this.putUnsignedVarInt(this.difficulty);
     }
 
     @Override

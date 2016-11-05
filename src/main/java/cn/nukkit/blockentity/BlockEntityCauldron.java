@@ -37,16 +37,16 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
         return getPotionId() != 0xffff;
     }
 
-    public boolean isSplashPotion(){
+    public boolean isSplashPotion() {
         return namedTag.getByte("SplashPotion") > 0;
     }
 
-    public void setSplashPotion(boolean value){
+    public void setSplashPotion(boolean value) {
         namedTag.putByte("SplashPotion", value ? 1 : 0);
     }
 
-    public Color getCustomColor(){
-        if(isCustomColor()){
+    public Color getCustomColor() {
+        if (isCustomColor()) {
             int color = namedTag.getInt("CustomColor");
 
             int red = (color >> 16) & 0xff;
@@ -59,7 +59,7 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
         return null;
     }
 
-    public boolean isCustomColor(){
+    public boolean isCustomColor() {
         return namedTag.contains("CustomColor");
     }
 
@@ -67,14 +67,14 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
         setCustomColor(color.getRed(), color.getGreen(), color.getBlue());
     }
 
-    public void setCustomColor(int r, int g, int b){
+    public void setCustomColor(int r, int g, int b) {
         int color = (r << 16 | g << 8 | b) & 0xffffff;
 
         namedTag.putInt("CustomColor", color);
         spawnToAll();
     }
 
-    public void clearCustomColor(){
+    public void clearCustomColor() {
         namedTag.remove("CustomColor");
         spawnToAll();
     }

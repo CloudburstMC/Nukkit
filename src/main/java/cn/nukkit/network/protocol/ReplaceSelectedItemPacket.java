@@ -19,7 +19,7 @@ public class ReplaceSelectedItemPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putSlot(item);
+        this.putSlot(this.item);
     }
 
     @Override

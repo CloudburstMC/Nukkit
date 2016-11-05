@@ -16,8 +16,8 @@ public class HurtArmorPacket extends DataPacket {
 
     @Override
     public void encode() {
-        reset();
-        putVarInt(health);
+        this.reset();
+        this.putVarInt(this.health);
     }
 
     @Override

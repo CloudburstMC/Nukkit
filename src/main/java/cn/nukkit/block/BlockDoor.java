@@ -32,7 +32,7 @@ public abstract class BlockDoor extends BlockTransparent {
     public boolean canPassThrough() {
         return true;
     }
-    
+
     private int getFullDamage() {
         int damage = this.getDamage();
         boolean isUp = (damage & 0x08) > 0;

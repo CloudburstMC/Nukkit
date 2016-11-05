@@ -199,7 +199,7 @@ public abstract class Enchantment implements Cloneable {
         return this.type.canEnchantItem(item);
     }
 
-    public boolean isMajor(){
+    public boolean isMajor() {
         return false;
     }
 

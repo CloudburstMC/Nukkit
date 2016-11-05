@@ -200,7 +200,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int BIRCH_WOODEN_STAIRS = 135;
     public static final int JUNGLE_WOOD_STAIRS = 136;
     public static final int JUNGLE_WOODEN_STAIRS = 136;
-    
+
     public static final int BEACON = 138;
 
     public static final int COBBLE_WALL = 139;
@@ -248,10 +248,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int SLIME_BLOCK = 165;
 
     public static final int IRON_TRAPDOOR = 167;
-    
+
     public static final int PRISMARINE = 168;
     public static final int SEA_LANTERN = 169;
-    		
+
     public static final int HAY_BALE = 170;
     public static final int CARPET = 171;
     public static final int HARDENED_CLAY = 172;
@@ -433,9 +433,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[SPRUCE_WOOD_STAIRS] = BlockStairsSpruce.class;
             list[BIRCH_WOOD_STAIRS] = BlockStairsBirch.class;
             list[JUNGLE_WOOD_STAIRS] = BlockStairsJungle.class;
-            
+
             list[BEACON] = BlockBeacon.class;
-            
+
             list[STONE_WALL] = BlockWall.class;
 
             list[CARROT_BLOCK] = BlockCarrot.class;
@@ -459,10 +459,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[SLIME_BLOCK] = BlockSlime.class;
 
             list[IRON_TRAPDOOR] = BlockTrapdoorIron.class;
-            
+
             list[PRISMARINE] = BlockPrismarine.class;
             list[SEA_LANTERN] = BlockSeaLantern.class;
-            
+
             list[HAY_BALE] = BlockHayBale.class;
             list[CARPET] = BlockCarpet.class;
             list[HARDENED_CLAY] = BlockClayHardened.class;

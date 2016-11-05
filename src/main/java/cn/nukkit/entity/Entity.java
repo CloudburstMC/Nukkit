@@ -70,22 +70,22 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_COLOR = 8; //int (ARGB!)
     public static final int DATA_POTION_AMBIENT = 9; //byte
     /* 27 (byte) something to do with beds
-	 * 28 (int)
+     * 28 (int)
 	 * 29 (block coords) bed position */
     public static final int DATA_LEAD_HOLDER_EID = 38; //long
     public static final int DATA_SCALE = 39; //float
     public static final int DATA_INTERACTIVE_TAG = 40; //string (button text)
-	/* 41 (long) */
+    /* 41 (long) */
     public static final int DATA_URL_TAG = 43; //string
     public static final int DATA_MAX_AIR = 44; //short
     public static final int DATA_MARK_VARIANT = 45; //int
-	/* 46 (byte)
-	 * 47 (int)
-	 * 48 (int)
-	 * 49 (long)
-	 * 50 (long)
-	 * 51 (long)
-	 * 52 (short) */
+    /* 46 (byte)
+     * 47 (int)
+     * 48 (int)
+     * 49 (long)
+     * 50 (long)
+     * 51 (long)
+     * 52 (short) */
     public static final int DATA_BOUNDING_BOX_WIDTH = 53; //float
     public static final int DATA_BOUNDING_BOX_HEIGHT = 54; //float
 	/* 56 (vector3f)
@@ -1679,7 +1679,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void setDataFlag(int propertyId, int id, boolean value) {
         if (this.getDataFlag(propertyId, id) != value) {
             if (propertyId == EntityHuman.DATA_PLAYER_FLAGS) {
-                byte flags = (byte)this.getDataPropertyByte(propertyId);
+                byte flags = (byte) this.getDataPropertyByte(propertyId);
                 flags ^= 1 << id;
                 this.setDataProperty(new ByteEntityData(propertyId, flags));
             } else {

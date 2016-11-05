@@ -2,7 +2,8 @@ package cn.nukkit.math;
 
 import java.util.Random;
 
-public class MathHelper {private static float[] a = new float[65536];
+public class MathHelper {
+    private static float[] a = new float[65536];
 
     public static float sqrt(float paramFloat) {
         return (float) Math.sqrt(paramFloat);

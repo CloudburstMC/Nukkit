@@ -10,10 +10,10 @@ import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.math.NukkitRandom;
 
 public class PopulatorGlowStone extends Populator {
-    
+
     private ChunkManager level;
     private OreType type = new OreType(new BlockGlowstone(), 1, 20, 128, 10);
-    
+
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
         this.level = level;
@@ -23,7 +23,7 @@ public class PopulatorGlowStone extends Populator {
         int tx = bx + 15;
         int tz = bz + 15;
         ObjectOre ore = new ObjectOre(random, type, Block.AIR);
-        for(int i = 0; i < ore.type.clusterCount; ++i){
+        for (int i = 0; i < ore.type.clusterCount; ++i) {
             int x = random.nextRange(0, 15);
             int z = random.nextRange(0, 15);
             int y = this.getHighestWorkableBlock(chunk, x, z);
@@ -35,9 +35,9 @@ public class PopulatorGlowStone extends Populator {
 
     private int getHighestWorkableBlock(FullChunk chunk, int x, int z) {
         int y;
-        for(y = 127; y >=0; y--){
+        for (y = 127; y >= 0; y--) {
             int b = chunk.getBlockId(x, y, z);
-            if(b == Block.AIR){
+            if (b == Block.AIR) {
                 break;
             }
         }

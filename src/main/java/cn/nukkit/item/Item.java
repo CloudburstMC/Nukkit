@@ -226,7 +226,7 @@ public class Item implements Cloneable {
     public static final int BIRCH_WOODEN_STAIRS = 135;
     public static final int JUNGLE_WOOD_STAIRS = 136;
     public static final int JUNGLE_WOODEN_STAIRS = 136;
-    
+
     public static final int BEACON = 138;
 
     public static final int COBBLE_WALL = 139;
@@ -276,7 +276,7 @@ public class Item implements Cloneable {
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
 
     public static final int SLIME_BLOCK = 165;
-    
+
     public static final int PRISMARINE = 168;
     public static final int SEA_LANTERN = 169;
 
@@ -488,7 +488,7 @@ public class Item implements Cloneable {
     public static final int SKULL = 397;
 
     public static final int NETHER_STAR = 399;
-    
+
     public static final int PUMPKIN_PIE = 400;
 
     public static final int ENCHANTED_BOOK = 403;
@@ -502,9 +502,9 @@ public class Item implements Cloneable {
 
     public static final int MINECART_WITH_TNT = 407;
     public static final int MINECART_WITH_HOPPER = 408;
-    
+
     public static final int PRISMARINE_SHARD = 409;
-    
+
     public static final int HOPPER = 410;
 
     public static final int RAW_RABBIT = 411;
@@ -514,10 +514,10 @@ public class Item implements Cloneable {
     public static final int RABBIT_HIDE = 415;
 
     public static final int LEATHER_HORSE_ARMOR = 416;
-    public static final int IRON_HORSE_ARMOR = 417 ;
-    public static final int GOLD_HORSE_ARMOR = 418 ;
-    public static final int DIAMOND_HORSE_ARMOR = 419 ;
-    
+    public static final int IRON_HORSE_ARMOR = 417;
+    public static final int GOLD_HORSE_ARMOR = 418;
+    public static final int DIAMOND_HORSE_ARMOR = 419;
+
     public static final int PRISMARINE_CRYSTALS = 422;
 
     public static final int SPRUCE_DOOR = 427;
@@ -747,7 +747,7 @@ public class Item implements Cloneable {
             list[IRON_HORSE_ARMOR] = ItemIronHorseArmor.class;
             list[GOLD_HORSE_ARMOR] = ItemGoldHorseArmor.class;
             list[DIAMOND_HORSE_ARMOR] = ItemDiamondHorseArmor.class;
-            
+
             list[PRISMARINE_SHARD] = ItemPrismarineShard.class;
             list[PRISMARINE_CRYSTALS] = ItemPrismarineCrystals.class;
 
@@ -1819,15 +1819,15 @@ public class Item implements Cloneable {
         return 0;
     }
 
-    public int getAttackDamage(){
+    public int getAttackDamage() {
         return 1;
     }
 
-    public int getArmorPoints(){
+    public int getArmorPoints() {
         return 0;
     }
 
-    public boolean isUnbreakable(){
+    public boolean isUnbreakable() {
         return false;
     }
 

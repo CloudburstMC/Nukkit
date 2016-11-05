@@ -1,7 +1,6 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;

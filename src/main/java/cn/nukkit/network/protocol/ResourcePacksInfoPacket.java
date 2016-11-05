@@ -18,18 +18,18 @@ public class ResourcePacksInfoPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putBoolean(mustAccept);
-        this.putShort(behaviourPackEntries.length);
-        for (ResourcePackInfoEntry entry : behaviourPackEntries) {
+        this.putBoolean(this.mustAccept);
+        this.putShort(this.behaviourPackEntries.length);
+        for (ResourcePackInfoEntry entry : this.behaviourPackEntries) {
             this.putString(entry.getPackId());
             this.putString(entry.getVersion());
-            this.putLong(entry.getUint64());
+            this.putLong(entry.getPackSize());
         }
-        this.putShort(resourcePackEntries.length);
-        for (ResourcePackInfoEntry entry : resourcePackEntries) {
+        this.putShort(this.resourcePackEntries.length);
+        for (ResourcePackInfoEntry entry : this.resourcePackEntries) {
             this.putString(entry.getPackId());
             this.putString(entry.getVersion());
-            this.putLong(entry.getUint64());
+            this.putLong(entry.getPackSize());
         }
     }
 

@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-public class ItemNetherStar extends Item{
+public class ItemNetherStar extends Item {
 
     public ItemNetherStar() {
         this(0, 1);

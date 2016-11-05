@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-public class ItemPrismarineShard extends Item{
+public class ItemPrismarineShard extends Item {
 
     public ItemPrismarineShard() {
         this(0, 1);

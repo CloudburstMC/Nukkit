@@ -1,6 +1,6 @@
 package cn.nukkit.nbt.stream;
 
-import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.VarInt;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -100,7 +100,7 @@ public class NBTInputStream implements DataInput, AutoCloseable {
     @Override
     public int readInt() throws IOException {
         if (network) {
-            return Binary.readVarInt(this.stream);
+            return VarInt.readVarInt(this.stream);
         }
         int i = this.stream.readInt();
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
@@ -111,6 +111,9 @@ public class NBTInputStream implements DataInput, AutoCloseable {
 
     @Override
     public long readLong() throws IOException {
+        if (network) {
+            return VarInt.readVarLong(this.stream);
+        }
         long l = this.stream.readLong();
         if (endianness == ByteOrder.LITTLE_ENDIAN) {
             l = Long.reverseBytes(l);

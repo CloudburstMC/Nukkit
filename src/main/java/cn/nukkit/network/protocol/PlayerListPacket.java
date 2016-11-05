@@ -30,7 +30,7 @@ public class PlayerListPacket extends DataPacket {
         for (Entry entry : this.entries) {
             if (type == TYPE_ADD) {
                 this.putUUID(entry.uuid);
-                this.putEntityId(entry.entityId);
+                this.putVarLong(entry.entityId);
                 this.putString(entry.name);
                 this.putSkin(entry.skin);
             } else {

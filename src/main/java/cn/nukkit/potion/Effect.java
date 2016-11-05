@@ -2,7 +2,6 @@ package cn.nukkit.potion;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;

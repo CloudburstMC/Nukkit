@@ -137,7 +137,7 @@ public class Network {
         try {
             List<DataPacket> packets = new ArrayList<>();
             while (stream.offset < len) {
-                byte[] buf = stream.get((int) stream.getUnsignedVarInt());
+                byte[] buf = stream.getByteArray();
 
                 DataPacket pk;
 

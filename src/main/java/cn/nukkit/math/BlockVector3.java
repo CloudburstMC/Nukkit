@@ -18,7 +18,8 @@ public class BlockVector3 implements Cloneable {
         this.z = z;
     }
 
-    public BlockVector3() {}
+    public BlockVector3() {
+    }
 
     public BlockVector3 setComponents(int x, int y, int z) {
         this.x = x;
@@ -38,6 +39,7 @@ public class BlockVector3 implements Cloneable {
     public int getZ() {
         return this.z;
     }
+
     public Vector3 add(double x) {
         return this.add(x, 0, 0);
     }
@@ -183,7 +185,7 @@ public class BlockVector3 implements Cloneable {
 
         if (!(ob instanceof BlockVector3)) return false;
 
-        return this.x == ((BlockVector3)ob).x && this.z == ((BlockVector3)ob).z;
+        return this.x == ((BlockVector3) ob).x && this.z == ((BlockVector3) ob).z;
     }
 
     @Override

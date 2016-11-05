@@ -14,8 +14,8 @@ public class DropItemPacket extends DataPacket {
 
     @Override
     public void decode() {
-        type = getByte();
-        item = getSlot();
+        this.type = this.getByte();
+        this.item = this.getSlot();
     }
 
     @Override

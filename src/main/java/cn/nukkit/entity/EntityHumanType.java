@@ -187,10 +187,10 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     public void setOnFire(int seconds) {
         int level = 0;
 
-        for(Item armor : this.inventory.getArmorContents()){
+        for (Item armor : this.inventory.getArmorContents()) {
             Enchantment fireProtection = armor.getEnchantment(Enchantment.ID_PROTECTION_FIRE);
 
-            if(fireProtection != null && fireProtection.getLevel() > 0){
+            if (fireProtection != null && fireProtection.getLevel() > 0) {
                 level = Math.max(level, fireProtection.getLevel());
             }
         }

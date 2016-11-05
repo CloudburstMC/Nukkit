@@ -1,6 +1,7 @@
 package cn.nukkit.nbt.stream;
 
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.VarInt;
 
 import java.io.DataOutput;
 import java.io.DataOutputStream;
@@ -84,7 +85,7 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
     @Override
     public void writeInt(int v) throws IOException {
         if (network) {
-            this.stream.write(Binary.writeVarInt(v));
+            VarInt.writeVarInt(this.stream, v);
         } else {
             if (endianness == ByteOrder.LITTLE_ENDIAN) {
                 v = Integer.reverseBytes(v);
@@ -95,10 +96,14 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
 
     @Override
     public void writeLong(long v) throws IOException {
-        if (endianness == ByteOrder.LITTLE_ENDIAN) {
-            v = Long.reverseBytes(v);
+        if (network) {
+            VarInt.writeVarLong(this.stream, v);
+        } else {
+            if (endianness == ByteOrder.LITTLE_ENDIAN) {
+                v = Long.reverseBytes(v);
+            }
+            this.stream.writeLong(v);
         }
-        this.stream.writeLong(v);
     }
 
     @Override

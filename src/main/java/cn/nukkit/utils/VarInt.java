@@ -1,5 +1,8 @@
 package cn.nukkit.utils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 
 public class VarInt {
@@ -81,11 +84,37 @@ public class VarInt {
         return result;
     }
 
+    private static BigInteger _readVarInt(InputStream stream, int maxSize) {
+        BigInteger result = BigInteger.ZERO;
+        int offset = 0;
+        int b;
+
+        do {
+            if (offset >= maxSize) {
+                throw new IllegalArgumentException("VarInt too big");
+            }
+
+            try {
+                b = stream.read();
+            } catch (IOException e) {
+                return null;
+            }
+            result = result.or(BigInteger.valueOf((b & 0x7f) << (offset * 7)));
+            offset++;
+        } while ((b & 0x80) > 0);
+
+        return result;
+    }
+
     /**
      * @param stream
      * @return Signed int
      */
     public static int readVarInt(BinaryStream stream) {
+        return decodeZigZag32(readUnsignedVarInt(stream));
+    }
+
+    public static int readVarInt(InputStream stream) {
         return decodeZigZag32(readUnsignedVarInt(stream));
     }
 
@@ -97,6 +126,10 @@ public class VarInt {
         return _readVarInt(stream, 5).longValue();
     }
 
+    public static long readUnsignedVarInt(InputStream stream) {
+        return _readVarInt(stream, 5).longValue();
+    }
+
     /**
      * @param stream
      * @return Signed long
@@ -105,11 +138,20 @@ public class VarInt {
         return decodeZigZag64(readUnsignedVarInt(stream)).longValue();
     }
 
+    public static long readVarLong(InputStream stream) {
+        return decodeZigZag64(readUnsignedVarInt(stream)).longValue();
+    }
+
+
     /**
      * @param stream
      * @return Unsigned long
      */
     public static BigInteger readUnsignedVarLong(BinaryStream stream) {
+        return _readVarInt(stream, 10);
+    }
+
+    public static BigInteger readUnsignedVarLong(InputStream stream) {
         return _readVarInt(stream, 10);
     }
 
@@ -127,11 +169,33 @@ public class VarInt {
         stream.putByte(v.byteValue());
     }
 
+    private static void _writeVarInt(OutputStream stream, BigInteger v) {
+        _assert(v);
+        v = v.and(UNSIGNED_LONG_MAX_VALUE);
+        BigInteger i = BigInteger.valueOf(-128);
+        BigInteger BIX7F = BigInteger.valueOf(0x7f);
+        BigInteger BIX80 = BigInteger.valueOf(0x80);
+        try {
+            while (!v.and(i).equals(BigInteger.ZERO)) {
+                stream.write(v.and(BIX7F).or(BIX80).byteValue());
+                v = v.shiftRight(7);
+            }
+
+            stream.write(v.byteValue());
+        } catch (IOException e) {
+
+        }
+    }
+
     /**
      * @param stream
      * @param value  Signed int
      */
     public static void writeVarInt(BinaryStream stream, int value) {
+        writeUnsignedVarInt(stream, encodeZigZag32(value));
+    }
+
+    public static void writeVarInt(OutputStream stream, int value) {
         writeUnsignedVarInt(stream, encodeZigZag32(value));
     }
 
@@ -143,6 +207,10 @@ public class VarInt {
         _writeVarInt(stream, BigInteger.valueOf(value));
     }
 
+    public static void writeUnsignedVarInt(OutputStream stream, long value) {
+        _writeVarInt(stream, BigInteger.valueOf(value));
+    }
+
     /**
      * @param stream
      * @param value  Signed long
@@ -151,11 +219,20 @@ public class VarInt {
         writeUnsignedVarLong(stream, encodeZigZag64(value));
     }
 
+    public static void writeVarLong(OutputStream stream, long value) {
+        writeUnsignedVarLong(stream, encodeZigZag64(value));
+    }
+
     /**
      * @param stream
      * @param value  Unsigned long
      */
     public static void writeUnsignedVarLong(BinaryStream stream, BigInteger value) {
+        _assert(value);
+        _writeVarInt(stream, value);
+    }
+
+    public static void writeUnsignedVarLong(OutputStream stream, BigInteger value) {
         _assert(value);
         _writeVarInt(stream, value);
     }

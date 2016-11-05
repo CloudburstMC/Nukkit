@@ -25,31 +25,28 @@ public class MovePlayerPacket extends DataPacket {
 
     @Override
     public void decode() {
-        eid = this.getEntityId();
+        this.eid = this.getVarLong();
         Vector3f v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        pitch = getLFloat();
-        headYaw = getLFloat();
-        yaw = getLFloat();
-        mode = (byte) getByte();
-        onGround = getBoolean();
+        this.pitch = this.getLFloat();
+        this.headYaw = this.getLFloat();
+        this.yaw = this.getLFloat();
+        this.mode = (byte) this.getByte();
+        this.onGround = this.getBoolean();
     }
 
     @Override
     public void encode() {
-        reset();
-        putEntityId(eid);
-        putVector3f(x, y, z);
-        //putLFloat(x);
-        //putLFloat(y);
-        //putLFloat(z);
-        putLFloat(pitch);
-        putLFloat(yaw);
-        putLFloat(headYaw);
-        putByte(mode);
-        putBoolean(onGround);
+        this.reset();
+        this.putVarLong(this.eid);
+        this.putVector3f(this.x, this.y, this.z);
+        this.putLFloat(this.pitch);
+        this.putLFloat(this.yaw);
+        this.putLFloat(this.headYaw);
+        this.putByte(this.mode);
+        this.putBoolean(this.onGround);
     }
 
     @Override

@@ -21,20 +21,20 @@ public class CraftingEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-        windowId = getByte();
-        type = (int)getUnsignedVarInt();
-        id = getUUID();
+        this.windowId = this.getByte();
+        this.type = (int) this.getUnsignedVarInt();
+        this.id = this.getUUID();
 
-        int inputSize = (int) getUnsignedVarInt();
-        input = new Item[inputSize];
+        int inputSize = (int) this.getUnsignedVarInt();
+        this.input = new Item[inputSize];
         for (int i = 0; i < inputSize && i < 128; ++i) {
-            input[i] = getSlot();
+            this.input[i] = this.getSlot();
         }
 
-        int outputSize = (int) getUnsignedVarInt();
-        output = new Item[outputSize];
+        int outputSize = (int) this.getUnsignedVarInt();
+        this.output = new Item[outputSize];
         for (int i = 0; i < outputSize && i < 128; ++i) {
-            output[i] = getSlot();
+            this.output[i] = getSlot();
         }
     }
 
