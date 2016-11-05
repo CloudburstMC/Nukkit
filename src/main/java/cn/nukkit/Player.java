@@ -4235,9 +4235,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     //todo a lot on dimension
 
-    public void setDimension() {
+    public void setDimension(int dimension) {
         ChangeDimensionPacket pk = new ChangeDimensionPacket();
-        pk.dimension = (byte) (getLevel().getDimension() & 0xff);
+        pk.dimension = getLevel().getDimension();
         this.dataPacket(pk);
     }
 
