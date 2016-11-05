@@ -2791,7 +2791,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     PlayerCommandPreprocessEvent playerCommandPreprocessEvent = new PlayerCommandPreprocessEvent(this, "/" + commandText);
-                    Server.getInstance().getPluginManager().callEvent(playerCommandPreprocessEvent);
+                    this.server.getPluginManager().callEvent(playerCommandPreprocessEvent);
                     if (playerCommandPreprocessEvent.isCancelled()) {
                         break;
                     }

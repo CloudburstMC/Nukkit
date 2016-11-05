@@ -66,7 +66,7 @@ public class VarInt {
         return left.xor(right);
     }
 
-    private static BigInteger _readVarInt(BinaryStream stream, int maxSize) {
+    private static BigInteger read(BinaryStream stream, int maxSize) {
         BigInteger result = BigInteger.ZERO;
         int offset = 0;
         int b;
@@ -84,7 +84,7 @@ public class VarInt {
         return result;
     }
 
-    private static BigInteger _readVarInt(InputStream stream, int maxSize) {
+    private static BigInteger read(InputStream stream, int maxSize) throws IOException {
         BigInteger result = BigInteger.ZERO;
         int offset = 0;
         int b;
@@ -94,11 +94,8 @@ public class VarInt {
                 throw new IllegalArgumentException("VarInt too big");
             }
 
-            try {
-                b = stream.read();
-            } catch (IOException e) {
-                return null;
-            }
+            b = stream.read();
+
             result = result.or(BigInteger.valueOf((b & 0x7f) << (offset * 7)));
             offset++;
         } while ((b & 0x80) > 0);
@@ -114,7 +111,11 @@ public class VarInt {
         return decodeZigZag32(readUnsignedVarInt(stream));
     }
 
-    public static int readVarInt(InputStream stream) {
+    /**
+     * @param stream
+     * @return Signed int
+     */
+    public static int readVarInt(InputStream stream) throws IOException {
         return decodeZigZag32(readUnsignedVarInt(stream));
     }
 
@@ -123,11 +124,15 @@ public class VarInt {
      * @return Unsigned int
      */
     public static long readUnsignedVarInt(BinaryStream stream) {
-        return _readVarInt(stream, 5).longValue();
+        return read(stream, 5).longValue();
     }
 
-    public static long readUnsignedVarInt(InputStream stream) {
-        return _readVarInt(stream, 5).longValue();
+    /**
+     * @param stream
+     * @return Unsigned int
+     */
+    public static long readUnsignedVarInt(InputStream stream) throws IOException {
+        return read(stream, 5).longValue();
     }
 
     /**
@@ -138,24 +143,31 @@ public class VarInt {
         return decodeZigZag64(readUnsignedVarInt(stream)).longValue();
     }
 
-    public static long readVarLong(InputStream stream) {
+    /**
+     * @param stream
+     * @return Signed long
+     */
+    public static long readVarLong(InputStream stream) throws IOException {
         return decodeZigZag64(readUnsignedVarInt(stream)).longValue();
     }
-
 
     /**
      * @param stream
      * @return Unsigned long
      */
     public static BigInteger readUnsignedVarLong(BinaryStream stream) {
-        return _readVarInt(stream, 10);
+        return read(stream, 10);
     }
 
-    public static BigInteger readUnsignedVarLong(InputStream stream) {
-        return _readVarInt(stream, 10);
+    /**
+     * @param stream
+     * @return Unsigned long
+     */
+    public static BigInteger readUnsignedVarLong(InputStream stream) throws IOException {
+        return read(stream, 10);
     }
 
-    private static void _writeVarInt(BinaryStream stream, BigInteger v) {
+    private static void write(BinaryStream stream, BigInteger v) {
         _assert(v);
         v = v.and(UNSIGNED_LONG_MAX_VALUE);
         BigInteger i = BigInteger.valueOf(-128);
@@ -169,22 +181,18 @@ public class VarInt {
         stream.putByte(v.byteValue());
     }
 
-    private static void _writeVarInt(OutputStream stream, BigInteger v) {
+    private static void write(OutputStream stream, BigInteger v) throws IOException {
         _assert(v);
         v = v.and(UNSIGNED_LONG_MAX_VALUE);
         BigInteger i = BigInteger.valueOf(-128);
         BigInteger BIX7F = BigInteger.valueOf(0x7f);
         BigInteger BIX80 = BigInteger.valueOf(0x80);
-        try {
-            while (!v.and(i).equals(BigInteger.ZERO)) {
-                stream.write(v.and(BIX7F).or(BIX80).byteValue());
-                v = v.shiftRight(7);
-            }
-
-            stream.write(v.byteValue());
-        } catch (IOException e) {
-
+        while (!v.and(i).equals(BigInteger.ZERO)) {
+            stream.write(v.and(BIX7F).or(BIX80).intValue());
+            v = v.shiftRight(7);
         }
+
+        stream.write(v.byteValue());
     }
 
     /**
@@ -195,7 +203,11 @@ public class VarInt {
         writeUnsignedVarInt(stream, encodeZigZag32(value));
     }
 
-    public static void writeVarInt(OutputStream stream, int value) {
+    /**
+     * @param stream
+     * @param value  Signed int
+     */
+    public static void writeVarInt(OutputStream stream, int value) throws IOException {
         writeUnsignedVarInt(stream, encodeZigZag32(value));
     }
 
@@ -204,11 +216,15 @@ public class VarInt {
      * @param value  Unsigned int
      */
     public static void writeUnsignedVarInt(BinaryStream stream, long value) {
-        _writeVarInt(stream, BigInteger.valueOf(value));
+        write(stream, BigInteger.valueOf(value));
     }
 
-    public static void writeUnsignedVarInt(OutputStream stream, long value) {
-        _writeVarInt(stream, BigInteger.valueOf(value));
+    /**
+     * @param stream
+     * @param value  Unsigned int
+     */
+    public static void writeUnsignedVarInt(OutputStream stream, long value) throws IOException {
+        write(stream, BigInteger.valueOf(value));
     }
 
     /**
@@ -219,7 +235,11 @@ public class VarInt {
         writeUnsignedVarLong(stream, encodeZigZag64(value));
     }
 
-    public static void writeVarLong(OutputStream stream, long value) {
+    /**
+     * @param stream
+     * @param value  Signed long
+     */
+    public static void writeVarLong(OutputStream stream, long value) throws IOException {
         writeUnsignedVarLong(stream, encodeZigZag64(value));
     }
 
@@ -229,12 +249,15 @@ public class VarInt {
      */
     public static void writeUnsignedVarLong(BinaryStream stream, BigInteger value) {
         _assert(value);
-        _writeVarInt(stream, value);
+        write(stream, value);
     }
 
-    public static void writeUnsignedVarLong(OutputStream stream, BigInteger value) {
+    /**
+     * @param stream
+     * @param value  Unsigned long
+     */
+    public static void writeUnsignedVarLong(OutputStream stream, BigInteger value) throws IOException {
         _assert(value);
-        _writeVarInt(stream, value);
+        write(stream, value);
     }
-
 }
