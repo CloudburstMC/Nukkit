@@ -1959,7 +1959,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     //TODO: player abilities, check for other changes
                     AdventureSettingsPacket adventureSettingsPacket = (AdventureSettingsPacket) packet;
                     if (adventureSettingsPacket.isFlying && !this.getAdventureSettings().canFly()) {
-                        this.kick("Flying is not enabled on this server");
+                        this.kick(PlayerKickEvent.Reason.FLYING_DISABLED, "Flying is not enabled on this server");
                         break;
                     }
                     PlayerToggleFlightEvent playerToggleFlightEvent = new PlayerToggleFlightEvent(this, adventureSettingsPacket.isFlying);
@@ -3364,12 +3364,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             String message;
             if (isAdmin) {
                 if (!this.isBanned()) {
-                    message = "Kicked by admin." + (!"".equals(reason) ? " Reason: " + reason : "");
+                    message = "Kicked by admin." + (!"".equals(reasonString) ? " Reason: " + reasonString : "");
                 } else {
                     message = reasonString;
                 }
             } else {
-                if ("".equals(reason)) {
+                if ("".equals(reasonString)) {
                     message = "disconnectionScreen.noReason";
                 } else {
                     message = reasonString;
