@@ -44,6 +44,14 @@ public class BaseLang {
 
     }
 
+	public Map<String, String> getLangMap() {
+		return lang;
+	}
+	
+	public Map<String, String> getFallbackLangMap() {
+		return fallbackLang;
+	}
+
     public String getName() {
         return this.get("language.name");
     }
