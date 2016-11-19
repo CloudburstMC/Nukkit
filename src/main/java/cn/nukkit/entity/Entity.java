@@ -197,6 +197,8 @@ public abstract class Entity extends Location implements Metadatable {
     public int maxFireTicks;
     public int fireTicks = 0;
     public int inPortalTicks = 0;
+	
+    public float scale = 1;
 
     public CompoundTag namedTag;
 
@@ -350,6 +352,12 @@ public abstract class Entity extends Location implements Metadatable {
             this.namedTag.putBoolean("Invulnerable", false);
         }
         this.invulnerable = this.namedTag.getBoolean("Invulnerable");
+	    
+	if (!this.namedTag.contains("Scale")) {
+            this.namedTag.putFloat("Scale", 1);
+        }
+        this.scale = this.namedTag.getFloat("Scale");
+        this.setDataProperty(new FloatEntityData(DATA_SCALE, scale), false);
 
         this.chunk.addEntity(this);
         this.level.addEntity(this);
@@ -432,6 +440,20 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void setImmobile(boolean value) {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE, value);
+    }
+	
+    public void setScale(float scale) {
+        this.scale = scale;
+        this.setDataProperty(new FloatEntityData(DATA_SCALE, this.scale));
+
+        float height = this.getHeight() * this.scale;
+        double radius = (this.getWidth() * this.scale) / 2d;
+
+        this.boundingBox.setBounds(x - radius, y, z - radius, x + radius, y + height, z + radius);
+    }
+
+    public float getScale() {
+        return this.scale;
     }
 
     public Map<Integer, Effect> getEffects() {
@@ -618,6 +640,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.namedTag.putShort("Air", this.getDataPropertyShort(DATA_AIR));
         this.namedTag.putBoolean("OnGround", this.onGround);
         this.namedTag.putBoolean("Invulnerable", this.invulnerable);
+	this.namedTag.putFloat("Scale", this.scale);
 
         if (!this.effects.isEmpty()) {
             ListTag<CompoundTag> list = new ListTag<>("ActiveEffects");
@@ -1474,7 +1497,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         double radius = this.getWidth() / 2d;
 
-        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + this.getHeight(), pos.z +
+        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + (this.getHeight() * this.scale), pos.z +
                 radius);
 
         this.checkChunks();
