@@ -1588,6 +1588,10 @@ public class Server {
     }
 
     public boolean generateLevel(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options) {
+        return generateLevel(name, seed, generator, options, null);
+    }
+
+    public boolean generateLevel(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options, Class<? extends LevelProvider> provider) {
         if (Objects.equals(name.trim(), "") || this.isLevelGenerated(name)) {
             return false;
         }
@@ -1600,11 +1604,12 @@ public class Server {
             generator = Generator.getGenerator(this.getLevelType());
         }
 
-        Class<? extends LevelProvider> provider;
-        String providerName;
-        if ((provider = LevelProviderManager.getProviderByName
-                (providerName = (String) this.getConfig("level-settings.default-format", "mcregion"))) == null) {
-            provider = LevelProviderManager.getProviderByName(providerName = "mcregion");
+        if (provider == null) {
+            String providerName;
+            if ((provider = LevelProviderManager.getProviderByName
+                    (providerName = (String) this.getConfig("level-settings.default-format", "mcregion"))) == null) {
+                provider = LevelProviderManager.getProviderByName(providerName = "mcregion");
+            }
         }
 
         Level level;
