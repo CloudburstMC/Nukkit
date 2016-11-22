@@ -63,6 +63,8 @@ import cn.nukkit.plugin.JavaPluginLoader;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginLoadOrder;
 import cn.nukkit.plugin.PluginManager;
+import cn.nukkit.plugin.service.NKServiceManager;
+import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.scheduler.FileWriteTask;
@@ -181,6 +183,8 @@ public class Server {
     private final Map<Integer, String> identifier = new HashMap<>();
 
     private final Map<Integer, Level> levels = new HashMap<>();
+
+    private final ServiceManager serviceManager = new NKServiceManager();
 
     private Level defaultLevel = null;
 
@@ -1825,6 +1829,10 @@ public class Server {
 
     public void reloadWhitelist() {
         this.whitelist.reload();
+    }
+
+    public ServiceManager getServiceManager() {
+        return serviceManager;
     }
 
     public Map<String, List<String>> getCommandAliases() {
