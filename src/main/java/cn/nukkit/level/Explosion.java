@@ -17,6 +17,7 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.ExplodePacket;
+import cn.nukkit.level.particle.HugeExplodeParticle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -225,6 +226,7 @@ public class Explosion {
         pk.records = send.stream().toArray(Vector3[]::new);
 
         this.level.addChunkPacket((int) source.x >> 4, (int) source.z >> 4, pk);
+        this.level.addParticle(new HugeExplodeParticle(new Vector3(this.source.x,  this.source.y, this.source.z)));
 
         return true;
     }
