@@ -44,7 +44,7 @@ public abstract class Particle extends Vector3 {
     public static final int TYPE_ENCHANTMENT_TABLE = 34;
     public static final int TYPE_TRACKING_EMITTER = 35;
     public static final int TYPE_NOTE = 36;
-    //37 yet another SpellParticle of some description
+    public static final int TYPE_WITCH_MAGIC = 37;
     public static final int TYPE_CARROT = 38;
 
     public Particle() {
