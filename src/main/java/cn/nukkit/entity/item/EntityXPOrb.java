@@ -59,6 +59,8 @@ public class EntityXPOrb extends Entity {
     private int pickupDelay = 0;
     private int exp = 0;
 
+    public Player closestPlayer = null;
+
     @Override
     protected void initEntity() {
         super.initEntity();
@@ -113,6 +115,34 @@ public class EntityXPOrb extends Entity {
 
             if (this.checkObstruction(this.x, this.y, this.z)) {
                 hasUpdate = true;
+            }
+
+            if (this.closestPlayer == null || this.closestPlayer.distanceSquared(this) > 64.0D) {
+                for (Player p : level.getPlayers().values()) {
+                    if (!p.isSpectator() && p.distance(this) <= 8) {
+                        this.closestPlayer = p;
+                        break;
+                    }
+                }
+            }
+
+            if (this.closestPlayer != null && this.closestPlayer.isSpectator()) {
+                this.closestPlayer = null;
+            }
+
+            if (this.closestPlayer != null) {
+                double dX = (this.closestPlayer.x - this.x) / 8.0D;
+                double dY = (this.closestPlayer.y + (double) this.closestPlayer.getEyeHeight() / 2.0D - this.y) / 8.0D;
+                double dZ = (this.closestPlayer.z - this.z) / 8.0D;
+                double d = Math.sqrt(dX * dX + dY * dY + dZ * dZ);
+                double diff = 1.0D - d;
+
+                if (diff > 0.0D) {
+                    diff = diff * diff;
+                    this.motionX += dX / d * diff * 0.1D;
+                    this.motionY += dY / d * diff * 0.1D;
+                    this.motionZ += dZ / d * diff * 0.1D;
+                }
             }
 
             this.move(this.motionX, this.motionY, this.motionZ);

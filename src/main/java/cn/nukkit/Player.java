@@ -3901,7 +3901,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static int calculateRequireExperience(int level) {
         if (level < 16) {
             return 2 * level + 7;
-        } else if (level >= 17 && level <= 31) {
+        } else if (level >= 16  && level <= 31) {
             return 5 * level - 38;
         } else {
             return 9 * level - 158;
