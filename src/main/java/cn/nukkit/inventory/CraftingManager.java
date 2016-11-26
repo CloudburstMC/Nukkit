@@ -398,13 +398,13 @@ public class CraftingManager {
                 "PPP"
         )).setIngredient("P", Item.get(Item.NETHER_BRICK_BLOCK, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.STONE, 6),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlabStone.STONE, 6),
                 "PPP",
                 "   ",
                 "   "
         )).setIngredient("P", Item.get(Item.STONE, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.SANDSTONE, 6),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlabStone.SANDSTONE, 6),
                 "PPP",
                 "   ",
                 "   "
@@ -446,31 +446,31 @@ public class CraftingManager {
                 "   "
         )).setIngredient("P", Item.get(Item.WOODEN_PLANK, BlockPlanks.DARK_OAK, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.COBBLESTONE, 6),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlabStone.COBBLESTONE, 6),
                 "PPP",
                 "   ",
                 "   "
         )).setIngredient("P", Item.get(Item.COBBLESTONE, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.BRICK, 6),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlabStone.BRICK, 6),
                 "PPP",
                 "   ",
                 "   "
         )).setIngredient("P", Item.get(Item.BRICK, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.STONE_BRICK, 6),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlabStone.STONE_BRICK, 6),
                 "PPP",
                 "   ",
                 "   "
         )).setIngredient("P", Item.get(Item.STONE_BRICK, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.QUARTZ, 6),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlabStone.QUARTZ, 6),
                 "PPP",
                 "   ",
                 "   "
         )).setIngredient("P", Item.get(Item.QUARTZ_BLOCK, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlab.NETHER_BRICK, 6),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlabStone.NETHER_BRICK, 6),
                 "PPP",
                 "   ",
                 "   "
@@ -492,25 +492,25 @@ public class CraftingManager {
                 "   ",
                 " N ",
                 " N "
-        )).setIngredient("N", Item.get(Item.SLAB, BlockSlab.QUARTZ, 1)));
+        )).setIngredient("N", Item.get(Item.SLAB, BlockSlabStone.QUARTZ, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.SANDSTONE, BlockSandstone.NORMAL, 1),
+                "   ",
                 "SS ",
-                "SS ",
-                "   "
+                "SS "
         )).setIngredient("S", Item.get(Item.SAND, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SANDSTONE, BlockSandstone.SMOOTH, 2),
-                "S  ",
-                "S  ",
-                "   "
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.SANDSTONE, BlockSandstone.SMOOTH, 4),
+                "   ",
+                "SS ",
+                "SS "
         )).setIngredient("S", Item.get(Item.SANDSTONE, BlockSandstone.NORMAL, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.SANDSTONE, BlockSandstone.CHISELED, 1),
                 "   ",
                 " N ",
                 " N "
-        )).setIngredient("N", Item.get(Item.SLAB, BlockSlab.SANDSTONE, 1)));
+        )).setIngredient("N", Item.get(Item.SLAB, BlockSlabStone.SANDSTONE, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE_BRICK, BlockBricksStone.NORMAL, 1),
                 "   ",
@@ -528,7 +528,7 @@ public class CraftingManager {
                 "   ",
                 " S ",
                 " S "
-        )).setIngredient("S", Item.get(Item.SLAB, BlockSlab.STONE_BRICK, 1)));
+        )).setIngredient("S", Item.get(Item.SLAB, BlockSlabStone.STONE_BRICK, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.MOSS_STONE, 0, 1),
                 "   ",
@@ -658,6 +658,36 @@ public class CraftingManager {
                 "SLS",
                 "SSS"
         )).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("L", Item.get(Item.LEATHER, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.RED_SANDSTONE_STAIRS, 0, 4),
+                "  S",
+                " SS",
+                "SSS"
+        )).setIngredient("S", Item.get(Item.RED_SANDSTONE, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.RED_SANDSTONE_SLAB, 0, 6),
+                "   ",
+                "SSS",
+                "   "
+        )).setIngredient("S", Item.get(Item.RED_SANDSTONE, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.RED_SANDSTONE, BlockSandstone.NORMAL, 1),
+                "   ",
+                "SS ",
+                "SS "
+        )).setIngredient("S", Item.get(Item.SAND, 1, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.RED_SANDSTONE, BlockSandstone.SMOOTH, 4),
+                "   ",
+                "SS ",
+                "SS "
+        )).setIngredient("S", Item.get(Item.RED_SANDSTONE, BlockSandstone.NORMAL, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.RED_SANDSTONE, BlockSandstone.CHISELED, 1),
+                "   ",
+                " N ",
+                " N "
+        )).setIngredient("N", Item.get(Item.RED_SANDSTONE_SLAB, 0, 1)));
     }
 
     protected void registerFurnace() {
@@ -684,10 +714,6 @@ public class CraftingManager {
     }
 
     protected void registerBrewing() {
-        for (int ingredient : new int[]{Item.NETHER_WART, Item.GOLD_NUGGET, Item.GHAST_TEAR, Item.GLOWSTONE_DUST, Item.REDSTONE_DUST, Item.GUNPOWDER, Item.MAGMA_CREAM, Item.BLAZE_POWDER, Item.GOLDEN_CARROT, Item.SPIDER_EYE, Item.FERMENTED_SPIDER_EYE, Item.GLISTERING_MELON, Item.SUGAR, Item.RAW_FISH}) {
-            BlockEntityBrewingStand.ingredients.add(ingredient); //temporally solution for ingredients
-        }
-
         registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, ItemPotion.AWKWARD, 1), Item.get(Item.NETHER_WART, 0, 1), Item.get(Item.POTION, ItemPotion.NO_EFFECTS, 1)));
         registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, ItemPotion.THICK, 1), Item.get(Item.GLOWSTONE_DUST, 0, 1), Item.get(Item.POTION, ItemPotion.NO_EFFECTS, 1)));
         registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, ItemPotion.MUNDANE_II, 1), Item.get(Item.REDSTONE_DUST, 0, 1), Item.get(Item.POTION, ItemPotion.NO_EFFECTS, 1)));
