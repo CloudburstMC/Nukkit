@@ -688,6 +688,51 @@ public class CraftingManager {
                 " N ",
                 " N "
         )).setIngredient("N", Item.get(Item.RED_SANDSTONE_SLAB, 0, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE_BUTTON, 0, 1),
+                "   ",
+                " N ",
+                "   "
+        )).setIngredient("N", Item.get(Item.STONE, 0, 1)));
+
+
+
+        //all planks...
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOODEN_BUTTON, 0, 1),
+                "   ",
+                " N ",
+                "   "
+        )).setIngredient("N", Item.get(Item.PLANKS, BlockPlanks.OAK, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOODEN_BUTTON, 0, 1),
+                "   ",
+                " N ",
+                "   "
+        )).setIngredient("N", Item.get(Item.PLANKS, BlockPlanks.SPRUCE, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOODEN_BUTTON, 0, 1),
+                "   ",
+                " N ",
+                "   "
+        )).setIngredient("N", Item.get(Item.PLANKS, BlockPlanks.BIRCH, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOODEN_BUTTON, 0, 1),
+                "   ",
+                " N ",
+                "   "
+        )).setIngredient("N", Item.get(Item.PLANKS, BlockPlanks.JUNGLE, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOODEN_BUTTON, 0, 1),
+                "   ",
+                " N ",
+                "   "
+        )).setIngredient("N", Item.get(Item.PLANKS, BlockPlanks.ACACIA, 1)));
+
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.WOODEN_BUTTON, 0, 1),
+                "   ",
+                " N ",
+                "   "
+        )).setIngredient("N", Item.get(Item.PLANKS, BlockPlanks.DARK_OAK, 1)));
     }
 
     protected void registerFurnace() {
