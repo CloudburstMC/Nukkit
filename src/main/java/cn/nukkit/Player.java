@@ -3830,7 +3830,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (!ev.getKeepInventory()) {
             for (Item item : ev.getDrops()) {
-                this.level.dropItem(this, item);
+                this.level.dropItem(this, item, null, true, 40);
             }
 
             if (this.inventory != null) {

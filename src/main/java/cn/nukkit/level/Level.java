@@ -1575,8 +1575,21 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropItem(Vector3 source, Item item, Vector3 motion, int delay) {
-        motion = motion == null ? new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2,
-                new java.util.Random().nextDouble() * 0.2 - 0.1) : motion;
+        this.dropItem(source, item, motion, false, delay);
+    }
+
+    public void dropItem(Vector3 source, Item item, Vector3 motion, boolean dropAround, int delay) {
+        if(motion == null) {
+            if(dropAround){
+                float f = this.rand.nextFloat() * 0.5f;
+                float f1 = this.rand.nextFloat() * ((float)Math.PI * 2);
+
+                motion = new Vector3(-MathHelper.sin(f1) * f, 0.20000000298023224, MathHelper.cos(f1) * f);
+            } else {
+                motion = new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2,
+                        new java.util.Random().nextDouble() * 0.2 - 0.1);
+            }
+        }
 
         CompoundTag itemTag = NBTIO.putItemHelper(item);
         itemTag.setName("Item");
