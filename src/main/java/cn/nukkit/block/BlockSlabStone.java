@@ -5,10 +5,9 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * Created by CreeperFace on 26. 11. 2016.
  */
-public class BlockDoubleSlab extends BlockSolid {
+public class BlockSlabStone extends BlockSlab {
     public static final int STONE = 0;
     public static final int SANDSTONE = 1;
     public static final int WOODEN = 2;
@@ -18,29 +17,17 @@ public class BlockDoubleSlab extends BlockSolid {
     public static final int QUARTZ = 6;
     public static final int NETHER_BRICK = 7;
 
-    public BlockDoubleSlab() {
+    public BlockSlabStone() {
         this(0);
     }
 
-    public BlockDoubleSlab(int meta) {
-        super(meta);
+    public BlockSlabStone(int meta) {
+        super(meta, DOUBLE_STONE_SLAB);
     }
 
     @Override
     public int getId() {
-        return DOUBLE_SLAB;
-    }
-
-    //todo hardness and residence
-
-    @Override
-    public double getHardness() {
-        return 2;
-    }
-
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_PICKAXE;
+        return STONE_SLAB;
     }
 
     @Override
@@ -55,14 +42,15 @@ public class BlockDoubleSlab extends BlockSolid {
                 "Quartz",
                 "Nether Brick"
         };
-        return "Double " + names[this.meta & 0x07] + " Slab";
+
+        return ((this.meta & 0x08) > 0 ? "Upper " : "") + names[this.meta & 0x07] + " Slab";
     }
 
     @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{
-                    {Item.SLAB, this.meta & 0x07, 2}
+                    {this.getId(), this.meta & 0x07, 1}
             };
         } else {
             return new int[0][0];
@@ -70,23 +58,28 @@ public class BlockDoubleSlab extends BlockSolid {
     }
 
     @Override
+    public int getToolType() {
+        return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
     public BlockColor getColor() {
         switch (this.meta & 0x07) {
-            case BlockDoubleSlab.STONE:
+            case STONE:
                 return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.SANDSTONE:
+            case SANDSTONE:
                 return BlockColor.SAND_BLOCK_COLOR;
-            case BlockDoubleSlab.WOODEN:
+            case WOODEN:
                 return BlockColor.WOOD_BLOCK_COLOR;
-            case BlockDoubleSlab.COBBLESTONE:
+            case COBBLESTONE:
                 return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.BRICK:
+            case BRICK:
                 return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.STONE_BRICK:
+            case STONE_BRICK:
                 return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.QUARTZ:
+            case QUARTZ:
                 return BlockColor.QUARTZ_BLOCK_COLOR;
-            case BlockDoubleSlab.NETHER_BRICK:
+            case NETHER_BRICK:
                 return BlockColor.NETHERRACK_BLOCK_COLOR;
 
             default:

@@ -17,6 +17,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -28,7 +29,11 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
     public int brewTime = MAX_BREW_TIME;
 
-    public static final List<Integer> ingredients = new ArrayList<>();
+    public static final List<Integer> ingredients = new ArrayList<Integer>() {
+        {
+            addAll(Arrays.asList(Item.NETHER_WART, Item.GOLD_NUGGET, Item.GHAST_TEAR, Item.GLOWSTONE_DUST, Item.REDSTONE_DUST, Item.GUNPOWDER, Item.MAGMA_CREAM, Item.BLAZE_POWDER, Item.GOLDEN_CARROT, Item.SPIDER_EYE, Item.FERMENTED_SPIDER_EYE, Item.GLISTERING_MELON, Item.SUGAR, Item.RAW_FISH));
+        }
+    };
 
     public BlockEntityBrewingStand(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
