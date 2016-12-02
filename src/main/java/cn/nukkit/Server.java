@@ -63,6 +63,8 @@ import cn.nukkit.plugin.JavaPluginLoader;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginLoadOrder;
 import cn.nukkit.plugin.PluginManager;
+import cn.nukkit.plugin.service.NKServiceManager;
+import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.scheduler.FileWriteTask;
@@ -181,6 +183,8 @@ public class Server {
     private final Map<Integer, String> identifier = new HashMap<>();
 
     private final Map<Integer, Level> levels = new HashMap<>();
+
+    private final ServiceManager serviceManager = new NKServiceManager();
 
     private Level defaultLevel = null;
 
@@ -1584,6 +1588,10 @@ public class Server {
     }
 
     public boolean generateLevel(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options) {
+        return generateLevel(name, seed, generator, options, null);
+    }
+
+    public boolean generateLevel(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options, Class<? extends LevelProvider> provider) {
         if (Objects.equals(name.trim(), "") || this.isLevelGenerated(name)) {
             return false;
         }
@@ -1596,11 +1604,12 @@ public class Server {
             generator = Generator.getGenerator(this.getLevelType());
         }
 
-        Class<? extends LevelProvider> provider;
-        String providerName;
-        if ((provider = LevelProviderManager.getProviderByName
-                (providerName = (String) this.getConfig("level-settings.default-format", "mcregion"))) == null) {
-            provider = LevelProviderManager.getProviderByName(providerName = "mcregion");
+        if (provider == null) {
+            String providerName;
+            if ((provider = LevelProviderManager.getProviderByName
+                    (providerName = (String) this.getConfig("level-settings.default-format", "mcregion"))) == null) {
+                provider = LevelProviderManager.getProviderByName(providerName = "mcregion");
+            }
         }
 
         Level level;
@@ -1825,6 +1834,10 @@ public class Server {
 
     public void reloadWhitelist() {
         this.whitelist.reload();
+    }
+
+    public ServiceManager getServiceManager() {
+        return serviceManager;
     }
 
     public Map<String, List<String>> getCommandAliases() {

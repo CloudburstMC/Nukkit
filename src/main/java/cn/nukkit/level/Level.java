@@ -32,6 +32,7 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.task.*;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
+import cn.nukkit.level.sound.BlockPlaceSound;
 import cn.nukkit.level.sound.Sound;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.BlockMetadataStore;
@@ -1574,8 +1575,21 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropItem(Vector3 source, Item item, Vector3 motion, int delay) {
-        motion = motion == null ? new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2,
-                new java.util.Random().nextDouble() * 0.2 - 0.1) : motion;
+        this.dropItem(source, item, motion, false, delay);
+    }
+
+    public void dropItem(Vector3 source, Item item, Vector3 motion, boolean dropAround, int delay) {
+        if(motion == null) {
+            if(dropAround){
+                float f = this.rand.nextFloat() * 0.5f;
+                float f1 = this.rand.nextFloat() * ((float)Math.PI * 2);
+
+                motion = new Vector3(-MathHelper.sin(f1) * f, 0.20000000298023224, MathHelper.cos(f1) * f);
+            } else {
+                motion = new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2,
+                        new java.util.Random().nextDouble() * 0.2 - 0.1);
+            }
+        }
 
         CompoundTag itemTag = NBTIO.putItemHelper(item);
         itemTag.setName("Item");
@@ -1922,8 +1936,14 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        if (player != null && !player.isCreative()) {
-            item.setCount(item.getCount() - 1);
+        if (player != null) {
+            BlockPlaceSound sound = new BlockPlaceSound(block.add(0.5, 0.5, 0.5));
+            Map<Integer, Player> players = getChunkPlayers((int) block.x >> 4, (int) block.z >> 4);
+            addSound(sound, players.values());
+
+            if (!player.isCreative()) {
+                item.setCount(item.getCount() - 1);
+            }
         }
 
         if (item.getCount() <= 0) {

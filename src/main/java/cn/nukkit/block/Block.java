@@ -53,9 +53,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int GLASS = 20;
     public static final int LAPIS_ORE = 21;
     public static final int LAPIS_BLOCK = 22;
-
     public static final int DISPENSER = 23;
-
     public static final int SANDSTONE = 24;
     public static final int NOTEBLOCK = 25;
     public static final int BED_BLOCK = 26;
@@ -77,8 +75,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int GOLD_BLOCK = 41;
     public static final int IRON_BLOCK = 42;
     public static final int DOUBLE_SLAB = 43;
+    public static final int DOUBLE_STONE_SLAB = 43;
     public static final int DOUBLE_SLABS = 43;
     public static final int SLAB = 44;
+    public static final int STONE_SLAB = 44;
     public static final int SLABS = 44;
     public static final int BRICKS = 45;
     public static final int BRICKS_BLOCK = 45;
@@ -123,7 +123,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int LIT_REDSTONE_ORE = 74;
 
     public static final int REDSTONE_TORCH = 76;
-
+    public static final int STONE_BUTTON = 77;
     public static final int SNOW = 78;
     public static final int SNOW_LAYER = 78;
     public static final int ICE = 79;
@@ -149,10 +149,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     public static final int STONE_BRICKS = 98;
     public static final int STONE_BRICK = 98;
-
     public static final int BROWN_MUSHROOM_BLOCK = 99;
     public static final int RED_MUSHROOM_BLOCK = 100;
-
     public static final int IRON_BAR = 101;
     public static final int IRON_BARS = 101;
     public static final int GLASS_PANE = 102;
@@ -202,14 +200,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int JUNGLE_WOODEN_STAIRS = 136;
 
     public static final int BEACON = 138;
-
     public static final int COBBLE_WALL = 139;
     public static final int STONE_WALL = 139;
     public static final int COBBLESTONE_WALL = 139;
     public static final int FLOWER_POT_BLOCK = 140;
     public static final int CARROT_BLOCK = 141;
     public static final int POTATO_BLOCK = 142;
-
+    public static final int WOODEN_BUTTON = 143;
     public static final int SKULL_BLOCK = 144;
     public static final int ANVIL = 145;
     public static final int TRAPPED_CHEST = 146;
@@ -220,7 +217,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int DAYLIGHT_DETECTOR = 151;
     public static final int REDSTONE_BLOCK = 152;
     public static final int QUARTZ_ORE = 153;
-
     public static final int HOPPER_BLOCK = 154;
     public static final int QUARTZ_BLOCK = 155;
     public static final int QUARTZ_STAIRS = 156;
@@ -244,14 +240,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int ACACIA_WOODEN_STAIRS = 163;
     public static final int DARK_OAK_WOOD_STAIRS = 164;
     public static final int DARK_OAK_WOODEN_STAIRS = 164;
-
     public static final int SLIME_BLOCK = 165;
 
     public static final int IRON_TRAPDOOR = 167;
-
     public static final int PRISMARINE = 168;
     public static final int SEA_LANTERN = 169;
-
     public static final int HAY_BALE = 170;
     public static final int CARPET = 171;
     public static final int HARDENED_CLAY = 172;
@@ -260,7 +253,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int DOUBLE_PLANT = 175;
 
     public static final int DAYLIGHT_DETECTOR_INVERTED = 178;
-
+    public static final int RED_SANDSTONE = 179;
+    public static final int RED_SANDSTONE_STAIRS = 180;
+    public static final int DOUBLE_RED_SANDSTONE_SLAB = 181;
+    public static final int RED_SANDSTONE_SLAB = 182;
     public static final int FENCE_GATE_SPRUCE = 183;
     public static final int FENCE_GATE_BIRCH = 184;
     public static final int FENCE_GATE_JUNGLE = 185;
@@ -272,7 +268,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int JUNGLE_DOOR_BLOCK = 195;
     public static final int ACACIA_DOOR_BLOCK = 196;
     public static final int DARK_OAK_DOOR_BLOCK = 197;
-
     public static final int GRASS_PATH = 198;
     public static final int ITEM_FRAME_BLOCK = 199;
 
@@ -346,8 +341,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[RED_MUSHROOM] = BlockMushroomRed.class;
             list[GOLD_BLOCK] = BlockGold.class;
             list[IRON_BLOCK] = BlockIron.class;
-            list[DOUBLE_SLAB] = BlockDoubleSlab.class;
-            list[SLAB] = BlockSlab.class;
+            list[DOUBLE_SLAB] = BlockDoubleSlabStone.class;
+            list[SLAB] = BlockSlabStone.class;
             list[BRICKS_BLOCK] = BlockBricks.class;
             list[TNT] = BlockTNT.class;
             list[BOOKSHELF] = BlockBookshelf.class;
@@ -501,10 +496,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[REDSTONE_LAMP] = BlockRedstoneLamp.class;
             list[STONE_PRESSURE_PLATE] = BlockPressurePlateStone.class;
             list[WOODEN_PRESSURE_PLATE] = BlockPressurePlateWood.class;
-
             list[SKULL_BLOCK] = BlockSkull.class;
             list[CAULDRON_BLOCK] = BlockCauldron.class;
             list[COCOA] = BlockCocoa.class;
+            list[RED_SANDSTONE] = BlockRedSandstone.class;
+            list[RED_SANDSTONE_SLAB] = BlockSlabRedSandstone.class;
+            list[RED_SANDSTONE_STAIRS] = BlockStairsRedSandstone.class;
+            list[DOUBLE_RED_SANDSTONE_SLAB] = BlockDoubleSlabRedSandstone.class;
+            list[WOODEN_BUTTON] = BlockButtonStone.class;
+            list[STONE_BUTTON] = BlockButtonWooden.class;
 
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];
@@ -519,6 +519,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                         }
                     } catch (Exception e) {
                         Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
+                        for (int data = 0; data < 16; ++data) {
+                            fullList[(id << 4) | data] = new BlockUnknown(id, data);
+                        }
                         return;
                     }
 
@@ -543,7 +546,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                 } else {
                     lightFilter[id] = 1;
                     for (int data = 0; data < 16; ++data) {
-                        fullList[(id) << 4 | data] = new BlockUnknown(id, data);
+                        fullList[(id << 4) | data] = new BlockUnknown(id, data);
                     }
                 }
             }
