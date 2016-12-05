@@ -1,5 +1,7 @@
 package cn.nukkit.math;
 
+import cn.nukkit.block.Block;
+
 public class BlockVector3 implements Cloneable {
     public static final int SIDE_DOWN = 0;
     public static final int SIDE_UP = 1;
@@ -185,7 +187,10 @@ public class BlockVector3 implements Cloneable {
 
         if (!(ob instanceof BlockVector3)) return false;
 
-        return this.x == ((BlockVector3) ob).x && this.z == ((BlockVector3) ob).z;
+        return
+                this.x == ((BlockVector3) ob).x &&
+                this.y == ((BlockVector3) ob).y &&
+                this.z == ((BlockVector3) ob).z;
     }
 
     @Override
