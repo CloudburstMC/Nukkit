@@ -1,7 +1,5 @@
 package cn.nukkit.math;
 
-import cn.nukkit.block.Block;
-
 public class BlockVector3 implements Cloneable {
     public static final int SIDE_DOWN = 0;
     public static final int SIDE_UP = 1;
