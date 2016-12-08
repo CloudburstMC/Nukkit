@@ -32,7 +32,7 @@ public class BlockStemPumpkin extends BlockCrops {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(0).isTransparent()) {
+            if (this.getSide(0).getId() != FARMLAND) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
