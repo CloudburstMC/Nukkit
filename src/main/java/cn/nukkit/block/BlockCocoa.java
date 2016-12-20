@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
@@ -82,9 +83,14 @@ public class BlockCocoa extends BlockTransparent {
 
         return bbs[this.meta / 4].getOffsetBoundingBox(x, y, z);
     }
+    
+    @Override
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz){
+        return this.place(item, block, target, face, fx, fy, fz, null);
+    }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (target.getId() == Block.WOOD && target.getDamage() == BlockWood.JUNGLE) {
             if (face != 0 && face != 1) {
                 int[] faces = new int[]{
