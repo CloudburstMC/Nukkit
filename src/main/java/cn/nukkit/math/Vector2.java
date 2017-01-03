@@ -30,11 +30,11 @@ public class Vector2 {
     }
 
     public int getFloorX() {
-        return (int) this.x;
+        return (int) Math.floor(this.x);
     }
 
     public int getFloorY() {
-        return (int) this.y;
+        return (int) Math.floor(this.y);
     }
 
     public Vector2 add(double x) {
@@ -66,7 +66,7 @@ public class Vector2 {
     }
 
     public Vector2 floor() {
-        return new Vector2((int) this.x, (int) this.y);
+        return new Vector2((int) Math.floor(this.x), (int) Math.floor(this.y));
     }
 
     public Vector2 round() {

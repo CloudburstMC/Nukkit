@@ -15,7 +15,7 @@ public class BlockPumpkin extends BlockSolid {
     }
 
     public BlockPumpkin(int meta) {
-        super(0);
+        super(meta);
     }
 
     @Override
