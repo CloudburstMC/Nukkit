@@ -1354,17 +1354,21 @@ public class Level implements ChunkManager, Metadatable {
     public Block getBlock(Vector3 pos, boolean cached) {
         long chunkIndex = Level.chunkHash((int) pos.x >> 4, (int) pos.z >> 4);
         BlockVector3 index = Level.blockHash((int) pos.x, (int) pos.y, (int) pos.z);
-        int fullState = 0;
-        if (cached && this.blockCache.containsKey(index)) {
-            return this.blockCache.get(index);
-        } else if (pos.y >= 0 && pos.y < 128 && this.chunks.containsKey(chunkIndex)) {
-            fullState = this.chunks.get(chunkIndex).getFullBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f,
+        int fullState;
+
+        Block block;
+        BaseFullChunk chunk;
+
+        if (cached && (block = this.blockCache.get(index)) != null) {
+            return block;
+        } else if (pos.y >= 0 && pos.y < 128 && (chunk = this.chunks.get(chunkIndex)) != null) {
+            fullState = chunk.getFullBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f,
                     (int) pos.z & 0x0f);
         } else {
             fullState = 0;
         }
 
-        Block block = this.blockStates[fullState & 0xfff].clone();
+        block = this.blockStates[fullState & 0xfff].clone();
 
         block.x = pos.x;
         block.y = pos.y;
