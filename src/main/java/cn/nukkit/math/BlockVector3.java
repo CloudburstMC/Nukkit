@@ -187,8 +187,8 @@ public class BlockVector3 implements Cloneable {
 
         return
                 this.x == ((BlockVector3) ob).x &&
-                this.y == ((BlockVector3) ob).y &&
-                this.z == ((BlockVector3) ob).z;
+                        this.y == ((BlockVector3) ob).y &&
+                        this.z == ((BlockVector3) ob).z;
     }
 
     @Override

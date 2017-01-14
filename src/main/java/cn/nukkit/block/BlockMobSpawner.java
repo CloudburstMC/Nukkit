@@ -37,6 +37,11 @@ public class BlockMobSpawner extends BlockSolid {
     }
 
     @Override
+    public double getResistance() {
+        return 25;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{

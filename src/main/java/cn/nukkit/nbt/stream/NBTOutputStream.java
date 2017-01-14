@@ -1,6 +1,5 @@
 package cn.nukkit.nbt.stream;
 
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.VarInt;
 
 import java.io.DataOutput;

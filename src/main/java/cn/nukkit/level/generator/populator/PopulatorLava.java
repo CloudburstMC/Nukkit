@@ -131,10 +131,7 @@ public class PopulatorLava extends Populator {
 
     private boolean canFlowInto(int x, int y, int z) {
         int id = this.level.getBlockIdAt(x, y, z);
-        if (id == Block.AIR || id == Block.LAVA || id == Block.STILL_LAVA) {
-            return true;
-        }
-        return false;
+        return id == Block.AIR || id == Block.LAVA || id == Block.STILL_LAVA;
     }
 
     private int calculateFlowCost(int xx, int yy, int zz, int accumulatedCost, int previousDirection) {

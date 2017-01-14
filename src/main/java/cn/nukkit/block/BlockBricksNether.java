@@ -8,19 +8,19 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/7 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockNetherBrick extends BlockSolid {
+public class BlockBricksNether extends BlockSolid {
 
-    public BlockNetherBrick() {
+    public BlockBricksNether() {
         this(0);
     }
 
-    public BlockNetherBrick(int meta) {
+    public BlockBricksNether(int meta) {
         super(0);
     }
 
     @Override
     public String getName() {
-        return "Nether Bricks";
+        return "Nether Brick";
     }
 
     @Override

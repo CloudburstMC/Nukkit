@@ -291,6 +291,6 @@ public class Normal extends Generator {
 
     @Override
     public Vector3 getSpawn() {
-        return new Vector3(127.5, 128, 127.5);
+        return new Vector3(127.5, 256, 127.5);
     }
 }

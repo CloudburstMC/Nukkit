@@ -25,14 +25,14 @@ public class BaseKey {
 
     public byte[] toArray() {
         return new byte[]{
-                (byte) (this.chunkX & 0xFF),
-                (byte) ((this.chunkX >>> 8) & 0xFF),
-                (byte) ((this.chunkX >>> 16) & 0xFF),
-                (byte) ((this.chunkX >>> 24) & 0xFF),
-                (byte) (this.chunkZ & 0xFF),
-                (byte) ((this.chunkZ >>> 8) & 0xFF),
-                (byte) ((this.chunkZ >>> 16) & 0xFF),
-                (byte) ((this.chunkZ >>> 24) & 0xFF),
+                (byte) (this.chunkX & 0xff),
+                (byte) ((this.chunkX >>> 8) & 0xff),
+                (byte) ((this.chunkX >>> 16) & 0xff),
+                (byte) ((this.chunkX >>> 24) & 0xff),
+                (byte) (this.chunkZ & 0xff),
+                (byte) ((this.chunkZ >>> 8) & 0xff),
+                (byte) ((this.chunkZ >>> 16) & 0xff),
+                (byte) ((this.chunkZ >>> 24) & 0xff),
                 this.type
         };
     }

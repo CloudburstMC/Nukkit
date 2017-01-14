@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBoat;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.SmokeParticle;
@@ -12,6 +13,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.network.protocol.SetEntityLinkPacket;
 
 /**
  * Created by yescallop on 2016/2/13.
@@ -164,4 +166,32 @@ public class EntityBoat extends EntityVehicle {
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
     }
 
+    @Override
+    public boolean onInteract(Entity entity, Item item) {
+        if (this.linkedEntity != null) {
+            return false;
+        }
+
+        SetEntityLinkPacket pk;
+
+        pk = new SetEntityLinkPacket();
+        pk.rider = this.getId(); //WTF
+        pk.riding = entity.getId();
+        pk.type = 2;
+        Server.broadcastPacket(this.hasSpawned.values(), pk);
+
+        if (entity instanceof Player) {
+            pk = new SetEntityLinkPacket();
+            pk.rider = this.getId();
+            pk.riding = 0;
+            pk.type = 2;
+            ((Player) entity).dataPacket(pk);
+        }
+
+        entity.riding = this;
+        this.linkedEntity = entity;
+
+        entity.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
+        return true;
+    }
 }

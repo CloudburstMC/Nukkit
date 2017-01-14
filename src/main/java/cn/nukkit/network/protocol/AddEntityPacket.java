@@ -43,8 +43,8 @@ public class AddEntityPacket extends DataPacket {
         this.putUnsignedVarInt(this.type);
         this.putVector3f(this.x, this.y, this.z);
         this.putVector3f(this.speedX, this.speedY, this.speedZ);
-        this.putLFloat(this.yaw * (256f / 360f));
         this.putLFloat(this.pitch * (256f / 360f));
+        this.putLFloat(this.yaw * (256f / 360f));
         this.putUnsignedVarInt(this.modifiers);
         this.put(Binary.writeMetadata(this.metadata));
         this.putUnsignedVarInt(this.links.length);

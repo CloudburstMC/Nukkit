@@ -1,6 +1,5 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
@@ -26,11 +25,6 @@ public class ProjectileHitEvent extends EntityEvent implements Cancellable {
     public ProjectileHitEvent(EntityProjectile entity, MovingObjectPosition movingObjectPosition) {
         this.entity = entity;
         this.movingObjectPosition = movingObjectPosition;
-    }
-
-    @Override
-    public Entity getEntity() {
-        return super.getEntity();
     }
 
     public MovingObjectPosition getMovingObjectPosition() {

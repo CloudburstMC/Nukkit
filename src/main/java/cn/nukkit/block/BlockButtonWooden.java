@@ -7,11 +7,11 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockButtonWooden extends BlockButton {
 
-    public BlockButtonWooden(){
+    public BlockButtonWooden() {
         this(0);
     }
 
-    public BlockButtonWooden(int meta){
+    public BlockButtonWooden(int meta) {
         super(meta);
     }
 

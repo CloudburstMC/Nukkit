@@ -77,7 +77,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putShort("Health", this.getHealth());
+        this.namedTag.putShort("Health", (int) this.getHealth());
     }
 
     public boolean hasLineOfSight(Entity entity) {

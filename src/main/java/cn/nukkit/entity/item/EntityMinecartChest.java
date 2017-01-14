@@ -9,7 +9,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public class EntityMinecartChest extends EntityMinecartEmpty {
 
-    // TODO: 2016/1/30 NETWORK_ID
+    public static final int NETWORK_ID = 62;
 
     public EntityMinecartChest(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);

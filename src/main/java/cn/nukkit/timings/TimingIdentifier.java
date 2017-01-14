@@ -28,13 +28,7 @@ class TimingIdentifier {
             return DEFAULT_GROUP;
         }
 
-        TimingGroup group = GROUP_MAP.get(name);
-        if (group == null) {
-            group = new TimingGroup(name);
-            GROUP_MAP.put(name, group);
-        }
-
-        return group;
+        return GROUP_MAP.computeIfAbsent(name, k -> new TimingGroup(name));
     }
 
     @Override

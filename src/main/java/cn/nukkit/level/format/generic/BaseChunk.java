@@ -55,7 +55,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         int damage = meta == null ? 0 : meta;
         try {
             this.hasChanged = true;
-            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, id & 0xff, damage & 0x0f);
+            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, id, damage);
         } catch (ChunkException e) {
             int Y = y >> 4;
             try {
@@ -63,7 +63,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
                 Server.getInstance().getLogger().logException(e1);
             }
-            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, id & 0xff, damage & 0x0f);
+            return this.sections[y >> 4].setBlock(x, y & 0x0f, z, id, damage);
         }
     }
 
@@ -153,7 +153,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     @Override
     public byte[] getBlockIdColumn(int x, int z) {
-        ByteBuffer buffer = ByteBuffer.allocate(128);
+        ByteBuffer buffer = ByteBuffer.allocate(256);
         for (int y = 0; y < SECTION_COUNT; y++) {
             buffer.put(this.sections[y].getBlockIdColumn(x, z));
         }
@@ -201,8 +201,6 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     public boolean setSection(float fY, ChunkSection section) {
         byte[] emptyIdArray = new byte[4096];
         byte[] emptyDataArray = new byte[2048];
-        Arrays.fill(emptyIdArray, (byte) 0x00);
-        Arrays.fill(emptyDataArray, (byte) 0x00);
         if (Arrays.equals(emptyIdArray, section.getIdArray()) && Arrays.equals(emptyDataArray, section.getDataArray())) {
             this.sections[(int) fY] = new EmptyChunkSection((int) fY);
         } else {

@@ -78,7 +78,7 @@ public interface FullChunk extends Cloneable {
 
     byte[] getBlockLightColumn(int x, int z);
 
-    void setBiomeColor(int x, int z, int R, int G, int B);
+    void setBiomeColor(int x, int z, int r, int g, int b);
 
     boolean isLightPopulated();
 

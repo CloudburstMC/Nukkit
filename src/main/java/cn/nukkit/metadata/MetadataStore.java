@@ -23,11 +23,7 @@ public abstract class MetadataStore {
             throw new PluginException("Plugin cannot be null");
         }
         String key = this.disambiguate((Metadatable) subject, metadataKey);
-        Map<Plugin, MetadataValue> entry = this.metadataMap.get(key);
-        if (entry == null) {
-            entry = new WeakHashMap<>(1);
-            this.metadataMap.put(key, entry);
-        }
+        Map<Plugin, MetadataValue> entry = this.metadataMap.computeIfAbsent(key, k -> new WeakHashMap<>(1));
         entry.put(owningPlugin, newMetadataValue);
     }
 
@@ -49,7 +45,7 @@ public abstract class MetadataStore {
             throw new PluginException("Plugin cannot be null");
         }
         String key = this.disambiguate((Metadatable) subject, metadataKey);
-        Map entry = (Map) this.metadataMap.get(key);
+        Map entry = this.metadataMap.get(key);
         if (entry == null) {
             return;
         }

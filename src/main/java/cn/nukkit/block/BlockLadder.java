@@ -61,7 +61,7 @@ public class BlockLadder extends BlockTransparent {
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
 
-        double f = 0.125d;
+        double f = 0.1875;
 
         if (this.meta == 2) {
             return new AxisAlignedBB(
@@ -126,8 +126,9 @@ public class BlockLadder extends BlockTransparent {
                     5,
                     4
             };
-            if (this.getSide(faces[this.meta]).isTransparent()) {
+            if (!this.getSide(faces[this.meta]).isSolid()) {
                 this.getLevel().useBreakOn(this);
+                return Level.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

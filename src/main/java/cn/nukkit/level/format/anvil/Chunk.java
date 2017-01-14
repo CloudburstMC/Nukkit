@@ -101,17 +101,17 @@ public class Chunk extends BaseChunk {
             this.nbt.putIntArray("HeightMap", new int[256]);
         }
 
-        cn.nukkit.level.format.ChunkSection[] sections = new cn.nukkit.level.format.ChunkSection[8];
+        cn.nukkit.level.format.ChunkSection[] sections = new cn.nukkit.level.format.ChunkSection[16];
         for (Tag section : this.nbt.getList("Sections").getAll()) {
             if (section instanceof CompoundTag) {
                 int y = ((CompoundTag) section).getByte("Y");
-                if (y < 8) {
+                if (y < 16) {
                     sections[y] = new ChunkSection((CompoundTag) section);
                 }
             }
         }
 
-        for (int y = 0; y < 8; y++) {
+        for (int y = 0; y < 16; y++) {
             if (sections[y] == null) {
                 sections[y] = new EmptyChunkSection(y);
             }
@@ -153,7 +153,7 @@ public class Chunk extends BaseChunk {
         int[] heightMap = this.nbt.getIntArray("HeightMap");
         if (heightMap.length != 256) {
             heightMap = new int[256];
-            Arrays.fill(heightMap, 127);
+            Arrays.fill(heightMap, 255);
         }
         this.heightMap = heightMap;
 
@@ -264,7 +264,7 @@ public class Chunk extends BaseChunk {
                 continue;
             }
             CompoundTag s = new CompoundTag(null);
-            s.putByte("Y", (section.getY() & 0xff));
+            s.putByte("Y", section.getY());
             s.putByteArray("Blocks", section.getIdArray());
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
@@ -394,8 +394,8 @@ public class Chunk extends BaseChunk {
             chunk.x = chunkX;
             chunk.z = chunkZ;
 
-            chunk.sections = new cn.nukkit.level.format.ChunkSection[8];
-            for (int y = 0; y < 8; ++y) {
+            chunk.sections = new cn.nukkit.level.format.ChunkSection[16];
+            for (int y = 0; y < 16; ++y) {
                 chunk.sections[y] = new EmptyChunkSection(y);
             }
 

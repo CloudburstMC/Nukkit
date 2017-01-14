@@ -178,10 +178,10 @@ public class ServerScheduler {
         taskHandler.setPeriod(period);
         taskHandler.setNextRunTick(taskHandler.isDelayed() ? currentTick + taskHandler.getDelay() : currentTick);
 
-        if(task instanceof Task) {
+        if (task instanceof Task) {
             ((Task) task).setHandler(taskHandler);
         }
-        
+
         pending.offer(taskHandler);
         taskMap.put(taskHandler.getTaskId(), taskHandler);
 

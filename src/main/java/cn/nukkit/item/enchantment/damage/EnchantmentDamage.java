@@ -31,26 +31,6 @@ public abstract class EnchantmentDamage extends Enchantment {
     }
 
     @Override
-    public double getDamageBonus(Entity entity) {
-        int level = this.level;
-
-        switch (this.damageType) {
-            case ARTHROPODS:
-                if (entity instanceof EntityArthropod) {
-                    return (double) level * 2.5;
-                }
-            case SMITE:
-                if (entity instanceof EntitySmite) {
-                    return (double) level * 2.5;
-                }
-            case ALL:
-                return (double) level * 1.25;
-        }
-
-        return 0;
-    }
-
-    @Override
     public boolean isCompatibleWith(Enchantment enchantment) {
         return !(enchantment instanceof EnchantmentDamage);
     }
@@ -63,16 +43,6 @@ public abstract class EnchantmentDamage extends Enchantment {
     @Override
     public int getMaxLevel() {
         return 5;
-    }
-
-    @Override
-    public void doPostAttack(Entity attacker, Entity entity) {
-        if (attacker instanceof EntityLiving) {
-            if (this.damageType == TYPE.ARTHROPODS && entity instanceof EntityArthropod) {
-                int duration = 20 + ThreadLocalRandom.current().nextInt(10 * this.level);
-                entity.addEffect(Effect.getEffect(Effect.SLOWNESS).setDuration(duration).setAmplifier(3));
-            }
-        }
     }
 
     @Override

@@ -90,14 +90,7 @@ public class TimingsManager {
 
     static Timing getTiming(String group, String name, Timing groupTiming) {
         TimingIdentifier id = new TimingIdentifier(group, name, groupTiming);
-        Timing timing = TIMING_MAP.get(id);
-
-        if (timing == null) {
-            timing = new Timing(id);
-            TIMING_MAP.put(id, timing);
-        }
-
-        return timing;
+        return TIMING_MAP.computeIfAbsent(id, k -> new Timing(id));
     }
 
     static final class BoundedQueue<E> extends LinkedList<E> {

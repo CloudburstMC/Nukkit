@@ -11,6 +11,7 @@ import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityEnderPearl;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
@@ -49,10 +50,7 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.BatchPacket;
-import cn.nukkit.network.protocol.CraftingDataPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.PlayerListPacket;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.permission.BanEntry;
@@ -354,7 +352,7 @@ public class Server {
         this.network = new Network(this);
         this.network.setName(this.getMotd());
 
-        this.logger.info(this.getLanguage().translateString("nukkit.server.info", new String[]{this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()}));
+        this.logger.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()));
         this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
 
@@ -848,7 +846,10 @@ public class Server {
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, Collection<Player> players) {
-        this.updatePlayerListData(uuid, entityId, name, skin, players.stream().toArray(Player[]::new));
+        this.updatePlayerListData(uuid, entityId, name, skin,
+                players.stream()
+                .filter(p -> !p.getUniqueId().equals(uuid))
+                .toArray(Player[]::new));
     }
 
     public void removePlayerListData(UUID uuid) {
@@ -867,18 +868,19 @@ public class Server {
     }
 
     public void sendFullPlayerListData(Player player) {
+        final UUID uuid = player.getUniqueId();
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        List<PlayerListPacket.Entry> entries = new ArrayList<>();
-        for (Player p : this.playerList.values()) {
-            if (p != player) entries.add(
-                    new PlayerListPacket.Entry(
-                            p.getUniqueId(),
-                            p.getId(),
-                            p.getDisplayName(),
-                            p.getSkin()));
-        }
-        pk.entries = entries.stream().toArray(PlayerListPacket.Entry[]::new);
+        pk.entries = this.playerList.values()
+                .stream()
+                .filter(p -> !p.getUniqueId().equals(uuid))
+                .map(p -> new PlayerListPacket.Entry(
+                        p.getUniqueId(),
+                        p.getId(),
+                        p.getDisplayName(),
+                        p.getSkin()))
+                .toArray(PlayerListPacket.Entry[]::new);
+
         player.dataPacket(pk);
     }
 
@@ -903,7 +905,7 @@ public class Server {
 
     private void checkTickUpdates(int currentTick, long tickTime) {
         for (Player p : new ArrayList<>(this.players.values())) {
-            if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMOUT)) {
+            if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
                 continue;
             }
             if (this.alwaysTickPlayers) {
@@ -1114,7 +1116,7 @@ public class Server {
     }
 
     public String getVersion() {
-        return Nukkit.MINECRAFT_VERSION;
+        return ProtocolInfo.MINECRAFT_VERSION;
     }
 
     public String getApiVersion() {
@@ -1605,10 +1607,9 @@ public class Server {
         }
 
         if (provider == null) {
-            String providerName;
             if ((provider = LevelProviderManager.getProviderByName
-                    (providerName = (String) this.getConfig("level-settings.default-format", "mcregion"))) == null) {
-                provider = LevelProviderManager.getProviderByName(providerName = "mcregion");
+                    ((String) this.getConfig("level-settings.default-format", "anvil"))) == null) {
+                provider = LevelProviderManager.getProviderByName("anvil");
             }
         }
 
@@ -1874,6 +1875,7 @@ public class Server {
         Entity.registerEntity("FallingSand", EntityFallingBlock.class);
         Entity.registerEntity("PrimedTnt", EntityPrimedTNT.class);
         Entity.registerEntity("Snowball", EntitySnowball.class);
+        Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("Painting", EntityPainting.class);
         //todo mobs
         Entity.registerEntity("Creeper", EntityCreeper.class);
@@ -1910,6 +1912,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.BREWING_STAND, BlockEntityBrewingStand.class);
         BlockEntity.registerBlockEntity(BlockEntity.ITEM_FRAME, BlockEntityItemFrame.class);
         BlockEntity.registerBlockEntity(BlockEntity.CAULDRON, BlockEntityCauldron.class);
+        BlockEntity.registerBlockEntity(BlockEntity.ENDER_CHEST, BlockEntityEnderChest.class);
         BlockEntity.registerBlockEntity(BlockEntity.BEACON, BlockEntityBeacon.class);
     }
 

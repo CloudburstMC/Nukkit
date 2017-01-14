@@ -98,7 +98,7 @@ public abstract class BaseFullChunk implements FullChunk {
         }
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
-                Biome biome = Biome.getBiome(data[(z << 4) + x] & 0xff);
+                Biome biome = Biome.getBiome(data[(z << 4) | x] & 0xff);
                 this.setBiomeId(x, z, biome.getId());
                 int c = biome.getColor();
                 this.setBiomeColor(x, z, c >> 16, (c >> 8) & 0xff, c & 0xff);
@@ -130,7 +130,10 @@ public abstract class BaseFullChunk implements FullChunk {
                     }
                 }
                 this.getProvider().getLevel().timings.syncChunkLoadEntitiesTimer.stopTiming();
+                this.NBTentities = null;
+            }
 
+            if (this.NBTtiles != null) {
                 this.getProvider().getLevel().timings.syncChunkLoadBlockEntitiesTimer.startTiming();
                 for (CompoundTag nbt : NBTtiles) {
                     if (nbt != null) {
@@ -149,10 +152,7 @@ public abstract class BaseFullChunk implements FullChunk {
                         }
                     }
                 }
-
                 this.getProvider().getLevel().timings.syncChunkLoadBlockEntitiesTimer.stopTiming();
-
-                this.NBTentities = null;
                 this.NBTtiles = null;
             }
 
@@ -192,35 +192,35 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public int getBiomeId(int x, int z) {
-        return (this.getBiomeColorArray()[(z << 4) + x] & 0xFF000000) >> 24;
+        return this.biomeColors[(z << 4) | x] >> 24;
     }
 
     @Override
     public void setBiomeId(int x, int z, int biomeId) {
         this.hasChanged = true;
-        this.getBiomeColorArray()[(z << 4) + x] = (this.getBiomeColorArray()[(z << 4) + x] & 0xFFFFFF) | (biomeId << 24);
+        this.biomeColors[(z << 4) | x] = this.biomeColors[(z << 4) | x] & 0xffffff | (biomeId << 24);
     }
 
     @Override
     public int[] getBiomeColor(int x, int z) {
-        int color = this.biomeColors[(z << 4) | x] & 0xFFFFFF;
-        return new int[]{color >> 16, (color >> 8) & 0xFF, color & 0xFF};
+        int color = this.biomeColors[(z << 4) | x];
+        return new int[]{(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff};
     }
 
     @Override
-    public void setBiomeColor(int x, int z, int R, int G, int B) {
+    public void setBiomeColor(int x, int z, int r, int g, int b) {
         this.hasChanged = true;
-        this.getBiomeColorArray()[(z << 4) + x] = (this.getBiomeColorArray()[(z << 4) + x] & 0xFF000000) | ((R & 0xFF) << 16) | ((G & 0xFF) << 8) | (B & 0XFF);
+        this.biomeColors[(z << 4) | x] = this.biomeColors[(z << 4) | x] & 0xff000000 | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
     }
 
     @Override
     public int getHeightMap(int x, int z) {
-        return this.heightMap[(z << 4) + x];
+        return this.heightMap[(z << 4) | x];
     }
 
     @Override
     public void setHeightMap(int x, int z, int value) {
-        this.heightMap[(z << 4) + x] = value;
+        this.heightMap[(z << 4) | x] = value;
     }
 
     @Override
@@ -258,7 +258,7 @@ public abstract class BaseFullChunk implements FullChunk {
         for (int z = 0; z < 16; ++z) {
             for (int x = 0; x < 16; ++x) {
                 int top = this.getHeightMap(x, z);
-                for (int y = 127; y > top; --y) {
+                for (int y = 255; y > top; --y) {
                     this.setBlockSkyLight(x, y, z, 15);
                 }
                 for (int y = top; y >= 0; --y) {
@@ -281,12 +281,12 @@ public abstract class BaseFullChunk implements FullChunk {
     public int getHighestBlockAt(int x, int z, boolean cache) {
         if (cache) {
             int h = this.getHeightMap(x, z);
-            if (h != 0 && h != 127) {
+            if (h != 0 && h != 255) {
                 return h;
             }
         }
         byte[] column = this.getBlockIdColumn(x, z);
-        for (int y = 127; y >= 0; --y) {
+        for (int y = 255; y >= 0; --y) {
             if (column[y] != 0x00) {
                 this.setHeightMap(x, z, y);
                 return y;
@@ -314,7 +314,7 @@ public abstract class BaseFullChunk implements FullChunk {
     @Override
     public void addBlockEntity(BlockEntity blockEntity) {
         this.tiles.put(blockEntity.getId(), blockEntity);
-        int index = (((int) blockEntity.z & 0x0f) << 12) | (((int) blockEntity.x & 0x0f) << 8) | ((int) blockEntity.y & 0xff);
+        int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
         if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(blockEntity)) {
             this.tileList.get(index).close();
         }
@@ -435,7 +435,7 @@ public abstract class BaseFullChunk implements FullChunk {
         byte[] ids = new byte[this.getBiomeColorArray().length];
         for (int i = 0; i < this.getBiomeColorArray().length; i++) {
             int d = this.getBiomeColorArray()[i];
-            ids[i] = (byte) ((d & 0xFF000000) >> 24);
+            ids[i] = (byte) (d >> 24);
         }
         return ids;
     }

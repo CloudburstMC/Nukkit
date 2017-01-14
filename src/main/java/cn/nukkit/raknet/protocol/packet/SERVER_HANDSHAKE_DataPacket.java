@@ -47,11 +47,6 @@ public class SERVER_HANDSHAKE_DataPacket extends Packet {
         this.putLong(this.sendPong);
     }
 
-    @Override
-    public void decode() {
-        super.decode();
-    }
-
     public static final class Factory implements Packet.PacketFactory {
 
         @Override

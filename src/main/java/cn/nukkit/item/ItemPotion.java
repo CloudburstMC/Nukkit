@@ -38,6 +38,7 @@ public class ItemPotion extends Item {
     public static final int STRENGTH_II = 33;
     public static final int WEAKNESS = 34;
     public static final int WEAKNESS_LONG = 35;
+    public static final int DECAY = 36;
 
     public ItemPotion() {
         this(0, 1);

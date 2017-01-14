@@ -13,7 +13,6 @@ import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -151,16 +150,13 @@ public class PluginManager {
             }
 
             for (final PluginLoader loader : loaders.values()) {
-                for (File file : dictionary.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        for (Pattern pattern : loader.getPluginFilters()) {
-                            if (pattern.matcher(name).matches()) {
-                                return true;
-                            }
+                for (File file : dictionary.listFiles((dir, name) -> {
+                    for (Pattern pattern : loader.getPluginFilters()) {
+                        if (pattern.matcher(name).matches()) {
+                            return true;
                         }
-                        return false;
                     }
+                    return false;
                 })) {
                     if (file.isDirectory() && !includeDir) {
                         continue;
@@ -224,8 +220,8 @@ public class PluginManager {
                         }
                     } catch (Exception e) {
                         this.server.getLogger().error(this.server.getLanguage().translateString("nukkit.plugin" +
-                                ".fileError", new String[]{file.getName(), dictionary.toString(), Utils
-                                .getExceptionMessage(e)}));
+                                ".fileError", file.getName(), dictionary.toString(), Utils
+                                .getExceptionMessage(e)));
                         MainLogger logger = this.server.getLogger();
                         if (logger != null) {
                             logger.logException(e);
@@ -556,7 +552,7 @@ public class PluginManager {
                 try {
                     registration.callEvent(event);
                 } catch (Exception e) {
-                    this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.eventError", new String[]{event.getEventName(), registration.getPlugin().getDescription().getFullName(), e.getMessage(), registration.getListener().getClass().getName()}));
+                    this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.eventError", event.getEventName(), registration.getPlugin().getDescription().getFullName(), e.getMessage(), registration.getListener().getClass().getName()));
                     this.server.getLogger().logException(e);
                 }
             }
@@ -598,17 +594,12 @@ public class PluginManager {
 
             final Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
             method.setAccessible(true);
-            Set<RegisteredListener> eventSet = ret.get(eventClass);
-            if (eventSet == null) {
-                eventSet = new HashSet<>();
-                ret.put(eventClass, eventSet);
-            }
 
             for (Class<?> clazz = eventClass; Event.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) {
                 // This loop checks for extending deprecated events
                 if (clazz.getAnnotation(Deprecated.class) != null) {
                     if (Boolean.valueOf(String.valueOf(this.server.getConfig("settings.deprecated-verbpse", true)))) {
-                        this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.plugin.deprecatedEvent", new String[]{plugin.getName(), clazz.getName(), listener.getClass().getName() + "." + method.getName() + "()"}));
+                        this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.plugin.deprecatedEvent", plugin.getName(), clazz.getName(), listener.getClass().getName() + "." + method.getName() + "()"));
                     }
                     break;
                 }

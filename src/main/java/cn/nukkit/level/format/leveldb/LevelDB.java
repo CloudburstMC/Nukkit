@@ -7,6 +7,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.leveldb.key.BaseKey;
 import cn.nukkit.level.format.leveldb.key.FlagsKey;
 import cn.nukkit.level.format.leveldb.key.TerrainKey;
 import cn.nukkit.level.format.leveldb.key.VersionKey;
@@ -196,7 +197,7 @@ public class LevelDB implements LevelProvider {
         stream.put(chunk.getBlockSkyLightArray());
         stream.put(chunk.getBlockLightArray());
         for (int height : chunk.getHeightMapArray()) {
-            stream.putByte((byte) (height & 0xff));
+            stream.putByte((byte) height);
         }
         for (int color : chunk.getBiomeColorArray()) {
             stream.put(Binary.writeInt(color));
@@ -241,8 +242,8 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public boolean isChunkLoaded(int X, int Z) {
-        return this.chunks.containsKey(Level.chunkHash(X, Z));
+    public boolean isChunkLoaded(int x, int z) {
+        return this.chunks.containsKey(Level.chunkHash(x, z));
     }
 
     @Override
@@ -253,21 +254,21 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public boolean loadChunk(int chunkX, int chunkZ) {
-        return this.loadChunk(chunkX, chunkZ, false);
+    public boolean loadChunk(int x, int z) {
+        return this.loadChunk(x, z, false);
     }
 
     @Override
-    public boolean loadChunk(int chunkX, int chunkZ, boolean create) {
-        long index = Level.chunkHash(chunkX, chunkZ);
+    public boolean loadChunk(int x, int z, boolean create) {
+        long index = Level.chunkHash(x, z);
         if (this.chunks.containsKey(index)) {
             return true;
         }
 
         this.level.timings.syncChunkLoadDataTimer.startTiming();
-        Chunk chunk = this.readChunk(chunkX, chunkZ);
+        Chunk chunk = this.readChunk(x, z);
         if (chunk == null && create) {
-            chunk = Chunk.getEmptyChunk(chunkX, chunkZ, this);
+            chunk = Chunk.getEmptyChunk(x, z, this);
         }
         this.level.timings.syncChunkLoadDataTimer.stopTiming();
         if (chunk != null) {
@@ -278,7 +279,7 @@ public class LevelDB implements LevelProvider {
         return false;
     }
 
-    private Chunk readChunk(int chunkX, int chunkZ) {
+    public Chunk readChunk(int chunkX, int chunkZ) {
         byte[] data;
         if (!this.chunkExists(chunkX, chunkZ) || (data = this.db.get(TerrainKey.create(chunkX, chunkZ).toArray())) == null) {
             return null;
@@ -306,13 +307,13 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public boolean unloadChunk(int X, int Z) {
-        return this.unloadChunk(X, Z, true);
+    public boolean unloadChunk(int x, int z) {
+        return this.unloadChunk(x, z, true);
     }
 
     @Override
-    public boolean unloadChunk(int X, int Z, boolean safe) {
-        long index = Level.chunkHash(X, Z);
+    public boolean unloadChunk(int x, int z, boolean safe) {
+        long index = Level.chunkHash(x, z);
         Chunk chunk = this.chunks.containsKey(index) ? this.chunks.get(index) : null;
         if (chunk != null && chunk.unload(false, safe)) {
             this.chunks.remove(index);
@@ -323,24 +324,32 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public void saveChunk(int X, int Z) {
-        if (this.isChunkLoaded(X, Z)) {
-            this.writeChunk(this.getChunk(X, Z));
+    public void saveChunk(int x, int z) {
+        if (this.isChunkLoaded(x, z)) {
+            this.writeChunk(this.getChunk(x, z));
         }
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkZ) {
-        return this.getChunk(chunkX, chunkZ, false);
+    public void saveChunk(int x, int z, FullChunk chunk) {
+        if (!(chunk instanceof Chunk)) {
+            throw new ChunkException("Invalid Chunk class");
+        }
+        this.writeChunk((Chunk) chunk);
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkZ, boolean create) {
-        long index = Level.chunkHash(chunkX, chunkZ);
+    public Chunk getChunk(int x, int z) {
+        return this.getChunk(x, z, false);
+    }
+
+    @Override
+    public Chunk getChunk(int x, int z, boolean create) {
+        long index = Level.chunkHash(x, z);
         if (this.chunks.containsKey(index)) {
             return this.chunks.get(index);
         } else {
-            this.loadChunk(chunkX, chunkZ, create);
+            this.loadChunk(x, z, create);
             return this.chunks.containsKey(index) ? this.chunks.get(index) : null;
         }
     }
@@ -367,7 +376,7 @@ public class LevelDB implements LevelProvider {
         this.chunks.put(index, (Chunk) chunk);
     }
 
-    public static ChunkSection createChunkSection(int Y) {
+    public static ChunkSection createChunkSection(int y) {
         return null;
     }
 
@@ -376,14 +385,14 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public boolean isChunkGenerated(int chunkX, int chunkZ) {
-        return this.chunkExists(chunkX, chunkZ) && this.getChunk(chunkX, chunkZ, false) != null;
+    public boolean isChunkGenerated(int x, int z) {
+        return this.chunkExists(x, z) && this.getChunk(x, z, false) != null;
 
     }
 
     @Override
-    public boolean isChunkPopulated(int chunkX, int chunkZ) {
-        return this.getChunk(chunkX, chunkZ) != null;
+    public boolean isChunkPopulated(int x, int z) {
+        return this.getChunk(x, z) != null;
     }
 
     @Override
@@ -511,5 +520,16 @@ public class LevelDB implements LevelProvider {
         if (!this.getName().equals(name)) {
             this.levelData.putString("LevelName", name);
         }
+    }
+
+    public byte[][] getTerrainKeys() {
+        List<byte[]> result = new ArrayList<>();
+        this.db.forEach((entry) -> {
+            byte[] key = entry.getKey();
+            if (key.length > 8 && key[8] == BaseKey.DATA_TERRAIN) {
+                result.add(key);
+            }
+        });
+        return result.stream().toArray(byte[][]::new);
     }
 }

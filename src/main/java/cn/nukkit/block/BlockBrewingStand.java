@@ -12,7 +12,6 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
-import java.util.Iterator;
 import java.util.Map;
 
 public class BlockBrewingStand extends BlockSolid {
@@ -78,10 +77,8 @@ public class BlockBrewingStand extends BlockSolid {
 
             if (item.hasCustomBlockData()) {
                 Map<String, Tag> customData = item.getCustomBlockData().getTags();
-                Iterator iter = customData.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry tag = (Map.Entry) iter.next();
-                    nbt.put((String) tag.getKey(), (Tag) tag.getValue());
+                for (Map.Entry<String, Tag> tag : customData.entrySet()) {
+                    nbt.put(tag.getKey(), tag.getValue());
                 }
             }
 
@@ -96,7 +93,7 @@ public class BlockBrewingStand extends BlockSolid {
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
             BlockEntity t = getLevel().getBlockEntity(this);
-            BlockEntityBrewingStand brewing = null;
+            BlockEntityBrewingStand brewing;
             if (t instanceof BlockEntityBrewingStand) {
                 brewing = (BlockEntityBrewingStand) t;
             } else {

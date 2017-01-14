@@ -176,7 +176,7 @@ public class EntityXPOrb extends Entity {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putShort("Health", getHealth());
+        this.namedTag.putShort("Health", (int) getHealth());
         this.namedTag.putShort("Age", age);
         this.namedTag.putShort("PickupDelay", pickupDelay);
     }

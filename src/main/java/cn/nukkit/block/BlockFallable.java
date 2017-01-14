@@ -1,8 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.item.EntityFallingBlock;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -19,16 +17,6 @@ public abstract class BlockFallable extends BlockSolid {
 
     protected BlockFallable(int meta) {
         super(meta);
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
-        return this.place(item, block, target, face, fx, fy, fz, null);
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        return this.getLevel().setBlock(this, this, true, true);
     }
 
     public int onUpdate(int type) {

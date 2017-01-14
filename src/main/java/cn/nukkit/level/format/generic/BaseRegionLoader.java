@@ -85,4 +85,8 @@ abstract public class BaseRegionLoader {
 
     public abstract int getZ();
 
+    public Integer[] getLocationIndexes() {
+        return this.locationTable.keySet().stream().toArray(Integer[]::new);
+    }
+
 }

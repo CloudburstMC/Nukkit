@@ -7,13 +7,13 @@ import cn.nukkit.item.ItemTool;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockPackedIce extends BlockIce {
+public class BlockIcePacked extends BlockIce {
 
-    public BlockPackedIce() {
+    public BlockIcePacked() {
         this(0);
     }
 
-    public BlockPackedIce(int meta) {
+    public BlockIcePacked(int meta) {
         super(0);
     }
 

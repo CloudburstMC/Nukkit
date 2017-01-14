@@ -83,9 +83,9 @@ public class BlockCocoa extends BlockTransparent {
 
         return bbs[this.meta / 4].getOffsetBoundingBox(x, y, z);
     }
-    
+
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz){
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 

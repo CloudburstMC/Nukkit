@@ -6,13 +6,13 @@ import cn.nukkit.level.Level;
 /**
  * Created by Pub4Game on 30.03.2016.
  */
-public class BlockLitRedstoneLamp extends BlockRedstoneLamp {
+public class BlockRedstoneLampLit extends BlockRedstoneLamp {
 
-    public BlockLitRedstoneLamp(int meta) {
+    public BlockRedstoneLampLit(int meta) {
         super(meta);
     }
 
-    public BlockLitRedstoneLamp() {
+    public BlockRedstoneLampLit() {
         this(0);
     }
 

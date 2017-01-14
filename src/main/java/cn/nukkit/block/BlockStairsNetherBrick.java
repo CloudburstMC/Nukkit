@@ -27,6 +27,11 @@ public class BlockStairsNetherBrick extends BlockStairs {
     }
 
     @Override
+    public double getResistance() {
+        return 10;
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }

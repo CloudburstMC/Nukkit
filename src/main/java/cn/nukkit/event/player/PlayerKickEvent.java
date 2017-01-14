@@ -15,7 +15,7 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
         IP_BANNED,
         NAME_BANNED,
         INVALID_PVE,
-        LOGIN_TIMOUT,
+        LOGIN_TIMEOUT,
         SERVER_FULL,
         FLYING_DISABLED,
         UNKNOWN;

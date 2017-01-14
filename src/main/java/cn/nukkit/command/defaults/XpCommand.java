@@ -31,8 +31,8 @@ public class XpCommand extends Command {
         //  "/xp <amount> [player]"  for adding exp
         //  "/xp <amount>L [player]" for adding exp level
         String amountString;
-        String playerName = "";
-        Player player = null;
+        String playerName;
+        Player player;
         if (!(sender instanceof Player)) {
             if (args.length != 2) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));

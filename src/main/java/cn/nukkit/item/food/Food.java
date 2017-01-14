@@ -18,7 +18,6 @@ public abstract class Food {
     private static final Map<NodeIDMetaPlugin, Food> registryCustom = new LinkedHashMap<>();
     private static final Map<NodeIDMeta, Food> registryDefault = new LinkedHashMap<>();
 
-    //some of following are not available yet in MCPE 0.13.1
     public static final Food apple = registerDefaultFood(new FoodNormal(4, 2.4F).addRelative(Item.APPLE));
     public static final Food apple_golden = registerDefaultFood(new FoodEffective(4, 9.6F)
             .addEffect(Effect.getEffect(Effect.REGENERATION).setAmplifier(1).setDuration(5 * 20))
@@ -49,8 +48,8 @@ public abstract class Food {
     public static final Food melon_slice = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(Item.MELON_SLICE));
     public static final Food milk = registerDefaultFood(new FoodMilk().addRelative(Item.BUCKET, 1));
     public static final Food mushroom_stew = registerDefaultFood(new FoodInBowl(6, 7.2F).addRelative(Item.MUSHROOM_STEW));
-    public static final Food mutton_cooked = registerDefaultFood(new FoodNormal(6, 9.6F));
-    public static final Food mutton_raw = registerDefaultFood(new FoodNormal(2, 1.2F));
+    public static final Food mutton_cooked = registerDefaultFood(new FoodNormal(6, 9.6F).addRelative(Item.COOKED_MUTTON));
+    public static final Food mutton_raw = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(Item.RAW_MUTTON));
     public static final Food porkchop_cooked = registerDefaultFood(new FoodNormal(8, 12.8F).addRelative(Item.COOKED_PORKCHOP));
     public static final Food porkchop_raw = registerDefaultFood(new FoodNormal(3, 1.8F).addRelative(Item.RAW_PORKCHOP));
     public static final Food potato_raw = registerDefaultFood(new FoodNormal(1, 0.6F).addRelative(Item.POTATO));

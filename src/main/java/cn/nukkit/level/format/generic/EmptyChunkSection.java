@@ -3,6 +3,7 @@ package cn.nukkit.level.format.generic;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.utils.ChunkException;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
@@ -121,6 +122,22 @@ public class EmptyChunkSection implements ChunkSection {
     @Override
     public void setBlockSkyLight(int x, int y, int z, int level) throws ChunkException {
         throw new ChunkException("Tried to modify an empty Chunk");
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
+    public byte[] getBytes() {
+        ByteBuffer buffer = ByteBuffer.allocate(10240);
+        byte[] skyLight = new byte[2048];
+        Arrays.fill(skyLight, (byte) 0xff);
+        buffer.position(6144);
+        return buffer
+                .put(skyLight)
+                .array();
     }
 
     @Override

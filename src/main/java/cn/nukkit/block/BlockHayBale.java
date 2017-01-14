@@ -33,6 +33,11 @@ public class BlockHayBale extends BlockSolid {
     }
 
     @Override
+    public double getResistance() {
+        return 2.5;
+    }
+
+    @Override
     public int getBurnChance() {
         return 60;
     }
