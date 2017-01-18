@@ -189,7 +189,12 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         if (burnTime > 0 && ev.isBurning()) {
             fuel.setCount(fuel.getCount() - 1);
             if (fuel.getCount() == 0) {
-                fuel = new ItemBlock(new BlockAir(), 0, 0);
+                if (fuel.getId() == Item.BUCKET && fuel.getDamage() == 10) {
+                    fuel.setDamage(0);
+                    fuel.setCount(1);
+                } else {
+                    fuel = new ItemBlock(new BlockAir(), 0, 0);
+                }
             }
             this.inventory.setFuel(fuel);
         }

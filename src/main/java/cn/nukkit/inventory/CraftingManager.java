@@ -512,7 +512,7 @@ public class CraftingManager {
                 " N "
         )).setIngredient("N", Item.get(Item.SLAB, BlockSlabStone.SANDSTONE, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE_BRICK, BlockBricksStone.NORMAL, 1),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE_BRICK, BlockBricksStone.NORMAL, 4),
                 "   ",
                 "SS ",
                 "SS "
