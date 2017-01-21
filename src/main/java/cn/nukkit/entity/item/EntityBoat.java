@@ -167,7 +167,7 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
-    public boolean onInteract(Entity entity, Item item) {
+    public boolean onInteract(Player player, Item item) {
         if (this.linkedEntity != null) {
             return false;
         }
@@ -176,22 +176,20 @@ public class EntityBoat extends EntityVehicle {
 
         pk = new SetEntityLinkPacket();
         pk.rider = this.getId(); //WTF
-        pk.riding = entity.getId();
+        pk.riding = player.getId();
         pk.type = 2;
         Server.broadcastPacket(this.hasSpawned.values(), pk);
 
-        if (entity instanceof Player) {
-            pk = new SetEntityLinkPacket();
-            pk.rider = this.getId();
-            pk.riding = 0;
-            pk.type = 2;
-            ((Player) entity).dataPacket(pk);
-        }
+        pk = new SetEntityLinkPacket();
+        pk.rider = this.getId();
+        pk.riding = 0;
+        pk.type = 2;
+        player.dataPacket(pk);
 
-        entity.riding = this;
-        this.linkedEntity = entity;
+        player.riding = this;
+        this.linkedEntity = player;
 
-        entity.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
+        player.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
         return true;
     }
 }

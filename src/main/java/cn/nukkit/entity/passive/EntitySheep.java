@@ -1,11 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.BlockAir;
-import cn.nukkit.block.BlockWood;
 import cn.nukkit.block.BlockWool;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityHumanType;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
@@ -91,43 +87,13 @@ public class EntitySheep extends EntityAnimal {
     }
 
     @Override
-    public boolean onInteract(Entity entity, Item item) {
+    public boolean onInteract(Player player, Item item) {
         if (item.getId() == Item.DYE) {
             this.setColor(((ItemDye) item).getDyeColor().getWoolData());
-
-            if (entity instanceof EntityHumanType) {
-                EntityHumanType human = (EntityHumanType) entity;
-                item.setCount(item.getCount() - 1);
-
-                if (item.getCount() <= 0) {
-                    human.getInventory().setItemInHand(new ItemBlock(new BlockAir()));
-                } else {
-                    human.getInventory().setItemInHand(item);
-                }
-            }
             return true;
         }
 
-        if (item.getId() != Item.SHEARS) {
-            return false;
-        }
-
-        if (shear()) {
-            if (entity instanceof EntityHumanType) {
-                EntityHumanType human = (EntityHumanType) entity;
-                item.setDamage(item.getDamage() + 1);
-
-                if (item.getDamage() >= item.getMaxDurability()) {
-                    human.getInventory().setItemInHand(new ItemBlock(new BlockAir()));
-                } else {
-                    human.getInventory().setItemInHand(item);
-                }
-            }
-
-            return true;
-        }
-
-        return false;
+        return item.getId() == Item.SHEARS && shear();
     }
 
     public boolean shear() {

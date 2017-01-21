@@ -1174,7 +1174,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     }
 
-    public boolean onInteract(Entity entity, Item item) {
+    public boolean onInteract(Player player, Item item) {
         return false;
     }
 

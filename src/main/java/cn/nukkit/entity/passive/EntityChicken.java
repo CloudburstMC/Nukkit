@@ -57,4 +57,11 @@ public class EntityChicken extends EntityAnimal {
         super.initEntity();
         setMaxHealth(4);
     }
+
+    @Override
+    public boolean isBreedingItem(Item item) {
+        int id = item.getId();
+
+        return id == Item.WHEAT_SEEDS || id == Item.MELON_SEEDS || id == Item.PUMPKIN_SEEDS || id == Item.BEETROOT_SEEDS;
+    }
 }

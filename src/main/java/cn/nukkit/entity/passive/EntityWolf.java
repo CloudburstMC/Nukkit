@@ -62,4 +62,9 @@ public class EntityWolf extends EntityAnimal {
         super.initEntity();
         setMaxHealth(8);
     }
+
+    @Override
+    public boolean isBreedingItem(Item item) {
+        return false; //only certain food
+    }
 }

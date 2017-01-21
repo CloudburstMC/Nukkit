@@ -2705,7 +2705,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 break;
                             }
 
-                            targetEntity.onInteract(this, item);
+                            if (targetEntity.onInteract(this, item) && this.isSurvival()) {
+                                if (item.isTool()) {
+                                    if (item.useOn(targetEntity) && item.getDamage() >= item.getMaxDurability()) {
+                                        item = new ItemBlock(new BlockAir());
+                                    }
+                                } else {
+                                    if (item.count > 1) {
+                                        item.count--;
+                                    } else {
+                                        item = new ItemBlock(new BlockAir());
+                                    }
+                                }
+
+                                this.inventory.setItemInHand(item);
+                            }
                             break;
                         case InteractPacket.ACTION_VEHICLE_EXIT:
                             if (!(targetEntity instanceof EntityVehicle)) {
@@ -3913,6 +3927,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public void setHealth(float health) {
+        if (health < 1) {
+            health = 0;
+        }
+
         super.setHealth(health);
         Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0);
         if (this.spawned) {
