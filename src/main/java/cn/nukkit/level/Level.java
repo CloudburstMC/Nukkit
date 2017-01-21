@@ -1382,8 +1382,8 @@ public class Level implements ChunkManager, Metadatable {
 
         if (cached && (block = this.blockCache.get(index)) != null) {
             return block;
-        } else if (pos.y >= 0 && pos.y < 128 && (chunk = this.chunks.get(chunkIndex)) != null) {
-            fullState = chunk.getFullBlock((int) pos.x & 0x0f, (int) pos.y & 0x7f,
+        } else if (pos.y >= 0 && pos.y < 256 && (chunk = this.chunks.get(chunkIndex)) != null) {
+            fullState = chunk.getFullBlock((int) pos.x & 0x0f, (int) pos.y & 0xff,
                     (int) pos.z & 0x0f);
         } else {
             fullState = 0;
