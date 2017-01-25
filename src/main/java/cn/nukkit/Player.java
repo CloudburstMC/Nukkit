@@ -138,6 +138,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Vector3 forceMovement = null;
 
     protected Vector3 teleportPosition = null;
+    protected Vector3 mwPosition = null;
 
     protected boolean connected = true;
     protected final String ip;
@@ -612,6 +613,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             pk.time = this.level.getTime();
             pk.started = !this.level.stopTime;
             this.dataPacket(pk);
+
+            // TODO: Remove this hack
+            int mwDist = this.viewDistance * 2 * 16 * 2;
+            this.mwPosition = this.add(mwDist, 0, mwDist);
             return true;
         }
         return false;
@@ -1984,7 +1989,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.forceMovement = new Vector3(this.x, this.y, this.z);
                     }
 
-                    if (this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
+                    if (this.mwPosition != null) {
+                        // TODO: Remove this hack
+                        this.sendPosition(this.mwPosition, movePlayerPacket.yaw, movePlayerPacket.pitch);
+                    } else if (this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
                         this.sendPosition(this.forceMovement, movePlayerPacket.yaw, movePlayerPacket.pitch);
                     } else {
 
@@ -4169,6 +4177,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.spawnToAll();
             this.forceMovement = this.teleportPosition;
             this.teleportPosition = null;
+            this.mwPosition = null;
 
             return true;
         }
