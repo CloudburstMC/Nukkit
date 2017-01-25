@@ -138,7 +138,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Vector3 forceMovement = null;
 
     protected Vector3 teleportPosition = null;
-    protected Vector3 mwPosition = null;
 
     protected boolean connected = true;
     protected final String ip;
@@ -615,8 +614,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.dataPacket(pk);
 
             // TODO: Remove this hack
-            int mwDist = this.viewDistance * 2 * 16 * 2;
-            this.mwPosition = this.add(mwDist, 0, mwDist);
+            int distance = this.viewDistance * 2 * 16 * 2;
+            this.sendPosition(this.add(distance, 0, distance), this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
             return true;
         }
         return false;
@@ -4177,7 +4176,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.spawnToAll();
             this.forceMovement = this.teleportPosition;
             this.teleportPosition = null;
-            this.mwPosition = null;
 
             return true;
         }
