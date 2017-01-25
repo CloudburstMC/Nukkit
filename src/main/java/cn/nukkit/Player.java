@@ -631,14 +631,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            if (level != this.level) {
-                FullChunkDataPacket pk = new FullChunkDataPacket();
-                pk.chunkX = x;
-                pk.chunkZ = z;
-                pk.data = new byte[]{(byte) 16};
-                this.dataPacket(pk);
-            }
-
             this.usedChunks.remove(index);
         }
         level.unregisterChunkLoader(this, x, z);
