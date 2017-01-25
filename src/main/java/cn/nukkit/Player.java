@@ -1988,10 +1988,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.forceMovement = new Vector3(this.x, this.y, this.z);
                     }
 
-                    if (this.mwPosition != null) {
-                        // TODO: Remove this hack
-                        this.sendPosition(this.mwPosition, movePlayerPacket.yaw, movePlayerPacket.pitch);
-                    } else if (this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
+                    if (this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
                         this.sendPosition(this.forceMovement, movePlayerPacket.yaw, movePlayerPacket.pitch);
                     } else {
 
