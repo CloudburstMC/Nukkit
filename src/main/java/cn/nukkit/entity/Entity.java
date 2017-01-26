@@ -433,6 +433,18 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SPRINTING, value);
     }
 
+    public boolean isGliding() {
+        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_GLIDING);
+    }
+
+    public void setGliding() {
+        this.setGliding(true);
+    }
+
+    public void setGliding(boolean value) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GLIDING, value);
+    }
+
     public boolean isImmobile() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE);
     }

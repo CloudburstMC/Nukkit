@@ -771,7 +771,7 @@ public class Item implements Cloneable {
 
             //TODO: list[LINGERING_POTION] = ItemPotionLingering.class; //441
 
-            //TODO: list[ELYTRA] = ItemElytra.class; //444
+            list[ELYTRA] = ItemElytra.class; //444
 
             //TODO: list[SHULKER_SHELL] = ItemShulkerShell.class; //445
 
