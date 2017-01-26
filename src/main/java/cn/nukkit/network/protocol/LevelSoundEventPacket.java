@@ -100,18 +100,17 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_DEFAULT = 90;
     public static final int SOUND_UNDEFINED = 91;
 
-    public int type;
+    public byte type;
     public float x;
     public float y;
     public float z;
     public int case1;
     public int case2;
     public boolean unknownBool;
-    public boolean unknownBool2;
 
     @Override
     public void decode() {
-        this.type = this.getVarInt();
+        this.type = (byte) this.getByte();
         Vector3f v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
@@ -119,18 +118,16 @@ public class LevelSoundEventPacket extends DataPacket {
         this.case1 = this.getVarInt();
         this.case2 = this.getVarInt();
         this.unknownBool = this.getBoolean();
-        this.unknownBool2 = this.getBoolean();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(this.type);
+        this.putByte(this.type);
         this.putVector3f(this.x, this.y, this.z);
         this.putVarInt(this.case1);
         this.putVarInt(this.case2);
         this.putBoolean(this.unknownBool);
-        this.putBoolean(this.unknownBool2);
     }
 
     @Override

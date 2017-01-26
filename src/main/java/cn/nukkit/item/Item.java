@@ -612,7 +612,7 @@ public class Item implements Cloneable {
             list[STONE_PICKAXE] = ItemPickaxeStone.class; //274
             list[STONE_AXE] = ItemAxeStone.class; //275
             list[DIAMOND_SWORD] = ItemSwordDiamond.class; //276
-            list[DIAMOND_SHOVEL] = ItemSwordDiamond.class; //277
+            list[DIAMOND_SHOVEL] = ItemShovelDiamond.class; //277
             list[DIAMOND_PICKAXE] = ItemPickaxeDiamond.class; //278
             list[DIAMOND_AXE] = ItemAxeDiamond.class; //279
             list[STICK] = ItemStick.class; //280
