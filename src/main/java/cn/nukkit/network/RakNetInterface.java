@@ -15,6 +15,7 @@ import cn.nukkit.raknet.server.ServerHandler;
 import cn.nukkit.raknet.server.ServerInstance;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.Utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -204,7 +205,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
         QueryRegenerateEvent info = this.server.getQueryInformation();
 
         this.handler.sendOption("name",
-                "MCPE;" + name.replace(";", "\\;") + ";" +
+                "MCPE;" + Utils.rtrim(name.replace(";", "\\;"), '\\') + ";" +
                         ProtocolInfo.CURRENT_PROTOCOL + ";" +
                         ProtocolInfo.MINECRAFT_VERSION_NETWORK + ";" +
                         info.getPlayerCount() + ";" +
