@@ -27,11 +27,6 @@ public class ItemSkull extends Item {
         this.block = Block.get(Block.SKULL_BLOCK);
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
-
     public static String getItemSkullName(int meta) {
         switch (meta) {
             case 1:
