@@ -42,7 +42,7 @@ Get Nukkit & Plugins
 * __[Jar Download at Circle CI](https://circleci.com/gh/Nukkit/Nukkit/tree/master/)__ (**login required**)
 * __[Discussion](#discussion)__
 
-*Thank you for visiting our official sites. Our official websites are provided free of charge, and we do not like to place ads on the home page affecting your reading. If you like this project, please [donate us](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=magicdroidx%40gmail%2ecom&lc=US&item_name=Nukkit&currency_code=USD&bn=PP%2dDonationsBF%3apaypal%2ddonate%2dyellow%2esvg%3aNonHostedGuest). All the donations will only be used for Nukkit websites and services.*
+*Thank you for visiting our official sites. Our official websites are provided free of charge, and we do not like to place ads on the home page affecting your reading. If you like this project, please [donate to us](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=magicdroidx%40gmail%2ecom&lc=US&item_name=Nukkit&currency_code=USD&bn=PP%2dDonationsBF%3apaypal%2ddonate%2dyellow%2esvg%3aNonHostedGuest). All the donations will only be used for Nukkit websites and services.*
 
 
 ####Unofficial Download Mirrors
@@ -58,7 +58,7 @@ Build JAR file
 
 Running
 -------------
-Simply run `start.sh` or `start.cmd`. Or execute `java -jar Nukkit.jar`.
+Simply run `start.sh` or `start.cmd`, or execute `java -jar Nukkit.jar`.
 
 Plugin API
 -------------
