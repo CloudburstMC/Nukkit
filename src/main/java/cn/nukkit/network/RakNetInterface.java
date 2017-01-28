@@ -193,7 +193,10 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
 
     @Override
     public void notifyACK(String identifier, int identifierACK) {
-
+        // TODO: Better ACK notification implementation!
+        for (Player p : server.getOnlinePlayers().values()) {
+            p.notifyACK(identifierACK);
+        }
     }
 
     @Override
