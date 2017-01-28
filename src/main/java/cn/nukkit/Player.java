@@ -500,17 +500,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             int identifier = this.dataPacket(pk, true); // We *need* ACK so we can be sure that the client received the packet or not
             Thread t = new Thread() {
                 public void run() {
-                    while (true) {
-                        // We are going to wait 3 seconds, if after 3 seconds we didn't receive a reply from the client, resend the packet.
-                        try {
-                            Thread.sleep(3000);
-                            boolean status = needACK.get(identifier);
-                            if (!status && isOnline()) {
-                                sendCommandData();
-                                return;
-                            }
-                        } catch (InterruptedException e) {}
-                    }
+                    // We are going to wait 3 seconds, if after 3 seconds we didn't receive a reply from the client, resend the packet.
+                    try {
+                        Thread.sleep(3000);
+                        boolean status = needACK.get(identifier);
+                        if (!status && isOnline()) {
+                            sendCommandData();
+                            return;
+                        }
+                    } catch (InterruptedException e) {}
                 }
             };
             t.start();
