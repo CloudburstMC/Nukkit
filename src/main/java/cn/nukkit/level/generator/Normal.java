@@ -3,6 +3,7 @@ package cn.nukkit.level.generator;
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.biome.BiomeSelector;
 import cn.nukkit.level.generator.noise.Simplex;
@@ -14,10 +15,53 @@ import cn.nukkit.math.Vector3;
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * This generator was written by Creeperface and Nycuro
+ * 
+ * The following classes are theirs and are intended for NUKKIT USAGE and should not be copied/translated to other software
+ * such as BukkitPE, ClearSky, Genisys , Pocketmine-MP
+ *
+ * Normal.java
+ * MushroomPopulator.java
+ * DarkOakTreePopulator.java
+ * JungleBigTreePopulator.java
+ * JungleTreePopulaotr.java
+ * SavannaTreePopulator.java
+ * SwampTreePopulator.java
+ * BasicPopulator.java
+ * MesaBiome.java
+ * JungleBiome.java
+ * SavannaBiome.java
+ * RoofedForestBiome.java
+ * RoofedForestMBiome.java
+ * MushroomIsland.java
+ * TreeGenerator.java
+ * HugeTreesGenerator.java
+ * 
+ * Created by CreeperFace on 26. 10. 2016.
  */
 public class Normal extends Generator {
+
+    /**
+     * biome IDs
+     */
+    public static final int JUNGLE = 21;
+    public static final int SAVANNA = 35;
+    public static final int ROOFED_FOREST = 29;
+    public static final int ROOFED_FOREST_M = 157;
+    public static final int MUSHROOM_ISLAND = 14;
+    public static final int SWAMP = 6;
+    
+    public static final int OCEAN = 0;
+    public static final int PLAINS = 1;
+    public static final int DESERT = 2;
+    public static final int FOREST = 4;
+    public static final int TAIGA = 5;
+    public static final int RIVER = 7;
+    public static final int ICE_PLAINS = 12;
+    public static final int BEACH = 16;
+    public static final int BIRCH_FOREST = 27;
+    
+    public static final int MAX_BIOMES = 256;
 
     @Override
     public int getId() {
@@ -46,15 +90,21 @@ public class Normal extends Generator {
 
     private int heightOffset;
 
-    private final int seaHeight = 62;
+    private final int seaHeight = 64;
     private final int seaFloorHeight = 48;
     private final int beathStartHeight = 60;
     private final int beathStopHeight = 64;
     private final int bedrockDepth = 5;
     private final int seaFloorGenerateRange = 5;
-    private final int landHeightRange = 18; // 36 / 2
-    private final int mountainHeight = 13; // 26 / 2
+    private final int landHeightRange = 18;
+    private final int mountainHeight = 13;
     private final int basegroundHeight = 3;
+    private int waterColor = 16777215;
+    //private boolean enableSnow; Coming soon
+    
+    protected float rainfall = 0.5F;
+    protected float temperature = 0.5F;
+    protected int grassColor = 0;
 
     public Normal() {
         this(new HashMap<>());
@@ -110,20 +160,24 @@ public class Normal extends Generator {
         this.noiseBaseGround = new Simplex(this.nukkitRandom, 4F, 1F / 4F, 1F / 64F);
         this.noiseRiver = new Simplex(this.nukkitRandom, 2F, 1F, 1F / 512F);
         this.nukkitRandom.setSeed(this.level.getSeed());
-        this.selector = new BiomeSelector(this.nukkitRandom, Biome.getBiome(Biome.OCEAN));
+        this.selector = new BiomeSelector(this.nukkitRandom, Biome.getBiome(Biome.FOREST));
         this.heightOffset = random.nextRange(-5, 3);
 
-        this.selector.addBiome(Biome.getBiome(Biome.OCEAN));
-        this.selector.addBiome(Biome.getBiome(Biome.PLAINS));
-        this.selector.addBiome(Biome.getBiome(Biome.DESERT));
-        this.selector.addBiome(Biome.getBiome(Biome.MOUNTAINS));
-        this.selector.addBiome(Biome.getBiome(Biome.FOREST));
-        this.selector.addBiome(Biome.getBiome(Biome.TAIGA));
-        this.selector.addBiome(Biome.getBiome(Biome.SWAMP));
-        this.selector.addBiome(Biome.getBiome(Biome.RIVER));
-        this.selector.addBiome(Biome.getBiome(Biome.ICE_PLAINS));
-        this.selector.addBiome(Biome.getBiome(Biome.SMALL_MOUNTAINS));
-        this.selector.addBiome(Biome.getBiome(Biome.BIRCH_FOREST));
+        this.selector.addBiome(Biome.getBiome(OCEAN));
+        this.selector.addBiome(Biome.getBiome(PLAINS));
+        this.selector.addBiome(Biome.getBiome(DESERT));
+        this.selector.addBiome(Biome.getBiome(FOREST));
+        this.selector.addBiome(Biome.getBiome(TAIGA));
+        this.selector.addBiome(Biome.getBiome(RIVER));
+        this.selector.addBiome(Biome.getBiome(ICE_PLAINS));
+        this.selector.addBiome(Biome.getBiome(BIRCH_FOREST));
+        
+        this.selector.addBiome(Biome.getBiome(JUNGLE));
+        this.selector.addBiome(Biome.getBiome(SAVANNA));
+        this.selector.addBiome(Biome.getBiome(ROOFED_FOREST));
+        this.selector.addBiome(Biome.getBiome(ROOFED_FOREST_M));
+        this.selector.addBiome(Biome.getBiome(MUSHROOM_ISLAND));
+        this.selector.addBiome(Biome.getBiome(SWAMP));
 
         this.selector.recalculate();
 
@@ -142,14 +196,17 @@ public class Normal extends Generator {
 
         PopulatorOre ores = new PopulatorOre();
         ores.setOreTypes(new OreType[]{
-                new OreType(new BlockOreCoal(), 20, 16, 0, 128),
-                new OreType(new BlockOreIron(), 20, 8, 0, 64),
-                new OreType(new BlockOreRedstone(), 8, 7, 0, 16),
-                new OreType(new BlockOreLapis(), 1, 6, 0, 32),
-                new OreType(new BlockOreGold(), 2, 8, 0, 32),
-                new OreType(new BlockOreDiamond(), 1, 7, 0, 16),
-                new OreType(new BlockDirt(), 20, 32, 0, 128),
-                new OreType(new BlockGravel(), 10, 16, 0, 128)
+                new OreType(new BlockOreCoal(), 20, 17, 0, 128),
+                new OreType(new BlockOreIron(), 20, 9, 0, 64),
+                new OreType(new BlockOreRedstone(), 8, 8, 0, 16),
+                new OreType(new BlockOreLapis(), 1, 7, 0, 16),
+                new OreType(new BlockOreGold(), 2, 9, 0, 32),
+                new OreType(new BlockOreDiamond(), 1, 8, 0, 16),
+                new OreType(new BlockDirt(), 10, 33, 0, 128),
+                new OreType(new BlockGravel(), 8, 33, 0, 128),
+                new OreType(new BlockStone(BlockStone.GRANITE), 10, 33, 0, 80),
+                new OreType(new BlockStone(BlockStone.DIORITE), 10, 33, 0, 80),
+                new OreType(new BlockStone(BlockStone.ANDESITE), 10, 33, 0, 80)
         });
         this.populators.add(ores);
     }
