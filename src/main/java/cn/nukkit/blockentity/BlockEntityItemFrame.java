@@ -1,5 +1,6 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -32,7 +33,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.getBlock().getId() == Item.ITEM_FRAME;
+        return this.getBlock().getId() == Block.ITEM_FRAME_BLOCK;
     }
 
     public int getItemRotation() {
@@ -89,8 +90,9 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
                 .putCompound("Item", item ? NBTIO.putItemHelper(new ItemBlock(new BlockAir())) : NBTItem)
-                .putByte("ItemRotation", item ? 0 : this.getItemRotation())
-                .putFloat("ItemDropChance", this.getItemDropChance());
+                .putByte("ItemRotation", item ? 0 : this.getItemRotation());
+                // TODO: This crashes the client, why?
+                // .putFloat("ItemDropChance", this.getItemDropChance());
 
     }
 }
