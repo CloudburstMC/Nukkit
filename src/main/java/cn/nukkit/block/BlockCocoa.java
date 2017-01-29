@@ -159,4 +159,17 @@ public class BlockCocoa extends BlockTransparent {
     public int getToolType() {
         return ItemTool.TYPE_AXE;
     }
+    
+    @Override
+    public int[][] getDrops(Item item) {
+        if(this.meta >= 8) {
+            return new int[][]{
+                    {Item.DYE, 3, 3}
+            };
+        } else {
+            return new int[][]{
+                    {Item.DYE, 3, 1}
+            };
+        }
+    }
 }
