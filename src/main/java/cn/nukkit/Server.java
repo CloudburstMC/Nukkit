@@ -1547,7 +1547,13 @@ public class Server {
             return false;
         }
 
-        String path = this.getDataPath() + "worlds/" + name + "/";
+        String path;
+
+        if (name.contains("/") || name.contains("\\")) {
+            path = name;
+        } else {
+            path = this.getDataPath() + "worlds/" + name + "/";
+        }
 
         Class<? extends LevelProvider> provider = LevelProviderManager.getProvider(path);
 
@@ -1613,10 +1619,16 @@ public class Server {
             }
         }
 
+        String path;
+
+        if (name.contains("/") || name.contains("\\")) {
+            path = name;
+        } else {
+            path = this.getDataPath() + "worlds/" + name + "/";
+        }
+
         Level level;
         try {
-            String path = this.getDataPath() + "worlds/" + name + "/";
-
             provider.getMethod("generate", String.class, String.class, long.class, Class.class, Map.class).invoke(null, path, name, seed, generator, options);
 
             level = new Level(this, name, path, provider);
