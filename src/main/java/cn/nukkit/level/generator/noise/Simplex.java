@@ -103,12 +103,12 @@ public class Simplex extends Perlin {
         double z0 = z - (k - t);
 
         // For the 3D case, the simplex shape is a slightly irregular tetrahedron.
-        int i1;
-        int j1;
-        int k1;
-        int i2;
-        int j2;
-        int k2;
+        int i1 = 0;
+        int j1 = 0;
+        int k1 = 0;
+        int i2 = 0;
+        int j2 = 0;
+        int k2 = 0;
 
         // Determine which simplex we are in.
         if (x0 >= y0) {
@@ -231,8 +231,8 @@ public class Simplex extends Perlin {
         double y0 = y - (j - t);
 
         // For the 2D case, the simplex shape is an equilateral triangle.
-        int i1;
-        int j1;
+        int i1 = 0;
+        int j1 = 0;
         // Determine which simplex we are in.
         if (x0 > y0) {
             i1 = 1;
