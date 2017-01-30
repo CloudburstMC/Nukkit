@@ -1610,9 +1610,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.checkTeleportPosition();
 
+        // TODO: remove this workaround (broken client MCPE 1.0.0)
+        if (!messageQueue.isEmpty()) {
+            TextPacket pk = new TextPacket();
+            pk.type = TextPacket.TYPE_RAW;
+            pk.message = String.join("\n", messageQueue);
+            this.dataPacket(pk);
+            messageQueue.clear();
+        }
         return true;
     }
 
+    private ArrayList<String> messageQueue = new ArrayList<String>();
+    
     public void checkNetwork() {
         if (!this.isOnline()) {
             return;
@@ -3585,15 +3595,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public void sendMessage(String message) {
-        String[] mes = this.server.getLanguage().translateString(message).split("\\n");
-        for (String m : mes) {
-            if (!"".equals(m)) {
-                TextPacket pk = new TextPacket();
-                pk.type = TextPacket.TYPE_RAW;
-                pk.message = m;
-                this.dataPacket(pk);
-            }
-        }
+        // TODO: Remove this workaround (broken client MCPE 1.0.0)
+        messageQueue.add(this.server.getLanguage().translateString(message));
+
+        /*
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_RAW;
+        pk.message = this.server.getLanguage().translateString(message);
+        this.dataPacket(pk);
+        */
     }
 
     @Override
