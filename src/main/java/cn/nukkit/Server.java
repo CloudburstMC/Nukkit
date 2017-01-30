@@ -186,7 +186,10 @@ public class Server {
 
     private Level defaultLevel = null;
 
+    private Thread currentThread;
+    
     public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
+        currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
         instance = this;
         this.logger = logger;
 
@@ -628,6 +631,12 @@ public class Server {
     }
 
     public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
+        // First we need to check if this command is on the main thread or not, if not, warn the user
+        if (!this.isPrimaryThread()) {
+            getLogger().warning("Command Dispatched Async: " + commandLine);
+            getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
+            // TODO: We should sync the command to the main thread too!
+        }
         if (sender == null) {
             throw new ServerException("CommandSender is not valid");
         }
@@ -1881,6 +1890,16 @@ public class Server {
         return this.getPropertyBoolean("player.save-player-data", true);
     }
 
+    /**
+     * Checks the current thread against the expected primary thread for the server.
+     * 
+     * <b>Note:</b> this method should not be used to indicate the current synchronized state of the runtime. A current thread matching the main thread indicates that it is synchronized, but a mismatch does not preclude the same assumption.
+     * @return true if the current thread matches the expected primary thread, false otherwise
+     */
+    public boolean isPrimaryThread() {
+        return (Thread.currentThread() == currentThread);
+    }
+    
     private void registerEntities() {
         Entity.registerEntity("Arrow", EntityArrow.class);
         Entity.registerEntity("Item", EntityItem.class);
