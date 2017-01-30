@@ -6,11 +6,11 @@ import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.event.*;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.permission.Permission;
-import cn.nukkit.timings.Timing;
-import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
 
 import java.io.File;
 import java.lang.reflect.Constructor;

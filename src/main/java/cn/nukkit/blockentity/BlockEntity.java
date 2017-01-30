@@ -5,9 +5,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.timings.Timing;
-import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.ChunkException;
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;

@@ -1,8 +1,8 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
-import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.ThreadStore;
+import co.aikar.timings.Timings;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;

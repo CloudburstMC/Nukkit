@@ -49,9 +49,9 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.redstone.Redstone;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.timings.LevelTimings;
-import cn.nukkit.timings.Timings;
-import cn.nukkit.timings.TimingsHistory;
 import cn.nukkit.utils.*;
+import co.aikar.timings.Timings;
+import co.aikar.timings.TimingsHistory;
 
 import java.io.File;
 import java.io.IOException;

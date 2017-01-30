@@ -4,8 +4,8 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
-import cn.nukkit.timings.Timing;
 import cn.nukkit.utils.EventException;
+import co.aikar.timings.Timing;
 
 /**
  * author: MagicDroidX

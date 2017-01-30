@@ -2,9 +2,9 @@ package cn.nukkit.permission;
 
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.ServerException;
+import co.aikar.timings.Timings;
 
 import java.util.HashMap;
 import java.util.HashSet;

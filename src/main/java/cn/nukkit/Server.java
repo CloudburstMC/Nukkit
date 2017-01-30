@@ -67,8 +67,8 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.*;
+import co.aikar.timings.Timings;
 
 import java.io.*;
 import java.nio.ByteOrder;

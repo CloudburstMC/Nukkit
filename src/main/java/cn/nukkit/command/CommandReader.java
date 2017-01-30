@@ -3,7 +3,7 @@ package cn.nukkit.command;
 import cn.nukkit.InterruptibleThread;
 import cn.nukkit.Server;
 import cn.nukkit.event.server.ServerCommandEvent;
-import cn.nukkit.timings.Timings;
+import co.aikar.timings.Timings;
 import jline.console.ConsoleReader;
 import jline.console.CursorBuffer;
 
