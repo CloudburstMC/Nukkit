@@ -175,7 +175,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                 if (armor.getDamage() >= armor.getMaxDurability()) {
                     inventory.setArmorItem(slot, new ItemBlock(new BlockAir()));
                 } else {
-                    inventory.setArmorItem(slot, armor);
+                    inventory.setArmorItem(slot, armor, true);
                 }
             }
         }

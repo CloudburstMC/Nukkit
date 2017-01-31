@@ -166,9 +166,13 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public boolean setArmorItem(int index, Item item) {
-        return this.setItem(this.getSize() + index, item);
+        return this.setArmorItem(this.getSize() + index, item, false);
     }
 
+    public boolean setArmorItem(int index, Item item, boolean ignoreArmorEvents) {
+        return this.setItem(this.getSize() + index, item, ignoreArmorEvents);
+    }
+    
     public Item getHelmet() {
         return this.getItem(this.getSize());
     }
@@ -203,6 +207,10 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public boolean setItem(int index, Item item) {
+        return setItem(index, item, false);
+    }
+
+    private boolean setItem(int index, Item item, boolean ignoreArmorEvents) {
         if (index < 0 || index >= this.size) {
             return false;
         } else if (item.getId() == 0 || item.getCount() <= 0) {
@@ -210,7 +218,7 @@ public class PlayerInventory extends BaseInventory {
         }
 
         //Armor change
-        if (index >= this.getSize()) {
+        if (!ignoreArmorEvents && index >= this.getSize()) {
             EntityArmorChangeEvent ev = new EntityArmorChangeEvent(this.getHolder(), this.getItem(index), item, index);
             Server.getInstance().getPluginManager().callEvent(ev);
             if (ev.isCancelled() && this.getHolder() != null) {
@@ -234,7 +242,7 @@ public class PlayerInventory extends BaseInventory {
 
         return true;
     }
-
+    
     @Override
     public boolean clear(int index) {
         if (this.slots.containsKey(index)) {
