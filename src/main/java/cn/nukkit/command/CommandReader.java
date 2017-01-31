@@ -3,11 +3,14 @@ package cn.nukkit.command;
 import cn.nukkit.InterruptibleThread;
 import cn.nukkit.Server;
 import cn.nukkit.event.server.ServerCommandEvent;
+import cn.nukkit.utils.completers.CommandsCompleter;
+import cn.nukkit.utils.completers.PlayersCompleter;
 import co.aikar.timings.Timings;
 import jline.console.ConsoleReader;
 import jline.console.CursorBuffer;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * author: MagicDroidX
@@ -29,63 +32,69 @@ public class CommandReader extends Thread implements InterruptibleThread {
 
     public CommandReader() {
         if (instance != null) {
-            throw new RuntimeException("Command Reader is already exist");
+            throw new RuntimeException("CommandReader is already initialized!");
         }
         try {
             this.reader = new ConsoleReader();
             reader.setPrompt("> ");
             instance = this;
+            
+            reader.addCompleter(new PlayersCompleter()); // Add player TAB completer
+            reader.addCompleter(new CommandsCompleter()); // Add command TAB completer
         } catch (IOException e) {
-            Server.getInstance().getLogger().error("Unable to start Console Reader", e);
+            Server.getInstance().getLogger().error("Unable to start CommandReader", e);
         }
         this.setName("Console");
     }
 
     public String readLine() {
         try {
-            reader.resetPromptLine("", "", 0);
-            return this.reader.readLine("> ");
+            return reader.readLine();
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
-            return "";
+            e.printStackTrace();
         }
+        return null;
     }
-
+    
     public void run() {
         Long lastLine = System.currentTimeMillis();
-        while (this.running) {
-            if (Server.getInstance().getConsoleSender() == null || Server.getInstance().getPluginManager() == null) {
-                continue;
-            }
+        String line;
+        
+        try {
+            while ((line = reader.readLine()) != null) {
+                if (Server.getInstance().getConsoleSender() == null || Server.getInstance().getPluginManager() == null) {
+                    continue;
+                }
 
-            String line = readLine();
-
-            if (line != null && !line.trim().equals("")) {
-                //todo 将即时执行指令改为每tick执行
-                try {
-                    Timings.serverCommandTimer.startTiming();
-                    ServerCommandEvent event = new ServerCommandEvent(Server.getInstance().getConsoleSender(), line);
-                    Server.getInstance().getPluginManager().callEvent(event);
-                    if (!event.isCancelled()) {
-                        Server.getInstance().getScheduler().scheduleTask(new Runnable() {
-                            public void run() {
-                                Server.getInstance().dispatchCommand(event.getSender(), event.getCommand());
-                            }
-                        });
+                if (line != null && !line.trim().equals("")) {
+                    //todo 将即时执行指令改为每tick执行
+                    try {
+                        Timings.serverCommandTimer.startTiming();
+                        ServerCommandEvent event = new ServerCommandEvent(Server.getInstance().getConsoleSender(), line);
+                        Server.getInstance().getPluginManager().callEvent(event);
+                        if (!event.isCancelled()) {
+                            Server.getInstance().getScheduler().scheduleTask(new Runnable() {
+                                public void run() {
+                                    Server.getInstance().dispatchCommand(event.getSender(), event.getCommand());
+                                }
+                            });
+                        }
+                        Timings.serverCommandTimer.stopTiming();
+                    } catch (Exception e) {
+                        Server.getInstance().getLogger().logException(e);
                     }
-                    Timings.serverCommandTimer.stopTiming();
-                } catch (Exception e) {
-                    Server.getInstance().getLogger().logException(e);
-                }
 
-            } else if (System.currentTimeMillis() - lastLine <= 1) {
-                try {
-                    sleep(40);
-                } catch (InterruptedException e) {
-                    Server.getInstance().getLogger().logException(e);
+                } else if (System.currentTimeMillis() - lastLine <= 1) {
+                    try {
+                        sleep(40);
+                    } catch (InterruptedException e) {
+                        Server.getInstance().getLogger().logException(e);
+                    }
                 }
+                lastLine = System.currentTimeMillis();
             }
-            lastLine = System.currentTimeMillis();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
