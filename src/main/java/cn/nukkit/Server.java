@@ -1079,8 +1079,9 @@ public class Server {
         return true;
     }
 
+    // TODO: Fix title tick
     public void titleTick() {
-        if (!Nukkit.ANSI) {
+        if (true || !Nukkit.ANSI) {
             return;
         }
 
