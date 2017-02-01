@@ -10,6 +10,10 @@ public class BossEventPacket extends DataPacket {
     public long eid;
     public int type;
 
+    public static final int ADD = 0;
+    public static final int UPDATE = 1;
+    public static final int REMOVE = 2;
+    
     @Override
     public byte pid() {
         return NETWORK_ID;
