@@ -20,6 +20,7 @@ import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.*;
+import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.entity.projectile.*;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.block.SignChangeEvent;
@@ -73,6 +74,7 @@ import com.google.gson.JsonElement;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -4294,6 +4296,104 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
+    /**
+     * Creates and sends a BossBar to the player
+     * 
+     * @param text  The BossBar message
+     * @param length  The BossBar percentage
+     * @return bossBarId  The BossBar ID, you should store it if you want to remove or update the BossBar later
+     */
+    public long createBossBar(String text, int length) {
+        // First we spawn a entity
+        long bossBarId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
+        AddEntityPacket pkAdd = new AddEntityPacket();
+        pkAdd.type = EntityCreeper.NETWORK_ID;
+        pkAdd.entityUniqueId = bossBarId;
+        pkAdd.entityRuntimeId = bossBarId;
+        pkAdd.x = (float) this.x;
+        pkAdd.y = (float) -10; // Below the bedrock
+        pkAdd.z = (float) this.z;
+        pkAdd.speedX = (float) this.motionX;
+        pkAdd.speedY = (float) this.motionY;
+        pkAdd.speedZ = (float) this.motionZ;
+        EntityMetadata metadata = new EntityMetadata()
+                // Default Metadata tags
+                .putLong(DATA_FLAGS, 0)
+                .putShort(DATA_AIR, 400)
+                .putShort(DATA_MAX_AIR, 400)
+                .putLong(DATA_LEAD_HOLDER_EID, -1)
+                .putFloat(DATA_SCALE, 1f)
+                .putString(Entity.DATA_NAMETAG, text) // Set the entity name
+                .putInt(Entity.DATA_SCALE, 0); // And make it invisible
+        pkAdd.metadata = metadata;
+        this.dataPacket(pkAdd);
+        
+        // Now we send the entity attributes
+        // TODO: Attributes should be sent on AddEntityPacket, however it doesn't work (client bug?)
+        UpdateAttributesPacket pkAttributes = new UpdateAttributesPacket();
+        pkAttributes.entityId = bossBarId;
+        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH);
+        attr.setMaxValue(100); // Max value - We need to change the max value first, or else the "setValue" will return a IllegalArgumentException
+        attr.setValue(length); // Entity health
+        pkAttributes.entries = new Attribute[] { attr };
+        this.dataPacket(pkAttributes);
+        
+        // And now we send the bossbar packet
+        BossEventPacket pkBoss = new BossEventPacket();
+        pkBoss.eid = bossBarId;
+        pkBoss.type = BossEventPacket.ADD;
+        this.dataPacket(pkBoss);
+        return bossBarId;
+    }
+    
+    /**
+     * 
+     * @param text  The new BossBar message
+     * @param length  The new BossBar length
+     * @param bossBarId  The BossBar ID
+     */
+    public void updateBossBar(String text, int length, long bossBarId) {
+        // First we update the boss bar length
+        UpdateAttributesPacket pkAttributes = new UpdateAttributesPacket();
+        pkAttributes.entityId = bossBarId;
+        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH);
+        attr.setMaxValue(100); // Max value - We need to change the max value first, or else the "setValue" will return a IllegalArgumentException
+        attr.setValue(length); // Entity health
+        pkAttributes.entries = new Attribute[] { attr };
+        this.dataPacket(pkAttributes);
+        this.createBossBar("wow", 100);
+        // And then the boss bar text
+        SetEntityDataPacket pkMetadata = new SetEntityDataPacket();
+        pkMetadata.eid = bossBarId;
+        pkMetadata.metadata = new EntityMetadata()
+                // Default Metadata tags
+                .putLong(DATA_FLAGS, 0)
+                .putShort(DATA_AIR, 400)
+                .putShort(DATA_MAX_AIR, 400)
+                .putLong(DATA_LEAD_HOLDER_EID, -1)
+                .putFloat(DATA_SCALE, 1f)
+                .putString(Entity.DATA_NAMETAG, text) // Set the entity name
+                .putInt(Entity.DATA_SCALE, 0); // And make it invisible
+        this.dataPacket(pkMetadata);
+        
+        // And now we send the bossbar packet
+        BossEventPacket pkBoss = new BossEventPacket();
+        pkBoss.eid = bossBarId;
+        pkBoss.type = BossEventPacket.UPDATE;
+        this.dataPacket(pkBoss);
+        return;
+    }
+    
+    /**
+     * Removes a BossBar
+     * @param bossBarId  The BossBar ID
+     */
+    public void removeBossBar(long bossBarId) {
+        RemoveEntityPacket pkRemove = new RemoveEntityPacket();
+        pkRemove.eid = bossBarId;
+        this.dataPacket(pkRemove);
+    }
+    
     public int getWindowId(Inventory inventory) {
         if (this.windows.containsKey(inventory)) {
             return this.windows.get(inventory);
