@@ -4347,6 +4347,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
     
     /**
+     * Updates a BossBar
      * 
      * @param text  The new BossBar message
      * @param length  The new BossBar length
@@ -4386,6 +4387,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     
     /**
      * Removes a BossBar
+     * 
      * @param bossBarId  The BossBar ID
      */
     public void removeBossBar(long bossBarId) {
