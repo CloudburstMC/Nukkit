@@ -166,7 +166,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public boolean setArmorItem(int index, Item item) {
-        return this.setArmorItem(this.getSize() + index, item, false);
+        return this.setArmorItem(index, item, false);
     }
 
     public boolean setArmorItem(int index, Item item, boolean ignoreArmorEvents) {
