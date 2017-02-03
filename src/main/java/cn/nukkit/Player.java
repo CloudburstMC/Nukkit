@@ -4362,7 +4362,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         attr.setValue(length); // Entity health
         pkAttributes.entries = new Attribute[] { attr };
         this.dataPacket(pkAttributes);
-        this.createBossBar("wow", 100);
         // And then the boss bar text
         SetEntityDataPacket pkMetadata = new SetEntityDataPacket();
         pkMetadata.eid = bossBarId;
