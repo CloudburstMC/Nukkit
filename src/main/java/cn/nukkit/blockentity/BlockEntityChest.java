@@ -39,11 +39,6 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
             this.inventory.setItem(i, this.getItem(i));
         } */
         
-        // Fill inventory with empty slots
-        for (int i = 0; i < this.getSize(); i++) {
-            this.inventory.slots.put(i, Item.get(0));
-        }
-        
         ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
         for (CompoundTag compound : list.getAll()) {
             Item item = NBTIO.getItemHelper(compound);
