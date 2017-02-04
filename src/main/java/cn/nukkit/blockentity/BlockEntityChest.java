@@ -35,8 +35,19 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
             this.namedTag.putList(new ListTag<CompoundTag>("Items"));
         }
 
-        for (int i = 0; i < this.getSize(); i++) {
+        /* for (int i = 0; i < this.getSize(); i++) {
             this.inventory.setItem(i, this.getItem(i));
+        } */
+        
+        // Fill inventory with empty slots
+        for (int i = 0; i < this.getSize(); i++) {
+            this.inventory.slots.put(i, Item.get(0));
+        }
+        
+        ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
+        for (CompoundTag compound : list.getAll()) {
+            Item item = NBTIO.getItemHelper(compound);
+            this.inventory.slots.put(compound.getByte("Slot"), item);
         }
     }
 
@@ -98,16 +109,19 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     @Override
     public void setItem(int index, Item item) {
         int i = this.getSlotIndex(index);
-
+        
         CompoundTag d = NBTIO.putItemHelper(item, index);
 
+        // If item is air or count less than 0, remove the item from the "Items" list
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
             if (i >= 0) {
                 this.namedTag.getList("Items").remove(i);
             }
         } else if (i < 0) {
+            // If it is less than i, then it is a new item, so we are going to add it at the end of the list
             (this.namedTag.getList("Items", CompoundTag.class)).add(d);
         } else {
+            // If it is more than i, then it is an update on a slot, so we are going to overwrite the item in the list
             (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
         }
     }
