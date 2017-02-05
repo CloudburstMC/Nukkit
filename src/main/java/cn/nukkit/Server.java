@@ -610,7 +610,7 @@ public class Server {
     }
 
     public void enablePlugins(PluginLoadOrder type) {
-        for (Plugin plugin : this.pluginManager.getPlugins().values()) {
+        for (Plugin plugin : new ArrayList(this.pluginManager.getPlugins().values())) {
             if (!plugin.isEnabled() && type == plugin.getDescription().getOrder()) {
                 this.enablePlugin(plugin);
             }
