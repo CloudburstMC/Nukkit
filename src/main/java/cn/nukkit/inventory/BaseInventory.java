@@ -29,7 +29,7 @@ public abstract class BaseInventory implements Inventory {
 
     protected final String title;
 
-    protected final Map<Integer, Item> slots = new HashMap<>();
+    public final Map<Integer, Item> slots = new HashMap<>();
 
     protected final Set<Player> viewers = new HashSet<>();
 
