@@ -1324,7 +1324,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     protected void processMovement(int tickDiff) {
-        if (!this.isAlive() || !this.spawned || this.newPosition == null || this.teleportPosition != null) {
+        if (!this.isAlive() || !this.spawned || this.newPosition == null || this.teleportPosition != null || this.isSleeping()) {
             return;
         }
         Vector3 newPos = this.newPosition;
