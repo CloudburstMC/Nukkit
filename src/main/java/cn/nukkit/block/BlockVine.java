@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 
 /**
@@ -146,6 +147,31 @@ public class BlockVine extends BlockTransparent {
         } else {
             return new int[0][0];
         }
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            int[] faces = {
+                    0,
+                    this.SIDE_SOUTH,
+                    this.SIDE_WEST,
+                    0,
+                    this.SIDE_NORTH,
+                    0,
+                    0,
+                    0,
+                    this.SIDE_EAST
+            };
+            if (!this.getSide(faces[this.meta]).isSolid()) {
+                Block up = this.getSide(this.SIDE_UP);
+                if (up.getId() != this.getId() || up.meta != this.meta) {
+                    this.getLevel().useBreakOn(this);
+                    return Level.BLOCK_UPDATE_NORMAL;
+                }
+            }
+        }
+        return 0;
     }
 
     @Override
