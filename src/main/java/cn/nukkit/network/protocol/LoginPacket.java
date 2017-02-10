@@ -27,6 +27,7 @@ public class LoginPacket extends DataPacket {
     public long clientId;
     public String identityPublicKey;
     public String serverAddress;
+    public String deviceModel;
 
     public Skin skin;
 
@@ -85,6 +86,7 @@ public class LoginPacket extends DataPacket {
         if (skinToken.has("ServerAddress")) this.serverAddress = skinToken.get("ServerAddress").getAsString();
         if (skinToken.has("SkinId")) skinId = skinToken.get("SkinId").getAsString();
         if (skinToken.has("SkinData")) this.skin = new Skin(skinToken.get("SkinData").getAsString(), skinId);
+        if (skinToken.has("DeviceModel")) this.deviceModel = skinToken.get("DeviceModel").getAsString();
     }
 
     private JsonObject decodeToken(String token) {

@@ -67,11 +67,11 @@ import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Zlib;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -200,6 +200,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private BlockEnderChest viewingEnderChest = null;
     
     protected int lastEnderPearl = -1;
+
+    private String deviceModel;
 
     public BlockEnderChest getViewingEnderChest() {
         return viewingEnderChest;
@@ -1979,6 +1981,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     } else {
                         this.setSkin(loginPacket.getSkin());
                     }
+
+                    this.deviceModel = loginPacket.deviceModel;
 
                     PlayerPreLoginEvent playerPreLoginEvent;
                     this.server.getPluginManager().callEvent(playerPreLoginEvent = new PlayerPreLoginEvent(this, "Plugin reason"));
@@ -4561,6 +4565,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.movementSpeed += sprintSpeedChange;
         }
         this.setMovementSpeed(this.movementSpeed);
+    }
+
+    public void transfer(InetSocketAddress address) {
+        String hostName = address.getHostName();
+        int port = address.getPort();
+        TransferPacket pk = new TransferPacket();
+        pk.address = hostName;
+        pk.port = port;
+        this.dataPacket(pk);
+        String message = "tranferred to " + address + ":" + port;
+        this.close(message, message, false);
+    }
+
+    public String getDeviceModel() {
+        return deviceModel;
     }
 
     @Override
