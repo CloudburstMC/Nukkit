@@ -57,4 +57,11 @@ public class EntityPig extends EntityAnimal {
         super.initEntity();
         setMaxHealth(10);
     }
+
+    @Override
+    public boolean isBreedingItem(Item item) {
+        int id = item.getId();
+
+        return id == Item.CARROT || id == Item.POTATO || id == Item.BEETROOT;
+    }
 }

@@ -42,13 +42,12 @@ public class BanList {
     }
 
     public boolean isBanned(String name) {
-        name = name.toLowerCase();
-        if (!this.isEnable()) {
+        if (!this.isEnable() || name == null) {
             return false;
         } else {
             this.removeExpired();
 
-            return this.list.containsKey(name);
+            return this.list.containsKey(name.toLowerCase());
         }
     }
 

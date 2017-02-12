@@ -1,6 +1,7 @@
 package cn.nukkit;
 
 import cn.nukkit.command.CommandReader;
+import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.ServerKiller;
 
@@ -26,8 +27,10 @@ public class Nukkit {
     public final static String VERSION = "1.0dev";
     public final static String API_VERSION = "1.0.0";
     public final static String CODENAME = "蘋果(Apple)派(Pie)";
-    public final static String MINECRAFT_VERSION = "v0.16.0 alpha";
-    public final static String MINECRAFT_VERSION_NETWORK = "0.16.0";
+    @Deprecated
+    public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
+    @Deprecated
+    public final static String MINECRAFT_VERSION_NETWORK = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
 
     public final static String PATH = System.getProperty("user.dir") + "/";
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
@@ -62,7 +65,7 @@ public class Nukkit {
             if (ANSI) {
                 System.out.print((char) 0x1b + "]0;Starting Nukkit Server For Minecraft: PE" + (char) 0x07);
             }
-            Server server = new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
+            new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
         } catch (Exception e) {
             logger.logException(e);
         }

@@ -36,6 +36,11 @@ public class BlockQuartz extends BlockSolid {
     }
 
     @Override
+    public double getResistance() {
+        return 4;
+    }
+
+    @Override
     public String getName() {
         String[] names = new String[]{
                 "Quartz Block",
@@ -54,16 +59,18 @@ public class BlockQuartz extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        short[] faces = new short[]{
-                0,
-                0,
-                0b1000,
-                0b1000,
-                0b0100,
-                0b0100
-        };
+        if (this.meta != QUARTZ_NORMAL) {
+            short[] faces = new short[]{
+                    0,
+                    0,
+                    0b1000,
+                    0b1000,
+                    0b0100,
+                    0b0100
+            };
 
-        this.meta = ((this.meta & 0x03) | faces[face]);
+            this.meta = ((this.meta & 0x03) | faces[face]);
+        }
         this.getLevel().setBlock(block, this, true, true);
 
         return true;

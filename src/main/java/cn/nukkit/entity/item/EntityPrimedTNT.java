@@ -3,6 +3,7 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
+import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
@@ -73,6 +74,9 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         } else {
             fuse = 80;
         }
+
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_IGNITED, true);
+        this.setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
     }
 
 
@@ -98,6 +102,11 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         if (tickDiff <= 0 && !justCreated) {
             return true;
         }
+
+        if (fuse % 5 == 0) {
+            this.setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
+        }
+
         lastUpdate = currentTick;
 
         boolean hasUpdate = entityBaseTick(tickDiff);

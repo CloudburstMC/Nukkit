@@ -544,8 +544,8 @@ public class Session {
     }
 
     public void close() throws Exception {
-        byte[] data = new byte[]{0x00, 0x00, 0x08, 0x15}; //CLIENT_DISCONNECT packet 0x15
-        this.addEncapsulatedToQueue(EncapsulatedPacket.fromBinary(data), RakNet.PRIORITY_IMMEDIATE);
+        byte[] data = new byte[]{0x60, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x15}; //CLIENT_DISCONNECT packet 0x15
+        this.addEncapsulatedToQueue(EncapsulatedPacket.fromBinary(data));
         this.sessionManager = null;
     }
 }

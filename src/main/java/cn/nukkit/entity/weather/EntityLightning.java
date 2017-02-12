@@ -74,7 +74,6 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
     public void attack(EntityDamageEvent source) {
         source.setDamage(0);
         super.attack(source);
-        if (source.isCancelled()) return;
     }
 
     @Override

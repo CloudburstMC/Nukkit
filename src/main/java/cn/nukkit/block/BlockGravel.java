@@ -32,6 +32,11 @@ public class BlockGravel extends BlockFallable {
     }
 
     @Override
+    public double getResistance() {
+        return 3;
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_SHOVEL;
     }

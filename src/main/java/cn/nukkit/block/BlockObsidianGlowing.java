@@ -33,6 +33,11 @@ public class BlockObsidianGlowing extends BlockSolid {
     }
 
     @Override
+    public double getHardness() {
+        return 50;
+    }
+
+    @Override
     public double getResistance() {
         return 6000;
     }

@@ -5,9 +5,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.timings.Timing;
-import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.ChunkException;
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import java.util.Map;
 public abstract class BlockEntity extends Position {
     //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
     public static final String CHEST = "Chest";
+    public static final String ENDER_CHEST = "EnderChest";
     public static final String FURNACE = "Furnace";
     public static final String SIGN = "Sign";
     public static final String MOB_SPAWNER = "MobSpawner";

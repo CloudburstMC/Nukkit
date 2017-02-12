@@ -43,6 +43,11 @@ public class BlockMycelium extends BlockSolid {
     }
 
     @Override
+    public double getResistance() {
+        return 2.5;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
                 {Item.DIRT, 0, 1}

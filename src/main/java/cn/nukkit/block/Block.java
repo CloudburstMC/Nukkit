@@ -59,11 +59,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int BED_BLOCK = 26;
     public static final int POWERED_RAIL = 27;
     public static final int DETECTOR_RAIL = 28;
-
+    public static final int STICKY_PISTON = 29;
     public static final int COBWEB = 30;
     public static final int TALL_GRASS = 31;
     public static final int BUSH = 32;
     public static final int DEAD_BUSH = 32;
+    public static final int PISTON = 33;
+    public static final int PISTON_HEAD = 34;
     public static final int WOOL = 35;
     public static final int DANDELION = 37;
     public static final int POPPY = 38;
@@ -118,10 +120,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int STONE_PRESSURE_PLATE = 70;
     public static final int IRON_DOOR_BLOCK = 71;
     public static final int WOODEN_PRESSURE_PLATE = 72;
+
     public static final int REDSTONE_ORE = 73;
     public static final int GLOWING_REDSTONE_ORE = 74;
     public static final int LIT_REDSTONE_ORE = 74;
-
+    public static final int UNLIT_REDSTONE_TORCH = 75;
     public static final int REDSTONE_TORCH = 76;
     public static final int STONE_BUTTON = 77;
     public static final int SNOW = 78;
@@ -143,10 +146,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int LIT_PUMPKIN = 91;
     public static final int JACK_O_LANTERN = 91;
     public static final int CAKE_BLOCK = 92;
-
+    public static final int UNPOWERED_REPEATER = 93;
+    public static final int POWERED_REPEATER = 94;
     public static final int INVISIBLE_BEDROCK = 95;
     public static final int TRAPDOOR = 96;
-
+    public static final int MONSTER_EGG = 97;
     public static final int STONE_BRICKS = 98;
     public static final int STONE_BRICK = 98;
     public static final int BROWN_MUSHROOM_BLOCK = 99;
@@ -171,7 +175,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int NETHER_BRICK_BLOCK = 112;
     public static final int NETHER_BRICK_FENCE = 113;
     public static final int NETHER_BRICKS_STAIRS = 114;
-
+    public static final int NETHER_WART_BLOCK = 115;
     public static final int ENCHANTING_TABLE = 116;
     public static final int ENCHANT_TABLE = 116;
     public static final int ENCHANTMENT_TABLE = 116;
@@ -181,16 +185,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int END_PORTAL = 119;
     public static final int END_PORTAL_FRAME = 120;
     public static final int END_STONE = 121;
-
+    public static final int DRAGON_EGG = 122;
     public static final int REDSTONE_LAMP = 123;
     public static final int LIT_REDSTONE_LAMP = 124;
-
+    public static final int DROPPER = 125;
     public static final int ACTIVATOR_RAIL = 126;
     public static final int COCOA = 127;
     public static final int COCOA_BLOCK = 127;
     public static final int SANDSTONE_STAIRS = 128;
     public static final int EMERALD_ORE = 129;
-
+    public static final int ENDER_CHEST = 130;
+    public static final int TRIPWIRE_HOOK = 131;
+    public static final int TRIPWIRE = 132;
     public static final int EMERALD_BLOCK = 133;
     public static final int SPRUCE_WOOD_STAIRS = 134;
     public static final int SPRUCE_WOODEN_STAIRS = 134;
@@ -230,7 +236,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int WOODEN_SLABS = 158;
     public static final int STAINED_CLAY = 159;
     public static final int STAINED_HARDENED_CLAY = 159;
-
+    public static final int STAINED_GLASS_PANE = 160;
     public static final int LEAVES2 = 161;
     public static final int LEAVE2 = 161;
     public static final int WOOD2 = 162;
@@ -270,11 +276,28 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int DARK_OAK_DOOR_BLOCK = 197;
     public static final int GRASS_PATH = 198;
     public static final int ITEM_FRAME_BLOCK = 199;
+    public static final int CHORUS_FLOWER = 200;
+    public static final int PURPUR_BLOCK = 201;
 
+    public static final int PURPUR_STAIRS = 203;
+    public static final int DOUBLE_PURPUR_SLAB = 204;
+    public static final int PURPUR_SLAB = 205;
+    public static final int END_BRICKS = 206;
+
+    public static final int END_ROD = 208;
+    public static final int END_GATEWAY = 209;
+
+    public static final int CHORUS_PLANT = 240;
+    public static final int STAINED_GLASS = 241;
     public static final int PODZOL = 243;
     public static final int BEETROOT_BLOCK = 244;
     public static final int STONECUTTER = 245;
     public static final int GLOWING_OBSIDIAN = 246;
+    public static final int NETHER_REACTOR = 247; //Should not be removed
+
+    public static final int PISTON_EXTENSION = 250;
+
+    public static final int OBSERVER = 251;
 
     public static Class[] list = null;
     public static Block[] fullList = null;
@@ -303,208 +326,221 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             hardness = new double[256];
             transparent = new boolean[256];
 
-            list[AIR] = BlockAir.class;
-            list[STONE] = BlockStone.class;
-            list[GRASS] = BlockGrass.class;
-            list[DIRT] = BlockDirt.class;
-            list[COBBLESTONE] = BlockCobblestone.class;
-            list[PLANKS] = BlockPlanks.class;
-            list[SAPLING] = BlockSapling.class;
-            list[BEDROCK] = BlockBedrock.class;
-            list[WATER] = BlockWater.class;
-            list[STILL_WATER] = BlockWaterStill.class;
-            list[LAVA] = BlockLava.class;
-            list[STILL_LAVA] = BlockLavaStill.class;
-            list[SAND] = BlockSand.class;
-            list[GRAVEL] = BlockGravel.class;
-            list[GOLD_ORE] = BlockOreGold.class;
-            list[IRON_ORE] = BlockOreIron.class;
-            list[COAL_ORE] = BlockOreCoal.class;
-            list[WOOD] = BlockWood.class;
-            list[LEAVES] = BlockLeaves.class;
-            list[SPONGE] = BlockSponge.class;
-            list[GLASS] = BlockGlass.class;
-            list[LAPIS_ORE] = BlockOreLapis.class;
-            list[LAPIS_BLOCK] = BlockLapis.class;
-            list[SANDSTONE] = BlockSandstone.class;
-            list[NOTEBLOCK] = BlockNoteblock.class;
-            list[BED_BLOCK] = BlockBed.class;
-            list[COBWEB] = BlockCobweb.class;
-            list[TALL_GRASS] = BlockTallGrass.class;
-            list[DEAD_BUSH] = BlockDeadBush.class;
-            list[WOOL] = BlockWool.class;
-            list[DANDELION] = BlockDandelion.class;
+            list[AIR] = BlockAir.class; //0
+            list[STONE] = BlockStone.class; //1
+            list[GRASS] = BlockGrass.class; //2
+            list[DIRT] = BlockDirt.class; //3
+            list[COBBLESTONE] = BlockCobblestone.class; //4
+            list[PLANKS] = BlockPlanks.class; //5
+            list[SAPLING] = BlockSapling.class; //6
+            list[BEDROCK] = BlockBedrock.class; //7
+            list[WATER] = BlockWater.class; //8
+            list[STILL_WATER] = BlockWaterStill.class; //9
+            list[LAVA] = BlockLava.class; //10
+            list[STILL_LAVA] = BlockLavaStill.class; //11
+            list[SAND] = BlockSand.class; //12
+            list[GRAVEL] = BlockGravel.class; //13
+            list[GOLD_ORE] = BlockOreGold.class; //14
+            list[IRON_ORE] = BlockOreIron.class; //15
+            list[COAL_ORE] = BlockOreCoal.class; //16
+            list[WOOD] = BlockWood.class; //17
+            list[LEAVES] = BlockLeaves.class; //18
+            list[SPONGE] = BlockSponge.class; //19
+            list[GLASS] = BlockGlass.class; //20
+            list[LAPIS_ORE] = BlockOreLapis.class; //21
+            list[LAPIS_BLOCK] = BlockLapis.class; //22
+            //TODO: list[DISPENSER] = BlockDispenser.class; //23
+            list[SANDSTONE] = BlockSandstone.class; //24
+            list[NOTEBLOCK] = BlockNoteblock.class; //25
+            list[BED_BLOCK] = BlockBed.class; //26
+            list[POWERED_RAIL] = BlockRailPowered.class; //27
+            list[DETECTOR_RAIL] = BlockRailDetector.class; //28
+            //TODO: list[STICKY_PISTON] = BlockPistonSticky.class; //29
+            list[COBWEB] = BlockCobweb.class; //30
+            list[TALL_GRASS] = BlockTallGrass.class; //31
+            list[DEAD_BUSH] = BlockDeadBush.class; //32
+            //TODO: list[PISTON] = BlockPiston.class; //33
+            //TODO: list[PISTON_HEAD] = BlockPistonHead.class; //34
+            list[WOOL] = BlockWool.class; //35
+            list[DANDELION] = BlockDandelion.class; //37
+            list[FLOWER] = BlockFlower.class; //38
+            list[BROWN_MUSHROOM] = BlockMushroomBrown.class; //39
+            list[RED_MUSHROOM] = BlockMushroomRed.class; //40
+            list[GOLD_BLOCK] = BlockGold.class; //41
+            list[IRON_BLOCK] = BlockIron.class; //42
+            list[DOUBLE_STONE_SLAB] = BlockDoubleSlabStone.class; //43
+            list[STONE_SLAB] = BlockSlabStone.class; //44
+            list[BRICKS_BLOCK] = BlockBricks.class; //45
+            list[TNT] = BlockTNT.class; //46
+            list[BOOKSHELF] = BlockBookshelf.class; //47
+            list[MOSS_STONE] = BlockMossStone.class; //48
+            list[OBSIDIAN] = BlockObsidian.class; //49
+            list[TORCH] = BlockTorch.class; //50
+            list[FIRE] = BlockFire.class; //51
+            list[MONSTER_SPAWNER] = BlockMobSpawner.class; //52
+            list[WOOD_STAIRS] = BlockStairsWood.class; //53
+            list[CHEST] = BlockChest.class; //54
+            list[REDSTONE_WIRE] = BlockRedstoneWire.class; //55
+            list[DIAMOND_ORE] = BlockOreDiamond.class; //56
+            list[DIAMOND_BLOCK] = BlockDiamond.class; //57
+            list[WORKBENCH] = BlockWorkbench.class; //58
+            list[WHEAT_BLOCK] = BlockWheat.class; //59
+            list[FARMLAND] = BlockFarmland.class; //60
+            list[FURNACE] = BlockFurnace.class; //61
+            list[BURNING_FURNACE] = BlockFurnaceBurning.class; //62
+            list[SIGN_POST] = BlockSignPost.class; //63
+            list[WOOD_DOOR_BLOCK] = BlockDoorWood.class; //64
+            list[LADDER] = BlockLadder.class; //65
+            list[RAIL] = BlockRail.class; //66
+            list[COBBLESTONE_STAIRS] = BlockStairsCobblestone.class; //67
+            list[WALL_SIGN] = BlockWallSign.class; //68
+            list[LEVER] = BlockLever.class; //69
+            list[STONE_PRESSURE_PLATE] = BlockPressurePlateStone.class; //70
+            list[IRON_DOOR_BLOCK] = BlockDoorIron.class; //71
+            list[WOODEN_PRESSURE_PLATE] = BlockPressurePlateWood.class; //72
+            list[REDSTONE_ORE] = BlockOreRedstone.class; //73
+            list[GLOWING_REDSTONE_ORE] = BlockOreRedstoneGlowing.class; //74
+            //TODO: list[UNLIT_REDSTONE_TORCH] = BlockRedstoneTorchUnlit.class; //75
+            list[REDSTONE_TORCH] = BlockRedstoneTorch.class; //76
+            list[STONE_BUTTON] = BlockButtonStone.class; //77
+            list[SNOW_LAYER] = BlockSnowLayer.class; //78
+            list[ICE] = BlockIce.class; //79
+            list[SNOW_BLOCK] = BlockSnow.class; //80
+            list[CACTUS] = BlockCactus.class; //81
+            list[CLAY_BLOCK] = BlockClay.class; //82
+            list[SUGARCANE_BLOCK] = BlockSugarcane.class; //83
 
-            list[FLOWER] = BlockFlower.class;
+            list[FENCE] = BlockFence.class; //85
+            list[PUMPKIN] = BlockPumpkin.class; //86
+            list[NETHERRACK] = BlockNetherrack.class; //87
+            list[SOUL_SAND] = BlockSoulSand.class; //88
+            list[GLOWSTONE_BLOCK] = BlockGlowstone.class; //89
+            list[NETHER_PORTAL] = BlockNetherPortal.class; //90
+            list[LIT_PUMPKIN] = BlockPumpkinLit.class; //91
+            list[CAKE_BLOCK] = BlockCake.class; //92
+            //TODO: list[UNPOWERED_REPEATER] = BlockRepeaterUnpowered.class; //93
+            //TODO: list[POWERED_REPEATER] = BlockRepeaterPowered.class; //94
+            list[INVISIBLE_BEDROCK] = BlockBedrockInvisible.class; //95
+            list[TRAPDOOR] = BlockTrapdoor.class; //96
+            list[MONSTER_EGG] = BlockMonsterEgg.class; //97
+            list[STONE_BRICKS] = BlockBricksStone.class; //98
+            list[BROWN_MUSHROOM_BLOCK] = BlockHugeMushroomBrown.class; //99
+            list[RED_MUSHROOM_BLOCK] = BlockHugeMushroomRed.class; //100
+            list[IRON_BARS] = BlockIronBars.class; //101
+            list[GLASS_PANE] = BlockGlassPane.class; //102
+            list[MELON_BLOCK] = BlockMelon.class; //103
+            list[PUMPKIN_STEM] = BlockStemPumpkin.class; //104
+            list[MELON_STEM] = BlockStemMelon.class; //105
+            list[VINE] = BlockVine.class; //106
+            list[FENCE_GATE] = BlockFenceGate.class; //107
+            list[BRICK_STAIRS] = BlockStairsBrick.class; //108
+            list[STONE_BRICK_STAIRS] = BlockStairsStoneBrick.class; //109
+            list[MYCELIUM] = BlockMycelium.class; //110
+            list[WATER_LILY] = BlockWaterLily.class; //111
+            list[NETHER_BRICKS] = BlockBricksNether.class; //112
+            list[NETHER_BRICK_FENCE] = BlockFenceNetherBrick.class; //113
+            list[NETHER_BRICKS_STAIRS] = BlockStairsNetherBrick.class; //114
+            //TODO: list[NETHER_WART_BLOCK] = BlockNetherWart.class; //115
+            list[ENCHANTING_TABLE] = BlockEnchantingTable.class; //116
+            list[BREWING_STAND_BLOCK] = BlockBrewingStand.class; //117
+            list[CAULDRON_BLOCK] = BlockCauldron.class; //118
+            list[END_PORTAL] = BlockEndPortal.class; //119
+            list[END_PORTAL_FRAME] = BlockEndPortalFrame.class; //120
+            list[END_STONE] = BlockEndStone.class; //121
+            list[DRAGON_EGG] = BlockDragonEgg.class; //122
+            list[REDSTONE_LAMP] = BlockRedstoneLamp.class; //123
+            list[LIT_REDSTONE_LAMP] = BlockRedstoneLampLit.class; //124
+            //TODO: list[DROPPER] = BlockDropper.class; //125
+            list[ACTIVATOR_RAIL] = BlockRailActivator.class; //126
+            list[COCOA] = BlockCocoa.class; //127
+            list[SANDSTONE_STAIRS] = BlockStairsSandstone.class; //128
+            list[EMERALD_ORE] = BlockOreEmerald.class; //129
+            list[ENDER_CHEST] = BlockEnderChest.class; //130
+            //TODO: list[TRIPWIRE_HOOK] = BlockTripwireHook.class; //131
+            list[TRIPWIRE] = BlockTripWire.class; //132
+            list[EMERALD_BLOCK] = BlockEmerald.class; //133
+            list[SPRUCE_WOOD_STAIRS] = BlockStairsSpruce.class; //134
+            list[BIRCH_WOOD_STAIRS] = BlockStairsBirch.class; //135
+            list[JUNGLE_WOOD_STAIRS] = BlockStairsJungle.class; //136
 
-            list[BROWN_MUSHROOM] = BlockMushroomBrown.class;
-            list[RED_MUSHROOM] = BlockMushroomRed.class;
-            list[GOLD_BLOCK] = BlockGold.class;
-            list[IRON_BLOCK] = BlockIron.class;
-            list[DOUBLE_SLAB] = BlockDoubleSlabStone.class;
-            list[SLAB] = BlockSlabStone.class;
-            list[BRICKS_BLOCK] = BlockBricks.class;
-            list[TNT] = BlockTNT.class;
-            list[BOOKSHELF] = BlockBookshelf.class;
-            list[MOSS_STONE] = BlockMossStone.class;
-            list[OBSIDIAN] = BlockObsidian.class;
-            list[TORCH] = BlockTorch.class;
-            list[FIRE] = BlockFire.class;
-            list[MONSTER_SPAWNER] = BlockMobSpawner.class;
-            list[WOOD_STAIRS] = BlockStairsWood.class;
-            list[CHEST] = BlockChest.class;
-            list[REDSTONE_WIRE] = BlockRedstoneWire.class;
-            list[DIAMOND_ORE] = BlockOreDiamond.class;
-            list[DIAMOND_BLOCK] = BlockDiamond.class;
-            list[WORKBENCH] = BlockWorkbench.class;
-            list[WHEAT_BLOCK] = BlockWheat.class;
-            list[FARMLAND] = BlockFarmland.class;
-            list[FURNACE] = BlockFurnace.class;
-            list[BURNING_FURNACE] = BlockFurnaceBurning.class;
-            list[SIGN_POST] = BlockSignPost.class;
-            list[WOOD_DOOR_BLOCK] = BlockDoorWood.class;
-            list[LADDER] = BlockLadder.class;
+            list[BEACON] = BlockBeacon.class; //138
+            list[STONE_WALL] = BlockWall.class; //139
+            list[FLOWER_POT_BLOCK] = BlockFlowerPot.class; //140
+            list[CARROT_BLOCK] = BlockCarrot.class; //141
+            list[POTATO_BLOCK] = BlockPotato.class; //142
+            list[WOODEN_BUTTON] = BlockButtonWooden.class; //143
+            list[SKULL_BLOCK] = BlockSkull.class; //144
+            list[ANVIL] = BlockAnvil.class; //145
+            list[TRAPPED_CHEST] = BlockTrappedChest.class; //146
+            list[LIGHT_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateLight.class; //147
+            list[HEAVY_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateHeavy.class; //148
+            //TODO: list[UNPOWERED_COMPARATOR] = BlockComparatorUnpowered.class; //149
+            //TODO: list[POWERED_COMPARATOR] = BlockComparatorPowered.class; //149
+            list[DAYLIGHT_DETECTOR] = BlockDaylightDetector.class; //151
+            list[REDSTONE_BLOCK] = BlockRedstone.class; //152
+            list[QUARTZ_ORE] = BlockOreQuartz.class; //153
+            //TODO: list[HOPPER_BLOCK] = BlockHopper.class; //154
+            list[QUARTZ_BLOCK] = BlockQuartz.class; //155
+            list[QUARTZ_STAIRS] = BlockStairsQuartz.class; //156
+            list[DOUBLE_WOOD_SLAB] = BlockDoubleSlabWood.class; //157
+            list[WOOD_SLAB] = BlockSlabWood.class; //158
+            list[STAINED_CLAY] = BlockClayStained.class; //159
+            //TODO: list[STAINED_GLASS_PANE] = BlockGlassPaneStained.class; //160
 
-            list[COBBLESTONE_STAIRS] = BlockStairsCobblestone.class;
-            list[WALL_SIGN] = BlockWallSign.class;
+            list[LEAVES2] = BlockLeaves2.class; //161
+            list[WOOD2] = BlockWood2.class; //162
+            list[ACACIA_WOOD_STAIRS] = BlockStairsAcacia.class; //163
+            list[DARK_OAK_WOOD_STAIRS] = BlockStairsDarkOak.class; //164
+            list[SLIME_BLOCK] = BlockSlime.class; //165
 
-            list[IRON_DOOR_BLOCK] = BlockDoorIron.class;
-            list[REDSTONE_ORE] = BlockOreRedstone.class;
-            list[GLOWING_REDSTONE_ORE] = BlockOreRedstoneGlowing.class;
+            list[IRON_TRAPDOOR] = BlockTrapdoorIron.class; //167
+            list[PRISMARINE] = BlockPrismarine.class; //168
+            list[SEA_LANTERN] = BlockSeaLantern.class; //169
+            list[HAY_BALE] = BlockHayBale.class; //170
+            list[CARPET] = BlockCarpet.class; //171
+            list[HARDENED_CLAY] = BlockClayHardened.class; //172
+            list[COAL_BLOCK] = BlockCoal.class; //173
+            list[PACKED_ICE] = BlockIcePacked.class; //174
+            list[DOUBLE_PLANT] = BlockDoublePlant.class; //175
 
-            list[REDSTONE_TORCH] = BlockRedstoneTorch.class;
+            list[DAYLIGHT_DETECTOR_INVERTED] = BlockDaylightDetectorInverted.class; //178
+            list[RED_SANDSTONE] = BlockRedSandstone.class; //179
+            list[RED_SANDSTONE_STAIRS] = BlockStairsRedSandstone.class; //180
+            list[DOUBLE_RED_SANDSTONE_SLAB] = BlockDoubleSlabRedSandstone.class; //181
+            list[RED_SANDSTONE_SLAB] = BlockSlabRedSandstone.class; //182
+            list[FENCE_GATE_SPRUCE] = BlockFenceGateSpruce.class; //183
+            list[FENCE_GATE_BIRCH] = BlockFenceGateBirch.class; //184
+            list[FENCE_GATE_JUNGLE] = BlockFenceGateJungle.class; //185
+            list[FENCE_GATE_DARK_OAK] = BlockFenceGateDarkOak.class; //186
+            list[FENCE_GATE_ACACIA] = BlockFenceGateAcacia.class; //187
 
-            list[SNOW_LAYER] = BlockSnowLayer.class;
-            list[ICE] = BlockIce.class;
-            list[SNOW_BLOCK] = BlockSnow.class;
-            list[CACTUS] = BlockCactus.class;
-            list[CLAY_BLOCK] = BlockClay.class;
-            list[SUGARCANE_BLOCK] = BlockSugarcane.class;
-            list[FENCE] = BlockFence.class;
-            list[PUMPKIN] = BlockPumpkin.class;
-            list[NETHERRACK] = BlockNetherrack.class;
-            list[SOUL_SAND] = BlockSoulSand.class;
-            list[GLOWSTONE_BLOCK] = BlockGlowstone.class;
-            list[NETHER_PORTAL] = BlockNetherPortal.class;
-            list[LIT_PUMPKIN] = BlockPumpkinLit.class;
-            list[CAKE_BLOCK] = BlockCake.class;
-            list[ITEM_FRAME_BLOCK] = BlockItemFrame.class;
-            list[INVISIBLE_BEDROCK] = BlockBedrockInvisible.class;
-            list[TRAPDOOR] = BlockTrapdoor.class;
+            list[SPRUCE_DOOR_BLOCK] = BlockDoorSpruce.class; //193
+            list[BIRCH_DOOR_BLOCK] = BlockDoorBirch.class; //194
+            list[JUNGLE_DOOR_BLOCK] = BlockDoorJungle.class; //195
+            list[ACACIA_DOOR_BLOCK] = BlockDoorAcacia.class; //196
+            list[DARK_OAK_DOOR_BLOCK] = BlockDoorDarkOak.class; //197
+            list[GRASS_PATH] = BlockGrassPath.class; //198
+            list[ITEM_FRAME_BLOCK] = BlockItemFrame.class; //199
+            //TODO: list[CHORUS_FLOWER] = BlockChorusFlower.class; //200
+            list[PURPUR_BLOCK] = BlockPurpur.class; //201
 
-            list[STONE_BRICKS] = BlockBricksStone.class;
+            list[PURPUR_STAIRS] = BlockStairsPurpur.class; //203
 
-            list[RED_MUSHROOM_BLOCK] = BlockHugeMushroomRed.class;
-            list[BROWN_MUSHROOM_BLOCK] = BlockHugeMushroomBrown.class;
+            list[END_BRICKS] = BlockBricksEndStone.class; //206
 
-            list[IRON_BARS] = BlockIronBars.class;
-            list[GLASS_PANE] = BlockGlassPane.class;
-            list[MELON_BLOCK] = BlockMelon.class;
-            list[LIT_REDSTONE_LAMP] = BlockLitRedstoneLamp.class;
-            list[PUMPKIN_STEM] = BlockStemPumpkin.class;
-            list[MELON_STEM] = BlockStemMelon.class;
-            list[VINE] = BlockVine.class;
-            list[FENCE_GATE] = BlockFenceGate.class;
+            //TODO: list[END_ROD] = BlockEndRod.class; //208
+            //TODO: list[END_GATEWAY] = BlockEndGateway.class; //209
 
-            list[BRICK_STAIRS] = BlockStairsBrick.class;
-            list[STONE_BRICK_STAIRS] = BlockStairsStoneBrick.class;
+            //TODO: list[CHORUS_PLANT] = BlockChorusPlant.class; //240
+            list[PODZOL] = BlockPodzol.class; //243
+            list[BEETROOT_BLOCK] = BlockBeetroot.class; //244
+            list[STONECUTTER] = BlockStonecutter.class; //245
+            list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class; //246
+            //TODO: list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
 
-            list[MYCELIUM] = BlockMycelium.class;
-            list[WATER_LILY] = BlockWaterLily.class;
-            list[NETHER_BRICKS] = BlockNetherBrick.class;
-            list[NETHER_BRICK_FENCE] = BlockFenceNetherBrick.class;
-            list[NETHER_BRICKS_STAIRS] = BlockStairsNetherBrick.class;
+            //TODO: list[PISTON_EXTENSION] = BlockPistonExtension.class; //250
 
-            list[ENCHANTING_TABLE] = BlockEnchantingTable.class;
-
-            list[END_PORTAL_FRAME] = BlockEndPortalFrame.class;
-            list[END_STONE] = BlockEndStone.class;
-
-            list[SANDSTONE_STAIRS] = BlockStairsSandstone.class;
-
-            list[EMERALD_ORE] = BlockOreEmerald.class;
-            list[EMERALD_BLOCK] = BlockEmerald.class;
-
-            list[SPRUCE_WOOD_STAIRS] = BlockStairsSpruce.class;
-            list[BIRCH_WOOD_STAIRS] = BlockStairsBirch.class;
-            list[JUNGLE_WOOD_STAIRS] = BlockStairsJungle.class;
-
-            list[BEACON] = BlockBeacon.class;
-
-            list[STONE_WALL] = BlockWall.class;
-
-            list[CARROT_BLOCK] = BlockCarrot.class;
-            list[POTATO_BLOCK] = BlockPotato.class;
-            list[ANVIL] = BlockAnvil.class;
-
-            list[REDSTONE_BLOCK] = BlockRedstone.class;
-
-            list[QUARTZ_ORE] = BlockOreQuartz.class;
-            list[QUARTZ_BLOCK] = BlockQuartz.class;
-            list[QUARTZ_STAIRS] = BlockStairsQuartz.class;
-            list[DOUBLE_WOOD_SLAB] = BlockDoubleSlabWood.class;
-            list[WOOD_SLAB] = BlockSlabWood.class;
-            list[STAINED_CLAY] = BlockClayStained.class;
-
-            list[LEAVES2] = BlockLeaves2.class;
-            list[WOOD2] = BlockWood2.class;
-            list[ACACIA_WOOD_STAIRS] = BlockStairsAcacia.class;
-            list[DARK_OAK_WOOD_STAIRS] = BlockStairsDarkOak.class;
-
-            list[SLIME_BLOCK] = BlockSlime.class;
-
-            list[IRON_TRAPDOOR] = BlockTrapdoorIron.class;
-
-            list[PRISMARINE] = BlockPrismarine.class;
-            list[SEA_LANTERN] = BlockSeaLantern.class;
-
-            list[HAY_BALE] = BlockHayBale.class;
-            list[CARPET] = BlockCarpet.class;
-            list[HARDENED_CLAY] = BlockClayHardened.class;
-            list[COAL_BLOCK] = BlockCoal.class;
-            list[PACKED_ICE] = BlockPackedIce.class;
-            list[DOUBLE_PLANT] = BlockDoublePlant.class;
-
-            list[FENCE_GATE_SPRUCE] = BlockFenceGateSpruce.class;
-            list[FENCE_GATE_BIRCH] = BlockFenceGateBirch.class;
-            list[FENCE_GATE_JUNGLE] = BlockFenceGateJungle.class;
-            list[FENCE_GATE_DARK_OAK] = BlockFenceGateDarkOak.class;
-            list[FENCE_GATE_ACACIA] = BlockFenceGateAcacia.class;
-
-            list[GRASS_PATH] = BlockGrassPath.class;
-
-            list[PODZOL] = BlockPodzol.class;
-            list[BEETROOT_BLOCK] = BlockBeetroot.class;
-            list[STONECUTTER] = BlockStonecutter.class;
-            list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class;
-            list[BREWING_STAND_BLOCK] = BlockBrewingStand.class;
-            list[ACACIA_DOOR_BLOCK] = BlockDoorAcacia.class;
-            list[SPRUCE_DOOR_BLOCK] = BlockDoorSpruce.class;
-            list[DARK_OAK_DOOR_BLOCK] = BlockDoorDarkOak.class;
-            list[BIRCH_DOOR_BLOCK] = BlockDoorBirch.class;
-            list[JUNGLE_DOOR_BLOCK] = BlockDoorJungle.class;
-            list[DAYLIGHT_DETECTOR] = BlockDaylightDetector.class;
-            list[DAYLIGHT_DETECTOR_INVERTED] = BlockDaylightDetectorInverted.class;
-            list[RAIL] = BlockRail.class;
-            list[ACTIVATOR_RAIL] = BlockRailActivator.class;
-            list[DETECTOR_RAIL] = BlockRailDetector.class;
-            list[POWERED_RAIL] = BlockRailPowered.class;
-            list[FLOWER_POT_BLOCK] = BlockFlowerPot.class;
-            list[LEVER] = BlockLever.class;
-            list[HEAVY_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateHeavy.class;
-            list[LIGHT_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateLight.class;
-            list[REDSTONE_LAMP] = BlockRedstoneLamp.class;
-            list[STONE_PRESSURE_PLATE] = BlockPressurePlateStone.class;
-            list[WOODEN_PRESSURE_PLATE] = BlockPressurePlateWood.class;
-            list[SKULL_BLOCK] = BlockSkull.class;
-            list[CAULDRON_BLOCK] = BlockCauldron.class;
-            list[COCOA] = BlockCocoa.class;
-            list[RED_SANDSTONE] = BlockRedSandstone.class;
-            list[RED_SANDSTONE_SLAB] = BlockSlabRedSandstone.class;
-            list[RED_SANDSTONE_STAIRS] = BlockStairsRedSandstone.class;
-            list[DOUBLE_RED_SANDSTONE_SLAB] = BlockDoubleSlabRedSandstone.class;
-            list[WOODEN_BUTTON] = BlockButtonStone.class;
-            list[STONE_BUTTON] = BlockButtonWooden.class;
+            //TODO: list[OBSERVER] = BlockObserver.class; //251
 
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];
@@ -961,13 +997,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     public String getLocationHash() {
-        String str = "";
-        str = String.valueOf((int) this.x);
-        str += ":";
-        str += String.valueOf((int) this.y);
-        str += ":";
-        str += String.valueOf((int) this.z);
-        return str;
+        return this.getFloorX() + ":" + this.getFloorY() + ":" + this.getFloorZ();
     }
 
     public int getDropExp() {

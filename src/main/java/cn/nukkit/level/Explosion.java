@@ -11,17 +11,17 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.level.particle.HugeExplodeSeedParticle;
+import cn.nukkit.level.sound.ExplodeSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.ExplodePacket;
-import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -89,7 +89,7 @@ public class Explosion {
                             vBlock.x = pointerX >= x ? x : x - 1;
                             vBlock.y = pointerY >= y ? y : y - 1;
                             vBlock.z = pointerZ >= z ? z : z - 1;
-                            if (vBlock.y < 0 || vBlock.y > 127) {
+                            if (vBlock.y < 0 || vBlock.y > 255) {
                                 break;
                             }
                             Block block = this.level.getBlock(vBlock);
@@ -170,10 +170,8 @@ public class Explosion {
 
         ItemBlock air = new ItemBlock(new BlockAir());
 
-        Iterator iter = this.affectedBlocks.iterator();
         //Iterator iter = this.affectedBlocks.entrySet().iterator();
-        while (iter.hasNext()) {
-            Block block = (Block) iter.next();
+        for (Block block : this.affectedBlocks) {
             //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
                 double mot = Math.random() * Math.PI * 2;
@@ -226,8 +224,9 @@ public class Explosion {
         pk.records = send.stream().toArray(Vector3[]::new);
 
         this.level.addChunkPacket((int) source.x >> 4, (int) source.z >> 4, pk);
-        this.level.addParticle(new HugeExplodeSeedParticle(new Vector3(this.source.x,  this.source.y, this.source.z)));
-
+        this.level.addParticle(new HugeExplodeSeedParticle(this.source));
+        this.level.addSound(new ExplodeSound(new Vector3(this.source.x, this.source.y, this.source.z)));
+        
         return true;
     }
 

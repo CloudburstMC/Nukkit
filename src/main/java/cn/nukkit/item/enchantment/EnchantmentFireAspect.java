@@ -1,5 +1,7 @@
 package cn.nukkit.item.enchantment;
 
+import cn.nukkit.entity.Entity;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -22,5 +24,10 @@ public class EnchantmentFireAspect extends Enchantment {
     @Override
     public int getMaxLevel() {
         return 2;
+    }
+
+    @Override
+    public void doPostAttack(Entity attacker, Entity entity) {
+        entity.setOnFire(Math.max(entity.fireTicks * 20, getLevel() * 4));
     }
 }

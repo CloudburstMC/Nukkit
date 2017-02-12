@@ -96,6 +96,9 @@ public class BlockSugarcane extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        if (block.getId() != AIR) {
+            return false;
+        }
         Block down = this.getSide(0);
         if (down.getId() == SUGARCANE_BLOCK) {
             this.getLevel().setBlock(block, new BlockSugarcane(), true);

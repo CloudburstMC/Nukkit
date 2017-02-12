@@ -220,11 +220,7 @@ public class RCONServer extends Thread {
         }
 
         synchronized (this.sendQueues) {
-            List<RCONPacket> queue = sendQueues.get(channel);
-            if (queue == null) {
-                queue = new ArrayList<>();
-                sendQueues.put(channel, queue);
-            }
+            List<RCONPacket> queue = sendQueues.computeIfAbsent(channel, k -> new ArrayList<>());
             queue.add(packet);
         }
 

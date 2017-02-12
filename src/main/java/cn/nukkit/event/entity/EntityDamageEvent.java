@@ -25,7 +25,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     public static final int MODIFIER_STRENGTH = 2;
     public static final int MODIFIER_WEAKNESS = 3;
     public static final int MODIFIER_RESISTANCE = 4;
-    public static final int MODIFIER_ARMOR_ENCHANTMENTS = 5;
+    //public static final int MODIFIER_ARMOR_ENCHANTMENTS = 5;
 
     public static final int CAUSE_CONTACT = 0;
     public static final int CAUSE_ENTITY_ATTACK = 1;

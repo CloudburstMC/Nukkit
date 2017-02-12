@@ -13,8 +13,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ShortTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.BlockIterator;
+import co.aikar.timings.Timings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +77,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putShort("Health", this.getHealth());
+        this.namedTag.putShort("Health", (int) this.getHealth());
     }
 
     public boolean hasLineOfSight(Entity entity) {

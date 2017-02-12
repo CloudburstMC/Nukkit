@@ -34,9 +34,4 @@ public class EndTag extends Tag {
         return new EndTag();
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
 }

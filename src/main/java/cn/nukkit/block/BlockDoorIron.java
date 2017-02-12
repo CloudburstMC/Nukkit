@@ -52,7 +52,7 @@ public class BlockDoorIron extends BlockDoor {
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{
-                    {Item.WOODEN_DOOR, 0, 1}
+                    {Item.IRON_DOOR, 0, 1}
             };
         } else {
             return new int[0][0];

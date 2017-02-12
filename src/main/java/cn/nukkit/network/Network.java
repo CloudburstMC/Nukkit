@@ -128,7 +128,6 @@ public class Network {
         try {
             data = Zlib.inflate(packet.payload, 64 * 1024 * 1024);
         } catch (Exception e) {
-            Server.getInstance().getLogger().logException(e);
             return;
         }
 
@@ -261,11 +260,12 @@ public class Network {
         this.registerPacket(ProtocolInfo.MOVE_PLAYER_PACKET, MovePlayerPacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_ACTION_PACKET, PlayerActionPacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_INPUT_PACKET, PlayerInputPacket.class);
+        this.registerPacket(ProtocolInfo.PLAYER_FALL_PACKET, PlayerFallPacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_LIST_PACKET, PlayerListPacket.class);
         this.registerPacket(ProtocolInfo.PLAY_STATUS_PACKET, PlayStatusPacket.class);
         this.registerPacket(ProtocolInfo.REMOVE_BLOCK_PACKET, RemoveBlockPacket.class);
         this.registerPacket(ProtocolInfo.REMOVE_ENTITY_PACKET, RemoveEntityPacket.class);
-        this.registerPacket(ProtocolInfo.REPLACE_SELECTED_ITEM_PACKET, ReplaceSelectedItemPacket.class);
+        this.registerPacket(ProtocolInfo.REPLACE_ITEM_IN_SLOT_PACKET, ReplaceItemInSlotPacket.class);
         this.registerPacket(ProtocolInfo.GAME_RULES_CHANGED_PACKET, GameRulesChangedPacket.class);
         this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET, ResourcePackClientResponsePacket.class);

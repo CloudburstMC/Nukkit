@@ -11,6 +11,7 @@ import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityEnderPearl;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
@@ -49,10 +50,7 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.BatchPacket;
-import cn.nukkit.network.protocol.CraftingDataPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.PlayerListPacket;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.permission.BanEntry;
@@ -69,8 +67,8 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.*;
+import co.aikar.timings.Timings;
 
 import java.io.*;
 import java.nio.ByteOrder;
@@ -188,7 +186,10 @@ public class Server {
 
     private Level defaultLevel = null;
 
+    private Thread currentThread;
+    
     public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
+        currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
         instance = this;
         this.logger = logger;
 
@@ -354,7 +355,7 @@ public class Server {
         this.network = new Network(this);
         this.network.setName(this.getMotd());
 
-        this.logger.info(this.getLanguage().translateString("nukkit.server.info", new String[]{this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()}));
+        this.logger.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()));
         this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
 
@@ -609,7 +610,7 @@ public class Server {
     }
 
     public void enablePlugins(PluginLoadOrder type) {
-        for (Plugin plugin : this.pluginManager.getPlugins().values()) {
+        for (Plugin plugin : new ArrayList<>(this.pluginManager.getPlugins().values())) {
             if (!plugin.isEnabled() && type == plugin.getDescription().getOrder()) {
                 this.enablePlugin(plugin);
             }
@@ -630,6 +631,12 @@ public class Server {
     }
 
     public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
+        // First we need to check if this command is on the main thread or not, if not, warn the user
+        if (!this.isPrimaryThread()) {
+            getLogger().warning("Command Dispatched Async: " + commandLine);
+            getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
+            // TODO: We should sync the command to the main thread too!
+        }
         if (sender == null) {
             throw new ServerException("CommandSender is not valid");
         }
@@ -848,7 +855,10 @@ public class Server {
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, Collection<Player> players) {
-        this.updatePlayerListData(uuid, entityId, name, skin, players.stream().toArray(Player[]::new));
+        this.updatePlayerListData(uuid, entityId, name, skin,
+                players.stream()
+                .filter(p -> !p.getUniqueId().equals(uuid))
+                .toArray(Player[]::new));
     }
 
     public void removePlayerListData(UUID uuid) {
@@ -867,18 +877,19 @@ public class Server {
     }
 
     public void sendFullPlayerListData(Player player) {
+        final UUID uuid = player.getUniqueId();
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        List<PlayerListPacket.Entry> entries = new ArrayList<>();
-        for (Player p : this.playerList.values()) {
-            if (p != player) entries.add(
-                    new PlayerListPacket.Entry(
-                            p.getUniqueId(),
-                            p.getId(),
-                            p.getDisplayName(),
-                            p.getSkin()));
-        }
-        pk.entries = entries.stream().toArray(PlayerListPacket.Entry[]::new);
+        pk.entries = this.playerList.values()
+                .stream()
+                .filter(p -> !p.getUniqueId().equals(uuid))
+                .map(p -> new PlayerListPacket.Entry(
+                        p.getUniqueId(),
+                        p.getId(),
+                        p.getDisplayName(),
+                        p.getSkin()))
+                .toArray(PlayerListPacket.Entry[]::new);
+
         player.dataPacket(pk);
     }
 
@@ -903,7 +914,7 @@ public class Server {
 
     private void checkTickUpdates(int currentTick, long tickTime) {
         for (Player p : new ArrayList<>(this.players.values())) {
-            if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMOUT)) {
+            if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
                 continue;
             }
             if (this.alwaysTickPlayers) {
@@ -1068,8 +1079,9 @@ public class Server {
         return true;
     }
 
+    // TODO: Fix title tick
     public void titleTick() {
-        if (!Nukkit.ANSI) {
+        if (true || !Nukkit.ANSI) {
             return;
         }
 
@@ -1114,7 +1126,7 @@ public class Server {
     }
 
     public String getVersion() {
-        return Nukkit.MINECRAFT_VERSION;
+        return ProtocolInfo.MINECRAFT_VERSION;
     }
 
     public String getApiVersion() {
@@ -1545,7 +1557,13 @@ public class Server {
             return false;
         }
 
-        String path = this.getDataPath() + "worlds/" + name + "/";
+        String path;
+
+        if (name.contains("/") || name.contains("\\")) {
+            path = name;
+        } else {
+            path = this.getDataPath() + "worlds/" + name + "/";
+        }
 
         Class<? extends LevelProvider> provider = LevelProviderManager.getProvider(path);
 
@@ -1605,17 +1623,22 @@ public class Server {
         }
 
         if (provider == null) {
-            String providerName;
             if ((provider = LevelProviderManager.getProviderByName
-                    (providerName = (String) this.getConfig("level-settings.default-format", "mcregion"))) == null) {
-                provider = LevelProviderManager.getProviderByName(providerName = "mcregion");
+                    ((String) this.getConfig("level-settings.default-format", "anvil"))) == null) {
+                provider = LevelProviderManager.getProviderByName("anvil");
             }
+        }
+
+        String path;
+
+        if (name.contains("/") || name.contains("\\")) {
+            path = name;
+        } else {
+            path = this.getDataPath() + "worlds/" + name + "/";
         }
 
         Level level;
         try {
-            String path = this.getDataPath() + "worlds/" + name + "/";
-
             provider.getMethod("generate", String.class, String.class, long.class, Class.class, Map.class).invoke(null, path, name, seed, generator, options);
 
             level = new Level(this, name, path, provider);
@@ -1868,12 +1891,23 @@ public class Server {
         return this.getPropertyBoolean("player.save-player-data", true);
     }
 
+    /**
+     * Checks the current thread against the expected primary thread for the server.
+     * 
+     * <b>Note:</b> this method should not be used to indicate the current synchronized state of the runtime. A current thread matching the main thread indicates that it is synchronized, but a mismatch does not preclude the same assumption.
+     * @return true if the current thread matches the expected primary thread, false otherwise
+     */
+    public boolean isPrimaryThread() {
+        return (Thread.currentThread() == currentThread);
+    }
+    
     private void registerEntities() {
         Entity.registerEntity("Arrow", EntityArrow.class);
         Entity.registerEntity("Item", EntityItem.class);
         Entity.registerEntity("FallingSand", EntityFallingBlock.class);
         Entity.registerEntity("PrimedTnt", EntityPrimedTNT.class);
         Entity.registerEntity("Snowball", EntitySnowball.class);
+        Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("Painting", EntityPainting.class);
         //todo mobs
         Entity.registerEntity("Creeper", EntityCreeper.class);
@@ -1910,6 +1944,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.BREWING_STAND, BlockEntityBrewingStand.class);
         BlockEntity.registerBlockEntity(BlockEntity.ITEM_FRAME, BlockEntityItemFrame.class);
         BlockEntity.registerBlockEntity(BlockEntity.CAULDRON, BlockEntityCauldron.class);
+        BlockEntity.registerBlockEntity(BlockEntity.ENDER_CHEST, BlockEntityEnderChest.class);
         BlockEntity.registerBlockEntity(BlockEntity.BEACON, BlockEntityBeacon.class);
     }
 

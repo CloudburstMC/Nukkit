@@ -472,13 +472,7 @@ public class SessionManager {
 
     private void registerPackets() {
         // fill with dummy returning null
-        Arrays.fill(this.packetPool, new Packet.PacketFactory() {
-
-            @Override
-            public Packet create() {
-                return null;
-            }
-        });
+        Arrays.fill(this.packetPool, (Packet.PacketFactory) () -> null);
 
         //this.registerPacket(UNCONNECTED_PING.ID, UNCONNECTED_PING.class);
         this.registerPacket(UNCONNECTED_PING_OPEN_CONNECTIONS.ID, new UNCONNECTED_PING_OPEN_CONNECTIONS.Factory());

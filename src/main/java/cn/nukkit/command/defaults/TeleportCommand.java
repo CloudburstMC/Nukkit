@@ -102,7 +102,7 @@ public class TeleportCommand extends VanillaCommand {
                 return true;
             }
             if (y < 0) y = 0;
-            if (y > 128) y = 128;
+            if (y > 256) y = 256;
             if (args.length == 6 || (args.length == 5 && pos == 3)) {
                 yaw = Integer.parseInt(args[pos++]);
                 pitch = Integer.parseInt(args[pos++]);

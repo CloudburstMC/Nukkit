@@ -3,6 +3,7 @@ package cn.nukkit.utils;
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -77,6 +78,34 @@ public class Utils {
         return stringBuilder.toString();
     }
 
+    public static void copyFile(File from, File to) throws IOException {
+        if (!from.exists()) {
+            throw new FileNotFoundException();
+        }
+        if (from.isDirectory() || to.isDirectory()) {
+            throw new FileNotFoundException();
+        }
+        FileInputStream fi = null;
+        FileChannel in = null;
+        FileOutputStream fo = null;
+        FileChannel out = null;
+        try {
+            if (!to.exists()) {
+                to.createNewFile();
+            }
+            fi = new FileInputStream(from);
+            in = fi.getChannel();
+            fo = new FileOutputStream(to);
+            out = fo.getChannel();
+            in.transferTo(0, in.size(), out);
+        } finally {
+            if (fi != null) fi.close();
+            if (in != null) in.close();
+            if (fo != null) fo.close();
+            if (out != null) out.close();
+        }
+    }
+
     public static String getAllThreadDumps() {
         ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads(true, true);
         StringBuilder builder = new StringBuilder();
@@ -114,4 +143,11 @@ public class Utils {
         return UUID.nameUUIDFromBytes(stream.toByteArray());
     }
 
+	public static String rtrim(String s, char character) {
+	    int i = s.length()-1;
+	    while (i >= 0 && (s.charAt(i)) == character) {
+	        i--;
+	    }
+	    return s.substring(0,i+1);
+	}
 }

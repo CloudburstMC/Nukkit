@@ -62,4 +62,9 @@ public class EntityOcelot extends EntityAnimal {
         super.initEntity();
         setMaxHealth(8);
     }
+
+    @Override
+    public boolean isBreedingItem(Item item) {
+        return item.getId() == Item.RAW_FISH;
+    }
 }

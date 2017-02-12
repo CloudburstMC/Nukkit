@@ -35,6 +35,11 @@ public class BlockMelon extends BlockSolid {
     }
 
     @Override
+    public double getResistance() {
+        return 5;
+    }
+
+    @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
                 {Item.MELON_SLICE, 0, new Random().nextInt(4) + 3}

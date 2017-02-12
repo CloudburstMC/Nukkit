@@ -143,7 +143,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public void setBlockId(int x, int y, int z, int id) {
-        this.blocks[(x << 11) | (z << 7) | y] = (byte) (id & 0xff);
+        this.blocks[(x << 11) | (z << 7) | y] = (byte) id;
         this.hasChanged = true;
     }
 
@@ -162,9 +162,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.data[i] & 0xff;
         if ((y & 1) == 0) {
-            this.data[i] = (byte) (((old & 0xf0) | (data & 0x0f)) & 0xff);
+            this.data[i] = (byte) ((old & 0xf0) | (data & 0x0f));
         } else {
-            this.data[i] = (byte) ((((data & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+            this.data[i] = (byte) (((data & 0x0f) << 4) | (old & 0x0f));
         }
         this.hasChanged = true;
     }
@@ -196,7 +196,7 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 11) | (z << 7) | y;
         boolean changed = false;
         if (blockId != null) {
-            byte id = (byte) (blockId & 0xff);
+            byte id = blockId.byteValue();
             if (this.blocks[i] != id) {
                 this.blocks[i] = id;
                 changed = true;
@@ -213,7 +213,7 @@ public class Chunk extends BaseFullChunk {
                 }
             } else {
                 this.data[i] = (byte) (((meta & 0x0f) << 4) | (old & 0x0f));
-                if (!meta.equals((old & 0xf0) >> 4)) {
+                if (!meta.equals(old >> 4)) {
                     changed = true;
                 }
             }
@@ -240,9 +240,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.skyLight[i] & 0xff;
         if ((y & 1) == 0) {
-            this.skyLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
+            this.skyLight[i] = (byte) ((old & 0xf0) | (level & 0x0f));
         } else {
-            this.skyLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+            this.skyLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
         this.hasChanged = true;
     }
@@ -262,9 +262,9 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.blockLight[i] & 0xff;
         if ((y & 1) == 0) {
-            this.blockLight[i] = (byte) (((old & 0xf0) | (level & 0x0f)) & 0xff);
+            this.blockLight[i] = (byte) ((old & 0xf0) | (level & 0x0f));
         } else {
-            this.blockLight[i] = (byte) ((((level & 0x0f) << 4) | (old & 0x0f)) & 0xff);
+            this.blockLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
         this.hasChanged = true;
     }
@@ -272,28 +272,28 @@ public class Chunk extends BaseFullChunk {
     @Override
     public byte[] getBlockIdColumn(int x, int z) {
         byte[] b = new byte[128];
-        System.arraycopy(this.blocks, (x << 11) + (z << 7), b, 0, 128);
+        System.arraycopy(this.blocks, (x << 11) | (z << 7), b, 0, 128);
         return b;
     }
 
     @Override
     public byte[] getBlockDataColumn(int x, int z) {
         byte[] b = new byte[64];
-        System.arraycopy(this.data, (x << 10) + (z << 6), b, 0, 64);
+        System.arraycopy(this.data, (x << 10) | (z << 6), b, 0, 64);
         return b;
     }
 
     @Override
     public byte[] getBlockSkyLightColumn(int x, int z) {
         byte[] b = new byte[64];
-        System.arraycopy(this.skyLight, (x << 10) + (z << 6), b, 0, 64);
+        System.arraycopy(this.skyLight, (x << 10) | (z << 6), b, 0, 64);
         return b;
     }
 
     @Override
     public byte[] getBlockLightColumn(int x, int z) {
         byte[] b = new byte[64];
-        System.arraycopy(this.blockLight, (x << 10) + (z << 6), b, 0, 64);
+        System.arraycopy(this.blockLight, (x << 10) | (z << 6), b, 0, 64);
         return b;
     }
 
@@ -419,7 +419,7 @@ public class Chunk extends BaseFullChunk {
         stream.put(this.getBlockSkyLightArray());
         stream.put(this.getBlockLightArray());
         for (int height : this.getHeightMapArray()) {
-            stream.putByte((byte) (height & 0xff));
+            stream.putByte((byte) height);
         }
         for (int color : this.getBiomeColorArray()) {
             stream.put(Binary.writeInt(color));

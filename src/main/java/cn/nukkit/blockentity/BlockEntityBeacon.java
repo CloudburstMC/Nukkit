@@ -52,7 +52,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     @Override
     public boolean onUpdate() {
         //Only check every 100 ticks
-        if(currentTick++ % 100 != 0) {
+        if (currentTick++ % 100 != 0) {
             return true;
         }
 
@@ -69,7 +69,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         int tileZ = getFloorZ();
 
         //The power level that we're testing for
-        for(int powerLevel = 1; powerLevel <= POWER_LEVEL_MAX; powerLevel++) {
+        for (int powerLevel = 1; powerLevel <= POWER_LEVEL_MAX; powerLevel++) {
             int queryY = tileY - powerLevel; //Layer below the beacon block
 
             for (int queryX = tileX - powerLevel; queryX <= tileX + powerLevel; queryX++) {
@@ -77,11 +77,11 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
                     int testBlockId = level.getBlockIdAt(queryX, queryY, queryZ);
                     if (
-                        testBlockId != Block.IRON_BLOCK &&
-                        testBlockId != Block.GOLD_BLOCK &&
-                        testBlockId != Block.EMERALD_BLOCK &&
-                        testBlockId != Block.DIAMOND_BLOCK
-                    ) {
+                            testBlockId != Block.IRON_BLOCK &&
+                                    testBlockId != Block.GOLD_BLOCK &&
+                                    testBlockId != Block.EMERALD_BLOCK &&
+                                    testBlockId != Block.DIAMOND_BLOCK
+                            ) {
                         return powerLevel - 1;
                     }
 
@@ -98,7 +98,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
     public void setPowerLevel(int level) {
         int currentLevel = getPowerLevel();
-        if(level != currentLevel) {
+        if (level != currentLevel) {
             namedTag.putInt("Level", level);
             chunk.setChanged();
             this.spawnToAll();

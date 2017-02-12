@@ -74,8 +74,9 @@ public class ItemBucket extends Item {
                 if (!ev.isCancelled()) {
                     player.getLevel().setBlock(target, new BlockAir(), true, true);
                     if (player.isSurvival()) {
-                        this.setCount(this.getCount() - 1);
-                        player.getInventory().setItemInHand(this);
+                        Item clone = this.clone();
+                        clone.setCount(this.getCount() - 1);
+                        player.getInventory().setItemInHand(clone);
                         player.getInventory().addItem(ev.getItem());
                     }
                     return true;
@@ -90,8 +91,9 @@ public class ItemBucket extends Item {
             if (!ev.isCancelled()) {
                 player.getLevel().setBlock(block, targetBlock, true, true);
                 if (player.isSurvival()) {
-                    this.setCount(this.getCount() - 1);
-                    player.getInventory().setItemInHand(this);
+                    Item clone = this.clone();
+                    clone.setCount(this.getCount() - 1);
+                    player.getInventory().setItemInHand(clone);
                     player.getInventory().addItem(ev.getItem());
                 }
                 return true;

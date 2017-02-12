@@ -141,11 +141,11 @@ public class RegionLoader extends BaseRegionLoader {
     public void writeChunk(FullChunk chunk) throws Exception {
         this.lastUsed = System.currentTimeMillis();
         byte[] chunkData = chunk.toBinary();
-        this.saveChunk(chunk.getX() - (this.getX() * 32), chunk.getZ() - (this.getZ() * 32), chunkData);
+        this.saveChunk(chunk.getX() & 0x1f, chunk.getZ() & 0x1f, chunkData);
     }
 
     protected static int getChunkOffset(int x, int z) {
-        return x + (z << 5);
+        return x | (z << 5);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class RegionLoader extends BaseRegionLoader {
         this.randomAccessFile.seek(0);
         for (int i = 0; i < 1024; ++i) {
             Integer[] array = this.locationTable.get(i);
-            this.randomAccessFile.writeInt(((array[0] << 8) | array[1]));
+            this.randomAccessFile.writeInt((array[0] << 8) | array[1]);
         }
         for (int i = 0; i < 1024; ++i) {
             Integer[] array = this.locationTable.get(i);

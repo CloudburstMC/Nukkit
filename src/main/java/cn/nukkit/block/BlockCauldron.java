@@ -11,7 +11,6 @@ import cn.nukkit.level.sound.SplashSound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -200,10 +199,8 @@ public class BlockCauldron extends BlockSolid {
 
         if (item.hasCustomBlockData()) {
             Map<String, Tag> customData = item.getCustomBlockData().getTags();
-            Iterator iter = customData.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry tag = (Map.Entry) iter.next();
-                nbt.put((String) tag.getKey(), (Tag) tag.getValue());
+            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
+                nbt.put(tag.getKey(), tag.getValue());
             }
         }
 

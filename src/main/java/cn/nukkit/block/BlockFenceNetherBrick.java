@@ -19,15 +19,6 @@ public class BlockFenceNetherBrick extends BlockFence {
     }
 
     @Override
-    public double getBreakTime(Item item) {
-        if (item.getId() == 0) {
-            return 10;
-        } else {
-            return super.getBreakTime(item);
-        }
-    }
-
-    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }

@@ -115,7 +115,7 @@ public class Chunk extends BaseFullChunk {
 
     @Override
     public void setBlockId(int x, int y, int z, int id) {
-        this.blocks[(x << 11) | (z << 7) | y] = (byte) (id);
+        this.blocks[(x << 11) | (z << 7) | y] = (byte) id;
         this.hasChanged = true;
     }
 
@@ -168,7 +168,7 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 11) | (z << 7) | y;
         boolean changed = false;
         if (blockId != null) {
-            byte id = (byte) (blockId & 0xff);
+            byte id = blockId.byteValue();
             if (this.blocks[i] != id) {
                 this.blocks[i] = id;
                 changed = true;
@@ -185,7 +185,7 @@ public class Chunk extends BaseFullChunk {
                 }
             } else {
                 this.data[i] = (byte) (((meta & 0x0f) << 4) | (old & 0x0f));
-                if (!meta.equals((old & 0xf0) >> 4)) {
+                if (!meta.equals(old >> 4)) {
                     changed = true;
                 }
             }

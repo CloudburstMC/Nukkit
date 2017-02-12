@@ -83,9 +83,9 @@ public class BlockCocoa extends BlockTransparent {
 
         return bbs[this.meta / 4].getOffsetBoundingBox(x, y, z);
     }
-    
+
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz){
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
@@ -158,5 +158,18 @@ public class BlockCocoa extends BlockTransparent {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
+    }
+    
+    @Override
+    public int[][] getDrops(Item item) {
+        if(this.meta >= 8) {
+            return new int[][]{
+                    {Item.DYE, 3, 3}
+            };
+        } else {
+            return new int[][]{
+                    {Item.DYE, 3, 1}
+            };
+        }
     }
 }

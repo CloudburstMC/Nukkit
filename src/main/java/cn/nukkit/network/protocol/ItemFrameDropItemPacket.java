@@ -18,9 +18,9 @@ public class ItemFrameDropItemPacket extends DataPacket {
     @Override
     public void decode() {
         BlockVector3 v = this.getBlockCoords();
-        this.z = v.x;
+        this.z = v.z;
         this.y = v.y;
-        this.x = v.z;
+        this.x = v.x;
         this.dropItem = this.getSlot();
     }
 

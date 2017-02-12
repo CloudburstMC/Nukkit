@@ -2,8 +2,8 @@ package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.timings.Timing;
-import cn.nukkit.timings.Timings;
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
 
 /**
  * @author MagicDroidX

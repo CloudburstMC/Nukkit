@@ -86,14 +86,12 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        CompoundTag nbt = new CompoundTag()
+        return new CompoundTag()
                 .putString("id", BlockEntity.CAULDRON)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
                 .putShort("PotionId", namedTag.getShort("PotionId"))
                 .putByte("SplashPotion", namedTag.getByte("SplashPotion"));
-
-        return nbt;
     }
 }

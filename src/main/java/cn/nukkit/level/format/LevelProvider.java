@@ -23,29 +23,31 @@ public interface LevelProvider {
 
     Map<String, Object> getGeneratorOptions();
 
-    BaseFullChunk getChunk(int X, int Z);
+    BaseFullChunk getChunk(int x, int z);
 
-    BaseFullChunk getChunk(int X, int Z, boolean create);
+    BaseFullChunk getChunk(int x, int z, boolean create);
 
     void saveChunks();
 
-    void saveChunk(int X, int Z);
+    void saveChunk(int x, int z);
+
+    void saveChunk(int x, int z, FullChunk chunk);
 
     void unloadChunks();
 
-    boolean loadChunk(int X, int Z);
+    boolean loadChunk(int x, int z);
 
-    boolean loadChunk(int X, int Z, boolean create);
+    boolean loadChunk(int x, int z, boolean create);
 
-    boolean unloadChunk(int X, int Z);
+    boolean unloadChunk(int x, int z);
 
-    boolean unloadChunk(int X, int Z, boolean safe);
+    boolean unloadChunk(int x, int z, boolean safe);
 
-    boolean isChunkGenerated(int X, int Z);
+    boolean isChunkGenerated(int x, int z);
 
-    boolean isChunkPopulated(int X, int Z);
+    boolean isChunkPopulated(int x, int z);
 
-    boolean isChunkLoaded(int X, int Z);
+    boolean isChunkLoaded(int x, int z);
 
     void setChunk(int chunkX, int chunkZ, FullChunk chunk);
 

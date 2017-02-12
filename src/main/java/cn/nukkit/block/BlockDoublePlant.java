@@ -6,6 +6,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
+import java.util.Random;
+
 /**
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
@@ -93,6 +95,33 @@ public class BlockDoublePlant extends BlockFlowable {
     @Override
     public int[][] getDrops(Item item) {
         if ((this.meta & 0x08) != 0x08) {
+            switch (this.meta & 0x07) {
+                case 2:
+                case 3:
+                    boolean dropSeeds = new Random().nextInt(10) == 0;
+                    if (item.isShears()) {
+                        //todo enchantment
+                        if (dropSeeds) {
+                            return new int[][]{
+                                    {Item.SEEDS, 0, 1},
+                                    {DOUBLE_PLANT, this.meta, 1}
+                            };
+                        } else {
+                            return new int[][]{
+                                    {DOUBLE_PLANT, this.meta, 1}
+                            };
+                        }
+                    }
+
+                    if (dropSeeds) {
+                        return new int[][]{
+                                {Item.SEEDS, 0, 1},
+                        };
+                    } else {
+                        return new int[0][0];
+                    }
+            }
+
             return new int[][]{{DOUBLE_PLANT, this.meta, 1}};
         }
 

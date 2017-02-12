@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class MainLogger extends ThreadedLogger {
 
     protected final String logPath;
-    protected final ConcurrentLinkedQueue<String> logBuffer = new ConcurrentLinkedQueue<String>();
+    protected final ConcurrentLinkedQueue<String> logBuffer = new ConcurrentLinkedQueue<>();
     protected boolean shutdown;
     protected boolean logDebug = false;
     private final Map<TextFormat, String> replacements = new EnumMap<>(TextFormat.class);

@@ -169,7 +169,7 @@ public class Config {
     public boolean load(InputStream inputStream) {
         if (inputStream == null) return false;
         if (this.correct) {
-            String content = "";
+            String content;
             try {
                 content = Utils.readFile(inputStream);
             } catch (IOException e) {

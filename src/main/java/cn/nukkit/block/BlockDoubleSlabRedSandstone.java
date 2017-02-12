@@ -18,7 +18,7 @@ public class BlockDoubleSlabRedSandstone extends BlockSolid {
 
     @Override
     public int getId() {
-        return DOUBLE_SLAB;
+        return DOUBLE_RED_SANDSTONE_SLAB;
     }
 
     @Override
@@ -38,7 +38,18 @@ public class BlockDoubleSlabRedSandstone extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Red Sandstone Double Slab";
+        String[] names = new String[]{
+                "Red Sandstone",
+                "Purpur",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+        };
+
+        return "Double " + names[this.meta & 0x07] + " Slab";
     }
 
     @Override

@@ -48,7 +48,12 @@ public class BlockItemFrame extends BlockTransparent {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
         if (itemFrame.getItem().getId() == Item.AIR) {
-            itemFrame.setItem(Item.get(item.getId(), item.getDamage(), 1));
+            // We can't use Item.get(item.getId(), item.getDamage(), 1) because
+            // we need to keep the item's NBT tags
+            Item itemOnFrame = item.clone(); // So we clone the item
+            itemOnFrame.setCount(1); // Change it to only one item (if we keep +1, visual glitches will happen)
+            itemFrame.setItem(itemOnFrame); // And then we set it on the item frame
+            // The item will be removed from the player's hand a few lines ahead
             this.getLevel().addSound(new ItemFrameItemAddedSound(this));
             if (player != null && player.isSurvival()) {
                 int count = item.getCount();

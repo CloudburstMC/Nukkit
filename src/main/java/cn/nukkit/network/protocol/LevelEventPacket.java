@@ -22,9 +22,6 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_DOOR_BUMP = 1010;
     public static final int EVENT_SOUND_DOOR_CRASH = 1012;
 
-    public static final int EVENT_SOUND_BAT_FLY = 1015;
-    public static final int EVENT_SOUND_ZOMBIE_INFECT = 1016;
-    public static final int EVENT_SOUND_ZOMBIE_HEAL = 1017;
     public static final int EVENT_SOUND_ENDERMAN_TELEPORT = 1018;
 
     public static final int EVENT_SOUND_ANVIL_BREAK = 1020;
@@ -34,6 +31,8 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_ITEM_DROP = 1030;
     public static final int EVENT_SOUND_ITEM_THROWN = 1031;
 
+    public static final int EVENT_SOUND_PORTAL = 1032;
+    
     public static final int EVENT_SOUND_ITEM_FRAME_ITEM_ADDED = 1040;
     public static final int EVENT_SOUND_ITEM_FRAME_PLACED = 1041;
     public static final int EVENT_SOUND_ITEM_FRAME_REMOVED = 1042;
@@ -44,11 +43,20 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_EXPERIENCE_ORB = 1051;
     public static final int EVENT_SOUND_BLOCK_PLACE = 1052;
 
+    public static final int EVENT_GUARDIAN_CURSE = 2006;
+    
+    public static final int EVENT_PARTICLE_BLOCK_FORCE_FIELD = 2008;
+    
     public static final int EVENT_SOUND_BUTTON_CLICK = 3500;
     public static final int EVENT_SOUND_EXPLODE = 3501;
-
+    public static final int EVENT_CAULDRON_DYE_ARMOR = 3502;
+    public static final int EVENT_CAULDRON_CLEAN_ARMOR = 3503;
+    public static final int EVENT_CAULDRON_FILL_POTION = 3504;
+    public static final int EVENT_CAULDRON_TAKE_POTION = 3505;
     public static final int EVENT_SOUND_SPLASH = 3506;
-
+    public static final int EVENT_CAULDRON_TAKE_WATER = 3507;
+    public static final int EVENT_CAULDRON_ADD_DYE = 3508;
+    
     public static final int EVENT_PARTICLE_SHOOT = 2000;
     public static final int EVENT_PARTICLE_DESTROY = 2001;
     public static final int EVENT_PARTICLE_SPLASH = 2002;
