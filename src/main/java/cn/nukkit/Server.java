@@ -69,6 +69,7 @@ import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timings;
+import com.google.common.base.Preconditions;
 
 import java.io.*;
 import java.nio.ByteOrder;
@@ -188,7 +189,8 @@ public class Server {
 
     private Thread currentThread;
     
-    public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
+    Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
+        Preconditions.checkState(instance == null, "Already initialized!");
         currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
         instance = this;
         this.logger = logger;
