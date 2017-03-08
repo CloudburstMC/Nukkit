@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockVector3;
 
 /**
@@ -13,7 +12,6 @@ public class ItemFrameDropItemPacket extends DataPacket {
     public int x;
     public int y;
     public int z;
-    public Item dropItem;
 
     @Override
     public void decode() {
@@ -21,7 +19,6 @@ public class ItemFrameDropItemPacket extends DataPacket {
         this.z = v.z;
         this.y = v.y;
         this.x = v.x;
-        this.dropItem = this.getSlot();
     }
 
     @Override
