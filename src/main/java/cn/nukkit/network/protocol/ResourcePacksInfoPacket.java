@@ -23,13 +23,13 @@ public class ResourcePacksInfoPacket extends DataPacket {
         for (ResourcePackInfoEntry entry : this.behaviourPackEntries) {
             this.putString(entry.getPackId());
             this.putString(entry.getVersion());
-            this.putLong(entry.getPackSize());
+            this.putLLong(entry.getPackSize());
         }
         this.putShort(this.resourcePackEntries.length);
         for (ResourcePackInfoEntry entry : this.resourcePackEntries) {
             this.putString(entry.getPackId());
             this.putString(entry.getVersion());
-            this.putLong(entry.getPackSize());
+            this.putLLong(entry.getPackSize());
         }
     }
 

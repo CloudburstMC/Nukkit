@@ -800,14 +800,15 @@ public class Server {
             while (this.isRunning) {
                 try {
                     this.tick();
+
+                    long next = this.nextTick;
+                    long current = System.currentTimeMillis();
+
+                    if (next - 0.1 > current) {
+                        Thread.sleep(next - current - 1, 900000);
+                    }
                 } catch (RuntimeException e) {
                     this.getLogger().logException(e);
-                }
-
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    Server.getInstance().getLogger().logException(e);
                 }
             }
         } catch (Throwable e) {

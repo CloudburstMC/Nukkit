@@ -143,11 +143,20 @@ public class Utils {
         return UUID.nameUUIDFromBytes(stream.toByteArray());
     }
 
-	public static String rtrim(String s, char character) {
-	    int i = s.length()-1;
-	    while (i >= 0 && (s.charAt(i)) == character) {
-	        i--;
-	    }
-	    return s.substring(0,i+1);
-	}
+    public static String rtrim(String s, char character) {
+        int i = s.length() - 1;
+        while (i >= 0 && (s.charAt(i)) == character) {
+            i--;
+        }
+        return s.substring(0, i + 1);
+    }
+
+    public static boolean isByteArrayEmpty(final byte[] array) {
+        for (byte b : array) {
+            if (b != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

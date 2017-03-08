@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -120,5 +121,4 @@ public class BlockAnvil extends BlockFallable {
     public BlockColor getColor() {
         return BlockColor.IRON_BLOCK_COLOR;
     }
-
 }

@@ -1,6 +1,7 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -246,7 +247,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public boolean isEmpty() {
-        return Arrays.equals(this.blocks, new byte[4096]);
+        return Utils.isByteArrayEmpty(this.blocks);
     }
 
     @Override

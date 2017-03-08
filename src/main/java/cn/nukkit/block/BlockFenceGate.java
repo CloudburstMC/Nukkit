@@ -81,8 +81,7 @@ public class BlockFenceGate extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        int[] faces = new int[]{3, 0, 1, 2};
-        this.meta = faces[(player != null) ? player.getDirection() : 0] & 0x03;
+        this.meta = player != null ? (player.getDirection() - 1) & 0x03 : 0;
         this.getLevel().setBlock(block, this, true, true);
 
         return true;

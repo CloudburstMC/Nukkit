@@ -15,10 +15,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector2;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -161,7 +158,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected EntityDamageEvent lastDamageCause = null;
 
-    private List<Block> blocksAround = new ArrayList<>();
+    protected List<Block> blocksAround = new ArrayList<>();
+    protected List<Block> collisionBlocks = new ArrayList<>();
 
     public double lastX;
     public double lastY;
@@ -935,7 +933,11 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean entityBaseTick(int tickDiff) {
         Timings.entityBaseTickTimer.startTiming();
-        this.blocksAround = null;
+
+        if (!this.isPlayer) {
+            this.blocksAround = null;
+            this.collisionBlocks = null;
+        }
         this.justCreated = false;
 
         if (!this.isAlive()) {
@@ -997,6 +999,14 @@ public abstract class Entity extends Location implements Metadatable {
             if (this.noDamageTicks < 0) {
                 this.noDamageTicks = 0;
             }
+        }
+
+        if (this.inPortalTicks > 80) {
+            EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, EntityPortalEnterEvent.TYPE_NETHER);
+            getServer().getPluginManager().callEvent(ev);
+
+            //TODO: teleport
+            this.inPortalTicks = 0;
         }
 
         this.age += tickDiff;
@@ -1159,18 +1169,19 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         if (fallDistance > 0.75) {
-            Block down = this.level.getBlock(this.temporalVector.setComponents(getFloorX(), getFloorY() - 1, getFloorZ()));
+            BlockVector3 v = new BlockVector3(getFloorX(), getFloorY() - 1, getFloorZ());
+            int down = this.level.getBlockIdAt(v.x, v.y, v.z);
 
-            if (down.getId() == Item.FARMLAND) {
+            if (down == Item.FARMLAND) {
                 if (this instanceof Player) {
                     Player p = (Player) this;
-                    PlayerInteractEvent ev = new PlayerInteractEvent(p, p.getInventory().getItemInHand(), this.temporalVector.setComponents(down.x, down.y, down.z), PlayerInteractEvent.PHYSICAL);
+                    PlayerInteractEvent ev = new PlayerInteractEvent(p, p.getInventory().getItemInHand(), this.temporalVector.setComponents(v.x, v.y, v.z), PlayerInteractEvent.PHYSICAL);
                     this.server.getPluginManager().callEvent(ev);
                     if (ev.isCancelled()) {
                         return;
                     }
                 }
-                this.level.setBlock(this.temporalVector.setComponents(down.x, down.y, down.z), new BlockDirt(), true, true);
+                this.level.setBlock(this.temporalVector.setComponents(v.x, v.y, v.z), new BlockDirt(), true, true);
             }
         }
     }
@@ -1253,7 +1264,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean isInsideOfFire() {
-        for (Block block : this.getBlocksAround()) {
+        for (Block block : this.getCollisionBlocks()) {
             if (block instanceof BlockFire) {
                 return true;
             }
@@ -1434,9 +1445,7 @@ public abstract class Entity extends Location implements Metadatable {
                 for (int x = minX; x <= maxX; ++x) {
                     for (int y = minY; y <= maxY; ++y) {
                         Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
-                        if (block.hasEntityCollision()) {
-                            this.blocksAround.add(block);
-                        }
+                        this.blocksAround.add(block);
                     }
                 }
             }
@@ -1445,12 +1454,36 @@ public abstract class Entity extends Location implements Metadatable {
         return this.blocksAround;
     }
 
+    public List<Block> getCollisionBlocks() {
+        if (this.collisionBlocks == null) {
+            this.collisionBlocks = new ArrayList<>();
+
+            for (Block b : getBlocksAround()) {
+                if (b.collidesWithBB(this.getBoundingBox(), true)) {
+                    this.collisionBlocks.add(b);
+                }
+            }
+        }
+
+        return this.collisionBlocks;
+    }
+
     protected void checkBlockCollision() {
         Vector3 vector = new Vector3(0, 0, 0);
+        boolean portal = false;
 
-        for (Block block : this.getBlocksAround()) {
+        for (Block block : this.getCollisionBlocks()) {
+            if (block.getId() == Block.NETHER_PORTAL) {
+                portal = true;
+                continue;
+            }
+
             block.onEntityCollide(this);
             block.addVelocityToEntity(this, vector);
+        }
+
+        if (portal) {
+            inPortalTicks++;
         }
 
         if (vector.lengthSquared() > 0) {

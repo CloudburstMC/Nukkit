@@ -307,6 +307,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static double[] hardness = null;
     public static boolean[] transparent = null;
     public AxisAlignedBB boundingBox = null;
+    public AxisAlignedBB collisionBoundingBox = null;
     protected int meta = 0;
     protected int powerLevel = 0;
     protected boolean powerSource = false;
@@ -813,7 +814,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
-        AxisAlignedBB bb1 = this.getBoundingBox();
+        return collidesWithBB(bb, false);
+    }
+
+    public boolean collidesWithBB(AxisAlignedBB bb, boolean collisionBB) {
+        AxisAlignedBB bb1 = collisionBB ? this.getCollisionBoundingBox() : this.getBoundingBox();
         return bb1 != null && bb.intersectsWith(bb1);
     }
 
@@ -828,6 +833,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return this.boundingBox;
     }
 
+    public AxisAlignedBB getCollisionBoundingBox() {
+        if (this.collisionBoundingBox == null) {
+            this.collisionBoundingBox = this.recalculateCollisionBoundingBox();
+        }
+        return this.collisionBoundingBox;
+    }
+
     protected AxisAlignedBB recalculateBoundingBox() {
         return new AxisAlignedBB(
                 this.x,
@@ -837,6 +849,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                 this.y + 1,
                 this.z + 1
         );
+    }
+
+    protected AxisAlignedBB recalculateCollisionBoundingBox() {
+        return getBoundingBox();
     }
 
     public MovingObjectPosition calculateIntercept(Vector3 pos1, Vector3 pos2) {

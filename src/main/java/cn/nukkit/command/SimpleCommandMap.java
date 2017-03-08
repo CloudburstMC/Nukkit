@@ -13,6 +13,7 @@ import cn.nukkit.utils.Utils;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * author: MagicDroidX
@@ -166,6 +167,24 @@ public class SimpleCommandMap implements CommandMap {
 
         if (!isAlias) {
             command.setLabel(label);
+        }
+
+        // Then we need to check if there isn't any command conflicts with vanilla commands
+        ArrayList<String> toRemove = new ArrayList<String>();
+
+        for (Entry<String, Command> entry : knownCommands.entrySet()) {
+            Command cmd = entry.getValue();
+            if (cmd.getLabel().equalsIgnoreCase(command.getLabel()) && !cmd.equals(command)) { // If the new command conflicts... (But if it isn't the same command)
+                if (cmd instanceof VanillaCommand) { // And if the old command is a vanilla command...
+                    // Remove it!
+                    toRemove.add(entry.getKey());
+                }
+            }
+        }
+
+        // Now we loop the toRemove list to remove the command conflicts from the knownCommands map
+        for (String cmd : toRemove) {
+            knownCommands.remove(cmd);
         }
 
         this.knownCommands.put(label, command);

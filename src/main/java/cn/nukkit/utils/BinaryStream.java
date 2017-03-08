@@ -191,25 +191,6 @@ public class BinaryStream {
         this.put(new byte[]{b});
     }
 
-    public byte[][] getDataArray() {
-        return this.getDataArray(10);
-    }
-
-    public byte[][] getDataArray(int len) {
-        byte[][] data = new byte[len][];
-        for (int i = 0; i < len && !this.feof(); ++i) {
-            data[i] = this.get(this.getTriad());
-        }
-        return data;
-    }
-
-    public void putDataArray(byte[][] data) {
-        for (byte[] v : data) {
-            this.putTriad(v.length);
-            this.put(v);
-        }
-    }
-
     public void putUUID(UUID uuid) {
         this.put(Binary.writeUUID(uuid));
     }

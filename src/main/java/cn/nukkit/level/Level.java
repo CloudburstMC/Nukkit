@@ -52,12 +52,15 @@ import cn.nukkit.timings.LevelTimings;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
+import com.google.common.cache.CacheBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * author: MagicDroidX Nukkit Project
@@ -102,10 +105,16 @@ public class Level implements ChunkManager, Metadatable {
     public final Map<Long, BlockEntity> updateBlockEntities = new HashMap<>();
 
     // Use a weak map to avoid OOM
-    private final Map<BlockVector3, Block> blockCache = new WeakHashMap<>();
+    private final ConcurrentMap<Object, Object> blockCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build().asMap();
 
     // Use a weak map to avoid OOM
-    private final Map<Long, DataPacket> chunkCache = new WeakHashMap<>();
+    private final ConcurrentMap<Object, Object> chunkCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build().asMap();
 
     private boolean cacheChunks = false;
 
@@ -1380,7 +1389,7 @@ public class Level implements ChunkManager, Metadatable {
         Block block;
         BaseFullChunk chunk;
 
-        if (cached && (block = this.blockCache.get(index)) != null) {
+        if (cached && (block = (Block) this.blockCache.get(index)) != null) {
             return block;
         } else if (pos.y >= 0 && pos.y < 256 && (chunk = this.chunks.get(chunkIndex)) != null) {
             fullState = chunk.getFullBlock((int) pos.x & 0x0f, (int) pos.y & 0xff,
@@ -1630,6 +1639,7 @@ public class Level implements ChunkManager, Metadatable {
 
                             .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", delay));
 
+            itemEntity.setPickupDelay(delay); //TODO: fix this
             itemEntity.spawnToAll();
         }
     }
@@ -2315,7 +2325,7 @@ public class Level implements ChunkManager, Metadatable {
         if (this.chunkSendTasks.containsKey(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
                 if (player.isConnected() && player.usedChunks.containsKey(index)) {
-                    player.sendChunk(x, z, this.chunkCache.get(index));
+                    player.sendChunk(x, z, (DataPacket) this.chunkCache.get(index));
                 }
             }
 
