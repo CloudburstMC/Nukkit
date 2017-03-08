@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockLiquid;
+import cn.nukkit.block.BlockWater;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.level.Level;
@@ -13,6 +14,8 @@ import cn.nukkit.level.Level;
  * Nukkit Project
  */
 public class ItemBucket extends Item {
+
+    private static final int[] SIDES_NSEW = new int[]{ Block.SIDE_NORTH, Block.SIDE_SOUTH, Block.SIDE_EAST, Block.SIDE_WEST };
 
     public ItemBucket() {
         this(0, 1);
@@ -73,6 +76,16 @@ public class ItemBucket extends Item {
                 player.getServer().getPluginManager().callEvent(ev = new PlayerBucketFillEvent(player, block, face, this, result));
                 if (!ev.isCancelled()) {
                     player.getLevel().setBlock(target, new BlockAir(), true, true);
+
+                    // When water is removed ensure any adjacent still water is
+                    // replaced with water that can flow.
+                    for (int side : this.SIDES_NSEW) {
+                        Block b = target.getSide(side);
+                        if (b.getId() == STILL_WATER) {
+                            level.setBlock(b, new BlockWater());
+                        }
+                    }
+
                     if (player.isSurvival()) {
                         Item clone = this.clone();
                         clone.setCount(this.getCount() - 1);
