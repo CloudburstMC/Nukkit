@@ -1027,7 +1027,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.level.sleepTicks = 0;
 
             AnimatePacket pk = new AnimatePacket();
-            pk.eid = 0;
+            pk.eid = this.id;
             pk.action = 3; //Wake up
             this.dataPacket(pk);
         }
@@ -1266,7 +1266,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 Server.broadcastPacket(entity.getViewers().values(), pk);
 
                 pk = new TakeItemEntityPacket();
-                pk.entityId = 0;
+                pk.entityId = this.id;
                 pk.target = entity.getId();
                 this.dataPacket(pk);
 
@@ -1311,7 +1311,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Server.broadcastPacket(entity.getViewers().values(), pk);
 
                         pk = new TakeItemEntityPacket();
-                        pk.entityId = 0;
+                        pk.entityId = this.id;
                         pk.target = entity.getId();
                         this.dataPacket(pk);
 
@@ -1515,7 +1515,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (this.chunk != null) {
                 this.getLevel().addEntityMotion(this.chunk.getX(), this.chunk.getZ(), this.getId(), this.motionX, this.motionY, this.motionZ);  //Send to others
                 SetEntityMotionPacket pk = new SetEntityMotionPacket();
-                pk.eid = 0;
+                pk.eid = this.id;
                 pk.motionX = (float) motion.x;
                 pk.motionY = (float) motion.y;
                 pk.motionZ = (float) motion.z;
@@ -1540,7 +1540,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendAttributes() {
         UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        pk.entityId = 0;
+        pk.entityId = this.getId();
         pk.entries = new Attribute[]{
                 Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0),
                 Attribute.getAttribute(Attribute.MAX_HUNGER).setValue(this.getFoodData().getLevel()),
@@ -1843,10 +1843,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         Position spawnPosition = this.getSpawn();
-
         StartGamePacket startGamePacket = new StartGamePacket();
-        startGamePacket.entityUniqueId = 0;
-        startGamePacket.entityRuntimeId = 0;
+        startGamePacket.entityUniqueId = this.id;
+        startGamePacket.entityRuntimeId = this.id;
         startGamePacket.x = (float) this.x;
         startGamePacket.y = (float) this.y;
         startGamePacket.z = (float) this.z;
@@ -4007,7 +4006,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.spawned) {
             UpdateAttributesPacket pk = new UpdateAttributesPacket();
             pk.entries = new Attribute[]{attr};
-            pk.entityId = 0;
+            pk.entityId = this.id;
             this.dataPacket(pk);
         }
     }
@@ -4082,7 +4081,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setAttribute(Attribute attribute) {
         UpdateAttributesPacket pk = new UpdateAttributesPacket();
         pk.entries = new Attribute[]{attribute};
-        pk.entityId = 0;
+        pk.entityId = this.id;
         this.dataPacket(pk);
     }
 
@@ -4146,7 +4145,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (!source.isCancelled() && this.getLastDamageCause() == source && this.spawned) {
             this.getFoodData().updateFoodExpLevel(0.3);
             EntityEventPacket pk = new EntityEventPacket();
-            pk.eid = 0;
+            pk.eid = this.id;
             pk.event = EntityEventPacket.HURT_ANIMATION;
             this.dataPacket(pk);
         }
@@ -4182,7 +4181,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (targets != null) {
             Server.broadcastPacket(targets, pk);
         } else {
-            pk.eid = 0;
+            pk.eid = this.id;
             this.dataPacket(pk);
         }
     }

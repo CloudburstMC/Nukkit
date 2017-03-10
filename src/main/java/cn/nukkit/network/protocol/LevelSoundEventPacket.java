@@ -97,8 +97,13 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_TELEPORT = 87;
     public static final int SOUND_SHULKER_OPEN = 88;
     public static final int SOUND_SHULKER_CLOSE = 89;
-    public static final int SOUND_DEFAULT = 90;
-    public static final int SOUND_UNDEFINED = 91;
+    public static final int SOUND_HAGGLE = 90;
+    public static final int SOUND_HAGGLE_YES = 91;
+    public static final int SOUND_HAGGLE_NO = 92;
+    public static final int SOUND_HAGGLE_IDLE = 93;
+    public static final int SOUND_DEFAULT = 94;
+    public static final int SOUND_UNDEFINED = 95;
+    
 
     public byte type;
     public float x;

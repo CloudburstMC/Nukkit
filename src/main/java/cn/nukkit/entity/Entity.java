@@ -92,7 +92,12 @@ public abstract class Entity extends Location implements Metadatable {
      * 57 (byte)
 	 * 58 (float)
 	 * 59 (float) */
-
+    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = 61; //float
+    public static final int DATA_AREA_EFFECT_CLOUD_WAITING = 62; //int
+    public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE = 63; //int
+    public static final int DATA_TRADE_PLAYER = 68;//long
+    
+    
     public static final int DATA_FLAG_ONFIRE = 0;
     public static final int DATA_FLAG_SNEAKING = 1;
     public static final int DATA_FLAG_RIDING = 2;
@@ -707,7 +712,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void sendPotionEffects(Player player) {
         for (Effect effect : this.effects.values()) {
             MobEffectPacket pk = new MobEffectPacket();
-            pk.eid = 0;
+            pk.eid = player.getId();
             pk.effectId = effect.getId();
             pk.amplifier = effect.getAmplifier();
             pk.particles = effect.isVisible();
@@ -746,7 +751,6 @@ public abstract class Entity extends Location implements Metadatable {
             player.dataPacket(pk.clone());
         }
         if (this instanceof Player) {
-            pk.eid = 0;
             ((Player) this).dataPacket(pk);
         }
     }

@@ -9,9 +9,9 @@ public interface ProtocolInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    byte CURRENT_PROTOCOL = 101;
-    String MINECRAFT_VERSION = "v1.0.3";
-    String MINECRAFT_VERSION_NETWORK = "1.0.3";
+    byte CURRENT_PROTOCOL = 102;
+    String MINECRAFT_VERSION = "v1.0.4";
+    String MINECRAFT_VERSION_NETWORK = "1.0.4";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
@@ -90,8 +90,10 @@ public interface ProtocolInfo {
     byte BOSS_EVENT_PACKET = 0x4b;
     byte AVAILABLE_COMMANDS_PACKET = 0x4d;
     byte COMMAND_STEP_PACKET = 0x4e;
-    byte RESOURCE_PACK_DATA_INFO_PACKET = 0x4f;
-    byte RESOURCE_PACK_CHUNK_DATA_PACKET = 0x50;
-    byte RESOURCE_PACK_CHUNK_REQUEST_PACKET = 0x51;
-    byte TRANSFER_PACKET = 0x52;
+    byte UPDATE_TRADE_PACKET = 0x4f;
+    byte RESOURCE_PACK_DATA_INFO_PACKET = 0x50;
+    byte RESOURCE_PACK_CHUNK_DATA_PACKET = 0x51;
+    byte RESOURCE_PACK_CHUNK_REQUEST_PACKET = 0x52;
+    byte TRANSFER_PACKET = 0x53;
+    
 }
