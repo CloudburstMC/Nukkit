@@ -8,11 +8,11 @@ public class UpdateTradePacket extends DataPacket {
     public byte unknownByte2;
     public int unknownVarInt1;
     public int unknownVarInt2;
-    public boolean unknownBoolean;
+    public boolean isWilling;
     public long trader;
     public long player;
-    public String unknownString;
-    public byte[] unknownBytes;
+    public String displayName;
+    public byte[] offers;
 
     @Override
     public byte pid() {
@@ -30,11 +30,11 @@ public class UpdateTradePacket extends DataPacket {
         this.putByte(unknownByte2);
         this.putVarInt(unknownVarInt1);
         this.putVarInt(unknownVarInt2);
-        this.putBoolean(unknownBoolean);
+        this.putBoolean(isWilling);
         this.putVarLong(player);
         this.putVarLong(trader);
-        this.putString(unknownString);
-        this.put(this.unknownBytes);
+        this.putString(displayName);
+        this.put(this.offers);
     }
 
 }
