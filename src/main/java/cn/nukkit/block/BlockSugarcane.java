@@ -34,15 +34,20 @@ public class BlockSugarcane extends BlockFlowable {
     @Override
     public int[][] getDrops(Item item) {
         return new int[][]{
-                {Item.SUGARCANE, 0, 1}
+            {Item.SUGARCANE, 0, 1}
         };
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //Bonemeal
             if (this.getSide(0).getId() != SUGARCANE_BLOCK) {
-                for (y = 1; y < 3; ++y) {
+                for (int y = 1; y < 3; ++y) {
                     Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
                     if (b.getId() == AIR) {
                         BlockGrowEvent ev = new BlockGrowEvent(b, new BlockSugarcane());
@@ -50,6 +55,7 @@ public class BlockSugarcane extends BlockFlowable {
                         if (!ev.isCancelled()) {
                             this.getLevel().setBlock(b, ev.getNewState(), true);
                         }
+                    } else if (b.getId() != SUGARCANE_BLOCK) {
                         break;
                     }
                 }
