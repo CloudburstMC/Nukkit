@@ -1,14 +1,14 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.resourcepacks.ResourcePackInfoEntry;
+import cn.nukkit.resourcepacks.ResourcePack;
 
 public class ResourcePacksInfoPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACKS_INFO_PACKET;
 
     public boolean mustAccept = false;
-    public ResourcePackInfoEntry[] behaviourPackEntries = new ResourcePackInfoEntry[0];
-    public ResourcePackInfoEntry[] resourcePackEntries = new ResourcePackInfoEntry[0];
+    public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
+    public ResourcePack[] resourcePackEntries = new ResourcePack[0];
 
     @Override
     public void decode() {
@@ -19,16 +19,18 @@ public class ResourcePacksInfoPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putBoolean(this.mustAccept);
-        this.putShort(this.behaviourPackEntries.length);
-        for (ResourcePackInfoEntry entry : this.behaviourPackEntries) {
+
+        this.putLShort(this.behaviourPackEntries.length);
+        for (ResourcePack entry : this.behaviourPackEntries) {
             this.putString(entry.getPackId());
-            this.putString(entry.getVersion());
+            this.putString(entry.getPackVersion());
             this.putLLong(entry.getPackSize());
         }
-        this.putShort(this.resourcePackEntries.length);
-        for (ResourcePackInfoEntry entry : this.resourcePackEntries) {
+
+        this.putLShort(this.resourcePackEntries.length);
+        for (ResourcePack entry : this.resourcePackEntries) {
             this.putString(entry.getPackId());
-            this.putString(entry.getVersion());
+            this.putString(entry.getPackVersion());
             this.putLLong(entry.getPackSize());
         }
     }

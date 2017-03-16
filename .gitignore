@@ -46,3 +46,7 @@ plugins
 plugins/*
 players
 players/*
+logs
+logs/*
+resource_packs
+resource_packs/*
