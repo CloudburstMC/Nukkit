@@ -24,6 +24,18 @@ public class GiveCommand extends VanillaCommand {
                 new CommandParameter("meta", CommandParameter.ARG_TYPE_INT, true),
                 new CommandParameter("tags...", CommandParameter.ARG_TYPE_RAW_TEXT, true)
         });
+        this.commandParameters.put("toPlayerById", new CommandParameter[]{
+                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
+                new CommandParameter("item ID", CommandParameter.ARG_TYPE_INT, false),
+                new CommandParameter("amount", CommandParameter.ARG_TYPE_INT, true),
+                new CommandParameter("tags...", CommandParameter.ARG_TYPE_RAW_TEXT, true)
+        });
+        this.commandParameters.put("toPlayerByIdMeta", new CommandParameter[]{
+                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
+                new CommandParameter("item ID:meta", CommandParameter.ARG_TYPE_RAW_TEXT, false),
+                new CommandParameter("amount", CommandParameter.ARG_TYPE_INT, true),
+                new CommandParameter("tags...", CommandParameter.ARG_TYPE_RAW_TEXT, true)
+        });
     }
 
     @Override
