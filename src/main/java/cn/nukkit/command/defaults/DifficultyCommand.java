@@ -22,6 +22,10 @@ public class DifficultyCommand extends VanillaCommand {
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("difficulty", CommandParameter.ARG_TYPE_INT, false)
         });
+        this.commandParameters.put("byString", new CommandParameter[]{
+                new CommandParameter("difficulty", new String[]{"peaceful", "p", "easy", "e",
+                    "normal", "n", "hard", "h"})
+        });
     }
 
     @Override

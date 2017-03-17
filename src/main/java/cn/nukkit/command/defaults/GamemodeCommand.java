@@ -22,6 +22,11 @@ public class GamemodeCommand extends VanillaCommand {
                 new CommandParameter("mode", CommandParameter.ARG_TYPE_INT, false),
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, true)
         });
+        this.commandParameters.put("byString", new CommandParameter[]{
+                new CommandParameter("mode", new String[]{"survival", "creative", "s", "c",
+                        "adventure", "a", "spectator", "view", "v"}),
+                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, true)
+        });
     }
 
     @Override
