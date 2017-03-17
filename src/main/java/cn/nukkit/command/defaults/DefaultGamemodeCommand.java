@@ -18,6 +18,10 @@ public class DefaultGamemodeCommand extends VanillaCommand {
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("mode", CommandParameter.ARG_TYPE_INT, false)
         });
+        this.commandParameters.put("byString", new CommandParameter[]{
+                new CommandParameter("mode", new String[]{"survival", "creative", "s", "c",
+                        "adventure", "a", "spectator", "view", "v"})
+        });
     }
 
     @Override

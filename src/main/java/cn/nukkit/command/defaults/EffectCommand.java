@@ -21,10 +21,14 @@ public class EffectCommand extends Command {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
-                new CommandParameter("effect"),
+                new CommandParameter("effect", CommandParameter.ARG_TYPE_STRING, false), //Do not use Enum here because of buggy behavior
                 new CommandParameter("seconds", CommandParameter.ARG_TYPE_INT, true),
                 new CommandParameter("amplifier", true),
                 new CommandParameter("hideParticle", CommandParameter.ARG_TYPE_BOOL, true)
+        });
+        this.commandParameters.put("clear", new CommandParameter[]{
+                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
+                new CommandParameter("clear", new String[]{"clear"})
         });
     }
 

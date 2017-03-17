@@ -17,6 +17,13 @@ public class GiveCommand extends VanillaCommand {
         super(name, "%nukkit.command.give.description", "%nukkit.command.give.usage");
         this.setPermission("nukkit.command.give");
         this.commandParameters.clear();
+        this.commandParameters.put("default", new CommandParameter[]{
+                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
+                new CommandParameter("item", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
+                new CommandParameter("amount", CommandParameter.ARG_TYPE_INT, true),
+                new CommandParameter("meta", CommandParameter.ARG_TYPE_INT, true),
+                new CommandParameter("tags...", CommandParameter.ARG_TYPE_RAW_TEXT, true)
+        });
         this.commandParameters.put("toPlayerById", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
                 new CommandParameter("item ID", CommandParameter.ARG_TYPE_INT, false),
@@ -26,12 +33,6 @@ public class GiveCommand extends VanillaCommand {
         this.commandParameters.put("toPlayerByIdMeta", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
                 new CommandParameter("item ID:meta", CommandParameter.ARG_TYPE_RAW_TEXT, false),
-                new CommandParameter("amount", CommandParameter.ARG_TYPE_INT, true),
-                new CommandParameter("tags...", CommandParameter.ARG_TYPE_RAW_TEXT, true)
-        });
-        this.commandParameters.put("toPlayerByName", new CommandParameter[]{
-                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
-                new CommandParameter("item name", CommandParameter.ARG_TYPE_STRING, false),
                 new CommandParameter("amount", CommandParameter.ARG_TYPE_INT, true),
                 new CommandParameter("tags...", CommandParameter.ARG_TYPE_RAW_TEXT, true)
         });
