@@ -7,7 +7,7 @@ import cn.nukkit.network.protocol.LevelEventPacket;
  * Created on 2015/11/21 by xtypr.
  * Package cn.nukkit.level.sound in project Nukkit .
  */
-public class DoorSound extends GenericSound {
+public class DoorSound extends LevelEventSound {
     public DoorSound(Vector3 pos) {
         this(pos, 0);
     }

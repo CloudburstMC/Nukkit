@@ -6,7 +6,7 @@ import cn.nukkit.network.protocol.LevelEventPacket;
 /**
  * Created by Pub4Game on 03.07.2016.
  */
-public class ItemFrameRemovedSound extends GenericSound {
+public class ItemFrameRemovedSound extends LevelEventSound {
     public ItemFrameRemovedSound(Vector3 pos) {
         this(pos, 0);
     }

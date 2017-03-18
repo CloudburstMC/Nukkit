@@ -7,7 +7,7 @@ import cn.nukkit.network.protocol.LevelEventPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ButtonClickSound extends GenericSound {
+public class ButtonClickSound extends LevelEventSound {
     public ButtonClickSound(Vector3 pos) {
         this(pos, 0);
     }
