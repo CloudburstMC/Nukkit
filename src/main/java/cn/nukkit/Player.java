@@ -68,6 +68,8 @@ import co.aikar.timings.Timings;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
@@ -3576,6 +3578,38 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                         } else {
                             itemFrame.spawnTo(this);
+                        }
+                    }
+                    break;
+                case ProtocolInfo.MAP_INFO_REQUEST_PACKET:
+                    MapInfoRequestPacket pk = (MapInfoRequestPacket) packet;
+                    Item mapItem = null;
+
+                    for (Item item1 : this.inventory.getContents().values()) {
+                        if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.mapId) {
+                            mapItem = item1;
+                        }
+                    }
+
+                    if (mapItem == null) {
+                        for (BlockEntity be : this.level.getBlockEntities().values()) {
+                            if (be instanceof BlockEntityItemFrame) {
+                                BlockEntityItemFrame itemFrame1 = (BlockEntityItemFrame) be;
+
+                                if (itemFrame1.getItem() instanceof ItemMap && ((ItemMap) itemFrame1.getItem()).getMapId() == pk.mapId) {
+                                    ((ItemMap) itemFrame1.getItem()).sendImage(this);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (mapItem != null) {
+                        PlayerMapInfoRequestEvent event;
+                        getServer().getPluginManager().callEvent(event = new PlayerMapInfoRequestEvent(this, mapItem));
+
+                        if (!event.isCancelled()) {
+                            ((ItemMap) mapItem).sendImage(this);
                         }
                     }
                     break;

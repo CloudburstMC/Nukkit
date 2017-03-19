@@ -139,4 +139,8 @@ public class BlockItemFrame extends BlockTransparent {
         }
     }
 
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
 }
