@@ -78,6 +78,14 @@ public abstract class DefaultPermissions {
         registerPermission(new Permission(ROOT + ".command.kill.other", "Allows the user to kill other players"), kill);
         kill.recalculatePermissibles();
 
+        Permission gamemode = registerPermission(new Permission(ROOT + ".command.gamemode", "Allows the user to change the gamemode of players", Permission.DEFAULT_OP), commands);
+        registerPermission(new Permission(ROOT + ".command.gamemode.survival", "Allows the user to change the gamemode to survival", Permission.DEFAULT_OP), gamemode);
+        registerPermission(new Permission(ROOT + ".command.gamemode.creative", "Allows the user to change the gamemode to creative", Permission.DEFAULT_OP), gamemode);
+        registerPermission(new Permission(ROOT + ".command.gamemode.adventure", "Allows the user to change the gamemode to adventure", Permission.DEFAULT_OP), gamemode);
+        registerPermission(new Permission(ROOT + ".command.gamemode.spectator", "Allows the user to change the gamemode to spectator", Permission.DEFAULT_OP), gamemode);
+        registerPermission(new Permission(ROOT + ".command.gamemode.other", "Allows the user to change the gamemode of other players", Permission.DEFAULT_OP), gamemode);
+        gamemode.recalculatePermissibles();
+
         registerPermission(new Permission(ROOT + ".command.me", "Allows the user to perform a chat action", Permission.DEFAULT_TRUE), commands);
         registerPermission(new Permission(ROOT + ".command.tell", "Allows the user to privately message another player", Permission.DEFAULT_TRUE), commands);
         registerPermission(new Permission(ROOT + ".command.say", "Allows the user to talk as the console", Permission.DEFAULT_OP), commands);
@@ -92,7 +100,6 @@ public abstract class DefaultPermissions {
         registerPermission(new Permission(ROOT + ".command.plugins", "Allows the user to view the list of plugins", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.reload", "Allows the user to reload the server settings", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.version", "Allows the user to view the version of the server", Permission.DEFAULT_TRUE), commands);
-        registerPermission(new Permission(ROOT + ".command.gamemode", "Allows the user to change the gamemode of players", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.defaultgamemode", "Allows the user to change the default gamemode", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.seed", "Allows the user to view the seed of the world", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.status", "Allows the user to view the server performance", Permission.DEFAULT_OP), commands);
