@@ -52,4 +52,9 @@ public class ItemMinecartHopper extends Item {
 
         return true;
     }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
 }

@@ -52,4 +52,9 @@ public class ItemMinecartTNT extends Item {
 
         return true;
     }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
 }

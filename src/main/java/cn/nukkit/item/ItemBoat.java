@@ -59,4 +59,9 @@ public class ItemBoat extends Item {
         boat.spawnToAll();
         return true;
     }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
 }
