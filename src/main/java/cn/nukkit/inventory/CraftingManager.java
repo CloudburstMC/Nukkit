@@ -92,9 +92,8 @@ public class CraftingManager {
         )).setIngredient("X", Item.get(Item.PUMPKIN, 0, 1)).setIngredient("Y", Item.get(Item.TORCH, 0, 1)));
 
         this.registerRecipe((new ShapedRecipe(Item.get(Item.SNOW_BLOCK, 0, 1),
-                "   ",
-                "XX ",
-                "XX "
+                "XX",
+                "XX"
         )).setIngredient("X", Item.get(Item.SNOWBALL, 0, 1)));
 
         this.registerRecipe((new ShapedRecipe(Item.get(Item.SNOW_LAYER, 0, 6),
