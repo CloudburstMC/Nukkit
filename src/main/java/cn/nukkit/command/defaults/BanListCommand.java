@@ -6,7 +6,7 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -29,40 +29,39 @@ public class BanListCommand extends VanillaCommand {
         }
 
         BanList list;
-        String arg;
+        boolean ips = false;
         if (args.length > 0) {
-            arg = args[0].toLowerCase();
-            if ("ips".equals(arg)) {
-                list = sender.getServer().getIPBans();
-            } else if ("players".equals(arg)) {
-                list = sender.getServer().getNameBans();
-            } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
-                return false;
+            switch (args[0].toLowerCase()) {
+                case "ips":
+                    list = sender.getServer().getIPBans();
+                    ips = true;
+                    break;
+                case "players":
+                    list = sender.getServer().getNameBans();
+                    break;
+                default:
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    return false;
             }
         } else {
             list = sender.getServer().getNameBans();
-            arg = "players";
         }
 
-        String message = "";
-        LinkedHashMap<String, BanEntry> entries = list.getEntires();
-        for (BanEntry entry : entries.values()) {
-            message += entry.getName() + ", ";
+        StringBuilder builder = new StringBuilder();
+        Iterator<BanEntry> itr = list.getEntires().values().iterator();
+        while (itr.hasNext()) {
+            builder.append(itr.next().getName());
+            if (itr.hasNext()) {
+                builder.append(", ");
+            }
         }
 
-        if ("ips".equals(arg)) {
-            sender.sendMessage(new TranslationContainer("commands.banlist.ips", String.valueOf(entries.size())));
+        if (ips) {
+            sender.sendMessage(new TranslationContainer("commands.banlist.ips", String.valueOf(list.getEntires().size())));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.banlist.players", String.valueOf(entries.size())));
+            sender.sendMessage(new TranslationContainer("commands.banlist.players", String.valueOf(list.getEntires().size())));
         }
-
-        if (message.length() > 0) {
-            message = message.substring(0, message.length() - 2);
-        }
-        sender.sendMessage(message);
-
+        sender.sendMessage(builder.toString());
         return true;
     }
 }
