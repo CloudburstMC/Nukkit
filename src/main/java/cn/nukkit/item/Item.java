@@ -706,7 +706,7 @@ public class Item implements Cloneable {
             list[BLAZE_ROD] = ItemBlazeRod.class; //369
             //TODO: list[GHAST_TEAR] = ItemGhastTear.class; //370
             list[GOLD_NUGGET] = ItemNuggetGold.class; //371
-            //TODO: list[NETHER_WART] = ItemNetherWart.class; //372
+            list[NETHER_WART] = ItemNetherWart.class; //372
             list[POTION] = ItemPotion.class; //373
             list[GLASS_BOTTLE] = ItemGlassBottle.class; //374
             list[SPIDER_EYE] = ItemSpiderEye.class; //375

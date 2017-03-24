@@ -211,6 +211,7 @@ public class Level implements ChunkManager, Metadatable {
             put(Block.SUGARCANE_BLOCK, BlockSugarcane.class);
             put(Block.RED_MUSHROOM, BlockMushroomRed.class);
             put(Block.BROWN_MUSHROOM, BlockMushroomBrown.class);
+            put(Block.NETHER_WART_BLOCK, BlockNetherWart.class);
 
             put(Block.FIRE, BlockFire.class);
             put(Block.GLOWING_REDSTONE_ORE, BlockOreRedstoneGlowing.class);
