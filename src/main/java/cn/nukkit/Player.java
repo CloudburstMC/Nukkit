@@ -68,8 +68,6 @@ import co.aikar.timings.Timings;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
-import javax.imageio.ImageIO;
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
@@ -3729,6 +3727,61 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         TextPacket pk = new TextPacket();
         pk.type = TextPacket.TYPE_TIP;
         pk.message = message;
+        this.dataPacket(pk);
+    }
+
+    public void clearTitle() {
+        SetTitlePacket pk = new SetTitlePacket();
+        pk.type = SetTitlePacket.TYPE_CLEAR;
+        this.dataPacket(pk);
+    }
+
+    /**
+     * Resets both title animation times and subtitle for the next shown title
+     */
+    public void resetTitleSettings() {
+        SetTitlePacket pk = new SetTitlePacket();
+        pk.type = SetTitlePacket.TYPE_RESET;
+        this.dataPacket(pk);
+    }
+
+    public void sendTitle(String text) {
+        SetTitlePacket pk = new SetTitlePacket();
+        pk.type = SetTitlePacket.TYPE_TITLE;
+        pk.text = text;
+        this.dataPacket(pk);
+    }
+
+    /**
+     * Sets a subtitle for the next shown title
+     * @param text Subtitle text
+     */
+    public void setSubtitle(String text) {
+        SetTitlePacket pk = new SetTitlePacket();
+        pk.type = SetTitlePacket.TYPE_SUBTITLE;
+        pk.text = text;
+        this.dataPacket(pk);
+    }
+
+    public void sendActionBarTitle(String text) {
+        SetTitlePacket pk = new SetTitlePacket();
+        pk.type = SetTitlePacket.TYPE_ACTION_BAR;
+        pk.text = text;
+        this.dataPacket(pk);
+    }
+
+    /**
+     * Sets times for title animations
+     * @param fadeInTime For how long title fades in
+     * @param stayTime For how long title is shown
+     * @param fadeOutTime For how long title fades out
+     */
+    public void setTitleAnimationTimes(int fadeInTime, int stayTime, int fadeOutTime) {
+        SetTitlePacket pk = new SetTitlePacket();
+        pk.type = SetTitlePacket.TYPE_ANIMATION_TIMES;
+        pk.fadeInTime = fadeInTime;
+        pk.stayTime = stayTime;
+        pk.fadeOutTime = fadeOutTime;
         this.dataPacket(pk);
     }
 
