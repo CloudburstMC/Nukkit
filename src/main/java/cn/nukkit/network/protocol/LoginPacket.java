@@ -28,6 +28,7 @@ public class LoginPacket extends DataPacket {
     public String identityPublicKey;
     public String serverAddress;
     public String deviceModel;
+    public String xuid;
 
     public Skin skin;
 
@@ -73,6 +74,7 @@ public class LoginPacket extends DataPacket {
                 JsonObject extra = chainMap.get("extraData").getAsJsonObject();
                 if (extra.has("displayName")) this.username = extra.get("displayName").getAsString();
                 if (extra.has("identity")) this.clientUUID = UUID.fromString(extra.get("identity").getAsString());
+                if (extra.has("XUID")) this.xuid = extra.get("XUID").getAsString();
             }
             if (chainMap.has("identityPublicKey"))
                 this.identityPublicKey = chainMap.get("identityPublicKey").getAsString();

@@ -140,6 +140,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected String username;
     protected String iusername;
     protected String displayName;
+    protected String xuid;
 
     protected int startAction = -1;
 
@@ -1925,6 +1926,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.username = TextFormat.clean(loginPacket.username);
                     this.displayName = this.username;
                     this.iusername = this.username.toLowerCase();
+                    this.xuid = loginPacket.xuid;
                     this.setDataProperty(new StringEntityData(DATA_NAMETAG, this.username), false);
 
                     if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick(PlayerKickEvent.Reason.SERVER_FULL, "disconnectionScreen.serverFull", false)) {
