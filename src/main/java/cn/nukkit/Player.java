@@ -2574,8 +2574,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
                             this.server.getPluginManager().callEvent(playerRespawnEvent);
+                            
+                            Position respawnPos = playerRespawnEvent.getRespawnPosition();
 
-                            this.teleport(playerRespawnEvent.getRespawnPosition(), null);
+                            this.teleport(respawnPos, null);
+                            
+                            RespawnPacket respawnPacket = new RespawnPacket();
+                            respawnPacket.x = (float) respawnPos.x;
+                            respawnPacket.y = (float) respawnPos.y;
+                            respawnPacket.z = (float) respawnPos.z;
+                            this.dataPacket(respawnPacket);
 
                             this.setSprinting(false, true);
                             this.setSneaking(false);
