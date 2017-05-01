@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.BlockFace;
 
 /**
  * author: MagicDroidX
@@ -53,10 +53,10 @@ public class BlockWall extends BlockTransparent {
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
 
-        boolean north = this.canConnect(this.getSide(Vector3.SIDE_NORTH));
-        boolean south = this.canConnect(this.getSide(Vector3.SIDE_SOUTH));
-        boolean west = this.canConnect(this.getSide(Vector3.SIDE_WEST));
-        boolean east = this.canConnect(this.getSide(Vector3.SIDE_EAST));
+        boolean north = this.canConnect(this.getSide(BlockFace.NORTH));
+        boolean south = this.canConnect(this.getSide(BlockFace.SOUTH));
+        boolean west = this.canConnect(this.getSide(BlockFace.WEST));
+        boolean east = this.canConnect(this.getSide(BlockFace.EAST));
 
         double n = north ? 0 : 0.25;
         double s = south ? 1 : 0.75;

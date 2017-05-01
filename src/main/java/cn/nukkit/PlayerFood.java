@@ -2,6 +2,7 @@ package cn.nukkit;
 
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.item.food.Food;
@@ -150,7 +151,7 @@ public class PlayerFood {
 		        } else if (this.getLevel() == 0) {
 		            this.foodTickTimer += tickDiff;
 		            if (this.foodTickTimer >= 80) {
-		                EntityDamageEvent ev = new EntityDamageEvent(this.getPlayer(), EntityDamageEvent.CAUSE_VOID, 1);
+		                EntityDamageEvent ev = new EntityDamageEvent(this.getPlayer(), DamageCause.VOID, 1);
 		                float now = this.getPlayer().getHealth();
 		                if (diff == 1) {
 		                    if (now > 10) this.getPlayer().attack(ev);

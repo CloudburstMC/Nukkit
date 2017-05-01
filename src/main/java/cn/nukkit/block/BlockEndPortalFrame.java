@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.AxisAlignedBB;
 
@@ -56,5 +57,30 @@ public class BlockEndPortalFrame extends BlockTransparent {
                 y + ((this.getDamage() & 0x04) > 0 ? 1 : 0.8125),
                 z + 1
         );
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
+
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    public int getComparatorInputOverride() {
+        return (meta & 4) != 0 ? 15 : 0;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        //TODO: ender eye
+        //TODO: redstone comparator update
+        return false;
     }
 }

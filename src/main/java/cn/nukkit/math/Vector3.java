@@ -5,12 +5,6 @@ package cn.nukkit.math;
  * Nukkit Project
  */
 public class Vector3 implements Cloneable {
-    public static final int SIDE_DOWN = 0;
-    public static final int SIDE_UP = 1;
-    public static final int SIDE_NORTH = 2;
-    public static final int SIDE_SOUTH = 3;
-    public static final int SIDE_WEST = 4;
-    public static final int SIDE_EAST = 5;
 
     public double x;
     public double y;
@@ -138,46 +132,60 @@ public class Vector3 implements Cloneable {
         return new Vector3((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z));
     }
 
-    public Vector3 getSide(int side) {
-        return this.getSide(side, 1);
+    public Vector3 getSide(BlockFace face) {
+        return this.getSide(face, 1);
     }
 
-    public Vector3 getSide(int side, int step) {
-        switch (side) {
-            case Vector3.SIDE_DOWN:
-                return new Vector3(this.x, this.y - step, this.z);
-            case Vector3.SIDE_UP:
-                return new Vector3(this.x, this.y + step, this.z);
-            case Vector3.SIDE_NORTH:
-                return new Vector3(this.x, this.y, this.z - step);
-            case Vector3.SIDE_SOUTH:
-                return new Vector3(this.x, this.y, this.z + step);
-            case Vector3.SIDE_WEST:
-                return new Vector3(this.x - step, this.y, this.z);
-            case Vector3.SIDE_EAST:
-                return new Vector3(this.x + step, this.y, this.z);
-            default:
-                return this;
-        }
+    public Vector3 getSide(BlockFace face, int step) {
+        return new Vector3(this.getX() + face.getXOffset() * step, this.getY() + face.getYOffset() * step, this.getZ() + face.getZOffset() * step);
     }
 
-    public static int getOppositeSide(int side) {
-        switch (side) {
-            case Vector3.SIDE_DOWN:
-                return Vector3.SIDE_UP;
-            case Vector3.SIDE_UP:
-                return Vector3.SIDE_DOWN;
-            case Vector3.SIDE_NORTH:
-                return Vector3.SIDE_SOUTH;
-            case Vector3.SIDE_SOUTH:
-                return Vector3.SIDE_NORTH;
-            case Vector3.SIDE_WEST:
-                return Vector3.SIDE_EAST;
-            case Vector3.SIDE_EAST:
-                return Vector3.SIDE_WEST;
-            default:
-                return -1;
-        }
+    public Vector3 up() {
+        return up(1);
+    }
+
+    public Vector3 up(int step) {
+        return getSide(BlockFace.UP, step);
+    }
+
+    public Vector3 down() {
+        return down(1);
+    }
+
+    public Vector3 down(int step) {
+        return getSide(BlockFace.DOWN, step);
+    }
+
+    public Vector3 north() {
+        return north(1);
+    }
+
+    public Vector3 north(int step) {
+        return getSide(BlockFace.NORTH, step);
+    }
+
+    public Vector3 south() {
+        return south(1);
+    }
+
+    public Vector3 south(int step) {
+        return getSide(BlockFace.SOUTH, step);
+    }
+
+    public Vector3 east() {
+        return east(1);
+    }
+
+    public Vector3 east(int step) {
+        return getSide(BlockFace.EAST, step);
+    }
+
+    public Vector3 west() {
+        return west(1);
+    }
+
+    public Vector3 west(int step) {
+        return getSide(BlockFace.WEST, step);
     }
 
     public double distance(Vector3 pos) {

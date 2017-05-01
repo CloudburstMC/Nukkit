@@ -8,14 +8,14 @@ import cn.nukkit.block.BlockWater;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockFace.Plane;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemBucket extends Item {
-
-    private static final int[] SIDES_NSEW = new int[]{ Block.SIDE_NORTH, Block.SIDE_SOUTH, Block.SIDE_EAST, Block.SIDE_WEST };
 
     public ItemBucket() {
         this(0, 1);
@@ -66,7 +66,7 @@ public class ItemBucket extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         Block targetBlock = Block.get(this.meta);
 
         if (targetBlock instanceof BlockAir) {
@@ -79,7 +79,7 @@ public class ItemBucket extends Item {
 
                     // When water is removed ensure any adjacent still water is
                     // replaced with water that can flow.
-                    for (int side : this.SIDES_NSEW) {
+                    for (BlockFace side : Plane.HORIZONTAL) {
                         Block b = target.getSide(side);
                         if (b.getId() == STILL_WATER) {
                             level.setBlock(b, new BlockWater());

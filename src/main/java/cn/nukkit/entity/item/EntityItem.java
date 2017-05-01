@@ -3,6 +3,7 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.item.Item;
@@ -99,14 +100,12 @@ public class EntityItem extends Entity {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        if (source.getCause() == EntityDamageEvent.CAUSE_VOID ||
-                source.getCause() == EntityDamageEvent.CAUSE_FIRE_TICK ||
-                source.getCause() == EntityDamageEvent.CAUSE_ENTITY_EXPLOSION ||
-                source.getCause() == EntityDamageEvent.CAUSE_BLOCK_EXPLOSION
-                ) {
-            super.attack(source);
-        }
+    public boolean attack(EntityDamageEvent source) {
+        return (source.getCause() == DamageCause.VOID ||
+                source.getCause() == DamageCause.FIRE_TICK ||
+                source.getCause() == DamageCause.ENTITY_EXPLOSION ||
+                source.getCause() == DamageCause.BLOCK_EXPLOSION)
+                && super.attack(source);
     }
 
     @Override

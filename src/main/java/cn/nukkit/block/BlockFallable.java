@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.entity.item.EntityFallingBlock;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -21,7 +20,7 @@ public abstract class BlockFallable extends BlockSolid {
 
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            Block down = this.getSide(Vector3.SIDE_DOWN);
+            Block down = this.down();
             if (down.getId() == AIR || down instanceof BlockLiquid) {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<DoubleTag>("Pos")

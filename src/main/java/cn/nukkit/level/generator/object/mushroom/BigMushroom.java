@@ -84,7 +84,7 @@ public class BigMushroom extends BasicGenerator {
             if (!flag) {
                 return false;
             } else {
-                Vector3 pos2 = position.getSide(Vector3.SIDE_DOWN);
+                Vector3 pos2 = position.down();
                 int block1 = level.getBlockIdAt(pos2.getFloorX(), pos2.getFloorY(), pos2.getFloorZ());
 
                 if (block1 != Block.DIRT && block1 != Block.GRASS && block1 != Block.MYCELIUM) {
@@ -185,7 +185,7 @@ public class BigMushroom extends BasicGenerator {
                     }
 
                     for (int i3 = 0; i3 < i; ++i3) {
-                        Vector3 pos = position.getSide(Vector3.SIDE_UP, i3);
+                        Vector3 pos = position.up(i3);
                         int id = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
 
                         if (!Block.solid[id]) {

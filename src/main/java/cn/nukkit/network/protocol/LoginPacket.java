@@ -89,6 +89,13 @@ public class LoginPacket extends DataPacket {
         if (skinToken.has("SkinId")) skinId = skinToken.get("SkinId").getAsString();
         if (skinToken.has("SkinData")) this.skin = new Skin(skinToken.get("SkinData").getAsString(), skinId);
         if (skinToken.has("DeviceModel")) this.deviceModel = skinToken.get("DeviceModel").getAsString();
+        if (skinToken.has("DeviceOS")) ; //TODO: add variables
+        if (skinToken.has("GameVersion")) ;
+        if (skinToken.has("GuiScale")) ;
+        if (skinToken.has("LanguageCode")) ;
+        if (skinToken.has("CurrentInputMode")) ;
+        if (skinToken.has("DefaultInputMode")) ;
+        if (skinToken.has("ADRole")) ;
     }
 
     private JsonObject decodeToken(String token) {

@@ -2,28 +2,32 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.utils.BlockColor;
 
 /**
- * @author Nukkit Project Team
+ * @author CreeperFace
  */
-public class BlockWeightedPressurePlateLight extends BlockWeightedPressurePlate {
-
-    public BlockWeightedPressurePlateLight(int meta) {
-        super(meta);
-    }
+public class BlockWeightedPressurePlateLight extends BlockPressurePlateBase {
 
     public BlockWeightedPressurePlateLight() {
         this(0);
     }
 
-    @Override
-    public String getName() {
-        return "Light Weighted Pressure Plate";
+    public BlockWeightedPressurePlateLight(int meta) {
+        super(meta);
+        this.onPitch = 0.90000004f;
+        this.offPitch = 0.75f;
     }
 
     @Override
     public int getId() {
         return LIGHT_WEIGHTED_PRESSURE_PLATE;
+    }
+
+    @Override
+    public String getName() {
+        return "Weighted Pressure Plate (Light)";
     }
 
     @Override
@@ -52,4 +56,24 @@ public class BlockWeightedPressurePlateLight extends BlockWeightedPressurePlate 
         }
     }
 
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.GOLD_BLOCK_COLOR;
+    }
+
+    @Override
+    protected int computeRedstoneStrength() {
+        int count = Math.min(this.level.getCollidingEntities(getCollisionBoundingBox()).length, this.getMaxWeight());
+
+        if (count > 0) {
+            float f = (float) Math.min(this.getMaxWeight(), count) / (float) this.getMaxWeight();
+            return NukkitMath.ceilFloat(f * 15.0F);
+        } else {
+            return 0;
+        }
+    }
+
+    public int getMaxWeight() {
+        return 15;
+    }
 }

@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
@@ -123,12 +125,12 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
+    public boolean attack(EntityDamageEvent source) {
         if (!this.isAlive()) {
-            return;
+            return false;
         }
 
-        if (source.getCause() != EntityDamageEvent.CAUSE_VOID && source.getCause() != EntityDamageEvent.CAUSE_CUSTOM && source.getCause() != EntityDamageEvent.CAUSE_MAGIC) {
+        if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.CUSTOM && source.getCause() != DamageCause.MAGIC) {
             int points = 0;
             int epf = 0;
             int toughness = 0;
@@ -143,13 +145,11 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
 
             float finalDamage = (float) (originalDamage * (1 - Math.max(points / 5, points - originalDamage / (2 + toughness / 4)) / 25) * (1 - /*0.75 */ epf * 0.04));
 
-            source.setDamage(finalDamage - originalDamage, EntityDamageEvent.MODIFIER_ARMOR);
-            //source.setDamage(source.getDamage(EntityDamageEvent.MODIFIER_ARMOR_ENCHANTMENTS) - (originalDamage - originalDamage * (1 - epf / 25)), EntityDamageEvent.MODIFIER_ARMOR_ENCHANTMENTS);
+            source.setDamage(finalDamage - originalDamage, DamageModifier.ARMOR);
+            //source.setDamage(source.getDamage(DamageModifier.ARMOR_ENCHANTMENTS) - (originalDamage - originalDamage * (1 - epf / 25)), DamageModifier.ARMOR_ENCHANTMENTS);
         }
 
-        super.attack(source);
-
-        if (!source.isCancelled()) {
+        if (super.attack(source)) {
             Entity damager = null;
 
             if (source instanceof EntityDamageByEntityEvent) {
@@ -178,6 +178,10 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                     inventory.setArmorItem(slot, armor, true);
                 }
             }
+
+            return true;
+        } else {
+            return false;
         }
     }
 

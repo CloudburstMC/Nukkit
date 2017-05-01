@@ -5,6 +5,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.format.FullChunk;
@@ -60,10 +61,8 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(source);
-        }
+    public boolean attack(EntityDamageEvent source) {
+        return source.getCause() == DamageCause.VOID && super.attack(source);
     }
 
     protected void initEntity() {

@@ -1,11 +1,12 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.math.AxisAlignedBB;
 
 /**
- * Created by CreeperFace on 1. 1. 2017.
+ * @author CreeperFace
  */
-public class BlockTripWire extends BlockTransparent {
+public class BlockTripWire extends BlockFlowable {
 
     public BlockTripWire(int meta) {
         super(meta);
@@ -43,5 +44,10 @@ public class BlockTripWire extends BlockTransparent {
     @Override
     public AxisAlignedBB getBoundingBox() {
         return null;
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        return new int[][]{{Item.STRING, 0, 1}};
     }
 }

@@ -79,14 +79,14 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
      * It also generates dirt around the block in a 2x2 square if there is dirt underneath the blockpos.
      */
     private boolean ensureDirtsUnderneath(Vector3 pos, ChunkManager worldIn) {
-        Vector3 blockpos = pos.getSide(Vector3.SIDE_DOWN);
+        Vector3 blockpos = pos.down();
         int block = worldIn.getBlockIdAt((int) blockpos.x, (int) blockpos.y, (int) blockpos.z);
 
         if ((block == Block.GRASS || block == Block.DIRT) && pos.getY() >= 2) {
             this.setDirtAt(worldIn, blockpos);
-            this.setDirtAt(worldIn, blockpos.getSide(Vector3.SIDE_EAST));
-            this.setDirtAt(worldIn, blockpos.getSide(Vector3.SIDE_SOUTH));
-            this.setDirtAt(worldIn, blockpos.getSide(Vector3.SIDE_SOUTH).getSide(Vector3.SIDE_EAST));
+            this.setDirtAt(worldIn, blockpos.east());
+            this.setDirtAt(worldIn, blockpos.south());
+            this.setDirtAt(worldIn, blockpos.south().east());
             return true;
         } else {
             return false;

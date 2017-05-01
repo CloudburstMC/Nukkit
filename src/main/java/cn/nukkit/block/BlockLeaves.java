@@ -6,6 +6,7 @@ import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class BlockLeaves extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.meta |= 0x04;
         this.getLevel().setBlock(this, this, true);
         return true;
@@ -123,42 +124,55 @@ public class BlockLeaves extends BlockTransparent {
         return findLog(pos, visited, distance, check, null);
     }
 
-    private Boolean findLog(Block pos, ArrayList<String> visited, Integer distance, Integer check, Integer fromSide) {
+    private Boolean findLog(Block pos, ArrayList<String> visited, Integer distance, Integer check, BlockFace fromSide) {
         ++check;
         String index = pos.x + "." + pos.y + "." + pos.z;
         if (visited.contains(index)) return false;
         if (pos.getId() == Block.WOOD) return true;
         if (pos.getId() == Block.LEAVES && distance < 4) {
             visited.add(index);
-            Integer down = pos.getSide(0).getId();
+            Integer down = pos.down().getId();
             if (down == Item.WOOD) {
                 return true;
             }
             if (fromSide == null) {
                 //North, East, South, West
                 for (Integer side = 2; side <= 5; ++side) {
-                    if (this.findLog(pos.getSide(side), visited, distance + 1, check, side)) return true;
+                    if (this.findLog(pos.getSide(BlockFace.fromIndex(side)), visited, distance + 1, check, BlockFace.fromIndex(side)))
+                        return true;
                 }
             } else { //No more loops
                 switch (fromSide) {
-                    case Block.SIDE_NORTH:
-                        if (this.findLog(pos.getSide(Block.SIDE_NORTH), visited, distance + 1, check, fromSide)) return true;
-                        if (this.findLog(pos.getSide(Block.SIDE_WEST), visited, distance + 1, check, fromSide)) return true;
-                        if (this.findLog(pos.getSide(Block.SIDE_EAST), visited, distance + 1, check, fromSide)) return true;
+                    case NORTH:
+                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
+                            return true;
+                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
+                            return true;
+                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
+                            return true;
                         break;
-                    case Block.SIDE_SOUTH:
-                        if (this.findLog(pos.getSide(Block.SIDE_SOUTH), visited, distance + 1, check, fromSide)) return true;
-                        if (this.findLog(pos.getSide(Block.SIDE_WEST), visited, distance + 1, check, fromSide)) return true;
-                        if (this.findLog(pos.getSide(Block.SIDE_EAST), visited, distance + 1, check, fromSide)) return true;
+                    case SOUTH:
+                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
+                            return true;
+                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
+                            return true;
+                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
+                            return true;
                         break;
-                    case Block.SIDE_WEST:
-                        if (this.findLog(pos.getSide(Block.SIDE_NORTH), visited, distance + 1, check, fromSide)) return true;
-                        if (this.findLog(pos.getSide(Block.SIDE_SOUTH), visited, distance + 1, check, fromSide)) return true;
-                        if (this.findLog(pos.getSide(Block.SIDE_WEST), visited, distance + 1, check, fromSide)) return true;
-                    case Block.SIDE_EAST:
-                        if (this.findLog(pos.getSide(Block.SIDE_NORTH), visited, distance + 1, check, fromSide)) return true;
-                        if (this.findLog(pos.getSide(Block.SIDE_SOUTH), visited, distance + 1, check, fromSide)) return true;
-                        if (this.findLog(pos.getSide(Block.SIDE_EAST), visited, distance + 1, check, fromSide)) return true;
+                    case WEST:
+                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
+                            return true;
+                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
+                            return true;
+                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
+                            return true;
+                    case EAST:
+                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
+                            return true;
+                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
+                            return true;
+                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
+                            return true;
                         break;
                 }
             }

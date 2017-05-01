@@ -1,8 +1,6 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
-import cn.nukkit.level.Level;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
 import cn.nukkit.utils.MainLogger;
@@ -97,11 +95,6 @@ public class ItemMap extends Item {
 
     @Override
     public boolean canBeActivated() {
-        return true;
-    }
-
-    @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
         return true;
     }
 

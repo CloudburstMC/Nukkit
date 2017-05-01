@@ -737,6 +737,60 @@ public class CraftingManager {
                 "PSP",
                 "PPP"
         ).setIngredient("P", Item.get(Item.OBSIDIAN, 0, 1)).setIngredient("S", Item.get(Item.ENDER_EYE, 0, 1)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.REDSTONE_TORCH, 0, 1),
+                "  R",
+                "  S"
+        ).setIngredient("R", Item.get(Item.REDSTONE_DUST, 0, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.LEVER, 0, 1),
+                "  S",
+                "  C"
+        ).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.STONE_BUTTON, 0, 1),
+                "  S"
+        ).setIngredient("S", Item.get(Item.STONE, 0, 1)));
+
+        for (int i = 0; i < 6; i++) {
+            this.registerRecipe(new BigShapedRecipe(Item.get(Item.WOODEN_BUTTON, 0, 1),
+                    "  W"
+            ).setIngredient("W", Item.get(Item.PLANKS, i, 1)));
+
+            this.registerRecipe(new BigShapedRecipe(Item.get(Item.WOODEN_PRESSURE_PLATE, 0, 1),
+                    "WW "
+            ).setIngredient("W", Item.get(Item.PLANKS, i, 2)));
+        }
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.STONE_PRESSURE_PLATE, 0, 1),
+                "SS "
+        ).setIngredient("S", Item.get(Item.STONE, 0, 2)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.HEAVY_WEIGHTED_PRESSURE_PLATE, 0, 1),
+                "II "
+        ).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 2)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.LIGHT_WEIGHTED_PRESSURE_PLATE, 0, 1),
+                "GG "
+        ).setIngredient("G", Item.get(Item.GOLD_INGOT, 0, 2)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.REDSTONE_LAMP, 0, 1),
+                " R ",
+                "RGR",
+                " R "
+        ).setIngredient("R", Item.get(Item.REDSTONE_DUST, 0, 4)).setIngredient("G", Item.get(Item.GLOWSTONE_BLOCK, 0, 1)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.REPEATER, 0, 1),
+                "   ",
+                "TRT",
+                "SSS"
+        ).setIngredient("R", Item.get(Item.REDSTONE_DUST, 0, 1)).setIngredient("T", Item.get(Item.REDSTONE_TORCH, 0, 2)).setIngredient("S", Item.get(Item.STONE, 0, 3)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.COMPARATOR, 0, 1),
+                " T ",
+                "TQT",
+                "SSS"
+        ).setIngredient("Q", Item.get(Item.QUARTZ, 0, 1)).setIngredient("T", Item.get(Item.REDSTONE_TORCH, 0, 3)).setIngredient("S", Item.get(Item.STONE, 0, 3)));
     }
 
     protected void registerFurnace() {
@@ -843,7 +897,7 @@ public class CraftingManager {
                 "XXX"
         )).setIngredient("X", Item.get(Item.GOLD_INGOT, 0, 1)).setIngredient("Y", Item.get(Item.APPLE, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GOLDEN_APPLE, 1, 1),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GOLDEN_APPLE_ENCHANTED, 1, 1),
                 "XXX",
                 "XYX",
                 "XXX"

@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
 
 public class BlockPurpur extends BlockSolid {
 
@@ -50,7 +51,7 @@ public class BlockPurpur extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (this.meta != PURPUR_NORMAL) {
             short[] faces = new short[]{
                     0,
@@ -61,7 +62,7 @@ public class BlockPurpur extends BlockSolid {
                     0b0100
             };
 
-            this.meta = ((this.meta & 0x03) | faces[face]);
+            this.meta = ((this.meta & 0x03) | faces[face.getIndex()]);
         }
         this.getLevel().setBlock(block, this, true, true);
 

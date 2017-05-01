@@ -3,8 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.NoteBoxSound;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.BlockEventPacket;
 
 /**
@@ -63,7 +63,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public int getInstrument() {
-        Block below = this.getSide(Vector3.SIDE_DOWN);
+        Block below = this.down();
         switch (below.getId()) {
             case WOODEN_PLANK:
             case NOTEBLOCK:
@@ -108,7 +108,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public boolean onActivate(Item item, Player player) {
-        Block up = this.getSide(Vector3.SIDE_UP);
+        Block up = this.up();
         if (up.getId() == Block.AIR) {
             this.increaseStrength();
             this.emitSound();
@@ -116,5 +116,14 @@ public class BlockNoteblock extends BlockSolid {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
+            //TODO: redstone
+        }
+
+        return 0;
     }
 }

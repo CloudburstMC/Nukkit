@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
@@ -50,13 +50,13 @@ public class BlockDoublePlant extends BlockFlowable {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if ((this.meta & 0x08) == 8) {
                 // Top
-                if (!(this.getSide(0).getId() == DOUBLE_PLANT)) {
+                if (!(this.down().getId() == DOUBLE_PLANT)) {
                     this.getLevel().setBlock(this, new BlockAir(), true, true);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             } else {
                 // Bottom
-                if (this.getSide(0).isTransparent() || !(this.getSide(1).getId() == DOUBLE_PLANT)) {
+                if (this.down().isTransparent() || !(this.up().getId() == DOUBLE_PLANT)) {
                     this.getLevel().useBreakOn(this);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
@@ -66,9 +66,9 @@ public class BlockDoublePlant extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        Block down = getSide(Vector3.SIDE_DOWN);
-        Block up = getSide(Vector3.SIDE_UP);
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        Block down = down();
+        Block up = up();
 
         if (up.getId() == 0 && (down.getId() == GRASS || down.getId() == DIRT)) {
             this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
@@ -81,7 +81,7 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean onBreak(Item item) {
-        Block down = getSide(Vector3.SIDE_DOWN);
+        Block down = down();
 
         if ((this.meta & 0x08) == 0x08) { // Top half
             this.getLevel().useBreakOn(down);

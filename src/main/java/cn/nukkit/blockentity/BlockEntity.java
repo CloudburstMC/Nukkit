@@ -32,6 +32,9 @@ public abstract class BlockEntity extends Position {
     public static final String ITEM_FRAME = "ItemFrame";
     public static final String CAULDRON = "Cauldron";
     public static final String BEACON = "Beacon";
+    public static final String PISTON_ARM = "PistonArm";
+    public static final String MOVING_BLOCK = "MovingBlock";
+    public static final String COMPARATOR = "Comparator";
 
 
     public static long count = 1;

@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -31,16 +33,16 @@ public class BlockTrappedChest extends BlockChest {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {4, 2, 5, 3};
 
         BlockEntityChest chest = null;
         this.meta = faces[player != null ? player.getDirection() : 0];
 
-        for (int side = 2; side <= 5; ++side) {
-            if ((this.meta == 4 || this.meta == 5) && (side == 4 || side == 5)) {
+        for (BlockFace side : Plane.HORIZONTAL) {
+            if ((this.meta == 4 || this.meta == 5) && (side == BlockFace.WEST || side == BlockFace.EAST)) {
                 continue;
-            } else if ((this.meta == 3 || this.meta == 2) && (side == 2 || side == 3)) {
+            } else if ((this.meta == 3 || this.meta == 2) && (side == BlockFace.NORTH || side == BlockFace.SOUTH)) {
                 continue;
             }
             Block c = this.getSide(side);

@@ -9,6 +9,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -690,7 +691,7 @@ public class Item implements Cloneable {
             list[SUGAR] = ItemSugar.class; //353
             list[CAKE] = ItemCake.class; //354
             list[BED] = ItemBed.class; //355
-            //TODO: list[REPEATER] = ItemRepeater.class; //356
+            list[REPEATER] = ItemRedstoneRepeater.class; //356
             list[COOKIE] = ItemCookie.class; //357
             list[MAP] = ItemMap.class; //358
             list[SHEARS] = ItemShears.class; //359
@@ -735,7 +736,7 @@ public class Item implements Cloneable {
             list[PUMPKIN_PIE] = ItemPumpkinPie.class; //400
 
             list[ENCHANTED_BOOK] = ItemBookEnchanted.class; //403
-            //TODO: list[COMPARATOR] = ItemComparator.class; //404
+            list[COMPARATOR] = ItemRedstoneComparator.class; //404
             list[NETHER_BRICK] = ItemNetherBrick.class; //405
             list[QUARTZ] = ItemQuartz.class; //406
             list[MINECART_WITH_TNT] = ItemMinecartTNT.class; //407
@@ -1208,6 +1209,9 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.REPEATER));
         addCreativeItem(Item.get(Item.COMPARATOR));
         addCreativeItem(Item.get(Item.DISPENSER, 3));
+        addCreativeItem(Item.get(Item.DROPPER));
+        addCreativeItem(Item.get(Item.PISTON));
+        addCreativeItem(Item.get(Item.STICKY_PISTON));
         addCreativeItem(Item.get(Item.OBSERVER));
         addCreativeItem(Item.get(Item.HOPPER));
         addCreativeItem(Item.get(Item.SNOWBALL));
@@ -1646,7 +1650,7 @@ public class Item implements Cloneable {
         for (CompoundTag entry : this.getNamedTag().getList("ench", CompoundTag.class).getAll()) {
             if (entry.getShort("id") == id) {
                 Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
-                if (e != null){
+                if (e != null) {
                     e.setLevel(entry.getShort("lvl"));
                     return e;
                 }
@@ -1708,10 +1712,10 @@ public class Item implements Cloneable {
         ListTag<CompoundTag> ench = this.getNamedTag().getList("ench", CompoundTag.class);
         for (CompoundTag entry : ench.getAll()) {
             Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
-            if (e != null){
+            if (e != null) {
                 e.setLevel(entry.getShort("lvl"));
                 enchantments.add(e);
-            } 
+            }
         }
 
         return enchantments.stream().toArray(Enchantment[]::new);
@@ -1970,7 +1974,7 @@ public class Item implements Cloneable {
         return 1;
     }
 
-    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return false;
     }
 

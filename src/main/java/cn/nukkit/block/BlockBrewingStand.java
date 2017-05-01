@@ -4,8 +4,10 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBrewingStand;
+import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
@@ -60,8 +62,8 @@ public class BlockBrewingStand extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (!block.getSide(SIDE_DOWN).isTransparent()) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (!block.down().isTransparent()) {
             getLevel().setBlock(block, this, true, true);
 
             CompoundTag nbt = new CompoundTag()
@@ -132,5 +134,20 @@ public class BlockBrewingStand extends BlockSolid {
     @Override
     public BlockColor getColor() {
         return BlockColor.IRON_BLOCK_COLOR;
+    }
+
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride() {
+        BlockEntity blockEntity = this.level.getBlockEntity(this);
+
+        if (blockEntity instanceof BlockEntityBrewingStand) {
+            return ContainerInventory.calculateRedstone(((BlockEntityBrewingStand) blockEntity).getInventory());
+        }
+
+        return super.getComparatorInputOverride();
     }
 }

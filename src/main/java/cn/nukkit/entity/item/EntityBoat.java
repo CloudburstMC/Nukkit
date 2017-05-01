@@ -84,28 +84,32 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        super.attack(source);
-        if (source.isCancelled()) return;
-        if (source instanceof EntityDamageByEntityEvent) {
-            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-            if (damager instanceof Player) {
-                if (((Player) damager).isCreative()) {
-                    this.kill();
-                }
-                if (this.getHealth() <= 0) {
-                    if (((Player) damager).isSurvival()) {
-                        this.level.dropItem(this, new ItemBoat());
+    public boolean attack(EntityDamageEvent source) {
+        if (super.attack(source)) {
+            if (source instanceof EntityDamageByEntityEvent) {
+                Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+                if (damager instanceof Player) {
+                    if (((Player) damager).isCreative()) {
+                        this.kill();
                     }
-                    this.close();
+                    if (this.getHealth() <= 0) {
+                        if (((Player) damager).isSurvival()) {
+                            this.level.dropItem(this, new ItemBoat());
+                        }
+                        this.close();
+                    }
                 }
             }
-        }
 
-        EntityEventPacket pk = new EntityEventPacket();
-        pk.eid = this.getId();
-        pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
-        Server.broadcastPacket(this.hasSpawned.values(), pk);
+            EntityEventPacket pk = new EntityEventPacket();
+            pk.eid = this.getId();
+            pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
+            Server.broadcastPacket(this.hasSpawned.values(), pk);
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

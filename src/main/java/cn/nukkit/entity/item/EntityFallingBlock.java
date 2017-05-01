@@ -8,6 +8,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.AnvilFallSound;
@@ -89,10 +90,8 @@ public class EntityFallingBlock extends Entity {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(source);
-        }
+    public boolean attack(EntityDamageEvent source) {
+        return source.getCause() == DamageCause.VOID && super.attack(source);
     }
 
     @Override

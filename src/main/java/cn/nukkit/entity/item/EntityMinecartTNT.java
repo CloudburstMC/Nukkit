@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.format.FullChunk;
@@ -19,11 +18,11 @@ public class EntityMinecartTNT extends EntityMinecartEmpty {
     }
 
     public boolean onUpdate(int currentTick) {
-        Block downSide = this.getLocation().floor().getLevelBlock();
-        if (downSide.getId() == Block.ACTIVATOR_RAIL && downSide.isPowered()) {
+        /*Block downSide = this.getLocation().floor().getLevelBlock();
+        if (downSide.getId() == Block.ACTIVATOR_RAIL && downSide.isPowered()) { TODO: implement
             explode();
             kill();
-        }
+        }*/
         return true;
     }
 

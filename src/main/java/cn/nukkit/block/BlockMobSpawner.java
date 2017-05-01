@@ -51,4 +51,9 @@ public class BlockMobSpawner extends BlockSolid {
             return new int[0][0];
         }
     }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
 }

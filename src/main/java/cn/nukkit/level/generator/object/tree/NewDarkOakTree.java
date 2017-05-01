@@ -4,9 +4,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockWood2;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.EnumFacing;
 
 /**
  * Created by CreeperFace on 23. 10. 2016.
@@ -23,7 +23,7 @@ public class NewDarkOakTree extends TreeGenerator {
         int l = position.getFloorZ();
 
         if (k >= 1 && k + i + 1 < 256) {
-            Vector3 blockpos = position.getSide(Vector3.SIDE_DOWN);
+            Vector3 blockpos = position.down();
             int block = level.getBlockIdAt(blockpos.getFloorX(), blockpos.getFloorY(), blockpos.getFloorZ());
 
             if (block != Block.GRASS && block != Block.DIRT) {
@@ -32,10 +32,10 @@ public class NewDarkOakTree extends TreeGenerator {
                 return false;
             } else {
                 this.setDirtAt(level, blockpos);
-                this.setDirtAt(level, blockpos.getSide(Vector3.SIDE_EAST));
-                this.setDirtAt(level, blockpos.getSide(Vector3.SIDE_SOUTH));
-                this.setDirtAt(level, blockpos.getSide(Vector3.SIDE_SOUTH).getSide(Vector3.SIDE_EAST));
-                EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.random(rand);
+                this.setDirtAt(level, blockpos.east());
+                this.setDirtAt(level, blockpos.south());
+                this.setDirtAt(level, blockpos.south().east());
+                BlockFace enumfacing = BlockFace.Plane.HORIZONTAL.random(rand);
                 int i1 = i - rand.nextBoundedInt(4);
                 int j1 = 2 - rand.nextBoundedInt(3);
                 int k1 = j;
@@ -44,8 +44,8 @@ public class NewDarkOakTree extends TreeGenerator {
 
                 for (int j2 = 0; j2 < i; ++j2) {
                     if (j2 >= i1 && j1 > 0) {
-                        k1 += enumfacing.getFrontOffsetX();
-                        l1 += enumfacing.getFrontOffsetZ();
+                        k1 += enumfacing.getXOffset();
+                        l1 += enumfacing.getZOffset();
                         --j1;
                     }
 
@@ -55,9 +55,9 @@ public class NewDarkOakTree extends TreeGenerator {
 
                     if (material == Block.AIR || material == Block.LEAVES) {
                         this.placeLogAt(level, blockpos1);
-                        this.placeLogAt(level, blockpos1.getSide(Vector3.SIDE_EAST));
-                        this.placeLogAt(level, blockpos1.getSide(Vector3.SIDE_SOUTH));
-                        this.placeLogAt(level, blockpos1.getSide(Vector3.SIDE_EAST).getSide(Vector3.SIDE_SOUTH));
+                        this.placeLogAt(level, blockpos1.east());
+                        this.placeLogAt(level, blockpos1.south());
+                        this.placeLogAt(level, blockpos1.east().south());
                     }
                 }
 

@@ -5,6 +5,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
@@ -40,7 +41,7 @@ public class KillCommand extends VanillaCommand {
             }
             Player player = sender.getServer().getPlayer(args[0]);
             if (player != null) {
-                EntityDamageEvent ev = new EntityDamageEvent(player, EntityDamageEvent.CAUSE_SUICIDE, 1000);
+                EntityDamageEvent ev = new EntityDamageEvent(player, DamageCause.SUICIDE, 1000);
                 sender.getServer().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {
                     return true;
@@ -58,7 +59,7 @@ public class KillCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                 return true;
             }
-            EntityDamageEvent ev = new EntityDamageEvent((Player) sender, EntityDamageEvent.CAUSE_SUICIDE, 1000);
+            EntityDamageEvent ev = new EntityDamageEvent((Player) sender, DamageCause.SUICIDE, 1000);
             sender.getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return true;
