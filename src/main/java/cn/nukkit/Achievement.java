@@ -61,7 +61,7 @@ public class Achievement {
     }
 
     public void broadcast(Player player) {
-        String translation = Server.getInstance().getLanguage().translateString("chat.type.achievement", player.getDisplayName(), TextFormat.GREEN + this.getMessage());
+        String translation = Server.getInstance().getLanguage().translateString("chat.type.achievement", player.getDisplayName(), TextFormat.GREEN + this.getMessage(), null);
 
         if (Server.getInstance().getPropertyBoolean("announce-player-achievements", true)) {
             Server.getInstance().broadcastMessage(translation);

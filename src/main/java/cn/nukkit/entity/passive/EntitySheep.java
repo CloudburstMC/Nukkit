@@ -104,7 +104,7 @@ public class EntitySheep extends EntityAnimal {
         this.sheared = true;
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, true);
 
-        this.level.dropItem(this, new ItemBlock(new BlockWool(this.getColor()), 0, this.level.rand.nextInt(2) + 1));
+        this.level.dropItem(this, Item.get(Item.WOOL, getColor(), this.level.rand.nextInt(2) + 1));
         return true;
     }
 
@@ -119,6 +119,7 @@ public class EntitySheep extends EntityAnimal {
     public void setColor(int color) {
         this.color = color;
         this.setDataProperty(new ByteEntityData(DATA_COLOUR, color));
+        this.namedTag.putByte("Color", this.color);
     }
 
     public int getColor() {

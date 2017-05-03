@@ -199,7 +199,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected boolean enableClientCommand = true;
 
     private BlockEnderChest viewingEnderChest = null;
-    
+
     protected int lastEnderPearl = -1;
 
     private String deviceModel;
@@ -989,7 +989,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.sleeping = pos.clone();
-        this.teleport(new Location(pos.x + 0.5, pos.y - 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level), null);
+        this.teleport(new Location(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level), null);
 
         this.setDataProperty(new IntPositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
@@ -1638,7 +1638,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     private ArrayList<String> messageQueue = new ArrayList<String>();
-    
+
     public void checkNetwork() {
         if (!this.isOnline()) {
             return;
@@ -2579,11 +2579,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
                             this.server.getPluginManager().callEvent(playerRespawnEvent);
-                            
+
                             Position respawnPos = playerRespawnEvent.getRespawnPosition();
 
                             this.teleport(respawnPos, null);
-                            
+
                             RespawnPacket respawnPacket = new RespawnPacket();
                             respawnPacket.x = (float) respawnPos.x;
                             respawnPacket.y = (float) respawnPos.y;
@@ -3379,6 +3379,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         case Item.DIAMOND:
                             this.awardAchievement("diamond");
                             break;
+                        default:
+                            break;
                     }
 
                     break;
@@ -4050,6 +4052,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 break;
 
             default:
+                break;
 
         }
 
@@ -4431,7 +4434,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     /**
      * Creates and sends a BossBar to the player
-     * 
+     *
      * @param text  The BossBar message
      * @param length  The BossBar percentage
      * @return bossBarId  The BossBar ID, you should store it if you want to remove or update the BossBar later
@@ -4460,7 +4463,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 .putInt(Entity.DATA_SCALE, 0); // And make it invisible
         pkAdd.metadata = metadata;
         this.dataPacket(pkAdd);
-        
+
         // Now we send the entity attributes
         // TODO: Attributes should be sent on AddEntityPacket, however it doesn't work (client bug?)
         UpdateAttributesPacket pkAttributes = new UpdateAttributesPacket();
@@ -4470,7 +4473,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         attr.setValue(length); // Entity health
         pkAttributes.entries = new Attribute[] { attr };
         this.dataPacket(pkAttributes);
-        
+
         // And now we send the bossbar packet
         BossEventPacket pkBoss = new BossEventPacket();
         pkBoss.eid = bossBarId;
@@ -4478,10 +4481,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(pkBoss);
         return bossBarId;
     }
-    
+
     /**
      * Updates a BossBar
-     * 
+     *
      * @param text  The new BossBar message
      * @param length  The new BossBar length
      * @param bossBarId  The BossBar ID
@@ -4508,7 +4511,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 .putString(Entity.DATA_NAMETAG, text) // Set the entity name
                 .putInt(Entity.DATA_SCALE, 0); // And make it invisible
         this.dataPacket(pkMetadata);
-        
+
         // And now we send the bossbar packet
         BossEventPacket pkBoss = new BossEventPacket();
         pkBoss.eid = bossBarId;
@@ -4516,10 +4519,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(pkBoss);
         return;
     }
-    
+
     /**
      * Removes a BossBar
-     * 
+     *
      * @param bossBarId  The BossBar ID
      */
     public void removeBossBar(long bossBarId) {
@@ -4527,7 +4530,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pkRemove.eid = bossBarId;
         this.dataPacket(pkRemove);
     }
-    
+
     public int getWindowId(Inventory inventory) {
         if (this.windows.containsKey(inventory)) {
             return this.windows.get(inventory);
@@ -4728,10 +4731,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Player other = (Player) obj;
         return Objects.equals(this.getUniqueId(), other.getUniqueId()) && this.getId() == other.getId();
     }
-    
+
     /**
      * Notifies an ACK response from the client
-     * 
+     *
      * @param identification
      */
     public void notifyACK(int identification) {
