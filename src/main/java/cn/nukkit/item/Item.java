@@ -1131,13 +1131,13 @@ public class Item implements Cloneable {
         */
         addCreativeItem(Item.get(Item.SPAWN_EGG, 22)); //Ocelot
         addCreativeItem(Item.get(Item.SPAWN_EGG, 33)); //Creeper
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 32)); //Zombie
         /*
         addCreativeItem(Item.get(Item.SPAWN_EGG, 38)); //Enderman
         addCreativeItem(Item.get(Item.SPAWN_EGG, 39)); //Silverfish
         addCreativeItem(Item.get(Item.SPAWN_EGG, 34)); //Skeleton
         addCreativeItem(Item.get(Item.SPAWN_EGG, 37)); //Slime
         addCreativeItem(Item.get(Item.SPAWN_EGG, 35)); //Spider
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 32)); //Zombie
         addCreativeItem(Item.get(Item.SPAWN_EGG, 36)); //Zombie Pigman
         addCreativeItem(Item.get(Item.SPAWN_EGG, 17)); //Squid
         addCreativeItem(Item.get(Item.SPAWN_EGG, 40)); //Cave spider
