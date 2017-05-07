@@ -90,16 +90,19 @@ public class EntityPainting extends EntityHanging {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        super.attack(source);
-        if (source.isCancelled()) return;
-        if (source instanceof EntityDamageByEntityEvent) {
-            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-            if (damager instanceof Player && ((Player) damager).isSurvival()) {
-                this.level.dropItem(this, new ItemPainting());
+    public boolean attack(EntityDamageEvent source) {
+        if (super.attack(source)){
+            if (source instanceof EntityDamageByEntityEvent) {
+                Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+                if (damager instanceof Player && ((Player) damager).isSurvival()) {
+                    this.level.dropItem(this, new ItemPainting());
+                }
             }
+            this.close();
+            return true;
+        } else {
+            return false;
         }
-        this.close();
     }
 
     @Override

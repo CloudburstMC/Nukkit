@@ -322,7 +322,7 @@ public abstract class BaseInventory implements Inventory {
             }
         }
 
-        for (int i = 0; i < this.getSize(); ++i) {
+        for (int i = 0; i < this.size; ++i) {
             Item item = this.getItem(i);
             if (item.getId() == Item.AIR || item.getCount() <= 0) {
                 continue;

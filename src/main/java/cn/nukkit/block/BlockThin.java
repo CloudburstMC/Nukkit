@@ -24,10 +24,10 @@ public abstract class BlockThin extends BlockTransparent {
         double f2 = 0.4375;
         double f3 = 0.5625;
         try {
-            boolean flag = this.canConnect(this.getSide(2));
-            boolean flag1 = this.canConnect(this.getSide(3));
-            boolean flag2 = this.canConnect(this.getSide(4));
-            boolean flag3 = this.canConnect(this.getSide(5));
+            boolean flag = this.canConnect(this.north());
+            boolean flag1 = this.canConnect(this.south());
+            boolean flag2 = this.canConnect(this.west());
+            boolean flag3 = this.canConnect(this.east());
             if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1)) {
                 if (flag2) {
                     f = 0;

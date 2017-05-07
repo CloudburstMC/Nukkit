@@ -4,19 +4,20 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.BlockFace;
 
 abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
 
     private final Block blockClicked;
 
-    private final Integer blockFace;
+    private final BlockFace blockFace;
 
     private final Item bucket;
 
     private Item item;
 
 
-    public PlayerBucketEvent(Player who, Block blockClicked, Integer blockFace, Item bucket, Item itemInHand) {
+    public PlayerBucketEvent(Player who, Block blockClicked, BlockFace blockFace, Item bucket, Item itemInHand) {
         this.player = who;
         this.blockClicked = blockClicked;
         this.blockFace = blockFace;
@@ -46,7 +47,7 @@ abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
         return this.blockClicked;
     }
 
-    public int getBlockFace() {
+    public BlockFace getBlockFace() {
         return this.blockFace;
     }
 }

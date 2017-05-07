@@ -7,6 +7,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 
 import java.util.Random;
 
@@ -85,14 +86,14 @@ public class BlockCocoa extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (target.getId() == Block.WOOD && target.getDamage() == BlockWood.JUNGLE) {
-            if (face != 0 && face != 1) {
+            if (face != BlockFace.DOWN && face != BlockFace.UP) {
                 int[] faces = new int[]{
                         0,
                         0,
@@ -102,7 +103,7 @@ public class BlockCocoa extends BlockTransparent {
                         1,
                 };
 
-                this.meta = faces[face];
+                this.meta = faces[face.getIndex()];
                 this.level.setBlock(block, this, true, true);
                 return true;
             }
@@ -117,7 +118,7 @@ public class BlockCocoa extends BlockTransparent {
                     3, 4, 2, 5, 3, 4, 2, 5, 3, 4, 2, 5
             };
 
-            Block side = this.getSide(faces[this.meta]);
+            Block side = this.getSide(BlockFace.fromIndex(faces[this.meta]));
 
             if (side.getId() != Block.WOOD && side.getDamage() != BlockWood.JUNGLE) {
                 this.getLevel().useBreakOn(this);
@@ -159,10 +160,10 @@ public class BlockCocoa extends BlockTransparent {
     public int getToolType() {
         return ItemTool.TYPE_AXE;
     }
-    
+
     @Override
     public int[][] getDrops(Item item) {
-        if(this.meta >= 8) {
+        if (this.meta >= 8) {
             return new int[][]{
                     {Item.DYE, 3, 3}
             };

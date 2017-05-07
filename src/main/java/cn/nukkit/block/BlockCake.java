@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -58,8 +59,8 @@ public class BlockCake extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (getSide(0).getId() != Block.AIR) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (down().getId() != Block.AIR) {
             getLevel().setBlock(block, this, true, true);
 
             return true;
@@ -70,7 +71,7 @@ public class BlockCake extends BlockTransparent {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (getSide(0).getId() == Block.AIR) {
+            if (down().getId() == Block.AIR) {
                 getLevel().setBlock(this, new BlockAir(), true);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -103,5 +104,13 @@ public class BlockCake extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    public int getComparatorInputOverride() {
+        return (7 - this.meta) * 2;
+    }
+
+    public boolean hasComparatorInputOverride() {
+        return true;
     }
 }

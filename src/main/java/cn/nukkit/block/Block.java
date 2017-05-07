@@ -8,6 +8,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
@@ -307,9 +308,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static double[] hardness = null;
     public static boolean[] transparent = null;
     public AxisAlignedBB boundingBox = null;
+    public AxisAlignedBB collisionBoundingBox = null;
     protected int meta = 0;
-    protected int powerLevel = 0;
-    protected boolean powerSource = false;
 
     protected Block(Integer meta) {
         this.meta = (meta != null ? meta : 0);
@@ -355,12 +355,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[BED_BLOCK] = BlockBed.class; //26
             list[POWERED_RAIL] = BlockRailPowered.class; //27
             list[DETECTOR_RAIL] = BlockRailDetector.class; //28
-            //TODO: list[STICKY_PISTON] = BlockPistonSticky.class; //29
+            list[STICKY_PISTON] = BlockPistonSticky.class; //29
             list[COBWEB] = BlockCobweb.class; //30
             list[TALL_GRASS] = BlockTallGrass.class; //31
             list[DEAD_BUSH] = BlockDeadBush.class; //32
-            //TODO: list[PISTON] = BlockPiston.class; //33
-            //TODO: list[PISTON_HEAD] = BlockPistonHead.class; //34
+            list[PISTON] = BlockPiston.class; //33
+            list[PISTON_HEAD] = BlockPistonHead.class; //34
             list[WOOL] = BlockWool.class; //35
             list[DANDELION] = BlockDandelion.class; //37
             list[FLOWER] = BlockFlower.class; //38
@@ -400,7 +400,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[WOODEN_PRESSURE_PLATE] = BlockPressurePlateWood.class; //72
             list[REDSTONE_ORE] = BlockOreRedstone.class; //73
             list[GLOWING_REDSTONE_ORE] = BlockOreRedstoneGlowing.class; //74
-            //TODO: list[UNLIT_REDSTONE_TORCH] = BlockRedstoneTorchUnlit.class; //75
+            list[UNLIT_REDSTONE_TORCH] = BlockRedstoneTorchUnlit.class;
             list[REDSTONE_TORCH] = BlockRedstoneTorch.class; //76
             list[STONE_BUTTON] = BlockButtonStone.class; //77
             list[SNOW_LAYER] = BlockSnowLayer.class; //78
@@ -418,8 +418,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[NETHER_PORTAL] = BlockNetherPortal.class; //90
             list[LIT_PUMPKIN] = BlockPumpkinLit.class; //91
             list[CAKE_BLOCK] = BlockCake.class; //92
-            //TODO: list[UNPOWERED_REPEATER] = BlockRepeaterUnpowered.class; //93
-            //TODO: list[POWERED_REPEATER] = BlockRepeaterPowered.class; //94
+            list[UNPOWERED_REPEATER] = BlockRedstoneRepeaterUnpowered.class; //93
+            list[POWERED_REPEATER] = BlockRedstoneRepeaterPowered.class; //94
             list[INVISIBLE_BEDROCK] = BlockBedrockInvisible.class; //95
             list[TRAPDOOR] = BlockTrapdoor.class; //96
             list[MONSTER_EGG] = BlockMonsterEgg.class; //97
@@ -440,7 +440,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[NETHER_BRICKS] = BlockBricksNether.class; //112
             list[NETHER_BRICK_FENCE] = BlockFenceNetherBrick.class; //113
             list[NETHER_BRICKS_STAIRS] = BlockStairsNetherBrick.class; //114
-            //TODO: list[NETHER_WART_BLOCK] = BlockNetherWart.class; //115
+            list[NETHER_WART_BLOCK] = BlockNetherWart.class; //115
             list[ENCHANTING_TABLE] = BlockEnchantingTable.class; //116
             list[BREWING_STAND_BLOCK] = BlockBrewingStand.class; //117
             list[CAULDRON_BLOCK] = BlockCauldron.class; //118
@@ -474,8 +474,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[TRAPPED_CHEST] = BlockTrappedChest.class; //146
             list[LIGHT_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateLight.class; //147
             list[HEAVY_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateHeavy.class; //148
-            //TODO: list[UNPOWERED_COMPARATOR] = BlockComparatorUnpowered.class; //149
-            //TODO: list[POWERED_COMPARATOR] = BlockComparatorPowered.class; //149
+            list[UNPOWERED_COMPARATOR] = BlockRedstoneComparatorUnpowered.class; //149
+            list[POWERED_COMPARATOR] = BlockRedstoneComparatorPowered.class; //149
             list[DAYLIGHT_DETECTOR] = BlockDaylightDetector.class; //151
             list[REDSTONE_BLOCK] = BlockRedstone.class; //152
             list[QUARTZ_ORE] = BlockOreQuartz.class; //153
@@ -622,11 +622,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return block;
     }
 
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         return this.getLevel().setBlock(this, this, true, true);
     }
 
@@ -714,6 +714,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return false;
     }
 
+    public boolean canBePushed() {
+        return true;
+    }
+
+    public boolean hasComparatorInputOverride() {
+        return false;
+    }
+
+    public int getComparatorInputOverride() {
+        return 0;
+    }
+
     public BlockColor getColor() {
         return BlockColor.VOID_BLOCK_COLOR;
     }
@@ -796,15 +808,63 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return this.getHardness() != -1;
     }
 
-    public Block getSide(int side) {
-        return this.getSide(side, 1);
+    public Block getSide(BlockFace face) {
+        return this.getSide(face, 1);
     }
 
-    public Block getSide(int side, int step) {
+    public Block getSide(BlockFace face, int step) {
         if (this.isValid()) {
-            return this.getLevel().getBlock(super.getSide(side, step));
+            return this.getLevel().getBlock(super.getSide(face, step));
         }
-        return Block.get(Item.AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(side, step)));
+        return Block.get(Item.AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(face, step)));
+    }
+
+    public Block up() {
+        return up(1);
+    }
+
+    public Block up(int step) {
+        return getSide(BlockFace.UP, step);
+    }
+
+    public Block down() {
+        return down(1);
+    }
+
+    public Block down(int step) {
+        return getSide(BlockFace.DOWN, step);
+    }
+
+    public Block north() {
+        return north(1);
+    }
+
+    public Block north(int step) {
+        return getSide(BlockFace.NORTH, step);
+    }
+
+    public Block south() {
+        return south(1);
+    }
+
+    public Block south(int step) {
+        return getSide(BlockFace.SOUTH, step);
+    }
+
+    public Block east() {
+        return east(1);
+    }
+
+    public Block east(int step) {
+        return getSide(BlockFace.EAST, step);
+    }
+
+    public Block west() {
+        return west(1);
+    }
+
+    public Block west(int step) {
+        return getSide(BlockFace.WEST, step);
     }
 
     @Override
@@ -813,7 +873,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
-        AxisAlignedBB bb1 = this.getBoundingBox();
+        return collidesWithBB(bb, false);
+    }
+
+    public boolean collidesWithBB(AxisAlignedBB bb, boolean collisionBB) {
+        AxisAlignedBB bb1 = collisionBB ? this.getCollisionBoundingBox() : this.getBoundingBox();
         return bb1 != null && bb.intersectsWith(bb1);
     }
 
@@ -828,6 +892,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return this.boundingBox;
     }
 
+    public AxisAlignedBB getCollisionBoundingBox() {
+        if (this.collisionBoundingBox == null) {
+            this.collisionBoundingBox = this.recalculateCollisionBoundingBox();
+        }
+        return this.collisionBoundingBox;
+    }
+
     protected AxisAlignedBB recalculateBoundingBox() {
         return new AxisAlignedBB(
                 this.x,
@@ -837,6 +908,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                 this.y + 1,
                 this.z + 1
         );
+    }
+
+    protected AxisAlignedBB recalculateCollisionBoundingBox() {
+        return getBoundingBox();
     }
 
     public MovingObjectPosition calculateIntercept(Vector3 pos1, Vector3 pos2) {
@@ -954,46 +1029,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return (Block) super.clone();
     }
 
-    public int getPowerLevel() {
-        return powerLevel;
+    public int getWeakPower(BlockFace face) {
+        return 0;
     }
 
-    public void setPowerLevel(int powerLevel) {
-        this.powerLevel = powerLevel;
-    }
-
-    public int getPowerLevel(int side) {
-        return this.getSide(side).getPowerLevel();
-    }
-
-    public boolean isNeighborPowered() {
-        return this.getNeighborPowerLevel() > 0;
-    }
-
-    public int getNeighborPowerLevel() {
-        int energy = 0;
-        int tempLevel;
-        tempLevel = this.getSide(SIDE_DOWN).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_UP).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
-            tempLevel = this.getSide(side).getPowerLevel();
-            energy = tempLevel > energy ? tempLevel : energy;
-        }
-        return energy;
-    }
-
-    public boolean isPowered() {
-        return this.powerLevel > 0;
+    public int getStrongPower(BlockFace side) {
+        return 0;
     }
 
     public boolean isPowerSource() {
-        return this.powerSource;
-    }
-
-    public void setPowerSource(boolean isSource) {
-        this.powerSource = isSource;
+        return false;
     }
 
     public String getLocationHash() {
@@ -1004,4 +1049,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return 0;
     }
 
+    public boolean isNormalBlock() {
+        return !isTransparent() && isSolid() && !isPowerSource();
+    }
 }

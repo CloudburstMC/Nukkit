@@ -8,19 +8,19 @@ import cn.nukkit.network.protocol.LevelEventPacket;
  * Created on 2015/11/21 by xtypr.
  * Package cn.nukkit.level.sound in project Nukkit .
  */
-public class GenericSound extends Sound {
-    public GenericSound(Vector3 pos, int id) {
+public class LevelEventSound extends Sound {
+    protected final int id;
+    protected float pitch = 0f;
+
+    public LevelEventSound(Vector3 pos, int id) {
         this(pos, id, 0);
     }
 
-    public GenericSound(Vector3 pos, int id, float pitch) {
+    public LevelEventSound(Vector3 pos, int id, float pitch) {
         super(pos.x, pos.y, pos.z);
         this.id = id;
         this.pitch = pitch * 1000f;
     }
-
-    protected float pitch = 0f;
-    protected final int id;
 
     public float getPitch() {
         return this.pitch / 1000f;

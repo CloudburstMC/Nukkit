@@ -12,4 +12,9 @@ public class ItemHorseArmorGold extends Item {
     public ItemHorseArmorGold(Integer meta, int count) {
         super(GOLD_HORSE_ARMOR, meta, count, "Gold Horse Armor");
     }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
 }

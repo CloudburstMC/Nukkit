@@ -1,15 +1,8 @@
 package cn.nukkit.item.enchantment.damage;
 
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityArthropod;
-import cn.nukkit.entity.EntityLiving;
-import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.enchantment.EnchantmentType;
-import cn.nukkit.potion.Effect;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX

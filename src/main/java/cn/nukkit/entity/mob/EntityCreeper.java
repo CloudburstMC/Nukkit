@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.entity.CreeperPowerEvent;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -50,6 +52,15 @@ public class EntityCreeper extends EntityMob {
             this.setDataProperty(new ByteEntityData(DATA_POWERED, powered ? 1 : 0));
             this.namedTag.putBoolean("powered", powered);
         }
+    }
+
+
+    @Override
+    public Item[] getDrops() {
+        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
+            return new Item[]{Item.get(Item.GUNPOWDER, level.rand.nextInt(2) + 1)};
+        }
+        return new Item[0];
     }
 
     @Override

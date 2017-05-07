@@ -15,7 +15,6 @@ import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.level.*;
 import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
@@ -38,6 +37,7 @@ import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.sound.BlockPlaceSound;
 import cn.nukkit.level.sound.Sound;
 import cn.nukkit.math.*;
+import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.metadata.BlockMetadataStore;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
@@ -46,18 +46,20 @@ import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.redstone.Redstone;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.timings.LevelTimings;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
+import com.google.common.cache.CacheBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * author: MagicDroidX Nukkit Project
@@ -73,6 +75,7 @@ public class Level implements ChunkManager, Metadatable {
     public static final int BLOCK_UPDATE_SCHEDULED = 3;
     public static final int BLOCK_UPDATE_WEAK = 4;
     public static final int BLOCK_UPDATE_TOUCH = 5;
+    public static final int BLOCK_UPDATE_REDSTONE = 6;
 
     public static final int TIME_DAY = 0;
     public static final int TIME_SUNSET = 12000;
@@ -91,7 +94,6 @@ public class Level implements ChunkManager, Metadatable {
 
     private Map<Long, Map<Long, SetEntityMotionPacket>> motionToSend = new HashMap<>();
     private Map<Long, Map<Long, MoveEntityPacket>> moveToSend = new HashMap<>();
-    private Map<Long, Map<Long, MovePlayerPacket>> playerMoveToSend = new HashMap<>();
 
     private final Map<Long, Player> players = new HashMap<>();
 
@@ -102,10 +104,16 @@ public class Level implements ChunkManager, Metadatable {
     public final Map<Long, BlockEntity> updateBlockEntities = new HashMap<>();
 
     // Use a weak map to avoid OOM
-    private final Map<BlockVector3, Block> blockCache = new WeakHashMap<>();
+    private final ConcurrentMap<Object, Object> blockCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build().asMap();
 
     // Use a weak map to avoid OOM
-    private final Map<Long, DataPacket> chunkCache = new WeakHashMap<>();
+    private final ConcurrentMap<Object, Object> chunkCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build().asMap();
 
     private boolean cacheChunks = false;
 
@@ -203,6 +211,7 @@ public class Level implements ChunkManager, Metadatable {
             put(Block.SUGARCANE_BLOCK, BlockSugarcane.class);
             put(Block.RED_MUSHROOM, BlockMushroomRed.class);
             put(Block.BROWN_MUSHROOM, BlockMushroomBrown.class);
+            put(Block.NETHER_WART_BLOCK, BlockNetherWart.class);
 
             put(Block.FIRE, BlockFire.class);
             put(Block.GLOWING_REDSTONE_ORE, BlockOreRedstoneGlowing.class);
@@ -827,15 +836,6 @@ public class Level implements ChunkManager, Metadatable {
         }
         this.motionToSend.clear();
 
-        for (long index : this.playerMoveToSend.keySet()) {
-            int chunkX = getHashX(index);
-            int chunkZ = getHashZ(index);
-            for (MovePlayerPacket packet : this.playerMoveToSend.get(index).values()) {
-                this.addChunkPacket(chunkX, chunkZ, packet);
-            }
-        }
-        this.playerMoveToSend.clear();
-
         for (long index : this.chunkPackets.keySet()) {
             int chunkX = Level.getHashX(index);
             int chunkZ = Level.getHashZ(index);
@@ -1155,83 +1155,80 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public void updateAround(Vector3 pos) {
-        BlockUpdateEvent ev;
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(this.temporalVector.setComponents(pos.x, pos.y - 1, pos.z))));
-        if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
-        }
+    public void updateAroundRedstone(Vector3 pos, BlockFace face) {
+        //TODO: event
+        for (BlockFace side : BlockFace.values()) {
+            /*if(face != null && side == face) {
+                continue;
+            }*/
 
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(this.temporalVector.setComponents(pos.x, pos.y + 1, pos.z))));
-        if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
-        }
-
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(this.temporalVector.setComponents(pos.x - 1, pos.y, pos.z))));
-        if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
-        }
-
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(this.temporalVector.setComponents(pos.x + 1, pos.y, pos.z))));
-        if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
-        }
-
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(this.temporalVector.setComponents(pos.x, pos.y, pos.z - 1))));
-        if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
-        }
-
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(this.temporalVector.setComponents(pos.x, pos.y, pos.z + 1))));
-        if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+            this.getBlock(pos.getSide(side)).onUpdate(BLOCK_UPDATE_REDSTONE);
         }
     }
 
-    public void updateAroundRedstone(Block block) {
-        BlockUpdateEvent ev = new BlockUpdateEvent(block);
-        this.server.getPluginManager().callEvent(ev);
-        if (!ev.isCancelled()) {
-            for (Entity entity : this.getNearbyEntities(
-                    new AxisAlignedBB(block.x - 1, block.y - 1, block.z - 1, block.x + 1, block.y + 1, block.z + 1))) {
-                entity.scheduleUpdate();
-            }
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+    public void updateComparatorOutputLevel(Vector3 v) {
+        for (BlockFace face : Plane.HORIZONTAL) {
+            Vector3 pos = v.getSide(face);
 
-            RedstoneUpdateEvent rsEv = new RedstoneUpdateEvent(ev.getBlock());
-            this.server.getPluginManager().callEvent(rsEv);
-            if (!rsEv.isCancelled()) {
-                Block redstoneWire = rsEv.getBlock().getSide(Vector3.SIDE_DOWN);
-                if (redstoneWire instanceof BlockRedstoneWire) {
-                    if (rsEv.getBlock() instanceof BlockSolid) {
-                        int level = redstoneWire.getPowerLevel();
-                        redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
-                        redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
-                        Redstone.deactive(redstoneWire, level);
-                    } else {
-                        redstoneWire.setPowerLevel(redstoneWire.getNeighborPowerLevel() - 1);
-                        redstoneWire.getLevel().setBlock(redstoneWire, redstoneWire, true, true);
-                        Redstone.active(redstoneWire);
+            if (this.isChunkLoaded((int) pos.x >> 4, (int) pos.z >> 4)) {
+                Block block1 = this.getBlock(pos);
+
+                if (BlockRedstoneDiode.isDiode(block1)) {
+                    block1.onUpdate(BLOCK_UPDATE_REDSTONE);
+                } else if (block1.isNormalBlock()) {
+                    pos = pos.getSide(face);
+                    block1 = this.getBlock(pos);
+
+                    if (BlockRedstoneDiode.isDiode(block1)) {
+                        block1.onUpdate(BLOCK_UPDATE_REDSTONE);
                     }
                 }
             }
         }
     }
 
+    public void updateAround(Vector3 pos) {
+        BlockUpdateEvent ev;
+
+        for (BlockFace face : BlockFace.values()) {
+            this.server.getPluginManager().callEvent(
+                    ev = new BlockUpdateEvent(this.getBlock(pos.getSide(face))));
+            if (!ev.isCancelled()) {
+                ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+            }
+        }
+    }
+
     public void scheduleUpdate(Vector3 pos, int delay) {
+        delay += getServer().getTick();
+
         BlockVector3 index = Level.blockHash((int) pos.x, (int) pos.y, (int) pos.z);
         if (this.updateQueueIndex.containsKey(index) && this.updateQueueIndex.get(index) <= delay) {
             return;
         }
         this.updateQueueIndex.put(index, delay);
         this.updateQueue.add(
-                new PriorityObject(new Vector3((int) pos.x, (int) pos.y, (int) pos.z), delay + this.server.getTick()));
+                new PriorityObject(new Vector3((int) pos.x, (int) pos.y, (int) pos.z), delay));
+    }
+
+    public boolean cancelSheduledUpdate(Vector3 pos) {
+        BlockVector3 index = Level.blockHash((int) pos.x, (int) pos.y, (int) pos.z);
+
+        Integer delay = this.updateQueueIndex.remove(index);
+
+        if (delay == null) {
+            return false;
+        }
+
+
+        this.updateQueue.remove(new PriorityObject(pos, delay));
+        return true;
+    }
+
+    public boolean isUpdateScheduled(Vector3 pos) {
+        BlockVector3 index = Level.blockHash((int) pos.x, (int) pos.y, (int) pos.z);
+
+        return this.updateQueueIndex.containsKey(index);
     }
 
     public Block[] getCollisionBlocks(AxisAlignedBB bb) {
@@ -1380,7 +1377,7 @@ public class Level implements ChunkManager, Metadatable {
         Block block;
         BaseFullChunk chunk;
 
-        if (cached && (block = this.blockCache.get(index)) != null) {
+        if (cached && (block = (Block) this.blockCache.get(index)) != null) {
             return block;
         } else if (pos.y >= 0 && pos.y < 256 && (chunk = this.chunks.get(chunkIndex)) != null) {
             fullState = chunk.getFullBlock((int) pos.x & 0x0f, (int) pos.y & 0xff,
@@ -1560,7 +1557,7 @@ public class Level implements ChunkManager, Metadatable {
                     }
                     ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
                 }
-                this.updateAroundRedstone(block);
+
                 this.updateAround(position);
             }
 
@@ -1630,6 +1627,7 @@ public class Level implements ChunkManager, Metadatable {
 
                             .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", delay));
 
+            itemEntity.setPickupDelay(delay); //TODO: fix this
             itemEntity.spawnToAll();
         }
     }
@@ -1768,6 +1766,8 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             blockEntity.close();
+
+            this.updateComparatorOutputLevel(target);
         }
 
         item.useOn(target);
@@ -1823,11 +1823,11 @@ public class Level implements ChunkManager, Metadatable {
 
     }
 
-    public Item useItemOn(Vector3 vector, Item item, int face, float fx, float fy, float fz) {
+    public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz) {
         return this.useItemOn(vector, item, face, fx, fy, fz, null);
     }
 
-    public Item useItemOn(Vector3 vector, Item item, int face, float fx, float fy, float fz, Player player) {
+    public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz, Player player) {
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
 
@@ -1958,7 +1958,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
-            BlockPlaceSound sound = new BlockPlaceSound(block.add(0.5, 0.5, 0.5));
+            BlockPlaceSound sound = new BlockPlaceSound(block.add(0.5, 0.5, 0.5), item.getId());
             Map<Integer, Player> players = getChunkPlayers((int) block.x >> 4, (int) block.z >> 4);
             addSound(sound, players.values());
 
@@ -2315,7 +2315,7 @@ public class Level implements ChunkManager, Metadatable {
         if (this.chunkSendTasks.containsKey(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
                 if (player.isConnected() && player.usedChunks.containsKey(index)) {
-                    player.sendChunk(x, z, this.chunkCache.get(index));
+                    player.sendChunk(x, z, (DataPacket) this.chunkCache.get(index));
                 }
             }
 
@@ -2850,25 +2850,6 @@ public class Level implements ChunkManager, Metadatable {
         this.moveToSend.get(index).put(entityId, pk);
     }
 
-    public void addPlayerMovement(int chunkX, int chunkZ, long entityId, double x, double y, double z, double yaw,
-                                  double pitch, boolean onGround) {
-        Long index = Level.chunkHash(chunkX, chunkZ);
-        if (!this.playerMoveToSend.containsKey(index)) {
-            this.playerMoveToSend.put(index, new HashMap<>());
-        }
-
-        MovePlayerPacket pk = new MovePlayerPacket();
-        pk.eid = entityId;
-        pk.x = (float) x;
-        pk.y = (float) y;
-        pk.z = (float) z;
-        pk.yaw = (float) yaw;
-        pk.headYaw = (float) yaw;
-        pk.pitch = (float) pitch;
-        pk.onGround = onGround;
-        this.playerMoveToSend.get(index).put(entityId, pk);
-    }
-
     public boolean isRaining() {
         return this.raining;
     }
@@ -2997,4 +2978,78 @@ public class Level implements ChunkManager, Metadatable {
         return this.getHighestBlockAt(pos.getFloorX(), pos.getFloorZ()) < pos.getY();
     }
 
+    public int getStrongPower(Vector3 pos, BlockFace direction) {
+        return this.getBlock(pos).getStrongPower(direction);
+    }
+
+    public int getStrongPower(Vector3 pos) {
+        int i = 0;
+        i = Math.max(i, this.getStrongPower(pos.down(), BlockFace.DOWN));
+
+        if (i >= 15) {
+            return i;
+        } else {
+            i = Math.max(i, this.getStrongPower(pos.up(), BlockFace.UP));
+
+            if (i >= 15) {
+                return i;
+            } else {
+                i = Math.max(i, this.getStrongPower(pos.north(), BlockFace.NORTH));
+
+                if (i >= 15) {
+                    return i;
+                } else {
+                    i = Math.max(i, this.getStrongPower(pos.south(), BlockFace.SOUTH));
+
+                    if (i >= 15) {
+                        return i;
+                    } else {
+                        i = Math.max(i, this.getStrongPower(pos.west(), BlockFace.WEST));
+
+                        if (i >= 15) {
+                            return i;
+                        } else {
+                            i = Math.max(i, this.getStrongPower(pos.east(), BlockFace.EAST));
+                            return i >= 15 ? i : i;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean isSidePowered(Vector3 pos, BlockFace face) {
+        return this.getRedstonePower(pos, face) > 0;
+    }
+
+    public int getRedstonePower(Vector3 pos, BlockFace face) {
+        Block block = this.getBlock(pos);
+        return block.isNormalBlock() ? this.getStrongPower(pos) : block.getWeakPower(face);
+    }
+
+    public boolean isBlockPowered(Vector3 pos) {
+        return this.getRedstonePower(pos.north(), BlockFace.NORTH) > 0 || this.getRedstonePower(pos.south(), BlockFace.SOUTH) > 0 || this.getRedstonePower(pos.west(), BlockFace.WEST) > 0 || this.getRedstonePower(pos.east(), BlockFace.EAST) > 0 || this.getRedstonePower(pos.down(), BlockFace.DOWN) > 0 || this.getRedstonePower(pos.up(), BlockFace.UP) > 0;
+    }
+
+    /**
+     * Checks if the specified block or its neighbors are powered by a neighboring block. Used by blocks like TNT and
+     * Doors.
+     */
+    public int isBlockIndirectlyGettingPowered(Vector3 pos) {
+        int power = 0;
+
+        for (BlockFace face : BlockFace.values()) {
+            int blockPower = this.getRedstonePower(pos.getSide(face), face);
+
+            if (blockPower >= 15) {
+                return 15;
+            }
+
+            if (blockPower > power) {
+                power = blockPower;
+            }
+        }
+
+        return power;
+    }
 }

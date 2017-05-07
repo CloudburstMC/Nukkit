@@ -3,7 +3,7 @@ package cn.nukkit.level.sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
-public class SplashSound extends GenericSound {
+public class SplashSound extends LevelEventSound {
 
     public SplashSound(Vector3 pos) {
         this(pos, 0);

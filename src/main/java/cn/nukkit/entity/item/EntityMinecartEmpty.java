@@ -84,15 +84,17 @@ public class EntityMinecartEmpty extends EntityVehicle {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        super.attack(source);
-        if (source.isCancelled()) return;
-
-        EntityEventPacket pk = new EntityEventPacket();
-        pk.eid = this.id;
-        pk.event = EntityEventPacket.HURT_ANIMATION;
-        for (Player aPlayer : this.getLevel().getPlayers().values()) {
-            aPlayer.dataPacket(pk);
+    public boolean attack(EntityDamageEvent source) {
+        if (super.attack(source)) {
+            EntityEventPacket pk = new EntityEventPacket();
+            pk.eid = this.id;
+            pk.event = EntityEventPacket.HURT_ANIMATION;
+            for (Player aPlayer : this.getLevel().getPlayers().values()) {
+                aPlayer.dataPacket(pk);
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 

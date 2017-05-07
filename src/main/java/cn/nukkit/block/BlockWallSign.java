@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
 
 /**
  * Created by Pub4Game on 26.12.2015.
@@ -36,7 +37,7 @@ public class BlockWallSign extends BlockSignPost {
         };
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.meta >= 2 && this.meta <= 5) {
-                if (this.getSide(faces[this.meta - 2]).getId() == Item.AIR) {
+                if (this.getSide(BlockFace.fromIndex(faces[this.meta - 2])).getId() == Item.AIR) {
                     this.getLevel().useBreakOn(this);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;

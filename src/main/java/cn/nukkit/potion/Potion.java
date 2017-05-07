@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.potion.PotionApplyEvent;
 import cn.nukkit.utils.ServerException;
@@ -188,7 +189,7 @@ public class Potion implements Cloneable {
                 break;
             case HARMING:
             case HARMING_II:
-                entity.attack(new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, (float) (health * (double) (6 << (applyEffect.getAmplifier() + 1)))));
+                entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, (float) (health * (double) (6 << (applyEffect.getAmplifier() + 1)))));
                 break;
             default:
                 int duration = (int) ((isSplash() ? health : 1) * (double) applyEffect.getDuration() + 0.5);

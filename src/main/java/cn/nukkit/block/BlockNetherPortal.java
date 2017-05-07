@@ -1,8 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityPortalEnterEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -53,8 +52,8 @@ public class BlockNetherPortal extends BlockFlowable {
     @Override
     public boolean onBreak(Item item) {
         boolean result = super.onBreak(item);
-        for (int side = 0; side <= 5; side++) {
-            Block b = this.getSide(side);
+        for (BlockFace face : BlockFace.values()) {
+            Block b = this.getSide(face);
             if (b != null) {
                 if (b instanceof BlockNetherPortal) {
                     result &= b.onBreak(item);
@@ -64,32 +63,18 @@ public class BlockNetherPortal extends BlockFlowable {
         return result;
     }
 
-
     @Override
     public boolean hasEntityCollision() {
         return true;
     }
 
     @Override
-    public void onEntityCollide(Entity entity) {
-        entity.inPortalTicks++;
-
-        if (entity.inPortalTicks >= 80) {
-            EntityPortalEnterEvent ev = new EntityPortalEnterEvent(entity, EntityPortalEnterEvent.TYPE_NETHER);
-            this.level.getServer().getPluginManager().callEvent(ev);
-
-            if (ev.isCancelled()) {
-                return;
-            }
-
-            //todo: teleport to the nether
-        }
-    }
-
-
-    @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
 
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
 }

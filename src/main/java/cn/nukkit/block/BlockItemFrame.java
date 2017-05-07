@@ -5,11 +5,12 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.ItemFrameItemAddedSound;
 import cn.nukkit.level.sound.ItemFrameItemRotated;
 import cn.nukkit.level.sound.ItemFramePlacedSound;
 import cn.nukkit.level.sound.ItemFrameRemovedSound;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
@@ -36,6 +37,18 @@ public class BlockItemFrame extends BlockTransparent {
     @Override
     public String getName() {
         return "Item Frame";
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.getSide(getFacing()).isTransparent()) {
+                this.level.useBreakOn(this);
+                return type;
+            }
+        }
+
+        return 0;
     }
 
     @Override
@@ -78,19 +91,19 @@ public class BlockItemFrame extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent() && face > 1 && !block.isSolid()) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (!target.isTransparent() && face.getIndex() > 1 && !block.isSolid()) {
             switch (face) {
-                case Vector3.SIDE_NORTH:
+                case NORTH:
                     this.meta = 3;
                     break;
-                case Vector3.SIDE_SOUTH:
+                case SOUTH:
                     this.meta = 2;
                     break;
-                case Vector3.SIDE_WEST:
+                case WEST:
                     this.meta = 1;
                     break;
-                case Vector3.SIDE_EAST:
+                case EAST:
                     this.meta = 0;
                     break;
                 default:
@@ -139,4 +152,39 @@ public class BlockItemFrame extends BlockTransparent {
         }
     }
 
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
+
+    @Override
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride() {
+        BlockEntity blockEntity = this.level.getBlockEntity(this);
+
+        if (blockEntity instanceof BlockEntityItemFrame) {
+            return ((BlockEntityItemFrame) blockEntity).getAnalogOutput();
+        }
+
+        return super.getComparatorInputOverride();
+    }
+
+    public BlockFace getFacing() {
+        switch (this.meta % 8) {
+            case 0:
+                return BlockFace.WEST;
+            case 1:
+                return BlockFace.EAST;
+            case 2:
+                return BlockFace.NORTH;
+            case 3:
+                return BlockFace.SOUTH;
+        }
+
+        return null;
+    }
 }

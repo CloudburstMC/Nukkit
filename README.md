@@ -36,7 +36,7 @@ Nukkit is **under improvement** yet, we welcome contributions.
 Get Nukkit & Plugins
 --------------------
 
-####Recommended Sites
+#### Recommended Sites
 
 * __[Official Site](https://nukkit.io)__
 * __[Jar Download at Circle CI](https://circleci.com/gh/Nukkit/Nukkit/tree/master/)__ (**login required**)
@@ -45,7 +45,7 @@ Get Nukkit & Plugins
 *Thank you for visiting our official sites. Our official websites are provided free of charge, and we do not like to place ads on the home page affecting your reading. If you like this project, please [donate to us](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=magicdroidx%40gmail%2ecom&lc=US&item_name=Nukkit&currency_code=USD&bn=PP%2dDonationsBF%3apaypal%2ddonate%2dyellow%2esvg%3aNonHostedGuest). All the donations will only be used for Nukkit websites and services.*
 
 
-####Unofficial Download Mirrors
+#### Unofficial Download Mirrors
 *These sites are provided by our users, Nukkit stuff are not responsible for the reliability of these sites. Jar files downloaded here are only for reference - to try the latest update or for commercial uses, compile by yourself.*
 
 * __[Jenkins by MengCraft](http://ci.mengcraft.com:8080/job/Nukkit/lastSuccessfulBuild/)__ (**UNOFFICIAL**)
@@ -62,7 +62,7 @@ Simply run `start.sh` or `start.cmd`, or execute `java -jar Nukkit.jar`.
 
 Plugin API
 -------------
-####**Example Plugin**
+#### **Example Plugin**
 Example Plugin which shows the API of Nukkit.
 
 * __[Example Plugin](http://github.com/Nukkit/ExamplePlugin)__

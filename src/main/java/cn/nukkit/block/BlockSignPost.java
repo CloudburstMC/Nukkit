@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
@@ -56,8 +56,8 @@ public class BlockSignPost extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (face != 0) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (face != BlockFace.DOWN) {
             CompoundTag nbt = new CompoundTag()
                     .putString("id", BlockEntity.SIGN)
                     .putInt("x", (int) block.x)
@@ -68,11 +68,11 @@ public class BlockSignPost extends BlockTransparent {
                     .putString("Text3", "")
                     .putString("Text4", "");
 
-            if (face == 1) {
+            if (face == BlockFace.UP) {
                 meta = (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f;
                 getLevel().setBlock(block, new BlockSignPost(meta), true);
             } else {
-                meta = face;
+                meta = face.getIndex();
                 getLevel().setBlock(block, new BlockWallSign(meta), true);
             }
 
@@ -97,7 +97,7 @@ public class BlockSignPost extends BlockTransparent {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (getSide(Vector3.SIDE_DOWN).getId() == Block.AIR) {
+            if (down().getId() == Block.AIR) {
                 getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;

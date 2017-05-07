@@ -2,8 +2,8 @@ package cn.nukkit.item.enchantment;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHumanType;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 
 import java.util.Random;
@@ -60,7 +60,7 @@ public class EnchantmentThorns extends Enchantment {
         }
 
         if (thornsDamage > 0) {
-            attacker.attack(new EntityDamageEvent(attacker, EntityDamageEvent.CAUSE_MAGIC, rnd.nextInt(4) + 1));
+            attacker.attack(new EntityDamageEvent(attacker, DamageCause.MAGIC, rnd.nextInt(4) + 1));
         }
     }
 }

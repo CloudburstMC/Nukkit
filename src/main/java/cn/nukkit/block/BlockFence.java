@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -62,10 +61,10 @@ public class BlockFence extends BlockTransparent {
     }
 
     protected AxisAlignedBB recalculateBoundingBox() {
-        boolean north = this.canConnect(this.getSide(Vector3.SIDE_NORTH));
-        boolean south = this.canConnect(this.getSide(Vector3.SIDE_SOUTH));
-        boolean west = this.canConnect(this.getSide(Vector3.SIDE_WEST));
-        boolean east = this.canConnect(this.getSide(Vector3.SIDE_EAST));
+        boolean north = this.canConnect(this.north());
+        boolean south = this.canConnect(this.south());
+        boolean west = this.canConnect(this.west());
+        boolean east = this.canConnect(this.east());
         double n = north ? 0 : 0.375;
         double s = south ? 1 : 0.625;
         double w = west ? 0 : 0.375;

@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.LeverSound;
-import cn.nukkit.redstone.Redstone;
+import cn.nukkit.math.BlockFace;
 
 /**
  * @author Nukkit Project Team
@@ -17,7 +17,6 @@ public class BlockLever extends BlockFlowable {
 
     public BlockLever(int meta) {
         super(meta);
-        this.setPowerLevel(Redstone.POWER_STRONGEST);
     }
 
     @Override
@@ -60,33 +59,22 @@ public class BlockLever extends BlockFlowable {
     public boolean onActivate(Item item, Player player) {
         this.meta ^= 0x08;
 
-        this.getLevel().setBlock(this, this, true, true);
+        this.getLevel().setBlock(this, this, false, true);
         this.getLevel().addSound(new LeverSound(this, this.isPowerOn()));
-        if (this.isPowerOn()) {
-            this.setPowerSource(true);
-            Redstone.active(this);
-        } else {
-            this.setPowerSource(false);
-            Redstone.deactive(this, this.getPowerLevel());
-        }
+
+        LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.meta ^ 0x08 : this.meta);
+        BlockFace face = orientation.getFacing();
+        //this.level.updateAroundRedstone(this, null);
+        this.level.updateAroundRedstone(this.getLocation().getSide(face.getOpposite()), isPowerOn() ? face : null);
         return true;
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            int[] faces = new int[]{
-                    1,
-                    4,
-                    5,
-                    2,
-                    3,
-                    0,
-                    0,
-                    1
-            };
             int face = this.isPowerOn() ? this.meta ^ 0x08 : this.meta;
-            if (this.getSide(faces[face]).isTransparent()) {
+            BlockFace faces = LeverOrientation.byMetadata(face).getFacing().getOpposite();
+            if (!this.getSide(faces).isSolid()) {
                 this.onBreak(null);
                 for (int[] item : this.getDrops(null)) {
                     this.getLevel().dropItem(this, Item.get(item[0], item[1], item[2]));
@@ -97,27 +85,9 @@ public class BlockLever extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent()) {
-            int[] faces = new int[]{
-                    0,
-                    5,
-                    4,
-                    3,
-                    2,
-                    1
-            };
-            int to;
-
-            if (face == 0) {
-                to = player != null ? player.getDirection() : 0;
-                this.meta = (to % 2 == 0 ? 0 : 7);
-            } else if (face == 1) {
-                to = player != null ? player.getDirection() : 0;
-                this.meta = (to % 2 == 0 ? 6 : 5);
-            } else {
-                this.meta = faces[face];
-            }
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (!target.isTransparent() && target.isSolid()) {
+            this.meta = LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata();
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
@@ -127,8 +97,120 @@ public class BlockLever extends BlockFlowable {
     @Override
     public boolean onBreak(Item item) {
         this.getLevel().setBlock(this, new BlockAir(), true, true);
-        Redstone.deactive(this, this.getPowerLevel());
+
+        if (isPowerOn()) {
+            BlockFace face = LeverOrientation.byMetadata(this.isPowerOn() ? this.meta ^ 0x08 : this.meta).getFacing();
+            this.level.updateAround(this.getLocation().getSide(face.getOpposite()));
+        }
         return true;
     }
 
+    @Override
+    public int getWeakPower(BlockFace side) {
+        return isPowerOn() ? 15 : 0;
+    }
+
+    public int getStrongPower(BlockFace side) {
+        return !isPowerOn() ? 0 : LeverOrientation.byMetadata(this.isPowerOn() ? this.meta ^ 0x08 : this.meta).getFacing() == side ? 15 : 0;
+    }
+
+    @Override
+    public boolean isPowerSource() {
+        return true;
+    }
+
+    public enum LeverOrientation {
+        DOWN_X(0, "down_x", BlockFace.DOWN),
+        EAST(1, "east", BlockFace.EAST),
+        WEST(2, "west", BlockFace.WEST),
+        SOUTH(3, "south", BlockFace.SOUTH),
+        NORTH(4, "north", BlockFace.NORTH),
+        UP_Z(5, "up_z", BlockFace.UP),
+        UP_X(6, "up_x", BlockFace.UP),
+        DOWN_Z(7, "down_z", BlockFace.DOWN);
+
+        private static final LeverOrientation[] META_LOOKUP = new LeverOrientation[values().length];
+        private final int meta;
+        private final String name;
+        private final BlockFace facing;
+
+        LeverOrientation(int meta, String name, BlockFace face) {
+            this.meta = meta;
+            this.name = name;
+            this.facing = face;
+        }
+
+        public int getMetadata() {
+            return this.meta;
+        }
+
+        public BlockFace getFacing() {
+            return this.facing;
+        }
+
+        public String toString() {
+            return this.name;
+        }
+
+        public static LeverOrientation byMetadata(int meta) {
+            if (meta < 0 || meta >= META_LOOKUP.length) {
+                meta = 0;
+            }
+
+            return META_LOOKUP[meta];
+        }
+
+        public static LeverOrientation forFacings(BlockFace clickedSide, BlockFace playerDirection) {
+            switch (clickedSide) {
+                case DOWN:
+                    switch (playerDirection.getAxis()) {
+                        case X:
+                            return DOWN_X;
+
+                        case Z:
+                            return DOWN_Z;
+
+                        default:
+                            throw new IllegalArgumentException("Invalid entityFacing " + playerDirection + " for facing " + clickedSide);
+                    }
+
+                case UP:
+                    switch (playerDirection.getAxis()) {
+                        case X:
+                            return UP_X;
+
+                        case Z:
+                            return UP_Z;
+
+                        default:
+                            throw new IllegalArgumentException("Invalid entityFacing " + playerDirection + " for facing " + clickedSide);
+                    }
+
+                case NORTH:
+                    return NORTH;
+
+                case SOUTH:
+                    return SOUTH;
+
+                case WEST:
+                    return WEST;
+
+                case EAST:
+                    return EAST;
+
+                default:
+                    throw new IllegalArgumentException("Invalid facing: " + clickedSide);
+            }
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        static {
+            for (LeverOrientation face : values()) {
+                META_LOOKUP[face.getMetadata()] = face;
+            }
+        }
+    }
 }

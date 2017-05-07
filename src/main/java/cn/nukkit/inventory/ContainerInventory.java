@@ -2,6 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
@@ -56,5 +57,26 @@ public abstract class ContainerInventory extends BaseInventory {
         pk.windowid = (byte) who.getWindowId(this);
         who.dataPacket(pk);
         super.onClose(who);
+    }
+
+    public static int calculateRedstone(Inventory inv) {
+        if (inv == null) {
+            return 0;
+        } else {
+            int itemCount = 0;
+            float averageCount = 0;
+
+            for (int slot = 0; slot < inv.getSize(); ++slot) {
+                Item item = inv.getItem(slot);
+
+                if (item.getId() != 0) {
+                    averageCount += (float) item.getCount() / (float) Math.min(inv.getMaxStackSize(), item.getMaxStackSize());
+                    ++itemCount;
+                }
+            }
+
+            averageCount = averageCount / (float) inv.getSize();
+            return NukkitMath.floorFloat(averageCount * 14) + (itemCount > 0 ? 1 : 0);
+        }
     }
 }

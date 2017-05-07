@@ -6,6 +6,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 
 /**
  * Created by Pub4Game on 15.01.2016.
@@ -102,7 +103,7 @@ public class BlockVine extends BlockTransparent {
             f5 = 1;
             flag = true;
         }
-        if (!flag && this.getSide(1).isSolid()) {
+        if (!flag && this.up().isSolid()) {
             f2 = Math.min(f2, 0.9375);
             f5 = 1;
             f1 = 0;
@@ -121,7 +122,7 @@ public class BlockVine extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (!target.isTransparent() && target.isSolid()) {
             int[] faces = new int[]{
                     0,
@@ -131,7 +132,7 @@ public class BlockVine extends BlockTransparent {
                     8,
                     2
             };
-            this.meta = faces[face];
+            this.meta = faces[face.getIndex()];
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
@@ -152,19 +153,19 @@ public class BlockVine extends BlockTransparent {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            int[] faces = {
-                    0,
-                    this.SIDE_SOUTH,
-                    this.SIDE_WEST,
-                    0,
-                    this.SIDE_NORTH,
-                    0,
-                    0,
-                    0,
-                    this.SIDE_EAST
+            BlockFace[] faces = {
+                    BlockFace.DOWN,
+                    BlockFace.SOUTH,
+                    BlockFace.WEST,
+                    BlockFace.DOWN,
+                    BlockFace.NORTH,
+                    BlockFace.DOWN,
+                    BlockFace.DOWN,
+                    BlockFace.DOWN,
+                    BlockFace.EAST
             };
             if (!this.getSide(faces[this.meta]).isSolid()) {
-                Block up = this.getSide(this.SIDE_UP);
+                Block up = this.up();
                 if (up.getId() != this.getId() || up.meta != this.meta) {
                     this.getLevel().useBreakOn(this);
                     return Level.BLOCK_UPDATE_NORMAL;

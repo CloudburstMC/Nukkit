@@ -7,7 +7,7 @@ import cn.nukkit.network.protocol.LevelEventPacket;
  * Created on 2015/11/21 by xtypr.
  * Package cn.nukkit.level.sound in project Nukkit .
  */
-public class GhastShootSound extends GenericSound {
+public class GhastShootSound extends LevelEventSound {
     public GhastShootSound(Vector3 pos) {
         this(pos, 0);
     }

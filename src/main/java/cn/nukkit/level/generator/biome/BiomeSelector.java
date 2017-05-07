@@ -28,54 +28,29 @@ public class BiomeSelector {
     }
 
     public int lookup(double temperature, double rainfall) {
-       if (temperature < 0.8f) {
-            if (rainfall < 0.4f) {
-                return Biome.PLAINS;
-            } else if (rainfall < 0.9f) {
-                return Biome.SWAMP;
-            } else {
-                if (temperature < 2.0f) {
-                    if (rainfall == 0.0f) {
-                        return Biome.DESERT;
-                    }
-                }
-            }
-        } else if (temperature < 1.2f) {
-            if (rainfall < 0.9f) {
-                return Biome.JUNGLE;
-            } else {
-                if (rainfall == 0.0f) {
-                    return Biome.SAVANNA;
-                }
-            }
-        } else if (temperature < 0.05f) {
-            if (rainfall < 0.8f) {
-                return Biome.TAIGA;
-            }
-        } else if (temperature < 0.6f) {
-            if (rainfall < 0.6f) {
-                return Biome.BIRCH_FOREST;
-            }
-        } else if (temperature < 0.9f) {
-            if (rainfall < 1.0f) {
-                return Biome.MUSHROOM_ISLAND;
-            }
-        } else if (temperature == 0.0f) {
-            if (rainfall < 0.5f) {
+        if (rainfall < 0.25) {
+            return Biome.SWAMP;
+        } else if (rainfall < 0.60) {
+            if (temperature < 0.25) {
                 return Biome.ICE_PLAINS;
-            }
-        } else if (temperature < 0.7f) {
-            if (rainfall < 0.8f) {
-                return Biome.FOREST;
+            } else if (temperature < 0.75) {
+                return Biome.DESERT;
             } else {
-                return Biome.ROOFED_FOREST;
+                return Biome.SAVANNA;
+            }
+        } else if (rainfall < 0.80) {
+            if (temperature < 0.25) {
+                return Biome.TAIGA;
+            } else {
+                return Biome.FOREST;
             }
         } else {
-            return Biome.ROOFED_FOREST_M;
+            if (rainfall < 1.0) {
+                return Biome.JUNGLE;
+            }
         }
-    return Biome.OCEAN;
+        return Biome.PLAINS;
     }
-    
     public void recalculate() {
         this.map = new int[64 * 64];
         for(int i = 0; i < 64; ++i) {

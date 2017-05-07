@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 
 /**
  * author: MagicDroidX
@@ -52,14 +53,14 @@ public abstract class BlockSlab extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.meta &= 0x07;
-        if (face == 0) {
+        if (face == BlockFace.DOWN) {
             if (target instanceof BlockSlab && (target.getDamage() & 0x08) == 0x08 && (target.getDamage() & 0x07) == (this.meta & 0x07)) {
                 this.getLevel().setBlock(target, Block.get(doubleSlab, this.meta), true);
 
@@ -71,7 +72,7 @@ public abstract class BlockSlab extends BlockTransparent {
             } else {
                 this.meta |= 0x08;
             }
-        } else if (face == 1) {
+        } else if (face == BlockFace.UP) {
             if (target instanceof BlockSlab && (target.getDamage() & 0x08) == 0 && (target.getDamage() & 0x07) == (this.meta & 0x07)) {
                 this.getLevel().setBlock(target, Block.get(doubleSlab, this.meta), true);
 

@@ -6,6 +6,7 @@ import cn.nukkit.blockentity.BlockEntityEnderChest;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -75,7 +76,7 @@ public class BlockEnderChest extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {4, 2, 5, 3};
         this.meta = faces[player != null ? player.getDirection() : 0];
 
@@ -104,7 +105,7 @@ public class BlockEnderChest extends BlockTransparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            Block top = this.getSide(1);
+            Block top = this.up();
             if (!top.isTransparent()) {
                 return true;
             }
@@ -153,5 +154,10 @@ public class BlockEnderChest extends BlockTransparent {
 
     public Set<Player> getViewers() {
         return viewers;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
     }
 }

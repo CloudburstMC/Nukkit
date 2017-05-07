@@ -11,7 +11,7 @@ public class EntityDamageByBlockEvent extends EntityDamageEvent {
 
     private final Block damager;
 
-    public EntityDamageByBlockEvent(Block damager, Entity entity, int cause, float damage) {
+    public EntityDamageByBlockEvent(Block damager, Entity entity, DamageCause cause, float damage) {
         super(entity, cause, damage);
         this.damager = damager;
     }

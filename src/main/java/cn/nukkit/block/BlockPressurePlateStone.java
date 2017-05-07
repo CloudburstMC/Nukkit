@@ -1,16 +1,21 @@
 package cn.nukkit.block;
 
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 /**
  * @author Nukkit Project Team
  */
-public class BlockPressurePlateStone extends BlockPressurePlate {
+public class BlockPressurePlateStone extends BlockPressurePlateBase {
 
     public BlockPressurePlateStone(int meta) {
         super(meta);
+        this.onPitch = 0.6f;
+        this.offPitch = 0.5f;
     }
 
     public BlockPressurePlateStone() {
@@ -58,4 +63,16 @@ public class BlockPressurePlateStone extends BlockPressurePlate {
         return BlockColor.STONE_BLOCK_COLOR;
     }
 
+    @Override
+    protected int computeRedstoneStrength() {
+        AxisAlignedBB bb = getCollisionBoundingBox();
+
+        for (Entity entity : this.level.getCollidingEntities(bb)) {
+            if (entity instanceof EntityLiving && entity.doesTriggerPressurePlate()) {
+                return 15;
+            }
+        }
+
+        return 0;
+    }
 }

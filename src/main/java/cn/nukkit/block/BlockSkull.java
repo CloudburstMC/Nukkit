@@ -10,7 +10,7 @@ import cn.nukkit.blockentity.BlockEntitySkull;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSkull;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
@@ -54,21 +54,21 @@ public class BlockSkull extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         switch (face) {
-            case Vector3.SIDE_NORTH:
-            case Vector3.SIDE_SOUTH:
-            case Vector3.SIDE_EAST:
-            case Vector3.SIDE_WEST:
-            case Vector3.SIDE_UP:
-                this.meta = face;
+            case NORTH:
+            case SOUTH:
+            case EAST:
+            case WEST:
+            case UP:
+                this.meta = face.getIndex();
                 break;
-            case Vector3.SIDE_DOWN:
+            case DOWN:
             default:
                 return false;
         }

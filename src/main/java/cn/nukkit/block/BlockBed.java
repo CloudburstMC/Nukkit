@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.TextFormat;
 
@@ -74,10 +75,10 @@ public class BlockBed extends BlockTransparent {
             return true;
         }
 
-        Block blockNorth = this.getSide(2);
-        Block blockSouth = this.getSide(3);
-        Block blockEast = this.getSide(5);
-        Block blockWest = this.getSide(4);
+        Block blockNorth = this.north();
+        Block blockSouth = this.south();
+        Block blockEast = this.east();
+        Block blockWest = this.west();
 
         Block b;
         if ((this.meta & 0x08) == 0x08) {
@@ -109,18 +110,18 @@ public class BlockBed extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        Block down = this.getSide(0);
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        Block down = this.down();
         if (!down.isTransparent()) {
             int[] faces = {3, 4, 2, 5};
             int d = player != null ? player.getDirection() : 0;
-            Block next = this.getSide(faces[((d + 3) % 4)]);
-            Block downNext = this.getSide(0);
+            Block next = this.getSide(BlockFace.fromIndex(faces[((d + 3) % 4)]));
+            Block downNext = this.down();
 
             if (next.canBeReplaced() && !downNext.isTransparent()) {
                 int meta = ((d + 3) % 4) & 0x03;
@@ -136,10 +137,10 @@ public class BlockBed extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item) {
-        Block blockNorth = this.getSide(2); //Gets the blocks around them
-        Block blockSouth = this.getSide(3);
-        Block blockEast = this.getSide(5);
-        Block blockWest = this.getSide(4);
+        Block blockNorth = this.north(); //Gets the blocks around them
+        Block blockSouth = this.south();
+        Block blockEast = this.east();
+        Block blockWest = this.west();
 
         if ((this.meta & 0x08) == 0x08) { //This is the Top part of bed
             if (blockNorth.getId() == this.getId() && blockNorth.meta != 0x08) { //Checks if the block ID&&meta are right

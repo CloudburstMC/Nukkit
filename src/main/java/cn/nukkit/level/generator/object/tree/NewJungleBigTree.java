@@ -18,7 +18,7 @@ public class NewJungleBigTree extends HugeTreesGenerator {
         if (!this.ensureGrowable(level, rand, position, i)) {
             return false;
         } else {
-            this.createCrown(level, position.getSide(Vector3.SIDE_UP, i), 2);
+            this.createCrown(level, position.up(i), 2);
 
             for (int j = (int) position.getY() + i - 2 - rand.nextBoundedInt(4); j > position.getY() + i / 2; j -= 2 + rand.nextBoundedInt(4)) {
                 float f = rand.nextFloat() * ((float) Math.PI * 2F);
@@ -41,48 +41,48 @@ public class NewJungleBigTree extends HugeTreesGenerator {
             }
 
             for (int i2 = 0; i2 < i; ++i2) {
-                Vector3 blockpos = position.getSide(Vector3.SIDE_UP, i2);
+                Vector3 blockpos = position.up(i2);
 
                 if (this.canGrowInto(level.getBlockIdAt((int) blockpos.x, (int) blockpos.y, (int) blockpos.z))) {
                     this.setBlockAndNotifyAdequately(level, blockpos, this.woodMetadata);
 
                     if (i2 > 0) {
-                        this.placeVine(level, rand, blockpos.getSide(Vector3.SIDE_WEST), 8);
-                        this.placeVine(level, rand, blockpos.getSide(Vector3.SIDE_NORTH), 1);
+                        this.placeVine(level, rand, blockpos.west(), 8);
+                        this.placeVine(level, rand, blockpos.north(), 1);
                     }
                 }
 
                 if (i2 < i - 1) {
-                    Vector3 blockpos1 = blockpos.getSide(Vector3.SIDE_EAST);
+                    Vector3 blockpos1 = blockpos.east();
 
                     if (this.canGrowInto(level.getBlockIdAt((int) blockpos1.x, (int) blockpos1.y, (int) blockpos1.z))) {
                         this.setBlockAndNotifyAdequately(level, blockpos1, this.woodMetadata);
 
                         if (i2 > 0) {
-                            this.placeVine(level, rand, blockpos1.getSide(Vector3.SIDE_EAST), 2);
-                            this.placeVine(level, rand, blockpos1.getSide(Vector3.SIDE_NORTH), 1);
+                            this.placeVine(level, rand, blockpos1.east(), 2);
+                            this.placeVine(level, rand, blockpos1.north(), 1);
                         }
                     }
 
-                    Vector3 blockpos2 = blockpos.getSide(Vector3.SIDE_SOUTH).getSide(Vector3.SIDE_EAST);
+                    Vector3 blockpos2 = blockpos.south().east();
 
                     if (this.canGrowInto(level.getBlockIdAt((int) blockpos2.x, (int) blockpos2.y, (int) blockpos2.z))) {
                         this.setBlockAndNotifyAdequately(level, blockpos2, this.woodMetadata);
 
                         if (i2 > 0) {
-                            this.placeVine(level, rand, blockpos2.getSide(Vector3.SIDE_EAST), 2);
-                            this.placeVine(level, rand, blockpos2.getSide(Vector3.SIDE_SOUTH), 4);
+                            this.placeVine(level, rand, blockpos2.east(), 2);
+                            this.placeVine(level, rand, blockpos2.south(), 4);
                         }
                     }
 
-                    Vector3 blockpos3 = blockpos.getSide(Vector3.SIDE_SOUTH);
+                    Vector3 blockpos3 = blockpos.south();
 
                     if (this.canGrowInto(level.getBlockIdAt((int) blockpos3.x, (int) blockpos3.y, (int) blockpos3.z))) {
                         this.setBlockAndNotifyAdequately(level, blockpos3, this.woodMetadata);
 
                         if (i2 > 0) {
-                            this.placeVine(level, rand, blockpos3.getSide(Vector3.SIDE_WEST), 8);
-                            this.placeVine(level, rand, blockpos3.getSide(Vector3.SIDE_SOUTH), 4);
+                            this.placeVine(level, rand, blockpos3.west(), 8);
+                            this.placeVine(level, rand, blockpos3.south(), 4);
                         }
                     }
                 }
@@ -100,7 +100,7 @@ public class NewJungleBigTree extends HugeTreesGenerator {
 
     private void createCrown(ChunkManager level, Vector3 pos, int i1) {
         for (int j = -2; j <= 0; ++j) {
-            this.growLeavesLayerStrict(level, pos.getSide(Vector3.SIDE_UP, j), i1 + 1 - j);
+            this.growLeavesLayerStrict(level, pos.up(j), i1 + 1 - j);
         }
     }
 }

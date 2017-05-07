@@ -48,7 +48,7 @@ public abstract class Task implements Runnable {
 
     @Override
     public final void run() {
-
+        this.onRun(taskHandler.getLastRunTick());
     }
 
     public void onCancel() {

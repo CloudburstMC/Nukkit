@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -69,7 +70,7 @@ public class BlockAnvil extends BlockFallable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (!target.isTransparent()) {
             int faces[] = {0, 1, 2, 3};
             int damage = this.getDamage();
@@ -120,5 +121,4 @@ public class BlockAnvil extends BlockFallable {
     public BlockColor getColor() {
         return BlockColor.IRON_BLOCK_COLOR;
     }
-
 }

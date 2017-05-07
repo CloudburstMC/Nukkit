@@ -3,8 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.NoteBoxSound;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.BlockEventPacket;
 
 /**
  * Created by Snake1999 on 2016/1/17.
@@ -50,14 +51,19 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public int getStrength() {
-        if (this.meta < 24) this.meta++;
-        else this.meta = 0;
-        this.getLevel().setBlock(this, this);
         return this.meta;
     }
 
+    public void increaseStrength() {
+        if (this.meta < 24) {
+            this.meta++;
+        } else {
+            this.meta = 0;
+        }
+    }
+
     public int getInstrument() {
-        Block below = this.getSide(Vector3.SIDE_DOWN);
+        Block below = this.down();
         switch (below.getId()) {
             case WOODEN_PLANK:
             case NOTEBLOCK:
@@ -85,17 +91,39 @@ public class BlockNoteblock extends BlockSolid {
         }
     }
 
+    public void emitSound() {
+        BlockEventPacket pk = new BlockEventPacket();
+        pk.x = (int) this.x;
+        pk.y = (int) this.y;
+        pk.z = (int) this.z;
+        pk.case1 = this.getInstrument();
+        pk.case2 = this.getStrength();
+        this.getLevel().addChunkPacket((int) this.x >> 4, (int) this.z >> 4, pk);
+
+        this.getLevel().addSound(new NoteBoxSound(this, this.getInstrument(), this.getStrength()));
+    }
+
     public boolean onActivate(Item item) {
         return this.onActivate(item, null);
     }
 
     public boolean onActivate(Item item, Player player) {
-        Block up = this.getSide(Vector3.SIDE_UP);
+        Block up = this.up();
         if (up.getId() == Block.AIR) {
-            this.getLevel().addSound(new NoteBoxSound(this, this.getInstrument(), this.getStrength()));
+            this.increaseStrength();
+            this.emitSound();
             return true;
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
+            //TODO: redstone
+        }
+
+        return 0;
     }
 }

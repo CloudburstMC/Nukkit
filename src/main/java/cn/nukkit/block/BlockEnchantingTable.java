@@ -6,6 +6,7 @@ import cn.nukkit.blockentity.BlockEntityEnchantTable;
 import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
@@ -17,7 +18,7 @@ import java.util.Map;
  * Created on 2015/11/22 by CreeperFace.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockEnchantingTable extends BlockSolid {
+public class BlockEnchantingTable extends BlockTransparent {
     public BlockEnchantingTable() {
         this(0);
     }
@@ -52,6 +53,11 @@ public class BlockEnchantingTable extends BlockSolid {
     }
 
     @Override
+    public int getLightLevel() {
+        return 12;
+    }
+
+    @Override
     public boolean canBeActivated() {
         return true;
     }
@@ -68,7 +74,7 @@ public class BlockEnchantingTable extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.getLevel().setBlock(block, this, true, true);
 
         CompoundTag nbt = new CompoundTag()

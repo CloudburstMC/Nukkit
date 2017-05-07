@@ -130,7 +130,7 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             pk.eid = this.getHolder().getId();
             if (player.equals(this.getHolder())) {
-                pk.eid = 0;
+                pk.eid = player.getId();
                 this.sendSlot(this.getHeldItemSlot(), player);
             }
 
@@ -172,7 +172,7 @@ public class PlayerInventory extends BaseInventory {
     public boolean setArmorItem(int index, Item item, boolean ignoreArmorEvents) {
         return this.setItem(this.getSize() + index, item, ignoreArmorEvents);
     }
-    
+
     public Item getHelmet() {
         return this.getItem(this.getSize());
     }
@@ -242,7 +242,7 @@ public class PlayerInventory extends BaseInventory {
 
         return true;
     }
-    
+
     @Override
     public boolean clear(int index) {
         if (this.slots.containsKey(index)) {
