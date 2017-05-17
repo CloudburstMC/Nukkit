@@ -729,6 +729,7 @@ public class Level implements ChunkManager, Metadatable {
 
                         EntityLightning bolt = new EntityLightning(chunk, nbt);
                         LightningStrikeEvent ev = new LightningStrikeEvent(this, bolt);
+                        getServer().getPluginManager().callEvent(ev);
                         if (!ev.isCancelled()) {
                             bolt.spawnToAll();
                         } else {
