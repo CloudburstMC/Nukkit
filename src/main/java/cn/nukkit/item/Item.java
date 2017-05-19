@@ -1794,6 +1794,46 @@ public class Item implements Cloneable {
         return this;
     }
 
+    public String[] getLore() {
+        Tag tag = this.getNamedTagEntry("display");
+        ArrayList<String> lines = new ArrayList<>();
+
+        if (tag instanceof CompoundTag) {
+            CompoundTag nbt = (CompoundTag) tag;
+            ListTag<StringTag> lore = nbt.getList("Lore", StringTag.class);
+
+            if (lore.size() > 0) {
+                for (StringTag stringTag : lore.getAll()) {
+                    lines.add(stringTag.data);
+                }
+            }
+        }
+
+        return lines.toArray(new String[0]);
+    }
+
+    public void setLore(String... lines) {
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+        ListTag<StringTag> lore = new ListTag<>("Lore");
+
+        for (String line : lines) {
+            lore.add(new StringTag("", line));
+        }
+
+        if (!tag.contains("display")) {
+            tag.putCompound("display", new CompoundTag("display").putList(lore));
+        } else {
+            tag.getCompound("display").putList(lore);
+        }
+
+        this.setNamedTag(tag);
+    }
+
     public Tag getNamedTagEntry(String name) {
         CompoundTag tag = this.getNamedTag();
         if (tag != null) {
