@@ -14,7 +14,6 @@ import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityEnderPearl;
 import cn.nukkit.entity.projectile.EntitySnowball;
-import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
@@ -1954,7 +1953,7 @@ public class Server {
         // TODO: 2016/1/30 all finds of minecart
         Entity.registerEntity("Boat", EntityBoat.class);
 
-        Entity.registerEntity("Lightning", EntityLightning.class);
+        //Entity.registerEntity("Lightning", EntityLightning.class); lightning shouldn't be saved as entity
     }
 
     private void registerBlockEntities() {
@@ -1971,6 +1970,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.BEACON, BlockEntityBeacon.class);
         BlockEntity.registerBlockEntity(BlockEntity.PISTON_ARM, BlockEntityPistonArm.class);
         BlockEntity.registerBlockEntity(BlockEntity.COMPARATOR, BlockEntityComparator.class);
+        BlockEntity.registerBlockEntity(BlockEntity.HOPPER, BlockEntityHopper.class);
     }
 
     public static Server getInstance() {

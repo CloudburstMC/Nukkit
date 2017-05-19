@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.LeverSound;
@@ -57,6 +58,7 @@ public class BlockLever extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
+        this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isPowerOn() ? 15 : 0, isPowerOn() ? 0 : 15));
         this.meta ^= 0x08;
 
         this.getLevel().setBlock(this, this, false, true);

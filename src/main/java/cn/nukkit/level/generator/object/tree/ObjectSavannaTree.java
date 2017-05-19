@@ -8,7 +8,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
-public class NewSavannaTree extends TreeGenerator {
+public class ObjectSavannaTree extends TreeGenerator {
     private static final Block TRUNK = new BlockWood2(BlockWood2.ACACIA);
     private static final Block LEAF = new BlockLeaves2(BlockLeaves2.ACACIA);
 

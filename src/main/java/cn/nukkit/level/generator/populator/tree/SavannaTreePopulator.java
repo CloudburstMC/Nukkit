@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.populator.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.generator.object.tree.NewSavannaTree;
+import cn.nukkit.level.generator.object.tree.ObjectSavannaTree;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
@@ -46,7 +46,7 @@ public class SavannaTreePopulator extends Populator {
             if (y == -1) {
                 continue;
             }
-            new NewSavannaTree().generate(level, random, v.setComponents(x, y, z));
+            new ObjectSavannaTree().generate(level, random, v.setComponents(x, y, z));
         }
     }
 

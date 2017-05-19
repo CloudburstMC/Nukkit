@@ -11,7 +11,7 @@ import cn.nukkit.math.Vector3;
 /**
  * Created by CreeperFace on 23. 10. 2016.
  */
-public class NewDarkOakTree extends TreeGenerator {
+public class ObjectDarkOakTree extends TreeGenerator {
     private static final Block DARK_OAK_LOG = new BlockWood2(BlockWood2.DARK_OAK);
     private static final Block DARK_OAK_LEAVES = new BlockLeaves2(BlockLeaves2.DARK_OAK);
 

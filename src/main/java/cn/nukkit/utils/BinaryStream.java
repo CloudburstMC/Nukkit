@@ -144,7 +144,11 @@ public class BinaryStream {
     }
 
     public float getFloat() {
-        return Binary.readFloat(this.get(4));
+        return getFloat(-1);
+    }
+
+    public float getFloat(int accuracy) {
+        return Binary.readFloat(this.get(4), accuracy);
     }
 
     public void putFloat(float v) {
@@ -152,7 +156,11 @@ public class BinaryStream {
     }
 
     public float getLFloat() {
-        return Binary.readLFloat(this.get(4));
+        return getLFloat(-1);
+    }
+
+    public float getLFloat(int accuracy) {
+        return Binary.readLFloat(this.get(4), accuracy);
     }
 
     public void putLFloat(float v) {
@@ -310,7 +318,7 @@ public class BinaryStream {
     }
 
     public Vector3f getVector3f() {
-        return new Vector3f(this.getLFloat(), this.getLFloat(), this.getLFloat());
+        return new Vector3f(this.getLFloat(4), this.getLFloat(4), this.getLFloat(4));
     }
 
     public void putVector3f(float x, float y, float z) {

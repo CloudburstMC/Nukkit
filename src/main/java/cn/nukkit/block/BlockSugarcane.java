@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
@@ -47,33 +48,38 @@ public class BlockSugarcane extends BlockFlowable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //Bonemeal
-            Block base = this;
-            // As sugarcane only grows to a height of three activating the
-            // lowest or middle block should cause growing.  Here we drop
-            // down one if it's not already the base.
-            Block down = base.down();
-            if (down.getId() == SUGARCANE_BLOCK) {
-                base = down;
+            int count = 1;
+
+            for (int i = 1; i <= 2; i++) {
+                int id = this.level.getBlockIdAt(this.getFloorX(), this.getFloorY() - i, this.getFloorZ());
+
+                if (id == SUGARCANE_BLOCK) {
+                    count++;
+                }
             }
-            if (down.getId() != SUGARCANE_BLOCK) {
-                for (int y = 1; y < 3; ++y) {
-                    Block b = base.getLevel().getBlock(new Vector3(base.x, base.y + y, base.z));
-                    if (b.getId() == AIR) {
-                        BlockGrowEvent ev = new BlockGrowEvent(b, new BlockSugarcane());
+
+            if (count < 3) {
+                int toGrow = 3 - count;
+
+                for (int i = 1; i <= toGrow; i++) {
+                    Block block = this.up(i);
+                    if (block.getId() == 0) {
+                        BlockGrowEvent ev = new BlockGrowEvent(block, new BlockSugarcane());
                         Server.getInstance().getPluginManager().callEvent(ev);
+
                         if (!ev.isCancelled()) {
-                            this.getLevel().setBlock(b, ev.getNewState(), true);
+                            this.getLevel().setBlock(block, ev.getNewState(), true);
                         }
-                    } else if (b.getId() != SUGARCANE_BLOCK) {
+                    } else if (block.getId() != SUGARCANE_BLOCK) {
                         break;
                     }
                 }
-                base.meta = 0;
-                base.getLevel().setBlock(base, base, true);
             }
+
             if ((player.gamemode & 0x01) == 0) {
                 item.count--;
             }
+            this.level.addParticle(new BoneMealParticle(this.add(0.5, 0.5, 0.5)));
             return true;
         }
         return false;

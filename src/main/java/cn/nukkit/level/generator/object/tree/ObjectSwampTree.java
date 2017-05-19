@@ -9,8 +9,8 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
-public class NewSwampTree extends TreeGenerator {
-    
+public class ObjectSwampTree extends TreeGenerator {
+
     /**
      * The metadata value of the wood to use in tree generation.
      */

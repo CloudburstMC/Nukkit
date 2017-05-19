@@ -732,7 +732,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void sendData(Player player, EntityMetadata data) {
         SetEntityDataPacket pk = new SetEntityDataPacket();
-        pk.eid = player == this ? 0 : this.getId();
+        pk.eid = this.getId();
         pk.metadata = data == null ? this.dataProperties : data;
 
         player.dataPacket(pk);
@@ -1037,7 +1037,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
 
-            this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+            this.addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.yaw);
         }
 
         if (diffMotion > 0.0025 || (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.0001)) { //0.05 ** 2
@@ -1123,19 +1123,19 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public Integer getDirection() {
+    public BlockFace getDirection() {
         double rotation = (this.yaw - 90) % 360;
         if (rotation < 0) {
             rotation += 360.0;
         }
         if ((0 <= rotation && rotation < 45) || (315 <= rotation && rotation < 360)) {
-            return 2; //North
+            return BlockFace.NORTH;
         } else if (45 <= rotation && rotation < 135) {
-            return 3; //East
+            return BlockFace.EAST;
         } else if (135 <= rotation && rotation < 225) {
-            return 0; //South
+            return BlockFace.SOUTH;
         } else if (225 <= rotation && rotation < 315) {
-            return 1; //West
+            return BlockFace.WEST;
         } else {
             return null;
         }
@@ -1205,6 +1205,14 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void onCollideWithPlayer(EntityHuman entityPlayer) {
 
+    }
+
+    public void onStruckByLightning(Entity entity) {
+        this.attack(new EntityDamageByEntityEvent(entity, this, DamageCause.LIGHTNING, 5));
+
+        if (this.fireTicks < 8 * 20) {
+            this.setOnFire(8);
+        }
     }
 
     public boolean onInteract(Player player, Item item) {
@@ -1523,7 +1531,7 @@ public abstract class Entity extends Location implements Metadatable {
      * used for bat only
      */
     public boolean doesTriggerPressurePlate() {
-        return true;
+        return false;
     }
 
     protected void checkChunks() {

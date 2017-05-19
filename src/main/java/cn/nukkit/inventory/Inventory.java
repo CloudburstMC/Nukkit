@@ -65,6 +65,10 @@ public interface Inventory {
 
     void clearAll();
 
+    boolean isFull();
+
+    boolean isEmpty();
+
     Set<Player> getViewers();
 
     InventoryType getType();

@@ -456,6 +456,54 @@ public abstract class BaseInventory implements Inventory {
     }
 
     @Override
+    public boolean isFull() {
+        if (this.slots.size() < this.getSize()) {
+            return false;
+        }
+
+        for (Item item : this.slots.values()) {
+            if (item == null || item.getId() == 0 || item.getCount() < item.getMaxStackSize() || item.getCount() < this.getMaxStackSize()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        if (this.getMaxStackSize() <= 0) {
+            return false;
+        }
+
+        for (Item item : this.slots.values()) {
+            if (item != null && item.getId() != 0 && item.getCount() > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public int getFreeSpace(Item item) {
+        int maxStackSize = Math.min(item.getMaxStackSize(), this.getMaxStackSize());
+        int space = (this.getSize() - this.slots.size()) * maxStackSize;
+
+        for (Item slot : this.getContents().values()) {
+            if (slot == null || slot.getId() == 0) {
+                space += maxStackSize;
+                continue;
+            }
+
+            if (slot.equals(item, true, true)) {
+                space += maxStackSize - slot.getCount();
+            }
+        }
+
+        return space;
+    }
+
+    @Override
     public void sendContents(Collection<Player> players) {
         this.sendContents(players.stream().toArray(Player[]::new));
     }

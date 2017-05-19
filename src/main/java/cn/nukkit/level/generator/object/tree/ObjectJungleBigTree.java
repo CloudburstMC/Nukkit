@@ -7,20 +7,20 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
-public class NewJungleBigTree extends HugeTreesGenerator {
-    public NewJungleBigTree(int baseHeightIn, int extraRandomHeightIn, Block woodMetadataIn, Block leavesMetadataIn) {
-        super(baseHeightIn, extraRandomHeightIn, woodMetadataIn, leavesMetadataIn);
+public class ObjectJungleBigTree extends HugeTreesGenerator {
+    public ObjectJungleBigTree(int baseHeightIn, int extraRandomHeight, Block woodMetadata, Block leavesMetadata) {
+        super(baseHeightIn, extraRandomHeight, woodMetadata, leavesMetadata);
     }
 
     public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {
-        int i = this.getHeight(rand);
+        int height = this.getHeight(rand);
 
-        if (!this.ensureGrowable(level, rand, position, i)) {
+        if (!this.ensureGrowable(level, rand, position, height)) {
             return false;
         } else {
-            this.createCrown(level, position.up(i), 2);
+            this.createCrown(level, position.up(height), 2);
 
-            for (int j = (int) position.getY() + i - 2 - rand.nextBoundedInt(4); j > position.getY() + i / 2; j -= 2 + rand.nextBoundedInt(4)) {
+            for (int j = (int) position.getY() + height - 2 - rand.nextBoundedInt(4); j > position.getY() + height / 2; j -= 2 + rand.nextBoundedInt(4)) {
                 float f = rand.nextFloat() * ((float) Math.PI * 2F);
                 int k = (int) (position.getX() + (0.5F + MathHelper.cos(f) * 4.0F));
                 int l = (int) (position.getZ() + (0.5F + MathHelper.sin(f) * 4.0F));
@@ -40,7 +40,7 @@ public class NewJungleBigTree extends HugeTreesGenerator {
                 }
             }
 
-            for (int i2 = 0; i2 < i; ++i2) {
+            for (int i2 = 0; i2 < height; ++i2) {
                 Vector3 blockpos = position.up(i2);
 
                 if (this.canGrowInto(level.getBlockIdAt((int) blockpos.x, (int) blockpos.y, (int) blockpos.z))) {
@@ -52,7 +52,7 @@ public class NewJungleBigTree extends HugeTreesGenerator {
                     }
                 }
 
-                if (i2 < i - 1) {
+                if (i2 < height - 1) {
                     Vector3 blockpos1 = blockpos.east();
 
                     if (this.canGrowInto(level.getBlockIdAt((int) blockpos1.x, (int) blockpos1.y, (int) blockpos1.z))) {

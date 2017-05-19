@@ -66,7 +66,7 @@ public class BlockFurnaceBurning extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int faces[] = {4, 2, 5, 3};
-        this.meta = faces[player != null ? player.getDirection() : 0];
+        this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))

@@ -6,6 +6,7 @@ import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 
@@ -126,7 +127,7 @@ public class BlockCocoa extends BlockTransparent {
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (new Random().nextInt(2) == 1) {
-                if (this.meta <= 7) {
+                if (this.meta / 4 < 2) {
                     BlockCocoa block = (BlockCocoa) this.clone();
                     block.meta += 4;
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
@@ -144,6 +145,34 @@ public class BlockCocoa extends BlockTransparent {
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+            Block block = this.clone();
+            if (this.meta / 4 < 2) {
+                block.meta += 4;
+                BlockGrowEvent ev = new BlockGrowEvent(this, block);
+                Server.getInstance().getPluginManager().callEvent(ev);
+
+                if (ev.isCancelled()) {
+                    return false;
+                }
+                this.getLevel().setBlock(this, ev.getNewState(), true, true);
+            }
+
+            this.level.addParticle(new BoneMealParticle(this.add(0.5, 0.5, 0.5)));
+            item.count--;
+            return true;
+        }
+
+        return false;
     }
 
     @Override

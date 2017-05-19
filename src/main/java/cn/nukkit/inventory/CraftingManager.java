@@ -760,6 +760,12 @@ public class CraftingManager {
             this.registerRecipe(new BigShapedRecipe(Item.get(Item.WOODEN_PRESSURE_PLATE, 0, 1),
                     "WW "
             ).setIngredient("W", Item.get(Item.PLANKS, i, 2)));
+
+            this.registerRecipe(new BigShapedRecipe(Item.get(Item.TRIPWIRE_HOOK, 0, 2),
+                    " I ",
+                    " S ",
+                    " P "
+            ).setIngredient("P", Item.get(Item.PLANKS, i, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 1)));
         }
 
         this.registerRecipe(new BigShapedRecipe(Item.get(Item.STONE_PRESSURE_PLATE, 0, 1),
@@ -791,6 +797,12 @@ public class CraftingManager {
                 "TQT",
                 "SSS"
         ).setIngredient("Q", Item.get(Item.QUARTZ, 0, 1)).setIngredient("T", Item.get(Item.REDSTONE_TORCH, 0, 3)).setIngredient("S", Item.get(Item.STONE, 0, 3)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.HOPPER, 0, 1),
+                "I I",
+                "ICI",
+                " I "
+        ).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 5)).setIngredient("C", Item.get(Item.CHEST, 0, 1)));
     }
 
     protected void registerFurnace() {

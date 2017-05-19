@@ -323,4 +323,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         return this.movementSpeed;
     }
 
+    @Override
+    public boolean doesTriggerPressurePlate() {
+        return true;
+    }
 }

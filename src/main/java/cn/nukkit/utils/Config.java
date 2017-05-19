@@ -129,6 +129,7 @@ public class Config {
         this.file = new File(file);
         if (!this.file.exists()) {
             try {
+                this.file.getParentFile().mkdirs();
                 this.file.createNewFile();
             } catch (IOException e) {
                 MainLogger.getLogger().error("Could not create Config " + this.file.toString(), e);

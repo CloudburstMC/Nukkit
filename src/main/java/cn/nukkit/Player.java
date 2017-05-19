@@ -2833,7 +2833,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             pk = new SetEntityLinkPacket();
                             pk.rider = targetEntity.getId();
-                            pk.riding = 0;
+                            pk.riding = this.getId();
                             pk.type = 3;
                             dataPacket(pk);
 
@@ -4344,7 +4344,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
             this.spawnToAll();
             this.forceMovement = this.teleportPosition;
             this.teleportPosition = null;
@@ -4382,12 +4381,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             this.teleportPosition = new Vector3(this.x, this.y, this.z);
+            this.forceMovement = this.teleportPosition;
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
 
-            if (!this.checkTeleportPosition()) {
-                this.forceMovement = oldPos;
-            } else {
-                this.spawnToAll();
-            }
+            this.checkTeleportPosition();
 
             this.resetFallDistance();
             this.nextChunkOrderRun = 0;

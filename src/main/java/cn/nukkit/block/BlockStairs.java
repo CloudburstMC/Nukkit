@@ -47,7 +47,7 @@ public abstract class BlockStairs extends BlockTransparent {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = new int[]{0, 2, 1, 3};
-        this.meta = (faces[player.getDirection()] & 0x03);
+        this.meta = (faces[player.getDirection().getHorizontalIndex()] & 0x03);
         if ((fy > 0.5 && face != BlockFace.UP) || face == BlockFace.DOWN) {
             this.meta |= 0x04; //Upside-down stairs
         }

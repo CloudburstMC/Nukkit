@@ -456,7 +456,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[SANDSTONE_STAIRS] = BlockStairsSandstone.class; //128
             list[EMERALD_ORE] = BlockOreEmerald.class; //129
             list[ENDER_CHEST] = BlockEnderChest.class; //130
-            //TODO: list[TRIPWIRE_HOOK] = BlockTripwireHook.class; //131
+            list[TRIPWIRE_HOOK] = BlockTripWireHook.class;
             list[TRIPWIRE] = BlockTripWire.class; //132
             list[EMERALD_BLOCK] = BlockEmerald.class; //133
             list[SPRUCE_WOOD_STAIRS] = BlockStairsSpruce.class; //134
@@ -479,7 +479,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[DAYLIGHT_DETECTOR] = BlockDaylightDetector.class; //151
             list[REDSTONE_BLOCK] = BlockRedstone.class; //152
             list[QUARTZ_ORE] = BlockOreQuartz.class; //153
-            //TODO: list[HOPPER_BLOCK] = BlockHopper.class; //154
+            list[HOPPER_BLOCK] = BlockHopper.class; //154
             list[QUARTZ_BLOCK] = BlockQuartz.class; //155
             list[QUARTZ_STAIRS] = BlockStairsQuartz.class; //156
             list[DOUBLE_WOOD_SLAB] = BlockDoubleSlabWood.class; //157
@@ -1051,5 +1051,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     public boolean isNormalBlock() {
         return !isTransparent() && isSolid() && !isPowerSource();
+    }
+
+    public static boolean equals(Block b1, Block b2) {
+        return equals(b1, b2, true);
+    }
+
+    public static boolean equals(Block b1, Block b2, boolean checkDamage) {
+        return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getDamage() == b2.getDamage());
     }
 }

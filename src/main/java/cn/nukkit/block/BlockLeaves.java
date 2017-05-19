@@ -180,6 +180,13 @@ public class BlockLeaves extends BlockTransparent {
         return false;
     }
 
+    public boolean isChechDecay() {
+        return (this.meta & 0x08) > 0;
+    }
+
+    public boolean isDecayable() {
+        return (this.meta & 0x04) == 0;
+    }
 
     @Override
     public BlockColor getColor() {

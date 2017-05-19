@@ -221,7 +221,7 @@ public class Explosion {
         this.level.addChunkPacket((int) source.x >> 4, (int) source.z >> 4, pk);
         this.level.addParticle(new HugeExplodeSeedParticle(this.source));
         this.level.addSound(new ExplodeSound(new Vector3(this.source.x, this.source.y, this.source.z)));
-        
+
         return true;
     }
 

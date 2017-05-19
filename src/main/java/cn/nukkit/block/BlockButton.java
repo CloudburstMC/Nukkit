@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.ButtonClickSound;
@@ -52,6 +53,7 @@ public abstract class BlockButton extends BlockFlowable {
             return false;
         }
 
+        this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         this.meta ^= 0x08;
         this.level.setBlock(this, this, true, false);
         this.level.addSound(new ButtonClickSound(this.add(0.5, 0.5, 0.5)));
@@ -72,6 +74,8 @@ public abstract class BlockButton extends BlockFlowable {
             }
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (this.isActivated()) {
+                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+
                 this.meta ^= 0x08;
                 this.level.setBlock(this, this, true, false);
                 this.level.addSound(new ButtonClickSound(this.add(0.5, 0.5, 0.5)));
@@ -107,5 +111,14 @@ public abstract class BlockButton extends BlockFlowable {
     public BlockFace getFacing() {
         int side = isActivated() ? meta ^ 0x08 : meta;
         return BlockFace.fromIndex(side);
+    }
+
+    @Override
+    public boolean onBreak(Item item) {
+        if (isActivated()) {
+            this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+        }
+
+        return super.onBreak(item);
     }
 }

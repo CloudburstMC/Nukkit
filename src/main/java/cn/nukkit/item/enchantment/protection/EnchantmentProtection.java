@@ -1,7 +1,5 @@
 package cn.nukkit.item.enchantment.protection;
 
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.enchantment.EnchantmentType;
 
@@ -10,6 +8,7 @@ import cn.nukkit.item.enchantment.EnchantmentType;
  * Nukkit Project
  */
 public abstract class EnchantmentProtection extends Enchantment {
+
     public enum TYPE {
         ALL,
         FIRE,
@@ -26,62 +25,6 @@ public abstract class EnchantmentProtection extends Enchantment {
         if (protectionType == TYPE.FALL) {
             this.type = EnchantmentType.ARMOR_FEET;
         }
-    }
-
-    @Override
-    public int getDamageProtection(EntityDamageEvent event) {
-        int level = this.level;
-        DamageCause cause = event.getCause();
-
-        if (level <= 0 || cause == DamageCause.VOID || cause == DamageCause.CUSTOM || cause == DamageCause.MAGIC) {
-            return 0;
-        }
-        /*double f = (6d + level * level) / 3d;
-        switch (event.getCause()) {
-            case PROJECTILE:
-            case ENTITY_EXPLOSION:
-            case BLOCK_EXPLOSION:
-                return (int) Math.floor(f * 1.5);
-            case FALL:
-                return (int) Math.floor(f * 2.5);
-            case FIRE:
-            case FIRE_TICK:
-                return (int) Math.floor(f * 1.25);
-            default:
-                if (this.protectionType == TYPE.ALL) {
-                    return (int) Math.floor(f * 0.75);
-                } else {
-                    return 0;
-                }
-        }*/
-
-        boolean canProtect = false;
-
-        switch (this.getId()) {
-            case Enchantment.ID_PROTECTION_ALL:
-                canProtect = true;
-                break;
-            case Enchantment.ID_PROTECTION_FIRE:
-                if (cause == DamageCause.FIRE || cause == DamageCause.FIRE_TICK || cause == DamageCause.LAVA)
-                    canProtect = true;
-                break;
-            case Enchantment.ID_PROTECTION_FALL:
-                if (cause == DamageCause.FALL) canProtect = true;
-                break;
-            case Enchantment.ID_PROTECTION_EXPLOSION:
-                if (cause == DamageCause.ENTITY_EXPLOSION || cause == DamageCause.BLOCK_EXPLOSION)
-                    canProtect = true;
-                break;
-            case Enchantment.ID_PROTECTION_PROJECTILE:
-                if (cause == DamageCause.PROJECTILE) canProtect = true;
-                break;
-        }
-
-        if (canProtect) {
-            return (int) (level * getTypeModifier());
-        }
-
-        return 0;
     }
 
     @Override

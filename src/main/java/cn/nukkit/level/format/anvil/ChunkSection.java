@@ -4,7 +4,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Utils;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * author: MagicDroidX

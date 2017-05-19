@@ -3,7 +3,6 @@ package cn.nukkit.level.generator;
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.biome.BiomeSelector;
 import cn.nukkit.level.generator.noise.Simplex;
@@ -16,10 +15,10 @@ import java.util.*;
 
 /**
  * This generator was written by Creeperface and Nycuro
- * 
+ * <p>
  * The following classes are theirs and are intended for NUKKIT USAGE and should not be copied/translated to other software
  * such as BukkitPE, ClearSky, Genisys , Pocketmine-MP
- *
+ * <p>
  * Normal.java
  * MushroomPopulator.java
  * DarkOakTreePopulator.java
@@ -36,7 +35,7 @@ import java.util.*;
  * MushroomIsland.java
  * TreeGenerator.java
  * HugeTreesGenerator.java
- * 
+ * <p>
  * Created by CreeperFace on 26. 10. 2016.
  */
 public class Normal extends Generator {
@@ -50,7 +49,7 @@ public class Normal extends Generator {
     public static final int ROOFED_FOREST_M = 157;
     public static final int MUSHROOM_ISLAND = 14;
     public static final int SWAMP = 6;
-    
+
     public static final int OCEAN = 0;
     public static final int PLAINS = 1;
     public static final int DESERT = 2;
@@ -60,7 +59,7 @@ public class Normal extends Generator {
     public static final int ICE_PLAINS = 12;
     public static final int BEACH = 16;
     public static final int BIRCH_FOREST = 27;
-    
+
     public static final int MAX_BIOMES = 256;
 
     @Override
@@ -101,7 +100,7 @@ public class Normal extends Generator {
     private final int basegroundHeight = 3;
     private int waterColor = 16777215;
     //private boolean enableSnow; Coming soon
-    
+
     protected float rainfall = 0.5F;
     protected float temperature = 0.5F;
     protected int grassColor = 0;
@@ -171,7 +170,7 @@ public class Normal extends Generator {
         this.selector.addBiome(Biome.getBiome(RIVER));
         this.selector.addBiome(Biome.getBiome(ICE_PLAINS));
         this.selector.addBiome(Biome.getBiome(BIRCH_FOREST));
-        
+
         this.selector.addBiome(Biome.getBiome(JUNGLE));
         this.selector.addBiome(Biome.getBiome(SAVANNA));
         this.selector.addBiome(Biome.getBiome(ROOFED_FOREST));

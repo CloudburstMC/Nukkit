@@ -27,10 +27,6 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
         Vector3 pos = getLocation();
         this.level.setBlock(this, new BlockAir(), true, true);
 
-        if (this.level.isUpdateScheduled(this)) {
-            this.level.cancelSheduledUpdate(this);
-        }
-
         for (BlockFace face : BlockFace.values()) {
             this.level.updateAroundRedstone(pos.getSide(face), null);
         }
@@ -43,7 +39,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
             return false;
         }
 
-        this.meta = (player.getDirection() + 5) % 4;
+        this.meta = (player.getDirection().getHorizontalIndex() + 5) % 4;
         this.level.setBlock(block, this, true, true);
 
         if (shouldBePowered()) {
@@ -68,7 +64,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
                     this.level.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
 
                     if (!shouldBePowered) {
-                        level.scheduleUpdate(pos, this.getDelay());
+                        level.scheduleUpdate(getPowered(), this, this.getDelay());
                     }
                 }
             }
@@ -88,9 +84,16 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
         if (!this.isLocked()) {
             boolean shouldPowered = this.shouldBePowered();
 
-            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isUpdateScheduled(this)) {
+            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isUpdateScheduled(this, this)) {
+                /*int priority = -1;
 
-                this.level.scheduleUpdate(this, this.getDelay());
+                if (this.isFacingTowardsRepeater()) {
+                    priority = -3;
+                } else if (this.isPowered) {
+                    priority = -2;
+                }*/
+
+                this.level.scheduleUpdate(this, this, this.getDelay());
             }
         }
     }
@@ -180,5 +183,11 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
 
     public boolean isPowered() {
         return isPowered;
+    }
+
+    public boolean isFacingTowardsRepeater() {
+        BlockFace side = getFacing().getOpposite();
+        Block block = this.getSide(side);
+        return block instanceof BlockRedstoneDiode && ((BlockRedstoneDiode) block).getFacing() != side;
     }
 }

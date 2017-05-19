@@ -119,7 +119,7 @@ public class BlockBed extends BlockTransparent {
         Block down = this.down();
         if (!down.isTransparent()) {
             int[] faces = {3, 4, 2, 5};
-            int d = player != null ? player.getDirection() : 0;
+            int d = player != null ? player.getDirection().getHorizontalIndex() : 0;
             Block next = this.getSide(BlockFace.fromIndex(faces[((d + 3) % 4)]));
             Block downNext = this.down();
 

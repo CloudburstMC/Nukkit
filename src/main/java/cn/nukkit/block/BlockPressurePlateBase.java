@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.ClickSound;
@@ -103,8 +104,10 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
             if (!isPowered && wasPowered) {
                 this.playOffSound();
+                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
             } else if (isPowered && !wasPowered) {
                 this.playOnSound();
+                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
             }
         }
 

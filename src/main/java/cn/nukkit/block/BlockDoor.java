@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -217,6 +218,8 @@ public abstract class BlockDoor extends BlockTransparent {
 
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
             if ((!isOpen() && this.level.isBlockPowered(this)) || (isOpen() && !this.level.isBlockPowered(this))) {
+                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
+
                 this.toggle(null);
             }
         }
@@ -237,7 +240,7 @@ public abstract class BlockDoor extends BlockTransparent {
             if (!blockUp.canBeReplaced() || blockDown.isTransparent()) {
                 return false;
             }
-            int direction = player != null ? player.getDirection() : 0;
+            int direction = player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0;
             int[] faces = {3, 4, 2, 5};
 
             Block next = this.getSide(BlockFace.fromIndex(faces[((direction + 2) % 4)]));
@@ -250,6 +253,10 @@ public abstract class BlockDoor extends BlockTransparent {
             this.setDamage(direction & 0x03);
             this.getLevel().setBlock(block, this, true, true); //Bottom
             this.getLevel().setBlock(blockUp, Block.get(this.getId(), metaUp), true); //Top
+
+            if (!this.isOpen() && this.level.isBlockPowered(this)) {
+                this.toggle(null);
+            }
             return true;
         }
 

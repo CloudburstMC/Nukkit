@@ -48,7 +48,7 @@ public class BlockPumpkin extends BlockSolid {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (player != null) {
             if (player.getDirection() != null) {
-                this.meta = (player.getDirection() + 5) % 4;
+                this.meta = (player.getDirection().getHorizontalIndex() + 5) % 4;
             }
         }
         this.getLevel().setBlock(block, this, true, true);

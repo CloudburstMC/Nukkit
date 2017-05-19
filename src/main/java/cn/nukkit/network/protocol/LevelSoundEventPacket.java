@@ -111,7 +111,7 @@ public class LevelSoundEventPacket extends DataPacket {
     public int extraData = -1;
     public int pitch = -1;
     public boolean unknownBool;
-    public boolean unknownBool2;
+    public boolean disableRelativeVolume;
 
     @Override
     public void decode() {
@@ -123,7 +123,7 @@ public class LevelSoundEventPacket extends DataPacket {
         this.extraData = this.getVarInt();
         this.pitch = this.getVarInt();
         this.unknownBool = this.getBoolean();
-        this.unknownBool2 = this.getBoolean();
+        this.disableRelativeVolume = this.getBoolean();
     }
 
     @Override
@@ -134,7 +134,7 @@ public class LevelSoundEventPacket extends DataPacket {
         this.putVarInt(this.extraData);
         this.putVarInt(this.pitch);
         this.putBoolean(this.unknownBool);
-        this.putBoolean(this.unknownBool2);
+        this.putBoolean(this.disableRelativeVolume);
     }
 
     @Override

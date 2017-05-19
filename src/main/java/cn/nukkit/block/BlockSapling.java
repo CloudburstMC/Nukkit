@@ -3,10 +3,12 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.generator.object.tree.ObjectTree;
+import cn.nukkit.level.generator.object.BasicGenerator;
+import cn.nukkit.level.generator.object.tree.*;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -71,12 +73,81 @@ public class BlockSapling extends BlockFlowable {
                 item.count--;
             }
 
+            this.level.addParticle(new BoneMealParticle(this));
             if (this.level.rand.nextFloat() >= 0.45) {
-                this.level.addParticle(new BoneMealParticle(this));
                 return true;
             }
 
-            ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new NukkitRandom(), this.meta & 0x07);
+            BasicGenerator generator = null;
+            boolean bigTree = false;
+
+            int x = 0;
+            int z = 0;
+
+            switch (this.meta) {
+                case JUNGLE:
+                    loop:
+                    for (x = 0; x >= -1; --x) {
+                        for (z = 0; z >= -1; --z) {
+                            if (this.findSaplings(x, z, JUNGLE)) {
+                                generator = new ObjectJungleBigTree(10, 20, new BlockWood(BlockWood.JUNGLE), new BlockLeaves(BlockLeaves.JUNGLE));
+                                bigTree = true;
+                                break loop;
+                            }
+                        }
+                    }
+
+                    if (!bigTree) {
+                        generator = new NewJungleTree(4 + this.level.rand.nextInt(7));
+                    }
+                    break;
+                case ACACIA:
+                    generator = new ObjectSavannaTree();
+                    break;
+                case DARK_OAK:
+                    bigTree = false;
+
+                    loop:
+                    for (x = 0; x >= -1; --x) {
+                        for (z = 0; z >= -1; --z) {
+                            if (this.findSaplings(x, z, DARK_OAK)) {
+                                generator = new ObjectDarkOakTree();
+                                bigTree = true;
+                                break loop;
+                            }
+                        }
+                    }
+
+                    if (!bigTree) {
+                        return false;
+                    }
+                    break;
+                //TODO: big spruce
+                default:
+                    ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new NukkitRandom(), this.meta & 0x07);
+                    return true;
+            }
+            BlockAir air = new BlockAir();
+
+            if (bigTree) {
+                this.level.setBlock(this.add(x, 0, z), air, true, false);
+                this.level.setBlock(this.add(x + 1, 0, z), air, true, false);
+                this.level.setBlock(this.add(x, 0, z + 1), air, true, false);
+                this.level.setBlock(this.add(x + 1, 0, z + 1), air, true, false);
+            } else {
+                this.level.setBlock(this, air, true, false);
+            }
+
+            if (!generator.generate(this.level, new NukkitRandom(), this.add(x, 0, z))) {
+                if (bigTree) {
+                    this.level.setBlock(this.add(x, 0, z), this, true, false);
+                    this.level.setBlock(this.add(x + 1, 0, z), this, true, false);
+                    this.level.setBlock(this.add(x, 0, z + 1), this, true, false);
+                    this.level.setBlock(this.add(x + 1, 0, z + 1), this, true, false);
+                } else {
+                    this.level.setBlock(this, this, true, false);
+                }
+            }
             return true;
         }
         this.getLevel().loadChunk((int) this.x >> 4, (int) this.z >> 4);
@@ -110,6 +181,15 @@ public class BlockSapling extends BlockFlowable {
         return new int[][]{
                 {Item.SAPLING, this.getDamage(), 1}
         };
+    }
+
+    private boolean findSaplings(int x, int z, int type) {
+        return this.isSameType(this.add(x, 0, z), type) && this.isSameType(this.add(x + 1, 0, z), type) && this.isSameType(this.add(x, 0, z + 1), type) && this.isSameType(this.add(x + 1, 0, z + 1), type);
+    }
+
+    public boolean isSameType(Vector3 pos, int type) {
+        Block block = this.level.getBlock(pos);
+        return block.getId() == this.getId() && block.getDamage() == type;
     }
 
     @Override

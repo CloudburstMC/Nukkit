@@ -1,4 +1,5 @@
 package cn.nukkit.level.generator.biome;
+
 import cn.nukkit.level.generator.populator.MushroomPopulator;
 import cn.nukkit.level.generator.populator.PopulatorFlower;
 import cn.nukkit.level.generator.populator.PopulatorGrass;

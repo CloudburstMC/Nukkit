@@ -93,7 +93,7 @@ public abstract class Enchantment implements Cloneable {
     }
 
     public static Enchantment getEnchantment(int id) {
-        return get(id) == null ? null : get(id).clone();
+        return get(id).clone();
     }
 
     public static Enchantment[] getEnchantments() {
@@ -176,7 +176,7 @@ public abstract class Enchantment implements Cloneable {
         return this.getMinEnchantAbility(level) + 5;
     }
 
-    public int getDamageProtection(EntityDamageEvent event) {
+    public float getDamageProtection(EntityDamageEvent event) {
         return 0;
     }
 
