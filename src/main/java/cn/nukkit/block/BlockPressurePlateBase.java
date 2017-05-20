@@ -67,7 +67,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        System.out.println("place");
+//        System.out.println("place");
         if (block.down().isTransparent()) {
             return false;
         }
