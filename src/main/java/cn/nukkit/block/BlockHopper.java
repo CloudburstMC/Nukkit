@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityHopper;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -31,6 +32,16 @@ public class BlockHopper extends BlockTransparent {
     @Override
     public String getName() {
         return "Hopper Block";
+    }
+
+    @Override
+    public double getHardness() {
+        return 3;
+    }
+
+    @Override
+    public double getResistance() {
+        return 24;
     }
 
     @Override
@@ -121,5 +132,19 @@ public class BlockHopper extends BlockTransparent {
         }
 
         return 0;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        if (item.getTier() >= ItemTool.TIER_WOODEN) {
+            return new int[][]{{Item.HOPPER, 0, 1}};
+        }
+
+        return new int[0][0];
     }
 }
