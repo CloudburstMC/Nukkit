@@ -67,19 +67,27 @@ public class BlockFarmland extends BlockTransparent {
                 return 0;
             }
 
+            if (this.level.getBlock(v.setComponents(x, this.y + 1, z)).isSolid()) {
+                this.level.setBlock(this, new BlockDirt(), true, true);
+
+                return Level.BLOCK_UPDATE_RANDOM;
+            }
+
             boolean found = false;
 
-            for (int x = (int) this.x - 1; x <= this.x + 1; x++) {
-                for (int z = (int) this.z - 1; z <= this.z + 1; z++) {
-                    if (z == this.z && x == this.x) {
-                        continue;
-                    }
+            for (int x = (int) this.x - 4; x <= this.x + 4; x++) {
+                for (int z = (int) this.z - 4; z <= this.z + 4; z++) {
+                    for (int y = (int) this.y; y <= this.y + 1; y++) {
+                        if (z == this.z && x == this.x && y == this.y) {
+                            continue;
+                        }
 
-                    Block block = this.level.getBlock(v.setComponents(x, this.y, z));
+                        Block block = this.level.getBlock(v.setComponents(x, y, z));
 
-                    if (block instanceof BlockWater) {
-                        found = true;
-                        break;
+                        if (block instanceof BlockWater) {
+                            found = true;
+                            break;
+                        }
                     }
                 }
             }
