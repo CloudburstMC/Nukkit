@@ -2419,6 +2419,12 @@ public class Level implements ChunkManager, Metadatable {
         Position previousSpawn = this.getSpawnLocation();
         this.provider.setSpawn(pos);
         this.server.getPluginManager().callEvent(new SpawnChangeEvent(this, previousSpawn));
+        SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
+        pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+        pk.x = pos.getFloorX();
+        pk.y = pos.getFloorY();
+        pk.z = pos.getFloorZ();
+        for (Player p : getPlayers().values()) p.dataPacket(pk);
     }
 
     public void requestChunk(int x, int z, Player player) {

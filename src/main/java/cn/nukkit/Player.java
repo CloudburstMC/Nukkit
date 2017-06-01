@@ -1010,6 +1010,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
         this.spawnPosition = new Position(pos.x, pos.y, pos.z, level);
         SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
+        pk.spawnType = SetSpawnPositionPacket.TYPE_PLAYER_SPAWN;
         pk.x = (int) this.spawnPosition.x;
         pk.y = (int) this.spawnPosition.y;
         pk.z = (int) this.spawnPosition.z;
@@ -4368,6 +4369,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().callEvent(event);
             if (event.isCancelled()) return false;
             to = event.getTo();
+            if (from.getLevel().getId() != to.getLevel().getId()){ //Different level, update compass position
+                SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
+                pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+                Position spawn = to.getLevel().getSpawnLocation();
+                pk.x = spawn.getFloorX();
+                pk.y = spawn.getFloorY();
+                pk.z = spawn.getFloorZ();
+                dataPacket(pk);
+            }
         }
 
         Position oldPos = this.getPosition();
@@ -4405,6 +4415,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void teleportImmediate(Location location, TeleportCause cause) {
+        Location from = this.getLocation();
         if (super.teleport(location, cause)) {
 
             for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
@@ -4412,6 +4423,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     continue;
                 }
                 this.removeWindow(window);
+            }
+
+            if (from.getLevel().getId() != location.getLevel().getId()){ //Different level, update compass position
+                SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
+                pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+                Position spawn = location.getLevel().getSpawnLocation();
+                pk.x = spawn.getFloorX();
+                pk.y = spawn.getFloorY();
+                pk.z = spawn.getFloorZ();
+                dataPacket(pk);
             }
 
             this.forceMovement = new Vector3(this.x, this.y, this.z);
