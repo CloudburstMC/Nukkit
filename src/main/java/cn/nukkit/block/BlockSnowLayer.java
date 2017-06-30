@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemSnowball;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -82,19 +83,24 @@ public class BlockSnowLayer extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isShovel() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.SNOWBALL, 0, 1}
+            return new Item[]{
+                    new ItemSnowball()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.SNOW_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }
 

@@ -259,7 +259,7 @@ public class Item implements Cloneable {
     public static final int WOODEN_SLAB = 158;
     public static final int WOOD_SLABS = 158;
     public static final int WOODEN_SLABS = 158;
-    public static final int STAINED_CLAY = 159;
+    public static final int STAINED_TERRACOTTA = 159;
     public static final int STAINED_HARDENED_CLAY = 159;
     public static final int STAINED_GLASS_PANE = 160;
     public static final int LEAVES2 = 161;
@@ -278,7 +278,7 @@ public class Item implements Cloneable {
     public static final int SEA_LANTERN = 169;
     public static final int HAY_BALE = 170;
     public static final int CARPET = 171;
-    public static final int HARDENED_CLAY = 172;
+    public static final int TERRACOTTA = 172;
     public static final int COAL_BLOCK = 173;
     public static final int PACKED_ICE = 174;
     public static final int DOUBLE_PLANT = 175;
@@ -310,6 +310,26 @@ public class Item implements Cloneable {
 
     public static final int END_ROD = 208;
     public static final int END_GATEWAY = 209;
+
+    public static final int SHULKER_BOX = 218;
+    public static final int PURPLE_GLAZED_TERRACOTTA = 219;
+    public static final int WHITE_GLAZED_TERRACOTTA = 220;
+    public static final int ORANGE_GLAZED_TERRACOTTA = 221;
+    public static final int MAGENTA_GLAZED_TERRACOTTA = 222;
+    public static final int LIGHT_BLUE_GLAZED_TERRACOTTA = 223;
+    public static final int YELLOW_GLAZED_TERRACOTTA = 224;
+    public static final int LIME_GLAZED_TERRACOTTA = 225;
+    public static final int PINK_GLAZED_TERRACOTTA = 226;
+    public static final int GRAY_GLAZED_TERRACOTTA = 227;
+    public static final int SILVER_GLAZED_TERRACOTTA = 228;
+    public static final int CYAN_GLAZED_TERRACOTTA = 229;
+    public static final int BLUE_GLAZED_TERRACOTTA = 231;
+    public static final int BROWN_GLAZED_TERRACOTTA = 232;
+    public static final int GREEN_GLAZED_TERRACOTTA = 233;
+    public static final int RED_GLAZED_TERRACOTTA = 234;
+    public static final int BLACK_GLAZED_TERRACOTTA = 235;
+    public static final int CONCRETE = 236;
+    public static final int CONCRETE_POWDER = 237;
 
     public static final int CHORUS_PLANT = 240;
     public static final int STAINED_GLASS = 241;
@@ -828,23 +848,23 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.GRASS, 0));
         addCreativeItem(Item.get(Item.MYCELIUM, 0));
         addCreativeItem(Item.get(Item.CLAY_BLOCK, 0));
-        addCreativeItem(Item.get(Item.HARDENED_CLAY, 0));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 0));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 1));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 2));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 3));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 4));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 5));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 6));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 7));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 8));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 9));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 10));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 11));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 12));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 13));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 14));
-        addCreativeItem(Item.get(Item.STAINED_CLAY, 15));
+        addCreativeItem(Item.get(Item.TERRACOTTA, 0));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 0));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 1));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 2));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 3));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 4));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 5));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 6));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 7));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 8));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 9));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 10));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 11));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 12));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 13));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 14));
+        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 15));
         addCreativeItem(Item.get(Item.SANDSTONE, 0));
         addCreativeItem(Item.get(Item.SANDSTONE, 1));
         addCreativeItem(Item.get(Item.SANDSTONE, 2));
@@ -962,7 +982,10 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.FENCE_GATE_ACACIA, 0));
         addCreativeItem(Item.get(Item.FENCE_GATE_DARK_OAK, 0));
         addCreativeItem(Item.get(Item.IRON_BARS, 0));
-        addCreativeItem(Item.get(Item.BED, 0));
+        int[] dyeColors = {0, 8, 7, 15, 12, 14, 1, 4, 5, 13, 9, 3, 11, 10, 2, 6};
+        for (int color : dyeColors) {
+            addCreativeItem(Item.get(Item.BED, color));
+        }
         addCreativeItem(Item.get(Item.BOOKSHELF, 0));
         addCreativeItem(Item.get(Item.SIGN, 0));
         addCreativeItem(Item.get(Item.PAINTING, 0));
@@ -1023,6 +1046,24 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.LEAVES, 3));
         addCreativeItem(Item.get(Item.LEAVES2, 0));
         addCreativeItem(Item.get(Item.LEAVES2, 1));
+
+        addCreativeItem(Item.get(Item.WHITE_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.SILVER_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.GRAY_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.BLACK_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.BROWN_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.RED_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.ORANGE_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.LIME_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.GREEN_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.CYAN_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.LIGHT_BLUE_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.BLUE_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.PURPLE_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.MAGENTA_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.WHITE_GLAZED_TERRACOTTA));
+        addCreativeItem(Item.get(Item.PINK_GLAZED_TERRACOTTA));
+
         addCreativeItem(Item.get(Item.CAKE, 0));
 
         addCreativeItem(Item.get(Item.SKULL, ItemSkull.SKELETON_SKULL));
@@ -1048,22 +1089,9 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SLIME_BLOCK, 0));
         addCreativeItem(Item.get(Item.ENDER_CHEST, 0));
 
-        addCreativeItem(Item.get(Item.WOOL, 0));
-        addCreativeItem(Item.get(Item.WOOL, 8));
-        addCreativeItem(Item.get(Item.WOOL, 7));
-        addCreativeItem(Item.get(Item.WOOL, 15));
-        addCreativeItem(Item.get(Item.WOOL, 12));
-        addCreativeItem(Item.get(Item.WOOL, 14));
-        addCreativeItem(Item.get(Item.WOOL, 1));
-        addCreativeItem(Item.get(Item.WOOL, 4));
-        addCreativeItem(Item.get(Item.WOOL, 5));
-        addCreativeItem(Item.get(Item.WOOL, 13));
-        addCreativeItem(Item.get(Item.WOOL, 9));
-        addCreativeItem(Item.get(Item.WOOL, 3));
-        addCreativeItem(Item.get(Item.WOOL, 11));
-        addCreativeItem(Item.get(Item.WOOL, 10));
-        addCreativeItem(Item.get(Item.WOOL, 2));
-        addCreativeItem(Item.get(Item.WOOL, 6));
+        for (int color : dyeColors) {
+            addCreativeItem(Item.get(Item.WOOL, color));
+        }
 
         addCreativeItem(Item.get(Item.CARPET, 0));
         addCreativeItem(Item.get(Item.CARPET, 8));
@@ -1118,36 +1146,44 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.IRON_HORSE_ARMOR, 0));
         addCreativeItem(Item.get(Item.GOLD_HORSE_ARMOR, 0));
         addCreativeItem(Item.get(Item.DIAMOND_HORSE_ARMOR, 0));
+        
         addCreativeItem(Item.get(Item.SPAWN_EGG, 10)); //Chicken
         addCreativeItem(Item.get(Item.SPAWN_EGG, 11)); //Cow
         addCreativeItem(Item.get(Item.SPAWN_EGG, 12)); //Pig
         addCreativeItem(Item.get(Item.SPAWN_EGG, 13)); //Sheep
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 14)); //Wolf
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 18)); //Rabbit
         addCreativeItem(Item.get(Item.SPAWN_EGG, 15)); //Villager
-        /*
         addCreativeItem(Item.get(Item.SPAWN_EGG, 16)); //Mooshroom
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 19)); //Bat
-        */
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 17)); //Squid
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 19)); //Bat 
+		//addCreativeItem(Item.get(Item.SPAWN_EGG, 20)); //Iron Golem
+        //addCreativeItem(Item.get(Item.SPAWN_EGG, 21)); //Snow Golem
         addCreativeItem(Item.get(Item.SPAWN_EGG, 22)); //Ocelot
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 33)); //Creeper
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 23)); //Horse
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 24)); //Donkey
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 25)); //Mule
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 26)); //SkeletonHorse
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 27)); //ZombieHorse
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 28)); //PolarBear
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 29)); //Llama
         addCreativeItem(Item.get(Item.SPAWN_EGG, 32)); //Zombie
-        /*
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 38)); //Enderman
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 39)); //Silverfish
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 33)); //Creeper
         addCreativeItem(Item.get(Item.SPAWN_EGG, 34)); //Skeleton
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 37)); //Slime
         addCreativeItem(Item.get(Item.SPAWN_EGG, 35)); //Spider
         addCreativeItem(Item.get(Item.SPAWN_EGG, 36)); //Zombie Pigman
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 17)); //Squid
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 37)); //Slime
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 38)); //Enderman
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 39)); //Silverfish
         addCreativeItem(Item.get(Item.SPAWN_EGG, 40)); //Cave spider
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 42)); //Magma Cube
         addCreativeItem(Item.get(Item.SPAWN_EGG, 41)); //Ghast
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 42)); //MagmaCube
         addCreativeItem(Item.get(Item.SPAWN_EGG, 43)); //Blaze
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 20)); //Iron Golem
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 21)); //Snow Golem
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 44)); //Zombie Villager
-        */
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 45)); //Witch
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 46)); //Stray
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 47)); //Husk
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 49)); //Guardian
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 50)); //ElderGuardian
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 54)); //Shulker
+        
         addCreativeItem(Item.get(Item.FIRE_CHARGE, 0));
         addCreativeItem(Item.get(Item.WOODEN_SWORD));
         addCreativeItem(Item.get(Item.WOODEN_HOE));
@@ -1303,22 +1339,9 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SHULKER_SHELL));
         addCreativeItem(Item.get(Item.PRISMARINE_SHARD, 0));
         addCreativeItem(Item.get(Item.PRISMARINE_CRYSTALS, 0));
-        addCreativeItem(Item.get(Item.DYE, 0));
-        addCreativeItem(Item.get(Item.DYE, 8));
-        addCreativeItem(Item.get(Item.DYE, 7));
-        addCreativeItem(Item.get(Item.DYE, 15));
-        addCreativeItem(Item.get(Item.DYE, 12));
-        addCreativeItem(Item.get(Item.DYE, 14));
-        addCreativeItem(Item.get(Item.DYE, 1));
-        addCreativeItem(Item.get(Item.DYE, 4));
-        addCreativeItem(Item.get(Item.DYE, 5));
-        addCreativeItem(Item.get(Item.DYE, 13));
-        addCreativeItem(Item.get(Item.DYE, 9));
-        addCreativeItem(Item.get(Item.DYE, 3));
-        addCreativeItem(Item.get(Item.DYE, 11));
-        addCreativeItem(Item.get(Item.DYE, 10));
-        addCreativeItem(Item.get(Item.DYE, 2));
-        addCreativeItem(Item.get(Item.DYE, 6));
+        for (int color : dyeColors) {
+            addCreativeItem(Item.get(Item.DYE, color));
+        }
 
         //Potion
         addCreativeItem(Item.get(Item.GLASS_BOTTLE, 0));
@@ -1812,7 +1835,7 @@ public class Item implements Cloneable {
         return lines.toArray(new String[0]);
     }
 
-    public void setLore(String... lines) {
+    public Item setLore(String... lines) {
         CompoundTag tag;
         if (!this.hasCompoundTag()) {
             tag = new CompoundTag();
@@ -1832,6 +1855,7 @@ public class Item implements Cloneable {
         }
 
         this.setNamedTag(tag);
+        return this;
     }
 
     public Tag getNamedTagEntry(String name) {

@@ -7,6 +7,10 @@ import cn.nukkit.block.BlockRedstoneRepeaterUnpowered;
  */
 public class ItemRedstoneRepeater extends Item {
 
+    public ItemRedstoneRepeater() {
+        this(0);
+    }
+
     public ItemRedstoneRepeater(Integer meta) {
         this(0, 1);
     }

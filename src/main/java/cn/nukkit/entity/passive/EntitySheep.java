@@ -1,20 +1,19 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.BlockWool;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Author: BeYkeRYkt
+ * Author: BeYkeRYkt 
  * Nukkit Project
  */
 public class EntitySheep extends EntityAnimal {
@@ -30,13 +29,16 @@ public class EntitySheep extends EntityAnimal {
 
     @Override
     public float getWidth() {
+        if (this.isBaby()) {
+            return 0.45f;
+        }
         return 0.9f;
     }
 
     @Override
     public float getHeight() {
         if (isBaby()) {
-            return 0.9f; // No have information
+            return 0.65f;
         }
         return 1.3f;
     }
@@ -44,9 +46,9 @@ public class EntitySheep extends EntityAnimal {
     @Override
     public float getEyeHeight() {
         if (isBaby()) {
-            return 0.95f * 0.9f; // No have information
+            return 0.65f;
         }
-        return 0.95f * getHeight();
+        return 1.1f;
     }
 
     @Override
@@ -139,5 +141,23 @@ public class EntitySheep extends EntityAnimal {
         }
 
         return DyeColor.WHITE.getWoolData();
+    }
+
+    @Override
+    public void spawnTo(Player player) {
+        AddEntityPacket pk = new AddEntityPacket();
+        pk.type = this.getNetworkId();
+        pk.entityUniqueId = this.getId();
+        pk.entityRuntimeId = this.getId();
+        pk.x = (float) this.x;
+        pk.y = (float) this.y;
+        pk.z = (float) this.z;
+        pk.speedX = (float) this.motionX;
+        pk.speedY = (float) this.motionY;
+        pk.speedZ = (float) this.motionZ;
+        pk.metadata = this.dataProperties;
+        player.dataPacket(pk);
+
+        super.spawnTo(player);
     }
 }

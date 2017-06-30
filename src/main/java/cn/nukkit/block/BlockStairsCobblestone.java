@@ -45,4 +45,9 @@ public class BlockStairsCobblestone extends BlockStairs {
     public BlockColor getColor() {
         return BlockColor.STONE_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
 }

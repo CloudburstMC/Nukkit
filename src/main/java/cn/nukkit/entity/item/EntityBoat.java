@@ -93,7 +93,7 @@ public class EntityBoat extends EntityVehicle {
                         this.kill();
                     }
                     if (this.getHealth() <= 0) {
-                        if (((Player) damager).isSurvival()) {
+                        if (((Player) damager).isSurvival() && this.level.getGameRules().getBoolean("doEntityDrops")) {
                             this.level.dropItem(this, new ItemBoat());
                         }
                         this.close();

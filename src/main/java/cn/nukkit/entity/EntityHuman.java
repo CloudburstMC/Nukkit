@@ -48,6 +48,11 @@ public class EntityHuman extends EntityHumanType {
         return 1.62f;
     }
 
+    @Override
+    protected float getBaseOffset() {
+        return this.getEyeHeight();
+    }
+
     protected Skin skin;
 
     @Override

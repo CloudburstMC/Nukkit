@@ -8,8 +8,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.*;
-import cn.nukkit.entity.mob.EntityCreeper;
-import cn.nukkit.entity.mob.EntityZombie;
+import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityEnderPearl;
@@ -303,18 +302,6 @@ public class Server {
 
         ServerScheduler.WORKERS = (int) poolSize;
 
-        int threshold;
-        try {
-            threshold = Integer.valueOf(String.valueOf(this.getConfig("network.batch-threshold", 256)));
-        } catch (Exception e) {
-            threshold = 256;
-        }
-
-        if (threshold < 0) {
-            threshold = -1;
-        }
-
-        Network.BATCH_THRESHOLD = threshold;
         this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
         this.networkCompressionAsync = (boolean) this.getConfig("network.async-compression", true);
 
@@ -547,10 +534,6 @@ public class Server {
     public static void broadcastPacket(Player[] players, DataPacket packet) {
         packet.encode();
         packet.isEncoded = true;
-        if (Network.BATCH_THRESHOLD >= 0 && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
-            Server.getInstance().batchPackets(players, new DataPacket[]{packet}, false);
-            return;
-        }
 
         for (Player player : players) {
             player.dataPacket(packet);
@@ -606,8 +589,6 @@ public class Server {
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
-        pk.encode();
-        pk.isEncoded = true;
 
         for (String i : identifiers) {
             if (this.players.containsKey(i)) {
@@ -1666,6 +1647,7 @@ public class Server {
             this.levels.put(level.getId(), level);
 
             level.initLevel();
+            level.getGameRules().setGameRule("spawnRadius", "" + this.getSpawnRadius());
 
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
@@ -1933,12 +1915,38 @@ public class Server {
         //todo mobs
         Entity.registerEntity("Creeper", EntityCreeper.class);
         Entity.registerEntity("Zombie", EntityZombie.class);
+        Entity.registerEntity("Blaze", EntityBlaze.class);
+        Entity.registerEntity("CaveSpider", EntityCaveSpider.class);
+        Entity.registerEntity("ElderGuardian", EntityElderGuardian.class);
+        Entity.registerEntity("EnderDragon", EntityEnderDragon.class);
+        Entity.registerEntity("Enderman", EntityEnderman.class);
+        Entity.registerEntity("Endermite", EntityEndermite.class);
+        Entity.registerEntity("Ghast", EntityGhast.class);
+        Entity.registerEntity("Guardian", EntityGuardian.class);
+        Entity.registerEntity("Husk", EntityHusk.class);
+        Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
+        Entity.registerEntity("Shulker", EntityShulker.class);
+        Entity.registerEntity("Silferfish", EntitySilverfish.class);
+        Entity.registerEntity("Skeleton", EntitySkeleton.class);
+        Entity.registerEntity("SkeletonHorse", EntitySkeletonHorse.class);
+        Entity.registerEntity("Slime", EntitySlime.class);
+        Entity.registerEntity("Spider", EntitySpider.class);
+        Entity.registerEntity("Stray", EntityStray.class);
+        Entity.registerEntity("Witch", EntityWitch.class);
         //TODO: more mobs
+        Entity.registerEntity("Bat", EntityBat.class);
         Entity.registerEntity("Chicken", EntityChicken.class);
         Entity.registerEntity("Cow", EntityCow.class);
+        Entity.registerEntity("Donkey", EntityDonkey.class);
+        Entity.registerEntity("Horse", EntityHorse.class);
+        Entity.registerEntity("Llama", EntityLlama.class);
+        Entity.registerEntity("Mooshroom", EntityMooshroom.class);
+        Entity.registerEntity("Mule", EntityMule.class);
+        Entity.registerEntity("PolarBear", EntityPolarBear.class);
         Entity.registerEntity("Pig", EntityPig.class);
         Entity.registerEntity("Rabbit", EntityRabbit.class);
         Entity.registerEntity("Sheep", EntitySheep.class);
+        Entity.registerEntity("Squid", EntitySquid.class);
         Entity.registerEntity("Wolf", EntityWolf.class);
         Entity.registerEntity("Ocelot", EntityOcelot.class);
         Entity.registerEntity("Villager", EntityVillager.class);
@@ -1971,6 +1979,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.PISTON_ARM, BlockEntityPistonArm.class);
         BlockEntity.registerBlockEntity(BlockEntity.COMPARATOR, BlockEntityComparator.class);
         BlockEntity.registerBlockEntity(BlockEntity.HOPPER, BlockEntityHopper.class);
+        BlockEntity.registerBlockEntity(BlockEntity.BED, BlockEntityBed.class);
     }
 
     public static Server getInstance() {

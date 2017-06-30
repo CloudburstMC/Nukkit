@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import co.aikar.timings.Timing;
@@ -36,6 +37,7 @@ public abstract class BlockEntity extends Position {
     public static final String MOVING_BLOCK = "MovingBlock";
     public static final String COMPARATOR = "Comparator";
     public static final String HOPPER = "Hopper";
+    public static final String BED = "Bed";
 
 
     public static long count = 1;
@@ -141,6 +143,17 @@ public abstract class BlockEntity extends Position {
         this.namedTag.putInt("z", (int) this.getZ());
     }
 
+    public CompoundTag getCleanedNBT(){
+        this.saveNBT();
+        CompoundTag tag = this.namedTag.clone();
+        tag.remove("x").remove("y").remove("z").remove("id");
+        if(tag.getTags().size() > 0){
+            return tag;
+        }else{
+            return null;
+        }
+    }
+
     public Block getBlock() {
         return this.level.getBlock(this);
     }
@@ -173,4 +186,11 @@ public abstract class BlockEntity extends Position {
         return name;
     }
 
+    public static CompoundTag getDefaultCompound(Vector3 pos, String id) {
+        return new CompoundTag("")
+                .putString("id", id)
+                .putInt("x", pos.getFloorX())
+                .putInt("y", pos.getFloorY())
+                .putInt("z", pos.getFloorZ());
+    }
 }

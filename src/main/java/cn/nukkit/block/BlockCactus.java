@@ -125,13 +125,6 @@ public class BlockCactus extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {this.getId(), 0, 1}
-        };
-    }
-
-    @Override
     public String getName() {
         return "Cactus";
     }

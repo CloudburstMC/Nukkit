@@ -48,8 +48,6 @@ public class EntityArrow extends EntityProjectile {
     protected float gravity = 0.05f;
     protected float drag = 0.01f;
 
-    protected boolean isCritical;
-
     public EntityArrow(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
@@ -70,16 +68,23 @@ public class EntityArrow extends EntityProjectile {
         this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
     }
 
+    public void setCritical() {
+        this.setCritical(true);
+    }
+
     public void setCritical(boolean value) {
-        this.isCritical = value;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, this.isCritical);
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, value);
+    }
+
+    public boolean isCritical() {
+        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL);
     }
 
     @Override
     public int getResultDamage() {
         int base = super.getResultDamage();
 
-        if (this.isCritical) {
+        if (this.isCritical()) {
             base += this.level.rand.nextInt(base / 2 + 2);
         }
 

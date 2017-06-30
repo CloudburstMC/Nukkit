@@ -45,4 +45,9 @@ public class BlockStairsQuartz extends BlockStairs {
     public BlockColor getColor() {
         return BlockColor.QUARTZ_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
 }

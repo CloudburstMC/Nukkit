@@ -82,9 +82,9 @@ public class BlockFlower extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {this.getId(), this.meta, 1}
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+                toItem()
         };
     }
 

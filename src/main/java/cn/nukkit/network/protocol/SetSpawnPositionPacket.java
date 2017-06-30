@@ -14,7 +14,7 @@ public class SetSpawnPositionPacket extends DataPacket {
     public int y;
     public int z;
     public int x;
-    public boolean spawnForced;
+    public boolean spawnForced = false;
 
     @Override
     public void decode() {

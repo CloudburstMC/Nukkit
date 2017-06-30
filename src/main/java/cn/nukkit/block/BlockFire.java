@@ -80,8 +80,8 @@ public class BlockFire extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[0][0];
+    public Item[] getDrops(Item item) {
+        return new Item[0];
     }
 
     @Override
@@ -92,7 +92,7 @@ public class BlockFire extends BlockFlowable {
             }
 
             return Level.BLOCK_UPDATE_NORMAL;
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.level.gameRules.getBoolean("doFireTick")) {
             boolean forever = this.down().getId() == Block.NETHERRACK;
 
             Random random = this.getLevel().rand;

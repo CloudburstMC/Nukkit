@@ -18,8 +18,10 @@ public class ContainerSetContentPacket extends DataPacket {
     public static final byte SPECIAL_ARMOR = 0x78;
     public static final byte SPECIAL_CREATIVE = 0x79;
     public static final byte SPECIAL_HOTBAR = 0x7a;
+    public static final byte SPECIAL_FIXED_INVENTORY = 0x7b;
 
-    public int windowid;
+    public long windowid;
+    public long eid;
     public Item[] slots = new Item[0];
     public int[] hotbar = new int[0];
 
@@ -32,7 +34,8 @@ public class ContainerSetContentPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.windowid = this.getByte();
+        this.windowid = (int) this.getUnsignedVarInt();
+        this.eid = this.getVarLong();
         int count = (int) this.getUnsignedVarInt();
         this.slots = new Item[count];
 
@@ -40,19 +43,18 @@ public class ContainerSetContentPacket extends DataPacket {
             this.slots[s] = this.getSlot();
         }
 
-        if (this.windowid == SPECIAL_INVENTORY) {
-            count = (int) this.getUnsignedVarInt();
-            this.hotbar = new int[count];
-            for (int s = 0; s < count && !this.feof(); ++s) {
-                this.hotbar[s] = this.getVarInt();
-            }
+        count = (int) this.getUnsignedVarInt();
+        this.hotbar = new int[count];
+        for (int s = 0; s < count && !this.feof(); ++s) {
+            this.hotbar[s] = this.getVarInt();
         }
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putByte((byte) this.windowid);
+        this.putUnsignedVarInt(this.windowid);
+        this.putVarLong(this.eid);
         this.putUnsignedVarInt(this.slots.length);
         for (Item slot : this.slots) {
             this.putSlot(slot);

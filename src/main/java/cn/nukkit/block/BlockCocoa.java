@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
@@ -191,14 +192,14 @@ public class BlockCocoa extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (this.meta >= 8) {
-            return new int[][]{
-                    {Item.DYE, 3, 3}
+            return new Item[]{
+                    new ItemDye(3, 3)
             };
         } else {
-            return new int[][]{
-                    {Item.DYE, 3, 1}
+            return new Item[]{
+                    new ItemDye(3, 1)
             };
         }
     }

@@ -2,8 +2,8 @@ package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -15,7 +15,6 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.level.sound.ExplodeSound;
 import cn.nukkit.math.*;
-import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.ExplodePacket;
 
 import java.util.ArrayList;
@@ -169,26 +168,10 @@ public class Explosion {
         for (Block block : this.affectedBlocks) {
             //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
-                double mot = Math.random() * Math.PI * 2;
-                EntityPrimedTNT tnt = new EntityPrimedTNT(this.level.getChunk((int) block.x >> 4, (int) block.z >> 4),
-                        new CompoundTag()
-                                .putList(new ListTag<DoubleTag>("Pos")
-                                        .add(new DoubleTag("", block.x + 0.5))
-                                        .add(new DoubleTag("", block.y))
-                                        .add(new DoubleTag("", block.z + 0.5)))
-                                .putList(new ListTag<DoubleTag>("Motion")
-                                        .add(new DoubleTag("", -Math.sin(mot) * 0.02))
-                                        .add(new DoubleTag("", 0.2))
-                                        .add(new DoubleTag("", -Math.cos(mot) * 0.02)))
-                                .putList(new ListTag<FloatTag>("Rotation")
-                                        .add(new FloatTag("", 0))
-                                        .add(new FloatTag("", 0)))
-                                .put("Fuse", new ByteTag("", (byte) (10 + (Math.random() * 30) + 1))
-                                ));
-                tnt.spawnToAll();
+                ((BlockTNT) block).prime(new NukkitRandom().nextRange(10, 30));
             } else if (Math.random() * 100 < yield) {
-                for (int[] drop : block.getDrops(air)) {
-                    this.level.dropItem(block.add(0.5, 0.5, 0.5), Item.get(drop[0], drop[1], drop[2]));
+                for (Item drop : block.getDrops(air)) {
+                    this.level.dropItem(block.add(0.5, 0.5, 0.5), drop);
                 }
             }
 

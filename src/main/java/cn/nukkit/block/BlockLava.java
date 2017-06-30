@@ -78,8 +78,7 @@ public class BlockLava extends BlockLiquid {
     public int onUpdate(int type) {
         int result = super.onUpdate(type);
 
-        if (type == Level.BLOCK_UPDATE_RANDOM) {
-
+        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean("doFireTick")) {
             Random random = this.getLevel().rand;
 
             int i = random.nextInt(3);

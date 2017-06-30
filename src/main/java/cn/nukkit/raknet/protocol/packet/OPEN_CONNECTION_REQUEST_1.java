@@ -31,7 +31,7 @@ public class OPEN_CONNECTION_REQUEST_1 extends Packet {
         super.decode();
         this.offset += 16; //skip magic bytes
         this.protocol = this.getByte();
-        this.mtuSize = (short) (this.get().length + 18);
+        this.mtuSize = (short) this.buffer.length;
     }
 
     public static final class Factory implements Packet.PacketFactory {

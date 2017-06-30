@@ -39,7 +39,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
             return false;
         }
 
-        this.meta = (player.getDirection().getHorizontalIndex() + 5) % 4;
+        this.meta = player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0;
         this.level.setBlock(block, this, true, true);
 
         if (shouldBePowered()) {

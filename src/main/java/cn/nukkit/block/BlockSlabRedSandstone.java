@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 
 /**
@@ -41,13 +42,23 @@ public class BlockSlabRedSandstone extends BlockSlab {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.RED_SANDSTONE_SLAB, this.meta & 0x07, 1}
+            return new Item[]{
+                    toItem()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, this.meta & 0x07);
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }

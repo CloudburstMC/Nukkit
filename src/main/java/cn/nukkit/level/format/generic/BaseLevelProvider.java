@@ -1,6 +1,7 @@
 package cn.nukkit.level.format.generic;
 
 import cn.nukkit.Server;
+import cn.nukkit.level.GameRules;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.generator.Generator;
@@ -149,6 +150,21 @@ public abstract class BaseLevelProvider implements LevelProvider {
         this.levelData.putInt("SpawnX", (int) pos.x);
         this.levelData.putInt("SpawnY", (int) pos.y);
         this.levelData.putInt("SpawnZ", (int) pos.z);
+    }
+
+    @Override
+    public GameRules getGamerules() {
+        GameRules rules = new GameRules();
+
+        if (this.levelData.contains("GameRules"))
+            rules.readNBT(this.levelData.getCompound("GameRules"));
+
+        return rules;
+    }
+
+    @Override
+    public void setGameRules(GameRules rules) {
+        this.levelData.putCompound("GameRules", rules.writeNBT());
     }
 
     @Override

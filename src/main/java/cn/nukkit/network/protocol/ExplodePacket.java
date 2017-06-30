@@ -36,7 +36,7 @@ public class ExplodePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putVector3f(this.x, this.y, this.z);
-        this.putLFloat(this.radius);
+        this.putVarInt((int) (this.radius * 32));
         this.putUnsignedVarInt(this.records.length);
         if (this.records.length > 0) {
             for (Vector3 record : records) {

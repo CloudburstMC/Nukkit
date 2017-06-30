@@ -15,6 +15,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
  * @author Box.
  */
 public class EntityCreeper extends EntityMob {
+
     public static final int NETWORK_ID = 33;
 
     public static final int DATA_SWELL_DIRECTION = 16;
@@ -25,6 +26,16 @@ public class EntityCreeper extends EntityMob {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public float getWidth() {
+        return 0.72f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 1.8f;
     }
 
     public EntityCreeper(FullChunk chunk, CompoundTag nbt) {
@@ -55,16 +66,6 @@ public class EntityCreeper extends EntityMob {
         }
     }
 
-
-    @Override
-    public Item[] getDrops() {
-        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
-            return new Item[]{Item.get(Item.GUNPOWDER, level.rand.nextInt(2) + 1)};
-        }
-        return new Item[0];
-    }
-
-    @Override
     public void onStruckByLightning(Entity entity) {
         this.setPowered(true);
     }
@@ -76,6 +77,15 @@ public class EntityCreeper extends EntityMob {
         if (this.namedTag.getBoolean("powered") || this.namedTag.getBoolean("IsPowered")) {
             this.dataProperties.putBoolean(DATA_POWERED, true);
         }
+        this.setMaxHealth(20);
+    }
+
+    @Override
+    public Item[] getDrops() {
+        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
+            return new Item[]{Item.get(Item.GUNPOWDER, level.rand.nextInt(2) + 1)};
+        }
+        return new Item[0];
     }
 
     @Override

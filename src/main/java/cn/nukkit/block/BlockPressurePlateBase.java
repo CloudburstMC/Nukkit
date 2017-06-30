@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.ClickSound;
 import cn.nukkit.math.AxisAlignedBB;
@@ -28,6 +29,11 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     @Override
     public boolean canPassThrough() {
         return true;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 
     @Override
@@ -155,4 +161,9 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     }
 
     protected abstract int computeRedstoneStrength();
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, 0, 1);
+    }
 }

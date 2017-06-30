@@ -9,27 +9,27 @@ import cn.nukkit.utils.DyeColor;
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockClayHardened extends BlockSolid {
-    public BlockClayHardened() {
+public class BlockTerracotta extends BlockSolid {
+    public BlockTerracotta() {
         this(0);
     }
 
-    public BlockClayHardened(int meta) {
+    public BlockTerracotta(int meta) {
         super(0);
     }
 
-    public BlockClayHardened(DyeColor dyeColor) {
+    public BlockTerracotta(DyeColor dyeColor) {
         this(dyeColor.getWoolData());
     }
 
     @Override
     public int getId() {
-        return HARDENED_CLAY;
+        return TERRACOTTA;
     }
 
     @Override
     public String getName() {
-        return "Hardened Clay";
+        return "Terracotta";
     }
 
     @Override
@@ -48,13 +48,13 @@ public class BlockClayHardened extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.HARDENED_CLAY, 0, 1}
+            return new Item[]{
+                    toItem()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
 

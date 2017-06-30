@@ -86,6 +86,11 @@ public class ShapedRecipe implements Recipe {
         this.uuid = id;
     }
 
+    public ShapedRecipe addIngredient(int x, int y, Item item) {
+        this.ingredients.get(y).put(x, item.clone());
+        return this;
+    }
+
     public ShapedRecipe setIngredient(String key, Item item) {
         return this.setIngredient(key.charAt(0), item);
     }

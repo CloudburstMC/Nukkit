@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDiamond;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.NukkitRandom;
 
@@ -45,18 +46,23 @@ public class BlockOreDiamond extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
-            return new int[][]{
-                    {Item.DIAMOND, 0, 1}
+            return new Item[]{
+                    new ItemDiamond()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
 
     @Override
     public int getDropExp() {
         return new NukkitRandom().nextRange(3, 7);
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }

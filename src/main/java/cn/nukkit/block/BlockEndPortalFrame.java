@@ -83,4 +83,9 @@ public class BlockEndPortalFrame extends BlockTransparent {
         //TODO: redstone comparator update
         return false;
     }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
 }

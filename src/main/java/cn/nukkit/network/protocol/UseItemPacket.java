@@ -27,7 +27,7 @@ public class UseItemPacket extends DataPacket {
     public float posY;
     public float posZ;
 
-    public int unknown;
+    public int slot;
 
     public Item item;
 
@@ -52,7 +52,7 @@ public class UseItemPacket extends DataPacket {
         this.posX = playerPos.x;
         this.posY = playerPos.y;
         this.posZ = playerPos.z;
-        this.unknown = this.getByte();
+        this.slot = this.getByte();
         this.item = this.getSlot();
     }
 

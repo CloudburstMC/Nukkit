@@ -26,15 +26,15 @@ public class BlockBeetroot extends BlockCrops {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (this.meta >= 0x07) {
-            return new int[][]{
-                    {Item.BEETROOT, 0, 1},
-                    {Item.BEETROOT_SEEDS, 0, (int) (4d * Math.random())}
+            return new Item[]{
+                    Item.get(Item.BEETROOT, 0, 1),
+                    Item.get(Item.BEETROOT_SEEDS, 0, (int) (4d * Math.random()))
             };
         } else {
-            return new int[][]{
-                    {Item.BEETROOT_SEEDS, 0, 1}
+            return new Item[]{
+                    Item.get(Item.BEETROOT_SEEDS, 0, 1)
             };
         }
     }

@@ -1,11 +1,13 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * Author: BeYkeRYkt
+ * Author: BeYkeRYkt 
  * Nukkit Project
  */
 public class EntityOcelot extends EntityAnimal {
@@ -18,28 +20,26 @@ public class EntityOcelot extends EntityAnimal {
 
     @Override
     public float getWidth() {
-        return 0.6f;
-    }
-
-    @Override
-    public float getLength() {
+        if (this.isBaby()) {
+            return 0.3f;
+        }
         return 0.6f;
     }
 
     @Override
     public float getHeight() {
-        if (isBaby()) {
-            return 0.8f; // No have information
+        if (this.isBaby()) {
+            return 0.35f;
         }
-        return 0.8f;
+        return 0.7f;
     }
 
     @Override
     public float getEyeHeight() {
         if (isBaby()) {
-            return 0.8f * getHeight(); // No have information
+            return 0.35f * getHeight(); // No have information
         }
-        return 0.8f * getHeight();
+        return 0.7f * getHeight();
     }
 
     @Override
@@ -66,5 +66,23 @@ public class EntityOcelot extends EntityAnimal {
     @Override
     public boolean isBreedingItem(Item item) {
         return item.getId() == Item.RAW_FISH;
+    }
+
+    @Override
+    public void spawnTo(Player player) {
+        AddEntityPacket pk = new AddEntityPacket();
+        pk.type = this.getNetworkId();
+        pk.entityUniqueId = this.getId();
+        pk.entityRuntimeId = this.getId();
+        pk.x = (float) this.x;
+        pk.y = (float) this.y;
+        pk.z = (float) this.z;
+        pk.speedX = (float) this.motionX;
+        pk.speedY = (float) this.motionY;
+        pk.speedZ = (float) this.motionZ;
+        pk.metadata = this.dataProperties;
+        player.dataPacket(pk);
+
+        super.spawnTo(player);
     }
 }

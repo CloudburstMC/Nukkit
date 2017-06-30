@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemSeedsWheat;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -93,28 +94,28 @@ public class BlockTallGrass extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         boolean dropSeeds = new Random().nextInt(10) == 0;
         if (item.isShears()) {
             //todo enchantment
             if (dropSeeds) {
-                return new int[][]{
-                        {Item.SEEDS, 0, 1},
-                        {Item.TALL_GRASS, this.meta, 1}
+                return new Item[]{
+                        new ItemSeedsWheat(),
+                        Item.get(Item.TALL_GRASS, this.meta, 1)
                 };
             } else {
-                return new int[][]{
-                        {Item.TALL_GRASS, this.meta, 1}
+                return new Item[]{
+                        Item.get(Item.TALL_GRASS, this.meta, 1)
                 };
             }
         }
 
         if (dropSeeds) {
-            return new int[][]{
-                    {Item.SEEDS, 0, 1},
+            return new Item[]{
+                    new ItemSeedsWheat()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
 

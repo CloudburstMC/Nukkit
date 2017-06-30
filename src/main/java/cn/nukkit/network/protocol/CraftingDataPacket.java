@@ -25,6 +25,7 @@ public class CraftingDataPacket extends DataPacket {
     public static final int ENTRY_FURNACE = 2;
     public static final int ENTRY_FURNACE_DATA = 3;
     public static final int ENTRY_ENCHANT_LIST = 4;
+    public static final int ENTRY_SHULKER_BOX = 5;
 
     public List<Object> entries = new ArrayList<>();
     public boolean cleanRecipes;

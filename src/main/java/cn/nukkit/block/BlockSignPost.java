@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemSign;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -108,10 +109,8 @@ public class BlockSignPost extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.SIGN, 0, 1}
-        };
+    public Item toItem() {
+        return new ItemSign();
     }
 
     @Override

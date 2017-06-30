@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemCake;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -82,8 +83,13 @@ public class BlockCake extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[0][0];
+    public Item[] getDrops(Item item) {
+        return new Item[0];
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemCake();
     }
 
     @Override

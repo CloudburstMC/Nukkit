@@ -7,6 +7,10 @@ import cn.nukkit.block.BlockRedstoneComparatorUnpowered;
  */
 public class ItemRedstoneComparator extends Item {
 
+    public ItemRedstoneComparator() {
+        this(0);
+    }
+
     public ItemRedstoneComparator(Integer meta) {
         this(0, 1);
     }

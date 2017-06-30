@@ -99,7 +99,7 @@ public class Effect implements Cloneable {
 
     protected int duration;
 
-    protected int amplifier;
+    protected int amplifier = 0;
 
     protected int color;
 

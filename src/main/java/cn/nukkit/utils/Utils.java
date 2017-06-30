@@ -1,11 +1,12 @@
 package cn.nukkit.utils;
 
-import java.awt.*;
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -167,5 +168,24 @@ public class Utils {
         result |= ((int) b & 0xff) << 16;
         result |= ((int) a & 0xff) << 24;
         return result & 0xFFFFFFFFL;
+    }
+
+    public static <T> java.util.List<T[]> toChunk(java.util.List<T> list, int size) {
+        java.util.List<T[]> result = new ArrayList<>();
+        T[] arr = (T[]) list.stream().toArray();
+
+        int from = 0;
+        int to = size >= arr.length ? arr.length : size;
+
+        while (from < arr.length) {
+            T[] subArray = Arrays.copyOfRange(arr, from, to);
+            from = to;
+            to += size;
+            if (to > arr.length) {
+                to = arr.length;
+            }
+            result.add(subArray);
+        }
+        return result;
     }
 }

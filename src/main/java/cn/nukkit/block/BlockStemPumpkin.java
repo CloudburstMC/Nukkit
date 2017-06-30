@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemSeedsPumpkin;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
@@ -74,10 +75,10 @@ public class BlockStemPumpkin extends BlockCrops {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         NukkitRandom random = new NukkitRandom();
-        return new int[][]{
-                {Item.PUMPKIN_SEEDS, 0, random.nextRange(0, 2)}
+        return new Item[]{
+                new ItemSeedsPumpkin(0, random.nextRange(0, 3))
         };
     }
 }

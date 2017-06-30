@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityHopper;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemHopper;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -140,11 +141,21 @@ public class BlockHopper extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{{Item.HOPPER, 0, 1}};
+            return new Item[]{toItem()};
         }
 
-        return new int[0][0];
+        return new Item[0];
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemHopper();
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }

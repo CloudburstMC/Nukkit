@@ -176,13 +176,6 @@ public class BlockSapling extends BlockFlowable {
         return 1;
     }
 
-    @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.SAPLING, this.getDamage(), 1}
-        };
-    }
-
     private boolean findSaplings(int x, int z, int type) {
         return this.isSameType(this.add(x, 0, z), type) && this.isSameType(this.add(x + 1, 0, z), type) && this.isSameType(this.add(x, 0, z + 1), type) && this.isSameType(this.add(x + 1, 0, z + 1), type);
     }

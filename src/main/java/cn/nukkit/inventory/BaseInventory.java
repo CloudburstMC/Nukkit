@@ -445,6 +445,7 @@ public abstract class BaseInventory implements Inventory {
         }
 
         for (Player player : players) {
+            pk.eid = player.getId();
             int id = player.getWindowId(this);
             if (id == -1 || !player.spawned) {
                 this.close(player);

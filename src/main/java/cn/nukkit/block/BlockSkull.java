@@ -94,12 +94,12 @@ public class BlockSkull extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         BlockEntity blockEntity = getLevel().getBlockEntity(this);
         int dropMeta = 0;
         if (blockEntity != null) dropMeta = blockEntity.namedTag.getByte("SkullType");
-        return new int[][]{
-                {Item.SKULL, dropMeta, 1}
+        return new Item[]{
+                new ItemSkull(dropMeta)
         };
     }
 

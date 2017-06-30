@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemRedstone;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
@@ -180,10 +181,8 @@ public class BlockRedstoneWire extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.REDSTONE, 0, 1}
-        };
+    public Item toItem() {
+        return new ItemRedstone();
     }
 
     @Override

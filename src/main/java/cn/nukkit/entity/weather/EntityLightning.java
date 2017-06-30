@@ -44,7 +44,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         this.state = 2;
         this.liveTime = this.level.rand.nextInt(3) + 1;
 
-        if (isEffect && (this.server.getDifficulty() >= 2)) {
+        if (isEffect && this.level.gameRules.getBoolean("doFireTick") && (this.server.getDifficulty() >= 2)) {
             Block block = this.getLevelBlock();
             if (block.getId() == 0 || block.getId() == Block.TALL_GRASS) {
                 BlockFire fire = new BlockFire();
@@ -133,7 +133,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                 this.liveTime--;
                 this.state = 1;
 
-                if (this.isEffect) {
+                if (this.isEffect && this.level.gameRules.getBoolean("doFireTick")) {
                     Block block = this.getLevelBlock();
 
                     if (block.getId() == Block.AIR || block.getId() == Block.TALL_GRASS) {

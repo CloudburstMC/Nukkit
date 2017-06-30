@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityComparator;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemRedstoneComparator;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.ClickSound;
 import cn.nukkit.math.BlockFace;
@@ -183,8 +184,8 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{{Item.COMPARATOR, 0, 1}};
+    public Item toItem() {
+        return new ItemRedstoneComparator();
     }
 
     public enum Mode {

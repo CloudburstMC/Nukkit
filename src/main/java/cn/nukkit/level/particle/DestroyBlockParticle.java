@@ -15,7 +15,7 @@ public class DestroyBlockParticle extends Particle {
 
     public DestroyBlockParticle(Vector3 pos, Block block) {
         super(pos.x, pos.y, pos.z);
-        this.data = block.getId() + (block.getDamage() << 12);
+        this.data = block.getId() | (block.getDamage() << 8);
     }
 
     @Override

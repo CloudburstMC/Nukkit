@@ -6,6 +6,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBrewingStand;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -121,13 +122,18 @@ public class BlockBrewingStand extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item toItem() {
+        return new ItemBrewingStand();
+    }
+
+    @Override
+    public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.BREWING_STAND, 0, 1}
+            return new Item[]{
+                    toItem()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
 
@@ -149,5 +155,10 @@ public class BlockBrewingStand extends BlockSolid {
         }
 
         return super.getComparatorInputOverride();
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }

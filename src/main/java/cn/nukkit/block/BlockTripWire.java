@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemString;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
@@ -51,8 +52,8 @@ public class BlockTripWire extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{{Item.STRING, 0, 1}};
+    public Item toItem() {
+        return new ItemString();
     }
 
     public boolean isPowered() {

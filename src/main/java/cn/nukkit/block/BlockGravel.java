@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemFlint;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -47,14 +48,14 @@ public class BlockGravel extends BlockFallable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (new Random().nextInt(9) == 0) {
-            return new int[][]{
-                    {Item.FLINT, 0, 1}
+            return new Item[]{
+                    new ItemFlint()
             };
         } else {
-            return new int[][]{
-                    {Item.GRAVEL, 0, 1}
+            return new Item[]{
+                    toItem()
             };
         }
     }

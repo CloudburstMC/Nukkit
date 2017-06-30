@@ -4,6 +4,10 @@ import cn.nukkit.block.BlockBrewingStand;
 
 public class ItemBrewingStand extends Item {
 
+    public ItemBrewingStand() {
+        this(0, 1);
+    }
+
     public ItemBrewingStand(Integer meta) {
         this(meta, 1);
     }

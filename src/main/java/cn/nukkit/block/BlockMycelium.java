@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
@@ -48,9 +49,9 @@ public class BlockMycelium extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.DIRT, 0, 1}
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+                new ItemBlock(new BlockDirt())
         };
     }
 

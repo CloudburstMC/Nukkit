@@ -7,6 +7,10 @@ import cn.nukkit.block.BlockHopper;
  */
 public class ItemHopper extends Item {
 
+    public ItemHopper() {
+        this(0);
+    }
+
     public ItemHopper(Integer meta) {
         this(meta, 1);
     }

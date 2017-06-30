@@ -121,4 +121,9 @@ public abstract class BlockButton extends BlockFlowable {
 
         return super.onBreak(item);
     }
+
+    @Override
+    public Item toItem() {
+        return Item.get(this.getId(), 0, 1);
+    }
 }

@@ -27,6 +27,8 @@ public abstract class Enchantment implements Cloneable {
 
     protected static Enchantment[] enchantments;
 
+    //http://minecraft.gamepedia.com/Enchanting#Aqua_Affinity
+
     public static final int ID_PROTECTION_ALL = 0;
     public static final int ID_PROTECTION_FIRE = 1;
     public static final int ID_PROTECTION_FALL = 2;
@@ -34,13 +36,8 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_PROTECTION_PROJECTILE = 4;
     public static final int ID_THORNS = 5;
     public static final int ID_WATER_BREATHING = 6;
-    /**
-     * @deprecated Use {@link #ID_WATER_WORKER}, this value is deprecated due to a typo on it's name;
-     */
-    @Deprecated
-    public static final int UD_WATER_WORKER = 7;
-    public static final int ID_WATER_WORKER = 7;
-    public static final int ID_WATER_WALKER = 8;
+    public static final int ID_WATER_WALKER = 7;
+    public static final int ID_WATER_WORKER = 8;
     public static final int ID_DAMAGE_ALL = 9;
     public static final int ID_DAMAGE_SMITE = 10;
     public static final int ID_DAMAGE_ARTHROPODS = 11;

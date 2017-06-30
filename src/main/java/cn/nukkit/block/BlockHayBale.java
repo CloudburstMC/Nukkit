@@ -65,13 +65,6 @@ public class BlockHayBale extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {this.getId(), 0, 1}
-        };
-    }
-
-    @Override
     public BlockColor getColor() {
         return BlockColor.GRASS_BLOCK_COLOR;
     }
