@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemStick;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -34,7 +35,7 @@ public class BlockDeadBush extends BlockFlowable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (down.getId() == SAND || down.getId() == HARDENED_CLAY || down.getId() == STAINED_CLAY || down.getId() == PODZOL) {
+        if (down.getId() == SAND || down.getId() == TERRACOTTA || down.getId() == STAINED_TERRACOTTA || down.getId() == PODZOL) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
@@ -55,14 +56,14 @@ public class BlockDeadBush extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isShears()) {
-            return new int[][]{
-                    {Item.DEAD_BUSH, 0, 1}
+            return new Item[]{
+                    toItem()
             };
         } else {
-            return new int[][]{
-                    {Item.STICK, 0, new Random().nextInt(3)}
+            return new Item[]{
+                    new ItemStick(0, new Random().nextInt(3))
             };
         }
     }

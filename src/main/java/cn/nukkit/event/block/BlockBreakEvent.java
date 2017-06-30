@@ -6,9 +6,6 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -43,12 +40,7 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
         this.item = item;
         this.player = player;
         this.instaBreak = instaBreak;
-        int[][] drops = player.isSurvival() ? block.getDrops(item) : new int[0][0];
-        List<Item> list = new ArrayList<>();
-        for (int[] i : drops) {
-            list.add(Item.get(i[0], i[1], i[2]));
-        }
-        this.blockDrops = list.toArray(new Item[list.size()]);
+        this.blockDrops = player.isSurvival() ? block.getDrops(item) : new Item[0];
         this.fastBreak = fastBreak;
     }
 

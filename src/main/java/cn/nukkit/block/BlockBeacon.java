@@ -64,12 +64,6 @@ public class BlockBeacon extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{{Item.BEACON, 0, 1}};
-    }
-
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         boolean blockSuccess = super.place(item, block, target, face, fx, fy, fz, player);
 

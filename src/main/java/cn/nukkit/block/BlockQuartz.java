@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -78,14 +79,19 @@ public class BlockQuartz extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.QUARTZ_BLOCK, this.meta & 0x03, 1}
+            return new Item[]{
+                    toItem()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(new BlockQuartz(), this.meta & 0x03, 1);
     }
 
     @Override
@@ -96,5 +102,10 @@ public class BlockQuartz extends BlockSolid {
     @Override
     public BlockColor getColor() {
         return BlockColor.QUARTZ_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }

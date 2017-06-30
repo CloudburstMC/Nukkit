@@ -53,9 +53,9 @@ public class BlockDoubleSlabWood extends BlockSolid {
         return "Double " + names[this.meta & 0x07] + " Slab";
     }
 
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.WOOD_SLAB, this.meta & 0x07, 2}
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+                Item.get(Item.WOOD_SLAB, this.meta & 0x07, 2)
         };
     }
 

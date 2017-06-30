@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -217,6 +218,8 @@ public abstract class BlockDoor extends BlockTransparent {
 
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
             if ((!isOpen() && this.level.isBlockPowered(this)) || (isOpen() && !this.level.isBlockPowered(this))) {
+                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
+
                 this.toggle(null);
             }
         }
@@ -237,19 +240,23 @@ public abstract class BlockDoor extends BlockTransparent {
             if (!blockUp.canBeReplaced() || blockDown.isTransparent()) {
                 return false;
             }
-            int direction = player != null ? player.getDirection() : 0;
-            int[] faces = {3, 4, 2, 5};
+            int[] faces = {1, 2, 3, 0};
+            int direction = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
 
-            Block next = this.getSide(BlockFace.fromIndex(faces[((direction + 2) % 4)]));
-            Block next2 = this.getSide(BlockFace.fromIndex(faces[direction]));
+            Block left = this.getSide(player.getDirection().rotateYCCW());
+            Block right = this.getSide(player.getDirection().rotateY());
             int metaUp = 0x08;
-            if (next.getId() == this.getId() || (!next2.isTransparent() && next.isTransparent())) { //Door hinge
+            if (left.getId() == this.getId() || (!right.isTransparent() && left.isTransparent())) { //Door hinge
                 metaUp |= 0x01;
             }
 
-            this.setDamage(direction & 0x03);
+            this.setDamage(direction);
             this.getLevel().setBlock(block, this, true, true); //Bottom
             this.getLevel().setBlock(blockUp, Block.get(this.getId(), metaUp), true); //Top
+
+            if (!this.isOpen() && this.level.isBlockPowered(this)) {
+                this.toggle(null);
+            }
             return true;
         }
 

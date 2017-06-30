@@ -2,6 +2,7 @@ package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
@@ -11,20 +12,15 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
 import cn.nukkit.nbt.tag.*;
-import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.BinaryStream;
-import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.Zlib;
+import cn.nukkit.utils.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -162,6 +158,40 @@ public class Chunk extends BaseChunk {
         this.NBTentities = this.nbt.getList("Entities", CompoundTag.class).getAll();
         this.NBTtiles = this.nbt.getList("TileEntities", CompoundTag.class).getAll();
 
+        ListTag<CompoundTag> updateEntries = nbt.getList("TileTicks", CompoundTag.class);
+
+        if (updateEntries != null && updateEntries.size() > 0) {
+            for (CompoundTag entryNBT : updateEntries.getAll()) {
+                Block block = null;
+
+                try {
+                    Tag tag = entryNBT.get("i");
+                    if (tag instanceof StringTag) {
+                        String name = ((StringTag) tag).data;
+
+                        @SuppressWarnings("unchecked")
+                        Class<? extends Block> clazz = (Class<? extends Block>) Class.forName("cn.nukkit.block." + name);
+
+                        Constructor constructor = clazz.getDeclaredConstructor(int.class);
+                        constructor.setAccessible(true);
+                        block = (Block) constructor.newInstance(0);
+                    }
+                } catch (Throwable e) {
+                    continue;
+                }
+
+                if (block == null) {
+                    continue;
+                }
+
+                block.x = entryNBT.getInt("x");
+                block.y = entryNBT.getInt("y");
+                block.z = entryNBT.getInt("z");
+
+                this.provider.getLevel().scheduleUpdate(block, block, entryNBT.getInt("t"), entryNBT.getInt("p"), false);
+            }
+        }
+
         if (this.nbt.contains("Biomes")) {
             this.checkOldBiomes(this.nbt.getByteArray("Biomes"));
             this.nbt.remove("Biomes");
@@ -292,6 +322,26 @@ public class Chunk extends BaseChunk {
         tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
 
+        List<BlockUpdateEntry> entries = this.provider.getLevel().getPendingBlockUpdates(this);
+
+        if (entries != null) {
+            ListTag<CompoundTag> tileTickTag = new ListTag<>("TileTicks");
+            long totalTime = this.provider.getLevel().getCurrentTick();
+
+            for (BlockUpdateEntry entry : entries) {
+                CompoundTag entryNBT = new CompoundTag()
+                        .putString("i", entry.block.getClass().getSimpleName())
+                        .putInt("x", entry.pos.getFloorX())
+                        .putInt("y", entry.pos.getFloorY())
+                        .putInt("z", entry.pos.getFloorZ())
+                        .putInt("t", (int) (entry.delay - totalTime))
+                        .putInt("p", entry.priority);
+                tileTickTag.add(entryNBT);
+            }
+
+            nbt.putList(tileTickTag);
+        }
+
         BinaryStream extraData = new BinaryStream();
         Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();
         extraData.putInt(extraDataArray.size());
@@ -357,6 +407,26 @@ public class Chunk extends BaseChunk {
         ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
         tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
+
+        List<BlockUpdateEntry> entries = this.provider.getLevel().getPendingBlockUpdates(this);
+
+        if (entries != null) {
+            ListTag<CompoundTag> tileTickTag = new ListTag<>("TileTicks");
+            long totalTime = this.provider.getLevel().getCurrentTick();
+
+            for (BlockUpdateEntry entry : entries) {
+                CompoundTag entryNBT = new CompoundTag()
+                        .putString("i", entry.block.getClass().getSimpleName())
+                        .putInt("x", entry.pos.getFloorX())
+                        .putInt("y", entry.pos.getFloorY())
+                        .putInt("z", entry.pos.getFloorZ())
+                        .putInt("t", (int) (entry.delay - totalTime))
+                        .putInt("p", entry.priority);
+                tileTickTag.add(entryNBT);
+            }
+
+            nbt.putList(tileTickTag);
+        }
 
         BinaryStream extraData = new BinaryStream();
         Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();

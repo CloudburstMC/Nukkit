@@ -16,6 +16,8 @@ public class MoveEntityPacket extends DataPacket {
     public double yaw;
     public double headYaw;
     public double pitch;
+    public boolean onGround;
+    public boolean teleport;
 
     @Override
     public byte pid() {
@@ -30,8 +32,10 @@ public class MoveEntityPacket extends DataPacket {
         this.y = v.y;
         this.z = v.z;
         this.pitch = this.getByte() * (360d / 256d);
-        this.yaw = this.getByte() * (360d / 256d);
         this.headYaw = this.getByte() * (360d / 256d);
+        this.yaw = this.getByte() * (360d / 256d);
+        this.onGround = this.getBoolean();
+        this.teleport = this.getBoolean();
     }
 
     @Override
@@ -42,5 +46,7 @@ public class MoveEntityPacket extends DataPacket {
         this.putByte((byte) (this.pitch / (360d / 256d)));
         this.putByte((byte) (this.headYaw / (360d / 256d)));
         this.putByte((byte) (this.yaw / (360d / 256d)));
+        this.putBoolean(this.onGround);
+        this.putBoolean(this.teleport);
     }
 }

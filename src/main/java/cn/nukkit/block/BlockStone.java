@@ -61,14 +61,19 @@ public class BlockStone extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {this.getDamage() == 0 ? Item.COBBLESTONE : Item.STONE, this.getDamage(), 1}
+            return new Item[]{
+                    Item.get(this.getDamage() == 0 ? Item.COBBLESTONE : Item.STONE, this.getDamage(), 1)
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 
 }

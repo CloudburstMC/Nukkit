@@ -38,4 +38,9 @@ public class BlockDispenser extends BlockSolid {
 
         return super.getComparatorInputOverride();
     }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
 }

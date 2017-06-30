@@ -22,6 +22,7 @@ public abstract class BlockFallable extends BlockSolid {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = this.down();
             if (down.getId() == AIR || down instanceof BlockLiquid) {
+                this.level.setBlock(this, Block.get(Block.AIR), true, true);
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<DoubleTag>("Pos")
                                 .add(new DoubleTag("", this.x + 0.5))

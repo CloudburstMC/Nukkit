@@ -246,7 +246,7 @@ public class PopulatorCaves extends Populator {
         }
 
         // Few hardcoded cases
-        if (block == Block.HARDENED_CLAY) {
+        if (block == Block.TERRACOTTA) {
             return true;
         }
 

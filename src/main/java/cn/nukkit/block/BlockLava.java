@@ -78,8 +78,7 @@ public class BlockLava extends BlockLiquid {
     public int onUpdate(int type) {
         int result = super.onUpdate(type);
 
-        if (type == Level.BLOCK_UPDATE_RANDOM) {
-
+        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean("doFireTick")) {
             Random random = this.getLevel().rand;
 
             int i = random.nextInt(3);
@@ -97,7 +96,7 @@ public class BlockLava extends BlockLiquid {
                             if (!e.isCancelled()) {
                                 BlockFire fire = new BlockFire();
                                 this.getLevel().setBlock(v, fire, true);
-                                this.getLevel().scheduleUpdate(v, fire.tickRate());
+                                this.getLevel().scheduleUpdate(fire, fire.tickRate());
                                 return Level.BLOCK_UPDATE_RANDOM;
                             }
 
@@ -119,7 +118,7 @@ public class BlockLava extends BlockLiquid {
                         if (!e.isCancelled()) {
                             BlockFire fire = new BlockFire();
                             this.getLevel().setBlock(v, fire, true);
-                            this.getLevel().scheduleUpdate(v, fire.tickRate());
+                            this.getLevel().scheduleUpdate(fire, fire.tickRate());
                         }
                     }
                 }

@@ -123,8 +123,6 @@ public abstract class BaseFullChunk implements FullChunk {
                     }
                     Entity entity = Entity.createEntity(nbt.getString("id"), this, nbt);
                     if (entity != null) {
-                        entity.spawnToAll();
-                    } else {
                         changed = true;
                         continue;
                     }

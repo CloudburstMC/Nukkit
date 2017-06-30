@@ -46,7 +46,7 @@ Get Nukkit & Plugins
 
 
 #### Unofficial Download Mirrors
-*These sites are provided by our users, Nukkit stuff are not responsible for the reliability of these sites. Jar files downloaded here are only for reference - to try the latest update or for commercial uses, compile by yourself.*
+*These sites are provided by our users, Nukkit staff are not responsible for the reliability of these sites. Jar files downloaded here are only for reference - to try the latest update or for commercial uses, compile by yourself.*
 
 * __[Jenkins by MengCraft](http://ci.mengcraft.com:8080/job/Nukkit/lastSuccessfulBuild/)__ (**UNOFFICIAL**)
 

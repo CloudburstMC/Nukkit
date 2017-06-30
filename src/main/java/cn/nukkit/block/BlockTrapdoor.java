@@ -1,8 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.DoorSound;
@@ -123,8 +125,9 @@ public class BlockTrapdoor extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_REDSTONE) {
+        if (type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_NORMAL) {
             if ((!isOpen() && this.level.isBlockPowered(this)) || (isOpen() && !this.level.isBlockPowered(this))) {
+                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
                 this.toggle(null);
                 return type;
             }
@@ -135,37 +138,33 @@ public class BlockTrapdoor extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if ((!target.isTransparent() || target.getId() == SLAB)) {
-            int faceBit = 0b00;
-            int upDownBit = 0b000;
-            if (fy > 0.5) upDownBit = 0b100;
-            switch (face) {
-                case NORTH:
-                    faceBit = 0b11;
-                    break;
-                case SOUTH:
-                    faceBit = 0b10;
-                    break;
-                case WEST:
-                    faceBit = 0b01;
-                    break;
-                case EAST:
-                    faceBit = 0b00;
-                    break;
-            }
-            this.meta |= upDownBit;
-            this.meta |= faceBit;
-            this.getLevel().setBlock(block, this, true, true);
-            return true;
+        BlockFace facing;
+        boolean top;
+
+        if (face.getAxis().isHorizontal() || player == null) {
+            facing = face;
+            top = fy > 0.5;
+        } else {
+            facing = player.getDirection().getOpposite();
+            top = face != BlockFace.UP;
         }
-        return false;
+
+        int[] faces = {2, 1, 3, 0};
+        int faceBit = faces[facing.getHorizontalIndex()];
+
+        this.meta |= faceBit;
+
+        if (top) {
+            this.meta |= 0x04;
+        }
+
+        this.getLevel().setBlock(block, this, true, true);
+        return true;
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {this.getId(), 0, 1}
-        };
+    public Item toItem() {
+        return new ItemBlock(this, 0);
     }
 
     @Override
@@ -192,17 +191,31 @@ public class BlockTrapdoor extends BlockTransparent {
             return false;
         }
 
-        int sideBit = this.meta & 0b0111;
-        int openBit = this.meta & 0b1000;
-        openBit = (~openBit) & 0b1000;
-        this.meta = sideBit | openBit;
+
+        int sideBit = this.meta & 0x07;
+        boolean open = isOpen();
+
+        this.meta = sideBit;
+
+        if (open) {
+            this.meta |= 0x08;
+        }
+
         this.level.setBlock(this, this, false, false);
         this.level.addSound(new DoorSound(this));
         return true;
     }
 
-    public boolean isOpen() {
-        return (this.meta & 0x08) > 0;
+    public BlockFace getFacing() {
+        int[] faces = {3, 1, 0, 2};
+        return BlockFace.fromHorizontalIndex(faces[this.meta & 0x03]);
     }
 
+    public boolean isOpen() {
+        return (this.meta & 0x08) != 0;
+    }
+
+    public boolean isTop() {
+        return (this.meta & 0x04) != 0;
+    }
 }

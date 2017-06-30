@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemRedstoneRepeater;
 import cn.nukkit.math.BlockFace;
 
 /**
@@ -39,8 +40,8 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{{Item.REPEATER, 0, 1}};
+    public Item toItem() {
+        return new ItemRedstoneRepeater();
     }
 
     @Override

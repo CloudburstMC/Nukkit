@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.populator.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.generator.object.tree.NewSwampTree;
+import cn.nukkit.level.generator.object.tree.ObjectSwampTree;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
@@ -45,7 +45,7 @@ public class SwampTreePopulator extends Populator {
             if (y == -1) {
                 continue;
             }
-            new NewSwampTree().generate(level, random, v.setComponents(x, y, z));
+            new ObjectSwampTree().generate(level, random, v.setComponents(x, y, z));
         }
     }
 

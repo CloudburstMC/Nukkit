@@ -49,6 +49,11 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
+
+    @Override
     public AxisAlignedBB getBoundingBox() {
         return null;
     }

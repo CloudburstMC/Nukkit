@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemPrismarineCrystals;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -41,9 +42,9 @@ public class BlockSeaLantern extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.PRISMARINE_CRYSTALS, 0, ThreadLocalRandom.current().nextInt(2, 4)}
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+                new ItemPrismarineCrystals(0, ThreadLocalRandom.current().nextInt(2, 4))
         };
     }
 

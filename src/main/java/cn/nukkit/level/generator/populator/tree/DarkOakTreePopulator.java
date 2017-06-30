@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.populator.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.generator.object.tree.NewDarkOakTree;
+import cn.nukkit.level.generator.object.tree.ObjectDarkOakTree;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
@@ -46,7 +46,7 @@ public class DarkOakTreePopulator extends Populator {
                 continue;
             }
 
-            new NewDarkOakTree().generate(level, random, v.setComponents(x, y, z));
+            new ObjectDarkOakTree().generate(level, random, v.setComponents(x, y, z));
         }
     }
 

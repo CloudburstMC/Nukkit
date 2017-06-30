@@ -215,12 +215,17 @@ public class BlockCauldron extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{{Item.CAULDRON, 0, 1}};
+            return new Item[]{new ItemCauldron()};
         }
 
-        return new int[0][0];
+        return new Item[0];
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemCauldron();
     }
 
     public boolean hasComparatorInputOverride() {
@@ -229,5 +234,10 @@ public class BlockCauldron extends BlockSolid {
 
     public int getComparatorInputOverride() {
         return this.meta;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }

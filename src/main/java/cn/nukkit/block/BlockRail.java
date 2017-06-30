@@ -46,6 +46,11 @@ public class BlockRail extends BlockFlowable {
     }
 
     @Override
+    public boolean canPassThrough() {
+        return true;
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
@@ -59,13 +64,6 @@ public class BlockRail extends BlockFlowable {
             }
         }
         return 0;
-    }
-
-    @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.RAIL, 0, 1}
-        };
     }
 
     @Override

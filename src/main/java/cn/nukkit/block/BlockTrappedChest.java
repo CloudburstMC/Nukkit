@@ -34,10 +34,10 @@ public class BlockTrappedChest extends BlockChest {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {4, 2, 5, 3};
+        int[] faces = {2, 5, 3, 4};
 
         BlockEntityChest chest = null;
-        this.meta = faces[player != null ? player.getDirection() : 0];
+        this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
 
         for (BlockFace side : Plane.HORIZONTAL) {
             if ((this.meta == 4 || this.meta == 5) && (side == BlockFace.WEST || side == BlockFace.EAST)) {
@@ -81,6 +81,29 @@ public class BlockTrappedChest extends BlockChest {
             ((BlockEntityChest) blockEntity).pairWith(chest);
         }
 
+        return true;
+    }
+
+    @Override
+    public int getWeakPower(BlockFace face) {
+        int playerCount = 0;
+
+        BlockEntity blockEntity = this.level.getBlockEntity(this);
+
+        if (blockEntity instanceof BlockEntityChest) {
+            playerCount = ((BlockEntityChest) blockEntity).getInventory().getViewers().size();
+        }
+
+        return playerCount < 0 ? 0 : playerCount > 15 ? 15 : playerCount;
+    }
+
+    @Override
+    public int getStrongPower(BlockFace side) {
+        return side == BlockFace.UP ? this.getWeakPower(side) : 0;
+    }
+
+    @Override
+    public boolean isPowerSource() {
         return true;
     }
 }

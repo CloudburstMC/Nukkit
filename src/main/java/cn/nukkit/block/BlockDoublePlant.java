@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemSeedsWheat;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -93,7 +94,7 @@ public class BlockDoublePlant extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if ((this.meta & 0x08) != 0x08) {
             switch (this.meta & 0x07) {
                 case 2:
@@ -102,30 +103,30 @@ public class BlockDoublePlant extends BlockFlowable {
                     if (item.isShears()) {
                         //todo enchantment
                         if (dropSeeds) {
-                            return new int[][]{
-                                    {Item.SEEDS, 0, 1},
-                                    {DOUBLE_PLANT, this.meta, 1}
+                            return new Item[]{
+                                    new ItemSeedsWheat(0, 1),
+                                    toItem()
                             };
                         } else {
-                            return new int[][]{
-                                    {DOUBLE_PLANT, this.meta, 1}
+                            return new Item[]{
+                                    toItem()
                             };
                         }
                     }
 
                     if (dropSeeds) {
-                        return new int[][]{
-                                {Item.SEEDS, 0, 1},
+                        return new Item[]{
+                                new ItemSeedsWheat()
                         };
                     } else {
-                        return new int[0][0];
+                        return new Item[0];
                     }
             }
 
-            return new int[][]{{DOUBLE_PLANT, this.meta, 1}};
+            return new Item[]{toItem()};
         }
 
-        return new int[0][0];
+        return new Item[0];
     }
 
     @Override

@@ -46,4 +46,8 @@ public class BlockStairsNetherBrick extends BlockStairs {
         return BlockColor.NETHERRACK_BLOCK_COLOR;
     }
 
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
 }

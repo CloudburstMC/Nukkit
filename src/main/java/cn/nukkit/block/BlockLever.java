@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.LeverSound;
@@ -45,10 +46,8 @@ public class BlockLever extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.LEVER, 0, 1}
-        };
+    public Item[] getDrops(Item item) {
+        return new Item[]{toItem()};
     }
 
     public boolean isPowerOn() {
@@ -57,6 +56,7 @@ public class BlockLever extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
+        this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isPowerOn() ? 15 : 0, isPowerOn() ? 0 : 15));
         this.meta ^= 0x08;
 
         this.getLevel().setBlock(this, this, false, true);
@@ -75,10 +75,7 @@ public class BlockLever extends BlockFlowable {
             int face = this.isPowerOn() ? this.meta ^ 0x08 : this.meta;
             BlockFace faces = LeverOrientation.byMetadata(face).getFacing().getOpposite();
             if (!this.getSide(faces).isSolid()) {
-                this.onBreak(null);
-                for (int[] item : this.getDrops(null)) {
-                    this.getLevel().dropItem(this, Item.get(item[0], item[1], item[2]));
-                }
+                this.level.useBreakOn(this);
             }
         }
         return 0;

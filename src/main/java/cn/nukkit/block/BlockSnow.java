@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemSnowball;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -40,18 +41,24 @@ public class BlockSnow extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isShovel() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.SNOWBALL, 0, 4}
+            return new Item[]{
+                    new ItemSnowball(0, 4)
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.SNOW_BLOCK_COLOR;
+    }
+
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }

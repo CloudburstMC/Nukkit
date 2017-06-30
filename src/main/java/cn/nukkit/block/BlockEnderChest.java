@@ -77,8 +77,8 @@ public class BlockEnderChest extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {4, 2, 5, 3};
-        this.meta = faces[player != null ? player.getDirection() : 0];
+        int[] faces = {2, 5, 3, 4};
+        this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
 
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag("")
@@ -137,13 +137,13 @@ public class BlockEnderChest extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.OBSIDIAN, 0, 8}
+            return new Item[]{
+                    Item.get(Item.OBSIDIAN, 0, 8)
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
 
@@ -158,6 +158,11 @@ public class BlockEnderChest extends BlockTransparent {
 
     @Override
     public boolean canBePushed() {
+        return false;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
         return false;
     }
 }

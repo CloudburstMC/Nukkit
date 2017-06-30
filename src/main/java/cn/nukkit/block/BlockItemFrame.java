@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemItemFrame;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.ItemFrameItemAddedSound;
 import cn.nukkit.level.sound.ItemFrameItemRotated;
@@ -137,19 +138,24 @@ public class BlockItemFrame extends BlockTransparent {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
         int chance = new Random().nextInt(100) + 1;
         if (itemFrame != null && chance <= (itemFrame.getItemDropChance() * 100)) {
-            return new int[][]{
-                    {Item.ITEM_FRAME, 0, 1}, {itemFrame.getItem().getId(), itemFrame.getItem().getDamage(), 1}
+            return new Item[]{
+                    toItem(), Item.get(itemFrame.getItem().getId(), itemFrame.getItem().getDamage(), 1)
             };
         } else {
-            return new int[][]{
-                    {Item.ITEM_FRAME, 0, 1}
+            return new Item[]{
+                    toItem()
             };
         }
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemItemFrame();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockVector3;
@@ -7,7 +8,9 @@ import cn.nukkit.math.Vector3f;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -144,7 +147,11 @@ public class BinaryStream {
     }
 
     public float getFloat() {
-        return Binary.readFloat(this.get(4));
+        return getFloat(-1);
+    }
+
+    public float getFloat(int accuracy) {
+        return Binary.readFloat(this.get(4), accuracy);
     }
 
     public void putFloat(float v) {
@@ -152,7 +159,11 @@ public class BinaryStream {
     }
 
     public float getLFloat() {
-        return Binary.readLFloat(this.get(4));
+        return getLFloat(-1);
+    }
+
+    public float getLFloat(int accuracy) {
+        return Binary.readLFloat(this.get(4), accuracy);
     }
 
     public void putLFloat(float v) {
@@ -191,6 +202,50 @@ public class BinaryStream {
         this.put(new byte[]{b});
     }
 
+    /**
+     * Reads a list of Attributes from the stream.
+     * @return Attribute[]
+     */
+    public Attribute[] getAttributeList() throws Exception {
+        List<Attribute> list = new ArrayList<>();
+        long count = this.getUnsignedVarInt();
+
+        for(int i = 0; i < count; ++i){
+            float min = this.getLFloat();
+            float max = this.getLFloat();
+            float current = this.getLFloat();
+            float defaultValue = this.getLFloat();
+            String name = this.getString();
+
+            Attribute attr = Attribute.getAttributeByName(name);
+            if(attr != null){
+                attr.setMinValue(min);
+                attr.setMaxValue(max);
+                attr.setValue(current);
+                attr.setDefaultValue(defaultValue);
+                list.add(attr);
+            }else{
+                throw new Exception("Unknown attribute type \"" + name + "\"");
+            }
+        }
+
+        return list.stream().toArray(Attribute[]::new);
+    }
+
+    /**
+     * Writes a list of Attributes to the packet buffer using the standard format.
+     */
+    public void putAttributeList(Attribute[] attributes){
+        this.putUnsignedVarInt(attributes.length);
+        for (Attribute attribute: attributes){
+            this.putLFloat(attribute.getMinValue());
+            this.putLFloat(attribute.getMaxValue());
+            this.putLFloat(attribute.getValue());
+            this.putLFloat(attribute.getDefaultValue());
+            this.putString(attribute.getName());
+        }
+    }
+
     public void putUUID(UUID uuid) {
         this.put(Binary.writeUUID(uuid));
     }
@@ -218,12 +273,31 @@ public class BinaryStream {
         }
         int auxValue = this.getVarInt();
         int data = auxValue >> 8;
+        if (data == Short.MAX_VALUE) {
+            data = -1;
+        }
         int cnt = auxValue & 0xff;
 
         int nbtLen = this.getLShort();
         byte[] nbt = new byte[0];
         if (nbtLen > 0) {
             nbt = this.get(nbtLen);
+        }
+
+        //TODO
+        int canPlaceOn = this.getVarInt();
+        if(canPlaceOn > 0){
+            for(int i = 0; i < canPlaceOn; ++i){
+                this.getString();
+            }
+        }
+
+        //TODO
+        int canDestroy = this.getVarInt();
+        if(canDestroy > 0){
+            for(int i = 0; i < canDestroy; ++i){
+                this.getString();
+            }
         }
 
         return Item.get(
@@ -238,11 +312,13 @@ public class BinaryStream {
         }
 
         this.putVarInt(item.getId());
-        int auxValue = ((item.hasMeta() ? item.getDamage() : -1) << 8) | item.getCount();
+        int auxValue = ((item.hasMeta() ? item.getDamage() : Short.MAX_VALUE) << 8) | item.getCount();
         this.putVarInt(auxValue);
         byte[] nbt = item.getCompoundTag();
         this.putLShort(nbt.length);
         this.put(nbt);
+        this.putVarInt(0); //TODO CanPlaceOn entry count
+        this.putVarInt(0); //TODO CanDestroy entry count
     }
 
     public byte[] getByteArray() {
@@ -310,13 +386,27 @@ public class BinaryStream {
     }
 
     public Vector3f getVector3f() {
-        return new Vector3f(this.getLFloat(), this.getLFloat(), this.getLFloat());
+        return new Vector3f(this.getLFloat(4), this.getLFloat(4), this.getLFloat(4));
     }
 
     public void putVector3f(float x, float y, float z) {
         this.putLFloat(x);
         this.putLFloat(y);
         this.putLFloat(z);
+    }
+
+    public RuleData getRuleData() {
+        RuleData rule = new RuleData();
+        rule.name = this.getString();
+        rule.unknown1 = this.getBoolean();
+        rule.unknown2 = this.getBoolean();
+        return rule;
+    }
+
+    public void putRuleData(RuleData rule) {
+        this.putString(rule.name);
+        this.putBoolean(rule.unknown1);
+        this.putBoolean(rule.unknown2);
     }
 
     public boolean feof() {

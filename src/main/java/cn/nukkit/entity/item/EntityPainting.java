@@ -81,7 +81,7 @@ public class EntityPainting extends EntityHanging {
         pk.x = (int) this.x;
         pk.y = (int) this.y;
         pk.z = (int) this.z;
-        pk.direction = this.getDirection();
+        pk.direction = this.getDirection().getHorizontalIndex();
         pk.title = this.namedTag.getString("Motive");
 
         player.dataPacket(pk);
@@ -94,7 +94,7 @@ public class EntityPainting extends EntityHanging {
         if (super.attack(source)){
             if (source instanceof EntityDamageByEntityEvent) {
                 Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-                if (damager instanceof Player && ((Player) damager).isSurvival()) {
+                if (damager instanceof Player && ((Player) damager).isSurvival() && this.level.getGameRules().getBoolean("doEntityDrops")) {
                     this.level.dropItem(this, new ItemPainting());
                 }
             }

@@ -20,13 +20,13 @@ public class ResourcePackStackPacket extends DataPacket {
         this.reset();
         this.putBoolean(this.mustAccept);
 
-        this.putLShort(this.behaviourPackStack.length);
+        this.putUnsignedVarInt(this.behaviourPackStack.length);
         for (ResourcePack entry : this.behaviourPackStack) {
             this.putString(entry.getPackId());
             this.putString(entry.getPackVersion());
         }
 
-        this.putLShort(this.resourcePackStack.length);
+        this.putUnsignedVarInt(this.resourcePackStack.length);
         for (ResourcePack entry : this.resourcePackStack) {
             this.putString(entry.getPackId());
             this.putString(entry.getPackVersion());

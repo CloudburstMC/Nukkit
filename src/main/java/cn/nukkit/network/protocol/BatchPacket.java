@@ -16,12 +16,11 @@ public class BatchPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.payload = this.getByteArray();
+        this.payload = this.get();
     }
 
     @Override
     public void encode() {
-        this.reset();
-        this.putByteArray(this.payload);
+
     }
 }

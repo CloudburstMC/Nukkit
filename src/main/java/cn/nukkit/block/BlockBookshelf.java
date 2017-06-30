@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBook;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -53,9 +54,9 @@ public class BlockBookshelf extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.BOOK, 0, 3}
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+                new ItemBook(0, 3)
         };
     }
 

@@ -22,11 +22,11 @@ public abstract class Biome {
     public static final int TAIGA = 5;
     public static final int SWAMP = 6;
     public static final int RIVER = 7;
-	 public static final int JUNGLE = 21;
-	 public static final int SAVANNA = 35;
-	 public static final int ROOFED_FOREST = 29;
-	 public static final int ROOFED_FOREST_M = 157;
-	 public static final int MUSHROOM_ISLAND = 14;
+    public static final int JUNGLE = 21;
+    public static final int SAVANNA = 35;
+    public static final int ROOFED_FOREST = 29;
+    public static final int ROOFED_FOREST_M = 157;
+    public static final int MUSHROOM_ISLAND = 14;
 
     public static final int HELL = 8;
 
@@ -78,7 +78,7 @@ public abstract class Biome {
         register(ICE_PLAINS, new IcePlainsBiome());
         register(SMALL_MOUNTAINS, new SmallMountainsBiome());
         register(BIRCH_FOREST, new ForestBiome(ForestBiome.TYPE_BIRCH));
-        
+
         register(JUNGLE, new JungleBiome());
         register(ROOFED_FOREST, new RoofedForestBiome());
         register(ROOFED_FOREST_M, new RoofedForestMBiome());

@@ -1,11 +1,13 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * Author: BeYkeRYkt
+ * Author: BeYkeRYkt 
  * Nukkit Project
  */
 public class EntityRabbit extends EntityAnimal {
@@ -18,23 +20,26 @@ public class EntityRabbit extends EntityAnimal {
 
     @Override
     public float getWidth() {
-        return 0.9f;
+        if (this.isBaby()) {
+            return 0.2f;
+        }
+        return 0.4f;
     }
 
     @Override
     public float getHeight() {
-        if (isBaby()) {
-            return 0.9f; // No have information
+        if (this.isBaby()) {
+            return 0.25f;
         }
-        return 0.9f;
+        return 0.5f;
     }
 
     @Override
     public float getEyeHeight() {
         if (isBaby()) {
-            return 0.9f; // No have information
+            return 0.25f;
         }
-        return 0.9f;
+        return 0.5f;
     }
 
     @Override
@@ -56,5 +61,23 @@ public class EntityRabbit extends EntityAnimal {
     protected void initEntity() {
         super.initEntity();
         setMaxHealth(10);
+    }
+
+    @Override
+    public void spawnTo(Player player) {
+        AddEntityPacket pk = new AddEntityPacket();
+        pk.type = this.getNetworkId();
+        pk.entityUniqueId = this.getId();
+        pk.entityRuntimeId = this.getId();
+        pk.x = (float) this.x;
+        pk.y = (float) this.y;
+        pk.z = (float) this.z;
+        pk.speedX = (float) this.motionX;
+        pk.speedY = (float) this.motionY;
+        pk.speedZ = (float) this.motionZ;
+        pk.metadata = this.dataProperties;
+        player.dataPacket(pk);
+
+        super.spawnTo(player);
     }
 }

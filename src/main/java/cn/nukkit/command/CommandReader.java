@@ -10,7 +10,6 @@ import jline.console.ConsoleReader;
 import jline.console.CursorBuffer;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * author: MagicDroidX
@@ -66,18 +65,14 @@ public class CommandReader extends Thread implements InterruptibleThread {
                     continue;
                 }
 
-                if (line != null && !line.trim().equals("")) {
+                if (!line.trim().isEmpty()) {
                     //todo 将即时执行指令改为每tick执行
                     try {
                         Timings.serverCommandTimer.startTiming();
                         ServerCommandEvent event = new ServerCommandEvent(Server.getInstance().getConsoleSender(), line);
                         Server.getInstance().getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
-                            Server.getInstance().getScheduler().scheduleTask(new Runnable() {
-                                public void run() {
-                                    Server.getInstance().dispatchCommand(event.getSender(), event.getCommand());
-                                }
-                            });
+                            Server.getInstance().getScheduler().scheduleTask(() -> Server.getInstance().dispatchCommand(event.getSender(), event.getCommand()));
                         }
                         Timings.serverCommandTimer.stopTiming();
                     } catch (Exception e) {

@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemSeedsWheat;
+import cn.nukkit.item.ItemWheat;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -27,15 +29,15 @@ public class BlockWheat extends BlockCrops {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (this.meta >= 0x07) {
-            return new int[][]{
-                    {Item.WHEAT, 0, 1},
-                    {Item.WHEAT_SEEDS, 0, (int) (4d * Math.random())}
+            return new Item[]{
+                    new ItemWheat(),
+                    new ItemSeedsWheat(0, (int) (4d * Math.random()))
             };
         } else {
-            return new int[][]{
-                    {Item.WHEAT_SEEDS, 0, 1}
+            return new Item[]{
+                    new ItemSeedsWheat()
             };
         }
     }

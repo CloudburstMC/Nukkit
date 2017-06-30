@@ -5,6 +5,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,11 +88,11 @@ public class ServerScheduler {
     }
 
     public int getAsyncTaskPoolSize() {
-        return asyncPool.getSize();
+        return asyncPool.getCorePoolSize();
     }
 
     public void increaseAsyncTaskPoolSize(int newSize) {
-        throw new UnsupportedOperationException("Cannot increase a working pool size.");
+        throw new UnsupportedOperationException("Cannot increase a working pool size."); //wtf?
     }
 
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
@@ -275,7 +276,7 @@ public class ServerScheduler {
                 taskMap.remove(taskHandler.getTaskId());
                 continue;
             } else if (taskHandler.isAsynchronous()) {
-                asyncPool.submitTask(taskHandler.getTask());
+                asyncPool.execute(taskHandler.getTask());
             } else {
                 taskHandler.timing.startTiming();
                 try {
@@ -291,7 +292,7 @@ public class ServerScheduler {
                 pending.offer(taskHandler);
             } else {
                 try {
-                    taskMap.remove(taskHandler.getTaskId()).cancel();
+                    Optional.ofNullable(taskMap.remove(taskHandler.getTaskId())).ifPresent(TaskHandler::cancel);
                 } catch (RuntimeException ex) {
                     Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
                 }

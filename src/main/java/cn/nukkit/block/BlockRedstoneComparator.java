@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityComparator;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemRedstoneComparator;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.ClickSound;
 import cn.nukkit.math.BlockFace;
@@ -56,13 +57,19 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public void updateState() {
-        if (!this.level.isUpdateScheduled(this)) {
+        if (!this.level.isUpdateScheduled(this, this)) {
             int output = this.calculateOutput();
             BlockEntity blockEntity = this.level.getBlockEntity(this);
             int power = blockEntity instanceof BlockEntityComparator ? ((BlockEntityComparator) blockEntity).getOutputSignal() : 0;
 
             if (output != power || this.isPowered() != this.shouldBePowered()) {
-                this.level.scheduleUpdate(this, 2);
+                /*if(isFacingTowardsRepeater()) {
+                    this.level.scheduleUpdate(this, this, 2, -1);
+                } else {
+                    this.level.scheduleUpdate(this, this, 2, 0);
+                }*/
+
+                this.level.scheduleUpdate(this, this, 2);
             }
         }
     }
@@ -177,8 +184,8 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{{Item.COMPARATOR, 0, 1}};
+    public Item toItem() {
+        return new ItemRedstoneComparator();
     }
 
     public enum Mode {

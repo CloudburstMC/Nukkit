@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemApple;
+import cn.nukkit.item.ItemBlock;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -32,23 +34,23 @@ public class BlockLeaves2 extends BlockLeaves {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isShears()) {
-            return new int[][]{
-                    {Item.LEAVES2, this.meta & 0x03, 1}
+            return new Item[]{
+                    toItem()
             };
         } else {
             if ((int) ((Math.random()) * 200) == 0 && this.meta == DARK_OAK) {
-                return new int[][]{
-                        {Item.APPLE, 0, 1}
+                return new Item[]{
+                        new ItemApple()
                 };
             }
             if ((int) ((Math.random()) * 20) == 0) {
-                return new int[][]{
-                        {Item.SAPLING, this.meta & 0x03, 1}
+                return new Item[]{
+                        new ItemBlock(new BlockSapling(), this.meta & 0x03, 1)
                 };
             }
         }
-        return new int[0][0];
+        return new Item[0];
     }
 }

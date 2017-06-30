@@ -30,7 +30,7 @@ public class LevelSoundEventSound extends Sound {
     @Override
     public DataPacket[] encode() {
         LevelSoundEventPacket pk = new LevelSoundEventPacket();
-        pk.type = this.type;
+        pk.sound = this.type;
         pk.x = (float) this.x;
         pk.y = (float) this.y;
         pk.z = (float) this.z;
