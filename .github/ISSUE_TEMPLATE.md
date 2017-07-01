@@ -11,13 +11,17 @@ Write a short description about the issue
 ### OS and versions
 <!--- Use the 'version' command in Nukkit -->
 * Nukkit Version: ?? <!--- Do not just write "latest" or "1.0dev" here. Write compile time is also fine. -->
+<!--- Use 'java -version' in command line -->
+* Java Version: 
+```
+??
+```
 <!--- Device and host configuration, such as: 8GB RAM, 12-core Intel X5650 CPU, 100Mb internet upload. You may get this info from your host provider or hardware information softwares -->
 * Host Configuration: 
 <!-- Do NOT write "doesn't matters", it DOES matters. I met a guy shouting his world can not be saved, after we looked into storage, we found that his SATA wire is not connected. -->
 
 | Item | Value |
 |:----:|:-----:|
-| Java version | ?? | <!--- Use 'java -version' in command line -->
 | Host OS | ?? |  <!-- What OS do you use to open Nukkit in? Linux? Windows? Write it here -->
 | Memory(RAM) | ?? GB | <!-- Open your task manager in windows, or use command "top" in linux -->
 | Storage size | ?? GB | <!-- Max size -->
