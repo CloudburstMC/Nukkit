@@ -28,7 +28,7 @@ Write a short description about the issue
 | Storage Type | ?? | <!-- SSD or HDD -->
 | CPU Type | ?? | <!-- Such as: "Intel Xeon X5650" ,"Hisilicon HI3536C" or "AMD Ryzen 7" -->
 | CPU Core Count | ?? cores ?? threads | 
-| Internet Upload | ?? | <!-- How many Mbps/Gbps? Such as: 100 Mbps or 1 Gbps. If you are testing in LAN (wired or wifi) , it depends on speed of your router, it is normally 100 Mbps. -->
+| Upstream Bandwidth | ?? | <!-- How many Mbps/Gbps? Such as: 100 Mbps or 1 Gbps. If you are testing in LAN (wired or wifi) , it depends on speed of your router, it is normally 100 Mbps. -->
 
 * Client Configuration: 
 
