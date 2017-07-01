@@ -20,13 +20,13 @@ While sending issues, please provide **as much information as you could**, or ou
 
 Example
 ---
-### Issue description
+### Issue Description
 <!--- Use our forum https://forums.nukkit.io for questions -->
 It seems that the player you are manipulating does not seem to be moving from other people, and it seems that you are not moving from others.
 
 I do not know because I have not logged in to anything other than my server, but it works normally with Wi-Fi multi.
 
-### OS and versions
+### OS and Versions
 <!--- Use the 'version' command in Nukkit -->
 * Nukkit Version: https://github.com/Nukkit/Nukkit/pull/1517  <!--- Do not just write "latest" or "1.0dev" here. Write compile time is also fine. -->
 <!--- Use 'java -version' in command line -->
@@ -44,27 +44,27 @@ Java HotSpot(TM) 64-Bit Server VM (build 9+175, mixed mode)
 |:----:|:-----:|
 | Host OS | Microsoft Windows [10.0.10240] |  <!-- What OS do you use to open Nukkit in? Linux? Windows? Write it here -->
 | Memory(RAM) | 4 GB | <!-- Open your task manager in windows, or use command "top" in linux -->
-| Storage size | 1 TB | <!-- Max size -->
-| Storage type | SSD | <!-- SSD or HDD -->
-| CPU type | Intel Xeon X5650 | <!-- Such as: "Intel Xeon X5650" ,"Hisilicon HI3536C" or "AMD Ryzen 7" -->
-| CPU core count | 12 cores 24 threads | 
-| Internet upload | 100 Mbps | <!-- How many Mbps/Gbps? Such as: 100 Mbps or 1 Gbps. If you are testing in LAN (wired or wifi) , it depends on speed of your router, it is normally 100 Mbps. -->
+| Storage Size | 1 TB | <!-- Max size -->
+| Storage Type | SSD | <!-- SSD or HDD -->
+| CPU Type | Intel Xeon X5650 | <!-- Such as: "Intel Xeon X5650" ,"Hisilicon HI3536C" or "AMD Ryzen 7" -->
+| CPU Core Count | 12 cores 24 threads | 
+| Upstream Bandwidth | 100 Mbps | <!-- How many Mbps/Gbps? Such as: 100 Mbps or 1 Gbps. If you are testing in LAN (wired or wifi) , it depends on speed of your router, it is normally 100 Mbps. -->
 
 * Client Configuration: 
 
 | Item | Value |
 |:----:|:-----:|
-| Client edition | Android | <!--- Windows 10? Android? iOS? Simulators with x86 platform? -->
-| Client version | 1.0.4 | <!--- Client Version, such as 1.1.2, 0.15.90 or 0.15 build 1 and so on -->
+| Client Edition | Android | <!--- Windows 10? Android? iOS? Simulators with x86 platform? -->
+| Client Version | 1.0.4 | <!--- Client Version, such as 1.1.2, 0.15.90 or 0.15 build 1 and so on -->
 
 ```
-### Issue description
+### Issue Description
 <!--- Use our forum https://forums.nukkit.io for questions -->
 It seems that the player you are manipulating does not seem to be moving from other people, and it seems that you are not moving from others.
 
 I do not know because I have not logged in to anything other than my server, but it works normally with Wi-Fi multi.
 
-### OS and versions
+### OS and Versions
 <!--- Use the 'version' command in Nukkit -->
 * Nukkit Version: https://github.com/Nukkit/Nukkit/pull/1517  <!--- Do not just write "latest" or "1.0dev" here. Write compile time is also fine. -->
 <!--- Use 'java -version' in command line -->
@@ -82,17 +82,17 @@ Java HotSpot(TM) 64-Bit Server VM (build 9+175, mixed mode)
 |:----:|:-----:|
 | Host OS | Microsoft Windows [10.0.10240] |  <!-- What OS do you use to open Nukkit in? Linux? Windows? Write it here -->
 | Memory(RAM) | 4 GB | <!-- Open your task manager in windows, or use command "top" in linux -->
-| Storage size | 1 TB | <!-- Max size -->
-| Storage type | SSD | <!-- SSD or HDD -->
-| CPU type | Intel Xeon X5650 | <!-- Such as: "Intel Xeon X5650" ,"Hisilicon HI3536C" or "AMD Ryzen 7" -->
-| CPU core count | 12 cores 24 threads | 
-| Internet upload | 100 Mbps | <!-- How many Mbps/Gbps? Such as: 100 Mbps or 1 Gbps. If you are testing in LAN (wired or wifi) , it depends on speed of your router, it is normally 100 Mbps. -->
+| Storage Size | 1 TB | <!-- Max size -->
+| Storage Type | SSD | <!-- SSD or HDD -->
+| CPU Type | Intel Xeon X5650 | <!-- Such as: "Intel Xeon X5650" ,"Hisilicon HI3536C" or "AMD Ryzen 7" -->
+| CPU Core Count | 12 cores 24 threads | 
+| Upstream Bandwidth | 100 Mbps | <!-- How many Mbps/Gbps? Such as: 100 Mbps or 1 Gbps. If you are testing in LAN (wired or wifi) , it depends on speed of your router, it is normally 100 Mbps. -->
 
 * Client Configuration: 
 
 | Item | Value |
 |:----:|:-----:|
-| Client edition | Android | <!--- Windows 10? Android? iOS? Simulators with x86 platform? -->
-| Client version | 1.0.4 | <!--- Client Version, such as 1.1.2, 0.15.90 or 0.15 build 1 and so on -->
+| Client Edition | Android | <!--- Windows 10? Android? iOS? Simulators with x86 platform? -->
+| Client Version | 1.0.4 | <!--- Client Version, such as 1.1.2, 0.15.90 or 0.15 build 1 and so on -->
 
 ```
