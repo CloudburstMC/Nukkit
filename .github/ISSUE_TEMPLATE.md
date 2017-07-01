@@ -1,14 +1,14 @@
-### Issue description
+### Issue Description
 <!--- Use our forum https://forums.nukkit.io for questions -->
 Write a short description about the issue
 
-### Steps to reproduce the issue
+### Steps to Reproduce the Issue
 <!--- Help us to find the problem by adding steps to reproduce the issue -->
 1. ...
 2. ...
 3. ...
 
-### OS and versions
+### OS and Versions
 <!--- Use the 'version' command in Nukkit -->
 * Nukkit Version: ?? <!--- Do not just write "latest" or "1.0dev" here. Write compile time is also fine. -->
 <!--- Use 'java -version' in command line -->
@@ -37,7 +37,7 @@ Write a short description about the issue
 | Client edition | ?? | <!--- Windows 10? Android? iOS? Simulators with x86 platform? -->
 | Client version | ?? | <!--- Client Version, such as 1.1.2, 0.15.90 or 0.15 build 1 and so on -->
 
-### Crashdump, backtrace or other files
+### Crashdump, Backtrace or Other Files
 <!--- Please use gist or anything else and add links here -->
 ```
 <!--- Copy and paste your backtrace here... -->
