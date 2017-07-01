@@ -16,6 +16,10 @@ If it's an advice or a feature request:
   2. This feature is logical and clear-cut.
   3. It's you yourself who first came up with the idea.
  
+Nukkit will create a bug report for EVERY exception and error detected, and there are some columns you need to fill out in the report. If multiple exceptions are triggered, you should combine the stacktrace into one report and then submit the report.
+
+In the report, you can see if the error is caused by Nukkit or a plugin. However, when "PLUGIN ERROR" is "false" and there are plugins running, it does not necessarily indicates that the error is caused by Nukkit.
+ 
 While sending issues, please provide **as much information as you could**, or our developers might got stuck or confused when looking into your issue. 
 
 Example
