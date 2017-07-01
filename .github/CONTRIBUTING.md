@@ -20,68 +20,79 @@ While sending issues, please provide **as much information as you could**, or ou
 
 Example
 ---
-
-```
 ### Issue description
+<!--- Use our forum https://forums.nukkit.io for questions -->
 It seems that the player you are manipulating does not seem to be moving from other people, and it seems that you are not moving from others.
 
 I do not know because I have not logged in to anything other than my server, but it works normally with Wi-Fi multi.
 
 ### OS and versions
-* Nukkit Version: https://github.com/Nukkit/Nukkit/pull/1517 
+<!--- Use the 'version' command in Nukkit -->
+* Nukkit Version: https://github.com/Nukkit/Nukkit/pull/1517  <!--- Do not just write "latest" or "1.0dev" here. Write compile time is also fine. -->
+<!--- Use 'java -version' in command line -->
+* Java Version: 
+```
+java version "9"
+Java(TM) SE Runtime Environment (build 9+175)
+Java HotSpot(TM) 64-Bit Server VM (build 9+175, mixed mode)
+```
+<!--- Device and host configuration, such as: 8GB RAM, 12-core Intel X5650 CPU, 100Mb internet upload. You may get this info from your host provider or hardware information softwares -->
+* Host Configuration: 
+<!-- Do NOT write "doesn't matters", it DOES matters. I met a guy shouting his world can not be saved, after we looked into storage, we found that his SATA wire is not connected. -->
+
+| Item | Value |
+|:----:|:-----:|
+| Host OS | Microsoft Windows [10.0.10240] |  <!-- What OS do you use to open Nukkit in? Linux? Windows? Write it here -->
+| Memory(RAM) | 4 GB | <!-- Open your task manager in windows, or use command "top" in linux -->
+| Storage size | 1 TB | <!-- Max size -->
+| Storage type | SSD | <!-- SSD or HDD -->
+| CPU type | Intel Xeon X5650 | <!-- Such as: "Intel Xeon X5650" ,"Hisilicon HI3536C" or "AMD Ryzen 7" -->
+| CPU core count | 12 cores 24 threads | 
+| Internet upload | 100 Mbps | <!-- How many Mbps/Gbps? Such as: 100 Mbps or 1 Gbps. If you are testing in LAN (wired or wifi) , it depends on speed of your router, it is normally 100 Mbps. -->
+
+* Client Configuration: 
+
+| Item | Value |
+|:----:|:-----:|
+| Client edition | Android | <!--- Windows 10? Android? iOS? Simulators with x86 platform? -->
+| Client version | 1.0.4 | <!--- Client Version, such as 1.1.2, 0.15.90 or 0.15 build 1 and so on -->
+
+```
+### Issue description
+<!--- Use our forum https://forums.nukkit.io for questions -->
+It seems that the player you are manipulating does not seem to be moving from other people, and it seems that you are not moving from others.
+
+I do not know because I have not logged in to anything other than my server, but it works normally with Wi-Fi multi.
+
+### OS and versions
+<!--- Use the 'version' command in Nukkit -->
+* Nukkit Version: https://github.com/Nukkit/Nukkit/pull/1517  <!--- Do not just write "latest" or "1.0dev" here. Write compile time is also fine. -->
+<!--- Use 'java -version' in command line -->
 * Java Version: 
 
 java version "9"
 Java(TM) SE Runtime Environment (build 9+175)
 Java HotSpot(TM) 64-Bit Server VM (build 9+175, mixed mode)
 
-* Host OS: Microsoft Windows [10.0.10240]
-* Host Configuration:
+<!--- Device and host configuration, such as: 8GB RAM, 12-core Intel X5650 CPU, 100Mb internet upload. You may get this info from your host provider or hardware information softwares -->
+* Host Configuration: 
+<!-- Do NOT write "doesn't matters", it DOES matters. I met a guy shouting his world can not be saved, after we looked into storage, we found that his SATA wire is not connected. -->
 
 | Item | Value |
 |:----:|:-----:|
-| Memory(RAM) | 4 GB |
-| Storage size | 1024 GB |
-| Storage type | SSD |
-| CPU core count | 2 cores |
-| CPU provider | Intel |
-| Internet upload | 100 Mbps |
+| Host OS | Microsoft Windows [10.0.10240] |  <!-- What OS do you use to open Nukkit in? Linux? Windows? Write it here -->
+| Memory(RAM) | 4 GB | <!-- Open your task manager in windows, or use command "top" in linux -->
+| Storage size | 1 TB | <!-- Max size -->
+| Storage type | SSD | <!-- SSD or HDD -->
+| CPU type | Intel Xeon X5650 | <!-- Such as: "Intel Xeon X5650" ,"Hisilicon HI3536C" or "AMD Ryzen 7" -->
+| CPU core count | 12 cores 24 threads | 
+| Internet upload | 100 Mbps | <!-- How many Mbps/Gbps? Such as: 100 Mbps or 1 Gbps. If you are testing in LAN (wired or wifi) , it depends on speed of your router, it is normally 100 Mbps. -->
 
 * Client Configuration: 
 
 | Item | Value |
 |:----:|:-----:|
-| Client edition | Andriod |
-| Client version | 1.0.4 |
+| Client edition | Android | <!--- Windows 10? Android? iOS? Simulators with x86 platform? -->
+| Client version | 1.0.4 | <!--- Client Version, such as 1.1.2, 0.15.90 or 0.15 build 1 and so on -->
+
 ```
-### Issue description
-It seems that the player you are manipulating does not seem to be moving from other people, and it seems that you are not moving from others.
-
-I do not know because I have not logged in to anything other than my server, but it works normally with Wi-Fi multi.
-
-### OS and versions
-* Nukkit Version: https://github.com/Nukkit/Nukkit/pull/1517 
-* Java Version: 
-
-java version "9"
-Java(TM) SE Runtime Environment (build 9+175)
-Java HotSpot(TM) 64-Bit Server VM (build 9+175, mixed mode)
-
-* Host OS: Microsoft Windows [10.0.10240]
-* Host Configuration:
-
-| Item | Value |
-|:----:|:-----:|
-| Memory(RAM) | 4 GB |
-| Storage size | 1024 GB |
-| Storage type | SSD |
-| CPU core count | 2 cores |
-| CPU provider | Intel |
-| Internet upload | 100 Mbps |
-
-* Client Configuration: 
-
-| Item | Value |
-|:----:|:-----:|
-| Client edition | Andriod |
-| Client version | 1.0.4 |
