@@ -3,7 +3,6 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
-import cn.nukkit.plugin.certification.PluginCertificateTask;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
@@ -52,11 +51,6 @@ public class JavaPluginLoader implements PluginLoader {
 
                     plugin = pluginClass.newInstance();
                     this.initPlugin(plugin, description, dataFolder, file);
-
-                    if (plugin != null && description.isSigned()) {
-                        PluginCertificateTask task = new PluginCertificateTask(plugin);
-                        task.run();
-                    }
 
                     return plugin;
                 } catch (ClassCastException e) {

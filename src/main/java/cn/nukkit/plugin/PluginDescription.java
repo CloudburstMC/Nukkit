@@ -111,7 +111,6 @@ public class PluginDescription {
 
     private String name;
     private String main;
-    private boolean signed;
     private List<String> api;
     private List<String> depend = new ArrayList<>();
     private List<String> softDepend = new ArrayList<>();
@@ -155,10 +154,6 @@ public class PluginDescription {
         }
         if (this.main.startsWith("cn.nukkit.")) {
             throw new PluginException("Invalid PluginDescription main, cannot start within the cn.nukkit. package");
-        }
-
-        if (plugin.containsKey("code_signing")) {
-            this.signed = Boolean.valueOf((String) plugin.get("code_signing"));
         }
 
         if (plugin.containsKey("commands") && plugin.get("commands") instanceof Map) {
@@ -388,13 +383,6 @@ public class PluginDescription {
      */
     public List<String> getSoftDepend() {
         return softDepend;
-    }
-
-    /**
-     * @return 这个插件是否有Nukkit团队颁发的安全证书。
-     */
-    public boolean isSigned() {
-        return signed;
     }
 
     /**
