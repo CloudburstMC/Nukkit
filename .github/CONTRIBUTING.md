@@ -24,6 +24,7 @@ While sending issues, please provide **as much information as you could**, or ou
 
 Example
 ---
+
 ### Issue Description
 <!--- Use our forum https://forums.nukkit.io for questions -->
 It seems that the player you are manipulating does not seem to be moving from other people, and it seems that you are not moving from others.
