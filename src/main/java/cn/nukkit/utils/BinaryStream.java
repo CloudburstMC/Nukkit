@@ -312,7 +312,7 @@ public class BinaryStream {
         }
 
         this.putVarInt(item.getId());
-        int auxValue = ((item.hasMeta() ? item.getDamage() : Short.MAX_VALUE) << 8) | item.getCount();
+        int auxValue = (((item.hasMeta() ? item.getDamage() : -1) & 0x7fff) << 8) | item.getCount();
         this.putVarInt(auxValue);
         byte[] nbt = item.getCompoundTag();
         this.putLShort(nbt.length);

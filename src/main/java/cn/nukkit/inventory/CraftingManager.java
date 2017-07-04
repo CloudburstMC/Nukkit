@@ -307,7 +307,7 @@ public class CraftingManager {
                 "CCC",
                 "CCC",
                 "   "
-        )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)));
+        )).setIngredient("C", Item.get(Item.COBBLESTONE, null, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.COBBLESTONE_WALL, BlockWall.MOSSY_WALL, 6),
                 "MMM",
@@ -319,7 +319,7 @@ public class CraftingManager {
                 "CCC",
                 "C C",
                 "CCC"
-        )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)));
+        )).setIngredient("C", Item.get(Item.COBBLESTONE, null, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.GLASS_PANE, 0, 16),
                 "GGG",
@@ -427,7 +427,7 @@ public class CraftingManager {
                 "P  ",
                 "PP ",
                 "PPP"
-        )).setIngredient("P", Item.get(Item.COBBLESTONE, 0, 1)));
+        )).setIngredient("P", Item.get(Item.COBBLESTONE, null, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BRICK_STAIRS, 0, 4),
                 "P  ",
@@ -505,7 +505,7 @@ public class CraftingManager {
                 "PPP",
                 "   ",
                 "   "
-        )).setIngredient("P", Item.get(Item.COBBLESTONE, 0, 1)));
+        )).setIngredient("P", Item.get(Item.COBBLESTONE, null, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.SLAB, BlockSlabStone.BRICK, 6),
                 "PPP",
@@ -589,7 +589,7 @@ public class CraftingManager {
                 "   ",
                 "SL ",
                 "   "
-        )).setIngredient("S", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("L", Item.get(Item.VINES, 0, 1)));
+        )).setIngredient("S", Item.get(Item.COBBLESTONE, null, 1)).setIngredient("L", Item.get(Item.VINES, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE, BlockStone.GRANITE, 1),
                 "   ",
@@ -607,7 +607,7 @@ public class CraftingManager {
                 "   ",
                 "CN ",
                 "NC "
-        )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("N", Item.get(Item.NETHER_QUARTZ, 0, 1)));
+        )).setIngredient("C", Item.get(Item.COBBLESTONE, null, 1)).setIngredient("N", Item.get(Item.NETHER_QUARTZ, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE, BlockStone.POLISHED_DIORITE, 4),
                 "   ",
@@ -619,7 +619,7 @@ public class CraftingManager {
                 "   ",
                 "DC ",
                 "   "
-        )).setIngredient("D", Item.get(Item.STONE, BlockStone.DIORITE, 1)).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)));
+        )).setIngredient("D", Item.get(Item.STONE, BlockStone.DIORITE, 1)).setIngredient("C", Item.get(Item.COBBLESTONE, null, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE, BlockStone.POLISHED_ANDESITE, 4),
                 "   ",
@@ -706,7 +706,7 @@ public class CraftingManager {
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.BREWING_STAND, 0, 1),
                 " I ",
                 "CCC"
-        )).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("I", Item.get(Item.BLAZE_ROD, 0, 1)));
+        )).setIngredient("C", Item.get(Item.COBBLESTONE, null, 1)).setIngredient("I", Item.get(Item.BLAZE_ROD, 0, 1)));
 
         this.registerRecipe((new BigShapedRecipe(Item.get(Item.ITEM_FRAME, 0, 3),
                 "SSS",
@@ -802,7 +802,7 @@ public class CraftingManager {
         this.registerRecipe(new BigShapedRecipe(Item.get(Item.LEVER, 0, 1),
                 "  S",
                 "  C"
-        ).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)));
+        ).setIngredient("C", Item.get(Item.COBBLESTONE, null, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)));
 
         this.registerRecipe(new BigShapedRecipe(Item.get(Item.STONE_BUTTON, 0, 1),
                 "  S"
