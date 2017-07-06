@@ -1,23 +1,28 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.api.API;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 
-public class VarInt {
+import static cn.nukkit.api.API.Definition.UNIVERSAL;
+import static cn.nukkit.api.API.Usage.EXPERIMENTAL;
 
-    private static final BigInteger UNSIGNED_LONG_MAX_VALUE = new BigInteger("FFFFFFFFFFFFFFFF", 16);
+/**
+ * Tool class for VarInt or VarLong operations.
+ * <p>
+ * Some code from http://wiki.vg/Protocol.
+ *
+ * @author MagicDroidX
+ * @author lmlstarqaq
+ */
+@API(usage = EXPERIMENTAL, definition = UNIVERSAL)
+public final class VarInt {
 
-    private static void _assert(BigInteger integer) {
-        if (integer == null) {
-            throw new IllegalArgumentException("The value should not be null");
-        }
-
-        if (integer.compareTo(UNSIGNED_LONG_MAX_VALUE) > 0) {
-            throw new IllegalArgumentException("The value is too big");
-        }
-    }
+	private VarInt() {
+		//no instance
+	}
 
     /**
      * @param v Signed int
@@ -40,71 +45,48 @@ public class VarInt {
      * @param v Signed long
      * @return Unsigned encoded long
      */
-    public static BigInteger encodeZigZag64(long v) {
-        BigInteger origin = BigInteger.valueOf(v);
-        BigInteger left = origin.shiftLeft(1);
-        BigInteger right = origin.shiftRight(63);
-        return left.xor(right);
+    public static long encodeZigZag64(long v) {
+	    return (v << 1) ^ (v >> 63);
     }
 
     /**
      * @param v Signed encoded long
      * @return Unsigned decoded long
      */
-    public static BigInteger decodeZigZag64(long v) {
-        return decodeZigZag64(BigInteger.valueOf(v).and(UNSIGNED_LONG_MAX_VALUE));
+    public static long decodeZigZag64(long v) {
+        return (v >>> 1) ^ -(v & 1);
+    }
+
+    private static long read(BinaryStream stream, int maxSize) {
+	    long value = 0;
+	    int size = 0;
+	    int b;
+	    while (((b = stream.getByte()) & 0x80) == 0x80) {
+		    value |= (long) (b & 0x7F) << (size++ * 7);
+		    if (size >= maxSize) {
+			    throw new IllegalArgumentException("VarLong too big");
+		    }
+	    }
+
+	    return value | ((long) (b & 0x7F) << (size * 7));
+    }
+
+    private static long read(InputStream stream, int maxSize) throws IOException {
+	    long value = 0;
+	    int size = 0;
+	    int b;
+	    while (((b = stream.read()) & 0x80) == 0x80) {
+		    value |= (long) (b & 0x7F) << (size++ * 7);
+		    if (size >= maxSize) {
+			    throw new IllegalArgumentException("VarLong too big");
+		    }
+	    }
+
+	    return value | ((long) (b & 0x7F) << (size * 7));
     }
 
     /**
-     * @param v Unsigned encoded long
-     * @return Unsigned decoded long
-     */
-    public static BigInteger decodeZigZag64(BigInteger v) {
-        _assert(v);
-        BigInteger left = v.shiftRight(1);
-        BigInteger right = v.and(BigInteger.ONE).negate();
-        return left.xor(right);
-    }
-
-    private static BigInteger read(BinaryStream stream, int maxSize) {
-        BigInteger result = BigInteger.ZERO;
-        int offset = 0;
-        int b;
-
-        do {
-            if (offset >= maxSize) {
-                throw new IllegalArgumentException("VarInt too big");
-            }
-
-            b = stream.getByte();
-            result = result.or(BigInteger.valueOf((b & 0x7f) << (offset * 7)));
-            offset++;
-        } while ((b & 0x80) > 0);
-
-        return result;
-    }
-
-    private static BigInteger read(InputStream stream, int maxSize) throws IOException {
-        BigInteger result = BigInteger.ZERO;
-        int offset = 0;
-        int b;
-
-        do {
-            if (offset >= maxSize) {
-                throw new IllegalArgumentException("VarInt too big");
-            }
-
-            b = stream.read();
-
-            result = result.or(BigInteger.valueOf((b & 0x7f) << (offset * 7)));
-            offset++;
-        } while ((b & 0x80) > 0);
-
-        return result;
-    }
-
-    /**
-     * @param stream
+     * @param stream BinaryStream
      * @return Signed int
      */
     public static int readVarInt(BinaryStream stream) {
@@ -112,7 +94,7 @@ public class VarInt {
     }
 
     /**
-     * @param stream
+     * @param stream InputStream
      * @return Signed int
      */
     public static int readVarInt(InputStream stream) throws IOException {
@@ -120,83 +102,79 @@ public class VarInt {
     }
 
     /**
-     * @param stream
+     * @param stream BinaryStream
      * @return Unsigned int
      */
     public static long readUnsignedVarInt(BinaryStream stream) {
-        return read(stream, 5).longValue();
+        return read(stream, 5);
     }
 
     /**
-     * @param stream
+     * @param stream InputStream
      * @return Unsigned int
      */
     public static long readUnsignedVarInt(InputStream stream) throws IOException {
-        return read(stream, 5).longValue();
+        return read(stream, 5);
     }
 
     /**
-     * @param stream
+     * @param stream BinaryStream
      * @return Signed long
      */
     public static long readVarLong(BinaryStream stream) {
-        return decodeZigZag64(readUnsignedVarLong(stream)).longValue();
+        return decodeZigZag64(readUnsignedVarLong(stream));
     }
 
     /**
-     * @param stream
+     * @param stream InputStream
      * @return Signed long
      */
     public static long readVarLong(InputStream stream) throws IOException {
-        return decodeZigZag64(readUnsignedVarLong(stream)).longValue();
+        return decodeZigZag64(readUnsignedVarLong(stream));
     }
 
     /**
-     * @param stream
+     * @param stream BinaryStream
      * @return Unsigned long
      */
-    public static BigInteger readUnsignedVarLong(BinaryStream stream) {
+    public static long readUnsignedVarLong(BinaryStream stream) {
         return read(stream, 10);
     }
 
     /**
-     * @param stream
+     * @param stream InputStream
      * @return Unsigned long
      */
-    public static BigInteger readUnsignedVarLong(InputStream stream) throws IOException {
+    public static long readUnsignedVarLong(InputStream stream) throws IOException {
         return read(stream, 10);
     }
 
-    private static void write(BinaryStream stream, BigInteger v) {
-        _assert(v);
-        v = v.and(UNSIGNED_LONG_MAX_VALUE);
-        BigInteger i = BigInteger.valueOf(-128);
-        BigInteger BIX7F = BigInteger.valueOf(0x7f);
-        BigInteger BIX80 = BigInteger.valueOf(0x80);
-        while (!v.and(i).equals(BigInteger.ZERO)) {
-            stream.putByte(v.and(BIX7F).or(BIX80).byteValue());
-            v = v.shiftRight(7);
-        }
-
-        stream.putByte(v.byteValue());
+    private static void write(BinaryStream stream, long value) {
+	    do {
+		    byte temp = (byte)(value & 0b01111111);
+		    // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
+		    value >>>= 7;
+		    if (value != 0) {
+			    temp |= 0b10000000;
+		    }
+		    stream.putByte(temp);
+	    } while (value != 0);
     }
 
-    private static void write(OutputStream stream, BigInteger v) throws IOException {
-        _assert(v);
-        v = v.and(UNSIGNED_LONG_MAX_VALUE);
-        BigInteger i = BigInteger.valueOf(-128);
-        BigInteger BIX7F = BigInteger.valueOf(0x7f);
-        BigInteger BIX80 = BigInteger.valueOf(0x80);
-        while (!v.and(i).equals(BigInteger.ZERO)) {
-            stream.write(v.and(BIX7F).or(BIX80).intValue());
-            v = v.shiftRight(7);
-        }
-
-        stream.write(v.byteValue());
+    private static void write(OutputStream stream, long value) throws IOException {
+	    do {
+		    byte temp = (byte)(value & 0b01111111);
+		    // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
+		    value >>>= 7;
+		    if (value != 0) {
+			    temp |= 0b10000000;
+		    }
+		    stream.write(temp);
+	    } while (value != 0);
     }
 
     /**
-     * @param stream
+     * @param stream BinaryStream
      * @param value  Signed int
      */
     public static void writeVarInt(BinaryStream stream, int value) {
@@ -204,7 +182,7 @@ public class VarInt {
     }
 
     /**
-     * @param stream
+     * @param stream OutputStream
      * @param value  Signed int
      */
     public static void writeVarInt(OutputStream stream, int value) throws IOException {
@@ -212,23 +190,23 @@ public class VarInt {
     }
 
     /**
-     * @param stream
+     * @param stream BinaryStream
      * @param value  Unsigned int
      */
     public static void writeUnsignedVarInt(BinaryStream stream, long value) {
-        write(stream, BigInteger.valueOf(value));
+        write(stream, value);
     }
 
     /**
-     * @param stream
+     * @param stream OutputStream
      * @param value  Unsigned int
      */
     public static void writeUnsignedVarInt(OutputStream stream, long value) throws IOException {
-        write(stream, BigInteger.valueOf(value));
+        write(stream, value);
     }
 
     /**
-     * @param stream
+     * @param stream BinaryStream
      * @param value  Signed long
      */
     public static void writeVarLong(BinaryStream stream, long value) {
@@ -236,7 +214,7 @@ public class VarInt {
     }
 
     /**
-     * @param stream
+     * @param stream OutputStream
      * @param value  Signed long
      */
     public static void writeVarLong(OutputStream stream, long value) throws IOException {
@@ -244,20 +222,18 @@ public class VarInt {
     }
 
     /**
-     * @param stream
+     * @param stream BinaryStream
      * @param value  Unsigned long
      */
-    public static void writeUnsignedVarLong(BinaryStream stream, BigInteger value) {
-        _assert(value);
+    public static void writeUnsignedVarLong(BinaryStream stream, long value) {
         write(stream, value);
     }
 
     /**
-     * @param stream
+     * @param stream OutputStream
      * @param value  Unsigned long
      */
-    public static void writeUnsignedVarLong(OutputStream stream, BigInteger value) throws IOException {
-        _assert(value);
+    public static void writeUnsignedVarLong(OutputStream stream, long value) throws IOException {
         write(stream, value);
     }
 }
