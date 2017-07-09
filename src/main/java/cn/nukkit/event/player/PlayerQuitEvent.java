@@ -58,8 +58,8 @@ public class PlayerQuitEvent extends PlayerEvent {
         this.quitMessage = quitMessage;
     }
 
-    public void setQuitMessage(String joinMessage) {
-        this.setQuitMessage(new TextContainer(joinMessage));
+    public void setQuitMessage(String quitMessage) {
+        this.setQuitMessage(new TextContainer(quitMessage));
     }
 
     public boolean getAutoSave() {
