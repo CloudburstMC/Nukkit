@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 
 /**
  * Project nukkit
@@ -61,10 +62,17 @@ public class BugReportGenerator extends Thread {
         StringWriter stringWriter = new StringWriter();
         throwable.printStackTrace(new PrintWriter(stringWriter));
 
+
         File mdReport = new File(reports, date + "_" + throwable.getClass().getSimpleName() + ".md");
         mdReport.createNewFile();
         String content = Utils.readFile(this.getClass().getClassLoader().getResourceAsStream("report_template.md"));
+
+        Properties properties = getGitRepositoryState();
+        System.out.println(properties.getProperty("git.commit.id.abbrev"));
+        String abbrev = properties.getProperty("git.commit.id.abbrev");
+
         content = content.replace("${NUKKIT_VERSION}", Nukkit.VERSION);
+        content = content.replace("${GIT_COMMIT_ABBREV}", abbrev);
         content = content.replace("${JAVA_VERSION}", System.getProperty("java.vm.name") + " (" + System.getProperty("java.runtime.version") + ")");
         content = content.replace("${HOSTOS}", systemInfo.getOperatingSystem().getFamily() + " [" + systemInfo.getOperatingSystem().getVersion().getVersion() + "]");
         content = content.replace("${MEMORY}", getCount(systemInfo.getHardware().getMemory().getTotal(), true));
@@ -75,9 +83,16 @@ public class BugReportGenerator extends Thread {
         content = content.replace("${STACKTRACE}", stringWriter.toString());
         content = content.replace("${PLUGIN_ERROR}", String.valueOf(!throwable.getStackTrace()[0].getClassName().startsWith("cn.nukkit")).toUpperCase());
         content = content.replace("${STORAGE_TYPE}", model.toString());
+
         Utils.writeFile(mdReport, content);
 
         return mdReport.getAbsolutePath();
+    }
+
+    public Properties getGitRepositoryState() throws IOException {
+        Properties properties = new Properties();
+        properties.load(getClass().getClassLoader().getResourceAsStream("git.properties"));
+        return properties;
     }
 
     //Code section from SOF
