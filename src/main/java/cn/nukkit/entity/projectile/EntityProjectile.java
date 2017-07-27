@@ -23,7 +23,11 @@ public abstract class EntityProjectile extends Entity {
     public Entity shootingEntity = null;
 
     protected double getDamage() {
-        return namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
+        return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
+    }
+
+    private double getBaseDamage() {
+        return 0;
     }
 
     public boolean hadCollision = false;
