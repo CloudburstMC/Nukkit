@@ -91,7 +91,8 @@ public class EntityArrow extends EntityProjectile {
         return base;
     }
 
-    private double getBaseDamage() {
+    @Override
+    protected double getBaseDamage() {
         return 2;
     }
 

@@ -26,7 +26,7 @@ public abstract class EntityProjectile extends Entity {
         return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
     }
 
-    private double getBaseDamage() {
+    protected double getBaseDamage() {
         return 0;
     }
 
