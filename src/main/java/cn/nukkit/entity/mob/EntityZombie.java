@@ -36,7 +36,7 @@ public class EntityZombie extends EntityMob {
     public float getHeight() {
         return 1.8f;
     }
-
+    
     @Override
     public String getName() {
         return "Zombie";

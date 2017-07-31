@@ -45,5 +45,21 @@ public class NukkitMath {
     public static double round(double d, int precision) {
         return ((double) Math.round(d * Math.pow(10, precision))) / Math.pow(10, precision);
     }
+    
+    public static double clamp(double check, double min, double max) {
+        return check > max ? max : (check < min ? min : check);
+    }
+
+    public static double getDirection(double d0, double d1) {
+        if (d0 < 0.0D) {
+            d0 = -d0;
+        }
+
+        if (d1 < 0.0D) {
+            d1 = -d1;
+        }
+
+        return d0 > d1 ? d0 : d1;
+    }
 
 }

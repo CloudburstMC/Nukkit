@@ -1,7 +1,6 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.utils.Zlib;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;

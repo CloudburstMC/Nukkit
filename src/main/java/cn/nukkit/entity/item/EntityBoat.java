@@ -1,19 +1,21 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.vehicle.VehicleDamageEvent;
+import cn.nukkit.event.vehicle.VehicleDestroyEvent;
+import cn.nukkit.event.vehicle.VehicleMoveEvent;
+import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBoat;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.network.protocol.EntityEventPacket;
-import cn.nukkit.network.protocol.SetEntityLinkPacket;
 
 /**
  * Created by yescallop on 2016/2/13.
@@ -59,6 +61,11 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
+    public float getBaseOffset() {
+        return 0.35F;
+    }
+    
+    @Override
     public int getNetworkId() {
         return NETWORK_ID;
     }
@@ -85,31 +92,45 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        if (super.attack(source)) {
-            if (source instanceof EntityDamageByEntityEvent) {
-                Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-                if (damager instanceof Player) {
-                    if (((Player) damager).isCreative()) {
-                        this.kill();
+        if (invulnerable) {
+            return false;
+        } else {
+            // Event start
+            VehicleDamageEvent event = new VehicleDamageEvent(this, source.getEntity(), source.getFinalDamage());
+            getServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return false;
+            }
+            // Event stop
+            performHurtAnimation((int) event.getDamage());
+
+            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+            boolean instantKill = damager instanceof Player
+                    ? ((Player) damager).isCreative() : false;
+            if (instantKill || getDamage() > 40) {
+                // Event start
+                VehicleDestroyEvent event2 = new VehicleDestroyEvent(this, source.getEntity());
+                getServer().getPluginManager().callEvent(event2);
+                if (event2.isCancelled()) {
+                    return false;
+                }
+                // Event stop
+                if (linkedEntity != null) {
+                    mountEntity(linkedEntity);
+                }
+
+                if (instantKill && (!hasCustomName())) {
+                    kill();
+                } else {
+                    if (level.getGameRules().getBoolean("doEntityDrops")) {
+                        this.level.dropItem(this, new ItemBoat());
                     }
-                    if (this.getHealth() <= 0) {
-                        if (((Player) damager).isSurvival() && this.level.getGameRules().getBoolean("doEntityDrops")) {
-                            this.level.dropItem(this, new ItemBoat());
-                        }
-                        this.close();
-                    }
+                    close();
                 }
             }
-
-            EntityEventPacket pk = new EntityEventPacket();
-            pk.eid = this.getId();
-            pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
-            Server.broadcastPacket(this.hasSpawned.values(), pk);
-
-            return true;
-        } else {
-            return false;
         }
+        
+        return true;
     }
 
     @Override
@@ -141,7 +162,8 @@ public class EntityBoat extends EntityVehicle {
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
         if (this.isAlive()) {
-
+            super.onUpdate(currentTick);
+            
             this.motionY = (this.level.getBlock(new Vector3(this.x, this.y, this.z)).getBoundingBox() != null || this.isInsideOfWater()) ? getGravity() : -0.08;
 
             if (this.checkObstruction(this.x, this.y, this.z)) {
@@ -164,6 +186,15 @@ public class EntityBoat extends EntityVehicle {
                 this.motionY *= -0.5;
             }
 
+            Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
+            Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
+
+            this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
+
+            if (!from.equals(to)) {
+                this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
+            }
+
             this.updateMovement();
         }
 
@@ -176,24 +207,7 @@ public class EntityBoat extends EntityVehicle {
             return false;
         }
 
-        SetEntityLinkPacket pk;
-
-        pk = new SetEntityLinkPacket();
-        pk.rider = this.getId(); //WTF
-        pk.riding = player.getId();
-        pk.type = 2;
-        Server.broadcastPacket(this.hasSpawned.values(), pk);
-
-        pk = new SetEntityLinkPacket();
-        pk.rider = this.getId();
-        pk.riding = 0;
-        pk.type = 2;
-        player.dataPacket(pk);
-
-        player.riding = this;
-        this.linkedEntity = player;
-
-        player.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
+        super.mountEntity(player);
         return true;
     }
 }

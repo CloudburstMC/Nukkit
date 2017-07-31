@@ -12,7 +12,6 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.TNTPrimeSound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
  * @author MagicDroidX

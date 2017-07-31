@@ -1,21 +1,33 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Rail;
+import cn.nukkit.utils.Rail.Orientation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static cn.nukkit.math.BlockFace.*;
+import static cn.nukkit.utils.Rail.Orientation.*;
 
 /**
  * Created by Snake1999 on 2016/1/11.
  * Package cn.nukkit.block in project nukkit
  */
 public class BlockRail extends BlockFlowable {
+
+    // 0x8: Set the block active
+    // 0x7: Reset the block to normal
+    // If the rail can be powered. So its a complex rail!
+    protected boolean canBePowered = false;
 
     public BlockRail() {
         this(0);
@@ -58,7 +70,8 @@ public class BlockRail extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            Optional<BlockFace> ascendingDirection = this.getOrientation().ascendingDirection();
+            if (this.down().isTransparent() || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -67,160 +80,181 @@ public class BlockRail extends BlockFlowable {
     }
 
     @Override
+    public AxisAlignedBB recalculateBoundingBox() {
+        return new AxisAlignedBB(
+                this.x,
+                this.y,
+                this.z,
+                this.x + 1,
+                this.y + 0.125D,
+                this.z + 1);
+    }
+
+    @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
 
+    //Information from http://minecraft.gamepedia.com/Rail
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (down == null) return false;
-        if (down.isTransparent()) return false;
-        int[][] arrayXZ = new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-        int[] arrayY = new int[]{0, 1, -1};
-        List<Vector3> connected = new ArrayList<>();
-        for (int[] xz : arrayXZ) {
-            int x = xz[0];
-            int z = xz[1];
-            for (int y : arrayY) {
-                Vector3 v3 = new Vector3(x, y, z).add(this);
-                Block v3block = this.getLevel().getBlock(v3);
-                if (v3block == null) continue;
-                if (!isRailBlock(v3block.getId()) || !isValidRailMeta(v3block.getDamage())) continue;
-                if (!(v3block instanceof BlockRail)) continue;
-                this.connectRail(v3block);
-                connected.add(v3block);
-            }
-            if (connected.size() >= 2) break;
+        if (down == null || down.isTransparent()) {
+            return false;
         }
-
-        if (connected.size() == 1) {
-            Vector3 v3 = connected.get(0).subtract(this);
-            this.meta = (v3.y != 1) ? (v3.x == 0 ? 0 : 1) : (int) (v3.z == 0 ? (v3.x / -2) + 2.5 : (v3.z / 2) + 4.5);
-        } else if (connected.size() == 2) {
-            Vector3[] subtract = new Vector3[2];
-            for (int i = 0; i < connected.size(); i++) {
-                subtract[i] = connected.get(i).subtract(this);
-            }
-            if (Math.abs(subtract[0].x) == Math.abs(subtract[1].z) && Math.abs(subtract[1].x) == Math.abs(subtract[0].z)) {
-                Vector3 v3 = connected.get(0).subtract(this).add(connected.get(1).subtract(this));
-                this.meta = v3.x == 1 ? (v3.z == 1 ? 6 : 9) : (v3.z == 1 ? 7 : 8);
-            } else if (subtract[0].y == 1 || subtract[1].y == 1) {
-                Vector3 v3 = subtract[0].y == 1 ? subtract[0] : subtract[1];
-                this.meta = v3.x == 0 ? (v3.z == -1 ? 4 : 5) : (v3.x == 1 ? 2 : 3);
+        Map<BlockRail, BlockFace> railsAround = this.checkRailsAroundAffected();
+        List<BlockRail> rails = new ArrayList<>(railsAround.keySet());
+        List<BlockFace> faces = new ArrayList<>(railsAround.values());
+        if (railsAround.size() == 1) {
+            BlockRail other = rails.get(0);
+            this.meta = this.connect(other, railsAround.get(other)).metadata();
+        } else if (railsAround.size() == 4) {
+            if (this.isAbstract()) {
+                this.meta = this.connect(rails.get(faces.indexOf(SOUTH)), SOUTH, rails.get(faces.indexOf(EAST)), EAST).metadata();
             } else {
-                this.meta = subtract[0].x == 0 ? 0 : 1;
+                this.meta = this.connect(rails.get(faces.indexOf(EAST)), EAST, rails.get(faces.indexOf(WEST)), WEST).metadata();
+            }
+        } else if (!railsAround.isEmpty()) {
+            if (this.isAbstract()) {
+                if (railsAround.size() == 2) {
+                    BlockRail rail1 = rails.get(0);
+                    BlockRail rail2 = rails.get(1);
+                    this.meta = this.connect(rail1, railsAround.get(rail1), rail2, railsAround.get(rail2)).metadata();
+                } else {
+                    List<BlockFace> cd = Stream.of(CURVED_SOUTH_EAST, CURVED_NORTH_EAST, CURVED_SOUTH_WEST)
+                            .filter(o -> o.connectingDirections().stream().allMatch(faces::contains))
+                            .findFirst().get().connectingDirections();
+                    BlockFace f1 = cd.get(0);
+                    BlockFace f2 = cd.get(1);
+                    this.meta = this.connect(rails.get(faces.indexOf(f1)), f1, rails.get(faces.indexOf(f2)), f2).metadata();
+                }
+            } else {
+                BlockFace f = faces.stream()
+                        .sorted((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((x == y) ? 0 : -1))
+                        .findFirst().get();
+                BlockFace fo = f.getOpposite();
+                if (faces.contains(fo)) { //Opposite connectable
+                    this.meta = this.connect(rails.get(faces.indexOf(f)), f, rails.get(faces.indexOf(fo)), fo).metadata();
+                } else {
+                    this.meta = this.connect(rails.get(faces.indexOf(f)), f).metadata();
+                }
             }
         }
-        this.getLevel().setBlock(this, Block.get(this.getId(), this.getDamage()), true, true);
+        this.level.setBlock(this, this, true, true);
+        if (!isAbstract()) {
+            level.scheduleUpdate(this, this, 0);
+        }
         return true;
     }
 
-    /************ Rail Connecting Part ***********/
-    /****
-     * todo: too complex, need to simplify
-     ****/
+    private Orientation connect(BlockRail rail1, BlockFace face1, BlockRail rail2, BlockFace face2) {
+        this.connect(rail1, face1);
+        this.connect(rail2, face2);
 
-    protected Vector3[] canConnectRail(Block block) {
-        if (!(block instanceof BlockRail)) return null;
-        if (this.distanceSquared(block) > 2) return null;
-        Vector3[] result = checkRail(this);
-        if (result.length == 2) return null;
+        if (face1.getOpposite() == face2) {
+            int delta1 = (int) (this.y - rail1.y);
+            int delta2 = (int) (this.y - rail2.y);
+
+            if (delta1 == -1) {
+                return Orientation.ascending(face1);
+            } else if (delta2 == -1) {
+                return Orientation.ascending(face2);
+            }
+        }
+        return straightOrCurved(face1, face2);
+    }
+
+    private Orientation connect(BlockRail other, BlockFace face) {
+        int delta = (int) (this.y - other.y);
+        Map<BlockRail, BlockFace> rails = other.checkRailsConnected();
+        if (rails.isEmpty()) { //Only one
+            other.setOrientation(delta == 1 ? ascending(face.getOpposite()) : straight(face));
+            return delta == -1 ? ascending(face) : straight(face);
+        } else if (rails.size() == 1) { //Already connected
+            BlockFace faceConnected = rails.values().iterator().next();
+
+            if (other.isAbstract() && faceConnected != face) { //Curve!
+                other.setOrientation(curved(face.getOpposite(), faceConnected));
+                return delta == -1 ? ascending(face) : straight(face);
+            } else if (faceConnected == face) { //Turn!
+                if (!other.getOrientation().isAscending()) {
+                    other.setOrientation(delta == 1 ? ascending(face.getOpposite()) : straight(face));
+                }
+                return delta == -1 ? ascending(face) : straight(face);
+            } else if (other.getOrientation().hasConnectingDirections(NORTH, SOUTH)) { //North-south
+                other.setOrientation(delta == 1 ? ascending(face.getOpposite()) : straight(face));
+                return delta == -1 ? ascending(face) : straight(face);
+            }
+        }
+        return STRAIGHT_NORTH_SOUTH;
+    }
+
+    private Map<BlockRail, BlockFace> checkRailsAroundAffected() {
+        Map<BlockRail, BlockFace> railsAround = this.checkRailsAround(Arrays.asList(SOUTH, EAST, WEST, NORTH));
+        return railsAround.keySet().stream()
+                .filter(r -> r.checkRailsConnected().size() != 2)
+                .collect(Collectors.toMap(r -> r, railsAround::get));
+    }
+
+    private Map<BlockRail, BlockFace> checkRailsAround(Collection<BlockFace> faces) {
+        Map<BlockRail, BlockFace> result = new HashMap<>();
+        faces.forEach(f -> {
+            Block b = this.getSide(f);
+            Stream.of(b, b.up(), b.down())
+                    .filter(Rail::isRailBlock)
+                    .forEach(block -> result.put((BlockRail) block, f));
+        });
         return result;
     }
 
-    protected void connectRail(Block rail) {
-        Vector3[] connected = canConnectRail(rail);
-        if (connected == null) return;
-        if (connected.length == 1) {
-            Vector3 v3 = connected[0].subtract(this);
-            this.meta = (v3.y != 1) ? (v3.x == 0 ? 0 : 1) : (int) (v3.z == 0 ? (v3.x / -2) + 2.5 : (v3.z / 2) + 4.5);
-        } else if (connected.length == 2) {
-            Vector3[] subtract = new Vector3[2];
-            for (int i = 0; i < connected.length; i++) {
-                subtract[i] = connected[i].subtract(this);
-            }
-            if (Math.abs(subtract[0].x) == Math.abs(subtract[1].z) && Math.abs(subtract[1].x) == Math.abs(subtract[0].z)) {
-                Vector3 v3 = connected[0].subtract(this).add(connected[1].subtract(this));
-                this.meta = v3.x == 1 ? (v3.z == 1 ? 6 : 9) : (v3.z == 1 ? 7 : 8);
-            } else if (subtract[0].y == 1 || subtract[1].y == 1) {
-                Vector3 v3 = subtract[0].y == 1 ? subtract[0] : subtract[1];
-                this.meta = v3.x == 0 ? (v3.z == -1 ? 4 : 5) : (v3.x == 1 ? 2 : 3);
-            } else {
-                this.meta = subtract[0].x == 0 ? 0 : 1;
-            }
-        }
-        this.getLevel().setBlock(this, Block.get(this.getId(), this.getDamage()), true, true);
+    protected Map<BlockRail, BlockFace> checkRailsConnected() {
+        Map<BlockRail, BlockFace> railsAround = this.checkRailsAround(this.getOrientation().connectingDirections());
+        return railsAround.keySet().stream()
+                .filter(r -> r.getOrientation().hasConnectingDirections(railsAround.get(r).getOpposite()))
+                .collect(Collectors.toMap(r -> r, railsAround::get));
     }
 
-    protected static Vector3[] checkRail(Block rail) {
-        if (!(rail instanceof BlockRail)) return null;
-        int damage = rail.getDamage();
-        if (damage < 0 || damage > 10) return null;
-        int[][][] delta = new int[][][]{
-                {{0, 1}, {0, -1}},
-                {{1, 0}, {-1, 0}},
-                {{1, 0}, {-1, 0}},
-                {{1, 0}, {-1, 0}},
-                {{0, 1}, {0, -1}},
-                {{0, 1}, {0, -1}},
-                {{1, 0}, {0, 1}},
-                {{0, 1}, {-1, 0}},
-                {{-1, 0}, {0, -1}},
-                {{0, -1}, {1, 0}}
-        };
-        int[] deltaY = new int[]{0, 1, -1};
-        int[][] blocks = delta[damage];
-        List<Vector3> connected = new ArrayList<>();
-        for (int y : deltaY) {
-            Vector3 v3 = new Vector3(
-                    rail.getFloorX() + blocks[0][0],
-                    rail.getFloorY() + y,
-                    rail.getFloorZ() + blocks[0][1]
-            );
-            int idToConnect = rail.getLevel().getBlockIdAt(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ());
-            int metaToConnect = rail.getLevel().getBlockDataAt(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ());
-            if (!isRailBlock(idToConnect) || !isValidRailMeta(metaToConnect)) continue;
-            int xDiff = damage - v3.getFloorX();
-            int zDiff = damage - v3.getFloorZ();
-            for (int[] xz : blocks) {
-                if (xz[0] != xDiff || xz[1] != zDiff) continue;
-                connected.add(v3);
-            }
-        }
-        for (int y : deltaY) {
-            Vector3 v3 = new Vector3(
-                    rail.getFloorX() + blocks[1][0],
-                    rail.getFloorY() + y,
-                    rail.getFloorZ() + blocks[1][1]
-            );
-            int idToConnect = rail.getLevel().getBlockIdAt(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ());
-            int metaToConnect = rail.getLevel().getBlockDataAt(v3.getFloorX(), v3.getFloorY(), v3.getFloorZ());
-            if (!isRailBlock(idToConnect) || !isValidRailMeta(metaToConnect)) continue;
-            int xDiff = damage - v3.getFloorX();
-            int zDiff = damage - v3.getFloorZ();
-            for (int[] xz : blocks) {
-                if (xz[0] != xDiff || xz[1] != zDiff) continue;
-                connected.add(v3);
-            }
-        }
-        return connected.toArray(new Vector3[connected.size()]);
+    public boolean isAbstract() {
+        return this.getId() == RAIL;
     }
 
-    protected static boolean isRailBlock(int id) {
-        switch (id) {
-            case RAIL:
-            case POWERED_RAIL:
-            case ACTIVATOR_RAIL:
-            case DETECTOR_RAIL:
-                return true;
-            default:
-                return false;
+    public boolean canPowered() {
+        return this.canBePowered;
+    }
+
+    public Orientation getOrientation() {
+        return byMetadata(this.getRealMeta());
+    }
+
+    public void setOrientation(Orientation o) {
+        if (o.metadata() != this.getRealMeta()) {
+            this.setDamage(o.metadata());
+            this.level.setBlock(this, this, true, true);
         }
     }
 
-    protected static boolean isValidRailMeta(int meta) {
-        return !(meta < 0 || meta > 10);
+    public int getRealMeta() {
+        // Check if this can be powered
+        // Avoid modifying the value from meta (The rail orientation may be false)
+        // Reason: When the rail is curved, the meta will return STRAIGHT_NORTH_SOUTH.
+        // OR Null Pointer Exception
+        if (!isAbstract()) {
+            return getDamage() & 0x7;
+        }
+        // Return the default: This meta
+        return getDamage();
     }
 
+    public boolean isActive() {
+        return (getDamage() & 0x8) != 0;
+    }
+
+    public void setActive(boolean active) {
+        if (active) {
+            setDamage(getDamage() | 0x8);
+        } else {
+            setDamage(getDamage() & 0x7);
+        }
+        level.setBlock(this, this, true, true);
+    }
 }
