@@ -4,7 +4,7 @@ import cn.nukkit.block.BlockChest;
 import cn.nukkit.item.ItemMinecartChest;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.EnumMinecart;
+import cn.nukkit.utils.MinecartType;
 
 /**
  * Created by Snake1999 on 2016/1/30.
@@ -22,8 +22,8 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
     // TODO: 2016/1/30 inventory
     
     @Override
-    public EnumMinecart getType() {
-        return EnumMinecart.valueOf(1);
+    public MinecartType getType() {
+        return MinecartType.valueOf(1);
     }
 
     @Override

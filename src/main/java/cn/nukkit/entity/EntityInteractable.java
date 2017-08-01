@@ -12,8 +12,8 @@ public abstract class EntityInteractable extends Entity {
         super(chunk, nbt);
     }
 
-    // Todo: Passive entity
-    public abstract String getInteractButton();
+    // Todo: Passive entity?? i18n and boat leaving text
+    public abstract String getInteractButtonText();
     
     public abstract boolean canDoInteraction();
 

@@ -23,7 +23,7 @@ public class ItemMinecartChest extends Item {
     }
 
     public ItemMinecartChest(Integer meta, int count) {
-        super(MINECART_WITH_CHEST, meta, count, "Minecart With Chest");
+        super(MINECART_WITH_CHEST, meta, count, "Minecart with Chest");
     }
 
     @Override

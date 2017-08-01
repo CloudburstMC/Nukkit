@@ -2,7 +2,7 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.EnumMinecart;
+import cn.nukkit.utils.MinecartType;
 
 /**
  * Created by Snake1999 on 2016/1/30.
@@ -22,8 +22,8 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
     }
     
     @Override
-    public EnumMinecart getType() {
-        return EnumMinecart.valueOf(0);
+    public MinecartType getType() {
+        return MinecartType.valueOf(0);
     }
 
     @Override

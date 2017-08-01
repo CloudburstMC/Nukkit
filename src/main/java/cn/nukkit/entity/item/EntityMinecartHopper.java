@@ -4,7 +4,7 @@ import cn.nukkit.block.BlockHopper;
 import cn.nukkit.item.ItemMinecartHopper;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.EnumMinecart;
+import cn.nukkit.utils.MinecartType;
 
 public class EntityMinecartHopper extends EntityMinecartAbstract {
 
@@ -18,8 +18,8 @@ public class EntityMinecartHopper extends EntityMinecartAbstract {
     // TODO: 2016/12/18 inventory
 
     @Override
-    public EnumMinecart getType() {
-        return EnumMinecart.valueOf(5);
+    public MinecartType getType() {
+        return MinecartType.valueOf(5);
     }
     
     @Override

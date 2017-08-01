@@ -15,8 +15,6 @@ import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.vehicle.VehicleDamageEvent;
-import cn.nukkit.event.vehicle.VehicleDestroyEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
@@ -29,7 +27,7 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.utils.EnumMinecart;
+import cn.nukkit.utils.MinecartType;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
@@ -45,7 +43,7 @@ import java.util.Objects;
 public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     private String entityName;
-    public final int[][][] matrix = new int[][][]{
+    private static final int[][][] matrix = new int[][][]{
         {{0, 0, -1}, {0, 0, 1}}, 
         {{-1, 0, 0}, {1, 0, 0}}, 
         {{-1, -1, 0}, {1, 0, 0}}, 
@@ -58,9 +56,9 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         {{0, 0, -1}, {1, 0, 0}}
     };
     private double currentSpeed = 0;
-    protected Block blockInside = null;
+    private Block blockInside = null;
     // Plugins modifiers
-    public boolean slowWhenEmpty = true;
+    private boolean slowWhenEmpty = true;
     private double derailedX = 0.5;
     private double derailedY = 0.5;
     private double derailedZ = 0.5;
@@ -70,7 +68,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     private double maxSpeed = 0.4D;
     private final boolean devs = false; // Avoid maintained features into production
 
-    public abstract EnumMinecart getType();
+    public abstract MinecartType getType();
 
     public EntityMinecartAbstract(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -232,25 +230,11 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         if (invulnerable) {
             return false;
         } else {
-            // Event start
-            VehicleDamageEvent event = new VehicleDamageEvent(this, source.getEntity(), source.getFinalDamage());
-            getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return false;
-            }
-            // Event stop
             Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
             boolean instantKill = damager instanceof Player && ((Player) damager).isCreative();
-            performHurtAnimation(instantKill ? 9999 : (int) event.getDamage());
+            if (!instantKill) performHurtAnimation((int) source.getFinalDamage());
 
             if (instantKill || getDamage() > 40) {
-                // Event start
-                VehicleDestroyEvent event2 = new VehicleDestroyEvent(this, source.getEntity());
-                getServer().getPluginManager().callEvent(event2);
-                if (event2.isCancelled()) {
-                    return false;
-                }
-                // Event stop
                 if (linkedEntity != null) {
                     mountEntity(linkedEntity);
                 }
@@ -411,10 +395,10 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     protected void activate(int x, int y, int z, boolean flag) {
     }
-    
-    protected boolean hasUpdated = false;
 
-    protected void setFalling() {
+    private boolean hasUpdated = false;
+
+    private void setFalling() {
         motionX = NukkitMath.clamp(motionX, -getMaxSpeed(), getMaxSpeed());
         motionZ = NukkitMath.clamp(motionZ, -getMaxSpeed(), getMaxSpeed());
         
@@ -439,7 +423,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         }
     }
 
-    protected void processMovement(int dx, int dy, int dz, BlockRail block) {
+    private void processMovement(int dx, int dy, int dz, BlockRail block) {
         fallDistance = 0.0F; 
         Vector3 vector = getNextRail(x, y, z);
 
@@ -452,7 +436,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             isSlowed = !block.isActive();
         }
 
-        switch (Orientation.byMetadata(((BlockRail) block).getRealMeta())) {
+        switch (Orientation.byMetadata(block.getRealMeta())) {
             case ASCENDING_NORTH:
                 motionX -= 0.0078125D;
                 y += 1;
@@ -499,8 +483,8 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             expectedSpeed = currentSpeed;
             if (expectedSpeed > 0) {
                 // This is a trajectory (Angle of elevation)
-                playerYawNeg = -Math.sin((double) (linkedEntity.yaw * 3.1415927F / 180.0F));
-                playerYawPos = Math.cos((double) (linkedEntity.yaw * 3.1415927F / 180.0F));
+                playerYawNeg = -Math.sin(linkedEntity.yaw * 3.1415927F / 180.0F);
+                playerYawPos = Math.cos(linkedEntity.yaw * 3.1415927F / 180.0F);
                 motion = motionX * motionX + motionZ * motionZ;
                 if (motion < 0.01D) {
                     motionX += playerYawNeg * 0.1D;
@@ -616,7 +600,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     }
 
-    protected void applyDrag() {
+    private void applyDrag() {
         if (linkedEntity != null || !slowWhenEmpty) {
             motionX *= 0.996999979019165D;
             motionY *= 0.0D;
@@ -628,7 +612,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         }
     }
 
-    public Vector3 getNextRail(double dx, double dy, double dz) {
+    private Vector3 getNextRail(double dx, double dy, double dz) {
         int checkX = MathHelper.floor(dx);
         int checkY = MathHelper.floor(dy);
         int checkZ = MathHelper.floor(dz);
@@ -642,7 +626,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         if (Rail.isRailBlock(block)) {
             int[][] facing = matrix[((BlockRail) block).getRealMeta()];
             double rail;
-            // Genisys minstake (Doesn't check surrounding more exactly)
+            // Genisys mistake (Doesn't check surrounding more exactly)
             double nextOne = (double) checkX + 0.5D + (double) facing[0][0] * 0.5D;
             double nextTwo = (double) checkY + 0.5D + (double) facing[0][1] * 0.5D;
             double nextThree = (double) checkZ + 0.5D + (double) facing[0][2] * 0.5D;
@@ -688,19 +672,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      */
     public void setCurrentSpeed(double speed) {
         currentSpeed = speed;
-    }
-
-    public double wrapAngleTo180(double rotation) {
-        rotation %= 360;
-        if (rotation >= 180) {
-            rotation -= 360;
-        }
-
-        if (rotation < -180) {
-            rotation += 360;
-        }
-
-        return rotation;
     }
 
     private void prepareDataProperty() {

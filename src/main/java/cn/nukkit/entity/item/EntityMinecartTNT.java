@@ -2,15 +2,12 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.EntityExplosive;
-import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.ItemMinecartTNT;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.SmokeParticle;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.EnumMinecart;
+import cn.nukkit.utils.MinecartType;
 
 import java.util.Random;
 
@@ -75,8 +72,8 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     }
 
     @Override
-    public EnumMinecart getType() {
-        return EnumMinecart.valueOf(3);
+    public MinecartType getType() {
+        return MinecartType.valueOf(3);
     }
 
     @Override

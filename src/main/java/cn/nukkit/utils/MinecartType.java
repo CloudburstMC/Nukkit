@@ -11,7 +11,7 @@ import java.util.Map;
  * Creation time: 2017/7/17 19:55.
  */
 @API(usage = API.Usage.STABLE, definition = API.Definition.INTERNAL)
-public enum EnumMinecart {
+public enum MinecartType {
     /**
      * Represents an empty vehicle.
      */
@@ -19,11 +19,11 @@ public enum EnumMinecart {
     /**
      * Represents a chest holder.
      */
-    MINECART_CHEST(1, true, "Minecart with chest"),
+    MINECART_CHEST(1, true, "Minecart with Chest"),
     /**
      * Represents a furnace minecart.
      */
-    MINECART_FURNACE(2, true, "Minecart with furnace"),
+    MINECART_FURNACE(2, true, "Minecart with Furnace"),
     /**
      * Represents a TNT minecart.
      */
@@ -35,7 +35,7 @@ public enum EnumMinecart {
     /**
      * Represents a hopper minecart.
      */
-    MINECART_HOPPER(5, true, "Minecart with hopper"),
+    MINECART_HOPPER(5, true, "Minecart with Hopper"),
     /**
      * Represents a command block minecart.
      */
@@ -43,25 +43,25 @@ public enum EnumMinecart {
     /**
      * Represents an unknown minecart.
      */
-    MINECART_UNKNOWN(-1, false, "Minecart unknown");
+    MINECART_UNKNOWN(-1, false, "Unknown Minecart");
 
     private final int type;
-    private final boolean hasBlockyInside;
+    private final boolean hasBlockInside;
     private final String realName;
-    private static final Map TYPES = new HashMap<>();
+    private static final Map<Integer, MinecartType> TYPES = new HashMap<>();
 
     static {
-        EnumMinecart[] types = values();
+        MinecartType[] types = values();
         int var1 = types.length;
         for (int var2 = 0; var2 < var1; var2++) {
-            EnumMinecart var3 = types[var2];
-            TYPES.put(Integer.valueOf(var3.getId()), var3);
+            MinecartType var3 = types[var2];
+            TYPES.put(var3.getId(), var3);
         }
     }
 
-    EnumMinecart(int number, boolean hasBlockInside, String name) {
+    MinecartType(int number, boolean hasBlockInside, String name) {
         type = number;
-        hasBlockyInside = hasBlockInside;
+        this.hasBlockInside = hasBlockInside;
         realName = name;
     }
 
@@ -88,8 +88,8 @@ public enum EnumMinecart {
      *
      * @return Boolean
      */
-    public boolean isBlockOverrides() {
-        return hasBlockyInside;
+    public boolean hasBlockInside() {
+        return hasBlockInside;
     }
 
     /**
@@ -98,8 +98,8 @@ public enum EnumMinecart {
      * @param types The number of minecart
      * @return Integer
      */
-    public static EnumMinecart valueOf(int types) {
-        EnumMinecart what = (EnumMinecart) TYPES.get(types);
+    public static MinecartType valueOf(int types) {
+        MinecartType what = TYPES.get(types);
         return what == null ? MINECART_UNKNOWN : what;
     }
 }

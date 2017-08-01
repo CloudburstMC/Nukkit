@@ -6,10 +6,8 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityInteractable;
 import cn.nukkit.entity.EntityRideable;
 import cn.nukkit.entity.data.IntEntityData;
-import cn.nukkit.event.vehicle.EntityEnterVehicleEvent;
-import cn.nukkit.event.vehicle.EntityExitVehicleEvent;
-import cn.nukkit.event.vehicle.VehicleCreateEvent;
-import cn.nukkit.event.vehicle.VehicleEvent;
+import cn.nukkit.event.entity.EntityVehicleEnterEvent;
+import cn.nukkit.event.entity.EntityVehicleExitEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
@@ -50,7 +48,7 @@ public abstract class EntityVehicle extends EntityInteractable implements Entity
     }
 
     @Override
-    public String getInteractButton() {
+    public String getInteractButtonText() {
         return "Mount";
     }
 
@@ -67,13 +65,10 @@ public abstract class EntityVehicle extends EntityInteractable implements Entity
      */
     public boolean mountEntity(Entity entity) {
         Objects.requireNonNull(entity, "The target of the mounting entity can't be null");
-        if (!(this instanceof EntityVehicle)) {
-            return false;
-        }
         this.PitchDelta = 0.0D;
         this.YawDelta = 0.0D;
         if (entity.riding != null) {
-            VehicleEvent ev = new EntityExitVehicleEvent(entity, (EntityVehicle) this);
+            EntityVehicleExitEvent ev = new EntityVehicleExitEvent(entity, this);
             server.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return false;
@@ -99,7 +94,7 @@ public abstract class EntityVehicle extends EntityInteractable implements Entity
             entity.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, false);
             return true;
         }
-        VehicleEvent ev = new EntityEnterVehicleEvent(entity, (EntityVehicle) this);
+        EntityVehicleEnterEvent ev = new EntityVehicleEnterEvent(entity, this);
         server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return false;
@@ -131,16 +126,6 @@ public abstract class EntityVehicle extends EntityInteractable implements Entity
 
     @Override
     public boolean onUpdate(int currentTick) {
-        if (justCreated) {
-            VehicleCreateEvent event = new VehicleCreateEvent(this);
-            getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                kill();
-                return false;
-            }
-            justCreated = false;
-        }
-
         // The rolling amplitude
         if (getRollingAmplitude() > 0) {
             setRollingAmplitude(getRollingAmplitude() - 1);
