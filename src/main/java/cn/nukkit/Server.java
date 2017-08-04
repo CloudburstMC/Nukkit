@@ -669,7 +669,20 @@ public class Server {
         if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
             this.setPropertyInt("difficulty", 3);
         }
-
+        
+        /*
+        * Regeneration of creative inventory added to 
+        * the reload command in case of #1786 regression
+        * reloads creative inventory for *all* connected players
+        */        
+        if((this.getGamemode() & 0x01) > 0) 
+        {
+            this.logger.info("Reloading creative inventory...");
+            for (Player player : this.players.values()){
+                player.getInventory().sendCreativeContents(player);
+            }
+        }
+        
         this.banByIP.load();
         this.banByName.load();
         this.reloadWhitelist();
@@ -813,6 +826,7 @@ public class Server {
     public void onPlayerLogin(Player player) {
         if (this.sendUsageTicker > 0) {
             this.uniquePlayers.add(player.getUniqueId());
+            
         }
     }
 

@@ -425,6 +425,21 @@ public class PlayerInventory extends BaseInventory {
         }
     }
 
+    /*
+    * Creative inventory generation moved here by MitchellBot
+    * to resolve Issue #1786
+    */        
+    public void sendCreativeContents(Player player)
+    {
+        ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
+        
+        containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+        containerSetContentPacket.eid = this.getHolder().getId();
+        containerSetContentPacket.slots = Item.getCreativeItems().stream().toArray(Item[]::new);
+            
+        player.dataPacket(containerSetContentPacket.clone(), true);
+    }
+    
     @Override
     public void sendSlot(int index, Player player) {
         this.sendSlot(index, new Player[]{player});

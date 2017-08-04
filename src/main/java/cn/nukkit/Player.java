@@ -754,6 +754,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.inventory.sendContents(this);
         this.inventory.sendArmorContents(this);
 
+        /*
+        * Creative inventory generation moved here by MitchellBot
+        * to resolve Issue #1786
+        */        
+        if(this.isCreative()){
+        this.inventory.sendCreativeContents(this);
+        }
+        
         SetTimePacket setTimePacket = new SetTimePacket();
         setTimePacket.time = this.level.getTime();
         this.dataPacket(setTimePacket);
@@ -1952,19 +1960,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.setRemoveFormat(false);
         }
 
-        if (this.gamemode == Player.SPECTATOR) {
-            ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
-            containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
-            containerSetContentPacket.eid = this.id;
-            this.dataPacket(containerSetContentPacket);
-        } else {
-            ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
-            containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
-            containerSetContentPacket.eid = this.id;
-            containerSetContentPacket.slots = Item.getCreativeItems().stream().toArray(Item[]::new);
-            this.dataPacket(containerSetContentPacket);
-        }
-
         this.setEnableClientCommand(true);
 
         this.server.sendFullPlayerListData(this);
@@ -1972,6 +1967,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.forceMovement = this.teleportPosition = this.getPosition();
 
         this.server.onPlayerLogin(this);
+
     }
 
     public void handleDataPacket(DataPacket packet) {
