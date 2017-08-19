@@ -344,7 +344,7 @@ public class PlayerInventory extends BaseInventory {
             if (items[i].getId() == Item.AIR) {
                 this.clear(this.getSize() + i);
             } else {
-                this.setItem(this.getSize() + 1, items[i]);
+                this.setItem(this.getSize() + i, items[i]);
             }
         }
     }
