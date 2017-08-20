@@ -356,13 +356,15 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                     if (mine.getType().getId() == 2 && getType().getId() != 2) {
                         motionX *= 0.20000000298023224D;
                         motionZ *= 0.20000000298023224D;
-                        setMotion(new Vector3(mine.motionX - motiveX, 0, mine.motionZ - motiveZ));
+                        motionX += mine.motionX - motiveX;
+                        motionZ += mine.motionZ - motiveZ;
                         mine.motionX *= 0.949999988079071D;
                         mine.motionZ *= 0.949999988079071D;
                     } else if (mine.getType().getId() != 2 && getType().getId() == 2) {
                         mine.motionX *= 0.20000000298023224D;
                         mine.motionZ *= 0.20000000298023224D;
-                        mine.setMotion(new Vector3(motionX + motiveX, 0, motionZ + motiveZ));
+                        motionX += mine.motionX + motiveX;
+                        motionZ += mine.motionZ + motiveZ;
                         motionX *= 0.949999988079071D;
                         motionZ *= 0.949999988079071D;
                     } else {
@@ -370,14 +372,17 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                         motZ /= 2;
                         motionX *= 0.20000000298023224D;
                         motionZ *= 0.20000000298023224D;
-                        setMotion(new Vector3(motX - motiveX, 0, motZ - motiveZ));
+                        motionX += motX - motiveX;
+                        motionZ += motZ - motiveZ;
                         mine.motionX *= 0.20000000298023224D;
                         mine.motionZ *= 0.20000000298023224D;
-                        mine.setMotion(new Vector3(motX + motiveX, 0, motZ + motiveZ));
+                        mine.motionX += motX + motiveX;
+                        mine.motionZ += motZ + motiveZ;
                     }
                 } else {
-                    setMotion(new Vector3(-motiveX, 0, -motiveZ));
-                }
+                    motionX -= motiveX;
+                    motionZ -= motiveZ;
+                }                
             }
         }
     }
