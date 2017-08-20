@@ -185,6 +185,11 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
     }
 
     @Override
+    public void unblockAddress(String address) {
+        this.handler.unblockAddress(address);
+    }
+
+    @Override
     public void handleRaw(String address, int port, byte[] payload) {
         this.server.handlePacket(address, port, payload);
     }
