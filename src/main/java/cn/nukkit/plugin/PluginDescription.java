@@ -142,7 +142,7 @@ public class PluginDescription {
             throw new PluginException("Invalid PluginDescription name");
         }
         this.name = this.name.replace(" ", "_");
-        this.version = (String) plugin.get("version");
+        this.version = String.valueOf(plugin.get("version"));
         this.main = (String) plugin.get("main");
         Object api = plugin.get("api");
         if (api instanceof List) {
