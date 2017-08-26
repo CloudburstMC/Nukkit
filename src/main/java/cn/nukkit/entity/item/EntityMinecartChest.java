@@ -20,7 +20,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
     }
 
     // TODO: 2016/1/30 inventory
-    
+
     @Override
     public MinecartType getType() {
         return MinecartType.valueOf(1);
@@ -35,7 +35,6 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
     public void dropItem() {
         level.dropItem(this, new ItemMinecartChest());
     }
-
 
 
 }

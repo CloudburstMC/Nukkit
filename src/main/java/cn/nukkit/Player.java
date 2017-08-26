@@ -197,6 +197,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private ClientChainData loginChainData;
 
+    public int pickedXPOrb = 0;
+
     public BlockEnderChest getViewingEnderChest() {
         return viewingEnderChest;
     }
@@ -1248,6 +1250,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (portal) {
             inPortalTicks++;
+        } else {
+            this.inPortalTicks = 0;
         }
     }
 
@@ -1259,85 +1263,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 continue;
             }
 
-            if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision) {
-                ItemArrow item = new ItemArrow();
-                if (this.isSurvival() && !this.inventory.canAddItem(item)) {
-                    continue;
-                }
-
-                InventoryPickupArrowEvent ev;
-                this.server.getPluginManager().callEvent(ev = new InventoryPickupArrowEvent(this.inventory, (EntityArrow) entity));
-                if (ev.isCancelled()) {
-                    continue;
-                }
-
-                TakeItemEntityPacket pk = new TakeItemEntityPacket();
-                pk.entityId = this.getId();
-                pk.target = entity.getId();
-                Server.broadcastPacket(entity.getViewers().values(), pk);
-
-                this.inventory.addItem(item.clone());
-                entity.kill();
-            } else if (entity instanceof EntityItem) {
-                if (((EntityItem) entity).getPickupDelay() <= 0) {
-                    Item item = ((EntityItem) entity).getItem();
-
-                    if (item != null) {
-                        if (this.isSurvival() && !this.inventory.canAddItem(item)) {
-                            continue;
-                        }
-
-                        InventoryPickupItemEvent ev;
-                        this.server.getPluginManager().callEvent(ev = new InventoryPickupItemEvent(this.inventory, (EntityItem) entity));
-                        if (ev.isCancelled()) {
-                            continue;
-                        }
-
-                        switch (item.getId()) {
-                            case Item.WOOD:
-                            case Item.WOOD2:
-                                this.awardAchievement("mineWood");
-                                break;
-                            case Item.DIAMOND:
-                                this.awardAchievement("diamond");
-                                break;
-                        }
-                        /*switch (item.getId()) {
-                            case Item.WOOD:
-                                this.awardAchievement("mineWood");
-                                break;
-                            case Item.DIAMOND:
-                                this.awardAchievement("diamond");
-                                break;
-                        }*/
-
-                        TakeItemEntityPacket pk = new TakeItemEntityPacket();
-                        pk.entityId = this.getId();
-                        pk.target = entity.getId();
-                        Server.broadcastPacket(entity.getViewers().values(), pk);
-
-                        this.inventory.addItem(item.clone());
-                        entity.kill();
-                    }
-                }
-            }
-        }
-        for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(3.5, 2, 3.5), this)) {
-            entity.scheduleUpdate();
-
-            if (!entity.isAlive() || !this.isAlive()) {
-                continue;
-            }
-            if (entity instanceof EntityXPOrb) {
-                EntityXPOrb xpOrb = (EntityXPOrb) entity;
-                if (xpOrb.getPickupDelay() <= 0) {
-                    int exp = xpOrb.getExp();
-                    this.addExperience(exp);
-                    entity.kill();
-                    this.getLevel().addSound(new ExperienceOrbSound(this));
-                    break;
-                }
-            }
+            this.pickupEntity(entity, true);
         }
     }
 
@@ -4486,7 +4412,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            if (this.isLevelChange) { //TODO: remove this
+            /*if (this.isLevelChange) { //TODO: remove this
                 PlayStatusPacket statusPacket0 = new PlayStatusPacket();//Weather
                 this.getLevel().sendWeather(this);
                 //Update time
@@ -4498,7 +4424,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.getLevel().sendWeather(this);
                 //Update time
                 this.getLevel().sendTime(this);
-            }
+            }*/
 
             this.spawnToAll();
             this.isLevelChange = false;
@@ -4562,7 +4488,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.getLevel().sendTime(this);
 
             if (from.getLevel().getId() != to.level.getId()) {
-                if (this.spawned) {
+                /*if (this.spawned) { //broken
                     //TODO: remove this in future version
                     this.isLevelChange = true;
                     this.nextChunkOrderRun = 10000;
@@ -4590,7 +4516,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         dataPacket(changeDimensionPacket);
                         nextChunkOrderRun = 0;
                     }, 9);
-                }
+                }*/
             }
             return true;
         }
@@ -4929,6 +4855,104 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public ClientChainData getLoginChainData() {
         return this.loginChainData;
+    }
+
+    public boolean pickupEntity(Entity entity, boolean near) {
+        if (!this.spawned || !this.isAlive() || !this.isOnline()) {
+            return false;
+        }
+
+        if (near) {
+            if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision) {
+                ItemArrow item = new ItemArrow();
+                if (this.isSurvival() && !this.inventory.canAddItem(item)) {
+                    return false;
+                }
+
+                InventoryPickupArrowEvent ev;
+                this.server.getPluginManager().callEvent(ev = new InventoryPickupArrowEvent(this.inventory, (EntityArrow) entity));
+                if (ev.isCancelled()) {
+                    return false;
+                }
+
+                TakeItemEntityPacket pk = new TakeItemEntityPacket();
+                pk.entityId = this.getId();
+                pk.target = entity.getId();
+                Server.broadcastPacket(entity.getViewers().values(), pk);
+
+                pk = new TakeItemEntityPacket();
+                pk.entityId = this.id;
+                pk.target = entity.getId();
+                this.dataPacket(pk);
+
+                this.inventory.addItem(item.clone());
+                entity.kill();
+                return true;
+            } else if (entity instanceof EntityItem) {
+                if (((EntityItem) entity).getPickupDelay() <= 0) {
+                    Item item = ((EntityItem) entity).getItem();
+
+                    if (item != null) {
+                        if (this.isSurvival() && !this.inventory.canAddItem(item)) {
+                            return false;
+                        }
+
+                        InventoryPickupItemEvent ev;
+                        this.server.getPluginManager().callEvent(ev = new InventoryPickupItemEvent(this.inventory, (EntityItem) entity));
+                        if (ev.isCancelled()) {
+                            return false;
+                        }
+
+                        switch (item.getId()) {
+                            case Item.WOOD:
+                            case Item.WOOD2:
+                                this.awardAchievement("mineWood");
+                                break;
+                            case Item.DIAMOND:
+                                this.awardAchievement("diamond");
+                                break;
+                        }
+                        /*switch (item.getId()) {
+                            case Item.WOOD:
+                                this.awardAchievement("mineWood");
+                                break;
+                            case Item.DIAMOND:
+                                this.awardAchievement("diamond");
+                                break;
+                        }*/
+
+                        TakeItemEntityPacket pk = new TakeItemEntityPacket();
+                        pk.entityId = this.getId();
+                        pk.target = entity.getId();
+                        Server.broadcastPacket(entity.getViewers().values(), pk);
+
+                        pk = new TakeItemEntityPacket();
+                        pk.entityId = this.id;
+                        pk.target = entity.getId();
+                        this.dataPacket(pk);
+
+                        this.inventory.addItem(item.clone());
+                        entity.kill();
+                        return true;
+                    }
+                }
+            }
+        }
+
+        int tick = this.getServer().getTick();
+        if (pickedXPOrb < tick && entity instanceof EntityXPOrb && this.boundingBox.isVectorInside(entity)) {
+            EntityXPOrb xpOrb = (EntityXPOrb) entity;
+            if (xpOrb.getPickupDelay() <= 0) {
+                int exp = xpOrb.getExp();
+                this.addExperience(exp);
+                entity.kill();
+                this.getLevel().addSound(new ExperienceOrbSound(this));
+                pickedXPOrb = tick;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

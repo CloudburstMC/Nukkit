@@ -44,16 +44,16 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     private String entityName;
     private static final int[][][] matrix = new int[][][]{
-        {{0, 0, -1}, {0, 0, 1}}, 
-        {{-1, 0, 0}, {1, 0, 0}}, 
-        {{-1, -1, 0}, {1, 0, 0}}, 
-        {{-1, 0, 0}, {1, -1, 0}}, 
-        {{0, 0, -1}, {0, -1, 1}}, 
-        {{0, -1, -1}, {0, 0, 1}}, 
-        {{0, 0, 1}, {1, 0, 0}}, 
-        {{0, 0, 1}, {-1, 0, 0}}, 
-        {{0, 0, -1}, {-1, 0, 0}}, 
-        {{0, 0, -1}, {1, 0, 0}}
+            {{0, 0, -1}, {0, 0, 1}},
+            {{-1, 0, 0}, {1, 0, 0}},
+            {{-1, -1, 0}, {1, 0, 0}},
+            {{-1, 0, 0}, {1, -1, 0}},
+            {{0, 0, -1}, {0, -1, 1}},
+            {{0, -1, -1}, {0, 0, 1}},
+            {{0, 0, 1}, {1, 0, 0}},
+            {{0, 0, 1}, {-1, 0, 0}},
+            {{0, 0, -1}, {-1, 0, 0}},
+            {{0, 0, -1}, {1, 0, 0}}
     };
     private double currentSpeed = 0;
     private Block blockInside = null;
@@ -112,7 +112,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     public boolean canDoInteraction() {
         return linkedEntity == null && this.getDisplayBlock() == null;
     }
-    
+
     @Override
     public float getMountedYOffset() {
         return 0.45F; // Real minecart offset
@@ -187,13 +187,13 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             if (diffX * diffX + diffZ * diffZ > 0.001D) {
                 yawToChange = (Math.atan2(diffZ, diffX) * 180 / 3.141592653589793D);
             }
-            
+
             // Reverse yaw if yaw is below 0
             if (yawToChange < 0) {
                 // -90-(-90)-(-90) = 90
                 yawToChange -= yawToChange - yawToChange;
             }
-            
+
             setRotation(yawToChange, pitch);
 
             Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
@@ -249,7 +249,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 }
             }
         }
-        
+
         return true;
     }
 
@@ -406,14 +406,14 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     private void setFalling() {
         motionX = NukkitMath.clamp(motionX, -getMaxSpeed(), getMaxSpeed());
         motionZ = NukkitMath.clamp(motionZ, -getMaxSpeed(), getMaxSpeed());
-        
-        if(linkedEntity != null && !hasUpdated){
+
+        if (linkedEntity != null && !hasUpdated) {
             updateRiderPosition(getMountedYOffset() + 0.35F);
             hasUpdated = true;
         } else {
             hasUpdated = false;
         }
-        
+
         if (onGround) {
             motionX *= derailedX;
             motionY *= derailedY;
@@ -429,7 +429,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     }
 
     private void processMovement(int dx, int dy, int dz, BlockRail block) {
-        fallDistance = 0.0F; 
+        fallDistance = 0.0F;
         Vector3 vector = getNextRail(x, y, z);
 
         y = (double) dy;

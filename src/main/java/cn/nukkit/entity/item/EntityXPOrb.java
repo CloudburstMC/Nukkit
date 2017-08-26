@@ -108,6 +108,14 @@ public class EntityXPOrb extends Entity {
                 if (this.pickupDelay < 0) {
                     this.pickupDelay = 0;
                 }
+            } else {
+                for (Entity entity : this.level.getCollidingEntities(this.boundingBox, this)) {
+                    if (entity instanceof Player) {
+                        if (((Player) entity).pickupEntity(this, false)) {
+                            return true;
+                        }
+                    }
+                }
             }
 
             this.motionY -= this.getGravity();

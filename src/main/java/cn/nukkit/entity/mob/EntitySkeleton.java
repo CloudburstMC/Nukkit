@@ -37,7 +37,7 @@ public class EntitySkeleton extends EntityMob {
     public float getHeight() {
         return 1.8f;
     }
-    
+
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();

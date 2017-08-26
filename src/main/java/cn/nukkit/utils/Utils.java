@@ -5,7 +5,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -170,22 +169,25 @@ public class Utils {
         return result & 0xFFFFFFFFL;
     }
 
-    public static <T> java.util.List<T[]> toChunk(java.util.List<T> list, int size) {
-        java.util.List<T[]> result = new ArrayList<>();
-        T[] arr = (T[]) list.stream().toArray();
-
-        int from = 0;
-        int to = size >= arr.length ? arr.length : size;
-
-        while (from < arr.length) {
-            T[] subArray = Arrays.copyOfRange(arr, from, to);
-            from = to;
-            to += size;
-            if (to > arr.length) {
-                to = arr.length;
-            }
-            result.add(subArray);
+    public static Object[][] splitArray(Object[] arrayToSplit, int chunkSize) {
+        if (chunkSize <= 0) {
+            return null;
         }
-        return result;
+
+        int rest = arrayToSplit.length % chunkSize;
+        int chunks = arrayToSplit.length / chunkSize + (rest > 0 ? 1 : 0);
+
+        Object[][] arrays = new Object[chunks][];
+        for (int i = 0; i < (rest > 0 ? chunks - 1 : chunks); i++) {
+            arrays[i] = Arrays.copyOfRange(arrayToSplit, i * chunkSize, i * chunkSize + chunkSize);
+        }
+        if (rest > 0) {
+            arrays[chunks - 1] = Arrays.copyOfRange(arrayToSplit, (chunks - 1) * chunkSize, (chunks - 1) * chunkSize + rest);
+        }
+        return arrays;
+    }
+
+    public static int toInt(Object number) {
+        return (int) Math.round((double) number);
     }
 }

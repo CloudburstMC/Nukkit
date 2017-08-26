@@ -21,7 +21,7 @@ public class EntityMinecartHopper extends EntityMinecartAbstract {
     public MinecartType getType() {
         return MinecartType.valueOf(5);
     }
-    
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;

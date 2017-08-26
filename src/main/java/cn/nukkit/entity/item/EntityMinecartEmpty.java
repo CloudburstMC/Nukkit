@@ -20,7 +20,7 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
     public EntityMinecartEmpty(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
-    
+
     @Override
     public MinecartType getType() {
         return MinecartType.valueOf(0);

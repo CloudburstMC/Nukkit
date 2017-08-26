@@ -26,7 +26,10 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.*;
+import cn.nukkit.network.protocol.MobEffectPacket;
+import cn.nukkit.network.protocol.RemoveEntityPacket;
+import cn.nukkit.network.protocol.SetEntityDataPacket;
+import cn.nukkit.network.protocol.SetEntityMotionPacket;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.ChunkException;
@@ -222,10 +225,10 @@ public abstract class Entity extends Location implements Metadatable {
 
     public double lastYaw;
     public double lastPitch;
-    
+
     public double PitchDelta;
     public double YawDelta;
-    
+
     public double entityCollisionReduction = 0; // Higher than 0.9 will result a fast collisions
     public AxisAlignedBB boundingBox;
     public boolean onGround;
@@ -545,7 +548,7 @@ public abstract class Entity extends Location implements Metadatable {
     public float getScale() {
         return this.scale;
     }
-    
+
     public Entity getLinkedEntity() {
         return linkedEntity;
     }
@@ -1086,12 +1089,11 @@ public abstract class Entity extends Location implements Metadatable {
             }
         }
 
-        if (this.inPortalTicks > 80) {
+        if (this.inPortalTicks == 80) {
             EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, PortalType.NETHER);
             getServer().getPluginManager().callEvent(ev);
-
+            
             //TODO: teleport
-            this.inPortalTicks = 0;
         }
 
         this.age += tickDiff;
@@ -1458,7 +1460,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         return false;
     }
-    
+
     public boolean fastMove(double dx, double dy, double dz) {
         if (dx == 0 && dy == 0 && dz == 0) {
             return true;
@@ -1489,7 +1491,7 @@ public abstract class Entity extends Location implements Metadatable {
         Timings.entityMoveTimer.stopTiming();
         return true;
     }
-        
+
     public boolean move(double dx, double dy, double dz) {
         if (dx == 0 && dz == 0 && dy == 0) {
             return true;
@@ -1667,6 +1669,8 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (portal) {
             inPortalTicks++;
+        } else {
+            this.inPortalTicks = 0;
         }
 
         if (vector.lengthSquared() > 0) {

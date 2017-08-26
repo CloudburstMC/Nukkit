@@ -11,10 +11,11 @@ import cn.nukkit.event.entity.EntityVehicleExitEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
+
 import java.util.Objects;
 
 /**
- * author: MagicDroidX 
+ * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class EntityVehicle extends EntityInteractable implements EntityRideable {
@@ -142,7 +143,7 @@ public abstract class EntityVehicle extends EntityInteractable implements Entity
         updateMovement();
         return true;
     }
-    
+
     protected boolean rollingDirection = true;
 
     protected boolean performHurtAnimation(int damage) {
