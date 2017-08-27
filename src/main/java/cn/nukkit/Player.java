@@ -3165,7 +3165,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             }
 
                                             ingredientz.add(ingredient);
-                                            this.inventory.removeItem(ingredient);
+                                            this.inventory.removeItem(ingredient); //TODO: improve this, or wait for mojang's fix :D
                                         }
                                     }
                                 }
@@ -3192,8 +3192,69 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.inventory.sendContents(this);
                         }
                     } else {
+                        ArrayList<Item> ingredientz = new ArrayList<>();
 
                         if (recipe instanceof ShapedRecipe) {
+                            Map<Integer, Map<Integer, Item>> ingredients = ((ShapedRecipe) recipe).getIngredientMap();
+                            for (Map<Integer, Item> map : ingredients.values()) {
+                                for (Item ingredient : map.values()) {
+                                    if (ingredient != null && ingredient.getId() != Item.AIR) {
+                                        ingredientz.add(ingredient);
+                                    }
+                                }
+                            }
+                        } else if (recipe instanceof ShapelessRecipe) {
+                            ShapelessRecipe recipe0 = (ShapelessRecipe) recipe;
+
+                            for (Item ingredient : recipe0.getIngredientList()) {
+                                if (ingredient != null && ingredient.getId() != Item.AIR) {
+                                    ingredientz.add(ingredient);
+                                }
+                            }
+                        }
+
+                        Map<String, Item> serialized = new HashMap<>();
+
+                        for (Item ingredient : ingredientz) {
+                            String hash = ingredient.getId() + ":" + ingredient.getDamage();
+                            Item r = serialized.get(hash);
+
+                            if (r != null) {
+                                r.count += ingredient.getCount();
+                                continue;
+                            }
+
+                            serialized.put(hash, ingredient);
+                        }
+
+                        for (Item ingredient : serialized.values()) {
+                            if (!this.inventory.contains(ingredient)) {
+                                canCraft = false;
+                                break;
+                            }
+                        }
+
+                        if (!canCraft) {
+                            this.server.getLogger().debug("(1) Unmatched recipe " + craftingEventPacket.id + " from player " + this.getName() + "  not anough ingredients");
+                            return;
+                        }
+
+                        System.out.println("craft");
+                        CraftItemEvent craftItemEvent = new CraftItemEvent(this, serialized.values().stream().toArray(Item[]::new), recipe);
+                        getServer().getPluginManager().callEvent(craftItemEvent);
+
+                        if (craftItemEvent.isCancelled()) {
+                            this.inventory.sendContents(this);
+                            break;
+                        }
+
+                        for (Item ingredient : serialized.values()) {
+                            this.inventory.removeItem(ingredient);
+                        }
+
+                        this.inventory.addItem(recipe.getResult());
+
+                        /*if (recipe instanceof ShapedRecipe) {
                             int offsetX = 0;
                             int offsetY = 0;
 
@@ -3389,7 +3450,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             for (Item i : extraItem) {
                                 this.level.dropItem(this, i);
                             }
-                        }
+                        }*/
                     }
 
                     switch (recipe.getResult().getId()) {

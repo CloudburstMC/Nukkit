@@ -588,7 +588,7 @@ public class Item implements Cloneable {
 
     public Item(int id, Integer meta, int count, String name) {
         this.id = id & 0xffff;
-        if (meta != null) {
+        if (meta != null && meta >= 0) {
             this.meta = meta & 0xffff;
         } else {
             this.hasMeta = false;

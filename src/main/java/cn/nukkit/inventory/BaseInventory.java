@@ -169,7 +169,7 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public boolean contains(Item item) {
         int count = Math.max(1, item.getCount());
-        boolean checkDamage = item.hasMeta();
+        boolean checkDamage = item.hasMeta() && item.getDamage() >= 0;
         boolean checkTag = item.getCompoundTag() != null;
         for (Item i : this.getContents().values()) {
             if (item.equals(i, checkDamage, checkTag)) {
@@ -186,7 +186,7 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public Map<Integer, Item> all(Item item) {
         Map<Integer, Item> slots = new HashMap<>();
-        boolean checkDamage = item.hasMeta();
+        boolean checkDamage = item.hasMeta() && item.getDamage() >= 0;
         boolean checkTag = item.getCompoundTag() != null;
         for (Map.Entry<Integer, Item> entry : this.getContents().entrySet()) {
             if (item.equals(entry.getValue(), checkDamage, checkTag)) {
