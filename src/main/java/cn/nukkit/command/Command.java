@@ -207,7 +207,7 @@ public abstract class Command {
     }
 
     public boolean allowChangesFrom(CommandMap commandMap) {
-        return commandMap == null || commandMap.equals(this.commandMap);
+        return commandMap != null && !commandMap.equals(this.commandMap);
     }
 
     public boolean isRegistered() {

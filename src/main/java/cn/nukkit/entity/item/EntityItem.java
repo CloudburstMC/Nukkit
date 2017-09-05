@@ -133,11 +133,18 @@ public class EntityItem extends Entity {
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
         if (this.isAlive()) {
-
             if (this.pickupDelay > 0 && this.pickupDelay < 32767) {
                 this.pickupDelay -= tickDiff;
                 if (this.pickupDelay < 0) {
                     this.pickupDelay = 0;
+                }
+            } else {
+                for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(1, 0.5, 1), this)) {
+                    if (entity instanceof Player) {
+                        if (((Player) entity).pickupEntity(this, true)) {
+                            return true;
+                        }
+                    }
                 }
             }
 

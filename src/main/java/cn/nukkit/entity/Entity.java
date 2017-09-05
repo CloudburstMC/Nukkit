@@ -7,6 +7,7 @@ import cn.nukkit.block.BlockDirt;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.data.*;
+import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityPortalEnterEvent.PortalType;
@@ -225,6 +226,10 @@ public abstract class Entity extends Location implements Metadatable {
     public double lastYaw;
     public double lastPitch;
 
+    public double PitchDelta;
+    public double YawDelta;
+
+    public double entityCollisionReduction = 0; // Higher than 0.9 will result a fast collisions
     public AxisAlignedBB boundingBox;
     public boolean onGround;
     public boolean inBlock = false;
@@ -587,9 +592,13 @@ public abstract class Entity extends Location implements Metadatable {
 
         Effect oldEffect = this.effects.getOrDefault(effect.getId(), null);
         if (oldEffect != null) {
-            if (Math.abs(effect.getAmplifier()) < Math.abs(oldEffect.getAmplifier())) return;
+            if (Math.abs(effect.getAmplifier()) < Math.abs(oldEffect.getAmplifier())) {
+                return;
+            }
             if (Math.abs(effect.getAmplifier()) == Math.abs(oldEffect.getAmplifier())
-                    && effect.getDuration() < oldEffect.getDuration()) return;
+                    && effect.getDuration() < oldEffect.getDuration()) {
+                return;
+            }
             effect.add(this, true);
         } else {
             effect.add(this, false);
@@ -1027,6 +1036,9 @@ public abstract class Entity extends Location implements Metadatable {
             Timings.entityBaseTickTimer.stopTiming();
             return false;
         }
+        if (riding != null && !riding.isAlive()) {
+            ((EntityVehicle) riding).mountEntity(this);
+        }
 
         if (!this.effects.isEmpty()) {
             for (Effect effect : this.effects.values()) {
@@ -1077,12 +1089,11 @@ public abstract class Entity extends Location implements Metadatable {
             }
         }
 
-        if (this.inPortalTicks > 80) {
+        if (this.inPortalTicks == 80) {
             EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, PortalType.NETHER);
             getServer().getPluginManager().callEvent(ev);
-
+            
             //TODO: teleport
-            this.inPortalTicks = 0;
         }
 
         this.age += tickDiff;
@@ -1178,6 +1189,53 @@ public abstract class Entity extends Location implements Metadatable {
         return hasUpdate;
     }
 
+    protected boolean updateRidden() {
+        if (this.linkedEntity != null) {
+            if (!linkedEntity.isAlive()) {
+                return false;
+            }
+            this.motionX = 0.0D;
+            this.motionY = 0.0D;
+            this.motionZ = 0.0D;
+            onUpdate(lastUpdate);
+            if (this.linkedEntity != null) {
+                this.YawDelta += this.linkedEntity.yaw - this.linkedEntity.lastYaw;
+                for (this.PitchDelta += this.linkedEntity.pitch - this.linkedEntity.lastPitch; this.YawDelta >= 180.0D; this.YawDelta -= 360.0D) {
+                }
+                while (this.YawDelta < -180.0D) {
+                    this.YawDelta += 360.0D;
+                }
+                while (this.PitchDelta >= 180.0D) {
+                    this.PitchDelta -= 360.0D;
+                }
+                while (this.PitchDelta < -180.0D) {
+                    this.PitchDelta += 360.0D;
+                }
+                double var1 = this.YawDelta * 0.5D;
+                double var3 = this.PitchDelta * 0.5D;
+                float var5 = 10.0F;
+                var1 = NukkitMath.clamp(var1, -var5, var5);
+                var3 = NukkitMath.clamp(var3, -var5, var5);
+                this.YawDelta -= var1;
+                this.PitchDelta -= var3;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected void updateRiderPosition(float offset) {
+        // Messy unknown variables
+        if (updateRidden()) {
+            linkedEntity.setDataProperty(new Vector3fEntityData(DATA_RIDER_SEAT_POSITION,
+                    new Vector3f(0, offset, 0)));
+        }
+    }
+
+    public float getMountedYOffset() {
+        return getHeight() * 0.75F;
+    }
+
     public final void scheduleUpdate() {
         this.level.updateEntities.put(this.id, this);
     }
@@ -1268,12 +1326,56 @@ public abstract class Entity extends Location implements Metadatable {
         //todo
     }
 
-    public void moveFlying() {
-        //todo
+    public void moveFlying(float strafe, float forward, float friction) {
+        // This is special for Nukkit! :)
+        float speed = strafe * strafe + forward * forward;
+        if (speed >= 1.0E-4F) {
+            speed = MathHelper.sqrt(speed);
+            if (speed < 1.0F) {
+                speed = 1.0F;
+            }
+            speed = friction / speed;
+            strafe *= speed;
+            forward *= speed;
+            float nest = MathHelper.sin((float) (this.yaw * 3.1415927F / 180.0F));
+            float place = MathHelper.cos((float) (this.yaw * 3.1415927F / 180.0F));
+            this.motionX += strafe * place - forward * nest;
+            this.motionZ += forward * place + strafe * nest;
+        }
     }
 
     public void onCollideWithPlayer(EntityHuman entityPlayer) {
 
+    }
+
+    public void applyEntityCollision(Entity entity) {
+        if (entity.riding != this && entity.linkedEntity != this) {
+            double dx = entity.x - this.x;
+            double dy = entity.z - this.z;
+            double dz = NukkitMath.getDirection(dx, dy);
+
+            if (dz >= 0.009999999776482582D) {
+                dz = MathHelper.sqrt((float) dz);
+                dx /= dz;
+                dy /= dz;
+                double d3 = 1.0D / dz;
+
+                if (d3 > 1.0D) {
+                    d3 = 1.0D;
+                }
+
+                dx *= d3;
+                dy *= d3;
+                dx *= 0.05000000074505806D;
+                dy *= 0.05000000074505806D;
+                dx *= 1.0F + entityCollisionReduction;
+                dz *= 1.0F + entityCollisionReduction;
+                if (this.riding == null) {
+                    motionX -= dx;
+                    motionZ -= dy;
+                }
+            }
+        }
     }
 
     public void onStruckByLightning(Entity entity) {
@@ -1391,7 +1493,6 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean move(double dx, double dy, double dz) {
-
         if (dx == 0 && dz == 0 && dy == 0) {
             return true;
         }
@@ -1434,7 +1535,6 @@ public abstract class Entity extends Location implements Metadatable {
             }
 
             this.boundingBox.offset(0, 0, dz);
-
 
             if (this.getStepHeight() > 0 && fallingFlag && this.ySize < 0.05 && (movX != dx || movZ != dz)) {
                 double cx = dx;
@@ -1501,7 +1601,6 @@ public abstract class Entity extends Location implements Metadatable {
             if (movZ != dz) {
                 this.motionZ = 0;
             }
-
 
             //TODO: vehicle collision events (first we need to spawn them!)
             Timings.entityMoveTimer.stopTiming();
@@ -1570,6 +1669,8 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (portal) {
             inPortalTicks++;
+        } else {
+            this.inPortalTicks = 0;
         }
 
         if (vector.lengthSquared() > 0) {
@@ -1650,8 +1751,8 @@ public abstract class Entity extends Location implements Metadatable {
 
         double radius = this.getWidth() / 2d;
 
-        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + (this.getHeight() * this.scale), pos.z +
-                radius);
+        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + (this.getHeight() * this.scale), pos.z
+                + radius);
 
         this.checkChunks();
 
@@ -1793,8 +1894,9 @@ public abstract class Entity extends Location implements Metadatable {
     public boolean setDataProperty(EntityData data, boolean send) {
         if (!Objects.equals(data, this.getDataProperties().get(data.getId()))) {
             this.getDataProperties().put(data);
-            if (send)
+            if (send) {
                 this.sendData(this.hasSpawned.values().stream().toArray(Player[]::new), new EntityMetadata().put(this.dataProperties.get(data.getId())));
+            }
             return true;
         }
         return false;

@@ -383,6 +383,11 @@ public class SessionManager {
                     int timeout = Binary.readInt(Binary.subBytes(packet, offset, 4));
                     this.blockAddress(address, timeout);
                     break;
+                case RakNet.PACKET_UNBLOCK_ADDRESS:
+                    len = packet[offset++];
+                    address = new String(Binary.subBytes(packet, offset, len), StandardCharsets.UTF_8);
+                    this.unblockAddress(address);
+                    break;
                 case RakNet.PACKET_SHUTDOWN:
                     for (Session session : new ArrayList<>(this.sessions.values())) {
                         this.removeSession(session);
@@ -418,6 +423,10 @@ public class SessionManager {
         } else if (this.block.get(address) < finalTime) {
             this.block.put(address, finalTime);
         }
+    }
+
+    public void unblockAddress(String address) {
+        this.block.remove(address);
     }
 
     public Session getSession(String ip, int port) {

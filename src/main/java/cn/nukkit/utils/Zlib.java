@@ -9,24 +9,47 @@ import java.util.zip.InflaterInputStream;
 
 
 public abstract class Zlib {
-    
+
     public static byte[] deflate(byte[] data) throws Exception {
         return deflate(data, Deflater.DEFAULT_COMPRESSION);
     }
 
     public static byte[] deflate(byte[] data, int level) throws Exception {
-        Deflater deflater = getDef(level);
-        if(deflater == null) throw new IllegalArgumentException("No deflate for level "+level+" !");
+        Deflater deflater = new Deflater(level);
         deflater.reset();
         deflater.setInput(data);
         deflater.finish();
         ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length);
-        while (!deflater.finished()) {
-            int i = deflater.deflate(buf.get());
-            bos.write(buf.get(), 0, i);
+        byte[] buf = new byte[1024];
+        try {
+            while (!deflater.finished()) {
+                int i = deflater.deflate(buf);
+                bos.write(buf, 0, i);
+            }
+        } finally {
+            deflater.end();
         }
-        //Deflater::end is called the time when the process exits.
         return bos.toByteArray();
+    }
+
+    public static byte[] inflate(InputStream stream) throws IOException {
+        InflaterInputStream inputStream = new InflaterInputStream(stream);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+
+        try {
+            while ((length = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, length);
+            }
+        } finally {
+            buffer = outputStream.toByteArray();
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
+        }
+
+        return buffer;
     }
 
     public static byte[] inflate(byte[] data) throws IOException {
@@ -37,35 +60,4 @@ public abstract class Zlib {
         return inflate(new ByteArrayInputStream(data, 0, maxSize));
     }
 
-    /* -=-=-=-=-=- Internal -=-=-=-=-=- Do NOT attempt to use in production -=-=-=-=-=- */
-
-    private static final ThreadLocal<byte[]> buf = ThreadLocal.withInitial(() -> new byte[1024]);
-    private static final ThreadLocal<Deflater> def = ThreadLocal.withInitial(Deflater::new);
-
-    private static Deflater getDef(int level) {
-        def.get().setLevel(level);
-        return def.get();
-    }
-
-    private static byte[] inflate(InputStream stream) throws IOException {
-        InflaterInputStream inputStream = new InflaterInputStream(stream);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        int length;
-
-        try {
-            while ((length = inputStream.read(buf.get())) != -1) {
-                outputStream.write(buf.get(), 0, length);
-            }
-        } finally {
-            buf.set(outputStream.toByteArray());
-            outputStream.flush();
-            outputStream.close();
-            inputStream.close();
-        }
-
-        return buf.get();
-    }
-
-
 }
-

@@ -6,7 +6,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- *
  * @author PikyCZ
  */
 public class EntityLlama extends EntityAnimal {

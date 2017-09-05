@@ -59,7 +59,7 @@ public class EntityMooshroom extends EntityAnimal {
         super.initEntity();
         setMaxHealth(10);
     }
-    
+
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();

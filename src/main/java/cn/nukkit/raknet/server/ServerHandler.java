@@ -78,6 +78,15 @@ public class ServerHandler {
         this.server.pushMainToThreadPacket(buffer);
     }
 
+    public void unblockAddress(String address) {
+        byte[] buffer = Binary.appendBytes(
+                RakNet.PACKET_UNBLOCK_ADDRESS,
+                new byte[]{(byte) (address.length() & 0xff)},
+                address.getBytes(StandardCharsets.UTF_8)
+        );
+        this.server.pushMainToThreadPacket(buffer);
+    }
+
     public void shutdown() {
         this.server.pushMainToThreadPacket(new byte[]{RakNet.PACKET_SHUTDOWN});
         this.server.shutdown();

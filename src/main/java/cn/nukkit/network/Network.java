@@ -211,6 +211,12 @@ public class Network {
         }
     }
 
+    public void unblockAddress(String address) {
+        for (AdvancedSourceInterface interfaz : this.advancedInterfaces) {
+            interfaz.unblockAddress(address);
+        }
+    }
+
     private void registerPackets() {
         this.packetPool = new Class[256];
 

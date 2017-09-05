@@ -89,12 +89,19 @@ public abstract class RakNet {
     public static final byte PACKET_RAW = 0x08;
 
     /*
-     * RAW payload:
+     * BLOCK_ADDRESS payload:
      * byte (address length)
      * byte[] (address)
      * int (timeout)
      */
     public static final byte PACKET_BLOCK_ADDRESS = 0x09;
+
+    /*
+     * UNBLOCK_ADDRESS payload:
+     * byte (adress length)
+     * byte[] (address)
+     */
+    public static final byte PACKET_UNBLOCK_ADDRESS = 0x10;
 
     /*
      * No payload

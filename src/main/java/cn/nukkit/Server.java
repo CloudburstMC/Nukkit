@@ -17,7 +17,8 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
-import cn.nukkit.inventory.*;
+import cn.nukkit.inventory.CraftingManager;
+import cn.nukkit.inventory.Recipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
@@ -48,7 +49,10 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.*;
+import cn.nukkit.network.protocol.BatchPacket;
+import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.PlayerListPacket;
+import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.permission.BanEntry;
@@ -889,22 +893,7 @@ public class Server {
     }
 
     public void sendRecipeList(Player player) {
-        CraftingDataPacket pk = new CraftingDataPacket();
-        pk.cleanRecipes = true;
-
-        for (Recipe recipe : this.getCraftingManager().getRecipes().values()) {
-            if (recipe instanceof ShapedRecipe) {
-                pk.addShapedRecipe((ShapedRecipe) recipe);
-            } else if (recipe instanceof ShapelessRecipe) {
-                pk.addShapelessRecipe((ShapelessRecipe) recipe);
-            }
-        }
-
-        for (FurnaceRecipe recipe : this.getCraftingManager().getFurnaceRecipes().values()) {
-            pk.addFurnaceRecipe(recipe);
-        }
-
-        player.dataPacket(pk);
+        player.dataPacket(CraftingManager.packet);
     }
 
     private void checkTickUpdates(int currentTick, long tickTime) {

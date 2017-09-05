@@ -49,6 +49,7 @@ Get Nukkit & Plugins
 *These sites are provided by our users, Nukkit staff are not responsible for the reliability of these sites. Jar files downloaded here are only for reference - to try the latest update or for commercial uses, compile by yourself.*
 
 * __[Jenkins by MengCraft](http://ci.mengcraft.com:8080/job/Nukkit/lastSuccessfulBuild/)__ (**UNOFFICIAL**)
+* __[Yivesmirror](https://yivesmirror.com/downloads/nukkit)__ (**UNOFFICIAL**)
 
 Build JAR file
 -------------

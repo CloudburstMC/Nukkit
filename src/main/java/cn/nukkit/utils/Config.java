@@ -99,6 +99,10 @@ public class Config {
         this.load(file, type, defaultMap);
     }
 
+    public Config(File file, int type, ConfigSection defaultMap) {
+        this.load(file.toString(), type, defaultMap);
+    }
+
     @Deprecated
     public Config(File file, int type, LinkedHashMap<String, Object> defaultMap) {
         this(file.toString(), type, new ConfigSection(defaultMap));
