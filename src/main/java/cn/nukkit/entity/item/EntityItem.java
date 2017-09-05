@@ -29,12 +29,12 @@ public class EntityItem extends Entity {
         return NETWORK_ID;
     }
 
-    protected String owner = null;
-    protected String thrower = null;
+    protected String owner;
+    protected String thrower;
 
     protected Item item;
 
-    protected int pickupDelay = 0;
+    protected int pickupDelay;
 
     @Override
     public float getWidth() {

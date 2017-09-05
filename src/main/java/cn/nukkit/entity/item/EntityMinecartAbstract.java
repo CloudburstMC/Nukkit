@@ -56,7 +56,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             {{0, 0, -1}, {1, 0, 0}}
     };
     private double currentSpeed = 0;
-    private Block blockInside = null;
+    private Block blockInside;
     // Plugins modifiers
     private boolean slowWhenEmpty = true;
     private double derailedX = 0.5;
