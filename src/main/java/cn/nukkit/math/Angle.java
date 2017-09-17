@@ -1,5 +1,7 @@
 package cn.nukkit.math;
 
+import java.util.Locale;
+
 import static java.lang.Math.*;
 
 /**
@@ -96,7 +98,8 @@ public final class Angle implements Comparable<Angle> {
 
   @Override
   public String toString() {
-    return String.format("Angle[%s, %f%s = %f%s] [%d]",
+    return String.format(Locale.ROOT,
+            "Angle[%s, %f%s = %f%s] [%d]",
             isOriginDouble ? "Double" : "Float",
             isOriginDouble ? doubleValue : floatValue,
             isDegree ? "deg" : "rad",
