@@ -4,7 +4,8 @@ package cn.nukkit.utils;
  * author: MagicDroidX
  * Nukkit Project
  */
-public enum LogLevel {
+public enum LogLevel implements Comparable<LogLevel> {
+    NONE,
     EMERGENCY,
     ALERT,
     CRITICAL,
@@ -12,5 +13,10 @@ public enum LogLevel {
     WARNING,
     NOTICE,
     INFO,
-    DEBUG
+    DEBUG;
+    public static final LogLevel DEFAULT_LEVEL = INFO;
+
+    int getLevel() {
+        return ordinal();
+    }
 }

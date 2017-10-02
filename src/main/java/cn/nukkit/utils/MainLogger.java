@@ -22,24 +22,28 @@ public class MainLogger extends ThreadedLogger {
     protected final String logPath;
     protected final ConcurrentLinkedQueue<String> logBuffer = new ConcurrentLinkedQueue<>();
     protected boolean shutdown;
-    protected boolean logDebug = false;
+    protected LogLevel logLevel = LogLevel.DEFAULT_LEVEL;
     private final Map<TextFormat, String> replacements = new EnumMap<>(TextFormat.class);
     private final TextFormat[] colors = TextFormat.values();
 
     protected static MainLogger logger;
 
     public MainLogger(String logFile) {
-        this(logFile, false);
+        this(logFile, LogLevel.DEFAULT_LEVEL);
     }
 
-    public MainLogger(String logFile, boolean logDebug) {
+    public MainLogger(String logFile, LogLevel logLevel) {
+
         if (logger != null) {
             throw new RuntimeException("MainLogger has been already created");
         }
         logger = this;
         this.logPath = logFile;
-        this.logDebug = logDebug;
         this.start();
+    }
+
+    public MainLogger(String logFile, boolean logDebug) {
+        this(logFile, logDebug ? LogLevel.DEBUG : LogLevel.INFO);
     }
 
     public static MainLogger getLogger() {
@@ -48,49 +52,54 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void emergency(String message) {
-        this.send(TextFormat.RED + "[EMERGENCY] " + message);
+        if (logLevel.getLevel() <= LogLevel.EMERGENCY.getLevel())
+            this.send(TextFormat.RED + "[EMERGENCY] " + message);
     }
 
     @Override
     public void alert(String message) {
-        this.send(TextFormat.RED + "[ALERT] " + message);
+        if (logLevel.getLevel() <= LogLevel.ALERT.getLevel())
+            this.send(TextFormat.RED + "[ALERT] " + message);
     }
 
     @Override
     public void critical(String message) {
-        this.send(TextFormat.RED + "[CRITICAL] " + message);
+        if (logLevel.getLevel() <= LogLevel.CRITICAL.getLevel())
+            this.send(TextFormat.RED + "[CRITICAL] " + message);
     }
 
     @Override
     public void error(String message) {
-        this.send(TextFormat.DARK_RED + "[ERROR] " + message);
+        if (logLevel.getLevel() <= LogLevel.ERROR.getLevel())
+            this.send(TextFormat.DARK_RED + "[ERROR] " + message);
     }
 
     @Override
     public void warning(String message) {
-        this.send(TextFormat.YELLOW + "[WARNING] " + message);
+        if (logLevel.getLevel() <= LogLevel.WARNING.getLevel())
+            this.send(TextFormat.YELLOW + "[WARNING] " + message);
     }
 
     @Override
     public void notice(String message) {
-        this.send(TextFormat.AQUA + "[NOTICE] " + message);
+        if (logLevel.getLevel() <= LogLevel.NOTICE.getLevel())
+            this.send(TextFormat.AQUA + "[NOTICE] " + message);
     }
 
     @Override
     public void info(String message) {
-        this.send(TextFormat.WHITE + "[INFO] " + message);
+        if (logLevel.getLevel() <= LogLevel.INFO.getLevel())
+            this.send(TextFormat.WHITE + "[INFO] " + message);
     }
 
     @Override
     public void debug(String message) {
-        if (!this.logDebug) {
-            return;
-        }
-        this.send(TextFormat.GRAY + "[DEBUG] " + message);
+        if (logLevel.getLevel() <= LogLevel.DEBUG.getLevel())
+            this.send(TextFormat.GRAY + "[DEBUG] " + message);
     }
 
     public void setLogDebug(Boolean logDebug) {
-        this.logDebug = logDebug;
+        this.logLevel = logDebug ? LogLevel.INFO : LogLevel.DEBUG;
     }
 
     public void logException(Exception e) {
