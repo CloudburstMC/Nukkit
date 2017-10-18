@@ -20,7 +20,11 @@ Nukkit will create a bug report for EVERY exception and error detected, and ther
 
 In the report, you can see if the error is caused by Nukkit or a plugin. However, when "PLUGIN ERROR" is "false" and there are plugins running, it does not necessarily indicates that the error is caused by Nukkit.
  
-While sending issues, please provide **as much information as you could**, or our developers might got stuck or confused when looking into your issue. 
+To sumbit bugs and problems, please upload the automaticly generated report. Make sure you have filled in all blanks in the template. Please provide **as much information as you could**, or our developers might got stuck or confused when looking into your issue. 
+
+To submit feature requests and suggestions, please explicitly describe the feature you want or your suggestion.
+
+Note that the Issues section on GitHub is not for contents that are not related to the two categories listed above. Irrelevant issues will be closed. Please visit our forums for other kinds of discussions.
 
 Example
 ---
