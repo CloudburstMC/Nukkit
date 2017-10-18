@@ -24,7 +24,7 @@ To sumbit bugs and problems, please upload the automaticly generated report. Mak
 
 To submit feature requests and suggestions, please explicitly describe the feature you want or your suggestion.
 
-Note that the Issues section on GitHub is not for contents that are not related to the two categories listed above. Irrelevant issues will be closed. Please visit our forums for other kinds of discussions.
+**Note that the Issues section on GitHub is not for contents that are not related to the two categories listed above. Irrelevant issues will be closed. Please visit our forums for other kinds of discussions.**
 
 Example
 ---
