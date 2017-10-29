@@ -52,49 +52,49 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void emergency(String message) {
-        if (logLevel.getLevel() <= LogLevel.EMERGENCY.getLevel())
+        if (LogLevel.EMERGENCY.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.RED + "[EMERGENCY] " + message);
     }
 
     @Override
     public void alert(String message) {
-        if (logLevel.getLevel() <= LogLevel.ALERT.getLevel())
+        if (LogLevel.ALERT.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.RED + "[ALERT] " + message);
     }
 
     @Override
     public void critical(String message) {
-        if (logLevel.getLevel() <= LogLevel.CRITICAL.getLevel())
+        if (LogLevel.CRITICAL.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.RED + "[CRITICAL] " + message);
     }
 
     @Override
     public void error(String message) {
-        if (logLevel.getLevel() <= LogLevel.ERROR.getLevel())
+        if (LogLevel.ERROR.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.DARK_RED + "[ERROR] " + message);
     }
 
     @Override
     public void warning(String message) {
-        if (logLevel.getLevel() <= LogLevel.WARNING.getLevel())
+        if (LogLevel.WARNING.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.YELLOW + "[WARNING] " + message);
     }
 
     @Override
     public void notice(String message) {
-        if (logLevel.getLevel() <= LogLevel.NOTICE.getLevel())
+        if (LogLevel.NOTICE.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.AQUA + "[NOTICE] " + message);
     }
 
     @Override
     public void info(String message) {
-        if (logLevel.getLevel() <= LogLevel.INFO.getLevel())
+        if (LogLevel.INFO.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.WHITE + "[INFO] " + message);
     }
 
     @Override
     public void debug(String message) {
-        if (logLevel.getLevel() <= LogLevel.DEBUG.getLevel())
+        if (LogLevel.DEBUG.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.GRAY + "[DEBUG] " + message);
     }
 
