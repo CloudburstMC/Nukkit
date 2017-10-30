@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.vehicle.VehicleDamageEvent;
+import cn.nukkit.event.vehicle.VehicleDestroyEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
@@ -93,11 +95,30 @@ public class EntityBoat extends EntityVehicle {
         if (invulnerable) {
             return false;
         } else {
-            performHurtAnimation((int) source.getFinalDamage());
+            // Event start
+            VehicleDamageEvent event = new VehicleDamageEvent(this, source.getEntity(), source.getFinalDamage());
+            getServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return false;
+            }
+            // Event stop
+            performHurtAnimation((int) event.getDamage());
 
-            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-            boolean instantKill = damager instanceof Player && ((Player) damager).isCreative();
+            boolean instantKill = false;
+
+            if (source instanceof EntityDamageByEntityEvent) {
+                Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+                instantKill = damager instanceof Player && ((Player) damager).isCreative();
+            }
+
             if (instantKill || getDamage() > 40) {
+                // Event start
+                VehicleDestroyEvent event2 = new VehicleDestroyEvent(this, source.getEntity());
+                getServer().getPluginManager().callEvent(event2);
+                if (event2.isCancelled()) {
+                    return false;
+                }
+                // Event stop
                 if (linkedEntity != null) {
                     mountEntity(linkedEntity);
                 }

@@ -16,7 +16,7 @@ public abstract class Zlib {
 
     public static byte[] deflate(byte[] data, int level) throws Exception {
         Deflater deflater = getDef(level);
-        if(deflater == null) throw new IllegalArgumentException("No deflate for level "+level+" !");
+        if (deflater == null) throw new IllegalArgumentException("No deflate for level " + level + " !");
         deflater.reset();
         deflater.setInput(data);
         deflater.finish();
@@ -65,7 +65,4 @@ public abstract class Zlib {
 
         return buf.get();
     }
-
-
 }
-

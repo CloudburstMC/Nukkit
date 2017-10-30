@@ -13,8 +13,8 @@ public class AnimatePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.action = (int) this.getUnsignedVarInt();
-        this.eid = getVarLong();
+        this.action = this.getVarInt();
+        this.eid = getEntityRuntimeId();
         if ((this.action & 0x80) != 0) {
             this.unknown = this.getLFloat();
         }
@@ -23,8 +23,8 @@ public class AnimatePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(this.action);
-        this.putVarLong(this.eid);
+        this.putVarInt(this.action);
+        this.putEntityRuntimeId(this.eid);
         if ((this.action & 0x80) != 0) {
             this.putLFloat(this.unknown);
         }

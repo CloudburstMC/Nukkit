@@ -4,8 +4,8 @@ public class UpdateTradePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.UPDATE_TRADE_PACKET;
 
-    public byte unknownByte1;
-    public byte unknownByte2;
+    public byte windowId;
+    public byte windowType = 15; //trading id
     public int unknownVarInt1;
     public int unknownVarInt2;
     public boolean isWilling;
@@ -26,13 +26,14 @@ public class UpdateTradePacket extends DataPacket {
 
     @Override
     public void encode() {
-        this.putByte(unknownByte1);
-        this.putByte(unknownByte2);
+        this.reset();
+        this.putByte(windowId);
+        this.putByte(windowType);
         this.putVarInt(unknownVarInt1);
         this.putVarInt(unknownVarInt2);
         this.putBoolean(isWilling);
-        this.putVarLong(player);
-        this.putVarLong(trader);
+        this.putEntityUniqueId(player);
+        this.putEntityUniqueId(trader);
         this.putString(displayName);
         this.put(this.offers);
     }

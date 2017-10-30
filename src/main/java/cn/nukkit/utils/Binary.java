@@ -18,6 +18,30 @@ import java.util.UUID;
  */
 public class Binary {
 
+    public static int signByte(int value) {
+        return value << 56 >> 56;
+    }
+
+    public static int unsignByte(int value) {
+        return value & 0xff;
+    }
+
+    public static int signShort(int value) {
+        return value << 48 >> 48;
+    }
+
+    public int unsignShort(int value) {
+        return value & 0xffff;
+    }
+
+    public static int signInt(int value) {
+        return value << 32 >> 32;
+    }
+
+    public static int unsignInt(int value) {
+        return value;
+    }
+
     //Triad: {0x00,0x00,0x01}<=>1
     public static int readTriad(byte[] bytes) {
         return readInt(new byte[]{
@@ -55,7 +79,7 @@ public class Binary {
     }
 
     public static UUID readUUID(byte[] bytes) {
-        return new UUID(readLong(bytes), readLong(new byte[]{
+        return new UUID(readLLong(bytes), readLLong(new byte[]{
                 bytes[8],
                 bytes[9],
                 bytes[10],
@@ -68,7 +92,7 @@ public class Binary {
     }
 
     public static byte[] writeUUID(UUID uuid) {
-        return appendBytes(writeLong(uuid.getMostSignificantBits()), writeLong(uuid.getLeastSignificantBits()));
+        return appendBytes(writeLLong(uuid.getMostSignificantBits()), writeLLong(uuid.getLeastSignificantBits()));
     }
 
     public static byte[] writeMetadata(EntityMetadata metadata) {
@@ -99,14 +123,12 @@ public class Binary {
                     break;
                 case Entity.DATA_TYPE_SLOT:
                     SlotEntityData slot = (SlotEntityData) d;
-                    stream.putLShort(slot.blockId);
-                    stream.putByte((byte) slot.meta);
-                    stream.putLShort(slot.count);
+                    stream.putSlot(slot.getData());
                     break;
                 case Entity.DATA_TYPE_POS:
                     IntPositionEntityData pos = (IntPositionEntityData) d;
                     stream.putVarInt(pos.x);
-                    stream.putByte((byte) pos.y);
+                    stream.putVarInt(pos.y);
                     stream.putVarInt(pos.z);
                     break;
                 case Entity.DATA_TYPE_LONG:
@@ -153,7 +175,7 @@ public class Binary {
                     value = new SlotEntityData(key, item.getId(), item.getDamage(), item.getCount());
                     break;
                 case Entity.DATA_TYPE_POS:
-                    BlockVector3 v3 = stream.getBlockCoords();
+                    BlockVector3 v3 = stream.getSignedBlockPosition();
                     value = new IntPositionEntityData(key, v3.x, v3.y, v3.z);
                     break;
                 case Entity.DATA_TYPE_LONG:

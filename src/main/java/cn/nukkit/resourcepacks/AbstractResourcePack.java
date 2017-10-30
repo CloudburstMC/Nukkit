@@ -9,7 +9,7 @@ public abstract class AbstractResourcePack implements ResourcePack {
     protected boolean verifyManifest() {
         if (this.manifest.has("format_version") && this.manifest.has("header") && this.manifest.has("modules")) {
             JsonObject header = this.manifest.getAsJsonObject("header");
-            return  header.has("description") &&
+            return header.has("description") &&
                     header.has("name") &&
                     header.has("uuid") &&
                     header.has("version") &&

@@ -25,7 +25,7 @@ public class StartGamePacket extends DataPacket {
     public int seed;
     public byte dimension;
     public int generator = 1;
-    public int gamemode;
+    public int worldGamemode;
     public int difficulty;
     public int spawnX;
     public int spawnY;
@@ -35,14 +35,23 @@ public class StartGamePacket extends DataPacket {
     public boolean eduMode = false;
     public float rainLevel;
     public float lightningLevel;
+    public boolean multiplayerGame = true;
+    public boolean broadcastToLAN = true;
+    public boolean broadcastToXboxLive = true;
     public boolean commandsEnabled;
     public boolean isTexturePacksRequired = false;
     public RuleData[] ruleDatas = new RuleData[0];
+    public boolean bonusChest = false;
+    public boolean trustPlayers = false;
+    public int permissionLevel = 1;
+    public int gamePublish = 4;
     public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
     public boolean unknown = false;
     public long currentTick;
+
+    public int enchantmentSeed;
 
     @Override
     public void decode() {
@@ -52,8 +61,8 @@ public class StartGamePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarLong(this.entityUniqueId);
-        this.putVarLong(this.entityRuntimeId);
+        this.putEntityUniqueId(this.entityUniqueId);
+        this.putEntityRuntimeId(this.entityRuntimeId);
         this.putVarInt(this.playerGamemode);
         this.putVector3f(this.x, this.y, this.z);
         this.putLFloat(this.yaw);
@@ -61,25 +70,33 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.seed);
         this.putVarInt(this.dimension);
         this.putVarInt(this.generator);
-        this.putVarInt(this.gamemode);
+        this.putVarInt(this.worldGamemode);
         this.putVarInt(this.difficulty);
-        this.putBlockCoords(this.spawnX, this.spawnY, this.spawnZ);
+        this.putBlockVector3(this.spawnX, this.spawnY, this.spawnZ);
         this.putBoolean(this.hasAchievementsDisabled);
         this.putVarInt(this.dayCycleStopTime);
         this.putBoolean(this.eduMode);
         this.putLFloat(this.rainLevel);
         this.putLFloat(this.lightningLevel);
+        this.putBoolean(this.multiplayerGame);
+        this.putBoolean(this.broadcastToLAN);
+        this.putBoolean(this.broadcastToXboxLive);
         this.putBoolean(this.commandsEnabled);
         this.putBoolean(this.isTexturePacksRequired);
         this.putUnsignedVarInt(this.ruleDatas.length);
         for (RuleData rule : this.ruleDatas) {
             this.putRuleData(rule);
         }
+        this.putBoolean(this.bonusChest);
+        this.putBoolean(this.trustPlayers);
+        this.putVarInt(this.permissionLevel);
+        this.putVarInt(this.gamePublish);
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
         this.putBoolean(this.unknown);
         this.putLLong(this.currentTick);
+        this.putVarInt(this.enchantmentSeed);
     }
 
 }

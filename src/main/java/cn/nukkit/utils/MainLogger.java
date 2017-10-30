@@ -99,7 +99,7 @@ public class MainLogger extends ThreadedLogger {
     }
 
     public void setLogDebug(Boolean logDebug) {
-        this.logLevel = logDebug ? LogLevel.INFO : LogLevel.DEBUG;
+        this.logLevel = logDebug ? LogLevel.DEBUG : LogLevel.INFO;
     }
 
     public void logException(Exception e) {

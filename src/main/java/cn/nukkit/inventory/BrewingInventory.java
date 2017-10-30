@@ -22,9 +22,21 @@ public class BrewingInventory extends ContainerInventory {
         setItem(0, item);
     }
 
+    public void setFuel(Item fuel) {
+        setItem(4, fuel);
+    }
+
+    public Item getFuel() {
+        return getItem(4);
+    }
+
     @Override
-    public void onSlotChange(int index, Item before) {
-        super.onSlotChange(index, before);
+    public void onSlotChange(int index, Item before, boolean send) {
+        super.onSlotChange(index, before, send);
+
+        if (index >= 0 && index <= 2) {
+            this.getHolder().updateBlock();
+        }
 
         this.getHolder().scheduleUpdate();
     }

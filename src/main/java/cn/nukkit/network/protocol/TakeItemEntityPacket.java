@@ -12,13 +12,15 @@ public class TakeItemEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.target = this.getEntityRuntimeId();
+        this.entityId = this.getEntityRuntimeId();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putVarLong(this.target);
-        this.putVarLong(this.entityId);
+        this.putEntityRuntimeId(this.target);
+        this.putEntityRuntimeId(this.entityId);
     }
 
     @Override

@@ -43,8 +43,8 @@ public class FurnaceInventory extends ContainerInventory {
     }
 
     @Override
-    public void onSlotChange(int index, Item before) {
-        super.onSlotChange(index, before);
+    public void onSlotChange(int index, Item before, boolean send) {
+        super.onSlotChange(index, before, send);
 
         this.getHolder().scheduleUpdate();
     }

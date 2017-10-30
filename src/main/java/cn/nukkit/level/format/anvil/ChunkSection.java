@@ -251,11 +251,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public byte[] getBytes() {
-        ByteBuffer buffer = ByteBuffer.allocate(10240);
+        ByteBuffer buffer = ByteBuffer.allocate(6144);
         byte[] blocks = new byte[4096];
         byte[] data = new byte[2048];
-        byte[] skyLight = new byte[2048];
-        byte[] blockLight = new byte[2048];
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 int i = (x << 7) | (z << 3);
@@ -265,20 +263,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                     int b1 = this.getBlockData(x, y, z);
                     int b2 = this.getBlockData(x, y + 1, z);
                     data[i | (y >> 1)] = (byte) ((b2 << 4) | b1);
-                    b1 = this.getBlockSkyLight(x, y, z);
-                    b2 = this.getBlockSkyLight(x, y + 1, z);
-                    skyLight[i | (y >> 1)] = (byte) ((b2 << 4) | b1);
-                    b1 = this.getBlockLight(x, y, z);
-                    b2 = this.getBlockLight(x, y + 1, z);
-                    blockLight[i | (y >> 1)] = (byte) ((b2 << 4) | b1);
                 }
             }
         }
         return buffer
                 .put(blocks)
                 .put(data)
-                .put(skyLight)
-                .put(blockLight)
                 .array();
     }
 

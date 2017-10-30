@@ -12,16 +12,16 @@ public class ContainerClosePacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    public int windowid;
+    public int windowId;
 
     @Override
     public void decode() {
-        this.windowid = this.getByte();
+        this.windowId = this.getByte();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putByte((byte) this.windowid);
+        this.putByte((byte) this.windowId);
     }
 }

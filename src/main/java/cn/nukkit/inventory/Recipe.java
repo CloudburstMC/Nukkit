@@ -17,4 +17,8 @@ public interface Recipe {
     UUID getId();
 
     void setId(UUID id);
+
+    default boolean requiresCraftingTable() {
+        return false;
+    }
 }

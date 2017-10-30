@@ -120,7 +120,11 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         /**
          * Damage reduction caused by the Resistance potion effect
          */
-        RESISTANCE
+        RESISTANCE,
+        /**
+         * Damage reduction caused by the Damage absorption effect
+         */
+        ABSORPTION
 
         //ARMOR_ENCHANTMENTS
     }

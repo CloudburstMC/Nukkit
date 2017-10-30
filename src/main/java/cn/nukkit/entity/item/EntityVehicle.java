@@ -18,7 +18,7 @@ import java.util.Objects;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class EntityVehicle extends EntityInteractable implements EntityRideable {
+public abstract class EntityVehicle extends Entity implements EntityRideable, EntityInteractable {
 
     public EntityVehicle(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -64,6 +64,7 @@ public abstract class EntityVehicle extends EntityInteractable implements Entity
      * @param entity The target Entity
      * @return {@code true} if the mounting successful
      */
+    @Override
     public boolean mountEntity(Entity entity) {
         Objects.requireNonNull(entity, "The target of the mounting entity can't be null");
         this.PitchDelta = 0.0D;

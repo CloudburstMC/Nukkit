@@ -15,7 +15,7 @@ import cn.nukkit.utils.TextFormat;
 public class OpCommand extends VanillaCommand {
 
     public OpCommand(String name) {
-        super(name, "%nukkit.command.op.description", "%commands.op.usage");
+        super(name, "%nukkit.command.op.description", "%commands.op.description");
         this.setPermission("nukkit.command.op.give");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
@@ -38,7 +38,7 @@ public class OpCommand extends VanillaCommand {
 
         Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", player.getName()));
         if (player instanceof Player) {
-            ((Player) player).sendMessage(TextFormat.GRAY + "You are now op!");
+            ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
         }
 
         player.setOp(true);

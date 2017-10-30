@@ -261,6 +261,11 @@ public class Effect implements Cloneable {
             entity.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_INVISIBLE, true);
             entity.setNameTagVisible(false);
         }
+
+        if (this.id == Effect.ABSORPTION) {
+            int add = (this.amplifier + 1) * 4;
+            if (add > entity.getAbsorption()) entity.setAbsorption(add);
+        }
     }
 
     public void remove(Entity entity) {
@@ -280,6 +285,10 @@ public class Effect implements Cloneable {
         if (this.id == Effect.INVISIBILITY) {
             entity.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_INVISIBLE, false);
             entity.setNameTagVisible(true);
+        }
+
+        if (this.id == Effect.ABSORPTION) {
+            entity.setAbsorption(0);
         }
     }
 

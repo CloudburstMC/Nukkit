@@ -52,7 +52,7 @@ public class BlockRailDetector extends BlockRail {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {            
+        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             updateState();
             return type;
         }

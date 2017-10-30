@@ -24,7 +24,7 @@ public class DifficultyCommand extends VanillaCommand {
         });
         this.commandParameters.put("byString", new CommandParameter[]{
                 new CommandParameter("difficulty", new String[]{"peaceful", "p", "easy", "e",
-                    "normal", "n", "hard", "h"})
+                        "normal", "n", "hard", "h"})
         });
     }
 

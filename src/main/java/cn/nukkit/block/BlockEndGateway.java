@@ -4,7 +4,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
 /**
- *
  * @author PikyCZ
  */
 public class BlockEndGateway extends BlockSolid {

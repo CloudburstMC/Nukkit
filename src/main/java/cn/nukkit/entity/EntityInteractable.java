@@ -1,20 +1,13 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.nbt.tag.CompoundTag;
-
 /**
  * @author Adam Matthew
  */
-public abstract class EntityInteractable extends Entity {
-
-    public EntityInteractable(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-    }
+public interface EntityInteractable {
 
     // Todo: Passive entity?? i18n and boat leaving text
-    public abstract String getInteractButtonText();
+    String getInteractButtonText();
 
-    public abstract boolean canDoInteraction();
+    boolean canDoInteraction();
 
 }

@@ -57,7 +57,7 @@ public class ServerScheduler {
     public TaskHandler scheduleTask(Plugin plugin, Runnable task) {
         return addTask(plugin, task, 0, 0, false);
     }
-    
+
     /**
      * @deprecated Use {@link #scheduleTask(Plugin, Runnable, boolean)
      */
@@ -69,7 +69,7 @@ public class ServerScheduler {
     public TaskHandler scheduleTask(Plugin plugin, Runnable task, boolean asynchronous) {
         return addTask(plugin, task, 0, 0, asynchronous);
     }
-    
+
     /**
      * @deprecated Use {@link #scheduleAsyncTask(Plugin, AsyncTask)
      */
@@ -81,7 +81,7 @@ public class ServerScheduler {
     public TaskHandler scheduleAsyncTask(Plugin plugin, AsyncTask task) {
         return addTask(plugin, task, 0, 0, true);
     }
-    
+
     @Deprecated
     public void scheduleAsyncTaskToWorker(AsyncTask task, int worker) {
         scheduleAsyncTask(task);
@@ -114,7 +114,7 @@ public class ServerScheduler {
     public TaskHandler scheduleDelayedTask(Plugin plugin, Runnable task, int delay) {
         return addTask(plugin, task, delay, 0, false);
     }
-    
+
     /**
      * @deprecated Use {@link #scheduleDelayedTask(Plugin, Runnable, int, boolean)
      */
@@ -126,7 +126,7 @@ public class ServerScheduler {
     public TaskHandler scheduleDelayedTask(Plugin plugin, Runnable task, int delay, boolean asynchronous) {
         return addTask(plugin, task, delay, 0, asynchronous);
     }
-    
+
     /**
      * @deprecated Use {@link #scheduleRepeatingTask(Plugin, Runnable, int)
      */
@@ -134,7 +134,7 @@ public class ServerScheduler {
     public TaskHandler scheduleRepeatingTask(Runnable task, int period) {
         return addTask(null, task, 0, period, false);
     }
-    
+
     public TaskHandler scheduleRepeatingTask(Plugin plugin, Runnable task, int period) {
         return addTask(plugin, task, 0, period, false);
     }
@@ -150,7 +150,7 @@ public class ServerScheduler {
     public TaskHandler scheduleRepeatingTask(Plugin plugin, Runnable task, int period, boolean asynchronous) {
         return addTask(plugin, task, 0, period, asynchronous);
     }
-    
+
     public TaskHandler scheduleRepeatingTask(Task task, int period) {
         return addTask(task, 0, period, false);
     }
@@ -174,7 +174,7 @@ public class ServerScheduler {
     public TaskHandler scheduleDelayedRepeatingTask(Runnable task, int delay, int period) {
         return addTask(null, task, delay, period, false);
     }
-    
+
     public TaskHandler scheduleDelayedRepeatingTask(Plugin plugin, Runnable task, int delay, int period) {
         return addTask(plugin, task, delay, period, false);
     }
@@ -186,7 +186,7 @@ public class ServerScheduler {
     public TaskHandler scheduleDelayedRepeatingTask(Runnable task, int delay, int period, boolean asynchronous) {
         return addTask(null, task, delay, period, asynchronous);
     }
-    
+
     public TaskHandler scheduleDelayedRepeatingTask(Plugin plugin, Runnable task, int delay, int period, boolean asynchronous) {
         return addTask(plugin, task, delay, period, asynchronous);
     }

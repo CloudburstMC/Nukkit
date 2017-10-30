@@ -8,19 +8,19 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
  * @author Tee7even
  */
 public class LevelSoundEventSound extends Sound {
-    protected final byte type;
+    protected final int type;
     protected int extraData;
     protected int pitch;
 
-    public LevelSoundEventSound(Vector3 pos, byte type) {
+    public LevelSoundEventSound(Vector3 pos, int type) {
         this(pos, type, -1, -1);
     }
 
-    public LevelSoundEventSound(Vector3 pos, byte type, int extraData) {
+    public LevelSoundEventSound(Vector3 pos, int type, int extraData) {
         this(pos, type, extraData, -1);
     }
 
-    public LevelSoundEventSound(Vector3 pos, byte type, int extraData, int pitch) {
+    public LevelSoundEventSound(Vector3 pos, int type, int extraData, int pitch) {
         super(pos.x, pos.y, pos.z);
         this.type = type;
         this.extraData = extraData;

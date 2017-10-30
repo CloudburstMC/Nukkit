@@ -78,20 +78,20 @@ public class TitleCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                     return false;
             }
-        } else if (args.length == 3){
+        } else if (args.length == 3) {
             switch (args[1].toLowerCase()) {
                 case "title":
                     player.sendTitle(args[2]);
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.title", new String[]{TextFormat.clean(args[2]), player.getName()}));
                     break;
-                case "subtitle":
+                /*case "subtitle":
                     player.setSubtitle(args[2]);
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.subtitle", new String[]{TextFormat.clean(args[2]), player.getName()}));
                     break;
                 case "actionbar":
                     player.sendActionBarTitle(args[2]);
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.actionbar", new String[]{TextFormat.clean(args[2]), player.getName()}));
-                    break;
+                    break;*/
                 default:
                     sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                     return false;
@@ -99,9 +99,9 @@ public class TitleCommand extends VanillaCommand {
         } else if (args.length == 5) {
             if (args[1].toLowerCase().equals("times")) {
                 try {
-                    player.setTitleAnimationTimes(Integer.valueOf(args[2]), //fadeIn
+                    /*player.setTitleAnimationTimes(Integer.valueOf(args[2]), //fadeIn
                             Integer.valueOf(args[3]), //stay
-                            Integer.valueOf(args[4])); //fadeOut
+                            Integer.valueOf(args[4])); //fadeOut*/
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.times.success", new String[]{
                             args[2], args[3], args[4], player.getName()}));
                 } catch (NumberFormatException exception) {

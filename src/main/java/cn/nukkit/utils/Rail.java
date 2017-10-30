@@ -4,7 +4,10 @@ import cn.nukkit.api.API;
 import cn.nukkit.block.Block;
 import cn.nukkit.math.BlockFace;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static cn.nukkit.math.BlockFace.*;
@@ -25,16 +28,16 @@ public final class Rail {
     }
 
     public enum Orientation {
-        STRAIGHT_NORTH_SOUTH  (0, STRAIGHT,   NORTH,  SOUTH,  null),
-        STRAIGHT_EAST_WEST    (1, STRAIGHT,   EAST,   WEST,   null),
-        ASCENDING_EAST        (2, ASCENDING,  EAST,   WEST,   EAST),
-        ASCENDING_WEST        (3, ASCENDING,  EAST,   WEST,   WEST),
-        ASCENDING_NORTH       (4, ASCENDING,  NORTH,  SOUTH,  NORTH),
-        ASCENDING_SOUTH       (5, ASCENDING,  NORTH,  SOUTH,  SOUTH),
-        CURVED_SOUTH_EAST     (6, CURVED,     SOUTH,  EAST,   null),
-        CURVED_SOUTH_WEST     (7, CURVED,     SOUTH,  WEST,   null),
-        CURVED_NORTH_WEST     (8, CURVED,     NORTH,  WEST,   null),
-        CURVED_NORTH_EAST     (9, CURVED,     NORTH,  EAST,   null);
+        STRAIGHT_NORTH_SOUTH(0, STRAIGHT, NORTH, SOUTH, null),
+        STRAIGHT_EAST_WEST(1, STRAIGHT, EAST, WEST, null),
+        ASCENDING_EAST(2, ASCENDING, EAST, WEST, EAST),
+        ASCENDING_WEST(3, ASCENDING, EAST, WEST, WEST),
+        ASCENDING_NORTH(4, ASCENDING, NORTH, SOUTH, NORTH),
+        ASCENDING_SOUTH(5, ASCENDING, NORTH, SOUTH, SOUTH),
+        CURVED_SOUTH_EAST(6, CURVED, SOUTH, EAST, null),
+        CURVED_SOUTH_WEST(7, CURVED, SOUTH, WEST, null),
+        CURVED_NORTH_WEST(8, CURVED, NORTH, WEST, null),
+        CURVED_NORTH_EAST(9, CURVED, NORTH, EAST, null);
 
         private static final Orientation[] META_LOOKUP = new Orientation[values().length];
         private final int meta;

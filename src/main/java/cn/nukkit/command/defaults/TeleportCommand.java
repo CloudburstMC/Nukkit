@@ -28,10 +28,10 @@ public class TeleportCommand extends VanillaCommand {
         });
         this.commandParameters.put("Player->Pos", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
-                new CommandParameter("pos", CommandParameter.ARG_TYPE_BLOCK_POS, false),
+                new CommandParameter("blockPos", CommandParameter.ARG_TYPE_BLOCK_POS, false),
         });
         this.commandParameters.put("->Pos", new CommandParameter[]{
-                new CommandParameter("pos", CommandParameter.ARG_TYPE_BLOCK_POS, false),
+                new CommandParameter("blockPos", CommandParameter.ARG_TYPE_BLOCK_POS, false),
         });
     }
 
