@@ -21,7 +21,7 @@ public class EffectCommand extends Command {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
-                new CommandParameter("effect", false, getEffects()),
+                new CommandParameter("effect", false),
                 new CommandParameter("seconds", CommandParameter.ARG_TYPE_INT, true),
                 new CommandParameter("amplifier", true),
                 new CommandParameter("hideParticle", CommandParameter.ARG_TYPE_BOOL, true)
@@ -110,13 +110,6 @@ public class EffectCommand extends Command {
             Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.effect.success", new String[]{effect.getName(), String.valueOf(effect.getId()), String.valueOf(effect.getAmplifier()), player.getDisplayName(), String.valueOf(effect.getDuration() / 20)}));
         }
         return true;
-    }
-    private String[] getEffects(){
-        String[] effects = new String[24];
-        for (int i = 0; i < 24; i++){
-            if (Effect.getEffect(i) != null) effects[i] = Effect.getEffect(i).getName();
-        }
-        return effects;
     }
 
 }
