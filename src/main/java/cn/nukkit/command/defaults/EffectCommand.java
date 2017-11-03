@@ -21,7 +21,7 @@ public class EffectCommand extends Command {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
-                new CommandParameter("effect", CommandParameter.ARG_TYPE_STRING, false), //Do not use Enum here because of buggy behavior
+                new CommandParameter("effect", false, getEffects()),
                 new CommandParameter("seconds", CommandParameter.ARG_TYPE_INT, true),
                 new CommandParameter("amplifier", true),
                 new CommandParameter("hideParticle", CommandParameter.ARG_TYPE_BOOL, true)
@@ -111,4 +111,12 @@ public class EffectCommand extends Command {
         }
         return true;
     }
+    private String[] getEffects(){
+        String[] effects = new String[24];
+        for (int i = 0; i < 24; i++){
+            effects[i] = Effect.getEffect(i).getName();
+        }
+        return effects;
+    }
+
 }

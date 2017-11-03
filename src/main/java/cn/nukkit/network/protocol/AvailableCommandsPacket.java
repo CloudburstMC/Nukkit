@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.command.data.CommandDataVersions;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandOverload;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.utils.BinaryStream;
@@ -46,6 +47,8 @@ public class AvailableCommandsPacket extends DataPacket {
     }
 
     int aliasCommands = 0;
+    private ArrayList<String> enum_values = new ArrayList<>();
+    private ArrayList<CommandEnum> enums = new ArrayList<>();
 
     @Override
     public void encode() {
@@ -57,27 +60,64 @@ public class AvailableCommandsPacket extends DataPacket {
             aliases.addAll(Arrays.asList(versions.versions.get(0).aliases));
             aliases.add(name);
             for (String alias : aliases) {
-                commandsStream.putString(alias);
-                commandsStream.putString(versions.versions.get(0).description);
-                commandsStream.putByte((byte) 0);
-                commandsStream.putByte((byte) 0);
-                commandsStream.putLInt(-1);
+                commandsStream.putString(alias); //name
+                commandsStream.putString(versions.versions.get(0).description); //description
+                commandsStream.putByte((byte) 0); //?
+                commandsStream.putByte((byte) 0); //?
+                commandsStream.putLInt(-1); //aliases enum
                 commandsStream.putUnsignedVarInt(versions.versions.get(0).overloads.size());
                 for (CommandOverload overload : versions.versions.get(0).overloads.values()) {
                     commandsStream.putUnsignedVarInt(overload.input.parameters.length);
                     for (CommandParameter parameter : overload.input.parameters) {
                         commandsStream.putString(parameter.name);
-                        commandsStream.putLInt(ARG_FLAG_VALID | getFlag(parameter.type));
+                        if (parameter.enum_values == null || parameter.enum_values.length == 0){
+                            commandsStream.putLInt(ARG_FLAG_VALID | getFlag(parameter.type));
+                        }
+                        else {
+                            ArrayList<Integer> enumValuesIndexes = new ArrayList<>();
+                            for (String enumValue : parameter.enum_values){
+                                if (this.enum_values.contains(enumValue)) {
+                                    enumValuesIndexes.add(this.enum_values.indexOf(enumValue));
+                                }
+                                else {
+                                    enumValuesIndexes.add(this.enum_values.size());
+                                    this.enum_values.add(enumValue);
+                                }
+                            }
+                            CommandEnum commandEnum = new CommandEnum(parameter.name, enumValuesIndexes);
+                            int enumIndex = this.enums.size();
+                            if (!this.enums.contains(commandEnum)) {
+                                this.enums.add(commandEnum);
+                            }
+                            else {
+                                enumIndex = this.enums.indexOf(commandEnum);
+                                CommandEnum previous = this.enums.get(enumIndex);
+                                commandEnum.getEnumIndexes().forEach(actualIndex -> {
+                                    if (!previous.getEnumIndexes().contains(actualIndex))
+                                        previous.getEnumIndexes().add(actualIndex);
+                                });
+                            }
+                            commandsStream.putLInt(ARG_FLAG_ENUM | ARG_FLAG_VALID | enumIndex);
+                        }
                         commandsStream.putBoolean(parameter.optional);
                     }
                 }
             }
-            aliasCommands += (aliases.size() - 1);
+            aliasCommands += aliases.size()-1;
         });
-
-        this.putUnsignedVarInt(0);
-        this.putUnsignedVarInt(0);
-        this.putUnsignedVarInt(0);
+        this.putUnsignedVarInt(this.enum_values.size()); //String[]
+        this.enum_values.forEach(this::putString);
+        this.putUnsignedVarInt(0); //Template[]
+        this.putUnsignedVarInt(this.enums.size()); //Enum[]
+        this.enums.forEach(commandEnum -> {
+            this.putString(commandEnum.getName());
+            this.putUnsignedVarInt(commandEnum.getEnumIndexes().size());
+            commandEnum.getEnumIndexes().forEach(index -> {
+                if (index <= Byte.MAX_VALUE) this.putByte(index.byteValue());
+                else if (index <= Short.MAX_VALUE) this.putLShort(index);
+                else this.putInt(index);
+            });
+        });
         this.putUnsignedVarInt(this.commands.size() + aliasCommands);
         this.put(commandsStream.getBuffer());
     }
@@ -92,6 +132,8 @@ public class AvailableCommandsPacket extends DataPacket {
                 return ARG_TYPE_TARGET;
             case CommandParameter.ARG_TYPE_RAW_TEXT:
                 return ARG_TYPE_RAWTEXT;
+            case CommandParameter.ARG_TYPE_TEXT:
+                return ARG_TYPE_TEXT;
             case CommandParameter.ARG_TYPE_STRING:
             case CommandParameter.ARG_TYPE_STRING_ENUM:
                 return ARG_TYPE_STRING;

@@ -25,7 +25,7 @@ public class EnchantCommand extends VanillaCommand {
         });
         this.commandParameters.put("byName", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
-                new CommandParameter("id", false, CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST),
+                new CommandParameter("id", false, getEnchantmentNames()),
                 new CommandParameter("level", CommandParameter.ARG_TYPE_INT, true)
         });
     }
@@ -125,5 +125,13 @@ public class EnchantCommand extends VanillaCommand {
             default:
                 return Integer.parseInt(value);
         }
+    }
+    private String[] getEnchantmentNames(){
+        return new String[]{
+                "protection", "fire_protection", "feather_falling", "blast_protection", "projectile_protection",
+                "thorns", "respiration", "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods",
+                "knockback", "fire_aspect", "looting", "efficiency", "silk_touch", "durability", "fortune", "power",
+                "punch", "flame", "infinity", "luck_of_the_sea", "lure"
+        };
     }
 }
