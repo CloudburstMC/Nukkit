@@ -114,7 +114,7 @@ public class EffectCommand extends Command {
     private String[] getEffects(){
         String[] effects = new String[24];
         for (int i = 0; i < 24; i++){
-            effects[i] = Effect.getEffect(i).getName();
+            if (Effect.getEffect(i) != null) effects[i] = Effect.getEffect(i).getName();
         }
         return effects;
     }
