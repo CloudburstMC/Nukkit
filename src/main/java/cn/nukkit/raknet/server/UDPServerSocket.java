@@ -2,11 +2,12 @@ package cn.nukkit.raknet.server;
 
 import cn.nukkit.utils.ThreadedLogger;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollDatagramChannel;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
@@ -39,12 +40,21 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
     public UDPServerSocket(ThreadedLogger logger, int port, String interfaz) {
         this.logger = logger;
         try {
-            bootstrap = new Bootstrap();
-            group = new NioEventLoopGroup();
-            bootstrap
-                    .group(group)
-                    .channel(NioDatagramChannel.class)
-                    .handler(this);
+            if (Epoll.isAvailable()) {
+                bootstrap = new Bootstrap()
+                        .channel(EpollDatagramChannel.class)
+                        .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                        .handler(this)
+                        .group(new EpollEventLoopGroup());
+                this.logger.info("Epoll is available. EpollEventLoop will be used.");
+            } else {
+                bootstrap = new Bootstrap()
+                        .group(new NioEventLoopGroup())
+                        .channel(NioDatagramChannel.class)
+                        .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                        .handler(this);
+                this.logger.info("Epoll is unavailable. Reverting to NioEventLoop.");
+            }
             channel = bootstrap.bind(interfaz, port).sync().channel();
         } catch (Exception e) {
             this.logger.critical("**** FAILED TO BIND TO " + interfaz + ":" + port + "!");
