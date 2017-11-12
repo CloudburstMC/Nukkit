@@ -5,8 +5,6 @@ package cn.nukkit.network.protocol;
  */
 public class PlayerInputPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_INPUT_PACKET;
-
     public float motionX;
     public float motionY;
 
@@ -14,7 +12,7 @@ public class PlayerInputPacket extends DataPacket {
     public boolean unknownBool2;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.motionX = this.getLFloat();
         this.motionY = this.getLFloat();
         this.unknownBool1 = this.getBoolean();
@@ -22,13 +20,15 @@ public class PlayerInputPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.PLAYER_INPUT_PACKET :
+                ProtocolInfo.PLAYER_INPUT_PACKET;
     }
 
 }

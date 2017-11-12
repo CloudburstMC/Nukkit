@@ -50,10 +50,7 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.BatchPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.PlayerListPacket;
-import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.permission.BanEntry;
@@ -545,11 +542,15 @@ public class Server {
     }
 
     public static void broadcastPacket(Player[] players, DataPacket packet) {
-        packet.encode();
+        DataPacket packet113 = packet.clone();
+        packet113.encode(PlayerProtocol.PLAYER_PROTOCOL_113);
+        packet113.isEncoded = true;
+        packet.encode(PlayerProtocol.PLAYER_PROTOCOL_130);
         packet.isEncoded = true;
 
         for (Player player : players) {
-            player.dataPacket(packet);
+            if (player.getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113)) player.dataPacket(packet113);
+            else player.dataPacket(packet);
         }
 
         if (packet.encapsulatedPacket != null) {
@@ -567,31 +568,46 @@ public class Server {
         }
 
         Timings.playerNetworkSendTimer.startTiming();
+        byte[][] payload113 = new byte[packets.length * 2][];
         byte[][] payload = new byte[packets.length * 2][];
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
+            DataPacket p113 = p.clone();
             if (!p.isEncoded) {
-                p.encode();
+                p.encode(PlayerProtocol.PLAYER_PROTOCOL_130);
+            }
+            if (!p113.isEncoded){
+                p113.encode(PlayerProtocol.PLAYER_PROTOCOL_113);
             }
             byte[] buf = p.getBuffer();
+            byte[] buf113 = p113.getBuffer();
             payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
             payload[i * 2 + 1] = buf;
+            payload113[i * 2] = Binary.writeUnsignedVarInt(buf113.length);
+            payload113[i * 2 + 1] = buf113;
         }
+        byte[] data113;
+        data113 = Binary.appendBytes(payload113);
         byte[] data;
         data = Binary.appendBytes(payload);
 
         List<String> targets = new ArrayList<>();
+        List<String> targets113 = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
-                targets.add(this.identifier.get(p.rawHashCode()));
+                if (p.getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113))
+                    targets113.add(this.identifier.get(p.rawHashCode()));
+                else targets.add(this.identifier.get(p.rawHashCode()));
             }
         }
 
         if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel));
+            this.getScheduler().scheduleAsyncTask(null, new CompressBatchedTask(data113, targets113, this.networkCompressionLevel));
+            this.getScheduler().scheduleAsyncTask(null, new CompressBatchedTask(data, targets, this.networkCompressionLevel));
         } else {
             try {
                 this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
+                this.broadcastPacketsCallback(Zlib.deflate(data113, this.networkCompressionLevel), targets113);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -1438,7 +1454,7 @@ public class Server {
         if (this.shouldSavePlayerData()) {
             try {
                 if (async) {
-                    this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
+                    this.getScheduler().scheduleAsyncTask(null, new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
                 } else {
                     Utils.writeFile(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", new ByteArrayInputStream(NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
                 }

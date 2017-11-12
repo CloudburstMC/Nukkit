@@ -2,8 +2,6 @@ package cn.nukkit.network.protocol;
 
 public class UpdateTradePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_TRADE_PACKET;
-
     public byte windowId;
     public byte windowType = 15; //trading id
     public int unknownVarInt1;
@@ -15,18 +13,20 @@ public class UpdateTradePacket extends DataPacket {
     public byte[] offers;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.UPDATE_TRADE_PACKET :
+                ProtocolInfo.UPDATE_TRADE_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putByte(windowId);
         this.putByte(windowType);
         this.putVarInt(unknownVarInt1);

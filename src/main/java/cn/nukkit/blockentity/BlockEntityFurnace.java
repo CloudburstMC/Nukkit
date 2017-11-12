@@ -17,6 +17,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 import java.util.HashSet;
 
@@ -284,7 +285,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         CompoundTag c = new CompoundTag()
                 .putString("id", BlockEntity.FURNACE)
                 .putInt("x", (int) this.x)

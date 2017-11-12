@@ -5,11 +5,12 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class BlockEventPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.BLOCK_EVENT_PACKET;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.BLOCK_EVENT_PACKET :
+                ProtocolInfo.BLOCK_EVENT_PACKET;
     }
 
     public int x;
@@ -19,13 +20,13 @@ public class BlockEventPacket extends DataPacket {
     public int case2;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putBlockVector3(this.x, this.y, this.z);
         this.putVarInt(this.case1);
         this.putVarInt(this.case2);

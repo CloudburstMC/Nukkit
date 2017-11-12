@@ -16,8 +16,8 @@ import java.util.Map;
  */
 public class AvailableCommandsPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
     public Map<String, CommandDataVersions> commands;
+    public String jsonCommands;
 
     public static final int ARG_FLAG_VALID = 0x100000;
     public static final int ARG_TYPE_INT = 0x01;
@@ -38,12 +38,14 @@ public class AvailableCommandsPacket extends DataPacket {
     public static final int ARG_FLAG_TEMPLATE = 0x01000000;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.AVAILABLE_COMMANDS_PACKET :
+                ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
     }
 
     int aliasCommands = 0;
@@ -51,8 +53,13 @@ public class AvailableCommandsPacket extends DataPacket {
     private ArrayList<CommandEnum> enums = new ArrayList<>();
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
+        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)){
+            this.putString(this.jsonCommands);
+            this.putString("");
+            return;
+        }
         BinaryStream commandsStream = new BinaryStream();
         this.commands.forEach((name, versions) -> {
             if (name.equals("help")) return;

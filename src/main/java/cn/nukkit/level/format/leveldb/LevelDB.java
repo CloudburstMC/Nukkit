@@ -16,6 +16,7 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
 import org.iq80.leveldb.DB;
@@ -168,7 +169,7 @@ public class LevelDB implements LevelProvider {
 
             for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
                 if (blockEntity instanceof BlockEntitySpawnable) {
-                    tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
+                    tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound(PlayerProtocol.PLAYER_PROTOCOL_130));
                 }
             }
 
@@ -210,7 +211,7 @@ public class LevelDB implements LevelProvider {
         }
         stream.put(tiles);
 
-        this.getLevel().chunkRequestCallback(x, z, stream.getBuffer());
+        this.getLevel().chunkRequestCallback(x, z, stream.getBuffer(), stream.getBuffer());
 
         return null;
     }

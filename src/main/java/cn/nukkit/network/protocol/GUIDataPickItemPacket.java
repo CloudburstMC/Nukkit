@@ -5,18 +5,20 @@ public class GUIDataPickItemPacket extends DataPacket {
     public int hotbarSlot;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.GUI_DATA_PICK_ITEM_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                0 :
+                ProtocolInfo.GUI_DATA_PICK_ITEM_PACKET;
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putLInt(this.hotbarSlot);
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.hotbarSlot = this.getLInt();
     }
 }

@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.utils.DyeColor;
 
 /**
@@ -34,7 +35,7 @@ public class BlockEntityBed extends BlockEntitySpawnable {
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         return new CompoundTag()
                 .putString("id", BlockEntity.BED)
                 .putInt("x", (int) this.x)

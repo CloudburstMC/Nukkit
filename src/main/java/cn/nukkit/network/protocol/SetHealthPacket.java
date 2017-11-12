@@ -2,23 +2,23 @@ package cn.nukkit.network.protocol;
 
 public class SetHealthPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.SET_HEALTH_PACKET;
-
     public int health;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.SET_HEALTH_PACKET :
+                ProtocolInfo.SET_HEALTH_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putUnsignedVarInt(this.health);
     }
 }

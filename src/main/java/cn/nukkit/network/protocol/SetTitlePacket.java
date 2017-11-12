@@ -4,7 +4,6 @@ package cn.nukkit.network.protocol;
  * @author Tee7even
  */
 public class SetTitlePacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SET_TITLE_PACKET;
 
     public static final int TYPE_CLEAR = 0;
     public static final int TYPE_RESET = 1;
@@ -20,12 +19,14 @@ public class SetTitlePacket extends DataPacket {
     public int fadeOutTime = 0;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.SET_TITLE_PACKET :
+                ProtocolInfo.SET_TITLE_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.type = this.getVarInt();
         this.text = this.getString();
         this.fadeInTime = this.getVarInt();
@@ -34,8 +35,8 @@ public class SetTitlePacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putVarInt(type);
         this.putString(text);
         this.putVarInt(fadeInTime);

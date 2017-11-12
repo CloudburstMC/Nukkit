@@ -7,14 +7,12 @@ import cn.nukkit.math.Vector3f;
  */
 public class RespawnPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.RESPAWN_PACKET;
-
     public float x;
     public float y;
     public float z;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         Vector3f v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
@@ -22,14 +20,16 @@ public class RespawnPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putVector3f(this.x, this.y, this.z);
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.RESPAWN_PACKET :
+                ProtocolInfo.RESPAWN_PACKET;
     }
 
 }

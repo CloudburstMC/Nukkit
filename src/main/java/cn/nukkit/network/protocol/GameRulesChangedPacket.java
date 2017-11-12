@@ -7,23 +7,24 @@ import cn.nukkit.utils.RuleData;
  * Nukkit Project
  */
 public class GameRulesChangedPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.GAME_RULES_CHANGED_PACKET;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.GAME_RULES_CHANGED_PACKET :
+                ProtocolInfo.GAME_RULES_CHANGED_PACKET;
     }
 
     public RuleData[] ruleDatas = new RuleData[0];
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putInt(this.ruleDatas.length);
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
+        this.putVarInt(this.ruleDatas.length);
         for (RuleData rule : this.ruleDatas) {
             this.putRuleData(rule);
         }

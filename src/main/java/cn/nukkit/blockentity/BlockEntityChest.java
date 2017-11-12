@@ -14,6 +14,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 import java.util.HashSet;
 
@@ -236,7 +237,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         CompoundTag c;
         if (this.isPaired()) {
             c = new CompoundTag()

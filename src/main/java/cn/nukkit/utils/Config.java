@@ -240,7 +240,7 @@ public class Config {
                     break;
             }
             if (async) {
-                Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content));
+                Server.getInstance().getScheduler().scheduleAsyncTask(null, new FileWriteTask(this.file, content));
 
             } else {
                 try {

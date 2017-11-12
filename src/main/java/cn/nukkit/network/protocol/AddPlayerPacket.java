@@ -11,11 +11,12 @@ import java.util.UUID;
  * Nukkit Project
  */
 public class AddPlayerPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.ADD_PLAYER_PACKET;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.ADD_PLAYER_PACKET :
+                ProtocolInfo.ADD_PLAYER_PACKET;
     }
 
     public UUID uuid;
@@ -34,14 +35,14 @@ public class AddPlayerPacket extends DataPacket {
     public EntityMetadata metadata = new EntityMetadata();
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putUUID(this.uuid);
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
+        this.putUUID(this.uuid, protocol);
         this.putString(this.username);
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);

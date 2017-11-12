@@ -9,11 +9,12 @@ import cn.nukkit.utils.Binary;
  * Nukkit Project
  */
 public class AddEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.ADD_ENTITY_PACKET;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.ADD_ENTITY_PACKET :
+                ProtocolInfo.ADD_ENTITY_PACKET;
     }
 
     public long entityUniqueId;
@@ -32,13 +33,13 @@ public class AddEntityPacket extends DataPacket {
     public final Object[][] links = new Object[0][3];
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
         this.putUnsignedVarInt(this.type);

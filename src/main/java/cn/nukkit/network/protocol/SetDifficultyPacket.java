@@ -5,24 +5,24 @@ package cn.nukkit.network.protocol;
  */
 public class SetDifficultyPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.SET_DIFFICULTY_PACKET;
-
     public int difficulty;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.difficulty = (int) this.getUnsignedVarInt();
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putUnsignedVarInt(this.difficulty);
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.SET_DIFFICULTY_PACKET :
+                ProtocolInfo.SET_DIFFICULTY_PACKET;
     }
 
 }

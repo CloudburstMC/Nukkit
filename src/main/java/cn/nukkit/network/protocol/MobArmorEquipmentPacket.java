@@ -7,18 +7,19 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class MobArmorEquipmentPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.MOB_ARMOR_EQUIPMENT_PACKET;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.MOB_ARMOR_EQUIPMENT_PACKET :
+                ProtocolInfo.MOB_ARMOR_EQUIPMENT_PACKET;
     }
 
     public long eid;
     public Item[] slots = new Item[4];
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.eid = this.getEntityRuntimeId();
         this.slots = new Item[4];
         this.slots[0] = this.getSlot();
@@ -28,8 +29,8 @@ public class MobArmorEquipmentPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityRuntimeId(this.eid);
         this.putSlot(this.slots[0]);
         this.putSlot(this.slots[1]);

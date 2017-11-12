@@ -4,8 +4,6 @@ import cn.nukkit.math.BlockVector3;
 
 public class BlockPickRequestPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.BLOCK_PICK_REQUEST_PACKET;
-
     public int x;
     public int y;
     public int z;
@@ -13,12 +11,13 @@ public class BlockPickRequestPacket extends DataPacket {
     public int selectedSlot;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.BLOCK_PICK_REQUEST_PACKET :
+                ProtocolInfo.BLOCK_PICK_REQUEST_PACKET;
     }
-
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         BlockVector3 v = this.getSignedBlockPosition();
         this.x = v.x;
         this.y = v.y;
@@ -28,7 +27,7 @@ public class BlockPickRequestPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
 
     }
 }

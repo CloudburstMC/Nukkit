@@ -7,11 +7,11 @@ import cn.nukkit.utils.RuleData;
  */
 public class StartGamePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.START_GAME_PACKET;
-
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.START_GAME_PACKET :
+                ProtocolInfo.START_GAME_PACKET;
     }
 
     public long entityUniqueId;
@@ -54,13 +54,13 @@ public class StartGamePacket extends DataPacket {
     public int enchantmentSeed;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
         this.putVarInt(this.playerGamemode);

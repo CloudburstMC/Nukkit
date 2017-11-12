@@ -6,8 +6,6 @@ package cn.nukkit.network.protocol;
  */
 public class ChangeDimensionPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.CHANGE_DIMENSION_PACKET;
-
     public int dimension;
 
     public float x;
@@ -17,20 +15,22 @@ public class ChangeDimensionPacket extends DataPacket {
     public boolean respawn;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putVarInt(this.dimension);
         this.putVector3f(this.x, this.y, this.z);
         this.putBoolean(this.respawn);
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.CHANGE_DIMENSION_PACKET :
+                ProtocolInfo.CHANGE_DIMENSION_PACKET;
     }
 }

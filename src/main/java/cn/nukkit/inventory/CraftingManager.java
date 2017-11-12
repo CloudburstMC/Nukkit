@@ -6,6 +6,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemPotion;
 import cn.nukkit.network.protocol.CraftingDataPacket;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
@@ -164,7 +165,7 @@ public class CraftingManager {
             pk.addFurnaceRecipe(recipe);
         }
 
-        pk.encode();
+        pk.encode(PlayerProtocol.PLAYER_PROTOCOL_130);
         pk.isEncoded = true;
 
         packet = pk;

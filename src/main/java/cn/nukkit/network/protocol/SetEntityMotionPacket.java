@@ -5,7 +5,6 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class SetEntityMotionPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_MOTION_PACKET;
 
     public long eid;
     public float motionX;
@@ -13,18 +12,20 @@ public class SetEntityMotionPacket extends DataPacket {
     public float motionZ;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.SET_ENTITY_MOTION_PACKET :
+                ProtocolInfo.SET_ENTITY_MOTION_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityRuntimeId(this.eid);
         this.putVector3f(this.motionX, this.motionY, this.motionZ);
     }

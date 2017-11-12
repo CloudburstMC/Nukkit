@@ -8,6 +8,7 @@ import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -102,18 +103,22 @@ public class Anvil extends BaseLevelProvider {
         }
 
         byte[] blockEntities = new byte[0];
+        byte[] blockEntities113 = new byte[0];
 
         if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
+            List<CompoundTag> tagList113 = new ArrayList<>();
 
             for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
                 if (blockEntity instanceof BlockEntitySpawnable) {
-                    tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
+                    tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound(PlayerProtocol.PLAYER_PROTOCOL_130));
+                    tagList113.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound(PlayerProtocol.PLAYER_PROTOCOL_113));
                 }
             }
 
             try {
                 blockEntities = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN, true);
+                blockEntities113 = NBTIO.write(tagList113, ByteOrder.LITTLE_ENDIAN, true);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -133,6 +138,7 @@ public class Anvil extends BaseLevelProvider {
         }
 
         BinaryStream stream = new BinaryStream();
+        BinaryStream stream113 = new BinaryStream();
         int count = 0;
         cn.nukkit.level.format.ChunkSection[] sections = chunk.getSections();
         for (int i = sections.length - 1; i >= 0; i--) {
@@ -142,24 +148,34 @@ public class Anvil extends BaseLevelProvider {
             }
         }
         stream.putByte((byte) count);
+        stream113.putByte((byte) count);
         for (int i = 0; i < count; i++) {
             stream.putByte((byte) 0);
-            stream.put(sections[i].getBytes());
+            stream.put(sections[i].getBytes(PlayerProtocol.PLAYER_PROTOCOL_130));
+            stream113.putByte((byte) 0);
+            stream113.put(sections[i].getBytes(PlayerProtocol.PLAYER_PROTOCOL_113));
         }
         for (int height : chunk.getHeightMapArray()) {
             stream.putByte((byte) height);
+            stream113.putByte((byte) height);
         }
         stream.put(new byte[256]);
         stream.put(chunk.getBiomeIdArray());
         stream.putByte((byte) 0);
+        stream113.put(new byte[256]);
+        stream113.put(chunk.getBiomeIdArray());
+        stream113.putByte((byte) 0);
         if (extraData != null) {
             stream.put(extraData.getBuffer());
+            stream113.put(extraData.getBuffer());
         } else {
             stream.putVarInt(0);
+            stream113.putVarInt(0);
         }
         stream.put(blockEntities);
+        stream113.put(blockEntities113);
 
-        this.getLevel().chunkRequestCallback(x, z, stream.getBuffer());
+        this.getLevel().chunkRequestCallback(x, z, stream113.getBuffer(), stream.getBuffer());
 
         return null;
     }

@@ -6,18 +6,20 @@ public class ModalFormRequestPacket extends DataPacket {
     public String data;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.MODAL_FORM_REQUEST_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                0 :
+                ProtocolInfo.MODAL_FORM_REQUEST_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putVarInt(this.formId);
         this.putString(this.data);
     }

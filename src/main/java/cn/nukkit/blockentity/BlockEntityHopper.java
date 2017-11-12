@@ -15,6 +15,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 /**
  * Created by CreeperFace on 8.5.2017.
@@ -275,7 +276,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         CompoundTag c = new CompoundTag()
                 .putString("id", BlockEntity.HOPPER)
                 .putInt("x", (int) this.x)

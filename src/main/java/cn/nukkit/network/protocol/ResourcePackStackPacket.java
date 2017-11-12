@@ -4,20 +4,18 @@ import cn.nukkit.resourcepacks.ResourcePack;
 
 public class ResourcePackStackPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_STACK_PACKET;
-
     public boolean mustAccept = false;
     public ResourcePack[] behaviourPackStack = new ResourcePack[0];
     public ResourcePack[] resourcePackStack = new ResourcePack[0];
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putBoolean(this.mustAccept);
 
         this.putUnsignedVarInt(this.behaviourPackStack.length);
@@ -34,7 +32,9 @@ public class ResourcePackStackPacket extends DataPacket {
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.RESOURCE_PACK_STACK_PACKET :
+                ProtocolInfo.RESOURCE_PACK_STACK_PACKET;
     }
 }

@@ -5,27 +5,27 @@ package cn.nukkit.network.protocol;
  */
 public class TakeItemEntityPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.TAKE_ITEM_ENTITY_PACKET;
-
     public long entityId;
     public long target;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.target = this.getEntityRuntimeId();
         this.entityId = this.getEntityRuntimeId();
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityRuntimeId(this.target);
         this.putEntityRuntimeId(this.entityId);
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.TAKE_ITEM_ENTITY_PACKET :
+                ProtocolInfo.TAKE_ITEM_ENTITY_PACKET;
     }
 
 }

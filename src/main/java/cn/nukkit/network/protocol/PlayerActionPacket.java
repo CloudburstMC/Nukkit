@@ -7,8 +7,6 @@ import cn.nukkit.math.BlockVector3;
  */
 public class PlayerActionPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ACTION_PACKET;
-
     public static final int ACTION_START_BREAK = 0;
     public static final int ACTION_ABORT_BREAK = 1;
     public static final int ACTION_STOP_BREAK = 2;
@@ -36,9 +34,8 @@ public class PlayerActionPacket extends DataPacket {
     public int z;
     public int face;
 
-
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.entityId = this.getEntityRuntimeId();
         this.action = this.getVarInt();
         BlockVector3 v = this.getBlockVector3();
@@ -49,8 +46,8 @@ public class PlayerActionPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityRuntimeId(this.entityId);
         this.putVarInt(this.action);
         this.putBlockVector3(this.x, this.y, this.z);
@@ -58,8 +55,10 @@ public class PlayerActionPacket extends DataPacket {
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.PLAYER_ACTION_PACKET :
+                ProtocolInfo.PLAYER_ACTION_PACKET;
     }
 
 }

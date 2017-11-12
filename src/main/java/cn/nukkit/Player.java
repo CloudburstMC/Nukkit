@@ -8,20 +8,21 @@ import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandDataVersions;
+import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.data.args.CommandArg;
+import cn.nukkit.command.data.args.CommandArgBlockVector;
 import cn.nukkit.entity.*;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.*;
-import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.*;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
-import cn.nukkit.event.inventory.CraftItemEvent;
-import cn.nukkit.event.inventory.InventoryCloseEvent;
-import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
-import cn.nukkit.event.inventory.InventoryPickupItemEvent;
+import cn.nukkit.event.entity.ProjectileLaunchEvent;
+import cn.nukkit.event.inventory.*;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -31,6 +32,7 @@ import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
+import cn.nukkit.inventory.transaction.Old113InventoryTransaction;
 import cn.nukkit.inventory.transaction.SimpleInventoryTransaction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
@@ -52,6 +54,7 @@ import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.level.particle.PunchBlockParticle;
 import cn.nukkit.level.sound.ExperienceOrbSound;
 import cn.nukkit.level.sound.ItemFrameItemRemovedSound;
+import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.nbt.NBTIO;
@@ -71,6 +74,8 @@ import cn.nukkit.resourcepacks.ResourcePack;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 import java.awt.*;
 import java.io.IOException;
@@ -113,6 +118,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int ENCHANT_WINDOW_ID = 3;
 
     protected final SourceInterface interfaz;
+    private PlayerProtocol protocol = PlayerProtocol.PLAYER_PROTOCOL_130;
+    public PlayerProtocol getProtocol(){
+        return this.protocol;
+    }
+    public void setProtocol(PlayerProtocol protocol){
+        this.protocol = protocol;
+    }
 
     public boolean playedBefore;
     public boolean spawned = false;
@@ -226,6 +238,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Map<Integer, FormWindow> serverSettings = new HashMap<>();
 
     protected Map<Long, DummyBossBar> dummyBossBars = new HashMap<>();
+    protected Old113InventoryTransaction last113transaction = null;
 
     public int getStartActionTick() {
         return startAction;
@@ -554,7 +567,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             data.put(command.getName(), data0);
         }
         if (count > 0) {
-            //TODO: structure checking
+            pk.jsonCommands = new Gson().toJson(data);
             pk.commands = data;
             int identifier = this.dataPacket(pk, true); // We *need* ACK so we can be sure that the client received the packet or not
             Thread t = new Thread() {
@@ -762,18 +775,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
-    public void sendChunk(int x, int z, byte[] payload) {
+    public void sendChunk(int x, int z, byte[] payload113, byte[] payload) {
         if (!this.connected) {
             return;
         }
 
         this.usedChunks.put(Level.chunkHash(x, z), true);
         this.chunkLoadCount++;
-
         FullChunkDataPacket pk = new FullChunkDataPacket();
         pk.chunkX = x;
         pk.chunkZ = z;
-        pk.data = payload;
+        pk.data = getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113) ? payload113 : payload;
 
         this.batchDataPacket(pk);
 
@@ -881,6 +893,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (this.gamemode == Player.SPECTATOR) {
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
+            inventoryContentPacket.eid = getId();
             inventoryContentPacket.inventoryId = ContainerIds.CREATIVE;
             this.dataPacket(inventoryContentPacket);
         } else {
@@ -1222,6 +1235,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.teleport(this.temporalVector.setComponents(this.x, this.y + 0.1, this.z));
 
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
+            inventoryContentPacket.eid = getId();
             inventoryContentPacket.inventoryId = InventoryContentPacket.SPECIAL_CREATIVE;
             this.dataPacket(inventoryContentPacket);
         } else {
@@ -1229,6 +1243,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.getAdventureSettings().set(Type.FLYING, false);
             }
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
+            inventoryContentPacket.eid = getId();
             inventoryContentPacket.inventoryId = InventoryContentPacket.SPECIAL_CREATIVE;
             inventoryContentPacket.slots = Item.getCreativeItems().stream().toArray(Item[]::new);
             this.dataPacket(inventoryContentPacket);
@@ -1980,14 +1995,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 return;
             }
 
-            if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
+            if (packet.pid(getProtocol()) == ProtocolInfo.BATCH_PACKET) {
                 timing.stopTiming();
                 this.server.getNetwork().processBatch((BatchPacket) packet, this);
                 return;
             }
-
             packetswitch:
-            switch (packet.pid()) {
+            switch (packet.pid(getProtocol())) {
                 case ProtocolInfo.LOGIN_PACKET:
                     if (this.loggedIn) {
                         break;
@@ -2024,7 +2038,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.randomClientId = loginPacket.clientId;
 
                     this.uuid = loginPacket.clientUUID;
-                    this.rawUUID = Binary.writeUUID(this.uuid);
+                    this.rawUUID = Binary.writeUUID(this.uuid, getProtocol());
 
                     boolean valid = true;
                     int len = loginPacket.username.length();
@@ -2448,6 +2462,72 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     item = this.inventory.getItemInHand();
 
                     switch (interactPacket.action) {
+                        case InteractPacket.ACTION_RIGHT_CLICK:
+                            PlayerInteractEntityEvent playerInteractEntityEvent = new PlayerInteractEntityEvent(this, targetEntity, item);
+                            if (this.isSpectator()) playerInteractEntityEvent.setCancelled();
+                            getServer().getPluginManager().callEvent(playerInteractEntityEvent);
+
+                            if (playerInteractEntityEvent.isCancelled()) {
+                                break;
+                            }
+
+                            if (targetEntity.onInteract(this, item) && this.isSurvival()) {
+                                if (item.isTool()) {
+                                    if (item.useOn(targetEntity) && item.getDamage() >= item.getMaxDurability()) {
+                                        item = new ItemBlock(new BlockAir());
+                                    }
+                                } else {
+                                    if (item.count > 1) {
+                                        item.count--;
+                                    } else {
+                                        item = new ItemBlock(new BlockAir());
+                                    }
+                                }
+
+                                this.inventory.setItemInHand(item);
+                            }
+                            break;
+                        case InteractPacket.ACTION_LEFT_CLICK:
+                            float itemDamage = item.getAttackDamage();
+
+                            for (Enchantment enchantment : item.getEnchantments()) {
+                                itemDamage += enchantment.getDamageBonus(targetEntity);
+                            }
+
+                            Map<DamageModifier, Float> damage = new EnumMap<>(DamageModifier.class);
+                            damage.put(DamageModifier.BASE, itemDamage);
+
+                            if (!this.canInteract(targetEntity, isCreative() ? 8 : 5)) {
+                                break;
+                            } else if (targetEntity instanceof Player) {
+                                if ((((Player) targetEntity).getGamemode() & 0x01) > 0) {
+                                    break;
+                                } else if (!this.server.getPropertyBoolean("pvp") || this.server.getDifficulty() == 0) {
+                                    break;
+                                }
+                            }
+
+                            EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, targetEntity, DamageCause.ENTITY_ATTACK, damage);
+                            if (this.isSpectator()) entityDamageByEntityEvent.setCancelled();
+                            if (!targetEntity.attack(entityDamageByEntityEvent)) {
+                                if (item.isTool() && this.isSurvival()) {
+                                    this.inventory.sendContents(this);
+                                }
+                                break;
+                            }
+
+                            for (Enchantment enchantment : item.getEnchantments()) {
+                                enchantment.doPostAttack(this, targetEntity);
+                            }
+
+                            if (item.isTool() && this.isSurvival()) {
+                                if (item.useOn(targetEntity) && item.getDamage() >= item.getMaxDurability()) {
+                                    this.inventory.setItemInHand(new ItemBlock(new BlockAir()));
+                                } else {
+                                    this.inventory.setItemInHand(item);
+                                }
+                            }
+                            break;
                         case InteractPacket.ACTION_MOUSEOVER:
                             this.getServer().getPluginManager().callEvent(new PlayerMouseOverEntityEvent(this, targetEntity));
                             break;
@@ -2511,6 +2591,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
 
                 case ProtocolInfo.ENTITY_EVENT_PACKET:
+                case ProtocolInfo113.ENTITY_EVENT_PACKET:
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
@@ -2531,7 +2612,56 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     break;
                 case ProtocolInfo.COMMAND_REQUEST_PACKET:
+                case ProtocolInfo113.COMMAND_STEP_PACKET:
                     if (!this.spawned || !this.isAlive()) {
+                        break;
+                    }
+                    if (getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113)){
+                        CommandRequestPacket commandStepPacket = (CommandRequestPacket) packet;
+                        String commandText = commandStepPacket.command;
+                        Command command = this.getServer().getCommandMap().getCommand(commandText);
+                        if (command != null) {
+                            if (commandStepPacket.args != null && commandStepPacket.args.size() > 0) {
+                                CommandParameter[] pars = command.getCommandParameters(commandStepPacket.overload);
+                                if (pars != null) {
+                                    for (CommandParameter par : pars) {
+                                        JsonElement arg = commandStepPacket.args.get(par.name);
+                                        if (arg != null) {
+                                            switch (par.type) {
+                                                case CommandParameter.ARG_TYPE_TARGET:
+                                                    CommandArg rules = new Gson().fromJson(arg, CommandArg.class);
+                                                    commandText += " " + rules.getRules()[0].getValue();
+                                                    break;
+                                                case CommandParameter.ARG_TYPE_BLOCK_POS:
+                                                    CommandArgBlockVector bv = new Gson().fromJson(arg, CommandArgBlockVector.class);
+                                                    commandText += " " + bv.getX() + " " + bv.getY() + " " + bv.getZ();
+                                                    break;
+                                                case CommandParameter.ARG_TYPE_STRING:
+                                                case CommandParameter.ARG_TYPE_STRING_ENUM:
+                                                case CommandParameter.ARG_TYPE_RAW_TEXT:
+                                                    String string = new Gson().fromJson(arg, String.class);
+                                                    commandText += " " + string;
+                                                    break;
+                                                default:
+                                                    commandText += " " + arg.toString();
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    this.sendMessage(this.getServer().getLanguage().translateString(command.getUsage()));
+                                }
+                            }
+                        }
+                        PlayerCommandPreprocessEvent playerCommandPreprocessEvent = new PlayerCommandPreprocessEvent(this, "/" + commandText);
+                        this.server.getPluginManager().callEvent(playerCommandPreprocessEvent);
+                        if (playerCommandPreprocessEvent.isCancelled()) {
+                            break;
+                        }
+
+                        Timings.playerCommandTimer.startTiming();
+                        this.server.dispatchCommand(playerCommandPreprocessEvent.getPlayer(), playerCommandPreprocessEvent.getMessage().substring(1));
+                        Timings.playerCommandTimer.stopTiming();
                         break;
                     }
                     this.craftingType = 0;
@@ -2558,6 +2688,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     break;
                 case ProtocolInfo.CONTAINER_CLOSE_PACKET:
+                case ProtocolInfo113.CONTAINER_CLOSE_PACKET:
                     ContainerClosePacket containerClosePacket = (ContainerClosePacket) packet;
                     if (!this.spawned || containerClosePacket.windowId == 0) {
                         break;
@@ -2574,6 +2705,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
 
                 case ProtocolInfo.CRAFTING_EVENT_PACKET:
+                case ProtocolInfo113.CRAFTING_EVENT_PACKET:
                     CraftingEventPacket craftingEventPacket = (CraftingEventPacket) packet;
 
                     if (!this.spawned || !this.isAlive()) {
@@ -2841,6 +2973,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     break;
                 case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET:
+                case ProtocolInfo113.LEVEL_SOUND_EVENT_PACKET:
                     //LevelSoundEventPacket levelSoundEventPacket = (LevelSoundEventPacket) packet;
                     //We just need to broadcast this packet to all viewers.
                     this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, packet);
@@ -3220,6 +3353,426 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             re.data = window.getJSONData();
                             this.dataPacket(re);
                         });
+                    }
+                    break;
+                case ProtocolInfo113.USE_ITEM_PACKET:
+                    if (!this.spawned || !this.isAlive()) {
+                        break;
+                    }
+
+                    UseItemPacket useItemPacket = (UseItemPacket) packet;
+
+                    Vector3 blockVector = new Vector3(useItemPacket.x, useItemPacket.y, useItemPacket.z);
+
+                    this.craftingType = CRAFTING_SMALL;
+
+                    if (useItemPacket.face >= 0 && useItemPacket.face <= 5) {
+                        BlockFace useFace = BlockFace.fromIndex(useItemPacket.face);
+                        this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
+
+                        if (!this.canInteract(blockVector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 7)) {
+                        } else if (this.isCreative()) {
+                            Item i = this.inventory.getItemInHand();
+                            if (this.level.useItemOn(blockVector, i, useFace, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this, true) != null) {
+                                break;
+                            }
+                        } else if (!this.inventory.getItemInHand().equalsExact(useItemPacket.item)) {
+                            this.inventory.sendHeldItem(this);
+                        } else {
+                            item = this.inventory.getItemInHand();
+                            Item oldItem = item.clone();
+                            //TODO: Implement adventure mode checks
+                            if ((item = this.level.useItemOn(blockVector, item, useFace, useItemPacket.fx, useItemPacket.fy, useItemPacket.fz, this, true)) != null) {
+                                if (!item.equalsExact(oldItem) || item.getCount() != oldItem.getCount()) {
+                                    this.inventory.setItemInHand(item);
+                                    this.inventory.sendHeldItem(this.hasSpawned.values());
+                                }
+                                break;
+                            }
+                        }
+
+                        this.inventory.sendHeldItem(this);
+
+                        if (blockVector.distanceSquared(this) > 10000) {
+                            break;
+                        }
+
+                        Block target = this.level.getBlock(blockVector);
+                        Block useBlock = target.getSide(useFace);
+
+                        if (target instanceof BlockDoor) {
+                            BlockDoor door = (BlockDoor) target;
+
+                            Block part;
+
+                            if ((door.getDamage() & 0x08) > 0) { //up
+                                part = target.down();
+
+                                if (part.getId() == target.getId()) {
+                                    target = part;
+                                }
+                            }
+                        }
+
+                        this.level.sendBlocks(new Player[]{this}, new Block[]{target, useBlock}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
+                        break;
+                    } else if (useItemPacket.face == -1) {
+                        Vector3 aimPos = new Vector3(
+                                -Math.sin(this.yaw / 180d * Math.PI) * Math.cos(this.pitch / 180d * Math.PI),
+                                -Math.sin(this.pitch / 180d * Math.PI),
+                                Math.cos(this.yaw / 180d * Math.PI) * Math.cos(this.pitch / 180d * Math.PI)
+                        );
+
+                        if (this.isCreative()) {
+                            item = this.inventory.getItemInHand();
+                        } else if (!this.inventory.getItemInHand().equalsExact(useItemPacket.item)) {
+                            this.inventory.sendHeldItem(this);
+                            break;
+                        } else {
+                            item = this.inventory.getItemInHand();
+                        }
+
+                        PlayerInteractEvent playerInteractEvent = new PlayerInteractEvent(this, item, aimPos, null, Action.RIGHT_CLICK_AIR);
+
+                        this.server.getPluginManager().callEvent(playerInteractEvent);
+
+                        if (playerInteractEvent.isCancelled()) {
+                            this.inventory.sendHeldItem(this);
+                            break;
+                        }
+
+                        if (item.getId() == Item.SNOWBALL) {
+                            CompoundTag nbt = new CompoundTag()
+                                    .putList(new ListTag<DoubleTag>("Pos")
+                                            .add(new DoubleTag("", x))
+                                            .add(new DoubleTag("", y + this.getEyeHeight()))
+                                            .add(new DoubleTag("", z)))
+                                    .putList(new ListTag<DoubleTag>("Motion")
+                                            .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                    .putList(new ListTag<FloatTag>("Rotation")
+                                            .add(new FloatTag("", (float) yaw))
+                                            .add(new FloatTag("", (float) pitch)));
+
+                            float f = 1.5f;
+                            EntitySnowball snowball = new EntitySnowball(this.chunk, nbt, this);
+
+                            snowball.setMotion(snowball.getMotion().multiply(f));
+                            if (this.isSurvival()) {
+                                item.setCount(item.getCount() - 1);
+                                this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                            }
+                            if (snowball instanceof EntityProjectile) {
+                                ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(snowball);
+                                this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                                if (projectileLaunchEvent.isCancelled()) {
+                                    snowball.kill();
+                                } else {
+                                    snowball.spawnToAll();
+                                    this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                                }
+                            } else {
+                                snowball.spawnToAll();
+                            }
+                        } else if (item.getId() == Item.EGG) {
+                            CompoundTag nbt = new CompoundTag()
+                                    .putList(new ListTag<DoubleTag>("Pos")
+                                            .add(new DoubleTag("", x))
+                                            .add(new DoubleTag("", y + this.getEyeHeight()))
+                                            .add(new DoubleTag("", z)))
+                                    .putList(new ListTag<DoubleTag>("Motion")
+                                            .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                    .putList(new ListTag<FloatTag>("Rotation")
+                                            .add(new FloatTag("", (float) yaw))
+                                            .add(new FloatTag("", (float) pitch)));
+
+                            float f = 1.5f;
+                            EntityEgg egg = new EntityEgg(this.chunk, nbt, this);
+
+                            egg.setMotion(egg.getMotion().multiply(f));
+                            if (this.isSurvival()) {
+                                item.setCount(item.getCount() - 1);
+                                this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                            }
+                            if (egg instanceof EntityProjectile) {
+                                ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(egg);
+                                this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                                if (projectileLaunchEvent.isCancelled()) {
+                                    egg.kill();
+                                } else {
+                                    egg.spawnToAll();
+                                    this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                                }
+                            } else {
+                                egg.spawnToAll();
+                            }
+                        } else if (item.getId() == Item.ENDER_PEARL && (this.server.getTick() - this.lastEnderPearl) >= 20) {
+                            CompoundTag nbt = new CompoundTag()
+                                    .putList(new ListTag<DoubleTag>("Pos")
+                                            .add(new DoubleTag("", x))
+                                            .add(new DoubleTag("", y + this.getEyeHeight()))
+                                            .add(new DoubleTag("", z)))
+                                    .putList(new ListTag<DoubleTag>("Motion")
+                                            .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                    .putList(new ListTag<FloatTag>("Rotation")
+                                            .add(new FloatTag("", (float) yaw))
+                                            .add(new FloatTag("", (float) pitch)));
+
+                            float f = 1.5f;
+                            EntityEnderPearl enderPearl = new EntityEnderPearl(this.chunk, nbt, this);
+
+                            enderPearl.setMotion(enderPearl.getMotion().multiply(f));
+                            if (this.isSurvival()) {
+                                item.setCount(item.getCount() - 1);
+                                this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                            }
+                            if (enderPearl instanceof EntityProjectile) {
+                                ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(enderPearl);
+                                this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                                if (projectileLaunchEvent.isCancelled()) {
+                                    enderPearl.kill();
+                                } else {
+                                    enderPearl.spawnToAll();
+                                    this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                                }
+                            } else {
+                                enderPearl.spawnToAll();
+                            }
+                            this.lastEnderPearl = this.server.getTick();
+                        } else if (item.getId() == Item.EXPERIENCE_BOTTLE) {
+                            CompoundTag nbt = new CompoundTag()
+                                    .putList(new ListTag<DoubleTag>("Pos")
+                                            .add(new DoubleTag("", x))
+                                            .add(new DoubleTag("", y + this.getEyeHeight()))
+                                            .add(new DoubleTag("", z)))
+                                    .putList(new ListTag<DoubleTag>("Motion")
+                                            .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                    .putList(new ListTag<FloatTag>("Rotation")
+                                            .add(new FloatTag("", (float) yaw))
+                                            .add(new FloatTag("", (float) pitch)))
+                                    .putInt("Potion", item.getDamage());
+                            double f = 1.5;
+                            Entity bottle = new EntityExpBottle(this.chunk, nbt, this);
+                            bottle.setMotion(bottle.getMotion().multiply(f));
+                            if (this.isSurvival()) {
+                                item.setCount(item.getCount() - 1);
+                                this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                            }
+                            if (bottle instanceof EntityProjectile) {
+                                EntityProjectile bottleEntity = (EntityProjectile) bottle;
+                                ProjectileLaunchEvent projectileEv = new ProjectileLaunchEvent(bottleEntity);
+                                this.server.getPluginManager().callEvent(projectileEv);
+                                if (projectileEv.isCancelled()) {
+                                    bottle.kill();
+                                } else {
+                                    bottle.spawnToAll();
+                                    this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                                }
+                            } else {
+                                bottle.spawnToAll();
+                            }
+                        } else if (item.getId() == Item.SPLASH_POTION) {
+                            CompoundTag nbt = new CompoundTag()
+                                    .putList(new ListTag<DoubleTag>("Pos")
+                                            .add(new DoubleTag("", x))
+                                            .add(new DoubleTag("", y + this.getEyeHeight()))
+                                            .add(new DoubleTag("", z)))
+                                    .putList(new ListTag<DoubleTag>("Motion")
+                                            .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                    .putList(new ListTag<FloatTag>("Rotation")
+                                            .add(new FloatTag("", (float) yaw))
+                                            .add(new FloatTag("", (float) pitch)))
+                                    .putShort("PotionId", item.getDamage());
+                            double f = 1.5;
+                            Entity bottle = new EntityPotion(this.chunk, nbt, this);
+                            bottle.setMotion(bottle.getMotion().multiply(f));
+                            if (this.isSurvival()) {
+                                item.setCount(item.getCount() - 1);
+                                this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                            }
+                            if (bottle instanceof EntityPotion) {
+                                EntityPotion bottleEntity = (EntityPotion) bottle;
+                                ProjectileLaunchEvent projectileEv = new ProjectileLaunchEvent(bottleEntity);
+                                this.server.getPluginManager().callEvent(projectileEv);
+                                if (projectileEv.isCancelled()) {
+                                    bottle.kill();
+                                } else {
+                                    bottle.spawnToAll();
+                                    this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                                }
+                            } else {
+                                bottle.spawnToAll();
+                            }
+                        }
+
+                        this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, true);
+                        this.startAction = this.server.getTick();
+                    }
+                    break;
+                case ProtocolInfo113.CONTAINER_SET_SLOT_PACKET:
+                    if (!this.spawned || !this.isAlive()) {
+                        break;
+                    }
+                    InventorySlotPacket containerSetSlotPacket = (InventorySlotPacket) packet;
+                    if (containerSetSlotPacket.slot < 0) {
+                        break;
+                    }
+
+                    Inventory inv;
+                    SlotChangeAction transaction;
+                    if (containerSetSlotPacket.inventoryId == 0) { //Our inventory
+                        inv = this.inventory;
+                        if (containerSetSlotPacket.slot >= this.inventory.getSize()) {
+                            break;
+                        }
+                        if (this.isCreative()) {
+                            if (Item.getCreativeItemIndex(containerSetSlotPacket.item) != -1) {
+                                inv.setItem(containerSetSlotPacket.slot, containerSetSlotPacket.item);
+                            }
+                        }
+                        transaction = new SlotChangeAction(this.inventory, containerSetSlotPacket.slot,
+                                this.inventory.getItem(containerSetSlotPacket.slot), containerSetSlotPacket.item);
+                    } else if (containerSetSlotPacket.inventoryId == ContainerIds.ARMOR) { //Our armor
+                        inv = this.inventory;
+                        if (containerSetSlotPacket.slot >= 4) {
+                            break;
+                        }
+                        transaction = new SlotChangeAction(this.inventory, containerSetSlotPacket.slot +
+                                this.inventory.getSize(), this.inventory.getArmorItem(containerSetSlotPacket.slot),
+                                containerSetSlotPacket.item);
+                    } else if (this.windowIndex.containsKey(containerSetSlotPacket.inventoryId)) {
+                        inv = this.windowIndex.get(containerSetSlotPacket.inventoryId);
+
+                        if (!(inv instanceof AnvilInventory)) {
+                            this.craftingType = CRAFTING_SMALL;
+                        }
+
+                        if (inv instanceof EnchantInventory && containerSetSlotPacket.item.hasEnchantments()) {
+                            ((EnchantInventory) inv).onEnchant(this, inv.getItem(containerSetSlotPacket.slot),
+                                    containerSetSlotPacket.item);
+                        }
+
+                        transaction = new SlotChangeAction(inv, containerSetSlotPacket.slot,
+                                inv.getItem(containerSetSlotPacket.slot),
+                                containerSetSlotPacket.item);
+                    } else {
+                        break;
+                    }
+
+                    if (inv != null) {
+                        Item sourceItem = inv.getItem(containerSetSlotPacket.slot);
+                        Item heldItem = sourceItem.clone();
+                        heldItem.setCount(sourceItem.getCount() - containerSetSlotPacket.item.getCount());
+                        if (heldItem.getCount() > 0) { //In win10, click mouse and hold on item
+                            InventoryClickEvent inventoryClickEvent = new InventoryClickEvent(inv,
+                                    containerSetSlotPacket.slot, sourceItem, heldItem, containerSetSlotPacket.item);
+                            this.getServer().getPluginManager().callEvent(inventoryClickEvent);
+                        }
+                    }
+
+                    if (transaction.getSourceItem().equalsExact(transaction.getTargetItem()) &&
+                            transaction.getTargetItem().getCount() ==
+                                    transaction.getSourceItem().getCount()) { //No changes!
+                        //No changes, just a local inventory update sent by the server
+                        break;
+                    }
+
+
+                    if (this.last113transaction == null || this.last113transaction.getCreationTime() <
+                            (System.currentTimeMillis() - 8 * 1000)) {
+                        if (this.last113transaction != null) {
+                            for (Inventory inventory : this.last113transaction.getInventories()) {
+                                if (inventory instanceof PlayerInventory) {
+                                    ((PlayerInventory) inventory).sendArmorContents(this);
+                                }
+                                inventory.sendContents(this);
+                            }
+                        }
+                        this.last113transaction = new Old113InventoryTransaction(this);
+                    }
+
+                    this.last113transaction.addAction(transaction);
+
+                    if (this.last113transaction.canExecute() || this.isCreative()) {
+                        HashSet<String> achievements = new HashSet<>();
+
+                        for (InventoryAction tra : this.last113transaction.getActions()) {
+                            if (!(tra instanceof SlotChangeAction)) continue;
+                            SlotChangeAction tr = (SlotChangeAction) tra;
+                            Inventory inv1 = tr.getInventory();
+
+                            if (inv1 instanceof FurnaceInventory) {
+                                if (tr.getSlot() == 2) {
+                                    switch (((FurnaceInventory) inv1).getResult().getId()) {
+                                        case Item.IRON_INGOT:
+                                            achievements.add("acquireIron");
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (this.last113transaction.execute()) {
+                            for (String achievement : achievements) {
+                                this.awardAchievement(achievement);
+                            }
+                        }
+
+                        this.last113transaction = null;
+                    } else {
+                        if (containerSetSlotPacket.item.getId() != 0) {
+                            inventory.sendSlot(containerSetSlotPacket.hotbarSlot, this);
+                            inventory.sendSlot(containerSetSlotPacket.slot, this);
+                        }
+                    }
+
+                    break;
+                case ProtocolInfo113.REMOVE_BLOCK_PACKET:
+                    if (!this.spawned || !this.isAlive()) {
+                        break;
+                    }
+                    this.craftingType = CRAFTING_SMALL;
+
+                    Vector3 vector = new Vector3(((RemoveBlockPacket) packet).x, ((RemoveBlockPacket) packet).y, ((RemoveBlockPacket) packet).z);
+
+                    if (this.isCreative()) {
+                        item = this.inventory.getItemInHand();
+                    } else {
+                        item = this.inventory.getItemInHand();
+                    }
+
+                    Item oldItem = item.clone();
+
+                    if (this.canInteract(vector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 7) && (item = this.level.useBreakOn(vector, item, this, true)) != null) {
+                        if (this.isSurvival()) {
+                            this.getFoodData().updateFoodExpLevel(0.025);
+                            if (!item.equalsExact(oldItem) || item.getCount() != oldItem.getCount()) {
+                                this.inventory.setItemInHand(item);
+                                this.inventory.sendHeldItem(this.hasSpawned.values());
+                            }
+                        }
+                        break;
+                    }
+
+                    this.inventory.sendContents(this);
+                    Block target = this.level.getBlock(vector);
+                    BlockEntity blockEntity = this.level.getBlockEntity(vector);
+
+                    this.level.sendBlocks(new Player[]{this}, new Block[]{target}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
+
+                    this.inventory.sendHeldItem(this);
+
+                    if (blockEntity instanceof BlockEntitySpawnable) {
+                        ((BlockEntitySpawnable) blockEntity).spawnTo(this);
                     }
                     break;
                 default:
@@ -4462,12 +5015,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
 
-    public static BatchPacket getChunkCacheFromData(int chunkX, int chunkZ, byte[] payload) {
+    public static BatchPacket getChunkCacheFromData(int chunkX, int chunkZ, byte[] payload, PlayerProtocol protocol) {
         FullChunkDataPacket pk = new FullChunkDataPacket();
         pk.chunkX = chunkX;
         pk.chunkZ = chunkZ;
         pk.data = payload;
-        pk.encode();
+        pk.encode(protocol);
 
         BatchPacket batch = new BatchPacket();
         byte[][] batchPayload = new byte[2][];

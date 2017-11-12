@@ -57,6 +57,7 @@ public abstract class ItemTool extends Item {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean useOn(Block block) {
         if (this.isUnbreakable() || !canReduceDamage()) {
             return true;

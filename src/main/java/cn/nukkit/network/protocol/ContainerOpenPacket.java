@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.math.BlockVector3;
 
 /**
@@ -7,11 +8,12 @@ import cn.nukkit.math.BlockVector3;
  * Nukkit Project
  */
 public class ContainerOpenPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_OPEN_PACKET;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.CONTAINER_OPEN_PACKET :
+                ProtocolInfo.CONTAINER_OPEN_PACKET;
     }
 
     public int windowId;
@@ -22,7 +24,7 @@ public class ContainerOpenPacket extends DataPacket {
     public long entityId = -1;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.windowId = this.getByte();
         this.type = this.getByte();
         BlockVector3 v = this.getBlockVector3();
@@ -33,8 +35,8 @@ public class ContainerOpenPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putByte((byte) this.windowId);
         this.putByte((byte) this.type);
         this.putBlockVector3(this.x, this.y, this.z);

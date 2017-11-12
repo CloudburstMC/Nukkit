@@ -6,6 +6,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -240,12 +241,12 @@ public class BinaryStream {
         }
     }
 
-    public void putUUID(UUID uuid) {
-        this.put(Binary.writeUUID(uuid));
+    public void putUUID(UUID uuid, PlayerProtocol protocol) {
+        this.put(Binary.writeUUID(uuid, protocol));
     }
 
-    public UUID getUUID() {
-        return Binary.readUUID(this.get(16));
+    public UUID getUUID(PlayerProtocol protocol) {
+        return Binary.readUUID(this.get(16), protocol);
     }
 
     public void putSkin(Skin skin) {

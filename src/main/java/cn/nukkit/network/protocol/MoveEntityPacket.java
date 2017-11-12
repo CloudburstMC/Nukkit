@@ -7,7 +7,6 @@ import cn.nukkit.math.Vector3f;
  * Nukkit Project
  */
 public class MoveEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.MOVE_ENTITY_PACKET;
 
     public long eid;
     public double x;
@@ -20,12 +19,14 @@ public class MoveEntityPacket extends DataPacket {
     public boolean teleport;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.MOVE_ENTITY_PACKET :
+                ProtocolInfo.MOVE_ENTITY_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.eid = this.getEntityRuntimeId();
         Vector3f v = this.getVector3f();
         this.x = v.x;
@@ -39,8 +40,8 @@ public class MoveEntityPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityRuntimeId(this.eid);
         this.putVector3f((float) this.x, (float) this.y, (float) this.z);
         this.putByte((byte) (this.pitch / (360d / 256d)));

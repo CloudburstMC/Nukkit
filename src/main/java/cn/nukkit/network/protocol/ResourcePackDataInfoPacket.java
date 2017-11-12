@@ -2,8 +2,6 @@ package cn.nukkit.network.protocol;
 
 public class ResourcePackDataInfoPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_DATA_INFO_PACKET;
-
     public String packId;
     public int maxChunkSize;
     public int chunkCount;
@@ -11,7 +9,7 @@ public class ResourcePackDataInfoPacket extends DataPacket {
     public byte[] sha256;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.packId = this.getString();
         this.maxChunkSize = this.getLInt();
         this.chunkCount = this.getLInt();
@@ -20,8 +18,8 @@ public class ResourcePackDataInfoPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putString(this.packId);
         this.putLInt(this.maxChunkSize);
         this.putLInt(this.chunkCount);
@@ -30,7 +28,9 @@ public class ResourcePackDataInfoPacket extends DataPacket {
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.RESOURCE_PACK_DATA_INFO_PACKET :
+                ProtocolInfo.RESOURCE_PACK_DATA_INFO_PACKET;
     }
 }

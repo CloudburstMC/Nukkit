@@ -7,6 +7,7 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 /**
  * Created by Pub4Game on 03.07.2016.
@@ -82,7 +83,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         if (!this.namedTag.contains("Item")) {
             this.setItem(new ItemBlock(new BlockAir()), false);
         }

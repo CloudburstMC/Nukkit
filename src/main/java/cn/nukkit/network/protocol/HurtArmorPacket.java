@@ -5,24 +5,24 @@ package cn.nukkit.network.protocol;
  */
 public class HurtArmorPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.HURT_ARMOR_PACKET;
-
     public int health;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putVarInt(this.health);
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.HURT_ARMOR_PACKET :
+                ProtocolInfo.HURT_ARMOR_PACKET;
     }
 
 }

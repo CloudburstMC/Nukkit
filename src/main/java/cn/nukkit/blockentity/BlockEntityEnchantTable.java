@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 /**
  * author: MagicDroidX
@@ -40,7 +41,7 @@ public class BlockEntityEnchantTable extends BlockEntitySpawnable implements Blo
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         CompoundTag c = new CompoundTag()
                 .putString("id", BlockEntity.ENCHANT_TABLE)
                 .putInt("x", (int) this.x)

@@ -5,8 +5,10 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -24,6 +26,7 @@ public class ChunkRequestTask extends AsyncTask {
     protected final int chunkZ;
 
     protected byte[] blockEntities;
+    protected byte[] blockEntities113;
 
     public ChunkRequestTask(Level level, Chunk chunk) {
         this.levelId = level.getId();
@@ -32,11 +35,15 @@ public class ChunkRequestTask extends AsyncTask {
         this.chunkZ = chunk.getZ();
 
         byte[] buffer = new byte[0];
+        byte[] buffer113 = new byte[0];
 
         for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
             if (blockEntity instanceof BlockEntitySpawnable) {
                 try {
-                    buffer = Binary.appendBytes(buffer, NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), ByteOrder.BIG_ENDIAN, true));
+                    buffer = Binary.appendBytes(buffer, NBTIO.write(((BlockEntitySpawnable) blockEntity)
+                            .getSpawnCompound(PlayerProtocol.PLAYER_PROTOCOL_130), ByteOrder.BIG_ENDIAN, true));
+                    buffer113 = Binary.appendBytes(buffer, NBTIO.write(((BlockEntitySpawnable) blockEntity)
+                            .getSpawnCompound(PlayerProtocol.PLAYER_PROTOCOL_113), ByteOrder.BIG_ENDIAN, true));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -45,6 +52,7 @@ public class ChunkRequestTask extends AsyncTask {
         }
 
         this.blockEntities = buffer;
+        this.blockEntities113 = buffer113;
     }
 
     @Override
@@ -62,6 +70,14 @@ public class ChunkRequestTask extends AsyncTask {
                         + 256
                         + this.blockEntities.length
         );
+        ByteBuffer buffer113 = ByteBuffer.allocate(
+                16 * 16 * (128 + 64 + 64 + 64)
+                        + 256
+                        + 256
+                        + 256
+                        + 256
+                        + this.blockEntities113.length
+        );
 
         ByteBuffer orderedIds = ByteBuffer.allocate(16 * 16 * 128);
         ByteBuffer orderedData = ByteBuffer.allocate(16 * 16 * 64);
@@ -72,6 +88,8 @@ public class ChunkRequestTask extends AsyncTask {
             for (int z = 0; z < 16; ++z) {
                 orderedIds.put(this.getColumn(ids, x, z));
                 orderedData.put(this.getHalfColumn(meta, x, z));
+                orderedSkyLight.put(this.getHalfColumn(skyLight, x, z));
+                orderedLight.put(this.getHalfColumn(blockLight, x, z));
             }
         }
 
@@ -85,13 +103,22 @@ public class ChunkRequestTask extends AsyncTask {
         }
 
         this.setResult(
-                buffer
+                new byte[][]{buffer
                         .put(orderedIds)
                         .put(orderedData)
                         .put(orderedHeightMap)
                         .put(orderedBiomeColors)
                         .put(this.blockEntities)
-                        .array()
+                        .array(),
+                           buffer113
+                        .put(orderedIds)
+                        .put(orderedData)
+                        .put(orderedHeightMap)
+                        .put(orderedBiomeColors)
+                        .put(orderedSkyLight)
+                        .put(orderedLight)
+                        .put(this.blockEntities113)
+                        .array()}
         );
     }
 
@@ -123,7 +150,8 @@ public class ChunkRequestTask extends AsyncTask {
     public void onCompletion(Server server) {
         Level level = server.getLevel(this.levelId);
         if (level != null && this.hasResult()) {
-            level.chunkRequestCallback(this.chunkX, this.chunkZ, (byte[]) this.getResult());
+            byte[][] result = (byte[][]) this.getResult();
+            level.chunkRequestCallback(this.chunkX, this.chunkZ, result[1], result[0]);
         }
     }
 }

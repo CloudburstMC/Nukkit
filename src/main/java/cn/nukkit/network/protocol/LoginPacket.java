@@ -17,8 +17,6 @@ import java.util.UUID;
  */
 public class LoginPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.LOGIN_PACKET;
-
     public String username;
     public int protocol;
     public UUID clientUUID;
@@ -31,20 +29,23 @@ public class LoginPacket extends DataPacket {
     public byte[] capeData;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.LOGIN_PACKET :
+                ProtocolInfo.LOGIN_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.protocol = this.getInt();
+        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)) this.getByte();
         this.setBuffer(this.getByteArray(), 0);
         decodeChainData();
-        decodeSkinData();
+        decodeSkinData(protocol);
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
 
     }
 
@@ -69,14 +70,15 @@ public class LoginPacket extends DataPacket {
         }
     }
 
-    private void decodeSkinData() {
+    private void decodeSkinData(PlayerProtocol protocol) {
         JsonObject skinToken = decodeToken(new String(this.get(this.getLInt())));
         String skinId = null;
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
         if (skinToken.has("SkinId")) skinId = skinToken.get("SkinId").getAsString();
         if (skinToken.has("SkinData")) {
             this.skin = new Skin(skinToken.get("SkinData").getAsString(), skinId);
-
+            if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)) this.skin.setModel("Standard_"+
+                    this.skin.getModel().split("_")[1]);
             if (skinToken.has("CapeData"))
                 this.skin.setCape(this.skin.new Cape(Base64.getDecoder().decode(skinToken.get("CapeData").getAsString())));
         }

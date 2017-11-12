@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 public class BlockEntityBeacon extends BlockEntitySpawnable {
 
@@ -35,7 +36,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         return new CompoundTag()
                 .putString("id", BlockEntity.BEACON)
                 .putInt("x", (int) this.x)

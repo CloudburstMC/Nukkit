@@ -1,5 +1,7 @@
 package cn.nukkit.level.format;
 
+import cn.nukkit.network.protocol.PlayerProtocol;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -49,7 +51,7 @@ public interface ChunkSection extends Cloneable {
 
     boolean isEmpty();
 
-    byte[] getBytes();
+    byte[] getBytes(PlayerProtocol protocol);
 
     ChunkSection clone();
 }

@@ -9,8 +9,6 @@ import java.util.UUID;
  */
 public class PlayerListPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_LIST_PACKET;
-
     public static final byte TYPE_ADD = 0;
     public static final byte TYPE_REMOVE = 1;
 
@@ -18,35 +16,39 @@ public class PlayerListPacket extends DataPacket {
     public Entry[] entries = new Entry[0];
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putByte(this.type);
         this.putUnsignedVarInt(this.entries.length);
         for (Entry entry : this.entries) {
             if (type == TYPE_ADD) {
-                this.putUUID(entry.uuid);
+                this.putUUID(entry.uuid, protocol);
                 this.putVarLong(entry.entityId);
                 this.putString(entry.name);
                 this.putSkin(entry.skin);
-                this.putByteArray(entry.skin.getCape().getData());
-                this.putString(entry.geometryModel);
-                this.putByteArray(entry.geometryData);
-                this.putString(entry.xboxUserId);
+                if (!protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)){
+                    this.putByteArray(entry.skin.getCape().getData());
+                    this.putString(entry.geometryModel);
+                    this.putByteArray(entry.geometryData);
+                    this.putString(entry.xboxUserId);
+                }
             } else {
-                this.putUUID(entry.uuid);
+                this.putUUID(entry.uuid, protocol);
             }
         }
 
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.PLAYER_LIST_PACKET :
+                ProtocolInfo.PLAYER_LIST_PACKET;
     }
 
     public static class Entry {

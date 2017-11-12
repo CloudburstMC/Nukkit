@@ -5,23 +5,24 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class ContainerClosePacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_CLOSE_PACKET;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.CONTAINER_CLOSE_PACKET :
+                ProtocolInfo.CONTAINER_CLOSE_PACKET;
     }
 
     public int windowId;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.windowId = this.getByte();
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putByte((byte) this.windowId);
     }
 }

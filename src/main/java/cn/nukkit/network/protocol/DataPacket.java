@@ -17,17 +17,16 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     public Integer orderIndex = null;
     public Integer orderChannel = null;
 
-    public abstract byte pid();
+    public abstract byte pid(PlayerProtocol protocol);
 
-    public abstract void decode();
+    public abstract void decode(PlayerProtocol protocol);
 
-    public abstract void encode();
+    public abstract void encode(PlayerProtocol protocol);
 
-    @Override
-    public void reset() {
+    public void reset(PlayerProtocol protocol) {
         super.reset();
-        this.putByte(this.pid());
-        this.putShort(0);
+        this.putByte(this.pid(protocol));
+        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)) this.putShort(0);
     }
 
     public void setChannel(int channel) {

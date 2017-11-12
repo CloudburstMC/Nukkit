@@ -10,10 +10,7 @@ import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.network.protocol.InventoryContentPacket;
-import cn.nukkit.network.protocol.InventorySlotPacket;
-import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
-import cn.nukkit.network.protocol.MobEquipmentPacket;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.ContainerIds;
 
 import java.util.Collection;
@@ -79,14 +76,12 @@ public class PlayerInventory extends BaseInventory {
         return slot >= 0 && slot <= this.getHotbarSize();
     }
 
-    @Deprecated
     public int getHotbarSlotIndex(int index) {
-        return index;
+        return this.getHotbarSize() > index ? this.hotbar[index] : -1;
     }
 
-    @Deprecated
     public void setHotbarSlotIndex(int index, int slot) {
-
+        if (this.getHotbarSize() > index) this.hotbar[index] = slot;
     }
 
     public int getHeldItemIndex() {
@@ -332,17 +327,21 @@ public class PlayerInventory extends BaseInventory {
         MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
         pk.eid = this.getHolder().getId();
         pk.slots = armor;
-        pk.encode();
+        MobArmorEquipmentPacket pk113 = (MobArmorEquipmentPacket) pk.clone();
+        pk.encode(PlayerProtocol.PLAYER_PROTOCOL_130);
         pk.isEncoded = true;
+        pk113.encode(PlayerProtocol.PLAYER_PROTOCOL_113);
+        pk113.isEncoded = true;
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
                 InventoryContentPacket pk2 = new InventoryContentPacket();
+                pk2.eid = player.getId();
                 pk2.inventoryId = InventoryContentPacket.SPECIAL_ARMOR;
                 pk2.slots = armor;
                 player.dataPacket(pk2);
             } else {
-                player.dataPacket(pk);
+                player.dataPacket(player.getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113) ? pk113 : pk);
             }
         }
     }
@@ -381,7 +380,10 @@ public class PlayerInventory extends BaseInventory {
         MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
         pk.eid = this.getHolder().getId();
         pk.slots = armor;
-        pk.encode();
+        MobArmorEquipmentPacket pk113 = (MobArmorEquipmentPacket) pk.clone();
+        pk113.encode(PlayerProtocol.PLAYER_PROTOCOL_113);
+        pk113.isEncoded = true;
+        pk.encode(PlayerProtocol.PLAYER_PROTOCOL_130);
         pk.isEncoded = true;
 
         for (Player player : players) {
@@ -392,7 +394,7 @@ public class PlayerInventory extends BaseInventory {
                 pk2.item = this.getItem(index);
                 player.dataPacket(pk2);
             } else {
-                player.dataPacket(pk);
+                player.dataPacket(player.getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113) ? pk113 : pk);
             }
         }
     }
@@ -418,13 +420,10 @@ public class PlayerInventory extends BaseInventory {
         for (int i = 0; i < this.getSize(); ++i) {
             pk.slots[i] = this.getItem(i);
         }
-
-        /*//Because PE is stupid and shows 9 less slots than you send it, give it 9 dummy slots so it shows all the REAL slots.
-        for(int i = this.getSize(); i < this.getSize() + this.getHotbarSize(); ++i){
-            pk.slots[i] = new ItemBlock(new BlockAir());
+        pk.hotbar = new int[this.getHotbarSize()];
+        for (int i = 0; i < this.getHotbarSize(); i++){
+            pk.hotbar[i] = this.getHotbarSlotIndex(i);
         }
-            pk.slots[i] = new ItemBlock(new BlockAir());
-        }*/
 
         for (Player player : players) {
             int id = player.getWindowId(this);
@@ -432,6 +431,7 @@ public class PlayerInventory extends BaseInventory {
                 this.close(player);
                 continue;
             }
+            pk.eid = player.getId();
             pk.inventoryId = id;
             player.dataPacket(pk.clone());
 
@@ -477,6 +477,7 @@ public class PlayerInventory extends BaseInventory {
         Player p = (Player) this.getHolder();
 
         InventoryContentPacket pk = new InventoryContentPacket();
+        pk.eid = p.getId();
         pk.inventoryId = ContainerIds.CREATIVE;
 
         if (!p.isSpectator()) { //fill it for all gamemodes except spectator

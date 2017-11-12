@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.command.data.CommandArgs;
+import com.google.gson.Gson;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -21,17 +24,44 @@ public class CommandRequestPacket extends DataPacket {
     public static final int TYPE_INTERNAL = 10;
 
     public String command;
+    //1.2 easy data
     public int type;
     public String requestId;
     public long playerUniqueId;
 
+    //1.1 harder data
+    public String overload;
+    public long uvarint1;
+    public long currentStep;
+    public boolean done;
+    public long clientId;
+    public CommandArgs args = new CommandArgs(); //JSON formatted command arguments
+    public String outputJson;
+
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.COMMAND_STEP_PACKET :
+                ProtocolInfo.COMMAND_REQUEST_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
+        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)){
+            this.command = this.getString();
+            this.overload = this.getString();
+            this.uvarint1 = this.getUnsignedVarInt();
+            this.currentStep = this.getUnsignedVarInt();
+            this.done = this.getBoolean();
+            this.clientId = this.getVarLong();
+            String argsString = this.getString();
+            this.args = new Gson().fromJson(argsString, CommandArgs.class);
+            this.outputJson = this.getString();
+            while (!this.feof()) {
+                this.getByte(); //prevent assertion errors
+            }
+            return;
+        }
         this.command = this.getString();
         this.type = this.getVarInt();
         this.requestId = this.getString();
@@ -39,7 +69,7 @@ public class CommandRequestPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
     }
 
 }

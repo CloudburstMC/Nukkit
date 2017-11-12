@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 import java.awt.*;
 
@@ -85,7 +86,7 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         return new CompoundTag()
                 .putString("id", BlockEntity.CAULDRON)
                 .putInt("x", (int) this.x)

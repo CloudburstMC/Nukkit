@@ -5,6 +5,7 @@ import cn.nukkit.entity.data.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitMath;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -78,8 +79,18 @@ public class Binary {
         };
     }
 
-    public static UUID readUUID(byte[] bytes) {
-        return new UUID(readLLong(bytes), readLLong(new byte[]{
+    public static UUID readUUID(byte[] bytes, PlayerProtocol protocol) {
+        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)) return new UUID(readLLong(bytes), readLLong(new byte[]{
+                bytes[8],
+                bytes[9],
+                bytes[10],
+                bytes[11],
+                bytes[12],
+                bytes[13],
+                bytes[14],
+                bytes[15]
+        }));
+        return new UUID(readLong(bytes), readLong(new byte[]{
                 bytes[8],
                 bytes[9],
                 bytes[10],
@@ -91,8 +102,10 @@ public class Binary {
         }));
     }
 
-    public static byte[] writeUUID(UUID uuid) {
-        return appendBytes(writeLLong(uuid.getMostSignificantBits()), writeLLong(uuid.getLeastSignificantBits()));
+    public static byte[] writeUUID(UUID uuid, PlayerProtocol protocol) {
+        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)) return
+                appendBytes(writeLLong(uuid.getMostSignificantBits()), writeLLong(uuid.getLeastSignificantBits()));
+        else return appendBytes(writeLong(uuid.getMostSignificantBits()), writeLong(uuid.getLeastSignificantBits()));
     }
 
     public static byte[] writeMetadata(EntityMetadata metadata) {

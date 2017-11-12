@@ -30,6 +30,7 @@ public class Network {
     public static final byte CHANNEL_END = 31;
 
     private Class<? extends DataPacket>[] packetPool = new Class[256];
+    private Class<? extends DataPacket>[] packetPool113 = new Class[256];
 
     private final Server server;
 
@@ -45,6 +46,7 @@ public class Network {
 
     public Network(Server server) {
         this.registerPackets();
+        this.registerPackets113();
         this.server = server;
     }
 
@@ -126,6 +128,9 @@ public class Network {
     public void registerPacket(byte id, Class<? extends DataPacket> clazz) {
         this.packetPool[id & 0xff] = clazz;
     }
+    public void registerPacket113(byte id, Class<? extends DataPacket> clazz) {
+        this.packetPool113[id & 0xff] = clazz;
+    }
 
     public Server getServer() {
         return server;
@@ -148,10 +153,15 @@ public class Network {
 
                 DataPacket pk;
 
-                if ((pk = this.getPacket(buf[0])) != null) {
-                    pk.setBuffer(buf, 3); //skip 2 more bytes
-
-                    pk.decode();
+                if ((pk = this.getPacket(buf[0], player.getProtocol())) != null) {
+                    if (pk.pid(player.getProtocol()) == 0x01){
+                        if (buf[4] != 0){ //Protocol 113
+                            player.setProtocol(PlayerProtocol.PLAYER_PROTOCOL_113);
+                        }
+                        else player.setProtocol(PlayerProtocol.PLAYER_PROTOCOL_130);
+                    }
+                    pk.setBuffer(buf, player.getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113) ? 1 : 3); //skip
+                    pk.decode(player.getProtocol());
 
                     packets.add(pk);
                 }
@@ -179,8 +189,10 @@ public class Network {
     }
 
 
-    public DataPacket getPacket(byte id) {
-        Class<? extends DataPacket> clazz = this.packetPool[id & 0xff];
+    public DataPacket getPacket(byte id, PlayerProtocol protocol) {
+        Class<? extends DataPacket> clazz;
+        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)) clazz = this.packetPool113[id & 0xff];
+        else clazz = this.packetPool[id & 0xff];
         if (clazz != null) {
             try {
                 return clazz.newInstance();
@@ -295,4 +307,83 @@ public class Network {
         this.registerPacket(ProtocolInfo.UPDATE_BLOCK_PACKET, UpdateBlockPacket.class);
         this.registerPacket(ProtocolInfo.UPDATE_TRADE_PACKET, UpdateTradePacket.class);
     }
+    private void registerPackets113() {
+        this.packetPool113 = new Class[256];
+
+        this.registerPacket113(ProtocolInfo113.ADD_ENTITY_PACKET, AddEntityPacket.class);
+        this.registerPacket113(ProtocolInfo113.ADD_ITEM_ENTITY_PACKET, AddItemEntityPacket.class);
+        this.registerPacket113(ProtocolInfo113.ADD_PAINTING_PACKET, AddPaintingPacket.class);
+        this.registerPacket113(ProtocolInfo113.ADD_PLAYER_PACKET, AddPlayerPacket.class);
+        this.registerPacket113(ProtocolInfo113.ADVENTURE_SETTINGS_PACKET, AdventureSettingsPacket.class);
+        this.registerPacket113(ProtocolInfo113.ANIMATE_PACKET, AnimatePacket.class);
+        this.registerPacket113(ProtocolInfo113.AVAILABLE_COMMANDS_PACKET, AvailableCommandsPacket.class);
+        this.registerPacket113(ProtocolInfo113.BATCH_PACKET, BatchPacket.class);
+        this.registerPacket113(ProtocolInfo113.BLOCK_ENTITY_DATA_PACKET, BlockEntityDataPacket.class);
+        this.registerPacket113(ProtocolInfo113.BLOCK_EVENT_PACKET, BlockEventPacket.class);
+        this.registerPacket113(ProtocolInfo113.BLOCK_PICK_REQUEST_PACKET, BlockPickRequestPacket.class);
+        this.registerPacket113(ProtocolInfo113.BOSS_EVENT_PACKET, BossEventPacket.class);
+        this.registerPacket113(ProtocolInfo113.COMMAND_STEP_PACKET, CommandRequestPacket.class);
+        this.registerPacket113(ProtocolInfo113.CHANGE_DIMENSION_PACKET, ChangeDimensionPacket.class);
+        this.registerPacket113(ProtocolInfo113.CHUNK_RADIUS_UPDATED_PACKET, ChunkRadiusUpdatedPacket.class);
+        this.registerPacket113(ProtocolInfo113.CLIENTBOUND_MAP_ITEM_DATA_PACKET, ClientboundMapItemDataPacket.class);
+        this.registerPacket113(ProtocolInfo113.CONTAINER_CLOSE_PACKET, ContainerClosePacket.class);
+        this.registerPacket113(ProtocolInfo113.CONTAINER_OPEN_PACKET, ContainerOpenPacket.class);
+        this.registerPacket113(ProtocolInfo113.CONTAINER_SET_CONTENT_PACKET, InventoryContentPacket.class);
+        this.registerPacket113(ProtocolInfo113.CONTAINER_SET_DATA_PACKET, ContainerSetDataPacket.class);
+        this.registerPacket113(ProtocolInfo113.CONTAINER_SET_SLOT_PACKET, InventorySlotPacket.class);
+        this.registerPacket113(ProtocolInfo113.CRAFTING_DATA_PACKET, CraftingDataPacket.class);
+        this.registerPacket113(ProtocolInfo113.CRAFTING_EVENT_PACKET, CraftingEventPacket.class);
+        this.registerPacket113(ProtocolInfo113.DISCONNECT_PACKET, DisconnectPacket.class);
+        this.registerPacket113(ProtocolInfo113.ENTITY_EVENT_PACKET, EntityEventPacket.class);
+        this.registerPacket113(ProtocolInfo113.ENTITY_FALL_PACKET, EntityFallPacket.class);
+        this.registerPacket113(ProtocolInfo113.EXPLODE_PACKET, ExplodePacket.class);
+        this.registerPacket113(ProtocolInfo113.FULL_CHUNK_DATA_PACKET, FullChunkDataPacket.class);
+        this.registerPacket113(ProtocolInfo113.GAME_RULES_CHANGED_PACKET, GameRulesChangedPacket.class);
+        this.registerPacket113(ProtocolInfo113.HURT_ARMOR_PACKET, HurtArmorPacket.class);
+        this.registerPacket113(ProtocolInfo113.INTERACT_PACKET, InteractPacket.class);
+        this.registerPacket113(ProtocolInfo113.ITEM_FRAME_DROP_ITEM_PACKET, ItemFrameDropItemPacket.class);
+        this.registerPacket113(ProtocolInfo113.LEVEL_EVENT_PACKET, LevelEventPacket.class);
+        this.registerPacket113(ProtocolInfo113.LEVEL_SOUND_EVENT_PACKET, LevelSoundEventPacket.class);
+        this.registerPacket113(ProtocolInfo113.LOGIN_PACKET, LoginPacket.class);
+        this.registerPacket113(ProtocolInfo113.MAP_INFO_REQUEST_PACKET, MapInfoRequestPacket.class);
+        this.registerPacket113(ProtocolInfo113.MOB_ARMOR_EQUIPMENT_PACKET, MobArmorEquipmentPacket.class);
+        this.registerPacket113(ProtocolInfo113.MOB_EQUIPMENT_PACKET, MobEquipmentPacket.class);
+        this.registerPacket113(ProtocolInfo113.MOVE_ENTITY_PACKET, MoveEntityPacket.class);
+        this.registerPacket113(ProtocolInfo113.MOVE_PLAYER_PACKET, MovePlayerPacket.class);
+        this.registerPacket113(ProtocolInfo113.PLAYER_ACTION_PACKET, PlayerActionPacket.class);
+        this.registerPacket113(ProtocolInfo113.PLAYER_INPUT_PACKET, PlayerInputPacket.class);
+        this.registerPacket113(ProtocolInfo113.PLAYER_LIST_PACKET, PlayerListPacket.class);
+        this.registerPacket113(ProtocolInfo113.PLAY_SOUND_PACKET, PlaySoundPacket.class);
+        this.registerPacket113(ProtocolInfo113.PLAY_STATUS_PACKET, PlayStatusPacket.class);
+        this.registerPacket113(ProtocolInfo113.REMOVE_BLOCK_PACKET, RemoveBlockPacket.class);
+        this.registerPacket113(ProtocolInfo113.REMOVE_ENTITY_PACKET, RemoveEntityPacket.class);
+        this.registerPacket113(ProtocolInfo113.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
+        this.registerPacket113(ProtocolInfo113.RESOURCE_PACKS_INFO_PACKET, ResourcePacksInfoPacket.class);
+        this.registerPacket113(ProtocolInfo113.RESOURCE_PACK_STACK_PACKET, ResourcePackStackPacket.class);
+        this.registerPacket113(ProtocolInfo113.RESOURCE_PACK_CLIENT_RESPONSE_PACKET, ResourcePackClientResponsePacket.class);
+        this.registerPacket113(ProtocolInfo113.RESOURCE_PACK_DATA_INFO_PACKET, ResourcePackDataInfoPacket.class);
+        this.registerPacket113(ProtocolInfo113.RESOURCE_PACK_CHUNK_DATA_PACKET, ResourcePackChunkDataPacket.class);
+        this.registerPacket113(ProtocolInfo113.RESOURCE_PACK_CHUNK_REQUEST_PACKET, ResourcePackChunkRequestPacket.class);
+        this.registerPacket113(ProtocolInfo113.RESPAWN_PACKET, RespawnPacket.class);
+        this.registerPacket113(ProtocolInfo113.RIDER_JUMP_PACKET, RiderJumpPacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_COMMANDS_ENABLED_PACKET, SetCommandsEnabledPacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_DIFFICULTY_PACKET, SetDifficultyPacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_ENTITY_DATA_PACKET, SetEntityDataPacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_ENTITY_LINK_PACKET, SetEntityLinkPacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_ENTITY_MOTION_PACKET, SetEntityMotionPacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_HEALTH_PACKET, SetHealthPacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_PLAYER_GAME_TYPE_PACKET, SetPlayerGameTypePacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_SPAWN_POSITION_PACKET, SetSpawnPositionPacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_TITLE_PACKET, SetTitlePacket.class);
+        this.registerPacket113(ProtocolInfo113.SET_TIME_PACKET, SetTimePacket.class);
+        this.registerPacket113(ProtocolInfo113.SHOW_CREDITS_PACKET, ShowCreditsPacket.class);
+        this.registerPacket113(ProtocolInfo113.SPAWN_EXPERIENCE_ORB_PACKET, SpawnExperienceOrbPacket.class);
+        this.registerPacket113(ProtocolInfo113.START_GAME_PACKET, StartGamePacket.class);
+        this.registerPacket113(ProtocolInfo113.TAKE_ITEM_ENTITY_PACKET, TakeItemEntityPacket.class);
+        this.registerPacket113(ProtocolInfo113.TEXT_PACKET, TextPacket.class);
+        this.registerPacket113(ProtocolInfo113.UPDATE_BLOCK_PACKET, UpdateBlockPacket.class);
+        this.registerPacket113(ProtocolInfo113.UPDATE_TRADE_PACKET, UpdateTradePacket.class);
+        this.registerPacket113(ProtocolInfo113.USE_ITEM_PACKET, UseItemPacket.class);
+    }
+
 }

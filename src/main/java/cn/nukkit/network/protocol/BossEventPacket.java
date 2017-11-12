@@ -5,8 +5,6 @@ package cn.nukkit.network.protocol;
  */
 public class BossEventPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.BOSS_EVENT_PACKET;
-
     /* S2C: Shows the bossbar to the player. */
     public static final int TYPE_SHOW = 0;
     /* C2S: Registers a player to a boss fight. */
@@ -33,14 +31,16 @@ public class BossEventPacket extends DataPacket {
     public short unknown;
     public int color;
     public int overlay;
-    
+
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.BOSS_EVENT_PACKET :
+                ProtocolInfo.BOSS_EVENT_PACKET;
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.bossEid = this.getEntityUniqueId();
         this.type = (int) this.getUnsignedVarInt();
         switch (this.type) {
@@ -67,8 +67,8 @@ public class BossEventPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityUniqueId(this.bossEid);
         this.putUnsignedVarInt(this.type);
         switch (this.type) {

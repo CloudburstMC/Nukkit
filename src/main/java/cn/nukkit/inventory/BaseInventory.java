@@ -445,6 +445,7 @@ public abstract class BaseInventory implements Inventory {
         for (int i = 0; i < this.getSize(); ++i) {
             pk.slots[i] = this.getItem(i);
         }
+        pk.hotbar = new int[0];
 
         for (Player player : players) {
             int id = player.getWindowId(this);
@@ -452,6 +453,7 @@ public abstract class BaseInventory implements Inventory {
                 this.close(player);
                 continue;
             }
+            pk.eid = player.getId();
             pk.inventoryId = id;
             player.dataPacket(pk);
         }

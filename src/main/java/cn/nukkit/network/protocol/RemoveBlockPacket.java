@@ -2,10 +2,7 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.BlockVector3;
 
-/**
- * Created by Pub4Game on 03.07.2016.
- */
-public class ItemFrameDropItemPacket extends DataPacket {
+public class RemoveBlockPacket extends DataPacket {
 
     public int x;
     public int y;
@@ -14,20 +11,19 @@ public class ItemFrameDropItemPacket extends DataPacket {
     @Override
     public void decode(PlayerProtocol protocol) {
         BlockVector3 v = this.getBlockVector3();
-        this.z = v.z;
-        this.y = v.y;
         this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
     }
 
     @Override
     public void encode(PlayerProtocol protocol) {
-
     }
 
     @Override
-    public byte pid(PlayerProtocol protocol) {
+    public byte pid(PlayerProtocol protocol){
         return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
-                ProtocolInfo113.ITEM_FRAME_DROP_ITEM_PACKET :
-                ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET;
+                ProtocolInfo113.REMOVE_BLOCK_PACKET : 0;
     }
+
 }

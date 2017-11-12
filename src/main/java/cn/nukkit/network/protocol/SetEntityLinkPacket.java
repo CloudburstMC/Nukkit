@@ -5,8 +5,6 @@ package cn.nukkit.network.protocol;
  */
 public class SetEntityLinkPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_LINK_PACKET;
-
     public static final byte TYPE_REMOVE = 0;
     public static final byte TYPE_RIDE = 1;
     public static final byte TYPE_PASSENGER = 2;
@@ -17,13 +15,13 @@ public class SetEntityLinkPacket extends DataPacket {
     public byte unknownByte;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityUniqueId(this.rider);
         this.putEntityUniqueId(this.riding);
         this.putByte(this.type);
@@ -31,7 +29,9 @@ public class SetEntityLinkPacket extends DataPacket {
     }
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                ProtocolInfo113.SET_ENTITY_LINK_PACKET :
+                ProtocolInfo.SET_ENTITY_LINK_PACKET;
     }
 }
