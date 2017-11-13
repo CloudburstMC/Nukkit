@@ -11,13 +11,15 @@ import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityEnderPearl;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
-import cn.nukkit.inventory.*;
+import cn.nukkit.inventory.CraftingManager;
+import cn.nukkit.inventory.Recipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
@@ -48,7 +50,10 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.*;
+import cn.nukkit.network.protocol.BatchPacket;
+import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.PlayerListPacket;
+import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.permission.BanEntry;
@@ -259,6 +264,7 @@ public class Server {
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
             {
                 put("motd", "Nukkit Server For Minecraft: PE");
+                put("sub-motd", "Powered by Nukkit");
                 put("server-port", 19132);
                 put("server-ip", "0.0.0.0");
                 put("view-distance", 10);
@@ -353,6 +359,7 @@ public class Server {
 
         this.network = new Network(this);
         this.network.setName(this.getMotd());
+        this.network.setSubName(this.getSubMotd());
 
         this.logger.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()));
         this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
@@ -426,7 +433,7 @@ public class Server {
 
         if (this.getDefaultLevel() == null) {
             String defaultName = this.getPropertyString("level-name", "world");
-            if (defaultName == null || "".equals(defaultName.trim())) {
+            if (defaultName == null || defaultName.trim().isEmpty()) {
                 this.getLogger().warning("level-name cannot be null, using default");
                 defaultName = "world";
                 this.setPropertyString("level-name", defaultName);
@@ -639,7 +646,7 @@ public class Server {
             return true;
         }
 
-        sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.notFound"));
+        sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));
 
         return false;
     }
@@ -810,6 +817,10 @@ public class Server {
         }
     }
 
+    public void onPlayerCompleteLoginSequence(Player player) {
+        this.sendFullPlayerListData(player);
+    }
+
     public void onPlayerLogin(Player player) {
         if (this.sendUsageTicker > 0) {
             this.uniquePlayers.add(player.getUniqueId());
@@ -823,7 +834,7 @@ public class Server {
 
     public void addOnlinePlayer(Player player) {
         this.playerList.put(player.getUniqueId(), player);
-        this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin());
+        this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin(), player.getLoginChainData().getXUID());
     }
 
     public void removeOnlinePlayer(Player player) {
@@ -839,18 +850,26 @@ public class Server {
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin) {
-        this.updatePlayerListData(uuid, entityId, name, skin, this.playerList.values());
+        this.updatePlayerListData(uuid, entityId, name, skin, "", this.playerList.values());
+    }
+
+    public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId) {
+        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId, this.playerList.values());
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, Player[] players) {
+        this.updatePlayerListData(uuid, entityId, name, skin, "", players);
+    }
+
+    public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Player[] players) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid, entityId, name, skin)};
+        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid, entityId, name, skin, xboxUserId)};
         Server.broadcastPacket(players, pk);
     }
 
-    public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, Collection<Player> players) {
-        this.updatePlayerListData(uuid, entityId, name, skin,
+    public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Collection<Player> players) {
+        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId,
                 players.stream()
                         .filter(p -> !p.getUniqueId().equals(uuid))
                         .toArray(Player[]::new));
@@ -872,39 +891,22 @@ public class Server {
     }
 
     public void sendFullPlayerListData(Player player) {
-        final UUID uuid = player.getUniqueId();
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = this.playerList.values()
-                .stream()
-                .filter(p -> !p.getUniqueId().equals(uuid))
+        pk.entries = this.playerList.values().stream()
                 .map(p -> new PlayerListPacket.Entry(
                         p.getUniqueId(),
                         p.getId(),
                         p.getDisplayName(),
-                        p.getSkin()))
+                        p.getSkin(),
+                        p.getLoginChainData().getXUID()))
                 .toArray(PlayerListPacket.Entry[]::new);
 
         player.dataPacket(pk);
     }
 
     public void sendRecipeList(Player player) {
-        CraftingDataPacket pk = new CraftingDataPacket();
-        pk.cleanRecipes = true;
-
-        for (Recipe recipe : this.getCraftingManager().getRecipes().values()) {
-            if (recipe instanceof ShapedRecipe) {
-                pk.addShapedRecipe((ShapedRecipe) recipe);
-            } else if (recipe instanceof ShapelessRecipe) {
-                pk.addShapelessRecipe((ShapelessRecipe) recipe);
-            }
-        }
-
-        for (FurnaceRecipe recipe : this.getCraftingManager().getFurnaceRecipes().values()) {
-            pk.addFurnaceRecipe(recipe);
-        }
-
-        player.dataPacket(pk);
+        player.dataPacket(CraftingManager.packet);
     }
 
     private void checkTickUpdates(int currentTick, long tickTime) {
@@ -1012,6 +1014,7 @@ public class Server {
 
         if ((this.tickCounter & 0b1111) == 0) {
             this.titleTick();
+            this.network.resetStatistics();
             this.maxTick = 20;
             this.maxUse = 0;
 
@@ -1080,7 +1083,7 @@ public class Server {
 
     // TODO: Fix title tick
     public void titleTick() {
-        if (true || !Nukkit.ANSI) {
+        if (!Nukkit.ANSI) {
             return;
         }
 
@@ -1100,8 +1103,6 @@ public class Server {
                 " | Load " + this.getTickUsage() + "%" + (char) 0x07;
 
         System.out.print(title);
-
-        this.network.resetStatistics();
     }
 
     public QueryRegenerateEvent getQueryInformation() {
@@ -1192,15 +1193,19 @@ public class Server {
     }
 
     public static String getGamemodeString(int mode) {
+        return getGamemodeString(mode, false);
+    }
+
+    public static String getGamemodeString(int mode, boolean direct) {
         switch (mode) {
             case Player.SURVIVAL:
-                return "%gameMode.survival";
+                return direct ? "Survival" : "%gameMode.survival";
             case Player.CREATIVE:
-                return "%gameMode.creative";
+                return direct ? "Creative" : "%gameMode.creative";
             case Player.ADVENTURE:
-                return "%gameMode.adventure";
+                return direct ? "Adventure" : "%gameMode.adventure";
             case Player.SPECTATOR:
-                return "%gameMode.spectator";
+                return direct ? "Spectator" : "%gameMode.spectator";
         }
         return "UNKNOWN";
     }
@@ -1286,6 +1291,10 @@ public class Server {
 
     public String getMotd() {
         return this.getPropertyString("motd", "Nukkit Server For Minecraft: PE");
+    }
+
+    public String getSubMotd() {
+        return this.getPropertyString("sub-motd", "Powered by Nukkit");
     }
 
     public boolean getForceResources() {
@@ -1902,8 +1911,9 @@ public class Server {
 
     /**
      * Checks the current thread against the expected primary thread for the server.
-     *
+     * <p>
      * <b>Note:</b> this method should not be used to indicate the current synchronized state of the runtime. A current thread matching the main thread indicates that it is synchronized, but a mismatch does not preclude the same assumption.
+     *
      * @return true if the current thread matches the expected primary thread, false otherwise
      */
     public boolean isPrimaryThread() {
@@ -1960,6 +1970,7 @@ public class Server {
         Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);
         Entity.registerEntity("XpOrb", EntityXPOrb.class);
         Entity.registerEntity("ThrownPotion", EntityPotion.class);
+        Entity.registerEntity("Egg", EntityEgg.class);
 
         Entity.registerEntity("Human", EntityHuman.class, true);
 
@@ -1986,6 +1997,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.COMPARATOR, BlockEntityComparator.class);
         BlockEntity.registerBlockEntity(BlockEntity.HOPPER, BlockEntityHopper.class);
         BlockEntity.registerBlockEntity(BlockEntity.BED, BlockEntityBed.class);
+        BlockEntity.registerBlockEntity(BlockEntity.JUKEBOX, BlockEntityJukebox.class);
     }
 
     public static Server getInstance() {

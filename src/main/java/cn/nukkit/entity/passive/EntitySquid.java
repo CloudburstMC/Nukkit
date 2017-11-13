@@ -9,7 +9,6 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.utils.DyeColor;
 
 /**
- *
  * @author PikyCZ
  */
 public class EntitySquid extends EntityAnimal {

@@ -1,8 +1,5 @@
 package cn.nukkit.utils.bugreport;
 
-import cn.nukkit.Server;
-import cn.nukkit.lang.BaseLang;
-
 /**
  * Project nukkit
  */

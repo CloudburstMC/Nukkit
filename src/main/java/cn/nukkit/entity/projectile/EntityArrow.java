@@ -92,6 +92,11 @@ public class EntityArrow extends EntityProjectile {
     }
 
     @Override
+    protected double getBaseDamage() {
+        return 2;
+    }
+
+    @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
             return false;

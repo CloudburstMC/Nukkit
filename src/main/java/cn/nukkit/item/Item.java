@@ -1,27 +1,33 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
-import cn.nukkit.block.BlockFence;
-import cn.nukkit.block.BlockFlower;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.Config;
+import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.Utils;
 
+import javax.xml.bind.DatatypeConverter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -29,22 +35,6 @@ import java.util.regex.Pattern;
  * Nukkit Project
  */
 public class Item implements Cloneable {
-
-    private static CompoundTag parseCompoundTag(byte[] tag) {
-        try {
-            return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private byte[] writeCompoundTag(CompoundTag tag) {
-        try {
-            return NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     //All Block IDs are here too
     public static final int AIR = 0;
@@ -160,7 +150,7 @@ public class Item implements Cloneable {
     public static final int CLAY_BLOCK = 82;
     public static final int REEDS = 83;
     public static final int SUGARCANE_BLOCK = 83;
-
+    public static final int JUKEBOX = 84;
     public static final int FENCE = 85;
     public static final int PUMPKIN = 86;
     public static final int NETHERRACK = 87;
@@ -310,6 +300,11 @@ public class Item implements Cloneable {
 
     public static final int END_ROD = 208;
     public static final int END_GATEWAY = 209;
+
+    public static final int MAGMA = 213;
+    public static final int BLOCK_NETHER_WART_BLOCK = 214;
+    public static final int RED_NETHER_BRICK = 215;
+    public static final int BONE_BLOCK = 216;
 
     public static final int SHULKER_BOX = 218;
     public static final int PURPLE_GLAZED_TERRACOTTA = 219;
@@ -490,7 +485,8 @@ public class Item implements Cloneable {
     public static final int SPAWN_EGG = 383;
     public static final int EXPERIENCE_BOTTLE = 384;
     public static final int FIRE_CHARGE = 385;
-
+    public static final int BOOK_AND_QUILL = 386;
+    public static final int WRITTEN_BOOK = 387;
     public static final int EMERALD = 388;
     public static final int ITEM_FRAME = 389;
     public static final int FLOWER_POT = 390;
@@ -562,6 +558,19 @@ public class Item implements Cloneable {
 
     public static final int GOLDEN_APPLE_ENCHANTED = 466;
 
+    public static final int RECORD_13 = 500;
+    public static final int RECORD_CAT = 501;
+    public static final int RECORD_BLOCKS = 502;
+    public static final int RECORD_CHIRP = 503;
+    public static final int RECORD_FAR = 504;
+    public static final int RECORD_MALL = 505;
+    public static final int RECORD_MELLOHI = 506;
+    public static final int RECORD_STAL = 507;
+    public static final int RECORD_STRAD = 508;
+    public static final int RECORD_WARD = 509;
+    public static final int RECORD_11 = 510;
+    public static final int RECORD_WAIT = 511;
+
     public static Class[] list = null;
 
     protected Block block = null;
@@ -588,7 +597,7 @@ public class Item implements Cloneable {
 
     public Item(int id, Integer meta, int count, String name) {
         this.id = id & 0xffff;
-        if (meta != null) {
+        if (meta != null && meta >= 0) {
             this.meta = meta & 0xffff;
         } else {
             this.hasMeta = false;
@@ -741,7 +750,8 @@ public class Item implements Cloneable {
             list[SPAWN_EGG] = ItemSpawnEgg.class; //383
             list[EXPERIENCE_BOTTLE] = ItemExpBottle.class; //384
             //TODO: list[FIRE_CHARGE] = ItemFireCharge.class; //385
-
+            //TODO: list[BOOK_AND_QUILL] = ItemBookAndQuill.class; //386
+            list[WRITTEN_BOOK] = ItemBookWritten.class; //387
             list[EMERALD] = ItemEmerald.class; //388
             list[ITEM_FRAME] = ItemItemFrame.class; //389
             list[FLOWER_POT] = ItemFlowerPot.class; //390
@@ -805,6 +815,18 @@ public class Item implements Cloneable {
             list[COOKED_SALMON] = ItemSalmonCooked.class; //463
 
             list[GOLDEN_APPLE_ENCHANTED] = ItemAppleGoldEnchanted.class; //466
+            /*list[RECORD_11] = ItemRecord11.class;
+            list[RECORD_CAT] = ItemRecordCat.class;
+            list[RECORD_13] = ItemRecord13.class;
+            list[RECORD_BLOCKS] = ItemRecordBlocks.class;
+            list[RECORD_CHIRP] = ItemRecordChirp.class;
+            list[RECORD_FAR] = ItemRecordFar.class;
+            list[RECORD_WARD] = ItemRecordWard.class;
+            list[RECORD_MALL] = ItemRecordMall.class;
+            list[RECORD_MELLOHI] = ItemRecordMellohi.class;
+            list[RECORD_STAL] = ItemRecordStal.class;
+            list[RECORD_STRAD] = ItemRecordStrad.class;
+            list[RECORD_WAIT] = ItemRecordWait.class;*/
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -820,644 +842,31 @@ public class Item implements Cloneable {
 
     private static void initCreativeItems() {
         clearCreativeItems();
+        Server server = Server.getInstance();
 
-        //Building
-        addCreativeItem(Item.get(Item.COBBLESTONE, 0));
-        addCreativeItem(Item.get(Item.STONE_BRICKS, 0));
-        addCreativeItem(Item.get(Item.STONE_BRICKS, 1));
-        addCreativeItem(Item.get(Item.STONE_BRICKS, 2));
-        addCreativeItem(Item.get(Item.STONE_BRICKS, 3));
-        addCreativeItem(Item.get(Item.MOSS_STONE, 0));
-        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 0));
-        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 1));
-        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 2));
-        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 3));
-        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 4));
-        addCreativeItem(Item.get(Item.WOODEN_PLANKS, 5));
-        addCreativeItem(Item.get(Item.BRICKS, 0));
-
-        addCreativeItem(Item.get(Item.STONE, 0));
-        addCreativeItem(Item.get(Item.STONE, 1));
-        addCreativeItem(Item.get(Item.STONE, 2));
-        addCreativeItem(Item.get(Item.STONE, 3));
-        addCreativeItem(Item.get(Item.STONE, 4));
-        addCreativeItem(Item.get(Item.STONE, 5));
-        addCreativeItem(Item.get(Item.STONE, 6));
-        addCreativeItem(Item.get(Item.DIRT, 0));
-        addCreativeItem(Item.get(Item.PODZOL, 0));
-        addCreativeItem(Item.get(Item.GRASS, 0));
-        addCreativeItem(Item.get(Item.MYCELIUM, 0));
-        addCreativeItem(Item.get(Item.CLAY_BLOCK, 0));
-        addCreativeItem(Item.get(Item.TERRACOTTA, 0));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 0));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 1));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 2));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 3));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 4));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 5));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 6));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 7));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 8));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 9));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 10));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 11));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 12));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 13));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 14));
-        addCreativeItem(Item.get(Item.STAINED_TERRACOTTA, 15));
-        addCreativeItem(Item.get(Item.SANDSTONE, 0));
-        addCreativeItem(Item.get(Item.SANDSTONE, 1));
-        addCreativeItem(Item.get(Item.SANDSTONE, 2));
-        addCreativeItem(Item.get(Item.RED_SANDSTONE, 0));
-        addCreativeItem(Item.get(Item.RED_SANDSTONE, 1));
-        addCreativeItem(Item.get(Item.RED_SANDSTONE, 2));
-        addCreativeItem(Item.get(Item.SAND, 0));
-        addCreativeItem(Item.get(Item.SAND, 1));
-        addCreativeItem(Item.get(Item.GRAVEL, 0));
-        addCreativeItem(Item.get(Item.TRUNK, 0));
-        addCreativeItem(Item.get(Item.TRUNK, 1));
-        addCreativeItem(Item.get(Item.TRUNK, 2));
-        addCreativeItem(Item.get(Item.TRUNK, 3));
-        addCreativeItem(Item.get(Item.TRUNK2, 0));
-        addCreativeItem(Item.get(Item.TRUNK2, 1));
-        addCreativeItem(Item.get(Item.NETHER_BRICKS, 0));
-        addCreativeItem(Item.get(Item.NETHERRACK, 0));
-        addCreativeItem(Item.get(Item.SOUL_SAND, 0));
-        addCreativeItem(Item.get(Item.BEDROCK, 0));
-        addCreativeItem(Item.get(Item.COBBLESTONE_STAIRS, 0));
-        addCreativeItem(Item.get(Item.OAK_WOODEN_STAIRS, 0));
-        addCreativeItem(Item.get(Item.SPRUCE_WOODEN_STAIRS, 0));
-        addCreativeItem(Item.get(Item.BIRCH_WOODEN_STAIRS, 0));
-        addCreativeItem(Item.get(Item.JUNGLE_WOODEN_STAIRS, 0));
-        addCreativeItem(Item.get(Item.ACACIA_WOODEN_STAIRS, 0));
-        addCreativeItem(Item.get(Item.DARK_OAK_WOODEN_STAIRS, 0));
-        addCreativeItem(Item.get(Item.BRICK_STAIRS, 0));
-        addCreativeItem(Item.get(Item.SANDSTONE_STAIRS, 0));
-        addCreativeItem(Item.get(Item.RED_SANDSTONE_STAIRS, 0));
-        addCreativeItem(Item.get(Item.STONE_BRICK_STAIRS, 0));
-        addCreativeItem(Item.get(Item.NETHER_BRICKS_STAIRS, 0));
-        addCreativeItem(Item.get(Item.QUARTZ_STAIRS, 0));
-        addCreativeItem(Item.get(Item.PURPUR_STAIRS, 0));
-        addCreativeItem(Item.get(Item.SLAB, 0));
-        addCreativeItem(Item.get(Item.SLAB, 3));
-        addCreativeItem(Item.get(Item.WOODEN_SLAB, 0));
-        addCreativeItem(Item.get(Item.WOODEN_SLAB, 1));
-        addCreativeItem(Item.get(Item.WOODEN_SLAB, 2));
-        addCreativeItem(Item.get(Item.WOODEN_SLAB, 3));
-        addCreativeItem(Item.get(Item.WOODEN_SLAB, 4));
-        addCreativeItem(Item.get(Item.WOODEN_SLAB, 5));
-        addCreativeItem(Item.get(Item.SLAB, 4));
-        addCreativeItem(Item.get(Item.SLAB, 1));
-        addCreativeItem(Item.get(Item.RED_SANDSTONE_SLAB));
-        addCreativeItem(Item.get(Item.SLAB, 5));
-        addCreativeItem(Item.get(Item.SLAB, 7));
-        addCreativeItem(Item.get(Item.SLAB, 6));
-        addCreativeItem(Item.get(Item.RED_SANDSTONE_SLAB, 1));
-        addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 0));
-        addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 2));
-        addCreativeItem(Item.get(Item.QUARTZ_BLOCK, 1));
-        addCreativeItem(Item.get(Item.PRISMARINE, 0));
-        addCreativeItem(Item.get(Item.PRISMARINE, 1));
-        addCreativeItem(Item.get(Item.PRISMARINE, 2));
-        addCreativeItem(Item.get(Item.PURPUR_BLOCK, 0));
-        addCreativeItem(Item.get(Item.PURPUR_BLOCK, 2));
-        addCreativeItem(Item.get(Item.COAL_ORE, 0));
-        addCreativeItem(Item.get(Item.IRON_ORE, 0));
-        addCreativeItem(Item.get(Item.GOLD_ORE, 0));
-        addCreativeItem(Item.get(Item.DIAMOND_ORE, 0));
-        addCreativeItem(Item.get(Item.LAPIS_ORE, 0));
-        addCreativeItem(Item.get(Item.REDSTONE_ORE, 0));
-        addCreativeItem(Item.get(Item.EMERALD_ORE, 0));
-        addCreativeItem(Item.get(Item.QUARTZ_ORE, 0));
-        addCreativeItem(Item.get(Item.OBSIDIAN, 0));
-        addCreativeItem(Item.get(Item.ICE, 0));
-        addCreativeItem(Item.get(Item.PACKED_ICE, 0));
-        addCreativeItem(Item.get(Item.SNOW_BLOCK, 0));
-        addCreativeItem(Item.get(Item.END_BRICKS, 0));
-        addCreativeItem(Item.get(Item.END_STONE, 0));
-
-        //Decoration
-        addCreativeItem(Item.get(Item.BEACON, 0));
-        addCreativeItem(Item.get(Item.COBBLESTONE_WALL, 0));
-        addCreativeItem(Item.get(Item.COBBLESTONE_WALL, 1));
-        addCreativeItem(Item.get(Item.WATER_LILY, 0));
-        addCreativeItem(Item.get(Item.SEA_LANTERN, 0));
-        addCreativeItem(Item.get(Item.CHORUS_PLANT, 0));
-        addCreativeItem(Item.get(Item.CHORUS_FLOWER, 0));
-        addCreativeItem(Item.get(Item.GOLD_BLOCK, 0));
-        addCreativeItem(Item.get(Item.IRON_BLOCK, 0));
-        addCreativeItem(Item.get(Item.DIAMOND_BLOCK, 0));
-        addCreativeItem(Item.get(Item.LAPIS_BLOCK, 0));
-        addCreativeItem(Item.get(Item.COAL_BLOCK, 0));
-        addCreativeItem(Item.get(Item.EMERALD_BLOCK, 0));
-        addCreativeItem(Item.get(Item.REDSTONE_BLOCK, 0));
-        addCreativeItem(Item.get(Item.SNOW_LAYER, 0));
-        addCreativeItem(Item.get(Item.GLASS, 0));
-        addCreativeItem(Item.get(Item.GLOWSTONE_BLOCK, 0));
-        addCreativeItem(Item.get(Item.VINES, 0));
-        addCreativeItem(Item.get(Item.LADDER, 0));
-        addCreativeItem(Item.get(Item.SPONGE, 0));
-        addCreativeItem(Item.get(Item.SPONGE, 1));
-        addCreativeItem(Item.get(Item.GLASS_PANE, 0));
-        addCreativeItem(Item.get(Item.WOODEN_DOOR, 0));
-        addCreativeItem(Item.get(Item.SPRUCE_DOOR, 0));
-        addCreativeItem(Item.get(Item.BIRCH_DOOR, 0));
-        addCreativeItem(Item.get(Item.JUNGLE_DOOR, 0));
-        addCreativeItem(Item.get(Item.ACACIA_DOOR, 0));
-        addCreativeItem(Item.get(Item.DARK_OAK_DOOR, 0));
-        addCreativeItem(Item.get(Item.IRON_DOOR, 0));
-        addCreativeItem(Item.get(Item.TRAPDOOR, 0));
-        addCreativeItem(Item.get(Item.IRON_TRAPDOOR, 0));
-        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_OAK));
-        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_SPRUCE));
-        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_BIRCH));
-        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_JUNGLE));
-        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_ACACIA));
-        addCreativeItem(Item.get(Item.FENCE, BlockFence.FENCE_DARK_OAK));
-        addCreativeItem(Item.get(Item.NETHER_BRICK_FENCE, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE_SPRUCE, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE_BIRCH, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE_JUNGLE, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE_ACACIA, 0));
-        addCreativeItem(Item.get(Item.FENCE_GATE_DARK_OAK, 0));
-        addCreativeItem(Item.get(Item.IRON_BARS, 0));
-        int[] dyeColors = {0, 8, 7, 15, 12, 14, 1, 4, 5, 13, 9, 3, 11, 10, 2, 6};
-        for (int color : dyeColors) {
-            addCreativeItem(Item.get(Item.BED, color));
+        String path = server.getDataPath() + "creativeitems.json";
+        if (!new File(path).exists()) {
+            try {
+                Utils.writeFile(path, Server.class.getClassLoader().getResourceAsStream("creativeitems.json"));
+            } catch (IOException e) {
+                MainLogger.getLogger().logException(e);
+                return;
+            }
         }
-        addCreativeItem(Item.get(Item.BOOKSHELF, 0));
-        addCreativeItem(Item.get(Item.SIGN, 0));
-        addCreativeItem(Item.get(Item.PAINTING, 0));
-        addCreativeItem(Item.get(Item.ITEM_FRAME, 0));
-        addCreativeItem(Item.get(Item.WORKBENCH, 0));
-        addCreativeItem(Item.get(Item.STONECUTTER, 0));
-        addCreativeItem(Item.get(Item.CHEST, 0));
-        addCreativeItem(Item.get(Item.TRAPPED_CHEST, 0));
-        addCreativeItem(Item.get(Item.FURNACE, 0));
-        addCreativeItem(Item.get(Item.BREWING_STAND, 0));
-        addCreativeItem(Item.get(Item.CAULDRON, 0));
-        addCreativeItem(Item.get(Item.NOTEBLOCK, 0));
-        addCreativeItem(Item.get(Item.END_ROD, 0));
-        addCreativeItem(Item.get(Item.END_PORTAL_FRAME, 0));
-        addCreativeItem(Item.get(Item.ANVIL, 0));
-        addCreativeItem(Item.get(Item.ANVIL, 4));
-        addCreativeItem(Item.get(Item.ANVIL, 8));
-        addCreativeItem(Item.get(Item.DANDELION, 0));
-        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_POPPY));
-        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_BLUE_ORCHID));
-        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_ALLIUM));
-        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_AZURE_BLUET));
-        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_RED_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_ORANGE_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_WHITE_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_PINK_TULIP));
-        addCreativeItem(Item.get(Item.RED_FLOWER, BlockFlower.TYPE_OXEYE_DAISY));
-        addCreativeItem(Item.get(Item.DOUBLE_PLANT, 0)); // SUNFLOWER
-        addCreativeItem(Item.get(Item.DOUBLE_PLANT, 1)); // Lilac
-        addCreativeItem(Item.get(Item.DOUBLE_PLANT, 2)); // Double Tall Grass
-        addCreativeItem(Item.get(Item.DOUBLE_PLANT, 3)); // Large fern
-        addCreativeItem(Item.get(Item.DOUBLE_PLANT, 4)); // Rose bush
-        addCreativeItem(Item.get(Item.DOUBLE_PLANT, 5)); // Peony
-        addCreativeItem(Item.get(Item.BROWN_MUSHROOM, 0));
-        addCreativeItem(Item.get(Item.RED_MUSHROOM, 0));
-        addCreativeItem(Item.get(Item.BROWN_MUSHROOM_BLOCK, 14));
-        addCreativeItem(Item.get(Item.RED_MUSHROOM_BLOCK, 14));
-        addCreativeItem(Item.get(Item.BROWN_MUSHROOM_BLOCK, 0));
-        addCreativeItem(Item.get(Item.RED_MUSHROOM_BLOCK, 15));
-        addCreativeItem(Item.get(Item.CACTUS, 0));
-        addCreativeItem(Item.get(Item.MELON_BLOCK, 0));
-        addCreativeItem(Item.get(Item.PUMPKIN, 0));
-        addCreativeItem(Item.get(Item.LIT_PUMPKIN, 0));
-        addCreativeItem(Item.get(Item.COBWEB, 0));
-        addCreativeItem(Item.get(Item.HAY_BALE, 0));
-        addCreativeItem(Item.get(Item.TALL_GRASS, 1));
-        addCreativeItem(Item.get(Item.TALL_GRASS, 2));
-        addCreativeItem(Item.get(Item.DEAD_BUSH, 0));
-        addCreativeItem(Item.get(Item.SAPLING, 0));
-        addCreativeItem(Item.get(Item.SAPLING, 1));
-        addCreativeItem(Item.get(Item.SAPLING, 2));
-        addCreativeItem(Item.get(Item.SAPLING, 3));
-        addCreativeItem(Item.get(Item.SAPLING, 4));
-        addCreativeItem(Item.get(Item.SAPLING, 5));
-        addCreativeItem(Item.get(Item.LEAVES, 0));
-        addCreativeItem(Item.get(Item.LEAVES, 1));
-        addCreativeItem(Item.get(Item.LEAVES, 2));
-        addCreativeItem(Item.get(Item.LEAVES, 3));
-        addCreativeItem(Item.get(Item.LEAVES2, 0));
-        addCreativeItem(Item.get(Item.LEAVES2, 1));
+        List<Map> list = new Config(path, Config.YAML).getMapList("items");
 
-        addCreativeItem(Item.get(Item.WHITE_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.SILVER_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.GRAY_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.BLACK_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.BROWN_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.RED_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.ORANGE_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.LIME_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.GREEN_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.CYAN_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.LIGHT_BLUE_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.BLUE_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.PURPLE_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.MAGENTA_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.WHITE_GLAZED_TERRACOTTA));
-        addCreativeItem(Item.get(Item.PINK_GLAZED_TERRACOTTA));
+        for (Map map : list) {
+            try {
+                int id = (int) map.get("id");
+                int damage = (int) map.getOrDefault("damage", 0);
+                String hex = (String) map.get("nbt_hex");
+                byte[] nbt = hex != null ? DatatypeConverter.parseHexBinary(hex) : new byte[0];
 
-        addCreativeItem(Item.get(Item.CAKE, 0));
-
-        addCreativeItem(Item.get(Item.SKULL, ItemSkull.SKELETON_SKULL));
-        addCreativeItem(Item.get(Item.SKULL, ItemSkull.WITHER_SKELETON_SKULL));
-        addCreativeItem(Item.get(Item.SKULL, ItemSkull.ZOMBIE_HEAD));
-        addCreativeItem(Item.get(Item.SKULL, ItemSkull.HEAD));
-        addCreativeItem(Item.get(Item.SKULL, ItemSkull.CREEPER_HEAD));
-        addCreativeItem(Item.get(Item.SKULL, ItemSkull.DRAGON_HEAD));
-
-        addCreativeItem(Item.get(Item.FLOWER_POT, 0));
-
-        addCreativeItem(Item.get(Item.MONSTER_EGG, 0));
-        addCreativeItem(Item.get(Item.MONSTER_EGG, 1));
-        addCreativeItem(Item.get(Item.MONSTER_EGG, 2));
-        addCreativeItem(Item.get(Item.MONSTER_EGG, 3));
-        addCreativeItem(Item.get(Item.MONSTER_EGG, 4));
-        addCreativeItem(Item.get(Item.MONSTER_EGG, 5));
-
-        addCreativeItem(Item.get(Item.DRAGON_EGG, 0));
-        addCreativeItem(Item.get(Item.END_CRYSTAL, 0));
-        addCreativeItem(Item.get(Item.MONSTER_SPAWNER, 0));
-        addCreativeItem(Item.get(Item.ENCHANTMENT_TABLE, 0));
-        addCreativeItem(Item.get(Item.SLIME_BLOCK, 0));
-        addCreativeItem(Item.get(Item.ENDER_CHEST, 0));
-
-        for (int color : dyeColors) {
-            addCreativeItem(Item.get(Item.WOOL, color));
+                addCreativeItem(Item.get(id, damage, 1, nbt));
+            } catch (Exception e) {
+                MainLogger.getLogger().logException(e);
+            }
         }
-
-        addCreativeItem(Item.get(Item.CARPET, 0));
-        addCreativeItem(Item.get(Item.CARPET, 8));
-        addCreativeItem(Item.get(Item.CARPET, 7));
-        addCreativeItem(Item.get(Item.CARPET, 15));
-        addCreativeItem(Item.get(Item.CARPET, 12));
-        addCreativeItem(Item.get(Item.CARPET, 14));
-        addCreativeItem(Item.get(Item.CARPET, 1));
-        addCreativeItem(Item.get(Item.CARPET, 4));
-        addCreativeItem(Item.get(Item.CARPET, 5));
-        addCreativeItem(Item.get(Item.CARPET, 13));
-        addCreativeItem(Item.get(Item.CARPET, 9));
-        addCreativeItem(Item.get(Item.CARPET, 3));
-        addCreativeItem(Item.get(Item.CARPET, 11));
-        addCreativeItem(Item.get(Item.CARPET, 10));
-        addCreativeItem(Item.get(Item.CARPET, 2));
-        addCreativeItem(Item.get(Item.CARPET, 6));
-
-
-        //Tools
-        addCreativeItem(Item.get(Item.RAIL, 0));
-        addCreativeItem(Item.get(Item.POWERED_RAIL, 0));
-        addCreativeItem(Item.get(Item.DETECTOR_RAIL, 0));
-        addCreativeItem(Item.get(Item.ACTIVATOR_RAIL, 0));
-        addCreativeItem(Item.get(Item.TORCH, 0));
-        addCreativeItem(Item.get(Item.BUCKET, 0));
-        addCreativeItem(Item.get(Item.BUCKET, 1)); // milk
-        addCreativeItem(Item.get(Item.BUCKET, 8)); // water
-        addCreativeItem(Item.get(Item.BUCKET, 10)); // lava
-        addCreativeItem(Item.get(Item.TNT, 0));
-        addCreativeItem(Item.get(Item.LEAD, 0));
-        addCreativeItem(Item.get(Item.NAME_TAG, 0));
-        addCreativeItem(Item.get(Item.REDSTONE, 0));
-        addCreativeItem(Item.get(Item.BOW, 0));
-        addCreativeItem(Item.get(Item.FISHING_ROD, 0));
-        addCreativeItem(Item.get(Item.FLINT_AND_STEEL, 0));
-        addCreativeItem(Item.get(Item.SHEARS, 0));
-        addCreativeItem(Item.get(Item.CLOCK, 0));
-        addCreativeItem(Item.get(Item.COMPASS, 0));
-        addCreativeItem(Item.get(Item.MINECART, 0));
-        addCreativeItem(Item.get(Item.MINECART_WITH_CHEST, 0));
-        addCreativeItem(Item.get(Item.MINECART_WITH_HOPPER, 0));
-        addCreativeItem(Item.get(Item.MINECART_WITH_TNT, 0));
-        addCreativeItem(Item.get(Item.BOAT, 0)); // Oak
-        addCreativeItem(Item.get(Item.BOAT, 1)); // Spruce
-        addCreativeItem(Item.get(Item.BOAT, 2)); // Birch
-        addCreativeItem(Item.get(Item.BOAT, 3)); // Jungle
-        addCreativeItem(Item.get(Item.BOAT, 4)); // Acacia
-        addCreativeItem(Item.get(Item.BOAT, 5)); // Dark Oak
-        addCreativeItem(Item.get(Item.SADDLE, 0));
-        addCreativeItem(Item.get(Item.LEATHER_HORSE_ARMOR, 0));
-        addCreativeItem(Item.get(Item.IRON_HORSE_ARMOR, 0));
-        addCreativeItem(Item.get(Item.GOLD_HORSE_ARMOR, 0));
-        addCreativeItem(Item.get(Item.DIAMOND_HORSE_ARMOR, 0));
-        
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 10)); //Chicken
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 11)); //Cow
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 12)); //Pig
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 13)); //Sheep
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 15)); //Villager
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 16)); //Mooshroom
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 17)); //Squid
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 19)); //Bat 
-		//addCreativeItem(Item.get(Item.SPAWN_EGG, 20)); //Iron Golem
-        //addCreativeItem(Item.get(Item.SPAWN_EGG, 21)); //Snow Golem
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 22)); //Ocelot
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 23)); //Horse
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 24)); //Donkey
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 25)); //Mule
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 26)); //SkeletonHorse
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 27)); //ZombieHorse
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 28)); //PolarBear
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 29)); //Llama
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 32)); //Zombie
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 33)); //Creeper
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 34)); //Skeleton
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 35)); //Spider
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 36)); //Zombie Pigman
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 37)); //Slime
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 38)); //Enderman
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 39)); //Silverfish
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 40)); //Cave spider
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 41)); //Ghast
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 42)); //MagmaCube
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 43)); //Blaze
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 45)); //Witch
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 46)); //Stray
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 47)); //Husk
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 49)); //Guardian
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 50)); //ElderGuardian
-        addCreativeItem(Item.get(Item.SPAWN_EGG, 54)); //Shulker
-        
-        addCreativeItem(Item.get(Item.FIRE_CHARGE, 0));
-        addCreativeItem(Item.get(Item.WOODEN_SWORD));
-        addCreativeItem(Item.get(Item.WOODEN_HOE));
-        addCreativeItem(Item.get(Item.WOODEN_SHOVEL));
-        addCreativeItem(Item.get(Item.WOODEN_PICKAXE));
-        addCreativeItem(Item.get(Item.WOODEN_AXE));
-        addCreativeItem(Item.get(Item.STONE_SWORD));
-        addCreativeItem(Item.get(Item.STONE_HOE));
-        addCreativeItem(Item.get(Item.STONE_SHOVEL));
-        addCreativeItem(Item.get(Item.STONE_PICKAXE));
-        addCreativeItem(Item.get(Item.STONE_AXE));
-        addCreativeItem(Item.get(Item.IRON_SWORD));
-        addCreativeItem(Item.get(Item.IRON_HOE));
-        addCreativeItem(Item.get(Item.IRON_SHOVEL));
-        addCreativeItem(Item.get(Item.IRON_PICKAXE));
-        addCreativeItem(Item.get(Item.IRON_AXE));
-        addCreativeItem(Item.get(Item.DIAMOND_SWORD));
-        addCreativeItem(Item.get(Item.DIAMOND_HOE));
-        addCreativeItem(Item.get(Item.DIAMOND_SHOVEL));
-        addCreativeItem(Item.get(Item.DIAMOND_PICKAXE));
-        addCreativeItem(Item.get(Item.DIAMOND_AXE));
-        addCreativeItem(Item.get(Item.GOLD_SWORD));
-        addCreativeItem(Item.get(Item.GOLD_HOE));
-        addCreativeItem(Item.get(Item.GOLD_SHOVEL));
-        addCreativeItem(Item.get(Item.GOLD_PICKAXE));
-        addCreativeItem(Item.get(Item.GOLD_AXE));
-        addCreativeItem(Item.get(Item.LEATHER_CAP));
-        addCreativeItem(Item.get(Item.LEATHER_TUNIC));
-        addCreativeItem(Item.get(Item.LEATHER_PANTS));
-        addCreativeItem(Item.get(Item.LEATHER_BOOTS));
-        addCreativeItem(Item.get(Item.CHAIN_HELMET));
-        addCreativeItem(Item.get(Item.CHAIN_CHESTPLATE));
-        addCreativeItem(Item.get(Item.CHAIN_LEGGINGS));
-        addCreativeItem(Item.get(Item.CHAIN_BOOTS));
-        addCreativeItem(Item.get(Item.IRON_HELMET));
-        addCreativeItem(Item.get(Item.IRON_CHESTPLATE));
-        addCreativeItem(Item.get(Item.IRON_LEGGINGS));
-        addCreativeItem(Item.get(Item.IRON_BOOTS));
-        addCreativeItem(Item.get(Item.DIAMOND_HELMET));
-        addCreativeItem(Item.get(Item.DIAMOND_CHESTPLATE));
-        addCreativeItem(Item.get(Item.DIAMOND_LEGGINGS));
-        addCreativeItem(Item.get(Item.DIAMOND_BOOTS));
-        addCreativeItem(Item.get(Item.GOLD_HELMET));
-        addCreativeItem(Item.get(Item.GOLD_CHESTPLATE));
-        addCreativeItem(Item.get(Item.GOLD_LEGGINGS));
-        addCreativeItem(Item.get(Item.GOLD_BOOTS));
-        addCreativeItem(Item.get(Item.ELYTRA));
-        addCreativeItem(Item.get(Item.LEVER));
-        addCreativeItem(Item.get(Item.REDSTONE_LAMP));
-        addCreativeItem(Item.get(Item.REDSTONE_TORCH));
-        addCreativeItem(Item.get(Item.WOODEN_PRESSURE_PLATE));
-        addCreativeItem(Item.get(Item.STONE_PRESSURE_PLATE));
-        addCreativeItem(Item.get(Item.LIGHT_WEIGHTED_PRESSURE_PLATE));
-        addCreativeItem(Item.get(Item.HEAVY_WEIGHTED_PRESSURE_PLATE));
-        addCreativeItem(Item.get(Item.WOODEN_BUTTON, 5));
-        addCreativeItem(Item.get(Item.STONE_BUTTON, 5));
-        addCreativeItem(Item.get(Item.DAYLIGHT_DETECTOR));
-        addCreativeItem(Item.get(Item.TRIPWIRE_HOOK));
-        addCreativeItem(Item.get(Item.REPEATER));
-        addCreativeItem(Item.get(Item.COMPARATOR));
-        addCreativeItem(Item.get(Item.DISPENSER, 3));
-        addCreativeItem(Item.get(Item.DROPPER));
-        addCreativeItem(Item.get(Item.PISTON));
-        addCreativeItem(Item.get(Item.STICKY_PISTON));
-        addCreativeItem(Item.get(Item.OBSERVER));
-        addCreativeItem(Item.get(Item.HOPPER));
-        addCreativeItem(Item.get(Item.SNOWBALL));
-        addCreativeItem(Item.get(Item.ENDER_PEARL));
-        addCreativeItem(Item.get(Item.ENDER_EYE));
-
-        //Seeds
-        addCreativeItem(Item.get(Item.COAL, 0));
-        addCreativeItem(Item.get(Item.COAL, 1));
-        addCreativeItem(Item.get(Item.DIAMOND, 0));
-        addCreativeItem(Item.get(Item.IRON_INGOT, 0));
-        addCreativeItem(Item.get(Item.GOLD_INGOT, 0));
-        addCreativeItem(Item.get(Item.EMERALD, 0));
-        addCreativeItem(Item.get(Item.STICK, 0));
-        addCreativeItem(Item.get(Item.BOWL, 0));
-        addCreativeItem(Item.get(Item.STRING, 0));
-        addCreativeItem(Item.get(Item.FEATHER, 0));
-        addCreativeItem(Item.get(Item.FLINT, 0));
-        addCreativeItem(Item.get(Item.LEATHER, 0));
-        addCreativeItem(Item.get(Item.RABBIT_HIDE, 0));
-        addCreativeItem(Item.get(Item.CLAY, 0));
-        addCreativeItem(Item.get(Item.SUGAR, 0));
-        addCreativeItem(Item.get(Item.BRICK, 0));
-        addCreativeItem(Item.get(Item.NETHER_BRICK, 0));
-        addCreativeItem(Item.get(Item.NETHER_QUARTZ, 0));
-        addCreativeItem(Item.get(Item.PAPER, 0));
-        addCreativeItem(Item.get(Item.BOOK, 0));
-        addCreativeItem(Item.get(Item.ARROW, 0));
-        addCreativeItem(Item.get(Item.BONE, 0));
-        addCreativeItem(Item.get(Item.EMPTY_MAP, 0));
-        addCreativeItem(Item.get(Item.SUGARCANE, 0));
-        addCreativeItem(Item.get(Item.WHEAT, 0));
-        addCreativeItem(Item.get(Item.SEEDS, 0));
-        addCreativeItem(Item.get(Item.PUMPKIN_SEEDS, 0));
-        addCreativeItem(Item.get(Item.MELON_SEEDS, 0));
-        addCreativeItem(Item.get(Item.BEETROOT_SEEDS, 0));
-        addCreativeItem(Item.get(Item.EGG, 0));
-        addCreativeItem(Item.get(Item.APPLE, 0));
-        addCreativeItem(Item.get(Item.GOLDEN_APPLE, 0));
-        addCreativeItem(Item.get(Item.GOLDEN_APPLE_ENCHANTED, 0));
-        addCreativeItem(Item.get(Item.RAW_FISH, 0));
-        addCreativeItem(Item.get(Item.RAW_SALMON, 0));
-        addCreativeItem(Item.get(Item.CLOWNFISH, 0));
-        addCreativeItem(Item.get(Item.PUFFERFISH, 0));
-        addCreativeItem(Item.get(Item.COOKED_FISH, 0));
-        addCreativeItem(Item.get(Item.COOKED_SALMON, 0));
-        addCreativeItem(Item.get(Item.ROTTEN_FLESH, 0));
-        addCreativeItem(Item.get(Item.MUSHROOM_STEW, 0));
-        addCreativeItem(Item.get(Item.BREAD, 0));
-        addCreativeItem(Item.get(Item.RAW_PORKCHOP, 0));
-        addCreativeItem(Item.get(Item.COOKED_PORKCHOP, 0));
-        addCreativeItem(Item.get(Item.RAW_CHICKEN, 0));
-        addCreativeItem(Item.get(Item.COOKED_CHICKEN, 0));
-        addCreativeItem(Item.get(Item.RAW_MUTTON, 0));
-        addCreativeItem(Item.get(Item.COOKED_MUTTON, 0));
-        addCreativeItem(Item.get(Item.RAW_BEEF, 0));
-        addCreativeItem(Item.get(Item.STEAK, 0));
-        addCreativeItem(Item.get(Item.MELON, 0));
-        addCreativeItem(Item.get(Item.CARROT, 0));
-        addCreativeItem(Item.get(Item.POTATO, 0));
-        addCreativeItem(Item.get(Item.BAKED_POTATO, 0));
-        addCreativeItem(Item.get(Item.POISONOUS_POTATO, 0));
-        addCreativeItem(Item.get(Item.BEETROOT, 0));
-        addCreativeItem(Item.get(Item.COOKIE, 0));
-        addCreativeItem(Item.get(Item.PUMPKIN_PIE, 0));
-        addCreativeItem(Item.get(Item.RAW_RABBIT, 0));
-        addCreativeItem(Item.get(Item.COOKED_RABBIT, 0));
-        addCreativeItem(Item.get(Item.RABBIT_STEW, 0));
-        addCreativeItem(Item.get(Item.CHORUS_FRUIT, 0));
-        addCreativeItem(Item.get(Item.POPPED_CHORUS_FRUIT, 0));
-        addCreativeItem(Item.get(Item.NETHER_STAR, 0));
-        addCreativeItem(Item.get(Item.MAGMA_CREAM, 0));
-        addCreativeItem(Item.get(Item.BLAZE_ROD, 0));
-        addCreativeItem(Item.get(Item.GOLD_NUGGET, 0));
-        addCreativeItem(Item.get(Item.GOLDEN_CARROT, 0));
-        addCreativeItem(Item.get(Item.GLISTERING_MELON, 0));
-        addCreativeItem(Item.get(Item.RABBIT_FOOT, 0));
-        addCreativeItem(Item.get(Item.GHAST_TEAR, 0));
-        addCreativeItem(Item.get(Item.SLIMEBALL, 0));
-        addCreativeItem(Item.get(Item.BLAZE_POWDER, 0));
-        addCreativeItem(Item.get(Item.NETHER_WART, 0));
-        addCreativeItem(Item.get(Item.GUNPOWDER, 0));
-        addCreativeItem(Item.get(Item.GLOWSTONE_DUST, 0));
-        addCreativeItem(Item.get(Item.SPIDER_EYE, 0));
-        addCreativeItem(Item.get(Item.FERMENTED_SPIDER_EYE, 0));
-        addCreativeItem(Item.get(Item.DRAGON_BREATH));
-        addCreativeItem(Item.get(Item.CARROT_ON_A_STICK));
-        addCreativeItem(Item.get(Item.EXPERIENCE_BOTTLE));
-        addCreativeItem(Item.get(Item.SHULKER_SHELL));
-        addCreativeItem(Item.get(Item.PRISMARINE_SHARD, 0));
-        addCreativeItem(Item.get(Item.PRISMARINE_CRYSTALS, 0));
-        for (int color : dyeColors) {
-            addCreativeItem(Item.get(Item.DYE, color));
-        }
-
-        //Potion
-        addCreativeItem(Item.get(Item.GLASS_BOTTLE, 0));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.NO_EFFECTS));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.MUNDANE));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.MUNDANE_II));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.THICK));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.AWKWARD));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.NIGHT_VISION));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.NIGHT_VISION_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.INVISIBLE));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.INVISIBLE_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.LEAPING));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.LEAPING_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.LEAPING_II));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.FIRE_RESISTANCE));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.FIRE_RESISTANCE_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.SPEED));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.SPEED_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.SPEED_II));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.SLOWNESS));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.SLOWNESS_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.WATER_BREATHING));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.WATER_BREATHING_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.INSTANT_HEALTH));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.INSTANT_HEALTH_II));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.HARMING));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.HARMING_II));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.POISON));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.POISON_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.POISON_II));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.REGENERATION));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.REGENERATION_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.REGENERATION_II));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.STRENGTH));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.STRENGTH_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.STRENGTH_II));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.WEAKNESS));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.WEAKNESS_LONG));
-        addCreativeItem(Item.get(Item.POTION, ItemPotion.DECAY));
-
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.NO_EFFECTS));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.MUNDANE));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.MUNDANE_II));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.THICK));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.AWKWARD));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.NIGHT_VISION));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.NIGHT_VISION_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.INVISIBLE));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.INVISIBLE_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.LEAPING));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.LEAPING_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.LEAPING_II));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.FIRE_RESISTANCE));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.FIRE_RESISTANCE_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.SPEED));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.SPEED_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.SPEED_II));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.SLOWNESS));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.SLOWNESS_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.WATER_BREATHING));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.WATER_BREATHING_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.INSTANT_HEALTH));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.INSTANT_HEALTH_II));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.HARMING));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.HARMING_II));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.POISON));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.POISON_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.POISON_II));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.REGENERATION));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.REGENERATION_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.REGENERATION_II));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.STRENGTH));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.STRENGTH_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.STRENGTH_II));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.WEAKNESS));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.WEAKNESS_LONG));
-        addCreativeItem(Item.get(Item.SPLASH_POTION, ItemPotion.DECAY));
-
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.NO_EFFECTS));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.MUNDANE));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.MUNDANE_II));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.THICK));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.AWKWARD));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.NIGHT_VISION));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.NIGHT_VISION_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.INVISIBLE));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.INVISIBLE_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.LEAPING));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.LEAPING_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.LEAPING_II));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.FIRE_RESISTANCE));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.FIRE_RESISTANCE_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.SPEED));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.SPEED_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.SPEED_II));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.SLOWNESS));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.SLOWNESS_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.WATER_BREATHING));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.WATER_BREATHING_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.INSTANT_HEALTH));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.INSTANT_HEALTH_II));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.HARMING));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.HARMING_II));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.POISON));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.POISON_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.POISON_II));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.REGENERATION));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.REGENERATION_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.REGENERATION_II));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.STRENGTH));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.STRENGTH_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.STRENGTH_II));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.WEAKNESS));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.WEAKNESS_LONG));
-        addCreativeItem(Item.get(Item.LINGERING_POTION, ItemPotion.DECAY));
     }
 
     public static void clearCreativeItems() {
@@ -1835,7 +1244,7 @@ public class Item implements Cloneable {
         return lines.toArray(new String[0]);
     }
 
-    public void setLore(String... lines) {
+    public Item setLore(String... lines) {
         CompoundTag tag;
         if (!this.hasCompoundTag()) {
             tag = new CompoundTag();
@@ -1855,6 +1264,7 @@ public class Item implements Cloneable {
         }
 
         this.setNamedTag(tag);
+        return this;
     }
 
     public Tag getNamedTagEntry(String name) {
@@ -1869,16 +1279,24 @@ public class Item implements Cloneable {
     public CompoundTag getNamedTag() {
         if (!this.hasCompoundTag()) {
             return null;
-        } else if (this.cachedNBT != null) {
-            return this.cachedNBT;
         }
-        return this.cachedNBT = parseCompoundTag(this.tags);
+
+        if (this.cachedNBT == null) {
+            this.cachedNBT = parseCompoundTag(this.tags);
+        }
+
+        if (this.cachedNBT != null) {
+            this.cachedNBT.setName("");
+        }
+
+        return this.cachedNBT;
     }
 
     public Item setNamedTag(CompoundTag tag) {
         if (tag.isEmpty()) {
             return this.clearNamedTag();
         }
+        tag.setName(null);
 
         this.cachedNBT = tag;
         this.tags = writeCompoundTag(tag);
@@ -1890,12 +1308,33 @@ public class Item implements Cloneable {
         return this.setCompoundTag(new byte[0]);
     }
 
+    public static CompoundTag parseCompoundTag(byte[] tag) {
+        try {
+            return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public byte[] writeCompoundTag(CompoundTag tag) {
+        try {
+            tag.setName("");
+            return NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int getCount() {
         return count;
     }
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public boolean isNull() {
+        return this.count <= 0 || this.id == AIR;
     }
 
     final public String getName() {
@@ -2041,6 +1480,22 @@ public class Item implements Cloneable {
         return false;
     }
 
+    /**
+     * Called when a player uses the item on air, for example throwing a projectile.
+     * Returns whether the item was changed, for example count decrease or durability change.
+     */
+    public boolean onClickAir(Player player, Vector3 directionVector) {
+        return false;
+    }
+
+    /**
+     * Called when a player is using this item and releases it. Used to handle bow shoot actions.
+     * Returns whether the item was changed, for example count decrease or durability change.
+     */
+    public boolean onReleaseUsing(Player player) {
+        return false;
+    }
+
     @Override
     public final boolean equals(Object item) {
         return item instanceof Item && this.equals((Item) item, true);
@@ -2051,27 +1506,41 @@ public class Item implements Cloneable {
     }
 
     public final boolean equals(Item item, boolean checkDamage, boolean checkCompound) {
-        return this.getId() == item.getId() && (!checkDamage || this.getDamage() == item.getDamage()) && (!checkCompound || Arrays.equals(this.getCompoundTag(), item.getCompoundTag()));
-    }
-
-    public final boolean deepEquals(Item item) {
-        return deepEquals(item, true);
-    }
-
-    public final boolean deepEquals(Item item, boolean checkDamage) {
-        return deepEquals(item, checkDamage, true);
-    }
-
-    public final boolean deepEquals(Item item, boolean checkDamage, boolean checkCompound) {
-        if (this.equals(item, checkDamage, checkCompound)) {
-            return true;
-        } else if (item.hasCompoundTag()) {
-            return item.getNamedTag().equals(this.getNamedTag());
-        } else if (this.hasCompoundTag()) {
-            return this.getNamedTag().equals(item.getNamedTag());
+        if (this.getId() == item.getId() && (!checkDamage || this.getDamage() == item.getDamage())) {
+            if (checkCompound) {
+                if (Arrays.equals(this.getCompoundTag(), item.getCompoundTag())) {
+                    return true;
+                } else if (this.hasCompoundTag() && item.hasCompoundTag()) {
+                    return this.getNamedTag().equals(item.getNamedTag());
+                }
+            } else {
+                return true;
+            }
         }
 
         return false;
+    }
+
+    /**
+     * Returns whether the specified item stack has the same ID, damage, NBT and count as this item stack.
+     */
+    public final boolean equalsExact(Item other) {
+        return this.equals(other, true, true) && this.count == other.count;
+    }
+
+    @Deprecated
+    public final boolean deepEquals(Item item) {
+        return equals(item, true);
+    }
+
+    @Deprecated
+    public final boolean deepEquals(Item item, boolean checkDamage) {
+        return equals(item, checkDamage, true);
+    }
+
+    @Deprecated
+    public final boolean deepEquals(Item item, boolean checkDamage, boolean checkCompound) {
+        return equals(item, checkDamage, checkCompound);
     }
 
     @Override

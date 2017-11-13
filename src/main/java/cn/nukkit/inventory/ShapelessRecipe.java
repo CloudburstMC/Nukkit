@@ -94,4 +94,9 @@ public class ShapelessRecipe implements Recipe {
     public void registerToCraftingManager() {
         Server.getInstance().getCraftingManager().registerShapelessRecipe(this);
     }
+
+    @Override
+    public boolean requiresCraftingTable() {
+        return this.ingredients.size() > 4;
+    }
 }

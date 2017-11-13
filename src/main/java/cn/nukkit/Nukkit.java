@@ -2,8 +2,13 @@ package cn.nukkit;
 
 import cn.nukkit.command.CommandReader;
 import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.utils.LogLevel;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.ServerKiller;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * `_   _       _    _    _ _
@@ -50,16 +55,42 @@ public class Nukkit {
             }
         }
 
+        LogLevel logLevel = LogLevel.DEFAULT_LEVEL;
+        int index = -1;
+        boolean skip = false;
         //启动参数
         for (String arg : args) {
+            index++;
+            if (skip) {
+                skip = false;
+                continue;
+            }
+
             switch (arg) {
                 case "disable-ansi":
                     ANSI = false;
                     break;
+
+                case "--verbosity":
+                case "-v":
+                    skip = true;
+                    try {
+                        String levelName = args[index + 1];
+                        Set<String> levelNames = Arrays.stream(LogLevel.values()).map(level -> level.name().toLowerCase()).collect(Collectors.toSet());
+                        if (!levelNames.contains(levelName.toLowerCase())) {
+                            System.out.printf("'%s' is not a valid log level, using the default\n", levelName);
+                            continue;
+                        }
+                        logLevel = Arrays.stream(LogLevel.values()).filter(level -> level.name().equalsIgnoreCase(levelName)).findAny().orElse(LogLevel.DEFAULT_LEVEL);
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        System.out.println("You must enter the requested log level, using the default\n");
+                    }
+
             }
         }
 
-        MainLogger logger = new MainLogger(DATA_PATH + "server.log");
+        MainLogger logger = new MainLogger(DATA_PATH + "server.log", logLevel);
+        System.out.printf("Using log level '%s'\n", logLevel);
 
         try {
             if (ANSI) {

@@ -19,6 +19,7 @@ public class StopSoundPacket extends DataPacket {
 
     @Override
     public void encode() {
+        this.reset();
         this.putString(this.name);
         this.putBoolean(this.stopAll);
     }

@@ -21,7 +21,7 @@ public class BlockEntityDataPacket extends DataPacket {
 
     @Override
     public void decode() {
-        BlockVector3 v = this.getBlockCoords();
+        BlockVector3 v = this.getBlockVector3();
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
@@ -31,7 +31,7 @@ public class BlockEntityDataPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putBlockCoords(this.x, this.y, this.z);
+        this.putBlockVector3(this.x, this.y, this.z);
         this.put(this.namedTag);
     }
 }

@@ -28,7 +28,7 @@ public class QueryHandler {
         this.server = Server.getInstance();
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.start"));
         String ip = this.server.getIp();
-        String addr = (!"".equals(ip)) ? ip : "0.0.0.0";
+        String addr = (!ip.isEmpty()) ? ip : "0.0.0.0";
         int port = this.server.getPort();
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.info", String.valueOf(port)));
 

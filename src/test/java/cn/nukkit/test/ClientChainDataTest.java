@@ -30,8 +30,7 @@ class ClientChainDataTest {
 						"deviceOS=%d, gameVersion=%s, " +
 						"guiScale=%d, languageCode=%s, " +
 						"xuid=%s, currentInputMode=%d, " +
-						"defaultInputMode=%d, ADRole=%s," +
-						"tenantId=%s, UIProfile=%d"
+						"defaultInputMode=%d, UIProfile=%d"
 				,
 				data.getUsername(), data.getClientUUID(),
 				data.getIdentityPublicKey(), data.getClientId(),
@@ -39,8 +38,7 @@ class ClientChainDataTest {
 				data.getDeviceOS(), data.getGameVersion(),
 				data.getGuiScale(), data.getLanguageCode(),
 				data.getXUID(), data.getCurrentInputMode(),
-				data.getDefaultInputMode(), data.getADRole(),
-				data.getTenantId(), data.getUIProfile()
+				data.getDefaultInputMode(), data.getUIProfile()
 		);
 		String expecting = "userName=lmlstarqaq, clientUUID=8323afe1-641e-3b61-9a92-d5d20b279065, " +
 				"identityPublicKey=MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE4lyvA1iVhV2u3pLQqJAjJnJZSlSjib8mM1uB5h5yqOBSvCHW+nZxDmkOAW6MS1GA7yGHitGmfS4jW/yUISUdWvLzEWJYOzphb3GNh5J1oLJRwESc5278i4MEDk1y21/q, " +
@@ -49,8 +47,7 @@ class ClientChainDataTest {
 				"deviceOS=2, gameVersion=1.1.0, " +
 				"guiScale=0, languageCode=zh_CN, " +
 				"xuid=2535465134455915, currentInputMode=2, " +
-				"defaultInputMode=2, ADRole=2,tenantId=, " +
-				"UIProfile=1";
+				"defaultInputMode=2, UIProfile=1";
 		assertEquals(got, expecting);
 	}
 
