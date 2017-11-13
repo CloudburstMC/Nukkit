@@ -5,7 +5,12 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Recipe;
+import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.item.Item;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * author: MagicDroidX
@@ -19,32 +24,32 @@ public class CraftItemEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    private Item[] input = new Item[0];
+    private CraftingTransaction transaction;
 
-    private final Recipe recipe;
+    public CraftItemEvent(CraftingTransaction transaction) {
+        this.transaction = transaction;
+    }
 
-    private final Player player;
-
-    public CraftItemEvent(Player player, Item[] input, Recipe recipe) {
-        this.player = player;
-        this.input = input;
-        this.recipe = recipe;
+    public CraftingTransaction getTransaction() {
+        return transaction;
     }
 
     public Item[] getInput() {
-        Item[] items = new Item[this.input.length];
-        for (int i = 0; i < this.input.length; i++) {
-            items[i] = this.input[i].clone();
+        List<Item> merged = new ArrayList<>();
+        Item[][] input = transaction.getInputMap();
+
+        for (Item[] items : input) {
+            merged.addAll(Arrays.asList(items));
         }
 
-        return items;
+        return merged.stream().toArray(Item[]::new);
     }
 
     public Recipe getRecipe() {
-        return recipe;
+        return transaction.getRecipe();
     }
 
     public Player getPlayer() {
-        return player;
+        return transaction.getSource();
     }
 }

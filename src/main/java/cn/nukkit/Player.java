@@ -18,7 +18,6 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
-import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
@@ -30,10 +29,9 @@ import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
+import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
-import cn.nukkit.inventory.transaction.SimpleInventoryTransaction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
-import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
@@ -139,6 +137,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected PlayerCursorInventory cursorInventory;
     protected CraftingGrid craftingGrid;
+    protected CraftingTransaction craftingTransaction;
 
     public long creationTime = 0;
 
@@ -2572,169 +2571,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.windowIndex.remove(containerClosePacket.windowId);
                     }
                     break;
-
                 case ProtocolInfo.CRAFTING_EVENT_PACKET:
-                    CraftingEventPacket craftingEventPacket = (CraftingEventPacket) packet;
-
-                    if (!this.spawned || !this.isAlive()) {
-                        break;
-                    }
-
-                    Recipe recipe = this.server.getCraftingManager().getRecipe(craftingEventPacket.id);
-                    Recipe[] recipes = this.server.getCraftingManager().getRecipesByResult(craftingEventPacket.output[0]);
-                    
-                    boolean isValid = false;
-                    for (Recipe rec : recipes){
-                        if (rec.getId().equals(recipe.getId())) {
-                            isValid = true;   
-                            break;
-                        }
-                    }
-                    if (isValid) recipes = new Recipe[]{recipe};
-
-                    if (!this.windowIndex.containsKey(craftingEventPacket.windowId)) {
-                        this.inventory.sendContents(this);
-                        containerClosePacket = new ContainerClosePacket();
-                        containerClosePacket.windowId = craftingEventPacket.windowId;
-                        this.dataPacket(containerClosePacket);
-                        break;
-                    }
-                    
-                    if (isValid && (recipe == null || (((recipe instanceof BigShapelessRecipe) || (recipe instanceof BigShapedRecipe)) && this.craftingType == CRAFTING_SMALL))) {
-                        this.inventory.sendContents(this);
-                        break;
-                    }
-
-                    for (int i = 0; i < craftingEventPacket.input.length; i++) {
-                        Item inputItem = craftingEventPacket.input[i];
-                        if (inputItem.getDamage() == -1 || inputItem.getDamage() == 0xffff) {
-                            inputItem.setDamage(null);
-                        }
-
-                        if (i < 9 && inputItem.getId() > 0) {
-                            inputItem.setCount(1);
-                        }
-                    }
-
-                    boolean canCraft = true;
-                    Map<String, Item> realSerialized = new HashMap<>();
-                    
-                    for (Recipe rec : recipes) {
-                        ArrayList<Item> ingredientz = new ArrayList<>();
-                    
-                        if (rec == null || (((rec instanceof BigShapelessRecipe) || (rec instanceof BigShapedRecipe)) && this.craftingType == CRAFTING_SMALL)) {
-                            continue;
-                        }
-
-                        if (rec instanceof ShapedRecipe) {
-                            Map<Integer, Map<Integer, Item>> ingredients = ((ShapedRecipe) rec).getIngredientMap();
-                            
-                            for (Map<Integer, Item> map : ingredients.values()) {
-                                for (Item ingredient : map.values()) {
-                                    if (ingredient != null && ingredient.getId() != Item.AIR) {
-                                        ingredientz.add(ingredient);
-                                    }
-                                }
-                            }
-                        } else if (recipe instanceof ShapelessRecipe) {
-                            ShapelessRecipe recipe0 = (ShapelessRecipe) recipe;
-
-                            for (Item ingredient : recipe0.getIngredientList()) {
-                                if (ingredient != null && ingredient.getId() != Item.AIR) {
-                                    ingredientz.add(ingredient);
-                                }
-                            }
-                        }
-
-                        Map<String, Item> serialized = new HashMap<>();
-
-                        for (Item ingredient : ingredientz) {
-                            String hash = ingredient.getId() + ":" + ingredient.getDamage();
-                            Item r = serialized.get(hash);
-
-                            if (r != null) {
-                                r.count += ingredient.getCount();
-                                continue;
-                            }
-
-                            serialized.put(hash, ingredient);
-                        }
-
-                        boolean isPossible = true;
-                        for (Item ingredient : serialized.values()) {
-                            if (!this.craftingGrid.contains(ingredient)) {
-                                if (isValid) {
-                                    canCraft = false;
-                                    break;
-                                }
-                                else {
-                                    isPossible = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!isPossible) continue;
-                        recipe = rec;
-                        realSerialized = serialized;
-                        break;
-                    }
-
-                    if (!canCraft) {
-                        this.server.getLogger().debug("(1) Unmatched recipe " + craftingEventPacket.id + " from player " + this.getName() + "  not anough ingredients");
-                        return;
-                    }
-
-                    CraftItemEvent craftItemEvent = new CraftItemEvent(this, realSerialized.values().stream().toArray(Item[]::new), recipe);
-                    getServer().getPluginManager().callEvent(craftItemEvent);
-
-                    if (craftItemEvent.isCancelled()) {
-                        this.inventory.sendContents(this);
-                        break;
-                    }
-
-                    for (Item ingredient : realSerialized.values()) {
-                        this.craftingGrid.removeFromAll(ingredient);
-                    }
-
-                    this.inventory.addItem(recipe.getResult());
-
-                    switch (recipe.getResult().getId()) {
-                        case Item.WORKBENCH:
-                            this.awardAchievement("buildWorkBench");
-                            break;
-                        case Item.WOODEN_PICKAXE:
-                            this.awardAchievement("buildPickaxe");
-                            break;
-                        case Item.FURNACE:
-                            this.awardAchievement("buildFurnace");
-                            break;
-                        case Item.WOODEN_HOE:
-                            this.awardAchievement("buildHoe");
-                            break;
-                        case Item.BREAD:
-                            this.awardAchievement("makeBread");
-                            break;
-                        case Item.CAKE:
-                            //TODO: detect complex recipes like cake that leave remains
-                            this.awardAchievement("bakeCake");
-                            this.inventory.addItem(new ItemBucket(0, 3));
-                            break;
-                        case Item.STONE_PICKAXE:
-                        case Item.GOLD_PICKAXE:
-                        case Item.IRON_PICKAXE:
-                        case Item.DIAMOND_PICKAXE:
-                            this.awardAchievement("buildBetterPickaxe");
-                            break;
-                        case Item.WOODEN_SWORD:
-                            this.awardAchievement("buildSword");
-                            break;
-                        case Item.DIAMOND:
-                            this.awardAchievement("diamond");
-                            break;
-                        default:
-                            break;
-                    }
-
                     break;
                 case ProtocolInfo.BLOCK_ENTITY_DATA_PACKET:
                     if (!this.spawned || !this.isAlive()) {
@@ -2846,46 +2683,54 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, packet);
                     break;
                 case ProtocolInfo.INVENTORY_TRANSACTION_PACKET:
+                    if (this.isSpectator()) {
+                        this.sendAllInventories();
+                        break;
+                    }
+
                     InventoryTransactionPacket transactionPacket = (InventoryTransactionPacket) packet;
 
-                    boolean isCrafting = false;
                     List<InventoryAction> actions = new ArrayList<>();
                     for (NetworkInventoryAction networkInventoryAction : transactionPacket.actions) {
-                        try {
-                            InventoryAction a = networkInventoryAction.createInventoryAction(this);
-                            if (a != null) {
-                                if (a instanceof SlotChangeAction) {
-                                    if (((SlotChangeAction) a).getInventory() instanceof CraftingGrid)
-                                        isCrafting = true;
-                                }
-                                actions.add(a);
-                            }
-                        } catch (Throwable e) {
-                            MainLogger.getLogger().debug("Unhandled inventory action from " + this.getName() + ": " + e.getMessage());
+                        InventoryAction a = networkInventoryAction.createInventoryAction(this);
+
+                        if (a == null) {
+                            this.getServer().getLogger().debug("Unmatched inventory action from " + this.getName() + ": " + networkInventoryAction);
                             this.sendAllInventories();
                             break packetswitch;
                         }
+
+                        actions.add(a);
+                    }
+
+                    if (transactionPacket.isCraftingPart) {
+                        if (this.craftingTransaction == null) {
+                            this.craftingTransaction = new CraftingTransaction(this, actions);
+                        } else {
+                            for (InventoryAction action : actions) {
+                                this.craftingTransaction.addAction(action);
+                            }
+                        }
+
+                        if (this.craftingTransaction.getPrimaryOutput() != null) {
+                            //we get the actions for this in several packets, so we can't execute it until we get the result
+
+                            this.craftingTransaction.execute();
+                            this.craftingTransaction = null;
+                        }
+
+                        return;
+                    } else if (this.craftingTransaction != null) {
+                        this.server.getLogger().debug("Got unexpected normal inventory action with incomplete crafting transaction from " + this.getName() + ", refusing to execute crafting");
+                        this.craftingTransaction = null;
                     }
 
                     switch (transactionPacket.transactionType) {
                         case InventoryTransactionPacket.TYPE_NORMAL:
-                            if (this.isSpectator()) {
-                                this.sendAllInventories();
-                                break;
-                            }
-                            InventoryTransaction transaction = new SimpleInventoryTransaction(this, actions);
+                            InventoryTransaction transaction = new InventoryTransaction(this, actions);
 
-                            if (!transaction.execute() && !isCrafting) {
-                                for (Inventory inventory : transaction.getInventories()) {
-                                    inventory.sendContents(this);
-                                    if (inventory instanceof PlayerInventory) {
-                                        ((PlayerInventory) inventory).sendArmorContents(this);
-                                    }
-                                }
-
-                                MainLogger.getLogger().debug("Failed to execute inventory transaction from " + this.getName() + " with actions: " + Arrays.toString(actions.stream().toArray()));
-
-                                //TODO: check more stuff that might need reversion
+                            if (!transaction.execute()) {
+                                this.server.getLogger().debug("Failed to execute inventory transaction from " + this.getName() + " with actions: " + Arrays.toString(transactionPacket.actions));
                                 break packetswitch; //oops!
                             }
 
