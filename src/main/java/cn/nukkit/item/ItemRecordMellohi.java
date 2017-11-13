@@ -16,7 +16,7 @@ public class ItemRecordMellohi extends ItemRecord {
     }
 
     public ItemRecordMellohi(Integer meta, int count) {
-        super(meta, count);
+        super(RECORD_MELLOHI, meta, count);
     }
 
     @Override

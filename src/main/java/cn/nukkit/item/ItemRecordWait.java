@@ -16,7 +16,7 @@ public class ItemRecordWait extends ItemRecord {
     }
 
     public ItemRecordWait(Integer meta, int count) {
-        super(meta, count);
+        super(RECORD_WAIT, meta, count);
     }
 
     @Override

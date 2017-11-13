@@ -35,7 +35,10 @@ public class CommandRequestPacket extends DataPacket {
         this.command = this.getString();
         this.type = this.getVarInt();
         this.requestId = this.getString();
-        this.playerUniqueId = this.getVarLong();
+
+        if (type == 3) {
+            this.playerUniqueId = this.getVarLong();
+        }
     }
 
     @Override

@@ -24,10 +24,32 @@ public class CraftItemEvent extends Event implements Cancellable {
         return handlers;
     }
 
+    private Item[] input = new Item[0];
+
+    private final Recipe recipe;
+
+    private final Player player;
+
     private CraftingTransaction transaction;
 
     public CraftItemEvent(CraftingTransaction transaction) {
         this.transaction = transaction;
+
+        List<Item> merged = new ArrayList<>();
+        Item[][] input = transaction.getInputMap();
+
+        for (Item[] items : input) {
+            merged.addAll(Arrays.asList(items));
+        }
+        this.player = transaction.getSource();
+        this.input = merged.stream().toArray(Item[]::new);
+        this.recipe = transaction.getRecipe();
+    }
+
+    public CraftItemEvent(Player player, Item[] input, Recipe recipe) {
+        this.player = player;
+        this.input = input;
+        this.recipe = recipe;
     }
 
     public CraftingTransaction getTransaction() {
@@ -35,21 +57,14 @@ public class CraftItemEvent extends Event implements Cancellable {
     }
 
     public Item[] getInput() {
-        List<Item> merged = new ArrayList<>();
-        Item[][] input = transaction.getInputMap();
-
-        for (Item[] items : input) {
-            merged.addAll(Arrays.asList(items));
-        }
-
-        return merged.stream().toArray(Item[]::new);
+        return input;
     }
 
     public Recipe getRecipe() {
-        return transaction.getRecipe();
+        return recipe;
     }
 
     public Player getPlayer() {
-        return transaction.getSource();
+        return this.player;
     }
 }

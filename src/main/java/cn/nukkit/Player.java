@@ -3652,6 +3652,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
+    @Override
+    public void setMaxHealth(int maxHealth) {
+        super.setMaxHealth(maxHealth);
+
+        Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getAbsorption() % 2 != 0 ? this.getMaxHealth() + 1 : this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0);
+        if (this.spawned) {
+            UpdateAttributesPacket pk = new UpdateAttributesPacket();
+            pk.entries = new Attribute[]{attr};
+            pk.entityId = this.id;
+            this.dataPacket(pk);
+        }
+    }
+
     public int getExperience() {
         return this.exp;
     }

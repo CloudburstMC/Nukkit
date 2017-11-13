@@ -16,7 +16,7 @@ public class ItemRecordStal extends ItemRecord {
     }
 
     public ItemRecordStal(Integer meta, int count) {
-        super(meta, count);
+        super(RECORD_STAL, meta, count);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ItemRecordFar extends ItemRecord {
     }
 
     public ItemRecordFar(Integer meta, int count) {
-        super(meta, count);
+        super(RECORD_FAR, meta, count);
     }
 
     @Override

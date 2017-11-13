@@ -7,6 +7,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
+import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 
@@ -76,8 +77,14 @@ public abstract class BlockEntity extends Position {
         this.z = this.namedTag.getInt("z");
         this.movable = this.namedTag.getBoolean("isMovable");
 
+        this.initBlockEntity();
+
         this.chunk.addBlockEntity(this);
         this.getLevel().addBlockEntity(this);
+    }
+
+    protected void initBlockEntity() {
+
     }
 
     public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
@@ -113,7 +120,7 @@ public abstract class BlockEntity extends Position {
 
                     }
                 } catch (Exception e) {
-                    //ignore
+                    MainLogger.getLogger().logException(e);
                 }
 
             }

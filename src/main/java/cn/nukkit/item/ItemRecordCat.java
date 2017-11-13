@@ -16,7 +16,7 @@ public class ItemRecordCat extends ItemRecord {
     }
 
     public ItemRecordCat(Integer meta, int count) {
-        super(meta, count);
+        super(RECORD_CAT, meta, count);
     }
 
     @Override

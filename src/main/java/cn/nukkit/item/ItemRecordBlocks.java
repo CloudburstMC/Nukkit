@@ -16,7 +16,7 @@ public class ItemRecordBlocks extends ItemRecord {
     }
 
     public ItemRecordBlocks(Integer meta, int count) {
-        super(meta, count);
+        super(RECORD_BLOCKS, meta, count);
     }
 
     @Override

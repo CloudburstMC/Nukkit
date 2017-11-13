@@ -16,7 +16,7 @@ public class ItemRecordWard extends ItemRecord {
     }
 
     public ItemRecordWard(Integer meta, int count) {
-        super(meta, count);
+        super(RECORD_WARD, meta, count);
     }
 
     @Override

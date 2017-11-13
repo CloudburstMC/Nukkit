@@ -46,4 +46,9 @@ public class BlockUpdateEntry implements Comparable<BlockUpdateEntry> {
             return this.pos.equals(entry.pos) && Block.equals(this.block, entry.block, false);
         }
     }
+
+    @Override
+    public int hashCode() {
+        return this.pos.hashCode();
+    }
 }

@@ -84,7 +84,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
         if (!this.isLocked()) {
             boolean shouldPowered = this.shouldBePowered();
 
-            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isUpdateScheduled(this, this)) {
+            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isBlockTickPending(this, this)) {
                 /*int priority = -1;
 
                 if (this.isFacingTowardsRepeater()) {
