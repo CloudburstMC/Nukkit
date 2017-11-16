@@ -245,13 +245,13 @@ public class InventoryTransaction {
 
         if (!callExecuteEvent()) {
             this.sendInventories();
-            return true;
+            return false;
         }
 
         for (InventoryAction action : this.actions) {
             if (!action.onPreExecute(this.source)) {
                 this.sendInventories();
-                return true;
+                return false;
             }
         }
 
