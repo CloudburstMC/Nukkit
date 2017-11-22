@@ -35,6 +35,8 @@ public class InventoryTransactionPacket extends DataPacket {
     public NetworkInventoryAction[] actions;
     public TransactionData transactionData;
 
+    public boolean isCraftingPart = false;
+
     @Override
     public byte pid(PlayerProtocol protocol) {
         return protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?

@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Old113InventoryTransaction implements InventoryTransaction {
+public class Old113InventoryTransaction extends InventoryTransaction {
 
     private final long creationTime;
     protected boolean hasExecuted = false;
@@ -30,6 +30,7 @@ public class Old113InventoryTransaction implements InventoryTransaction {
     }
 
     public Old113InventoryTransaction(Player source) {
+        super (source, new ArrayList<>());
         this.creationTime = System.currentTimeMillis();
         this.source = source;
     }

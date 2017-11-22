@@ -187,6 +187,27 @@ public class Utils {
         return arrays;
     }
 
+    public static void reverseArray(Object[] data) {
+        reverseArray(data, false);
+    }
+
+    public static Object[] reverseArray(Object[] array, boolean copy) {
+        Object[] data = array;
+        if (copy) {
+            data = new Object[array.length];
+            System.arraycopy(array, 0, data, 0, data.length);
+        }
+
+        for (int left = 0, right = data.length - 1; left < right; left++, right--) {
+            // swap the values at the left and right indices
+            Object temp = data[left];
+            data[left] = data[right];
+            data[right] = temp;
+        }
+
+        return data;
+    }
+
     public static int toInt(Object number) {
         return (int) Math.round((double) number);
     }
