@@ -209,6 +209,9 @@ public class Utils {
     }
 
     public static int toInt(Object number) {
+        if (number instanceof Double){
+            return Double.valueOf(Math.round((double) number)).intValue();
+        }
         return (int) number;
     }
 }
