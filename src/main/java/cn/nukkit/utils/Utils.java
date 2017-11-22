@@ -209,6 +209,6 @@ public class Utils {
     }
 
     public static int toInt(Object number) {
-        return (int) Math.round((double) number);
+        return (int) number;
     }
 }
