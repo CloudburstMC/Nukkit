@@ -77,7 +77,7 @@ public class LoginPacket extends DataPacket {
         if (skinToken.has("SkinId")) skinId = skinToken.get("SkinId").getAsString();
         if (skinToken.has("SkinData")) {
             this.skin = new Skin(skinToken.get("SkinData").getAsString(), skinId);
-            if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)) this.skin.setModel("Standard_"+
+            if (!protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)) this.skin.setModel("Standard_"+
                     this.skin.getModel().split("_")[1]);
             if (skinToken.has("CapeData"))
                 this.skin.setCape(this.skin.new Cape(Base64.getDecoder().decode(skinToken.get("CapeData").getAsString())));

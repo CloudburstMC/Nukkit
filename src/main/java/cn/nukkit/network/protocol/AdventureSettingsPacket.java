@@ -51,7 +51,7 @@ public class AdventureSettingsPacket extends DataPacket {
     public void decode(PlayerProtocol protocol) {
         this.flags = getUnsignedVarInt();
         this.commandPermission = getUnsignedVarInt();
-        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)){
+        if (!protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)){
             this.flags2 = getUnsignedVarInt();
             this.playerPermission = getUnsignedVarInt();
             this.customFlags = getUnsignedVarInt();
@@ -63,7 +63,7 @@ public class AdventureSettingsPacket extends DataPacket {
         this.reset(protocol);
         this.putUnsignedVarInt(this.flags);
         this.putUnsignedVarInt(this.commandPermission);
-        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)){
+        if (!protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)){
             this.putUnsignedVarInt(this.flags2);
             this.putUnsignedVarInt(this.playerPermission);
             this.putUnsignedVarInt(this.customFlags);

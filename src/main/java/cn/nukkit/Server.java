@@ -542,15 +542,16 @@ public class Server {
     }
 
     public static void broadcastPacket(Player[] players, DataPacket packet) {
-        DataPacket packet113 = packet.clone();
-        packet113.encode(PlayerProtocol.PLAYER_PROTOCOL_113);
-        packet113.isEncoded = true;
-        packet.encode(PlayerProtocol.PLAYER_PROTOCOL_130);
-        packet.isEncoded = true;
+        HashMap<PlayerProtocol, DataPacket> packets = new HashMap<>();
+        for (PlayerProtocol protocol : PlayerProtocol.values()) {
+            DataPacket pk = packet.clone();
+            pk.encode(protocol);
+            pk.isEncoded = true;
+            packets.put(protocol, pk);
+        }
 
         for (Player player : players) {
-            if (player.getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113)) player.dataPacket(packet113);
-            else player.dataPacket(packet);
+            player.dataPacket(packets.getOrDefault(player.getProtocol(), packet));
         }
 
         if (packet.encapsulatedPacket != null) {

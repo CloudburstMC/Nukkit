@@ -1,7 +1,10 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.command.data.CommandArgs;
+import cn.nukkit.network.protocol.types.CommandOriginData;
 import com.google.gson.Gson;
+
+import java.util.UUID;
 
 /**
  * author: MagicDroidX
@@ -24,7 +27,9 @@ public class CommandRequestPacket extends DataPacket {
     public static final int TYPE_INTERNAL = 10;
 
     public String command;
-    //1.2 easy data
+    //1.2.5 origin data
+    public CommandOriginData data;
+    //1.2.0-1.2.3 easy data
     public int type;
     public String requestId;
     public long playerUniqueId;
@@ -63,9 +68,21 @@ public class CommandRequestPacket extends DataPacket {
             return;
         }
         this.command = this.getString();
-        this.type = this.getVarInt();
-        this.requestId = this.getString();
+        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)){
+            this.type = this.getVarInt();
+            this.requestId = this.getString();
+            this.playerUniqueId = this.getVarLong();
+            return;
+        }
+        CommandOriginData.Origin type = CommandOriginData.Origin.values()[this.getVarInt()];
         this.playerUniqueId = this.getVarLong();
+        UUID uuid = this.getUUID(protocol);
+        String requestId = this.getString();
+        Long varLong = null;
+        if (type == CommandOriginData.Origin.DEV_CONSOLE || type == CommandOriginData.Origin.TEST) {
+            varLong = this.getVarLong();
+        }
+        this.data = new CommandOriginData(type, uuid, requestId, varLong);
     }
 
     @Override

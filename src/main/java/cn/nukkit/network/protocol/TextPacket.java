@@ -30,7 +30,7 @@ public class TextPacket extends DataPacket {
     @Override
     public void decode(PlayerProtocol protocol) {
         this.type = (byte) getByte();
-        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)) this.isLocalized = this.getBoolean();
+        if (!protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)) this.isLocalized = this.getBoolean();
         switch (type) {
             case TYPE_POPUP:
             case TYPE_CHAT:
@@ -57,7 +57,7 @@ public class TextPacket extends DataPacket {
     public void encode(PlayerProtocol protocol) {
         this.reset(protocol);
         this.putByte(this.type);
-        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)) this.putBoolean(this.isLocalized);
+        if (!protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)) this.putBoolean(this.isLocalized);
         switch (this.type) {
             case TYPE_POPUP:
             case TYPE_CHAT:

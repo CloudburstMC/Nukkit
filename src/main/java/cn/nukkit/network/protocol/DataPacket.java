@@ -26,7 +26,7 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     public void reset(PlayerProtocol protocol) {
         super.reset();
         this.putByte(this.pid(protocol));
-        if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_130)) this.putShort(0);
+        if (!protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)) this.putShort(0);
     }
 
     public void setChannel(int channel) {
