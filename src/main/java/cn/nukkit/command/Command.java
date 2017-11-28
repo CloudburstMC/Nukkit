@@ -151,7 +151,7 @@ public abstract class Command {
         }
 
         if (this.permissionMessage == null) {
-            target.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+            target.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", this.name));
         } else if (!this.permissionMessage.equals("")) {
             target.sendMessage(this.permissionMessage.replace("<permission>", this.permission));
         }
@@ -207,7 +207,7 @@ public abstract class Command {
     }
 
     public boolean allowChangesFrom(CommandMap commandMap) {
-        return commandMap == null || commandMap.equals(this.commandMap);
+        return commandMap != null && !commandMap.equals(this.commandMap);
     }
 
     public boolean isRegistered() {

@@ -22,7 +22,8 @@ public class EntityHuman extends EntityHumanType {
     public static final int DATA_PLAYER_FLAG_DEAD = 2; //TODO: CHECK
 
     public static final int DATA_PLAYER_FLAGS = 27;
-    public static final int DATA_PLAYER_BED_POSITION = 17;
+
+    public static final int DATA_PLAYER_BED_POSITION = 29;
     public static final int DATA_PLAYER_BUTTON_TEXT = 40;
 
     protected UUID uuid;
@@ -83,6 +84,7 @@ public class EntityHuman extends EntityHumanType {
     @Override
     protected void initEntity() {
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY);
 
         this.setDataProperty(new IntPositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0), false);
 
@@ -103,10 +105,6 @@ public class EntityHuman extends EntityHumanType {
         }
 
         super.initEntity();
-
-        if (this instanceof Player) {
-            ((Player) this).addWindow(this.inventory, 0);
-        }
     }
 
     @Override
@@ -135,7 +133,10 @@ public class EntityHuman extends EntityHumanType {
                 throw new IllegalStateException(this.getClass().getSimpleName() + " must have a valid skin set");
             }
 
-            this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, new Player[]{player});
+            if (this instanceof Player)
+                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
+            else
+                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, new Player[]{player});
 
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = this.getUniqueId();

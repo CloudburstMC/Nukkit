@@ -27,6 +27,7 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     public void reset() {
         super.reset();
         this.putByte(this.pid());
+        this.putShort(0);
     }
 
     public void setChannel(int channel) {

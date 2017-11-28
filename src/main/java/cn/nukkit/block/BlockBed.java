@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBed;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBed;
+import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
@@ -77,7 +78,7 @@ public class BlockBed extends BlockTransparent {
         boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
 
         if (player != null && !isNight) {
-            player.sendMessage(TextFormat.GRAY + "You can only sleep at night");
+            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
             return true;
         }
 
@@ -100,7 +101,7 @@ public class BlockBed extends BlockTransparent {
                 b = blockWest;
             } else {
                 if (player != null) {
-                    player.sendMessage(TextFormat.GRAY + "This bed is incomplete");
+                    player.sendMessage(new TranslationContainer("tile.bed.notValid"));
                 }
 
                 return true;
@@ -108,7 +109,7 @@ public class BlockBed extends BlockTransparent {
         }
 
         if (player != null && !player.sleepOn(b)) {
-            player.sendMessage(TextFormat.GRAY + "This bed is occupied");
+            player.sendMessage(new TranslationContainer("tile.bed.occupied"));
         }
 
 

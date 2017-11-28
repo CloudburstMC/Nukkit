@@ -33,6 +33,12 @@ It has a few key advantages over other server software:
 
 Nukkit is **under improvement** yet, we welcome contributions. 
 
+Example servers running Nukkit
+--------------------
+- **play.EaseCation.net**
+- **play.GameTeam.cz**
+- **MultiLabs.net**
+
 Get Nukkit & Plugins
 --------------------
 
@@ -49,6 +55,7 @@ Get Nukkit & Plugins
 *These sites are provided by our users, Nukkit staff are not responsible for the reliability of these sites. Jar files downloaded here are only for reference - to try the latest update or for commercial uses, compile by yourself.*
 
 * __[Jenkins by MengCraft](http://ci.mengcraft.com:8080/job/Nukkit/lastSuccessfulBuild/)__ (**UNOFFICIAL**)
+* __[Yivesmirror](https://yivesmirror.com/downloads/nukkit)__ (**UNOFFICIAL**)
 
 Build JAR file
 -------------
@@ -73,6 +80,10 @@ There're some tools for Nukkit developers.
 
 * __[FDevTools](https://github.com/fengberd/FDevTools)__ (**Load source and pack them easily**)
 * __[PocketServer](https://github.com/fengberd/MinecraftPEServer)__ (**Run Nukkit on android devices**)
+
+Contributing
+------------
+Please read the [CONTRIBUTING](https://github.com/Nukkit/Nukkit/blob/master/.github/CONTRIBUTING.md) guide before submitting any issue. Issues with insufficient information or in the wrong format will be closed and will not be reviewed.
 
 Discussion
 -------------

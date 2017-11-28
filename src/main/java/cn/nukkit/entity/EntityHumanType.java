@@ -45,8 +45,9 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             ListTag<CompoundTag> inventoryList = this.namedTag.getList("Inventory", CompoundTag.class);
             for (CompoundTag item : inventoryList.getAll()) {
                 int slot = item.getByte("Slot");
-                if (slot >= 0 && slot < 9) {
-                    this.inventory.setHotbarSlotIndex(slot, item.contains("TrueSlot") ? item.getByte("TrueSlot") : -1);
+                if (slot >= 0 && slot < 9) { //hotbar
+                    //Old hotbar saving stuff, remove it (useless now)
+                    inventoryList.remove(item);
                 } else if (slot >= 100 && slot < 104) {
                     this.inventory.setItem(this.inventory.getSize() + slot - 100, NBTIO.getItemHelper(item));
                 } else {
@@ -74,14 +75,6 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         this.namedTag.putList(new ListTag<CompoundTag>("Inventory"));
         if (this.inventory != null) {
             for (int slot = 0; slot < 9; ++slot) {
-                int hotbarSlot = this.inventory.getHotbarSlotIndex(slot);
-                if (hotbarSlot != -1) {
-                    Item item = this.inventory.getItem(hotbarSlot);
-                    if (item.getId() != 0 && item.getCount() > 0) {
-                        this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot).putByte("TrueSlot", hotbarSlot));
-                        continue;
-                    }
-                }
                 this.namedTag.getList("Inventory", CompoundTag.class).add(new CompoundTag()
                         .putByte("Count", 0)
                         .putShort("Damage", 0)

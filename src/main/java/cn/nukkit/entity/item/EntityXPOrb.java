@@ -56,9 +56,9 @@ public class EntityXPOrb extends Entity {
         super(chunk, nbt);
     }
 
-    private int age = 0;
-    private int pickupDelay = 0;
-    private int exp = 0;
+    private int age;
+    private int pickupDelay;
+    private int exp;
 
     public Player closestPlayer = null;
 
@@ -107,6 +107,14 @@ public class EntityXPOrb extends Entity {
                 this.pickupDelay -= tickDiff;
                 if (this.pickupDelay < 0) {
                     this.pickupDelay = 0;
+                }
+            } else {
+                for (Entity entity : this.level.getCollidingEntities(this.boundingBox, this)) {
+                    if (entity instanceof Player) {
+                        if (((Player) entity).pickupEntity(this, false)) {
+                            return true;
+                        }
+                    }
                 }
             }
 

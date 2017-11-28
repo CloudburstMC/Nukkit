@@ -7,7 +7,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * Author: BeYkeRYkt 
+ * Author: BeYkeRYkt
  * Nukkit Project
  */
 public class EntityRabbit extends EntityAnimal {

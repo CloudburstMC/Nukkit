@@ -3,7 +3,10 @@ package cn.nukkit.inventory;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * author: MagicDroidX
@@ -21,40 +24,19 @@ public class ShapedRecipe implements Recipe {
 
     private final Map<Character, List<Entry>> shapeItems = new HashMap<>();
 
-    public ShapedRecipe(Item result, String... shape) {
-        if (shape.length == 0) {
-            throw new IllegalArgumentException("Must provide a shape");
-        }
-
-        if (shape.length > 3) {
-            throw new IllegalStateException("Crafting recipes should be 1, 2, 3 rows, not " + shape.length);
-        }
-
-
-        for (int y = 0; y < shape.length; y++) {
-            String row = shape[y];
-            if (row.length() == 0 || row.length() > 3) {
-                throw new IllegalStateException("Crafting rows should be 1, 2, 3 characters, not " + row.length());
+    public ShapedRecipe(Item result, int height, int width) {
+        for (int y = 0; y < height; y++) {
+            if (width == 0 || width > 3) {
+                throw new IllegalStateException("Crafting rows should be 1, 2, 3 characters, not " + width);
             }
 
             this.ingredients.put(y, new HashMap<Integer, Item>() {
                 {
-                    for (int i = 0; i < row.length(); i++) {
+                    for (int i = 0; i < width; i++) {
                         put(i, null);
                     }
                 }
             });
-
-            int len = row.length();
-            for (int i = 0; i < len; i++) {
-                this.shapes.put(row.charAt(i), null);
-
-                if (!this.shapeItems.containsKey(row.charAt(i))) {
-                    this.shapeItems.put(row.charAt(i), new ArrayList<>(Arrays.asList(new Entry[]{new Entry(i, y)})));
-                } else {
-                    this.shapeItems.get(row.charAt(i)).add(new Entry(i, y));
-                }
-            }
         }
 
         this.output = result.clone();
@@ -150,6 +132,11 @@ public class ShapedRecipe implements Recipe {
     @Override
     public void registerToCraftingManager() {
         Server.getInstance().getCraftingManager().registerShapedRecipe(this);
+    }
+
+    @Override
+    public boolean requiresCraftingTable() {
+        return this.getHeight() > 2 || this.getWidth() > 2;
     }
 
     public static class Entry {

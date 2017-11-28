@@ -72,8 +72,6 @@ public class ChunkRequestTask extends AsyncTask {
             for (int z = 0; z < 16; ++z) {
                 orderedIds.put(this.getColumn(ids, x, z));
                 orderedData.put(this.getHalfColumn(meta, x, z));
-                orderedSkyLight.put(this.getHalfColumn(skyLight, x, z));
-                orderedLight.put(this.getHalfColumn(blockLight, x, z));
             }
         }
 
@@ -90,8 +88,6 @@ public class ChunkRequestTask extends AsyncTask {
                 buffer
                         .put(orderedIds)
                         .put(orderedData)
-                        .put(orderedSkyLight)
-                        .put(orderedLight)
                         .put(orderedHeightMap)
                         .put(orderedBiomeColors)
                         .put(this.blockEntities)

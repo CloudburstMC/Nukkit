@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ItemSnowball extends Item {
+public class ItemSnowball extends ProjectileItem {
 
     public ItemSnowball() {
         this(0, 1);
@@ -21,5 +21,15 @@ public class ItemSnowball extends Item {
     @Override
     public int getMaxStackSize() {
         return 16;
+    }
+
+    @Override
+    public String getProjectileEntityType() {
+        return "Snowball";
+    }
+
+    @Override
+    public float getThrowForce() {
+        return 1.5f;
     }
 }

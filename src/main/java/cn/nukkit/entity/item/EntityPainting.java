@@ -91,7 +91,7 @@ public class EntityPainting extends EntityHanging {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        if (super.attack(source)){
+        if (super.attack(source)) {
             if (source instanceof EntityDamageByEntityEvent) {
                 Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
                 if (damager instanceof Player && ((Player) damager).isSurvival() && this.level.getGameRules().getBoolean("doEntityDrops")) {

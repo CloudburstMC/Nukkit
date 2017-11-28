@@ -38,6 +38,7 @@ public abstract class BlockEntity extends Position {
     public static final String COMPARATOR = "Comparator";
     public static final String HOPPER = "Hopper";
     public static final String BED = "Bed";
+    public static final String JUKEBOX = "Jukebox";
 
 
     public static long count = 1;
@@ -48,6 +49,8 @@ public abstract class BlockEntity extends Position {
     public FullChunk chunk;
     public String name;
     public long id;
+
+    public boolean movable = true;
 
     public boolean closed = false;
     public CompoundTag namedTag;
@@ -71,6 +74,7 @@ public abstract class BlockEntity extends Position {
         this.x = this.namedTag.getInt("x");
         this.y = this.namedTag.getInt("y");
         this.z = this.namedTag.getInt("z");
+        this.movable = this.namedTag.getBoolean("isMovable");
 
         this.chunk.addBlockEntity(this);
         this.getLevel().addBlockEntity(this);
@@ -141,21 +145,22 @@ public abstract class BlockEntity extends Position {
         this.namedTag.putInt("x", (int) this.getX());
         this.namedTag.putInt("y", (int) this.getY());
         this.namedTag.putInt("z", (int) this.getZ());
+        this.namedTag.putBoolean("isMovable", this.movable);
     }
 
-    public CompoundTag getCleanedNBT(){
+    public CompoundTag getCleanedNBT() {
         this.saveNBT();
         CompoundTag tag = this.namedTag.clone();
         tag.remove("x").remove("y").remove("z").remove("id");
-        if(tag.getTags().size() > 0){
+        if (tag.getTags().size() > 0) {
             return tag;
-        }else{
+        } else {
             return null;
         }
     }
 
     public Block getBlock() {
-        return this.level.getBlock(this);
+        return this.getLevelBlock();
     }
 
     public abstract boolean isBlockEntityValid();
@@ -184,6 +189,10 @@ public abstract class BlockEntity extends Position {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isMovable() {
+        return movable;
     }
 
     public static CompoundTag getDefaultCompound(Vector3 pos, String id) {

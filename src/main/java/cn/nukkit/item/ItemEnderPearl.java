@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-public class ItemEnderPearl extends Item {
+public class ItemEnderPearl extends ProjectileItem {
 
     public ItemEnderPearl() {
         this(0, 1);
@@ -17,5 +17,15 @@ public class ItemEnderPearl extends Item {
     @Override
     public int getMaxStackSize() {
         return 16;
+    }
+
+    @Override
+    public String getProjectileEntityType() {
+        return "EnderPearl";
+    }
+
+    @Override
+    public float getThrowForce() {
+        return 1.5f;
     }
 }

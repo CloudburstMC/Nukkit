@@ -157,4 +157,9 @@ public class BlockFlowerPot extends BlockFlowable {
     public boolean canPassThrough() {
         return false;
     }
+
+    @Override
+    public Item toItem() {
+        return new ItemFlowerPot();
+    }
 }

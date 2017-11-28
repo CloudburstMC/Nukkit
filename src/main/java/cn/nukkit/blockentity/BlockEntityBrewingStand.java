@@ -1,10 +1,12 @@
 package cn.nukkit.blockentity;
 
-
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockBrewingStand;
+import cn.nukkit.event.inventory.BrewEvent;
+import cn.nukkit.event.inventory.StartBrewEvent;
 import cn.nukkit.inventory.BrewingInventory;
 import cn.nukkit.inventory.BrewingRecipe;
 import cn.nukkit.inventory.InventoryHolder;
@@ -28,6 +30,8 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
     public static final int MAX_BREW_TIME = 400;
 
     public int brewTime = MAX_BREW_TIME;
+    public int fuelTotal;
+    public int fuelAmount;
 
     public static final List<Integer> ingredients = new ArrayList<Integer>() {
         {
@@ -52,6 +56,9 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         } else {
             this.brewTime = namedTag.getShort("CookTime");
         }
+
+        this.fuelAmount = namedTag.getShort("FuelAmount");
+        this.fuelTotal = namedTag.getShort("FuelTotal");
 
         if (brewTime < MAX_BREW_TIME) {
             this.scheduleUpdate();
@@ -96,6 +103,8 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         }
 
         namedTag.putShort("CookTime", brewTime);
+        namedTag.putShort("FuelAmount", this.fuelAmount);
+        namedTag.putShort("FuelTotal", this.fuelTotal);
     }
 
     @Override
@@ -167,46 +176,65 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         Item ingredient = this.inventory.getIngredient();
         boolean canBrew = false;
 
-        for (int i = 1; i <= 3; i++) {
-            if (this.inventory.getItem(i).getId() == Item.POTION) {
-                canBrew = true;
-            }
+        Item fuel = this.getInventory().getFuel();
+        if (this.fuelAmount <= 0 && fuel.getId() == Item.BLAZE_POWDER && fuel.getCount() > 0) {
+            fuel.count--;
+            this.fuelAmount = 20;
+            this.fuelTotal = 20;
+
+            this.inventory.setFuel(fuel);
+            this.sendFuel();
         }
 
-        if (this.brewTime <= MAX_BREW_TIME && canBrew && ingredient.getCount() > 0) {
-            if (!this.checkIngredient(ingredient)) {
+        if (this.fuelAmount > 0) {
+            for (int i = 1; i <= 3; i++) {
+                if (this.inventory.getItem(i).getId() == Item.POTION) {
+                    canBrew = true;
+                }
+            }
+
+            if (this.brewTime <= MAX_BREW_TIME && canBrew && ingredient.getCount() > 0) {
+                if (!this.checkIngredient(ingredient)) {
+                    canBrew = false;
+                }
+            } else {
                 canBrew = false;
             }
-        } else {
-            canBrew = false;
         }
 
         if (canBrew) {
-            this.brewTime--;
+            if (this.brewTime == MAX_BREW_TIME) {
+                this.sendBrewTime();
+                StartBrewEvent e = new StartBrewEvent(this);
+                this.server.getPluginManager().callEvent(e);
 
-            for (Player player : this.inventory.getViewers()) {
-                int windowId = player.getWindowId(this.inventory);
-                if (windowId > 0) {
-                    ContainerSetDataPacket pk = new ContainerSetDataPacket();
-                    pk.windowid = (byte) windowId;
-                    pk.property = 0;
-                    pk.value = this.brewTime;
-                    player.dataPacket(pk);
+                if (e.isCancelled()) {
+                    return false;
                 }
             }
 
+            this.brewTime--;
+
             if (this.brewTime <= 0) { //20 seconds
-                for (int i = 1; i <= 3; i++) {
-                    Item potion = this.inventory.getItem(i);
-                    BrewingRecipe recipe = Server.getInstance().getCraftingManager().matchBrewingRecipe(ingredient, potion);
+                BrewEvent e = new BrewEvent(this);
+                this.server.getPluginManager().callEvent(e);
 
-                    if (recipe != null) {
-                        this.inventory.setItem(i, recipe.getResult());
+                if (!e.isCancelled()) {
+                    for (int i = 1; i <= 3; i++) {
+                        Item potion = this.inventory.getItem(i);
+                        BrewingRecipe recipe = Server.getInstance().getCraftingManager().matchBrewingRecipe(ingredient, potion);
+
+                        if (recipe != null) {
+                            this.inventory.setItem(i, recipe.getResult());
+                        }
                     }
-                }
 
-                ingredient.count--;
-                this.inventory.setIngredient(ingredient);
+                    ingredient.count--;
+                    this.inventory.setIngredient(ingredient);
+
+                    this.fuelAmount--;
+                    this.sendFuel();
+                }
 
                 this.brewTime = MAX_BREW_TIME;
             }
@@ -216,9 +244,73 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
             this.brewTime = MAX_BREW_TIME;
         }
 
+        //this.sendBrewTime();
         lastUpdate = System.currentTimeMillis();
 
         return ret;
+    }
+
+    protected void sendFuel() {
+        ContainerSetDataPacket pk = new ContainerSetDataPacket();
+
+        for (Player p : this.inventory.getViewers()) {
+            int windowId = p.getWindowId(this.inventory);
+            if (windowId > 0) {
+                pk.windowId = windowId;
+
+                pk.property = ContainerSetDataPacket.PROPERTY_BREWING_STAND_FUEL_AMOUNT;
+                pk.value = this.fuelAmount;
+                p.dataPacket(pk);
+
+                pk.property = ContainerSetDataPacket.PROPERTY_BREWING_STAND_FUEL_TOTAL;
+                pk.value = this.fuelTotal;
+                p.dataPacket(pk);
+            }
+        }
+    }
+
+    protected void sendBrewTime() {
+        ContainerSetDataPacket pk = new ContainerSetDataPacket();
+        pk.property = ContainerSetDataPacket.PROPERTY_BREWING_STAND_BREW_TIME;
+        pk.value = this.brewTime;
+
+        for (Player p : this.inventory.getViewers()) {
+            int windowId = p.getWindowId(this.inventory);
+            if (windowId > 0) {
+                pk.windowId = windowId;
+
+                p.dataPacket(pk);
+            }
+        }
+    }
+
+    public void updateBlock() {
+        Block block = this.getLevelBlock();
+
+        if (!(block instanceof BlockBrewingStand)) {
+            return;
+        }
+
+        int meta = 0;
+
+        for (int i = 1; i <= 3; ++i) {
+            Item potion = this.inventory.getItem(i);
+
+            if (potion.getId() == Item.POTION && potion.getCount() > 0) {
+                meta |= 1 << i;
+            }
+        }
+
+        block.setDamage(meta);
+        this.level.setBlock(block, block, false, false);
+    }
+
+    public int getFuel() {
+        return fuelAmount;
+    }
+
+    public void setFuel(int fuel) {
+        this.fuelAmount = fuel;
     }
 
     @Override
@@ -228,7 +320,12 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putShort("CookTime", 0);
+                .putShort("FuelTotal", this.fuelTotal)
+                .putShort("FuelAmount", this.fuelAmount);
+
+        if (this.brewTime < MAX_BREW_TIME) {
+            nbt.putShort("CookTime", this.brewTime);
+        }
 
         if (this.hasName()) {
             nbt.put("CustomName", namedTag.get("CustomName"));

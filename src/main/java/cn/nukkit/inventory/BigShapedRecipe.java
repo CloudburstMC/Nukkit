@@ -8,6 +8,6 @@ import cn.nukkit.item.Item;
  */
 public class BigShapedRecipe extends ShapedRecipe {
     public BigShapedRecipe(Item result, String... shape) {
-        super(result, shape);
+        super(result, 0, 0);
     }
 }
