@@ -21,7 +21,7 @@ import cn.nukkit.nbt.tag.ListTag;
  */
 public class BlockEntityHopper extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
-    protected final HopperInventory inventory;
+    protected HopperInventory inventory;
 
     public int transferCooldown = 8;
 
@@ -29,7 +29,10 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     public BlockEntityHopper(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
 
+    @Override
+    protected void initBlockEntity() {
         if (this.namedTag.contains("TransferCooldown")) {
             this.transferCooldown = this.namedTag.getInt("TransferCooldown");
         }
@@ -47,6 +50,8 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         this.pickupArea = new AxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 2, this.z + 1);
 
         this.scheduleUpdate();
+
+        super.initBlockEntity();
     }
 
     @Override

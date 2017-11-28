@@ -614,6 +614,10 @@ public class Item implements Cloneable {
         return hasMeta;
     }
 
+    public boolean hasAnyDamageValue() {
+        return this.meta == -1;
+    }
+
     public boolean canBeActivated() {
         return false;
     }
@@ -815,7 +819,7 @@ public class Item implements Cloneable {
             list[COOKED_SALMON] = ItemSalmonCooked.class; //463
 
             list[GOLDEN_APPLE_ENCHANTED] = ItemAppleGoldEnchanted.class; //466
-            /*list[RECORD_11] = ItemRecord11.class;
+            list[RECORD_11] = ItemRecord11.class;
             list[RECORD_CAT] = ItemRecordCat.class;
             list[RECORD_13] = ItemRecord13.class;
             list[RECORD_BLOCKS] = ItemRecordBlocks.class;
@@ -826,7 +830,7 @@ public class Item implements Cloneable {
             list[RECORD_MELLOHI] = ItemRecordMellohi.class;
             list[RECORD_STAL] = ItemRecordStal.class;
             list[RECORD_STRAD] = ItemRecordStrad.class;
-            list[RECORD_WAIT] = ItemRecordWait.class;*/
+            list[RECORD_WAIT] = ItemRecordWait.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -965,6 +969,12 @@ public class Item implements Cloneable {
         if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
 
         return get(id, meta);
+    }
+
+    public static Item fromJson(Map<String, Object> data) {
+        String nbt = (String) data.getOrDefault("nbt_hex", "");
+
+        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbt.isEmpty() ? new byte[0] : DatatypeConverter.parseHexBinary(nbt));
     }
 
     public static Item[] fromStringMultiple(String str) {

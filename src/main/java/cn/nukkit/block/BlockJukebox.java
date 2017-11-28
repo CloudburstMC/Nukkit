@@ -50,6 +50,7 @@ public class BlockJukebox extends BlockSolid {
         } else if (item instanceof ItemRecord) {
             jukebox.setRecordItem(item);
             jukebox.play();
+            player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
         }
 
         return false;
@@ -59,6 +60,20 @@ public class BlockJukebox extends BlockSolid {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (super.place(item, block, target, face, fx, fy, fz, player)) {
             createBlockEntity();
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean onBreak(Item item) {
+        if (super.onBreak(item)) {
+            BlockEntity blockEntity = this.level.getBlockEntity(this);
+
+            if (blockEntity instanceof BlockEntityJukebox) {
+                ((BlockEntityJukebox) blockEntity).dropItem();
+            }
             return true;
         }
 
