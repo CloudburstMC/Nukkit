@@ -2025,6 +2025,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.close("", message, false);
                         break;
                     }
+                    if (loginPacket.getProtocol() == PlayerProtocol.PLAYER_PROTOCOL_141.getNumber())
+                        this.protocol = PlayerProtocol.PLAYER_PROTOCOL_141;
 
                     this.username = TextFormat.clean(loginPacket.username);
                     this.displayName = this.username;
