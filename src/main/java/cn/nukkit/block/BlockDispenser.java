@@ -5,6 +5,7 @@ import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.dispenser.ProjectileDispenseBehavior;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -99,11 +100,11 @@ public class BlockDispenser extends BlockSolid {
         return false;
     }
 
-    public static void registerBehavior(int itemId, DispenseBehavior behavior) {
-        behaviors.put(itemId, behavior);
-    }
-
-    public DispenseBehavior getBehavior(int id) {
-        return behaviors.getOrDefault(id, defaultBehavior);
+    public Vector3 getDispensePosition() {
+        BlockFace facing = getFacing();
+        double x = this.getX() + 0.7 * facing.getXOffset();
+        double y = this.getY() + 0.7 * facing.getYOffset();
+        double z = this.getZ() + 0.7 * facing.getZOffset();
+        return new Vector3(x, y, z);
     }
 }
