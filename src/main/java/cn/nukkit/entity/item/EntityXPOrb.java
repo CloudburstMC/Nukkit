@@ -56,9 +56,9 @@ public class EntityXPOrb extends Entity {
         super(chunk, nbt);
     }
 
-    private int age = 0;
-    private int pickupDelay = 0;
-    private int exp = 0;
+    private int age;
+    private int pickupDelay;
+    private int exp;
 
     public Player closestPlayer = null;
 

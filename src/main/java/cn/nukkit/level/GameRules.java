@@ -31,6 +31,7 @@ public class GameRules {
         this.addGameRule("spectatorsGenerateChunks", "true", ValueType.BOOLEAN_VALUE);
         this.addGameRule("spawnRadius", "10", ValueType.NUMERICAL_VALUE);
         this.addGameRule("disableElytraMovementCheck", "false", ValueType.BOOLEAN_VALUE);
+        this.addGameRule("pvp", "true", ValueType.BOOLEAN_VALUE);
     }
 
     public void addGameRule(String key, String value, ValueType type) {

@@ -134,6 +134,11 @@ public class ShapedRecipe implements Recipe {
         Server.getInstance().getCraftingManager().registerShapedRecipe(this);
     }
 
+    @Override
+    public boolean requiresCraftingTable() {
+        return this.getHeight() > 2 || this.getWidth() > 2;
+    }
+
     public static class Entry {
         public final int x;
         public final int y;

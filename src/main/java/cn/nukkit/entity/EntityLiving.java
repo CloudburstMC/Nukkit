@@ -88,7 +88,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         return true;
     }
 
-    public void collidingWith(EntityVehicle ent) { // can override (IronGolem|Bats)
+    public void collidingWith(Entity ent) { // can override (IronGolem|Bats)
         ent.applyEntityCollision(this);
     }
 
@@ -239,8 +239,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         }
         if (this.riding == null) {
             for (Entity entity : level.getNearbyEntities(this.boundingBox.grow(0.20000000298023224D, 0.0D, 0.20000000298023224D), this)) {
-                if (entity instanceof EntityVehicle) {
-                    this.collidingWith((EntityVehicle) entity);
+                if (entity instanceof EntityRideable) {
+                    this.collidingWith(entity);
                 }
             }
         }
@@ -339,10 +339,5 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     public float getMovementSpeed() {
         return this.movementSpeed;
-    }
-
-    @Override
-    public boolean doesTriggerPressurePlate() {
-        return true;
     }
 }

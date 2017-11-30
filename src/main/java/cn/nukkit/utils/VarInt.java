@@ -20,9 +20,9 @@ import static cn.nukkit.api.API.Usage.EXPERIMENTAL;
 @API(usage = EXPERIMENTAL, definition = UNIVERSAL)
 public final class VarInt {
 
-	private VarInt() {
-		//no instance
-	}
+    private VarInt() {
+        //no instance
+    }
 
     /**
      * @param v Signed int
@@ -46,7 +46,7 @@ public final class VarInt {
      * @return Unsigned encoded long
      */
     public static long encodeZigZag64(long v) {
-	    return (v << 1) ^ (v >> 63);
+        return (v << 1) ^ (v >> 63);
     }
 
     /**
@@ -58,31 +58,31 @@ public final class VarInt {
     }
 
     private static long read(BinaryStream stream, int maxSize) {
-	    long value = 0;
-	    int size = 0;
-	    int b;
-	    while (((b = stream.getByte()) & 0x80) == 0x80) {
-		    value |= (long) (b & 0x7F) << (size++ * 7);
-		    if (size >= maxSize) {
-			    throw new IllegalArgumentException("VarLong too big");
-		    }
-	    }
+        long value = 0;
+        int size = 0;
+        int b;
+        while (((b = stream.getByte()) & 0x80) == 0x80) {
+            value |= (long) (b & 0x7F) << (size++ * 7);
+            if (size >= maxSize) {
+                throw new IllegalArgumentException("VarLong too big");
+            }
+        }
 
-	    return value | ((long) (b & 0x7F) << (size * 7));
+        return value | ((long) (b & 0x7F) << (size * 7));
     }
 
     private static long read(InputStream stream, int maxSize) throws IOException {
-	    long value = 0;
-	    int size = 0;
-	    int b;
-	    while (((b = stream.read()) & 0x80) == 0x80) {
-		    value |= (long) (b & 0x7F) << (size++ * 7);
-		    if (size >= maxSize) {
-			    throw new IllegalArgumentException("VarLong too big");
-		    }
-	    }
+        long value = 0;
+        int size = 0;
+        int b;
+        while (((b = stream.read()) & 0x80) == 0x80) {
+            value |= (long) (b & 0x7F) << (size++ * 7);
+            if (size >= maxSize) {
+                throw new IllegalArgumentException("VarLong too big");
+            }
+        }
 
-	    return value | ((long) (b & 0x7F) << (size * 7));
+        return value | ((long) (b & 0x7F) << (size * 7));
     }
 
     /**
@@ -150,27 +150,27 @@ public final class VarInt {
     }
 
     private static void write(BinaryStream stream, long value) {
-	    do {
-		    byte temp = (byte)(value & 0b01111111);
-		    // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
-		    value >>>= 7;
-		    if (value != 0) {
-			    temp |= 0b10000000;
-		    }
-		    stream.putByte(temp);
-	    } while (value != 0);
+        do {
+            byte temp = (byte) (value & 0b01111111);
+            // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
+            value >>>= 7;
+            if (value != 0) {
+                temp |= 0b10000000;
+            }
+            stream.putByte(temp);
+        } while (value != 0);
     }
 
     private static void write(OutputStream stream, long value) throws IOException {
-	    do {
-		    byte temp = (byte)(value & 0b01111111);
-		    // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
-		    value >>>= 7;
-		    if (value != 0) {
-			    temp |= 0b10000000;
-		    }
-		    stream.write(temp);
-	    } while (value != 0);
+        do {
+            byte temp = (byte) (value & 0b01111111);
+            // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
+            value >>>= 7;
+            if (value != 0) {
+                temp |= 0b10000000;
+            }
+            stream.write(temp);
+        } while (value != 0);
     }
 
     /**

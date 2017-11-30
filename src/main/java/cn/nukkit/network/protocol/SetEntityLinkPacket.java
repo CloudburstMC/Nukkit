@@ -14,6 +14,7 @@ public class SetEntityLinkPacket extends DataPacket {
     public long rider;
     public long riding;
     public byte type;
+    public byte unknownByte;
 
     @Override
     public void decode() {
@@ -23,14 +24,14 @@ public class SetEntityLinkPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarLong(this.rider);
-        this.putVarLong(this.riding);
+        this.putEntityUniqueId(this.rider);
+        this.putEntityUniqueId(this.riding);
         this.putByte(this.type);
+        this.putByte(this.unknownByte);
     }
 
     @Override
     public byte pid() {
         return NETWORK_ID;
     }
-
 }

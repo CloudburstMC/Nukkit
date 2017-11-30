@@ -210,13 +210,16 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
     @Override
     public void setName(String name) {
         QueryRegenerateEvent info = this.server.getQueryInformation();
-
+        String[] names = name.split("!@#");  //Split double names within the program
         this.handler.sendOption("name",
-                "MCPE;" + Utils.rtrim(name.replace(";", "\\;"), '\\') + ";" +
+                "MCPE;" + Utils.rtrim(names[0].replace(";", "\\;"), '\\') + ";" +
                         ProtocolInfo.CURRENT_PROTOCOL + ";" +
                         ProtocolInfo.MINECRAFT_VERSION_NETWORK + ";" +
                         info.getPlayerCount() + ";" +
-                        info.getMaxPlayerCount());
+                        info.getMaxPlayerCount() + ";" +
+                        this.server.getServerUniqueId().toString() + ";" +
+                        (names.length > 1 ? Utils.rtrim(names[1].replace(";", "\\;"), '\\') : "") + ";" +
+                        Server.getGamemodeString(this.server.getDefaultGamemode(), true) + ";");
     }
 
     public void setPortCheck(boolean value) {

@@ -57,9 +57,9 @@ public class BlockRailActivator extends BlockRail {
     /**
      * Check the surrounding of the rail
      *
-     * @param pos The rail position
+     * @param pos      The rail position
      * @param relative The relative of the rail that will be checked
-     * @param power The count of the rail that had been counted
+     * @param power    The count of the rail that had been counted
      * @return Boolean of the surrounding area. Where the powered rail on!
      */
     protected boolean checkSurrounding(Vector3 pos, boolean relative, int power) {
@@ -69,7 +69,7 @@ public class BlockRailActivator extends BlockRail {
         int dx = pos.getFloorX();
         int dy = pos.getFloorY();
         int dz = pos.getFloorZ();
-        
+
         BlockRail block;
         Block block2 = level.getBlock(new Vector3(dx, dy, dz));
 
@@ -153,7 +153,7 @@ public class BlockRailActivator extends BlockRail {
         }
 
         Rail.Orientation base = ((BlockRailActivator) block).getOrientation();
-     
+
         return (state != Rail.Orientation.STRAIGHT_EAST_WEST
                 || base != Rail.Orientation.STRAIGHT_NORTH_SOUTH
                 && base != Rail.Orientation.ASCENDING_NORTH

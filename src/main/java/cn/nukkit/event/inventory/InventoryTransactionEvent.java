@@ -3,7 +3,7 @@ package cn.nukkit.event.inventory;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.inventory.TransactionGroup;
+import cn.nukkit.inventory.transaction.InventoryTransaction;
 
 /**
  * author: MagicDroidX
@@ -17,14 +17,13 @@ public class InventoryTransactionEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    private final TransactionGroup transaction;
+    private final InventoryTransaction transaction;
 
-    public InventoryTransactionEvent(TransactionGroup transaction) {
+    public InventoryTransactionEvent(InventoryTransaction transaction) {
         this.transaction = transaction;
     }
 
-    public TransactionGroup getTransaction() {
+    public InventoryTransaction getTransaction() {
         return transaction;
     }
-
 }

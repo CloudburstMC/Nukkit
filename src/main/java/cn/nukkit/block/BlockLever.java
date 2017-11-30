@@ -83,7 +83,7 @@ public class BlockLever extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent() && target.isSolid()) {
+        if (target.isNormalBlock()) {
             this.meta = LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata();
             this.getLevel().setBlock(block, this, true, true);
             return true;

@@ -13,11 +13,12 @@ public class RiderJumpPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.unknown = this.getVarInt();
     }
 
     @Override
     public void encode() {
+        this.reset();
         this.putVarInt(this.unknown);
     }
 }

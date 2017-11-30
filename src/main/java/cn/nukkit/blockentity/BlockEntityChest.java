@@ -38,7 +38,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
         /* for (int i = 0; i < this.getSize(); i++) {
             this.inventory.setItem(i, this.getItem(i));
         } */
-        
+
         ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
         for (CompoundTag compound : list.getAll()) {
             Item item = NBTIO.getItemHelper(compound);
@@ -104,7 +104,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     @Override
     public void setItem(int index, Item item) {
         int i = this.getSlotIndex(index);
-        
+
         CompoundTag d = NBTIO.putItemHelper(item, index);
 
         // If item is air or count less than 0, remove the item from the "Items" list
@@ -116,14 +116,14 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
             // If it is less than i, then it is a new item, so we are going to add it at the end of the list
             (this.namedTag.getList("Items", CompoundTag.class)).add(d);
         } else {
-            // If it is more than i, then it is an update on a slot, so we are going to overwrite the item in the list
+            // If it is more than i, then it is an update on a inventorySlot, so we are going to overwrite the item in the list
             (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
         }
     }
 
     @Override
     public BaseInventory getInventory() {
-        if (this.isPaired() && this.doubleInventory == null) {
+        if (this.doubleInventory == null && this.isPaired()) {
             this.checkPairing();
         }
 

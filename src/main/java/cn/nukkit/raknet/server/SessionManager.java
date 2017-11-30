@@ -82,7 +82,7 @@ public class SessionManager {
                     }
                     --max;
                 } catch (Exception e) {
-                    if (!"".equals(currentSource)) {
+                    if (!currentSource.isEmpty()) {
                         this.blockAddress(currentSource);
                     }
                     // else ignore

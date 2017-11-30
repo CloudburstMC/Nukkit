@@ -40,7 +40,7 @@ public class ExplodePacket extends DataPacket {
         this.putUnsignedVarInt(this.records.length);
         if (this.records.length > 0) {
             for (Vector3 record : records) {
-                this.putBlockCoords((int) record.x, (int) record.y, (int) record.z);
+                this.putBlockVector3((int) record.x, (int) record.y, (int) record.z);
             }
         }
     }

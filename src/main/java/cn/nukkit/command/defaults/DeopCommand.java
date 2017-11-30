@@ -14,7 +14,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class DeopCommand extends VanillaCommand {
     public DeopCommand(String name) {
-        super(name, "%nukkit.command.deop.description", "%commands.deop.usage");
+        super(name, "%nukkit.command.deop.description", "%commands.deop.description");
         this.setPermission("nukkit.command.op.take");
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false)
@@ -38,7 +38,7 @@ public class DeopCommand extends VanillaCommand {
         player.setOp(false);
 
         if (player instanceof Player) {
-            ((Player) player).sendMessage(TextFormat.GRAY + "You are no longer op!");
+            ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.deop.message"));
         }
 
         Command.broadcastCommandMessage(sender, new TranslationContainer("commands.deop.success", new String[]{player.getName()}));

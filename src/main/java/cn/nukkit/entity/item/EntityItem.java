@@ -29,12 +29,12 @@ public class EntityItem extends Entity {
         return NETWORK_ID;
     }
 
-    protected String owner = null;
-    protected String thrower = null;
+    protected String owner;
+    protected String thrower;
 
     protected Item item;
 
-    protected int pickupDelay = 0;
+    protected int pickupDelay;
 
     @Override
     public float getWidth() {
@@ -100,6 +100,7 @@ public class EntityItem extends Entity {
         }
 
         this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE, true);
 
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }
@@ -261,5 +262,10 @@ public class EntityItem extends Entity {
         player.dataPacket(pk);
 
         super.spawnTo(player);
+    }
+
+    @Override
+    public boolean doesTriggerPressurePlate() {
+        return true;
     }
 }

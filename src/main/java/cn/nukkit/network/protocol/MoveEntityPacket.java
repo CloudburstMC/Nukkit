@@ -26,7 +26,7 @@ public class MoveEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.eid = this.getVarLong();
+        this.eid = this.getEntityRuntimeId();
         Vector3f v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
@@ -41,7 +41,7 @@ public class MoveEntityPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarLong(this.eid);
+        this.putEntityRuntimeId(this.eid);
         this.putVector3f((float) this.x, (float) this.y, (float) this.z);
         this.putByte((byte) (this.pitch / (360d / 256d)));
         this.putByte((byte) (this.headYaw / (360d / 256d)));

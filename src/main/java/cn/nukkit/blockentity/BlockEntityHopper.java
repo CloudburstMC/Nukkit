@@ -146,7 +146,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         if (this.closed) {
             return false;
         }
-        
+
         this.transferCooldown--;
 
         if (!this.isOnTransferCooldown()) {
