@@ -59,7 +59,7 @@ public class ItemBow extends ItemTool {
             Enchantment bowDamage = this.getEnchantment(Enchantment.ID_BOW_POWER);
 
             if (bowDamage != null && bowDamage.getLevel() > 0) {
-                damage += 0.25 * (bowDamage.getLevel() + 1);
+                damage += damage * 0.25 * (bowDamage.getLevel() + 1);
             }
 
             Enchantment flameEnchant = this.getEnchantment(Enchantment.ID_BOW_FLAME);
