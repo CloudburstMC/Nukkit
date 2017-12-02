@@ -153,6 +153,7 @@ public class Server {
 
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
+    private int networkZlibProvider = 0;
 
     private boolean autoTickRate = true;
     private int autoTickRateLimit = 20;
@@ -310,8 +311,8 @@ public class Server {
 
         ServerScheduler.WORKERS = (int) poolSize;
 
-        this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
-        this.networkCompressionAsync = (boolean) this.getConfig("network.async-compression", true);
+        this.networkZlibProvider = (int) this.getConfig("network.zlib-provider", 0);
+        Zlib.setProvider(this.networkZlibProvider);
 
         this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
         this.networkCompressionAsync = (boolean) this.getConfig("network.async-compression", true);
