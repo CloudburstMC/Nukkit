@@ -1,6 +1,6 @@
 Nukkit
 ===================
-![nukkit](https://github.com/Nukkit/Nukkit/blob/master/images/banner.png)
+![nukkit](.github/images/banner.png)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by
@@ -16,7 +16,7 @@ Nukkit
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__A Nuclear-Powered NukkitServer Software For Minecraft: Pocket Edition__
+__A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 
 [![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=magicdroidx%40gmail%2ecom&lc=US&item_name=Nukkit&currency_code=USD&bn=PP%2dDonationsBF%3apaypal%2ddonate%2dyellow%2esvg%3aNonHostedGuest)
 [![Gitter](https://img.shields.io/gitter/room/Nukkit/Nukkit.js.svg?style=flat)](https://gitter.im/Nukkit/Nukkit)
@@ -25,8 +25,8 @@ __A Nuclear-Powered NukkitServer Software For Minecraft: Pocket Edition__
 Introduction
 -------------
 
-Nukkit is nuclear-powered NukkitServer software for Minecraft: Pocket Edition.
-It has a few key advantages over other NukkitServer software:
+Nukkit is nuclear-powered Server software for Minecraft: Pocket Edition.
+It has a few key advantages over other Server software:
 
 * Written in Java, Nukkit is faster and more stable.
 * Having a friendly structure, it's easy to contribute to Nukkit's development and rewrite plugins from other platforms into Nukkit plugins.
@@ -83,7 +83,7 @@ There're some tools for Nukkit developers.
 
 Contributing
 ------------
-Please read the [CONTRIBUTING](https://github.com/Nukkit/Nukkit/blob/master/.github/CONTRIBUTING.md) guide before submitting any issue. Issues with insufficient information or in the wrong format will be closed and will not be reviewed.
+Please read the [CONTRIBUTING](.github/CONTRIBUTING.md) guide before submitting any issue. Issues with insufficient information or in the wrong format will be closed and will not be reviewed.
 
 Discussion
 -------------
