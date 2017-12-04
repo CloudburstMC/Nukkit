@@ -1,0 +1,56 @@
+package cn.nukkit.server.block;
+
+import cn.nukkit.server.item.Item;
+import cn.nukkit.server.item.ItemApple;
+import cn.nukkit.server.item.ItemBlock;
+
+/**
+ * Created on 2015/12/1 by xtypr.
+ * Package cn.nukkit.server.block in project Nukkit .
+ */
+public class BlockLeaves2 extends BlockLeaves {
+
+    public BlockLeaves2() {
+        this(0);
+    }
+
+    public BlockLeaves2(int meta) {
+        super(meta);
+    }
+
+    public String getName() {
+        String[] names = new String[]{
+                "Oak Leaves",
+                "Spruce Leaves",
+                "Birch Leaves",
+                "Jungle Leaves"
+        };
+        return names[this.meta & 0x01];
+    }
+
+    @Override
+    public int getId() {
+        return LEAVES2;
+    }
+
+    @Override
+    public Item[] getDrops(Item item) {
+        if (item.isShears()) {
+            return new Item[]{
+                    toItem()
+            };
+        } else {
+            if ((int) ((Math.random()) * 200) == 0 && this.meta == DARK_OAK) {
+                return new Item[]{
+                        new ItemApple()
+                };
+            }
+            if ((int) ((Math.random()) * 20) == 0) {
+                return new Item[]{
+                        new ItemBlock(new BlockSapling(), this.meta & 0x03, 1)
+                };
+            }
+        }
+        return new Item[0];
+    }
+}

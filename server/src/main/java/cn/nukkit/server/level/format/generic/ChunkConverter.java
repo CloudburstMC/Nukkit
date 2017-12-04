@@ -1,0 +1,86 @@
+package cn.nukkit.server.level.format.generic;
+
+import cn.nukkit.server.level.format.FullChunk;
+import cn.nukkit.server.level.format.LevelProvider;
+import cn.nukkit.server.level.format.anvil.Chunk;
+import cn.nukkit.server.level.format.anvil.ChunkSection;
+
+import java.util.ArrayList;
+
+public class ChunkConverter {
+
+    private BaseFullChunk chunk;
+    private Class<? extends FullChunk> toClass;
+    private LevelProvider provider;
+
+    public ChunkConverter(LevelProvider provider) {
+        this.provider = provider;
+    }
+
+    public ChunkConverter from(BaseFullChunk chunk) {
+        if (!(chunk instanceof cn.nukkit.server.level.format.mcregion.Chunk) && !(chunk instanceof cn.nukkit.server.level.format.leveldb.Chunk)) {
+            throw new IllegalArgumentException("From type can be only McRegion or LevelDB");
+        }
+        this.chunk = chunk;
+        return this;
+    }
+
+    public ChunkConverter to(Class<? extends FullChunk> toClass) {
+        if (toClass != Chunk.class) {
+            throw new IllegalArgumentException("To type can be only Anvil");
+        }
+        this.toClass = toClass;
+        return this;
+    }
+
+    public FullChunk perform() {
+        BaseFullChunk result;
+        try {
+            result = (BaseFullChunk) toClass.getMethod("getEmptyChunk", int.class, int.class, LevelProvider.class).invoke(null, chunk.getX(), chunk.getZ(), provider);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (toClass == Chunk.class) {
+            for (int Y = 0; Y < 8; Y++) {
+                boolean empty = true;
+                for (int x = 0; x < 16; x++) {
+                    for (int y = 0; y < 16; y++) {
+                        for (int z = 0; z < 16; z++) {
+                            if (chunk.getBlockId(x, (Y << 4) | y, z) != 0) {
+                                empty = false;
+                                break;
+                            }
+                        }
+                        if (!empty) break;
+                    }
+                    if (!empty) break;
+                }
+                if (!empty) {
+                    ChunkSection section = new ChunkSection(Y);
+                    for (int x = 0; x < 16; x++) {
+                        for (int y = 0; y < 16; y++) {
+                            for (int z = 0; z < 16; z++) {
+                                section.setBlockId(x, y, z, chunk.getBlockId(x, (Y << 4) | y, z));
+                                section.setBlockData(x, y, z, chunk.getBlockData(x, (Y << 4) | y, z));
+                                section.setBlockLight(x, y, z, chunk.getBlockLight(x, (Y << 4) | y, z));
+                                section.setBlockSkyLight(x, y, z, chunk.getBlockSkyLight(x, (Y << 4) | y, z));
+                            }
+                        }
+                    }
+                    ((BaseChunk) result).sections[Y] = section;
+                }
+            }
+        }
+        System.arraycopy(chunk.getBiomeColorArray(), 0, result.biomeColors, 0, 256);
+        System.arraycopy(chunk.getHeightMapArray(), 0, result.heightMap, 0, 256);
+        result.NBTentities = new ArrayList<>();
+        chunk.NBTentities.forEach((nbt) -> result.NBTentities.add(nbt.copy()));
+        result.NBTtiles = new ArrayList<>();
+        chunk.NBTtiles.forEach((nbt) -> result.NBTtiles.add(nbt.copy()));
+        result.setGenerated();
+        result.setPopulated();
+        result.setLightPopulated();
+        result.initChunk();
+        return result;
+    }
+}

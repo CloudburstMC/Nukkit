@@ -43,7 +43,7 @@ I do not know because I have not logged in to anything other than my server, but
 ```
 java version "9"
 Java(TM) SE Runtime Environment (build 9+175)
-Java HotSpot(TM) 64-Bit Server VM (build 9+175, mixed mode)
+Java HotSpot(TM) 64-Bit NukkitServer VM (build 9+175, mixed mode)
 ```
 <!--- Device and host configuration, such as: 8GB RAM, 12-core Intel X5650 CPU, 100Mb internet upload. You may get this info from your host provider or hardware information softwares -->
 * Host Configuration: 
@@ -81,7 +81,7 @@ I do not know because I have not logged in to anything other than my server, but
 
 java version "9"
 Java(TM) SE Runtime Environment (build 9+175)
-Java HotSpot(TM) 64-Bit Server VM (build 9+175, mixed mode)
+Java HotSpot(TM) 64-Bit NukkitServer VM (build 9+175, mixed mode)
 
 <!--- Device and host configuration, such as: 8GB RAM, 12-core Intel X5650 CPU, 100Mb internet upload. You may get this info from your host provider or hardware information softwares -->
 * Host Configuration: 
