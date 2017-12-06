@@ -187,7 +187,46 @@ public class Utils {
         return arrays;
     }
 
+    public static void reverseArray(Object[] data) {
+        reverseArray(data, false);
+    }
+
+    public static Object[] reverseArray(Object[] array, boolean copy) {
+        Object[] data = array;
+        if (copy) {
+            data = new Object[array.length];
+            System.arraycopy(array, 0, data, 0, data.length);
+        }
+
+        for (int left = 0, right = data.length - 1; left < right; left++, right--) {
+            // swap the values at the left and right indices
+            Object temp = data[left];
+            data[left] = data[right];
+            data[right] = temp;
+        }
+
+        return data;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[][] clone2dArray(T[][] array) {
+        T[][] newArray = (T[][]) new Object[array.length][];
+        for (int i = 0; i < newArray.length; i++) {
+            T[] old = array[i];
+            T[] n = (T[]) new Object[old.length];
+
+            System.arraycopy(old, 0, n, 0, n.length);
+            newArray[i] = n;
+        }
+
+        return newArray;
+    }
+
     public static int toInt(Object number) {
+        if (number instanceof Integer) {
+            return (Integer) number;
+        }
+
         return (int) Math.round((double) number);
     }
 }

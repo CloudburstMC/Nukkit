@@ -19,24 +19,29 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     public BlockEntitySign(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
 
-        if (!nbt.contains("Text")) {
+    @Override
+    protected void initBlockEntity() {
+        if (!namedTag.contains("Text")) {
             List<String> lines = new ArrayList<>();
 
             for (int i = 1; i <= 4; i++) {
                 String key = "Text" + i;
 
-                if (nbt.contains(key)) {
-                    String line = nbt.getString(key);
+                if (namedTag.contains(key)) {
+                    String line = namedTag.getString(key);
 
                     lines.add(line);
 
-                    nbt.remove(key);
+                    namedTag.remove(key);
                 }
             }
 
-            nbt.putString("Text", String.join("\n", lines));
+            namedTag.putString("Text", String.join("\n", lines));
         }
+
+        super.initBlockEntity();
     }
 
     @Override

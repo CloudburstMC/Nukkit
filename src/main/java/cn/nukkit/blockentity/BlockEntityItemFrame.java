@@ -15,17 +15,23 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     public BlockEntityItemFrame(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        if (!nbt.contains("Item")) {
-            nbt.putCompound("Item", NBTIO.putItemHelper(new ItemBlock(new BlockAir())));
+    }
+
+    @Override
+    protected void initBlockEntity() {
+        if (!namedTag.contains("Item")) {
+            namedTag.putCompound("Item", NBTIO.putItemHelper(new ItemBlock(new BlockAir())));
         }
-        if (!nbt.contains("ItemRotation")) {
-            nbt.putByte("ItemRotation", 0);
+        if (!namedTag.contains("ItemRotation")) {
+            namedTag.putByte("ItemRotation", 0);
         }
-        if (!nbt.contains("ItemDropChance")) {
-            nbt.putFloat("ItemDropChance", 1.0f);
+        if (!namedTag.contains("ItemDropChance")) {
+            namedTag.putFloat("ItemDropChance", 1.0f);
         }
 
         this.level.updateComparatorOutputLevel(this);
+
+        super.initBlockEntity();
     }
 
     @Override
