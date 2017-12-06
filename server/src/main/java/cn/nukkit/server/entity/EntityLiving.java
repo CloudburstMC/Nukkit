@@ -1,12 +1,11 @@
 package cn.nukkit.server.entity;
 
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.entity.data.ShortEntityData;
 import cn.nukkit.server.entity.passive.EntityWaterAnimal;
-import cn.nukkit.server.event.entity.*;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.math.Vector3;

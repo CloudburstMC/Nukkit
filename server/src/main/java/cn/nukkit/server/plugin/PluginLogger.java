@@ -1,8 +1,6 @@
 package cn.nukkit.server.plugin;
 
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.utils.LogLevel;
-import cn.nukkit.server.utils.Logger;
 
 /**
  * author: MagicDroidX

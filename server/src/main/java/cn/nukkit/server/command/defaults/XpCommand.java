@@ -1,10 +1,9 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -35,7 +34,7 @@ public class XpCommand extends Command {
         Player player;
         if (!(sender instanceof Player)) {
             if (args.length != 2) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
                 return true;
             }
             amountString = args[0];
@@ -50,13 +49,13 @@ public class XpCommand extends Command {
                 playerName = args[1];
                 player = sender.getServer().getPlayer(playerName);
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
                 return true;
             }
         }
 
         if (player == null) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+            sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.player.notFound"));
             return true;
         }
 
@@ -70,7 +69,7 @@ public class XpCommand extends Command {
         try {
             amount = Integer.parseInt(amountString);
         } catch (NumberFormatException e1) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return true;
         }
 
@@ -84,18 +83,18 @@ public class XpCommand extends Command {
                 player.setExperience(player.getExperience(), newLevel);
             }
             if (amount > 0) {
-                sender.sendMessage(new TranslationContainer("commands.xp.success.levels", new String[]{String.valueOf(amount), player.getName()}));
+                sender.sendMessage(new TranslatedMessage("commands.xp.success.levels", new String[]{String.valueOf(amount), player.getName()}));
             } else {
-                sender.sendMessage(new TranslationContainer("commands.xp.success.levels.minus", new String[]{String.valueOf(-amount), player.getName()}));
+                sender.sendMessage(new TranslatedMessage("commands.xp.success.levels.minus", new String[]{String.valueOf(-amount), player.getName()}));
             }
             return true;
         } else {
             if (amount < 0) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
                 return true;
             }
             player.addExperience(amount);
-            sender.sendMessage(new TranslationContainer("commands.xp.success", new String[]{String.valueOf(amount), player.getName()}));
+            sender.sendMessage(new TranslatedMessage("commands.xp.success", new String[]{String.valueOf(amount), player.getName()}));
             return true;
         }
     }

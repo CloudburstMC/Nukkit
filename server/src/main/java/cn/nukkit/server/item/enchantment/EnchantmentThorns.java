@@ -1,9 +1,9 @@
 package cn.nukkit.server.item.enchantment;
 
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.EntityHumanType;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.item.Item;
 
 import java.util.Random;

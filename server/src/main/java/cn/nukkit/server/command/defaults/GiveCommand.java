@@ -1,11 +1,10 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -45,7 +44,7 @@ public class GiveCommand extends VanillaCommand {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
 
             return true;
         }
@@ -56,7 +55,7 @@ public class GiveCommand extends VanillaCommand {
         try {
             item = Item.fromString(args[1]);
         } catch (Exception e) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return true;
         }
 
@@ -68,16 +67,16 @@ public class GiveCommand extends VanillaCommand {
 
         if (player != null) {
             if (item.getId() == 0) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", args[1]));
+                sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.give.item.notFound", args[1]));
                 return true;
             }
             player.getInventory().addItem(item.clone());
         } else {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+            sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.player.notFound"));
 
             return true;
         }
-        Command.broadcastCommandMessage(sender, new TranslationContainer(
+        Command.broadcastCommandMessage(sender, new TranslatedMessage(
                 "%commands.give.success",
                 new String[]{
                         item.getName() + " (" + item.getId() + ":" + item.getDamage() + ")",

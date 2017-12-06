@@ -1,9 +1,27 @@
 package cn.nukkit.server;
 
+import cn.nukkit.api.MessageRecipient;
 import cn.nukkit.api.Server;
+import cn.nukkit.api.ServerProperties;
+import cn.nukkit.api.Whitelist;
+import cn.nukkit.api.command.Command;
+import cn.nukkit.api.command.CommandExecutorSource;
+import cn.nukkit.api.command.ConsoleCommandExecutorSource;
+import cn.nukkit.api.event.EventManager;
+import cn.nukkit.api.event.level.LevelInitEvent;
+import cn.nukkit.api.event.level.LevelLoadEvent;
+import cn.nukkit.api.event.server.QueryRegenerateEvent;
+import cn.nukkit.api.message.Message;
+import cn.nukkit.api.message.TranslatedMessage;
+import cn.nukkit.api.util.TextFormat;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.blockentity.*;
-import cn.nukkit.server.command.*;
+import cn.nukkit.server.command.PluginIdentifiableCommand;
+import cn.nukkit.server.command.SimpleCommandMap;
+import cn.nukkit.server.console.NukkitCommandConsoleCompletor;
+import cn.nukkit.server.console.NukkitConsoleAppender;
+import cn.nukkit.server.console.NukkitConsoleCommandExecutorSource;
+import cn.nukkit.server.console.NukkitPlayerConsoleCompletor;
 import cn.nukkit.server.entity.Attribute;
 import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.EntityHuman;
@@ -16,16 +34,12 @@ import cn.nukkit.server.entity.projectile.EntityEgg;
 import cn.nukkit.server.entity.projectile.EntityEnderPearl;
 import cn.nukkit.server.entity.projectile.EntitySnowball;
 import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.event.level.LevelInitEvent;
-import cn.nukkit.server.event.level.LevelLoadEvent;
-import cn.nukkit.server.event.server.QueryRegenerateEvent;
+import cn.nukkit.server.event.NukkitEventManager;
 import cn.nukkit.server.inventory.CraftingManager;
 import cn.nukkit.server.inventory.Recipe;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.enchantment.Enchantment;
 import cn.nukkit.server.lang.BaseLang;
-import cn.nukkit.server.lang.TextContainer;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.level.Level;
 import cn.nukkit.server.level.Position;
 import cn.nukkit.server.level.format.LevelProvider;
@@ -54,7 +68,6 @@ import cn.nukkit.server.network.SourceInterface;
 import cn.nukkit.server.network.protocol.BatchPacket;
 import cn.nukkit.server.network.protocol.DataPacket;
 import cn.nukkit.server.network.protocol.PlayerListPacket;
-import cn.nukkit.server.network.protocol.ProtocolInfo;
 import cn.nukkit.server.network.query.QueryHandler;
 import cn.nukkit.server.network.rcon.RCON;
 import cn.nukkit.server.permission.BanEntry;
@@ -75,135 +88,144 @@ import cn.nukkit.server.scheduler.ServerScheduler;
 import cn.nukkit.server.utils.*;
 import cn.nukkit.server.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.base.Preconditions;
+import lombok.extern.log4j.Log4j2;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author MagicDroidX
  * @author Box
  */
+@Log4j2
 public class NukkitServer implements Server {
-
     public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "nukkit.broadcast.admin";
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
+    public static final String NAME;
+    public static final String API_VERSION;
+    public static final String NUKKIT_VERSION;
+    public static final String MINECRAFT_VERSION;
+    public static final ObjectMapper JSON_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    public static final ObjectMapper YAML_MAPPER = new YAMLMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    public static final ObjectMapper PROPERTIES_MAPPER = new JavaPropsMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
+    static {
+        NAME = NukkitServer.class.getPackage().getImplementationTitle();
+        API_VERSION = NukkitServer.class.getPackage().getSpecificationVersion();
+        MINECRAFT_VERSION = NukkitServer.class.getPackage().getImplementationVersion();
+        NUKKIT_VERSION = NukkitServer.class.getPackage().getImplementationVendor();
+    }
+
+    private final boolean ansiEnabled;
     private static NukkitServer instance = null;
-
+    private final boolean useShortTitle;
+    private final NukkitEventManager eventManager = new NukkitEventManager();
+    private final ConsoleCommandExecutorSource consoleCommandExecutorSource = new NukkitConsoleCommandExecutorSource();
+    private LineReader lineReader;
+    private AtomicBoolean reading = new AtomicBoolean(false);
     private BanList banByName = null;
-
     private BanList banByIP = null;
-
     private Config operators = null;
-
-    private Config whitelist = null;
-
-    private boolean isRunning = true;
-
+    private BlockingQueue<String> inputLines;
+    private ConsoleReader consoleReader;
     private boolean hasStopped = false;
-
     private PluginManager pluginManager = null;
-
+    private NukkitServerProperties serverProperties;
     private int profilingTickrate = 20;
-
     private ServerScheduler scheduler = null;
-
     private int tickCounter;
-
     private long nextTick;
-
     private final float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
-
     private final float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
     private float maxTick = 20;
-
     private float maxUse = 0;
-
     private int sendUsageTicker = 0;
-
     private boolean dispatchSignals = false;
-
-    private final MainLogger logger;
-
-    private final CommandReader console;
-
     private SimpleCommandMap commandMap;
-
     private CraftingManager craftingManager;
-
     private ResourcePackManager resourcePackManager;
-
-    private ConsoleCommandSender consoleSender;
-
-    private int maxPlayers;
-
-    private boolean autoSave;
-
     private RCON rcon;
-
+    private NukkitWhitelist whitelist;
     private EntityMetadataStore entityMetadata;
-
     private PlayerMetadataStore playerMetadata;
-
     private LevelMetadataStore levelMetadata;
-
     private Network network;
-
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
-
     private boolean autoTickRate = true;
     private int autoTickRateLimit = 20;
     private boolean alwaysTickPlayers = false;
     private int baseTickRate = 1;
     private Boolean getAllowFlight = null;
-
     private int autoSaveTicker = 0;
     private int autoSaveTicks = 6000;
-
     private BaseLang baseLang;
-
     private boolean forceLanguage = false;
-
     private UUID serverID;
-
     private final String filePath;
     private final String dataPath;
     private final String pluginPath;
-
     private final Set<UUID> uniquePlayers = new HashSet<>();
-
     private QueryHandler queryHandler;
-
     private QueryRegenerateEvent queryRegenerateEvent;
-
-    private Config properties;
     private Config config;
-
     private final Map<String, Player> players = new HashMap<>();
-
     private final Map<UUID, Player> playerList = new HashMap<>();
-
     private final Map<Integer, String> identifier = new HashMap<>();
-
     private final Map<Integer, Level> levels = new HashMap<>();
-
     private final ServiceManager serviceManager = new NKServiceManager();
-
     private Level defaultLevel = null;
-
     private Thread currentThread;
+    private AtomicBoolean running = new AtomicBoolean(true);
 
-    NukkitServer(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
-        Preconditions.checkState(instance == null, "Already initialized!");
-        currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
-        instance = this;
-        this.logger = logger;
-
+    NukkitServer(final String filePath, final String dataPath, final String pluginPath, final boolean ansiEnabled, final boolean useShortTitle) {
         this.filePath = filePath;
+        this.dataPath = new File(dataPath).getAbsolutePath() + File.separator;
+        this.pluginPath = new File(pluginPath).getAbsolutePath() + File.separator;
+        this.ansiEnabled = ansiEnabled;
+        this.useShortTitle = useShortTitle;
+    }
+
+    public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
+        broadcastPacket(players.toArray(new Player[players.size()]), packet);
+    }
+
+    /**
+     * Get the server's instance.
+     * @deprecated you will now have to rely on getting the instance of the server through other methods such as player
+     * or when your plugin loads.
+     * @return instance of NukkitServer
+     */
+    @Deprecated
+    public static NukkitServer getInstance() {
+        return instance;
+    }
+
+    public void boot() throws Exception {
+        Preconditions.checkState(instance == null, "Already initialized!");
+        instance = this;
+
+        currentThread = Thread.currentThread();
+        currentThread.setName("Nukkit Main Thread");
+
         if (!new File(dataPath + "worlds/").exists()) {
             new File(dataPath + "worlds/").mkdirs();
         }
@@ -216,18 +238,42 @@ public class NukkitServer implements Server {
             new File(pluginPath).mkdirs();
         }
 
-        this.dataPath = new File(dataPath).getAbsolutePath() + "/";
-        this.pluginPath = new File(pluginPath).getAbsolutePath() + "/";
+        Terminal terminal = NukkitConsoleAppender.getTerminal();
 
-        this.console = new CommandReader();
+        LineReader reader = null;
+        if (terminal != null) {
+            reader = LineReaderBuilder.builder()
+                    .appName("Nukkit")
+                    .completer(new NukkitPlayerConsoleCompletor(this))
+                    .completer(new NukkitCommandConsoleCompletor(this))
+                    .terminal(terminal)
+                    .build();
+            reader.setKeyMap(LineReader.VISUAL);
+            reader.unsetOpt(LineReader.Option.INSERT_TAB);
+            NukkitConsoleAppender.setLineReader(reader);
+        }
+
+        inputLines = new LinkedBlockingQueue<>();
+
+        if (reader != null) {
+            lineReader = reader;
+            consoleReader = new ConsoleReader();
+
+            consoleReader.setName("Nukkit Console Reader");
+            consoleReader.start();
+
+            // Wait until we read
+            while (!reading.get()) {
+            }
+        }
         //todo: VersionString 现在不必要
 
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
-            this.getLogger().info(TextFormat.GREEN + "Welcome! Please choose a language first!");
+            log.info(TextFormat.GREEN + "Welcome! Please choose a language first!");
             try {
                 String[] lines = Utils.readFile(this.getClass().getClassLoader().getResourceAsStream("lang/language.list")).split("\n");
                 for (String line : lines) {
-                    this.getLogger().info(line);
+                    log.info(line);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -236,7 +282,11 @@ public class NukkitServer implements Server {
             String fallback = BaseLang.FALLBACK_LANGUAGE;
             String language = null;
             while (language == null) {
-                String lang = this.console.readLine();
+                String lang;
+                if (consoleReader == null) {
+                    lang = "eng"; // Console reader never started!
+                }
+                lang = consoleReader.readLine();
                 InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + lang + "/lang.ini");
                 if (conf != null) {
                     language = lang;
@@ -256,49 +306,18 @@ public class NukkitServer implements Server {
 
         }
 
-        this.console.start();
+        consoleReader.start();
 
-        this.logger.info("Loading " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + "...");
+        log.info("Loading " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + "...");
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
-        this.logger.info("Loading " + TextFormat.GREEN + "server properties" + TextFormat.WHITE + "...");
-        this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
-            {
-                put("motd", "Nukkit NukkitServer For Minecraft: PE");
-                put("sub-motd", "Powered by Nukkit");
-                put("server-port", 19132);
-                put("server-ip", "0.0.0.0");
-                put("view-distance", 10);
-                put("white-list", false);
-                put("achievements", true);
-                put("announce-player-achievements", true);
-                put("spawn-protection", 16);
-                put("max-players", 20);
-                put("allow-flight", false);
-                put("spawn-animals", true);
-                put("spawn-mobs", true);
-                put("gamemode", 0);
-                put("force-gamemode", false);
-                put("hardcore", false);
-                put("pvp", true);
-                put("difficulty", 1);
-                put("generator-settings", "");
-                put("level-name", "world");
-                put("level-seed", "");
-                put("level-type", "DEFAULT");
-                put("enable-query", true);
-                put("enable-rcon", false);
-                put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
-                put("auto-save", true);
-                put("force-resources", false);
-                put("bug-report", true);
-            }
-        });
+        log.info("Loading " + TextFormat.GREEN + "server.properties" + TextFormat.WHITE + "...");
+        loadServerProperties();
 
         this.forceLanguage = (Boolean) this.getConfig("settings.force-language", false);
         this.baseLang = new BaseLang((String) this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
-        this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
-        this.logger.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.WHITE));
+        log.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
+        log.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.WHITE));
 
         Object poolSize = this.getConfig("settings.async-workers", "auto");
         if (!(poolSize instanceof Integer)) {
@@ -324,8 +343,8 @@ public class NukkitServer implements Server {
 
         this.scheduler = new ServerScheduler();
 
-        if (this.getPropertyBoolean("enable-rcon", false)) {
-            this.rcon = new RCON(this, this.getPropertyString("rcon.password", ""), (!this.getIp().equals("")) ? this.getIp() : "0.0.0.0", this.getPropertyInt("rcon.port", this.getPort()));
+        if (serverProperties.getRcon().isEnabled()) {
+            this.rcon = new RCON(this, serverProperties.getRcon().getPassword(), serverProperties.getRcon().getPassword(), serverProperties.getRcon().getPort());
         }
 
         this.entityMetadata = new EntityMetadataStore();
@@ -333,40 +352,31 @@ public class NukkitServer implements Server {
         this.levelMetadata = new LevelMetadataStore();
 
         this.operators = new Config(this.dataPath + "ops.txt", Config.ENUM);
-        this.whitelist = new Config(this.dataPath + "white-list.txt", Config.ENUM);
+        loadWhitelist();
         this.banByName = new BanList(this.dataPath + "banned-players.json");
         this.banByName.load();
         this.banByIP = new BanList(this.dataPath + "banned-ips.json");
         this.banByIP.load();
 
-        this.maxPlayers = this.getPropertyInt("max-players", 20);
-        this.setAutoSave(this.getPropertyBoolean("auto-save", true));
-
-        if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
-            this.setPropertyInt("difficulty", 3);
-        }
-
-        Bootstrap.DEBUG = (int) this.getConfig("debug.level", 1);
-        if (this.logger instanceof MainLogger) {
-            this.logger.setLogDebug(Bootstrap.DEBUG > 1);
+        // Check if hardcore is enabled and set to force a check on the difficulty.
+        if (serverProperties.isHardcore()) {
+            serverProperties.setHardcore(true);
         }
 
         if (this.getConfig().getBoolean("bug-report", true)) {
             ExceptionHandler.registerExceptionHandler();
         }
 
-        this.logger.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[]{this.getIp().equals("") ? "*" : this.getIp(), String.valueOf(this.getPort())}));
+        log.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[]{serverProperties.getServerAddress(), Integer.toString(serverProperties.getServerPort())}));
         this.serverID = UUID.randomUUID();
 
         this.network = new Network(this);
-        this.network.setName(this.getMotd());
-        this.network.setSubName(this.getSubMotd());
+        this.network.setName(serverProperties.getMotd());
+        this.network.setSubName(serverProperties.getSubMotd());
 
-        this.logger.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()));
-        this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
+        log.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + NUKKIT_VERSION + TextFormat.WHITE, API_VERSION));
+        log.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
-
-        this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
 
         this.registerEntities();
@@ -381,10 +391,10 @@ public class NukkitServer implements Server {
         Attribute.init();
 
         this.craftingManager = new CraftingManager();
-        this.resourcePackManager = new ResourcePackManager(new File(Bootstrap.DATA_PATH, "resource_packs"));
+        this.resourcePackManager = new ResourcePackManager(new File(dataPath, "resource_packs"));
 
         this.pluginManager = new PluginManager(this, this.commandMap);
-        this.pluginManager.subscribeToPermission(NukkitServer.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
+        this.pluginManager.subscribeToPermission(NukkitServer.BROADCAST_CHANNEL_ADMINISTRATIVE, consoleCommandExecutorSource);
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
 
@@ -433,16 +443,10 @@ public class NukkitServer implements Server {
         }
 
         if (this.getDefaultLevel() == null) {
-            String defaultName = this.getPropertyString("level-name", "world");
-            if (defaultName == null || defaultName.trim().isEmpty()) {
-                this.getLogger().warning("level-name cannot be null, using default");
-                defaultName = "world";
-                this.setPropertyString("level-name", defaultName);
-            }
-
+            String defaultName = serverProperties.getLevelName();
             if (!this.loadLevel(defaultName)) {
                 long seed;
-                String seedString = String.valueOf(this.getProperty("level-seed", System.currentTimeMillis()));
+                String seedString = String.valueOf(serverProperties.getLevelSeed());
                 try {
                     seed = Long.valueOf(seedString);
                 } catch (NumberFormatException e) {
@@ -454,10 +458,8 @@ public class NukkitServer implements Server {
             this.setDefaultLevel(this.getLevelByName(defaultName));
         }
 
-        this.properties.save(true);
-
         if (this.getDefaultLevel() == null) {
-            this.getLogger().emergency(this.getLanguage().translateString("nukkit.level.defaultError"));
+            log.fatal(this.getLanguage().translateString("nukkit.level.defaultError"));
             this.forceShutdown();
 
             return;
@@ -473,77 +475,90 @@ public class NukkitServer implements Server {
 
     }
 
-    public int broadcastMessage(String message) {
-        return this.broadcast(message, BROADCAST_CHANNEL_USERS);
+    @Override
+    public void broadcastMessage(String message) {
+        broadcast(message, BROADCAST_CHANNEL_USERS);
     }
 
-    public int broadcastMessage(TextContainer message) {
-        return this.broadcast(message, BROADCAST_CHANNEL_USERS);
+    @Override
+    public String getName() {
+        return NAME;
     }
 
-    public int broadcastMessage(String message, CommandSender[] recipients) {
-        for (CommandSender recipient : recipients) {
+    @Override
+    public String getVersion() {
+        return MINECRAFT_VERSION;
+    }
+
+    @Override
+    public String getApiVersion() {
+        return API_VERSION;
+    }
+
+    @Override
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
+    @Override
+    public ConsoleCommandExecutorSource getConsoleCommandExecutorSource() {
+        return consoleCommandExecutorSource;
+    }
+
+    @Nonnull
+    @Override
+    public ObjectMapper getJsonMapper() {
+        return JSON_MAPPER;
+    }
+
+    @Nonnull
+    @Override
+    public ObjectMapper getYamlMapper() {
+        return YAML_MAPPER;
+    }
+
+    @Nonnull
+    @Override
+    public ObjectMapper getPropertiesMapper() {
+        return PROPERTIES_MAPPER;
+    }
+
+    @Nonnull
+    @Override
+    public ServerProperties getServerProperties() {
+        return serverProperties;
+    }
+
+    public void broadcastMessage(Message message) {
+        broadcast(message, BROADCAST_CHANNEL_USERS);
+    }
+
+    public void broadcastMessage(String message, Collection<MessageRecipient> recipients) {
+        for (MessageRecipient recipient : recipients) {
             recipient.sendMessage(message);
         }
-
-        return recipients.length;
     }
 
-    public int broadcastMessage(String message, Collection<CommandSender> recipients) {
-        for (CommandSender recipient : recipients) {
+    public void broadcastMessage(Message message, Collection<MessageRecipient> recipients) {
+        for (MessageRecipient recipient : recipients) {
             recipient.sendMessage(message);
         }
-
-        return recipients.size();
     }
 
-    public int broadcastMessage(TextContainer message, Collection<CommandSender> recipients) {
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
-
-        return recipients.size();
-    }
-
-    public int broadcast(String message, String permissions) {
-        Set<CommandSender> recipients = new HashSet<>();
+    public void broadcast(String message, String permissions) {
+        Set<MessageRecipient> recipients = new HashSet<>();
 
         for (String permission : permissions.split(";")) {
             for (Permissible permissible : this.pluginManager.getPermissionSubscriptions(permission)) {
-                if (permissible instanceof CommandSender && permissible.hasPermission(permission)) {
-                    recipients.add((CommandSender) permissible);
+                if (permissible instanceof MessageRecipient && permissible.hasPermission(permission)) {
+                    recipients.add((MessageRecipient) permissible);
                 }
             }
         }
 
-        for (CommandSender recipient : recipients) {
+        for (MessageRecipient recipient : recipients) {
             recipient.sendMessage(message);
         }
-
-        return recipients.size();
-    }
-
-    public int broadcast(TextContainer message, String permissions) {
-        Set<CommandSender> recipients = new HashSet<>();
-
-        for (String permission : permissions.split(";")) {
-            for (Permissible permissible : this.pluginManager.getPermissionSubscriptions(permission)) {
-                if (permissible instanceof CommandSender && permissible.hasPermission(permission)) {
-                    recipients.add((CommandSender) permissible);
-                }
-            }
-        }
-
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
-
-        return recipients.size();
-    }
-
-
-    public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
-        broadcastPacket(players.stream().toArray(Player[]::new), packet);
     }
 
     public static void broadcastPacket(Player[] players, DataPacket packet) {
@@ -633,35 +648,53 @@ public class NukkitServer implements Server {
         this.pluginManager.disablePlugins();
     }
 
-    public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
+    public void broadcast(Message message, String permissions) {
+        Set<MessageRecipient> recipients = new HashSet<>();
+
+        for (String permission : permissions.split(";")) {
+            for (Permissible permissible : this.pluginManager.getPermissionSubscriptions(permission)) {
+                if (permissible instanceof MessageRecipient && permissible.hasPermission(permission)) {
+                    recipients.add((MessageRecipient) permissible);
+                }
+            }
+        }
+
+        for (MessageRecipient recipient : recipients) {
+            recipient.sendMessage(message);
+        }
+    }
+
+    public boolean dispatchCommand(CommandExecutorSource executorSource, String commandLine) throws ServerException {
         // First we need to check if this command is on the main thread or not, if not, warn the user
         if (!this.isPrimaryThread()) {
-            getLogger().warning("Command Dispatched Async: " + commandLine);
-            getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
+            log.warn("Command Dispatched Async: " + commandLine);
+            log.warn("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
             // TODO: We should sync the command to the main thread too!
         }
-        if (sender == null) {
+        if (executorSource == null) {
             throw new ServerException("CommandSender is not valid");
         }
 
-        if (this.commandMap.dispatch(sender, commandLine)) {
+        if (this.commandMap.dispatch(executorSource, commandLine)) {
             return true;
         }
 
-        sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));
+        if (executorSource instanceof MessageRecipient) {
+            ((MessageRecipient) executorSource).sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.unknown", commandLine));
+        }
 
         return false;
     }
 
     //todo: use ticker to check console
-    public ConsoleCommandSender getConsoleSender() {
-        return consoleSender;
+    public ConsoleCommandExecutorSource getConsoleSender() {
+        return consoleCommandExecutorSource;
     }
 
-    public void reload() {
-        this.logger.info("Reloading...");
+    public void reload() throws Exception {
+        log.info("Reloading...");
 
-        this.logger.info("Saving levels...");
+        log.info("Saving levels...");
 
         for (Level level : this.levels.values()) {
             level.save();
@@ -671,13 +704,8 @@ public class NukkitServer implements Server {
         this.pluginManager.clearPlugins();
         this.commandMap.clearCommands();
 
-        this.logger.info("Reloading properties...");
-        this.properties.reload();
-        this.maxPlayers = this.getPropertyInt("max-players", 20);
-
-        if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
-            this.setPropertyInt("difficulty", 3);
-        }
+        log.info("Reloading properties...");
+        reloadServerProperties();
 
         this.banByIP.load();
         this.banByName.load();
@@ -696,11 +724,11 @@ public class NukkitServer implements Server {
     }
 
     public void shutdown() {
-        if (this.isRunning) {
+        if (running.get()) {
             ServerKiller killer = new ServerKiller(90);
             killer.start();
         }
-        this.isRunning = false;
+        running.set(false);
     }
 
     public void forceShutdown() {
@@ -709,12 +737,12 @@ public class NukkitServer implements Server {
         }
 
         try {
-            if (!this.isRunning) {
+            if (!running.get()) {
                 //todo sendUsage
             }
 
             // clean shutdown of console thread asap
-            this.console.shutdown();
+            NukkitConsoleAppender.close();
 
             this.hasStopped = true;
 
@@ -724,46 +752,53 @@ public class NukkitServer implements Server {
                 this.rcon.close();
             }
 
-            this.getLogger().debug("Disabling all plugins");
+            log.debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
             for (Player player : new ArrayList<>(this.players.values())) {
                 player.close(player.getLeaveMessage(), (String) this.getConfig("settings.shutdown-message", "Server closed"));
             }
 
-            this.getLogger().debug("Unloading all levels");
+            log.debug("Unloading all levels");
             for (Level level : new ArrayList<>(this.getLevels().values())) {
                 this.unloadLevel(level, true);
             }
 
-            this.getLogger().debug("Removing event handlers");
+            log.debug("Removing event handlers");
             HandlerList.unregisterAll();
 
-            this.getLogger().debug("Stopping all tasks");
+            log.debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
             this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
 
-            this.getLogger().debug("Closing console");
-            this.console.interrupt();
+            log.debug("Closing console");
+            if (consoleReader != null) {
+                try {
+                    consoleReader.interrupt();
+                    consoleReader.join();
+                } catch (InterruptedException e) {
+                    log.throwing(e);
+                }
+            }
 
-            this.getLogger().debug("Stopping network interfaces");
+            log.debug("Stopping network interfaces");
             for (SourceInterface interfaz : this.network.getInterfaces()) {
                 interfaz.shutdown();
                 this.network.unregisterInterface(interfaz);
             }
 
-            this.getLogger().debug("Disabling timings");
+            log.debug("Disabling timings");
             Timings.stopServer();
             //todo other things
         } catch (Exception e) {
-            this.logger.logException(e); //todo remove this?
-            this.logger.emergency("Exception happened while shutting down, exit the process");
+            log.throwing(e); //todo remove this?
+            log.fatal("Exception happened while shutting down, exit the process");
             System.exit(1);
         }
     }
 
     public void start() {
-        if (this.getPropertyBoolean("enable-query", true)) {
+        if (serverProperties.isQueryEnabled()) {
             this.queryHandler = new QueryHandler();
         }
 
@@ -775,9 +810,9 @@ public class NukkitServer implements Server {
 
         this.tickCounter = 0;
 
-        this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
+        log.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(serverProperties.getDefaultGamemode())));
 
-        this.logger.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Bootstrap.START_TIME) / 1000)));
+        log.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Bootstrap.START_TIME) / 1000)));
 
         this.tickProcessor();
         this.forceShutdown();
@@ -789,33 +824,9 @@ public class NukkitServer implements Server {
                 this.queryHandler.handle(address, port, payload);
             }
         } catch (Exception e) {
-            this.logger.logException(e);
+            log.throwing(e);
 
             this.getNetwork().blockAddress(address, 600);
-        }
-    }
-
-    public void tickProcessor() {
-        this.nextTick = System.currentTimeMillis();
-        try {
-            while (this.isRunning) {
-                try {
-                    this.tick();
-
-                    long next = this.nextTick;
-                    long current = System.currentTimeMillis();
-
-                    if (next - 0.1 > current) {
-                        Thread.sleep(next - current - 1, 900000);
-                    }
-                } catch (RuntimeException e) {
-                    this.getLogger().logException(e);
-                }
-            }
-        } catch (Throwable e) {
-            this.logger.emergency("Exception happened while ticking server");
-            this.logger.alert(Utils.getExceptionMessage(e));
-            this.logger.alert(Utils.getAllThreadDumps());
         }
     }
 
@@ -911,6 +922,30 @@ public class NukkitServer implements Server {
         player.dataPacket(CraftingManager.packet);
     }
 
+    public void tickProcessor() {
+        this.nextTick = System.currentTimeMillis();
+        try {
+            while (running.get()) {
+                try {
+                    this.tick();
+
+                    long next = this.nextTick;
+                    long current = System.currentTimeMillis();
+
+                    if (next - 0.1 > current) {
+                        Thread.sleep(next - current - 1, 900000);
+                    }
+                } catch (RuntimeException e) {
+                    log.throwing(e);
+                }
+            }
+        } catch (Throwable e) {
+            log.fatal("Exception happened while ticking server");
+            log.error(Utils.getExceptionMessage(e));
+            log.error(Utils.getAllThreadDumps());
+        }
+    }
+
     private void checkTickUpdates(int currentTick, long tickTime) {
         for (Player p : new ArrayList<>(this.players.values())) {
             /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
@@ -944,31 +979,27 @@ public class NukkitServer implements Server {
                         if (r > this.baseTickRate) {
                             level.tickRateCounter = level.getTickRate();
                         }
-                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + level.getTickRate() + " ticks");
+                        log.debug("Raising level \"" + level.getName() + "\" tick rate to " + level.getTickRate() + " ticks");
                     } else if (tickMs >= 50) {
                         if (level.getTickRate() == this.baseTickRate) {
                             level.setTickRate((int) Math.max(this.baseTickRate + 1, Math.min(this.autoTickRateLimit, Math.floor(tickMs / 50))));
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            log.debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
                         } else if ((tickMs / level.getTickRate()) >= 50 && level.getTickRate() < this.autoTickRateLimit) {
                             level.setTickRate(level.getTickRate() + 1);
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            log.debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
                         }
                         level.tickRateCounter = level.getTickRate();
                     }
                 }
             } catch (Exception e) {
-                if (Bootstrap.DEBUG > 1 && this.logger != null) {
-                    this.logger.logException(e);
-                }
-
-                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.toString()}));
-                this.logger.logException(e);
+                log.fatal(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.toString()}));
+                log.throwing(e);
             }
         }
     }
 
     public void doAutoSave() {
-        if (this.getAutoSave()) {
+        if (serverProperties.isAutoSaveEnabled()) {
             Timings.levelSaveTimer.startTiming();
             for (Player player : new ArrayList<>(this.players.values())) {
                 if (player.isOnline()) {
@@ -1027,14 +1058,14 @@ public class NukkitServer implements Server {
                         this.queryHandler.regenerateInfo();
                     }
                 } catch (Exception e) {
-                    this.logger.logException(e);
+                    log.throwing(e);
                 }
             }
 
             this.getNetwork().updateName();
         }
 
-        if (this.autoSave && ++this.autoSaveTicker >= this.autoSaveTicks) {
+        if (serverProperties.isAutoSaveEnabled() && ++this.autoSaveTicker >= this.autoSaveTicks) {
             this.autoSaveTicker = 0;
             this.doAutoSave();
         }
@@ -1083,21 +1114,25 @@ public class NukkitServer implements Server {
         return true;
     }
 
+    public QueryRegenerateEvent getQueryInformation() {
+        return this.queryRegenerateEvent;
+    }
+
     // TODO: Fix title tick
     public void titleTick() {
-        if (!Bootstrap.ANSI) {
+        if (!ansiEnabled) {
             return;
         }
 
         Runtime runtime = Runtime.getRuntime();
-        double used = NukkitMath.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024, 2);
-        double max = NukkitMath.round(((double) runtime.maxMemory()) / 1024 / 1024, 2);
-        String usage = Math.round(used / max * 100) + "%";
+        double used = ((runtime.totalMemory() - runtime.freeMemory()) / 1048576D);
+        double max = (runtime.maxMemory() / 1048576D);
+        String usage = Math.round((used / max) * 100) + "%";
         String title = (char) 0x1b + "]0;" + this.getName() + " " +
-                this.getNukkitVersion() +
-                " | Online " + this.players.size() + "/" + this.getMaxPlayers() +
+                MINECRAFT_VERSION +
+                " | Online " + players.size() + "/" + serverProperties.getMaxPlayers() +
                 " | Memory " + usage;
-        if (!Bootstrap.shortTitle) {
+        if (!useShortTitle) {
             title += " | U " + NukkitMath.round((this.network.getUpload() / 1024 * 1000), 2)
                     + " D " + NukkitMath.round((this.network.getDownload() / 1024 * 1000), 2) + " kB/s";
         }
@@ -1105,34 +1140,6 @@ public class NukkitServer implements Server {
                 " | Load " + this.getTickUsage() + "%" + (char) 0x07;
 
         System.out.print(title);
-    }
-
-    public QueryRegenerateEvent getQueryInformation() {
-        return this.queryRegenerateEvent;
-    }
-
-    public String getName() {
-        return "Nukkit";
-    }
-
-    public boolean isRunning() {
-        return isRunning;
-    }
-
-    public String getNukkitVersion() {
-        return Bootstrap.VERSION;
-    }
-
-    public String getCodename() {
-        return Bootstrap.CODENAME;
-    }
-
-    public String getVersion() {
-        return ProtocolInfo.MINECRAFT_VERSION;
-    }
-
-    public String getApiVersion() {
-        return Bootstrap.API_VERSION;
     }
 
     public String getFilePath() {
@@ -1145,53 +1152,6 @@ public class NukkitServer implements Server {
 
     public String getPluginPath() {
         return pluginPath;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
-    public int getPort() {
-        return this.getPropertyInt("server-port", 19132);
-    }
-
-    public int getViewDistance() {
-        return this.getPropertyInt("view-distance", 10);
-    }
-
-    public String getIp() {
-        return this.getPropertyString("server-ip", "0.0.0.0");
-    }
-
-    public UUID getServerUniqueId() {
-        return this.serverID;
-    }
-
-    public boolean getAutoSave() {
-        return this.autoSave;
-    }
-
-    public void setAutoSave(boolean autoSave) {
-        this.autoSave = autoSave;
-        for (Level level : this.getLevels().values()) {
-            level.setAutoSave(this.autoSave);
-        }
-    }
-
-    public String getLevelType() {
-        return this.getPropertyString("level-type", "DEFAULT");
-    }
-
-    public boolean getGenerateStructures() {
-        return this.getPropertyBoolean("generate-structures", true);
-    }
-
-    public int getGamemode() {
-        return this.getPropertyInt("gamemode", 0) & 0b11;
-    }
-
-    public boolean getForceGamemode() {
-        return this.getPropertyBoolean("force-gamemode", false);
     }
 
     public static String getGamemodeString(int mode) {
@@ -1262,49 +1222,6 @@ public class NukkitServer implements Server {
                 return 3;
         }
         return -1;
-    }
-
-    public int getDifficulty() {
-        return this.getPropertyInt("difficulty", 1);
-    }
-
-    public boolean hasWhitelist() {
-        return this.getPropertyBoolean("white-list", false);
-    }
-
-    public int getSpawnRadius() {
-        return this.getPropertyInt("spawn-protection", 16);
-    }
-
-    public boolean getAllowFlight() {
-        if (getAllowFlight == null) {
-            getAllowFlight = this.getPropertyBoolean("allow-flight", false);
-        }
-        return getAllowFlight;
-    }
-
-    public boolean isHardcore() {
-        return this.getPropertyBoolean("hardcore", false);
-    }
-
-    public int getDefaultGamemode() {
-        return this.getPropertyInt("gamemode", 0);
-    }
-
-    public String getMotd() {
-        return this.getPropertyString("motd", "Nukkit NukkitServer For Minecraft: PE");
-    }
-
-    public String getSubMotd() {
-        return this.getPropertyString("sub-motd", "Powered by Nukkit");
-    }
-
-    public boolean getForceResources() {
-        return this.getPropertyBoolean("force-resources", false);
-    }
-
-    public MainLogger getLogger() {
-        return this.logger;
     }
 
     public EntityMetadataStore getEntityMetadata() {
@@ -1386,6 +1303,14 @@ public class NukkitServer implements Server {
         return result;
     }
 
+    public boolean isRunning() {
+        return running.get();
+    }
+
+    public void saveOfflinePlayerData(String name, CompoundTag tag) {
+        this.saveOfflinePlayerData(name, tag, false);
+    }
+
     public CompoundTag getOfflinePlayerData(String name) {
         name = name.toLowerCase();
         String path = this.getDataPath() + "players/";
@@ -1396,10 +1321,10 @@ public class NukkitServer implements Server {
                 return NBTIO.readCompressed(new FileInputStream(file));
             } catch (Exception e) {
                 file.renameTo(new File(path + name + ".dat.bak"));
-                this.logger.notice(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
+                log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
             }
         } else {
-            this.logger.notice(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
+            log.warn(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
         }
 
         Position spawn = this.getDefaultLevel().getSafeSpawn();
@@ -1413,7 +1338,7 @@ public class NukkitServer implements Server {
                 .putString("Level", this.getDefaultLevel().getName())
                 .putList(new ListTag<>("Inventory"))
                 .putCompound("Achievements", new CompoundTag())
-                .putInt("playerGameType", this.getGamemode())
+                .putInt("playerGameType", getGamemodeFromString(serverProperties.getDefaultGamemode()))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("0", 0))
                         .add(new DoubleTag("1", 0))
@@ -1430,27 +1355,6 @@ public class NukkitServer implements Server {
 
         this.saveOfflinePlayerData(name, nbt);
         return nbt;
-    }
-
-    public void saveOfflinePlayerData(String name, CompoundTag tag) {
-        this.saveOfflinePlayerData(name, tag, false);
-    }
-
-    public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
-        if (this.shouldSavePlayerData()) {
-            try {
-                if (async) {
-                    this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
-                } else {
-                    Utils.writeFile(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", new ByteArrayInputStream(NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
-                }
-            } catch (Exception e) {
-                this.logger.critical(this.getLanguage().translateString("nukkit.data.saveError", new String[]{name, e.getMessage()}));
-                if (Bootstrap.DEBUG > 1) {
-                    this.logger.logException(e);
-                }
-            }
-        }
     }
 
     public Player getPlayer(String name) {
@@ -1564,52 +1468,21 @@ public class NukkitServer implements Server {
 
     }
 
-    public boolean loadLevel(String name) {
-        if (Objects.equals(name.trim(), "")) {
-            throw new LevelException("Invalid empty level name");
+    public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
+        if (this.shouldSavePlayerData()) {
+            try {
+                if (async) {
+                    this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
+                } else {
+                    Utils.writeFile(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", new ByteArrayInputStream(NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
+                }
+            } catch (Exception e) {
+                log.error(this.getLanguage().translateString("nukkit.data.saveError", new String[]{name, e.getMessage()}));
+                if (log.isDebugEnabled()) {
+                    log.throwing(e);
+                }
+            }
         }
-        if (this.isLevelLoaded(name)) {
-            return true;
-        } else if (!this.isLevelGenerated(name)) {
-            this.logger.notice(this.getLanguage().translateString("nukkit.level.notFound", name));
-
-            return false;
-        }
-
-        String path;
-
-        if (name.contains("/") || name.contains("\\")) {
-            path = name;
-        } else {
-            path = this.getDataPath() + "worlds/" + name + "/";
-        }
-
-        Class<? extends LevelProvider> provider = LevelProviderManager.getProvider(path);
-
-        if (provider == null) {
-            this.logger.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, "Unknown provider"}));
-
-            return false;
-        }
-
-        Level level;
-        try {
-            level = new Level(this, name, path, provider);
-        } catch (Exception e) {
-            this.logger.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
-            this.logger.logException(e);
-            return false;
-        }
-
-        this.levels.put(level.getId(), level);
-
-        level.initLevel();
-
-        this.getPluginManager().callEvent(new LevelLoadEvent(level));
-
-        level.setTickRate(this.baseTickRate);
-
-        return true;
     }
 
     public boolean generateLevel(String name) {
@@ -1628,24 +1501,16 @@ public class NukkitServer implements Server {
         return generateLevel(name, seed, generator, options, null);
     }
 
-    public boolean generateLevel(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options, Class<? extends LevelProvider> provider) {
-        if (Objects.equals(name.trim(), "") || this.isLevelGenerated(name)) {
+    public boolean loadLevel(String name) {
+        if (Objects.equals(name.trim(), "")) {
+            throw new LevelException("Invalid empty level name");
+        }
+        if (this.isLevelLoaded(name)) {
+            return true;
+        } else if (!this.isLevelGenerated(name)) {
+            log.warn(this.getLanguage().translateString("nukkit.level.notFound", name));
+
             return false;
-        }
-
-        if (!options.containsKey("preset")) {
-            options.put("preset", this.getPropertyString("generator-settings", ""));
-        }
-
-        if (generator == null) {
-            generator = Generator.getGenerator(this.getLevelType());
-        }
-
-        if (provider == null) {
-            if ((provider = LevelProviderManager.getProviderByName
-                    ((String) this.getConfig("level-settings.default-format", "anvil"))) == null) {
-                provider = LevelProviderManager.getProviderByName("anvil");
-            }
         }
 
         String path;
@@ -1656,56 +1521,30 @@ public class NukkitServer implements Server {
             path = this.getDataPath() + "worlds/" + name + "/";
         }
 
-        Level level;
-        try {
-            provider.getMethod("generate", String.class, String.class, long.class, Class.class, Map.class).invoke(null, path, name, seed, generator, options);
+        Class<? extends LevelProvider> provider = LevelProviderManager.getProvider(path);
 
-            level = new Level(this, name, path, provider);
-            this.levels.put(level.getId(), level);
+        if (provider == null) {
+            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, "Unknown provider"}));
 
-            level.initLevel();
-            level.getGameRules().setGameRule("spawnRadius", "" + this.getSpawnRadius());
-
-            level.setTickRate(this.baseTickRate);
-        } catch (Exception e) {
-            this.logger.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
-            this.logger.logException(e);
             return false;
         }
 
-        this.getPluginManager().callEvent(new LevelInitEvent(level));
+        Level level;
+        try {
+            level = new Level(this, name, path, provider);
+        } catch (Exception e) {
+            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
+            log.throwing(e);
+            return false;
+        }
+
+        this.levels.put(level.getId(), level);
+
+        level.initLevel();
 
         this.getPluginManager().callEvent(new LevelLoadEvent(level));
 
-        /*this.getLogger().notice(this.getLanguage().translateString("nukkit.level.backgroundGeneration", name));
-
-        int centerX = (int) level.getSpawnLocation().getX() >> 4;
-        int centerZ = (int) level.getSpawnLocation().getZ() >> 4;
-
-        TreeMap<String, Integer> order = new TreeMap<>();
-
-        for (int X = -3; X <= 3; ++X) {
-            for (int Z = -3; Z <= 3; ++Z) {
-                int distance = X * X + Z * Z;
-                int chunkX = X + centerX;
-                int chunkZ = Z + centerZ;
-                order.put(Level.chunkHash(chunkX, chunkZ), distance);
-            }
-        }
-
-        List<Map.Entry<String, Integer>> sortList = new ArrayList<>(order.entrySet());
-
-        Collections.sort(sortList, new Comparator<Map.Entry<String, Integer>>() {
-            @Override
-            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                return o2.getValue() - o1.getValue();
-            }
-        });
-
-        for (String index : order.keySet()) {
-            Chunk.Entry entry = Level.getChunkXZ(index);
-            level.populateChunk(entry.chunkX, entry.chunkZ, true);
-        }*/
+        level.setTickRate(this.baseTickRate);
 
         return true;
     }
@@ -1752,68 +1591,6 @@ public class NukkitServer implements Server {
         return value == null ? defaultValue : value;
     }
 
-    public Config getProperties() {
-        return this.properties;
-    }
-
-    public Object getProperty(String variable) {
-        return this.getProperty(variable, null);
-    }
-
-    public Object getProperty(String variable, Object defaultValue) {
-        return this.properties.exists(variable) ? this.properties.get(variable) : defaultValue;
-    }
-
-    public void setPropertyString(String variable, String value) {
-        this.properties.set(variable, value);
-        this.properties.save();
-    }
-
-    public String getPropertyString(String variable) {
-        return this.getPropertyString(variable, null);
-    }
-
-    public String getPropertyString(String variable, String defaultValue) {
-        return this.properties.exists(variable) ? (String) this.properties.get(variable) : defaultValue;
-    }
-
-    public int getPropertyInt(String variable) {
-        return this.getPropertyInt(variable, null);
-    }
-
-    public int getPropertyInt(String variable, Integer defaultValue) {
-        return this.properties.exists(variable) ? (!this.properties.get(variable).equals("") ? Integer.parseInt(String.valueOf(this.properties.get(variable))) : defaultValue) : defaultValue;
-    }
-
-    public void setPropertyInt(String variable, int value) {
-        this.properties.set(variable, value);
-        this.properties.save();
-    }
-
-    public boolean getPropertyBoolean(String variable) {
-        return this.getPropertyBoolean(variable, null);
-    }
-
-    public boolean getPropertyBoolean(String variable, Object defaultValue) {
-        Object value = this.properties.exists(variable) ? this.properties.get(variable) : defaultValue;
-        if (value instanceof Boolean) {
-            return (Boolean) value;
-        }
-        switch (String.valueOf(value)) {
-            case "on":
-            case "true":
-            case "1":
-            case "yes":
-                return true;
-        }
-        return false;
-    }
-
-    public void setPropertyBoolean(String variable, boolean value) {
-        this.properties.set(variable, value ? "1" : "0");
-        this.properties.save();
-    }
-
     public PluginIdentifiableCommand getPluginCommand(String name) {
         Command command = this.commandMap.getCommand(name);
         if (command instanceof PluginIdentifiableCommand) {
@@ -1849,34 +1626,98 @@ public class NukkitServer implements Server {
         this.operators.save();
     }
 
-    public void addWhitelist(String name) {
-        this.whitelist.set(name.toLowerCase(), true);
-        this.whitelist.save(true);
-    }
-
-    public void removeWhitelist(String name) {
-        this.whitelist.remove(name.toLowerCase());
-        this.whitelist.save(true);
-    }
-
-    public boolean isWhitelisted(String name) {
-        return !this.hasWhitelist() || this.operators.exists(name, true) || this.whitelist.exists(name, true);
-    }
-
     public boolean isOp(String name) {
         return this.operators.exists(name, true);
     }
 
-    public Config getWhitelist() {
-        return whitelist;
+    public boolean generateLevel(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options, Class<? extends LevelProvider> provider) {
+        if (Objects.equals(name.trim(), "") || this.isLevelGenerated(name)) {
+            return false;
+        }
+
+        if (!options.containsKey("preset")) {
+            options.put("preset", serverProperties.getGeneratorSettings());
+        }
+
+        if (generator == null) {
+            generator = Generator.getGenerator(serverProperties.getLevelType());
+        }
+
+        if (provider == null) {
+            if ((provider = LevelProviderManager.getProviderByName
+                    ((String) this.getConfig("level-settings.default-format", "anvil"))) == null) {
+                provider = LevelProviderManager.getProviderByName("anvil");
+            }
+        }
+
+        String path;
+
+        if (name.contains("/") || name.contains("\\")) {
+            path = name;
+        } else {
+            path = this.getDataPath() + "worlds/" + name + "/";
+        }
+
+        Level level;
+        try {
+            provider.getMethod("generate", String.class, String.class, long.class, Class.class, Map.class).invoke(null, path, name, seed, generator, options);
+
+            level = new Level(this, name, path, provider);
+            this.levels.put(level.getId(), level);
+
+            level.initLevel();
+            level.getGameRules().setGameRule("spawnRadius", "" + serverProperties.getSpawnProtection());
+
+            level.setTickRate(this.baseTickRate);
+        } catch (Exception e) {
+            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
+            log.throwing(e);
+            return false;
+        }
+
+        this.getPluginManager().callEvent(new LevelInitEvent(level));
+
+        this.getPluginManager().callEvent(new LevelLoadEvent(level));
+
+        /*this.getLogger().notice(this.getLanguage().translateString("nukkit.level.backgroundGeneration", name));
+
+        int centerX = (int) level.getSpawnLocation().getX() >> 4;
+        int centerZ = (int) level.getSpawnLocation().getZ() >> 4;
+
+        TreeMap<String, Integer> order = new TreeMap<>();
+
+        for (int X = -3; X <= 3; ++X) {
+            for (int Z = -3; Z <= 3; ++Z) {
+                int distance = X * X + Z * Z;
+                int chunkX = X + centerX;
+                int chunkZ = Z + centerZ;
+                order.put(Level.chunkHash(chunkX, chunkZ), distance);
+            }
+        }
+
+        List<Map.Entry<String, Integer>> sortList = new ArrayList<>(order.entrySet());
+
+        Collections.sort(sortList, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o2.getValue() - o1.getValue();
+            }
+        });
+
+        for (String index : order.keySet()) {
+            Chunk.Entry entry = Level.getChunkXZ(index);
+            level.populateChunk(entry.chunkX, entry.chunkZ, true);
+        }*/
+
+        return true;
+    }
+
+    public boolean isWhitelisted(String name) {
+        return !serverProperties.isWhitelistEnabled() || this.operators.exists(name, true) || this.whitelist.exists(name, true);
     }
 
     public Config getOps() {
         return operators;
-    }
-
-    public void reloadWhitelist() {
-        this.whitelist.reload();
     }
 
     public ServiceManager getServiceManager() {
@@ -2002,8 +1843,98 @@ public class NukkitServer implements Server {
         BlockEntity.registerBlockEntity(BlockEntity.JUKEBOX, BlockEntityJukebox.class);
     }
 
-    public static NukkitServer getInstance() {
-        return instance;
+    @Override
+    public Whitelist getWhitelist() {
+        return whitelist;
     }
 
+    private void loadPlugins() throws Exception {
+        log.info("L");
+        try {
+            Path pluginPath = Paths.get("plugins");
+            if (Files.notExists(pluginPath)) {
+                Files.createDirectory(pluginPath);
+            } else {
+                if (!Files.isDirectory(pluginPath)) {
+                    log.info("Plugin location {} is not a directory, continuing without loading plugins.", pluginPath);
+                    return;
+                }
+            }
+            pluginManager.loadPlugins(pluginPath);
+            pluginManager.getAllPlugins().forEach(p -> eventManager.register(p.getPlugin(), p.getPlugin()));
+        } catch (Exception e) {
+            log.error("Can't load plugins", e);
+        }
+        log.info("Loaded {} plugins.", pluginManager.getAllPlugins().size());
+    }
+
+    private void loadServerProperties() throws Exception {
+        Path configFile = Paths.get(filePath + File.separator + "server.properties");
+        try {
+            serverProperties = NukkitServerProperties.load(configFile);
+            serverProperties.addMissingValues();
+            if (serverProperties.hasPropertiesChanged()) {
+                NukkitServerProperties.save(configFile, serverProperties);
+            }
+        } catch (NoSuchFileException e) {
+            serverProperties = NukkitServerProperties.defaultConfiguration();
+            NukkitServerProperties.save(configFile, serverProperties);
+        }
+    }
+
+    private void reloadServerProperties() throws Exception {
+        if (serverProperties.isValueChanged()) {
+            Path configFile = Paths.get(filePath + File.separator + "server.properties");
+            NukkitServerProperties.save(configFile, serverProperties);
+        }
+        serverProperties = null;
+        loadServerProperties();
+    }
+
+    private void loadWhitelist() throws Exception {
+        Path whitelistFile = Paths.get(filePath + File.separator + "whitelist.json");
+        try {
+            whitelist = NukkitWhitelist.load(whitelistFile);
+        } catch (NoSuchFileException e) {
+            whitelist = NukkitWhitelist.defaultConfiguration();
+            NukkitWhitelist.save(whitelistFile, whitelist);
+        }
+    }
+
+    private void reloadWhitelist() throws Exception {
+        Path whitelistFile = Paths.get(filePath + File.separator + "whitelist.json");
+        NukkitWhitelist.save(whitelistFile, whitelist);
+        whitelist = null;
+        loadWhitelist();
+    }
+
+    private class ConsoleReader extends Thread implements InterruptibleThread {
+
+        @Override
+        public void run() {
+            String line;
+            try {
+                while (running.get()) {
+                    // Read line
+                    reading.set(true);
+                    line = lineReader.readLine("> ");
+                    inputLines.offer(line);
+                }
+            } catch (UserInterruptException e) {
+                shutdown();
+            } finally {
+                NukkitConsoleAppender.setLineReader(null);
+            }
+        }
+
+        public String readLine() throws Exception{
+            try {
+                reading.set(true);
+                return lineReader.readLine();
+            } catch (UserInterruptException e) {
+                shutdown();
+            }
+            return null;
+        }
+    }
 }

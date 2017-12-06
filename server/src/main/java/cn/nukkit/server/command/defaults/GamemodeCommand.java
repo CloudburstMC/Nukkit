@@ -1,11 +1,10 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -37,7 +36,7 @@ public class GamemodeCommand extends VanillaCommand {
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return false;
         }
 
@@ -52,15 +51,15 @@ public class GamemodeCommand extends VanillaCommand {
             if (sender.hasPermission("nukkit.command.gamemode.other")) {
                 target = sender.getServer().getPlayer(args[1]);
                 if (target == null) {
-                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+                    sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.player.notFound"));
                     return true;
                 }
             } else {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+                sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.permission"));
                 return true;
             }
         } else if (!(sender instanceof Player)) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return true;
         }
 
@@ -68,7 +67,7 @@ public class GamemodeCommand extends VanillaCommand {
                 (gameMode == 1 && !sender.hasPermission("nukkit.command.gamemode.creative")) ||
                 (gameMode == 2 && !sender.hasPermission("nukkit.command.gamemode.adventure")) ||
                 (gameMode == 3 && !sender.hasPermission("nukkit.command.gamemode.spectator"))) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+            sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.permission"));
             return true;
         }
 
@@ -76,10 +75,10 @@ public class GamemodeCommand extends VanillaCommand {
             sender.sendMessage("Game mode update for " + target.getName() + " failed");
         } else {
             if (target.equals(sender)) {
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", NukkitServer.getGamemodeString(gameMode)));
+                Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.gamemode.success.self", NukkitServer.getGamemodeString(gameMode)));
             } else {
-                target.sendMessage(new TranslationContainer("gameMode.changed"));
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", new String[]{target.getName(), NukkitServer.getGamemodeString(gameMode)}));
+                target.sendMessage(new TranslatedMessage("gameMode.changed"));
+                Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.gamemode.success.other", new String[]{target.getName(), NukkitServer.getGamemodeString(gameMode)}));
             }
         }
 

@@ -1,8 +1,8 @@
 package cn.nukkit.server.blockentity;
 
+import cn.nukkit.api.event.block.SignChangeEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.block.SignChangeEvent;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.utils.TextFormat;

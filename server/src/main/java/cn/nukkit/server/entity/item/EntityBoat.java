@@ -1,13 +1,13 @@
 package cn.nukkit.server.entity.item;
 
+import cn.nukkit.api.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.vehicle.VehicleDamageEvent;
+import cn.nukkit.api.event.vehicle.VehicleDestroyEvent;
+import cn.nukkit.api.event.vehicle.VehicleMoveEvent;
+import cn.nukkit.api.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.vehicle.VehicleDamageEvent;
-import cn.nukkit.server.event.vehicle.VehicleDestroyEvent;
-import cn.nukkit.server.event.vehicle.VehicleMoveEvent;
-import cn.nukkit.server.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBoat;
 import cn.nukkit.server.level.Location;

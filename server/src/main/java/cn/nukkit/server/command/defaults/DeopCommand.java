@@ -1,11 +1,10 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.IPlayer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -28,7 +27,7 @@ public class DeopCommand extends VanillaCommand {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
 
             return false;
         }
@@ -38,10 +37,10 @@ public class DeopCommand extends VanillaCommand {
         player.setOp(false);
 
         if (player instanceof Player) {
-            ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.deop.message"));
+            ((Player) player).sendMessage(new TranslatedMessage(TextFormat.GRAY + "%commands.deop.message"));
         }
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.deop.success", new String[]{player.getName()}));
+        Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.deop.success", new String[]{player.getName()}));
 
         return true;
     }

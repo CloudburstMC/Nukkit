@@ -1,5 +1,9 @@
 Nukkit
 ===================
+
+**NOTICE: In it's current state, the project will not compile!**
+-------------
+
 ![nukkit](.github/images/banner.png)
 
 	This program is free software: you can redistribute it and/or modify

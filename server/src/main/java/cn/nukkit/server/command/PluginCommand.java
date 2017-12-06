@@ -1,6 +1,7 @@
 package cn.nukkit.server.command;
 
-import cn.nukkit.server.lang.TranslationContainer;
+import cn.nukkit.api.command.CommandExecutor;
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.plugin.Plugin;
 
 /**
@@ -33,7 +34,7 @@ public class PluginCommand<T extends Plugin> extends Command implements PluginId
         boolean success = this.executor.onCommand(sender, this, commandLabel, args);
 
         if (!success && !this.usageMessage.equals("")) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
         }
 
         return success;

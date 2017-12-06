@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.block.BlockSpreadEvent;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.event.block.BlockSpreadEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemTool;

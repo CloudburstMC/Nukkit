@@ -1,13 +1,12 @@
 package cn.nukkit.server.inventory.transaction;
 
+import cn.nukkit.api.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.server.inventory.Inventory;
 import cn.nukkit.server.inventory.transaction.action.InventoryAction;
 import cn.nukkit.server.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.utils.MainLogger;
 
 import java.util.*;
 import java.util.Map.Entry;

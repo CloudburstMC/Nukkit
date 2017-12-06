@@ -1,9 +1,7 @@
 package cn.nukkit.server.plugin;
 
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.Event;
-import cn.nukkit.server.event.EventPriority;
-import cn.nukkit.server.event.Listener;
+import cn.nukkit.api.event.EventPriority;
+import cn.nukkit.api.event.Listener;
 import cn.nukkit.server.utils.EventException;
 import co.aikar.timings.Timing;
 

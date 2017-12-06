@@ -1,9 +1,8 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -30,13 +29,13 @@ public class DefaultGamemodeCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", new String[]{this.usageMessage}));
             return false;
         }
         int gameMode = NukkitServer.getGamemodeFromString(args[0]);
         if (gameMode != -1) {
             sender.getServer().setPropertyInt("gamemode", gameMode);
-            sender.sendMessage(new TranslationContainer("commands.defaultgamemode.success", new String[]{NukkitServer.getGamemodeString(gameMode)}));
+            sender.sendMessage(new TranslatedMessage("commands.defaultgamemode.success", new String[]{NukkitServer.getGamemodeString(gameMode)}));
         } else {
             sender.sendMessage("Unknown game mode"); //
         }

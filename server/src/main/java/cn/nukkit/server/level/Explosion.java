@@ -1,15 +1,15 @@
 package cn.nukkit.server.level;
 
+import cn.nukkit.api.event.block.BlockUpdateEvent;
+import cn.nukkit.api.event.entity.EntityDamageByBlockEvent;
+import cn.nukkit.api.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.api.event.entity.EntityExplodeEvent;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockAir;
 import cn.nukkit.server.block.BlockTNT;
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.block.BlockUpdateEvent;
-import cn.nukkit.server.event.entity.EntityDamageByBlockEvent;
-import cn.nukkit.server.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.server.event.entity.EntityExplodeEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.level.particle.HugeExplodeSeedParticle;

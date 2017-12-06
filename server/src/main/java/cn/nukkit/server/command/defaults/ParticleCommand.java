@@ -1,11 +1,10 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.level.Level;
 import cn.nukkit.server.level.particle.*;
 import cn.nukkit.server.math.Vector3;
@@ -43,7 +42,7 @@ public class ParticleCommand extends VanillaCommand {
         }
 
         if (args.length < 7) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
 
             return true;
         }
@@ -96,11 +95,11 @@ public class ParticleCommand extends VanillaCommand {
         Particle particle = this.getParticle(name, pos, xd, yd, zd, data);
 
         if (particle == null) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.particle.notFound", name));
+            sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.particle.notFound", name));
             return true;
         }
 
-        sender.sendMessage(new TranslationContainer("commands.particle.success", new String[]{name, String.valueOf(count)}));
+        sender.sendMessage(new TranslatedMessage("commands.particle.success", new String[]{name, String.valueOf(count)}));
 
         Random random = new Random(System.currentTimeMillis());
 

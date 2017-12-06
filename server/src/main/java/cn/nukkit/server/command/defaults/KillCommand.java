@@ -1,12 +1,11 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -31,12 +30,12 @@ public class KillCommand extends VanillaCommand {
             return true;
         }
         if (args.length >= 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return false;
         }
         if (args.length == 1) {
             if (!sender.hasPermission("nukkit.command.kill.other")) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+                sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.permission"));
                 return true;
             }
             Player player = sender.getServer().getPlayer(args[0]);
@@ -48,15 +47,15 @@ public class KillCommand extends VanillaCommand {
                 }
                 player.setLastDamageCause(ev);
                 player.setHealth(0);
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
+                Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.kill.successful", player.getName()));
             } else {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+                sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.player.notFound"));
             }
             return true;
         }
         if (sender instanceof Player) {
             if (!sender.hasPermission("nukkit.command.kill.self")) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+                sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.permission"));
                 return true;
             }
             EntityDamageEvent ev = new EntityDamageEvent((Player) sender, DamageCause.SUICIDE, 1000);
@@ -66,9 +65,9 @@ public class KillCommand extends VanillaCommand {
             }
             ((Player) sender).setLastDamageCause(ev);
             ((Player) sender).setHealth(0);
-            sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
+            sender.sendMessage(new TranslatedMessage("commands.kill.successful", sender.getName()));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return false;
         }
         return true;

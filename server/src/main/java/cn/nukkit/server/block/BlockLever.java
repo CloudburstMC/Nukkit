@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.block.BlockRedstoneEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.event.block.BlockRedstoneEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.Level;
 import cn.nukkit.server.level.sound.LeverSound;

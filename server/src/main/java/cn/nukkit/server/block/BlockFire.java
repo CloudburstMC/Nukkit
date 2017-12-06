@@ -1,14 +1,14 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.block.BlockBurnEvent;
+import cn.nukkit.api.event.block.BlockIgniteEvent;
+import cn.nukkit.api.event.entity.EntityCombustByBlockEvent;
+import cn.nukkit.api.event.entity.EntityDamageByBlockEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.projectile.EntityArrow;
-import cn.nukkit.server.event.block.BlockBurnEvent;
-import cn.nukkit.server.event.block.BlockIgniteEvent;
-import cn.nukkit.server.event.entity.EntityCombustByBlockEvent;
-import cn.nukkit.server.event.entity.EntityDamageByBlockEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.Level;
 import cn.nukkit.server.math.AxisAlignedBB;

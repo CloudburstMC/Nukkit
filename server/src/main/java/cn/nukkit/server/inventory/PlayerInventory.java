@@ -1,13 +1,13 @@
 package cn.nukkit.server.inventory;
 
+import cn.nukkit.api.event.entity.EntityArmorChangeEvent;
+import cn.nukkit.api.event.entity.EntityInventoryChangeEvent;
+import cn.nukkit.api.event.player.PlayerItemHeldEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.BlockAir;
 import cn.nukkit.server.entity.EntityHuman;
 import cn.nukkit.server.entity.EntityHumanType;
-import cn.nukkit.server.event.entity.EntityArmorChangeEvent;
-import cn.nukkit.server.event.entity.EntityInventoryChangeEvent;
-import cn.nukkit.server.event.player.PlayerItemHeldEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.network.protocol.InventoryContentPacket;

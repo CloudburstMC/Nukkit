@@ -1,9 +1,9 @@
 package cn.nukkit.server.entity.item;
 
+import cn.nukkit.api.event.potion.PotionCollideEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.projectile.EntityProjectile;
-import cn.nukkit.server.event.potion.PotionCollideEvent;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.particle.InstantSpellParticle;
 import cn.nukkit.server.level.particle.Particle;

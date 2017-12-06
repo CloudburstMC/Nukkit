@@ -1,7 +1,7 @@
 package cn.nukkit.server.inventory.transaction.action;
 
+import cn.nukkit.api.event.player.PlayerDropItemEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.event.player.PlayerDropItemEvent;
 import cn.nukkit.server.item.Item;
 
 /**

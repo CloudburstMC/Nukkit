@@ -1,7 +1,6 @@
 package cn.nukkit.server.raknet.server;
 
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.utils.ThreadedLogger;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 

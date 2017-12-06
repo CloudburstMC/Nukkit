@@ -17,7 +17,6 @@ import cn.nukkit.server.nbt.tag.StringTag;
 import cn.nukkit.server.nbt.tag.Tag;
 import cn.nukkit.server.utils.Binary;
 import cn.nukkit.server.utils.Config;
-import cn.nukkit.server.utils.MainLogger;
 import cn.nukkit.server.utils.Utils;
 
 import javax.xml.bind.DatatypeConverter;

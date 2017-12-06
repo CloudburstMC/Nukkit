@@ -1,11 +1,11 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.blockentity.BlockEntityBed;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBed;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.level.Level;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
@@ -77,7 +77,7 @@ public class BlockBed extends BlockTransparent {
         boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
 
         if (player != null && !isNight) {
-            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
+            player.sendMessage(new TranslatedMessage("tile.bed.noSleep"));
             return true;
         }
 
@@ -100,7 +100,7 @@ public class BlockBed extends BlockTransparent {
                 b = blockWest;
             } else {
                 if (player != null) {
-                    player.sendMessage(new TranslationContainer("tile.bed.notValid"));
+                    player.sendMessage(new TranslatedMessage("tile.bed.notValid"));
                 }
 
                 return true;
@@ -108,7 +108,7 @@ public class BlockBed extends BlockTransparent {
         }
 
         if (player != null && !player.sleepOn(b)) {
-            player.sendMessage(new TranslationContainer("tile.bed.occupied"));
+            player.sendMessage(new TranslatedMessage("tile.bed.occupied"));
         }
 
 

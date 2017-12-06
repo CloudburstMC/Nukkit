@@ -1,10 +1,10 @@
 package cn.nukkit.server;
 
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.api.event.entity.EntityRegainHealthEvent;
+import cn.nukkit.api.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.server.entity.Attribute;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.server.event.entity.EntityRegainHealthEvent;
-import cn.nukkit.server.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.server.item.food.Food;
 import cn.nukkit.server.potion.Effect;
 

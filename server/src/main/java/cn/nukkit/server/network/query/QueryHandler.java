@@ -1,7 +1,7 @@
 package cn.nukkit.server.network.query;
 
+import cn.nukkit.api.event.server.QueryRegenerateEvent;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.event.server.QueryRegenerateEvent;
 import cn.nukkit.server.utils.Binary;
 
 import java.security.MessageDigest;

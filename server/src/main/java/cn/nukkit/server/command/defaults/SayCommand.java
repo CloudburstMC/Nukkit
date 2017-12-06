@@ -1,10 +1,8 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.command.ConsoleCommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -29,7 +27,7 @@ public class SayCommand extends VanillaCommand {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return false;
         }
 
@@ -51,7 +49,7 @@ public class SayCommand extends VanillaCommand {
         }
 
 
-        sender.getServer().broadcastMessage(new TranslationContainer(
+        sender.getServer().broadcastMessage(new TranslatedMessage(
                 TextFormat.LIGHT_PURPLE + "%chat.type.announcement",
                 new String[]{senderString, TextFormat.LIGHT_PURPLE + msg}
         ));

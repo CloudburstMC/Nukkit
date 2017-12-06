@@ -1,12 +1,12 @@
 package cn.nukkit.server.blockentity;
 
+import cn.nukkit.api.event.inventory.BrewEvent;
+import cn.nukkit.api.event.inventory.StartBrewEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockAir;
 import cn.nukkit.server.block.BlockBrewingStand;
-import cn.nukkit.server.event.inventory.BrewEvent;
-import cn.nukkit.server.event.inventory.StartBrewEvent;
 import cn.nukkit.server.inventory.BrewingInventory;
 import cn.nukkit.server.inventory.BrewingRecipe;
 import cn.nukkit.server.inventory.InventoryHolder;

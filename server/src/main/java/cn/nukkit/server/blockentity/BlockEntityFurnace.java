@@ -1,12 +1,12 @@
 package cn.nukkit.server.blockentity;
 
+import cn.nukkit.api.event.inventory.FurnaceBurnEvent;
+import cn.nukkit.api.event.inventory.FurnaceSmeltEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockAir;
 import cn.nukkit.server.block.BlockFurnace;
 import cn.nukkit.server.block.BlockFurnaceBurning;
-import cn.nukkit.server.event.inventory.FurnaceBurnEvent;
-import cn.nukkit.server.event.inventory.FurnaceSmeltEvent;
 import cn.nukkit.server.inventory.FurnaceInventory;
 import cn.nukkit.server.inventory.FurnaceRecipe;
 import cn.nukkit.server.inventory.InventoryHolder;

@@ -1,8 +1,7 @@
 package cn.nukkit.server.command.defaults;
 
-import cn.nukkit.server.command.CommandSender;
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.permission.BanEntry;
 import cn.nukkit.server.permission.BanList;
 
@@ -40,7 +39,7 @@ public class BanListCommand extends VanillaCommand {
                     list = sender.getServer().getNameBans();
                     break;
                 default:
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
                     return false;
             }
         } else {
@@ -57,9 +56,9 @@ public class BanListCommand extends VanillaCommand {
         }
 
         if (ips) {
-            sender.sendMessage(new TranslationContainer("commands.banlist.ips", String.valueOf(list.getEntires().size())));
+            sender.sendMessage(new TranslatedMessage("commands.banlist.ips", String.valueOf(list.getEntires().size())));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.banlist.players", String.valueOf(list.getEntires().size())));
+            sender.sendMessage(new TranslatedMessage("commands.banlist.players", String.valueOf(list.getEntires().size())));
         }
         sender.sendMessage(builder.toString());
         return true;

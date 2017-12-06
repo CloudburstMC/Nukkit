@@ -1,5 +1,9 @@
 package cn.nukkit.server.entity.item;
 
+import cn.nukkit.api.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.vehicle.VehicleMoveEvent;
+import cn.nukkit.api.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.api.API;
 import cn.nukkit.server.block.Block;
@@ -11,10 +15,6 @@ import cn.nukkit.server.entity.EntityHuman;
 import cn.nukkit.server.entity.EntityLiving;
 import cn.nukkit.server.entity.data.ByteEntityData;
 import cn.nukkit.server.entity.data.IntEntityData;
-import cn.nukkit.server.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.vehicle.VehicleMoveEvent;
-import cn.nukkit.server.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemMinecart;
 import cn.nukkit.server.level.Location;

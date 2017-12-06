@@ -1,8 +1,8 @@
 package cn.nukkit.server.plugin;
 
+import cn.nukkit.api.event.plugin.PluginDisableEvent;
+import cn.nukkit.api.event.plugin.PluginEnableEvent;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.event.plugin.PluginDisableEvent;
-import cn.nukkit.server.event.plugin.PluginEnableEvent;
 import cn.nukkit.server.utils.PluginException;
 import cn.nukkit.server.utils.Utils;
 

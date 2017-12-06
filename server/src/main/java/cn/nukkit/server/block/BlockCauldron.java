@@ -1,10 +1,10 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.player.PlayerBucketEmptyEvent;
+import cn.nukkit.api.event.player.PlayerBucketFillEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.blockentity.BlockEntityCauldron;
-import cn.nukkit.server.event.player.PlayerBucketEmptyEvent;
-import cn.nukkit.server.event.player.PlayerBucketFillEvent;
 import cn.nukkit.server.item.*;
 import cn.nukkit.server.level.sound.ExplodeSound;
 import cn.nukkit.server.level.sound.SplashSound;

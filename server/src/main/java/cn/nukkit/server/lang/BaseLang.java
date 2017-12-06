@@ -1,5 +1,7 @@
 package cn.nukkit.server.lang;
 
+import cn.nukkit.api.message.Message;
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.utils.Utils;
 
@@ -62,29 +64,7 @@ public class BaseLang {
 
     protected Map<String, String> loadLang(String path) {
         try {
-            String content = Utils.readFile(path);
-            Map<String, String> d = new HashMap<>();
-            for (String line : content.split("\n")) {
-                line = line.trim();
-                if (line.equals("") || line.charAt(0) == '#') {
-                    continue;
-                }
-                String[] t = line.split("=");
-                if (t.length < 2) {
-                    continue;
-                }
-                String key = t[0];
-                String value = "";
-                for (int i = 1; i < t.length - 1; i++) {
-                    value += t[i] + "=";
-                }
-                value += t[t.length - 1];
-                if (value.equals("")) {
-                    continue;
-                }
-                d.put(key, value);
-            }
-            return d;
+            return processLang(Utils.readFile(path));
         } catch (IOException e) {
             NukkitServer.getInstance().getLogger().logException(e);
             return null;
@@ -93,33 +73,36 @@ public class BaseLang {
 
     protected Map<String, String> loadLang(InputStream stream) {
         try {
-            String content = Utils.readFile(stream);
-            Map<String, String> d = new HashMap<>();
-            for (String line : content.split("\n")) {
-                line = line.trim();
-                if (line.equals("") || line.charAt(0) == '#') {
-                    continue;
-                }
-                String[] t = line.split("=");
-                if (t.length < 2) {
-                    continue;
-                }
-                String key = t[0];
-                String value = "";
-                for (int i = 1; i < t.length - 1; i++) {
-                    value += t[i] + "=";
-                }
-                value += t[t.length - 1];
-                if (value.equals("")) {
-                    continue;
-                }
-                d.put(key, value);
-            }
-            return d;
+            return processLang(Utils.readFile(stream));
         } catch (IOException e) {
             NukkitServer.getInstance().getLogger().logException(e);
             return null;
         }
+    }
+
+    private Map<String, String> processLang(String content) {
+        Map<String, String> transforms = new HashMap<>();
+        for (String line : content.split("\n")) {
+            line = line.trim();
+            if (line.equals("") || line.charAt(0) == '#') {
+                continue;
+            }
+            String[] t = line.split("=");
+            if (t.length < 2) {
+                continue;
+            }
+            String key = t[0];
+            String value = "";
+            for (int i = 1; i < t.length - 1; i++) {
+                value += t[i] + "=";
+            }
+            value += t[t.length - 1];
+            if (value.equals("")) {
+                continue;
+            }
+            transforms.put(key, value);
+        }
+        return transforms;
     }
 
     public String translateString(String str) {
@@ -144,13 +127,13 @@ public class BaseLang {
         return baseText;
     }
 
-    public String translate(TextContainer c) {
+    public String translate(Message c) {
         String baseText = this.parseTranslation(c.getText());
-        if (c instanceof TranslationContainer) {
+        if (c instanceof TranslatedMessage) {
             baseText = this.internalGet(c.getText());
             baseText = this.parseTranslation(baseText != null ? baseText : c.getText());
-            for (int i = 0; i < ((TranslationContainer) c).getParameters().length; i++) {
-                baseText = baseText.replace("{%" + i + "}", this.parseTranslation(((TranslationContainer) c).getParameters()[i]));
+            for (int i = 0; i < ((TranslatedMessage) c).getParameters().length; i++) {
+                baseText = baseText.replace("{%" + i + "}", this.parseTranslation(((TranslatedMessage) c).getParameters()[i]));
             }
         }
         return baseText;

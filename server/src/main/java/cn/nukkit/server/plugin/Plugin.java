@@ -1,7 +1,7 @@
 package cn.nukkit.server.plugin;
 
+import cn.nukkit.api.command.CommandExecutor;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.command.CommandExecutor;
 import cn.nukkit.server.utils.Config;
 
 import java.io.File;

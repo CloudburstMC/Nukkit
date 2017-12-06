@@ -1,8 +1,7 @@
 package cn.nukkit.server.command;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.lang.TranslationContainer;
-import cn.nukkit.server.utils.MainLogger;
 import cn.nukkit.server.utils.TextFormat;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class FormattedCommandAlias extends Command {
                 if (e instanceof IllegalArgumentException) {
                     sender.sendMessage(TextFormat.RED + e.getMessage());
                 } else {
-                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
+                    sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.exception"));
                     MainLogger logger = sender.getServer().getLogger();
                     if (logger != null) {
                         logger.logException(e);

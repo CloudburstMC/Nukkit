@@ -1,10 +1,9 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -54,13 +53,13 @@ public class TitleCommand extends VanillaCommand {
             return true;
         }
         if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return false;
         }
 
         Player player = NukkitServer.getInstance().getPlayerExact(args[0]);
         if (player == null) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+            sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.player.notFound"));
             return true;
         }
 
@@ -68,32 +67,32 @@ public class TitleCommand extends VanillaCommand {
             switch (args[1].toLowerCase()) {
                 case "clear":
                     player.clearTitle();
-                    sender.sendMessage(new TranslationContainer("nukkit.command.title.clear", player.getName()));
+                    sender.sendMessage(new TranslatedMessage("nukkit.command.title.clear", player.getName()));
                     break;
                 case "reset":
                     player.resetTitleSettings();
-                    sender.sendMessage(new TranslationContainer("nukkit.command.title.reset", player.getName()));
+                    sender.sendMessage(new TranslatedMessage("nukkit.command.title.reset", player.getName()));
                     break;
                 default:
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
                     return false;
             }
         } else if (args.length == 3) {
             switch (args[1].toLowerCase()) {
                 case "title":
                     player.sendTitle(args[2]);
-                    sender.sendMessage(new TranslationContainer("nukkit.command.title.title", new String[]{TextFormat.clean(args[2]), player.getName()}));
+                    sender.sendMessage(new TranslatedMessage("nukkit.command.title.title", new String[]{TextFormat.clean(args[2]), player.getName()}));
                     break;
                 /*case "subtitle":
                     player.setSubtitle(args[2]);
-                    sender.sendMessage(new TranslationContainer("nukkit.command.title.subtitle", new String[]{TextFormat.clean(args[2]), player.getName()}));
+                    sender.sendMessage(new TranslatedMessage("nukkit.command.title.subtitle", new String[]{TextFormat.clean(args[2]), player.getName()}));
                     break;
                 case "actionbar":
                     player.sendActionBarTitle(args[2]);
-                    sender.sendMessage(new TranslationContainer("nukkit.command.title.actionbar", new String[]{TextFormat.clean(args[2]), player.getName()}));
+                    sender.sendMessage(new TranslatedMessage("nukkit.command.title.actionbar", new String[]{TextFormat.clean(args[2]), player.getName()}));
                     break;*/
                 default:
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
                     return false;
             }
         } else if (args.length == 5) {
@@ -102,17 +101,17 @@ public class TitleCommand extends VanillaCommand {
                     /*player.setTitleAnimationTimes(Integer.valueOf(args[2]), //fadeIn
                             Integer.valueOf(args[3]), //stay
                             Integer.valueOf(args[4])); //fadeOut*/
-                    sender.sendMessage(new TranslationContainer("nukkit.command.title.times.success", new String[]{
+                    sender.sendMessage(new TranslatedMessage("nukkit.command.title.times.success", new String[]{
                             args[2], args[3], args[4], player.getName()}));
                 } catch (NumberFormatException exception) {
-                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%nukkit.command.title.times.fail"));
+                    sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%nukkit.command.title.times.fail"));
                 }
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
                 return false;
             }
         } else {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return false;
         }
 

@@ -23,12 +23,12 @@
  */
 package co.aikar.timings;
 
+import cn.nukkit.api.command.Command;
+import cn.nukkit.api.event.Event;
+import cn.nukkit.api.event.Listener;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.blockentity.BlockEntity;
-import cn.nukkit.server.command.Command;
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Event;
-import cn.nukkit.server.event.Listener;
 import cn.nukkit.server.network.protocol.DataPacket;
 import cn.nukkit.server.plugin.EventExecutor;
 import cn.nukkit.server.plugin.MethodEventExecutor;

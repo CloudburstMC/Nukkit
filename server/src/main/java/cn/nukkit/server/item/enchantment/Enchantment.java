@@ -1,7 +1,7 @@
 package cn.nukkit.server.item.enchantment;
 
+import cn.nukkit.api.event.entity.EntityDamageEvent;
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.enchantment.bow.EnchantmentBowFlame;
 import cn.nukkit.server.item.enchantment.bow.EnchantmentBowInfinity;

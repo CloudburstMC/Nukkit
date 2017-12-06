@@ -1,8 +1,8 @@
 package cn.nukkit.server.network.rcon;
 
+import cn.nukkit.api.event.server.RemoteServerCommandEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.command.RemoteConsoleCommandSender;
-import cn.nukkit.server.event.server.RemoteServerCommandEvent;
 import cn.nukkit.server.utils.TextFormat;
 
 import java.io.IOException;

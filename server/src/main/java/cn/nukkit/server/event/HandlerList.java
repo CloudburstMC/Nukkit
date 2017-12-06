@@ -1,5 +1,7 @@
 package cn.nukkit.server.event;
 
+import cn.nukkit.api.event.EventPriority;
+import cn.nukkit.api.event.Listener;
 import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.plugin.RegisteredListener;
 

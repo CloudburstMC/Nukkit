@@ -1,7 +1,6 @@
 package cn.nukkit.server.command.defaults;
 
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.lang.TranslationContainer;
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.network.protocol.ProtocolInfo;
 import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.plugin.PluginDescription;
@@ -31,7 +30,7 @@ public class VersionCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("nukkit.server.info.extended", new String[]{
+            sender.sendMessage(new TranslatedMessage("nukkit.server.info.extended", new String[]{
                     sender.getServer().getName(),
                     sender.getServer().getNukkitVersion(),
                     sender.getServer().getCodename(),
@@ -77,7 +76,7 @@ public class VersionCommand extends VanillaCommand {
                     sender.sendMessage("Authors: " + authorsString[0]);
                 }
             } else {
-                sender.sendMessage(new TranslationContainer("nukkit.command.version.noSuchPlugin"));
+                sender.sendMessage(new TranslatedMessage("nukkit.command.version.noSuchPlugin"));
             }
         }
         return true;

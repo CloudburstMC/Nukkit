@@ -1,11 +1,11 @@
 package cn.nukkit.server.entity.weather;
 
+import cn.nukkit.api.event.block.BlockIgniteEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockFire;
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.block.BlockIgniteEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.nbt.tag.CompoundTag;

@@ -1,8 +1,8 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.block.BlockRedstoneEvent;
+import cn.nukkit.api.event.block.DoorToggleEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.event.block.BlockRedstoneEvent;
-import cn.nukkit.server.event.block.DoorToggleEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemTool;

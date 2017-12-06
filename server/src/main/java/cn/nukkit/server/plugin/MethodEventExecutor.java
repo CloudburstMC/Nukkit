@@ -1,7 +1,6 @@
 package cn.nukkit.server.plugin;
 
-import cn.nukkit.server.event.Event;
-import cn.nukkit.server.event.Listener;
+import cn.nukkit.api.event.Listener;
 import cn.nukkit.server.utils.EventException;
 
 import java.lang.reflect.InvocationTargetException;

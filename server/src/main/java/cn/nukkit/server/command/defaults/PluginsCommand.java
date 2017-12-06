@@ -1,7 +1,6 @@
 package cn.nukkit.server.command.defaults;
 
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.lang.TranslationContainer;
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.utils.TextFormat;
 
@@ -44,6 +43,6 @@ public class PluginsCommand extends VanillaCommand {
             list += plugin.getDescription().getFullName();
         }
 
-        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", new String[]{String.valueOf(plugins.size()), list}));
+        sender.sendMessage(new TranslatedMessage("nukkit.command.plugins.success", new String[]{String.valueOf(plugins.size()), list}));
     }
 }

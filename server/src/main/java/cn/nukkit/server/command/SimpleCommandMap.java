@@ -1,13 +1,12 @@
 package cn.nukkit.server.command;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.command.defaults.*;
 import cn.nukkit.server.command.simple.Arguments;
 import cn.nukkit.server.command.simple.CommandPermission;
 import cn.nukkit.server.command.simple.ForbidConsole;
 import cn.nukkit.server.command.simple.SimpleCommand;
-import cn.nukkit.server.lang.TranslationContainer;
-import cn.nukkit.server.utils.MainLogger;
 import cn.nukkit.server.utils.TextFormat;
 import cn.nukkit.server.utils.Utils;
 
@@ -244,7 +243,7 @@ public class SimpleCommandMap implements CommandMap {
         try {
             target.execute(sender, sentCommandLabel, args);
         } catch (Exception e) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
+            sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.exception"));
             this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.command.exception", cmdLine, target.toString(), Utils.getExceptionMessage(e)));
             MainLogger logger = sender.getServer().getLogger();
             if (logger != null) {

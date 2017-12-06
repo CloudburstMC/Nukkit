@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.block.DoorToggleEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.event.block.DoorToggleEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemTool;
 import cn.nukkit.server.level.Level;

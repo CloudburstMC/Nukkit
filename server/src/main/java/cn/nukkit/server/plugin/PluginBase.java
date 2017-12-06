@@ -2,7 +2,6 @@ package cn.nukkit.server.plugin;
 
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.PluginIdentifiableCommand;
 import cn.nukkit.server.utils.Config;
 import cn.nukkit.server.utils.Utils;

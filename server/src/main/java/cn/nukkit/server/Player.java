@@ -1,32 +1,33 @@
 package cn.nukkit.server;
 
+import cn.nukkit.api.event.block.ItemFrameDropItemEvent;
+import cn.nukkit.api.event.entity.EntityDamageByBlockEvent;
+import cn.nukkit.api.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageModifier;
+import cn.nukkit.api.event.inventory.CraftItemEvent;
+import cn.nukkit.api.event.inventory.InventoryCloseEvent;
+import cn.nukkit.api.event.inventory.InventoryPickupArrowEvent;
+import cn.nukkit.api.event.inventory.InventoryPickupItemEvent;
+import cn.nukkit.api.event.player.*;
+import cn.nukkit.api.event.player.PlayerInteractEvent.Action;
+import cn.nukkit.api.event.player.PlayerTeleportEvent.TeleportCause;
+import cn.nukkit.api.event.server.DataPacketReceiveEvent;
+import cn.nukkit.api.event.server.DataPacketSendEvent;
+import cn.nukkit.api.message.Message;
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.AdventureSettings.Type;
 import cn.nukkit.server.block.*;
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.blockentity.BlockEntityItemFrame;
 import cn.nukkit.server.blockentity.BlockEntitySpawnable;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandDataVersions;
 import cn.nukkit.server.entity.*;
 import cn.nukkit.server.entity.data.*;
 import cn.nukkit.server.entity.item.*;
 import cn.nukkit.server.entity.projectile.EntityArrow;
-import cn.nukkit.server.event.block.ItemFrameDropItemEvent;
-import cn.nukkit.server.event.entity.EntityDamageByBlockEvent;
-import cn.nukkit.server.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageModifier;
-import cn.nukkit.server.event.inventory.CraftItemEvent;
-import cn.nukkit.server.event.inventory.InventoryCloseEvent;
-import cn.nukkit.server.event.inventory.InventoryPickupArrowEvent;
-import cn.nukkit.server.event.inventory.InventoryPickupItemEvent;
-import cn.nukkit.server.event.player.*;
-import cn.nukkit.server.event.player.PlayerInteractEvent.Action;
-import cn.nukkit.server.event.player.PlayerTeleportEvent.TeleportCause;
-import cn.nukkit.server.event.server.DataPacketReceiveEvent;
-import cn.nukkit.server.event.server.DataPacketSendEvent;
 import cn.nukkit.server.form.window.FormWindow;
 import cn.nukkit.server.form.window.FormWindowCustom;
 import cn.nukkit.server.inventory.*;
@@ -40,8 +41,6 @@ import cn.nukkit.server.inventory.transaction.data.UseItemOnEntityData;
 import cn.nukkit.server.item.*;
 import cn.nukkit.server.item.enchantment.Enchantment;
 import cn.nukkit.server.item.food.Food;
-import cn.nukkit.server.lang.TextContainer;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.level.ChunkLoader;
 import cn.nukkit.server.level.Level;
 import cn.nukkit.server.level.Location;
@@ -260,8 +259,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.viewingEnderChest = chest;
     }
 
-    public TranslationContainer getLeaveMessage() {
-        return new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
+    public TranslatedMessage getLeaveMessage() {
+        return new TranslatedMessage(TextFormat.YELLOW + "%multiplayer.player.left", this.getDisplayName());
     }
 
     public String getClientSecret() {
@@ -864,7 +863,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
 
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this,
-                new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.joined", new String[]{
+                new TranslatedMessage(TextFormat.YELLOW + "%multiplayer.player.joined", new String[]{
                         this.getDisplayName()
                 })
         );
@@ -2781,7 +2780,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                         }
                         this.setGamemode(setPlayerGameTypePacket.gamemode, true);
-                        Command.broadcastCommandMessage(this, new TranslationContainer("commands.gamemode.success.self", NukkitServer.getGamemodeString(this.gamemode)));
+                        Command.broadcastCommandMessage(this, new TranslatedMessage("commands.gamemode.success.self", NukkitServer.getGamemodeString(this.gamemode)));
                     }
                     break;
                 case ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET:
@@ -3330,9 +3329,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public void sendMessage(TextContainer message) {
-        if (message instanceof TranslationContainer) {
-            this.sendTranslation(message.getText(), ((TranslationContainer) message).getParameters());
+    public void sendMessage(Message message) {
+        if (message instanceof TranslatedMessage) {
+            this.sendTranslation(message.getText(), ((TranslatedMessage) message).getParameters());
             return;
         }
         this.sendMessage(message.getText());
@@ -3476,18 +3475,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void close(String message, String reason, boolean notify) {
-        this.close(new TextContainer(message), reason, notify);
+        this.close(new Message(message), reason, notify);
     }
 
-    public void close(TextContainer message) {
+    public void close(Message message) {
         this.close(message, "generic");
     }
 
-    public void close(TextContainer message, String reason) {
+    public void close(Message message, String reason) {
         this.close(message, reason, true);
     }
 
-    public void close(TextContainer message, String reason, boolean notify) {
+    public void close(Message message, String reason, boolean notify) {
         if (this.connected && !this.closed) {
             if (notify && reason.length() > 0) {
                 DisconnectPacket pk = new DisconnectPacket();
@@ -3748,7 +3747,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.health = 0;
         this.scheduleUpdate();
 
-        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.stream().toArray(String[]::new)), this.getExperienceLevel());
+        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslatedMessage(message, params.stream().toArray(String[]::new)), this.getExperienceLevel());
 
         ev.setKeepExperience(this.level.gameRules.getBoolean("keepInventory"));
         ev.setKeepInventory(ev.getKeepExperience());

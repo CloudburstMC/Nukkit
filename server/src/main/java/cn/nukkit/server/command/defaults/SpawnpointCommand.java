@@ -1,10 +1,9 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.level.Level;
 import cn.nukkit.server.level.Position;
 import cn.nukkit.server.utils.TextFormat;
@@ -35,13 +34,13 @@ public class SpawnpointCommand extends VanillaCommand {
             if (sender instanceof Player) {
                 target = (Player) sender;
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslatedMessage("commands.generic.ingame"));
                 return true;
             }
         } else {
             target = sender.getServer().getPlayer(args[0]);
             if (target == null) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+                sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.player.notFound"));
                 return true;
             }
         }
@@ -57,13 +56,13 @@ public class SpawnpointCommand extends VanillaCommand {
                     y = Integer.parseInt(args[2]);
                     z = Integer.parseInt(args[3]);
                 } catch (NumberFormatException e1) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
                     return true;
                 }
                 if (y < 0) y = 0;
                 if (y > 256) y = 256;
                 target.setSpawn(new Position(x, y, z, level));
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success", new String[]{
+                Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.spawnpoint.success", new String[]{
                         target.getName(),
                         round2.format(x),
                         round2.format(y),
@@ -75,7 +74,7 @@ public class SpawnpointCommand extends VanillaCommand {
             if (sender instanceof Player) {
                 Position pos = (Position) sender;
                 target.setSpawn(pos);
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success", new String[]{
+                Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.spawnpoint.success", new String[]{
                         target.getName(),
                         round2.format(pos.x),
                         round2.format(pos.y),
@@ -83,11 +82,11 @@ public class SpawnpointCommand extends VanillaCommand {
                 }));
                 return true;
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslatedMessage("commands.generic.ingame"));
                 return true;
             }
         }
-        sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+        sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
         return true;
     }
 }

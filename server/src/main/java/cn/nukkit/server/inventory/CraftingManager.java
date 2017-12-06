@@ -7,7 +7,6 @@ import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemPotion;
 import cn.nukkit.server.network.protocol.CraftingDataPacket;
 import cn.nukkit.server.utils.Config;
-import cn.nukkit.server.utils.MainLogger;
 import cn.nukkit.server.utils.Utils;
 
 import java.io.File;

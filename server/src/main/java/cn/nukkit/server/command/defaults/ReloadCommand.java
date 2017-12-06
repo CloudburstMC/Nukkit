@@ -1,8 +1,7 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -23,11 +22,11 @@ public class ReloadCommand extends VanillaCommand {
             return true;
         }
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer(TextFormat.YELLOW + "%nukkit.command.reload.reloading" + TextFormat.WHITE));
+        Command.broadcastCommandMessage(sender, new TranslatedMessage(TextFormat.YELLOW + "%nukkit.command.reload.reloading" + TextFormat.WHITE));
 
         sender.getServer().reload();
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer(TextFormat.YELLOW + "%nukkit.command.reload.reloaded" + TextFormat.WHITE));
+        Command.broadcastCommandMessage(sender, new TranslatedMessage(TextFormat.YELLOW + "%nukkit.command.reload.reloaded" + TextFormat.WHITE));
 
         return true;
     }

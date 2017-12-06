@@ -1,7 +1,7 @@
 package cn.nukkit.server.item.enchantment.protection;
 
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.item.enchantment.Enchantment;
 
 /**

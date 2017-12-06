@@ -1,10 +1,7 @@
 package cn.nukkit.server.command.simple;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.command.ConsoleCommandSender;
-import cn.nukkit.server.lang.TranslationContainer;
 
 import java.lang.reflect.Method;
 
@@ -38,12 +35,12 @@ public class SimpleCommand extends Command {
 
     public void sendUsageMessage(CommandSender sender) {
         if (!this.usageMessage.equals("")) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
         }
     }
 
     public void sendInGameMessage(CommandSender sender) {
-        sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+        sender.sendMessage(new TranslatedMessage("commands.generic.ingame"));
     }
 
     @Override

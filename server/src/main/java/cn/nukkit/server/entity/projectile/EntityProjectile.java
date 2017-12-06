@@ -1,10 +1,9 @@
 package cn.nukkit.server.entity.projectile;
 
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.EntityLiving;
 import cn.nukkit.server.entity.data.LongEntityData;
-import cn.nukkit.server.event.entity.*;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.level.MovingObjectPosition;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.math.AxisAlignedBB;

@@ -5,7 +5,6 @@ import cn.nukkit.server.raknet.protocol.EncapsulatedPacket;
 import cn.nukkit.server.raknet.protocol.Packet;
 import cn.nukkit.server.raknet.protocol.packet.*;
 import cn.nukkit.server.utils.Binary;
-import cn.nukkit.server.utils.ThreadedLogger;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.socket.DatagramPacket;
 

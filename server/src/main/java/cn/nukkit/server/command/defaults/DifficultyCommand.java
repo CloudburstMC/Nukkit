@@ -1,10 +1,9 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.network.protocol.SetDifficultyPacket;
 
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class DifficultyCommand extends VanillaCommand {
         }
 
         if (args.length != 1) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return false;
         }
 
@@ -52,9 +51,9 @@ public class DifficultyCommand extends VanillaCommand {
             pk.difficulty = sender.getServer().getDifficulty();
             NukkitServer.broadcastPacket(new ArrayList<>(sender.getServer().getOnlinePlayers().values()), pk);
 
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.difficulty.success", String.valueOf(difficulty)));
+            Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.difficulty.success", String.valueOf(difficulty)));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
 
             return false;
         }

@@ -1,8 +1,7 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.lang.TranslationContainer;
 
 /**
  * author: MagicDroidX
@@ -22,7 +21,7 @@ public class StopCommand extends VanillaCommand {
             return true;
         }
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.stop.start"));
+        Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.stop.start"));
 
         sender.getServer().shutdown();
 

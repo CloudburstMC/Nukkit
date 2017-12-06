@@ -1,8 +1,7 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.lang.TranslationContainer;
 
 /**
  * Created on 2015/11/13 by xtypr.
@@ -22,7 +21,7 @@ public class SaveOnCommand extends VanillaCommand {
             return true;
         }
         sender.getServer().setAutoSave(true);
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.save.enabled"));
+        Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.save.enabled"));
         return true;
     }
 }

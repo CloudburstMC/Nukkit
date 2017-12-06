@@ -1,10 +1,10 @@
 package cn.nukkit.server.network;
 
+import cn.nukkit.api.event.player.PlayerCreationEvent;
+import cn.nukkit.api.event.server.QueryRegenerateEvent;
 import cn.nukkit.server.Bootstrap;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.event.player.PlayerCreationEvent;
-import cn.nukkit.server.event.server.QueryRegenerateEvent;
 import cn.nukkit.server.network.protocol.BatchPacket;
 import cn.nukkit.server.network.protocol.DataPacket;
 import cn.nukkit.server.network.protocol.ProtocolInfo;
@@ -15,7 +15,6 @@ import cn.nukkit.server.raknet.server.RakNetServer;
 import cn.nukkit.server.raknet.server.ServerHandler;
 import cn.nukkit.server.raknet.server.ServerInstance;
 import cn.nukkit.server.utils.Binary;
-import cn.nukkit.server.utils.MainLogger;
 import cn.nukkit.server.utils.Utils;
 import cn.nukkit.server.utils.Zlib;
 

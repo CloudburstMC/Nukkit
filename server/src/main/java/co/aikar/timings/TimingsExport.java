@@ -23,11 +23,9 @@
  */
 package co.aikar.timings;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.command.ConsoleCommandSender;
 import cn.nukkit.server.command.RemoteConsoleCommandSender;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.timings.JsonUtil;
 import cn.nukkit.server.utils.TextFormat;
 import com.google.gson.Gson;
@@ -185,7 +183,7 @@ public class TimingsExport extends Thread {
     @Override
     public synchronized void start() {
         if (this.sender instanceof RemoteConsoleCommandSender) {
-            this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.rcon"));
+            this.sender.sendMessage(new TranslatedMessage("nukkit.command.timings.rcon"));
             run();
         } else {
             super.start();
@@ -194,7 +192,7 @@ public class TimingsExport extends Thread {
 
     @Override
     public void run() {
-        this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.uploadStart"));
+        this.sender.sendMessage(new TranslatedMessage("nukkit.command.timings.uploadStart"));
         this.out.add("data", JsonUtil.mapToArray(this.history, TimingsHistory::export));
 
         String response = null;
@@ -217,7 +215,7 @@ public class TimingsExport extends Thread {
             response = getResponse(con);
 
             if (con.getResponseCode() != 302) {
-                this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.uploadError", new String[]{String.valueOf(con.getResponseCode()), con.getResponseMessage()}));
+                this.sender.sendMessage(new TranslatedMessage("nukkit.command.timings.uploadError", new String[]{String.valueOf(con.getResponseCode()), con.getResponseMessage()}));
                 if (response != null) {
                     NukkitServer.getInstance().getLogger().alert(response);
                 }
@@ -225,7 +223,7 @@ public class TimingsExport extends Thread {
             }
 
             String location = con.getHeaderField("Location");
-            this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.timingsLocation", location));
+            this.sender.sendMessage(new TranslatedMessage("nukkit.command.timings.timingsLocation", location));
             if (!(this.sender instanceof ConsoleCommandSender)) {
                 NukkitServer.getInstance().getLogger().info(NukkitServer.getInstance().getLanguage().translateString("nukkit.command.timings.timingsLocation", location));
             }
@@ -245,7 +243,7 @@ public class TimingsExport extends Thread {
 
             NukkitServer.getInstance().getLogger().info(NukkitServer.getInstance().getLanguage().translateString("nukkit.command.timings.timingsWrite", fileName));
         } catch (IOException exception) {
-            this.sender.sendMessage(TextFormat.RED + "" + new TranslationContainer("nukkit.command.timings.reportError"));
+            this.sender.sendMessage(TextFormat.RED + "" + new TranslatedMessage("nukkit.command.timings.reportError"));
             if (response != null) {
                 NukkitServer.getInstance().getLogger().alert(response);
             }
@@ -267,7 +265,7 @@ public class TimingsExport extends Thread {
             return bos.toString();
 
         } catch (IOException exception) {
-            this.sender.sendMessage(TextFormat.RED + "" + new TranslationContainer("nukkit.command.timings.reportError"));
+            this.sender.sendMessage(TextFormat.RED + "" + new TranslatedMessage("nukkit.command.timings.reportError"));
             NukkitServer.getInstance().getLogger().warning(con.getResponseMessage(), exception);
             return null;
         } finally {

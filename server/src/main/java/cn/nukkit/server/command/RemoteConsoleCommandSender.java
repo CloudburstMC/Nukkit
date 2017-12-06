@@ -1,6 +1,6 @@
 package cn.nukkit.server.command;
 
-import cn.nukkit.server.lang.TextContainer;
+import cn.nukkit.api.message.Message;
 
 /**
  * Represents an RCON command sender.
@@ -17,7 +17,7 @@ public class RemoteConsoleCommandSender extends ConsoleCommandSender {
     }
 
     @Override
-    public void sendMessage(TextContainer message) {
+    public void sendMessage(Message message) {
         this.sendMessage(this.getServer().getLanguage().translate(message));
     }
 

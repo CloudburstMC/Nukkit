@@ -1,6 +1,5 @@
 package cn.nukkit.server.permission;
 
-import cn.nukkit.server.utils.MainLogger;
 import cn.nukkit.server.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

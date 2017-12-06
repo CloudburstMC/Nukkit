@@ -1,8 +1,8 @@
 package cn.nukkit.server.entity.item;
 
+import cn.nukkit.api.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.server.block.BlockTNT;
 import cn.nukkit.server.entity.EntityExplosive;
-import cn.nukkit.server.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.server.item.ItemMinecartTNT;
 import cn.nukkit.server.level.Explosion;
 import cn.nukkit.server.level.format.FullChunk;

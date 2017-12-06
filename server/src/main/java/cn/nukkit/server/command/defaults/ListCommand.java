@@ -1,8 +1,7 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.lang.TranslationContainer;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -34,7 +33,7 @@ public class ListCommand extends VanillaCommand {
             online = online.substring(0, online.length() - 2);
         }
 
-        sender.sendMessage(new TranslationContainer("commands.players.list",
+        sender.sendMessage(new TranslatedMessage("commands.players.list",
                 new String[]{String.valueOf(onlineCount), String.valueOf(sender.getServer().getMaxPlayers())}));
         sender.sendMessage(online);
         return true;

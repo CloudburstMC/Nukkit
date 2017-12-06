@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.block.BlockFromToEvent;
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.block.BlockFromToEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.Level;
 import cn.nukkit.server.level.particle.SmokeParticle;

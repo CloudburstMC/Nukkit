@@ -1,12 +1,15 @@
 package cn.nukkit.server.plugin;
 
+import cn.nukkit.api.event.Event;
+import cn.nukkit.api.event.EventHandler;
+import cn.nukkit.api.event.EventPriority;
+import cn.nukkit.api.event.Listener;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.command.PluginCommand;
 import cn.nukkit.server.command.SimpleCommandMap;
-import cn.nukkit.server.event.*;
+import cn.nukkit.server.event.HandlerList;
 import cn.nukkit.server.permission.Permissible;
 import cn.nukkit.server.permission.Permission;
-import cn.nukkit.server.utils.MainLogger;
 import cn.nukkit.server.utils.PluginException;
 import cn.nukkit.server.utils.Utils;
 import co.aikar.timings.Timing;
@@ -542,23 +545,14 @@ public class PluginManager {
         this.defaultPermsOp.clear();
     }
 
+    /**
+     * @deprecated events have be moved to a separate manager.
+     * @see cn.nukkit.api.event.EventManager
+     * @param event event to call.
+     */
+    @Deprecated
     public void callEvent(Event event) {
-        try {
-            for (RegisteredListener registration : getEventListeners(event.getClass()).getRegisteredListeners()) {
-                if (!registration.getPlugin().isEnabled()) {
-                    continue;
-                }
-
-                try {
-                    registration.callEvent(event);
-                } catch (Exception e) {
-                    this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.eventError", event.getEventName(), registration.getPlugin().getDescription().getFullName(), e.getMessage(), registration.getListener().getClass().getName()));
-                    this.server.getLogger().logException(e);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            this.server.getLogger().logException(e);
-        }
+        server.getEventManager().fire(event);
     }
 
     public void registerEvents(Listener listener, Plugin plugin) {

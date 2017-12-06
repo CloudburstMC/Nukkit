@@ -1,12 +1,11 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.block.BlockRedstoneEvent;
+import cn.nukkit.api.event.entity.EntityInteractEvent;
+import cn.nukkit.api.event.player.PlayerInteractEvent;
+import cn.nukkit.api.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Event;
-import cn.nukkit.server.event.block.BlockRedstoneEvent;
-import cn.nukkit.server.event.entity.EntityInteractEvent;
-import cn.nukkit.server.event.player.PlayerInteractEvent;
-import cn.nukkit.server.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.level.Level;

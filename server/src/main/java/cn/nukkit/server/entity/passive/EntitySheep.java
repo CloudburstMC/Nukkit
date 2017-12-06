@@ -1,8 +1,8 @@
 package cn.nukkit.server.entity.passive;
 
+import cn.nukkit.api.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.data.ByteEntityData;
-import cn.nukkit.server.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemDye;
 import cn.nukkit.server.level.format.FullChunk;

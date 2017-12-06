@@ -1,13 +1,13 @@
 package cn.nukkit.server.entity.item;
 
+import cn.nukkit.api.event.entity.EntityVehicleEnterEvent;
+import cn.nukkit.api.event.entity.EntityVehicleExitEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.EntityInteractable;
 import cn.nukkit.server.entity.EntityRideable;
 import cn.nukkit.server.entity.data.IntEntityData;
-import cn.nukkit.server.event.entity.EntityVehicleEnterEvent;
-import cn.nukkit.server.event.entity.EntityVehicleExitEvent;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.network.protocol.SetEntityLinkPacket;

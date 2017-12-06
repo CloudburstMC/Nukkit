@@ -1,11 +1,11 @@
 package cn.nukkit.server.entity.item;
 
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.api.event.entity.ItemDespawnEvent;
+import cn.nukkit.api.event.entity.ItemSpawnEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.server.event.entity.ItemDespawnEvent;
-import cn.nukkit.server.event.entity.ItemSpawnEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.NBTIO;

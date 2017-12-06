@@ -1,11 +1,11 @@
 package cn.nukkit.server.entity;
 
+import cn.nukkit.api.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.api.event.entity.EntityDamageEvent.DamageModifier;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.BlockAir;
-import cn.nukkit.server.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.server.event.entity.EntityDamageEvent.DamageModifier;
 import cn.nukkit.server.inventory.InventoryHolder;
 import cn.nukkit.server.inventory.PlayerEnderChestInventory;
 import cn.nukkit.server.inventory.PlayerInventory;

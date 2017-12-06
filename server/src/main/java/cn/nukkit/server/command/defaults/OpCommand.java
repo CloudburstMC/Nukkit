@@ -1,11 +1,10 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.IPlayer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -29,16 +28,16 @@ public class OpCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return false;
         }
 
         String name = args[0];
         IPlayer player = sender.getServer().getOfflinePlayer(name);
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", player.getName()));
+        Command.broadcastCommandMessage(sender, new TranslatedMessage("commands.op.success", player.getName()));
         if (player instanceof Player) {
-            ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
+            ((Player) player).sendMessage(new TranslatedMessage(TextFormat.GRAY + "%commands.op.message"));
         }
 
         player.setOp(true);

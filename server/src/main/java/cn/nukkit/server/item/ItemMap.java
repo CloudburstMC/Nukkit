@@ -3,7 +3,6 @@ package cn.nukkit.server.item;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.network.protocol.ClientboundMapItemDataPacket;
-import cn.nukkit.server.utils.MainLogger;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

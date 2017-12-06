@@ -1,8 +1,8 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.block.BlockSpreadEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.event.block.BlockSpreadEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.Level;
 import cn.nukkit.server.level.generator.object.ObjectTallGrass;

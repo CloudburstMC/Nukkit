@@ -1,14 +1,15 @@
 package cn.nukkit.server;
 
-import cn.nukkit.server.command.CommandReader;
-import cn.nukkit.server.network.protocol.ProtocolInfo;
-import cn.nukkit.server.utils.LogLevel;
-import cn.nukkit.server.utils.MainLogger;
 import cn.nukkit.server.utils.ServerKiller;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.io.File;
 
 /**
  * `_   _       _    _    _ _
@@ -27,26 +28,16 @@ import java.util.stream.Collectors;
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
+@Log4j2
 public class Bootstrap {
-
-    public final static String VERSION = "1.0dev";
-    public final static String API_VERSION = "1.0.0";
-    public final static String CODENAME = "蘋果(Apple)派(Pie)";
-    @Deprecated
-    public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
-    @Deprecated
-    public final static String MINECRAFT_VERSION_NETWORK = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
-
-    public final static String PATH = System.getProperty("user.dir") + "/";
-    public final static String DATA_PATH = System.getProperty("user.dir") + "/";
-    public final static String PLUGIN_PATH = DATA_PATH + "plugins";
+    private final static String PATH = System.getProperty("user.dir") + File.separator;
+    private final static String DATA_PATH = System.getProperty("user.dir") + File.separator;
+    private final static String PLUGIN_PATH = DATA_PATH + "plugins";
     public static final long START_TIME = System.currentTimeMillis();
-    public static boolean ANSI = true;
-    public static boolean shortTitle = false;
-    public static int DEBUG = 1;
+    private static boolean ANSI = true;
+    private static boolean shortTitle = false;
 
-    public static void main(String[] args) {
-
+    public static void main(String... args) {
         //Shorter title for windows 8/2012
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("windows")) {
@@ -54,63 +45,45 @@ public class Bootstrap {
                 shortTitle = true;
             }
         }
+        OptionParser parser = new OptionParser(){{
+            accepts("loglevel").withRequiredArg().ofType(String.class);
+            accepts("disable-ansi");
+        }};
 
-        LogLevel logLevel = LogLevel.DEFAULT_LEVEL;
-        int index = -1;
-        boolean skip = false;
-        //启动参数
-        for (String arg : args) {
-            index++;
-            if (skip) {
-                skip = false;
-                continue;
-            }
+        OptionSet options = parser.parse(args);
 
-            switch (arg) {
-                case "disable-ansi":
-                    ANSI = false;
-                    break;
-
-                case "--verbosity":
-                case "-v":
-                    skip = true;
-                    try {
-                        String levelName = args[index + 1];
-                        Set<String> levelNames = Arrays.stream(LogLevel.values()).map(level -> level.name().toLowerCase()).collect(Collectors.toSet());
-                        if (!levelNames.contains(levelName.toLowerCase())) {
-                            System.out.printf("'%s' is not a valid log level, using the default\n", levelName);
-                            continue;
-                        }
-                        logLevel = Arrays.stream(LogLevel.values()).filter(level -> level.name().equalsIgnoreCase(levelName)).findAny().orElse(LogLevel.DEFAULT_LEVEL);
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        System.out.println("You must enter the requested log level, using the default\n");
-                    }
-
-            }
+        Level logLevel = Level.INFO;
+        if (options.has("loglevel")) {
+            logLevel = Level.toLevel((String) options.valueOf("loglevel"), Level.INFO);
         }
 
-        MainLogger logger = new MainLogger(DATA_PATH + "server.log", logLevel);
-        System.out.printf("Using log level '%s'\n", logLevel);
+        LoggerContext ctx = (LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
+        Configuration config = ctx.getConfiguration();
+        LoggerConfig loggerConfig = config.getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
+        loggerConfig.setLevel(logLevel);
+        ctx.updateLoggers();
 
+        if(options.has("disable-ansi")) {
+            ANSI = false;
+        }
+
+        log.debug("Using log level {}", logLevel);
+        log.info("Nukkit is loading...");
+        NukkitServer server = new NukkitServer(PATH, DATA_PATH, PLUGIN_PATH, ANSI, shortTitle);
         try {
-            if (ANSI) {
-                System.out.print((char) 0x1b + "]0;Starting Nukkit NukkitServer For Minecraft: PE" + (char) 0x07);
-            }
-            new NukkitServer(logger, PATH, DATA_PATH, PLUGIN_PATH);
+            server.boot();
         } catch (Exception e) {
-            logger.logException(e);
+            log.throwing(e);
         }
 
-        if (ANSI) {
-            System.out.print((char) 0x1b + "]0;Stopping Server..." + (char) 0x07);
-        }
-        logger.info("Stopping other threads");
+        log.info("Stopping server...");
+        log.debug("Stopping other threads");
 
         for (Thread thread : java.lang.Thread.getAllStackTraces().keySet()) {
             if (!(thread instanceof InterruptibleThread)) {
                 continue;
             }
-            logger.debug("Stopping " + thread.getClass().getSimpleName() + " thread");
+            log.debug("Stopping " + thread.getClass().getSimpleName() + " thread");
             if (thread.isAlive()) {
                 thread.interrupt();
             }
@@ -119,13 +92,14 @@ public class Bootstrap {
         ServerKiller killer = new ServerKiller(8);
         killer.start();
 
-        logger.shutdown();
+        log.info("Goodbye!");
+        /*logger.shutdown();
         logger.interrupt();
         CommandReader.getInstance().removePromptLine();
 
         if (ANSI) {
             System.out.print((char) 0x1b + "]0;Server Stopped" + (char) 0x07);
         }
-        System.exit(0);
+        System.exit(0);*/
     }
 }

@@ -1,8 +1,8 @@
 package cn.nukkit.server.block;
 
+import cn.nukkit.api.event.block.LeavesDecayEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.event.block.LeavesDecayEvent;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemApple;
 import cn.nukkit.server.item.ItemBlock;

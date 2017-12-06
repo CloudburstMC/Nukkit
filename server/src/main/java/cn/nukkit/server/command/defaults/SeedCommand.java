@@ -1,8 +1,7 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.lang.TranslationContainer;
 
 /**
  * author: MagicDroidX
@@ -29,7 +28,7 @@ public class SeedCommand extends VanillaCommand {
             seed = sender.getServer().getDefaultLevel().getSeed();
         }
 
-        sender.sendMessage(new TranslationContainer("commands.seed.success", String.valueOf(seed)));
+        sender.sendMessage(new TranslatedMessage("commands.seed.success", String.valueOf(seed)));
 
         return true;
     }

@@ -1,12 +1,11 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.command.CommandSender;
 import cn.nukkit.server.command.data.CommandParameter;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.enchantment.Enchantment;
-import cn.nukkit.server.lang.TranslationContainer;
 import cn.nukkit.server.utils.TextFormat;
 
 /**
@@ -36,12 +35,12 @@ public class EnchantCommand extends VanillaCommand {
             return true;
         }
         if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return true;
         }
         Player player = sender.getServer().getPlayer(args[0]);
         if (player == null) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+            sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.player.notFound"));
             return true;
         }
         int enchantId;
@@ -50,23 +49,23 @@ public class EnchantCommand extends VanillaCommand {
             enchantId = getIdByName(args[1]);
             enchantLevel = args.length == 3 ? Integer.parseInt(args[2]) : 1;
         } catch (NumberFormatException e) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
             return true;
         }
         Enchantment enchantment = Enchantment.getEnchantment(enchantId);
         if (enchantment == null) {
-            sender.sendMessage(new TranslationContainer("commands.enchant.notFound", String.valueOf(enchantId)));
+            sender.sendMessage(new TranslatedMessage("commands.enchant.notFound", String.valueOf(enchantId)));
             return true;
         }
         enchantment.setLevel(enchantLevel);
         Item item = player.getInventory().getItemInHand();
         if (item.getId() <= 0) {
-            sender.sendMessage(new TranslationContainer("commands.enchant.noItem"));
+            sender.sendMessage(new TranslatedMessage("commands.enchant.noItem"));
             return true;
         }
         item.addEnchantment(enchantment);
         player.getInventory().setItemInHand(item);
-        Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success"));
+        Command.broadcastCommandMessage(sender, new TranslatedMessage("%commands.enchant.success"));
         return true;
     }
 
