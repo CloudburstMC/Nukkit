@@ -1,6 +1,6 @@
 package cn.nukkit.dispenser;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockDispenser;
 import cn.nukkit.item.Item;
 
 /**
@@ -9,7 +9,7 @@ import cn.nukkit.item.Item;
 public class EmptyBucketDispenseBehavior implements DispenseBehavior {
 
     @Override
-    public void dispense(Block block, Item stack) {
+    public void dispense(BlockDispenser block, Item item) {
 
     }
 }

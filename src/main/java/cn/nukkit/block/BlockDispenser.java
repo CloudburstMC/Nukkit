@@ -1,46 +1,12 @@
 package cn.nukkit.block;
 
-import cn.nukkit.dispenser.DefaultDispenseBehavior;
-import cn.nukkit.dispenser.DispenseBehavior;
-import cn.nukkit.dispenser.ProjectileDispenseBehavior;
-import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by CreeperFace on 15.4.2017.
  */
 public class BlockDispenser extends BlockSolid {
-
-    private static Map<Integer, DispenseBehavior> behaviors = new HashMap<>();
-    private static DispenseBehavior defaultBehavior = new DefaultDispenseBehavior();
-
-    static {
-        DispenseBehavior projectile = new ProjectileDispenseBehavior();
-
-        registerBehavior(Item.ARROW, projectile);
-        registerBehavior(Item.SNOWBALL, projectile);
-        registerBehavior(Item.EGG, projectile);
-        registerBehavior(Item.EXPERIENCE_BOTTLE, projectile);
-        registerBehavior(Item.SPLASH_POTION, projectile);
-        registerBehavior(Item.FIRE_CHARGE, projectile);
-        registerBehavior(Item.LINGERING_POTION, projectile);
-        /*registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);
-        registerBehavior(Item., projectile);*/
-    }
 
     public BlockDispenser() {
         this(0);

@@ -32,18 +32,22 @@ public class ProjectileDispenseBehavior implements DispenseBehavior {
         BlockFace face = source.getFacing();
 
         Entity projectile = Entity.createEntity(getEntityType(), dispensePos.getLevel().getChunk(dispensePos.getFloorX(), dispensePos.getFloorZ()), nbt);
+        if (projectile == null) {
+            return;
+        }
+
         projectile.setMotion(new Vector3(face.getXOffset(), face.getYOffset() + 0.1f, face.getZOffset()).multiply(6));
         projectile.spawnToAll();
     }
 
-    public String getEntityType() {
+    protected String getEntityType() {
         return this.entityType;
     }
 
     /**
      * you can add extra data of projectile here
      */
-    public void correctNBT(CompoundTag nbt) {
+    protected void correctNBT(CompoundTag nbt) {
 
     }
 }
