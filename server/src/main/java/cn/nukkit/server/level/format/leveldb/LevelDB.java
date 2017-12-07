@@ -315,7 +315,7 @@ public class LevelDB implements LevelProvider {
     @Override
     public boolean unloadChunk(int x, int z, boolean safe) {
         long index = Level.chunkHash(x, z);
-        Chunk chunk = this.chunks.containsKey(index) ? this.chunks.get(index) : null;
+        Chunk chunk = this.chunks.getOrDefault(index, null);
         if (chunk != null && chunk.unload(false, safe)) {
             this.chunks.remove(index);
             return true;
@@ -351,7 +351,7 @@ public class LevelDB implements LevelProvider {
             return this.chunks.get(index);
         } else {
             this.loadChunk(x, z, create);
-            return this.chunks.containsKey(index) ? this.chunks.get(index) : null;
+            return this.chunks.getOrDefault(index, null);
         }
     }
 

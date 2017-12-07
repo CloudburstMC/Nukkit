@@ -34,7 +34,7 @@ public class AnvilInventory extends ContainerInventory {
         Item second = getItem(SACRIFICE);
 
         if (!resultItem.equals(local, true, false) || resultItem.getCount() != local.getCount()) {
-            //Item does not match target item. Everything must match except the tags.
+            //ItemUse does not match target item. Everything must match except the tags.
             return false;
         }
 
@@ -145,7 +145,7 @@ public class AnvilInventory extends ContainerInventory {
     }
 
     /*@Override
-    public boolean setItem(int index, Item item, boolean send) {
+    public boolean setItem(int index, ItemUse item, boolean send) {
         return super.setItem(index, item, false);
     }
 

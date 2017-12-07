@@ -13,6 +13,7 @@ import cn.nukkit.api.event.level.LevelLoadEvent;
 import cn.nukkit.api.event.server.QueryRegenerateEvent;
 import cn.nukkit.api.message.Message;
 import cn.nukkit.api.message.TranslatedMessage;
+import cn.nukkit.api.util.Config;
 import cn.nukkit.api.util.TextFormat;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.blockentity.*;
@@ -309,7 +310,7 @@ public class NukkitServer implements Server {
         consoleReader.start();
 
         log.info("Loading " + TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE + "...");
-        this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
+        config = new NukkitConfig(dataPath + "nukkit.yml", Config.Type.YAML);
 
         log.info("Loading " + TextFormat.GREEN + "server.properties" + TextFormat.WHITE + "...");
         loadServerProperties();
@@ -351,7 +352,7 @@ public class NukkitServer implements Server {
         this.playerMetadata = new PlayerMetadataStore();
         this.levelMetadata = new LevelMetadataStore();
 
-        this.operators = new Config(this.dataPath + "ops.txt", Config.ENUM);
+        this.operators = new NukkitConfig(this.dataPath + "ops.txt", Config.Type.ENUM);
         loadWhitelist();
         this.banByName = new BanList(this.dataPath + "banned-players.json");
         this.banByName.load();
@@ -810,7 +811,7 @@ public class NukkitServer implements Server {
 
         this.tickCounter = 0;
 
-        log.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(serverProperties.getDefaultGamemode())));
+        log.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(getGamemodeFromString(serverProperties.getDefaultGamemode()))));
 
         log.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Bootstrap.START_TIME) / 1000)));
 
@@ -1765,7 +1766,7 @@ public class NukkitServer implements Server {
 
     private void registerEntities() {
         Entity.registerEntity("Arrow", EntityArrow.class);
-        Entity.registerEntity("Item", EntityItem.class);
+        Entity.registerEntity("ItemUse", EntityItem.class);
         Entity.registerEntity("FallingSand", EntityFallingBlock.class);
         Entity.registerEntity("PrimedTnt", EntityPrimedTNT.class);
         Entity.registerEntity("Snowball", EntitySnowball.class);
@@ -1846,6 +1847,10 @@ public class NukkitServer implements Server {
     @Override
     public Whitelist getWhitelist() {
         return whitelist;
+    }
+
+    public NukkitConfigBuilder getConfigBuilder() {
+        return new NukkitConfigBuilder();
     }
 
     private void loadPlugins() throws Exception {

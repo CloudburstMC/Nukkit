@@ -278,7 +278,7 @@ public class EnchantInventory extends ContainerInventory {
     }
 
     @Override
-    public boolean setItem(int index, Item item, boolean send) {
+    public boolean setItem(int index, ItemUse item, boolean send) {
         return super.setItem(index, item, false);
     }*/
 }

@@ -1062,7 +1062,7 @@ public class Level implements ChunkManager, Metadatable {
             int chunkZ = (int) loader.getZ() >> 4;
 
             Long index = Level.chunkHash(chunkX, chunkZ);
-            int existingLoaders = Math.max(0, this.chunkTickList.containsKey(index) ? this.chunkTickList.get(index) : 0);
+            int existingLoaders = Math.max(0, this.chunkTickList.getOrDefault(index, 0));
             this.chunkTickList.put(index, existingLoaders + 1);
             for (int chunk = 0; chunk < chunksPerLoader; ++chunk) {
                 int dx = new java.util.Random().nextInt(2 * randRange) - randRange;
@@ -1723,7 +1723,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         CompoundTag itemTag = NBTIO.putItemHelper(item);
-        itemTag.setName("Item");
+        itemTag.setName("ItemUse");
 
         if (item.getId() > 0 && item.getCount() > 0) {
             EntityItem itemEntity = new EntityItem(
@@ -1738,7 +1738,7 @@ public class Level implements ChunkManager, Metadatable {
                                     .add(new FloatTag("", new java.util.Random().nextFloat() * 360))
                                     .add(new FloatTag("", 0)))
 
-                            .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", delay));
+                            .putShort("Health", 5).putCompound("ItemUse", itemTag).putShort("PickupDelay", delay));
 
             itemEntity.spawnToAll();
         }
@@ -2094,7 +2094,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Entity getEntity(long entityId) {
-        return this.entities.containsKey(entityId) ? this.entities.get(entityId) : null;
+        return this.entities.getOrDefault(entityId, null);
     }
 
     public Entity[] getEntities() {
@@ -2159,7 +2159,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public BlockEntity getBlockEntityById(long blockEntityId) {
-        return this.blockEntities.containsKey(blockEntityId) ? this.blockEntities.get(blockEntityId) : null;
+        return this.blockEntities.getOrDefault(blockEntityId, null);
     }
 
     public Map<Long, Player> getPlayers() {

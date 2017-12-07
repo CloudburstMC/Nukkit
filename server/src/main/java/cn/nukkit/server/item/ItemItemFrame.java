@@ -16,7 +16,7 @@ public class ItemItemFrame extends Item {
     }
 
     public ItemItemFrame(Integer meta, int count) {
-        super(ITEM_FRAME, meta, count, "Item Frame");
+        super(ITEM_FRAME, meta, count, "ItemUse Frame");
         this.block = new BlockItemFrame();
     }
 }

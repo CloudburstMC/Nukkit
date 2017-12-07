@@ -2,6 +2,7 @@ package cn.nukkit.api;
 
 import cn.nukkit.api.command.ConsoleCommandExecutorSource;
 import cn.nukkit.api.event.EventManager;
+import cn.nukkit.api.util.ConfigBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;
@@ -39,4 +40,7 @@ public interface Server {
 
     @Nonnull
     Whitelist getWhitelist();
+
+    @Nonnull
+    ConfigBuilder getConfigBuilder();
 }

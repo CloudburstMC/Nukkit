@@ -15,8 +15,8 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     public BlockEntityItemFrame(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        if (!nbt.contains("Item")) {
-            nbt.putCompound("Item", NBTIO.putItemHelper(new ItemBlock(new BlockAir())));
+        if (!nbt.contains("ItemUse")) {
+            nbt.putCompound("ItemUse", NBTIO.putItemHelper(new ItemBlock(new BlockAir())));
         }
         if (!nbt.contains("ItemRotation")) {
             nbt.putByte("ItemRotation", 0);
@@ -30,7 +30,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     @Override
     public String getName() {
-        return "Item Frame";
+        return "ItemUse Frame";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     }
 
     public Item getItem() {
-        CompoundTag NBTTag = this.namedTag.getCompound("Item");
+        CompoundTag NBTTag = this.namedTag.getCompound("ItemUse");
         return NBTIO.getItemHelper(NBTTag);
     }
 
@@ -58,7 +58,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     }
 
     public void setItem(Item item, boolean setChanged) {
-        this.namedTag.putCompound("Item", NBTIO.putItemHelper(item));
+        this.namedTag.putCompound("ItemUse", NBTIO.putItemHelper(item));
         if (setChanged) {
             this.setChanged();
         }
@@ -83,18 +83,18 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        if (!this.namedTag.contains("Item")) {
+        if (!this.namedTag.contains("ItemUse")) {
             this.setItem(new ItemBlock(new BlockAir()), false);
         }
-        CompoundTag NBTItem = namedTag.getCompound("Item").copy();
-        NBTItem.setName("Item");
+        CompoundTag NBTItem = namedTag.getCompound("ItemUse").copy();
+        NBTItem.setName("ItemUse");
         boolean item = NBTItem.getShort("id") == Item.AIR;
         return new CompoundTag()
                 .putString("id", BlockEntity.ITEM_FRAME)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putCompound("Item", item ? NBTIO.putItemHelper(new ItemBlock(new BlockAir())) : NBTItem)
+                .putCompound("ItemUse", item ? NBTIO.putItemHelper(new ItemBlock(new BlockAir())) : NBTItem)
                 .putByte("ItemRotation", item ? 0 : this.getItemRotation());
         // TODO: This crashes the client, why?
         // .putFloat("ItemDropChance", this.getItemDropChance());

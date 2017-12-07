@@ -37,7 +37,7 @@ public class BlockItemFrame extends BlockTransparent {
 
     @Override
     public String getName() {
-        return "Item Frame";
+        return "ItemUse Frame";
     }
 
     @Override
@@ -62,7 +62,7 @@ public class BlockItemFrame extends BlockTransparent {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
         if (itemFrame.getItem().getId() == Item.AIR) {
-            // We can't use Item.get(item.getId(), item.getDamage(), 1) because
+            // We can't use ItemUse.get(item.getId(), item.getDamage(), 1) because
             // we need to keep the item's NBT tags
             Item itemOnFrame = item.clone(); // So we clone the item
             itemOnFrame.setCount(1); // Change it to only one item (if we keep +1, visual glitches will happen)

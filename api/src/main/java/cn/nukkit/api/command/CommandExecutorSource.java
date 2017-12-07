@@ -1,6 +1,7 @@
 package cn.nukkit.api.command;
 
 import cn.nukkit.api.Server;
+import cn.nukkit.api.permission.Permissible;
 
 /**
  * 能发送命令的人。<br>
@@ -14,7 +15,7 @@ import cn.nukkit.api.Server;
  * @see cn.nukkit.api.command.CommandExecutor#onCommand
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
-public interface CommandExecutorSource {
+public interface CommandExecutorSource extends Permissible {
     /**
      * 返回命令发送者所在的服务器。<br>
      * Returns the NukkitServer of the command sender.

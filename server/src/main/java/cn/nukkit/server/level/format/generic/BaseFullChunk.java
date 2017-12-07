@@ -350,7 +350,7 @@ public abstract class BaseFullChunk implements FullChunk {
     @Override
     public BlockEntity getTile(int x, int y, int z) {
         int index = (z << 12) | (x << 8) | y;
-        return this.tileList.containsKey(index) ? this.tileList.get(index) : null;
+        return this.tileList.getOrDefault(index, null);
     }
 
     @Override

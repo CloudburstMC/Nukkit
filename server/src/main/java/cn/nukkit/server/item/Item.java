@@ -337,7 +337,7 @@ public class Item implements Cloneable {
 
     public static final int OBSERVER = 251;
 
-    //Normal Item IDs
+    //Normal ItemUse IDs
 
     public static final int IRON_SHOVEL = 256;
     public static final int IRON_PICKAXE = 257;
@@ -1468,7 +1468,7 @@ public class Item implements Cloneable {
 
     @Override
     final public String toString() {
-        return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
+        return "ItemUse " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
     }
 
     public int getDestroySpeed(Block block, Player player) {

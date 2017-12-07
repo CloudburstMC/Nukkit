@@ -73,7 +73,7 @@ public class Anvil extends BaseLevelProvider {
                 .putLong("DayTime", 0)
                 .putInt("GameType", 0)
                 .putString("generatorName", Generator.getGeneratorName(generator))
-                .putString("generatorOptions", options.containsKey("preset") ? options.get("preset") : "")
+                .putString("generatorOptions", options.getOrDefault("preset", ""))
                 .putInt("generatorVersion", 1)
                 .putBoolean("hardcore", false)
                 .putBoolean("initialized", true)
@@ -262,7 +262,7 @@ public class Anvil extends BaseLevelProvider {
     @Override
     public boolean unloadChunk(int x, int z, boolean safe) {
         long index = Level.chunkHash(x, z);
-        Chunk chunk = this.chunks.containsKey(index) ? this.chunks.get(index) : null;
+        Chunk chunk = this.chunks.getOrDefault(index, null);
         if (chunk != null && chunk.unload(false, safe)) {
             this.chunks.remove(index);
             return true;
@@ -300,7 +300,7 @@ public class Anvil extends BaseLevelProvider {
 
     protected RegionLoader getRegion(int x, int z) {
         long index = Level.chunkHash(x, z);
-        return this.regions.containsKey(index) ? this.regions.get(index) : null;
+        return this.regions.getOrDefault(index, null);
     }
 
     @Override
@@ -315,7 +315,7 @@ public class Anvil extends BaseLevelProvider {
             return this.chunks.get(index);
         } else {
             this.loadChunk(x, z, create);
-            return this.chunks.containsKey(index) ? this.chunks.get(index) : null;
+            return this.chunks.getOrDefault(index, null);
         }
     }
 

@@ -34,7 +34,7 @@ public class BlockUpdateEntry implements Comparable<BlockUpdateEntry> {
 
     @Override
     public int compareTo(BlockUpdateEntry entry) {
-        return this.delay < entry.delay ? -1 : (this.delay > entry.delay ? 1 : (this.priority != entry.priority ? this.priority - entry.priority : (this.id < entry.id ? -1 : (this.id > entry.id ? 1 : 0))));
+        return this.delay < entry.delay ? -1 : (this.delay > entry.delay ? 1 : (this.priority != entry.priority ? this.priority - entry.priority : (Long.compare(this.id, entry.id))));
     }
 
     @Override

@@ -178,17 +178,12 @@ public class CraftingManager {
             return 1;
         } else if (i1.getDamage() < i2.getDamage()) {
             return -1;
-        } else if (i1.getCount() > i2.getCount()) {
-            return 1;
-        } else if (i1.getCount() < i2.getCount()) {
-            return -1;
-        } else {
-            return 0;
         }
+        return Integer.compare(i1.getCount(), i2.getCount());
     };
 
     public Recipe getRecipe(UUID id) {
-        return this.recipes.containsKey(id) ? this.recipes.get(id) : null;
+        return this.recipes.getOrDefault(id, null);
     }
 
     public Map<UUID, Recipe> getRecipes() {

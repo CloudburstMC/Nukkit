@@ -1,10 +1,13 @@
 package cn.nukkit.server.utils;
 
+import cn.nukkit.api.util.Config;
+import cn.nukkit.api.util.ConfigSection;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.scheduler.FileWriteTask;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.log4j.Log4j2;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -19,9 +22,10 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit
  */
-public class Config {
+@Log4j2
+public class NukkitConfig implements Config {
 
-    public static final int DETECT = -1; //Detect by file extension
+    /*public static final int DETECT = -1; //Detect by file extension
     public static final int PROPERTIES = 0; // .properties
     public static final int CNF = Config.PROPERTIES; // .cnf
     public static final int JSON = 1; // .js, .json
@@ -29,85 +33,84 @@ public class Config {
     //public static final int EXPORT = 3; // .export, .xport
     //public static final int SERIALIZED = 4; // .sl
     public static final int ENUM = 5; // .txt, .list, .enum
-    public static final int ENUMERATION = Config.ENUM;
+    public static final int ENUMERATION = Config.ENUM;*/
 
-    //private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
-    private ConfigSection config = new ConfigSection();
+    public static final Map<String, Config.Type> format = new TreeMap<>();
     private final Map<String, Object> nestedCache = new HashMap<>();
     private File file;
     private boolean correct = false;
-    private int type = Config.DETECT;
-
-    public static final Map<String, Integer> format = new TreeMap<>();
 
     static {
-        format.put("properties", Config.PROPERTIES);
-        format.put("con", Config.PROPERTIES);
-        format.put("conf", Config.PROPERTIES);
-        format.put("config", Config.PROPERTIES);
-        format.put("js", Config.JSON);
-        format.put("json", Config.JSON);
-        format.put("yml", Config.YAML);
-        format.put("yaml", Config.YAML);
-        //format.put("sl", Config.SERIALIZED);
-        //format.put("serialize", Config.SERIALIZED);
-        format.put("txt", Config.ENUM);
-        format.put("list", Config.ENUM);
-        format.put("enum", Config.ENUM);
+        format.put("properties", Config.Type.PROPERTIES);
+        format.put("con", Config.Type.PROPERTIES);
+        format.put("conf", Config.Type.PROPERTIES);
+        format.put("config", Config.Type.PROPERTIES);
+        format.put("js", Config.Type.JSON);
+        format.put("json", Config.Type.JSON);
+        format.put("yml", Config.Type.YAML);
+        format.put("yaml", Config.Type.YAML);
+        format.put("txt", Config.Type.ENUM);
+        format.put("list", Config.Type.ENUM);
+        format.put("enum", Config.Type.ENUM);
     }
+
+    //private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
+    private NukkitConfigSection config = new NukkitConfigSection();
+    private Config.Type type = Config.Type.DETECT;
 
     /**
      * Constructor for Config instance with undefined file object
      *
      * @param type - Config type
      */
-    public Config(int type) {
+    public NukkitConfig(Config.Type type) {
         this.type = type;
         this.correct = true;
-        this.config = new ConfigSection();
+        this.config = new NukkitConfigSection();
     }
 
     /**
      * Constructor for Config (YAML) instance with undefined file object
      */
-    public Config() {
-        this(Config.YAML);
+    public NukkitConfig() {
+        this(Config.Type.YAML);
     }
 
-    public Config(String file) {
-        this(file, Config.DETECT);
+    public NukkitConfig(String file) {
+        this(file, Config.Type.DETECT);
     }
 
-    public Config(File file) {
-        this(file.toString(), Config.DETECT);
+    public NukkitConfig(File file) {
+        this(file.toString(), Config.Type.DETECT);
     }
 
-    public Config(String file, int type) {
-        this(file, type, new ConfigSection());
+    public NukkitConfig(String file, Config.Type type) {
+        this(file, type, (ConfigSection) new NukkitConfigSection());
     }
 
-    public Config(File file, int type) {
-        this(file.toString(), type, new ConfigSection());
+    public NukkitConfig(File file, Config.Type type) {
+        this(file.toString(), type, (ConfigSection) new NukkitConfigSection());
     }
 
     @Deprecated
-    public Config(String file, int type, LinkedHashMap<String, Object> defaultMap) {
-        this.load(file, type, new ConfigSection(defaultMap));
+    public NukkitConfig(String file, Config.Type type, LinkedHashMap<String, Object> defaultMap) {
+        this.load(file, type, new NukkitConfigSection(defaultMap));
     }
 
-    public Config(String file, int type, ConfigSection defaultMap) {
+    public NukkitConfig(String file, Config.Type type, ConfigSection defaultMap) {
         this.load(file, type, defaultMap);
     }
 
-    public Config(File file, int type, ConfigSection defaultMap) {
+    public NukkitConfig(File file, Config.Type type, ConfigSection defaultMap) {
         this.load(file.toString(), type, defaultMap);
     }
 
     @Deprecated
-    public Config(File file, int type, LinkedHashMap<String, Object> defaultMap) {
-        this(file.toString(), type, new ConfigSection(defaultMap));
+    public NukkitConfig(File file, Config.Type type, LinkedHashMap<String, Object> defaultMap) {
+        this(file.toString(), type, (ConfigSection) new NukkitConfigSection(defaultMap));
     }
 
+    @Override
     public void reload() {
         this.config.clear();
         this.nestedCache.clear();
@@ -119,15 +122,14 @@ public class Config {
     }
 
     public boolean load(String file) {
-        return this.load(file, Config.DETECT);
+        return this.load(file, Config.Type.DETECT);
     }
 
-    public boolean load(String file, int type) {
-        return this.load(file, type, new ConfigSection());
+    public boolean load(String file, Config.Type type) {
+        return this.load(file, type, new NukkitConfigSection());
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean load(String file, int type, ConfigSection defaultMap) {
+    public boolean load(String file, Config.Type type, ConfigSection defaultMap) {
         this.correct = true;
         this.type = type;
         this.file = new File(file);
@@ -136,12 +138,12 @@ public class Config {
                 this.file.getParentFile().mkdirs();
                 this.file.createNewFile();
             } catch (IOException e) {
-                MainLogger.getLogger().error("Could not create Config " + this.file.toString(), e);
+                log.error("Could not create Config " + this.file.toString(), e);
             }
-            this.config = defaultMap;
+            this.config = (NukkitConfigSection)defaultMap;
             this.save();
         } else {
-            if (this.type == Config.DETECT) {
+            if (this.type == Config.Type.DETECT) {
                 String extension = "";
                 if (this.file.getName().lastIndexOf(".") != -1 && this.file.getName().lastIndexOf(".") != 0) {
                     extension = this.file.getName().substring(this.file.getName().lastIndexOf(".") + 1);
@@ -157,7 +159,7 @@ public class Config {
                 try {
                     content = Utils.readFile(this.file);
                 } catch (IOException e) {
-                    NukkitServer.getInstance().getLogger().logException(e);
+                    log.throwing(e);
                 }
                 this.parseContent(content);
                 if (!this.correct) return false;
@@ -178,7 +180,7 @@ public class Config {
             try {
                 content = Utils.readFile(inputStream);
             } catch (IOException e) {
-                NukkitServer.getInstance().getLogger().logException(e);
+                log.throwing(e);
                 return false;
             }
             this.parseContent(content);
@@ -215,24 +217,26 @@ public class Config {
         return this.save(false);
     }
 
-    public boolean save(Boolean async) {
+    public boolean save(boolean async) {
         if (this.file == null) throw new IllegalStateException("Failed to save Config. File object is undefined.");
         if (this.correct) {
             String content = "";
             switch (this.type) {
-                case Config.PROPERTIES:
+                case CNF:
+                case PROPERTIES:
                     content = this.writeProperties();
                     break;
-                case Config.JSON:
+                case JSON:
                     content = new GsonBuilder().setPrettyPrinting().create().toJson(this.config);
                     break;
-                case Config.YAML:
+                case YAML:
                     DumperOptions dumperOptions = new DumperOptions();
                     dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                     Yaml yaml = new Yaml(dumperOptions);
                     content = yaml.dump(this.config);
                     break;
-                case Config.ENUM:
+                case ENUMERATION:
+                case ENUM:
                     for (Object o : this.config.entrySet()) {
                         Map.Entry entry = (Map.Entry) o;
                         content += String.valueOf(entry.getKey()) + "\r\n";
@@ -246,7 +250,7 @@ public class Config {
                 try {
                     Utils.writeFile(this.file, content);
                 } catch (IOException e) {
-                    NukkitServer.getInstance().getLogger().logException(e);
+                    log.throwing(e);
                 }
             }
             return true;
@@ -263,25 +267,24 @@ public class Config {
         return this.get(key, null);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T get(String key, T defaultValue) {
         return this.correct ? this.config.get(key, defaultValue) : defaultValue;
     }
 
-    public ConfigSection getSection(String key) {
-        return this.correct ? this.config.getSection(key) : new ConfigSection();
+    public NukkitConfigSection getSection(String key) {
+        return this.correct ? this.config.getSection(key) : new NukkitConfigSection();
     }
 
     public boolean isSection(String key) {
         return config.isSection(key);
     }
 
-    public ConfigSection getSections(String key) {
-        return this.correct ? this.config.getSections(key) : new ConfigSection();
+    public NukkitConfigSection getSections(String key) {
+        return this.correct ? this.config.getSections(key) : new NukkitConfigSection();
     }
 
-    public ConfigSection getSections() {
-        return this.correct ? this.config.getSections() : new ConfigSection();
+    public NukkitConfigSection getSections() {
+        return this.correct ? this.config.getSections() : new NukkitConfigSection();
     }
 
     public int getInt(String key) {
@@ -397,11 +400,11 @@ public class Config {
     }
 
     public void setAll(LinkedHashMap<String, Object> map) {
-        this.config = new ConfigSection(map);
+        this.config = new NukkitConfigSection(map);
     }
 
     public void setAll(ConfigSection section) {
-        this.config = section;
+        this.config = (NukkitConfigSection) section;
     }
 
     public boolean exists(String key) {
@@ -420,27 +423,22 @@ public class Config {
         return this.config.getAllMap();
     }
 
-    /**
-     * Get root (main) config section of the Config
-     *
-     * @return
-     */
-    public ConfigSection getRootSection() {
+    public NukkitConfigSection getRootSection() {
         return config;
     }
 
     public int setDefault(LinkedHashMap<String, Object> map) {
-        return setDefault(new ConfigSection(map));
+        return setDefault((ConfigSection) new NukkitConfigSection(map));
     }
 
     public int setDefault(ConfigSection map) {
         int size = this.config.size();
-        this.config = this.fillDefaults(map, this.config);
+        this.config = this.fillDefaults((NukkitConfigSection) map, this.config);
         return this.config.size() - size;
     }
 
 
-    private ConfigSection fillDefaults(ConfigSection defaultMap, ConfigSection data) {
+    private NukkitConfigSection fillDefaults(NukkitConfigSection defaultMap, NukkitConfigSection data) {
         for (String key : defaultMap.keySet()) {
             if (!data.containsKey(key)) {
                 data.put(key, defaultMap.get(key));
@@ -481,7 +479,7 @@ public class Config {
                 String v = b[1].trim();
                 String v_lower = v.toLowerCase();
                 if (this.config.containsKey(k)) {
-                    MainLogger.getLogger().debug("[Config] Repeated property " + k + " on file " + this.file.toString());
+                    log.debug("[Config] Repeated property " + k + " on file " + this.file.toString());
                 }
                 switch (v_lower) {
                     case "on":
@@ -537,26 +535,27 @@ public class Config {
 
     private void parseContent(String content) {
         switch (this.type) {
-            case Config.PROPERTIES:
+            case CNF:
+            case PROPERTIES:
                 this.parseProperties(content);
                 break;
-            case Config.JSON:
+            case JSON:
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
-                this.config = new ConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
+                this.config = new NukkitConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
                 }.getType()));
                 break;
-            case Config.YAML:
+            case YAML:
                 DumperOptions dumperOptions = new DumperOptions();
                 dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                 Yaml yaml = new Yaml(dumperOptions);
-                this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
+                this.config = new NukkitConfigSection(yaml.loadAs(content, LinkedHashMap.class));
                 if (this.config == null) {
-                    this.config = new ConfigSection();
+                    this.config = new NukkitConfigSection();
                 }
                 break;
-            // case Config.SERIALIZED
-            case Config.ENUM:
+            case ENUMERATION:
+            case ENUM:
                 this.parseList(content);
                 break;
             default:

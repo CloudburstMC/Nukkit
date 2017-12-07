@@ -36,8 +36,8 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         super(chunk, nbt);
         this.inventory = new FurnaceInventory(this);
 
-        if (!this.namedTag.contains("Items") || !(this.namedTag.get("Items") instanceof ListTag)) {
-            this.namedTag.putList(new ListTag<CompoundTag>("Items"));
+        if (!this.namedTag.contains("ItemTypes") || !(this.namedTag.get("ItemTypes") instanceof ListTag)) {
+            this.namedTag.putList(new ListTag<CompoundTag>("ItemTypes"));
         }
 
         for (int i = 0; i < this.getSize(); i++) {
@@ -105,7 +105,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
     @Override
     public void saveNBT() {
-        this.namedTag.putList(new ListTag<CompoundTag>("Items"));
+        this.namedTag.putList(new ListTag<CompoundTag>("ItemTypes"));
         for (int index = 0; index < this.getSize(); index++) {
             this.setItem(index, this.inventory.getItem(index));
         }
@@ -128,7 +128,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     }
 
     protected int getSlotIndex(int index) {
-        ListTag<CompoundTag> list = this.namedTag.getList("Items", CompoundTag.class);
+        ListTag<CompoundTag> list = this.namedTag.getList("ItemTypes", CompoundTag.class);
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getByte("Slot") == index) {
                 return i;
@@ -144,7 +144,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         if (i < 0) {
             return new ItemBlock(new BlockAir(), 0, 0);
         } else {
-            CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
+            CompoundTag data = (CompoundTag) this.namedTag.getList("ItemTypes").get(i);
             return NBTIO.getItemHelper(data);
         }
     }
@@ -157,12 +157,12 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
             if (i >= 0) {
-                this.namedTag.getList("Items").getAll().remove(i);
+                this.namedTag.getList("ItemTypes").getAll().remove(i);
             }
         } else if (i < 0) {
-            (this.namedTag.getList("Items", CompoundTag.class)).add(d);
+            (this.namedTag.getList("ItemTypes", CompoundTag.class)).add(d);
         } else {
-            (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
+            (this.namedTag.getList("ItemTypes", CompoundTag.class)).add(i, d);
         }
     }
 

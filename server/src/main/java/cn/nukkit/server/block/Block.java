@@ -892,7 +892,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     public double getBreakTime(Item item, Player player) {
-        Objects.requireNonNull(item, "getBreakTime: Item can not be null");
+        Objects.requireNonNull(item, "getBreakTime: ItemUse can not be null");
         Objects.requireNonNull(player, "getBreakTime: Player can not be null");
         double blockHardness = getHardness();
         boolean correctTool = correctTool0(getToolType(), item);
@@ -913,7 +913,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     /**
-     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
+     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(ItemUse, Player)
      */
     @Deprecated
     public double getBreakTime(Item item) {

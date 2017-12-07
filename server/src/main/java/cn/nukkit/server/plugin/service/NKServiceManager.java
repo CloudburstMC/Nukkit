@@ -31,11 +31,7 @@ public class NKServiceManager implements ServiceManager {
 
     protected <T> boolean provide(Class<T> service, T instance, Plugin plugin, ServicePriority priority) {
         synchronized (handle) {
-            List<RegisteredServiceProvider<?>> list = handle.get(service);
-
-            if (list == null) {
-                handle.put(service, list = new ArrayList<>());
-            }
+            List<RegisteredServiceProvider<?>> list = handle.computeIfAbsent(service, k -> new ArrayList<>());
 
             RegisteredServiceProvider<T> registered = new RegisteredServiceProvider<>(service, instance, priority, plugin);
 

@@ -12,7 +12,6 @@ import cn.nukkit.server.item.Item;
  */
 public class BlockBreakEvent extends BlockEvent implements Cancellable {
 
-    private static final HandlerList handlers = new HandlerList();
     protected final Player player;
     protected final Item item;
     protected boolean instaBreak = false;

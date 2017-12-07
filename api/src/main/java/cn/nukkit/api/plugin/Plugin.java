@@ -2,7 +2,7 @@ package cn.nukkit.api.plugin;
 
 import cn.nukkit.api.Server;
 import cn.nukkit.api.command.CommandExecutor;
-import cn.nukkit.server.utils.Config;
+import cn.nukkit.api.util.Config;
 
 import java.io.File;
 import java.io.InputStream;
@@ -179,8 +179,8 @@ public interface Plugin extends CommandExecutor {
     boolean saveResource(String filename, String outputName, boolean replace);
 
     /**
-     * 返回这个Nukkit插件配置文件的{@link cn.nukkit.api.utils.Config}对象。<br>
-     * The config file this Nukkit plugin as a {@link cn.nukkit.api.utils.Config} object.
+     * 返回这个Nukkit插件配置文件的{@link cn.nukkit.api.util.Config}对象。<br>
+     * The config file this Nukkit plugin as a {@link cn.nukkit.api.util.Config} object.
      * <p>
      * <p>一般地，插件的配置保存在数据文件夹下的config.yml文件。<br>
      * Normally, the plugin config is saved in the 'config.yml' file in its data folder.</p>

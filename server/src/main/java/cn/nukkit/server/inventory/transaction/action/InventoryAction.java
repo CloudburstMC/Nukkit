@@ -29,7 +29,7 @@ public abstract class InventoryAction {
     /**
      * Returns the item that was present before the action took place.
      *
-     * @return Item
+     * @return ItemUse
      */
     public Item getSourceItem() {
         return sourceItem.clone();

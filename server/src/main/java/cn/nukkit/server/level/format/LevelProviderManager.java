@@ -1,6 +1,7 @@
 package cn.nukkit.server.level.format;
 
 import cn.nukkit.server.NukkitServer;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public abstract class LevelProviderManager {
     protected static final Map<String, Class<? extends LevelProvider>> providers = new HashMap<>();
 
@@ -16,7 +18,7 @@ public abstract class LevelProviderManager {
         try {
             providers.put((String) clazz.getMethod("getProviderName").invoke(null), clazz);
         } catch (Exception e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.throwing(e);
         }
     }
 
@@ -27,7 +29,7 @@ public abstract class LevelProviderManager {
                     return provider;
                 }
             } catch (Exception e) {
-                NukkitServer.getInstance().getLogger().logException(e);
+                log.throwing(e);
             }
         }
         return null;
@@ -35,7 +37,7 @@ public abstract class LevelProviderManager {
 
     public static Class<? extends LevelProvider> getProviderByName(String name) {
         name = name.trim().toLowerCase();
-        return providers.containsKey(name) ? providers.get(name) : null;
+        return providers.getOrDefault(name, null);
     }
 
 }

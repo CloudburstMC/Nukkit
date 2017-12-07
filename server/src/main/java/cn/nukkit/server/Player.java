@@ -556,20 +556,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             //TODO: structure checking
             pk.commands = data;
             int identifier = this.dataPacket(pk, true); // We *need* ACK so we can be sure that the client received the packet or not
-            Thread t = new Thread() {
-                public void run() {
-                    // We are going to wait 3 seconds, if after 3 seconds we didn't receive a reply from the client, resend the packet.
-                    try {
-                        Thread.sleep(3000);
-                        boolean status = needACK.get(identifier);
-                        if (!status && isOnline()) {
-                            sendCommandData();
-                            return;
-                        }
-                    } catch (InterruptedException e) {
+            Thread t = new Thread(() -> {
+                // We are going to wait 3 seconds, if after 3 seconds we didn't receive a reply from the client, resend the packet.
+                try {
+                    Thread.sleep(3000);
+                    boolean status = needACK.get(identifier);
+                    if (!status && isOnline()) {
+                        sendCommandData();
+                        return;
                     }
+                } catch (InterruptedException e) {
                 }
-            };
+            });
             t.start();
         }
     }
@@ -4595,10 +4593,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 break;
                         }
                         /*switch (item.getId()) {
-                            case Item.WOOD:
+                            case ItemUse.WOOD:
                                 this.awardAchievement("mineWood");
                                 break;
-                            case Item.DIAMOND:
+                            case ItemUse.DIAMOND:
                                 this.awardAchievement("diamond");
                                 break;
                         }*/
