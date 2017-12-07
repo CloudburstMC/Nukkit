@@ -2025,7 +2025,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.close("", message, false);
                         break;
                     }
-                    if (loginPacket.getProtocol() == PlayerProtocol.PLAYER_PROTOCOL_141.getNumber())
+                    if (loginPacket.getProtocol() >= PlayerProtocol.PLAYER_PROTOCOL_141.getNumber())
                         this.protocol = PlayerProtocol.PLAYER_PROTOCOL_141;
 
                     this.username = TextFormat.clean(loginPacket.username);
@@ -2211,6 +2211,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Item item = this.inventory.getItem(mobEquipmentPacket.hotbarSlot);
 
                     if (!item.equals(mobEquipmentPacket.item)) {
+                        if (this.protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)){
+                            int hotbarSlot = mobEquipmentPacket.hotbarSlot;
+                            int inventorySlot = mobEquipmentPacket.inventorySlot;
+                            Item wasInInventory = this.inventory.getItem(mobEquipmentPacket.inventorySlot).clone();
+                            this.inventory.setItem(inventorySlot, item);
+                            this.inventory.setItem(hotbarSlot, wasInInventory);
+                            this.inventory.sendContents(this);
+                            return;
+                        }
                         this.server.getLogger().debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
                         this.inventory.sendContents(this);
                         return;
@@ -3528,8 +3537,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-
-                    if (this.last113transaction == null || this.last113transaction.getCreationTime() <
+                    if (this.last113transaction != null && this.last113transaction.getCreationTime() <
                             (System.currentTimeMillis() - 8 * 1000)) {
                         if (this.last113transaction != null) {
                             for (Inventory inventory : this.last113transaction.getInventories()) {
@@ -3539,10 +3547,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 inventory.sendContents(this);
                             }
                         }
-                        this.last113transaction = new Old113InventoryTransaction(this);
                     }
-
-                    this.last113transaction.addAction(transaction);
+                    else if (this.last113transaction == null) {
+                        this.last113transaction = new Old113InventoryTransaction(this);
+                        this.last113transaction.addAction(transaction);
+                        break;
+                    }
+                    else this.last113transaction.addAction(transaction);
 
                     if (this.last113transaction.canExecute() || this.isCreative()) {
                         HashSet<String> achievements = new HashSet<>();
@@ -3569,13 +3580,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                         }
 
-                        this.last113transaction = null;
                     } else {
                         if (containerSetSlotPacket.item.getId() != 0) {
                             inventory.sendSlot(containerSetSlotPacket.hotbarSlot, this);
                             inventory.sendSlot(containerSetSlotPacket.slot, this);
                         }
                     }
+                    this.last113transaction = null;
 
                     break;
                 case ProtocolInfo113.REMOVE_BLOCK_PACKET:

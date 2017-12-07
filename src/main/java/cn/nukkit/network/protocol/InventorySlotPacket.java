@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.network.protocol.types.ContainerIds;
 
 /**
  * author: MagicDroidX
@@ -26,7 +27,8 @@ public class InventorySlotPacket extends DataPacket {
     public void decode(PlayerProtocol protocol) {
         if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)){
             this.inventoryId = this.getByte();
-            this.slot = this.getVarInt();
+            this.slot = this.getVarInt()-9;
+            if (this.slot < 0 || (this.inventoryId != 0 && this.inventoryId != ContainerIds.HOTBAR)) this.slot += 9;
             this.hotbarSlot = this.getVarInt();
             this.item = this.getSlot();
             this.selectedSlot = this.getByte();
@@ -45,7 +47,7 @@ public class InventorySlotPacket extends DataPacket {
             this.putVarInt(this.slot);
             this.putVarInt(this.hotbarSlot);
             this.putSlot(this.item);
-            this.putByte((byte) this.selectedSlot);
+            this.putByte((byte) (this.selectedSlot));
             return;
         }
         this.putUnsignedVarInt((byte) this.inventoryId);

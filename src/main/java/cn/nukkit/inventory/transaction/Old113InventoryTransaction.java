@@ -97,7 +97,7 @@ public class Old113InventoryTransaction extends InventoryTransaction {
 
         for (Item needItem : new ArrayList<>(needItems)) {
             for (Item haveItem : new ArrayList<>(haveItems)) {
-                if (needItem.equalsExact(haveItem)) {
+                if (needItem.equals(haveItem, true, true)) {
                     int amount = Math.min(haveItem.getCount(), needItem.getCount());
                     needItem.setCount(needItem.getCount() - amount);
                     haveItem.setCount(haveItem.getCount() - amount);

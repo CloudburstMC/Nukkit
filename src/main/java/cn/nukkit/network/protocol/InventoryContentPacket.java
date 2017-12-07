@@ -50,7 +50,7 @@ public class InventoryContentPacket extends DataPacket {
 
         if (protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)) {
             int hotbar = (int) this.getUnsignedVarInt();
-            this.hotbar = new int[count];
+            this.hotbar = new int[hotbar];
 
             for (int s = 0; s < count && !this.feof(); ++s) {
                 this.hotbar[s] = this.getVarInt();
@@ -64,14 +64,17 @@ public class InventoryContentPacket extends DataPacket {
             this.reset(protocol);
             this.putUnsignedVarInt(this.inventoryId);
             this.putEntityUniqueId(this.eid);
-            this.putUnsignedVarInt(this.slots.length);
+            this.putUnsignedVarInt(this.slots.length+9);
             for (Item slot : this.slots){
                 this.putSlot(slot);
             }
+            for (int i = 0; i < 9; i++){
+                this.putSlot(Item.get(Item.AIR));
+            }
             if (this.inventoryId == SPECIAL_INVENTORY) {
-                this.putUnsignedVarInt(this.hotbar.length);
-                for (int i : this.hotbar){
-                    this.putVarInt(i);
+                this.putUnsignedVarInt(9);
+                for (int i = 0; i < 9; i++){
+                    this.putVarInt(i+9);
                 }
             }
             else this.putUnsignedVarInt(0);
