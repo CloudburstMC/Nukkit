@@ -94,6 +94,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.base.Preconditions;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -148,9 +149,13 @@ public class NukkitServer implements Server {
     private BlockingQueue<String> inputLines;
     private ConsoleReader consoleReader;
     private boolean hasStopped = false;
+
+    @Getter
     private PluginManager pluginManager = null;
     private NukkitServerProperties serverProperties;
     private int profilingTickrate = 20;
+
+    @Getter
     private ServerScheduler scheduler = null;
     private int tickCounter;
     private long nextTick;
@@ -161,13 +166,25 @@ public class NukkitServer implements Server {
     private int sendUsageTicker = 0;
     private boolean dispatchSignals = false;
     private SimpleCommandMap commandMap;
+
+    @Getter
     private CraftingManager craftingManager;
+
+    @Getter
     private ResourcePackManager resourcePackManager;
     private RCON rcon;
     private NukkitWhitelist whitelist;
+
+    @Getter
     private EntityMetadataStore entityMetadata;
+
+    @Getter
     private PlayerMetadataStore playerMetadata;
+
+    @Getter
     private LevelMetadataStore levelMetadata;
+
+    @Getter
     private Network network;
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
@@ -181,8 +198,11 @@ public class NukkitServer implements Server {
     private BaseLang baseLang;
     private boolean forceLanguage = false;
     private UUID serverID;
+    @Getter
     private final String filePath;
+    @Getter
     private final String dataPath;
+    @Getter
     private final String pluginPath;
     private final Set<UUID> uniquePlayers = new HashSet<>();
     private QueryHandler queryHandler;
@@ -191,8 +211,13 @@ public class NukkitServer implements Server {
     private final Map<String, Player> players = new HashMap<>();
     private final Map<UUID, Player> playerList = new HashMap<>();
     private final Map<Integer, String> identifier = new HashMap<>();
+
+    @Getter
     private final Map<Integer, Level> levels = new HashMap<>();
+    @Getter
     private final ServiceManager serviceManager = new NKServiceManager();
+
+    @Getter
     private Level defaultLevel = null;
     private Thread currentThread;
     private AtomicBoolean running = new AtomicBoolean(true);
@@ -481,26 +506,31 @@ public class NukkitServer implements Server {
         broadcast(message, BROADCAST_CHANNEL_USERS);
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return NAME;
     }
 
+    @Nonnull
     @Override
     public String getVersion() {
         return MINECRAFT_VERSION;
     }
 
+    @Nonnull
     @Override
     public String getApiVersion() {
         return API_VERSION;
     }
 
+    @Nonnull
     @Override
     public EventManager getEventManager() {
         return eventManager;
     }
 
+    @Nonnull
     @Override
     public ConsoleCommandExecutorSource getConsoleCommandExecutorSource() {
         return consoleCommandExecutorSource;
@@ -1143,18 +1173,6 @@ public class NukkitServer implements Server {
         System.out.print(title);
     }
 
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public String getDataPath() {
-        return dataPath;
-    }
-
-    public String getPluginPath() {
-        return pluginPath;
-    }
-
     public static String getGamemodeString(int mode) {
         return getGamemodeString(mode, false);
     }
@@ -1223,34 +1241,6 @@ public class NukkitServer implements Server {
                 return 3;
         }
         return -1;
-    }
-
-    public EntityMetadataStore getEntityMetadata() {
-        return entityMetadata;
-    }
-
-    public PlayerMetadataStore getPlayerMetadata() {
-        return playerMetadata;
-    }
-
-    public LevelMetadataStore getLevelMetadata() {
-        return levelMetadata;
-    }
-
-    public PluginManager getPluginManager() {
-        return this.pluginManager;
-    }
-
-    public CraftingManager getCraftingManager() {
-        return craftingManager;
-    }
-
-    public ResourcePackManager getResourcePackManager() {
-        return resourcePackManager;
-    }
-
-    public ServerScheduler getScheduler() {
-        return scheduler;
     }
 
     public int getTick() {
@@ -1421,14 +1411,6 @@ public class NukkitServer implements Server {
         }
     }
 
-    public Map<Integer, Level> getLevels() {
-        return levels;
-    }
-
-    public Level getDefaultLevel() {
-        return defaultLevel;
-    }
-
     public void setDefaultLevel(Level defaultLevel) {
         if (defaultLevel == null || (this.isLevelLoaded(defaultLevel.getFolderName()) && defaultLevel != this.defaultLevel)) {
             this.defaultLevel = defaultLevel;
@@ -1574,10 +1556,6 @@ public class NukkitServer implements Server {
         return forceLanguage;
     }
 
-    public Network getNetwork() {
-        return network;
-    }
-
     //Revising later...
     public Config getConfig() {
         return this.config;
@@ -1719,10 +1697,6 @@ public class NukkitServer implements Server {
 
     public Config getOps() {
         return operators;
-    }
-
-    public ServiceManager getServiceManager() {
-        return serviceManager;
     }
 
     public Map<String, List<String>> getCommandAliases() {
