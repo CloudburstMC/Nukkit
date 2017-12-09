@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author MagicDroidX
  */
-public abstract class Entity extends Location implements Metadatable {
+public abstract class Entity extends Location implements Metadatable, cn.nukkit.api.entity.Entity {
 
     public static final int NETWORK_ID = -1;
 

@@ -4,12 +4,13 @@ import cn.nukkit.server.block.Block;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.utils.LevelException;
+import com.flowpowered.math.vector.Vector3d;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Position extends Vector3 {
+public class Position extends Vector3d {
     public Level level;
 
     public Position() {

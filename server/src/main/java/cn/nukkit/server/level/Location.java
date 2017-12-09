@@ -1,16 +1,18 @@
 package cn.nukkit.server.level;
 
+import cn.nukkit.api.util.Rotation;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.utils.LevelException;
+import lombok.Getter;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Location extends Position {
+public class Location extends Position implements cn.nukkit.api.Location {
 
-    public double yaw;
-    public double pitch;
+    @Getter
+    protected Rotation rotation;
 
     public Location() {
         this(0);
@@ -32,20 +34,19 @@ public class Location extends Position {
         this(x, y, z, 0);
     }
 
-    public Location(double x, double y, double z, double yaw) {
+    public Location(double x, double y, double z, float yaw) {
         this(x, y, z, yaw, 0);
     }
 
-    public Location(double x, double y, double z, double yaw, double pitch) {
+    public Location(double x, double y, double z, float yaw, float pitch) {
         this(x, y, z, yaw, pitch, null);
     }
 
-    public Location(double x, double y, double z, double yaw, double pitch, Level level) {
+    public Location(double x, double y, double z, float yaw, float pitch, Level level) {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
+        this.rotation = new Rotation(pitch, yaw, yaw);
         this.level = level;
     }
 
@@ -66,11 +67,11 @@ public class Location extends Position {
     }
 
     public double getYaw() {
-        return this.yaw;
+        return this.rotation.getYaw();
     }
 
     public double getPitch() {
-        return this.pitch;
+        return this.rotation.getPitch();
     }
 
     @Override

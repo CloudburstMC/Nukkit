@@ -3,5 +3,5 @@ package cn.nukkit.api.entity;
 /**
  * @author CreeperFace
  */
-public class EntityTypes {
+public interface Monster extends Creature {
 }
