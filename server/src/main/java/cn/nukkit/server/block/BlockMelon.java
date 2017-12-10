@@ -29,7 +29,7 @@ public class BlockMelon extends BlockSolid {
     }
 
     public String getName() {
-        return "Melon Block";
+        return "Melon BlockType";
     }
 
     public double getHardness() {

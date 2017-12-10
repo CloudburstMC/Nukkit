@@ -1,7 +1,7 @@
 package cn.nukkit.server.plugin.service;
 
 
-import cn.nukkit.server.plugin.Plugin;
+import cn.nukkit.api.plugin.Plugin;
 
 /**
  * Created on 16-11-20.

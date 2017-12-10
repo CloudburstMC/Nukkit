@@ -44,7 +44,6 @@ import cn.nukkit.server.metadata.Metadatable;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.tag.*;
 import cn.nukkit.server.network.protocol.*;
-import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.potion.Effect;
 import cn.nukkit.server.scheduler.AsyncTask;
 import cn.nukkit.server.timings.LevelTimings;
@@ -266,7 +265,7 @@ public class Level implements ChunkManager, Metadatable {
         this.timings = new LevelTimings(this);
 
         if (convert) {
-            this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.updating",
+            log.info(this.server.getLanguage().translateString("nukkit.level.updating",
                     TextFormat.GREEN + this.provider.getName() + TextFormat.WHITE));
             LevelProvider old = this.provider;
             try {
@@ -282,7 +281,7 @@ public class Level implements ChunkManager, Metadatable {
 
         this.provider.updateLevelName(name);
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.preparing",
+        log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
                 TextFormat.GREEN + this.provider.getName() + TextFormat.WHITE));
 
         this.generator = Generator.getGenerator(this.provider.getGenerator());
@@ -562,7 +561,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading",
+        log.info(this.server.getLanguage().translateString("nukkit.level.unloading",
                 TextFormat.GREEN + this.getName() + TextFormat.WHITE));
         Level defaultLevel = this.server.getDefaultLevel();
 
@@ -2538,7 +2537,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addBlockEntity(BlockEntity blockEntity) {
         if (blockEntity.getLevel() != this) {
-            throw new LevelException("Invalid Block Entity level");
+            throw new LevelException("Invalid BlockType Entity level");
         }
         blockEntities.put(blockEntity.getId(), blockEntity);
         this.clearChunkCache((int) blockEntity.getX() >> 4, (int) blockEntity.getZ() >> 4);
@@ -2546,7 +2545,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void removeBlockEntity(BlockEntity blockEntity) {
         if (blockEntity.getLevel() != this) {
-            throw new LevelException("Invalid Block Entity level");
+            throw new LevelException("Invalid BlockType Entity level");
         }
         blockEntities.remove(blockEntity.getId());
         updateBlockEntities.remove(blockEntity.getId());
@@ -2686,7 +2685,7 @@ public class Level implements ChunkManager, Metadatable {
             }
             this.provider.unloadChunk(x, z, safe);
         } catch (Exception e) {
-            MainLogger logger = this.server.getLogger();
+            MainLogger logger = log;
             logger.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.toString()));
             logger.logException(e);
         }

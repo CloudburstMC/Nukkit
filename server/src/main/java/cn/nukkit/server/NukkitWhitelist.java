@@ -2,6 +2,7 @@ package cn.nukkit.server;
 
 import cn.nukkit.api.Whitelist;
 import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.io.BufferedReader;
@@ -27,7 +28,6 @@ public class NukkitWhitelist implements Whitelist{
             entryList.stream().forEach(entry -> {
                 whitelist.entries.put(entry.name, entry);
                 whitelist.entries.put(entry.uuid, entry);
-                whitelist.entries.put(entry.xuid, entry);
             });
 
             return whitelist;
@@ -55,15 +55,9 @@ public class NukkitWhitelist implements Whitelist{
     }
 
     @Getter
+    @AllArgsConstructor
     public static final class Entry {
-        private final String xuid;
         private final String uuid;
         private final String name;
-
-        public Entry(String xuid, String uuid, String name) {
-            this.xuid = xuid;
-            this.uuid = uuid;
-            this.name = name;
-        }
     }
 }

@@ -15,7 +15,7 @@ public class BlockEndPortal extends BlockFlowable {
 
     @Override
     public String getName() {
-        return "End Portal Block";
+        return "End Portal BlockType";
     }
 
     @Override

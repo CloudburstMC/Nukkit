@@ -166,7 +166,7 @@ public class Explosion {
 
         //Iterator iter = this.affectedBlocks.entrySet().iterator();
         for (Block block : this.affectedBlocks) {
-            //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
+            //BlockType block = (BlockType) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
                 ((BlockTNT) block).prime(new NukkitRandom().nextRange(10, 30));
             } else if (Math.random() * 100 < yield) {

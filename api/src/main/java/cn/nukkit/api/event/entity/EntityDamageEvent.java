@@ -167,7 +167,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
          */
         DROWNING,
         /**
-         * Block explosion damage
+         * BlockType explosion damage
          */
         BLOCK_EXPLOSION,
         /**

@@ -1,62 +1,64 @@
 package cn.nukkit.server.resourcepacks;
 
 import cn.nukkit.server.NukkitServer;
-import com.google.gson.JsonParser;
+import lombok.extern.log4j.Log4j2;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+@Log4j2
 public class ZippedResourcePack extends AbstractResourcePack {
-    private File file;
+    private Path file;
     private byte[] sha256 = null;
 
-    public ZippedResourcePack(File file) {
-        if (!file.exists()) {
+    public ZippedResourcePack(Path file) {
+        if (Files.notExists(file)) {
             throw new IllegalArgumentException(NukkitServer.getInstance().getLanguage()
-                    .translateString("nukkit.resources.zip.not-found", file.getName()));
+                    .translateString("nukkit.resources.zip.not-found", file.getFileName().toString()));
         }
 
         this.file = file;
 
-        try (ZipFile zip = new ZipFile(file)) {
+        try (ZipFile zip = new ZipFile(file.toFile())) {
             ZipEntry entry = zip.getEntry("manifest.json");
             if (entry == null) {
                 throw new IllegalArgumentException(NukkitServer.getInstance().getLanguage()
                         .translateString("nukkit.resources.zip.no-manifest"));
             } else {
-                this.manifest = new JsonParser()
-                        .parse(new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8))
-                        .getAsJsonObject();
+                manifest = NukkitServer.JSON_MAPPER.readValue(Files.newInputStream(file), NukkitResourcePackPackManifest.class);
             }
         } catch (IOException e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.throwing(e);
         }
 
-        if (!this.verifyManifest()) {
+        if (!manifest.verify()) {
             throw new IllegalArgumentException(NukkitServer.getInstance().getLanguage()
                     .translateString("nukkit.resources.zip.invalid-manifest"));
         }
     }
 
     @Override
-    public int getPackSize() {
-        return (int) this.file.length();
+    public long getPackSize() {
+        try {
+            return Files.size(file);
+        } catch (IOException e) {
+            log.throwing(e);
+            return 0L;
+        }
     }
 
     @Override
     public byte[] getSha256() {
         if (this.sha256 == null) {
             try {
-                this.sha256 = MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(this.file.toPath()));
+                this.sha256 = MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(file));
             } catch (Exception e) {
-                NukkitServer.getInstance().getLogger().logException(e);
+                log.throwing(e);
             }
         }
 
@@ -69,14 +71,14 @@ public class ZippedResourcePack extends AbstractResourcePack {
         if (this.getPackSize() - off > len) {
             chunk = new byte[len];
         } else {
-            chunk = new byte[this.getPackSize() - off];
+            chunk = new byte[(int)(getPackSize() - off)];
         }
 
-        try (FileInputStream fis = new FileInputStream(this.file)) {
+        try (InputStream fis = Files.newInputStream(file)) {
             fis.skip(off);
             fis.read(chunk);
         } catch (Exception e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.throwing(e);
         }
 
         return chunk;

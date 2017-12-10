@@ -75,7 +75,7 @@ public class BlockNetherWart extends BlockFlowable {
 
     @Override
     public String getName() {
-        return "Nether Wart Block";
+        return "Nether Wart BlockType";
     }
 
     @Override

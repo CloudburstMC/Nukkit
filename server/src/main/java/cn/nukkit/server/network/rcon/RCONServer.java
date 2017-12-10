@@ -1,7 +1,5 @@
 package cn.nukkit.server.network.rcon;
 
-import cn.nukkit.server.NukkitServer;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.BufferUnderflowException;
@@ -104,7 +102,7 @@ public class RCONServer extends Thread {
             } catch (BufferUnderflowException exception) {
                 //Corrupted packet, ignore
             } catch (Exception exception) {
-                NukkitServer.getInstance().getLogger().logException(exception);
+                log.logException(exception);
             }
         }
 
@@ -113,7 +111,7 @@ public class RCONServer extends Thread {
             this.serverChannel.close();
             this.selector.close();
         } catch (IOException exception) {
-            NukkitServer.getInstance().getLogger().logException(exception);
+            log.logException(exception);
         }
 
         synchronized (this) {

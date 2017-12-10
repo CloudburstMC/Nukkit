@@ -46,7 +46,7 @@ public class BlockRailPowered extends BlockRail {
                     || checkSurrounding(this, true, 0)
                     || checkSurrounding(this, false, 0);
 
-            // Avoid Block minstake
+            // Avoid BlockType minstake
             if (wasPowered != isPowered) {
                 setActive(isPowered);
                 level.updateAround(down());

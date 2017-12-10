@@ -30,9 +30,6 @@ import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.network.protocol.DataPacket;
-import cn.nukkit.server.plugin.EventExecutor;
-import cn.nukkit.server.plugin.MethodEventExecutor;
-import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.scheduler.PluginTask;
 import cn.nukkit.server.scheduler.TaskHandler;
 
@@ -92,7 +89,7 @@ public final class Timings {
         privacy = (boolean) NukkitServer.getInstance().getConfig("timings.privacy", false);
         ignoredConfigSections.addAll(NukkitServer.getInstance().getConfig().getStringList("timings.ignore"));
 
-        NukkitServer.getInstance().getLogger().debug("Timings: \n" +
+        log.debug("Timings: \n" +
                 "Enabled - " + isTimingsEnabled() + "\n" +
                 "Verbose - " + isVerboseEnabled() + "\n" +
                 "History Interval - " + getHistoryInterval() + "\n" +
@@ -127,7 +124,7 @@ public final class Timings {
         generationCallbackTimer = TimingsManager.getTiming("Level Generation Callback");
 
         permissibleCalculationTimer = TimingsManager.getTiming("Permissible Calculation");
-        permissionDefaultTimer = TimingsManager.getTiming("Default Permission Calculation");
+        permissionDefaultTimer = TimingsManager.getTiming("Default NukkitPermission Calculation");
     }
 
     public static boolean isTimingsEnabled() {
@@ -187,7 +184,7 @@ public final class Timings {
         Queue<TimingsHistory> oldQueue = TimingsManager.HISTORY;
         int frames = (getHistoryLength() / getHistoryInterval());
         if (length > maxLength) {
-            NukkitServer.getInstance().getLogger().warning(
+            log.warn(
                     "Timings Length too high. Requested " + length + ", max is " + maxLength
                             + ". To get longer history, you must increase your interval. Set Interval to "
                             + Math.ceil(length / MAX_HISTORY_FRAMES)

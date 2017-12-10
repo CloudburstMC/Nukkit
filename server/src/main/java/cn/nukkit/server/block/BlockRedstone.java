@@ -41,7 +41,7 @@ public class BlockRedstone extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Redstone Block";
+        return "Redstone BlockType";
     }
 
     //TODO: redstone

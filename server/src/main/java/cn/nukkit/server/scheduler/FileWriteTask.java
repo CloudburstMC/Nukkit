@@ -1,6 +1,5 @@
 package cn.nukkit.server.scheduler;
 
-import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.utils.Utils;
 
 import java.io.ByteArrayInputStream;
@@ -50,7 +49,7 @@ public class FileWriteTask extends AsyncTask {
         try {
             Utils.writeFile(file, contents);
         } catch (IOException e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.logException(e);
         }
     }
 

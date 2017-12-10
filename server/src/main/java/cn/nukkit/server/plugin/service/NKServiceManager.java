@@ -1,8 +1,8 @@
 package cn.nukkit.server.plugin.service;
 
 
+import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.plugin.Plugin;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 

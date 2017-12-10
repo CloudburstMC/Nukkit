@@ -15,13 +15,14 @@
 
     <properties>
         <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+        <nukkit.api.version>0.0.1</nukkit.api.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>nukkit-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${nukkit.api.version}-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -33,12 +34,6 @@
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <version>1.14</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -105,6 +100,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>2.9.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>4.39.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

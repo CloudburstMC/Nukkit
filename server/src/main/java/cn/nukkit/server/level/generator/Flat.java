@@ -1,6 +1,5 @@
 package cn.nukkit.server.level.generator;
 
-import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.block.*;
 import cn.nukkit.server.level.ChunkManager;
 import cn.nukkit.server.level.format.FullChunk;
@@ -141,7 +140,7 @@ public class Flat extends Generator {
                 }
             }
         } catch (Exception e) {
-            NukkitServer.getInstance().getLogger().error("error while parsing the preset", e);
+            log.error("error while parsing the preset", e);
             throw new RuntimeException(e);
         }
     }

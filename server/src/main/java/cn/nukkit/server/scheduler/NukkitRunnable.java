@@ -1,7 +1,6 @@
 package cn.nukkit.server.scheduler;
 
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.plugin.Plugin;
 
 /**
  * This class is provided as an easy way to handle scheduling tasks.

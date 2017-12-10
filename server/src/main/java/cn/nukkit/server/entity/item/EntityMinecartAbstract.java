@@ -748,7 +748,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     /**
      * Get the minecart display block
      *
-     * @return Block of minecart display block
+     * @return BlockType of minecart display block
      */
     @API(usage = API.Usage.STABLE, definition = API.Definition.UNIVERSAL)
     public Block getDisplayBlock() {

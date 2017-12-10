@@ -1,7 +1,5 @@
 package cn.nukkit.server.plugin;
 
-import cn.nukkit.server.NukkitServer;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -57,7 +55,7 @@ public class PluginLogger implements Logger {
 
     @Override
     public void log(LogLevel level, String message) {
-        NukkitServer.getInstance().getLogger().log(level, this.pluginName + message);
+        log.log(level, this.pluginName + message);
     }
 
     @Override
@@ -102,7 +100,7 @@ public class PluginLogger implements Logger {
 
     @Override
     public void log(LogLevel level, String message, Throwable t) {
-        NukkitServer.getInstance().getLogger().log(level, this.pluginName + message, t);
+        log.log(level, this.pluginName + message, t);
     }
 
 }

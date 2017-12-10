@@ -24,7 +24,7 @@ public class BlockCake extends BlockTransparent {
 
     @Override
     public String getName() {
-        return "Cake Block";
+        return "Cake BlockType";
     }
 
     @Override

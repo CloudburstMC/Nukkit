@@ -20,7 +20,7 @@ public class BlockEmerald extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Emerald Block";
+        return "Emerald BlockType";
     }
 
     @Override

@@ -1,5 +1,7 @@
 package cn.nukkit.api.permission;
 
+import cn.nukkit.api.plugin.Plugin;
+
 import java.util.Map;
 
 public interface Permissible extends ServerOperator {

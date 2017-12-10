@@ -7,11 +7,11 @@ import cn.nukkit.api.plugin.Plugin;
  */
 public interface EventManager {
     /**
-     * Registers an object with event listeners.
+     * Registers a object that extends {@link Listener} with event listeners.
      * @param plugin the plugin associated
-     * @param listener the object
+     * @param listener the listener object
      */
-    void register(Listener listener, Plugin plugin);
+    void registerListener(Listener listener, Plugin plugin);
 
     /**
      * Fires an event.

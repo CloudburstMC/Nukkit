@@ -1,6 +1,5 @@
 package cn.nukkit.server.level.format.anvil;
 
-import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.blockentity.BlockEntity;
@@ -256,7 +255,7 @@ public class Chunk extends BaseChunk {
 
             return new Chunk(provider, chunk.getCompound("Level"));
         } catch (Exception e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.logException(e);
             return null;
         }
     }
@@ -295,7 +294,7 @@ public class Chunk extends BaseChunk {
             }
             CompoundTag s = new CompoundTag(null);
             s.putByte("Y", section.getY());
-            s.putByteArray("Blocks", section.getIdArray());
+            s.putByteArray("BlockTypes", section.getIdArray());
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
             s.putByteArray("SkyLight", section.getSkyLightArray());
@@ -377,7 +376,7 @@ public class Chunk extends BaseChunk {
             }
             CompoundTag s = new CompoundTag(null);
             s.putByte("Y", (section.getY()));
-            s.putByteArray("Blocks", section.getIdArray());
+            s.putByteArray("BlockTypes", section.getIdArray());
             s.putByteArray("Data", section.getDataArray());
             s.putByteArray("BlockLight", section.getLightArray());
             s.putByteArray("SkyLight", section.getSkyLightArray());

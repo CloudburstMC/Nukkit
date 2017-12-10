@@ -1,7 +1,5 @@
 package cn.nukkit.server.metadata;
 
-import cn.nukkit.server.plugin.Plugin;
-
 import java.util.List;
 
 /**

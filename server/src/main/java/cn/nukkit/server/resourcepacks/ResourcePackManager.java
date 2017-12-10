@@ -1,27 +1,44 @@
 package cn.nukkit.server.resourcepacks;
 
+import cn.nukkit.api.resourcepack.ResourcePack;
 import cn.nukkit.server.NukkitServer;
-import com.google.common.io.Files;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2
 public class ResourcePackManager {
     private ResourcePack[] resourcePacks;
     private Map<String, ResourcePack> resourcePacksById = new HashMap<>();
 
-    public ResourcePackManager(File path) {
-        if (!path.exists()) {
-            path.mkdirs();
-        } else if (!path.isDirectory()) {
-            throw new IllegalArgumentException(NukkitServer.getInstance().getLanguage()
-                    .translateString("nukkit.resources.invalid-path", path.getName()));
+    public ResourcePackManager(NukkitServer server, Path resourcePath) throws Exception {
+        if (Files.notExists(resourcePath)) {
+            Files.createDirectory(resourcePath);
+        } else if (!Files.isDirectory(resourcePath)) {
+            throw new IllegalArgumentException(server.getLanguage()
+                    .translateString("nukkit.resources.invalid-path", resourcePath.toString()));
         }
 
         List<ResourcePack> loadedResourcePacks = new ArrayList<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(resourcePath, file -> Files.isRegularFile(file) && (file.toString().endsWith("zip") || file.toString().endsWith("mcpack")))) {
+            stream.forEach(path ->{
+                ResourcePack pack = new ZippedResourcePack(path);
+                if (pack != null) {
+                    loadedResourcePacks.add(pack);
+                    resourcePacksById.put(pack.getPackId(), pack);
+                }
+            });
+        } catch (Exception e) {
+            log.warn(server.getLanguage().translateString("nukkit.resources.fail", pack.getName(), e.getMessage()));
+        }
+
         for (File pack : path.listFiles()) {
             try {
                 ResourcePack resourcePack = null;
@@ -33,7 +50,7 @@ public class ResourcePackManager {
                             resourcePack = new ZippedResourcePack(pack);
                             break;
                         default:
-                            NukkitServer.getInstance().getLogger().warning(NukkitServer.getInstance().getLanguage()
+                            log.warn(NukkitServer.getInstance().getLanguage()
                                     .translateString("nukkit.resources.unknown-format", pack.getName()));
                             break;
                     }
@@ -44,13 +61,13 @@ public class ResourcePackManager {
                     this.resourcePacksById.put(resourcePack.getPackId(), resourcePack);
                 }
             } catch (IllegalArgumentException e) {
-                NukkitServer.getInstance().getLogger().warning(NukkitServer.getInstance().getLanguage()
+                log.warn(NukkitServer.getInstance().getLanguage()
                         .translateString("nukkit.resources.fail", pack.getName(), e.getMessage()));
             }
         }
 
         this.resourcePacks = loadedResourcePacks.toArray(new ResourcePack[loadedResourcePacks.size()]);
-        NukkitServer.getInstance().getLogger().info(NukkitServer.getInstance().getLanguage()
+        log.info(NukkitServer.getInstance().getLanguage()
                 .translateString("nukkit.resources.success", String.valueOf(this.resourcePacks.length)));
     }
 

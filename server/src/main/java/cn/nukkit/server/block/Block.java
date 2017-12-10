@@ -1,6 +1,5 @@
 package cn.nukkit.server.block;
 
-import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
@@ -14,7 +13,6 @@ import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.metadata.MetadataValue;
 import cn.nukkit.server.metadata.Metadatable;
-import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.potion.Effect;
 import cn.nukkit.server.utils.BlockColor;
 
@@ -609,7 +607,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                             fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
                         }
                     } catch (Exception e) {
-                        NukkitServer.getInstance().getLogger().error("Error while registering " + c.getName(), e);
+                        log.error("Error while registering " + c.getName(), e);
                         for (int data = 0; data < 16; ++data) {
                             fullList[(id << 4) | data] = new BlockUnknown(id, data);
                         }
@@ -1021,7 +1019,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
 
     @Override
     public String toString() {
-        return "Block[" + this.getName() + "] (" + this.getId() + ":" + this.getDamage() + ")";
+        return "BlockType[" + this.getName() + "] (" + this.getId() + ":" + this.getDamage() + ")";
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {

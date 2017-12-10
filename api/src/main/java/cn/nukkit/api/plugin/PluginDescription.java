@@ -1,7 +1,9 @@
 package cn.nukkit.api.plugin;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableMap;
+
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Optional;
 
 public interface PluginDescription {
@@ -9,13 +11,21 @@ public interface PluginDescription {
      * The ID for this plugin. This should be an alphanumeric name. Slashes are also allowed.
      * @return the ID for this plugin
      */
-    String getId();
+    String getName();
+
+    ImmutableCollection<String> getApiVersions();
+
+    /**
+     * The path where the plugin is located on the file system.
+     * @return the path of this plugin
+     */
+    Optional<Path> getPath();
 
     /**
      * The author of this plugin.
      * @return the plugin's author
      */
-    String getAuthor();
+    ImmutableCollection<String> getAuthors();
 
     /**
      * The version of this plugin.
@@ -27,17 +37,33 @@ public interface PluginDescription {
      * The array of plugin IDs that this plugin requires in order to load.
      * @return the dependencies
      */
-    Collection<String> getDependencies();
+    ImmutableCollection<String> getDependencies();
 
     /**
      * The array of plugin IDs that this plugin optionally depends on.
      * @return the soft dependencies
      */
-    Collection<String> getSoftDependencies();
+    ImmutableCollection<String> getSoftDependencies();
 
     /**
-     * The path where the plugin is located on the file system.
-     * @return the path of this plugin
+     * Plugin's website specified in the plugin.yml.
+     * @return website url
      */
-    Optional<Path> getPath();
+    Optional<String> getWebsite();
+
+    /**
+     * The plugin's logger prefix used in the console.
+     * @return logger prefix
+     */
+    Optional<String> getLoggerPrefix();
+
+    Optional<PluginLoadOrder> getLoadOrder();
+
+    Optional<String> getDescription();
+
+    ImmutableMap<String, PermissionDescription> getPermissionDescriptions();
+
+    ImmutableMap<String, CommandDescription> getCommandDescriptions();
+
+    ImmutableCollection<String> getPluginsToLoadBefore();
 }

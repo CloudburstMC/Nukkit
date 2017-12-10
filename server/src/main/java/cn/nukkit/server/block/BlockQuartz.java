@@ -45,8 +45,8 @@ public class BlockQuartz extends BlockSolid {
     @Override
     public String getName() {
         String[] names = new String[]{
-                "Quartz Block",
-                "Chiseled Quartz Block",
+                "Quartz BlockType",
+                "Chiseled Quartz BlockType",
                 "Quartz Pillar",
                 "Quartz Pillar"
         };

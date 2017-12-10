@@ -48,7 +48,7 @@ public class BlockCoal extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Block of Coal";
+        return "BlockType of Coal";
     }
 
     @Override

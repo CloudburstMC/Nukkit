@@ -1,7 +1,5 @@
 package cn.nukkit.server.raknet.server;
 
-import cn.nukkit.server.NukkitServer;
-
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -99,7 +97,7 @@ public class RakNetServer extends Thread {
         try {
             new SessionManager(this, socket);
         } catch (Exception e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.logException(e);
         }
     }
 }

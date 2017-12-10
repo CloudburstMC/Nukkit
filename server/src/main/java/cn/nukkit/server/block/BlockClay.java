@@ -40,7 +40,7 @@ public class BlockClay extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Clay Block";
+        return "Clay BlockType";
     }
 
     @Override

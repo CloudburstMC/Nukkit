@@ -20,7 +20,7 @@ public class BlockPotato extends BlockCrops {
 
     @Override
     public String getName() {
-        return "Potato Block";
+        return "Potato BlockType";
     }
 
     @Override

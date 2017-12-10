@@ -2,7 +2,6 @@ package cn.nukkit.server;
 
 import cn.nukkit.server.metadata.MetadataValue;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.plugin.Plugin;
 
 import java.io.File;
 import java.util.List;

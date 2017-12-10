@@ -45,7 +45,7 @@ public class BlockFire extends BlockFlowable {
 
     @Override
     public String getName() {
-        return "Fire Block";
+        return "Fire BlockType";
     }
 
     @Override

@@ -1,7 +1,6 @@
 package cn.nukkit.api.event.level;
 
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.api.level.Level;
 
 /**
  * author: MagicDroidX
@@ -9,14 +8,7 @@ import cn.nukkit.server.level.Level;
  */
 public class LevelInitEvent extends LevelEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-
     public LevelInitEvent(Level level) {
         super(level);
     }
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
 }

@@ -20,7 +20,7 @@ public class BlockRedstoneComparatorUnpowered extends BlockRedstoneComparator {
 
     @Override
     public String getName() {
-        return "Comparator Block Unpowered";
+        return "Comparator BlockType Unpowered";
     }
 
     @Override

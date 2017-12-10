@@ -20,7 +20,7 @@ public class BlockWheat extends BlockCrops {
 
     @Override
     public String getName() {
-        return "Wheat Block";
+        return "Wheat BlockType";
     }
 
     @Override

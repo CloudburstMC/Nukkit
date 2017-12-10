@@ -2,7 +2,6 @@ package cn.nukkit.server.lang;
 
 import cn.nukkit.api.message.Message;
 import cn.nukkit.api.message.TranslatedMessage;
-import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.utils.Utils;
 
 import java.io.IOException;
@@ -66,7 +65,7 @@ public class BaseLang {
         try {
             return processLang(Utils.readFile(path));
         } catch (IOException e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.logException(e);
             return null;
         }
     }
@@ -75,7 +74,7 @@ public class BaseLang {
         try {
             return processLang(Utils.readFile(stream));
         } catch (IOException e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.logException(e);
             return null;
         }
     }

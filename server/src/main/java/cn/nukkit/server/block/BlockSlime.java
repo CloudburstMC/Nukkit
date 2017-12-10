@@ -20,7 +20,7 @@ public class BlockSlime extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Slime Block";
+        return "Slime BlockType";
     }
 
     @Override

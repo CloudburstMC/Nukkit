@@ -1,6 +1,5 @@
 package cn.nukkit.server.permission;
 
-import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.utils.PluginException;
 
 import java.util.HashMap;
@@ -66,8 +65,8 @@ public class PermissionAttachment {
         this.permissible.recalculatePermissions();
     }
 
-    public void setPermission(Permission permission, boolean value) {
-        this.setPermission(permission.getName(), value);
+    public void setPermission(NukkitPermission nukkitPermission, boolean value) {
+        this.setPermission(nukkitPermission.getName(), value);
     }
 
     public void setPermission(String name, boolean value) {
@@ -81,8 +80,8 @@ public class PermissionAttachment {
         this.permissible.recalculatePermissions();
     }
 
-    public void unsetPermission(Permission permission, boolean value) {
-        this.unsetPermission(permission.getName(), value);
+    public void unsetPermission(NukkitPermission nukkitPermission, boolean value) {
+        this.unsetPermission(nukkitPermission.getName(), value);
     }
 
     public void unsetPermission(String name, boolean value) {

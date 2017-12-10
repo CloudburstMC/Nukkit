@@ -22,7 +22,7 @@ public class BlockDoorIron extends BlockDoor {
 
     @Override
     public String getName() {
-        return "Iron Door Block";
+        return "Iron Door BlockType";
     }
 
     @Override

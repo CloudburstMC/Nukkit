@@ -1,43 +1,37 @@
 package cn.nukkit.api.event.player;
 
+import cn.nukkit.api.MessageRecipient;
 import cn.nukkit.api.Player;
+import cn.nukkit.api.Server;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.permission.Permissible;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.command.CommandSender;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.permission.Permissible;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class PlayerChatEvent extends PlayerMessageEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
 
     protected String format;
 
-    protected Set<CommandSender> recipients = new HashSet<>();
+    protected Set<MessageRecipient> recipients = new HashSet<>();
 
     public PlayerChatEvent(Player player, String message) {
         this(player, message, "chat.type.text", null);
     }
 
-    public PlayerChatEvent(Player player, String message, String format, Set<CommandSender> recipients) {
+    public PlayerChatEvent(Server server, Player player, String message, String format, Set<MessageRecipient> recipients) {
         this.player = player;
         this.message = message;
 
         this.format = format;
 
         if (recipients == null) {
-            for (Permissible permissible : NukkitServer.getInstance().getPluginManager().getPermissionSubscriptions(NukkitServer.BROADCAST_CHANNEL_USERS)) {
-                if (permissible instanceof CommandSender) {
-                    this.recipients.add((CommandSender) permissible);
+            for (Permissible permissible : server.getPluginManager().getPermissionSubscriptions(NukkitServer.BROADCAST_CHANNEL_USERS)) {
+                if (permissible instanceof MessageRecipient) {
+                    this.recipients.add((MessageRecipient) permissible);
                 }
             }
-
         } else {
             this.recipients = recipients;
         }
@@ -58,11 +52,7 @@ public class PlayerChatEvent extends PlayerMessageEvent implements Cancellable {
         this.format = format;
     }
 
-    public Set<CommandSender> getRecipients() {
+    public Set<MessageRecipient> getRecipients() {
         return this.recipients;
-    }
-
-    public void setRecipients(Set<CommandSender> recipients) {
-        this.recipients = recipients;
     }
 }

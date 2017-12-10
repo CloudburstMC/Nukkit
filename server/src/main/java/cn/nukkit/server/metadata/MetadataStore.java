@@ -1,6 +1,5 @@
 package cn.nukkit.server.metadata;
 
-import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.utils.PluginException;
 import cn.nukkit.server.utils.ServerException;
 

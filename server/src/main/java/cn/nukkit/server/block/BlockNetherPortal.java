@@ -22,7 +22,7 @@ public class BlockNetherPortal extends BlockFlowable {
 
     @Override
     public String getName() {
-        return "Nether Portal Block";
+        return "Nether Portal BlockType";
     }
 
     @Override

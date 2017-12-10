@@ -82,7 +82,7 @@ public abstract class AsyncTask implements Runnable {
             try {
                 task.onCompletion(NukkitServer.getInstance());
             } catch (Exception e) {
-                NukkitServer.getInstance().getLogger().critical("Exception while async task "
+                log.critical("Exception while async task "
                         + task.getTaskId()
                         + " invoking onCompletion", e);
             }

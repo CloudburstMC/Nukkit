@@ -1,6 +1,5 @@
 package cn.nukkit.server.permission;
 
-import cn.nukkit.server.NukkitServer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -86,7 +85,7 @@ public class BanEntry {
             banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
             banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
         } catch (ParseException e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.logException(e);
         }
         banEntry.setSource(map.get("source"));
         banEntry.setReason(map.get("reason"));
@@ -105,7 +104,7 @@ public class BanEntry {
             banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
             banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
         } catch (ParseException e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.logException(e);
         }
         banEntry.setSource(map.get("source"));
         banEntry.setReason(map.get("reason"));

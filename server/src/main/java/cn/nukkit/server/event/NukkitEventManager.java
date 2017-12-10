@@ -1,9 +1,6 @@
 package cn.nukkit.server.event;
 
-import cn.nukkit.api.event.Event;
-import cn.nukkit.api.event.EventHandler;
-import cn.nukkit.api.event.EventManager;
-import cn.nukkit.api.event.Listener;
+import cn.nukkit.api.event.*;
 import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.server.event.firehandler.ReflectionEventFireHandler;
 import com.google.common.base.Preconditions;
@@ -12,20 +9,23 @@ import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class NukkitEventManager implements EventManager{
-    private final List<Object> listeners = new ArrayList<>();
-    private final Map<Object, List<Object>> listenersByPlugin = new HashMap<>();
-    private final Object registerLock = new Object();
+public class NukkitEventManager implements EventManager {
     private volatile Map<Class<? extends Event>, EventFireHandler> eventHandlers = Collections.emptyMap();
+    private final Map<Plugin, List<Listener>> listenersByPlugin = new HashMap<>();
+    private final List<Listener> listeners = new ArrayList<>();
+    private final Object registerLock = new Object();
 
     @Override
-    public void register(Listener listener, Plugin plugin) {
+    public void registerListener(Listener listener, Plugin plugin) {
         Preconditions.checkNotNull(plugin, "plugin");
         Preconditions.checkNotNull(listener, "listener");
 
         // Verify that all listeners are valid.
         for (Method method : listener.getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(EventHandler.class)) {
+                if (method.isBridge() || method.isSynthetic()) {
+                    continue;
+                }
                 if (method.getParameterCount() != 1) {
                     throw new IllegalArgumentException("Method " + method.getName() + " in " + listener + " does not accept only one parameter.");
                 }
@@ -35,6 +35,16 @@ public class NukkitEventManager implements EventManager{
                 }
 
                 method.setAccessible(true);
+
+                /*for (Class<?> clazz = eventClass; Event.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) { TODO: Reimplement verbose for deprecated events.
+                    // This loop checks for extending deprecated events
+                    if (clazz.getAnnotation(Deprecated.class) != null) {
+                        if (Boolean.valueOf(String.valueOf(this.server.getConfig("settings.deprecated-verbose", true)))) {
+                            log.warn(this.server.getLanguage().translateString("nukkit.plugin.deprecatedEvent", plugin.getName(), clazz.getName(), listener.getClass().getName() + "." + method.getName() + "()"));
+                        }
+                        break;
+                    }
+                }*/
             }
         }
 
@@ -58,8 +68,8 @@ public class NukkitEventManager implements EventManager{
     public void unregisterListener(Listener listener) {
         Preconditions.checkNotNull(listener, "listener");
         synchronized (registerLock) {
-            for (List<Object> objects : listenersByPlugin.values()) {
-                objects.remove(listener);
+            for (List<Listener> listeners : listenersByPlugin.values()) {
+                listeners.remove(listener);
             }
             listeners.remove(listener);
             bakeHandlers();
@@ -70,18 +80,33 @@ public class NukkitEventManager implements EventManager{
     public void unregisterAllListeners(Plugin plugin) {
         Preconditions.checkNotNull(plugin, "plugin");
         synchronized (registerLock) {
-            List<Object> objects = listenersByPlugin.remove(plugin);
-            if (objects != null) {
-                listeners.removeAll(objects);
+            List<Listener> listeners = listenersByPlugin.remove(plugin);
+            if (listeners != null) {
+                this.listeners.removeAll(listeners);
                 bakeHandlers();
             }
         }
     }
 
+    public void unregisterListeners(Collection<Listener> listeners) {
+        Preconditions.checkNotNull(listeners, "listeners");
+        synchronized (registerLock) {
+            if (listeners.size() > 0) {
+                this.listeners.removeAll(listeners);
+                bakeHandlers();
+            }
+        }
+    }
+
+    public void getEventListenerMethods(Class<? extends Event> eventClass) {
+        Preconditions.checkNotNull(eventClass, "eventClass");
+        eventHandlers.get(eventClass).getMethods();
+    }
+
     private void bakeHandlers() {
         Map<Class<? extends Event>, List<ReflectionEventFireHandler.ListenerMethod>> listenerMap = new HashMap<>();
 
-        for (Object listener : listeners) {
+        for (Listener listener : listeners) {
             for (Method method : listener.getClass().getDeclaredMethods()) {
                 if (method.isAnnotationPresent(EventHandler.class)) {
                     listenerMap.computeIfAbsent((Class<? extends Event>) method.getParameterTypes()[0], (k) -> new ArrayList<>())

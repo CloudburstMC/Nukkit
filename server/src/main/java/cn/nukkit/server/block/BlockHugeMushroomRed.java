@@ -20,7 +20,7 @@ public class BlockHugeMushroomRed extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Red Mushroom Block";
+        return "Red Mushroom BlockType";
     }
 
     @Override

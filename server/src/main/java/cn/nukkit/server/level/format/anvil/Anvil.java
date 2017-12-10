@@ -338,7 +338,7 @@ public class Anvil extends BaseLevelProvider {
     public static ChunkSection createChunkSection(int y) {
         CompoundTag nbt = new CompoundTag();
         nbt.putByte("Y", y);
-        nbt.putByteArray("Blocks", new byte[4096]);
+        nbt.putByteArray("BlockTypes", new byte[4096]);
         nbt.putByteArray("Data", new byte[2048]);
         byte[] sl = new byte[2048];
         Arrays.fill(sl, (byte) 0xff);

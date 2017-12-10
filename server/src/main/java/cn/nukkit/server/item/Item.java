@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  */
 public class Item implements Cloneable {
 
-    //All Block IDs are here too
+    //All BlockType IDs are here too
     public static final int AIR = 0;
     public static final int STONE = 1;
     public static final int GRASS = 2;
@@ -603,8 +603,8 @@ public class Item implements Cloneable {
         }
         this.count = count;
         this.name = name;
-        /*f (this.block != null && this.id <= 0xff && Block.list[id] != null) { //probably useless
-            this.block = Block.get(this.id, this.meta);
+        /*f (this.block != null && this.id <= 0xff && BlockType.list[id] != null) { //probably useless
+            this.block = BlockType.get(this.id, this.meta);
             this.name = this.block.getName();
         }*/
     }

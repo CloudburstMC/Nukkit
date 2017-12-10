@@ -23,7 +23,7 @@ package cn.nukkit.api.event;
  *    {@code @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)}
  *     public void onBlockBreak(BlockBreakEvent event) {
  *          int blockID = event.getBlock().getId();
- *          if (blockID == Block.STONE) {
+ *          if (blockID == BlockType.STONE) {
  *              event.getPlayer().sendMessage("Oops, my ExampleListener won't let you break a stone!")
  *              event.setCancelled(true);
  *          }

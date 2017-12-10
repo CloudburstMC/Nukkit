@@ -50,7 +50,7 @@ public class BlockBed extends BlockTransparent {
 
     @Override
     public String getName() {
-        return this.getDyeColor().getName() + " Bed Block";
+        return this.getDyeColor().getName() + " Bed BlockType";
     }
 
     @Override

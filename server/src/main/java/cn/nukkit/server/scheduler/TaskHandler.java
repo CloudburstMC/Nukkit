@@ -1,7 +1,5 @@
 package cn.nukkit.server.scheduler;
 
-import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.plugin.Plugin;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 
@@ -98,7 +96,7 @@ public class TaskHandler {
             setLastRunTick(currentTick);
             getTask().run();
         } catch (RuntimeException ex) {
-            NukkitServer.getInstance().getLogger().critical("Exception while invoking run", ex);
+            log.critical("Exception while invoking run", ex);
         }
     }
 

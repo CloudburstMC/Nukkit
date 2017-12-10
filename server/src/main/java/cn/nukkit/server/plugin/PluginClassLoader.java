@@ -1,61 +1,47 @@
 package cn.nukkit.server.plugin;
 
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
 public class PluginClassLoader extends URLClassLoader {
+    private static final Set<PluginClassLoader> loaders = new CopyOnWriteArraySet<>();
 
-    private JavaPluginLoader loader;
+    static {
+        ClassLoader.registerAsParallelCapable();
+    }
 
-    private final Map<String, Class> classes = new HashMap<>();
-
-    public PluginClassLoader(JavaPluginLoader loader, ClassLoader parent, File file) throws MalformedURLException {
-        super(new URL[]{file.toURI().toURL()}, parent);
-        this.loader = loader;
+    public PluginClassLoader(URL[] urls) {
+        super(urls);
+        loaders.add(this);
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        return this.findClass(name, true);
-
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        return loadClass0(name, resolve, true);
     }
 
-    protected Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
+    private Class<?> loadClass0(String name, boolean resolve, boolean checkOther) throws ClassNotFoundException {
         if (name.startsWith("cn.nukkit.") || name.startsWith("net.minecraft.")) {
             throw new ClassNotFoundException(name);
         }
-        Class<?> result = classes.get(name);
-
-        if (result == null) {
-            if (checkGlobal) {
-                result = loader.getClassByName(name);
-            }
-
-            if (result == null) {
-                result = super.findClass(name);
-
-                if (result != null) {
-                    loader.setClass(name, result);
+        try {
+            return super.loadClass(name, resolve);
+        } catch (ClassNotFoundException ignored) {
+            // Ignored: we'll try others
+        }
+        if (checkOther) {
+            for (PluginClassLoader loader : loaders) {
+                if (loader != this) {
+                    try {
+                        return loader.loadClass0(name, resolve, false);
+                    } catch (ClassNotFoundException ignored) {
+                        // We're trying others, safe to ignore
+                    }
                 }
             }
-
-            classes.put(name, result);
         }
-
-        return result;
+        throw new ClassNotFoundException(name);
     }
-
-    Set<String> getClasses() {
-        return classes.keySet();
-    }
-
 }

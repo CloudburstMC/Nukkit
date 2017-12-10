@@ -4,7 +4,6 @@ import cn.nukkit.api.event.player.PlayerEatFoodEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.potion.Effect;
 
 import java.util.*;

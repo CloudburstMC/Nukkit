@@ -1,12 +1,12 @@
 package cn.nukkit.server.command.defaults;
 
-import cn.nukkit.server.command.Command;
+import cn.nukkit.server.command.NukkitCommand;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class VanillaCommand extends Command {
+public abstract class VanillaCommand extends NukkitCommand {
 
     public VanillaCommand(String name) {
         super(name);

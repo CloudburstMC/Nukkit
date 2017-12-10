@@ -1,8 +1,5 @@
 package cn.nukkit.server.utils;
 
-import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.plugin.Plugin;
-
 import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -99,7 +96,7 @@ public abstract class SimpleConfig {
                 } else
                     throw new IllegalStateException("SimpleConfig did not supports class: " + field.getType().getName() + " for config field " + configFile.getName());
             } catch (Exception e) {
-                NukkitServer.getInstance().getLogger().logException(e);
+                log.logException(e);
                 return false;
             }
         }

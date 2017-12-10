@@ -1,5 +1,8 @@
 package cn.nukkit.server.command;
 
+import cn.nukkit.api.command.Command;
+import cn.nukkit.api.command.CommandExecutorSource;
+
 import java.util.List;
 
 /**
@@ -14,9 +17,9 @@ public interface CommandMap {
 
     boolean register(String fallbackPrefix, Command command, String label);
 
-    void registerSimpleCommands(Object object);
+    <T> void registerSimpleCommands(T object) throws Exception;
 
-    boolean dispatch(CommandSender sender, String cmdLine);
+    boolean dispatch(CommandExecutorSource sender, String cmdLine);
 
     void clearCommands();
 

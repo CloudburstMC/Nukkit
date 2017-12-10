@@ -2,8 +2,7 @@ package cn.nukkit.server.command.defaults;
 
 import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.network.protocol.ProtocolInfo;
-import cn.nukkit.server.plugin.Plugin;
-import cn.nukkit.server.plugin.PluginDescription;
+import cn.nukkit.server.plugin.NukkitPluginDescription;
 import cn.nukkit.server.utils.TextFormat;
 
 import java.util.List;
@@ -59,7 +58,7 @@ public class VersionCommand extends VanillaCommand {
             }
 
             if (found[0]) {
-                PluginDescription desc = exactPlugin[0].getDescription();
+                NukkitPluginDescription desc = exactPlugin[0].getDescription();
                 sender.sendMessage(TextFormat.DARK_GREEN + desc.getName() + TextFormat.WHITE + " version " + TextFormat.DARK_GREEN + desc.getVersion());
                 if (desc.getDescription() != null) {
                     sender.sendMessage(desc.getDescription());

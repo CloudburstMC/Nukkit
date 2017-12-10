@@ -1,11 +1,13 @@
 package cn.nukkit.server.event.firehandler;
 
 import cn.nukkit.api.event.Event;
+import cn.nukkit.api.event.EventFireHandler;
 import cn.nukkit.api.event.EventHandler;
-import cn.nukkit.server.event.EventFireHandler;
+import cn.nukkit.api.event.Listener;
 import com.google.common.collect.ImmutableList;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -40,11 +42,16 @@ public class ReflectionEventFireHandler implements EventFireHandler {
         }
     }
 
-    public static class ListenerMethod implements Comparable<ListenerMethod> {
-        private final Object listener;
+    @Override
+    public ImmutableList<EventFireHandler.ListenerMethod> getMethods() {
+        return ImmutableList.copyOf(methods);
+    }
+
+    public static class ListenerMethod implements Comparable<ListenerMethod>, EventFireHandler.ListenerMethod {
+        private final Listener listener;
         private final Method method;
 
-        public ListenerMethod(Object listener, Method method) {
+        public ListenerMethod(Listener listener, Method method) {
             this.listener = listener;
             this.method = method;
         }
@@ -58,10 +65,12 @@ public class ReflectionEventFireHandler implements EventFireHandler {
             return listener.getClass().getName() + "#" + method.getName();
         }
 
-        public Object getListener() {
+        @Override
+        public Listener getListener() {
             return listener;
         }
 
+        @Override
         public Method getMethod() {
             return method;
         }
@@ -78,7 +87,7 @@ public class ReflectionEventFireHandler implements EventFireHandler {
                 return 1;
             }
 
-            return Integer.compare(handler.order(), handler2.order());
+            return Integer.compare(handler.priority().ordinal(), handler2.priority().ordinal());
         }
     }
 }

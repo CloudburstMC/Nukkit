@@ -1,6 +1,6 @@
 package cn.nukkit.api.event.plugin;
 
-import cn.nukkit.server.plugin.Plugin;
+import cn.nukkit.api.plugin.Plugin;
 
 /**
  * author: MagicDroidX

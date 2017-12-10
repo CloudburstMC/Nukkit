@@ -1,6 +1,5 @@
 package cn.nukkit.server.level.format.generic;
 
-import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.level.format.Chunk;
 import cn.nukkit.server.level.format.ChunkSection;
 import cn.nukkit.server.level.format.LevelProvider;
@@ -61,7 +60,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                NukkitServer.getInstance().getLogger().logException(e1);
+                log.logException(e1);
             }
             return this.sections[y >> 4].setBlock(x, y & 0x0f, z, id, damage);
         }
@@ -82,7 +81,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                NukkitServer.getInstance().getLogger().logException(e1);
+                log.logException(e1);
             }
             this.setBlockId(x, y, z, id);
         }
@@ -103,7 +102,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                NukkitServer.getInstance().getLogger().logException(e1);
+                log.logException(e1);
             }
             this.setBlockData(x, y, z, data);
         }
@@ -124,7 +123,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                NukkitServer.getInstance().getLogger().logException(e1);
+                log.logException(e1);
             }
             this.setBlockSkyLight(x, y, z, level);
         }
@@ -145,7 +144,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                NukkitServer.getInstance().getLogger().logException(e1);
+                log.logException(e1);
             }
             this.setBlockLight(x, y, z, level);
         }

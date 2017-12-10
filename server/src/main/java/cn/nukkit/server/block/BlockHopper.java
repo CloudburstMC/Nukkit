@@ -32,7 +32,7 @@ public class BlockHopper extends BlockTransparent {
 
     @Override
     public String getName() {
-        return "Hopper Block";
+        return "Hopper BlockType";
     }
 
     @Override

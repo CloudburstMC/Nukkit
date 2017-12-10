@@ -21,7 +21,7 @@ public class BlockRedstoneComparatorPowered extends BlockRedstoneComparator {
 
     @Override
     public String getName() {
-        return "Comparator Block Powered";
+        return "Comparator BlockType Powered";
     }
 
     @Override

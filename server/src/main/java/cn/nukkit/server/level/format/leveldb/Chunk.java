@@ -1,6 +1,5 @@
 package cn.nukkit.server.level.format.leveldb;
 
-import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.entity.Entity;
@@ -399,7 +398,7 @@ public class Chunk extends BaseFullChunk {
                 return chunk;
             }
         } catch (Exception e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.logException(e);
         }
         return null;
     }

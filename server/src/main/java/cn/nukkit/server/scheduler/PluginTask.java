@@ -1,8 +1,6 @@
 package cn.nukkit.server.scheduler;
 
 
-import cn.nukkit.server.plugin.Plugin;
-
 /**
  * 插件创建的任务。<br>Task that created by a plugin.
  * <p>

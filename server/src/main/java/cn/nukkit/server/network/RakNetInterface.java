@@ -50,7 +50,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
     public RakNetInterface(NukkitServer server) {
         this.server = server;
 
-        this.raknet = new RakNetServer(this.server.getLogger(), this.server.getPort(), this.server.getIp().equals("") ? "0.0.0.0" : this.server.getIp());
+        this.raknet = new RakNetServer(log, this.server.getPort(), this.server.getIp().equals("") ? "0.0.0.0" : this.server.getIp());
         this.handler = new ServerHandler(this.raknet, this);
     }
 
@@ -131,7 +131,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
             this.identifiers.put(player.rawHashCode(), identifier);
             this.server.addPlayer(identifier, player);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            NukkitServer.getInstance().getLogger().logException(e);
+            log.logException(e);
         }
     }
 
@@ -157,9 +157,9 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                     }
                 }
             } catch (Exception e) {
-                this.server.getLogger().logException(e);
+                log.logException(e);
                 if (Bootstrap.DEBUG > 1 && pk != null) {
-                    MainLogger logger = this.server.getLogger();
+                    MainLogger logger = log;
 //                    if (logger != null) {
                     logger.debug("Packet " + pk.getClass().getName() + " 0x" + Binary.bytesToHexString(packet.buffer));
                     //logger.logException(e);

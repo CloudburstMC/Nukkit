@@ -31,11 +31,11 @@ public class RCON {
             this.serverThread = new RCONServer(address, port, password);
             this.serverThread.start();
         } catch (IOException exception) {
-            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.server.rcon.startupError", exception.getMessage()));
+            log.error(this.server.getLanguage().translateString("nukkit.server.rcon.startupError", exception.getMessage()));
             return;
         }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.rcon.running", new String[]{address, String.valueOf(port)}));
+        log.info(this.server.getLanguage().translateString("nukkit.server.rcon.running", new String[]{address, String.valueOf(port)}));
     }
 
     public void check() {

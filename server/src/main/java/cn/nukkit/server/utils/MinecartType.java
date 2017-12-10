@@ -40,7 +40,7 @@ public enum MinecartType {
     /**
      * Represents a command block minecart.
      */
-    MINECART_COMMAND_BLOCK(6, true, "Minecart with Command Block"),
+    MINECART_COMMAND_BLOCK(6, true, "Minecart with Command BlockType"),
     /**
      * Represents an unknown minecart.
      */

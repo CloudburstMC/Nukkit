@@ -17,6 +17,7 @@ import cn.nukkit.api.event.server.DataPacketReceiveEvent;
 import cn.nukkit.api.event.server.DataPacketSendEvent;
 import cn.nukkit.api.message.Message;
 import cn.nukkit.api.message.TranslatedMessage;
+import cn.nukkit.api.resourcepack.ResourcePack;
 import cn.nukkit.server.AdventureSettings.Type;
 import cn.nukkit.server.block.*;
 import cn.nukkit.server.blockentity.BlockEntity;
@@ -59,14 +60,12 @@ import cn.nukkit.server.network.SourceInterface;
 import cn.nukkit.server.network.protocol.*;
 import cn.nukkit.server.network.protocol.types.ContainerIds;
 import cn.nukkit.server.network.protocol.types.NetworkInventoryAction;
-import cn.nukkit.server.permission.PermissibleBase;
-import cn.nukkit.server.permission.Permission;
+import cn.nukkit.server.permission.NukkitPermissible;
+import cn.nukkit.server.permission.NukkitPermission;
 import cn.nukkit.server.permission.PermissionAttachment;
 import cn.nukkit.server.permission.PermissionAttachmentInfo;
-import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.potion.Effect;
 import cn.nukkit.server.potion.Potion;
-import cn.nukkit.server.resourcepacks.ResourcePack;
 import cn.nukkit.server.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -193,7 +192,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private Map<Integer, List<DataPacket>> batchedPackets = new TreeMap<>();
 
-    private PermissibleBase perm = null;
+    private NukkitPermissible perm = null;
 
     private int exp = 0;
     private int expLevel = 0;
@@ -471,9 +470,31 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.perm.isPermissionSet(name);
     }
 
-    @Override
-    public boolean isPermissionSet(Permission permission) {
-        return this.perm.isPermissionSet(permission);
+    public Player(SourceInterface interfaz, Long clientID, String ip, int port) {
+        super(null, new CompoundTag());
+        this.interfaz = interfaz;
+        this.windows = new HashMap<>();
+        this.perm = new NukkitPermissible(this);
+        this.server = NukkitServer.getInstance();
+        this.lastBreak = Long.MAX_VALUE;
+        this.ip = ip;
+        this.port = port;
+        this.clientID = clientID;
+        this.loaderId = Level.generateChunkLoaderId(this);
+        this.chunksPerTick = (int) this.server.getConfig("chunk-sending.per-tick", 4);
+        this.spawnThreshold = (int) this.server.getConfig("chunk-sending.spawn-threshold", 56);
+        this.spawnPosition = null;
+        this.gamemode = this.server.getGamemode();
+        this.setLevel(this.server.getDefaultLevel());
+        this.viewDistance = this.server.getViewDistance();
+        this.chunkRadius = viewDistance;
+        //this.newPosition = new Vector3(0, 0, 0);
+        this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
+
+        this.uuid = null;
+        this.rawUUID = null;
+
+        this.creationTime = System.currentTimeMillis();
     }
 
     @Override
@@ -482,8 +503,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public boolean hasPermission(Permission permission) {
-        return this.perm.hasPermission(permission);
+    public boolean isPermissionSet(NukkitPermission nukkitPermission) {
+        return this.perm.isPermissionSet(nukkitPermission);
     }
 
     @Override
@@ -577,31 +598,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.perm.getEffectivePermissions();
     }
 
-    public Player(SourceInterface interfaz, Long clientID, String ip, int port) {
-        super(null, new CompoundTag());
-        this.interfaz = interfaz;
-        this.windows = new HashMap<>();
-        this.perm = new PermissibleBase(this);
-        this.server = NukkitServer.getInstance();
-        this.lastBreak = Long.MAX_VALUE;
-        this.ip = ip;
-        this.port = port;
-        this.clientID = clientID;
-        this.loaderId = Level.generateChunkLoaderId(this);
-        this.chunksPerTick = (int) this.server.getConfig("chunk-sending.per-tick", 4);
-        this.spawnThreshold = (int) this.server.getConfig("chunk-sending.spawn-threshold", 56);
-        this.spawnPosition = null;
-        this.gamemode = this.server.getGamemode();
-        this.setLevel(this.server.getDefaultLevel());
-        this.viewDistance = this.server.getViewDistance();
-        this.chunkRadius = viewDistance;
-        //this.newPosition = new Vector3(0, 0, 0);
-        this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
-
-        this.uuid = null;
-        this.rawUUID = null;
-
-        this.creationTime = System.currentTimeMillis();
+    @Override
+    public boolean hasPermission(NukkitPermission nukkitPermission) {
+        return this.perm.hasPermission(nukkitPermission);
     }
 
     @Override
@@ -1416,7 +1415,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 revert = ev.isRevert();
 
                                 if (revert) {
-                                    this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                                    log.warn(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
                                 }
                             }
                         }
@@ -1944,7 +1943,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.setNameTagAlwaysVisible(true);
         this.setCanClimb(true);
 
-        this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logIn",
+        log.info(this.getServer().getLanguage().translateString("nukkit.player.logIn",
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
                 this.ip,
                 String.valueOf(this.port),
@@ -2190,7 +2189,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Item item = this.inventory.getItem(mobEquipmentPacket.hotbarSlot);
 
                     if (!item.equals(mobEquipmentPacket.item)) {
-                        this.server.getLogger().debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
+                        log.debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
                         this.inventory.sendContents(this);
                         return;
                     }
@@ -2438,7 +2437,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     if (targetEntity instanceof EntityItem || targetEntity instanceof EntityArrow || targetEntity instanceof EntityXPOrb) {
                         this.kick(PlayerKickEvent.Reason.INVALID_PVE, "Attempting to interact with an invalid entity");
-                        this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
+                        log.warn(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
                         break;
                     }
 
@@ -2477,7 +2476,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     PlayerBlockPickEvent pickEvent = new PlayerBlockPickEvent(this, block, item);
                     if (!this.isCreative()) {
-                        this.server.getLogger().debug("Got block-pick request from " + this.getName() + " when not in creative mode (gamemode " + this.getGamemode() + ")");
+                        log.debug("Got block-pick request from " + this.getName() + " when not in creative mode (gamemode " + this.getGamemode() + ")");
                         pickEvent.setCancelled();
                     }
 
@@ -2677,7 +2676,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     if (!canCraft) {
-                        this.server.getLogger().debug("(1) Unmatched recipe " + craftingEventPacket.id + " from player " + this.getName() + "  not anough ingredients");
+                        log.debug("(1) Unmatched recipe " + craftingEventPacket.id + " from player " + this.getName() + "  not anough ingredients");
                         return;
                     }
 
@@ -2891,7 +2890,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break packetswitch;
                         case InventoryTransactionPacket.TYPE_MISMATCH:
                             if (transactionPacket.actions.length > 0) {
-                                this.server.getLogger().debug("Expected 0 actions for mismatch, got " + transactionPacket.actions.length + ", " + Arrays.toString(transactionPacket.actions));
+                                log.debug("Expected 0 actions for mismatch, got " + transactionPacket.actions.length + ", " + Arrays.toString(transactionPacket.actions));
                             }
                             this.sendAllInventories();
 
@@ -3534,7 +3533,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.server.getPluginManager().unsubscribeFromPermission(NukkitServer.BROADCAST_CHANNEL_USERS, this);
             this.spawned = false;
-            this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logOut",
+            log.info(this.getServer().getLanguage().translateString("nukkit.player.logOut",
                     TextFormat.AQUA + (this.getName() == null ? "" : this.getName()) + TextFormat.WHITE,
                     this.ip,
                     String.valueOf(this.port),
@@ -3961,7 +3960,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         if (item.isNull()) {
-            this.server.getLogger().debug(this.getName() + " attempted to drop a null item (" + item + ")");
+            log.debug(this.getName() + " attempted to drop a null item (" + item + ")");
             return true;
         }
 

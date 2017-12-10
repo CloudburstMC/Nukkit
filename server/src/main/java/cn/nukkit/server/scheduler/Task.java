@@ -1,7 +1,5 @@
 package cn.nukkit.server.scheduler;
 
-import cn.nukkit.server.NukkitServer;
-
 /**
  * 表达一个任务的类。<br>A class that describes a task.
  * <p>
@@ -59,7 +57,7 @@ public abstract class Task implements Runnable {
         try {
             this.getHandler().cancel();
         } catch (RuntimeException ex) {
-            NukkitServer.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+            log.critical("Exception while invoking onCancel", ex);
         }
     }
 

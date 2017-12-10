@@ -15,7 +15,7 @@ public class BlockDoorAcacia extends BlockDoorWood {
 
     @Override
     public String getName() {
-        return "Acacia Door Block";
+        return "Acacia Door BlockType";
     }
 
     @Override

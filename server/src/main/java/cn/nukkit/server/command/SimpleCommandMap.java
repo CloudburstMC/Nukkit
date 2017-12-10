@@ -1,12 +1,14 @@
 package cn.nukkit.server.command;
 
+import cn.nukkit.api.command.Command;
+import cn.nukkit.api.command.CommandExecutorSource;
+import cn.nukkit.api.command.simple.annotation.Arguments;
+import cn.nukkit.api.command.simple.annotation.CommandPermission;
+import cn.nukkit.api.command.simple.annotation.ForbidConsole;
 import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.command.defaults.*;
-import cn.nukkit.server.command.simple.Arguments;
-import cn.nukkit.server.command.simple.CommandPermission;
-import cn.nukkit.server.command.simple.ForbidConsole;
-import cn.nukkit.server.command.simple.SimpleCommand;
+import cn.nukkit.server.command.simple.NukkitSimpleCommand;
 import cn.nukkit.server.utils.TextFormat;
 import cn.nukkit.server.utils.Utils;
 
@@ -117,11 +119,14 @@ public class SimpleCommandMap implements CommandMap {
     }
 
     @Override
-    public void registerSimpleCommands(Object object) {
+    public <T> void registerSimpleCommands(T object) throws Exception {
+        if (object.getClass().isPrimitive()) {
+            throw new CloneNotSupportedException();
+        }
         for (Method method : object.getClass().getDeclaredMethods()) {
-            cn.nukkit.server.command.simple.Command def = method.getAnnotation(cn.nukkit.server.command.simple.Command.class);
+            Command def = method.getAnnotation(Command.class);
             if (def != null) {
-                SimpleCommand sc = new SimpleCommand(object, method, def.name(), def.description(), def.usageMessage(), def.aliases());
+                NukkitSimpleCommand sc = new NukkitSimpleCommand(object, method, def.name(), def.description(), def.usageMessage(), def.aliases());
 
                 Arguments args = method.getAnnotation(Arguments.class);
                 if (args != null) {
@@ -225,7 +230,7 @@ public class SimpleCommandMap implements CommandMap {
     }
 
     @Override
-    public boolean dispatch(CommandSender sender, String cmdLine) {
+    public boolean dispatch(CommandExecutorSource sender, String cmdLine) {
         ArrayList<String> parsed = parseArguments(cmdLine);
         if (parsed.size() == 0) {
             return false;
@@ -244,7 +249,7 @@ public class SimpleCommandMap implements CommandMap {
             target.execute(sender, sentCommandLabel, args);
         } catch (Exception e) {
             sender.sendMessage(new TranslatedMessage(TextFormat.RED + "%commands.generic.exception"));
-            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.command.exception", cmdLine, target.toString(), Utils.getExceptionMessage(e)));
+            log.error(this.server.getLanguage().translateString("nukkit.command.exception", cmdLine, target.toString(), Utils.getExceptionMessage(e)));
             MainLogger logger = sender.getServer().getLogger();
             if (logger != null) {
                 logger.logException(e);
@@ -282,7 +287,7 @@ public class SimpleCommandMap implements CommandMap {
             String alias = entry.getKey();
             List<String> commandStrings = entry.getValue();
             if (alias.contains(" ") || alias.contains(":")) {
-                this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.command.alias.illegal", alias));
+                log.warn(this.server.getLanguage().translateString("nukkit.command.alias.illegal", alias));
                 continue;
             }
             List<String> targets = new ArrayList<>();
@@ -304,7 +309,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (bad.length() > 0) {
-                this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.command.alias.notFound", new String[]{alias, bad}));
+                log.warn(this.server.getLanguage().translateString("nukkit.command.alias.notFound", new String[]{alias, bad}));
                 continue;
             }
 

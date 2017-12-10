@@ -1,5 +1,6 @@
 package cn.nukkit.server.command.defaults;
 
+import cn.nukkit.api.command.CommandExecutorSource;
 import cn.nukkit.api.event.player.PlayerKickEvent;
 import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
@@ -24,7 +25,7 @@ public class BanCommand extends VanillaCommand {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(CommandExecutorSource sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
             return true;
         }

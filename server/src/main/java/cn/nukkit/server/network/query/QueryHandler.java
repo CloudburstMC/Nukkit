@@ -26,16 +26,16 @@ public class QueryHandler {
 
     public QueryHandler() {
         this.server = NukkitServer.getInstance();
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.start"));
+        log.info(this.server.getLanguage().translateString("nukkit.server.query.start"));
         String ip = this.server.getIp();
         String addr = (!ip.isEmpty()) ? ip : "0.0.0.0";
         int port = this.server.getPort();
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.info", String.valueOf(port)));
+        log.info(this.server.getLanguage().translateString("nukkit.server.query.info", String.valueOf(port)));
 
         this.regenerateToken();
         this.lastToken = this.token;
         this.regenerateInfo();
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.running", new String[]{addr, String.valueOf(port)}));
+        log.info(this.server.getLanguage().translateString("nukkit.server.query.running", new String[]{addr, String.valueOf(port)}));
     }
 
     public void regenerateInfo() {

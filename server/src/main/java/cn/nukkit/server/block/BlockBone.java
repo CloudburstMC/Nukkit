@@ -24,7 +24,7 @@ public class BlockBone extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Bone Block";
+        return "Bone BlockType";
     }
 
     @Override

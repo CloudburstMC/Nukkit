@@ -34,7 +34,7 @@ public class BlockCauldron extends BlockSolid {
     }
 
     public String getName() {
-        return "Cauldron Block";
+        return "Cauldron BlockType";
     }
 
     @Override

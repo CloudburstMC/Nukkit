@@ -76,8 +76,8 @@ public class Chunk extends BaseFullChunk {
             this.nbt.putIntArray("HeightMap", new int[256]);
         }
 
-        if (!(this.nbt.contains("Blocks"))) {
-            this.nbt.putByteArray("Blocks", new byte[32768]);
+        if (!(this.nbt.contains("BlockTypes"))) {
+            this.nbt.putByteArray("BlockTypes", new byte[32768]);
         }
 
         if (!(this.nbt.contains("Data"))) {
@@ -100,7 +100,7 @@ public class Chunk extends BaseFullChunk {
 
         this.x = this.nbt.getInt("xPos");
         this.z = this.nbt.getInt("zPos");
-        this.blocks = this.nbt.getByteArray("Blocks");
+        this.blocks = this.nbt.getByteArray("BlockTypes");
         this.data = this.nbt.getByteArray("Data");
         this.skyLight = this.nbt.getByteArray("SkyLight");
         this.blockLight = this.nbt.getByteArray("BlockLight");
@@ -127,7 +127,7 @@ public class Chunk extends BaseFullChunk {
             this.nbt.remove("Biomes");
         }
 
-        this.nbt.remove("Blocks");
+        this.nbt.remove("BlockTypes");
         this.nbt.remove("Data");
         this.nbt.remove("SkyLight");
         this.nbt.remove("BlockLight");
@@ -436,7 +436,7 @@ public class Chunk extends BaseFullChunk {
         nbt.putInt("zPos", this.z);
 
         if (this.isGenerated()) {
-            nbt.putByteArray("Blocks", this.getBlockIdArray());
+            nbt.putByteArray("BlockTypes", this.getBlockIdArray());
             nbt.putByteArray("Data", this.getBlockDataArray());
             nbt.putByteArray("SkyLight", this.getBlockSkyLightArray());
             nbt.putByteArray("BlockLight", this.getBlockLightArray());

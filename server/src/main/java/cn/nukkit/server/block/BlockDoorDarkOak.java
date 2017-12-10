@@ -15,7 +15,7 @@ public class BlockDoorDarkOak extends BlockDoorWood {
 
     @Override
     public String getName() {
-        return "Dark Oak Door Block";
+        return "Dark Oak Door BlockType";
     }
 
     @Override

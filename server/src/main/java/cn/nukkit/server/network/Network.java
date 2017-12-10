@@ -23,7 +23,7 @@ public class Network {
     public static final byte CHANNEL_PRIORITY = 1; //Priority channel, only to be used when it matters
     public static final byte CHANNEL_WORLD_CHUNKS = 2; //Chunk sending
     public static final byte CHANNEL_MOVEMENT = 3; //Movement sending
-    public static final byte CHANNEL_BLOCKS = 4; //Block updates or explosions
+    public static final byte CHANNEL_BLOCKS = 4; //BlockType updates or explosions
     public static final byte CHANNEL_WORLD_EVENTS = 5; //Entity, level or blockentity entity events
     public static final byte CHANNEL_ENTITY_SPAWNING = 6; //Entity spawn/despawn channel
     public static final byte CHANNEL_TEXT = 7; //Chat and other text stuff
@@ -76,12 +76,12 @@ public class Network {
                 interfaz.process();
             } catch (Exception e) {
                 if (Bootstrap.DEBUG > 1) {
-                    this.server.getLogger().logException(e);
+                    log.logException(e);
                 }
 
                 interfaz.emergencyShutdown();
                 this.unregisterInterface(interfaz);
-                this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.server.networkError", new String[]{interfaz.getClass().getName(), e.getMessage()}));
+                log.error(this.server.getLanguage().translateString("nukkit.server.networkError", new String[]{interfaz.getClass().getName(), e.getMessage()}));
             }
         }
     }
@@ -161,8 +161,8 @@ public class Network {
 
         } catch (Exception e) {
             if (Bootstrap.DEBUG > 0) {
-                this.server.getLogger().debug("BatchPacket 0x" + Binary.bytesToHexString(packet.payload));
-                this.server.getLogger().logException(e);
+                log.debug("BatchPacket 0x" + Binary.bytesToHexString(packet.payload));
+                log.logException(e);
             }
         }
     }
@@ -185,7 +185,7 @@ public class Network {
             try {
                 return clazz.newInstance();
             } catch (Exception e) {
-                NukkitServer.getInstance().getLogger().logException(e);
+                log.logException(e);
             }
         }
         return null;

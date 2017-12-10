@@ -22,7 +22,7 @@ public class BlockPurpur extends BlockSolid {
     @Override
     public String getName() {
         String[] names = new String[]{
-                "Purpur Block",
+                "Purpur BlockType",
                 "",
                 "Purpur Pillar",
                 ""

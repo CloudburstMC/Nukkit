@@ -1,6 +1,6 @@
 package cn.nukkit.server.network.protocol;
 
-import cn.nukkit.server.resourcepacks.ResourcePack;
+import cn.nukkit.api.resourcepack.ResourcePack;
 
 public class ResourcePackStackPacket extends DataPacket {
 

@@ -22,7 +22,7 @@ public class BlockBeetroot extends BlockCrops {
 
     @Override
     public String getName() {
-        return "Beetroot Block";
+        return "Beetroot BlockType";
     }
 
     @Override

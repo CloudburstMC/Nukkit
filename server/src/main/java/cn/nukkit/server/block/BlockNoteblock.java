@@ -23,7 +23,7 @@ public class BlockNoteblock extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Note Block";
+        return "Note BlockType";
     }
 
     @Override

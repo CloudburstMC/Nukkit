@@ -16,7 +16,7 @@ public class PermissionAttachmentInfo {
 
     public PermissionAttachmentInfo(Permissible permissible, String permission, PermissionAttachment attachment, boolean value) {
         if (permission == null) {
-            throw new IllegalStateException("Permission may not be null");
+            throw new IllegalStateException("NukkitPermission may not be null");
         }
 
         this.permissible = permissible;

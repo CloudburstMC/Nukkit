@@ -17,7 +17,7 @@ public class BlockSnow extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Snow Block";
+        return "Snow BlockType";
     }
 
     @Override

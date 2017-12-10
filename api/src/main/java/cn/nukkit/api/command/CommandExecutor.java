@@ -1,12 +1,14 @@
 package cn.nukkit.api.command;
 
+import cn.nukkit.api.plugin.JavaPlugin;
+
 /**
  * 能监听命令执行的类实现的接口。<br>
  * An interface what can be implemented by classes which listens command executing.
  *
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
- * @see cn.nukkit.api.plugin.PluginBase
+ * @see JavaPlugin
  * @see cn.nukkit.api.command.CommandExecutor#onCommand
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */

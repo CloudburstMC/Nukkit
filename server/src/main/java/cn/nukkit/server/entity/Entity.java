@@ -28,7 +28,6 @@ import cn.nukkit.server.network.protocol.MobEffectPacket;
 import cn.nukkit.server.network.protocol.RemoveEntityPacket;
 import cn.nukkit.server.network.protocol.SetEntityDataPacket;
 import cn.nukkit.server.network.protocol.SetEntityMotionPacket;
-import cn.nukkit.server.plugin.Plugin;
 import cn.nukkit.server.potion.Effect;
 import cn.nukkit.server.utils.ChunkException;
 import co.aikar.timings.Timing;
