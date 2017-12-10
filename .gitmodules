@@ -1,0 +1,3 @@
+[submodule "server/src/main/resources/lang"]
+	path = server/src/main/resources/lang
+	url = https://github.com/NukkitX/Languages
