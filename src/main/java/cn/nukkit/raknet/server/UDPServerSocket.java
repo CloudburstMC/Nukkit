@@ -4,7 +4,10 @@ import cn.nukkit.utils.ThreadedLogger;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
@@ -24,7 +27,6 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
 
     protected final ThreadedLogger logger;
     protected Bootstrap bootstrap;
-    protected EventLoopGroup group;
     protected Channel channel;
 
     protected ConcurrentLinkedQueue<DatagramPacket> packets = new ConcurrentLinkedQueue<>();
@@ -64,11 +66,9 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
     }
 
     public void close() {
-        this.group.shutdownGracefully();
-        try {
-            this.channel.closeFuture().sync();
-        } catch (Exception e) {
-            e.printStackTrace();
+        bootstrap.config().group().shutdownGracefully();
+        if (channel != null) {
+            channel.close().syncUninterruptibly();
         }
     }
 
