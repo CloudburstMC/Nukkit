@@ -25,7 +25,7 @@ __A Nuclear-Powered Server Software For Minecraft: Pocket Edition__
 Introduction
 -------------
 
-Nukkit is nuclear-powered server software for Minecraft: Pocket Edition.
+Nukkit is nuclear-powered server software for Minecraft Bedrock Edition.
 It has a few key advantages over other server software:
 
 * Written in Java, Nukkit is faster and more stable.
@@ -36,7 +36,7 @@ Nukkit is **under improvement** yet, we welcome contributions.
 Example servers running Nukkit
 --------------------
 - **play.EaseCation.net**
-- **play.GameTeam.cz**
+- **pe.GameTeam.cz**
 - **MultiLabs.net**
 
 Get Nukkit & Plugins
