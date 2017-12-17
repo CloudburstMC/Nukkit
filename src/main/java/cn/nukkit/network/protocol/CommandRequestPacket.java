@@ -74,8 +74,7 @@ public class CommandRequestPacket extends DataPacket {
             this.playerUniqueId = this.getVarLong();
             return;
         }
-        CommandOriginData.Origin type = CommandOriginData.Origin.values()[this.getVarInt()];
-        this.playerUniqueId = this.getVarLong();
+        CommandOriginData.Origin type = CommandOriginData.Origin.values()[(int) this.getUnsignedVarInt()];
         UUID uuid = this.getUUID(protocol);
         String requestId = this.getString();
         Long varLong = null;
