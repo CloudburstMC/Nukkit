@@ -13,5 +13,5 @@ public enum ItemUse implements ItemComponent {
     HELMET,
     CHESTPLATE,
     LEGGINGS,
-    BOOTS
+    BOOTS;
 }

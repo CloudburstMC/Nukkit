@@ -2,23 +2,16 @@ package cn.nukkit.api.metadata.block;
 
 import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.api.util.data.BlockFace;
-import com.google.common.base.Preconditions;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
-@AllArgsConstructor
-public class Directional implements Metadata {
-    private final BlockFace face;
+public abstract class Directional implements Metadata {
 
-    public static Directional of(BlockFace face) {
-        Preconditions.checkNotNull(face, "face");
-        return new Directional(face);
-    }
-
-    public BlockFace getFace() {
-        return face;
-    }
+    @Getter
+    @Setter
+    private BlockFace face;
 
     @Override
     public boolean equals(Object o) {

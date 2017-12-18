@@ -17,4 +17,10 @@ public interface ItemStack {
     Optional<String> getName();
 
     ItemStackBuilder toBuilder();
+
+    int getDurability();
+
+    void setDurability(int durability);
+
+
 }
