@@ -33,8 +33,8 @@ It has a few key advantages over other server software:
 
 Nukkit is **under improvement** yet, we welcome contributions. 
 
-NukkitX respect all players who need help and want developer her server with Nukkit!
-With that memoment, NukkitX invite all to this Discord-Group for Helping, Developing, Questions and Answers!
+NukkitX-Team respect all players who need help and want developer her server with Nukkit!
+With that momment, NukkitX-Team invite all to this Discord-Group for Helping, Developing, Questions and Answers!
 
 * __[Discord Group For Informations-Helping-Question-Answers](https://discordapp.com/invite/7y8WM4F)__
 
