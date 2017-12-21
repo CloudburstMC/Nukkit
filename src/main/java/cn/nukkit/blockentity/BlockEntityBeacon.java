@@ -8,7 +8,10 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
     public BlockEntityBeacon(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
 
+    @Override
+    protected void initBlockEntity() {
         if (!namedTag.contains("Lock")) {
             namedTag.putString("Lock", "");
         }
@@ -26,6 +29,8 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         }
 
         scheduleUpdate();
+
+        super.initBlockEntity();
     }
 
     @Override

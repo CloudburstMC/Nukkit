@@ -10,7 +10,6 @@ import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.sound.ClickSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 

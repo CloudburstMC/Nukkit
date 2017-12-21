@@ -13,7 +13,6 @@ import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
-import cn.nukkit.level.sound.ExplodeSound;
 import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.ExplodePacket;
 

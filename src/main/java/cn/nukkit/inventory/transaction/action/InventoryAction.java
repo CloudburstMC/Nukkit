@@ -1,6 +1,7 @@
 package cn.nukkit.inventory.transaction.action;
 
 import cn.nukkit.Player;
+import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.item.Item;
 
 /**
@@ -54,6 +55,13 @@ public abstract class InventoryAction {
      * Returns whether this action is currently valid. This should perform any necessary sanity checks.
      */
     abstract public boolean isValid(Player source);
+
+    /**
+     * Called when the action is added to the specified InventoryTransaction.
+     */
+    public void onAddToTransaction(InventoryTransaction transaction) {
+
+    }
 
     /**
      * Performs actions needed to complete the inventory-action server-side. Returns if it was successful. Will return

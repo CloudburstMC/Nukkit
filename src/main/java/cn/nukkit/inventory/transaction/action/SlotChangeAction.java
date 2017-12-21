@@ -2,6 +2,7 @@ package cn.nukkit.inventory.transaction.action;
 
 import cn.nukkit.Player;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.item.Item;
 
 import java.util.HashSet;
@@ -66,5 +67,10 @@ public class SlotChangeAction extends InventoryAction {
      */
     public void onExecuteFail(Player source) {
         this.inventory.sendSlot(this.inventorySlot, source);
+    }
+
+    @Override
+    public void onAddToTransaction(InventoryTransaction transaction) {
+        transaction.addInventory(this.inventory);
     }
 }

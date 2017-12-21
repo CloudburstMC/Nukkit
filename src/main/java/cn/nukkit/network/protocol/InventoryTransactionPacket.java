@@ -35,6 +35,12 @@ public class InventoryTransactionPacket extends DataPacket {
     public NetworkInventoryAction[] actions;
     public TransactionData transactionData;
 
+    /**
+     * NOTE: THIS FIELD DOES NOT EXIST IN THE PROTOCOL, it's merely used for convenience for PocketMine-MP to easily
+     * determine whether we're doing a crafting transaction.
+     */
+    public boolean isCraftingPart = false;
+
     @Override
     public byte pid() {
         return ProtocolInfo.INVENTORY_TRANSACTION_PACKET;
