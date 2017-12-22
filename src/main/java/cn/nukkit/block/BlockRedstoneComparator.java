@@ -6,6 +6,7 @@ import cn.nukkit.blockentity.BlockEntityComparator;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemRedstoneComparator;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -117,7 +118,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
             this.meta += 4;
         }
 
-        this.level.addSound(new ClickSound(this, getMode() == Mode.SUBTRACT ? 0.55F : 0.5F));
+        this.level.addSound(this, Sound.RANDOM_CLICK);
         this.level.setBlock(this, this, true, false);
         //bug?
 

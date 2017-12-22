@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 
 /**
@@ -59,7 +60,7 @@ public class BlockLever extends BlockFlowable {
         this.meta ^= 0x08;
 
         this.getLevel().setBlock(this, this, false, true);
-        this.getLevel().addSound(new LeverSound(this, this.isPowerOn()));
+        // TODO: Lever Sound
 
         LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.meta ^ 0x08 : this.meta);
         BlockFace face = orientation.getFacing();

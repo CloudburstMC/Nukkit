@@ -10,6 +10,7 @@ import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 
@@ -169,11 +170,11 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     }
 
     protected void playOnSound() {
-        this.level.addSound(new ClickSound(this, onPitch));
+        this.level.addSound(this, Sound.RANDOM_CLICK);
     }
 
     protected void playOffSound() {
-        this.level.addSound(new ClickSound(this, offPitch));
+        this.level.addSound(this, Sound.RANDOM_CLICK);
     }
 
     protected abstract int computeRedstoneStrength();

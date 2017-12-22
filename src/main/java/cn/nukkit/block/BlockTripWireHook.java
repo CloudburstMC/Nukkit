@@ -177,15 +177,15 @@ public class BlockTripWireHook extends BlockFlowable {
 
     private void addSound(Vector3 pos, boolean canConnect, boolean nextPowered, boolean attached, boolean powered) {
         if (nextPowered && !powered) {
-            this.level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_POWER_ON, 1, -1, pos);
+            // Sound Power On
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         } else if (!nextPowered && powered) {
-            this.level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_POWER_OFF, 1, -1, pos);
+            // Sound Power Off
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
         } else if (canConnect && !attached) {
-            this.level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_ATTACH, 1, -1, pos);
+            // Sound Attach
         } else if (!canConnect && attached) {
-            this.level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_DETACH, 1, -1, pos);
+            // Sound Detach
         }
     }
 

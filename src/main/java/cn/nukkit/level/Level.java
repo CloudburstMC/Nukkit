@@ -751,8 +751,8 @@ public class Level implements ChunkManager, Metadatable {
                             bolt.setEffect(false);
                         }
 
-                        this.addLevelSoundEvent(LevelSoundEventPacket.SOUND_THUNDER, 93, -1, vector, false);
-                        this.addLevelSoundEvent(LevelSoundEventPacket.SOUND_EXPLODE, 93, -1, vector, false);
+                        this.addSound(vector, Sound.AMBIENT_WEATHER_THUNDER);
+                        this.addSound(vector, Sound.RANDOM_EXPLODE);
                     }
 
                 }
@@ -2083,9 +2083,8 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
-            BlockPlaceSound sound = new BlockPlaceSound(block.add(0.5, 0.5, 0.5), item.getId());
+            this.addSound(block.add(0.5, 0.5, 0.5), Sound.LEASHKNOT_PLACE);
             Map<Integer, Player> players = getChunkPlayers((int) block.x >> 4, (int) block.z >> 4);
-            addSound(sound, players.values());
 
             if (!player.isCreative()) {
                 item.setCount(item.getCount() - 1);
@@ -2093,7 +2092,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (playSound) {
-            this.addLevelSoundEvent(LevelSoundEventPacket.SOUND_PLACE, 1, item.getId(), hand, false);
+            this.addSound(hand, Sound.LEASHKNOT_PLACE);
         }
 
         if (item.getCount() <= 0) {

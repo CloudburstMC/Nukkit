@@ -5,6 +5,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -86,7 +87,7 @@ public class BlockTNT extends BlockSolid {
                 nbt
         );
         tnt.spawnToAll();
-        this.level.addSound(new TNTPrimeSound(this));
+        this.level.addSound(this, Sound.RANDOM_EXPLODE);
     }
 
     @Override
