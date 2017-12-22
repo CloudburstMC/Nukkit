@@ -1,5 +1,9 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.network.protocol.types.CommandOriginData;
+
+import java.util.UUID;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -21,9 +25,7 @@ public class CommandRequestPacket extends DataPacket {
     public static final int TYPE_INTERNAL = 10;
 
     public String command;
-    public int type;
-    public String requestId;
-    public long playerUniqueId;
+    public CommandOriginData data;
 
     @Override
     public byte pid() {
@@ -33,9 +35,15 @@ public class CommandRequestPacket extends DataPacket {
     @Override
     public void decode() {
         this.command = this.getString();
-        this.type = this.getVarInt();
-        this.requestId = this.getString();
-        this.playerUniqueId = this.getVarLong();
+
+        CommandOriginData.Origin type = CommandOriginData.Origin.values()[this.getVarInt()];
+        UUID uuid = this.getUUID();
+        String requestId = this.getString();
+        Long varLong = null;
+        if (type == CommandOriginData.Origin.DEV_CONSOLE || type == CommandOriginData.Origin.TEST) {
+            varLong = this.getVarLong();
+        }
+        this.data = new CommandOriginData(type, uuid, requestId, varLong);
     }
 
     @Override
