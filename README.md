@@ -7,7 +7,7 @@ __A Nuclear-Powered Server Software For Minecraft: Bedrock Edition__
 
 ![nukkit](.github/images/banner.png)
 
-[![Gitter](https://img.shields.io/gitter/room/Nukkit/Nukkit.js.svg?style=flat)](https://gitter.im/Nukkit/Nukkit)
+[![Discord](https://img.shields.io/discord/393465748535640064.svg)](https://discord.gg/5PzMkyK)
 
 ### [License](LICENSE)
 
