@@ -27,35 +27,40 @@ public class BlockEntityPistonArm extends BlockEntity {
 
     public BlockEntityPistonArm(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        if (nbt.contains("Progress")) {
-            this.progress = nbt.getFloat("Progress");
+    }
+
+    @Override
+    protected void initBlockEntity() {
+        if (namedTag.contains("Progress")) {
+            this.progress = namedTag.getFloat("Progress");
         }
 
-        if (nbt.contains("LastProgress")) {
-            this.lastProgress = (float) nbt.getInt("LastProgress");
+        if (namedTag.contains("LastProgress")) {
+            this.lastProgress = (float) namedTag.getInt("LastProgress");
         }
 
-        if (nbt.contains("Sticky")) {
-            this.sticky = nbt.getBoolean("Sticky");
+        if (namedTag.contains("Sticky")) {
+            this.sticky = namedTag.getBoolean("Sticky");
         }
 
-        if (nbt.contains("Extending")) {
-            this.extending = nbt.getBoolean("Extending");
+        if (namedTag.contains("Extending")) {
+            this.extending = namedTag.getBoolean("Extending");
         }
 
-        if (nbt.contains("powered")) {
-            this.powered = nbt.getBoolean("powered");
+        if (namedTag.contains("powered")) {
+            this.powered = namedTag.getBoolean("powered");
         }
 
-        if (nbt.contains("AttachedBlocks")) {
-            ListTag blocks = nbt.getList("AttachedBlocks", IntTag.class);
+        if (namedTag.contains("AttachedBlocks")) {
+            ListTag blocks = namedTag.getList("AttachedBlocks", IntTag.class);
             if (blocks != null && blocks.size() > 0) {
-                this.attachedBlock = new Vector3((double) ((IntTag) blocks.get(0)).getData().intValue(), (double) ((IntTag) blocks.get(1)).getData().intValue(), (double) ((IntTag) blocks.get(2)).getData().intValue());
+                this.attachedBlock = new Vector3((double) ((IntTag) blocks.get(0)).getData(), (double) ((IntTag) blocks.get(1)).getData(), (double) ((IntTag) blocks.get(2)).getData());
             }
         } else {
-            nbt.putList(new ListTag("AttachedBlocks"));
+            namedTag.putList(new ListTag("AttachedBlocks"));
         }
 
+        super.initBlockEntity();
     }
 
     private void pushEntities() {

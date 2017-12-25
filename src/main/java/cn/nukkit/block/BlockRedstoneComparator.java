@@ -6,7 +6,7 @@ import cn.nukkit.blockentity.BlockEntityComparator;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemRedstoneComparator;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.sound.ClickSound;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -57,7 +57,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public void updateState() {
-        if (!this.level.isUpdateScheduled(this, this)) {
+        if (!this.level.isBlockTickPending(this, this)) {
             int output = this.calculateOutput();
             BlockEntity blockEntity = this.level.getBlockEntity(this);
             int power = blockEntity instanceof BlockEntityComparator ? ((BlockEntityComparator) blockEntity).getOutputSignal() : 0;
@@ -69,6 +69,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                     this.level.scheduleUpdate(this, this, 2, 0);
                 }*/
 
+                //System.out.println("schedule update 0");
                 this.level.scheduleUpdate(this, this, 2);
             }
         }
@@ -117,7 +118,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
             this.meta += 4;
         }
 
-        this.level.addSound(new ClickSound(this, getMode() == Mode.SUBTRACT ? 0.55F : 0.5F));
+        this.level.addSound(this, Sound.RANDOM_CLICK);
         this.level.setBlock(this, this, true, false);
         //bug?
 

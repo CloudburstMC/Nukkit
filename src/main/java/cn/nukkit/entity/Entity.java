@@ -7,7 +7,6 @@ import cn.nukkit.block.BlockDirt;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.data.*;
-import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -651,6 +650,14 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public static Entity createEntity(String name, Position pos, Object... args) {
+        return createEntity(name, pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+    }
+
+    public static Entity createEntity(int type, Position pos, Object... args) {
+        return createEntity(String.valueOf(type), pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+    }
+
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
         Entity entity = null;
 
@@ -716,6 +723,23 @@ public abstract class Entity extends Location implements Metadatable {
         knownEntities.put(name, clazz);
         shortNames.put(clazz.getSimpleName(), name);
         return true;
+    }
+
+    public static CompoundTag getDefaultNBT(Vector3 pos) {
+        Location loc = pos instanceof Location ? (Location) pos : null;
+
+        return new CompoundTag()
+                .putList(new ListTag<DoubleTag>("Pos")
+                        .add(new DoubleTag("", pos.x))
+                        .add(new DoubleTag("", pos.y))
+                        .add(new DoubleTag("", pos.z)))
+                .putList(new ListTag<DoubleTag>("Motion")
+                        .add(new DoubleTag("", 0))
+                        .add(new DoubleTag("", 0))
+                        .add(new DoubleTag("", 0)))
+                .putList(new ListTag<FloatTag>("Rotation")
+                        .add(new FloatTag("", (float) (loc != null ? loc.getYaw() : 0)))
+                        .add(new FloatTag("", (float) (loc != null ? loc.getPitch() : 0))));
     }
 
     public void saveNBT() {

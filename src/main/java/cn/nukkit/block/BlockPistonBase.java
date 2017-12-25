@@ -6,8 +6,7 @@ import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.event.block.BlockPistonChangeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.sound.PistonInSound;
-import cn.nukkit.level.sound.PistonOutSound;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -120,7 +119,7 @@ public abstract class BlockPistonBase extends BlockSolid {
                     return;
                 }
 
-                this.level.addSound(new PistonOutSound(this));
+                this.level.addSound(this, Sound.TILE_PISTON_OUT);
             } else {
             }
         } else if (!isPowered && isExtended()) {
@@ -140,7 +139,7 @@ public abstract class BlockPistonBase extends BlockSolid {
                 this.level.setBlock(getLocation().getSide(facing), new BlockAir(), true, false);
             }
 
-            this.level.addSound(new PistonInSound(this));
+            this.level.addSound(this, Sound.TILE_PISTON_IN);
         }
     }
 

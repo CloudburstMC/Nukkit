@@ -234,6 +234,16 @@ public abstract class BaseInventory implements Inventory {
     }
 
     @Override
+    public void decreaseCount(int slot) {
+        Item item = this.getItem(slot);
+
+        if (item.getCount() > 0) {
+            item.count--;
+            this.setItem(slot, item);
+        }
+    }
+
+    @Override
     public boolean canAddItem(Item item) {
         item = item.clone();
         boolean checkDamage = item.hasMeta();

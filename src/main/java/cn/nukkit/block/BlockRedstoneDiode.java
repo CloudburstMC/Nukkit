@@ -64,6 +64,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
                     this.level.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
 
                     if (!shouldBePowered) {
+                        System.out.println("schedule update 2");
                         level.scheduleUpdate(getPowered(), this, this.getDelay());
                     }
                 }
@@ -84,7 +85,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
         if (!this.isLocked()) {
             boolean shouldPowered = this.shouldBePowered();
 
-            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isUpdateScheduled(this, this)) {
+            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isBlockTickPending(this, this)) {
                 /*int priority = -1;
 
                 if (this.isFacingTowardsRepeater()) {

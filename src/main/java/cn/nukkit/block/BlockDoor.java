@@ -5,7 +5,7 @@ import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.sound.DoorSound;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 
@@ -292,7 +292,7 @@ public abstract class BlockDoor extends BlockTransparent {
             return false;
         }
 
-        this.level.addSound(new DoorSound(this));
+        this.level.addSound(this, Sound.RANDOM_DOOR_OPEN);
         return true;
     }
 
@@ -324,7 +324,7 @@ public abstract class BlockDoor extends BlockTransparent {
             this.getLevel().setBlock(this, this, true);
         }
 
-        this.level.addSound(new DoorSound(this));
+        this.level.addSound(this, Sound.RANDOM_DOOR_CLOSE);
         return true;
     }
 

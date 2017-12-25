@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.sound.ButtonClickSound;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 
@@ -56,7 +56,7 @@ public abstract class BlockButton extends BlockFlowable {
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         this.meta ^= 0x08;
         this.level.setBlock(this, this, true, false);
-        this.level.addSound(new ButtonClickSound(this.add(0.5, 0.5, 0.5)));
+        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
         this.level.scheduleUpdate(this, 30);
         Vector3 pos = getLocation();
 
@@ -78,7 +78,7 @@ public abstract class BlockButton extends BlockFlowable {
 
                 this.meta ^= 0x08;
                 this.level.setBlock(this, this, true, false);
-                this.level.addSound(new ButtonClickSound(this.add(0.5, 0.5, 0.5)));
+                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
 
                 Vector3 pos = getLocation();
                 level.updateAroundRedstone(pos, null);

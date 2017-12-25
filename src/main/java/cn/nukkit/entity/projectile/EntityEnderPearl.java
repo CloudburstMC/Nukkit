@@ -3,8 +3,8 @@ package cn.nukkit.entity.projectile;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.sound.EndermanTeleportSound;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -64,7 +64,7 @@ public class EntityEnderPearl extends EntityProjectile {
         if (this.isCollided && this.shootingEntity instanceof Player) {
             this.shootingEntity.teleport(new Vector3(NukkitMath.floorDouble(this.x) + 0.5, this.y, NukkitMath.floorDouble(this.z) + 0.5), TeleportCause.ENDER_PEARL);
             if ((((Player) this.shootingEntity).getGamemode() & 0x01) == 0) this.shootingEntity.attack(5);
-            this.level.addSound(new EndermanTeleportSound(this));
+            this.level.addSound(this, Sound.MOB_ENDERMEN_STARE);
         }
 
         if (this.age > 1200 || this.isCollided) {

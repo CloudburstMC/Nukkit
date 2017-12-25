@@ -6,6 +6,7 @@ import cn.nukkit.block.BlockFire;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -119,8 +120,8 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         this.entityBaseTick(tickDiff);
 
         if (this.state == 2) {
-            this.level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_THUNDER, 93, -1, this);
-            this.level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_EXPLODE, 93, -1, this);
+            this.level.addSound(this, Sound.RANDOM_EXPLODE);
+            this.level.addSound(this, Sound.AMBIENT_WEATHER_THUNDER);
         }
 
         this.state--;

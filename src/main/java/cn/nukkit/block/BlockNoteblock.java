@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.sound.NoteBoxSound;
+import cn.nukkit.level.Sound;
 import cn.nukkit.network.protocol.BlockEventPacket;
 
 /**
@@ -68,15 +68,15 @@ public class BlockNoteblock extends BlockSolid {
             case WOODEN_PLANK:
             case NOTEBLOCK:
             case CRAFTING_TABLE:
-                return NoteBoxSound.INSTRUMENT_BASS;
+                return 4; // Bass
             case SAND:
             case SANDSTONE:
             case SOUL_SAND:
-                return NoteBoxSound.INSTRUMENT_TABOUR;
+                return 3; // Tabour
             case GLASS:
             case GLASS_PANEL:
             case GLOWSTONE_BLOCK:
-                return NoteBoxSound.INSTRUMENT_CLICK;
+                return 2; // Instrument Click
             case COAL_ORE:
             case DIAMOND_ORE:
             case EMERALD_ORE:
@@ -85,9 +85,9 @@ public class BlockNoteblock extends BlockSolid {
             case IRON_ORE:
             case LAPIS_ORE:
             case REDSTONE_ORE:
-                return NoteBoxSound.INSTRUMENT_BASS_DRUM;
+                return 1; // Bass Drum
             default:
-                return NoteBoxSound.INSTRUMENT_PIANO;
+                return 0; // Instrument Piano
         }
     }
 
@@ -100,7 +100,7 @@ public class BlockNoteblock extends BlockSolid {
         pk.case2 = this.getStrength();
         this.getLevel().addChunkPacket((int) this.x >> 4, (int) this.z >> 4, pk);
 
-        this.getLevel().addSound(new NoteBoxSound(this, this.getInstrument(), this.getStrength()));
+        this.getLevel().addSound(this, Sound.NOTE_BASS);
     }
 
     public boolean onActivate(Item item) {

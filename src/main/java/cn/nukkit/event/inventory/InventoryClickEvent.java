@@ -1,5 +1,6 @@
 package cn.nukkit.event.inventory;
 
+import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Inventory;
@@ -20,14 +21,14 @@ public class InventoryClickEvent extends InventoryEvent implements Cancellable {
     private final int slot;
     private final Item sourceItem;
     private final Item heldItem;
-    private final Item leftItem;
+    private final Player player;
 
-    public InventoryClickEvent(Inventory inventory, int slot, Item sourceItem, Item heldItem, Item leftItem) {
+    public InventoryClickEvent(Player who, Inventory inventory, int slot, Item sourceItem, Item heldItem) {
         super(inventory);
         this.slot = slot;
         this.sourceItem = sourceItem;
         this.heldItem = heldItem;
-        this.leftItem = leftItem;
+        this.player = who;
     }
 
     public int getSlot() {
@@ -42,7 +43,7 @@ public class InventoryClickEvent extends InventoryEvent implements Cancellable {
         return heldItem;
     }
 
-    public Item getLeftItem() {
-        return leftItem;
+    public Player getPlayer() {
+        return player;
     }
 }
