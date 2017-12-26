@@ -339,7 +339,7 @@ public class AxisAlignedBB implements Cloneable {
         return null;
     }
 
-    private interface BBConsumer {
+    public interface BBConsumer {
 
         void accept(int x, int y, int z);
     }
