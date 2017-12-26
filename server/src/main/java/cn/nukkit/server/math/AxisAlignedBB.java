@@ -1,11 +1,15 @@
 package cn.nukkit.server.math;
 
 import cn.nukkit.server.level.MovingObjectPosition;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 /**
  * auth||: MagicDroidX
  * Nukkit Project
  */
+
+@Log4j2
 public class AxisAlignedBB implements Cloneable {
 
     public double minX;
@@ -295,11 +299,29 @@ public class AxisAlignedBB implements Cloneable {
             face = 1;
         } else if (vector == v5) {
             face = 2;
-        } else if (vector == v6) {
+        } else { //vector == v6
             face = 3;
         }
 
         return MovingObjectPosition.fromBlock(0, 0, 0, face, vector);
+    }
+
+    public void forEach(BBConsumer action) {
+        int minX = NukkitMath.floorDouble(this.minX);
+        int minY = NukkitMath.floorDouble(this.minY);
+        int minZ = NukkitMath.floorDouble(this.minZ);
+
+        int maxX = NukkitMath.floorDouble(this.maxX);
+        int maxY = NukkitMath.floorDouble(this.maxY);
+        int maxZ = NukkitMath.floorDouble(this.maxZ);
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; x <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    action.accept(x, y, z);
+                }
+            }
+        }
     }
 
     @Override
@@ -312,8 +334,13 @@ public class AxisAlignedBB implements Cloneable {
         try {
             return (AxisAlignedBB) super.clone();
         } catch (CloneNotSupportedException e) {
-            log.logException(e);
+            log.log(Level.TRACE, "", e);
         }
         return null;
+    }
+
+    private interface BBConsumer {
+
+        void accept(int x, int y, int z);
     }
 }
