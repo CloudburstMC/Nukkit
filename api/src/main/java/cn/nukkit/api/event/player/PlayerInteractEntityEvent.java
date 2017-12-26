@@ -1,37 +1,27 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.item.ItemStack;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * Created by CreeperFace on 1. 1. 2017.
+ * @author CreeperFace
  */
+
+@Getter
+@Setter
 public class PlayerInteractEntityEvent extends PlayerEvent implements Cancellable {
 
-
-    private static final HandlerList handlers = new HandlerList();
-
     protected final Entity entity;
-    protected final Item item;
+    protected final ItemStack item;
+    private boolean cancelled;
 
-    public PlayerInteractEntityEvent(Player player, Entity entity, Item item) {
-        this.player = player;
+    public PlayerInteractEntityEvent(Player player, Entity entity, ItemStack item) {
+        super(player);
         this.entity = entity;
         this.item = item;
-    }
-
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    public Item getItem() {
-        return this.item;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 }

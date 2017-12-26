@@ -1,16 +1,18 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.Entity;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Event;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class EntityEvent extends Event {
+
+@AllArgsConstructor
+@Getter
+public abstract class EntityEvent implements Event {
 
     protected Entity entity;
-
-    public Entity getEntity() {
-        return entity;
-    }
 }

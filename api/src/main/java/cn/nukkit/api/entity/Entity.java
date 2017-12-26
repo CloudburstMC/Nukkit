@@ -5,7 +5,7 @@ import cn.nukkit.api.Server;
 import cn.nukkit.api.event.entity.EntityDamageEvent;
 import cn.nukkit.api.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.api.level.Level;
-import com.flowpowered.math.vector.Vector3d;
+import com.flowpowered.math.vector.Vector3f;
 
 import java.util.List;
 import java.util.UUID;
@@ -38,28 +38,28 @@ public interface Entity {
      *
      * @return Current travelling velocity of this entity
      */
-    Vector3d getMotion();
+    Vector3f getMotion();
 
     /**
      * Sets this entity's velocity
      *
      * @param velocity New velocity to travel with
      */
-    void setMotion(Vector3d velocity);
+    void setMotion(Vector3f velocity);
 
     /**
      * Gets the entity's height
      *
      * @return height of entity
      */
-    double getHeight();
+    float getHeight();
 
     /**
      * Gets the entity's width
      *
      * @return width of entity
      */
-    double getWidth();
+    float getWidth();
 
     /**
      * Returns true if the entity is supported by a block. This value is a

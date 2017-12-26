@@ -1,25 +1,19 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.event.Cancellable;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class PlayerToggleSneakEvent extends PlayerEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
 
     protected final boolean isSneaking;
+    private boolean cancelled;
 
     public PlayerToggleSneakEvent(Player player, boolean isSneaking) {
-        this.player = player;
+        super(player);
         this.isSneaking = isSneaking;
     }
-
-    public boolean isSneaking() {
-        return this.isSneaking;
-    }
-
 }

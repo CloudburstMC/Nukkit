@@ -64,7 +64,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * author: MagicDroidX Nukkit Project
  */
-public class Level implements ChunkManager, Metadatable {
+public class Level implements ChunkManager, Metadatable, cn.nukkit.api.level.Level {
 
     private static int levelIdCounter = 1;
     private static int chunkLoaderCounter = 1;

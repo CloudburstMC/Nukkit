@@ -2,6 +2,7 @@ package cn.nukkit.api;
 
 import cn.nukkit.api.command.CommandExecutorSource;
 import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.entity.HumanEntity;
 import cn.nukkit.api.event.player.PlayerKickEvent;
 import cn.nukkit.api.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.api.form.window.FormWindow;
@@ -13,7 +14,7 @@ import com.flowpowered.math.vector.Vector3d;
 import java.net.InetSocketAddress;
 import java.util.Locale;
 
-public interface Player extends IPlayer, Session, Entity, CommandExecutorSource {
+public interface Player extends IPlayer, Session, HumanEntity, CommandExecutorSource {
 
     String getDisplayName();
 

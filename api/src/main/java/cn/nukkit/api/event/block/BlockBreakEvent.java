@@ -1,37 +1,43 @@
 package cn.nukkit.api.event.block;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.item.ItemStack;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+
+@Getter
 public class BlockBreakEvent extends BlockEvent implements Cancellable {
 
+    @Setter
+    private boolean cancelled;
+
     protected final Player player;
-    protected final Item item;
+    protected final ItemStack item;
     protected boolean instaBreak = false;
-    protected Item[] blockDrops = new Item[0];
+    protected ItemStack[] blockDrops = new ItemStack[][0];
     protected boolean fastBreak = false;
 
-    public BlockBreakEvent(Player player, Block block, Item item) {
+    public BlockBreakEvent(Player player, Block block, ItemStack item) {
         this(player, block, item, false, false);
     }
 
-    public BlockBreakEvent(Player player, Block block, Item item, boolean instaBreak) {
+    public BlockBreakEvent(Player player, Block block, ItemStack item, boolean instaBreak) {
         this(player, block, item, instaBreak, false);
     }
 
-    public BlockBreakEvent(Player player, Block block, Item item, boolean instaBreak, boolean fastBreak) {
+    public BlockBreakEvent(Player player, Block block, ItemStack item, boolean instaBreak, boolean fastBreak) {
         super(block);
         this.item = item;
         this.player = player;
         this.instaBreak = instaBreak;
-        this.blockDrops = player.isSurvival() ? block.getDrops(item) : new Item[0];
+        this.blockDrops = player.isSurvival() ? block.getDrops(item) : new ItemStack[][ 0];
         this.fastBreak = fastBreak;
     }
 

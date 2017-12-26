@@ -1,25 +1,18 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.form.response.FormResponse;
-import cn.nukkit.server.form.window.FormWindow;
+import cn.nukkit.api.form.response.FormResponse;
+import cn.nukkit.api.form.window.FormWindow;
 
 public class PlayerFormRespondedEvent extends PlayerEvent {
 
-    private static final HandlerList handlers = new HandlerList();
+    protected final int formID;
+    protected final FormWindow window;
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    protected int formID;
-    protected FormWindow window;
-
-    protected boolean closed = false;
+    protected final boolean closed = false;
 
     public PlayerFormRespondedEvent(Player player, int formID, FormWindow window) {
-        this.player = player;
+        super(player);
         this.formID = formID;
         this.window = window;
     }

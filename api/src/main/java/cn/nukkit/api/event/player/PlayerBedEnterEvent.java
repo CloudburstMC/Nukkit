@@ -1,19 +1,20 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.Cancellable;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.event.Cancellable;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable {
 
+    private boolean cancelled;
     private final Block bed;
 
     public PlayerBedEnterEvent(Player player, Block bed) {
-        this.player = player;
+        super(player);
         this.bed = bed;
-    }
-
-    public Block getBed() {
-        return bed;
     }
 }

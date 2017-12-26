@@ -1,8 +1,9 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.event.Cancellable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * call when a player moves wrongly
@@ -10,31 +11,13 @@ import cn.nukkit.server.event.HandlerList;
  * @author WilliamGao
  */
 
+@Getter
+@Setter
 public class PlayerInvalidMoveEvent extends PlayerEvent implements Cancellable {
 
-    private static final HandlerList handlers = new HandlerList();
+    private boolean cancelled;
 
-    private boolean revert;
-
-    public static HandlerList getHandlers() {
-        return handlers;
+    public PlayerInvalidMoveEvent(Player player) {
+        super(player);
     }
-
-    public PlayerInvalidMoveEvent(Player player, boolean revert) {
-        this.player = player;
-        this.revert = revert;
-    }
-
-    public boolean isRevert() {
-        return this.revert;
-    }
-
-    /**
-     * @deprecated If you just simply want to disable the movement check, please use {@link Player#setCheckMovement(boolean)} instead.
-     */
-    @Deprecated
-    public void setRevert(boolean revert) {
-        this.revert = revert;
-    }
-
 }

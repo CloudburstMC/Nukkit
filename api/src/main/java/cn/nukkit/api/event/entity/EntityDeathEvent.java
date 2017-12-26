@@ -1,36 +1,27 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.EntityLiving;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.entity.LivingEntity;
+import cn.nukkit.api.item.ItemStack;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+
+@Getter
+@Setter
 public class EntityDeathEvent extends EntityEvent {
-    private static final HandlerList handlers = new HandlerList();
 
-    public static HandlerList getHandlers() {
-        return handlers;
+    private ItemStack[] drops = new ItemStack[0];
+
+    public EntityDeathEvent(LivingEntity entity) {
+        this(entity, new ItemStack[0]);
     }
 
-    private Item[] drops = new Item[0];
-
-    public EntityDeathEvent(EntityLiving entity) {
-        this(entity, new Item[0]);
-    }
-
-    public EntityDeathEvent(EntityLiving entity, Item[] drops) {
-        this.entity = entity;
-        this.drops = drops;
-    }
-
-    public Item[] getDrops() {
-        return drops;
-    }
-
-    public void setDrops(Item[] drops) {
+    public EntityDeathEvent(LivingEntity entity, ItemStack[] drops) {
+        super(entity);
         this.drops = drops;
     }
 }

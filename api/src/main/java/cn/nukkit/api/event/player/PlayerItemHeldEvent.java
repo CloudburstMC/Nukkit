@@ -1,42 +1,27 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.item.ItemStack;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+
+@Getter
+@Setter
 public class PlayerItemHeldEvent extends PlayerEvent implements Cancellable {
 
-    private static final HandlerList handlers = new HandlerList();
+    private final ItemStack item;
+    private final int slot;
+    private boolean cancelled;
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    private final Item item;
-    private final int hotbarSlot;
-
-    public PlayerItemHeldEvent(Player player, Item item, int hotbarSlot) {
-        this.player = player;
+    public PlayerItemHeldEvent(Player player, ItemStack item, int slot) {
+        super(player);
         this.item = item;
-        this.hotbarSlot = hotbarSlot;
+        this.slot = slot;
     }
-
-    public int getSlot() {
-        return this.hotbarSlot;
-    }
-
-    @Deprecated
-    public int getInventorySlot() {
-        return hotbarSlot;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
 }

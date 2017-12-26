@@ -9,6 +9,7 @@ import cn.nukkit.server.item.food.Food;
  * Package cn.nukkit.server.event.player in project nukkit.
  */
 public class PlayerEatFoodEvent extends PlayerEvent implements Cancellable {
+
     private Food food;
     private boolean cancelled = false;
 

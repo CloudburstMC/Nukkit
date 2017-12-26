@@ -1,86 +1,89 @@
 package cn.nukkit.server.math;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
 public class Vector3 implements Cloneable {
 
-    public double x;
-    public double y;
-    public double z;
+    public static final int SIDE_DOWN = 0;
+    public static final int SIDE_UP = 1;
+    public static final int SIDE_NORTH = 2;
+    public static final int SIDE_SOUTH = 3;
+    public static final int SIDE_WEST = 4;
+    public static final int SIDE_EAST = 5;
+
+    public float x;
+    public float y;
+    public float z;
 
     public Vector3() {
         this(0, 0, 0);
     }
 
-    public Vector3(double x) {
+    public Vector3(float x) {
         this(x, 0, 0);
     }
 
-    public Vector3(double x, double y) {
+    public Vector3(float x, float y) {
         this(x, y, 0);
     }
 
-    public Vector3(double x, double y, double z) {
+    public Vector3(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public double getX() {
+    public float getX() {
         return this.x;
     }
 
-    public double getY() {
+    public float getY() {
         return this.y;
     }
 
-    public double getZ() {
+    public float getZ() {
         return this.z;
     }
 
     public int getFloorX() {
-        return (int) Math.floor(this.x);
+        return NukkitMath.floorFloat(this.x);
     }
 
     public int getFloorY() {
-        return (int) Math.floor(this.y);
+        return NukkitMath.floorFloat(this.y);
     }
 
     public int getFloorZ() {
-        return (int) Math.floor(this.z);
+        return NukkitMath.floorFloat(this.z);
     }
 
-    public double getRight() {
+    public float getRight() {
         return this.x;
     }
 
-    public double getUp() {
+    public float getUp() {
         return this.y;
     }
 
-    public double getForward() {
+    public float getForward() {
         return this.z;
     }
 
-    public double getSouth() {
+    public float getSouth() {
         return this.x;
     }
 
-    public double getWest() {
+    public float getWest() {
         return this.z;
     }
 
-    public Vector3 add(double x) {
+    public Vector3 add(float x) {
         return this.add(x, 0, 0);
     }
 
-    public Vector3 add(double x, double y) {
+    public Vector3 add(float x, float y) {
         return this.add(x, y, 0);
     }
 
-    public Vector3 add(double x, double y, double z) {
+    public Vector3 add(float x, float y, float z) {
         return new Vector3(this.x + x, this.y + y, this.z + z);
     }
 
@@ -92,15 +95,15 @@ public class Vector3 implements Cloneable {
         return this.subtract(0, 0, 0);
     }
 
-    public Vector3 subtract(double x) {
+    public Vector3 subtract(float x) {
         return this.subtract(x, 0, 0);
     }
 
-    public Vector3 subtract(double x, double y) {
+    public Vector3 subtract(float x, float y) {
         return this.subtract(x, y, 0);
     }
 
-    public Vector3 subtract(double x, double y, double z) {
+    public Vector3 subtract(float x, float y, float z) {
         return this.add(-x, -y, -z);
     }
 
@@ -108,11 +111,11 @@ public class Vector3 implements Cloneable {
         return this.add(-x.getX(), -x.getY(), -x.getZ());
     }
 
-    public Vector3 multiply(double number) {
+    public Vector3 multiply(float number) {
         return new Vector3(this.x * number, this.y * number, this.z * number);
     }
 
-    public Vector3 divide(double number) {
+    public Vector3 divide(float number) {
         return new Vector3(this.x / number, this.y / number, this.z / number);
     }
 
@@ -196,23 +199,23 @@ public class Vector3 implements Cloneable {
         return Math.pow(this.x - pos.x, 2) + Math.pow(this.y - pos.y, 2) + Math.pow(this.z - pos.z, 2);
     }
 
-    public double maxPlainDistance() {
+    public float maxPlainDistance() {
         return this.maxPlainDistance(0, 0);
     }
 
-    public double maxPlainDistance(double x) {
+    public float maxPlainDistance(float x) {
         return this.maxPlainDistance(x, 0);
     }
 
-    public double maxPlainDistance(double x, double z) {
+    public float maxPlainDistance(float x, float z) {
         return Math.max(Math.abs(this.x - x), Math.abs(this.z - z));
     }
 
-    public double maxPlainDistance(Vector2 vector) {
+    public float maxPlainDistance(Vector2f vector) {
         return this.maxPlainDistance(vector.x, vector.y);
     }
 
-    public double maxPlainDistance(Vector3 x) {
+    public float maxPlainDistance(Vector3 x) {
         return this.maxPlainDistance(x.x, x.z);
     }
 
@@ -220,19 +223,19 @@ public class Vector3 implements Cloneable {
         return Math.sqrt(this.lengthSquared());
     }
 
-    public double lengthSquared() {
+    public float lengthSquared() {
         return this.x * this.x + this.y * this.y + this.z * this.z;
     }
 
     public Vector3 normalize() {
-        double len = this.lengthSquared();
+        float len = this.lengthSquared();
         if (len > 0) {
-            return this.divide(Math.sqrt(len));
+            return this.divide((float) Math.sqrt(len));
         }
         return new Vector3(0, 0, 0);
     }
 
-    public double dot(Vector3 v) {
+    public float dot(Vector3 v) {
         return this.x * v.x + this.y * v.y + this.z * v.z;
     }
 
@@ -248,14 +251,14 @@ public class Vector3 implements Cloneable {
      * Returns a new vector with x value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
      */
-    public Vector3 getIntermediateWithXValue(Vector3 v, double x) {
-        double xDiff = v.x - this.x;
-        double yDiff = v.y - this.y;
-        double zDiff = v.z - this.z;
+    public Vector3 getIntermediateWithXValue(Vector3 v, float x) {
+        float xDiff = v.x - this.x;
+        float yDiff = v.y - this.y;
+        float zDiff = v.z - this.z;
         if (xDiff * xDiff < 0.0000001) {
             return null;
         }
-        double f = (x - this.x) / xDiff;
+        float f = (x - this.x) / xDiff;
         if (f < 0 || f > 1) {
             return null;
         } else {
@@ -267,14 +270,14 @@ public class Vector3 implements Cloneable {
      * Returns a new vector with y value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
      */
-    public Vector3 getIntermediateWithYValue(Vector3 v, double y) {
-        double xDiff = v.x - this.x;
-        double yDiff = v.y - this.y;
-        double zDiff = v.z - this.z;
+    public Vector3 getIntermediateWithYValue(Vector3 v, float y) {
+        float xDiff = v.x - this.x;
+        float yDiff = v.y - this.y;
+        float zDiff = v.z - this.z;
         if (yDiff * yDiff < 0.0000001) {
             return null;
         }
-        double f = (y - this.y) / yDiff;
+        float f = (y - this.y) / yDiff;
         if (f < 0 || f > 1) {
             return null;
         } else {
@@ -286,14 +289,14 @@ public class Vector3 implements Cloneable {
      * Returns a new vector with z value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
      */
-    public Vector3 getIntermediateWithZValue(Vector3 v, double z) {
-        double xDiff = v.x - this.x;
-        double yDiff = v.y - this.y;
-        double zDiff = v.z - this.z;
+    public Vector3 getIntermediateWithZValue(Vector3 v, float z) {
+        float xDiff = v.x - this.x;
+        float yDiff = v.y - this.y;
+        float zDiff = v.z - this.z;
         if (zDiff * zDiff < 0.0000001) {
             return null;
         }
-        double f = (z - this.z) / zDiff;
+        float f = (z - this.z) / zDiff;
         if (f < 0 || f > 1) {
             return null;
         } else {
@@ -301,7 +304,7 @@ public class Vector3 implements Cloneable {
         }
     }
 
-    public Vector3 setComponents(double x, double y, double z) {
+    public Vector3 setComponents(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -324,16 +327,6 @@ public class Vector3 implements Cloneable {
         return this.x == other.x && this.y == other.y && this.z == other.z;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-
-        hash = 79 * hash + (int) (Double.doubleToLongBits(this.x) ^ Double.doubleToLongBits(this.x) >>> 32);
-        hash = 79 * hash + (int) (Double.doubleToLongBits(this.y) ^ Double.doubleToLongBits(this.y) >>> 32);
-        hash = 79 * hash + (int) (Double.doubleToLongBits(this.z) ^ Double.doubleToLongBits(this.z) >>> 32);
-        return hash;
-    }
-
     public int rawHashCode() {
         return super.hashCode();
     }
@@ -345,13 +338,5 @@ public class Vector3 implements Cloneable {
         } catch (CloneNotSupportedException e) {
             return null;
         }
-    }
-
-    public Vector3f asVector3f() {
-        return new Vector3f((float) this.x, (float) this.y, (float) this.z);
-    }
-
-    public BlockVector3 asBlockVector3() {
-        return new BlockVector3(this.getFloorX(), this.getFloorY(), this.getFloorZ());
     }
 }

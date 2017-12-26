@@ -1,16 +1,16 @@
 package cn.nukkit.api.event.player;
 
+import cn.nukkit.api.Location;
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.Location;
+import cn.nukkit.api.event.Cancellable;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class PlayerMoveEvent extends PlayerEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
+    private boolean cancelled;
 
     private Location from;
     private Location to;
@@ -22,38 +22,9 @@ public class PlayerMoveEvent extends PlayerEvent implements Cancellable {
     }
 
     public PlayerMoveEvent(Player player, Location from, Location to, boolean resetBlocks) {
-        this.player = player;
+        super(player);
         this.from = from;
         this.to = to;
         this.resetBlocksAround = resetBlocks;
-    }
-
-    public Location getFrom() {
-        return from;
-    }
-
-    public void setFrom(Location from) {
-        this.from = from;
-    }
-
-    public Location getTo() {
-        return to;
-    }
-
-    public void setTo(Location to) {
-        this.to = to;
-    }
-
-    public boolean isResetBlocksAround() {
-        return resetBlocksAround;
-    }
-
-    public void setResetBlocksAround(boolean value) {
-        this.resetBlocksAround = value;
-    }
-
-    @Override
-    public void setCancelled() {
-        super.setCancelled();
     }
 }

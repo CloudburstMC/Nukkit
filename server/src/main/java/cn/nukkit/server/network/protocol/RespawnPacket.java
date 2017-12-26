@@ -1,6 +1,6 @@
 package cn.nukkit.server.network.protocol;
 
-import cn.nukkit.server.math.Vector3f;
+import cn.nukkit.server.math.Vector3;
 
 /**
  * @author Nukkit Project Team
@@ -15,7 +15,7 @@ public class RespawnPacket extends DataPacket {
 
     @Override
     public void decode() {
-        Vector3f v = this.getVector3f();
+        Vector3 v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;

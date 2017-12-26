@@ -5,7 +5,7 @@ import cn.nukkit.server.entity.Attribute;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.BlockVector3;
-import cn.nukkit.server.math.Vector3f;
+import cn.nukkit.server.math.Vector3;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -389,11 +389,11 @@ public class BinaryStream {
         this.putVarInt(z);
     }
 
-    public Vector3f getVector3f() {
-        return new Vector3f(this.getLFloat(4), this.getLFloat(4), this.getLFloat(4));
+    public Vector3 getVector3f() {
+        return new Vector3(this.getLFloat(4), this.getLFloat(4), this.getLFloat(4));
     }
 
-    public void putVector3f(Vector3f v) {
+    public void putVector3f(Vector3 v) {
         this.putVector3f(v.x, v.y, v.z);
     }
 

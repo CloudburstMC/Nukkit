@@ -1,5 +1,7 @@
 package cn.nukkit.server.entity;
 
+import cn.nukkit.api.Location;
+import cn.nukkit.api.event.entity.EntityDamageEvent;
 import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.api.event.entity.EntityPortalEnterEvent.PortalType;
 import cn.nukkit.api.event.player.PlayerInteractEvent;
@@ -14,7 +16,6 @@ import cn.nukkit.server.block.BlockWater;
 import cn.nukkit.server.entity.data.*;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.Level;
-import cn.nukkit.server.level.Location;
 import cn.nukkit.server.level.Position;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.math.*;
@@ -33,6 +34,7 @@ import cn.nukkit.server.utils.ChunkException;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
+import com.flowpowered.math.vector.Vector3f;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -208,26 +210,26 @@ public abstract class Entity extends Location implements Metadatable, cn.nukkit.
     public List<Block> blocksAround = new ArrayList<>();
     public List<Block> collisionBlocks = new ArrayList<>();
 
-    public double lastX;
-    public double lastY;
-    public double lastZ;
+    public float lastX;
+    public float lastY;
+    public float lastZ;
 
     public boolean firstMove = true;
 
-    public double motionX;
-    public double motionY;
-    public double motionZ;
+    public float motionX;
+    public float motionY;
+    public float motionZ;
 
-    public Vector3 temporalVector;
-    public double lastMotionX;
-    public double lastMotionY;
-    public double lastMotionZ;
+    public Vector3f temporalVector;
+    public float lastMotionX;
+    public float lastMotionY;
+    public float lastMotionZ;
 
-    public double lastYaw;
-    public double lastPitch;
+    public float lastYaw;
+    public float lastPitch;
 
-    public double PitchDelta;
-    public double YawDelta;
+    public float PitchDelta;
+    public float YawDelta;
 
     public double entityCollisionReduction = 0; // Higher than 0.9 will result a fast collisions
     public AxisAlignedBB boundingBox;
@@ -355,7 +357,7 @@ public abstract class Entity extends Location implements Metadatable, cn.nukkit.
         this.timing = Timings.getEntityTiming(this);
 
         this.isPlayer = this instanceof Player;
-        this.temporalVector = new Vector3();
+        this.temporalVector = new Vector3f();
 
         this.id = Entity.entityCount++;
         this.justCreated = true;

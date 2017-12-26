@@ -1,6 +1,6 @@
 package cn.nukkit.server.network.protocol;
 
-import cn.nukkit.server.math.Vector3f;
+import cn.nukkit.server.math.Vector3;
 
 /**
  * Created on 15-10-14.
@@ -30,7 +30,7 @@ public class MovePlayerPacket extends DataPacket {
     @Override
     public void decode() {
         this.eid = this.getEntityRuntimeId();
-        Vector3f v = this.getVector3f();
+        Vector3 v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;

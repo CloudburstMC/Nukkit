@@ -1,37 +1,32 @@
 package cn.nukkit.api.event.player;
 
+import cn.nukkit.api.Location;
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.Level;
-import cn.nukkit.server.level.Location;
-import cn.nukkit.server.level.Position;
-import cn.nukkit.server.math.Vector3;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.level.Level;
+import com.flowpowered.math.vector.Vector3f;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
+    private boolean cancelled;
 
     private TeleportCause cause;
     private Location from;
     private Location to;
 
-    private PlayerTeleportEvent(Player player) {
-        this.player = player;
-    }
-
     public PlayerTeleportEvent(Player player, Location from, Location to, TeleportCause cause) {
-        this(player);
+        super(player);
         this.from = from;
         this.to = to;
         this.cause = cause;
     }
 
-    public PlayerTeleportEvent(Player player, Vector3 from, Vector3 to, TeleportCause cause) {
-        this(player);
+    public PlayerTeleportEvent(Player player, Vector3f from, Vector3f to, TeleportCause cause) {
+        super(player);
         this.from = vectorToLocation(player.getLevel(), from);
         this.from = vectorToLocation(player.getLevel(), to);
         this.cause = cause;
@@ -49,10 +44,8 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         return cause;
     }
 
-    private Location vectorToLocation(Level baseLevel, Vector3 vector) {
-        if (vector instanceof Location) return (Location) vector;
-        if (vector instanceof Position) return ((Position) vector).getLocation();
-        return new Location(vector.getX(), vector.getY(), vector.getZ(), 0, 0, baseLevel);
+    private Location vectorToLocation(Level baseLevel, Vector3f vector) {
+        return new Location(baseLevel, vector);
     }
 
 

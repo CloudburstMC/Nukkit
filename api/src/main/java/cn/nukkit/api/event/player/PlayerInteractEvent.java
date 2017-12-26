@@ -1,73 +1,49 @@
 package cn.nukkit.api.event.player;
 
+import cn.nukkit.api.Location;
 import cn.nukkit.api.Player;
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Position;
-import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.math.Vector3;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.item.ItemStack;
+import cn.nukkit.api.util.data.BlockFace;
+import com.flowpowered.math.vector.Vector3f;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+
+@Getter
+@Setter
 public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
 
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     protected final Block blockTouched;
-
-    protected final Vector3 touchVector;
-
+    protected final Vector3f touchVector;
     protected final BlockFace blockFace;
-
-    protected final Item item;
-
+    protected final ItemStack item;
     protected final Action action;
+    private boolean cancelled;
 
-    public PlayerInteractEvent(Player player, Item item, Vector3 block, BlockFace face) {
+    public PlayerInteractEvent(Player player, ItemStack item, Vector3f block, BlockFace face) {
         this(player, item, block, face, Action.RIGHT_CLICK_BLOCK);
     }
 
-    public PlayerInteractEvent(Player player, Item item, Vector3 block, BlockFace face, Action action) {
+    public PlayerInteractEvent(Player player, ItemStack item, Vector3f block, BlockFace face, Action action) {
+        super(player);
+
         if (block instanceof Block) {
             this.blockTouched = (Block) block;
-            this.touchVector = new Vector3(0, 0, 0);
+            this.touchVector = new Vector3f(0, 0, 0);
         } else {
             this.touchVector = block;
-            this.blockTouched = Block.get(Block.AIR, 0, new Position(0, 0, 0, player.level));
+            this.blockTouched = Block.get(Block.AIR, 0, new Location(player.getLevel(), 0, 0, 0));
         }
 
-        this.player = player;
         this.item = item;
         this.blockFace = face;
         this.action = action;
-    }
-
-    public Action getAction() {
-        return action;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public Block getBlock() {
-        return blockTouched;
-    }
-
-    public Vector3 getTouchVector() {
-        return touchVector;
-    }
-
-    public BlockFace getFace() {
-        return blockFace;
     }
 
     public enum Action {

@@ -1,13 +1,13 @@
 package cn.nukkit.server.entity.data;
 
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.math.Vector3f;
+import cn.nukkit.server.math.Vector3;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Vector3fEntityData extends EntityData<Vector3f> {
+public class Vector3fEntityData extends EntityData<Vector3> {
     public float x;
     public float y;
     public float z;
@@ -19,17 +19,17 @@ public class Vector3fEntityData extends EntityData<Vector3f> {
         this.z = z;
     }
 
-    public Vector3fEntityData(int id, Vector3f pos) {
+    public Vector3fEntityData(int id, Vector3 pos) {
         this(id, pos.x, pos.y, pos.z);
     }
 
     @Override
-    public Vector3f getData() {
-        return new Vector3f(x, y, z);
+    public Vector3 getData() {
+        return new Vector3(x, y, z);
     }
 
     @Override
-    public void setData(Vector3f data) {
+    public void setData(Vector3 data) {
         if (data != null) {
             this.x = data.x;
             this.y = data.y;

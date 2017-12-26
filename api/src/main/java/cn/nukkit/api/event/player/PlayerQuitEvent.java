@@ -3,11 +3,16 @@ package cn.nukkit.api.event.player;
 import cn.nukkit.api.Player;
 import cn.nukkit.api.message.GenericMessage;
 import cn.nukkit.api.message.Message;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class PlayerQuitEvent extends PlayerEvent {
+
+    protected final String reason;
     protected Message quitMessage;
     protected boolean autoSave = true;
-    protected String reason;
 
     public PlayerQuitEvent(Player player, Message quitMessage, String reason) {
         this(player, quitMessage, true, reason);
@@ -42,33 +47,5 @@ public class PlayerQuitEvent extends PlayerEvent {
         this.quitMessage = quitMessage;
         this.autoSave = autoSave;
         this.reason = reason;
-    }
-
-    public Message getQuitMessage() {
-        return quitMessage;
-    }
-
-    public void setQuitMessage(Message quitMessage) {
-        this.quitMessage = quitMessage;
-    }
-
-    public void setQuitMessage(String quitMessage) {
-        this.setQuitMessage(new Message(quitMessage));
-    }
-
-    public boolean getAutoSave() {
-        return this.autoSave;
-    }
-
-    public void setAutoSave() {
-        this.setAutoSave(true);
-    }
-
-    public void setAutoSave(boolean autoSave) {
-        this.autoSave = autoSave;
-    }
-
-    public String getReason() {
-        return reason;
     }
 }

@@ -1,20 +1,14 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.event.Event;
 import cn.nukkit.server.network.SourceInterface;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PlayerCreationEvent extends Event {
-
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
+public class PlayerCreationEvent implements Event {
 
     private final SourceInterface interfaz;
 

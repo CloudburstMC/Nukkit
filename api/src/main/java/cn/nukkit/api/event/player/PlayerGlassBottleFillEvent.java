@@ -1,22 +1,27 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.item.ItemStack;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class PlayerGlassBottleFillEvent extends PlayerEvent implements Cancellable {
 
-    protected final Item item;
+    protected final ItemStack item;
     protected final Block target;
+    private boolean cancelled;
 
-    public PlayerGlassBottleFillEvent(Player player, Block target, Item item) {
-        this.player = player;
+    public PlayerGlassBottleFillEvent(Player player, Block target, ItemStack item) {
+        super(player);
         this.target = target;
-        this.item = item.clone();
+        this.item = item;
     }
 
-    public Item getItem() {
+    public ItemStack getItem() {
         return item;
     }
 
