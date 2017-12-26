@@ -1,7 +1,7 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.Cancellable;
+import cn.nukkit.api.event.Cancellable;
 import cn.nukkit.server.event.HandlerList;
 
 public class PlayerChunkRequestEvent extends PlayerEvent implements Cancellable {

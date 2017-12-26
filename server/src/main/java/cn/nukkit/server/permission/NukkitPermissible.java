@@ -1,6 +1,8 @@
 package cn.nukkit.server.permission;
 
 import cn.nukkit.api.permission.Permissible;
+import cn.nukkit.api.permission.Permission;
+import cn.nukkit.api.permission.ServerOperator;
 import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.utils.PluginException;
@@ -53,7 +55,7 @@ public class NukkitPermissible implements Permissible {
     }
 
     @Override
-    public boolean isPermissionSet(NukkitPermission nukkitPermission) {
+    public boolean isPermissionSet(Permission nukkitPermission) {
         return this.isPermissionSet(nukkitPermission.getName());
     }
 

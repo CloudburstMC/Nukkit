@@ -1,6 +1,6 @@
-package cn.nukkit.server.form.window;
+package cn.nukkit.api.form.window;
 
-import cn.nukkit.server.form.response.FormResponse;
+import cn.nukkit.api.form.response.FormResponse;
 
 public abstract class FormWindow {
 

@@ -1,7 +1,7 @@
 package cn.nukkit.server.utils;
 
+import cn.nukkit.api.Skin;
 import cn.nukkit.server.entity.Attribute;
-import cn.nukkit.server.entity.data.Skin;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.BlockVector3;

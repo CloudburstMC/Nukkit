@@ -10,6 +10,8 @@ public interface Whitelist {
 
     void removeFromWhitelist(String name);
 
+    boolean isOnWhitelist(String name);
+
     interface Entry {
         String getXuid();
         String getUuid();

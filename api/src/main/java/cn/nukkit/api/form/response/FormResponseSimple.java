@@ -1,6 +1,6 @@
-package cn.nukkit.server.form.response;
+package cn.nukkit.api.form.response;
 
-import cn.nukkit.server.form.element.ElementButton;
+import cn.nukkit.api.form.element.ElementButton;
 
 public class FormResponseSimple extends FormResponse {
 

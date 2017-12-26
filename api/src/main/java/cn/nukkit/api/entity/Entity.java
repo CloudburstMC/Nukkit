@@ -385,4 +385,13 @@ public interface Entity {
      * @param cooldown portal cooldown ticks
      */
     void setPortalCooldown(int cooldown);
+
+    /**
+     * Returns whether entity is {@link cn.nukkit.api.Player} or not
+     *
+     * @return whether entity is Player
+     */
+    boolean isPlayer();
+
+    boolean attack(EntityDamageEvent source);
 }

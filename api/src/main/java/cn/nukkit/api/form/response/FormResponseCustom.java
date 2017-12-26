@@ -1,4 +1,4 @@
-package cn.nukkit.server.form.response;
+package cn.nukkit.api.form.response;
 
 import java.util.HashMap;
 

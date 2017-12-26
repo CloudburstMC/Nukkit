@@ -1,4 +1,4 @@
-package cn.nukkit.server.form.element;
+package cn.nukkit.api.form.element;
 
 public class ElementButtonImageData {
 

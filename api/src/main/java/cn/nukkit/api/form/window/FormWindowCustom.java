@@ -1,8 +1,9 @@
-package cn.nukkit.server.form.window;
+package cn.nukkit.api.form.window;
 
+import cn.nukkit.api.form.element.*;
+import cn.nukkit.api.form.response.FormResponseCustom;
+import cn.nukkit.api.form.response.FormResponseData;
 import cn.nukkit.server.form.element.*;
-import cn.nukkit.server.form.response.FormResponseCustom;
-import cn.nukkit.server.form.response.FormResponseData;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

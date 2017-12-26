@@ -1,4 +1,4 @@
-package cn.nukkit.server.entity.data;
+package cn.nukkit.api;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;

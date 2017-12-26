@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class NukkitEventManager implements EventManager {
+
     private volatile Map<Class<? extends Event>, EventFireHandler> eventHandlers = Collections.emptyMap();
     private final Map<Plugin, List<Listener>> listenersByPlugin = new HashMap<>();
     private final List<Listener> listeners = new ArrayList<>();

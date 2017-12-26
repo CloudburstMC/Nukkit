@@ -1,6 +1,6 @@
 package cn.nukkit.server.network.protocol;
 
-import cn.nukkit.server.entity.data.Skin;
+import cn.nukkit.api.Skin;
 
 import java.util.UUID;
 

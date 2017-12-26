@@ -54,6 +54,11 @@ public class NukkitWhitelist implements Whitelist{
         entries.remove(name);
     }
 
+    @Override
+    public boolean isOnWhitelist(String name) {
+        return entries.containsKey(name);
+    }
+
     @Getter
     @AllArgsConstructor
     public static final class Entry {

@@ -1,8 +1,8 @@
 package cn.nukkit.server.entity;
 
+import cn.nukkit.api.Skin;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.data.IntPositionEntityData;
-import cn.nukkit.server.entity.data.Skin;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.network.protocol.AddPlayerPacket;

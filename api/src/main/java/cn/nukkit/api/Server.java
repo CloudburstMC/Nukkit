@@ -55,4 +55,14 @@ public interface Server {
 
     @Nonnull
     PermissionManager getPermissionManager();
+
+    Player getPlayer(String name);
+
+    Player getPlayerExact(String name);
+
+    void shutdown();
+
+    void forceShutdown();
+
+    GameMode getDefaultGameMode();
 }
