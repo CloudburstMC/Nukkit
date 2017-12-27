@@ -4,10 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.inventory.Inventory;
-import cn.nukkit.inventory.transaction.action.CreativeInventoryAction;
-import cn.nukkit.inventory.transaction.action.DropItemAction;
-import cn.nukkit.inventory.transaction.action.InventoryAction;
-import cn.nukkit.inventory.transaction.action.SlotChangeAction;
+import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
 
@@ -79,6 +76,13 @@ public class NetworkInventoryAction {
                 break;
             case SOURCE_TODO:
                 this.windowId = packet.getVarInt();
+
+                switch (this.windowId) {
+                    case SOURCE_TYPE_CRAFTING_RESULT:
+                    case SOURCE_TYPE_CRAFTING_USE_INGREDIENT:
+                        packet.isCraftingPart = true;
+                        break;
+                }
                 break;
         }
 
@@ -125,10 +129,12 @@ public class NetworkInventoryAction {
                     return new SlotChangeAction(window, this.inventorySlot, this.oldItem, this.newItem);
                 }
 
-                throw new RuntimeException("Player " + player.getName() + " has no open container with window ID " + this.windowId);
+                player.getServer().getLogger().debug("Player " + player.getName() + " has no open container with window ID " + this.windowId);
+                return null;
             case SOURCE_WORLD:
                 if (this.inventorySlot != InventoryTransactionPacket.ACTION_MAGIC_SLOT_DROP_ITEM) {
-                    throw new RuntimeException("Only expecting drop-item world actions from the client!");
+                    player.getServer().getLogger().debug("Only expecting drop-item world actions from the client!");
+                    return null;
                 }
 
                 return new DropItemAction(this.oldItem, this.newItem);
@@ -143,8 +149,8 @@ public class NetworkInventoryAction {
                         type = CreativeInventoryAction.TYPE_CREATE_ITEM;
                         break;
                     default:
-                        throw new RuntimeException("Unexpected creative action type " + this.inventorySlot);
-
+                        player.getServer().getLogger().debug("Unexpected creative action type " + this.inventorySlot);
+                        return null;
                 }
 
                 return new CreativeInventoryAction(this.oldItem, this.newItem, type);
@@ -153,16 +159,20 @@ public class NetworkInventoryAction {
                 switch (this.windowId) {
                     case SOURCE_TYPE_CRAFTING_ADD_INGREDIENT:
                     case SOURCE_TYPE_CRAFTING_REMOVE_INGREDIENT:
-                    case SOURCE_TYPE_CRAFTING_RESULT:
-                    case SOURCE_TYPE_CRAFTING_USE_INGREDIENT:
                         window = player.getCraftingGrid();
                         return new SlotChangeAction(window, this.inventorySlot, this.oldItem, this.newItem);
+                    case SOURCE_TYPE_CRAFTING_RESULT:
+                        return new CraftingTakeResultAction(this.oldItem, this.newItem);
+                    case SOURCE_TYPE_CRAFTING_USE_INGREDIENT:
+                        return new CraftingTransferMaterialAction(this.oldItem, this.newItem, this.inventorySlot);
                     case SOURCE_TYPE_CONTAINER_DROP_CONTENTS:
                         window = player.getCraftingGrid();
                         inventorySlot = window.first(this.oldItem, true);
+
                         if (inventorySlot == -1) {
-                            throw new RuntimeException("Fake container " + window.getClass().getName() + " for " + player.getName() + " does not contain " + this.oldItem);
+                            return null;
                         }
+
                         return new SlotChangeAction(window, inventorySlot, this.oldItem, this.newItem);
                 }
 
@@ -170,7 +180,8 @@ public class NetworkInventoryAction {
                     Inventory inv = player.getWindowById(Player.ANVIL_WINDOW_ID);
 
                     if (!(inv instanceof AnvilInventory)) {
-                        throw new RuntimeException("Player " + player.getName() + " has no open anvil inventory");
+                        player.getServer().getLogger().debug("Player " + player.getName() + " has no open anvil inventory");
+                        return null;
                     }
                     AnvilInventory anvil = (AnvilInventory) inv;
 
@@ -200,7 +211,8 @@ public class NetworkInventoryAction {
                     Inventory inv = player.getWindowById(Player.ENCHANT_WINDOW_ID);
 
                     if (!(inv instanceof EnchantInventory)) {
-                        throw new RuntimeException("Player " + player.getName() + " has no open enchant inventory");
+                        player.getServer().getLogger().debug("Player " + player.getName() + " has no open enchant inventory");
+                        return null;
                     }
                     EnchantInventory enchant = (EnchantInventory) inv;
 
@@ -225,9 +237,11 @@ public class NetworkInventoryAction {
                 }
 
                 //TODO: more stuff
-                throw new RuntimeException("Player " + player.getName() + " has no open container with window ID " + this.windowId);
+                player.getServer().getLogger().debug("Player " + player.getName() + " has no open container with window ID " + this.windowId);
+                return null;
             default:
-                throw new RuntimeException("Unknown inventory source type " + this.sourceType);
+                player.getServer().getLogger().debug("Unknown inventory source type " + this.sourceType);
+                return null;
         }
     }
 }

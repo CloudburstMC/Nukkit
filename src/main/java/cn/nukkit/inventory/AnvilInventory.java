@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
-import cn.nukkit.level.sound.AnvilUseSound;
 
 import java.util.ArrayList;
 import java.util.Arrays;

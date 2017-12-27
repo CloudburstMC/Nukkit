@@ -1,9 +1,9 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ShapelessRecipe implements Recipe {
+public class ShapelessRecipe implements CraftingRecipe {
 
     private final Item output;
 
@@ -91,12 +91,65 @@ public class ShapelessRecipe implements Recipe {
     }
 
     @Override
-    public void registerToCraftingManager() {
-        Server.getInstance().getCraftingManager().registerShapelessRecipe(this);
+    public void registerToCraftingManager(CraftingManager manager) {
+        manager.registerShapelessRecipe(this);
     }
 
     @Override
     public boolean requiresCraftingTable() {
         return this.ingredients.size() > 4;
+    }
+
+    @Override
+    public List<Item> getExtraResults() {
+        return null;
+    }
+
+    @Override
+    public List<Item> getAllResults() {
+        return null;
+    }
+
+    @Override
+    public boolean matchItems(Item[][] input, Item[][] output) {
+        List<Item> haveInputs = new ArrayList<>();
+        for (Item[] items : input) {
+            haveInputs.addAll(Arrays.asList(items));
+        }
+
+        List<Item> needInputs = this.getIngredientList();
+
+        if (!this.matchItemList(haveInputs, needInputs)) {
+            return false;
+        }
+
+        List<Item> haveOutputs = new ArrayList<>();
+        for (Item[] items : input) {
+            haveOutputs.addAll(Arrays.asList(items));
+        }
+        List<Item> needOutputs = this.getExtraResults();
+
+        return this.matchItemList(haveOutputs, needOutputs);
+    }
+
+
+    private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
+        for (Item haveItem : new ArrayList<>(haveItems)) {
+            if (haveItem.isNull()) {
+                haveItems.remove(haveItem);
+                continue;
+            }
+
+
+            for (Item needItem : new ArrayList<>(needItems)) {
+                if (needItem.equals(haveItem, !needItem.hasAnyDamageValue(), needItem.hasCompoundTag()) && needItem.getCount() == haveItem.getCount()) {
+                    haveItems.remove(haveItem);
+                    needItems.remove(needItem);
+                    break;
+                }
+            }
+        }
+
+        return haveItems.isEmpty() && haveItems.isEmpty();
     }
 }
