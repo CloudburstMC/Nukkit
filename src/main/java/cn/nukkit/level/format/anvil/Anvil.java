@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
  * Nukkit Project
  */
 public class Anvil extends BaseLevelProvider {
+    static private final byte[] PAD_256 = new byte[256];
 
     protected final Map<Long, RegionLoader> regions = new HashMap<>();
 
@@ -149,7 +150,7 @@ public class Anvil extends BaseLevelProvider {
         for (int height : chunk.getHeightMapArray()) {
             stream.putByte((byte) height);
         }
-        stream.put(new byte[256]);
+        stream.put(PAD_256);
         stream.put(chunk.getBiomeIdArray());
         stream.putByte((byte) 0);
         if (extraData != null) {
