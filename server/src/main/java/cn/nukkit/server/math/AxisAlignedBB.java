@@ -316,7 +316,7 @@ public class AxisAlignedBB implements Cloneable {
         int maxZ = NukkitMath.floorDouble(this.maxZ);
 
         for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; x <= maxY; y++) {
+            for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     action.accept(x, y, z);
                 }
