@@ -548,8 +548,12 @@ public class Server {
         packet.encode();
         packet.isEncoded = true;
 
-        for (Player player : players) {
-            player.dataPacket(packet);
+        if(packet.pid() == ProtocolInfo.BATCH_PACKET) {
+            for (Player player : players) {
+                player.dataPacket(packet);
+            }
+        } else {
+            getInstance().batchPackets(players, new DataPacket[]{packet}, true);
         }
 
         if (packet.encapsulatedPacket != null) {
