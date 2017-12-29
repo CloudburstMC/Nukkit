@@ -316,6 +316,23 @@ public class BinaryStream {
         this.putVarInt(0); //TODO CanDestroy entry count
     }
 
+    public void putSlot2(Item item) {
+        if (item == null || item.getId() == 0) {
+            this.putVarInt(0);
+            return;
+        }
+
+        this.putVarInt(item.getId());
+        int metadata = item.hasMeta() ? item.getDamage() : Short.MAX_VALUE;
+
+        this.putVarInt((metadata << 8) + (item.getCount() & 0xff));
+        byte[] nbt = item.getCompoundTag();
+        this.putLShort(nbt.length);
+        this.put(nbt);
+        this.putVarInt(0); //TODO CanPlaceOn entry count
+        this.putVarInt(0); //TODO CanDestroy entry count
+    }
+
     public byte[] getByteArray() {
         return this.get((int) this.getUnsignedVarInt());
     }

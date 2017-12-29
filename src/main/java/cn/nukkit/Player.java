@@ -2614,6 +2614,22 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
 
                     switch (entityEventPacket.event) {
+                        case EntityEventPacket.USE_ITEM:
+                            if (this.protocol.equals(PlayerProtocol.PLAYER_PROTOCOL_113)){
+                                PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(this, this.inventory.getItemInHand());
+                                this.server.getPluginManager().callEvent(consumeEvent);
+                                if (consumeEvent.isCancelled()){
+                                    this.inventory.sendContents(this);
+                                    break;
+                                }
+
+                                if (consumeEvent.getItem().getId() == Item.POTION){
+                                    Potion potion = Potion.getPotion(consumeEvent.getItem().getId()).setSplash(false);
+
+                                    if (potion != null) potion.applyPotion(this);
+                                }
+                            }
+                            break;
                         case EntityEventPacket.EATING_ITEM:
                             if (entityEventPacket.data == 0) {
                                 break;
