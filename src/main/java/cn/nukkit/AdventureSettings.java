@@ -1,6 +1,7 @@
 package cn.nukkit;
 
 import cn.nukkit.network.protocol.AdventureSettingsPacket;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -56,7 +57,11 @@ public class AdventureSettings implements Cloneable {
         pk.playerPermission = (player.isOp() ? Player.PERMISSION_OPERATOR : Player.PERMISSION_MEMBER);
         pk.entityUniqueId = player.getId();
 
-        Server.broadcastPacket(Server.getInstance().getOnlinePlayers().values(), pk);
+        //As 1.1 players are not able to proccess it, we must filter only NOT 1.1 players
+        Server.broadcastPacket(Server.getInstance().getOnlinePlayers().values().stream().filter(
+                player -> !player.getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113)
+        ).toArray(Player[]::new), pk);
+        if (player.getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113)) player.dataPacket(pk);
 
         player.resetInAirTicks();
     }
