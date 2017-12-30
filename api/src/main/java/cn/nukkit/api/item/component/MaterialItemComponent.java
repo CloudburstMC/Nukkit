@@ -2,7 +2,7 @@ package cn.nukkit.api.item.component;
 
 import java.util.Optional;
 
-public enum ItemMaterial implements ItemComponent {
+public enum MaterialItemComponent implements ItemComponent {
     // Armor
     LEATHER,
     CHAIN,
@@ -11,17 +11,17 @@ public enum ItemMaterial implements ItemComponent {
     NONE(1f),
     WOOD(2f),
     STONE(4f),
-    GOLD(12f),
     IRON(6f),
+    GOLD(12f),
     DIAMOND(8f);
 
     final Float toolMultiplier;
 
-    ItemMaterial() {
+    MaterialItemComponent() {
         this(null);
     }
 
-    ItemMaterial(Float toolMmultiplier) {
+    MaterialItemComponent(Float toolMmultiplier) {
         this.toolMultiplier = toolMmultiplier;
     }
 

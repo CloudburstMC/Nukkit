@@ -5,10 +5,14 @@ import cn.nukkit.api.event.EventManager;
 import cn.nukkit.api.item.ItemStackBuilder;
 import cn.nukkit.api.permission.PermissionManager;
 import cn.nukkit.api.plugin.PluginManager;
+import cn.nukkit.api.util.Config;
 import cn.nukkit.api.util.ConfigBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.UUID;
 
 public interface Server {
 
@@ -22,6 +26,9 @@ public interface Server {
 
     @Nonnull
     String getApiVersion();
+
+    @Nonnull
+    String getNukkitVersion();
 
     @Nonnull
     EventManager getEventManager();
@@ -65,4 +72,16 @@ public interface Server {
     void forceShutdown();
 
     GameMode getDefaultGameMode();
+
+    @Nonnull
+    Config getConfig();
+
+    @Nullable
+    Object getConfig(String variable);
+
+    @Nullable
+    Object getConfig(String variable, Object defaultValue);
+
+    @Nonnull
+    Map<UUID, Player> getOnlinePlayers();
 }

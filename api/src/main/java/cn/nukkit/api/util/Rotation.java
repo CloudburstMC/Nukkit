@@ -1,5 +1,6 @@
 package cn.nukkit.api.util;
 
+import com.flowpowered.math.HashFunctions;
 import com.flowpowered.math.vector.Vector3f;
 import com.google.common.base.Preconditions;
 
@@ -12,11 +13,15 @@ import javax.annotation.concurrent.Immutable;
 public final class Rotation {
     public static final Rotation ZERO = new Rotation(0f, 0f, 0f);
 
+    private transient volatile boolean hashed;
+    private transient volatile int hashCode;
     private final float pitch;
     private final float yaw;
     private final float headYaw;
 
     public Rotation(float pitch, float yaw, float headYaw) {
+        hashed = false;
+        hashCode = 0;
         this.pitch = validate(pitch, "pitch");
         this.yaw = validate(yaw, "yaw");
         this.headYaw = validate(headYaw, "headYaw");
@@ -62,21 +67,23 @@ public final class Rotation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Rotation rotation = (Rotation) o;
 
-        if (Float.compare(rotation.pitch, pitch) != 0) return false;
-        if (Float.compare(rotation.yaw, yaw) != 0) return false;
-        return Float.compare(rotation.headYaw, headYaw) == 0;
-
+        return Float.compare(rotation.pitch, pitch) == 0 &&
+                Float.compare(rotation.yaw, yaw) == 0 &&
+                Float.compare(rotation.headYaw, headYaw) == 0;
     }
 
     @Override
     public int hashCode() {
-        int result = (pitch != +0.0f ? Float.floatToIntBits(pitch) : 0);
-        result = 31 * result + (yaw != +0.0f ? Float.floatToIntBits(yaw) : 0);
-        result = 31 * result + (headYaw != +0.0f ? Float.floatToIntBits(headYaw) : 0);
-        return result;
+        if (!hashed) {
+            int result = pitch != 0.0F ? HashFunctions.hash(pitch) : 0;
+            result = 31 * result + (yaw != 0.0F ? HashFunctions.hash(yaw) : 0);
+            this.hashCode = 31 * result + (headYaw != 0.0F ? HashFunctions.hash(headYaw) : 0);
+            this.hashed = true;
+        }
+
+        return hashCode;
     }
 
     @Override

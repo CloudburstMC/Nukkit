@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
  */
 @Nonnull
 @Immutable
-public class TranslatedMessage implements Message {
+public class TranslatedMessage implements ParameterMessage {
 
     private final String name;
     private final List<String> replacements;
@@ -53,7 +54,7 @@ public class TranslatedMessage implements Message {
      * @return the replacements to use
      */
     @Nonnull
-    public List<String> getReplacements() {
+    public Collection<String> getReplacements() {
         return replacements;
     }
 
@@ -77,5 +78,10 @@ public class TranslatedMessage implements Message {
                 "name='" + name + '\'' +
                 ", replacements=" + replacements +
                 '}';
+    }
+
+    @Override
+    public Collection<String> getParameters() {
+        return replacements;
     }
 }

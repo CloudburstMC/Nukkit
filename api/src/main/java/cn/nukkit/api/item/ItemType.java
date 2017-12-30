@@ -18,8 +18,6 @@ public interface ItemType {
 
     int getMaximumStackSize();
 
-    Metadata defaultMetadata();
-
     default boolean isStackable() {
         return getMaximumStackSize() > 1;
     }
@@ -36,10 +34,6 @@ public interface ItemType {
             throw new VerifyException("Component class " + clazz.getName() + " isn't provided by this item.");
         }
         return component.get();
-    }
-
-    default boolean hasDefaultMetadata() {
-        return defaultMetadata() != null;
     }
 
     default boolean hasMetadataClass() {

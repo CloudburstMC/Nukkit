@@ -376,6 +376,11 @@ public class BlockTypes {
         }
 
         @Override
+        public boolean isFloodable() {
+            return floodable;
+        }
+
+        @Override
         public String toString() {
             return getName();
         }

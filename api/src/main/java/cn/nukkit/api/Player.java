@@ -14,7 +14,7 @@ import com.flowpowered.math.vector.Vector3d;
 import java.net.InetSocketAddress;
 import java.util.Locale;
 
-public interface Player extends IPlayer, Session, HumanEntity, CommandExecutorSource {
+public interface Player extends Session, HumanEntity, CommandExecutorSource {
 
     String getDisplayName();
 

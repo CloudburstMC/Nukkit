@@ -5,4 +5,6 @@ import cn.nukkit.api.util.data.FlowerType;
 public interface FlowerPotBlockEntity extends BlockEntity {
 
     FlowerType getFlowerType();
+
+    void setFlowerType(FlowerType flowerType);
 }

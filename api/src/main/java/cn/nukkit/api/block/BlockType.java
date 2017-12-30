@@ -20,4 +20,6 @@ public interface BlockType extends ItemType {
     int filtersLight();
 
     float hardness();
+
+    boolean isFloodable();
 }

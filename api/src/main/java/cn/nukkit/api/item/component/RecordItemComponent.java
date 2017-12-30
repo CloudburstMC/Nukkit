@@ -1,6 +1,6 @@
 package cn.nukkit.api.item.component;
 
-public enum ItemRecord implements ItemComponent {
+public enum RecordItemComponent implements ItemComponent {
     RECORD_13,
     RECORD_CAT,
     RECORD_BLOCKS,

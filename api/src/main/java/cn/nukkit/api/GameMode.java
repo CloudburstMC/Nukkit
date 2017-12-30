@@ -1,5 +1,6 @@
 package cn.nukkit.api;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,43 +9,60 @@ import java.util.Map;
  * have
  */
 public enum GameMode {
+
     /**
      * Survival mode is the "normal" gameplay type, with no special features.
      */
-    SURVIVAL("survival", "s"),
+    SURVIVAL("%gameMode.survival", "s", "0", "survival"),
 
     /**
      * Creative mode may fly, build instantly, become invulnerable and create
      * free items.
      */
-    CREATIVE("creative", "c"),
+    CREATIVE("%gameMode.creative", "c", "1", "creative"),
 
     /**
      * Adventure mode cannot break blocks without the correct tools.
      */
-    ADVENTURE("adventure", "a"),
+    ADVENTURE("%gameMode.adventure", "a", "2", "adventure"),
 
     /**
      * Spectator mode cannot interact with the world in anyway and is
      * invisible to normal players. This grants the player the
      * ability to no-clip through the world.
      */
-    SPECTATOR("spectator", "s");
+    SPECTATOR("%gameMode.spectator", "sp", "3", "spectator");
 
     private static final Map<String, GameMode> modes = new HashMap<>();
+    private final String translation;
+    private final String[] aliases;
 
-    static {
-        for (GameMode mode : values()) {
-            for (String s : mode.aliases) {
-                modes.put(s, mode);
-            }
+    GameMode(String translation, String... aliases) {
+        this.translation = translation;
+        this.aliases = aliases;
+        add();
+    }
+
+    @Nonnull
+    public static GameMode parse(String gamemode) {
+        return (modes.contains(gamemode.toLowerCase());
+    }
+
+    @Nonnull
+    public static GameMode parse(int gamemode) {
+        GameMode mode = GameMode.values()[gamemode];
+        return (mode == null ? GameMode.SURVIVAL : mode);
+    }
+
+    private void add() {
+        for (String s : aliases) {
+            modes.put(s, this);
         }
     }
 
-    private final String[] aliases;
-
-    GameMode(String... aliases) {
-        this.aliases = aliases;
+    @Nonnull
+    public String getTranslationString() {
+        return translation;
     }
 
     /**
@@ -54,9 +72,5 @@ public enum GameMode {
      */
     public int getId() {
         return ordinal();
-    }
-
-    public static GameMode of(String mode) {
-        return modes.get(mode.toLowerCase());
     }
 }

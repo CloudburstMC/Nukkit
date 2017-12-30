@@ -1,9 +1,7 @@
 package cn.nukkit.api.item;
 
-import cn.nukkit.api.item.component.ItemBreakable;
+import cn.nukkit.api.item.component.EdibleItemComponent;
 import cn.nukkit.api.item.component.ItemComponent;
-import cn.nukkit.api.item.component.ItemEdible;
-import cn.nukkit.api.item.component.ItemInBowl;
 import cn.nukkit.api.metadata.Dyed;
 import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.api.metadata.item.Coal;
@@ -18,76 +16,72 @@ import lombok.Singular;
 import java.util.Optional;
 import java.util.Set;
 
-import static cn.nukkit.api.item.component.ItemInBowl.IN_BOWL;
-import static cn.nukkit.api.metadata.Dyed.DEFAULT_DYE;
-import static cn.nukkit.api.metadata.item.GenericDamageValue.ZERO;
-
 public class ItemTypes {
-    public static final ItemType IRON_SHOVEL = IntItem.builder().id(256).name("iron_shovel").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(251)).build();
-    public static final ItemType IRON_PICKAXE = IntItem.builder().id(257).name("iron_pickaxe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(251)).build();
-    public static final ItemType IRON_AXE = IntItem.builder().id(258).name("iron_axe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(251)).build();
-    public static final ItemType FLINT_AND_STEEL = IntItem.builder().id(259).name("flint_and_steel").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).build();
-    public static final ItemType APPLE = IntItem.builder().id(260).name("apple").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(4, 2.4f)).build();
-    public static final ItemType BOW = IntItem.builder().id(261).name("bow").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).build();
+    public static final ItemType IRON_SHOVEL = IntItem.builder().id(256).name("iron_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType IRON_PICKAXE = IntItem.builder().id(257).name("iron_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType IRON_AXE = IntItem.builder().id(258).name("iron_axe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType FLINT_AND_STEEL = IntItem.builder().id(259).name("flint_and_steel").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType APPLE = IntItem.builder().id(260).name("apple").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(4, 2.4f)).build();
+    public static final ItemType BOW = IntItem.builder().id(261).name("bow").maxStackSize(1).data(GenericDamageValue.class).build();
     public static final ItemType ARROW = IntItem.builder().id(262).name("arrow").maxStackSize(64).build();
-    public static final ItemType COAL = IntItem.builder().id(263).name("coal").maxStackSize(64).data(Coal.class).defaultMetadata(Coal.REGULAR).build();
+    public static final ItemType COAL = IntItem.builder().id(263).name("coal").maxStackSize(64).data(Coal.class).build();
     public static final ItemType DIAMOND = IntItem.builder().id(264).name("diamond").maxStackSize(64).build();
     public static final ItemType IRON_INGOT = IntItem.builder().id(265).name("iron_ingot").maxStackSize(64).build();
     public static final ItemType GOLD_INGOT = IntItem.builder().id(266).name("gold_ingot").maxStackSize(64).build();
-    public static final ItemType IRON_SWORD = IntItem.builder().id(267).name("iron_sword").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(251)).build();
-    public static final ItemType WOODEN_SWORD = IntItem.builder().id(268).name("wooden_sword").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(60)).build();
-    public static final ItemType WOODEN_SHOVEL = IntItem.builder().id(269).name("wooden_shovel").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(60)).build();
-    public static final ItemType WOODEN_PICKAXE = IntItem.builder().id(270).name("wooden_pickaxe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(60)).build();
-    public static final ItemType WOODEN_AXE = IntItem.builder().id(271).name("wooden_axe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(60)).build();
-    public static final ItemType STONE_SWORD = IntItem.builder().id(272).name("stone_sword").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(132)).build();
-    public static final ItemType STONE_SHOVEL = IntItem.builder().id(273).name("stone_shovel").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(132)).build();
-    public static final ItemType STONE_PICKAXE = IntItem.builder().id(274).name("stone_pickaxe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(132)).build();
-    public static final ItemType STONE_AXE = IntItem.builder().id(275).name("stone_axe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(132)).build();
-    public static final ItemType DIAMOND_SWORD = IntItem.builder().id(276).name("diamond_sword").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(1562)).build();
-    public static final ItemType DIAMOND_SHOVEL = IntItem.builder().id(277).name("diamond_shovel").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(1562)).build();
-    public static final ItemType DIAMOND_PICKAXE = IntItem.builder().id(278).name("diamond_pickaxe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(1562)).build();
-    public static final ItemType DIAMOND_AXE = IntItem.builder().id(279).name("diamond_axe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(1562)).build();
+    public static final ItemType IRON_SWORD = IntItem.builder().id(267).name("iron_sword").maxStackSize(1).build();
+    public static final ItemType WOODEN_SWORD = IntItem.builder().id(268).name("wooden_sword").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType WOODEN_SHOVEL = IntItem.builder().id(269).name("wooden_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType WOODEN_PICKAXE = IntItem.builder().id(270).name("wooden_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType WOODEN_AXE = IntItem.builder().id(271).name("wooden_axe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType STONE_SWORD = IntItem.builder().id(272).name("stone_sword").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType STONE_SHOVEL = IntItem.builder().id(273).name("stone_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType STONE_PICKAXE = IntItem.builder().id(274).name("stone_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType STONE_AXE = IntItem.builder().id(275).name("stone_axe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType DIAMOND_SWORD = IntItem.builder().id(276).name("diamond_sword").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType DIAMOND_SHOVEL = IntItem.builder().id(277).name("diamond_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType DIAMOND_PICKAXE = IntItem.builder().id(278).name("diamond_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType DIAMOND_AXE = IntItem.builder().id(279).name("diamond_axe").maxStackSize(1).data(GenericDamageValue.class).build();
     public static final ItemType STICK = IntItem.builder().id(280).name("stick").maxStackSize(64).build();
     public static final ItemType BOWL = IntItem.builder().id(281).name("bowl").maxStackSize(64).build();
-    public static final ItemType MUSHROOM_STEW = IntItem.builder().id(282).name("mushroom_stew").maxStackSize(1).component(ItemEdible.class, ItemEdible.of(6, 7.2f)).component(ItemInBowl.class, IN_BOWL).build();
-    public static final ItemType GOLDEN_SWORD = IntItem.builder().id(283).name("golden_sword").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(33)).build();
-    public static final ItemType GOLDEN_SHOVEL = IntItem.builder().id(284).name("golden_shovel").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(33)).build();
-    public static final ItemType GOLDEN_PICKAXE = IntItem.builder().id(285).name("golden_pickaxe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(33)).build();
-    public static final ItemType GOLDEN_AXE = IntItem.builder().id(286).name("golden_axe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(33)).build();
+    public static final ItemType MUSHROOM_STEW = IntItem.builder().id(282).name("mushroom_stew").maxStackSize(1).component(EdibleItemComponent.class, EdibleItemComponent.of(6, 7.2f, true)).build();
+    public static final ItemType GOLDEN_SWORD = IntItem.builder().id(283).name("golden_sword").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType GOLDEN_SHOVEL = IntItem.builder().id(284).name("golden_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType GOLDEN_PICKAXE = IntItem.builder().id(285).name("golden_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType GOLDEN_AXE = IntItem.builder().id(286).name("golden_axe").maxStackSize(1).data(GenericDamageValue.class).build();
     public static final ItemType STRING = IntItem.builder().id(287).name("string").maxStackSize(64).build();
     public static final ItemType FEATHER = IntItem.builder().id(288).name("feather").maxStackSize(64).build();
     public static final ItemType GUNPOWDER = IntItem.builder().id(289).name("gunpowder").maxStackSize(64).build();
-    public static final ItemType WOODEN_HOE = IntItem.builder().id(290).name("wooden_hoe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).build();
-    public static final ItemType STONE_HOE = IntItem.builder().id(291).name("stone_hoe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).build();
-    public static final ItemType IRON_HOE = IntItem.builder().id(292).name("iron_hoe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).build();
-    public static final ItemType DIAMOND_HOE = IntItem.builder().id(293).name("diamond_hoe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).build();
-    public static final ItemType GOLDEN_HOE = IntItem.builder().id(294).name("golden_hoe").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).build();
+    public static final ItemType WOODEN_HOE = IntItem.builder().id(290).name("wooden_hoe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType STONE_HOE = IntItem.builder().id(291).name("stone_hoe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType IRON_HOE = IntItem.builder().id(292).name("iron_hoe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType DIAMOND_HOE = IntItem.builder().id(293).name("diamond_hoe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType GOLDEN_HOE = IntItem.builder().id(294).name("golden_hoe").maxStackSize(1).data(GenericDamageValue.class).build();
     public static final ItemType SEEDS = IntItem.builder().id(295).name("wheat_seeds").maxStackSize(64).build();
     public static final ItemType WHEAT = IntItem.builder().id(296).name("wheat").maxStackSize(64).build();
-    public static final ItemType BREAD = IntItem.builder().id(297).name("bread").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(5, 6f)).build();
-    public static final ItemType LEATHER_CAP = IntItem.builder().id(298).name("leather_helmet").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(56)).build();
-    public static final ItemType LEATHER_TUNIC = IntItem.builder().id(299).name("leather_chestplate").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(81)).build();
-    public static final ItemType LEATHER_PANTS = IntItem.builder().id(300).name("leather_leggings").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(76)).build();
-    public static final ItemType LEATHER_BOOTS = IntItem.builder().id(301).name("leather_boots").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(66)).build();
-    public static final ItemType CHAIN_HELMET = IntItem.builder().id(302).name("chain_helmet").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(166)).build();
-    public static final ItemType CHAIN_CHESTPLATE = IntItem.builder().id(303).name("chain_chestplate").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(241)).build();
-    public static final ItemType CHAIN_LEGGINGS = IntItem.builder().id(304).name("chain_leggings").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(226)).build();
-    public static final ItemType CHAIN_BOOTS = IntItem.builder().id(305).name("chain_boots").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(196)).build();
-    public static final ItemType IRON_HELMET = IntItem.builder().id(306).name("iron_helmet").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(166)).build();
-    public static final ItemType IRON_CHESTPLATE = IntItem.builder().id(307).name("iron_chestplate").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(241)).build();
-    public static final ItemType IRON_LEGGINGS = IntItem.builder().id(308).name("iron_leggings").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(226)).build();
-    public static final ItemType IRON_BOOTS = IntItem.builder().id(309).name("iron_boots").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(196)).build();
-    public static final ItemType DIAMOND_HELMET = IntItem.builder().id(310).name("diamond_helmet").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(364)).build();
-    public static final ItemType DIAMOND_CHESTPLATE = IntItem.builder().id(311).name("diamond_chestplate").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(529)).build();
-    public static final ItemType DIAMOND_LEGGINGS = IntItem.builder().id(312).name("diamond_leggings").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(496)).build();
-    public static final ItemType DIAMOND_BOOTS = IntItem.builder().id(313).name("diamond_boots").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(430)).build();
-    public static final ItemType GOLDEN_HELMET = IntItem.builder().id(314).name("golden_helmet").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(78)).build();
-    public static final ItemType GOLDEN_CHESTPLATE = IntItem.builder().id(315).name("golden_chestplate").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(113)).build();
-    public static final ItemType GOLDEN_LEGGINGS = IntItem.builder().id(316).name("golden_leggings").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(106)).build();
-    public static final ItemType GOLDEN_BOOTS = IntItem.builder().id(317).name("golden_boots").maxStackSize(1).data(GenericDamageValue.class).defaultMetadata(ZERO).component(ItemBreakable.class, ItemBreakable.of(92)).build();
+    public static final ItemType BREAD = IntItem.builder().id(297).name("bread").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(5, 6f)).build();
+    public static final ItemType LEATHER_CAP = IntItem.builder().id(298).name("leather_helmet").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType LEATHER_TUNIC = IntItem.builder().id(299).name("leather_chestplate").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType LEATHER_PANTS = IntItem.builder().id(300).name("leather_leggings").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType LEATHER_BOOTS = IntItem.builder().id(301).name("leather_boots").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType CHAIN_HELMET = IntItem.builder().id(302).name("chain_helmet").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType CHAIN_CHESTPLATE = IntItem.builder().id(303).name("chain_chestplate").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType CHAIN_LEGGINGS = IntItem.builder().id(304).name("chain_leggings").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType CHAIN_BOOTS = IntItem.builder().id(305).name("chain_boots").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType IRON_HELMET = IntItem.builder().id(306).name("iron_helmet").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType IRON_CHESTPLATE = IntItem.builder().id(307).name("iron_chestplate").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType IRON_LEGGINGS = IntItem.builder().id(308).name("iron_leggings").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType IRON_BOOTS = IntItem.builder().id(309).name("iron_boots").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType DIAMOND_HELMET = IntItem.builder().id(310).name("diamond_helmet").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType DIAMOND_CHESTPLATE = IntItem.builder().id(311).name("diamond_chestplate").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType DIAMOND_LEGGINGS = IntItem.builder().id(312).name("diamond_leggings").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType DIAMOND_BOOTS = IntItem.builder().id(313).name("diamond_boots").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType GOLDEN_HELMET = IntItem.builder().id(314).name("golden_helmet").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType GOLDEN_CHESTPLATE = IntItem.builder().id(315).name("golden_chestplate").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType GOLDEN_LEGGINGS = IntItem.builder().id(316).name("golden_leggings").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType GOLDEN_BOOTS = IntItem.builder().id(317).name("golden_boots").maxStackSize(1).data(GenericDamageValue.class).build();
     public static final ItemType FLINT = IntItem.builder().id(318).name("flint").maxStackSize(64).build();
     public static final ItemType RAW_PORKCHOP = IntItem.builder().id(319).name("porkchop").maxStackSize(64).build();
-    public static final ItemType COOKED_PORKCHOP = IntItem.builder().id(320).name("cooked_porkchop").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(8, 12.8f)).build();
+    public static final ItemType COOKED_PORKCHOP = IntItem.builder().id(320).name("cooked_porkchop").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(8, 12.8f)).build();
     public static final ItemType PAINTING = IntItem.builder().id(321).name("painting").maxStackSize(64).build();
     public static final ItemType GOLDEN_APPLE = IntItem.builder().id(322).name("golden_apple").maxStackSize(64).build();
     public static final ItemType SIGN = IntItem.builder().id(323).name("sign").maxStackSize(16).build();
@@ -113,14 +107,14 @@ public class ItemTypes {
     public static final ItemType CLOCK = IntItem.builder().id(347).name("clock").maxStackSize(64).build();
     public static final ItemType GLOWSTONE_DUST = IntItem.builder().id(348).name("glowstone_dust").maxStackSize(64).build();
     public static final ItemType RAW_FISH = IntItem.builder().id(349).name("fish").maxStackSize(64).build();
-    public static final ItemType COOKED_FISH = IntItem.builder().id(350).name("cooked_fish").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(5, 6f)).build();
-    public static final ItemType DYE = IntItem.builder().id(351).name("dye").maxStackSize(64).data(Dyed.class).defaultMetadata(DEFAULT_DYE).build();
+    public static final ItemType COOKED_FISH = IntItem.builder().id(350).name("cooked_fish").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(5, 6f)).build();
+    public static final ItemType DYE = IntItem.builder().id(351).name("dye").maxStackSize(64).data(Dyed.class).build();
     public static final ItemType BONE = IntItem.builder().id(352).name("bone").maxStackSize(64).build();
     public static final ItemType SUGAR = IntItem.builder().id(353).name("sugar").maxStackSize(64).build();
-    public static final ItemType CAKE = IntItem.builder().id(354).name("cake").maxStackSize(1).component(ItemEdible.class, ItemEdible.of(2, 0.4f)).build();
+    public static final ItemType CAKE = IntItem.builder().id(354).name("cake").maxStackSize(1).component(EdibleItemComponent.class, EdibleItemComponent.of(2, 0.4f)).build();
     public static final ItemType BED = IntItem.builder().id(355).name("bed").maxStackSize(1).build();
     public static final ItemType REDSTONE_REPEATER = IntItem.builder().id(356).name("repeater").maxStackSize(64).build();
-    public static final ItemType COOKIE = IntItem.builder().id(357).name("cookie").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(2, 0.4f)).build();
+    public static final ItemType COOKIE = IntItem.builder().id(357).name("cookie").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(2, 0.4f)).build();
     public static final ItemType FILLED_MAP = IntItem.builder().id(358).name("map_filled").maxStackSize(64).build();
     public static final ItemType SHEARS = IntItem.builder().id(359).name("shears").maxStackSize(1).build();
     public static final ItemType MELON = IntItem.builder().id(360).name("melon").maxStackSize(64).build();
@@ -129,7 +123,7 @@ public class ItemTypes {
     public static final ItemType RAW_BEEF = IntItem.builder().id(363).name("beef").maxStackSize(64).build();
     public static final ItemType STEAK = IntItem.builder().id(364).name("cooked_beef").maxStackSize(64).build();
     public static final ItemType RAW_CHICKEN = IntItem.builder().id(365).name("chicken").maxStackSize(64).build();
-    public static final ItemType COOKED_CHICKEN = IntItem.builder().id(366).name("cooked_chicken").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(6, 7.2f)).build();
+    public static final ItemType COOKED_CHICKEN = IntItem.builder().id(366).name("cooked_chicken").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(6, 7.2f)).build();
     public static final ItemType ROTTEN_FLESH = IntItem.builder().id(367).name("rotten_flesh").maxStackSize(64).build();
     public static final ItemType ENDER_PEARL = IntItem.builder().id(367).name("ender_pearl").maxStackSize(64).build();
     public static final ItemType BLAZE_ROD = IntItem.builder().id(369).name("blaze_rod").maxStackSize(64).build();
@@ -154,9 +148,9 @@ public class ItemTypes {
     public static final ItemType EMERALD = IntItem.builder().id(388).name("emerald").maxStackSize(64).build();
     public static final ItemType ITEM_FRAME = IntItem.builder().id(389).name("frame").maxStackSize(64).build();
     public static final ItemType FLOWER_POT = IntItem.builder().id(390).name("flower_pot").maxStackSize(64).build();
-    public static final ItemType CARROT = IntItem.builder().id(391).name("carrot").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(3, 3.6f)).build();
+    public static final ItemType CARROT = IntItem.builder().id(391).name("carrot").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(3, 3.6f)).build();
     public static final ItemType POTATO = IntItem.builder().id(392).name("potato").maxStackSize(64).build();
-    public static final ItemType BAKED_POTATO = IntItem.builder().id(393).name("baked_potato").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(5, 6f)).build();
+    public static final ItemType BAKED_POTATO = IntItem.builder().id(393).name("baked_potato").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(5, 6f)).build();
     public static final ItemType POISONOUS_POTATO = IntItem.builder().id(394).name("poisonous_potato").maxStackSize(64).build();
     public static final ItemType MAP = IntItem.builder().id(395).name("emptymap").maxStackSize(64).build();
     public static final ItemType GOLDEN_CARROT = IntItem.builder().id(396).name("golden_carrot").maxStackSize(64).build();
@@ -175,7 +169,7 @@ public class ItemTypes {
     public static final ItemType PRISMARINE_SHARD = IntItem.builder().id(409).name("prismarine_shard").maxStackSize(64).build();
     public static final ItemType HOPPER = IntItem.builder().id(410).name("hopper").maxStackSize(64).build();
     public static final ItemType RAW_RABBIT = IntItem.builder().id(411).name("rabbit").maxStackSize(64).build();
-    public static final ItemType COOKED_RABBIT = IntItem.builder().id(412).name("cooked_rabbit").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(5, 6f)).build();
+    public static final ItemType COOKED_RABBIT = IntItem.builder().id(412).name("cooked_rabbit").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(5, 6f)).build();
     public static final ItemType RABBIT_STEW = IntItem.builder().id(413).name("rabbit_stew").maxStackSize(64).build();
     public static final ItemType RABBITS_FOOT = IntItem.builder().id(414).name("rabbit_foot").maxStackSize(64).build();
     public static final ItemType RABBIT_HIDE = IntItem.builder().id(415).name("rabbit_hide").maxStackSize(64).build();
@@ -187,7 +181,7 @@ public class ItemTypes {
     public static final ItemType NAME_TAG = IntItem.builder().id(421).name("nametag").maxStackSize(64).build();
     public static final ItemType PRISMARINE_CRYSTALS = IntItem.builder().id(422).name("prismarine_crystals").maxStackSize(64).build();
     public static final ItemType MUTTON = IntItem.builder().id(423).name("muttonraw").maxStackSize(64).build();
-    public static final ItemType COOKED_MUTTON = IntItem.builder().id(424).name("muttoncooked").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(6, 9.6f)).build();
+    public static final ItemType COOKED_MUTTON = IntItem.builder().id(424).name("muttoncooked").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(6, 9.6f)).build();
     public static final ItemType ARMOR_STAND = IntItem.builder().id(425).name("armor_stand").maxStackSize(64).build();
     public static final ItemType END_CRYSTAL = IntItem.builder().id(426).name("end_crystal").maxStackSize(64).build();
     public static final ItemType SPRUCE_DOOR = IntItem.builder().id(427).name("spruce_door").maxStackSize(64).build();
@@ -195,7 +189,7 @@ public class ItemTypes {
     public static final ItemType JUNGLE_DOOR = IntItem.builder().id(429).name("jungle_door").maxStackSize(64).build();
     public static final ItemType ACACIA_DOOR = IntItem.builder().id(430).name("acacia_door").maxStackSize(64).build();
     public static final ItemType DARK_OAK_DOOR = IntItem.builder().id(431).name("dark_oak_door").maxStackSize(64).build();
-    public static final ItemType CHORUS_FRUIT = IntItem.builder().id(432).name("chorus_fruit").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(4, 2.4f)).build();
+    public static final ItemType CHORUS_FRUIT = IntItem.builder().id(432).name("chorus_fruit").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(4, 2.4f)).build();
     public static final ItemType POPPED_CHORUS_FRUIT = IntItem.builder().id(433).name("chorus_fruit_popped").maxStackSize(64).build();
     public static final ItemType DRAGONS_BREATH = IntItem.builder().id(437).name("dragon_breath").maxStackSize(64).build();
     public static final ItemType SPLASH_POTION = IntItem.builder().id(438).name("splash_potion").maxStackSize(1).build();
@@ -208,13 +202,13 @@ public class ItemTypes {
     public static final ItemType CHALKBOARD = IntItem.builder().id(454).name("board").maxStackSize(16).build();
     public static final ItemType PORTFOLIO = IntItem.builder().id(456).name("portfolio").maxStackSize(64).build();
     public static final ItemType IRON_NUGGET = IntItem.builder().id(457).name("iron_nugget").maxStackSize(64).build();
-    public static final ItemType BEETROOT = IntItem.builder().id(457).name("beetroot").maxStackSize(54).component(ItemEdible.class, ItemEdible.of(1, 1.2f)).build();
+    public static final ItemType BEETROOT = IntItem.builder().id(457).name("beetroot").maxStackSize(54).component(EdibleItemComponent.class, EdibleItemComponent.of(1, 1.2f)).build();
     public static final ItemType BEETROOT_SEEDS = IntItem.builder().id(458).name("beetroot_seeds").maxStackSize(64).build();
-    public static final ItemType BEETROOT_SOUP = IntItem.builder().id(459).name("beetroot_soup").maxStackSize(1).component(ItemEdible.class, ItemEdible.of(6, 7.2f)).component(ItemInBowl.class, IN_BOWL).build();
+    public static final ItemType BEETROOT_SOUP = IntItem.builder().id(459).name("beetroot_soup").maxStackSize(1).component(EdibleItemComponent.class, EdibleItemComponent.of(6, 7.2f, true)).build();
     public static final ItemType RAW_SALMON = IntItem.builder().id(460).name("salmon").maxStackSize(64).build();
-    public static final ItemType CLOWNFISH = IntItem.builder().id(461).name("clownfish").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(1, 0.2f)).build();
+    public static final ItemType CLOWNFISH = IntItem.builder().id(461).name("clownfish").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(1, 0.2f)).build();
     public static final ItemType PUFFERFISH = IntItem.builder().id(462).name("pufferfish").maxStackSize(64).build();
-    public static final ItemType COOKED_SALMON = IntItem.builder().id(463).name("cooked_salmon").maxStackSize(64).component(ItemEdible.class, ItemEdible.of(6, 9.6f)).build();
+    public static final ItemType COOKED_SALMON = IntItem.builder().id(463).name("cooked_salmon").maxStackSize(64).component(EdibleItemComponent.class, EdibleItemComponent.of(6, 9.6f)).build();
     public static final ItemType ENCHANTED_GOLDEN_APPLE = IntItem.builder().id(466).name("appleenchanted").maxStackSize(64).build();
     public static final ItemType CAMERA = IntItem.builder().id(498).name("camera").maxStackSize(64).build();
     public static final ItemType DISC_13 = IntItem.builder().id(500).name("record_13").maxStackSize(1).build();
@@ -237,15 +231,13 @@ public class ItemTypes {
         private final String name;
         private final int maxStackSize;
         private final Class<? extends Metadata> data;
-        private final Metadata defaultMetadata;
         @Singular("component") private final ImmutableMap<Class<? extends ItemComponent>, ItemComponent> itemComponents;
 
-        public IntItem(int id, String name, int maxStackSize, Class<? extends Metadata> data, Metadata defaultMetadata, ImmutableMap<Class<? extends ItemComponent>, ItemComponent> itemComponents) {
+        public IntItem(int id, String name, int maxStackSize, Class<? extends Metadata> data, ImmutableMap<Class<? extends ItemComponent>, ItemComponent> itemComponents) {
             this.id = id;
             this.name = name.toUpperCase();
             this.maxStackSize = maxStackSize;
             this.data = data;
-            this.defaultMetadata = defaultMetadata;
             this.itemComponents = itemComponents;
 
             BY_ID.put(id, this);
@@ -274,11 +266,6 @@ public class ItemTypes {
         @Override
         public int getMaximumStackSize() {
             return maxStackSize;
-        }
-
-        @Override
-        public Metadata defaultMetadata() {
-            return defaultMetadata;
         }
 
         @Override

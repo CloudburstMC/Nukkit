@@ -50,10 +50,6 @@ public interface ServerProperties {
 
     void setMobSpawningEnabled(boolean mobSpawningEnabled);
 
-    String getDefaultGamemode();
-
-    void setDefaultGamemode(String defaultGamemode);
-
     boolean isGamemodeForced();
 
     void setGamemodeForced(boolean gamemodeForced);
