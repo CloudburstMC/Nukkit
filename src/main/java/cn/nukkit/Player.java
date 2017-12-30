@@ -2017,7 +2017,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     this.loginChainData = ClientChainData.read(loginPacket);
 
-                    if (server.getPropertyBoolean("xbox-auth")) {
+                    if (!loginChainData.isXboxAuthed() && server.getPropertyBoolean("xbox-auth")) {
                         kick(PlayerKickEvent.Reason.UNKNOWN, "disconnectionScreen.invalidName", false);
                     }
 
