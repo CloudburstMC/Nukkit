@@ -4,8 +4,18 @@ import cn.nukkit.network.protocol.LoginPacket;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
+import net.minidev.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 
 /**
@@ -22,6 +32,17 @@ import java.util.*;
  * ===============
  */
 public final class ClientChainData implements LoginChainData {
+    private static final String MOJANG_PUBLIC_KEY_BASE64 =
+            "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
+    private static final PublicKey MOJANG_PUBLIC_KEY;
+
+    static {
+        try {
+            MOJANG_PUBLIC_KEY = generateKey(MOJANG_PUBLIC_KEY_BASE64);
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            throw new AssertionError(e);
+        }
+    }
 
     public static ClientChainData of(byte[] buffer) {
         return new ClientChainData(buffer);
@@ -86,6 +107,8 @@ public final class ClientChainData implements LoginChainData {
         return xuid;
     }
 
+    private boolean xboxAuthed;
+
     @Override
     public int getCurrentInputMode() {
         return currentInputMode;
@@ -130,6 +153,10 @@ public final class ClientChainData implements LoginChainData {
     private String username;
     private UUID clientUUID;
     private String xuid;
+
+    private static PublicKey generateKey(String base64) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(base64)));
+    }
     private String identityPublicKey;
 
     private long clientId;
@@ -154,24 +181,9 @@ public final class ClientChainData implements LoginChainData {
         decodeSkinData();
     }
 
-    private void decodeChainData() {
-        Map<String, List<String>> map = new Gson().fromJson(new String(bs.get(bs.getLInt()), StandardCharsets.UTF_8),
-                new TypeToken<Map<String, List<String>>>() {
-                }.getType());
-        if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
-        List<String> chains = map.get("chain");
-        for (String c : chains) {
-            JsonObject chainMap = decodeToken(c);
-            if (chainMap == null) continue;
-            if (chainMap.has("extraData")) {
-                JsonObject extra = chainMap.get("extraData").getAsJsonObject();
-                if (extra.has("displayName")) this.username = extra.get("displayName").getAsString();
-                if (extra.has("identity")) this.clientUUID = UUID.fromString(extra.get("identity").getAsString());
-                if (extra.has("XUID")) this.xuid = extra.get("XUID").getAsString();
-            }
-            if (chainMap.has("identityPublicKey"))
-                this.identityPublicKey = chainMap.get("identityPublicKey").getAsString();
-        }
+    @Override
+    public boolean isXboxAuthed() {
+        return xboxAuthed;
     }
 
     private void decodeSkinData() {
@@ -198,4 +210,68 @@ public final class ClientChainData implements LoginChainData {
         return new Gson().fromJson(json, JsonObject.class);
     }
 
+    private void decodeChainData() {
+        Map<String, List<String>> map = new Gson().fromJson(new String(bs.get(bs.getLInt()), StandardCharsets.UTF_8),
+                new TypeToken<Map<String, List<String>>>() {
+                }.getType());
+        if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
+        List<String> chains = map.get("chain");
+
+        // Validate keys
+        try {
+            xboxAuthed = verifyChain(chains);
+        } catch (Exception e) {
+            xboxAuthed = false;
+        }
+
+        for (String c : chains) {
+            JsonObject chainMap = decodeToken(c);
+            if (chainMap == null) continue;
+            if (chainMap.has("extraData")) {
+                JsonObject extra = chainMap.get("extraData").getAsJsonObject();
+                if (extra.has("displayName")) this.username = extra.get("displayName").getAsString();
+                if (extra.has("identity")) this.clientUUID = UUID.fromString(extra.get("identity").getAsString());
+                if (extra.has("XUID")) this.xuid = extra.get("XUID").getAsString();
+            }
+            if (chainMap.has("identityPublicKey"))
+                this.identityPublicKey = chainMap.get("identityPublicKey").getAsString();
+        }
+
+        if (!xboxAuthed) {
+            xuid = null;
+        }
+    }
+
+    private boolean verifyChain(List<String> chains) throws Exception {
+
+        PublicKey lastKey = null;
+        boolean mojangKeyVerified = false;
+        for (String chain: chains) {
+            JWSObject jws = JWSObject.parse(chain);
+
+            if (!mojangKeyVerified) {
+                // First chain should be signed using Mojang's private key. We'd be in big trouble if it leaked...
+                mojangKeyVerified = verify(MOJANG_PUBLIC_KEY, jws);
+            }
+
+            if (lastKey != null) {
+                if (!verify(lastKey, jws)) {
+                    throw new JOSEException("Unable to verify key in chain.");
+                }
+            }
+
+            JSONObject payload = jws.getPayload().toJSONObject();
+            String base64key = payload.getAsString("identityPublicKey");
+            if (base64key == null) {
+                throw new RuntimeException("No key found");
+            }
+            lastKey = generateKey(base64key);
+        }
+        return mojangKeyVerified;
+    }
+
+    private boolean verify(PublicKey key, JWSObject object) throws JOSEException {
+        JWSVerifier verifier = new DefaultJWSVerifierFactory().createJWSVerifier(object.getHeader(), key);
+        return object.verify(verifier);
+    }
 }

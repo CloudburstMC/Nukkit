@@ -93,6 +93,12 @@
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>4.39.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
