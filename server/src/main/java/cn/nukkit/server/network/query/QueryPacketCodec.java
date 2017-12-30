@@ -22,6 +22,7 @@ public class QueryPacketCodec extends MessageToMessageCodec<DatagramPacket, Dire
         try {
             ByteBuf buf = PooledByteBufAllocator.DEFAULT.directBuffer();
             buf.writeByte(packet.content().getId() & 0xFF);
+            packet.content().encode(buf);
             list.add(new DatagramPacket(buf, packet.recipient(), packet.sender()));
         } finally {
             packet.release();
