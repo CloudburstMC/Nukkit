@@ -1,71 +1,53 @@
 package cn.nukkit.api.event.server;
 
+import cn.nukkit.api.GameMode;
 import cn.nukkit.api.Player;
-import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.plugin.Plugin;
-import cn.nukkit.server.plugin.PluginDescription;
-import cn.nukkit.server.utils.Binary;
+import cn.nukkit.api.Server;
+import cn.nukkit.api.plugin.PluginContainer;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * Query information sent to server lists.
  */
-public class QueryRegenerateEvent extends ServerEvent {
-    //alot todo
-
-    private static final HandlerList handlers = new HandlerList();
-    private static final String GAME_ID = "MINECRAFTPE";
-    private final String gameType;
-    private final String version;
-    private final String server_engine;
-    private final String whitelist;
-    private final int port;
-    private final String ip;
+public class QueryRegenerateEvent implements ServerEvent {
+    private final Collection<PluginContainer> plugins;
+    private final Collection<Player> players;
+    private GameMode gameType;
     private int timeout;
     private String serverName;
-    private boolean listPlugins;
-    private Plugin[] plugins;
-    private Player[] players;
+    private String version;
+    private boolean whitelist;
+    private boolean pluginListEnabled;
     private String map;
     private int numPlayers;
     private int maxPlayers;
-    private Map<String, String> extraData = new HashMap<>();
 
-    public QueryRegenerateEvent(NukkitServer server) {
-        this(server, 5);
+    public QueryRegenerateEvent(Server server) {
+        this(server, 30);
     }
 
-    public QueryRegenerateEvent(NukkitServer server, int timeout) {
+    public QueryRegenerateEvent(Server server, int timeout) {
         this.timeout = timeout;
-        this.serverName = server.getMotd();
-        this.listPlugins = (boolean) server.getConfig("settings.query-plugins", true);
-        this.plugins = server.getPluginManager().getPlugins().values().toArray(new Plugin[server.getPluginManager().getPlugins().values().size()]);
-        List<Player> players = new ArrayList<>();
-        for (Player player : server.getOnlinePlayers().values()) {
-            if (player.isOnline()) {
-                players.add(player);
-            }
-        }
-        this.players = players.toArray(new Player[players.size()]);
-
-        this.gameType = (server.getGamemode() & 0x01) == 0 ? "SMP" : "CMP";
-        this.version = server.getVersion();
-        this.server_engine = server.getName() + " " + server.getNukkitVersion();
-        this.map = server.getDefaultLevel() == null ? "unknown" : server.getDefaultLevel().getName();
-        this.numPlayers = this.players.length;
-        this.maxPlayers = server.getMaxPlayers();
-        this.whitelist = server.hasWhitelist() ? "on" : "off";
-        this.port = server.getPort();
-        this.ip = server.getIp();
+        serverName = server.getServerProperties().getMotd();
+        pluginListEnabled = (boolean) server.getConfig("settings.query-plugins", true);
+        plugins = server.getPluginManager().getAllPlugins();
+        players = new ArrayList<>(server.getOnlinePlayers().values());
+        gameType = server.getDefaultGameMode();
+        version = server.getVersion();
+        map = server.getDefaultLevel() == null ? "unknown" : server.getDefaultLevel().getName();
+        numPlayers = players.size();
+        maxPlayers = server.getServerProperties().getMaxPlayers();
+        whitelist = server.getServerProperties().isWhitelistEnabled();
     }
 
-    public static HandlerList getHandlers() {
-        return handlers;
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public int getTimeout() {
@@ -84,32 +66,24 @@ public class QueryRegenerateEvent extends ServerEvent {
         this.serverName = serverName;
     }
 
-    public boolean canListPlugins() {
-        return this.listPlugins;
+    public boolean isPluginListEnabled() {
+        return pluginListEnabled;
     }
 
-    public void setListPlugins(boolean listPlugins) {
-        this.listPlugins = listPlugins;
+    public void setPluginListEnabled(boolean pluginListEnabled) {
+        this.pluginListEnabled = pluginListEnabled;
     }
 
-    public Plugin[] getPlugins() {
+    public Collection<PluginContainer> getPlugins() {
         return plugins;
     }
 
-    public void setPlugins(Plugin[] plugins) {
-        this.plugins = plugins;
-    }
-
-    public Player[] getPlayerList() {
+    public Collection<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayerList(Player[] players) {
-        this.players = players;
-    }
-
     public int getPlayerCount() {
-        return this.numPlayers;
+        return numPlayers;
     }
 
     public void setPlayerCount(int count) {
@@ -117,7 +91,7 @@ public class QueryRegenerateEvent extends ServerEvent {
     }
 
     public int getMaxPlayerCount() {
-        return this.maxPlayers;
+        return maxPlayers;
     }
 
     public void setMaxPlayerCount(int count) {
@@ -132,79 +106,19 @@ public class QueryRegenerateEvent extends ServerEvent {
         this.map = world;
     }
 
-    public Map<String, String> getExtraData() {
-        return extraData;
+    public GameMode getGameType() {
+        return gameType;
     }
 
-    public void setExtraData(Map<String, String> extraData) {
-        this.extraData = extraData;
+    public void setGameType(GameMode gameType) {
+        this.gameType = gameType;
     }
 
-    public byte[] getLongQuery() {
-        ByteBuffer query = ByteBuffer.allocate(65536);
-        String plist = this.server_engine;
-        if (this.plugins.length > 0 && this.listPlugins) {
-            plist += ":";
-            for (Plugin p : this.plugins) {
-                PluginDescription d = p.getDescription();
-                plist += " " + d.getName().replace(";", "").replace(":", "").replace(" ", "_") + " " + d.getVersion().replace(";", "").replace(":", "").replace(" ", "_") + ";";
-            }
-            plist = plist.substring(0, plist.length() - 2);
-        }
-
-        query.put("splitnum".getBytes());
-        query.put((byte) 0x00);
-        query.put((byte) 128);
-        query.put((byte) 0x00);
-
-        LinkedHashMap<String, String> KVdata = new LinkedHashMap<>();
-        KVdata.put("hostname", this.serverName);
-        KVdata.put("gametype", this.gameType);
-        KVdata.put("game_id", GAME_ID);
-        KVdata.put("version", this.version);
-        KVdata.put("server_engine", this.server_engine);
-        KVdata.put("plugins", plist);
-        KVdata.put("map", this.map);
-        KVdata.put("numplayers", String.valueOf(this.numPlayers));
-        KVdata.put("maxplayers", String.valueOf(this.maxPlayers));
-        KVdata.put("whitelist", this.whitelist);
-        KVdata.put("hostip", this.ip);
-        KVdata.put("hostport", String.valueOf(this.port));
-
-        for (Map.Entry<String, String> entry : KVdata.entrySet()) {
-            query.put(entry.getKey().getBytes(StandardCharsets.UTF_8));
-            query.put((byte) 0x00);
-            query.put(entry.getValue().getBytes(StandardCharsets.UTF_8));
-            query.put((byte) 0x00);
-        }
-
-        query.put(new byte[]{0x00, 0x01}).put("player_".getBytes()).put(new byte[]{0x00, 0x00});
-
-        for (Player player : this.players) {
-            query.put(player.getName().getBytes(StandardCharsets.UTF_8));
-            query.put((byte) 0x00);
-        }
-
-        query.put((byte) 0x00);
-        return Arrays.copyOf(query.array(), query.position());
+    public boolean isWhitelisted() {
+        return whitelist;
     }
 
-    public byte[] getShortQuery() {
-        ByteBuffer query = ByteBuffer.allocate(65536);
-        query.put(this.serverName.getBytes(StandardCharsets.UTF_8));
-        query.put((byte) 0x00);
-        query.put(this.gameType.getBytes(StandardCharsets.UTF_8));
-        query.put((byte) 0x00);
-        query.put(this.map.getBytes(StandardCharsets.UTF_8));
-        query.put((byte) 0x00);
-        query.put(String.valueOf(this.numPlayers).getBytes(StandardCharsets.UTF_8));
-        query.put((byte) 0x00);
-        query.put(String.valueOf(this.maxPlayers).getBytes(StandardCharsets.UTF_8));
-        query.put((byte) 0x00);
-        query.put(Binary.writeLShort(this.port));
-        query.put(this.ip.getBytes(StandardCharsets.UTF_8));
-        query.put((byte) 0x00);
-        return Arrays.copyOf(query.array(), query.position());
+    public void setWhitelisted(boolean whitelisted) {
+        this.whitelist = whitelisted;
     }
-
 }
