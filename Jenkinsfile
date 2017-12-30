@@ -18,7 +18,7 @@ pipeline {
                     archiveArtifacts artifacts: 'target/nukkit-*-SNAPSHOT.jar', fingerprint: true
                     step([
                         $class: 'JavadocArchiver',
-                        javadocDir: 'target\site\apidocs',
+                        javadocDir: 'target/site/apidocs',
                         keepAll: true
                     ])
                 }
