@@ -292,6 +292,7 @@ public class Server {
                 put("auto-save", true);
                 put("force-resources", false);
                 put("bug-report", true);
+                put("xbox-auth", true);
             }
         });
 
