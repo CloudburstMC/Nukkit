@@ -5,6 +5,7 @@ import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -98,9 +99,7 @@ public class BlockFenceGate extends BlockTransparent {
             return false;
         }
 
-        this.getLevel().setBlock(this, this, true);
-        this.getLevel().addSound(new DoorSound(this));
-
+        this.level.addSound(this, isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
         return true;
     }
 
@@ -155,7 +154,6 @@ public class BlockFenceGate extends BlockTransparent {
         }
 
         this.setDamage(direction | ((~this.getDamage()) & 0x04));
-        this.level.addSound(new DoorSound(this));
         this.level.setBlock(this, this, false, false);
         return true;
     }

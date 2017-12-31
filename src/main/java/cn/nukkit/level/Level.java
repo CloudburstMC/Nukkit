@@ -458,14 +458,18 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addSound(Vector3 pos, Sound sound) {
-        this.addSound(pos, sound, (Player[]) null);
+        this.addSound(pos, sound, 1, 1, (Player[]) null);
     }
 
-    public void addSound(Vector3 pos, Sound sound, Collection<Player> players) {
-        this.addSound(pos, sound, players.stream().toArray(Player[]::new));
+    public void addSound(Vector3 pos, Sound sound, float volume, float pitch) {
+        this.addSound(pos, sound, volume, pitch, (Player[]) null);
     }
 
-    public void addSound(Vector3 pos, Sound sound, Player... players) {
+    public void addSound(Vector3 pos, Sound sound, float volume, float pitch, Collection<Player> players) {
+        this.addSound(pos, sound, volume, pitch, players.stream().toArray(Player[]::new));
+    }
+
+    public void addSound(Vector3 pos, Sound sound, float volume, float pitch, Player... players) {
         PlaySoundPacket packet = new PlaySoundPacket();
         packet.name = sound.getSound();
         packet.volume = 1;
@@ -751,8 +755,8 @@ public class Level implements ChunkManager, Metadatable {
                             bolt.setEffect(false);
                         }
 
-                        this.addLevelSoundEvent(LevelSoundEventPacket.SOUND_THUNDER, 93, -1, vector, false);
-                        this.addLevelSoundEvent(LevelSoundEventPacket.SOUND_EXPLODE, 93, -1, vector, false);
+                        this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, 93, -1, false);
+                        this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, 93, -1, false);
                     }
 
                 }
@@ -2083,17 +2087,13 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
-            BlockPlaceSound sound = new BlockPlaceSound(block.add(0.5, 0.5, 0.5), item.getId());
-            Map<Integer, Player> players = getChunkPlayers((int) block.x >> 4, (int) block.z >> 4);
-            addSound(sound, players.values());
-
             if (!player.isCreative()) {
                 item.setCount(item.getCount() - 1);
             }
         }
 
         if (playSound) {
-            this.addLevelSoundEvent(LevelSoundEventPacket.SOUND_PLACE, 1, item.getId(), hand, false);
+            this.addLevelSoundEvent(hand, LevelSoundEventPacket.SOUND_PLACE, 1, item.getId(), false);
         }
 
         if (item.getCount() <= 0) {

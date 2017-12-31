@@ -7,6 +7,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -172,8 +173,7 @@ public class BlockTrapdoor extends BlockTransparent {
             return false;
         }
 
-        this.getLevel().setBlock(this, this, true);
-        this.level.addSound(new DoorSound(this));
+        this.level.addSound(this, isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
         return true;
     }
 
@@ -201,7 +201,6 @@ public class BlockTrapdoor extends BlockTransparent {
         }
 
         this.level.setBlock(this, this, false, false);
-        this.level.addSound(new DoorSound(this));
         return true;
     }
 

@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.network.protocol.BlockEventPacket;
 
 /**
@@ -61,21 +62,21 @@ public class BlockNoteblock extends BlockSolid {
         }
     }
 
-    public int getInstrument() {
+    public Instrument getInstrument() {
         Block below = this.down();
         switch (below.getId()) {
             case WOODEN_PLANK:
             case NOTEBLOCK:
             case CRAFTING_TABLE:
-                return NoteBoxSound.INSTRUMENT_BASS;
+                return Instrument.BASS;
             case SAND:
             case SANDSTONE:
             case SOUL_SAND:
-                return NoteBoxSound.INSTRUMENT_TABOUR;
+                return Instrument.DRUM;
             case GLASS:
             case GLASS_PANEL:
             case GLOWSTONE_BLOCK:
-                return NoteBoxSound.INSTRUMENT_CLICK;
+                return Instrument.STICKS;
             case COAL_ORE:
             case DIAMOND_ORE:
             case EMERALD_ORE:
@@ -84,22 +85,24 @@ public class BlockNoteblock extends BlockSolid {
             case IRON_ORE:
             case LAPIS_ORE:
             case REDSTONE_ORE:
-                return NoteBoxSound.INSTRUMENT_BASS_DRUM;
+                return Instrument.BASS_DRUM;
             default:
-                return NoteBoxSound.INSTRUMENT_PIANO;
+                return Instrument.PIANO;
         }
     }
 
     public void emitSound() {
+        Instrument instrument = getInstrument();
+
         BlockEventPacket pk = new BlockEventPacket();
         pk.x = (int) this.x;
         pk.y = (int) this.y;
         pk.z = (int) this.z;
-        pk.case1 = this.getInstrument();
+        pk.case1 = instrument.ordinal();
         pk.case2 = this.getStrength();
         this.getLevel().addChunkPacket((int) this.x >> 4, (int) this.z >> 4, pk);
 
-        this.getLevel().addSound(new NoteBoxSound(this, this.getInstrument(), this.getStrength()));
+        this.getLevel().addSound(this, instrument.getSound(), 1, this.getStrength()); //TODO: correct pitch
     }
 
     public boolean onActivate(Item item) {
@@ -124,5 +127,23 @@ public class BlockNoteblock extends BlockSolid {
         }
 
         return 0;
+    }
+
+    public enum Instrument {
+        PIANO(Sound.NOTE_HARP),
+        BASS_DRUM(Sound.NOTE_BD),
+        STICKS(Sound.NOTE_HAT),
+        DRUM(Sound.NOTE_SNARE),
+        BASS(Sound.NOTE_BASS);
+
+        private final Sound sound;
+
+        Instrument(Sound sound) {
+            this.sound = sound;
+        }
+
+        public Sound getSound() {
+            return sound;
+        }
     }
 }
