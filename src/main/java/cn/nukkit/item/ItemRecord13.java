@@ -1,7 +1,5 @@
 package cn.nukkit.item;
 
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
-
 /**
  * @author CreeperFace
  */
@@ -16,11 +14,11 @@ public class ItemRecord13 extends ItemRecord {
     }
 
     public ItemRecord13(Integer meta, int count) {
-        super(meta, count);
+        super(RECORD_13, meta, count);
     }
 
     @Override
-    public int getSoundId() {
-        return LevelSoundEventPacket.SOUND_RECORD_13;
+    public String getSoundId() {
+        return "record.13";
     }
 }

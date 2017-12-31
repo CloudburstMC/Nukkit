@@ -6,8 +6,6 @@ import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.event.block.BlockPistonChangeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.sound.PistonInSound;
-import cn.nukkit.level.sound.PistonOutSound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;

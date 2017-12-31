@@ -5,7 +5,6 @@ import cn.nukkit.event.block.BlockFromToEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.SmokeParticle;
-import cn.nukkit.level.sound.FizzSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
