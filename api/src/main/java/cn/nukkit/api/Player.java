@@ -9,6 +9,7 @@ import cn.nukkit.api.form.window.FormWindow;
 import cn.nukkit.api.inventory.Inventory;
 import cn.nukkit.api.item.ItemStack;
 import cn.nukkit.api.message.Message;
+import cn.nukkit.api.util.LoginChainData;
 import com.flowpowered.math.vector.Vector3d;
 
 import java.net.InetSocketAddress;
@@ -189,4 +190,6 @@ public interface Player extends Session, HumanEntity, CommandExecutorSource {
     void teleportImmediate(Location location);
 
     void teleportImmediate(Location location, TeleportCause cause);
+
+    LoginChainData getLoginChainData();
 }

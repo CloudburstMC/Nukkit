@@ -24,6 +24,7 @@ import cn.nukkit.api.message.Message;
 import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.api.resourcepack.ResourcePack;
+import cn.nukkit.api.util.LoginChainData;
 import cn.nukkit.server.AdventureSettings.Type;
 import cn.nukkit.server.block.*;
 import cn.nukkit.server.blockentity.BlockEntity;

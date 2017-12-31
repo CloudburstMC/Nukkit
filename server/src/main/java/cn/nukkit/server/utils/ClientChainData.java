@@ -1,5 +1,6 @@
 package cn.nukkit.server.utils;
 
+import cn.nukkit.api.util.LoginChainData;
 import cn.nukkit.server.network.protocol.LoginPacket;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
