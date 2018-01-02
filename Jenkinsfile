@@ -30,12 +30,19 @@ pipeline {
             }
             steps {
                 script {
-                    def server = Artifactory.server('potestas')
+                    def server = Artifactory.server "potestas"
+                    def buildInfo = Artifactory.newBuildInfo()
+                    buildInfo.env.capture = true
                     def rtMaven = Artifactory.newMavenBuild()
-                    rtMaven.resolver server: server, releaseRepo: 'release', snapshotRepo: 'snapshot'
-                    rtMaven.deployer server: server, releaseRepo: 'release', snapshotRepo: 'snapshot'
-                    rtMaven.tool = 'Maven 3'
-                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'install'
+                    rtMaven.tool = "Maven 3" // Tool name from Jenkins configuration
+                    rtMaven.opts = "-Denv=dev"
+                    rtMaven.deployer releaseRepo:'release', snapshotRepo:'snapshot', server: server
+                    rtMaven.resolver releaseRepo:'release', snapshotRepo:'snapshot', server: server
+
+                    rtMaven.run pom: 'pom.xml', goals: 'install -DskipTests', buildInfo: buildInfo
+
+                    buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
+                    // Publish build info.
                     server.publishBuildInfo buildInfo
                 }
             }
