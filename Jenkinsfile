@@ -26,7 +26,7 @@ pipeline {
 
         stage ('Deploy') {
             when {
-                branch "master"
+                branch "artifactory"
             }
             steps {
                 script {
