@@ -5,7 +5,7 @@ pipeline {
         jdk 'Java 8'
     }
     options {
-        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+        buildDiscarder(logRotator(artifactNumToKeepStr: '5'))
     }
     stages {
         stage ('Build') {
@@ -15,6 +15,7 @@ pipeline {
             post {
                 success {
                     junit 'target/surefire-reports/**/*.xml'
+                    archiveArtifacts artifacts: 'target/nukkit-*-SNAPSHOT.jar', fingerprint: true
                     step([
                         $class: 'JavadocArchiver',
                         javadocDir: 'target/site/apidocs',
