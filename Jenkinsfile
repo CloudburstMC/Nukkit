@@ -27,10 +27,7 @@ pipeline {
 
         stage ('Deploy') {
             when {
-                allOf {
-                    expression { currentBuild.result == 'SUCCESS' }
-                    branch "master"
-                }
+                branch "master"
             }
             steps {
                 sh 'mvn deploy -DskipTests'
