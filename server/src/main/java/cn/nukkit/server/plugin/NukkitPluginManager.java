@@ -195,7 +195,7 @@ public class NukkitPluginManager implements PluginManager {
                 log.throwing(e);
             }
 
-            server.getScheduler().cancelTask(object);
+            server.getScheduler().cancelTasks(object);
             server.getEventManager().unregisterAllListeners(object);
             for (Permission nukkitPermission : plugin.getPermissions()) {
                 server.getPermissionManager().removePermission(nukkitPermission);

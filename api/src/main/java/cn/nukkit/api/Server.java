@@ -5,6 +5,7 @@ import cn.nukkit.api.event.EventManager;
 import cn.nukkit.api.item.ItemStackBuilder;
 import cn.nukkit.api.permission.PermissionManager;
 import cn.nukkit.api.plugin.PluginManager;
+import cn.nukkit.api.scheduler.NukkitScheduler;
 import cn.nukkit.api.util.Config;
 import cn.nukkit.api.util.ConfigBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +36,8 @@ public interface Server {
 
     @Nonnull
     PluginManager getPluginManager();
+
+    NukkitScheduler getScheduler();
 
     @Nonnull
     ConsoleCommandExecutorSource getConsoleCommandExecutorSource();

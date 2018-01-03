@@ -1,8 +1,11 @@
 package cn.nukkit.server.scheduler;
 
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.utils.ThreadStore;
 import co.aikar.timings.Timings;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -10,69 +13,26 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * @author Nukkit Project Team
  */
-public abstract class AsyncTask implements Runnable {
+
+@Getter
+@Log4j2
+public final class AsyncTask {
 
     public static final Queue<AsyncTask> FINISHED_LIST = new ConcurrentLinkedQueue<>();
 
-    private Object result;
+    @Setter
     private int taskId;
     private boolean finished = false;
+    private Runnable runnable;
+
+    public AsyncTask(Runnable runnable) {
+        this.runnable = runnable;
+    }
 
     public void run() {
-        this.result = null;
-        this.onRun();
+        this.runnable.run();
         this.finished = true;
         FINISHED_LIST.offer(this);
-    }
-
-    public boolean isFinished() {
-        return this.finished;
-    }
-
-    public Object getResult() {
-        return this.result;
-    }
-
-    public boolean hasResult() {
-        return this.result != null;
-    }
-
-    public void setResult(Object result) {
-        this.result = result;
-    }
-
-    public void setTaskId(int taskId) {
-        this.taskId = taskId;
-    }
-
-    public int getTaskId() {
-        return this.taskId;
-    }
-
-    public Object getFromThreadStore(String identifier) {
-        return this.isFinished() ? null : ThreadStore.store.get(identifier);
-    }
-
-    public void saveToThreadStore(String identifier, Object value) {
-        if (!this.isFinished()) {
-            if (value == null) {
-                ThreadStore.store.remove(identifier);
-            } else {
-                ThreadStore.store.put(identifier, value);
-            }
-        }
-    }
-
-    public abstract void onRun();
-
-    public void onCompletion(NukkitServer server) {
-
-    }
-
-    public void cleanObject() {
-        this.result = null;
-        this.taskId = 0;
-        this.finished = false;
     }
 
     public static void collectTask() {
@@ -80,9 +40,12 @@ public abstract class AsyncTask implements Runnable {
         while (!FINISHED_LIST.isEmpty()) {
             AsyncTask task = FINISHED_LIST.poll();
             try {
-                task.onCompletion(NukkitServer.getInstance());
+                Runnable runnable = task.getRunnable();
+                if (runnable instanceof cn.nukkit.api.scheduler.AsyncTask) {
+                    ((cn.nukkit.api.scheduler.AsyncTask) runnable).onCompletion(NukkitServer.getInstance());
+                }
             } catch (Exception e) {
-                log.critical("Exception while async task "
+                log.log(Level.ERROR, "Exception while async task "
                         + task.getTaskId()
                         + " invoking onCompletion", e);
             }

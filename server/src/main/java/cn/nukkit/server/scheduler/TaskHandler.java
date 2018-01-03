@@ -1,12 +1,18 @@
 package cn.nukkit.server.scheduler;
 
+import cn.nukkit.api.plugin.Plugin;
+import cn.nukkit.api.scheduler.NukkitRunnable;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 /**
  * @author MagicDroidX
  */
-public class TaskHandler {
+
+@Log4j2
+public class TaskHandler implements cn.nukkit.api.scheduler.TaskHandler {
     private final int taskId;
     private final boolean asynchronous;
 
@@ -80,8 +86,8 @@ public class TaskHandler {
     }
 
     public void cancel() {
-        if (!this.isCancelled() && this.task instanceof Task) {
-            ((Task) this.task).onCancel();
+        if (!this.isCancelled() && this.task instanceof NukkitRunnable) {
+            ((NukkitRunnable) this.task).onCancel();
         }
         this.cancelled = true;
     }
@@ -96,7 +102,7 @@ public class TaskHandler {
             setLastRunTick(currentTick);
             getTask().run();
         } catch (RuntimeException ex) {
-            log.critical("Exception while invoking run", ex);
+            log.log(Level.ERROR, "Exception while invoking run", ex);
         }
     }
 
@@ -105,7 +111,7 @@ public class TaskHandler {
         return "Unknown";
     }
 
-    public boolean isAsynchronous() {
+    public boolean isAsync() {
         return asynchronous;
     }
 

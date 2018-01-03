@@ -26,12 +26,13 @@ package co.aikar.timings;
 import cn.nukkit.api.command.Command;
 import cn.nukkit.api.event.Event;
 import cn.nukkit.api.event.Listener;
+import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.network.protocol.DataPacket;
-import cn.nukkit.server.scheduler.PluginTask;
 import cn.nukkit.server.scheduler.TaskHandler;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.HashSet;
 import java.util.Queue;
@@ -39,6 +40,7 @@ import java.util.Set;
 
 import static co.aikar.timings.TimingIdentifier.DEFAULT_GROUP;
 
+@Log4j2
 public final class Timings {
     private static boolean timingsEnabled = false;
     private static boolean verboseEnabled = false;
@@ -212,10 +214,10 @@ public final class Timings {
             repeating += "(Single)";
         }
 
-        if (handler.getTask() instanceof PluginTask) {
-            String owner = ((PluginTask) handler.getTask()).getOwner().getName();
+        if (handler.getPlugin() != null) {
+            String owner = handler.getPlugin().getName();
             return TimingsManager.getTiming(owner, "PluginTask: " + handler.getTaskId() + repeating, schedulerSyncTimer);
-        } else if (!handler.isAsynchronous()) {
+        } else if (!handler.isAsync()) {
             return TimingsManager.getTiming(DEFAULT_GROUP.name, "Task: " + handler.getTaskId() + repeating, schedulerSyncTimer);
         } else {
             return null;
