@@ -27,7 +27,7 @@ pipeline {
         stage ('Deploy') {
             when {
                 allOf {
-                    currentBuild.result == 'SUCCESS'
+                    expression { currentBuild.result == 'SUCCESS' }
                     branch "master"
                 }
             }
