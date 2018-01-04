@@ -12,15 +12,7 @@ public class PlayStatusPacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    public static final int LOGIN_SUCCESS = 0;
-    public static final int LOGIN_FAILED_CLIENT = 1;
-    public static final int LOGIN_FAILED_SERVER = 2;
-    public static final int PLAYER_SPAWN = 3;
-    public static final int LOGIN_FAILED_INVALID_TENANT = 4;
-    public static final int LOGIN_FAILED_VANILLA_EDU = 5;
-    public static final int LOGIN_FAILED_EDU_VANILLA = 6;
-
-    public int status;
+    public Status status;
 
     @Override
     public void decode() {
@@ -30,7 +22,16 @@ public class PlayStatusPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putInt(this.status);
+        this.putInt(this.status.ordinal());
     }
 
+    public enum Status {
+        LOGIN_SUCCESS,
+        LOGIN_FAILED_CLIENT,
+        LOGIN_FAILED_SERVER,
+        PLAYER_SPAWN,
+        LOGIN_FAILED_INVALID_TENANT,
+        LOGIN_FAILED_VANILLA_EDU,
+        LOGIN_FAILED_EDU_VANILLA
+    }
 }

@@ -12,15 +12,8 @@ public class CraftingEventPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_EVENT_PACKET;
 
-    public static final int TYPE_SHAPELESS = 0;
-    public static final int TYPE_SHAPED = 1;
-    public static final int TYPE_FURNACE = 2;
-    public static final int TYPE_FURNACE_DATA = 3;
-    public static final int TYPE_MULTI = 4;
-    public static final int TYPE_SHULKER_BOX = 5;
-
     public int windowId;
-    public int type;
+    public CraftingEventType type;
     public UUID id;
 
     public Item[] input;
@@ -29,7 +22,7 @@ public class CraftingEventPacket extends DataPacket {
     @Override
     public void decode() {
         this.windowId = this.getByte();
-        this.type = this.getVarInt();
+        this.type = CraftingEventType.values()[this.getVarInt()];
         this.id = this.getUUID();
 
         int inputSize = (int) this.getUnsignedVarInt();
@@ -55,4 +48,12 @@ public class CraftingEventPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    public enum CraftingEventType {
+        SHAPELESS,
+        SHAPED,
+        FURNACE,
+        FURNACE_DATA,
+        MULTI,
+        SHULKER_BOX
+    }
 }

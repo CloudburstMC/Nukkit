@@ -7,10 +7,7 @@ public class SetSpawnPositionPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.SET_SPAWN_POSITION_PACKET;
 
-    public static final int TYPE_PLAYER_SPAWN = 0;
-    public static final int TYPE_WORLD_SPAWN = 1;
-
-    public int spawnType;
+    public SpawnType spawnType;
     public int y;
     public int z;
     public int x;
@@ -24,7 +21,7 @@ public class SetSpawnPositionPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(this.spawnType);
+        this.putVarInt(this.spawnType.ordinal());
         this.putBlockVector3(this.x, this.y, this.z);
         this.putBoolean(this.spawnForced);
     }
@@ -34,4 +31,8 @@ public class SetSpawnPositionPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    public enum SpawnType {
+        PLAYER_SPAWN,
+        WORLD_SPAWN
+    }
 }

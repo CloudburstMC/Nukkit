@@ -6,14 +6,7 @@ package cn.nukkit.server.network.protocol;
 public class SetTitlePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.SET_TITLE_PACKET;
 
-    public static final int TYPE_CLEAR = 0;
-    public static final int TYPE_RESET = 1;
-    public static final int TYPE_TITLE = 2;
-    public static final int TYPE_SUBTITLE = 3;
-    public static final int TYPE_ACTION_BAR = 4;
-    public static final int TYPE_ANIMATION_TIMES = 5;
-
-    public int type;
+    public TitleType type;
     public String text = "";
     public int fadeInTime = 0;
     public int stayTime = 0;
@@ -26,7 +19,7 @@ public class SetTitlePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.type = this.getVarInt();
+        this.type = TitleType.values()[this.getVarInt()];
         this.text = this.getString();
         this.fadeInTime = this.getVarInt();
         this.stayTime = this.getVarInt();
@@ -36,10 +29,19 @@ public class SetTitlePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(type);
+        this.putVarInt(type.ordinal());
         this.putString(text);
         this.putVarInt(fadeInTime);
         this.putVarInt(stayTime);
         this.putVarInt(fadeOutTime);
+    }
+
+    public enum TitleType {
+        CLEAR,
+        RESET,
+        TITLE,
+        SUBTITLE,
+        ACTION_BAR,
+        ANIMATION_TIMES
     }
 }

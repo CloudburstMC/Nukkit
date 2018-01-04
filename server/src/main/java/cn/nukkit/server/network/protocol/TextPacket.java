@@ -12,16 +12,7 @@ public class TextPacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    public static final byte TYPE_RAW = 0;
-    public static final byte TYPE_CHAT = 1;
-    public static final byte TYPE_TRANSLATION = 2;
-    public static final byte TYPE_POPUP = 3;
-    public static final byte TYPE_TIP = 4;
-    public static final byte TYPE_SYSTEM = 5;
-    public static final byte TYPE_WHISPER = 6;
-    public static final byte TYPE_ANNOUNCEMENT = 7;
-
-    public byte type;
+    public TextType type;
     public String source = "";
     public String message = "";
     public String[] parameters = new String[0];
@@ -29,21 +20,21 @@ public class TextPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.type = (byte) getByte();
+        this.type = TextType.values()[getByte()];
         this.isLocalized = this.getBoolean();
         switch (type) {
-            case TYPE_POPUP:
-            case TYPE_CHAT:
-            case TYPE_WHISPER:
-            case TYPE_ANNOUNCEMENT:
+            case POPUP:
+            case CHAT:
+            case WHISPER:
+            case ANNOUNCEMENT:
                 this.source = this.getString();
-            case TYPE_RAW:
-            case TYPE_TIP:
-            case TYPE_SYSTEM:
+            case RAW:
+            case TIP:
+            case SYSTEM:
                 this.message = this.getString();
                 break;
 
-            case TYPE_TRANSLATION:
+            case TRANSLATION:
                 this.message = this.getString();
                 int count = (int) this.getUnsignedVarInt();
                 this.parameters = new String[count];
@@ -56,21 +47,21 @@ public class TextPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.type);
+        this.putByte((byte) this.type.ordinal());
         this.putBoolean(this.isLocalized);
         switch (this.type) {
-            case TYPE_POPUP:
-            case TYPE_CHAT:
-            case TYPE_WHISPER:
-            case TYPE_ANNOUNCEMENT:
+            case POPUP:
+            case CHAT:
+            case WHISPER:
+            case ANNOUNCEMENT:
                 this.putString(this.source);
-            case TYPE_RAW:
-            case TYPE_TIP:
-            case TYPE_SYSTEM:
+            case RAW:
+            case TIP:
+            case SYSTEM:
                 this.putString(this.message);
                 break;
 
-            case TYPE_TRANSLATION:
+            case TRANSLATION:
                 this.putString(this.message);
                 this.putUnsignedVarInt(this.parameters.length);
                 for (String parameter : this.parameters) {
@@ -79,4 +70,14 @@ public class TextPacket extends DataPacket {
         }
     }
 
+    public enum TextType {
+        RAW,
+        CHAT,
+        TRANSLATION,
+        POPUP,
+        TIP,
+        SYSTEM,
+        WHISPER,
+        ANNOUNCEMENT
+    }
 }
