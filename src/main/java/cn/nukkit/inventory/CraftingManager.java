@@ -261,6 +261,7 @@ public class CraftingManager {
         if (brewingRecipes.containsKey(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()))) {
             return brewingRecipes.get(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()));
         }
+
         return null;
     }
 

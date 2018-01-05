@@ -4246,9 +4246,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 for (Item drop : drops) {
                     this.dropItem(drop);
                 }
-
-                this.craftingGrid.clearAll();
             }
+            this.craftingGrid.clearAll();
 
             if (this.craftingGrid instanceof BigCraftingGrid) {
                 this.craftingGrid = new CraftingGrid(this);
@@ -4257,6 +4256,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 pk.windowId = ContainerIds.NONE;
                 this.dataPacket(pk);
             }
+
             this.craftingType = 0;
         }
     }
