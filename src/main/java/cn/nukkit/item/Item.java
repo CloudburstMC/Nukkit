@@ -20,7 +20,6 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -974,7 +973,7 @@ public class Item implements Cloneable {
     public static Item fromJson(Map<String, Object> data) {
         String nbt = (String) data.getOrDefault("nbt_hex", "");
 
-        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbt.isEmpty() ? new byte[0] : DatatypeConverter.parseHexBinary(nbt));
+        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbt.isEmpty() ? new byte[0] : Utils.parseHexBinary(nbt));
     }
 
     public static Item[] fromStringMultiple(String str) {
