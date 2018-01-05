@@ -5,12 +5,12 @@ pipeline {
         jdk 'Java 8'
     }
     options {
-        buildDiscarder(logRotator(artifactNumToKeepStr: '10'))
+        buildDiscarder(logRotator(artifactNumToKeepStr: '5'))
     }
     stages {
         stage ('Build') {
             steps {
-                sh 'mvn clean package install javadoc:javadoc'
+                sh 'mvn clean package javadoc:javadoc'
             }
             post {
                 success {
@@ -22,6 +22,15 @@ pipeline {
                         keepAll: true
                     ])
                 }
+            }
+        }
+
+        stage ('Deploy') {
+            when {
+                branch "master"
+            }
+            steps {
+                sh 'mvn deploy -DskipTests'
             }
         }
     }
