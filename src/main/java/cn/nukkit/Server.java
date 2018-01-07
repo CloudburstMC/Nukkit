@@ -923,7 +923,8 @@ public class Server {
     }
 
     public void sendRecipeList(Player player) {
-        player.dataPacket(CraftingManager.packet);
+        player.dataPacket(player.getProtocol().equals(PlayerProtocol.PLAYER_PROTOCOL_113) ?
+                CraftingManager.packet113 : CraftingManager.packet);
     }
 
     private void checkTickUpdates(int currentTick, long tickTime) {
