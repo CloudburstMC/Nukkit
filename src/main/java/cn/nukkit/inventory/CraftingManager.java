@@ -198,6 +198,21 @@ public class CraftingManager {
     public Recipe getRecipe(UUID id) {
         return this.recipes.containsKey(id) ? this.recipes.get(id) : null;
     }
+    public Recipe[] getRecipesByResult(Item... output){
+        if (output.length == 0) return new Recipe[0];
+        return this.recipes.values().stream().filter(recipe -> {
+            if (recipe instanceof CraftingRecipe) {
+                List<Item> neededItems = ((CraftingRecipe) recipe).getAllResults();
+                int needMatches = output.length;
+                for (Item outputItem : output) {
+                    needMatches--;
+                    if (neededItems.contains(outputItem)) neededItems.remove(outputItem);
+                }
+                return (needMatches == 0 && neededItems.size() == 0);
+            }
+            return recipe.getResult().equals(output[0]) && output.length == 1;
+        }).toArray(Recipe[]::new);
+    }
 
     public Map<UUID, Recipe> getRecipes() {
         return recipes;

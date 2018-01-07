@@ -34,6 +34,7 @@ import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.inventory.transaction.Old113InventoryTransaction;
+import cn.nukkit.inventory.transaction.action.CraftingTransferMaterialAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.inventory.transaction.data.ReleaseItemData;
@@ -3199,6 +3200,254 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.inventory.sendContents(this);
                             break;
                     }
+                    break;
+                //ToDo
+                case ProtocolInfo.CRAFTING_EVENT_PACKET:
+                    CraftingEventPacket craftingEventPacket = (CraftingEventPacket) packet;
+
+                    if (!this.spawned || !this.isAlive()) {
+                        break;
+                    }
+
+                    Recipe recipe = this.server.getCraftingManager().getRecipe(craftingEventPacket.id);
+
+                    if (this.craftingType == CRAFTING_ANVIL) {
+                        Inventory inv = this.windowIndex.get(craftingEventPacket.windowId);
+                        AnvilInventory anvilInventory = inv instanceof AnvilInventory ? (AnvilInventory) inv : null;
+
+                        if (anvilInventory == null) {
+                            anvilInventory = null;
+
+                            for (Inventory window : this.windowIndex.values()) {
+                                if (window instanceof AnvilInventory) {
+                                    anvilInventory = (AnvilInventory) window;
+                                    break;
+                                }
+                            }
+
+                            if (anvilInventory == null) { //If it'sf _still_ null, then the player doesn't have a valid anvil window, cannot proceed.
+                                this.getServer().getLogger().debug("Couldn't find an anvil window for " + this.getName() + ", exiting");
+                                this.inventory.sendContents(this);
+                                break;
+                            }
+                        }
+
+                        if (recipe == null) {
+                            //Item renamed
+
+                            if (!anvilInventory.onRename(this, craftingEventPacket.output[0])) {
+                                this.getServer().getLogger().debug(this.getName() + " failed to rename an item in an anvil");
+                                this.inventory.sendContents(this);
+                            }
+                        } else {
+                            //TODO: Anvil crafting recipes
+                        }
+                        break;
+                    } else if (!this.windowIndex.containsKey(craftingEventPacket.windowId)) {
+                        this.inventory.sendContents(this);
+                        containerClosePacket = new ContainerClosePacket();
+                        containerClosePacket.windowId = craftingEventPacket.windowId;
+                        this.dataPacket(containerClosePacket);
+                        break;
+                    }
+
+                    if ((recipe == null) || (((recipe instanceof ShapelessRecipe) || (recipe instanceof ShapedRecipe)) && this.craftingType == CRAFTING_SMALL)) {
+                        this.inventory.sendContents(this);
+                        break;
+                    }
+
+                    for (int i = 0; i < craftingEventPacket.input.length; i++) {
+                        Item inputItem = craftingEventPacket.input[i];
+                        if (inputItem.getDamage() == -1 || inputItem.getDamage() == 0xffff) {
+                            inputItem.setDamage(null);
+                        }
+
+                        if (i < 9 && inputItem.getId() > 0) {
+                            inputItem.setCount(1);
+                        }
+                    }
+
+                    boolean canCraft = true;
+
+                    if (craftingEventPacket.input.length == 0) {
+                        Recipe[] recipes = getServer().getCraftingManager().getRecipesByResult(craftingEventPacket.output);
+
+                        recipe = null;
+
+                        ArrayList<Item> ingredientz = new ArrayList<>();
+
+                        recipeloop:
+                        for (Recipe rec : recipes) {
+                            ingredientz.clear();
+
+                            if (rec instanceof ShapedRecipe) {
+                                Map<Integer, Map<Integer, Item>> ingredients = ((ShapedRecipe) rec).getIngredientMap();
+                                for (Map<Integer, Item> map : ingredients.values()) {
+                                    for (Item ingredient : map.values()) {
+                                        if (ingredient != null && ingredient.getId() != Item.AIR) {
+                                            ingredientz.add(ingredient);
+                                        }
+                                    }
+                                }
+                            } else if (rec instanceof ShapelessRecipe) {
+                                ShapelessRecipe recipe0 = (ShapelessRecipe) rec;
+
+                                for (Item ingredient : recipe0.getIngredientList()) {
+                                    if (ingredient != null && ingredient.getId() != Item.AIR) {
+                                        ingredientz.add(ingredient);
+                                    }
+                                }
+                            }
+
+                            Map<String, Item> serialized = new HashMap<>();
+
+                            for (Item ingredient : ingredientz) {
+                                String hash = ingredient.getId() + ":" + ingredient.getDamage();
+                                Item r = serialized.get(hash);
+
+                                if (r != null) {
+                                    r.count += ingredient.getCount();
+                                    continue;
+                                }
+
+                                serialized.put(hash, ingredient);
+                            }
+
+                            for (Item ingredient : serialized.values()) {
+                                if (!this.inventory.contains(ingredient)) {
+                                    continue recipeloop;
+                                }
+                            }
+
+                            recipe = rec;
+
+                            //We have serialized, we have
+                            CraftingTransaction craftTransaction = new CraftingTransaction(this, new ArrayList<>());
+                            craftTransaction.setRecipe((CraftingRecipe) recipe);
+                            CraftItemEvent craftItemEvent = new CraftItemEvent( craftTransaction);
+                            getServer().getPluginManager().callEvent(craftItemEvent);
+
+                            if (craftItemEvent.isCancelled()) {
+                                this.inventory.sendContents(this);
+                                break packetswitch;
+                            }
+
+                            for (Item ingredient : serialized.values()) {
+                                this.inventory.removeItem(ingredient);
+                            }
+
+                            this.inventory.addItem(recipe.getResult());
+                            break;
+                        }
+
+                        if (recipe == null) {
+                            this.server.getLogger().debug("(1) Unmatched desktop recipe " + craftingEventPacket.id + " from player " + this.getName());
+                            this.inventory.sendContents(this);
+                        }
+                    } else {
+                        ArrayList<Item> ingredientz = new ArrayList<>();
+
+                        if (recipe instanceof ShapedRecipe) {
+
+                            Map<Integer, Map<Integer, Item>> ingredients = ((ShapedRecipe) recipe).getIngredientMap();
+                            for (Map<Integer, Item> map : ingredients.values()) {
+                                for (Item ingredient : map.values()) {
+                                    if (ingredient != null && ingredient.getId() != Item.AIR) {
+                                        ingredientz.add(ingredient);
+                                    }
+                                }
+                            }
+                        } else if (recipe instanceof ShapelessRecipe) {
+                            ShapelessRecipe recipe0 = (ShapelessRecipe) recipe;
+
+                            for (Item ingredient : recipe0.getIngredientList()) {
+                                if (ingredient != null && ingredient.getId() != Item.AIR) {
+                                    ingredientz.add(ingredient);
+                                }
+                            }
+                        }
+
+                        Map<String, Item> serialized = new HashMap<>();
+
+                        for (Item ingredient : ingredientz) {
+                            String hash = ingredient.getId() + ":" + ingredient.getDamage();
+                            Item r = serialized.get(hash);
+
+                            if (r != null) {
+                                r.count += ingredient.getCount();
+                                continue;
+                            }
+
+                            serialized.put(hash, ingredient);
+                        }
+
+                        for (Item ingredient : serialized.values()) {
+                            if (!this.inventory.contains(ingredient)) {
+                                canCraft = false;
+                                break;
+                            }
+                        }
+
+                        if (!canCraft) {
+                            this.server.getLogger().debug("(1) Unmatched recipe " + craftingEventPacket.id + " from player " + this.getName() + "  not anough ingredients");
+                            return;
+                        }
+
+                        CraftingTransaction craftingTransaction = new CraftingTransaction(this, new ArrayList<>());
+                        craftingTransaction.setRecipe((CraftingRecipe) recipe);
+                        CraftItemEvent craftItemEvent = new CraftItemEvent(craftingTransaction);
+                        getServer().getPluginManager().callEvent(craftItemEvent);
+
+                        if (craftItemEvent.isCancelled()) {
+                            this.inventory.sendContents(this);
+                            break;
+                        }
+
+                        for (Item ingredient : serialized.values()) {
+                            this.inventory.removeItem(ingredient);
+                        }
+
+                        this.inventory.addItem(recipe.getResult());
+                    }
+
+                    if (recipe != null) {
+                        switch (recipe.getResult().getId()) {
+                            case Item.WORKBENCH:
+                                this.awardAchievement("buildWorkBench");
+                                break;
+                            case Item.WOODEN_PICKAXE:
+                                this.awardAchievement("buildPickaxe");
+                                break;
+                            case Item.FURNACE:
+                                this.awardAchievement("buildFurnace");
+                                break;
+                            case Item.WOODEN_HOE:
+                                this.awardAchievement("buildHoe");
+                                break;
+                            case Item.BREAD:
+                                this.awardAchievement("makeBread");
+                                break;
+                            case Item.CAKE:
+                                this.awardAchievement("bakeCake");
+                                this.inventory.addItem(new ItemBucket(0, 3));
+                                break;
+                            case Item.STONE_PICKAXE:
+                            case Item.GOLD_PICKAXE:
+                            case Item.IRON_PICKAXE:
+                            case Item.DIAMOND_PICKAXE:
+                                this.awardAchievement("buildBetterPickaxe");
+                                break;
+                            case Item.WOODEN_SWORD:
+                                this.awardAchievement("buildSword");
+                                break;
+                            case Item.DIAMOND:
+                                this.awardAchievement("diamond");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
                     break;
                 case ProtocolInfo.PLAYER_HOTBAR_PACKET:
                     PlayerHotbarPacket hotbarPacket = (PlayerHotbarPacket) packet;

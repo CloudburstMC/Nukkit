@@ -88,6 +88,11 @@ public class CraftingTransaction extends InventoryTransaction {
         return recipe;
     }
 
+    //1.1 only
+    public void setRecipe(CraftingRecipe recipe){
+        this.recipe = recipe;
+    }
+
     private Item[][] reindexInputs() {
         int xOffset = gridSize;
         int yOffset = gridSize;
