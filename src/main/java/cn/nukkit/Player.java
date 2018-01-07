@@ -3222,7 +3222,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     break;
                 //ToDo
-                case ProtocolInfo.CRAFTING_EVENT_PACKET:
+                case ProtocolInfo113.CRAFTING_EVENT_PACKET:
                     CraftingEventPacket craftingEventPacket = (CraftingEventPacket) packet;
 
                     if (!this.spawned || !this.isAlive()) {
