@@ -28,6 +28,7 @@ import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
+import cn.nukkit.form.response.FormResponse;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
@@ -86,6 +87,7 @@ import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 /**
  * author: MagicDroidX & Box
@@ -237,7 +239,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected int formWindowCount = 0;
     protected Map<Integer, FormWindow> formWindows = new HashMap<>();
+    protected Map<Integer, Consumer<? super FormResponse>> formWindowActions = new HashMap<>();
     protected Map<Integer, FormWindow> serverSettings = new HashMap<>();
+    protected Map<Integer, Consumer<? super FormResponse>> serverSettingActions = new HashMap<>();
 
     protected Map<Long, DummyBossBar> dummyBossBars = new HashMap<>();
     protected Old113InventoryTransaction last113transaction = null;
@@ -2436,6 +2440,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         PlayerFormRespondedEvent event = new PlayerFormRespondedEvent(this, modalFormPacket.formId, window);
                         getServer().getPluginManager().callEvent(event);
 
+                        //Perform consumer actions
+                        if (formWindowActions.containsKey(modalFormPacket.formId)){
+                            Consumer<? super FormResponse> consumer = formWindowActions.get(modalFormPacket.formId);
+                            if (window.wasClosed()) consumer.accept(null);
+                            else consumer.accept(window.getResponse());
+                            formWindowActions.remove(modalFormPacket.formId);
+                        }
+
                         formWindows.remove(modalFormPacket.formId);
                     } else if (serverSettings.containsKey(modalFormPacket.formId)) {
                         FormWindow window = serverSettings.get(modalFormPacket.formId);
@@ -2447,6 +2459,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         //Set back new settings if not been cancelled
                         if (!event.isCancelled() && window instanceof FormWindowCustom)
                             ((FormWindowCustom) window).setElementsFromResponse();
+
+                        //Perform consumer actions
+                        if (serverSettingActions.containsKey(modalFormPacket.formId)){
+                            Consumer<? super FormResponse> consumer = serverSettingActions.get(modalFormPacket.formId);
+                            if (window.wasClosed()) consumer.accept(null);
+                            else consumer.accept(window.getResponse());
+                            serverSettingActions.remove(modalFormPacket.formId);
+                        }
                     }
 
                     break;
@@ -4875,6 +4895,22 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(packet);
         return id;
     }
+    /**
+     * Shows a new FormWindow to the player and performs a specific action on response
+     * Please consider that if form was closed, null response will be returned
+     */
+    public int showFormWindow(FormWindow window, Consumer<? super FormResponse> action){
+        int id = this.formWindowCount++;
+
+        ModalFormRequestPacket packet = new ModalFormRequestPacket();
+        packet.formId = id;
+        packet.data = window.getJSONData();
+        this.formWindows.put(packet.formId, window);
+        this.formWindowActions.put(packet.formId, action);
+
+        this.dataPacket(packet);
+        return id;
+    }
 
     /**
      * Shows a new setting page in game settings
@@ -4884,6 +4920,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int id = this.formWindowCount++;
 
         this.serverSettings.put(id, window);
+        return id;
+    }
+    /**
+     * Shows a new setting page in game settings and performs a specific action on response
+     */
+    public int addServerSettings(FormWindow window, Consumer<? super FormResponse> action){
+        int id = this.formWindowCount++;
+
+        this.serverSettings.put(id, window);
+        this.serverSettingActions.put(id, action);
         return id;
     }
 
