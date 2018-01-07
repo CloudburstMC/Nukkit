@@ -77,7 +77,7 @@ public class CraftingManager {
                         for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
                             result.addIngredient(Item.fromJson(ingredient));
                         }
-                        result.setRecipeProtocol((int) recipe.getOrDefault("protocol", 130));
+                        result.setRecipeProtocol(Utils.toInt(recipe.getOrDefault("protocol", 130)));
 
                         this.registerRecipe(result);
                         break;
@@ -102,7 +102,7 @@ public class CraftingManager {
                         }
 
                         ShapedRecipe shapedRecipe = new ShapedRecipe(Item.fromJson(first), shape, ingredients, extraResults);
-                        shapedRecipe.setRecipeProtocol((int) recipe.getOrDefault("protocol", 130));
+                        shapedRecipe.setRecipeProtocol(Utils.toInt(recipe.getOrDefault("protocol", 130)));
 
                         this.registerRecipe(shapedRecipe);
                         break;
@@ -112,7 +112,7 @@ public class CraftingManager {
                         Item resultItem = Item.fromJson(resultMap);
 
                         FurnaceRecipe furnaceRecipe = new FurnaceRecipe(resultItem, Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1));
-                        furnaceRecipe.setRecipeProtocol((int) recipe.getOrDefault("protocol", 130));
+                        furnaceRecipe.setRecipeProtocol(Utils.toInt(recipe.getOrDefault("protocol", 130)));
 
                         this.registerRecipe(furnaceRecipe);
                         break;
