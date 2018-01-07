@@ -19,8 +19,20 @@ public class ShapelessRecipe implements CraftingRecipe {
 
     private final List<Item> ingredients = new ArrayList<>();
 
+    private int recipeProtocol = 130;
+
     public ShapelessRecipe(Item result) {
         this.output = result.clone();
+    }
+
+    @Override
+    public boolean isCompatibleWith(int protocolVersion) {
+        return recipeProtocol <= protocolVersion;
+    }
+
+    @Override
+    public void setRecipeProtocol(int protocol){
+        this.recipeProtocol = protocol;
     }
 
     @Override

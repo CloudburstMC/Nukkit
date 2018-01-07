@@ -77,6 +77,7 @@ public class CraftingManager {
                         for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
                             result.addIngredient(Item.fromJson(ingredient));
                         }
+                        result.setRecipeProtocol((int) recipe.getOrDefault("protocol", 130));
 
                         this.registerRecipe(result);
                         break;
@@ -100,13 +101,20 @@ public class CraftingManager {
                             extraResults.add(Item.fromJson(data));
                         }
 
-                        this.registerRecipe(new ShapedRecipe(Item.fromJson(first), shape, ingredients, extraResults));
+                        ShapedRecipe shapedRecipe = new ShapedRecipe(Item.fromJson(first), shape, ingredients, extraResults);
+                        shapedRecipe.setRecipeProtocol((int) recipe.getOrDefault("protocol", 130));
+
+                        this.registerRecipe(shapedRecipe);
                         break;
                     case 2:
                     case 3:
                         Map<String, Object> resultMap = (Map) recipe.get("output");
                         Item resultItem = Item.fromJson(resultMap);
-                        this.registerRecipe(new FurnaceRecipe(resultItem, Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1)));
+
+                        FurnaceRecipe furnaceRecipe = new FurnaceRecipe(resultItem, Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1));
+                        furnaceRecipe.setRecipeProtocol((int) recipe.getOrDefault("protocol", 130));
+
+                        this.registerRecipe(furnaceRecipe);
                         break;
                     default:
                         break;
@@ -173,16 +181,16 @@ public class CraftingManager {
         for (Recipe recipe : this.getRecipes().values()) {
             if (recipe instanceof ShapedRecipe) {
                 pk.addShapedRecipe((ShapedRecipe) recipe);
-                pk113.addShapedRecipe((ShapedRecipe) recipe);
+                if (recipe.isCompatibleWith(113)) pk113.addShapedRecipe((ShapedRecipe) recipe);
             } else if (recipe instanceof ShapelessRecipe) {
                 pk.addShapelessRecipe((ShapelessRecipe) recipe);
-                pk113.addShapelessRecipe((ShapelessRecipe) recipe);
+                if (recipe.isCompatibleWith(113)) pk113.addShapelessRecipe((ShapelessRecipe) recipe);
             }
         }
 
         for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
             pk.addFurnaceRecipe(recipe);
-            pk113.addFurnaceRecipe((FurnaceRecipe) recipe);
+            if (recipe.isCompatibleWith(113)) pk113.addFurnaceRecipe((FurnaceRecipe) recipe);
         }
 
         pk.encode(PlayerProtocol.PLAYER_PROTOCOL_130);

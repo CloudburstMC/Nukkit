@@ -20,6 +20,8 @@ public class ShapedRecipe implements CraftingRecipe {
 
     private final Map<Character, Item> ingredients = new HashMap<>();
 
+    private int recipeProtocol = 130;
+
     /**
      * Constructs a ShapedRecipe instance.
      *
@@ -72,6 +74,16 @@ public class ShapedRecipe implements CraftingRecipe {
         for (Map.Entry<Character, Item> entry : ingredients.entrySet()) {
             this.setIngredient(entry.getKey(), entry.getValue());
         }
+    }
+
+    @Override
+    public boolean isCompatibleWith(int protocolVersion) {
+        return recipeProtocol <= protocolVersion;
+    }
+
+    @Override
+    public void setRecipeProtocol(int protocol){
+        this.recipeProtocol = protocol;
     }
 
     public int getWidth() {
