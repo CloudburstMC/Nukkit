@@ -31,6 +31,7 @@ public class CraftingManager {
 
     private static int RECIPE_COUNT = 0;
 
+    public static CraftingDataPacket packet113 = null;
     public static CraftingDataPacket packet = null;
 
     private static final Comparator<Item> recipeComparator = (i1, i2) -> {
@@ -165,23 +166,32 @@ public class CraftingManager {
 
     public void rebuildPacket() {
         CraftingDataPacket pk = new CraftingDataPacket();
+        CraftingDataPacket pk113 = new CraftingDataPacket();
         pk.cleanRecipes = true;
+        pk113.cleanRecipes = true;
 
         for (Recipe recipe : this.getRecipes().values()) {
             if (recipe instanceof ShapedRecipe) {
                 pk.addShapedRecipe((ShapedRecipe) recipe);
+                pk113.addShapedRecipe((ShapedRecipe) recipe);
             } else if (recipe instanceof ShapelessRecipe) {
                 pk.addShapelessRecipe((ShapelessRecipe) recipe);
+                pk113.addShapelessRecipe((ShapelessRecipe) recipe);
             }
         }
 
         for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
             pk.addFurnaceRecipe(recipe);
+            pk113.addFurnaceRecipe((FurnaceRecipe) recipe);
         }
 
         pk.encode(PlayerProtocol.PLAYER_PROTOCOL_130);
         pk.isEncoded = true;
 
+        pk113.encode(PlayerProtocol.PLAYER_PROTOCOL_113);
+        pk113.isEncoded = true;
+
+        packet113 = pk113;
         packet = pk;
     }
 
