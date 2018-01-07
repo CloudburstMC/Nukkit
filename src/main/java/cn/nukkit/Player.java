@@ -3221,7 +3221,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                     }
                     break;
-                //ToDo
                 case ProtocolInfo113.CRAFTING_EVENT_PACKET:
                     CraftingEventPacket craftingEventPacket = (CraftingEventPacket) packet;
 
@@ -3271,7 +3270,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    if ((recipe == null) || (((recipe instanceof ShapelessRecipe) || (recipe instanceof ShapedRecipe)) && this.craftingType == CRAFTING_SMALL)) {
+                    if ((recipe == null)/* || (((recipe instanceof ShapelessRecipe) || (recipe instanceof ShapedRecipe)) && this.craftingType == CRAFTING_SMALL)*/) {
                         this.inventory.sendContents(this);
                         break;
                     }
