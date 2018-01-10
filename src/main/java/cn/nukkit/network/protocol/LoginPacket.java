@@ -38,6 +38,10 @@ public class LoginPacket extends DataPacket {
     @Override
     public void decode() {
         this.protocol = this.getInt();
+        if (protocol >= 0xffff) {
+            this.offset -= 6;
+            this.protocol = this.getInt();
+        }
         this.setBuffer(this.getByteArray(), 0);
         decodeChainData();
         decodeSkinData();
