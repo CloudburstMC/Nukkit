@@ -561,7 +561,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             sendCommandData();
                             return;
                         }
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                     }
                 }
             };
