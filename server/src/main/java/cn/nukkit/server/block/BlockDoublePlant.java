@@ -3,9 +3,9 @@ package cn.nukkit.server.block;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemSeedsWheat;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.util.Random;
 
@@ -48,18 +48,18 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if ((this.meta & 0x08) == 8) {
                 // Top
                 if (!(this.down().getId() == DOUBLE_PLANT)) {
                     this.getLevel().setBlock(this, new BlockAir(), true, true);
-                    return Level.BLOCK_UPDATE_NORMAL;
+                    return NukkitLevel.BLOCK_UPDATE_NORMAL;
                 }
             } else {
                 // Bottom
                 if (this.down().isTransparent() || !(this.up().getId() == DOUBLE_PLANT)) {
                     this.getLevel().useBreakOn(this);
-                    return Level.BLOCK_UPDATE_NORMAL;
+                    return NukkitLevel.BLOCK_UPDATE_NORMAL;
                 }
             }
         }

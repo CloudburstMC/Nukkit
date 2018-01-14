@@ -1,7 +1,6 @@
 package cn.nukkit.server.test;
 
-import cn.nukkit.server.utils.BinaryStream;
-import cn.nukkit.server.utils.VarInt;
+import cn.nukkit.server.util.BinaryStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

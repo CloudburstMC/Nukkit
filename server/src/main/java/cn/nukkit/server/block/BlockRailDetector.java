@@ -1,8 +1,7 @@
 package cn.nukkit.server.block;
 
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.item.EntityMinecartAbstract;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
 
@@ -52,7 +51,7 @@ public class BlockRailDetector extends BlockRail {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED) {
             updateState();
             return type;
         }

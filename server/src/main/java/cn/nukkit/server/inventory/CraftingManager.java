@@ -6,8 +6,8 @@ import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemPotion;
 import cn.nukkit.server.network.protocol.CraftingDataPacket;
-import cn.nukkit.server.utils.Config;
-import cn.nukkit.server.utils.Utils;
+import cn.nukkit.server.util.Config;
+import cn.nukkit.server.util.Utils;
 
 import java.io.File;
 import java.io.IOException;

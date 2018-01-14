@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
-import cn.nukkit.server.utils.BlockColor;
-import cn.nukkit.server.utils.DyeColor;
+import cn.nukkit.server.util.BlockColor;
+import cn.nukkit.server.util.DyeColor;
 
 /**
  * Created by CreeperFace on 7.8.2017.

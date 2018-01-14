@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * author: MagicDroidX

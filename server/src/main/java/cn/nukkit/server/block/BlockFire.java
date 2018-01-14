@@ -7,15 +7,14 @@ import cn.nukkit.api.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.projectile.EntityArrow;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.potion.Effect;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.util.Random;
 
@@ -86,13 +85,13 @@ public class BlockFire extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL || type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             if (!this.isBlockTopFacingSurfaceSolid(this.down()) && !this.canNeighborBurn()) {
                 this.getLevel().setBlock(this, new BlockAir(), true);
             }
 
-            return Level.BLOCK_UPDATE_NORMAL;
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.level.gameRules.getBoolean("doFireTick")) {
+            return NukkitLevel.BLOCK_UPDATE_NORMAL;
+        } else if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED && this.level.gameRules.getBoolean("doFireTick")) {
             boolean forever = this.down().getId() == Block.NETHERRACK;
 
             Random random = this.getLevel().rand;

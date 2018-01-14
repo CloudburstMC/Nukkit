@@ -2,13 +2,11 @@ package cn.nukkit.server.entity.projectile;
 
 import cn.nukkit.api.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.sound.EndermanTeleportSound;
 import cn.nukkit.server.math.NukkitMath;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
 
 public class EntityEnderPearl extends EntityProjectile {
     public static final int NETWORK_ID = 87;

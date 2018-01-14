@@ -2,7 +2,7 @@ package cn.nukkit.server.block;
 
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
@@ -50,7 +50,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED) {
             if (!this.isLocked()) {
                 Vector3 pos = getLocation();
                 boolean shouldBePowered = this.shouldBePowered();
@@ -68,13 +68,13 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
                     }
                 }
             }
-        } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
-            if (type == Level.BLOCK_UPDATE_NORMAL && this.getSide(BlockFace.DOWN).isTransparent()) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_NORMAL || type == NukkitLevel.BLOCK_UPDATE_REDSTONE) {
+            if (type == NukkitLevel.BLOCK_UPDATE_NORMAL && this.getSide(BlockFace.DOWN).isTransparent()) {
                 this.level.useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             } else {
                 this.updateState();
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

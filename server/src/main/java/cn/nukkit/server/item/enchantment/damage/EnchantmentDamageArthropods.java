@@ -1,7 +1,5 @@
 package cn.nukkit.server.item.enchantment.damage;
 
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.entity.EntityArthropod;
 import cn.nukkit.server.potion.Effect;
 
 import java.util.concurrent.ThreadLocalRandom;

@@ -2,14 +2,12 @@ package cn.nukkit.server.entity.item;
 
 import cn.nukkit.api.event.potion.PotionCollideEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.projectile.EntityProjectile;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.particle.InstantSpellParticle;
 import cn.nukkit.server.level.particle.Particle;
 import cn.nukkit.server.level.particle.SpellParticle;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
 import cn.nukkit.server.potion.Effect;
 import cn.nukkit.server.potion.Potion;
 

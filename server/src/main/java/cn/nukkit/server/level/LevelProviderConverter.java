@@ -11,8 +11,8 @@ import cn.nukkit.server.level.format.mcregion.McRegion;
 import cn.nukkit.server.level.format.mcregion.RegionLoader;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.utils.LevelException;
-import cn.nukkit.server.utils.Utils;
+import cn.nukkit.server.util.LevelException;
+import cn.nukkit.server.util.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,10 +26,10 @@ class LevelProviderConverter {
 
     private LevelProvider provider;
     private Class<? extends LevelProvider> toClass;
-    private Level level;
+    private NukkitLevel level;
     private String path;
 
-    LevelProviderConverter(Level level, String path) {
+    LevelProviderConverter(NukkitLevel level, String path) {
         this.level = level;
         this.path = path;
     }
@@ -70,7 +70,7 @@ class LevelProviderConverter {
                     throw new LevelException("Invalid level.dat");
                 }
             }
-            result = toClass.getConstructor(Level.class, String.class).newInstance(level, path);
+            result = toClass.getConstructor(NukkitLevel.class, String.class).newInstance(level, path);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

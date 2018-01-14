@@ -2,13 +2,13 @@ package cn.nukkit.server.block;
 
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.server.level.particle.BoneMealParticle;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.NukkitRandom;
-import cn.nukkit.server.utils.BlockColor;
-import cn.nukkit.server.utils.DyeColor;
+import cn.nukkit.server.util.BlockColor;
+import cn.nukkit.server.util.DyeColor;
 
 /**
  * @author Nukkit Project Team
@@ -40,11 +40,11 @@ public class BlockMushroomBrown extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (!canStay()) {
                 getLevel().useBreakOn(this);
 
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

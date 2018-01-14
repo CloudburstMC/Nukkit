@@ -1,9 +1,11 @@
 package cn.nukkit.server.inventory.transaction;
 
-import cn.nukkit.server.inventory.Inventory;
-import cn.nukkit.server.inventory.transaction.action.InventoryAction;
 
-import java.util.Set;
+import cn.nukkit.server.inventory.transaction.record.TransactionRecord;
+import cn.nukkit.server.network.NetworkPacketHandler;
+import io.netty.buffer.ByteBuf;
+
+import java.util.Collection;
 
 /**
  * @author CreeperFace
@@ -12,7 +14,7 @@ public interface InventoryTransaction {
 
     long getCreationTime();
 
-    Set<InventoryAction> getActions();
+    /*Set<InventoryAction> getActions();
 
     Set<Inventory> getInventories();
 
@@ -22,5 +24,23 @@ public interface InventoryTransaction {
 
     boolean execute();
 
-    boolean hasExecuted();
+    boolean hasExecuted();*/
+
+    Collection<TransactionRecord> getRecords();
+
+    void read(ByteBuf buffer);
+
+    void write(ByteBuf buffer);
+
+    Type getType();
+
+    void handle(NetworkPacketHandler session);
+
+    enum Type {
+        NORMAL,
+        INVENTORY_MISMATCH,
+        ITEM_USE,
+        ITEM_USE_ON_ENTITY,
+        ITEM_RELEASE
+    }
 }

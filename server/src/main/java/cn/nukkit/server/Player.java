@@ -23,7 +23,6 @@ import cn.nukkit.api.form.window.FormWindowCustom;
 import cn.nukkit.api.message.Message;
 import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.api.plugin.Plugin;
-import cn.nukkit.api.resourcepack.ResourcePack;
 import cn.nukkit.api.util.LoginChainData;
 import cn.nukkit.server.AdventureSettings.Type;
 import cn.nukkit.server.block.*;
@@ -47,8 +46,8 @@ import cn.nukkit.server.item.*;
 import cn.nukkit.server.item.enchantment.Enchantment;
 import cn.nukkit.server.item.food.Food;
 import cn.nukkit.server.level.ChunkLoader;
-import cn.nukkit.server.level.Level;
 import cn.nukkit.server.level.Location;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.Position;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.format.generic.BaseFullChunk;
@@ -60,9 +59,13 @@ import cn.nukkit.server.math.*;
 import cn.nukkit.server.metadata.MetadataValue;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.tag.*;
-import cn.nukkit.server.network.SourceInterface;
-import cn.nukkit.server.network.protocol.*;
-import cn.nukkit.server.network.protocol.types.ContainerIds;
+import cn.nukkit.server.network.minecraft.data.ContainerIds;
+import cn.nukkit.server.network.minecraft.packet.ResourcePackChunkRequestPacket;
+import cn.nukkit.server.network.minecraft.packet.ResourcePackClientResponsePacket;
+import cn.nukkit.server.network.minecraft.packet.ResourcePackDataInfoPacket;
+import cn.nukkit.server.network.minecraft.packet.ResourcePackStackPacket;
+import cn.nukkit.server.network.protocol.AvailableCommandsPacket;
+import cn.nukkit.server.network.protocol.LevelEventPacket;
 import cn.nukkit.server.network.protocol.types.NetworkInventoryAction;
 import cn.nukkit.server.permission.NukkitPermissible;
 import cn.nukkit.server.permission.NukkitPermission;
@@ -70,7 +73,7 @@ import cn.nukkit.server.permission.PermissionAttachment;
 import cn.nukkit.server.permission.PermissionAttachmentInfo;
 import cn.nukkit.server.potion.Effect;
 import cn.nukkit.server.potion.Potion;
-import cn.nukkit.server.utils.*;
+import cn.nukkit.server.util.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 
@@ -484,7 +487,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
         this.ip = ip;
         this.port = port;
         this.clientID = clientID;
-        this.loaderId = Level.generateChunkLoaderId(this);
+        this.loaderId = NukkitLevel.generateChunkLoaderId(this);
         this.chunksPerTick = (int) this.server.getConfig("chunk-sending.per-tick", 4);
         this.spawnThreshold = (int) this.server.getConfig("chunk-sending.spawn-threshold", 56);
         this.spawnPosition = null;
@@ -693,12 +696,12 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
     }
 
     @Override
-    protected boolean switchLevel(Level targetLevel) {
-        Level oldLevel = this.level;
+    protected boolean switchLevel(NukkitLevel targetLevel) {
+        NukkitLevel oldLevel = this.level;
         if (super.switchLevel(targetLevel)) {
             for (long index : new ArrayList<>(this.usedChunks.keySet())) {
-                int chunkX = Level.getHashX(index);
-                int chunkZ = Level.getHashZ(index);
+                int chunkX = NukkitLevel.getHashX(index);
+                int chunkZ = NukkitLevel.getHashZ(index);
                 this.unloadChunk(chunkX, chunkZ, oldLevel);
             }
 
@@ -719,9 +722,9 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
         this.unloadChunk(x, z, null);
     }
 
-    public void unloadChunk(int x, int z, Level level) {
+    public void unloadChunk(int x, int z, NukkitLevel level) {
         level = level == null ? this.level : level;
-        long index = Level.chunkHash(x, z);
+        long index = NukkitLevel.chunkHash(x, z);
         if (this.usedChunks.containsKey(index)) {
             for (Entity entity : level.getChunkEntities(x, z).values()) {
                 if (entity != this) {
@@ -748,7 +751,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
             return;
         }
 
-        this.usedChunks.put(Level.chunkHash(x, z), true);
+        this.usedChunks.put(NukkitLevel.chunkHash(x, z), true);
         this.chunkLoadCount++;
 
         this.dataPacket(packet);
@@ -767,7 +770,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
             return;
         }
 
-        this.usedChunks.put(Level.chunkHash(x, z), true);
+        this.usedChunks.put(NukkitLevel.chunkHash(x, z), true);
         this.chunkLoadCount++;
 
         FullChunkDataPacket pk = new FullChunkDataPacket();
@@ -803,8 +806,8 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
             if (count >= this.chunksPerTick) {
                 break;
             }
-            int chunkX = Level.getHashX(index);
-            int chunkZ = Level.getHashZ(index);
+            int chunkX = NukkitLevel.getHashX(index);
+            int chunkZ = NukkitLevel.getHashZ(index);
 
             ++count;
 
@@ -888,8 +891,8 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
         }
 
         for (long index : this.usedChunks.keySet()) {
-            int chunkX = Level.getHashX(index);
-            int chunkZ = Level.getHashZ(index);
+            int chunkX = NukkitLevel.getHashX(index);
+            int chunkZ = NukkitLevel.getHashZ(index);
             for (Entity entity : this.level.getChunkEntities(chunkX, chunkZ).values()) {
                 if (this != entity && !entity.closed && entity.isAlive()) {
                     entity.spawnTo(this);
@@ -946,7 +949,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
                 int distance = (int) Math.sqrt((double) x * x + (double) z * z);
                 if (distance <= this.chunkRadius) {
                     long index;
-                    if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
+                    if (!(this.usedChunks.containsKey(index = NukkitLevel.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
                         newOrder.put(index, distance);
                     }
                     lastChunk.remove(index);
@@ -955,7 +958,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
         }
 
         for (long index : new ArrayList<>(lastChunk.keySet())) {
-            this.unloadChunk(Level.getHashX(index), Level.getHashZ(index));
+            this.unloadChunk(NukkitLevel.getHashX(index), NukkitLevel.getHashZ(index));
         }
 
         this.loadQueue = newOrder;
@@ -1088,7 +1091,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
     }
 
     public void setSpawn(Vector3 pos) {
-        Level level;
+        NukkitLevel level;
         if (!(pos instanceof Position)) {
             level = this.level;
         } else {
@@ -1840,10 +1843,10 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
                 .set(Type.ALLOW_FLIGHT, isCreative())
                 .set(Type.NO_CLIP, isSpectator());
 
-        Level level;
-        if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null || !alive) {
+        NukkitLevel level;
+        if ((level = this.server.getLevelByName(nbt.getString("NukkitLevel"))) == null || !alive) {
             this.setLevel(this.server.getDefaultLevel());
-            nbt.putString("Level", this.level.getName());
+            nbt.putString("NukkitLevel", this.level.getName());
             nbt.getList("Pos", DoubleTag.class)
                     .add(new DoubleTag("0", this.level.getSpawnLocation().x))
                     .add(new DoubleTag("1", this.level.getSpawnLocation().y))
@@ -1903,7 +1906,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
             return;
         }
 
-        Level level;
+        NukkitLevel level;
         if (this.spawnPosition == null && this.namedTag.contains("SpawnLevel") && (level = this.server.getLevelByName(this.namedTag.getString("SpawnLevel"))) != null) {
             this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
         }
@@ -3515,8 +3518,8 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
             this.removeAllWindows(true);
 
             for (long index : new ArrayList<>(this.usedChunks.keySet())) {
-                int chunkX = Level.getHashX(index);
-                int chunkZ = Level.getHashZ(index);
+                int chunkX = NukkitLevel.getHashX(index);
+                int chunkZ = NukkitLevel.getHashZ(index);
                 this.level.unregisterChunkLoader(this, chunkX, chunkZ);
                 this.usedChunks.remove(index);
             }
@@ -3582,7 +3585,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
         super.saveNBT();
 
         if (this.level != null) {
-            this.namedTag.putString("Level", this.level.getFolderName());
+            this.namedTag.putString("NukkitLevel", this.level.getFolderName());
             if (this.spawnPosition != null && this.spawnPosition.getLevel() != null) {
                 this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getFolderName());
                 this.namedTag.putInt("SpawnX", (int) this.spawnPosition.x);
@@ -3821,7 +3824,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
         int added = now + add;
         int level = this.getExperienceLevel();
         int most = calculateRequireExperience(level);
-        while (added >= most) {  //Level Up!
+        while (added >= most) {  //NukkitLevel Up!
             added = added - most;
             level++;
             most = calculateRequireExperience(level);
@@ -4053,7 +4056,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
 
             for (int X = -1; X <= 1; ++X) {
                 for (int Z = -1; Z <= 1; ++Z) {
-                    long index = Level.chunkHash(chunkX + X, chunkZ + Z);
+                    long index = NukkitLevel.chunkHash(chunkX + X, chunkZ + Z);
                     if (!this.usedChunks.containsKey(index) || !this.usedChunks.get(index)) {
                         return false;
                     }
@@ -4428,7 +4431,7 @@ public class Player extends EntityHuman implements cn.nukkit.api.Player, Invento
 
     @Override
     public void onChunkChanged(FullChunk chunk) {
-        this.usedChunks.remove(Level.chunkHash(chunk.getX(), chunk.getZ()));
+        this.usedChunks.remove(NukkitLevel.chunkHash(chunk.getX(), chunk.getZ()));
     }
 
     @Override

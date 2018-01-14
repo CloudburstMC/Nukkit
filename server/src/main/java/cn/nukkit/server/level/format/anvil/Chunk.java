@@ -3,15 +3,11 @@ package cn.nukkit.server.level.format.anvil;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.blockentity.BlockEntity;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.level.format.LevelProvider;
 import cn.nukkit.server.level.format.generic.BaseChunk;
 import cn.nukkit.server.level.format.generic.EmptyChunkSection;
 import cn.nukkit.server.nbt.NBTIO;
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
 import cn.nukkit.server.nbt.tag.*;
-import cn.nukkit.server.utils.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -66,7 +62,7 @@ public class Chunk extends BaseChunk {
         }
 
         if (nbt == null) {
-            this.nbt = new CompoundTag("Level");
+            this.nbt = new CompoundTag("NukkitLevel");
             return;
         }
 
@@ -249,11 +245,11 @@ public class Chunk extends BaseChunk {
         try {
             CompoundTag chunk = NBTIO.read(new ByteArrayInputStream(Zlib.inflate(data)), ByteOrder.BIG_ENDIAN);
 
-            if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
+            if (!chunk.contains("NukkitLevel") || !(chunk.get("NukkitLevel") instanceof CompoundTag)) {
                 return null;
             }
 
-            return new Chunk(provider, chunk.getCompound("Level"));
+            return new Chunk(provider, chunk.getCompound("NukkitLevel"));
         } catch (Exception e) {
             log.logException(e);
             return null;
@@ -268,11 +264,11 @@ public class Chunk extends BaseChunk {
     public static Chunk fromFastBinary(byte[] data, LevelProvider provider) {
         try {
             CompoundTag chunk = NBTIO.read(new DataInputStream(new ByteArrayInputStream(data)), ByteOrder.BIG_ENDIAN);
-            if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
+            if (!chunk.contains("NukkitLevel") || !(chunk.get("NukkitLevel") instanceof CompoundTag)) {
                 return null;
             }
 
-            return new Chunk(provider, chunk.getCompound("Level"));
+            return new Chunk(provider, chunk.getCompound("NukkitLevel"));
         } catch (Exception e) {
             return null;
         }
@@ -352,7 +348,7 @@ public class Chunk extends BaseChunk {
         nbt.putByteArray("ExtraData", extraData.getBuffer());
 
         CompoundTag chunk = new CompoundTag("");
-        chunk.putCompound("Level", nbt);
+        chunk.putCompound("NukkitLevel", nbt);
 
         try {
             return NBTIO.write(chunk, ByteOrder.BIG_ENDIAN);
@@ -438,7 +434,7 @@ public class Chunk extends BaseChunk {
         nbt.putByteArray("ExtraData", extraData.getBuffer());
 
         CompoundTag chunk = new CompoundTag("");
-        chunk.putCompound("Level", nbt);
+        chunk.putCompound("NukkitLevel", nbt);
 
         try {
             return Zlib.deflate(NBTIO.write(chunk, ByteOrder.BIG_ENDIAN), RegionLoader.COMPRESSION_LEVEL);

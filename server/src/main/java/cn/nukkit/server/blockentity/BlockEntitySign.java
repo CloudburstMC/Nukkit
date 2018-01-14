@@ -5,7 +5,7 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 import java.util.ArrayList;
 import java.util.List;

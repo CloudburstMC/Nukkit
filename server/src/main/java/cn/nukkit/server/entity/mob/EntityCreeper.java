@@ -3,13 +3,11 @@ package cn.nukkit.server.entity.mob;
 import cn.nukkit.api.event.entity.CreeperPowerEvent;
 import cn.nukkit.api.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.data.ByteEntityData;
 import cn.nukkit.server.entity.weather.EntityLightningStrike;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
 
 /**
  * @author Box.

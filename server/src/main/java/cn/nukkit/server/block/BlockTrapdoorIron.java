@@ -3,7 +3,7 @@ package cn.nukkit.server.block;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created by Pub4Game on 26.12.2015.

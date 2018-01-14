@@ -2,7 +2,7 @@ package cn.nukkit.server.lang;
 
 import cn.nukkit.api.message.Message;
 import cn.nukkit.api.message.TranslatedMessage;
-import cn.nukkit.server.utils.Utils;
+import cn.nukkit.server.util.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;

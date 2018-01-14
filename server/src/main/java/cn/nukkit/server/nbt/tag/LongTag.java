@@ -1,64 +1,40 @@
 package cn.nukkit.server.nbt.tag;
 
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
+import java.util.Objects;
 
-import java.io.IOException;
+public class LongTag extends Tag<Long> {
+    private final long value;
 
-public class LongTag extends NumberTag<Long> {
-    public long data;
-
-    @Override
-    public Long getData() {
-        return data;
-    }
-
-    @Override
-    public void setData(Long data) {
-        this.data = data == null ? 0 : data;
-    }
-
-    public LongTag(String name) {
+    public LongTag(String name, long value) {
         super(name);
+        this.value = value;
     }
 
-    public LongTag(String name, long data) {
-        super(name);
-        this.data = data;
-    }
-
-    @Override
-    void write(NBTOutputStream dos) throws IOException {
-        dos.writeLong(data);
+    public long getPrimitiveValue() {
+        return value;
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-        data = dis.readLong();
+    public Long getValue() {
+        return value;
     }
 
     @Override
-    public byte getId() {
-        return TAG_Long;
+    public int hashCode() {
+        return Objects.hash(getName(), value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LongTag that = (LongTag) o;
+        return value == that.value &&
+                Objects.equals(getName(), that.getName());
     }
 
     @Override
     public String toString() {
-        return "LongTag" + this.getName() + " (data:" + data + ")";
+        return "TAG_Long" + super.toString() + value;
     }
-
-    @Override
-    public Tag copy() {
-        return new LongTag(getName(), data);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            LongTag o = (LongTag) obj;
-            return data == o.data;
-        }
-        return false;
-    }
-
 }

@@ -3,11 +3,9 @@ package cn.nukkit.server.entity.item;
 import cn.nukkit.api.event.entity.EntityDamageEvent;
 import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.data.EntityMetadata;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
 
 /**
  * Created on 2015/12/26 by xtypr.

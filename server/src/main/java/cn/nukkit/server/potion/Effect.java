@@ -4,9 +4,7 @@ import cn.nukkit.api.event.entity.EntityDamageEvent;
 import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.api.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.network.protocol.MobEffectPacket;
-import cn.nukkit.server.utils.ServerException;
+import cn.nukkit.server.util.ServerException;
 
 /**
  * author: MagicDroidX

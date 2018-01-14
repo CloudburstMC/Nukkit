@@ -2,13 +2,13 @@ package cn.nukkit.server.level.format.generic;
 
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.level.GameRules;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.format.LevelProvider;
 import cn.nukkit.server.level.generator.Generator;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.utils.LevelException;
+import cn.nukkit.server.util.LevelException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,13 +21,13 @@ import java.nio.ByteOrder;
  * Nukkit Project
  */
 public abstract class BaseLevelProvider implements LevelProvider {
-    protected Level level;
+    protected NukkitLevel level;
 
     protected final String path;
 
     protected CompoundTag levelData;
 
-    public BaseLevelProvider(Level level, String path) throws IOException {
+    public BaseLevelProvider(NukkitLevel level, String path) throws IOException {
         this.level = level;
         this.path = path;
         File file_path = new File(this.path);
@@ -61,7 +61,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public Level getLevel() {
+    public NukkitLevel getLevel() {
         return level;
     }
 

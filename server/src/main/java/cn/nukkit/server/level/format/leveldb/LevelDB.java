@@ -4,7 +4,7 @@ import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.blockentity.BlockEntitySpawnable;
 import cn.nukkit.server.level.GameRules;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.format.ChunkSection;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.format.LevelProvider;
@@ -17,7 +17,7 @@ import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.scheduler.AsyncTask;
-import cn.nukkit.server.utils.*;
+import cn.nukkit.server.util.*;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
@@ -36,13 +36,13 @@ public class LevelDB implements LevelProvider {
 
     protected DB db;
 
-    protected Level level;
+    protected NukkitLevel level;
 
     protected final String path;
 
     protected CompoundTag levelData;
 
-    public LevelDB(Level level, String path) {
+    public LevelDB(NukkitLevel level, String path) {
         this.level = level;
         this.path = path;
         File file_path = new File(this.path);
@@ -244,7 +244,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public boolean isChunkLoaded(int x, int z) {
-        return this.chunks.containsKey(Level.chunkHash(x, z));
+        return this.chunks.containsKey(NukkitLevel.chunkHash(x, z));
     }
 
     @Override
@@ -261,7 +261,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public boolean loadChunk(int x, int z, boolean create) {
-        long index = Level.chunkHash(x, z);
+        long index = NukkitLevel.chunkHash(x, z);
         if (this.chunks.containsKey(index)) {
             return true;
         }
@@ -314,7 +314,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public boolean unloadChunk(int x, int z, boolean safe) {
-        long index = Level.chunkHash(x, z);
+        long index = NukkitLevel.chunkHash(x, z);
         Chunk chunk = this.chunks.getOrDefault(index, null);
         if (chunk != null && chunk.unload(false, safe)) {
             this.chunks.remove(index);
@@ -346,7 +346,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public Chunk getChunk(int x, int z, boolean create) {
-        long index = Level.chunkHash(x, z);
+        long index = NukkitLevel.chunkHash(x, z);
         if (this.chunks.containsKey(index)) {
             return this.chunks.get(index);
         } else {
@@ -368,7 +368,7 @@ public class LevelDB implements LevelProvider {
 
         chunk.setX(chunkX);
         chunk.setZ(chunkZ);
-        long index = Level.chunkHash(chunkX, chunkZ);
+        long index = NukkitLevel.chunkHash(chunkX, chunkZ);
 
         if (this.chunks.containsKey(index) && !this.chunks.get(index).equals(chunk)) {
             this.unloadChunk(chunkX, chunkZ, false);
@@ -417,7 +417,7 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public Level getLevel() {
+    public NukkitLevel getLevel() {
         return level;
     }
 

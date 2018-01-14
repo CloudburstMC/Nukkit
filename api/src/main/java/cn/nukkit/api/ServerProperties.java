@@ -83,4 +83,6 @@ public interface ServerProperties {
     void setResourcesForced(boolean resourcesForced);
 
     boolean isBugReportEnabled();
+
+    boolean isAuthEnabled();
 }

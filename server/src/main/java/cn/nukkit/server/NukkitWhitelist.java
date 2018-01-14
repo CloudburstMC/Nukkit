@@ -1,5 +1,6 @@
 package cn.nukkit.server;
 
+import cn.nukkit.api.Player;
 import cn.nukkit.api.Whitelist;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ public class NukkitWhitelist implements Whitelist{
 
             List<Entry> entryList = NukkitServer.JSON_MAPPER.readValue(reader, new TypeReference<List<Entry>>(){});
             whitelist.entries = new HashMap<>();
-            entryList.stream().forEach(entry -> {
+            entryList.forEach(entry -> {
                 whitelist.entries.put(entry.name, entry);
                 whitelist.entries.put(entry.uuid, entry);
             });
@@ -52,6 +53,10 @@ public class NukkitWhitelist implements Whitelist{
 
     public void removeFromWhitelist(String name) {
         entries.remove(name);
+    }
+
+    public void addToWhitelist(Player player) {
+        entries.if
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cn.nukkit.api.item;
 
+import cn.nukkit.api.block.BlockTypes;
 import cn.nukkit.api.item.component.EdibleItemComponent;
 import cn.nukkit.api.item.component.ItemComponent;
 import cn.nukkit.api.metadata.Dyed;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ItemTypes {
+    private static final TIntObjectMap<ItemType> BY_ID = new TIntObjectHashMap<>(256);
     public static final ItemType IRON_SHOVEL = IntItem.builder().id(256).name("iron_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
     public static final ItemType IRON_PICKAXE = IntItem.builder().id(257).name("iron_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
     public static final ItemType IRON_AXE = IntItem.builder().id(258).name("iron_axe").maxStackSize(1).data(GenericDamageValue.class).build();
@@ -223,7 +225,6 @@ public class ItemTypes {
     public static final ItemType DISC_WARD = IntItem.builder().id(500).name("record_ward").maxStackSize(1).build();
     public static final ItemType DISC_11 = IntItem.builder().id(500).name("record_11").maxStackSize(1).build();
     public static final ItemType WAIT_DISC = IntItem.builder().id(500).name("record_wait").maxStackSize(1).build();
-    private static final TIntObjectMap<ItemType> BY_ID = new TIntObjectHashMap<>(208);
 
     @Builder
     private static class IntItem  implements ItemType {
@@ -288,5 +289,21 @@ public class ItemTypes {
         public String toString() {
             return getName();
         }
+    }
+
+    public static ItemType byId(int data) {
+        return byId(data, false);
+    }
+
+    public static ItemType byId(int data, boolean itemsOnly) {
+        ItemType type = BY_ID.get(data);
+        if (type == null) {
+            if (itemsOnly) {
+                throw new IllegalArgumentException("ID " + data + " is not valid.");
+            } else {
+                return BlockTypes.byId(data);
+            }
+        }
+        return type;
     }
 }

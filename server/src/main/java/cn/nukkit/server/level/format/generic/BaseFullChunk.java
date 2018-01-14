@@ -3,8 +3,7 @@ package cn.nukkit.server.level.format.generic;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.blockentity.BlockEntity;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.format.LevelProvider;
 import cn.nukkit.server.level.generator.biome.Biome;
@@ -232,7 +231,7 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public int getBlockExtraData(int x, int y, int z) {
-        int index = Level.chunkBlockHash(x, y, z);
+        int index = NukkitLevel.chunkBlockHash(x, y, z);
         if (this.extraData.containsKey(index)) {
             return this.extraData.get(index);
         }
@@ -243,9 +242,9 @@ public abstract class BaseFullChunk implements FullChunk {
     @Override
     public void setBlockExtraData(int x, int y, int z, int data) {
         if (data == 0) {
-            this.extraData.remove(Level.chunkBlockHash(x, y, z));
+            this.extraData.remove(NukkitLevel.chunkBlockHash(x, y, z));
         } else {
-            this.extraData.put(Level.chunkBlockHash(x, y, z), data);
+            this.extraData.put(NukkitLevel.chunkBlockHash(x, y, z), data);
         }
 
         this.setChanged(true);

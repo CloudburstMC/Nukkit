@@ -1,6 +1,5 @@
 package cn.nukkit.server.blockentity;
 
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;

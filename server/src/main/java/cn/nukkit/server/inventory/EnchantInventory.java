@@ -7,12 +7,12 @@ import cn.nukkit.server.item.ItemBookEnchanted;
 import cn.nukkit.server.item.enchantment.Enchantment;
 import cn.nukkit.server.item.enchantment.EnchantmentEntry;
 import cn.nukkit.server.item.enchantment.EnchantmentList;
-import cn.nukkit.server.level.Level;
 import cn.nukkit.server.level.Location;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.Position;
 import cn.nukkit.server.math.NukkitRandom;
 import cn.nukkit.server.network.protocol.CraftingDataPacket;
-import cn.nukkit.server.utils.DyeColor;
+import cn.nukkit.server.util.DyeColor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -222,7 +222,7 @@ public class EnchantInventory extends ContainerInventory {
     public int countBookshelf() {
         int count = 0;
         Location loc = this.getHolder().getLocation();
-        Level level = loc.getLevel();
+        NukkitLevel level = loc.getLevel();
 
         for (int y = 0; y <= 1; y++) {
             for (int x = -1; x <= 1; x++) {

@@ -3,7 +3,7 @@ package cn.nukkit.server.block;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created on 2015/11/24 by xtypr.

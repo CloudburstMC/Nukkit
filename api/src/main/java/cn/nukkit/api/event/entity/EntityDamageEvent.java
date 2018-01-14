@@ -1,10 +1,9 @@
 package cn.nukkit.api.event.entity;
 
+import cn.nukkit.api.event.Cancellable;
 import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
 import cn.nukkit.server.potion.Effect;
-import cn.nukkit.server.utils.EventException;
+import cn.nukkit.server.util.EventException;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -14,11 +13,6 @@ import java.util.Map;
  * Nukkit Project
  */
 public class EntityDamageEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
 
     private final DamageCause cause;
 

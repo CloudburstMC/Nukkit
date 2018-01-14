@@ -4,9 +4,9 @@ import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.Position;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 import java.text.DecimalFormat;
 
@@ -44,7 +44,7 @@ public class SpawnpointCommand extends VanillaCommand {
                 return true;
             }
         }
-        Level level = target.getLevel();
+        NukkitLevel level = target.getLevel();
         DecimalFormat round2 = new DecimalFormat("##0.00");
         if (args.length == 4) {
             if (level != null) {

@@ -1,27 +1,104 @@
 package cn.nukkit.server.nbt;
 
-import cn.nukkit.server.item.Item;
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
-import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.nbt.tag.Tag;
+import cn.nukkit.api.item.ItemStack;
+import cn.nukkit.api.item.ItemStackBuilder;
+import cn.nukkit.api.item.ItemType;
+import cn.nukkit.api.item.ItemTypes;
+import cn.nukkit.server.item.NukkitItemStackBuilder;
+import cn.nukkit.server.nbt.stream.NBTReader;
+import cn.nukkit.server.nbt.stream.NBTWriter;
+import cn.nukkit.server.nbt.tag.*;
+import cn.nukkit.server.nbt.util.LittleEndianDataInputStream;
+import cn.nukkit.server.nbt.util.LittleEndianDataOutputStream;
+import com.google.common.base.Preconditions;
+import lombok.experimental.UtilityClass;
 
 import java.io.*;
-import java.nio.ByteOrder;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.Collection;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
+import java.util.Map;
+import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+@UtilityClass
 public class NBTIO {
+    public static int MAX_DEPTH = 16;
 
-    /**
+    public static NBTReader createLittleEndianReader(InputStream stream) {
+        Objects.requireNonNull(stream, "stream");
+        return new NBTReader(new LittleEndianDataInputStream(stream));
+    }
+
+    public static NBTReader createBigEndianReader(InputStream stream) {
+        Objects.requireNonNull(stream, "stream");
+        return new NBTReader(new DataInputStream(stream));
+    }
+
+    public static NBTWriter createLittleEndianWriter(OutputStream stream) {
+        Objects.requireNonNull(stream, "stream");
+        return new NBTWriter(new LittleEndianDataOutputStream(stream));
+    }
+
+    public static NBTWriter createBigEndianWriter(OutputStream stream) {
+        Objects.requireNonNull(stream, "stream");
+        return new NBTWriter(new DataOutputStream(stream));
+    }
+
+    public static NBTReader createCompressedReader(InputStream stream) throws IOException {
+        return createBigEndianReader(new GZIPInputStream(stream));
+    }
+
+    public static NBTWriter createCompressedWriter(OutputStream stream) throws IOException {
+        return createBigEndianWriter(new GZIPOutputStream(stream));
+    }
+
+    public static ItemStack createItemStack(Map<String, Tag<?>> map) {
+        ByteTag countTag = (ByteTag) map.get("Count");
+        ShortTag damageTag = (ShortTag) map.get("Damage");
+        ShortTag idTag = (ShortTag) map.get("id");
+        ItemType type = ItemTypes.forId(idTag.getValue());
+
+        ItemStackBuilder builder = new NukkitItemStackBuilder()
+                .itemType(type)
+                .amount(countTag.getValue())
+                .itemData(MetadataSerializer.deserializeMetadata(type, damageTag.getValue()));
+
+        Tag<?> tagTag = map.get("tag");
+        if (tagTag != null) {
+            applyItemData(builder, (Map<String, Tag<?>>) tagTag.getValue());
+        }
+
+        return builder.build();
+    }
+
+    public static void applyItemData(ItemStackBuilder builder, Map<String, Tag<?>> map) {
+        if (map.containsKey("display")) {
+            Map<String, Tag<?>> displayTag = ((CompoundTag) map.get("display")).getValue();
+            if (displayTag.containsKey("Name")) {
+                builder.name((String) displayTag.get("Name").getValue());
+            }
+        }
+    }
+
+    public static ItemStack[] createItemStacks(ListTag<CompoundTag> tag, int knownSize) {
+        ItemStack[] all = new ItemStack[knownSize];
+        for (CompoundTag slotTag : tag.getValue()) {
+            Map<String, Tag<?>> slotMap = slotTag.getValue();
+            Tag<?> inSlotTagRaw = slotMap.get("Slot");
+            Preconditions.checkArgument(inSlotTagRaw != null, "Slot NBT tag is missing from compound");
+            Preconditions.checkArgument(inSlotTagRaw instanceof ByteTag, "Slot NBT tag is not a Byte");
+            ByteTag inSlotTag = (ByteTag) inSlotTagRaw;
+            if (inSlotTag.getValue() < 0 || inSlotTag.getValue() >= knownSize) {
+                throw new IllegalArgumentException("Found illegal slot " + inSlotTag.getValue());
+            }
+            all[inSlotTag.getValue()] = createItemStack(slotMap);
+        }
+        return all;
+    }
+
+    /*/** TODO: Add compression support
      * A Named Binary Tag library for Nukkit Project
      */
-    public static CompoundTag putItemHelper(Item item) {
+    /*public static CompoundTag putItemHelper(Item item) {
         return putItemHelper(item, null);
     }
 
@@ -248,6 +325,5 @@ public class NBTIO {
         }
         write(tag, tmpFile);
         Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-    }
-
+    }*/
 }

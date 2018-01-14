@@ -4,7 +4,7 @@ import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.api.scheduler.NukkitRunnable;
 import cn.nukkit.api.scheduler.NukkitScheduler;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.utils.PluginException;
+import cn.nukkit.server.util.PluginException;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 

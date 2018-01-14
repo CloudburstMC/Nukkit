@@ -3,7 +3,7 @@ package cn.nukkit.server.command.defaults;
 import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 
 /**
  * Created on 2015/11/13 by xtypr.
@@ -29,7 +29,7 @@ public class SaveCommand extends VanillaCommand {
             player.save();
         }
 
-        for (Level level : sender.getServer().getLevels().values()) {
+        for (NukkitLevel level : sender.getServer().getLevels().values()) {
             level.save(true);
         }
 

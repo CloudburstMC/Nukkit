@@ -4,10 +4,10 @@ import cn.nukkit.api.event.block.BlockGrowEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.particle.BoneMealParticle;
 import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.util.Random;
 
@@ -75,12 +75,12 @@ public abstract class BlockCrops extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() != FARMLAND) {
                 this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             if (new Random().nextInt(2) == 1) {
                 if (this.meta < 0x07) {
                     BlockCrops block = (BlockCrops) this.clone();
@@ -91,11 +91,11 @@ public abstract class BlockCrops extends BlockFlowable {
                     if (!ev.isCancelled()) {
                         this.getLevel().setBlock(this, ev.getNewState(), true, true);
                     } else {
-                        return Level.BLOCK_UPDATE_RANDOM;
+                        return NukkitLevel.BLOCK_UPDATE_RANDOM;
                     }
                 }
             } else {
-                return Level.BLOCK_UPDATE_RANDOM;
+                return NukkitLevel.BLOCK_UPDATE_RANDOM;
             }
         }
 

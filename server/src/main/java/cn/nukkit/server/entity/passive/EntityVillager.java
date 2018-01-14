@@ -1,17 +1,14 @@
 package cn.nukkit.server.entity.passive;
 
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.entity.EntityAgeable;
-import cn.nukkit.server.entity.EntityCreature;
+import cn.nukkit.server.entity.EntityLiving;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
 
 /**
  * Created by Pub4Game on 21.06.2016.
  */
-public class EntityVillager extends EntityCreature implements EntityNPC, EntityAgeable {
+public class EntityVillager extends EntityLiving implements EntityNPC, EntityAgeable {
 
     public static final int PROFESSION_FARMER = 0;
     public static final int PROFESSION_LIBRARIAN = 1;

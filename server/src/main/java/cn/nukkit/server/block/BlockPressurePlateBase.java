@@ -5,10 +5,9 @@ import cn.nukkit.api.event.entity.EntityInteractEvent;
 import cn.nukkit.api.event.player.PlayerInteractEvent;
 import cn.nukkit.api.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.sound.ClickSound;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
@@ -60,11 +59,11 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
                 this.level.useBreakOn(this);
             }
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED) {
             int power = this.getRedstonePower();
 
             if (power > 0) {

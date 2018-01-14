@@ -5,10 +5,10 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.command.data.CommandParameter;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.particle.*;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 import java.util.Random;
 
@@ -47,7 +47,7 @@ public class ParticleCommand extends VanillaCommand {
             return true;
         }
 
-        Level level;
+        NukkitLevel level;
         if (sender instanceof Player) {
             level = ((Player) sender).getLevel();
         } else {

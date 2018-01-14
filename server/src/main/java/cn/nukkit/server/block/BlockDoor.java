@@ -4,7 +4,7 @@ import cn.nukkit.api.event.block.BlockRedstoneEvent;
 import cn.nukkit.api.event.block.DoorToggleEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.sound.DoorSound;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
@@ -203,7 +203,7 @@ public abstract class BlockDoor extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() == AIR) {
                 Block up = this.up();
 
@@ -212,11 +212,11 @@ public abstract class BlockDoor extends BlockTransparent {
                     this.getLevel().useBreakOn(this);
                 }
 
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
         }
 
-        if (type == Level.BLOCK_UPDATE_REDSTONE) {
+        if (type == NukkitLevel.BLOCK_UPDATE_REDSTONE) {
             if ((!isOpen() && this.level.isBlockPowered(this)) || (isOpen() && !this.level.isBlockPowered(this))) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
 

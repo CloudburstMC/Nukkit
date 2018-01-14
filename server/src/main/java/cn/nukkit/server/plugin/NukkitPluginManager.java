@@ -1,12 +1,17 @@
 package cn.nukkit.server.plugin;
 
 import cn.nukkit.api.permission.Permission;
-import cn.nukkit.api.plugin.*;
+import cn.nukkit.api.plugin.Plugin;
+import cn.nukkit.api.plugin.PluginDescription;
+import cn.nukkit.api.plugin.PluginLoader;
+import cn.nukkit.api.plugin.PluginManager;
 import cn.nukkit.server.NukkitServer;
+import cn.nukkit.server.math.graph.DirectedAcyclicGraph;
 import cn.nukkit.server.permission.NukkitPermission;
-import cn.nukkit.server.plugin.util.DirectedAcyclicGraph;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import lombok.extern.log4j.Log4j2;
 
@@ -24,8 +29,8 @@ import java.util.regex.Pattern;
  */
 @Log4j2
 public class NukkitPluginManager implements PluginManager {
-    private final Map<Class<? extends PluginLoader>, PluginLoader> loaders = new HashMap<>();
-    private final Map<String, PluginContainer> plugins = new HashMap<>();
+    private final BiMap<Class<? extends PluginLoader>, PluginLoader> loaders = HashBiMap.create();
+    private final Map<String, Plugin> plugins = new HashMap<>();
     private final NukkitServer server;
     private final Pattern API_REGEX;
     private final int API_MINOR;
@@ -54,12 +59,12 @@ public class NukkitPluginManager implements PluginManager {
         loaders.remove(loaderClass);
     }
 
-    public Optional<PluginContainer> getPlugin(String name) {
+    public Optional<Plugin> getPlugin(String name) {
         Preconditions.checkNotNull(name, "name");
         return Optional.ofNullable(plugins.get(name));
     }
 
-    public Collection<PluginContainer> getAllPlugins() {
+    public Collection<Plugin> getAllPlugins() {
         return ImmutableList.copyOf(plugins.values());
     }
 
@@ -109,7 +114,7 @@ public class NukkitPluginManager implements PluginManager {
 
             // Verify dependencies first.
             for (String s : plugin.getDependencies()) {
-                Optional<PluginContainer> loadedPlugin = getPlugin(s);
+                Optional<Plugin> loadedPlugin = getPlugin(s);
                 if (!loadedPlugin.isPresent()) {
                     log.error("Can't load plugin {} due to missing dependency {}", plugin.getName(), s);
                     continue pluginLoad;
@@ -117,7 +122,7 @@ public class NukkitPluginManager implements PluginManager {
             }
 
             // Now actually create the plugin.
-            PluginContainer pluginObject;
+            Plugin pluginObject;
             try {
                 pluginObject = foundPluginMap.get(plugin).createPlugin(plugin);
             } catch (Exception e) {
@@ -177,7 +182,7 @@ public class NukkitPluginManager implements PluginManager {
                 plugin.getPluginLoader().enablePlugin(plugin);
             } catch (Throwable e) {
                 log.throwing(e);
-                this.disablePlugin(plugin);
+                disablePlugin(plugin);
             }
         }
     }
@@ -186,11 +191,10 @@ public class NukkitPluginManager implements PluginManager {
         plugins.values().forEach(this::disablePlugin);
     }
 
-    public void disablePlugin(PluginContainer plugin) {
-        Plugin object = plugin.getPlugin();
-        if (object.isEnabled()) {
+    public void disablePlugin(Plugin plugin) {
+        if (plugin.isEnabled()) {
             try {
-                object.getPluginLoader().disablePlugin(object);
+                plugin.getPluginLoader().disablePlugin(plugin);
             } catch (Exception e) {
                 log.throwing(e);
             }
@@ -209,53 +213,26 @@ public class NukkitPluginManager implements PluginManager {
     }
 
     @VisibleForTesting
-    List<PluginDescription> sortDescriptions(List<PluginDescription> descriptions) {
-        // Create our graph, we're going to be using this for Kahn's algorithm.
+    private List<PluginDescription> sortDescriptions(List<PluginDescription> descriptions) {
+        // Create the graph.
         DirectedAcyclicGraph<PluginDescription> graph = new DirectedAcyclicGraph<>();
 
         // Add edges
         for (PluginDescription description : descriptions) {
             graph.add(description);
+            // Dependencies
             for (String s : description.getDependencies()) {
                 Optional<PluginDescription> in = descriptions.stream().filter(d -> d.getName().equals(s)).findFirst();
                 in.ifPresent(pluginDescription -> graph.addEdges(description, pluginDescription));
             }
 
-            /*for (String s : description.getSoftDependencies()) {
-                Optional<PluginDescription> in = descriptions.stream().filter(d -> d.getName().equals(s)).findFirst();
-                in.ifPresent(pluginDescription -> graph.addEdges(description, pluginDescription));
-            }*/
-
+            // Plugins to load before
             for (String s : description.getPluginsToLoadBefore()) {
                 Optional<PluginDescription> in = descriptions.stream().filter(d -> d.getName().equals(s)).findFirst();
                 in.ifPresent(pluginDescription -> graph.addEdges(pluginDescription, description)); // Load ordering is opposite to dependency loading.
             }
         }
 
-        // Now find nodes that have no edges.
-        Queue<DirectedAcyclicGraph.Node<PluginDescription>> noEdges = graph.getNodesWithNoEdges();
-
-        // Then actually run Kahn's algorithm.
-        List<PluginDescription> sorted = new ArrayList<>();
-        while (!noEdges.isEmpty()) {
-            DirectedAcyclicGraph.Node<PluginDescription> descriptionNode = noEdges.poll();
-            PluginDescription description = descriptionNode.getData();
-            sorted.add(description);
-
-            for (DirectedAcyclicGraph.Node<PluginDescription> node : graph.withEdge(description)) {
-                node.removeEdge(descriptionNode);
-                if (node.getAdjacent().isEmpty()) {
-                    if (!noEdges.contains(node)) {
-                        noEdges.add(node);
-                    }
-                }
-            }
-        }
-
-        if (graph.hasEdges()) {
-            throw new IllegalStateException("Plugin circular dependency or load order found: " + graph.toString());
-        }
-
-        return sorted;
+        return DirectedAcyclicGraph.sort(graph);
     }
 }

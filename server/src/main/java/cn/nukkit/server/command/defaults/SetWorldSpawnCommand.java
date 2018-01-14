@@ -4,7 +4,7 @@ import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.Vector3;
 
 import java.text.DecimalFormat;
@@ -28,7 +28,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-        Level level;
+        NukkitLevel level;
         Vector3 pos;
         if (args.length == 0) {
             if (sender instanceof Player) {

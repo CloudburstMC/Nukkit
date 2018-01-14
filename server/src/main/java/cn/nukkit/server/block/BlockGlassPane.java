@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created on 2015/12/6 by xtypr.

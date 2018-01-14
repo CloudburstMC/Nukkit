@@ -6,7 +6,7 @@ import cn.nukkit.server.level.Position;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.utils.ChunkException;
+import cn.nukkit.server.util.ChunkException;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 

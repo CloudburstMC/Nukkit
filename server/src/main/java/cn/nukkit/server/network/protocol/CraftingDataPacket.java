@@ -7,7 +7,7 @@ import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.enchantment.Enchantment;
 import cn.nukkit.server.item.enchantment.EnchantmentEntry;
 import cn.nukkit.server.item.enchantment.EnchantmentList;
-import cn.nukkit.server.utils.BinaryStream;
+import cn.nukkit.server.util.BinaryStream;
 
 import java.util.ArrayList;
 import java.util.Collections;

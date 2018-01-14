@@ -1,6 +1,6 @@
 package cn.nukkit.server;
 
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 import java.util.HashMap;
 

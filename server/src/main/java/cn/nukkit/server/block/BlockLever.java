@@ -3,7 +3,7 @@ package cn.nukkit.server.block;
 import cn.nukkit.api.event.block.BlockRedstoneEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.sound.LeverSound;
 import cn.nukkit.server.math.BlockFace;
 
@@ -71,7 +71,7 @@ public class BlockLever extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             int face = this.isPowerOn() ? this.meta ^ 0x08 : this.meta;
             BlockFace faces = LeverOrientation.byMetadata(face).getFacing().getOpposite();
             if (!this.getSide(faces).isSolid()) {

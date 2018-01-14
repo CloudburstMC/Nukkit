@@ -4,7 +4,6 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.BlockEntityDataPacket;
 
 import java.io.IOException;
 import java.nio.ByteOrder;

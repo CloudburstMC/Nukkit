@@ -1,13 +1,12 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -123,7 +122,7 @@ public class BlockLadder extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             int[] faces = {
                     0, //never use
                     1, //never use
@@ -134,7 +133,7 @@ public class BlockLadder extends BlockTransparent {
             };
             if (!this.getSide(BlockFace.fromIndex(faces[this.meta])).isSolid()) {
                 this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

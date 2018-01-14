@@ -3,19 +3,19 @@ package cn.nukkit.server.block;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.utils.BlockColor;
-import cn.nukkit.server.utils.Rail;
-import cn.nukkit.server.utils.Rail.Orientation;
+import cn.nukkit.server.util.BlockColor;
+import cn.nukkit.server.util.Rail;
+import cn.nukkit.server.util.Rail.Orientation;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static cn.nukkit.server.math.BlockFace.*;
-import static cn.nukkit.server.utils.Rail.Orientation.*;
+import static cn.nukkit.server.util.Rail.Orientation.*;
 
 /**
  * Created by Snake1999 on 2016/1/11.
@@ -68,11 +68,11 @@ public class BlockRail extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             Optional<BlockFace> ascendingDirection = this.getOrientation().ascendingDirection();
             if (this.down().isTransparent() || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
                 this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

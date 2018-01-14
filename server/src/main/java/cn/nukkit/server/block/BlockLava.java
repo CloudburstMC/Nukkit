@@ -6,13 +6,12 @@ import cn.nukkit.api.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.potion.Effect;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.util.Random;
 
@@ -78,7 +77,7 @@ public class BlockLava extends BlockLiquid {
     public int onUpdate(int type) {
         int result = super.onUpdate(type);
 
-        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean("doFireTick")) {
+        if (type == NukkitLevel.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean("doFireTick")) {
             Random random = this.getLevel().rand;
 
             int i = random.nextInt(3);
@@ -97,13 +96,13 @@ public class BlockLava extends BlockLiquid {
                                 BlockFire fire = new BlockFire();
                                 this.getLevel().setBlock(v, fire, true);
                                 this.getLevel().scheduleUpdate(fire, fire.tickRate());
-                                return Level.BLOCK_UPDATE_RANDOM;
+                                return NukkitLevel.BLOCK_UPDATE_RANDOM;
                             }
 
                             return 0;
                         }
                     } else if (block.isSolid()) {
-                        return Level.BLOCK_UPDATE_RANDOM;
+                        return NukkitLevel.BLOCK_UPDATE_RANDOM;
                     }
                 }
             } else {

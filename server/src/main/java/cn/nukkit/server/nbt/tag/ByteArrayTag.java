@@ -1,64 +1,37 @@
 package cn.nukkit.server.nbt.tag;
 
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
-import cn.nukkit.server.utils.Binary;
-
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
-public class ByteArrayTag extends Tag {
-    public byte[] data;
+public class ByteArrayTag extends Tag<byte[]> {
+    private final byte[] value;
 
-    public ByteArrayTag(String name) {
+    public ByteArrayTag(String name, byte[] value) {
         super(name);
-    }
-
-    public ByteArrayTag(String name, byte[] data) {
-        super(name);
-        this.data = data;
+        this.value = value;
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
-        if (data == null) {
-            dos.writeInt(0);
-            return;
-        }
-        dos.writeInt(data.length);
-        dos.write(data);
+    public byte[] getValue() {
+        return value;
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-        int length = dis.readInt();
-        data = new byte[length];
-        dis.readFully(data);
+    public int hashCode() {
+        return Objects.hash(getName(), value);
     }
 
     @Override
-    public byte getId() {
-        return TAG_Byte_Array;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ByteArrayTag that = (ByteArrayTag) o;
+        return Arrays.equals(value, that.value) &&
+                Objects.equals(getName(), that.getName());
     }
 
     @Override
     public String toString() {
-        return "ByteArrayTag " + this.getName() + " (data: 0x" + Binary.bytesToHexString(data, true) + " [" + data.length + " bytes])";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            ByteArrayTag byteArrayTag = (ByteArrayTag) obj;
-            return ((data == null && byteArrayTag.data == null) || (data != null && Arrays.equals(data, byteArrayTag.data)));
-        }
-        return false;
-    }
-
-    @Override
-    public Tag copy() {
-        byte[] cp = new byte[data.length];
-        System.arraycopy(data, 0, cp, 0, data.length);
-        return new ByteArrayTag(getName(), cp);
+        return "TAG_Byte_Array" + super.toString() + "[" + value.length + " bytes]";
     }
 }

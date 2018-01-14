@@ -5,11 +5,11 @@ import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemSugarcane;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.particle.BoneMealParticle;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created by Pub4Game on 09.01.2016.
@@ -86,13 +86,13 @@ public class BlockSugarcane extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             Block down = this.down();
             if (down.isTransparent() && down.getId() != SUGARCANE_BLOCK) {
                 this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             if (this.down().getId() != SUGARCANE_BLOCK) {
                 if (this.meta == 0x0F) {
                     for (int y = 1; y < 3; ++y) {
@@ -108,7 +108,7 @@ public class BlockSugarcane extends BlockFlowable {
                     ++this.meta;
                     this.getLevel().setBlock(this, this, true);
                 }
-                return Level.BLOCK_UPDATE_RANDOM;
+                return NukkitLevel.BLOCK_UPDATE_RANDOM;
             }
         }
         return 0;

@@ -5,11 +5,8 @@ import cn.nukkit.api.event.inventory.InventoryOpenEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.BlockAir;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
-import cn.nukkit.server.network.protocol.InventoryContentPacket;
-import cn.nukkit.server.network.protocol.InventorySlotPacket;
 
 import java.util.*;
 

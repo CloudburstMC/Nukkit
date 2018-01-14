@@ -1,8 +1,8 @@
 package cn.nukkit.server.block;
 
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.Rail;
+import cn.nukkit.server.util.Rail;
 
 /**
  * Created by Snake1999 on 2016/1/11.
@@ -39,7 +39,7 @@ public class BlockRailPowered extends BlockRail {
         //          Network below 86Kb/s. This will became unresponsive to clients 
         //          When updating the block state. Espicially on the world with many rails. 
         //          Trust me, I tested this on my server.
-        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL || type == NukkitLevel.BLOCK_UPDATE_REDSTONE || type == NukkitLevel.BLOCK_UPDATE_SCHEDULED) {
             super.onUpdate(type);
             boolean wasPowered = isActive();
             boolean isPowered = level.isBlockPowered(this)

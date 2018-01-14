@@ -1,55 +1,36 @@
 package cn.nukkit.server.nbt.tag;
 
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
+import java.util.Objects;
 
-import java.io.IOException;
+public class StringTag extends Tag<String> {
+    private final String value;
 
-public class StringTag extends Tag {
-    public String data;
-
-    public StringTag(String name) {
+    public StringTag(String name, String value) {
         super(name);
-    }
-
-    public StringTag(String name, String data) {
-        super(name);
-        this.data = data;
-        if (data == null) throw new IllegalArgumentException("Empty string not allowed");
+        this.value = value;
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
-        dos.writeUTF(data);
+    public String getValue() {
+        return value;
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-        data = dis.readUTF();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StringTag that = (StringTag) o;
+        return Objects.equals(value, that.value) &&
+                Objects.equals(getName(), that.getName());
     }
 
     @Override
-    public byte getId() {
-        return TAG_String;
+    public int hashCode() {
+        return Objects.hash(getName(), value);
     }
 
     @Override
     public String toString() {
-        return "StringTag " + this.getName() + " (data: " + data + ")";
+        return "TAG_String" + super.toString() + value;
     }
-
-    @Override
-    public Tag copy() {
-        return new StringTag(getName(), data);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            StringTag o = (StringTag) obj;
-            return ((data == null && o.data == null) || (data != null && data.equals(o.data)));
-        }
-        return false;
-    }
-
 }

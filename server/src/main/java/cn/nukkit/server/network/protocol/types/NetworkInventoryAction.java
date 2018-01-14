@@ -9,7 +9,7 @@ import cn.nukkit.server.inventory.transaction.action.DropItemAction;
 import cn.nukkit.server.inventory.transaction.action.InventoryAction;
 import cn.nukkit.server.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.network.protocol.InventoryTransactionPacket;
+import cn.nukkit.server.network.minecraft.data.ContainerIds;
 
 /**
  * @author CreeperFace

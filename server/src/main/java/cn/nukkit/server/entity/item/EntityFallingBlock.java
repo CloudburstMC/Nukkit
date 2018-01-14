@@ -5,14 +5,12 @@ import cn.nukkit.api.event.entity.EntityDamageEvent;
 import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.data.IntEntityData;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.sound.AnvilFallSound;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
 
 /**
  * @author MagicDroidX

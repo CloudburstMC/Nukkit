@@ -1,6 +1,5 @@
 package cn.nukkit.server.level;
 
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.math.Vector3;
 
 /**

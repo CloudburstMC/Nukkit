@@ -1,9 +1,8 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.api.event.block.BlockFromToEvent;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.particle.SmokeParticle;
 import cn.nukkit.server.level.sound.FizzSound;
 import cn.nukkit.server.math.AxisAlignedBB;
@@ -194,7 +193,7 @@ public abstract class BlockLiquid extends BlockTransparent {
         if (this instanceof BlockWater) {
             return 5;
         } else if (this instanceof BlockLava) {
-            if (this.getLevel().getDimension() == Level.DIMENSION_NETHER) {
+            if (this.getLevel().getDimension() == NukkitLevel.DIMENSION_NETHER) {
                 return 5;
             }
             return 30;
@@ -205,10 +204,10 @@ public abstract class BlockLiquid extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             this.checkForHarden();
             this.getLevel().scheduleUpdate(this, this.tickRate());
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED) {
             if (this.temporalVector == null) {
                 this.temporalVector = new Vector3(0, 0, 0);
             }

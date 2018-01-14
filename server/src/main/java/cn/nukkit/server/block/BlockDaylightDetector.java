@@ -1,6 +1,6 @@
 package cn.nukkit.server.block;
 
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created on 2015/11/22 by CreeperFace.

@@ -2,7 +2,7 @@ package cn.nukkit.server.command;
 
 import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 import java.util.ArrayList;
 import java.util.List;

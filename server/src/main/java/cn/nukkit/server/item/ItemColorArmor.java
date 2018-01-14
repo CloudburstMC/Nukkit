@@ -1,8 +1,8 @@
 package cn.nukkit.server.item;
 
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.utils.BlockColor;
-import cn.nukkit.server.utils.DyeColor;
+import cn.nukkit.server.util.BlockColor;
+import cn.nukkit.server.util.DyeColor;
 
 /**
  * Created by fromgate on 27.03.2016.

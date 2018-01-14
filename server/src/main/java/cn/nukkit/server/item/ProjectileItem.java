@@ -2,7 +2,6 @@ package cn.nukkit.server.item;
 
 import cn.nukkit.api.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.projectile.EntityProjectile;
 import cn.nukkit.server.level.sound.LaunchSound;
 import cn.nukkit.server.math.Vector3;

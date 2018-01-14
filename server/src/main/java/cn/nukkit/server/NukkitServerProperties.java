@@ -3,7 +3,6 @@ package cn.nukkit.server;
 import cn.nukkit.api.ServerProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.io.BufferedReader;
@@ -18,7 +17,6 @@ import java.util.Random;
 @Getter
 @ToString
 public class NukkitServerProperties implements ServerProperties {
-    @Setter
     private volatile boolean valueChanged = false;
     @JsonProperty("motd")
     private String motd;
@@ -74,28 +72,13 @@ public class NukkitServerProperties implements ServerProperties {
     private boolean resourcesForced = false;
     @JsonProperty("bug-report")
     private boolean bugReportEnabled = true;
+    @JsonProperty("online-mode")
+    private boolean isAuthEnabled = true;
 
     public static NukkitServerProperties load(Path path) throws IOException {
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             return NukkitServer.PROPERTIES_MAPPER.readValue(reader, NukkitServerProperties.class);
         }
-    }
-
-    public static void save(Path path, NukkitServerProperties configuration) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            NukkitServer.PROPERTIES_MAPPER.writerWithDefaultPrettyPrinter().writeValue(writer, configuration);
-        }
-    }
-
-    public static NukkitServerProperties defaultConfiguration() {
-        NukkitServerProperties configuration = new NukkitServerProperties();
-        configuration.addMissingValues();
-        return configuration;
-    }
-
-    private static String generateRandomPassword() {
-        BigInteger integer = new BigInteger(130, new Random());
-        return integer.toString(36);
     }
 
     public boolean hasPropertiesChanged() {
@@ -168,7 +151,6 @@ public class NukkitServerProperties implements ServerProperties {
         this.mobSpawningEnabled = mobSpawningEnabled;
     }
 
-    @Override
     public void setDefaultGamemode(String defaultGamemode) {
         valueChanged = true;
         this.defaultGamemode = defaultGamemode;
@@ -253,6 +235,23 @@ public class NukkitServerProperties implements ServerProperties {
             rcon.password = generateRandomPassword();
             valueChanged = true;
         }
+    }
+
+    public static void save(Path path, NukkitServerProperties configuration) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            NukkitServer.PROPERTIES_MAPPER.writerWithDefaultPrettyPrinter().writeValue(writer, configuration);
+        }
+    }
+
+    public static NukkitServerProperties defaultConfiguration() {
+        NukkitServerProperties configuration = new NukkitServerProperties();
+        configuration.addMissingValues();
+        return configuration;
+    }
+
+    private static String generateRandomPassword() {
+        BigInteger integer = new BigInteger(130, new Random());
+        return integer.toString(36);
     }
 
     @Getter

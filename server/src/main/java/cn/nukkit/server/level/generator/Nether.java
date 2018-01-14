@@ -2,7 +2,7 @@ package cn.nukkit.server.level.generator;
 
 import cn.nukkit.server.block.*;
 import cn.nukkit.server.level.ChunkManager;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.generator.biome.Biome;
 import cn.nukkit.server.level.generator.noise.Simplex;
@@ -48,7 +48,7 @@ public class Nether extends Generator {
 
     @Override
     public int getDimension() {
-        return Level.DIMENSION_NETHER;
+        return NukkitLevel.DIMENSION_NETHER;
     }
 
     @Override

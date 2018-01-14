@@ -1,12 +1,8 @@
 package cn.nukkit.server.level.particle;
 
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.data.EntityMetadata;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.network.protocol.AddPlayerPacket;
-import cn.nukkit.server.network.protocol.DataPacket;
-import cn.nukkit.server.network.protocol.RemoveEntityPacket;
 
 import java.util.ArrayList;
 import java.util.UUID;

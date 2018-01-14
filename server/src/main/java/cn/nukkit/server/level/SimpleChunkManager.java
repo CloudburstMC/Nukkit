@@ -56,7 +56,7 @@ public class SimpleChunkManager implements ChunkManager {
 
     @Override
     public BaseFullChunk getChunk(int chunkX, int chunkZ) {
-        long index = Level.chunkHash(chunkX, chunkZ);
+        long index = NukkitLevel.chunkHash(chunkX, chunkZ);
         return this.chunks.containsKey(index) ? (BaseFullChunk) this.chunks.get(index) : null;
     }
 
@@ -68,10 +68,10 @@ public class SimpleChunkManager implements ChunkManager {
     @Override
     public void setChunk(int chunkX, int chunkZ, BaseFullChunk chunk) {
         if (chunk == null) {
-            this.chunks.remove(Level.chunkHash(chunkX, chunkZ));
+            this.chunks.remove(NukkitLevel.chunkHash(chunkX, chunkZ));
             return;
         }
-        this.chunks.put(Level.chunkHash(chunkX, chunkZ), chunk);
+        this.chunks.put(NukkitLevel.chunkHash(chunkX, chunkZ), chunk);
     }
 
     public void cleanChunks() {

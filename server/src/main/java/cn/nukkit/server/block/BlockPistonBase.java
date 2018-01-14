@@ -5,7 +5,7 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.blockentity.BlockEntityPistonArm;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.sound.PistonInSound;
 import cn.nukkit.server.level.sound.PistonOutSound;
 import cn.nukkit.server.math.BlockFace;
@@ -247,7 +247,7 @@ public abstract class BlockPistonBase extends BlockSolid {
 
     public class BlocksCalculator {
 
-        private final Level level;
+        private final NukkitLevel level;
         private final Vector3 pistonPos;
         private final Block blockToMove;
         private final BlockFace moveDirection;
@@ -255,7 +255,7 @@ public abstract class BlockPistonBase extends BlockSolid {
         private final List<Block> toMove = new ArrayList<>();
         private final List<Block> toDestroy = new ArrayList<>();
 
-        public BlocksCalculator(Level level, Block pos, BlockFace facing, boolean extending) {
+        public BlocksCalculator(NukkitLevel level, Block pos, BlockFace facing, boolean extending) {
             this.level = level;
             this.pistonPos = pos.getLocation();
 

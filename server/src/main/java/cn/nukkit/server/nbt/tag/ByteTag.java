@@ -1,67 +1,40 @@
 package cn.nukkit.server.nbt.tag;
 
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
+import java.util.Objects;
 
-import java.io.IOException;
+public class ByteTag extends Tag<Byte> {
+    private final byte value;
 
-public class ByteTag extends NumberTag<Integer> {
-    public int data;
-
-    @Override
-    public Integer getData() {
-        return data;
-    }
-
-    @Override
-    public void setData(Integer data) {
-        this.data = data == null ? 0 : data;
-    }
-
-    public ByteTag(String name) {
+    public ByteTag(String name, byte value) {
         super(name);
+        this.value = value;
     }
 
-    public ByteTag(String name, int data) {
-        super(name);
-        this.data = data;
-    }
-
-    @Override
-    void write(NBTOutputStream dos) throws IOException {
-        dos.writeByte(data);
+    public byte getPrimitiveValue() {
+        return value;
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-        data = dis.readByte();
+    public Byte getValue() {
+        return value;
     }
 
     @Override
-    public byte getId() {
-        return TAG_Byte;
+    public int hashCode() {
+        return Objects.hash(getName(), value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ByteTag that = (ByteTag) o;
+        return value == that.value &&
+                Objects.equals(getName(), that.getName());
     }
 
     @Override
     public String toString() {
-        String hex = Integer.toHexString(this.data);
-        if (hex.length() < 2) {
-            hex = "0" + hex;
-        }
-        return "ByteTag " + this.getName() + " (data: 0x" + hex + ")";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            ByteTag byteTag = (ByteTag) obj;
-            return data == byteTag.data;
-        }
-        return false;
-    }
-
-    @Override
-    public Tag copy() {
-        return new ByteTag(getName(), data);
+        return "TAG_Byte_Array" + super.toString() + value;
     }
 }

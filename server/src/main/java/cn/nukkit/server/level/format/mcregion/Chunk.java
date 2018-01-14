@@ -2,7 +2,6 @@ package cn.nukkit.server.level.format.mcregion;
 
 import cn.nukkit.server.Player;
 import cn.nukkit.server.blockentity.BlockEntity;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.level.format.LevelProvider;
 import cn.nukkit.server.level.format.generic.BaseFullChunk;
 import cn.nukkit.server.nbt.NBTIO;
@@ -10,9 +9,9 @@ import cn.nukkit.server.nbt.tag.ByteArrayTag;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.IntArrayTag;
 import cn.nukkit.server.nbt.tag.ListTag;
-import cn.nukkit.server.utils.Binary;
-import cn.nukkit.server.utils.BinaryStream;
-import cn.nukkit.server.utils.Zlib;
+import cn.nukkit.server.util.Binary;
+import cn.nukkit.server.util.BinaryStream;
+import cn.nukkit.server.util.Zlib;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteOrder;
@@ -50,7 +49,7 @@ public class Chunk extends BaseFullChunk {
         }
 
         if (nbt == null) {
-            this.nbt = new CompoundTag("Level");
+            this.nbt = new CompoundTag("NukkitLevel");
             return;
         }
 
@@ -358,10 +357,10 @@ public class Chunk extends BaseFullChunk {
         try {
             CompoundTag chunk = NBTIO.read(new ByteArrayInputStream(Zlib.inflate(data)), ByteOrder.BIG_ENDIAN);
 
-            if (!chunk.contains("Level") || !(chunk.get("Level") instanceof CompoundTag)) {
+            if (!chunk.contains("NukkitLevel") || !(chunk.get("NukkitLevel") instanceof CompoundTag)) {
                 return null;
             }
-            return new Chunk(provider != null ? provider : McRegion.class.newInstance(), chunk.getCompound("Level"));
+            return new Chunk(provider != null ? provider : McRegion.class.newInstance(), chunk.getCompound("NukkitLevel"));
         } catch (Exception e) {
             return null;
         }
@@ -476,7 +475,7 @@ public class Chunk extends BaseFullChunk {
         nbt.putByteArray("ExtraData", extraData.getBuffer());
 
         CompoundTag chunk = new CompoundTag("");
-        chunk.putCompound("Level", nbt);
+        chunk.putCompound("NukkitLevel", nbt);
 
         try {
             return Zlib.deflate(NBTIO.write(chunk, ByteOrder.BIG_ENDIAN), RegionLoader.COMPRESSION_LEVEL);

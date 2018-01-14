@@ -4,7 +4,7 @@ import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 /**
  * Created by Snake1999 on 2016/1/22.

@@ -1,43 +1,32 @@
 package cn.nukkit.api.entity;
 
-import cn.nukkit.api.Location;
 import cn.nukkit.api.Server;
+import cn.nukkit.api.entity.component.EntityComponent;
 import cn.nukkit.api.event.entity.EntityDamageEvent;
 import cn.nukkit.api.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.api.level.Level;
+import cn.nukkit.api.util.Rotation;
 import com.flowpowered.math.vector.Vector3f;
+import com.google.common.base.VerifyException;
 
-import java.util.List;
-import java.util.UUID;
+import javax.annotation.Nonnull;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author CreeperFace
  */
 public interface Entity {
 
-    /**
-     * Gets the entity's current position
-     *
-     * @return a new copy of Location containing the position of this entity
-     */
-    Location getLocation();
-
-    /**
-     * Stores the entity's current position in the provided Location object.
-     * <p>
-     * If the provided Location is null this method does nothing and returns
-     * null.
-     *
-     * @param loc the location to copy into
-     * @return The Location object provided or null
-     */
-    Location getLocation(Location loc);
+    @Nonnull
+    Rotation getRotation();
 
     /**
      * Gets this entity's current velocity
      *
      * @return Current travelling velocity of this entity
      */
+    @Nonnull
     Vector3f getMotion();
 
     /**
@@ -62,6 +51,13 @@ public interface Entity {
     float getWidth();
 
     /**
+     * Gets the entity's depth
+     *
+     * @return depth of entity
+     */
+    float getDepth();
+
+    /**
      * Returns true if the entity is supported by a block. This value is a
      * state updated by the server and is not recalculated unless the entity
      * moves.
@@ -77,16 +73,16 @@ public interface Entity {
      */
     Level getLevel();
 
-    /**
+    /*/**
      * Teleports this entity to the given location. If this entity is riding a
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param location New location to teleport this entity to
      * @return <code>true</code> if the teleport was successful
      */
-    boolean teleport(Location location);
+    //boolean teleport(Location location);
 
-    /**
+    /*/**
      * Teleports this entity to the given location. If this entity is riding a
      * vehicle, it will be dismounted prior to teleportation.
      *
@@ -94,7 +90,7 @@ public interface Entity {
      * @param cause    The cause of this teleportation
      * @return <code>true</code> if the teleport was successful
      */
-    boolean teleport(Location location, TeleportCause cause);
+    //boolean teleport(Location location, TeleportCause cause);
 
     /**
      * Teleports this entity to the target Entity. If this entity is riding a
@@ -111,30 +107,9 @@ public interface Entity {
      *
      * @return Entity id
      */
-    int getEntityId();
+    long getUniqueEntityId();
 
-    /**
-     * Returns the entity's current fire ticks (ticks before the entity stops
-     * being on fire).
-     *
-     * @return int fireTicks
-     */
-    int getFireTicks();
-
-    /**
-     * Sets the entity's current fire ticks (ticks before the entity stops
-     * being on fire).
-     *
-     * @param ticks Current ticks remaining
-     */
-    void setFireTicks(int ticks);
-
-    /**
-     * Returns the entity's maximum fire ticks.
-     *
-     * @return int maxFireTicks
-     */
-    int getMaxFireTicks();
+    long getRuntimeEntityId();
 
     /**
      * Mark the entity's removal.
@@ -149,96 +124,25 @@ public interface Entity {
     boolean isAlive();
 
     /**
-     * Returns false if the entity has died or been despawned for some other
-     * reason.
-     *
-     * @return True if valid.
-     */
-    boolean isValid();
-
-    /**
      * Gets the {@link cn.nukkit.api.Server} that contains this Entity
      *
      * @return Server instance running this Entity
      */
     Server getServer();
 
-    /**
-     * Gets a list of passengers of this vehicle.
-     * <p>
-     * The returned list will not be directly linked to the entity's current
-     * passengers, and no guarantees are made as to its mutability.
-     *
-     * @return list of entities corresponding to current passengers.
-     */
-    List<Entity> getPassengers();
-
-    /**
-     * Add a passenger to the vehicle.
-     *
-     * @param passenger The passenger to add
-     * @return false if it could not be done for whatever reason
-     */
-    boolean addPassenger(Entity passenger);
-
-    /**
-     * Remove a passenger from the vehicle.
-     *
-     * @param passenger The passenger to remove
-     * @return false if it could not be done for whatever reason
-     */
-    boolean removePassenger(Entity passenger);
-
-    /**
-     * Check if a vehicle has passengers.
-     *
-     * @return True if the vehicle has no passengers.
-     */
-    boolean isEmpty();
-
-    /**
-     * Eject any passenger.
-     *
-     * @return True if there was a passenger.
-     */
-    boolean eject();
-
-    /**
+    /*/**
      * Returns the distance this entity has fallen
      *
      * @return The distance.
      */
-    float getFallDistance();
+    //float getFallDistance();
 
-    /**
+    /*/**
      * Sets the fall distance for this entity
      *
      * @param distance The new distance.
      */
-    void setFallDistance(float distance);
-
-    /**
-     * Retrieve the last {@link EntityDamageEvent} inflicted on this entity.
-     * This event may have been cancelled.
-     *
-     * @return the last known {@link EntityDamageEvent} or null if hitherto
-     * unharmed
-     */
-    EntityDamageEvent getLastDamageCause();
-
-    /**
-     * Record the last {@link EntityDamageEvent} inflicted on this entity
-     *
-     * @param event a {@link EntityDamageEvent}
-     */
-    void setLastDamageCause(EntityDamageEvent event);
-
-    /**
-     * Returns a unique and persistent id for this entity
-     *
-     * @return unique id
-     */
-    UUID getUniqueId();
+    //void setFallDistance(float distance);
 
     /**
      * Gets the amount of ticks this entity has lived for.
@@ -258,13 +162,6 @@ public interface Entity {
      * @param value Age of entity
      */
     void setTicksLived(int value);
-
-    /**
-     * Get the type of the entity.
-     *
-     * @return The entity type.
-     */
-    EntityType getType();
 
     /**
      * Returns whether this entity is inside a vehicle.
@@ -288,7 +185,7 @@ public interface Entity {
      *
      * @return The current vehicle.
      */
-    Entity getVehicle();
+    Optional<Entity> getVehicle();
 
     /**
      * Gets whether or not the mob's custom name is displayed client side.
@@ -347,51 +244,30 @@ public interface Entity {
      *
      * @return whether the entity is silent.
      */
-    boolean isSilent();
+    boolean isSneaking();
 
     /**
      * Sets whether the entity is silent or not.
      * <p>
      * When an entity is silent it will not produce any sound.
      *
-     * @param flag if the entity is silent
+     * @param sneaking if the entity is silent
      */
-    void setSilent(boolean flag);
-
-    /**
-     * Returns whether gravity applies to this entity.
-     *
-     * @return whether gravity applies
-     */
-    boolean hasGravity();
-
-    /**
-     * Sets whether gravity applies to this entity.
-     *
-     * @param gravity whether gravity should apply
-     */
-    void setGravity(boolean gravity);
-
-    /**
-     * Gets the period of time (in ticks) before this entity can use a portal.
-     *
-     * @return portal cooldown ticks
-     */
-    int getPortalCooldown();
-
-    /**
-     * Sets the period of time (in ticks) before this entity can use a portal.
-     *
-     * @param cooldown portal cooldown ticks
-     */
-    void setPortalCooldown(int cooldown);
-
-    /**
-     * Returns whether entity is {@link cn.nukkit.api.Player} or not
-     *
-     * @return whether entity is Player
-     */
-    boolean isPlayer();
+    void setSneaking(boolean sneaking);
 
     boolean attack(EntityDamageEvent source);
+
+    Set<Class<? extends EntityComponent>> providedComponents();
+
+    <C extends EntityComponent> boolean provides(Class<C> clazz);
+
+    <C extends EntityComponent> Optional<C> get(Class<C> clazz);
+
+    default <C extends EntityComponent> C ensureAndGet(Class<C> clazz) {
+        Optional<C> component = get(clazz);
+        if (!component.isPresent()) {
+            throw new VerifyException("Component class " + clazz.getName() + " isn't provided by this entity.");
+        }
+        return component.get();
+    }
 }

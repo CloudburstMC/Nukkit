@@ -7,8 +7,7 @@ import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemDye;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
-import cn.nukkit.server.utils.DyeColor;
+import cn.nukkit.server.util.DyeColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 

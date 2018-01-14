@@ -3,7 +3,7 @@ package cn.nukkit.server.level.generator.object.tree;
 import cn.nukkit.server.block.BlockDirt;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.ChunkManager;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.generator.object.BasicGenerator;
 import cn.nukkit.server.math.BlockVector3;
 import cn.nukkit.server.math.Vector3;
@@ -20,7 +20,7 @@ public abstract class TreeGenerator extends BasicGenerator {
         return id == Item.AIR || id == Item.LEAVES || id == Item.GRASS || id == Item.DIRT || id == Item.LOG || id == Item.LOG2 || id == Item.SAPLING || id == Item.VINE;
     }
 
-    public void generateSaplings(Level level, Random random, Vector3 pos) {
+    public void generateSaplings(NukkitLevel level, Random random, Vector3 pos) {
     }
 
     protected void setDirtAt(ChunkManager level, BlockVector3 pos) {

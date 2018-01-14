@@ -11,9 +11,8 @@ import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.FloatTag;
-import cn.nukkit.server.network.protocol.EntityEventPacket;
 import cn.nukkit.server.potion.Effect;
-import cn.nukkit.server.utils.BlockIterator;
+import cn.nukkit.server.util.BlockIterator;
 import co.aikar.timings.Timings;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class EntityLiving extends Entity implements EntityDamageable {
+public abstract class EntityLiving extends Entity {
 
     public EntityLiving(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);

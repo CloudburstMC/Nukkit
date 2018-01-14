@@ -4,15 +4,18 @@ import cn.nukkit.api.item.ItemStack;
 import cn.nukkit.api.item.ItemStackBuilder;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
-import lombok.AllArgsConstructor;
+import cn.nukkit.server.nbt.tag.CompoundTag;
+import cn.nukkit.server.nbt.tag.StringTag;
+import cn.nukkit.server.nbt.tag.Tag;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @EqualsAndHashCode
 @ToString
-@AllArgsConstructor
 public class NukkitItemStack implements ItemStack {
     private final ItemType itemType;
     private final int amount;
@@ -53,5 +56,19 @@ public class NukkitItemStack implements ItemStack {
     @Override
     public ItemStackBuilder toBuilder() {
         return new NukkitItemStackBuilder().itemType(itemType).amount(amount).itemData(data).name(itemName);
+    }
+
+    public CompoundTag toSpecificNBT() {
+        List<Tag<?>> tags = new ArrayList<>();
+
+        // Display properties
+        if (itemName != null) {
+            List<Tag<?>> displayTags = new ArrayList<>();
+            displayTags.add(new StringTag("Name", itemName));
+
+            tags.add(CompoundTag.createFromList("display", displayTags));
+        }
+
+        return CompoundTag.createFromList("", tags);
     }
 }

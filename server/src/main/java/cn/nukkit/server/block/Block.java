@@ -1,7 +1,6 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemTool;
@@ -14,7 +13,7 @@ import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.metadata.MetadataValue;
 import cn.nukkit.server.metadata.Metadatable;
 import cn.nukkit.server.potion.Effect;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.lang.reflect.Constructor;
 import java.util.List;

@@ -4,10 +4,9 @@ import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockAir;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.inventory.Fuel;
 import cn.nukkit.server.item.enchantment.Enchantment;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.NBTIO;
@@ -15,9 +14,9 @@ import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.ListTag;
 import cn.nukkit.server.nbt.tag.StringTag;
 import cn.nukkit.server.nbt.tag.Tag;
-import cn.nukkit.server.utils.Binary;
-import cn.nukkit.server.utils.Config;
-import cn.nukkit.server.utils.Utils;
+import cn.nukkit.server.util.Binary;
+import cn.nukkit.server.util.Config;
+import cn.nukkit.server.util.Utils;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.File;
@@ -1475,7 +1474,7 @@ public class Item implements Cloneable {
         return 1;
     }
 
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(NukkitLevel level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return false;
     }
 

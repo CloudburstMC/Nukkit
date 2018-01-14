@@ -5,12 +5,10 @@ import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.api.event.entity.ItemDespawnEvent;
 import cn.nukkit.api.event.entity.ItemSpawnEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddItemEntityPacket;
 
 /**
  * @author MagicDroidX

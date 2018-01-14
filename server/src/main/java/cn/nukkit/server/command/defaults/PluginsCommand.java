@@ -1,7 +1,7 @@
 package cn.nukkit.server.command.defaults;
 
 import cn.nukkit.api.message.TranslatedMessage;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 import java.util.Map;
 

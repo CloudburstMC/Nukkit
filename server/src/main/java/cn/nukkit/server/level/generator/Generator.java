@@ -1,7 +1,7 @@
 package cn.nukkit.server.level.generator;
 
 import cn.nukkit.server.level.ChunkManager;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.generator.noise.Noise;
 import cn.nukkit.server.math.NukkitRandom;
 import cn.nukkit.server.math.Vector3;
@@ -22,7 +22,7 @@ public abstract class Generator {
     public abstract int getId();
 
     public int getDimension() {
-        return Level.DIMENSION_OVERWORLD;
+        return NukkitLevel.DIMENSION_OVERWORLD;
     }
 
     private static final Map<String, Class<? extends Generator>> nameList = new HashMap<>();

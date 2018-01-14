@@ -4,8 +4,6 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.math.NukkitMath;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.network.protocol.ContainerClosePacket;
-import cn.nukkit.server.network.protocol.ContainerOpenPacket;
 
 import java.util.Map;
 

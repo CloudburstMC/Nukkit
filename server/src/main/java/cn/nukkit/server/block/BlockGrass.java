@@ -4,11 +4,11 @@ import cn.nukkit.api.event.block.BlockSpreadEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.generator.object.ObjectTallGrass;
 import cn.nukkit.server.math.NukkitRandom;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * author: Angelic47
@@ -75,7 +75,7 @@ public class BlockGrass extends BlockDirt {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             Block block = this.getLevel().getBlock(new Vector3(this.x, this.y, this.z));
             if (block.up().getLightLevel() < 4) {
                 BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockDirt());

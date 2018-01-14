@@ -1,6 +1,5 @@
 package cn.nukkit.api.event.player;
 
-import cn.nukkit.api.Location;
 import cn.nukkit.api.Player;
 import cn.nukkit.api.event.Cancellable;
 import cn.nukkit.api.level.Level;

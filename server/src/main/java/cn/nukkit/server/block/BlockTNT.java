@@ -1,17 +1,16 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.item.EntityPrimedTNT;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.sound.TNTPrimeSound;
 import cn.nukkit.server.math.NukkitRandom;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.DoubleTag;
 import cn.nukkit.server.nbt.tag.FloatTag;
 import cn.nukkit.server.nbt.tag.ListTag;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -92,7 +91,7 @@ public class BlockTNT extends BlockSolid {
 
     @Override
     public int onUpdate(int type) {
-        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && this.level.isBlockPowered(this)) {
+        if ((type == NukkitLevel.BLOCK_UPDATE_NORMAL || type == NukkitLevel.BLOCK_UPDATE_REDSTONE) && this.level.isBlockPowered(this)) {
             this.prime();
         }
         return 0;

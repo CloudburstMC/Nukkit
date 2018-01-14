@@ -5,10 +5,10 @@ import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.NukkitRandom;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created by Pub4Game on 03.01.2016.
@@ -57,7 +57,7 @@ public class BlockMycelium extends BlockSolid {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             //TODO: light levels
             NukkitRandom random = new NukkitRandom();
             x = random.nextRange((int) x - 1, (int) x + 1);

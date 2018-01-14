@@ -6,13 +6,13 @@ import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.blockentity.BlockEntityBed;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBed;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.utils.BlockColor;
-import cn.nukkit.server.utils.DyeColor;
+import cn.nukkit.server.util.BlockColor;
+import cn.nukkit.server.util.DyeColor;
 
 /**
  * author: MagicDroidX
@@ -72,9 +72,9 @@ public class BlockBed extends BlockTransparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        int time = this.getLevel().getTime() % Level.TIME_FULL;
+        int time = this.getLevel().getTime() % NukkitLevel.TIME_FULL;
 
-        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
+        boolean isNight = (time >= NukkitLevel.TIME_NIGHT && time < NukkitLevel.TIME_SUNRISE);
 
         if (player != null && !isNight) {
             player.sendMessage(new TranslatedMessage("tile.bed.noSleep"));

@@ -3,7 +3,7 @@ package cn.nukkit.server.network.protocol;
 import cn.nukkit.server.command.data.CommandDataVersions;
 import cn.nukkit.server.command.data.CommandOverload;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.utils.BinaryStream;
+import cn.nukkit.server.util.BinaryStream;
 
 import java.util.ArrayList;
 import java.util.Arrays;

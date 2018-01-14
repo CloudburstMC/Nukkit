@@ -2,8 +2,8 @@ package cn.nukkit.server.command.simple;
 
 import cn.nukkit.api.MessageRecipient;
 import cn.nukkit.api.command.CommandExecutorSource;
-import cn.nukkit.api.command.ConsoleCommandExecutorSource;
 import cn.nukkit.api.command.simple.SimpleCommand;
+import cn.nukkit.api.command.source.ConsoleCommandExecutorSource;
 import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.command.NukkitCommand;
 import lombok.extern.log4j.Log4j2;

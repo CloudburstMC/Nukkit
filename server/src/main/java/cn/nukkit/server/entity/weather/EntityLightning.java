@@ -5,12 +5,9 @@ import cn.nukkit.api.event.entity.EntityDamageEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockFire;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
-import cn.nukkit.server.network.protocol.LevelSoundEventPacket;
 
 /**
  * Created by boybook on 2016/2/27.

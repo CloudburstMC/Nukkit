@@ -3,7 +3,7 @@ package cn.nukkit.server.level.format.generic;
 import cn.nukkit.server.level.format.Chunk;
 import cn.nukkit.server.level.format.ChunkSection;
 import cn.nukkit.server.level.format.LevelProvider;
-import cn.nukkit.server.utils.ChunkException;
+import cn.nukkit.server.util.ChunkException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

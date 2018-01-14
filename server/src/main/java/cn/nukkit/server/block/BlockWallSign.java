@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
 
 /**
@@ -35,12 +35,12 @@ public class BlockWallSign extends BlockSignPost {
                 5,
                 4,
         };
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (this.meta >= 2 && this.meta <= 5) {
                 if (this.getSide(BlockFace.fromIndex(faces[this.meta - 2])).getId() == Item.AIR) {
                     this.getLevel().useBreakOn(this);
                 }
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

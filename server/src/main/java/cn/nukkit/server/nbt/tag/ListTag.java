@@ -1,139 +1,54 @@
 package cn.nukkit.server.nbt.tag;
 
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
+import cn.nukkit.server.nbt.TagType;
 
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-public class ListTag<T extends Tag> extends Tag {
+public class ListTag<T extends Tag> extends Tag<List<T>> {
+    private final Class<T> tagClass;
+    private final List<T> value;
 
-    private List<T> list = new ArrayList<>();
-
-    public byte type;
-
-    public ListTag() {
-        super("");
-    }
-
-    public ListTag(String name) {
+    public ListTag(String name, Class<T> tagClass, List<T> value) {
         super(name);
+        this.value = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(value, "value")));
+        this.tagClass = tagClass;
+    }
+
+    public Class<T> getTagClass() {
+        return tagClass;
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
-        if (list.size() > 0) type = list.get(0).getId();
-        else type = 1;
-
-        dos.writeByte(type);
-        dos.writeInt(list.size());
-        for (T aList : list) aList.write(dos);
+    public List<T> getValue() {
+        return value;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    void load(NBTInputStream dis) throws IOException {
-        type = dis.readByte();
-        int size = dis.readInt();
-
-        list = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            Tag tag = Tag.newTag(type, null);
-            tag.load(dis);
-            list.add((T) tag);
-        }
+    public int hashCode() {
+        return Objects.hash(getName(), value, tagClass);
     }
 
     @Override
-    public byte getId() {
-        return TAG_List;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ListTag that = (ListTag) o;
+        return Objects.equals(value, that.value) &&
+                Objects.equals(tagClass, that.tagClass) &&
+                Objects.equals(getName(), that.getName());
     }
 
     @Override
     public String toString() {
-        return "ListTag " + this.getName() + " [" + list.size() + " entries of type " + Tag.getTagName(type) + "]";
-    }
-
-    public void print(String prefix, PrintStream out) {
-        super.print(prefix, out);
-
-        out.println(prefix + "{");
-        String orgPrefix = prefix;
-        prefix += "   ";
-        for (T aList : list) aList.print(prefix, out);
-        out.println(orgPrefix + "}");
-    }
-
-    public ListTag<T> add(T tag) {
-        type = tag.getId();
-        list.add(tag);
-        return this;
-    }
-
-    public ListTag<T> add(int index, T tag) {
-        type = tag.getId();
-
-        if (index >= list.size()) {
-            list.add(index, tag);
-        } else {
-            list.set(index, tag);
+        StringBuilder builder = new StringBuilder();
+        builder.append("TAG_List").append(super.toString()).append(value.size()).append(" entries of type ").append(TagType.byClass(tagClass).getTypeName()).append("\r\n{\r\n");
+        for (Tag tag : value) {
+            builder.append("   ").append(tag.toString().replaceAll("\r\n", "\r\n   ")).append("\r\n");
         }
-        return this;
+        builder.append("}");
+        return builder.toString();
     }
-
-    public T get(int index) {
-        return list.get(index);
-    }
-
-    public List<T> getAll() {
-        return new ArrayList<>(list);
-    }
-
-    public void setAll(List<T> tags) {
-        this.list = new ArrayList<>(tags);
-    }
-
-    public void remove(T tag) {
-        list.remove(tag);
-    }
-
-    public void remove(int index) {
-        list.remove(index);
-    }
-
-    public void removeAll(Collection<T> tags) {
-        list.remove(tags);
-    }
-
-    public int size() {
-        return list.size();
-    }
-
-    @Override
-    public Tag copy() {
-        ListTag<T> res = new ListTag<>(getName());
-        res.type = type;
-        for (T t : list) {
-            @SuppressWarnings("unchecked")
-            T copy = (T) t.copy();
-            res.list.add(copy);
-        }
-        return res;
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            ListTag o = (ListTag) obj;
-            if (type == o.type) {
-                return list.equals(o.list);
-            }
-        }
-        return false;
-    }
-
 }

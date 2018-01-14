@@ -3,7 +3,7 @@ package cn.nukkit.server.block;
 import cn.nukkit.api.event.block.BlockRedstoneEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.sound.ButtonClickSound;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
@@ -67,12 +67,12 @@ public abstract class BlockButton extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (this.getSide(getFacing().getOpposite()).isTransparent()) {
                 this.level.useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED) {
             if (this.isActivated()) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
 
@@ -85,7 +85,7 @@ public abstract class BlockButton extends BlockFlowable {
                 level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
             }
 
-            return Level.BLOCK_UPDATE_SCHEDULED;
+            return NukkitLevel.BLOCK_UPDATE_SCHEDULED;
         }
 
         return 0;

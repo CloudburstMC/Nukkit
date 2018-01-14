@@ -7,7 +7,7 @@ import cn.nukkit.server.inventory.ContainerInventory;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemHopper;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.ListTag;
@@ -121,7 +121,7 @@ public class BlockHopper extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             boolean powered = this.level.isBlockPowered(this);
 
             if (powered == this.isEnabled()) {

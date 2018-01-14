@@ -2,7 +2,6 @@ package cn.nukkit.server.blockentity;
 
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockAir;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.item.EntityItem;
 import cn.nukkit.server.inventory.HopperInventory;
 import cn.nukkit.server.inventory.Inventory;

@@ -1,6 +1,6 @@
 package cn.nukkit.server.metadata;
 
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 
 /**
  * author: MagicDroidX
@@ -10,9 +10,9 @@ public class LevelMetadataStore extends MetadataStore {
 
     @Override
     protected String disambiguate(Metadatable level, String metadataKey) {
-        if (!(level instanceof Level)) {
-            throw new IllegalArgumentException("Argument must be a Level instance");
+        if (!(level instanceof NukkitLevel)) {
+            throw new IllegalArgumentException("Argument must be a NukkitLevel instance");
         }
-        return (((Level) level).getName() + ":" + metadataKey).toLowerCase();
+        return (((NukkitLevel) level).getName() + ":" + metadataKey).toLowerCase();
     }
 }

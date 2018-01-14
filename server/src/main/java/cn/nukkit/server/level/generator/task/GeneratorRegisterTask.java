@@ -1,7 +1,7 @@
 package cn.nukkit.server.level.generator.task;
 
 import cn.nukkit.server.block.Block;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.SimpleChunkManager;
 import cn.nukkit.server.level.generator.Generator;
 import cn.nukkit.server.level.generator.biome.Biome;
@@ -21,7 +21,7 @@ public class GeneratorRegisterTask extends AsyncTask {
     public final long seed;
     public final int levelId;
 
-    public GeneratorRegisterTask(Level level, Generator generator) {
+    public GeneratorRegisterTask(NukkitLevel level, Generator generator) {
         this.generator = generator.getClass();
         this.settings = generator.getSettings();
         this.seed = level.getSeed();

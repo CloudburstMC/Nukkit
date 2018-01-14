@@ -1,6 +1,7 @@
 package cn.nukkit.api.util;
 
 import com.flowpowered.math.HashFunctions;
+import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3f;
 import com.google.common.base.Preconditions;
 
@@ -18,6 +19,10 @@ public final class Rotation {
     private final float pitch;
     private final float yaw;
     private final float headYaw;
+
+    public Rotation(Vector2f rotation, float headYaw) {
+        this(rotation.getX(), rotation.getFloorY(), headYaw);
+    }
 
     public Rotation(float pitch, float yaw, float headYaw) {
         hashed = false;
@@ -52,6 +57,10 @@ public final class Rotation {
 
     public float getHeadYaw() {
         return headYaw;
+    }
+
+    public Vector2f getBodyRotation() {
+        return new Vector2f(pitch, yaw);
     }
 
     /**

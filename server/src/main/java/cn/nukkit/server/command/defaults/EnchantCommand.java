@@ -6,7 +6,7 @@ import cn.nukkit.server.command.Command;
 import cn.nukkit.server.command.data.CommandParameter;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.enchantment.Enchantment;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 /**
  * Created by Pub4Game on 23.01.2016.

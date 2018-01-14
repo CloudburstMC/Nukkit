@@ -24,7 +24,7 @@ public interface LevelSettings {
 
     int getTime();
 
-    boolean isInEducationMode();
+    boolean isEducationLevel();
 
     float getRainLevel();
 
@@ -44,11 +44,11 @@ public interface LevelSettings {
 
     boolean isBonusChestEnabled();
 
-    boolean isStartWithMapEnabled();
+    boolean isStartingWithMap();
 
-    boolean isTrustedPlayersEnabled();
+    boolean isTrustingPlayers();
 
-    int getDefaultPlayerPermission();
+    AdventureSettings.PlayerPermission getDefaultPlayerPermission();
 
     int getXboxLiveBroadcastMode();
 }

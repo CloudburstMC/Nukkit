@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.math.AxisAlignedBB;
-import cn.nukkit.server.utils.LevelException;
+import cn.nukkit.server.util.LevelException;
 
 /**
  * Created on 2015/12/6 by xtypr.

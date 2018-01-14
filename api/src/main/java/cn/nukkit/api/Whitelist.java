@@ -1,10 +1,11 @@
 package cn.nukkit.api;
 
 import java.util.Map;
+import java.util.UUID;
 
 public interface Whitelist {
 
-    Map<String, Entry> getEntries();
+    Map<UUID, Entry> getEntries();
 
     void addToWhitelist(String name);
 
@@ -13,8 +14,7 @@ public interface Whitelist {
     boolean isOnWhitelist(String name);
 
     interface Entry {
-        String getXuid();
-        String getUuid();
+        UUID getUuid();
         String getName();
     }
 }

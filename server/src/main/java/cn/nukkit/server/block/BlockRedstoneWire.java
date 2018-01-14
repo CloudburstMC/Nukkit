@@ -4,11 +4,11 @@ import cn.nukkit.api.event.block.BlockRedstoneEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemRedstone;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.BlockFace.Plane;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -190,20 +190,8 @@ public class BlockRedstoneWire extends BlockFlowable {
         return BlockColor.AIR_BLOCK_COLOR;
     }
 
-    @Override
-    public int onUpdate(int type) {
-        if (type != Level.BLOCK_UPDATE_NORMAL && type != Level.BLOCK_UPDATE_REDSTONE) {
-            return 0;
-        }
-
-        if (type == Level.BLOCK_UPDATE_NORMAL && !this.canBePlacedOn(this.getLocation().down())) {
-            this.getLevel().useBreakOn(this);
-            return Level.BLOCK_UPDATE_NORMAL;
-        }
-
-        this.updateSurroundingRedstone(false);
-
-        return Level.BLOCK_UPDATE_NORMAL;
+    protected static boolean canConnectUpwardsTo(NukkitLevel level, Vector3 pos) {
+        return canConnectUpwardsTo(level.getBlock(pos));
     }
 
     public boolean canBePlacedOn(Vector3 v) {
@@ -255,8 +243,20 @@ public class BlockRedstoneWire extends BlockFlowable {
         return !flag1 && flag && canConnectUpwardsTo(this.level, v.up()) || (canConnectTo(block, side) || !flag && canConnectUpwardsTo(this.level, block.down()));
     }
 
-    protected static boolean canConnectUpwardsTo(Level level, Vector3 pos) {
-        return canConnectUpwardsTo(level.getBlock(pos));
+    @Override
+    public int onUpdate(int type) {
+        if (type != NukkitLevel.BLOCK_UPDATE_NORMAL && type != NukkitLevel.BLOCK_UPDATE_REDSTONE) {
+            return 0;
+        }
+
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL && !this.canBePlacedOn(this.getLocation().down())) {
+            this.getLevel().useBreakOn(this);
+            return NukkitLevel.BLOCK_UPDATE_NORMAL;
+        }
+
+        this.updateSurroundingRedstone(false);
+
+        return NukkitLevel.BLOCK_UPDATE_NORMAL;
     }
 
     protected static boolean canConnectUpwardsTo(Block block) {

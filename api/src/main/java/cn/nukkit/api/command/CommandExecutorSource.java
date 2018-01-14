@@ -44,7 +44,4 @@ public interface CommandExecutorSource extends Permissible {
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     String getName();
-
-    boolean isPlayer();
-
 }

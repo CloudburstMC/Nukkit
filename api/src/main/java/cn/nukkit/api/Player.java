@@ -2,32 +2,35 @@ package cn.nukkit.api;
 
 import cn.nukkit.api.command.CommandExecutorSource;
 import cn.nukkit.api.entity.Entity;
-import cn.nukkit.api.entity.HumanEntity;
 import cn.nukkit.api.event.player.PlayerKickEvent;
-import cn.nukkit.api.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.api.form.window.FormWindow;
 import cn.nukkit.api.inventory.Inventory;
 import cn.nukkit.api.item.ItemStack;
 import cn.nukkit.api.message.Message;
-import cn.nukkit.api.util.LoginChainData;
 import com.flowpowered.math.vector.Vector3d;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.util.Locale;
+import java.util.Optional;
 
-public interface Player extends Session, HumanEntity, CommandExecutorSource {
+public interface Player extends Session, CommandExecutorSource, Entity, MessageRecipient {
 
-    String getDisplayName();
+    @Nonnull
+    Optional<String> getDisplayName();
 
-    void setDisplayName(String name);
+    void setDisplayName(@Nullable String name);
 
-    String getPlayerListName();
+    @Nonnull
+    Optional<String> getPlayerListName();
 
-    void setPlayerListName(String name);
+    void setPlayerListName(@Nullable String name);
 
+    @Nonnull
     GameMode getGameMode();
 
-    void setGameMode(GameMode gameMode);
+    void setGameMode(@Nullable GameMode gameMode);
 
     boolean isSneaking();
 
@@ -129,10 +132,6 @@ public interface Player extends Session, HumanEntity, CommandExecutorSource {
 
     void setEnabledClientCommand(boolean value);
 
-    default boolean isPlayer() {
-        return true;
-    }
-
     boolean isConnected();
 
     Skin getSkin();
@@ -142,10 +141,6 @@ public interface Player extends Session, HumanEntity, CommandExecutorSource {
     void setButtonText(String text);
 
     String getButtonText();
-
-    Location getSpawn();
-
-    void setSpawn(Location location);
 
     int getPing();
 
@@ -186,10 +181,4 @@ public interface Player extends Session, HumanEntity, CommandExecutorSource {
     void sendActionBar(String message, int fadein, int duration, int fadeout);
 
     boolean dropItem(ItemStack item);
-
-    void teleportImmediate(Location location);
-
-    void teleportImmediate(Location location, TeleportCause cause);
-
-    LoginChainData getLoginChainData();
 }

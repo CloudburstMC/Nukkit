@@ -9,13 +9,11 @@ import cn.nukkit.api.event.entity.EntityExplodeEvent;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockAir;
 import cn.nukkit.server.block.BlockTNT;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.server.level.sound.ExplodeSound;
 import cn.nukkit.server.math.*;
-import cn.nukkit.server.network.protocol.ExplodePacket;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Explosion {
 
     private final int rays = 16; //Rays
-    private final Level level;
+    private final NukkitLevel level;
     private final Position source;
     private final double size;
 
@@ -181,12 +179,12 @@ public class Explosion {
 
             for (BlockFace side : BlockFace.values()) {
                 Vector3 sideBlock = pos.getSide(side);
-                BlockVector3 index = Level.blockHash((int) sideBlock.x, (int) sideBlock.y, (int) sideBlock.z);
+                BlockVector3 index = NukkitLevel.blockHash((int) sideBlock.x, (int) sideBlock.y, (int) sideBlock.z);
                 if (!this.affectedBlocks.contains(sideBlock) && !updateBlocks.containsKey(index)) {
                     BlockUpdateEvent ev = new BlockUpdateEvent(this.level.getBlock(sideBlock));
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        ev.getBlock().onUpdate(Level.BLOCK_UPDATE_NORMAL);
+                        ev.getBlock().onUpdate(NukkitLevel.BLOCK_UPDATE_NORMAL);
                     }
                     updateBlocks.put(index, true);
                 }

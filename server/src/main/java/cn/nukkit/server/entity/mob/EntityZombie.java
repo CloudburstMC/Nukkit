@@ -3,7 +3,6 @@ package cn.nukkit.server.entity.mob;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
 
 /**
  * Created by Dr. Nick Doran on 4/23/2017.

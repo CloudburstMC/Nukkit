@@ -26,8 +26,7 @@ package co.aikar.timings;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.blockentity.BlockEntity;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.format.generic.BaseFullChunk;
 import cn.nukkit.server.timings.JsonUtil;
 import com.google.gson.Gson;
@@ -95,7 +94,7 @@ public class TimingsHistory {
         final Map<Integer, AtomicInteger> blockEntityCounts = new HashMap<>();
         final Gson GSON = new Gson();
         // Information about all loaded entities/block entities
-        for (Level level : NukkitServer.getInstance().getLevels().values()) {
+        for (NukkitLevel level : NukkitServer.getInstance().getLevels().values()) {
             JsonArray jsonLevel = new JsonArray();
             for (BaseFullChunk chunk : level.getChunks().values()) {
                 entityCounts.clear();

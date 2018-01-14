@@ -96,6 +96,7 @@ public enum TextFormat {
     public static final char FORMAT_CHAR = '\u00a7';
 
     private static final Pattern CHAT_COLOR_MATCHER = Pattern.compile("(?i)" + Character.toString(FORMAT_CHAR) + "[0-9A-FL-OR]");
+    private static final Pattern AMPERSAND_MATCHER = Pattern.compile("(?i)&([0-9A-FL-OR])");
 
     private final char id;
     private final String precompiledToString;
@@ -110,6 +111,13 @@ public enum TextFormat {
     public static String removeFormatting(String string) {
         Preconditions.checkNotNull(string, "string");
         return CHAT_COLOR_MATCHER.matcher(string).replaceAll("");
+    }
+
+    public static String colorize(String string) {
+        Preconditions.checkNotNull(string, "string");
+        return AMPERSAND_MATCHER.matcher(string).replaceAll(matchResult -> {
+            matchResult.
+        });
     }
 
     public char getId() {

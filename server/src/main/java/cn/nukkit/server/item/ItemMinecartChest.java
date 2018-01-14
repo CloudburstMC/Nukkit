@@ -4,13 +4,13 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockRail;
 import cn.nukkit.server.entity.item.EntityMinecartChest;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.DoubleTag;
 import cn.nukkit.server.nbt.tag.FloatTag;
 import cn.nukkit.server.nbt.tag.ListTag;
-import cn.nukkit.server.utils.Rail;
+import cn.nukkit.server.util.Rail;
 
 public class ItemMinecartChest extends Item {
 
@@ -32,7 +32,7 @@ public class ItemMinecartChest extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(NukkitLevel level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (Rail.isRailBlock(target)) {
             Rail.Orientation type = ((BlockRail) target).getOrientation();
             double adjacent = 0.0D;

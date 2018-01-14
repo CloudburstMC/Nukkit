@@ -13,7 +13,7 @@ import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.ListTag;
 import cn.nukkit.server.nbt.tag.StringTag;
 import cn.nukkit.server.nbt.tag.Tag;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.util.Map;
 

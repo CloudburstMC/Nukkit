@@ -3,7 +3,7 @@ package cn.nukkit.server.level;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.LevelException;
+import cn.nukkit.server.util.LevelException;
 import com.flowpowered.math.vector.Vector3d;
 
 /**
@@ -11,7 +11,7 @@ import com.flowpowered.math.vector.Vector3d;
  * Nukkit Project
  */
 public class Position extends Vector3d {
-    public Level level;
+    public NukkitLevel level;
 
     public Position() {
         this(0, 0, 0, null);
@@ -29,7 +29,7 @@ public class Position extends Vector3d {
         this(x, y, z, null);
     }
 
-    public Position(double x, double y, double z, Level level) {
+    public Position(double x, double y, double z, NukkitLevel level) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -40,15 +40,15 @@ public class Position extends Vector3d {
         return fromObject(pos, null);
     }
 
-    public static Position fromObject(Vector3 pos, Level level) {
+    public static Position fromObject(Vector3 pos, NukkitLevel level) {
         return new Position(pos.x, pos.y, pos.z, level);
     }
 
-    public Level getLevel() {
+    public NukkitLevel getLevel() {
         return this.level;
     }
 
-    public Position setLevel(Level level) {
+    public Position setLevel(NukkitLevel level) {
         this.level = level;
         return this;
     }
@@ -71,7 +71,7 @@ public class Position extends Vector3d {
 
     public Position getSide(BlockFace face, int step) {
         if (!this.isValid()) {
-            throw new LevelException("Undefined Level reference");
+            throw new LevelException("Undefined NukkitLevel reference");
         }
         return Position.fromObject(super.getSide(face, step), this.level);
     }
@@ -91,12 +91,12 @@ public class Position extends Vector3d {
 
     public Block getLevelBlock() {
         if (this.isValid()) return this.level.getBlock(this);
-        else throw new LevelException("Undefined Level reference");
+        else throw new LevelException("Undefined NukkitLevel reference");
     }
 
     public Location getLocation() {
         if (this.isValid()) return new Location(this.x, this.y, this.z, 0, 0, this.level);
-        else throw new LevelException("Undefined Level reference");
+        else throw new LevelException("Undefined NukkitLevel reference");
     }
 
     @Override

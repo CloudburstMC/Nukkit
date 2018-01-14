@@ -6,10 +6,9 @@ import cn.nukkit.api.event.plugin.PluginEnableEvent;
 import cn.nukkit.api.plugin.*;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.command.NukkitPluginCommand;
-import cn.nukkit.server.plugin.NukkitPluginContainer;
 import cn.nukkit.server.plugin.NukkitPluginDescription;
 import cn.nukkit.server.plugin.PluginClassLoader;
-import cn.nukkit.server.utils.PluginException;
+import cn.nukkit.server.util.PluginException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import lombok.extern.log4j.Log4j2;
@@ -55,7 +54,7 @@ public class JavaPluginLoader implements PluginLoader {
 
     @Nonnull
     @Override
-    public NukkitPluginContainer createPlugin(PluginDescription description) throws Exception {
+    public Plugin createPlugin(PluginDescription description) throws Exception {
         if (!(description instanceof NukkitJavaPluginDescription)) {
             throw new IllegalArgumentException("Description provided isn't of the Java plugin loader.");
         }
@@ -65,10 +64,7 @@ public class JavaPluginLoader implements PluginLoader {
             throw new IllegalArgumentException("No path in plugin description.");
         }
 
-        Plugin plugin = createPlugin(path.get(), (NukkitJavaPluginDescription) description);
-
-        return new NukkitPluginContainer((NukkitPluginDescription) description,
-                generateCommands(description.getCommandDescriptions(), plugin), plugin);
+        return createPlugin(path.get(), (NukkitJavaPluginDescription) description);
     }
 
     @SuppressWarnings("unchecked")
@@ -92,7 +88,8 @@ public class JavaPluginLoader implements PluginLoader {
 
             JavaPlugin javaPlugin = pluginClass.newInstance();
             javaPlugin.initPlugin(this, server, description, dataFolder,
-                    LoggerFactory.getLogger(description.getLoggerPrefix().orElse(description.getName())));
+                    LoggerFactory.getLogger(description.getLoggerPrefix().orElse(description.getName())),
+                    generateCommands(description.getCommandDescriptions(), javaPlugin));
 
             return javaPlugin;
         } catch (Exception e) {

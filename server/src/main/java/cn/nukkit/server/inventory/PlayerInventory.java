@@ -10,11 +10,7 @@ import cn.nukkit.server.entity.EntityHuman;
 import cn.nukkit.server.entity.EntityHumanType;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
-import cn.nukkit.server.network.protocol.InventoryContentPacket;
-import cn.nukkit.server.network.protocol.InventorySlotPacket;
-import cn.nukkit.server.network.protocol.MobArmorEquipmentPacket;
-import cn.nukkit.server.network.protocol.MobEquipmentPacket;
-import cn.nukkit.server.network.protocol.types.ContainerIds;
+import cn.nukkit.server.network.minecraft.data.ContainerIds;
 
 import java.util.Collection;
 

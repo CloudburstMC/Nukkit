@@ -1,6 +1,6 @@
 package cn.nukkit.server.scheduler;
 
-import cn.nukkit.server.utils.Utils;
+import cn.nukkit.server.util.Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

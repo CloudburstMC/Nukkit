@@ -4,11 +4,7 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.block.BlockEnderChest;
 import cn.nukkit.server.entity.EntityHuman;
 import cn.nukkit.server.entity.EntityHumanType;
-import cn.nukkit.server.level.Level;
-import cn.nukkit.server.network.protocol.BlockEventPacket;
-import cn.nukkit.server.network.protocol.ContainerClosePacket;
-import cn.nukkit.server.network.protocol.ContainerOpenPacket;
-import cn.nukkit.server.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.server.level.NukkitLevel;
 
 public class PlayerEnderChestInventory extends BaseInventory {
 
@@ -51,7 +47,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
             blockEventPacket.case1 = 1;
             blockEventPacket.case2 = 2;
 
-            Level level = this.getHolder().getLevel();
+            NukkitLevel level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_CHEST_OPEN, 1, -1, this.getHolder().add(0.5, 0.5, 0.5));
                 level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, blockEventPacket);
@@ -75,7 +71,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
             blockEventPacket.case1 = 1;
             blockEventPacket.case2 = 0;
 
-            Level level = this.getHolder().getLevel();
+            NukkitLevel level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_CHEST_CLOSED, 1, -1, this.getHolder().add(0.5, 0.5, 0.5));
                 level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, blockEventPacket);

@@ -3,10 +3,10 @@ package cn.nukkit.server.level.format.anvil;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.blockentity.BlockEntitySpawnable;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.scheduler.AsyncTask;
-import cn.nukkit.server.utils.Binary;
+import cn.nukkit.server.util.Binary;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -25,7 +25,7 @@ public class ChunkRequestTask extends AsyncTask {
 
     protected byte[] blockEntities;
 
-    public ChunkRequestTask(Level level, Chunk chunk) {
+    public ChunkRequestTask(NukkitLevel level, Chunk chunk) {
         this.levelId = level.getId();
         this.chunk = chunk.toFastBinary();
         this.chunkX = chunk.getX();
@@ -121,7 +121,7 @@ public class ChunkRequestTask extends AsyncTask {
 
     @Override
     public void onCompletion(NukkitServer server) {
-        Level level = server.getLevel(this.levelId);
+        NukkitLevel level = server.getLevel(this.levelId);
         if (level != null && this.hasResult()) {
             level.chunkRequestCallback(this.chunkX, this.chunkZ, (byte[]) this.getResult());
         }

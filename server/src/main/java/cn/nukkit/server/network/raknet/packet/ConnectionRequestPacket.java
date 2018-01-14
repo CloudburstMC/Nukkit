@@ -1,0 +1,26 @@
+package cn.nukkit.server.network.raknet.packet;
+
+import cn.nukkit.server.network.raknet.NetworkPacket;
+import io.netty.buffer.ByteBuf;
+import lombok.Data;
+
+@Data
+public class ConnectionRequestPacket implements NetworkPacket {
+    private long clientGuid;
+    private long timestamp;
+    private boolean serverSecurity;
+
+    @Override
+    public void encode(ByteBuf buffer) {
+        buffer.writeLong(clientGuid);
+        buffer.writeLong(timestamp);
+        buffer.writeBoolean(serverSecurity);
+    }
+
+    @Override
+    public void decode(ByteBuf buffer) {
+        clientGuid = buffer.readLong();
+        timestamp = buffer.readLong();
+        serverSecurity = buffer.readBoolean();
+    }
+}

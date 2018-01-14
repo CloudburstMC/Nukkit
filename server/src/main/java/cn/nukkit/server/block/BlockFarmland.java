@@ -3,10 +3,10 @@ package cn.nukkit.server.block;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -61,7 +61,7 @@ public class BlockFarmland extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             Vector3 v = new Vector3();
 
             if (this.level.getBlock(v.setComponents(x, this.y + 1, z)) instanceof BlockCrops) {
@@ -71,7 +71,7 @@ public class BlockFarmland extends BlockTransparent {
             if (this.level.getBlock(v.setComponents(x, this.y + 1, z)).isSolid()) {
                 this.level.setBlock(this, new BlockDirt(), true, true);
 
-                return Level.BLOCK_UPDATE_RANDOM;
+                return NukkitLevel.BLOCK_UPDATE_RANDOM;
             }
 
             boolean found = false;
@@ -104,7 +104,7 @@ public class BlockFarmland extends BlockTransparent {
                     this.meta = 7;
                     this.level.setBlock(this, this, true, false);
                 }
-                return Level.BLOCK_UPDATE_RANDOM;
+                return NukkitLevel.BLOCK_UPDATE_RANDOM;
             }
 
             if (this.meta > 0) {
@@ -114,7 +114,7 @@ public class BlockFarmland extends BlockTransparent {
                 this.level.setBlock(this, new BlockDirt(), true, true);
             }
 
-            return Level.BLOCK_UPDATE_RANDOM;
+            return NukkitLevel.BLOCK_UPDATE_RANDOM;
         }
 
         return 0;

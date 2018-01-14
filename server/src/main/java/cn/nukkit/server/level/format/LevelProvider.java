@@ -1,7 +1,7 @@
 package cn.nukkit.server.level.format;
 
 import cn.nukkit.server.level.GameRules;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.format.generic.BaseFullChunk;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.scheduler.AsyncTask;
@@ -90,7 +90,7 @@ public interface LevelProvider {
 
     void doGarbageCollection();
 
-    Level getLevel();
+    NukkitLevel getLevel();
 
     void close();
 

@@ -6,7 +6,7 @@ package cn.nukkit.server.entity;
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 
-import cn.nukkit.server.utils.ServerException;
+import cn.nukkit.server.util.ServerException;
 
 import java.util.HashMap;
 import java.util.Map;

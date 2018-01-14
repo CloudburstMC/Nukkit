@@ -9,7 +9,7 @@ public interface PluginLoader {
     PluginDescription loadPlugin(Path file) throws Exception;
 
     @Nonnull
-    PluginContainer createPlugin(PluginDescription description) throws Exception;
+    Plugin createPlugin(PluginDescription description) throws Exception;
 
     void enablePlugin(Plugin plugin);
 

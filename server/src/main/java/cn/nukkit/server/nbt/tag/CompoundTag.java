@@ -1,255 +1,126 @@
 package cn.nukkit.server.nbt.tag;
 
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
+import com.voxelwind.nbt.util.CompoundTagBuilder;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public class CompoundTag extends Tag implements Cloneable {
-    private final Map<String, Tag> tags = new HashMap<>();
-
-    public CompoundTag() {
-        super("");
-    }
+public class CompoundTag extends Tag<Map<String, Tag<?>>> {
+    private final Map<String, Tag<?>> value;
 
     public CompoundTag(String name) {
         super(name);
+        this.value = Collections.unmodifiableMap(new HashMap<>());
+    }
+
+    public CompoundTag(String name, Map<String, Tag<?>> value) {
+        super(name);
+        this.value = Collections.unmodifiableMap(new HashMap<>(Objects.requireNonNull(value, "value")));
+    }
+
+    public static CompoundTag createFromList(String name, List<Tag<?>> list) {
+        Map<String, Tag<?>> map = new HashMap<>();
+        for (Tag<?> tag : list) {
+            if (tag.getName() == null || tag.getName().isEmpty()) {
+                throw new IllegalArgumentException("Tag " + tag + " does not have a name.");
+            }
+            map.put(tag.getName(), tag);
+        }
+        return new CompoundTag(name, map);
+    }
+
+    public void remove(String name) {
+        if (value.containsKey(name)) {
+            value.remove(name);
+        }
+    }
+
+    public CompoundTag tag(Tag<?> tag) {
+        value.put(tag.getName(), tag);
+        return this;
+    }
+
+    public CompoundTag tagByte(String name, byte value) {
+        return tag(new ByteTag(name, value));
+    }
+
+    public CompoundTag tagByteArray(String name, byte[] value) {
+        return tag(new ByteArrayTag(name, value));
+    }
+
+    public CompoundTag tagDouble(String name, double value) {
+        return tag(new DoubleTag(name, value));
+    }
+
+    public CompoundTag tagFloat(String name, float value) {
+        return tag(new FloatTag(name, value));
+    }
+
+    public CompoundTag tagIntArray(String name, int[] value) {
+        return tag(new IntArrayTag(name, value));
+    }
+
+    public CompoundTag tagInt(String name, int value) {
+        return tag(new IntTag(name, value));
+    }
+
+    public CompoundTag tagLong(String name, long value) {
+        return tag(new LongTag(name, value));
+    }
+
+    public CompoundTag tagShort(String name, short value) {
+        return tag(new ShortTag(name, value));
+    }
+
+    public CompoundTag tagString(String name, String value) {
+        return tag(new StringTag(name, value));
+    }
+
+    public CompoundTag tagCompoundTag(String name, CompoundTag value) {
+        this.value.put(name, value);
+        return this;
+    }
+
+    public CompoundTag tagListTag(String name, ListTag value) {
+        this.value.put(name, value);
+        return this;
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
-        for (Tag tag : tags.values()) {
-            Tag.writeNamedTag(tag, dos);
-        }
-        dos.writeByte(Tag.TAG_End);
+    public Map<String, Tag<?>> getValue() {
+        return value;
     }
 
     @Override
-    public void load(NBTInputStream dis) throws IOException {
-        tags.clear();
-        Tag tag;
-        while ((tag = Tag.readNamedTag(dis)).getId() != Tag.TAG_End) {
-            tags.put(tag.getName(), tag);
-        }
-    }
-
-    public Collection<Tag> getAllTags() {
-        return tags.values();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CompoundTag that = (CompoundTag) o;
+        return Objects.equals(value, that.value) &&
+                Objects.equals(getName(), that.getName());
     }
 
     @Override
-    public byte getId() {
-        return TAG_Compound;
+    public int hashCode() {
+        return Objects.hash(getName(), value);
     }
 
-    public CompoundTag put(String name, Tag tag) {
-        tags.put(name, tag.setName(name));
-        return this;
-    }
-
-    public CompoundTag putByte(String name, int value) {
-        tags.put(name, new ByteTag(name, value));
-        return this;
-    }
-
-    public CompoundTag putShort(String name, int value) {
-        tags.put(name, new ShortTag(name, value));
-        return this;
-    }
-
-    public CompoundTag putInt(String name, int value) {
-        tags.put(name, new IntTag(name, value));
-        return this;
-    }
-
-    public CompoundTag putLong(String name, long value) {
-        tags.put(name, new LongTag(name, value));
-        return this;
-    }
-
-    public CompoundTag putFloat(String name, float value) {
-        tags.put(name, new FloatTag(name, value));
-        return this;
-    }
-
-    public CompoundTag putDouble(String name, double value) {
-        tags.put(name, new DoubleTag(name, value));
-        return this;
-    }
-
-    public CompoundTag putString(String name, String value) {
-        tags.put(name, new StringTag(name, value));
-        return this;
-    }
-
-    public CompoundTag putByteArray(String name, byte[] value) {
-        tags.put(name, new ByteArrayTag(name, value));
-        return this;
-    }
-
-    public CompoundTag putIntArray(String name, int[] value) {
-        tags.put(name, new IntArrayTag(name, value));
-        return this;
-    }
-
-    public CompoundTag putList(ListTag<? extends Tag> listTag) {
-        tags.put(listTag.getName(), listTag);
-        return this;
-    }
-
-    public CompoundTag putCompound(String name, CompoundTag value) {
-        tags.put(name, value.setName(name));
-        return this;
-    }
-
-    public CompoundTag putBoolean(String string, boolean val) {
-        putByte(string, val ? 1 : 0);
-        return this;
-    }
-
-    public Tag get(String name) {
-        return tags.get(name);
-    }
-
-    public boolean contains(String name) {
-        return tags.containsKey(name);
-    }
-
-    public CompoundTag remove(String name) {
-        tags.remove(name);
-        return this;
-    }
-
-    public int getByte(String name) {
-        if (!tags.containsKey(name)) return (byte) 0;
-        return ((NumberTag) tags.get(name)).getData().intValue();
-    }
-
-    public int getShort(String name) {
-        if (!tags.containsKey(name)) return 0;
-        return ((NumberTag) tags.get(name)).getData().intValue();
-    }
-
-    public int getInt(String name) {
-        if (!tags.containsKey(name)) return 0;
-        return ((NumberTag) tags.get(name)).getData().intValue();
-    }
-
-    public long getLong(String name) {
-        if (!tags.containsKey(name)) return (long) 0;
-        return ((NumberTag) tags.get(name)).getData().longValue();
-    }
-
-    public float getFloat(String name) {
-        if (!tags.containsKey(name)) return (float) 0;
-        return ((NumberTag) tags.get(name)).getData().floatValue();
-    }
-
-    public double getDouble(String name) {
-        if (!tags.containsKey(name)) return (double) 0;
-        return ((NumberTag) tags.get(name)).getData().doubleValue();
-    }
-
-    public String getString(String name) {
-        if (!tags.containsKey(name)) return "";
-        Tag tag = tags.get(name);
-        if (tag instanceof NumberTag) {
-            return String.valueOf(((NumberTag) tag).getData());
-        }
-        return ((StringTag) tag).data;
-    }
-
-    public byte[] getByteArray(String name) {
-        if (!tags.containsKey(name)) return new byte[0];
-        return ((ByteArrayTag) tags.get(name)).data;
-    }
-
-    public int[] getIntArray(String name) {
-        if (!tags.containsKey(name)) return new int[0];
-        return ((IntArrayTag) tags.get(name)).data;
-    }
-
-    public CompoundTag getCompound(String name) {
-        if (!tags.containsKey(name)) return new CompoundTag(name);
-        return (CompoundTag) tags.get(name);
-    }
-
-    @SuppressWarnings("unchecked")
-    public ListTag<? extends Tag> getList(String name) {
-        if (!tags.containsKey(name)) return new ListTag<>(name);
-        return (ListTag<? extends Tag>) tags.get(name);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends Tag> ListTag<T> getList(String name, Class<T> type) {
-        if (tags.containsKey(name)) {
-            return (ListTag<T>) tags.get(name);
-        }
-        return new ListTag<>(name);
-    }
-
-    public Map<String, Tag> getTags() {
-        return new HashMap<>(this.tags);
-    }
-
-    public boolean getBoolean(String name) {
-        return getByte(name) != 0;
-    }
-
+    @Override
     public String toString() {
-        return "CompoundTag " + this.getName() + " (" + tags.size() + " entries)";
-    }
-
-    public void print(String prefix, PrintStream out) {
-        super.print(prefix, out);
-        out.println(prefix + "{");
-        String orgPrefix = prefix;
-        prefix += "   ";
-        for (Tag tag : tags.values()) {
-            tag.print(prefix, out);
+        StringBuilder builder = new StringBuilder();
+        builder.append("TAG_Compound").append(super.toString()).append(value.size()).append(" entries\r\n{\r\n");
+        for (Tag entry : value.values()) {
+            builder.append("   ").append(entry.toString().replaceAll("\r\n", "\r\n   ")).append("\r\n");
         }
-        out.println(orgPrefix + "}");
+        builder.append("}");
+        return builder.toString();
     }
 
-    public boolean isEmpty() {
-        return tags.isEmpty();
+    public CompoundTagBuilder toBuilder() {
+        return CompoundTagBuilder.from(this);
     }
 
-    public CompoundTag copy() {
-        CompoundTag tag = new CompoundTag(getName());
-        for (String key : tags.keySet()) {
-            tag.put(key, tags.get(key).copy());
-        }
-        return tag;
+    public Tag<?> get(String key) {
+        return value.get(key);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            CompoundTag o = (CompoundTag) obj;
-            return tags.entrySet().equals(o.tags.entrySet());
-        }
-        return false;
-    }
-
-    /**
-     * Check existence of NBT tag
-     *
-     * @param name - NBT tag Id.
-     * @return - true, if tag exists
-     */
-    public boolean exist(String name) {
-        return tags.containsKey(name);
-    }
-
-    @Override
-    public CompoundTag clone() {
-        CompoundTag nbt = new CompoundTag();
-        this.getTags().forEach((key, value) -> nbt.put(key, value.copy()));
-        return nbt;
-    }
 }

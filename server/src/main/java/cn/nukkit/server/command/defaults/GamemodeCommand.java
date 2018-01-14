@@ -5,7 +5,7 @@ import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 /**
  * Created on 2015/11/13 by xtypr.

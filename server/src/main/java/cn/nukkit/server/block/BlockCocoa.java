@@ -6,7 +6,7 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemDye;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.particle.BoneMealParticle;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
@@ -115,7 +115,7 @@ public class BlockCocoa extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             int[] faces = new int[]{
                     3, 4, 2, 5, 3, 4, 2, 5, 3, 4, 2, 5
             };
@@ -124,9 +124,9 @@ public class BlockCocoa extends BlockTransparent {
 
             if (side.getId() != Block.WOOD && side.getDamage() != BlockWood.JUNGLE) {
                 this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             if (new Random().nextInt(2) == 1) {
                 if (this.meta / 4 < 2) {
                     BlockCocoa block = (BlockCocoa) this.clone();
@@ -137,11 +137,11 @@ public class BlockCocoa extends BlockTransparent {
                     if (!ev.isCancelled()) {
                         this.getLevel().setBlock(this, ev.getNewState(), true, true);
                     } else {
-                        return Level.BLOCK_UPDATE_RANDOM;
+                        return NukkitLevel.BLOCK_UPDATE_RANDOM;
                     }
                 }
             } else {
-                return Level.BLOCK_UPDATE_RANDOM;
+                return NukkitLevel.BLOCK_UPDATE_RANDOM;
             }
         }
 

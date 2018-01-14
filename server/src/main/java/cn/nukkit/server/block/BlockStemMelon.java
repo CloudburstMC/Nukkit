@@ -4,7 +4,7 @@ import cn.nukkit.api.event.block.BlockGrowEvent;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemSeedsMelon;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.BlockFace.Plane;
 import cn.nukkit.server.math.NukkitRandom;
@@ -34,12 +34,12 @@ public class BlockStemMelon extends BlockCrops {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() != FARMLAND) {
                 this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             NukkitRandom random = new NukkitRandom();
             if (random.nextRange(1, 2) == 1) {
                 if (this.meta < 0x07) {
@@ -50,12 +50,12 @@ public class BlockStemMelon extends BlockCrops {
                     if (!ev.isCancelled()) {
                         this.getLevel().setBlock(this, ev.getNewState(), true);
                     }
-                    return Level.BLOCK_UPDATE_RANDOM;
+                    return NukkitLevel.BLOCK_UPDATE_RANDOM;
                 } else {
                     for (BlockFace face : Plane.HORIZONTAL) {
                         Block b = this.getSide(face);
                         if (b.getId() == MELON_BLOCK) {
-                            return Level.BLOCK_UPDATE_RANDOM;
+                            return NukkitLevel.BLOCK_UPDATE_RANDOM;
                         }
                     }
                     Block side = this.getSide(Plane.HORIZONTAL.random(random));
@@ -69,7 +69,7 @@ public class BlockStemMelon extends BlockCrops {
                     }
                 }
             }
-            return Level.BLOCK_UPDATE_RANDOM;
+            return NukkitLevel.BLOCK_UPDATE_RANDOM;
         }
         return 0;
     }

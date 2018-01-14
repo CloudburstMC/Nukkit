@@ -1,9 +1,8 @@
 package cn.nukkit.server.block;
 
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.ItemTool;
 import cn.nukkit.server.math.AxisAlignedBB;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created by Pub4Game on 27.12.2015.

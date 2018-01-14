@@ -2,8 +2,7 @@ package cn.nukkit.server.item;
 
 import cn.nukkit.server.Player;
 import cn.nukkit.server.block.Block;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.nbt.tag.CompoundTag;
@@ -37,7 +36,7 @@ public class ItemSpawnEgg extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(NukkitLevel level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
 
         if (chunk == null) {

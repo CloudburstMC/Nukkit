@@ -5,8 +5,8 @@ import cn.nukkit.api.permission.Permission;
 import cn.nukkit.api.permission.ServerOperator;
 import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.utils.PluginException;
-import cn.nukkit.server.utils.ServerException;
+import cn.nukkit.server.util.PluginException;
+import cn.nukkit.server.util.ServerException;
 import co.aikar.timings.Timings;
 
 import java.util.HashMap;

@@ -1,7 +1,5 @@
 package cn.nukkit.server.item;
 
-import cn.nukkit.server.network.protocol.LevelSoundEventPacket;
-
 /**
  * @author CreeperFace
  */

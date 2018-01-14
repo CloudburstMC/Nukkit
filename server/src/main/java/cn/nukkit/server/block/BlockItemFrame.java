@@ -6,7 +6,7 @@ import cn.nukkit.server.blockentity.BlockEntityItemFrame;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemItemFrame;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.sound.ItemFrameItemAddedSound;
 import cn.nukkit.server.level.sound.ItemFrameItemRotated;
 import cn.nukkit.server.level.sound.ItemFramePlacedSound;
@@ -42,7 +42,7 @@ public class BlockItemFrame extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (this.getSide(getFacing()).isTransparent()) {
                 this.level.useBreakOn(this);
                 return type;

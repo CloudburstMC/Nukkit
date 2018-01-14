@@ -1,11 +1,10 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
 
@@ -163,7 +162,7 @@ public class BlockVine extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             BlockFace[] faces = {
                     BlockFace.DOWN,
                     BlockFace.SOUTH,
@@ -179,7 +178,7 @@ public class BlockVine extends BlockTransparent {
                 Block up = this.up();
                 if (up.getId() != this.getId() || up.meta != this.meta) {
                     this.getLevel().useBreakOn(this);
-                    return Level.BLOCK_UPDATE_NORMAL;
+                    return NukkitLevel.BLOCK_UPDATE_NORMAL;
                 }
             }
         }

@@ -1,7 +1,7 @@
 package cn.nukkit.server.item;
 
 import cn.nukkit.server.block.BlockBed;
-import cn.nukkit.server.utils.DyeColor;
+import cn.nukkit.server.util.DyeColor;
 
 /**
  * author: MagicDroidX

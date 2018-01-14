@@ -1,6 +1,6 @@
 package cn.nukkit.server.level.generator.task;
 
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.scheduler.AsyncTask;
 
 /**
@@ -11,7 +11,7 @@ public class GeneratorUnregisterTask extends AsyncTask {
 
     public final int levelId;
 
-    public GeneratorUnregisterTask(Level level) {
+    public GeneratorUnregisterTask(NukkitLevel level) {
         this.levelId = level.getId();
     }
 

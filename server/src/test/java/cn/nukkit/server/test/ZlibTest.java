@@ -1,6 +1,6 @@
 package cn.nukkit.server.test;
 
-import cn.nukkit.server.utils.Zlib;
+import cn.nukkit.server.util.Zlib;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

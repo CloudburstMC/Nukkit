@@ -9,8 +9,8 @@ import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.command.defaults.*;
 import cn.nukkit.server.command.simple.NukkitSimpleCommand;
-import cn.nukkit.server.utils.TextFormat;
-import cn.nukkit.server.utils.Utils;
+import cn.nukkit.server.util.TextFormat;
+import cn.nukkit.server.util.Utils;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -121,7 +121,7 @@ public class SimpleCommandMap implements CommandMap {
     @Override
     public <T> void registerSimpleCommands(T object) throws Exception {
         if (object.getClass().isPrimitive()) {
-            throw new CloneNotSupportedException();
+            throw new IllegalArgumentException();
         }
         for (Method method : object.getClass().getDeclaredMethods()) {
             Command def = method.getAnnotation(Command.class);

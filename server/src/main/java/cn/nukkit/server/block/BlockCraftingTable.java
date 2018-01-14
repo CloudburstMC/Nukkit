@@ -4,7 +4,7 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.inventory.BigCraftingGrid;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created on 2015/12/5 by xtypr.

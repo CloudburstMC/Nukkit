@@ -1,64 +1,40 @@
 package cn.nukkit.server.nbt.tag;
 
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
+import java.util.Objects;
 
-import java.io.IOException;
+public class ShortTag extends Tag<Short> {
+    private final short value;
 
-public class ShortTag extends NumberTag<Integer> {
-    public int data;
-
-    @Override
-    public Integer getData() {
-        return data;
-    }
-
-    @Override
-    public void setData(Integer data) {
-        this.data = data == null ? 0 : data;
-    }
-
-    public ShortTag(String name) {
+    public ShortTag(String name, short value) {
         super(name);
+        this.value = value;
     }
 
-    public ShortTag(String name, int data) {
-        super(name);
-        this.data = data;
-    }
-
-    @Override
-    void write(NBTOutputStream dos) throws IOException {
-        dos.writeShort(data);
+    public short getPrimitiveValue() {
+        return value;
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-        data = dis.readUnsignedShort();
+    public Short getValue() {
+        return value;
     }
 
     @Override
-    public byte getId() {
-        return TAG_Short;
+    public int hashCode() {
+        return Objects.hash(getName(), value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ShortTag that = (ShortTag) o;
+        return value == that.value &&
+                Objects.equals(getName(), that.getName());
     }
 
     @Override
     public String toString() {
-        return "" + data;
+        return "TAG_Short" + super.toString() + value;
     }
-
-    @Override
-    public Tag copy() {
-        return new ShortTag(getName(), data);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            ShortTag o = (ShortTag) obj;
-            return data == o.data;
-        }
-        return false;
-    }
-
 }

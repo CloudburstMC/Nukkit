@@ -3,7 +3,10 @@ package cn.nukkit.server.level.format.anvil;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.format.LevelProvider;
 import cn.nukkit.server.level.format.generic.BaseRegionLoader;
-import cn.nukkit.server.utils.*;
+import cn.nukkit.server.util.Binary;
+import cn.nukkit.server.util.BinaryStream;
+import cn.nukkit.server.util.ChunkException;
+import cn.nukkit.server.util.Zlib;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

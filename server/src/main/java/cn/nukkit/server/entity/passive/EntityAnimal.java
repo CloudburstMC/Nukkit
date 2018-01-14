@@ -1,19 +1,16 @@
 package cn.nukkit.server.entity.passive;
 
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.entity.EntityAgeable;
-import cn.nukkit.server.entity.EntityCreature;
+import cn.nukkit.server.entity.EntityLiving;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class EntityAnimal extends EntityCreature implements EntityAgeable {
+public abstract class EntityAnimal extends EntityLiving implements EntityAgeable {
     public EntityAnimal(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }

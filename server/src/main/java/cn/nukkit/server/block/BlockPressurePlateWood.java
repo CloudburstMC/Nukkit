@@ -1,10 +1,9 @@
 package cn.nukkit.server.block;
 
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemTool;
 import cn.nukkit.server.math.AxisAlignedBB;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * @author Nukkit Project Team

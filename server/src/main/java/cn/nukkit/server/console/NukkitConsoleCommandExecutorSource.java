@@ -1,7 +1,7 @@
 package cn.nukkit.server.console;
 
 import cn.nukkit.api.Server;
-import cn.nukkit.api.command.ConsoleCommandExecutorSource;
+import cn.nukkit.api.command.source.ConsoleCommandExecutorSource;
 import cn.nukkit.api.message.Message;
 
 public class NukkitConsoleCommandExecutorSource implements ConsoleCommandExecutorSource{

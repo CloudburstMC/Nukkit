@@ -1,6 +1,5 @@
 package cn.nukkit.server.entity.data;
 
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.math.BlockVector3;
 import cn.nukkit.server.math.Vector3;
 

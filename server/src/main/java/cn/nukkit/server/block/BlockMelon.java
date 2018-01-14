@@ -4,7 +4,7 @@ import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemMelon;
 import cn.nukkit.server.item.ItemTool;
 import cn.nukkit.server.item.enchantment.Enchantment;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.util.Random;
 

@@ -5,13 +5,12 @@ import cn.nukkit.api.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.api.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * @author Nukkit Project Team
@@ -70,7 +69,7 @@ public class BlockCactus extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             Block down = down();
             if (down.getId() != SAND && down.getId() != CACTUS) {
                 this.getLevel().useBreakOn(this);
@@ -82,7 +81,7 @@ public class BlockCactus extends BlockTransparent {
                     }
                 }
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             if (down().getId() != CACTUS) {
                 if (this.meta == 0x0F) {
                     for (int y = 1; y < 3; ++y) {

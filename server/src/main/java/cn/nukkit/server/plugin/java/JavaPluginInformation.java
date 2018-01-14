@@ -94,7 +94,7 @@ public class JavaPluginInformation {
         return ImmutableMap.copyOf(descriptionMap);
     }
 
-    public static class JavaCommandDescription {
+    private static class JavaCommandDescription {
         private String description;
         private Collection<String> aliases;
         private String usage;
@@ -103,7 +103,7 @@ public class JavaPluginInformation {
         private String permissionMessage;
     }
 
-    public static class JavaPermissionDescription {
+    static class JavaPermissionDescription {
         private String description;
         @JsonProperty("default")
         private String defaults;

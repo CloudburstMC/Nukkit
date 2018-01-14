@@ -5,9 +5,7 @@ import cn.nukkit.server.Player;
 import cn.nukkit.server.entity.data.IntPositionEntityData;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddPlayerPacket;
-import cn.nukkit.server.network.protocol.RemoveEntityPacket;
-import cn.nukkit.server.utils.Utils;
+import cn.nukkit.server.util.Utils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;

@@ -19,7 +19,7 @@ public interface ChunkLoader {
 
     double getZ();
 
-    Level getLevel();
+    NukkitLevel getLevel();
 
     void onChunkChanged(FullChunk chunk);
 

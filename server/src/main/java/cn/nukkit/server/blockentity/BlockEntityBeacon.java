@@ -93,13 +93,13 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     }
 
     public int getPowerLevel() {
-        return namedTag.getInt("Level");
+        return namedTag.getInt("NukkitLevel");
     }
 
     public void setPowerLevel(int level) {
         int currentLevel = getPowerLevel();
         if (level != currentLevel) {
-            namedTag.putInt("Level", level);
+            namedTag.putInt("NukkitLevel", level);
             chunk.setChanged();
             this.spawnToAll();
         }

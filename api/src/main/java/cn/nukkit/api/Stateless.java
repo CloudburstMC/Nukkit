@@ -1,6 +1,7 @@
 package cn.nukkit.api;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
 
 /**
  * Interface that represents any kind of Player instance whether they be online or offline.
@@ -19,6 +20,13 @@ public interface Stateless {
      */
     @Nonnull
     String getName();
+
+    /**
+     * Get the player's UUID.
+     * @return UUID
+     */
+    @Nonnull
+    UUID getUniqueId();
 
     /**
      * Check if the player has been banned from the server.
@@ -43,16 +51,4 @@ public interface Stateless {
      * @param value
      */
     void setWhitelisted(boolean value);
-
-    /**
-     * The the time at which the player first joined.
-     * @return time
-     */
-    long getFirstPlayed();
-
-    /**
-     * The the time at which the player last joined.
-     * @return time
-     */
-    long getLastPlayed();
 }

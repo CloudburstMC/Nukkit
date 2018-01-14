@@ -2,14 +2,14 @@ package cn.nukkit.server.block;
 
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.generator.object.BasicGenerator;
 import cn.nukkit.server.level.generator.object.tree.*;
 import cn.nukkit.server.level.particle.BoneMealParticle;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.NukkitRandom;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * author: Angelic47
@@ -155,22 +155,22 @@ public class BlockSapling extends BlockFlowable {
     }
 
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
                 this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) { //Growth
+        } else if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) { //Growth
             if (new NukkitRandom().nextRange(1, 7) == 1) {
                 if ((this.meta & 0x08) == 0x08) {
                     ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new NukkitRandom(), this.meta & 0x07);
                 } else {
                     this.meta |= 0x08;
                     this.getLevel().setBlock(this, this, true);
-                    return Level.BLOCK_UPDATE_RANDOM;
+                    return NukkitLevel.BLOCK_UPDATE_RANDOM;
                 }
             } else {
-                return Level.BLOCK_UPDATE_RANDOM;
+                return NukkitLevel.BLOCK_UPDATE_RANDOM;
             }
         }
         return 1;

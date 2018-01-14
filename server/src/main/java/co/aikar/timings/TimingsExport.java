@@ -27,7 +27,7 @@ import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.command.RemoteConsoleCommandSender;
 import cn.nukkit.server.timings.JsonUtil;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;

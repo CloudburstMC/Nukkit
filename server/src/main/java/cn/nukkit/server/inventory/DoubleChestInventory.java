@@ -3,9 +3,7 @@ package cn.nukkit.server.inventory;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.blockentity.BlockEntityChest;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
-import cn.nukkit.server.network.protocol.BlockEventPacket;
-import cn.nukkit.server.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.server.level.NukkitLevel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -116,7 +114,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
             pk1.z = (int) this.left.getHolder().getZ();
             pk1.case1 = 1;
             pk1.case2 = 2;
-            Level level = this.left.getHolder().getLevel();
+            NukkitLevel level = this.left.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_CHEST_OPEN, 1, -1, this.left.getHolder().add(0.5, 0.5, 0.5));
                 level.addChunkPacket((int) this.left.getHolder().getX() >> 4, (int) this.left.getHolder().getZ() >> 4, pk1);
@@ -147,7 +145,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
             pk1.case1 = 1;
             pk1.case2 = 0;
 
-            Level level = this.right.getHolder().getLevel();
+            NukkitLevel level = this.right.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(LevelSoundEventPacket.SOUND_CHEST_CLOSED, 1, -1, this.right.getHolder().add(0.5, 0.5, 0.5));
                 level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk1);

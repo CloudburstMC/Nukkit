@@ -4,7 +4,7 @@ import cn.nukkit.server.block.BlockHopper;
 import cn.nukkit.server.item.ItemMinecartHopper;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.utils.MinecartType;
+import cn.nukkit.server.util.MinecartType;
 
 public class EntityMinecartHopper extends EntityMinecartAbstract {
 

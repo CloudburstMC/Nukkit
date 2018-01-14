@@ -1,7 +1,6 @@
 package cn.nukkit.server.level.sound;
 
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.network.protocol.LevelEventPacket;
 
 /**
  * Created by Pub4Game on 03.07.2016.

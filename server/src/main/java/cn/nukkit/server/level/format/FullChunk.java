@@ -1,7 +1,6 @@
 package cn.nukkit.server.level.format;
 
 import cn.nukkit.server.blockentity.BlockEntity;
-import cn.nukkit.server.entity.Entity;
 
 import java.io.IOException;
 import java.util.Map;

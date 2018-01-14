@@ -3,7 +3,7 @@ package cn.nukkit.server.block;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created on 2016/1/5 by xtypr.

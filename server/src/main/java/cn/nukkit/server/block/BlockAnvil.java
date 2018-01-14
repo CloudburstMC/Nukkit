@@ -5,7 +5,7 @@ import cn.nukkit.server.inventory.AnvilInventory;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemTool;
 import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created by Pub4Game on 27.12.2015.

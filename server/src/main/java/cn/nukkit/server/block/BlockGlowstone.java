@@ -4,7 +4,7 @@ import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemGlowstoneDust;
 import cn.nukkit.server.item.enchantment.Enchantment;
 import cn.nukkit.server.math.MathHelper;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.util.Random;
 

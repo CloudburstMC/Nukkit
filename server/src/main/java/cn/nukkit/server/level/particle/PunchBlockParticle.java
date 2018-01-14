@@ -3,8 +3,6 @@ package cn.nukkit.server.level.particle;
 import cn.nukkit.server.block.Block;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.network.protocol.DataPacket;
-import cn.nukkit.server.network.protocol.LevelEventPacket;
 
 public class PunchBlockParticle extends Particle {
 

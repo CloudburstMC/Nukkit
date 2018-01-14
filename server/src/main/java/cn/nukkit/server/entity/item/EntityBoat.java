@@ -7,7 +7,6 @@ import cn.nukkit.api.event.vehicle.VehicleDestroyEvent;
 import cn.nukkit.api.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.api.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemBoat;
 import cn.nukkit.server.level.Location;
@@ -15,7 +14,6 @@ import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.particle.SmokeParticle;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
 
 /**
  * Created by yescallop on 2016/2/13.

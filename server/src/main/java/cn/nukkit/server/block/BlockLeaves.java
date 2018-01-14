@@ -7,9 +7,9 @@ import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemApple;
 import cn.nukkit.server.item.ItemBlock;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 import java.util.ArrayList;
 
@@ -104,10 +104,10 @@ public class BlockLeaves extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM && (meta & 0b00001100) == 0x00) {
+        if (type == NukkitLevel.BLOCK_UPDATE_RANDOM && (meta & 0b00001100) == 0x00) {
             meta |= 0x08;
             getLevel().setBlock(this, this, false, false);
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             if ((meta & 0b00001100) == 0x08) {
                 meta &= 0x03;
                 ArrayList<String> visited = new ArrayList<>();
@@ -120,7 +120,7 @@ public class BlockLeaves extends BlockTransparent {
                     getLevel().setBlock(this, this, false, false);
                 } else {
                     getLevel().useBreakOn(this);
-                    return Level.BLOCK_UPDATE_NORMAL;
+                    return NukkitLevel.BLOCK_UPDATE_NORMAL;
                 }
             }
         }

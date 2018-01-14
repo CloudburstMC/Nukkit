@@ -1,6 +1,7 @@
 package cn.nukkit.server.item;
 
 import cn.nukkit.api.item.ItemStack;
+import cn.nukkit.api.item.ItemStackBuilder;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
 import com.google.common.base.Preconditions;
@@ -10,7 +11,7 @@ import javax.annotation.Nonnull;
 
 @Nonnull
 @ToString
-public class NukkitItemStackBuilder implements cn.nukkit.api.item.ItemStackBuilder {
+public class NukkitItemStackBuilder implements ItemStackBuilder {
     private ItemType itemType;
     private int amount = 1;
     private Metadata data;

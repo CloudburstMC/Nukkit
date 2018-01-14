@@ -9,8 +9,8 @@ import cn.nukkit.server.command.NukkitCommand;
 import cn.nukkit.server.command.data.CommandParameter;
 import cn.nukkit.server.potion.Effect;
 import cn.nukkit.server.potion.InstantEffect;
-import cn.nukkit.server.utils.ServerException;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.ServerException;
+import cn.nukkit.server.util.TextFormat;
 
 /**
  * Created by Snake1999 and Pub4Game on 2016/1/23.

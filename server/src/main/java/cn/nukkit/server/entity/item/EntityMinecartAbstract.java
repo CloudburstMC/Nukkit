@@ -10,7 +10,6 @@ import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockRail;
 import cn.nukkit.server.block.BlockRailActivator;
 import cn.nukkit.server.block.BlockRailPowered;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.entity.EntityHuman;
 import cn.nukkit.server.entity.EntityLiving;
 import cn.nukkit.server.entity.data.ByteEntityData;
@@ -24,10 +23,9 @@ import cn.nukkit.server.math.MathHelper;
 import cn.nukkit.server.math.NukkitMath;
 import cn.nukkit.server.math.Vector3;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.network.protocol.AddEntityPacket;
-import cn.nukkit.server.utils.MinecartType;
-import cn.nukkit.server.utils.Rail;
-import cn.nukkit.server.utils.Rail.Orientation;
+import cn.nukkit.server.util.MinecartType;
+import cn.nukkit.server.util.Rail;
+import cn.nukkit.server.util.Rail.Orientation;
 
 import java.util.Objects;
 

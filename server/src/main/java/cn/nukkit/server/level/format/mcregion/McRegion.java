@@ -2,7 +2,7 @@ package cn.nukkit.server.level.format.mcregion;
 
 import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.blockentity.BlockEntitySpawnable;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.format.ChunkSection;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.level.format.generic.BaseFullChunk;
@@ -11,9 +11,9 @@ import cn.nukkit.server.level.generator.Generator;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.scheduler.AsyncTask;
-import cn.nukkit.server.utils.Binary;
-import cn.nukkit.server.utils.BinaryStream;
-import cn.nukkit.server.utils.ChunkException;
+import cn.nukkit.server.util.Binary;
+import cn.nukkit.server.util.BinaryStream;
+import cn.nukkit.server.util.ChunkException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,7 +35,7 @@ public class McRegion extends BaseLevelProvider {
 
     protected Map<Long, Chunk> chunks = new HashMap<>();
 
-    public McRegion(Level level, String path) throws IOException {
+    public McRegion(NukkitLevel level, String path) throws IOException {
         super(level, path);
     }
 
@@ -190,7 +190,7 @@ public class McRegion extends BaseLevelProvider {
 
     @Override
     public boolean isChunkLoaded(int x, int z) {
-        return this.chunks.containsKey(Level.chunkHash(x, z));
+        return this.chunks.containsKey(NukkitLevel.chunkHash(x, z));
     }
 
     @Override
@@ -224,7 +224,7 @@ public class McRegion extends BaseLevelProvider {
 
     @Override
     public boolean loadChunk(int x, int z, boolean create) {
-        long index = Level.chunkHash(x, z);
+        long index = NukkitLevel.chunkHash(x, z);
         if (this.chunks.containsKey(index)) {
             return true;
         }
@@ -262,7 +262,7 @@ public class McRegion extends BaseLevelProvider {
 
     @Override
     public boolean unloadChunk(int x, int z, boolean safe) {
-        long index = Level.chunkHash(x, z);
+        long index = NukkitLevel.chunkHash(x, z);
         Chunk chunk = this.chunks.getOrDefault(index, null);
         if (chunk != null && chunk.unload(false, safe)) {
             this.chunks.remove(index);
@@ -298,7 +298,7 @@ public class McRegion extends BaseLevelProvider {
     }
 
     protected RegionLoader getRegion(int x, int z) {
-        long index = Level.chunkHash(x, z);
+        long index = NukkitLevel.chunkHash(x, z);
         return this.regions.getOrDefault(index, null);
     }
 
@@ -309,7 +309,7 @@ public class McRegion extends BaseLevelProvider {
 
     @Override
     public Chunk getChunk(int x, int z, boolean create) {
-        long index = Level.chunkHash(x, z);
+        long index = NukkitLevel.chunkHash(x, z);
         if (this.chunks.containsKey(index)) {
             return this.chunks.get(index);
         } else {
@@ -329,7 +329,7 @@ public class McRegion extends BaseLevelProvider {
         this.loadRegion(regionX, regionZ);
         chunk.setX(chunkX);
         chunk.setZ(chunkZ);
-        long index = Level.chunkHash(chunkX, chunkZ);
+        long index = NukkitLevel.chunkHash(chunkX, chunkZ);
         if (this.chunks.containsKey(index) && !this.chunks.get(index).equals(chunk)) {
             this.unloadChunk(chunkX, chunkZ, false);
         }
@@ -353,7 +353,7 @@ public class McRegion extends BaseLevelProvider {
     }
 
     protected void loadRegion(int x, int z) {
-        long index = Level.chunkHash(x, z);
+        long index = NukkitLevel.chunkHash(x, z);
         if (!this.regions.containsKey(index)) {
             this.regions.put(index, new RegionLoader(this, x, z));
         }

@@ -11,7 +11,7 @@ import cn.nukkit.server.command.data.CommandData;
 import cn.nukkit.server.command.data.CommandDataVersions;
 import cn.nukkit.server.command.data.CommandOverload;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 

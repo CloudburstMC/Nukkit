@@ -4,8 +4,8 @@ import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.level.Level;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.level.NukkitLevel;
+import cn.nukkit.server.util.TextFormat;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -47,7 +47,7 @@ public class TimeCommand extends VanillaCommand {
 
                 return true;
             }
-            for (Level level : sender.getServer().getLevels().values()) {
+            for (NukkitLevel level : sender.getServer().getLevels().values()) {
                 level.checkTime();
                 level.startTime();
                 level.checkTime();
@@ -60,7 +60,7 @@ public class TimeCommand extends VanillaCommand {
 
                 return true;
             }
-            for (Level level : sender.getServer().getLevels().values()) {
+            for (NukkitLevel level : sender.getServer().getLevels().values()) {
                 level.checkTime();
                 level.stopTime();
                 level.checkTime();
@@ -73,7 +73,7 @@ public class TimeCommand extends VanillaCommand {
 
                 return true;
             }
-            Level level;
+            NukkitLevel level;
             if (sender instanceof Player) {
                 level = ((Player) sender).getLevel();
             } else {
@@ -99,9 +99,9 @@ public class TimeCommand extends VanillaCommand {
 
             int value;
             if ("day".equals(args[1])) {
-                value = Level.TIME_DAY;
+                value = NukkitLevel.TIME_DAY;
             } else if ("night".equals(args[1])) {
-                value = Level.TIME_NIGHT;
+                value = NukkitLevel.TIME_NIGHT;
             } else {
                 try {
                     value = Math.max(0, Integer.parseInt(args[1]));
@@ -111,7 +111,7 @@ public class TimeCommand extends VanillaCommand {
                 }
             }
 
-            for (Level level : sender.getServer().getLevels().values()) {
+            for (NukkitLevel level : sender.getServer().getLevels().values()) {
                 level.checkTime();
                 level.setTime(value);
                 level.checkTime();
@@ -132,7 +132,7 @@ public class TimeCommand extends VanillaCommand {
                 return true;
             }
 
-            for (Level level : sender.getServer().getLevels().values()) {
+            for (NukkitLevel level : sender.getServer().getLevels().values()) {
                 level.checkTime();
                 level.setTime(level.getTime() + value);
                 level.checkTime();

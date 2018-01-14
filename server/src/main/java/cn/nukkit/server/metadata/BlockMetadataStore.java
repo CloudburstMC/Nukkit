@@ -1,7 +1,7 @@
 package cn.nukkit.server.metadata;
 
 import cn.nukkit.server.block.Block;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ import java.util.List;
  * Nukkit Project
  */
 public class BlockMetadataStore extends MetadataStore {
-    private final Level owningLevel;
+    private final NukkitLevel owningLevel;
 
-    public BlockMetadataStore(Level owningLevel) {
+    public BlockMetadataStore(NukkitLevel owningLevel) {
         this.owningLevel = owningLevel;
     }
 

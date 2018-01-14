@@ -2,8 +2,8 @@ package cn.nukkit.server.block;
 
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemTool;
-import cn.nukkit.server.level.Level;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.level.NukkitLevel;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -57,10 +57,10 @@ public class BlockIce extends BlockTransparent {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12) {
                 this.getLevel().setBlock(this, new BlockWater(), true);
-                return Level.BLOCK_UPDATE_NORMAL;
+                return NukkitLevel.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

@@ -7,7 +7,7 @@ import cn.nukkit.server.block.Block;
 import cn.nukkit.server.block.BlockAir;
 import cn.nukkit.server.block.BlockLiquid;
 import cn.nukkit.server.block.BlockWater;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.BlockFace.Plane;
 
@@ -66,7 +66,7 @@ public class ItemBucket extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(NukkitLevel level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         Block targetBlock = Block.get(this.meta);
 
         if (targetBlock instanceof BlockAir) {

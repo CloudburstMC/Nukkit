@@ -1,6 +1,9 @@
 package cn.nukkit.server;
 
-import cn.nukkit.server.utils.ServerKiller;
+import cn.nukkit.api.util.SemVer;
+import cn.nukkit.server.util.ServerKiller;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.Native;
 import io.netty.util.ResourceLeakDetector;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -10,38 +13,29 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
-/**
- * `_   _       _    _    _ _
- * | \ | |     | |  | |  (_) |
- * |  \| |_   _| | _| | ___| |_
- * | . ` | | | | |/ / |/ / | __|
- * | |\  | |_| |   <|   <| | |_
- * |_| \_|\__,_|_|\_\_|\_\_|\__|
- */
-
-/**
- * Nukkit启动类，包含{@code main}函数。<br>
- * The launcher class of Nukkit, including the {@code main} function.
- *
- * @author MagicDroidX(code) @ Nukkit Project
- * @author 粉鞋大妈(javadoc) @ Nukkit Project
- * @since Nukkit 1.0 | Nukkit API 1.0.0
- */
 @Log4j2
 public class Bootstrap {
-    private final static String PATH = System.getProperty("user.dir") + File.separator;
     public static final long START_TIME = System.currentTimeMillis();
-    private static boolean ANSI = true;
-    private static boolean shortTitle = false;
+    private static final SemVer REUSEPORT_MINIMUM = new SemVer(3, 9, 0);
 
     public static void main(String... args) {
-        // prefer IPv4
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.ADVANCED);
-        System.setProperty("java.net.preferIPv4Stack", "true");
+        System.setProperty("java.net.preferIPv4Stack", "true"); // IPv4 over v6
+
+        boolean ansiEnabled = true;
+        boolean shortTitle = false;
+        boolean canReusePort = false;
+        Path path = Paths.get(System.getProperty("user.dir"));
+
+        // Check for SO_REUSEPORT compatible kernel for multithreaded netty binding.
+        Optional<SemVer> optionalVer = kernelVersion();
+        if (optionalVer.isPresent()) {
+            canReusePort = REUSEPORT_MINIMUM.isCompatiblePatch(optionalVer.get());
+        }
 
         //Shorter title for windows 8/2012
         String osName = System.getProperty("os.name").toLowerCase();
@@ -50,13 +44,14 @@ public class Bootstrap {
                 shortTitle = true;
             }
         }
+
         OptionParser parser = new OptionParser(){{
             accepts("loglevel").withRequiredArg().ofType(String.class);
             accepts("disable-ansi");
             accepts("data-path").withRequiredArg().ofType(String.class);
             accepts("plugin-path").withRequiredArg().ofType(String.class);
         }};
-
+        // Get arguments
         OptionSet options = parser.parse(args);
 
         Level logLevel = Level.INFO;
@@ -71,14 +66,14 @@ public class Bootstrap {
         ctx.updateLoggers();
 
         if (options.has("disable-ansi")) {
-            ANSI = false;
+            ansiEnabled = false;
         }
 
         Path dataPath;
         if (options.has("data-path")) {
             dataPath = Paths.get((String) options.valueOf("data-path"));
         } else {
-            dataPath = Paths.get(PATH);
+            dataPath = path;
         }
 
         Path pluginPath;
@@ -90,7 +85,7 @@ public class Bootstrap {
 
         log.debug("Using log level {}", logLevel);
         log.info("Nukkit is loading...");
-        NukkitServer server = new NukkitServer(Paths.get(PATH), dataPath, pluginPath, ANSI, shortTitle);
+        NukkitServer server = new NukkitServer(path, dataPath, pluginPath, ansiEnabled, shortTitle, canReusePort);
         try {
             server.boot();
         } catch (Exception e) {
@@ -114,5 +109,18 @@ public class Bootstrap {
         killer.start();
 
         log.info("Goodbye!");
+    }
+
+    private static Optional<SemVer> kernelVersion(){
+        if (Epoll.isAvailable()) {
+            String kernelVersion = Native.KERNEL_VERSION;
+            int index = kernelVersion.indexOf('-');
+            if (index > -1) {
+                kernelVersion = kernelVersion.substring(0, index);
+            }
+            return Optional.of(SemVer.fromString(kernelVersion));
+        } else {
+            return Optional.empty();
+        }
     }
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.entity.item.EntityFallingBlock;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.DoubleTag;
 import cn.nukkit.server.nbt.tag.FloatTag;
@@ -19,7 +19,7 @@ public abstract class BlockFallable extends BlockSolid {
     }
 
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             Block down = this.down();
             if (down.getId() == AIR || down instanceof BlockLiquid) {
                 this.level.setBlock(this, Block.get(Block.AIR), true, true);

@@ -2,7 +2,7 @@ package cn.nukkit.server.entity.item;
 
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.utils.MinecartType;
+import cn.nukkit.server.util.MinecartType;
 
 /**
  * Created by Snake1999 on 2016/1/30.

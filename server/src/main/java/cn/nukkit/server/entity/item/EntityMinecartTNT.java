@@ -7,7 +7,7 @@ import cn.nukkit.server.item.ItemMinecartTNT;
 import cn.nukkit.server.level.Explosion;
 import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.tag.CompoundTag;
-import cn.nukkit.server.utils.MinecartType;
+import cn.nukkit.server.util.MinecartType;
 
 import java.util.Random;
 

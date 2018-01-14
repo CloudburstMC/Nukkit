@@ -1,6 +1,6 @@
 package cn.nukkit.server.network.protocol;
 
-import cn.nukkit.server.utils.Utils;
+import cn.nukkit.server.util.Utils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

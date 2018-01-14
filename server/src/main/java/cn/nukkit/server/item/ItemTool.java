@@ -1,7 +1,6 @@
 package cn.nukkit.server.item;
 
 import cn.nukkit.server.block.Block;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.enchantment.Enchantment;
 import cn.nukkit.server.nbt.tag.ByteTag;
 import cn.nukkit.server.nbt.tag.Tag;

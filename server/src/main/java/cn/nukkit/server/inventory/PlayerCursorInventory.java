@@ -1,8 +1,7 @@
 package cn.nukkit.server.inventory;
 
 import cn.nukkit.server.Player;
-import cn.nukkit.server.network.protocol.InventorySlotPacket;
-import cn.nukkit.server.network.protocol.types.ContainerIds;
+import cn.nukkit.server.network.minecraft.data.ContainerIds;
 
 /**
  * @author CreeperFace

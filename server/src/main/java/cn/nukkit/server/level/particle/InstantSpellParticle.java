@@ -1,7 +1,7 @@
 package cn.nukkit.server.level.particle;
 
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.utils.BlockColor;
+import cn.nukkit.server.util.BlockColor;
 
 /**
  * Created on 2016/1/4 by xtypr.

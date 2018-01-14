@@ -2,9 +2,8 @@ checkout:
   post:
     - git submodule sync
     - git submodule update --init
-    - mvn clean
-    - mvn package
-    - cp -R ./target/nukkit-1.0-SNAPSHOT.jar $CIRCLE_ARTIFACTS
+    - mvn clean package
+    - cp -R ./server/target/nukkit-1.0-SNAPSHOT.jar $CIRCLE_ARTIFACTS
 
 machine:
   java:

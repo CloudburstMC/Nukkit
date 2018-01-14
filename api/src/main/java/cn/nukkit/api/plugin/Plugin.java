@@ -5,8 +5,8 @@ import cn.nukkit.api.command.CommandExecutor;
 import cn.nukkit.api.util.Config;
 import org.slf4j.Logger;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 /**
  * 所有Nukkit插件必须实现的接口。<br>
@@ -94,7 +94,7 @@ public interface Plugin extends CommandExecutor {
      * @return 这个插件的数据文件夹。<br>The data folder of this plugin.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
-    File getDataFolder();
+    Path getDataFolder();
 
     /**
      * 返回描述这个Nukkit插件的{@link PluginDescription}对象。<br>
@@ -117,9 +117,9 @@ public interface Plugin extends CommandExecutor {
      * For jar-packed Nukkit plugins, Nukkit will look for your resource file in the resources folder,
      * which is normally named 'resources' and placed in plugin jar file.</p>
      * <p>
-     * <p>当你需要把一个文件的所有内容读取为字符串，可以使用{@link cn.nukkit.server.utils.Utils#readFile}函数，
+     * <p>当你需要把一个文件的所有内容读取为字符串，可以使用{@link cn.nukkit.server.util.Utils#readFile}函数，
      * 来从{@code InputStream}读取所有内容为字符串。例如：<br>
-     * When you need to read the whole file content as a String, you can use {@link cn.nukkit.server.utils.Utils#readFile}
+     * When you need to read the whole file content as a String, you can use {@link cn.nukkit.server.util.Utils#readFile}
      * to read from a {@code InputStream} and get whole content as a String. For example:</p>
      * <p><code>String string = Utils.readFile(this.getResource("string.txt"));</code></p>
      *
@@ -257,6 +257,8 @@ public interface Plugin extends CommandExecutor {
      */
     String getName();
 
+    String getVersion();
+
     /**
      * 返回这个插件的日志记录器为{@link cn.nukkit.api.plugin.PluginLogger}对象。<br>
      * Returns the logger of this plugin as a {@link cn.nukkit.api.plugin.PluginLogger} object.
@@ -268,5 +270,7 @@ public interface Plugin extends CommandExecutor {
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     Logger getLogger();
+
+    PluginLoader getPluginLoader();
 }
 

@@ -3,6 +3,7 @@ package cn.nukkit.api.plugin;
 import cn.nukkit.api.Server;
 import cn.nukkit.api.command.Command;
 import cn.nukkit.api.command.CommandExecutorSource;
+import cn.nukkit.api.command.PluginCommand;
 import cn.nukkit.api.util.Config;
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 
 public abstract class JavaPlugin implements Plugin {
     private PluginLoader loader;
@@ -21,8 +23,9 @@ public abstract class JavaPlugin implements Plugin {
     private Config config;
     private Path configPath;
     private Logger logger;
+    private Collection<PluginCommand> pluginCommands;
 
-    public final void initPlugin(PluginLoader loader, Server server, PluginDescription description, Path dataFolder,  Logger logger) {
+    public final void initPlugin(PluginLoader loader, Server server, PluginDescription description, Path dataFolder, Logger logger, Collection<PluginCommand> pluginCommands) {
         if (!initialized) {
             initialized = true;
             this.loader = loader;
@@ -32,6 +35,7 @@ public abstract class JavaPlugin implements Plugin {
             this.logger = logger;
             this.configPath = dataFolder.resolve("config.yml");
             this.config = server.getConfigBuilder().file(configPath.toFile()).build();
+            this.pluginCommands = pluginCommands;
         }
     }
 
@@ -45,6 +49,14 @@ public abstract class JavaPlugin implements Plugin {
 
     public final PluginDescription getPluginDescription() {
         return description;
+    }
+
+    public final String getVersion() {
+        return description.getVersion();
+    }
+
+    public final String getName() {
+        return description.getName();
     }
 
     public final Path getDataFolder() {
@@ -122,11 +134,11 @@ public abstract class JavaPlugin implements Plugin {
 
 
     @Override
-    public void saveResource(String filename, String outputName, boolean replace) {
+    public boolean saveResource(String filename, String outputName, boolean replace) {
         Preconditions.checkArgument(filename != null && outputName != null, "Filename can not be null!");
         Preconditions.checkArgument(filename.trim().length() != 0 && outputName.trim().length() != 0, "Filename can not be empty!");
 
-        File out = new File(dataFolder, outputName);
+        File out = new File(dataFolder.toFile(), outputName);
         File outDir = out.getParentFile();
         InputStream resource = getResource(filename);
         if (resource == null) {
@@ -146,12 +158,14 @@ public abstract class JavaPlugin implements Plugin {
                 }
                 outStream.close();
                 resource.close();
+                return true;
             } catch (IOException e) {
                 logger.error(e.getLocalizedMessage());
             }
         } else {
             logger.warn("Could not save " + out.getName() + " to " + out + " because " + out.getName() + " already exists.");
         }
+        return false;
     }
 
     @Override

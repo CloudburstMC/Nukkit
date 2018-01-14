@@ -1,11 +1,12 @@
 package cn.nukkit.api.plugin;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface PluginManager {
 
 
-    Collection<PluginContainer> getAllPlugins();
+    Collection<Plugin> getAllPlugins();
 
     /**
      * Checks if the given plugin is loaded and returns it when applicable
@@ -15,7 +16,7 @@ public interface PluginManager {
      * @param name Name of the plugin to check
      * @return Plugin if it exists, otherwise null
      */
-    Plugin getPlugin(String name);
+    Optional<Plugin> getPlugin(String name);
 
     /**
      * Checks if the given plugin is enabled or not

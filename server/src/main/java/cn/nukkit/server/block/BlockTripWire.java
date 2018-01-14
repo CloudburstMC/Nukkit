@@ -1,10 +1,9 @@
 package cn.nukkit.server.block;
 
 import cn.nukkit.server.Player;
-import cn.nukkit.server.entity.Entity;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemString;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.AxisAlignedBB;
 import cn.nukkit.server.math.BlockFace;
 
@@ -130,7 +129,7 @@ public class BlockTripWire extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED) {
             if (!isPowered()) {
                 return type;
             }

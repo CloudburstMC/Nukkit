@@ -5,7 +5,7 @@ import cn.nukkit.server.blockentity.BlockEntity;
 import cn.nukkit.server.blockentity.BlockEntityComparator;
 import cn.nukkit.server.item.Item;
 import cn.nukkit.server.item.ItemRedstoneComparator;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.sound.ClickSound;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.nbt.tag.CompoundTag;
@@ -127,7 +127,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED) {
             this.onChange();
             return type;
         }
@@ -171,7 +171,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                     .putInt("z", (int) this.z);
             new BlockEntityComparator(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
-            onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+            onUpdate(NukkitLevel.BLOCK_UPDATE_REDSTONE);
             return true;
         }
 

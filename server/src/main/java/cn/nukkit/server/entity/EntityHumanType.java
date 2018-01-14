@@ -19,7 +19,7 @@ import cn.nukkit.server.nbt.tag.ListTag;
 
 import java.util.Random;
 
-public abstract class EntityHumanType extends EntityCreature implements InventoryHolder {
+public abstract class EntityHumanType extends EntityLiving implements InventoryHolder {
 
     protected PlayerInventory inventory;
     protected PlayerEnderChestInventory enderChestInventory;

@@ -4,7 +4,7 @@ import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.command.Command;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 
 /**
  * author: Angelic47
@@ -35,7 +35,7 @@ public class WeatherCommand extends VanillaCommand {
         }
 
         String weather = args[0];
-        Level level;
+        NukkitLevel level;
         int seconds;
         if (args.length > 1) {
             try {

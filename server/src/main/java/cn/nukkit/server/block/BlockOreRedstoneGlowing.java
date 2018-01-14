@@ -1,6 +1,6 @@
 package cn.nukkit.server.block;
 
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 
 //和pm源码有点出入，这里参考了wiki
 
@@ -35,10 +35,10 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED || type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED || type == NukkitLevel.BLOCK_UPDATE_RANDOM) {
             this.getLevel().setBlock(this, new BlockOreRedstone(this.meta), false, false);
 
-            return Level.BLOCK_UPDATE_WEAK;
+            return NukkitLevel.BLOCK_UPDATE_WEAK;
         }
 
         return 0;

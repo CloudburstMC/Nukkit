@@ -16,7 +16,6 @@ import cn.nukkit.server.level.format.FullChunk;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.ListTag;
-import cn.nukkit.server.network.protocol.ContainerSetDataPacket;
 
 import java.util.HashSet;
 

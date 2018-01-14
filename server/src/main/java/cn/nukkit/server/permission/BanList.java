@@ -1,6 +1,6 @@
 package cn.nukkit.server.permission;
 
-import cn.nukkit.server.utils.Utils;
+import cn.nukkit.server.util.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;

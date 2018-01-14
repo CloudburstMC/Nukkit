@@ -1,7 +1,5 @@
 package cn.nukkit.server.metadata;
 
-import cn.nukkit.server.entity.Entity;
-
 /**
  * author: MagicDroidX
  * Nukkit Project

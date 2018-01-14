@@ -3,10 +3,9 @@ package cn.nukkit.server.block;
 import cn.nukkit.api.event.block.BlockRedstoneEvent;
 import cn.nukkit.server.Player;
 import cn.nukkit.server.item.Item;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.math.BlockFace;
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.network.protocol.LevelSoundEventPacket;
 
 /**
  * @author CreeperFace
@@ -37,13 +36,13 @@ public class BlockTripWireHook extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == NukkitLevel.BLOCK_UPDATE_NORMAL) {
             if (!this.getSide(this.getFacing().getOpposite()).isNormalBlock()) {
                 this.level.useBreakOn(this);
             }
 
             return type;
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        } else if (type == NukkitLevel.BLOCK_UPDATE_SCHEDULED) {
             this.calculateState(false, true, -1, null);
             return type;
         }

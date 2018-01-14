@@ -1,64 +1,40 @@
 package cn.nukkit.server.nbt.tag;
 
-import cn.nukkit.server.nbt.stream.NBTInputStream;
-import cn.nukkit.server.nbt.stream.NBTOutputStream;
+import java.util.Objects;
 
-import java.io.IOException;
+public class FloatTag extends Tag<Float> {
+    private final float value;
 
-public class FloatTag extends NumberTag<Float> {
-    public float data;
-
-    @Override
-    public Float getData() {
-        return data;
-    }
-
-    @Override
-    public void setData(Float data) {
-        this.data = data == null ? 0 : data;
-    }
-
-    public FloatTag(String name) {
+    public FloatTag(String name, float value) {
         super(name);
+        this.value = value;
     }
 
-    public FloatTag(String name, float data) {
-        super(name);
-        this.data = data;
-    }
-
-    @Override
-    void write(NBTOutputStream dos) throws IOException {
-        dos.writeFloat(data);
+    public float getPrimitiveValue() {
+        return value;
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-        data = dis.readFloat();
+    public Float getValue() {
+        return value;
     }
 
     @Override
-    public byte getId() {
-        return TAG_Float;
+    public int hashCode() {
+        return Objects.hash(getName(), value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FloatTag that = (FloatTag) o;
+        return value == that.value &&
+                Objects.equals(getName(), that.getName());
     }
 
     @Override
     public String toString() {
-        return "FloatTag " + this.getName() + " (data: " + data + ")";
+        return "TAG_Float" + super.toString() + value;
     }
-
-    @Override
-    public Tag copy() {
-        return new FloatTag(getName(), data);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            FloatTag o = (FloatTag) obj;
-            return data == o.data;
-        }
-        return false;
-    }
-
 }

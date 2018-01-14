@@ -1,6 +1,6 @@
 package cn.nukkit.api;
 
-import cn.nukkit.api.command.ConsoleCommandExecutorSource;
+import cn.nukkit.api.command.source.ConsoleCommandExecutorSource;
 import cn.nukkit.api.event.EventManager;
 import cn.nukkit.api.item.ItemStackBuilder;
 import cn.nukkit.api.permission.PermissionManager;
@@ -8,6 +8,7 @@ import cn.nukkit.api.plugin.PluginManager;
 import cn.nukkit.api.scheduler.NukkitScheduler;
 import cn.nukkit.api.util.Config;
 import cn.nukkit.api.util.ConfigBuilder;
+import cn.nukkit.api.util.SemVer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;
@@ -23,13 +24,13 @@ public interface Server {
     String getName();
 
     @Nonnull
-    String getVersion();
+    SemVer getMinecraftVersion();
 
     @Nonnull
-    String getApiVersion();
+    SemVer getApiVersion();
 
     @Nonnull
-    String getNukkitVersion();
+    SemVer getNukkitVersion();
 
     @Nonnull
     EventManager getEventManager();

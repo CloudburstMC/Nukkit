@@ -1,7 +1,6 @@
 package cn.nukkit.server.level.particle;
 
 import cn.nukkit.server.math.Vector3;
-import cn.nukkit.server.network.protocol.DataPacket;
 
 /**
  * author: MagicDroidX

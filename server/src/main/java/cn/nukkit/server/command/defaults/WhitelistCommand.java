@@ -3,7 +3,7 @@ package cn.nukkit.server.command.defaults;
 import cn.nukkit.api.message.TranslatedMessage;
 import cn.nukkit.server.command.Command;
 import cn.nukkit.server.command.data.CommandParameter;
-import cn.nukkit.server.utils.TextFormat;
+import cn.nukkit.server.util.TextFormat;
 
 /**
  * Created on 2015/11/12 by xtypr.

@@ -14,7 +14,7 @@ public class QueryUtil {
         if (array != null) {
             buf.writeBytes(array);
         }
-        buf.writeByte((byte) 0x00);
+        buf.writeByte(0); // Null byte
     }
 
     public static String readNullTerminatedString(ByteBuf in) {
