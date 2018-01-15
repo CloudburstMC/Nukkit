@@ -151,7 +151,7 @@ public abstract class Command {
         }
 
         if (this.permissionMessage == null) {
-            target.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.notFound", this.name));
+            target.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", this.name));
         } else if (!this.permissionMessage.equals("")) {
             target.sendMessage(this.permissionMessage.replace("<permission>", this.permission));
         }

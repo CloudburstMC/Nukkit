@@ -17,8 +17,8 @@ public interface ProtocolInfo {
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(140, 141, 150, CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.2.7";
-    String MINECRAFT_VERSION_NETWORK = "1.2.7";
+    String MINECRAFT_VERSION = "v1.2.8";
+    String MINECRAFT_VERSION_NETWORK = "1.2.8";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
