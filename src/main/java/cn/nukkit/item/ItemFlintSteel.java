@@ -32,6 +32,11 @@ public class ItemFlintSteel extends ItemTool {
     public boolean canBeActivated() {
         return true;
     }
+    
+    @Override
+    public boolean isFlintAndSteal() {
+        return true;
+    }
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {

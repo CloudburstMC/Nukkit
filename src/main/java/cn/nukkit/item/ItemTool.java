@@ -58,23 +58,13 @@ public abstract class ItemTool extends Item {
 
     @Override
     public boolean useOn(Block block) {
-        if (this.isUnbreakable() || !canReduceDamage()) {
+        if (this.isUnbreakable()) {
             return true;
         }
-
-        if (block.getToolType() == ItemTool.TYPE_PICKAXE && this.isPickaxe() ||
-                block.getToolType() == ItemTool.TYPE_SHOVEL && this.isShovel() ||
-                block.getToolType() == ItemTool.TYPE_AXE && this.isAxe() ||
-                block.getToolType() == ItemTool.TYPE_SWORD && this.isSword() ||
-                block.getToolType() == ItemTool.SHEARS && this.isShears()
-                ) {
+        if (this.isTool()) {
             this.meta++;
         } else if (!this.isShears() && block.getBreakTime(this) > 0) {
             this.meta += 2;
-        } else if (this.isHoe()) {
-            if (block.getId() == GRASS || block.getId() == DIRT) {
-                this.meta++;
-            }
         } else {
             this.meta++;
         }
@@ -83,7 +73,7 @@ public abstract class ItemTool extends Item {
 
     @Override
     public boolean useOn(Entity entity) {
-        if (this.isUnbreakable() || !canReduceDamage()) {
+        if (this.isUnbreakable()) {
             return true;
         }
 
@@ -94,15 +84,6 @@ public abstract class ItemTool extends Item {
         }
 
         return true;
-    }
-
-    private boolean canReduceDamage() {
-        if (!hasEnchantments()) {
-            return true;
-        }
-
-        Enchantment durability = getEnchantment(Enchantment.ID_DURABILITY);
-        return durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100);
     }
 
     @Override
@@ -139,6 +120,11 @@ public abstract class ItemTool extends Item {
     @Override
     public boolean isShears() {
         return (this.id == SHEARS);
+    }
+
+    @Override
+    public boolean isFlintAndSteal() {
+        return (this.id == FLINT_AND_STEEL);
     }
 
     @Override
