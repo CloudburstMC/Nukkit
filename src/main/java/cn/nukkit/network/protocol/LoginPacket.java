@@ -41,6 +41,7 @@ public class LoginPacket extends DataPacket {
         if (protocol >= 0xffff) {
             this.offset -= 6;
             this.protocol = this.getInt();
+            this.offset += 1;
         }
         this.setBuffer(this.getByteArray(), 0);
         decodeChainData();
