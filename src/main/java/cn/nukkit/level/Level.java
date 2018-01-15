@@ -2362,19 +2362,31 @@ public class Level implements ChunkManager, Metadatable {
 
             Map<Long, BlockEntity> oldBlockEntities = oldChunk != null ? oldChunk.getBlockEntities() : new HashMap<>();
 
-            for (Entity entity : oldEntities.values()) {
-                chunk.addEntity(entity);
-                if (oldChunk != null) {
-                    oldChunk.removeEntity(entity);
-                    entity.chunk = chunk;
+            if (!oldEntities.isEmpty()) {
+                Iterator<Map.Entry<Long, Entity>> iter = oldEntities.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry<Long, Entity> entry = iter.next();
+                    Entity entity = entry.getValue();
+                    chunk.addEntity(entity);
+                    if (oldChunk != null) {
+                        iter.remove();
+                        oldChunk.removeEntity(entity);
+                        entity.chunk = chunk;
+                    }
                 }
             }
 
-            for (BlockEntity blockEntity : oldBlockEntities.values()) {
-                chunk.addBlockEntity(blockEntity);
-                if (oldChunk != null) {
-                    oldChunk.removeBlockEntity(blockEntity);
-                    blockEntity.chunk = chunk;
+            if (!oldEntities.isEmpty()) {
+                Iterator<Map.Entry<Long, BlockEntity>> iter = oldBlockEntities.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry<Long, BlockEntity> entry = iter.next();
+                    BlockEntity blockEntity = entry.getValue();
+                    chunk.addBlockEntity(blockEntity);
+                    if (oldChunk != null) {
+                        iter.remove();
+                        oldChunk.removeBlockEntity(blockEntity);
+                        blockEntity.chunk = chunk;
+                    }
                 }
             }
 
