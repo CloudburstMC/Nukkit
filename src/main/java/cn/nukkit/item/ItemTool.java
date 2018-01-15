@@ -96,9 +96,9 @@ public abstract class ItemTool extends Item {
         return true;
     }
 
-    private boolean canReduceDamage() {
+    protected boolean canReduceDamage() {
         if (!hasEnchantments()) {
-            return true;
+            return false;
         }
 
         Enchantment durability = getEnchantment(Enchantment.ID_DURABILITY);
