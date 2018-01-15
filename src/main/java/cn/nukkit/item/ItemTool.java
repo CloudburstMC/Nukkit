@@ -78,6 +78,10 @@ public abstract class ItemTool extends Item {
             if (block.getId() == GRASS || block.getId() == DIRT) {
                 this.meta++;
             }
+        } else if (this.isFlintAndSteal()) {
+            if (block.isNormalBlock()) {
+                this.meta++;
+            }
         } else {
             this.meta++;
         }
@@ -138,6 +142,11 @@ public abstract class ItemTool extends Item {
     @Override
     public boolean isShears() {
         return (this.id == SHEARS);
+    }
+
+    @Override
+    public boolean isFlintAndSteal() {
+        return (this.id == FLINT_AND_STEEL);
     }
 
     @Override

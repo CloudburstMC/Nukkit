@@ -1404,6 +1404,10 @@ public class Item implements Cloneable {
         return false;
     }
 
+    public boolean isFlintAndSteal() {
+        return false;
+    }
+
     public int getMaxDurability() {
         return -1;
     }
