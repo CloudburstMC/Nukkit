@@ -6,8 +6,8 @@ import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeBlockPosition;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeUniqueEntityId;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3i;
 
 @Data
 public class ContainerOpenPacket implements MinecraftPacket {
@@ -20,7 +20,7 @@ public class ContainerOpenPacket implements MinecraftPacket {
     public void encode(ByteBuf buffer) {
         buffer.writeByte(windowId);
         buffer.writeByte(type);
-        writeBlockPosition(buffer, blockPosition);
+        writeVector3i(buffer, blockPosition);
         writeUniqueEntityId(buffer, uniqueEntityId);
     }
 

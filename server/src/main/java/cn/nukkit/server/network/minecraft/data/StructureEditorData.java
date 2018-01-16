@@ -9,9 +9,9 @@ public class StructureEditorData {
     private String metadata;
     private Vector3i structureOffset;
     private Vector3i structureSize;
-    private boolean includeEntities;
+    private boolean includingEntities;
     private boolean ignoringBlocks;
-    private boolean includePlayers;
+    private boolean includingPlayers;
     private boolean showingAir;
     private StructureSettings structureSettings;
 }

@@ -6,7 +6,7 @@ import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.readBlockPosition;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.readVector3i;
 
 @Data
 public class BlockPickRequestPacket implements MinecraftPacket {
@@ -21,7 +21,7 @@ public class BlockPickRequestPacket implements MinecraftPacket {
 
     @Override
     public void decode(ByteBuf buffer) {
-        blockPosition = readBlockPosition(buffer);
+        blockPosition = readVector3i(buffer);
         addUserData = buffer.readBoolean();
         selectedSlot = buffer.readByte();
     }

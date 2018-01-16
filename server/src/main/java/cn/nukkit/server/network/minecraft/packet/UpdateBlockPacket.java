@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static cn.nukkit.server.nbt.util.VarInt.writeUnsignedInt;
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeBlockPosition;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3i;
 
 @Data
 public class UpdateBlockPacket implements MinecraftPacket {
@@ -24,7 +24,7 @@ public class UpdateBlockPacket implements MinecraftPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeBlockPosition(buffer, blockPosition);
+        writeVector3i(buffer, blockPosition);
         writeUnsignedInt(buffer, blockId);
         int flagValue = 0;
         for (Flag flag: flags) {

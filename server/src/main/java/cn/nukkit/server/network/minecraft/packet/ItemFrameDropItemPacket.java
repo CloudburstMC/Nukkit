@@ -6,8 +6,8 @@ import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.readBlockPosition;
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeBlockPosition;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.readVector3i;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3i;
 
 @Data
 public class ItemFrameDropItemPacket implements MinecraftPacket {
@@ -15,12 +15,12 @@ public class ItemFrameDropItemPacket implements MinecraftPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeBlockPosition(buffer, blockPosition);
+        writeVector3i(buffer, blockPosition);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
-        blockPosition = readBlockPosition(buffer);
+        blockPosition = readVector3i(buffer);
     }
 
     @Override

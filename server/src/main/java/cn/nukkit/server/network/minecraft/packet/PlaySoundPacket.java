@@ -7,8 +7,8 @@ import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeBlockPosition;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeString;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3i;
 
 @Data
 public class PlaySoundPacket implements MinecraftPacket {
@@ -20,7 +20,7 @@ public class PlaySoundPacket implements MinecraftPacket {
     @Override
     public void encode(ByteBuf buffer) {
         writeString(buffer, sound.getName());
-        writeBlockPosition(buffer, blockPosition);
+        writeVector3i(buffer, blockPosition);
         buffer.writeFloatLE(volume);
         buffer.writeFloatLE(pitch);
     }

@@ -31,7 +31,7 @@ public class CommandBlockUpdatePacket implements MinecraftPacket {
     public void decode(ByteBuf buffer) {
         block = buffer.readBoolean();
         if (block) {
-            blockPosition = readBlockPosition(buffer);
+            blockPosition = readVector3i(buffer);
             commandBlockMode = readUnsignedInt(buffer);
             redstoneMode = buffer.readBoolean();
             conditional = buffer.readBoolean();

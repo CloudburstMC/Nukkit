@@ -21,7 +21,7 @@ public class AddPaintingPacket implements MinecraftPacket {
     public void encode(ByteBuf buffer) {
         writeUniqueEntityId(buffer, uniqueEntityId);
         writeRuntimeEntityId(buffer, runtimeEntityId);
-        writeBlockPosition(buffer, blockPosition);
+        writeVector3i(buffer, blockPosition);
         VarInt.writeSignedInt(buffer, direction);
         writeString(buffer, title);
     }

@@ -7,7 +7,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
 import static cn.nukkit.server.nbt.util.VarInt.writeSignedInt;
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeBlockPosition;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3i;
 
 @Data
 public class BlockEventPacket implements MinecraftPacket {
@@ -17,7 +17,7 @@ public class BlockEventPacket implements MinecraftPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeBlockPosition(buffer, blockPosition);
+        writeVector3i(buffer, blockPosition);
         writeSignedInt(buffer, eventType.ordinal());
         writeSignedInt(buffer, eventData);
     }

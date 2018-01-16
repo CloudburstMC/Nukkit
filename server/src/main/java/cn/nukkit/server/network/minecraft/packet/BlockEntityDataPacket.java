@@ -14,8 +14,8 @@ import lombok.Data;
 
 import java.io.IOException;
 
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.readBlockPosition;
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeBlockPosition;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.readVector3i;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3i;
 
 @Data
 public class BlockEntityDataPacket implements MinecraftPacket {
@@ -24,7 +24,7 @@ public class BlockEntityDataPacket implements MinecraftPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeBlockPosition(buffer, blockPostion);
+        writeVector3i(buffer, blockPostion);
         try (NBTWriter writer = new NBTWriter(new LittleEndianByteBufOutputStream(buffer), NBTEncodingType.MCPE)) {
             writer.write(data);
         } catch (IOException e) {
@@ -34,7 +34,7 @@ public class BlockEntityDataPacket implements MinecraftPacket {
 
     @Override
     public void decode(ByteBuf buffer) {
-        blockPostion = readBlockPosition(buffer);
+        blockPostion = readVector3i(buffer);
         try (NBTReader reader = new NBTReader(new LittleEndianByteBufInputStream(buffer), NBTEncodingType.MCPE)) {
             data = reader.readTag();
         } catch (IOException e) {

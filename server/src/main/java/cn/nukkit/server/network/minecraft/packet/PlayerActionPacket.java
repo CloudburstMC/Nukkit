@@ -8,8 +8,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
 import static cn.nukkit.server.nbt.util.VarInt.readSignedInt;
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.readBlockPosition;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.readRuntimeEntityId;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.readVector3i;
 
 @Data
 public class PlayerActionPacket implements MinecraftPacket {
@@ -27,7 +27,7 @@ public class PlayerActionPacket implements MinecraftPacket {
     public void decode(ByteBuf buffer) {
         runtimeEntityId = readRuntimeEntityId(buffer);
         action = Action.values()[readSignedInt(buffer)];
-        blockPosition = readBlockPosition(buffer);
+        blockPosition = readVector3i(buffer);
         face = BlockFace.values()[readSignedInt(buffer)];
     }
 

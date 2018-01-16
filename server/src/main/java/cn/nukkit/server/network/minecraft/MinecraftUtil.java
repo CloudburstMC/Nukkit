@@ -11,6 +11,7 @@ import cn.nukkit.api.level.gamerule.FloatGameRule;
 import cn.nukkit.api.level.gamerule.GameRule;
 import cn.nukkit.api.level.gamerule.IntGameRule;
 import cn.nukkit.api.resourcepack.ResourcePack;
+import cn.nukkit.api.util.BoundingBox;
 import cn.nukkit.api.util.Rotation;
 import cn.nukkit.api.util.Skin;
 import cn.nukkit.server.entity.EntityAttribute;
@@ -25,6 +26,8 @@ import cn.nukkit.server.nbt.stream.NBTWriter;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.Tag;
 import cn.nukkit.server.network.minecraft.data.CommandOriginData;
+import cn.nukkit.server.network.minecraft.data.StructureEditorData;
+import cn.nukkit.server.network.minecraft.data.StructureSettings;
 import cn.nukkit.server.network.util.LittleEndianByteBufInputStream;
 import cn.nukkit.server.network.util.LittleEndianByteBufOutputStream;
 import com.flowpowered.math.vector.Vector2f;
@@ -244,7 +247,7 @@ public final class MinecraftUtil {
         }
     }
 
-    public static Vector3i readBlockPosition(ByteBuf buffer) {
+    public static Vector3i readVector3i(ByteBuf buffer) {
         Preconditions.checkNotNull(buffer, "buffer");
         int x = readSignedInt(buffer);
         int y = readUnsignedInt(buffer);
@@ -253,7 +256,7 @@ public final class MinecraftUtil {
         return new Vector3i(x, y, z);
     }
 
-    public static void writeBlockPosition(ByteBuf buffer, Vector3i blockPosition) {
+    public static void writeVector3i(ByteBuf buffer, Vector3i blockPosition) {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(blockPosition, "blockPosition");
         writeSignedInt(buffer, blockPosition.getX());
@@ -506,5 +509,38 @@ public final class MinecraftUtil {
         buffer.writeBoolean(levelSettings.isTrustingPlayers());
         writeSignedInt(buffer, levelSettings.getDefaultPlayerPermission().ordinal());
         writeSignedInt(buffer, levelSettings.getXboxLiveBroadcastMode());
+    }
+
+    public static void writeStructureEditorData(ByteBuf buffer, StructureEditorData structureEditorData) {
+        Preconditions.checkNotNull(buffer, "buffer");
+        Preconditions.checkNotNull(structureEditorData, "structureEditorData");
+        writeString(buffer, structureEditorData.getUnknown0());
+        writeString(buffer, structureEditorData.getMetadata());
+        writeVector3i(buffer, structureEditorData.getStructureOffset());
+        writeVector3i(buffer, structureEditorData.getStructureSize());
+        buffer.writeBoolean(structureEditorData.isIncludingEntities());
+        buffer.writeBoolean(structureEditorData.isIgnoringBlocks());
+        buffer.writeBoolean(structureEditorData.isIncludingPlayers());
+        buffer.writeBoolean(structureEditorData.isShowingAir());
+        writeStructureSettings(buffer, structureEditorData.getStructureSettings());
+    }
+
+    public static void writeStructureSettings(ByteBuf buffer, StructureSettings structureSettings) {
+        Preconditions.checkNotNull(buffer, "buffer");
+        Preconditions.checkNotNull(structureSettings, "structureSettings");
+        buffer.writeBoolean(structureSettings.isIntegrity());
+        writeUnsignedInt(buffer, structureSettings.getSeed());
+        writeUnsignedInt(buffer, structureSettings.getMirror());
+        writeUnsignedInt(buffer, structureSettings.getRotation());
+        buffer.writeBoolean(structureSettings.isIgnoreEntities());
+        buffer.writeBoolean(structureSettings.isIgnoreStructureBlocks());
+        writeIntBoundingBox(buffer, structureSettings.getBoundingBox());
+    }
+
+    public static void writeIntBoundingBox(ByteBuf buffer, BoundingBox bb) {
+        Preconditions.checkNotNull(buffer, "buffer");
+        Preconditions.checkNotNull(bb, "bb");
+        writeVector3i(buffer, bb.getMax().toInt());
+        writeVector3i(buffer, bb.getMin().toInt());
     }
 }

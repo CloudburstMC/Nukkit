@@ -20,7 +20,7 @@ public class AddHangingEntityPacket implements MinecraftPacket {
     public void encode(ByteBuf buffer) {
         writeUniqueEntityId(buffer, uniqueEntityId);
         writeRuntimeEntityId(buffer, runtimeEntityId);
-        writeBlockPosition(buffer, blockPosition);
+        writeVector3i(buffer, blockPosition);
         VarInt.writeSignedInt(buffer, rotation);
     }
 
@@ -28,7 +28,7 @@ public class AddHangingEntityPacket implements MinecraftPacket {
     public void decode(ByteBuf buffer) {
         uniqueEntityId = readUniqueEntityId(buffer);
         runtimeEntityId = readRuntimeEntityId(buffer);
-        blockPosition = readBlockPosition(buffer);
+        blockPosition = readVector3i(buffer);
         rotation = VarInt.readSignedInt(buffer);
     }
 
