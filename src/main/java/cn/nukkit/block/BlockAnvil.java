@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
@@ -81,6 +82,7 @@ public class BlockAnvil extends BlockFallable {
                 this.meta |= 0x08;
             }
             this.getLevel().setBlock(block, this, true);
+            this.getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
             return true;
         }
         return false;
