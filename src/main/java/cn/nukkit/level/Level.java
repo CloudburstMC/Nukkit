@@ -472,8 +472,8 @@ public class Level implements ChunkManager, Metadatable {
     public void addSound(Vector3 pos, Sound sound, float volume, float pitch, Player... players) {
         PlaySoundPacket packet = new PlaySoundPacket();
         packet.name = sound.getSound();
-        packet.volume = 1;
-        packet.pitch = 1;
+        packet.volume = volume;
+        packet.pitch = pitch;
         packet.x = pos.getFloorX();
         packet.y = pos.getFloorY();
         packet.z = pos.getFloorZ();
