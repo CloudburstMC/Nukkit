@@ -51,6 +51,7 @@ import cn.nukkit.utils.*;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import java.io.File;
@@ -472,8 +473,8 @@ public class Level implements ChunkManager, Metadatable {
     public void addSound(Vector3 pos, Sound sound, float volume, float pitch, Player... players) {
         PlaySoundPacket packet = new PlaySoundPacket();
         packet.name = sound.getSound();
-        packet.volume = volume;
-        packet.pitch = pitch;
+        packet.volume = 1;
+        packet.pitch = 1;
         packet.x = pos.getFloorX();
         packet.y = pos.getFloorY();
         packet.z = pos.getFloorZ();
@@ -2482,30 +2483,26 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private void processChunkRequest() {
-        if (!this.chunkSendQueue.isEmpty()) {
-            this.timings.syncChunkSendTimer.startTiming();
-            synchronized (chunkSendQueue) {
-                for (Long index : this.chunkSendQueue.keySet()) {
-                    if (this.chunkSendTasks.containsKey(index)) {
-                        continue;
-                    }
-                    int x = getHashX(index);
-                    int z = getHashZ(index);
-                    this.chunkSendTasks.put(index, true);
-                    if (this.chunkCache.containsKey(index)) {
-                        this.sendChunkFromCache(x, z);
-                        continue;
-                    }
-                    this.timings.syncChunkSendPrepareTimer.startTiming();
-                    AsyncTask task = this.provider.requestChunkTask(x, z);
-                    if (task != null) {
-                        this.server.getScheduler().scheduleAsyncTask(task);
-                    }
-                    this.timings.syncChunkSendPrepareTimer.stopTiming();
-                }
-                this.timings.syncChunkSendTimer.stopTiming();
+        this.timings.syncChunkSendTimer.startTiming();
+        for (Long index : ImmutableList.copyOf(this.chunkSendQueue.keySet())) {
+            if (this.chunkSendTasks.containsKey(index)) {
+                continue;
             }
+            int x = getHashX(index);
+            int z = getHashZ(index);
+            this.chunkSendTasks.put(index, true);
+            if (this.chunkCache.containsKey(index)) {
+                this.sendChunkFromCache(x, z);
+                continue;
+            }
+            this.timings.syncChunkSendPrepareTimer.startTiming();
+            AsyncTask task = this.provider.requestChunkTask(x, z);
+            if (task != null) {
+                this.server.getScheduler().scheduleAsyncTask(task);
+            }
+            this.timings.syncChunkSendPrepareTimer.stopTiming();
         }
+        this.timings.syncChunkSendTimer.stopTiming();
     }
 
     public void chunkRequestCallback(int x, int z, byte[] payload) {
