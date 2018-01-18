@@ -106,6 +106,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int ENCHANT_WINDOW_ID = 3;
 
     protected final SourceInterface interfaz;
+    
+    private PlayerProtocol protocol;
+    
+    public PlayerProtocol getProtocol() {
+        return this.protocol;
+    }
+    public void setProtocol(PlayerProtocol protocol) {
+        this.protocol = protocol;
+    }
 
     public boolean playedBefore;
     public boolean spawned = false;
