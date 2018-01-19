@@ -300,7 +300,7 @@ public class CraftingManager {
             for (Item[] a : inputMap) {
                 list.addAll(Arrays.asList(a));
             }
-            Collections.sort(list, recipeComparator);
+            list.sort(recipeComparator);
 
             String inputHash = "";
             for (Item item : list) {
