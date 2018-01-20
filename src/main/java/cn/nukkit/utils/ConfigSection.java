@@ -36,10 +36,26 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof LinkedHashMap) {
                 super.put(entry.getKey(), new ConfigSection((LinkedHashMap) entry.getValue()));
+            } else if (entry.getValue() instanceof List) {
+                super.put(entry.getKey(), parseList((List) entry.getValue()));
             } else {
                 super.put(entry.getKey(), entry.getValue());
             }
         }
+    }
+
+    private List parseList(List list) {
+        List<Object> newList = new ArrayList<>();
+
+        for (Object o : list) {
+            if (o instanceof LinkedHashMap) {
+                newList.add(new ConfigSection((LinkedHashMap) o));
+            } else {
+                newList.add(o);
+            }
+        }
+
+        return newList;
     }
 
     /**

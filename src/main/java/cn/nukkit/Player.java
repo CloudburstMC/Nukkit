@@ -4256,6 +4256,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.dropItem(drop);
                 }
             }
+
+            drops = this.inventory.addItem(this.cursorInventory.getItem(0));
+            if (drops.length > 0) {
+                for (Item drop : drops) {
+                    this.dropItem(drop);
+                }
+            }
+
+            this.cursorInventory.clearAll();
             this.craftingGrid.clearAll();
 
             if (this.craftingGrid instanceof BigCraftingGrid) {
