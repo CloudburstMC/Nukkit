@@ -142,7 +142,7 @@ public class ShapelessRecipe implements CraftingRecipe {
 
 
             for (Item needItem : new ArrayList<>(needItems)) {
-                if (needItem.equals(haveItem, !needItem.hasAnyDamageValue(), needItem.hasCompoundTag()) && needItem.getCount() == haveItem.getCount()) {
+                if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag()) && needItem.getCount() == haveItem.getCount()) {
                     haveItems.remove(haveItem);
                     needItems.remove(needItem);
                     break;

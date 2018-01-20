@@ -556,8 +556,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     // We are going to wait 3 seconds, if after 3 seconds we didn't receive a reply from the client, resend the packet.
                     try {
                         Thread.sleep(3000);
-                        boolean status = needACK.get(identifier);
-                        if (!status && isOnline()) {
+                        Boolean status = needACK.get(identifier);
+                        if ((status == null || !status) && isOnline()) {
                             sendCommandData();
                             return;
                         }

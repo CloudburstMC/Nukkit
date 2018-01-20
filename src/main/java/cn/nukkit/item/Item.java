@@ -613,10 +613,6 @@ public class Item implements Cloneable {
         return hasMeta;
     }
 
-    public boolean hasAnyDamageValue() {
-        return this.meta == -1;
-    }
-
     public boolean canBeActivated() {
         return false;
     }

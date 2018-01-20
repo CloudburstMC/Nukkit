@@ -198,7 +198,7 @@ public class ShapedRecipe implements CraftingRecipe {
             }
 
             for (Item needItem : new ArrayList<>(needItems)) {
-                if (needItem.equals(haveItem, !needItem.hasAnyDamageValue(), needItem.hasCompoundTag()) && needItem.getCount() == haveItem.getCount()) {
+                if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag()) && needItem.getCount() == haveItem.getCount()) {
                     haveItems.remove(haveItem);
                     needItems.remove(needItem);
                     break;
@@ -218,7 +218,7 @@ public class ShapedRecipe implements CraftingRecipe {
                 Item given = input[y][x];
                 Item required = map.get(y).get(x);
 
-                if (given == null || !required.equals(given, !required.hasAnyDamageValue(), required.hasCompoundTag()) || required.getCount() != given.getCount()) {
+                if (given == null || !required.equals(given, required.hasMeta(), required.hasCompoundTag()) || required.getCount() != given.getCount()) {
                     return false;
                 }
 
