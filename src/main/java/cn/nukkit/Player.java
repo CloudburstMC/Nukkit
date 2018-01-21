@@ -556,8 +556,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     // We are going to wait 3 seconds, if after 3 seconds we didn't receive a reply from the client, resend the packet.
                     try {
                         Thread.sleep(3000);
-                        boolean status = needACK.get(identifier);
-                        if (!status && isOnline()) {
+                        Boolean status = needACK.get(identifier);
+                        if ((status == null || !status) && isOnline()) {
                             sendCommandData();
                             return;
                         }
@@ -1990,7 +1990,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     LoginPacket loginPacket = (LoginPacket) packet;
 
                     String message;
-                    if (loginPacket.getProtocol() < ProtocolInfo.CURRENT_PROTOCOL) {
+                    if (!ProtocolInfo.SUPPORTED_PROTOCOLS.contains(loginPacket.getProtocol())) {
                         if (loginPacket.getProtocol() < ProtocolInfo.CURRENT_PROTOCOL) {
                             message = "disconnectionScreen.outdatedClient";
 
@@ -1999,6 +1999,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             message = "disconnectionScreen.outdatedServer";
 
                             this.sendPlayStatus(PlayStatusPacket.LOGIN_FAILED_SERVER);
+                        }
+                        if (((LoginPacket) packet).protocol < 137) {
+                            DisconnectPacket disconnectPacket = new DisconnectPacket();
+                            disconnectPacket.message = message;
+                            disconnectPacket.encode();
+                            BatchPacket batch = new BatchPacket();
+                            batch.payload = disconnectPacket.getBuffer();
+                            this.directDataPacket(batch);
+                            // Still want to run close() to allow the player to be removed properly
                         }
                         this.close("", message, false);
                         break;
@@ -2012,7 +2021,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.loginChainData = ClientChainData.read(loginPacket);
 
                     if (!loginChainData.isXboxAuthed() && server.getPropertyBoolean("xbox-auth")) {
-                        kick(PlayerKickEvent.Reason.UNKNOWN, "disconnectionScreen.invalidName", false);
+                        kick(PlayerKickEvent.Reason.UNKNOWN, "disconnectionScreen.notAuthenticated", false);
                     }
 
 
@@ -4247,6 +4256,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.dropItem(drop);
                 }
             }
+
+            drops = this.inventory.addItem(this.cursorInventory.getItem(0));
+            if (drops.length > 0) {
+                for (Item drop : drops) {
+                    this.dropItem(drop);
+                }
+            }
+
+            this.cursorInventory.clearAll();
             this.craftingGrid.clearAll();
 
             if (this.craftingGrid instanceof BigCraftingGrid) {

@@ -51,7 +51,10 @@ import cn.nukkit.timings.LevelTimings;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
@@ -472,6 +475,9 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addSound(Vector3 pos, Sound sound, float volume, float pitch, Player... players) {
+        Preconditions.checkArgument(volume >= 0 && volume <= 1, "Sound volume must be between 0 and 1");
+        Preconditions.checkArgument(pitch >= 0, "Sound pitch must be higher than 0");
+
         PlaySoundPacket packet = new PlaySoundPacket();
         packet.name = sound.getSound();
         packet.volume = 1;
@@ -1047,7 +1053,7 @@ public class Level implements ChunkManager, Metadatable {
             int chunkZ = (int) loader.getZ() >> 4;
 
             Long index = Level.chunkHash(chunkX, chunkZ);
-            int existingLoaders = Math.max(0, this.chunkTickList.containsKey(index) ? this.chunkTickList.get(index) : 0);
+            int existingLoaders = Math.max(0, this.chunkTickList.getOrDefault(index, 0));
             this.chunkTickList.put(index, existingLoaders + 1);
             for (int chunk = 0; chunk < chunksPerLoader; ++chunk) {
                 int dx = new java.util.Random().nextInt(2 * randRange) - randRange;
@@ -2438,28 +2444,26 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private void processChunkRequest() {
-        if (!this.chunkSendQueue.isEmpty()) {
-            this.timings.syncChunkSendTimer.startTiming();
-            for (Long index : new ArrayList<>(this.chunkSendQueue.keySet())) {
-                if (this.chunkSendTasks.containsKey(index)) {
-                    continue;
-                }
-                int x = getHashX(index);
-                int z = getHashZ(index);
-                this.chunkSendTasks.put(index, true);
-                if (this.chunkCache.containsKey(index)) {
-                    this.sendChunkFromCache(x, z);
-                    continue;
-                }
-                this.timings.syncChunkSendPrepareTimer.startTiming();
-                AsyncTask task = this.provider.requestChunkTask(x, z);
-                if (task != null) {
-                    this.server.getScheduler().scheduleAsyncTask(task);
-                }
-                this.timings.syncChunkSendPrepareTimer.stopTiming();
+        this.timings.syncChunkSendTimer.startTiming();
+        for (Long index : ImmutableList.copyOf(this.chunkSendQueue.keySet())) {
+            if (this.chunkSendTasks.containsKey(index)) {
+                continue;
             }
-            this.timings.syncChunkSendTimer.stopTiming();
+            int x = getHashX(index);
+            int z = getHashZ(index);
+            this.chunkSendTasks.put(index, true);
+            if (this.chunkCache.containsKey(index)) {
+                this.sendChunkFromCache(x, z);
+                continue;
+            }
+            this.timings.syncChunkSendPrepareTimer.startTiming();
+            AsyncTask task = this.provider.requestChunkTask(x, z);
+            if (task != null) {
+                this.server.getScheduler().scheduleAsyncTask(task);
+            }
+            this.timings.syncChunkSendPrepareTimer.stopTiming();
         }
+        this.timings.syncChunkSendTimer.stopTiming();
     }
 
     public void chunkRequestCallback(int x, int z, byte[] payload) {

@@ -551,9 +551,6 @@ public class Config {
                 dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                 Yaml yaml = new Yaml(dumperOptions);
                 this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
-                if (this.config == null) {
-                    this.config = new ConfigSection();
-                }
                 break;
             // case Config.SERIALIZED
             case Config.ENUM:

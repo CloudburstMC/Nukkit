@@ -58,7 +58,7 @@ public abstract class ItemTool extends Item {
 
     @Override
     public boolean useOn(Block block) {
-        if (this.isUnbreakable() || !canReduceDamage()) {
+        if (this.isUnbreakable() || isDurable()) {
             return true;
         }
 
@@ -83,7 +83,7 @@ public abstract class ItemTool extends Item {
 
     @Override
     public boolean useOn(Entity entity) {
-        if (this.isUnbreakable() || !canReduceDamage()) {
+        if (this.isUnbreakable() || isDurable()) {
             return true;
         }
 
@@ -96,9 +96,9 @@ public abstract class ItemTool extends Item {
         return true;
     }
 
-    private boolean canReduceDamage() {
+    private boolean isDurable() {
         if (!hasEnchantments()) {
-            return true;
+            return false;
         }
 
         Enchantment durability = getEnchantment(Enchantment.ID_DURABILITY);

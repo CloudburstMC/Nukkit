@@ -52,9 +52,13 @@ public class BlockLava extends BlockLiquid {
             entity.attack(new EntityDamageByBlockEvent(this, entity, DamageCause.LAVA, 4));
         }
 
+        // Always setting the duration to 15 seconds? TODO
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 15);
         Server.getInstance().getPluginManager().callEvent(ev);
-        if (!ev.isCancelled()) {
+        if (!ev.isCancelled()
+                // Making sure the entity is acutally alive and not invulnerable.
+                && entity.isAlive()
+                && entity.noDamageTicks == 0) {
             entity.setOnFire(ev.getDuration());
         }
 
