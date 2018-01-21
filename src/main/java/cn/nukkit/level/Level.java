@@ -2403,7 +2403,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-            if (!oldEntities.isEmpty()) {
+            if (!oldBlockEntities.isEmpty()) {
                 Iterator<Map.Entry<Long, BlockEntity>> iter = oldBlockEntities.entrySet().iterator();
                 while (iter.hasNext()) {
                     Map.Entry<Long, BlockEntity> entry = iter.next();
