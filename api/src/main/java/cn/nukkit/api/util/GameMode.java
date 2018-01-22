@@ -1,4 +1,6 @@
-package cn.nukkit.api;
+package cn.nukkit.api.util;
+
+import cn.nukkit.api.Player;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -45,7 +47,7 @@ public enum GameMode {
 
     @Nonnull
     public static GameMode parse(String gamemode) {
-        return (modes.contains(gamemode.toLowerCase());
+        return modes.getOrDefault(gamemode.toLowerCase(), GameMode.SURVIVAL);
     }
 
     @Nonnull
