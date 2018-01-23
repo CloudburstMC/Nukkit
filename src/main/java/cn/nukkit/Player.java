@@ -4061,8 +4061,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * You can find out FormWindow result by listening to PlayerFormRespondedEvent
      */
     public int showFormWindow(FormWindow window) {
-        int id = this.formWindowCount++;
+        return showFormWindow(window, this.formWindowCount++);
+    }
 
+    /**
+     * Shows a new FormWindow to the player
+     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
+     */
+    public int showFormWindow(FormWindow window, int id) {
         ModalFormRequestPacket packet = new ModalFormRequestPacket();
         packet.formId = id;
         packet.data = window.getJSONData();

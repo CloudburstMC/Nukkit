@@ -61,7 +61,6 @@ public class BlockLadder extends BlockTransparent {
     @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
-        entity.onGround = true;
     }
 
     @Override
@@ -107,6 +106,11 @@ public class BlockLadder extends BlockTransparent {
             );
         }
         return null;
+    }
+
+    @Override
+    protected AxisAlignedBB recalculateCollisionBoundingBox() {
+        return super.recalculateBoundingBox();
     }
 
     @Override
