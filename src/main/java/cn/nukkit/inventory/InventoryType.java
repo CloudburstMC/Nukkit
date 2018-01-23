@@ -10,7 +10,6 @@ public enum InventoryType {
     DOUBLE_CHEST(27 + 27, "Double Chest", 0),
     PLAYER(40, "Player", -1), //36 CONTAINER, 4 ARMOR
     FURNACE(3, "Furnace", 2),
-    TRADE(15, "Trade", 3),
     CRAFTING(5, "Crafting", 1), //4 CRAFTING slots, 1 RESULT
     WORKBENCH(10, "Crafting", 1), //9 CRAFTING slots, 1 RESULT
     BREWING_STAND(5, "Brewing", 4), //1 INPUT, 3 POTION, 1 fuel
@@ -19,6 +18,7 @@ public enum InventoryType {
     DISPENSER(0, "Dispenser", 6), //9 CONTAINER
     DROPPER(9, "Dropper", 7), //9 CONTAINER
     HOPPER(5, "Hopper", 8), //5 CONTAINER
+    TRADE(3, "Trade", 15),
     CURSOR(1, "Cursor", -1);
 
     private final int size;
