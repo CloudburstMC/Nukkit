@@ -1146,7 +1146,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         }
 
         return MovingObjectPosition.fromBlock((int) this.x, (int) this.y, (int) this.z, f, vector.add(this.x, this.y, this.z));
+    }
 
+    public String getSaveId() {
+        String name = getClass().getName();
+        return name.substring(16, name.length());
     }
 
     @Override

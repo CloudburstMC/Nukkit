@@ -10,7 +10,6 @@ import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,7 +139,9 @@ public abstract class BlockEntity extends Position {
     }
 
     public final String getSaveId() {
-        return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
+        String simpleName = getClass().getName();
+        simpleName = simpleName.substring(22, simpleName.length());
+        return shortNames.getOrDefault(simpleName, "");
     }
 
     public long getId() {
