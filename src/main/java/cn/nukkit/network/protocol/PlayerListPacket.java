@@ -77,6 +77,10 @@ public class PlayerListPacket extends DataPacket {
             this(uuid, entityId, name, "", 0, skin, "", "");
         }
 
+        public Entry(UUID uuid, long entityId, String name, Skin skin, String xboxUserId) {
+            this(uuid, entityId, name, "", 0, skin, xboxUserId, "");
+        }
+
         public Entry(UUID uuid, long entityId, String name, String thirdPartyName, int platformId, Skin skin, String xboxUserId, String platformChatId) {
             this.uuid = uuid;
             this.entityId = entityId;
