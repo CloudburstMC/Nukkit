@@ -19,7 +19,7 @@ public class TradeInventory extends ContainerInventory {
 
     @Override
     public InventoryType getType() {
-        return InventoryType.TRADE;
+        return InventoryType.TRADING;
     }
 
     @Override
