@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.item.Item;
 
 public class BrewingInventory extends ContainerInventory {
+
     public BrewingInventory(BlockEntityBrewingStand brewingStand) {
         super(brewingStand, InventoryType.BREWING_STAND);
     }

@@ -18,6 +18,7 @@ public enum InventoryType {
     DISPENSER(0, "Dispenser", 6), //9 CONTAINER
     DROPPER(9, "Dropper", 7), //9 CONTAINER
     HOPPER(5, "Hopper", 8), //5 CONTAINER
+    TRADE(2, "Trade", 15), // 2 slots usable, ID: 15
     CURSOR(1, "Cursor", -1);
 
     private final int size;
