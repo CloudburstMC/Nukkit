@@ -45,6 +45,10 @@ public class StartGamePacket extends DataPacket {
     public boolean trustPlayers = false;
     public int permissionLevel = 1;
     public int gamePublish = 4;
+    public int unknownInt0 = 0;
+    public byte unknownByte0 = 0;
+    public int unknownInt1 = 0;
+    public byte unknownByte1 = 0;
     public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
@@ -91,6 +95,10 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.trustPlayers);
         this.putVarInt(this.permissionLevel);
         this.putVarInt(this.gamePublish);
+        this.putLInt(this.unknownInt0);
+        this.putByte(this.unknownByte0);
+        this.putVarInt(this.unknownInt1);
+        this.putByte(this.unknownByte1);
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);

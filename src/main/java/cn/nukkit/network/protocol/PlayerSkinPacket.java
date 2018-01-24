@@ -9,7 +9,8 @@ public class PlayerSkinPacket extends DataPacket {
     public UUID uuid;
     public Skin skin;
     public String skinName;
-    public String serializeName;
+    public String oldSkinName;
+    public int unknownInt0 = 1;
     public String geometryModel;
     public String geometryData;
 
@@ -23,7 +24,9 @@ public class PlayerSkinPacket extends DataPacket {
         this.uuid = this.getUUID();
         String skinId = this.getString();
         this.skinName = this.getString();
-        this.serializeName = this.getString();
+        this.oldSkinName = this.getString();
+        unknownInt0 = this.getInt();
+
         byte[] data = this.getByteArray();
         byte[] cape = this.getByteArray();
 
@@ -40,7 +43,7 @@ public class PlayerSkinPacket extends DataPacket {
         this.putUUID(this.uuid);
         this.putString(this.skin.getModel());
         this.putString(this.skinName);
-        this.putString(this.serializeName);
+        this.putString(this.oldSkinName);
         this.putByteArray(this.skin.getData());
         this.putByteArray(this.skin.getCape().getData());
         this.putString(this.geometryModel);
