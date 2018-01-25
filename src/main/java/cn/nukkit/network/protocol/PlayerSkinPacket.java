@@ -10,7 +10,6 @@ public class PlayerSkinPacket extends DataPacket {
     public Skin skin;
     public String skinName;
     public String oldSkinName;
-    public int unknownInt0 = 1;
     public String geometryModel;
     public String geometryData;
 
@@ -25,11 +24,12 @@ public class PlayerSkinPacket extends DataPacket {
         String skinId = this.getString();
         this.skinName = this.getString();
         this.oldSkinName = this.getString();
-        unknownInt0 = this.getInt();
-
+        this.getInt(); // Always 1
+        this.getInt(); // No point in storing this.
         byte[] data = this.getByteArray();
+        this.getInt(); // Always 1
+        this.getInt(); // Same with this one.
         byte[] cape = this.getByteArray();
-
         this.skin = new Skin(data, skinId);
         this.skin.setCape(this.skin.new Cape(cape));
 
@@ -44,7 +44,11 @@ public class PlayerSkinPacket extends DataPacket {
         this.putString(this.skin.getModel());
         this.putString(this.skinName);
         this.putString(this.oldSkinName);
+        this.putInt(1); // Pointless at the moment
+        this.putInt(this.skin.getData().length);
         this.putByteArray(this.skin.getData());
+        this.putInt(1); // Another useless number
+        this.putInt(this.skin.getCape().getData().length);
         this.putByteArray(this.skin.getCape().getData());
         this.putString(this.geometryModel);
         this.putString(this.geometryData);

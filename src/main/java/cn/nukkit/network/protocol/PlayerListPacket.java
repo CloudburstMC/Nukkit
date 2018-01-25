@@ -36,9 +36,9 @@ public class PlayerListPacket extends DataPacket {
                 this.putVarInt(entry.platformId);
                 this.putSkin(entry.skin);
                 if (entry.skin.getCape().getData().length == 0) {
-                    this.putLInt(0); //isEmpty
+                    this.putLInt(0); // is Empty
                 } else {
-                    this.putLInt(1); //isEmpty
+                    this.putLInt(1); // not Empty
                     this.putByteArray(entry.skin.getCape().getData());
                 }
                 this.putString(entry.geometryModel);
