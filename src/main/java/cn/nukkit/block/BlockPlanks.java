@@ -60,7 +60,7 @@ public class BlockPlanks extends BlockSolid {
                 "Dark Oak Wood Planks",
         };
 
-        return names[this.meta & 0x07];
+        return this.meta < 0 ? "Unknown" : names[this.meta % 6];
     }
 
     @Override

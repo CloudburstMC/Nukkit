@@ -13,7 +13,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
-import cn.nukkit.utils.TextFormat;
 
 /**
  * author: MagicDroidX
@@ -194,11 +193,14 @@ public class BlockBed extends BlockTransparent {
     }
 
     public DyeColor getDyeColor() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        if (this.level != null) {
+            BlockEntity blockEntity = this.level.getBlockEntity(this);
 
-        if (blockEntity instanceof BlockEntityBed) {
-            return ((BlockEntityBed) blockEntity).getDyeColor();
+            if (blockEntity instanceof BlockEntityBed) {
+                return ((BlockEntityBed) blockEntity).getDyeColor();
+            }
         }
+
         return DyeColor.WHITE;
     }
 }
