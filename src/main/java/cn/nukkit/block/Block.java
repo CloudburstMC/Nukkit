@@ -7,6 +7,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
@@ -667,6 +668,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             block.z = pos.z;
             block.level = pos.level;
         }
+        return block;
+    }
+
+    public static Block get(int combinedId, Level level, int x, int y, int z) {
+        Block block = fullList[combinedId].clone();
+        block.x = x;
+        block.y = y;
+        block.z = z;
+        block.level = level;
         return block;
     }
 

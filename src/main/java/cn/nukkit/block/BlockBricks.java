@@ -9,7 +9,7 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockBricks extends BlockSolid {
 
-    public BlockBricks(int meta) {
+    public BlockBricks() {
     }
 
     @Override

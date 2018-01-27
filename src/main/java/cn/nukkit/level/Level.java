@@ -93,6 +93,35 @@ public class Level implements ChunkManager, Metadatable {
     // Lower values use less memory
     public static final int MAX_BLOCK_CACHE = 512;
 
+    // The blocks that can randomly tick
+    private static final boolean[] randomTickBlocks = new boolean[256];
+    static {
+        randomTickBlocks[Block.GRASS] = true;
+        randomTickBlocks[Block.FARMLAND] = true;
+        randomTickBlocks[Block.MYCELIUM] = true;
+        randomTickBlocks[Block.SAPLING] = true;
+        randomTickBlocks[Block.LEAVES] = true;
+        randomTickBlocks[Block.LEAVES2] = true;
+        randomTickBlocks[Block.SNOW_LAYER] = true;
+        randomTickBlocks[Block.ICE] = true;
+        randomTickBlocks[Block.LAVA] = true;
+        randomTickBlocks[Block.STILL_LAVA] = true;
+        randomTickBlocks[Block.CACTUS] = true;
+        randomTickBlocks[Block.BEETROOT_BLOCK] = true;
+        randomTickBlocks[Block.CARROT_BLOCK] = true;
+        randomTickBlocks[Block.POTATO_BLOCK] = true;
+        randomTickBlocks[Block.MELON_STEM] = true;
+        randomTickBlocks[Block.PUMPKIN_STEM] = true;
+        randomTickBlocks[Block.WHEAT_BLOCK] = true;
+        randomTickBlocks[Block.SUGARCANE_BLOCK] = true;
+        randomTickBlocks[Block.RED_MUSHROOM] = true;
+        randomTickBlocks[Block.BROWN_MUSHROOM] = true;
+        randomTickBlocks[Block.NETHER_WART_BLOCK] = true;
+        randomTickBlocks[Block.FIRE] = true;
+        randomTickBlocks[Block.GLOWING_REDSTONE_ORE] = true;
+        randomTickBlocks[Block.COCOA_BLOCK] = true;
+    }
+
     private final Map<Long, BlockEntity> blockEntities = new HashMap<>();
 
     private final Map<Long, Player> players = new HashMap<>();
@@ -184,39 +213,6 @@ public class Level implements ChunkManager, Metadatable {
     private Map<Long, Integer> chunkTickList = new HashMap<>();
     private int chunksPerTicks;
     private boolean clearChunksOnTick;
-    private final HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {
-        {
-            put(Block.GRASS, BlockGrass.class);
-            put(Block.FARMLAND, BlockFarmland.class);
-            put(Block.MYCELIUM, BlockMycelium.class);
-
-            put(Block.SAPLING, BlockSapling.class);
-
-            put(Block.LEAVES, BlockLeaves.class);
-            put(Block.LEAVES2, BlockLeaves2.class);
-
-            put(Block.SNOW_LAYER, BlockSnowLayer.class);
-            put(Block.ICE, BlockIce.class);
-            put(Block.LAVA, BlockLava.class);
-            put(Block.STILL_LAVA, BlockLavaStill.class);
-
-            put(Block.CACTUS, BlockCactus.class);
-            put(Block.BEETROOT_BLOCK, BlockBeetroot.class);
-            put(Block.CARROT_BLOCK, BlockCarrot.class);
-            put(Block.POTATO_BLOCK, BlockPotato.class);
-            put(Block.MELON_STEM, BlockStemMelon.class);
-            put(Block.PUMPKIN_STEM, BlockStemPumpkin.class);
-            put(Block.WHEAT_BLOCK, BlockWheat.class);
-            put(Block.SUGARCANE_BLOCK, BlockSugarcane.class);
-            put(Block.RED_MUSHROOM, BlockMushroomRed.class);
-            put(Block.BROWN_MUSHROOM, BlockMushroomBrown.class);
-            put(Block.NETHER_WART_BLOCK, BlockNetherWart.class);
-
-            put(Block.FIRE, BlockFire.class);
-            put(Block.GLOWING_REDSTONE_ORE, BlockOreRedstoneGlowing.class);
-            put(Block.COCOA_BLOCK, BlockCocoa.class);
-        }
-    };
 
     protected int updateLCG = (new Random()).nextInt();
 
@@ -1086,18 +1082,9 @@ public class Level implements ChunkManager, Metadatable {
                                 int z = k >> 16 & 0x0f;
 
                                 blockId = section.getBlockId(x, y, z);
-                                if (this.randomTickBlocks.containsKey(blockId)) {
-                                    Class<? extends Block> clazz = this.randomTickBlocks.get(blockId);
-                                    try {
-                                        Block block = clazz.getConstructor(int.class).newInstance(section.getBlockData(x, y, z));
-                                        block.x = chunkX * 16 + x;
-                                        block.y = (Y << 4) + y;
-                                        block.z = chunkZ * 16 + z;
-                                        block.level = this;
-                                        block.onUpdate(BLOCK_UPDATE_RANDOM);
-                                    } catch (Exception e) {
-                                        throw new RuntimeException(e);
-                                    }
+                                if (this.randomTickBlocks[blockId]) {
+                                    Block block = Block.get(blockId << 4, this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
+                                    block.onUpdate(BLOCK_UPDATE_RANDOM);
                                 }
                             }
                         }
@@ -1113,19 +1100,8 @@ public class Level implements ChunkManager, Metadatable {
                             int z = k >> 16 & 0x0f;
 
                             blockTest |= blockId = chunk.getBlockId(x, y + (Y << 4), z);
-                            if (this.randomTickBlocks.containsKey(blockId)) {
-                                Class<? extends Block> clazz = this.randomTickBlocks.get(blockId);
-
-                                Block block;
-                                try {
-                                    block = clazz.getConstructor(int.class).newInstance(chunk.getBlockData(x, y + (Y << 4), z));
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                                block.x = chunkX * 16 + x;
-                                block.y = (Y << 4) + y;
-                                block.z = chunkZ * 16 + z;
-                                block.level = this;
+                            if (this.randomTickBlocks[blockId]) {
+                                Block block = Block.get(blockId << 4, this, x, y + (Y << 4), z);
                                 block.onUpdate(BLOCK_UPDATE_RANDOM);
                             }
                         }
