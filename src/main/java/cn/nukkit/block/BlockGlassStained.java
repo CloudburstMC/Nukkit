@@ -8,12 +8,14 @@ import cn.nukkit.utils.DyeColor;
  */
 public class BlockGlassStained extends BlockGlass {
 
+    private int meta;
+
     public BlockGlassStained() {
         this(0);
     }
 
     public BlockGlassStained(int meta) {
-        super(meta);
+        this.meta = meta;
     }
 
     @Override
@@ -28,10 +30,20 @@ public class BlockGlassStained extends BlockGlass {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(meta).getColor();
+        return DyeColor.getByWoolData(getDamage()).getColor();
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(meta);
+        return DyeColor.getByWoolData(getDamage());
+    }
+
+    @Override
+    public final int getDamage() {
+        return this.meta;
+    }
+
+    @Override
+    public final void setDamage(int meta) {
+        this.meta = meta;
     }
 }

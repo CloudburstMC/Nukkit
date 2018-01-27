@@ -15,7 +15,7 @@ import cn.nukkit.nbt.tag.ListTag;
 /**
  * @author CreeperFace
  */
-public class BlockHopper extends BlockTransparent {
+public class BlockHopper extends BlockTransparentMeta {
 
     public BlockHopper() {
         this(0);
@@ -53,7 +53,7 @@ public class BlockHopper extends BlockTransparent {
             facing = BlockFace.DOWN;
         }
 
-        this.meta = facing.getIndex();
+        this.setDamage(facing.getIndex());
 
         boolean powered = this.level.isBlockPowered(this);
 
@@ -106,16 +106,16 @@ public class BlockHopper extends BlockTransparent {
     }
 
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.meta & 7);
+        return BlockFace.fromIndex(this.getDamage() & 7);
     }
 
     public boolean isEnabled() {
-        return (this.meta & 0x08) != 8;
+        return (this.getDamage() & 0x08) != 8;
     }
 
     public void setEnabled(boolean enabled) {
         if (isEnabled() != enabled) {
-            this.meta ^= 0x08;
+            this.setDamage(this.getDamage() ^ 0x08);
         }
     }
 

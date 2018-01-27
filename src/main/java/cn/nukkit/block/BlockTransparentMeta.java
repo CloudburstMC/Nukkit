@@ -6,7 +6,15 @@ import cn.nukkit.utils.BlockColor;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockTransparent extends Block {
+public abstract class BlockTransparentMeta extends BlockMeta {
+
+    protected BlockTransparentMeta() {
+        this(0);
+    }
+
+    protected BlockTransparentMeta(int meta) {
+        super(meta);
+    }
 
     @Override
     public boolean isTransparent() {

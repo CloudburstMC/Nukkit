@@ -9,11 +9,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockEndGateway extends BlockSolid {
 
     public BlockEndGateway() {
-        this(0);
-    }
-
-    public BlockEndGateway(int meta) {
-        super(0);
     }
 
     @Override

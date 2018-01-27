@@ -1,10 +1,7 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockFire;
-import cn.nukkit.block.BlockNetherPortal;
-import cn.nukkit.block.BlockSolid;
+import cn.nukkit.block.*;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -35,7 +32,7 @@ public class ItemFlintSteel extends ItemTool {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        if (block.getId() == AIR && (target instanceof BlockSolid)) {
+        if (block.getId() == AIR && (target instanceof BlockSolid || target instanceof BlockSolidMeta)) {
             if (target.getId() == OBSIDIAN) {
                 int targetX = target.getFloorX();
                 int targetY = target.getFloorY();

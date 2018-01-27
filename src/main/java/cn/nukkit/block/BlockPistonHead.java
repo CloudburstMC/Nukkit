@@ -6,7 +6,7 @@ import cn.nukkit.math.BlockFace;
 /**
  * @author CreeperFace
  */
-public class BlockPistonHead extends BlockTransparent {
+public class BlockPistonHead extends BlockTransparentMeta {
 
     public BlockPistonHead() {
         this(0);
@@ -53,7 +53,7 @@ public class BlockPistonHead extends BlockTransparent {
     }
 
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.meta).getOpposite();
+        return BlockFace.fromIndex(this.getDamage()).getOpposite();
     }
 
     @Override

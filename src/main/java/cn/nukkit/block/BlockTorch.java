@@ -74,12 +74,12 @@ public class BlockTorch extends BlockFlowable {
                     2, //4
                     1, //5
             };
-            this.meta = faces[face.getIndex()];
+            this.setDamage(faces[face.getIndex()]);
             this.getLevel().setBlock(block, this, true, true);
 
             return true;
         } else if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLE_WALL) {
-            this.meta = 0;
+            this.setDamage(0);
             this.getLevel().setBlock(block, this, true, true);
 
             return true;
@@ -98,7 +98,7 @@ public class BlockTorch extends BlockFlowable {
     }
 
     public BlockFace getFacing() {
-        return getFacing(this.meta);
+        return getFacing(this.getDamage());
     }
 
     public BlockFace getFacing(int meta) {

@@ -15,7 +15,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
 
-public class BlockSkull extends BlockTransparent {
+public class BlockSkull extends BlockTransparentMeta {
 
     public BlockSkull() {
         this(0);
@@ -70,7 +70,7 @@ public class BlockSkull extends BlockTransparent {
             case EAST:
             case WEST:
             case UP:
-                this.meta = face.getIndex();
+                this.setDamage(face.getIndex());
                 break;
             case DOWN:
             default:

@@ -11,7 +11,7 @@ import cn.nukkit.network.protocol.BlockEventPacket;
  * Created by Snake1999 on 2016/1/17.
  * Package cn.nukkit.block in project nukkit.
  */
-public class BlockNoteblock extends BlockSolid {
+public class BlockNoteblock extends BlockSolidMeta {
 
     public BlockNoteblock() {
         this(0);
@@ -51,14 +51,14 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public int getStrength() {
-        return this.meta;
+        return this.getDamage();
     }
 
     public void increaseStrength() {
-        if (this.meta < 24) {
-            this.meta++;
+        if (this.getDamage() < 24) {
+            this.setDamage(this.getDamage() + 1);
         } else {
-            this.meta = 0;
+            this.setDamage(0);
         }
     }
 

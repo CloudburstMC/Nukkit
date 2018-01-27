@@ -8,7 +8,7 @@ import cn.nukkit.math.BlockFace;
 /**
  * Created by CreeperFace on 2.6.2017.
  */
-public abstract class BlockTerracottaGlazed extends BlockSolid {
+public abstract class BlockTerracottaGlazed extends BlockSolidMeta {
 
     public BlockTerracottaGlazed() {
         this(0);
@@ -41,7 +41,7 @@ public abstract class BlockTerracottaGlazed extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int faces[] = {2, 5, 3, 4};
-        this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
+        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         return this.getLevel().setBlock(block, this, true, true);
     }
 

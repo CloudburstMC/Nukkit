@@ -6,7 +6,7 @@ import cn.nukkit.math.Vector3;
 /**
  * Created by CreeperFace on 15.4.2017.
  */
-public class BlockDispenser extends BlockSolid {
+public class BlockDispenser extends BlockSolidMeta {
 
     public BlockDispenser() {
         this(0);
@@ -43,11 +43,11 @@ public class BlockDispenser extends BlockSolid {
     }
 
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.meta & 7);
+        return BlockFace.fromIndex(this.getDamage() & 7);
     }
 
     public boolean isTriggered() {
-        return (this.meta & 8) > 0;
+        return (this.getDamage() & 8) > 0;
     }
 
     public void setTriggered(boolean value) {
@@ -58,7 +58,7 @@ public class BlockDispenser extends BlockSolid {
             i |= 8;
         }
 
-        this.meta = i;
+        this.setDamage(i);
     }
 
     @Override

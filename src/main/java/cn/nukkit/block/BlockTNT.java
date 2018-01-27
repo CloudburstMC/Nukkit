@@ -20,11 +20,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockTNT extends BlockSolid {
 
     public BlockTNT() {
-        this(0);
-    }
-
-    public BlockTNT(int meta) {
-        super(0);
     }
 
     @Override

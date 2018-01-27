@@ -12,11 +12,6 @@ public class BlockGold extends BlockSolid {
 
 
     public BlockGold() {
-        this(0);
-    }
-
-    public BlockGold(int meta) {
-        super(meta);
     }
 
     @Override

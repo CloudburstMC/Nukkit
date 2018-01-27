@@ -31,21 +31,21 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public BlockFace getFacing() {
-        return BlockFace.fromHorizontalIndex(this.meta);
+        return BlockFace.fromHorizontalIndex(this.getDamage());
     }
 
     public Mode getMode() {
-        return (meta & 4) > 0 ? Mode.SUBTRACT : Mode.COMPARE;
+        return (getDamage() & 4) > 0 ? Mode.SUBTRACT : Mode.COMPARE;
     }
 
     @Override
     protected BlockRedstoneComparator getUnpowered() {
-        return new BlockRedstoneComparatorUnpowered(this.meta);
+        return new BlockRedstoneComparatorUnpowered(this.getDamage());
     }
 
     @Override
     protected BlockRedstoneComparator getPowered() {
-        return new BlockRedstoneComparatorPowered(this.meta);
+        return new BlockRedstoneComparatorPowered(this.getDamage());
     }
 
     @Override
@@ -113,9 +113,9 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (getMode() == Mode.SUBTRACT) {
-            this.meta -= 4;
+            this.setDamage(this.getDamage() - 4);
         } else {
-            this.meta += 4;
+            this.setDamage(this.getDamage() + 4);
         }
 
         this.level.addSound(this, Sound.RANDOM_CLICK, 1, getMode() == Mode.SUBTRACT ? 0.55F : 0.5F);
@@ -181,7 +181,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public boolean isPowered() {
-        return this.isPowered || (this.meta & 8) > 0;
+        return this.isPowered || (this.getDamage() & 8) > 0;
     }
 
     @Override

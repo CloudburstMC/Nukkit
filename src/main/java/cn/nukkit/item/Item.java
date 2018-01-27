@@ -570,6 +570,7 @@ public class Item implements Cloneable {
     public static final int RECORD_11 = 510;
     public static final int RECORD_WAIT = 511;
 
+    protected static String UNKNOWN_STR = "Unknown";
     public static Class[] list = null;
 
     protected Block block = null;
@@ -583,15 +584,15 @@ public class Item implements Cloneable {
     protected String name;
 
     public Item(int id) {
-        this(id, 0, 1, "Unknown");
+        this(id, 0, 1, UNKNOWN_STR);
     }
 
     public Item(int id, Integer meta) {
-        this(id, meta, 1, "Unknown");
+        this(id, meta, 1, UNKNOWN_STR);
     }
 
     public Item(int id, Integer meta, int count) {
-        this(id, meta, count, "Unknown");
+        this(id, meta, count, UNKNOWN_STR);
     }
 
     public Item(int id, Integer meta, int count, String name) {
