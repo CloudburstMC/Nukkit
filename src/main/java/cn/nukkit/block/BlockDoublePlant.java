@@ -30,7 +30,7 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean canBeReplaced() {
-        return this.meta == 2 || this.meta == 3;
+        return this.getDamage() == 2 || this.getDamage() == 3;
     }
 
     @Override
@@ -43,13 +43,13 @@ public class BlockDoublePlant extends BlockFlowable {
                 "Rose Bush",
                 "Peony"
         };
-        return names[this.meta & 0x07];
+        return names[this.getDamage() & 0x07];
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if ((this.meta & 0x08) == 8) {
+            if ((this.getDamage() & 0x08) == 8) {
                 // Top
                 if (!(this.down().getId() == DOUBLE_PLANT)) {
                     this.getLevel().setBlock(this, new BlockAir(), true, true);
@@ -73,7 +73,7 @@ public class BlockDoublePlant extends BlockFlowable {
 
         if (up.getId() == 0 && (down.getId() == GRASS || down.getId() == DIRT)) {
             this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
-            this.getLevel().setBlock(up, new BlockDoublePlant(meta ^ 0x08), true, true);
+            this.getLevel().setBlock(up, new BlockDoublePlant(getDamage() ^ 0x08), true, true);
             return true;
         }
 
@@ -84,7 +84,7 @@ public class BlockDoublePlant extends BlockFlowable {
     public boolean onBreak(Item item) {
         Block down = down();
 
-        if ((this.meta & 0x08) == 0x08) { // Top half
+        if ((this.getDamage() & 0x08) == 0x08) { // Top half
             this.getLevel().useBreakOn(down);
         } else {
             this.getLevel().setBlock(this, new BlockAir(), true, true);
@@ -95,8 +95,8 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public Item[] getDrops(Item item) {
-        if ((this.meta & 0x08) != 0x08) {
-            switch (this.meta & 0x07) {
+        if ((this.getDamage() & 0x08) != 0x08) {
+            switch (this.getDamage() & 0x07) {
                 case 2:
                 case 3:
                     boolean dropSeeds = new Random().nextInt(10) == 0;

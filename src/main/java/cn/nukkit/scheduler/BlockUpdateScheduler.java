@@ -3,14 +3,11 @@ package cn.nukkit.scheduler;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockUpdateEntry;
 import com.google.common.collect.Maps;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class BlockUpdateScheduler {
     private final Level level;
@@ -51,7 +48,8 @@ public class BlockUpdateScheduler {
             Set<BlockUpdateEntry> updates = pendingUpdates = queuedUpdates.remove(tick);
             if (updates != null) {
                 for (BlockUpdateEntry entry : updates) {
-                    if (level.isAreaLoaded(new AxisAlignedBB(entry.pos, entry.pos))) {
+                    Vector3 pos = entry.pos;
+                    if (level.isChunkLoaded(NukkitMath.floorDouble(pos.x) >> 4, NukkitMath.floorDouble(pos.z) >> 4)) {
                         Block block = level.getBlock(entry.pos);
 
                         if (Block.equals(block, entry.block, false)) {
@@ -75,7 +73,7 @@ public class BlockUpdateScheduler {
             for (BlockUpdateEntry update : tickSet) {
                 Vector3 pos = update.pos;
 
-                if (pos.getX() >= boundingBox.minX && pos.getX() < boundingBox.maxX && pos.getZ() >= boundingBox.minZ && pos.getZ() < boundingBox.maxZ) {
+                if (pos.getX() >= boundingBox.getMinX() && pos.getX() < boundingBox.getMaxX() && pos.getZ() >= boundingBox.getMinZ() && pos.getZ() < boundingBox.getMaxZ()) {
                     if (set == null) {
                         set = new LinkedHashSet<>();
                     }

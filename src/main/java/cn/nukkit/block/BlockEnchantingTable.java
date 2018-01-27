@@ -20,11 +20,6 @@ import java.util.Map;
  */
 public class BlockEnchantingTable extends BlockTransparent {
     public BlockEnchantingTable() {
-        this(0);
-    }
-
-    public BlockEnchantingTable(int meta) {
-        super(meta);
     }
 
     @Override

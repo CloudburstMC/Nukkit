@@ -19,7 +19,7 @@ import java.util.Map;
  * author: Angelic47
  * Nukkit Project
  */
-public class BlockFurnaceBurning extends BlockSolid {
+public class BlockFurnaceBurning extends BlockSolidMeta {
 
     public BlockFurnaceBurning() {
         this(0);
@@ -67,7 +67,7 @@ public class BlockFurnaceBurning extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int faces[] = {2, 5, 3, 4};
-        this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
+        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))

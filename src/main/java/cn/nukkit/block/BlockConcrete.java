@@ -6,7 +6,7 @@ import cn.nukkit.item.ItemTool;
 /**
  * Created by CreeperFace on 2.6.2017.
  */
-public class BlockConcrete extends BlockSolid {
+public class BlockConcrete extends BlockSolidMeta {
 
     public BlockConcrete() {
         this(0);

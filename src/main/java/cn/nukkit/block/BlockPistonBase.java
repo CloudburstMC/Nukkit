@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * @author CreeperFace
  */
-public abstract class BlockPistonBase extends BlockSolid {
+public abstract class BlockPistonBase extends BlockSolidMeta {
 
     public boolean sticky;
 
@@ -45,14 +45,14 @@ public abstract class BlockPistonBase extends BlockSolid {
             double y = player.y + player.getEyeHeight();
 
             if (y - this.y > 2) {
-                this.meta = BlockFace.UP.getIndex();
+                this.setDamage(BlockFace.UP.getIndex());
             } else if (this.y - y > 0) {
-                this.meta = BlockFace.DOWN.getIndex();
+                this.setDamage(BlockFace.DOWN.getIndex());
             } else {
-                this.meta = player.getHorizontalFacing().getIndex();
+                this.setDamage(player.getHorizontalFacing().getIndex());
             }
         } else {
-            this.meta = player.getHorizontalFacing().getIndex();
+            this.setDamage(player.getHorizontalFacing().getIndex());
         }
         this.level.setBlock(block, this, true, false);
 
@@ -144,7 +144,7 @@ public abstract class BlockPistonBase extends BlockSolid {
     }
 
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.meta).getOpposite();
+        return BlockFace.fromIndex(this.getDamage()).getOpposite();
     }
 
     private boolean isPowered() {
@@ -214,7 +214,7 @@ public abstract class BlockPistonBase extends BlockSolid {
             if (extending) {
                 //extension block entity
 
-                this.level.setBlock(pistonHead, new BlockPistonHead(this.meta));
+                this.level.setBlock(pistonHead, new BlockPistonHead(this.getDamage()));
             }
 
             return true;

@@ -48,9 +48,9 @@ public class BlockNetherWart extends BlockFlowable {
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (new Random().nextInt(10) == 1) {
-                if (this.meta < 0x03) {
+                if (this.getDamage() < 0x03) {
                     BlockNetherWart block = (BlockNetherWart) this.clone();
-                    ++block.meta;
+                    block.setDamage(block.getDamage() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
 
@@ -85,7 +85,7 @@ public class BlockNetherWart extends BlockFlowable {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (this.meta == 0x03) {
+        if (this.getDamage() == 0x03) {
             return new Item[]{
                     new ItemNetherWart(0, 2 + (int) (Math.random() * ((4 - 2) + 1)))
             };

@@ -31,7 +31,7 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     public BlockFace getFacing() {
-        return BlockFace.fromHorizontalIndex(meta);
+        return BlockFace.fromHorizontalIndex(getDamage());
     }
 
     @Override
@@ -46,7 +46,7 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     protected int getDelay() {
-        return (1 + (meta >> 2)) * 2;
+        return (1 + (getDamage() >> 2)) * 2;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     protected Block getUnpowered() {
-        return new BlockRedstoneRepeaterUnpowered(this.meta);
+        return new BlockRedstoneRepeaterUnpowered(this.getDamage());
     }
 
     @Override
@@ -66,8 +66,8 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        this.meta += 4;
-        if (this.meta > 15) this.meta = this.meta % 4;
+        this.setDamage(this.getDamage() + 4);
+        if (this.getDamage() > 15) this.setDamage(this.getDamage() % 4);
 
         this.level.setBlock(this, this, true, false);
         return true;

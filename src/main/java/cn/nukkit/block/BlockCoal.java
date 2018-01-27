@@ -9,11 +9,6 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockCoal extends BlockSolid {
     public BlockCoal() {
-        this(0);
-    }
-
-    public BlockCoal(int meta) {
-        super(0);
     }
 
     @Override

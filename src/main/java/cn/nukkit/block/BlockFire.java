@@ -115,7 +115,7 @@ public class BlockFire extends BlockFlowable {
                 int meta = this.getDamage();
 
                 if (meta < 15) {
-                    this.meta = meta + random.nextInt(3);
+                    this.setDamage(meta + random.nextInt(3));
                     this.getLevel().setBlock(this, this, true);
                 }
 
@@ -281,13 +281,6 @@ public class BlockFire extends BlockFlowable {
 
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return new AxisAlignedBB(
-                this.x,
-                this.y,
-                this.z,
-                this.x + 1,
-                this.y + 1,
-                this.z + 1
-        );
+        return this;
     }
 }

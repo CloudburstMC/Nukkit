@@ -4,6 +4,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
@@ -68,7 +69,7 @@ public class BlockEntityPistonArm extends BlockEntity {
         double x = (double) (lastProgress * (float) this.facing.getXOffset());
         double y = (double) (lastProgress * (float) this.facing.getYOffset());
         double z = (double) (lastProgress * (float) this.facing.getZOffset());
-        AxisAlignedBB bb = new AxisAlignedBB(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D);
+        AxisAlignedBB bb = new SimpleAxisAlignedBB(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D);
         Entity[] entities = this.level.getCollidingEntities(bb);
         if (entities.length != 0) {
             ;

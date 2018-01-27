@@ -12,11 +12,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockCraftingTable extends BlockSolid {
     public BlockCraftingTable() {
-        this(0);
-    }
-
-    public BlockCraftingTable(int meta) {
-        super(meta);
     }
 
     @Override

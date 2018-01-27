@@ -15,11 +15,6 @@ public class BlockBricksStone extends BlockSolid {
 
 
     public BlockBricksStone() {
-        this(0);
-    }
-
-    public BlockBricksStone(int meta) {
-        super(meta);
     }
 
     @Override
@@ -46,14 +41,14 @@ public class BlockBricksStone extends BlockSolid {
                 "Chiseled Stone Bricks"
         };
 
-        return names[this.meta & 0x03];
+        return names[this.getDamage() & 0x03];
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(Item.STONE_BRICKS, this.meta & 0x03, 1)
+                    Item.get(Item.STONE_BRICKS, this.getDamage() & 0x03, 1)
             };
         } else {
             return new Item[0];

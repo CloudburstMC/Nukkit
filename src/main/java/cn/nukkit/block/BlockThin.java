@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.LevelException;
 
 /**
@@ -9,8 +10,7 @@ import cn.nukkit.utils.LevelException;
  */
 public abstract class BlockThin extends BlockTransparent {
 
-    protected BlockThin(int meta) {
-        super(meta);
+    protected BlockThin() {
     }
 
     @Override
@@ -51,7 +51,7 @@ public abstract class BlockThin extends BlockTransparent {
         } catch (LevelException ignore) {
             //null sucks
         }
-        return new AxisAlignedBB(
+        return new SimpleAxisAlignedBB(
                 this.x + f,
                 this.y,
                 this.z + f2,

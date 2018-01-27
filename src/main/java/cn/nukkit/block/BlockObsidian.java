@@ -11,11 +11,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockObsidian extends BlockSolid {
 
     public BlockObsidian() {
-        this(0);
-    }
-
-    public BlockObsidian(int meta) {
-        super(0);
     }
 
     @Override

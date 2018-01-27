@@ -10,11 +10,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockGlassPane extends BlockThin {
 
     public BlockGlassPane() {
-        this(0);
-    }
-
-    public BlockGlassPane(int meta) {
-        super(meta);
     }
 
     @Override

@@ -12,12 +12,7 @@ import cn.nukkit.math.BlockFace;
  */
 public class BlockRedstoneLamp extends BlockSolid {
 
-    public BlockRedstoneLamp(int meta) {
-        super(meta);
-    }
-
     public BlockRedstoneLamp() {
-        this(0);
     }
 
     @Override

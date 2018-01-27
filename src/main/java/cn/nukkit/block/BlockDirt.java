@@ -13,11 +13,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockDirt extends BlockSolid {
 
     public BlockDirt() {
-        this(0);
-    }
-
-    public BlockDirt(int meta) {
-        super(0);
     }
 
     @Override
