@@ -6,7 +6,9 @@ import java.lang.management.ThreadInfo;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * author: MagicDroidX
@@ -220,6 +222,35 @@ public class Utils {
         }
 
         return newArray;
+    }
+
+    public static <T,U,V> Map<U,V> getOrCreate(Map<T, Map<U, V>> map, T key) {
+        Map<U, V> existing = map.get(key);
+        if (existing == null) {
+            ConcurrentHashMap<U, V> toPut = new ConcurrentHashMap<U, V>();
+            existing = map.putIfAbsent(key, toPut);
+            if (existing == null) {
+                existing = toPut;
+            }
+        }
+        return existing;
+    }
+
+    public static <T, U, V extends U> U getOrCreate(Map<T, U> map, Class<V> clazz, T key) {
+        U existing = map.get(key);
+        if (existing != null) {
+            return existing;
+        }
+        try {
+            U toPut = clazz.newInstance();
+            existing = map.putIfAbsent(key, toPut);
+            if (existing == null) {
+                return toPut;
+            }
+            return existing;
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static int toInt(Object number) {
