@@ -47,9 +47,13 @@ public class BlockSkull extends BlockTransparentMeta {
 
     @Override
     public String getName() {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
         int itemMeta = 0;
-        if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
+
+        if (this.level != null) {
+            BlockEntity blockEntity = getLevel().getBlockEntity(this);
+            if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
+        }
+
         return ItemSkull.getItemSkullName(itemMeta);
     }
 

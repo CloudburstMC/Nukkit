@@ -185,11 +185,14 @@ public class BlockBed extends BlockTransparentMeta {
     }
 
     public DyeColor getDyeColor() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        if (this.level != null) {
+            BlockEntity blockEntity = this.level.getBlockEntity(this);
 
-        if (blockEntity instanceof BlockEntityBed) {
-            return ((BlockEntityBed) blockEntity).getDyeColor();
+            if (blockEntity instanceof BlockEntityBed) {
+                return ((BlockEntityBed) blockEntity).getDyeColor();
+            }
         }
+
         return DyeColor.WHITE;
     }
 }

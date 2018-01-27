@@ -60,7 +60,7 @@ public class BlockPlanks extends BlockSolidMeta {
                 "Dark Oak Wood Planks",
         };
 
-        return names[this.getDamage() & 0x07];
+        return this.getDamage() < 0 ? "Unknown" : names[this.getDamage() % 6];
     }
 
     @Override
