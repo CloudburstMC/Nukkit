@@ -74,6 +74,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_PADDLE_TIME_RIGHT = 14; //float
     public static final int DATA_EXPERIENCE_VALUE = 15; //int (xp orb)
     public static final int DATA_MINECART_DISPLAY_BLOCK = 16; //int (id | (data << 16))
+    public static final int DATA_FIREWORK_ITEM = 16; //int (id | (data << 16))
     public static final int DATA_MINECART_DISPLAY_OFFSET = 17; //int
     public static final int DATA_MINECART_HAS_DISPLAY = 18; //byte (must be 1 for minecart to show block inside)
     //TODO: add more properties
