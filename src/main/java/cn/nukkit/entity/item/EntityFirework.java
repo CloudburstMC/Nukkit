@@ -15,10 +15,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.network.protocol.EntityEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.network.protocol.PlaySoundPacket;
+import cn.nukkit.network.protocol.*;
 
 /**
  * @author CreeperFace
@@ -125,8 +122,6 @@ public class EntityFirework extends Entity {
                 pk2.y = (float) getY();
                 pk2.z = (float) getZ();
 
-                //Server.broadcastPacket(getViewers().values(), pk);
-                //Server.broadcastPacket(getViewers().values(), pk2);
                 this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
                 this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk2);
 
