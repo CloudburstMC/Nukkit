@@ -25,10 +25,13 @@ public class PopulatorGroundCover extends Populator {
                         diffY = 1;
                     }
 
-                    byte[] column = chunk.getBlockIdColumn(x, z);
+                    int height = chunk.getHeightMap(x, z);
+                    if (height == 0 || height == 255) height = 127;
+
                     int y;
-                    for (y = 127; y > 0; --y) {
-                        if (column[y] != 0x00 && !Block.get(column[y] & 0xff).isTransparent()) {
+                    for (y = height; y > 0; --y) {
+                        int blockId = chunk.getFullBlock(x, y, z);
+                        if (blockId != 0 && !Block.get(blockId).isTransparent()) {
                             break;
                         }
                     }
@@ -36,7 +39,8 @@ public class PopulatorGroundCover extends Populator {
                     int endY = startY - cover.length;
                     for (y = startY; y > endY && y >= 0; --y) {
                         Block b = cover[startY - y];
-                        if (column[y] == 0x00 && b.isSolid()) {
+                        int blockId = chunk.getBlockId(x, y, z);
+                        if (blockId == 0 && b.isSolid()) {
                             break;
                         }
                         if (b.getDamage() == 0) {

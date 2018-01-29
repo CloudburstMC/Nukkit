@@ -61,7 +61,7 @@ public class BlockFarmland extends BlockTransparentMeta {
             }
 
             if (this.level.getBlock(v.setComponents(x, this.y + 1, z)).isSolid()) {
-                this.level.setBlock(this, new BlockDirt(), true, true);
+                this.level.setBlock(this, new BlockDirt(), false, true);
 
                 return Level.BLOCK_UPDATE_RANDOM;
             }
@@ -94,16 +94,16 @@ public class BlockFarmland extends BlockTransparentMeta {
             if (found || block instanceof BlockWater) {
                 if (this.getDamage() < 7) {
                     this.setDamage(7);
-                    this.level.setBlock(this, this, true, false);
+                    this.level.setBlock(this, this, false, false);
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
             }
 
             if (this.getDamage() > 0) {
                 this.setDamage(this.getDamage() - 1);
-                this.level.setBlock(this, this, true, false);
+                this.level.setBlock(this, this, false, false);
             } else {
-                this.level.setBlock(this, new BlockDirt(), true, true);
+                this.level.setBlock(this, Block.get(Block.DIRT), false, true);
             }
 
             return Level.BLOCK_UPDATE_RANDOM;

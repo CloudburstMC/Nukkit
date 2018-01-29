@@ -652,11 +652,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public static Block get(int id) {
-        return get(id, 0);
+        return fullList[id << 4].clone();
     }
 
     public static Block get(int id, Integer meta) {
-        return get(id, meta, null);
+        if (meta != null) {
+            return fullList[(id << 4) + meta].clone();
+        } else {
+            return fullList[id << 4].clone();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -671,8 +675,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return block;
     }
 
-    public static Block get(int combinedId, Level level, int x, int y, int z) {
-        Block block = fullList[combinedId].clone();
+    public static Block get(int id, int data) {
+        return fullList[(id << 4) + data].clone();
+    }
+
+    public static Block get(int fullId, Level level, int x, int y, int z) {
+        Block block = fullList[fullId].clone();
         block.x = x;
         block.y = y;
         block.z = z;
@@ -800,6 +808,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public abstract String getName();
 
     public abstract int getId();
+
+    /**
+     * The full id is a combination of the id and data.
+     * @return
+     */
+    public int getFullId() {
+        return (getId() << 4);
+    }
 
     public void addVelocityToEntity(Entity entity, Vector3 vector) {
 

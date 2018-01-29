@@ -62,7 +62,6 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
         if (this.chunk != null) {
             this.chunk.setChanged();
-            this.level.clearChunkCache(this.chunk.getX(), this.chunk.getZ());
         }
 
         return true;

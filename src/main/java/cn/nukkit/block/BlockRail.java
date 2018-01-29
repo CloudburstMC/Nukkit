@@ -230,7 +230,7 @@ public class BlockRail extends BlockFlowable {
     public void setOrientation(Orientation o) {
         if (o.metadata() != this.getRealMeta()) {
             this.setDamage(o.metadata());
-            this.level.setBlock(this, this, true, true);
+            this.level.setBlock(this, this, false, true);
         }
     }
 

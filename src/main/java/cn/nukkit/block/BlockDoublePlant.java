@@ -52,7 +52,7 @@ public class BlockDoublePlant extends BlockFlowable {
             if ((this.getDamage() & 0x08) == 8) {
                 // Top
                 if (!(this.down().getId() == DOUBLE_PLANT)) {
-                    this.getLevel().setBlock(this, new BlockAir(), true, true);
+                    this.getLevel().setBlock(this, new BlockAir(), false, true);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             } else {

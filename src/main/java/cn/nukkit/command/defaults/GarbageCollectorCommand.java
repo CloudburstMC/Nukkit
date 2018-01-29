@@ -37,7 +37,6 @@ public class GarbageCollectorCommand extends VanillaCommand {
             chunksCollected += chunksCount - level.getChunks().size();
             entitiesCollected += entitiesCount - level.getEntities().length;
             tilesCollected += tilesCount - level.getBlockEntities().size();
-            level.clearCache(true);
         }
 
         System.gc();
