@@ -2,7 +2,10 @@ package cn.nukkit.level;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockRedstoneComparator;
+import cn.nukkit.block.BlockRedstoneDiode;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.entity.Entity;
@@ -54,6 +57,7 @@ import co.aikar.timings.TimingsHistory;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
@@ -1066,7 +1070,7 @@ public class Level implements ChunkManager, Metadatable {
             for (Entity entity : chunk.getEntities().values()) {
                 entity.scheduleUpdate();
             }
-            int tickSpeed = this.gameRules.getInt("randomTickSpeed");
+            int tickSpeed = 3;
 
             if (tickSpeed > 0) {
                 int blockId;
@@ -1082,7 +1086,7 @@ public class Level implements ChunkManager, Metadatable {
                                 int z = k >> 16 & 0x0f;
 
                                 blockId = section.getBlockId(x, y, z);
-                                if (this.randomTickBlocks[blockId]) {
+                                if (randomTickBlocks[blockId]) {
                                     Block block = Block.get(blockId << 4, this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
                                     block.onUpdate(BLOCK_UPDATE_RANDOM);
                                 }
@@ -2370,9 +2374,6 @@ public class Level implements ChunkManager, Metadatable {
 
     public void requestChunk(int x, int z, Player player) {
         Long index = Level.chunkHash(x, z);
-        if (player.getGamemode() == Player.SPECTATOR && !this.gameRules.getBoolean("spectatorsGenerateChunks") && isChunkGenerated(x, z)) {
-            return;
-        }
 
         if (!this.chunkSendQueue.containsKey(index)) {
             this.chunkSendQueue.put(index, new HashMap<>());
@@ -3136,9 +3137,5 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         return true;
-    }
-
-    public int getSpawnRadius() {
-        return getGameRules().getInt("spawnRadius");
     }
 }
