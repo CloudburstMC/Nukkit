@@ -39,6 +39,7 @@ public class RegionLoader extends BaseRegionLoader {
             return null;
         }
 
+        try {
         Integer[] table = this.locationTable.get(index);
         this.randomAccessFile.seek(table[0] << 12);
         int length = this.randomAccessFile.readInt();
@@ -70,6 +71,10 @@ public class RegionLoader extends BaseRegionLoader {
             return chunk;
         } else {
             MainLogger.getLogger().error("Corrupted chunk detected");
+            return null;
+        }
+        } catch (EOFException e) {
+            MainLogger.getLogger().error("Your world is corrupt, because some code is bad and corrupted it. oops. ");
             return null;
         }
     }
