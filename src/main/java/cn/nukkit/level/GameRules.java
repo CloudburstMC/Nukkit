@@ -23,15 +23,14 @@ public class GameRules {
         this.addGameRule("commandBlockOutput", "true", ValueType.BOOLEAN_VALUE);
         this.addGameRule("naturalRegeneration", "true", ValueType.BOOLEAN_VALUE);
         this.addGameRule("doDaylightCycle", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("logAdminCommands", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("showDeathMessages", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("randomTickSpeed", "3", ValueType.NUMERICAL_VALUE);
+        this.addGameRule("doWeatherCycle", "true", ValueType.BOOLEAN_VALUE);
+        this.addGameRule("drowningdamage", "true", ValueType.BOOLEAN_VALUE);
+        this.addGameRule("falldamage", "true", ValueType.BOOLEAN_VALUE);
+        this.addGameRule("firegdamage", "true", ValueType.BOOLEAN_VALUE);
         this.addGameRule("sendCommandFeedback", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("reducedDebugInfo", "false", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("spectatorsGenerateChunks", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("spawnRadius", "10", ValueType.NUMERICAL_VALUE);
-        this.addGameRule("disableElytraMovementCheck", "false", ValueType.BOOLEAN_VALUE);
+        this.addGameRule("showcoordinates", "true", ValueType.BOOLEAN_VALUE);
         this.addGameRule("pvp", "true", ValueType.BOOLEAN_VALUE);
+        this.addGameRule("tntexplodes", "true", ValueType.BOOLEAN_VALUE);
     }
 
     public void addGameRule(String key, String value, ValueType type) {
