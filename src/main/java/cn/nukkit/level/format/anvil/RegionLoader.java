@@ -4,7 +4,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseRegionLoader;
 import cn.nukkit.utils.*;
-
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -40,6 +40,7 @@ public class RegionLoader extends BaseRegionLoader {
             return null;
         }
 
+        try {
         Integer[] table = this.locationTable.get(index);
         RandomAccessFile raf = this.getRandomAccessFile();
         raf.seek(table[0] << 12);
@@ -72,6 +73,10 @@ public class RegionLoader extends BaseRegionLoader {
             return chunk;
         } else {
             MainLogger.getLogger().error("Corrupted chunk detected");
+            return null;
+        }
+        } catch (EOFException e) {
+            MainLogger.getLogger().error("Your world is corrupt, because some code is bad and corrupted it. oops. ");
             return null;
         }
     }
