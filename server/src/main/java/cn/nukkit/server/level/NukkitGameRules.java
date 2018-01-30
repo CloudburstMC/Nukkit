@@ -2,6 +2,7 @@ package cn.nukkit.server.level;
 
 import cn.nukkit.api.level.GameRules;
 import cn.nukkit.api.util.data.GameRule;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -58,34 +59,22 @@ public class NukkitGameRules implements GameRules {
 
     @Override
     public void setGameRule(@Nonnull GameRule gameRule, boolean value) {
-        Value gamerule = gameRules.get(gameRule);
-        if (gamerule != null) {
-            gamerule.setValue(value, RuleType.BOOLEAN);
-        } else {
-            gameRules.put(gameRule, new Value<>(RuleType.BOOLEAN, value));
-        }
+        Preconditions.checkNotNull(gameRule, "gameRule");
+        gameRules.get(gameRule).setValue(value, RuleType.BOOLEAN);
         stale = true;
     }
 
     @Override
     public void setGameRule(@Nonnull GameRule gameRule, int value) {
-        Value gamerule = gameRules.get(gameRule);
-        if (gamerule != null) {
-            gamerule.setValue(value, RuleType.INTEGER);
-        } else {
-            gameRules.put(gameRule, new Value<>(RuleType.BOOLEAN, value));
-        }
+        Preconditions.checkNotNull(gameRule, "gameRule");
+        gameRules.get(gameRule).setValue(value, RuleType.INTEGER);
         stale = true;
     }
 
     @Override
     public void setGameRule(@Nonnull GameRule gameRule, float value) {
-        Value gamerule = gameRules.get(gameRule);
-        if (gamerule != null) {
-            gamerule.setValue(value, RuleType.FLOAT);
-        } else {
-            gameRules.put(gameRule, new Value<>(RuleType.BOOLEAN, value));
-        }
+        Preconditions.checkNotNull(gameRule, "gameRule");
+        gameRules.get(gameRule).setValue(value, RuleType.FLOAT);
         stale = true;
     }
 
@@ -96,16 +85,20 @@ public class NukkitGameRules implements GameRules {
 
     @Override
     public int getInteger(@Nonnull GameRule gameRule) {
+        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).getValueAsInteger();
     }
 
     @Override
     public float getFloat(@Nonnull GameRule gameRule) {
+        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).getValueAsFloat();
     }
 
+    @Nonnull
     @Override
     public String getString(@Nonnull GameRule gameRule) {
+        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).value.toString();
     }
 

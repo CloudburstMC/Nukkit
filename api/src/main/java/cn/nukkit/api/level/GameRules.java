@@ -19,6 +19,7 @@ public interface GameRules {
 
     float getFloat(@Nonnull GameRule gameRule);
 
+    @Nonnull
     String getString(@Nonnull GameRule gameRule);
 
     boolean contains(@Nullable GameRule gameRule);
