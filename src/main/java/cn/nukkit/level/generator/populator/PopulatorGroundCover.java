@@ -26,10 +26,10 @@ public class PopulatorGroundCover extends Populator {
                     }
 
                     int height = chunk.getHeightMap(x, z);
-                    if (height == 0 || height == 255) height = 127;
+                    if (height == 0 || height == 255) height = 126;
 
                     int y;
-                    for (y = height; y > 0; --y) {
+                    for (y = height + 1; y > 0; --y) {
                         int blockId = chunk.getFullBlock(x, y, z);
                         if (blockId != 0 && !Block.get(blockId).isTransparent()) {
                             break;
