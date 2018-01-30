@@ -339,7 +339,6 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 if (hasBlockLight && hasSkyLight) {
                     try {
                         compressedLight = Zlib.deflate(Binary.appendBytes(arr1, arr2), 1);
-                        System.out.println("Compressed: " + (4096 - compressedLight.length));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
