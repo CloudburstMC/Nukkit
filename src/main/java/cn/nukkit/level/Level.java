@@ -640,12 +640,10 @@ public class Level implements ChunkManager, Metadatable {
                 if (chunkLoadersIndex.isEmpty()) {
                     this.chunkLoaders.remove(index);
                     this.playerLoaders.remove(index);
+                    this.unloadChunkRequest(chunkX, chunkZ, true);
                 } else {
                     Map<Integer, Player> playerLoadersIndex = this.playerLoaders.get(index);
                     playerLoadersIndex.remove(hash);
-
-                    int count = this.loaderCounter.get(hash);
-                    this.loaderCounter.put(hash, count - 1);
                 }
 
                 int count = this.loaderCounter.get(hash);
