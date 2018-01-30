@@ -26,24 +26,24 @@ public class NukkitGameRules implements GameRules {
     public static NukkitGameRules getDefault() {
         NukkitGameRules nukkitGameRules = new NukkitGameRules();
 
-        nukkitGameRules.gameRules.put(COMMAND_BLOCK_OUTPUT, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(DO_DAYLIGHT_CYCLE, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(DO_ENTITY_DROPS, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(DO_FIRE_TICK, new Value(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(DO_MOB_LOOT, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(DO_MOB_SPAWNING, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(DO_TILE_DROPS, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(DO_WEATHER_CYCLE, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(DROWNING_DAMAGE, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(FALL_DAMAGE, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(FIRE_DAMAGE, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(KEEP_INVENTORY, new Value<>(false, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(MOB_GRIEFING, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(NATURAL_REGENERATION, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(PVP, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(SEND_COMMAND_FEEDBACK, new Value<>(true, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(SHOW_COORDINATES, new Value<>(false, RuleType.BOOLEAN));
-        nukkitGameRules.gameRules.put(TNT_EXPLODES, new Value<>(true, RuleType.BOOLEAN));
+        nukkitGameRules.gameRules.put(COMMAND_BLOCK_OUTPUT, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(DO_DAYLIGHT_CYCLE, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(DO_ENTITY_DROPS, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(DO_FIRE_TICK, new Value(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(DO_MOB_LOOT, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(DO_MOB_SPAWNING, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(DO_TILE_DROPS, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(DO_WEATHER_CYCLE, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(DROWNING_DAMAGE, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(FALL_DAMAGE, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(FIRE_DAMAGE, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(KEEP_INVENTORY, new Value<>(RuleType.BOOLEAN, false));
+        nukkitGameRules.gameRules.put(MOB_GRIEFING, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(NATURAL_REGENERATION, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(PVP, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(SEND_COMMAND_FEEDBACK, new Value<>(RuleType.BOOLEAN, true));
+        nukkitGameRules.gameRules.put(SHOW_COORDINATES, new Value<>(RuleType.BOOLEAN, false));
+        nukkitGameRules.gameRules.put(TNT_EXPLODES, new Value<>(RuleType.BOOLEAN, true));
 
         return nukkitGameRules;
     }
@@ -62,7 +62,7 @@ public class NukkitGameRules implements GameRules {
         if (gamerule != null) {
             gamerule.setValue(value, RuleType.BOOLEAN);
         } else {
-            gameRules.put(gameRule, new Value<>(value, RuleType.BOOLEAN));
+            gameRules.put(gameRule, new Value<>(RuleType.BOOLEAN, value));
         }
         stale = true;
     }
@@ -73,7 +73,7 @@ public class NukkitGameRules implements GameRules {
         if (gamerule != null) {
             gamerule.setValue(value, RuleType.INTEGER);
         } else {
-            gameRules.put(gameRule, new Value<>(value, RuleType.INTEGER));
+            gameRules.put(gameRule, new Value<>(RuleType.BOOLEAN, value));
         }
         stale = true;
     }
@@ -84,7 +84,7 @@ public class NukkitGameRules implements GameRules {
         if (gamerule != null) {
             gamerule.setValue(value, RuleType.FLOAT);
         } else {
-            gameRules.put(gameRule, new Value<>(value, RuleType.FLOAT));
+            gameRules.put(gameRule, new Value<>(RuleType.BOOLEAN, value));
         }
         stale = true;
     }
