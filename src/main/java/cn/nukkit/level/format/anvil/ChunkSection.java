@@ -2,7 +2,13 @@ package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.anvil.palette.DataPalette;
+import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.Zlib;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * author: MagicDroidX
@@ -14,14 +20,17 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     private DataPalette palette;
 
-    private byte[] blockLight;
-    private byte[] skyLight;
+    protected byte[] blockLight;
+    protected byte[] skyLight;
+    protected byte[] compressedLight;
+    protected boolean hasBlockLight;
+    protected boolean hasSkyLight;
 
     public ChunkSection(int y) {
         this.y = y;
 
-        this.blockLight = new byte[2048];
-        this.skyLight = new byte[2048];
+        hasBlockLight = false;
+        hasSkyLight = false;
 
         palette = new DataPalette();
     }
@@ -123,6 +132,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public int getBlockSkyLight(int x, int y, int z) {
+        if (this.skyLight == null && !hasSkyLight) return 0;
+        this.skyLight = getSkyLightArray();
         int sl = this.skyLight[(y << 7) | (z << 3) | (x >> 1)] & 0xff;
         if ((x & 1) == 0) {
             return sl & 0x0f;
@@ -132,6 +143,15 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public void setBlockSkyLight(int x, int y, int z, int level) {
+        if (this.skyLight == null) {
+            if (hasSkyLight) {
+                this.skyLight = getSkyLightArray();
+            } else if (level == 0) {
+                return;
+            } else {
+                this.skyLight = new byte[2048];
+            }
+        }
         int i = (y << 7) | (z << 3) | (x >> 1);
         int old = this.skyLight[i] & 0xff;
         if ((x & 1) == 0) {
@@ -143,7 +163,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public int getBlockLight(int x, int y, int z) {
-        int l = this.blockLight[(y << 7) | (z << 3) | (x >> 1)] & 0xff;
+        if (blockLight == null && !hasBlockLight) return 0;
+        this.blockLight = getLightArray();
+        int l = blockLight[(y << 7) | (z << 3) | (x >> 1)] & 0xff;
         if ((x & 1) == 0) {
             return l & 0x0f;
         }
@@ -152,6 +174,15 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public void setBlockLight(int x, int y, int z, int level) {
+        if (this.blockLight == null) {
+            if (hasBlockLight) {
+                this.blockLight = getLightArray();
+            } else if (level == 0) {
+                return;
+            } else {
+                this.blockLight = new byte[2048];
+            }
+        }
         int i = (y << 7) | (z << 3) | (x >> 1);
         int old = this.blockLight[i] & 0xff;
         if ((x & 1) == 0) {
@@ -226,12 +257,40 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public byte[] getSkyLightArray() {
-        return this.skyLight;
+        if (this.skyLight != null) return skyLight;
+        if (hasSkyLight) {
+            inflate();
+            return this.skyLight;
+        } else {
+            return EmptyChunkSection.EMPTY_LIGHT_ARR;
+        }
+    }
+
+    private void inflate() {
+        try {
+            if (compressedLight != null && compressedLight.length != 0) {
+                byte[] inflated = Zlib.inflate(compressedLight);
+                blockLight = Arrays.copyOfRange(inflated, 0, 2048);
+                skyLight = Arrays.copyOfRange(inflated, 2048, 4096);
+                compressedLight = null;
+            } else {
+                blockLight = new byte[2048];
+                skyLight = new byte[2048];
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public byte[] getLightArray() {
-        return this.blockLight;
+        if (this.blockLight != null) return blockLight;
+        if (hasBlockLight) {
+            inflate();
+            return this.blockLight;
+        } else {
+            return EmptyChunkSection.EMPTY_LIGHT_ARR;
+        }
     }
 
     @Override
@@ -263,7 +322,33 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     public boolean compress() {
-        return palette.compress();
+        if (!palette.compress()) {
+            if (blockLight != null) {
+                byte[] arr1 = blockLight;
+                hasBlockLight = !Utils.isByteArrayEmpty(arr1);
+                byte[] arr2;
+                if (skyLight != null) {
+                    arr2 = skyLight;
+                    hasSkyLight = !Utils.isByteArrayEmpty(skyLight);
+                } else {
+                    arr2 = EmptyChunkSection.EMPTY_LIGHT_ARR;
+                    hasSkyLight = false;
+                }
+                blockLight = null;
+                skyLight = null;
+                if (hasBlockLight && hasSkyLight) {
+                    try {
+                        compressedLight = Zlib.deflate(Binary.appendBytes(arr1, arr2), 1);
+                        System.out.println("Compressed: " + (4096 - compressedLight.length));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -275,8 +360,11 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             e.printStackTrace();
             return null;
         }
-        section.skyLight = this.skyLight.clone();
-        section.blockLight = this.blockLight.clone();
+        if (this.blockLight != null) section.blockLight = this.blockLight.clone();
+        if (this.skyLight != null) section.skyLight = this.skyLight.clone();
+        section.hasBlockLight = this.hasBlockLight;
+        section.hasSkyLight = this.hasSkyLight;
+        if (this.compressedLight != null) section.compressedLight = this.compressedLight.clone();
         section.palette = this.palette.clone();
         return section;
     }

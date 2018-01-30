@@ -17,6 +17,12 @@ public class EmptyChunkSection implements ChunkSection {
             EMPTY[y] = new EmptyChunkSection(y);
         }
     }
+    public static byte[] EMPTY_LIGHT_ARR = new byte[2048];
+    public static byte[] EMPTY_SKY_LIGHT_ARR = new byte[2048];
+    static {
+        Arrays.fill(EMPTY_SKY_LIGHT_ARR, (byte) 255);
+    }
+
     private final int y;
 
     public EmptyChunkSection(int y) {
@@ -68,14 +74,12 @@ public class EmptyChunkSection implements ChunkSection {
 
     @Override
     public byte[] getSkyLightArray() {
-        byte[] b = new byte[2048];
-        Arrays.fill(b, (byte) 0xff);
-        return b;
+        return EMPTY_SKY_LIGHT_ARR;
     }
 
     @Override
     public byte[] getLightArray() {
-        return new byte[2048];
+        return EMPTY_LIGHT_ARR;
     }
 
     @Override

@@ -716,43 +716,41 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (this.isThundering()) {
-            synchronized (this) {
-                for (Map.Entry<Long, ? extends FullChunk> entry : getChunks().entrySet()) {
-                    long index = entry.getKey();
-                    FullChunk chunk = entry.getValue();
-                    if (rand.nextInt(10000) == 0) {
-                        this.updateLCG = this.updateLCG * 3 + 1013904223;
-                        int LCG = this.updateLCG >> 2;
+            for (Map.Entry<Long, ? extends FullChunk> entry : getChunks().entrySet()) {
+                long index = entry.getKey();
+                FullChunk chunk = entry.getValue();
+                if (rand.nextInt(10000) == 0) {
+                    this.updateLCG = this.updateLCG * 3 + 1013904223;
+                    int LCG = this.updateLCG >> 2;
 
-                        int chunkX = chunk.getX() * 16;
-                        int chunkZ = chunk.getZ() * 16;
-                        Vector3 vector = this.adjustPosToNearbyEntity(new Vector3(chunkX + (LCG & 15), 0, chunkZ + (LCG >> 8 & 15)));
+                    int chunkX = chunk.getX() * 16;
+                    int chunkZ = chunk.getZ() * 16;
+                    Vector3 vector = this.adjustPosToNearbyEntity(new Vector3(chunkX + (LCG & 15), 0, chunkZ + (LCG >> 8 & 15)));
 
-                        int bId = this.getBlockIdAt(vector.getFloorX(), vector.getFloorY(), vector.getFloorZ());
-                        if (bId != Block.TALL_GRASS && bId != Block.WATER)
-                            vector.y += 1;
-                        CompoundTag nbt = new CompoundTag()
-                                .putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", vector.x))
-                                        .add(new DoubleTag("", vector.y)).add(new DoubleTag("", vector.z)))
-                                .putList(new ListTag<DoubleTag>("Motion").add(new DoubleTag("", 0))
-                                        .add(new DoubleTag("", 0)).add(new DoubleTag("", 0)))
-                                .putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("", 0))
-                                        .add(new FloatTag("", 0)));
+                    int bId = this.getBlockIdAt(vector.getFloorX(), vector.getFloorY(), vector.getFloorZ());
+                    if (bId != Block.TALL_GRASS && bId != Block.WATER)
+                        vector.y += 1;
+                    CompoundTag nbt = new CompoundTag()
+                            .putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", vector.x))
+                                    .add(new DoubleTag("", vector.y)).add(new DoubleTag("", vector.z)))
+                            .putList(new ListTag<DoubleTag>("Motion").add(new DoubleTag("", 0))
+                                    .add(new DoubleTag("", 0)).add(new DoubleTag("", 0)))
+                            .putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("", 0))
+                                    .add(new FloatTag("", 0)));
 
-                        EntityLightning bolt = new EntityLightning(chunk, nbt);
-                        LightningStrikeEvent ev = new LightningStrikeEvent(this, bolt);
-                        getServer().getPluginManager().callEvent(ev);
-                        if (!ev.isCancelled()) {
-                            bolt.spawnToAll();
-                        } else {
-                            bolt.setEffect(false);
-                        }
-
-                        this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, 93, -1, false);
-                        this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, 93, -1, false);
+                    EntityLightning bolt = new EntityLightning(chunk, nbt);
+                    LightningStrikeEvent ev = new LightningStrikeEvent(this, bolt);
+                    getServer().getPluginManager().callEvent(ev);
+                    if (!ev.isCancelled()) {
+                        bolt.spawnToAll();
+                    } else {
+                        bolt.setEffect(false);
                     }
 
+                    this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, 93, -1, false);
+                    this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, 93, -1, false);
                 }
+
             }
         }
 
@@ -1601,12 +1599,12 @@ public class Level implements ChunkManager, Metadatable {
         }
         BaseFullChunk chunk = this.getChunk(x >> 4, z >> 4, true);
         Block blockPrevious;
-        synchronized (chunk) {
+//        synchronized (chunk) {
             blockPrevious = chunk.getAndSetBlock(x & 0xF, y, z & 0xF, block);
             if (blockPrevious.getFullId() == block.getFullId()) {
                 return false;
             }
-        }
+//        }
         block.x = x;
         block.y = y;
         block.z = z;

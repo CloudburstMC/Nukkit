@@ -54,8 +54,6 @@ public class ChunkRequestTask extends AsyncTask {
         Chunk chunk = Chunk.fromFastBinary(this.chunk);
         byte[] ids = chunk.getBlockIdArray();
         byte[] meta = chunk.getBlockDataArray();
-        byte[] blockLight = chunk.getBlockLightArray();
-        byte[] skyLight = chunk.getBlockSkyLightArray();
         byte[] heightMap = chunk.getHeightMapArray();
         int[] biomeColors = chunk.getBiomeColorArray();
         ByteBuffer buffer = ByteBuffer.allocate(
