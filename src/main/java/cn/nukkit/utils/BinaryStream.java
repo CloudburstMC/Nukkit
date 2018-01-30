@@ -42,7 +42,6 @@ public class BinaryStream {
     }
 
     public void reset() {
-        this.buffer = new byte[32];
         this.offset = 0;
         this.count = 0;
     }

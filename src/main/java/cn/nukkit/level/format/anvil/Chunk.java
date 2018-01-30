@@ -125,8 +125,7 @@ public class Chunk extends BaseChunk {
             }
         }
 
-        this.x = this.nbt.getInt("xPos");
-        this.z = this.nbt.getInt("zPos");
+        this.setPosition(this.nbt.getInt("xPos"), this.nbt.getInt("zPos"));
         for (int Y = 0; Y < sections.length; ++Y) {
             cn.nukkit.level.format.ChunkSection section = sections[Y];
             if (section != null) {
@@ -147,11 +146,15 @@ public class Chunk extends BaseChunk {
         this.biomeColors = biomeColors;
 
         int[] heightMap = this.nbt.getIntArray("HeightMap");
+        this.heightMap = new byte[256];
         if (heightMap.length != 256) {
-            heightMap = new int[256];
-            Arrays.fill(heightMap, 255);
+            Arrays.fill(this.heightMap, (byte) 255);
+        } else {
+            for (int i = 0; i < heightMap.length; i++) {
+                this.heightMap[i] = (byte) heightMap[i];
+            }
         }
-        this.heightMap = heightMap;
+
 
         this.extraData = extraData;
 
@@ -214,7 +217,7 @@ public class Chunk extends BaseChunk {
     @Override
     public void setPopulated(boolean value) {
         this.nbt.putBoolean("TerrainPopulated", value);
-        this.hasChanged = true;
+        setChanged();
     }
 
     @Override
@@ -235,7 +238,7 @@ public class Chunk extends BaseChunk {
     @Override
     public void setGenerated(boolean value) {
         this.nbt.putBoolean("TerrainGenerated", value);
-        this.hasChanged = true;
+        setChanged();
     }
 
     public CompoundTag getNBT() {
@@ -283,11 +286,15 @@ public class Chunk extends BaseChunk {
     @Override
     public byte[] toFastBinary() {
         CompoundTag nbt = this.getNBT().copy();
-        nbt.putInt("xPos", this.x);
-        nbt.putInt("zPos", this.z);
+        nbt.putInt("xPos", this.getX());
+        nbt.putInt("zPos", this.getZ());
 
         nbt.putIntArray("BiomeColors", this.getBiomeColorArray());
-        nbt.putIntArray("HeightMap", this.getHeightMapArray());
+        int[] heightInts = new int[256];
+        byte[] heightBytes = this.getHeightMapArray();
+        for (int i = 0; i < heightInts.length; i++) {
+            heightInts[i] = heightBytes[i] & 0xFF;
+        }
 
         for (cn.nukkit.level.format.ChunkSection section : this.getSections()) {
             if (section instanceof EmptyChunkSection) {
@@ -367,8 +374,8 @@ public class Chunk extends BaseChunk {
     public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
 
-        nbt.putInt("xPos", this.x);
-        nbt.putInt("zPos", this.z);
+        nbt.putInt("xPos", this.getX());
+        nbt.putInt("zPos", this.getZ());
 
         ListTag<CompoundTag> sectionList = new ListTag<>("Sections");
         for (cn.nukkit.level.format.ChunkSection section : this.getSections()) {
@@ -386,7 +393,12 @@ public class Chunk extends BaseChunk {
         nbt.putList(sectionList);
 
         nbt.putIntArray("BiomeColors", this.getBiomeColorArray());
-        nbt.putIntArray("HeightMap", this.getHeightMapArray());
+        int[] heightInts = new int[256];
+        byte[] heightBytes = this.getHeightMapArray();
+        for (int i = 0; i < heightInts.length; i++) {
+            heightInts[i] = heightBytes[i] & 0xFF;
+        }
+        nbt.putIntArray("HeightMap", heightInts);
 
         ArrayList<CompoundTag> entities = new ArrayList<>();
         for (Entity entity : this.getEntities().values()) {
@@ -448,6 +460,47 @@ public class Chunk extends BaseChunk {
         }
     }
 
+    @Override
+    public int getBlockSkyLight(int x, int y, int z) {
+        cn.nukkit.level.format.ChunkSection section = this.sections[y >> 4];
+        if (section instanceof cn.nukkit.level.format.anvil.ChunkSection) {
+            cn.nukkit.level.format.anvil.ChunkSection anvilSection = (cn.nukkit.level.format.anvil.ChunkSection) section;
+            if (anvilSection.skyLight != null) {
+                return section.getBlockSkyLight(x, y & 0x0f, z);
+            } else if (!anvilSection.hasSkyLight) {
+                return 0;
+            } else {
+                int height = getHighestBlockAt(x, z);
+                if (height < y) {
+                    return 15;
+                } else if (height == y) {
+                    return Block.transparent[getBlockId(x, y, z)] ? 15 : 0;
+                } else {
+                    return section.getBlockSkyLight(x, y & 0x0f, z);
+                }
+            }
+        } else {
+            return section.getBlockSkyLight(x, y & 0x0f, z);
+        }
+    }
+
+    @Override
+    public int getBlockLight(int x, int y, int z) {
+        cn.nukkit.level.format.ChunkSection section = this.sections[y >> 4];
+        if (section instanceof cn.nukkit.level.format.anvil.ChunkSection) {
+            cn.nukkit.level.format.anvil.ChunkSection anvilSection = (cn.nukkit.level.format.anvil.ChunkSection) section;
+            if (anvilSection.blockLight != null) {
+                return section.getBlockLight(x, y & 0x0f, z);
+            } else if (!anvilSection.hasBlockLight) {
+                return 0;
+            } else {
+                return section.getBlockLight(x, y & 0x0f, z);
+            }
+        } else {
+            return section.getBlockLight(x, y & 0x0f, z);
+        }
+    }
+
     public static Chunk getEmptyChunk(int chunkX, int chunkZ) {
         return getEmptyChunk(chunkX, chunkZ, null);
     }
@@ -461,15 +514,14 @@ public class Chunk extends BaseChunk {
                 chunk = new Chunk(Anvil.class, null);
             }
 
-            chunk.x = chunkX;
-            chunk.z = chunkZ;
+            chunk.setPosition(chunkX, chunkZ);
 
             chunk.sections = new cn.nukkit.level.format.ChunkSection[16];
             for (int y = 0; y < 16; ++y) {
-                chunk.sections[y] = new EmptyChunkSection(y);
+                chunk.sections[y] = EmptyChunkSection.EMPTY[y];
             }
 
-            chunk.heightMap = new int[256];
+            chunk.heightMap = new byte[256];
             chunk.biomeColors = new int[256];
 
             chunk.nbt.putByte("V", 1);

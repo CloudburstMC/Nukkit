@@ -19,6 +19,11 @@ public class BlockGlassPaneStained extends BlockGlassPane {
     }
 
     @Override
+    public int getFullId() {
+        return (getId() << 4) + getDamage();
+    }
+
+    @Override
     public int getId() {
         return STAINED_GLASS_PANE;
     }

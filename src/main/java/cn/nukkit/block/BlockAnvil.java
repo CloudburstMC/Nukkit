@@ -24,6 +24,11 @@ public class BlockAnvil extends BlockFallable {
     }
 
     @Override
+    public int getFullId() {
+        return (getId() << 4) + getDamage();
+    }
+
+    @Override
     public final int getDamage() {
         return this.meta;
     }

@@ -98,15 +98,15 @@ public class BlockSugarcane extends BlockFlowable {
                     for (int y = 1; y < 3; ++y) {
                         Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
                         if (b.getId() == AIR) {
-                            this.getLevel().setBlock(b, new BlockSugarcane(), true);
+                            this.getLevel().setBlock(b, new BlockSugarcane(), false);
                             break;
                         }
                     }
                     this.setDamage(0);
-                    this.getLevel().setBlock(this, this, true);
+                    this.getLevel().setBlock(this, this, false);
                 } else {
                     this.setDamage(this.getDamage() + 1);
-                    this.getLevel().setBlock(this, this, true);
+                    this.getLevel().setBlock(this, this, false);
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
             }
