@@ -841,13 +841,15 @@ public class Server {
                         long allocated = next - current - 1;
 
                         { // Instead of wasting time, do something potentially useful
+                            int offset = 0;
                             for (int i = 0; i < levelArray.length; i++) {
-                                int offset = (i + lastLevelGC) % levelArray.length;
+                                offset = (i + lastLevelGC) % levelArray.length;
                                 Level level = levelArray[offset];
                                 level.doGarbageCollection(allocated - 1);
                                 allocated = next - System.currentTimeMillis();
                                 if (allocated <= 0) break;
                             }
+                            lastLevelGC = offset + 1;
                         }
 
                         if (allocated > 0) {
