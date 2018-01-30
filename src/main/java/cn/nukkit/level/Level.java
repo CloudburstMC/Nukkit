@@ -688,6 +688,7 @@ public class Level implements ChunkManager, Metadatable {
     public void doTick(int currentTick) {
         this.timings.doTick.startTiming();
 
+        updateBlockLight(lightQueue);
         this.checkTime();
 
         // Tick Weather
