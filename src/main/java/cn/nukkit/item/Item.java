@@ -502,6 +502,7 @@ public class Item implements Cloneable {
     public static final int CARROT_ON_A_STICK = 398;
     public static final int NETHER_STAR = 399;
     public static final int PUMPKIN_PIE = 400;
+    public static final int FIREWORKS = 401;
 
     public static final int ENCHANTED_BOOK = 403;
     public static final int ENCHANT_BOOK = 403;

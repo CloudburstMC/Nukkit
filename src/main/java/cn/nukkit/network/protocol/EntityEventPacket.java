@@ -25,6 +25,8 @@ public class EntityEventPacket extends DataPacket {
     public static final int AMBIENT_SOUND = 17;
     public static final int RESPAWN = 18;
 
+    public static final int FIREWORK_EXPLOSION = 25;
+
     public static final int ENCHANT = 34;
 
     public static final byte EATING_ITEM = 57;
