@@ -1,12 +1,11 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.data.SlotEntityData;
 import cn.nukkit.entity.data.Vector3fEntityData;
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
@@ -20,7 +19,7 @@ import cn.nukkit.network.protocol.*;
 /**
  * @author CreeperFace
  */
-public class EntityFirework extends Entity {
+public class EntityFirework extends EntityProjectile {
 
     public static final int NETWORK_ID = 72;
 
