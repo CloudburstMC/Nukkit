@@ -716,6 +716,7 @@ public class Level implements ChunkManager, Metadatable {
         if (this.isThundering()) {
             for (Map.Entry<Long, ? extends FullChunk> entry : getChunks().entrySet()) {
                 long index = entry.getKey();
+                if (areNeighboringChunksLoaded(index)) continue;
                 FullChunk chunk = entry.getValue();
                 if (rand.nextInt(10000) == 0) {
                     this.updateLCG = this.updateLCG * 3 + 1013904223;
