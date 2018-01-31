@@ -837,11 +837,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.inventory.sendContents(this);
         this.inventory.sendArmorContents(this);
 
-        if (level.stopTime) {
-            SetTimePacket setTimePacket = new SetTimePacket();
-            setTimePacket.time = this.level.getTime();
-            this.dataPacket(setTimePacket);
-        }
+        SetTimePacket setTimePacket = new SetTimePacket();
+        setTimePacket.time = this.level.getTime();
+        this.dataPacket(setTimePacket);
 
         Position pos = this.level.getSafeSpawn(this);
 
@@ -952,13 +950,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         int radiusSqr = radius * radius;
         for (int x = -radius; x <= radius; x++) {
+            int xx = x * x;
             int chunkX = x + centerX;
             for (int z = -radius; z <= radius; z++) {
-                int chunkZ = z + centerZ;
-                int distanceSqr = x * x + z * z;
+                int distanceSqr = xx + z * z;
                 if (distanceSqr <= radiusSqr) {
-                    long index;
-                    if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
+                    int chunkZ = z + centerZ;
+                    long index = Level.chunkHash(chunkX, chunkZ);
+                    Boolean value = this.usedChunks.get(index);
+                    if (value == null || !value) {
                         this.loadQueue.put(index, distanceSqr);
                     }
                     lastChunk.remove(index);
