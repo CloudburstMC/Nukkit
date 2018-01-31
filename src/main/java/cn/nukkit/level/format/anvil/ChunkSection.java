@@ -305,20 +305,20 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     };
 
-    private byte[] toXYZ(char[] raw) {
+    private byte[] toXZY(char[] raw) {
         byte[] buffer = toXZYBuffer.get();
         for (int i = 0; i < 4096; i++) {
             buffer[i] = (byte) (raw[i] >> 4);
         }
-        for (int i = 0, j = 4096; i < 2048; i += 2, j++) {
-            buffer[j] = (byte) ((raw[i] & 0xF) + ((raw[i + 1] & 0xF) << 4));
+        for (int i = 0, j = 4096; i < 4096; i += 2, j++) {
+            buffer[j] = (byte) (((raw[i + 1] & 0xF) << 4) | (raw[i] & 0xF));
         }
         return buffer;
     }
 
     @Override
     public byte[] getBytes() {
-        return toXYZ(palette.getRaw());
+        return toXZY(palette.getRaw());
     }
 
     public boolean compress() {
