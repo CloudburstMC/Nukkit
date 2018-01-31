@@ -21,7 +21,7 @@ import java.util.Random;
  */
 public class FireworkRocket extends EntityProjectile {
 
-    public static final int NETWORK_ID = 82;
+    public static final int NETWORK_ID = 72;
 
     @Override
     public int getNetworkId() {
