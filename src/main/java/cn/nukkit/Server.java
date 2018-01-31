@@ -10,10 +10,7 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
-import cn.nukkit.entity.projectile.EntityArrow;
-import cn.nukkit.entity.projectile.EntityEgg;
-import cn.nukkit.entity.projectile.EntityEnderPearl;
-import cn.nukkit.entity.projectile.EntitySnowball;
+import cn.nukkit.entity.projectile.*;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
@@ -1994,6 +1991,7 @@ public class Server {
         Entity.registerEntity("Snowball", EntitySnowball.class);
         Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("Painting", EntityPainting.class);
+        Entity.registerEntity("Firework", FireworkRocket.class);
         //todo mobs
         Entity.registerEntity("Creeper", EntityCreeper.class);
         Entity.registerEntity("Zombie", EntityZombie.class);
