@@ -18,6 +18,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -95,7 +96,7 @@ public class BlockFire extends BlockFlowable {
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.level.gameRules.getBoolean("doFireTick")) {
             boolean forever = this.down().getId() == Block.NETHERRACK;
 
-            Random random = this.getLevel().rand;
+            ThreadLocalRandom random = ThreadLocalRandom.current();
 
             //TODO: END
 
@@ -187,7 +188,7 @@ public class BlockFire extends BlockFlowable {
     private void tryToCatchBlockOnFire(Block block, int bound, int damage) {
         int burnAbility = block.getBurnAbility();
 
-        Random random = this.getLevel().rand;
+        Random random = ThreadLocalRandom.current();
 
         if (random.nextInt(bound) < burnAbility) {
 

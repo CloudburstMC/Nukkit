@@ -10,6 +10,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Box.
@@ -83,7 +84,7 @@ public class EntityCreeper extends EntityMob {
     @Override
     public Item[] getDrops() {
         if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
-            return new Item[]{Item.get(Item.GUNPOWDER, level.rand.nextInt(2) + 1)};
+            return new Item[]{Item.get(Item.GUNPOWDER, ThreadLocalRandom.current().nextInt(2) + 1)};
         }
         return new Item[0];
     }

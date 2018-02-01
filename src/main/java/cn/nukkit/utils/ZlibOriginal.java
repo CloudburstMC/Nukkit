@@ -1,6 +1,5 @@
 package cn.nukkit.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +7,7 @@ import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 
 public class ZlibOriginal implements ZlibProvider {
+
     @Override
     public byte[] deflate(byte[] data, int level) throws Exception {
         Deflater deflater = new Deflater(level);

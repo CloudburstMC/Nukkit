@@ -29,6 +29,15 @@ public class RegionLoader extends BaseRegionLoader {
 
     @Override
     public Chunk readChunk(int x, int z) throws IOException {
+        {
+            StackTraceElement[] stacktrace = new Exception().getStackTrace();
+            MainLogger.getLogger().info("--------------------- Read ---------------------");
+            for (StackTraceElement elem : stacktrace) {
+                MainLogger.getLogger().info(elem.toString());
+            }
+            MainLogger.getLogger().info("------------------------------------------------");
+        }
+
         int index = getChunkOffset(x, z);
         if (index < 0 || index >= 4096) {
             return null;
@@ -184,7 +193,7 @@ public class RegionLoader extends BaseRegionLoader {
                 this.locationTable.put(i, new Integer[]{0, 0, 0});
                 continue;
             }
-            chunk = Zlib.deflate(chunk, 9);
+            chunk = Zlib.deflate(chunk, 1);
             ByteBuffer buffer = ByteBuffer.allocate(4 + 1 + chunk.length);
             buffer.put(Binary.writeInt(chunk.length + 1));
             buffer.put(COMPRESSION_ZLIB);

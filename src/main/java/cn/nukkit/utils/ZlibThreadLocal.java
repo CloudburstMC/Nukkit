@@ -1,12 +1,12 @@
 package cn.nukkit.utils;
 
-import java.io.ByteArrayOutputStream;
+import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 
-public class ZlibThreadLocal implements ZlibProvider {
+public final class ZlibThreadLocal implements ZlibProvider {
     @Override
     public byte[] deflate(byte[] data, int level) throws Exception {
         Deflater deflater = getDef(level);
@@ -14,7 +14,8 @@ public class ZlibThreadLocal implements ZlibProvider {
         deflater.reset();
         deflater.setInput(data);
         deflater.finish();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length);
+        FastByteArrayOutputStream bos = fbaos.get();
+        bos.reset();
         while (!deflater.finished()) {
             int i = deflater.deflate(buf.get());
             bos.write(buf.get(), 0, i);
@@ -25,6 +26,7 @@ public class ZlibThreadLocal implements ZlibProvider {
 
     /* -=-=-=-=-=- Internal -=-=-=-=-=- Do NOT attempt to use in production -=-=-=-=-=- */
 
+    private static final ThreadLocal<FastByteArrayOutputStream> fbaos = ThreadLocal.withInitial(() -> new FastByteArrayOutputStream(1024));
     private static final ThreadLocal<byte[]> buf = ThreadLocal.withInitial(() -> new byte[1024]);
     private static final ThreadLocal<Deflater> def = ThreadLocal.withInitial(Deflater::new);
 
@@ -36,7 +38,8 @@ public class ZlibThreadLocal implements ZlibProvider {
     @Override
     public byte[] inflate(InputStream stream) throws IOException {
         InflaterInputStream inputStream = new InflaterInputStream(stream);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        FastByteArrayOutputStream outputStream = fbaos.get();
+        outputStream.reset();
         int length;
 
         try {
