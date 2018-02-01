@@ -490,8 +490,10 @@ public class Server {
 
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
-        this.watchdog = new Watchdog(this, 60000);
-        this.watchdog.start();
+        if (Nukkit.DEBUG < 2) {
+            this.watchdog = new Watchdog(this, 60000);
+            this.watchdog.start();
+        }
 
         this.start();
     }
