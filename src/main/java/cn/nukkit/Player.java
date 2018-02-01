@@ -1796,8 +1796,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         if (!this.batchedPackets.isEmpty()) {
-            for (int channel : this.batchedPackets.keySet()) {
-                this.server.batchPackets(new Player[]{this}, batchedPackets.get(channel).stream().toArray(DataPacket[]::new), false);
+            Player[] pArr = new Player[]{this};
+            Iterator<Entry<Integer, List<DataPacket>>> iter = this.batchedPackets.entrySet().iterator();
+            while (iter.hasNext()) {
+                Entry<Integer, List<DataPacket>> entry = iter.next();
+                List<DataPacket> packets = entry.getValue();
+                DataPacket[] arr = packets.toArray(new DataPacket[packets.size()]);
+                packets.clear();
+                this.server.batchPackets(pArr, arr, false);
             }
             this.batchedPackets.clear();
         }

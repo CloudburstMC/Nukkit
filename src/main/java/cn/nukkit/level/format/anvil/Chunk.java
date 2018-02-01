@@ -109,7 +109,7 @@ public class Chunk extends BaseChunk {
 
         for (int y = 0; y < 16; y++) {
             if (sections[y] == null) {
-                sections[y] = new EmptyChunkSection(y);
+                sections[y] = EmptyChunkSection.EMPTY[y];
             }
         }
 

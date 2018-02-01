@@ -2117,7 +2117,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private static Entity[] EMPTY_ENTITY_ARR = new Entity[0];
-    private static Entity[] ENTITY_BUFFER = new Entity[Character.MAX_VALUE];
+    private static Entity[] ENTITY_BUFFER = new Entity[512];
 
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
         int index = 0;
@@ -2133,7 +2133,7 @@ public class Level implements ChunkManager, Metadatable {
             for (int z = minZ; z <= maxZ; ++z) {
                 for (Entity ent : this.getChunkEntities(x, z).values()) {
                     if (ent != entity && ent.boundingBox.intersectsWith(bb)) {
-                        if (index < Character.MAX_VALUE) {
+                        if (index < ENTITY_BUFFER.length) {
                             ENTITY_BUFFER[index] = ent;
                         } else {
                             if (overflow == null) overflow = new ArrayList<>(1024);
@@ -2154,7 +2154,7 @@ public class Level implements ChunkManager, Metadatable {
             copy = new Entity[ENTITY_BUFFER.length + overflow.size()];
             System.arraycopy(ENTITY_BUFFER, 0, copy, 0, ENTITY_BUFFER.length);
             for (int i = 0; i < overflow.size(); i++) {
-                copy[Character.MAX_VALUE + i] = overflow.get(i);
+                copy[ENTITY_BUFFER.length + i] = overflow.get(i);
             }
         }
         return copy;

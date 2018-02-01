@@ -12,6 +12,8 @@ public class ThreadCache {
         charCache4096v2.clean();
         fbaos.clean();
         binaryStream.clean();
+        ZlibThreadLocal.def.clean();
+        ZlibThreadLocal.buf.clean();
     }
 
     public static final IterableThreadLocal<byte[][]> idArray = new IterableThreadLocal<byte[][]>() {

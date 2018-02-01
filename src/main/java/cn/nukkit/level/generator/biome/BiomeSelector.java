@@ -3,9 +3,6 @@ package cn.nukkit.level.generator.biome;
 import cn.nukkit.level.generator.noise.Simplex;
 import cn.nukkit.math.NukkitRandom;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -15,7 +12,7 @@ public class BiomeSelector {
     private final Simplex temperature;
     private final Simplex rainfall;
 
-    private final Map<Integer, Biome> biomes = new HashMap<>();
+    private final boolean[] biomes = new boolean[256];
 
     private int[] map = new int[64 * 64];
 
@@ -60,7 +57,7 @@ public class BiomeSelector {
     }
 
     public void addBiome(Biome biome) {
-        this.biomes.put(Integer.valueOf(biome.getId()), biome);
+        this.biomes[biome.getId()] = true;
     }
 
     public double getTemperature(double x, double z) {
@@ -76,7 +73,11 @@ public class BiomeSelector {
         int rainfall = (int) (this.getRainfall(x, z) * 63);
 
         int biomeId = this.map[temperature + (rainfall << 6)];
-        return this.biomes.containsKey(biomeId) ? this.biomes.get(biomeId) : this.fallback;
+        if (this.biomes[biomeId]) {
+            return Biome.getBiome(biomeId);
+        } else {
+            return this.fallback;
+        }
     }
 
 }

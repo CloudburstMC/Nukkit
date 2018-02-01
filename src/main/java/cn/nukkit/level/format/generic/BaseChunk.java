@@ -176,7 +176,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         byte[] emptyIdArray = new byte[4096];
         byte[] emptyDataArray = new byte[2048];
         if (Arrays.equals(emptyIdArray, section.getIdArray()) && Arrays.equals(emptyDataArray, section.getDataArray())) {
-            this.sections[(int) fY] = new EmptyChunkSection((int) fY);
+            this.sections[(int) fY] = EmptyChunkSection.EMPTY[(int) fY];
         } else {
             this.sections[(int) fY] = section;
         }
