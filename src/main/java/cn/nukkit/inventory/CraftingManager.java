@@ -257,7 +257,6 @@ public class CraftingManager {
         //TODO: try to match special recipes before anything else (first they need to be implemented!)
 
         int outputHash = getItemHash(primaryOutput);
-        System.out.println("Match recipe " + primaryOutput);
         if (this.shapedRecipes.containsKey(outputHash)) {
 
             int numItems = 0;
