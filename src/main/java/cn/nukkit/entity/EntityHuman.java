@@ -126,52 +126,50 @@ public class EntityHuman extends EntityHumanType {
     }
 
     @Override
-    public void spawnTo(Player... players) {
-        for(Player player : players) { //TODO: rewrite
-            if (this != player && !this.hasSpawned.containsKey(player.getLoaderId())) {
-                this.hasSpawned.put(player.getLoaderId(), player);
+    public void spawnTo(Player player) {
+        if (this != player && !this.hasSpawned.containsKey(player.getLoaderId())) {
+            this.hasSpawned.put(player.getLoaderId(), player);
 
-                if (this.skin.getData().length < 64 * 32 * 4) {
-                    throw new IllegalStateException(this.getClass().getSimpleName() + " must have a valid skin set");
-                }
+            if (this.skin.getData().length < 64 * 32 * 4) {
+                throw new IllegalStateException(this.getClass().getSimpleName() + " must have a valid skin set");
+            }
 
-                if (this instanceof Player)
-                    this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
-                else
-                    this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, new Player[]{player});
+            if (this instanceof Player)
+                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
+            else
+                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, new Player[]{player});
 
-                AddPlayerPacket pk = new AddPlayerPacket();
-                pk.uuid = this.getUniqueId();
-                pk.username = this.getName();
-                pk.entityUniqueId = this.getId();
-                pk.entityRuntimeId = this.getId();
-                pk.x = (float) this.x;
-                pk.y = (float) this.y;
-                pk.z = (float) this.z;
-                pk.speedX = (float) this.motionX;
-                pk.speedY = (float) this.motionY;
-                pk.speedZ = (float) this.motionZ;
-                pk.yaw = (float) this.yaw;
-                pk.pitch = (float) this.pitch;
-                pk.item = this.getInventory().getItemInHand();
-                pk.metadata = this.dataProperties;
-                player.dataPacket(pk);
+            AddPlayerPacket pk = new AddPlayerPacket();
+            pk.uuid = this.getUniqueId();
+            pk.username = this.getName();
+            pk.entityUniqueId = this.getId();
+            pk.entityRuntimeId = this.getId();
+            pk.x = (float) this.x;
+            pk.y = (float) this.y;
+            pk.z = (float) this.z;
+            pk.speedX = (float) this.motionX;
+            pk.speedY = (float) this.motionY;
+            pk.speedZ = (float) this.motionZ;
+            pk.yaw = (float) this.yaw;
+            pk.pitch = (float) this.pitch;
+            pk.item = this.getInventory().getItemInHand();
+            pk.metadata = this.dataProperties;
+            player.dataPacket(pk);
 
-                this.inventory.sendArmorContents(player);
+            this.inventory.sendArmorContents(player);
 
-                if (this.riding != null) {
-                    SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-                    pkk.rider = this.riding.getId();
-                    pkk.riding = this.getId();
-                    pkk.type = 1;
-                    pkk.unknownByte = 1;
+            if (this.riding != null) {
+                SetEntityLinkPacket pkk = new SetEntityLinkPacket();
+                pkk.rider = this.riding.getId();
+                pkk.riding = this.getId();
+                pkk.type = 1;
+                pkk.unknownByte = 1;
 
-                    player.dataPacket(pkk);
-                }
+                player.dataPacket(pkk);
+            }
 
-                if (!(this instanceof Player)) {
-                    this.server.removePlayerListData(this.getUniqueId(), new Player[]{player});
-                }
+            if (!(this instanceof Player)) {
+                this.server.removePlayerListData(this.getUniqueId(), new Player[]{player});
             }
         }
     }

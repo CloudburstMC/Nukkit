@@ -1,7 +1,6 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.format.FullChunk;
@@ -52,7 +51,7 @@ public class EntitySquid extends EntityAnimal {
     }
 
     @Override
-    public void spawnTo(Player... players) {
+    public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
@@ -64,9 +63,9 @@ public class EntitySquid extends EntityAnimal {
         pk.speedY = (float) this.motionY;
         pk.speedZ = (float) this.motionZ;
         pk.metadata = this.dataProperties;
-        Server.broadcastPacket(players, pk);
+        player.dataPacket(pk);
 
-        super.spawnTo(players);
+        super.spawnTo(player);
     }
 
 }

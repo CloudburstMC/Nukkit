@@ -1,7 +1,6 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -40,7 +39,7 @@ public class EntitySkeleton extends EntityMob {
     }
 
     @Override
-    public void spawnTo(Player... players) {
+    public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
@@ -52,9 +51,9 @@ public class EntitySkeleton extends EntityMob {
         pk.speedY = (float) this.motionY;
         pk.speedZ = (float) this.motionZ;
         pk.metadata = this.dataProperties;
-        Server.broadcastPacket(players, pk);
+        player.dataPacket(pk);
 
-        super.spawnTo(players);
+        super.spawnTo(player);
     }
 
     @Override

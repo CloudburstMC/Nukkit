@@ -805,31 +805,20 @@ public abstract class Entity extends Location implements Metadatable {
         return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
     }
 
-    @Deprecated
     public void spawnTo(Player player) {
-        spawnTo(new Player[]{player});
-    }
-
-    public void spawnTo(Collection<Player> players) {
-        spawnTo(players.toArray(new Player[players.size()]));
-    }
-
-    public void spawnTo(Player... players) {
-        for(Player player : players) {
-            if (!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
-                this.hasSpawned.put(player.getLoaderId(), player);
-            }
+        if (!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
+            this.hasSpawned.put(player.getLoaderId(), player);
         }
 
-            if (this.riding != null) {
-                SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-                pkk.rider = this.riding.getId();
-                pkk.riding = this.getId();
-                pkk.type = 1;
-                pkk.unknownByte = 1;
+        if (this.riding != null) {
+            SetEntityLinkPacket pkk = new SetEntityLinkPacket();
+            pkk.rider = this.riding.getId();
+            pkk.riding = this.getId();
+            pkk.type = 1;
+            pkk.unknownByte = 1;
 
-                Server.broadcastPacket(players, pkk);
-            }
+            player.dataPacket(pkk);
+        }
     }
 
     public Map<Integer, Player> getViewers() {
@@ -1917,7 +1906,9 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void respawnToAll() {
-        this.spawnTo(this.hasSpawned.values());
+        for (Player player : this.hasSpawned.values()) {
+            this.spawnTo(player);
+        }
         this.hasSpawned = new HashMap<>();
     }
 
@@ -1926,7 +1917,11 @@ public abstract class Entity extends Location implements Metadatable {
             return;
         }
 
-        spawnTo(this.level.getChunkPlayers(this.chunk.getX(), this.chunk.getZ()).values());
+        for (Player player : this.level.getChunkPlayers(this.chunk.getX(), this.chunk.getZ()).values()) {
+            if (player.isOnline()) {
+                this.spawnTo(player);
+            }
+        }
     }
 
     public void despawnFromAll() {

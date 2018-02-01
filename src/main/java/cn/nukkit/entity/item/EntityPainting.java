@@ -1,7 +1,6 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHanging;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -75,7 +74,7 @@ public class EntityPainting extends EntityHanging {
     }
 
     @Override
-    public void spawnTo(Player... players) {
+    public void spawnTo(Player player) {
         AddPaintingPacket pk = new AddPaintingPacket();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
@@ -85,9 +84,9 @@ public class EntityPainting extends EntityHanging {
         pk.direction = this.getDirection().getHorizontalIndex();
         pk.title = this.namedTag.getString("Motive");
 
-        Server.broadcastPacket(players, pk);
+        player.dataPacket(pk);
 
-        super.spawnTo(players);
+        super.spawnTo(player);
     }
 
     @Override

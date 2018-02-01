@@ -1,7 +1,6 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -69,7 +68,7 @@ public class EntityEgg extends EntityProjectile {
     }
 
     @Override
-    public void spawnTo(Player... players) {
+    public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.type = EntityEgg.NETWORK_ID;
         pk.entityUniqueId = this.getId();
@@ -81,8 +80,8 @@ public class EntityEgg extends EntityProjectile {
         pk.speedY = (float) this.motionY;
         pk.speedZ = (float) this.motionZ;
         pk.metadata = this.dataProperties;
-        Server.broadcastPacket(players, pk);
+        player.dataPacket(pk);
 
-        super.spawnTo(players);
+        super.spawnTo(player);
     }
 }

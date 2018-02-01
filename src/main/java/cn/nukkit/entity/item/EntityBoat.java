@@ -1,7 +1,6 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -72,7 +71,7 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
-    public void spawnTo(Player... players) {
+    public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
@@ -86,9 +85,9 @@ public class EntityBoat extends EntityVehicle {
         pk.yaw = (float) this.yaw;
         pk.pitch = (float) this.pitch;
         pk.metadata = this.dataProperties;
-        Server.broadcastPacket(players, pk);
+        player.dataPacket(pk);
 
-        super.spawnTo(players);
+        super.spawnTo(player);
     }
 
     @Override

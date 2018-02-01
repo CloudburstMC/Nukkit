@@ -1,7 +1,6 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.IntEntityData;
@@ -178,7 +177,7 @@ public class EntityFallingBlock extends Entity {
     }
 
     @Override
-    public void spawnTo(Player... players) {
+    public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
         packet.type = EntityFallingBlock.NETWORK_ID;
         packet.entityUniqueId = this.getId();
@@ -192,8 +191,8 @@ public class EntityFallingBlock extends Entity {
         packet.yaw = (float) yaw;
         packet.pitch = (float) pitch;
         packet.metadata = dataProperties;
-        Server.broadcastPacket(players, pk);
-        super.spawnTo(players);
+        player.dataPacket(packet);
+        super.spawnTo(player);
     }
 
 }
