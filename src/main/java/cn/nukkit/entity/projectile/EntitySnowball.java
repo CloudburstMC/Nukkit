@@ -1,6 +1,7 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -72,7 +73,7 @@ public class EntitySnowball extends EntityProjectile {
     }
 
     @Override
-    public void spawnTo(Player player) {
+    public void spawnTo(Player... players) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.type = EntitySnowball.NETWORK_ID;
         pk.entityUniqueId = this.getId();
@@ -84,8 +85,8 @@ public class EntitySnowball extends EntityProjectile {
         pk.speedY = (float) this.motionY;
         pk.speedZ = (float) this.motionZ;
         pk.metadata = this.dataProperties;
-        player.dataPacket(pk);
+        Server.broadcastPacket(players, pk);
 
-        super.spawnTo(player);
+        super.spawnTo(players);
     }
 }

@@ -1,6 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityCreature;
@@ -73,7 +74,7 @@ public class EntityVillager extends EntityCreature implements EntityNPC, EntityA
     }
 
     @Override
-    public void spawnTo(Player player) {
+    public void spawnTo(Player... players) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
@@ -85,7 +86,8 @@ public class EntityVillager extends EntityCreature implements EntityNPC, EntityA
         pk.speedY = (float) this.motionY;
         pk.speedZ = (float) this.motionZ;
         pk.metadata = this.dataProperties;
-        player.dataPacket(pk);
-        super.spawnTo(player);
+        Server.broadcastPacket(players, pk);
+
+        super.spawnTo(players);
     }
 }

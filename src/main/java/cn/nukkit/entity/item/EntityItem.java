@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -247,7 +248,7 @@ public class EntityItem extends Entity {
     }
 
     @Override
-    public void spawnTo(Player player) {
+    public void spawnTo(Player... players) {
         AddItemEntityPacket pk = new AddItemEntityPacket();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
@@ -259,9 +260,9 @@ public class EntityItem extends Entity {
         pk.speedZ = (float) this.motionZ;
         pk.metadata = this.dataProperties;
         pk.item = this.getItem();
-        player.dataPacket(pk);
+        Server.broadcastPacket(players, pk);
 
-        super.spawnTo(player);
+        super.spawnTo(players);
     }
 
     @Override

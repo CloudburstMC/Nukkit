@@ -1,6 +1,7 @@
 package cn.nukkit.entity.weather;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.entity.Entity;
@@ -76,7 +77,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
     }
 
     @Override
-    public void spawnTo(Player player) {
+    public void spawnTo(Player... players) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
@@ -90,9 +91,9 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         pk.yaw = (float) this.yaw;
         pk.pitch = (float) this.pitch;
         pk.metadata = this.dataProperties;
-        player.dataPacket(pk);
+        Server.broadcastPacket(players, pk);
 
-        super.spawnTo(player);
+        super.spawnTo(players);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -210,7 +211,7 @@ public class EntityXPOrb extends Entity {
     }
 
     @Override
-    public void spawnTo(Player player) {
+    public void spawnTo(Player... players) {
         AddEntityPacket packet = new AddEntityPacket();
         packet.type = getNetworkId();
         packet.entityUniqueId = this.getId();
@@ -222,9 +223,8 @@ public class EntityXPOrb extends Entity {
         packet.speedY = (float) this.motionY;
         packet.speedZ = (float) this.motionZ;
         packet.metadata = new EntityMetadata();
-        player.dataPacket(packet);
-        //this.sendData(player);
+        Server.broadcastPacket(players, pk);
 
-        super.spawnTo(player);
+        super.spawnTo(players);
     }
 }

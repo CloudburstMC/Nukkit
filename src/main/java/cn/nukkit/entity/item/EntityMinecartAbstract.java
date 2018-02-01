@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.api.API;
 import cn.nukkit.api.API.Definition;
 import cn.nukkit.api.API.Usage;
@@ -283,7 +284,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     }
 
     @Override
-    public void spawnTo(Player player) {
+    public void spawnTo(Player... players) {
         AddEntityPacket pk = new AddEntityPacket();
         pk.entityUniqueId = getId();
         pk.entityRuntimeId = getId();
@@ -297,9 +298,9 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         pk.yaw = 0;
         pk.pitch = 0;
         pk.metadata = dataProperties;
-        player.dataPacket(pk);
+        Server.broadcastPacket(players, pk);
 
-        super.spawnTo(player);
+        super.spawnTo(players);
     }
 
     @Override

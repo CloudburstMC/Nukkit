@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.data.IntEntityData;
@@ -166,7 +167,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         explosion.explodeB();
     }
 
-    public void spawnTo(Player player) {
+    public void spawnTo(Player... players) {
         AddEntityPacket packet = new AddEntityPacket();
         packet.type = EntityPrimedTNT.NETWORK_ID;
         packet.entityUniqueId = this.getId();
@@ -178,8 +179,8 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         packet.speedY = (float) motionY;
         packet.speedZ = (float) motionZ;
         packet.metadata = dataProperties;
-        player.dataPacket(packet);
-        super.spawnTo(player);
+        Server.broadcastPacket(players, pk);
+        super.spawnTo(players);
     }
 
 }
