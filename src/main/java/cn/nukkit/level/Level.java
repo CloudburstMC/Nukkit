@@ -718,42 +718,18 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (this.isThundering()) {
-            for (Map.Entry<Long, ? extends FullChunk> entry : getChunks().entrySet()) {
-                long index = entry.getKey();
-                if (areNeighboringChunksLoaded(index)) continue;
-                FullChunk chunk = entry.getValue();
-                if (ThreadLocalRandom.current().nextInt(10000) == 0) {
-                    this.updateLCG = this.updateLCG * 3 + 1013904223;
-                    int LCG = this.updateLCG >> 2;
-
-                    int chunkX = chunk.getX() * 16;
-                    int chunkZ = chunk.getZ() * 16;
-                    Vector3 vector = this.adjustPosToNearbyEntity(new Vector3(chunkX + (LCG & 15), 0, chunkZ + (LCG >> 8 & 15)));
-
-                    int bId = this.getBlockIdAt(vector.getFloorX(), vector.getFloorY(), vector.getFloorZ());
-                    if (bId != Block.TALL_GRASS && bId != Block.WATER)
-                        vector.y += 1;
-                    CompoundTag nbt = new CompoundTag()
-                            .putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", vector.x))
-                                    .add(new DoubleTag("", vector.y)).add(new DoubleTag("", vector.z)))
-                            .putList(new ListTag<DoubleTag>("Motion").add(new DoubleTag("", 0))
-                                    .add(new DoubleTag("", 0)).add(new DoubleTag("", 0)))
-                            .putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("", 0))
-                                    .add(new FloatTag("", 0)));
-
-                    EntityLightning bolt = new EntityLightning(chunk, nbt);
-                    LightningStrikeEvent ev = new LightningStrikeEvent(this, bolt);
-                    getServer().getPluginManager().callEvent(ev);
-                    if (!ev.isCancelled()) {
-                        bolt.spawnToAll();
-                    } else {
-                        bolt.setEffect(false);
-                    }
-
-                    this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, 93, -1, false);
-                    this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, 93, -1, false);
+            Map<Long, ? extends FullChunk> chunks = getChunks();
+            if (chunks instanceof Long2ObjectOpenHashMap) {
+                Long2ObjectOpenHashMap<? extends FullChunk> fastChunks = (Long2ObjectOpenHashMap) chunks;
+                ObjectIterator<? extends Long2ObjectMap.Entry<? extends FullChunk>> iter = fastChunks.long2ObjectEntrySet().fastIterator();
+                while (iter.hasNext()) {
+                    Long2ObjectMap.Entry<? extends FullChunk> entry = iter.next();
+                    performThunder(entry.getLongKey(), entry.getValue());
                 }
-
+            } else {
+                for (Map.Entry<Long, ? extends FullChunk> entry : getChunks().entrySet()) {
+                    performThunder(entry.getKey(), entry.getValue());
+                }
             }
         }
 
@@ -799,7 +775,9 @@ public class Level implements ChunkManager, Metadatable {
 
         if (!this.changedBlocks.isEmpty()) {
             if (!this.players.isEmpty()) {
-                for (Map.Entry<Long, SoftReference<Map<Short, Object>>> entry : changedBlocks.entrySet()) {
+                ObjectIterator<Long2ObjectMap.Entry<SoftReference<Map<Short, Object>>>> iter = changedBlocks.long2ObjectEntrySet().fastIterator();
+                while (iter.hasNext()) {
+                    Long2ObjectMap.Entry<SoftReference<Map<Short, Object>>> entry = iter.next();
                     long index = entry.getKey();
                     Map<Short, Object> blocks = entry.getValue().get();
                     int chunkX = Level.getHashX(index);
@@ -844,6 +822,41 @@ public class Level implements ChunkManager, Metadatable {
 
         this.chunkPackets.clear();
         this.timings.doTick.stopTiming();
+    }
+
+    private void performThunder(long index, FullChunk chunk) {
+        if (areNeighboringChunksLoaded(index)) return;
+        if (ThreadLocalRandom.current().nextInt(10000) == 0) {
+            this.updateLCG = this.updateLCG * 3 + 1013904223;
+            int LCG = this.updateLCG >> 2;
+
+            int chunkX = chunk.getX() * 16;
+            int chunkZ = chunk.getZ() * 16;
+            Vector3 vector = this.adjustPosToNearbyEntity(new Vector3(chunkX + (LCG & 15), 0, chunkZ + (LCG >> 8 & 15)));
+
+            int bId = this.getBlockIdAt(vector.getFloorX(), vector.getFloorY(), vector.getFloorZ());
+            if (bId != Block.TALL_GRASS && bId != Block.WATER)
+                vector.y += 1;
+            CompoundTag nbt = new CompoundTag()
+                    .putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", vector.x))
+                            .add(new DoubleTag("", vector.y)).add(new DoubleTag("", vector.z)))
+                    .putList(new ListTag<DoubleTag>("Motion").add(new DoubleTag("", 0))
+                            .add(new DoubleTag("", 0)).add(new DoubleTag("", 0)))
+                    .putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("", 0))
+                            .add(new FloatTag("", 0)));
+
+            EntityLightning bolt = new EntityLightning(chunk, nbt);
+            LightningStrikeEvent ev = new LightningStrikeEvent(this, bolt);
+            getServer().getPluginManager().callEvent(ev);
+            if (!ev.isCancelled()) {
+                bolt.spawnToAll();
+            } else {
+                bolt.setEffect(false);
+            }
+
+            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, 93, -1, false);
+            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, 93, -1, false);
+        }
     }
 
     public Vector3 adjustPosToNearbyEntity(Vector3 pos) {
@@ -2994,6 +3007,8 @@ public class Level implements ChunkManager, Metadatable {
             ObjectIterator<Long2ObjectMap.Entry<Long>> iter = this.unloadQueue.long2ObjectEntrySet().fastIterator();
             if (lastUnloadIndex != 0) iter.skip(lastUnloadIndex);
 
+            PrimitiveList toUnload = null;
+
             for (int i = 0; i < maxIterations; i++) {
                 if (!iter.hasNext()) {
                     iter = this.unloadQueue.long2ObjectEntrySet().fastIterator();
@@ -3012,14 +3027,20 @@ public class Level implements ChunkManager, Metadatable {
                         continue;
                     }
                 }
+                if (toUnload == null) toUnload = new PrimitiveList(long.class);
+                toUnload.add(index);
+            }
 
-                int X = getHashX(index);
-                int Z = getHashZ(index);
-                if (this.unloadChunk(X, Z, true)) {
-                    this.unloadQueue.remove(index);
-                    if (System.currentTimeMillis() - now >= allocatedTime) {
-                        result = false;
-                        break;
+            if (toUnload != null) {
+                long[] arr = (long[]) toUnload.getArray();
+                for (long index : arr) {
+                    int X = getHashX(index);
+                    int Z = getHashZ(index);
+                    if (this.unloadChunk(X, Z, true)) {
+                        if (System.currentTimeMillis() - now >= allocatedTime) {
+                            result = false;
+                            break;
+                        }
                     }
                 }
             }

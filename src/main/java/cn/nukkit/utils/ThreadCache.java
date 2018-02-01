@@ -11,6 +11,7 @@ public class ThreadCache {
         charCache4096.clean();
         charCache4096v2.clean();
         fbaos.clean();
+        binaryStream.clean();
     }
 
     public static final IterableThreadLocal<byte[][]> idArray = new IterableThreadLocal<byte[][]>() {
@@ -59,6 +60,13 @@ public class ThreadCache {
         @Override
         public FastByteArrayOutputStream init() {
             return new FastByteArrayOutputStream(1024);
+        }
+    };
+
+    public static final IterableThreadLocal<BinaryStream> binaryStream = new IterableThreadLocal<BinaryStream>() {
+        @Override
+        public BinaryStream init() {
+            return new BinaryStream();
         }
     };
 }

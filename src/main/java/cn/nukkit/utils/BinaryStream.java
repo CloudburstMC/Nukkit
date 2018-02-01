@@ -41,9 +41,10 @@ public class BinaryStream {
         this.count = buffer.length;
     }
 
-    public void reset() {
+    public BinaryStream reset() {
         this.offset = 0;
         this.count = 0;
+        return this;
     }
 
     public void setBuffer(byte[] buffer) {
