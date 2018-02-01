@@ -11,6 +11,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.LevelException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -225,7 +226,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public GameRules getGamerules() {
-        GameRules rules = new GameRules();
+        GameRules rules = GameRules.getDefault();
 
         if (this.levelData.contains("GameRules"))
             rules.readNBT(this.levelData.getCompound("GameRules"));

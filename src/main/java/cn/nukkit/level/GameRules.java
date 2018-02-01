@@ -1,144 +1,237 @@
 package cn.nukkit.level;
 
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.BinaryStream;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.Optional;
 
-/**
- * Created by CreeperFace on 25.6.2017.
- */
+import static cn.nukkit.level.GameRule.*;
+
+@SuppressWarnings({"unchecked"})
 public class GameRules {
-    private final TreeMap<String, Value> theGameRules = new TreeMap<>();
+    private final EnumMap<GameRule, Value> gameRules = new EnumMap<>(GameRule.class);
+    private boolean stale;
 
-    public GameRules() {
-        this.addGameRule("doFireTick", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("mobGriefing", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("keepInventory", "false", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("doMobSpawning", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("doMobLoot", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("doTileDrops", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("doEntityDrops", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("commandBlockOutput", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("naturalRegeneration", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("doDaylightCycle", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("doWeatherCycle", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("drowningdamage", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("falldamage", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("firegdamage", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("sendCommandFeedback", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("showcoordinates", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("pvp", "true", ValueType.BOOLEAN_VALUE);
-        this.addGameRule("tntexplodes", "true", ValueType.BOOLEAN_VALUE);
+    private GameRules() {
     }
 
-    public void addGameRule(String key, String value, ValueType type) {
-        this.theGameRules.put(key, new GameRules.Value(value, type));
+
+    public static GameRules getDefault() {
+        GameRules gameRules = new GameRules();
+
+        gameRules.gameRules.put(COMMAND_BLOCK_OUTPUT, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_DAYLIGHT_CYCLE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_ENTITY_DROPS, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_FIRE_TICK, new Value(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_MOB_LOOT, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_MOB_SPAWNING, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_TILE_DROPS, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_WEATHER_CYCLE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DROWNING_DAMAGE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(FALL_DAMAGE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(FIRE_DAMAGE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(KEEP_INVENTORY, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(MOB_GRIEFING, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(NATURAL_REGENERATION, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(PVP, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(SEND_COMMAND_FEEDBACK, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(SHOW_COORDINATES, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(TNT_EXPLODES, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(SHOW_DEATH_MESSAGE, new Value<>(Type.BOOLEAN, true));
+
+        return gameRules;
     }
 
-    public void setGameRule(String key, String ruleValue) {
-        Value value = this.theGameRules.get(key);
+    public Map<GameRule, Value> getGameRules() {
+        return ImmutableMap.copyOf(gameRules);
+    }
 
-        if (value != null) {
-            value.setValue(ruleValue);
-        } else {
-            this.addGameRule(key, ruleValue, ValueType.ANY_VALUE);
+    public boolean isStale() {
+        return stale;
+    }
+
+    public void refresh() {
+        stale = false;
+    }
+
+    public void setGameRule(GameRule gameRule, boolean value) {
+        if (!gameRules.containsKey(gameRule)) {
+            throw new IllegalArgumentException("Gamerule does not exist");
+        }
+        gameRules.get(gameRule).setValue(value, Type.BOOLEAN);
+        stale = true;
+    }
+
+    public void setGameRule(GameRule gameRule, int value) {
+        if (!gameRules.containsKey(gameRule)) {
+            throw new IllegalArgumentException("Gamerule does not exist");
+        }
+        gameRules.get(gameRule).setValue(value, Type.INTEGER);
+        stale = true;
+    }
+
+    public void setGameRule(GameRule gameRule, float value) {
+        if (!gameRules.containsKey(gameRule)) {
+            throw new IllegalArgumentException("Gamerule does not exist");
+        }
+        gameRules.get(gameRule).setValue(value, Type.FLOAT);
+        stale = true;
+    }
+
+    public void setGameRules(GameRule gameRule, String value) throws IllegalArgumentException {
+        Preconditions.checkNotNull(gameRule, "gameRule");
+        Preconditions.checkNotNull(value, "value");
+
+        switch (getGameRuleType(gameRule)) {
+            case BOOLEAN:
+                if (value.equalsIgnoreCase("true")) {
+                    setGameRule(gameRule, true);
+                } else if (value.equalsIgnoreCase("false")) {
+                    setGameRule(gameRule, false);
+                } else {
+                    throw new IllegalArgumentException("Was not a boolean");
+                }
+                break;
+            case INTEGER:
+                setGameRule(gameRule, Integer.parseInt(value));
+                break;
+            case FLOAT:
+                setGameRule(gameRule, Float.parseFloat(value));
         }
     }
 
-    public String getString(String name) {
-        Value value = this.theGameRules.get(name);
-        return value != null ? value.getString() : "";
+    public boolean getBoolean(GameRule gameRule) {
+        return gameRules.get(gameRule).getValueAsBoolean();
     }
 
-    public boolean getBoolean(String name) {
-        Value value = this.theGameRules.get(name);
-        return value != null && value.getBoolean();
+    public int getInteger(GameRule gameRule) {
+        Preconditions.checkNotNull(gameRule, "gameRule");
+        return gameRules.get(gameRule).getValueAsInteger();
     }
 
-    public int getInt(String name) {
-        Value value = this.theGameRules.get(name);
-        return value != null ? value.getInt() : 0;
+    public float getFloat(GameRule gameRule) {
+        Preconditions.checkNotNull(gameRule, "gameRule");
+        return gameRules.get(gameRule).getValueAsFloat();
     }
 
+    public String getString(GameRule gameRule) {
+        Preconditions.checkNotNull(gameRule, "gameRule");
+        return gameRules.get(gameRule).value.toString();
+    }
+
+    public Type getGameRuleType(GameRule gameRule) {
+        Preconditions.checkNotNull(gameRule, "gameRule");
+        return gameRules.get(gameRule).getType();
+    }
+
+    public boolean hasRule(GameRule gameRule) {
+        return gameRules.containsKey(gameRule);
+    }
+
+    public GameRule[] getRules() {
+        return gameRules.keySet().toArray(new GameRule[gameRules.size()]);
+    }
+
+    // TODO: This needs to be moved out since there is not a separate compound tag in the LevelDB format for Game Rules.
     public CompoundTag writeNBT() {
         CompoundTag nbt = new CompoundTag();
 
-        for (Entry<String, Value> entry : this.theGameRules.entrySet()) {
-            nbt.putString(entry.getKey(), entry.getValue().getString());
+        for (Entry<GameRule, Value> entry : gameRules.entrySet()) {
+            nbt.putString(entry.getKey().getName(), entry.getValue().value.toString());
         }
 
         return nbt;
     }
 
     public void readNBT(CompoundTag nbt) {
+        Preconditions.checkNotNull(nbt);
         for (String key : nbt.getTags().keySet()) {
-            this.setGameRule(key, nbt.getString(key));
-        }
-    }
-
-    public String[] getRules() {
-        Set<String> set = this.theGameRules.keySet();
-        return set.toArray(new String[set.size()]);
-    }
-
-    public boolean hasRule(String name) {
-        return this.theGameRules.containsKey(name);
-    }
-
-    public boolean areSameType(String key, ValueType otherValue) {
-        Value value = this.theGameRules.get(key);
-        return value != null && (value.getType() == otherValue || otherValue == ValueType.ANY_VALUE);
-    }
-
-    private static class Value {
-
-        private String valueString;
-
-        private boolean valueBoolean;
-
-        private int valueInteger;
-
-        private final ValueType type;
-
-        public Value(String value, ValueType type) {
-            this.type = type;
-            this.setValue(value);
-        }
-
-        public void setValue(String value) {
-            this.valueString = value;
-            this.valueBoolean = Boolean.parseBoolean(value);
-            this.valueInteger = this.valueBoolean ? 1 : 0;
-
-            try {
-                this.valueInteger = Integer.parseInt(value);
-            } catch (NumberFormatException ex) {
-                //ignore
+            Optional<GameRule> gameRule = GameRule.parseString(key);
+            if (!gameRule.isPresent()) {
+                continue;
             }
-        }
 
-        public String getString() {
-            return this.valueString;
-        }
-
-        public boolean getBoolean() {
-            return this.valueBoolean;
-        }
-
-        public int getInt() {
-            return this.valueInteger;
-        }
-
-        public ValueType getType() {
-            return this.type;
+            setGameRules(gameRule.get(), nbt.getString(key));
         }
     }
 
-    public enum ValueType {
-        ANY_VALUE,
-        BOOLEAN_VALUE,
-        NUMERICAL_VALUE;
+    public enum Type {
+        UNKNOWN {
+            @Override
+            void write(BinaryStream pk, Value value) {
+            }
+        },
+        BOOLEAN {
+            @Override
+            void write(BinaryStream pk, Value value) {
+                pk.putBoolean(value.getValueAsBoolean());
+            }
+        },
+        INTEGER {
+            @Override
+            void write(BinaryStream pk, Value value) {
+                pk.putUnsignedVarInt(value.getValueAsInteger());
+            }
+        },
+        FLOAT {
+            @Override
+            void write(BinaryStream pk, Value value) {
+                pk.putLFloat(value.getValueAsFloat());
+            }
+        };
+
+        abstract void write(BinaryStream pk, Value value);
+    }
+
+    public static class Value<T> {
+        private final Type type;
+        private T value;
+
+        public Value(Type type, T value) {
+            this.type = type;
+            this.value = value;
+        }
+
+        private void setValue(T value, Type type) {
+            if (this.type != type) {
+                throw new UnsupportedOperationException("Rule not of type " + type.name().toLowerCase());
+            }
+            this.value = value;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        private boolean getValueAsBoolean() {
+            if (type != Type.BOOLEAN) {
+                throw new UnsupportedOperationException("Rule not of type boolean");
+            }
+            return (Boolean) value;
+        }
+
+        private int getValueAsInteger() {
+            if (type != Type.INTEGER) {
+                throw new UnsupportedOperationException("Rule not of type integer");
+            }
+            return (Integer) value;
+        }
+
+        private float getValueAsFloat() {
+            if (type != Type.FLOAT) {
+                throw new UnsupportedOperationException("Rule not of type float");
+            }
+            return (Float) value;
+        }
+
+        public void write(BinaryStream pk) {
+            pk.putUnsignedVarInt(type.ordinal());
+            type.write(pk, this);
+        }
     }
 }

@@ -838,6 +838,13 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
+        if(gameRules.isStale()) {
+            GameRulesChangedPacket packet = new GameRulesChangedPacket();
+            packet.gameRules = gameRules;
+            Server.broadcastPacket(players.values().toArray(new Player[players.size()]), packet);
+            gameRules.refresh();
+        }
+
         this.chunkPackets.clear();
         this.timings.doTick.stopTiming();
     }
@@ -1117,6 +1124,7 @@ public class Level implements ChunkManager, Metadatable {
         this.provider.setThundering(this.thundering);
         this.provider.setThunderTime(this.thunderTime);
         this.provider.setCurrentTick(this.levelCurrentTick);
+        this.provider.setGameRules(this.gameRules);
         this.saveChunks();
         if (this.provider instanceof BaseLevelProvider) {
             this.provider.saveLevelData();
@@ -1853,7 +1861,7 @@ public class Level implements ChunkManager, Metadatable {
             item = new ItemBlock(new BlockAir(), 0, 0);
         }
 
-        if (this.gameRules.getBoolean("doTileDrops")) {
+        if (this.gameRules.getBoolean(GameRule.DO_TILE_DROPS)) {
             int dropExp = target.getDropExp();
             if (player != null) {
                 player.addExperience(dropExp);

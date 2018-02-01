@@ -64,11 +64,13 @@ import cn.nukkit.resourcepacks.ResourcePack;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import java.awt.Color;
+
+import java.awt.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -1613,7 +1615,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.entityBaseTick(tickDiff);
 
-            if (this.getServer().getDifficulty() == 0 && this.level.getGameRules().getBoolean("naturalRegeneration")) {
+            if (this.getServer().getDifficulty() == 0 && this.level.getGameRules().getBoolean(GameRule.NATURAL_REGENERATION)) {
                 if (this.getHealth() < this.getMaxHealth() && this.ticksLived % 20 == 0) {
                     this.heal(1);
                 }
@@ -1943,6 +1945,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.rainLevel = 0;
         startGamePacket.lightningLevel = 0;
         startGamePacket.commandsEnabled = this.isEnableClientCommand();
+        startGamePacket.gameRules = getLevel().getGameRules();
         startGamePacket.levelId = "";
         startGamePacket.worldName = this.getServer().getNetwork().getName();
         startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
@@ -2961,7 +2964,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage);
                                     if (this.isSpectator()) entityDamageByEntityEvent.setCancelled();
-                                    if (this.level.getGameRules().getBoolean("pvp"))
+                                    if (this.level.getGameRules().getBoolean(GameRule.PVP))
                                         entityDamageByEntityEvent.setCancelled();
 
                                     if (!target.attack(entityDamageByEntityEvent)) {
@@ -3498,7 +3501,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        boolean showMessages = this.level.getGameRules().getBoolean("showDeathMessages");
+        boolean showMessages = this.level.getGameRules().getBoolean(GameRule.SHOW_DEATH_MESSAGE);
         String message = "death.attack.generic";
 
         List<String> params = new ArrayList<>();
@@ -3624,11 +3627,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.stream().toArray(String[]::new)), this.getExperienceLevel());
 
-        ev.setKeepExperience(this.level.gameRules.getBoolean("keepInventory"));
+        ev.setKeepExperience(this.level.gameRules.getBoolean(GameRule.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());
         this.server.getPluginManager().callEvent(ev);
 
-        if (!ev.getKeepInventory() && this.level.getGameRules().getBoolean("doEntityDrops")) {
+        if (!ev.getKeepInventory() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
             for (Item item : ev.getDrops()) {
                 this.level.dropItem(this, item, null, true, 40);
             }
@@ -3638,7 +3641,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         }
 
-        if (!ev.getKeepExperience() && this.level.getGameRules().getBoolean("doEntityDrops")) {
+        if (!ev.getKeepExperience() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
             if (this.isSurvival() || this.isAdventure()) {
                 int exp = ev.getExperience() * 7;
                 if (exp > 100) exp = 100;

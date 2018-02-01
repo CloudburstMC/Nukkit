@@ -6,6 +6,7 @@ import cn.nukkit.block.BlockFire;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -44,7 +45,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         this.state = 2;
         this.liveTime = this.level.rand.nextInt(3) + 1;
 
-        if (isEffect && this.level.gameRules.getBoolean("doFireTick") && (this.server.getDifficulty() >= 2)) {
+        if (isEffect && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK) && (this.server.getDifficulty() >= 2)) {
             Block block = this.getLevelBlock();
             if (block.getId() == 0 || block.getId() == Block.TALL_GRASS) {
                 BlockFire fire = new BlockFire();
@@ -133,7 +134,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                 this.liveTime--;
                 this.state = 1;
 
-                if (this.isEffect && this.level.gameRules.getBoolean("doFireTick")) {
+                if (this.isEffect && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
                     Block block = this.getLevelBlock();
 
                     if (block.getId() == Block.AIR || block.getId() == Block.TALL_GRASS) {
