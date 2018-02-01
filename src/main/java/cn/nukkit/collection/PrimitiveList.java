@@ -72,8 +72,8 @@ public class PrimitiveList<T> extends AbstractList<T> {
         this.totalLength = length;
     }
 
-    public Object getArray() {
-        return arr;
+    public <R> R getArray() {
+        return (R) arr;
     }
 
     @Override

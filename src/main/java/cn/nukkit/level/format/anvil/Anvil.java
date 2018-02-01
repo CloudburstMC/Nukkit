@@ -13,7 +13,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -221,14 +220,6 @@ public class Anvil extends BaseLevelProvider {
 
     @Override
     public BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create) {
-        {
-            StackTraceElement[] stacktrace = new Exception().getStackTrace();
-            MainLogger.getLogger().info("--------------------- load ---------------------");
-            for (StackTraceElement elem : stacktrace) {
-                MainLogger.getLogger().info(elem.toString());
-            }
-            MainLogger.getLogger().info("------------------------------------------------");
-        }
         int regionX = getRegionIndexX(chunkX);
         int regionZ = getRegionIndexZ(chunkZ);
         BaseRegionLoader region = this.loadRegion(regionX, regionZ);

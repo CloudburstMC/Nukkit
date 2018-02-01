@@ -4,6 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.nbt.stream.*;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.ThreadCache;
 import java.io.*;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
@@ -139,7 +140,7 @@ public class NBTIO {
     }
 
     public static byte[] write(CompoundTag tag, ByteOrder endianness, boolean network) throws IOException {
-        FastByteArrayOutputStream baos = new FastByteArrayOutputStream();
+        FastByteArrayOutputStream baos = ThreadCache.fbaos.get().reset();
         try (NBTOutputStream stream = new NBTOutputStream(baos, endianness, network)) {
             Tag.writeNamedTag(tag, stream);
             return baos.toByteArray();
@@ -155,7 +156,7 @@ public class NBTIO {
     }
 
     public static byte[] write(Collection<CompoundTag> tags, ByteOrder endianness, boolean network) throws IOException {
-        FastByteArrayOutputStream baos = new FastByteArrayOutputStream();
+        FastByteArrayOutputStream baos = ThreadCache.fbaos.get().reset();
         try (NBTOutputStream stream = new NBTOutputStream(baos, endianness, network)) {
             for (CompoundTag tag : tags) {
                 Tag.writeNamedTag(tag, stream);
@@ -191,7 +192,7 @@ public class NBTIO {
     }
 
     public static byte[] writeGZIPCompressed(CompoundTag tag, ByteOrder endianness) throws IOException {
-        FastByteArrayOutputStream baos = new FastByteArrayOutputStream();
+        FastByteArrayOutputStream baos = ThreadCache.fbaos.get().reset();
         writeGZIPCompressed(tag, baos, endianness);
         return baos.toByteArray();
     }
@@ -209,7 +210,7 @@ public class NBTIO {
     }
 
     public static byte[] writeNetworkGZIPCompressed(CompoundTag tag, ByteOrder endianness) throws IOException {
-        FastByteArrayOutputStream baos = new FastByteArrayOutputStream();
+        FastByteArrayOutputStream baos = ThreadCache.fbaos.get().reset();
         writeNetworkGZIPCompressed(tag, baos, endianness);
         return baos.toByteArray();
     }

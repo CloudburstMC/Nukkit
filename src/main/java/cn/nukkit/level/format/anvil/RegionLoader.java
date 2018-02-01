@@ -29,15 +29,6 @@ public class RegionLoader extends BaseRegionLoader {
 
     @Override
     public Chunk readChunk(int x, int z) throws IOException {
-        {
-            StackTraceElement[] stacktrace = new Exception().getStackTrace();
-            MainLogger.getLogger().info("--------------------- Read ---------------------");
-            for (StackTraceElement elem : stacktrace) {
-                MainLogger.getLogger().info(elem.toString());
-            }
-            MainLogger.getLogger().info("------------------------------------------------");
-        }
-
         int index = getChunkOffset(x, z);
         if (index < 0 || index >= 4096) {
             return null;

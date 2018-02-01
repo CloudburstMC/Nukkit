@@ -76,9 +76,10 @@ public class FastByteArrayOutputStream extends OutputStream {
     }
 
     /** Marks this array output stream as empty. */
-    public void reset() {
+    public FastByteArrayOutputStream reset() {
         length = 0;
         position = 0;
+        return this;
     }
 
     public void write( final int b ) {

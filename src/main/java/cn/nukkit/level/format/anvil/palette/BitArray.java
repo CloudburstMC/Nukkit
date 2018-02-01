@@ -1,5 +1,7 @@
 package cn.nukkit.level.format.anvil.palette;
 
+import cn.nukkit.utils.ThreadCache;
+
 /**
  * @author https://github.com/boy0001/
  */
@@ -96,7 +98,7 @@ public final class BitArray {
         if (amtGrow <= 0) return this;
         BitArray newBitArray = new BitArray(newBitsPerEntry);
 
-        char[] buffer = DataPalette.charCache.get();
+        char[] buffer = ThreadCache.charCache4096.get();
         toRaw(buffer);
         newBitArray.fromRaw(buffer);
 

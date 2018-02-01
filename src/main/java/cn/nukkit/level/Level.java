@@ -8,6 +8,7 @@ import cn.nukkit.block.BlockRedstoneComparator;
 import cn.nukkit.block.BlockRedstoneDiode;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.collection.PrimitiveList;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -155,7 +156,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private Long2ObjectOpenHashMap<List<DataPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
 
-    private final Map<Long, Long> unloadQueue = new ConcurrentHashMap<>();
+    private final Long2ObjectOpenHashMap<Long> unloadQueue = new Long2ObjectOpenHashMap<>();
 
     private float time;
     public boolean stopTime;
@@ -1029,7 +1030,7 @@ public class Level implements ChunkManager, Metadatable {
         int blockTest = 0;
 
         if (!chunkTickList.isEmpty()) {
-            ObjectIterator<Long2ObjectMap.Entry<Integer>> iter = chunkTickList.long2ObjectEntrySet().iterator();
+            ObjectIterator<Long2ObjectMap.Entry<Integer>> iter = chunkTickList.long2ObjectEntrySet().fastIterator();
             while (iter.hasNext()) {
                 Long2ObjectMap.Entry<Integer> entry = iter.next();
                 long index = entry.getLongKey();
@@ -2610,7 +2611,7 @@ public class Level implements ChunkManager, Metadatable {
                 loader.onChunkLoaded(chunk);
             }
         } else {
-            this.unloadQueue.put(index, System.currentTimeMillis());
+            this.unloadQueue.put(index, (Long) System.currentTimeMillis());
         }
         this.timings.syncChunkLoadTimer.stopTiming();
         return chunk;
@@ -2618,7 +2619,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private void queueUnloadChunk(int x, int z) {
         long index = Level.chunkHash(x, z);
-        this.unloadQueue.put(index, System.currentTimeMillis());
+        this.unloadQueue.put(index, (Long) System.currentTimeMillis());
     }
 
     public boolean unloadChunkRequest(int x, int z) {
@@ -2937,11 +2938,18 @@ public class Level implements ChunkManager, Metadatable {
         if (!this.unloadQueue.isEmpty()) {
             long now = System.currentTimeMillis();
 
-            for (Map.Entry<Long, Long> entry : unloadQueue.entrySet()) {
-                long index = entry.getKey();
-                long time = entry.getValue();
+            PrimitiveList toRemove = null;
+            ObjectIterator<Long2ObjectMap.Entry<Long>> iter = unloadQueue.long2ObjectEntrySet().fastIterator();
+            while (iter.hasNext()) {
+                Long2ObjectMap.Entry<Long> entry = iter.next();
+                long index = entry.getLongKey();
+
+                if (isChunkInUse(index)) {
+                    continue;
+                }
 
                 if (!force) {
+                    long time = entry.getValue();
                     if (maxUnload <= 0) {
                         break;
                     } else if (time > (now - 30000)) {
@@ -2949,22 +2957,27 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
 
-                if (isChunkInUse(index)) {
-                    continue;
-                }
+                if (toRemove == null) toRemove = new PrimitiveList(long.class);
+                toRemove.add(index);
+            }
 
-                int X = getHashX(index);
-                int Z = getHashZ(index);
+            if (toRemove != null) {
+                int size = toRemove.size();
+                for (int i = 0; i < size; i++) {
+                    long index = toRemove.getLong(i);
+                    int X = getHashX(index);
+                    int Z = getHashZ(index);
 
-                if (this.unloadChunk(X, Z, true)) {
-                    this.unloadQueue.remove(index);
-                    --maxUnload;
+                    if (this.unloadChunk(X, Z, true)) {
+                        this.unloadQueue.remove(index);
+                        --maxUnload;
+                    }
                 }
             }
         }
     }
 
-    private Iterator<Map.Entry<Long, Long>> unloadIter;
+    private int lastUnloadIndex;
 
     /**
      * @param now
@@ -2976,24 +2989,32 @@ public class Level implements ChunkManager, Metadatable {
         if (!this.unloadQueue.isEmpty()) {
             boolean result = true;
             int maxIterations = this.unloadQueue.size();
-            for (int i = 0; i < maxIterations; i++) {
-                if (this.unloadIter == null || !this.unloadIter.hasNext()) {
-                    this.unloadIter = this.unloadQueue.entrySet().iterator();
-                }
-                Map.Entry<Long, Long> entry = this.unloadIter.next();
-                long time = entry.getValue();
-                long index = entry.getKey();
-                int X = getHashX(index);
-                int Z = getHashZ(index);
 
-                if (!force && time > (now - 30000)) {
-                    continue;
+            if (lastUnloadIndex > maxIterations) lastUnloadIndex = 0;
+            ObjectIterator<Long2ObjectMap.Entry<Long>> iter = this.unloadQueue.long2ObjectEntrySet().fastIterator();
+            if (lastUnloadIndex != 0) iter.skip(lastUnloadIndex);
+
+            for (int i = 0; i < maxIterations; i++) {
+                if (!iter.hasNext()) {
+                    iter = this.unloadQueue.long2ObjectEntrySet().fastIterator();
                 }
+                Long2ObjectMap.Entry<Long> entry = iter.next();
+
+                long index = entry.getLongKey();
 
                 if (isChunkInUse(index)) {
                     continue;
                 }
 
+                if (!force) {
+                    long time = entry.getValue();
+                    if (time > (now - 30000)) {
+                        continue;
+                    }
+                }
+
+                int X = getHashX(index);
+                int Z = getHashZ(index);
                 if (this.unloadChunk(X, Z, true)) {
                     this.unloadQueue.remove(index);
                     if (System.currentTimeMillis() - now >= allocatedTime) {

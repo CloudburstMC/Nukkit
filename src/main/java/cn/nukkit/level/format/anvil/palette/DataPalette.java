@@ -1,43 +1,13 @@
 package cn.nukkit.level.format.anvil.palette;
 
 import cn.nukkit.math.MathHelper;
+import cn.nukkit.utils.ThreadCache;
 import java.util.Arrays;
 
 /**
  * @author https://github.com/boy0001/
  */
 public final class DataPalette implements Cloneable {
-    protected static final ThreadLocal<boolean[]> countCache = new ThreadLocal<boolean[]>() {
-        @Override
-        protected boolean[] initialValue() {
-            // TODO use actual block size
-            return new boolean[4096];
-        }
-    };
-
-    protected static final ThreadLocal<char[]> mapFullToBitCache = new ThreadLocal<char[]>() {
-        @Override
-        protected char[] initialValue() {
-            // TODO use actual block size
-            return new char[4096];
-        }
-    };
-
-    protected static final ThreadLocal<char[]> mapBitToFullCache = new ThreadLocal<char[]>() {
-        @Override
-        protected char[] initialValue() {
-            // TODO use actual block size
-            return new char[4096];
-        }
-    };
-
-    protected static final ThreadLocal<char[]> charCache = new ThreadLocal<char[]>() {
-        @Override
-        protected char[] initialValue() {
-            return new char[4096];
-        }
-    };
-
     private char[] rawData;
 
     private BitArray encodedData;
@@ -167,9 +137,9 @@ public final class DataPalette implements Cloneable {
             synchronized (this) {
                 char unique = 0;
 
-                boolean[] countTable = countCache.get();
-                char[] mapFullTable = mapFullToBitCache.get();
-                char[] mapBitTable = mapBitToFullCache.get();
+                boolean[] countTable = ThreadCache.boolCache4096.get();
+                char[] mapFullTable = ThreadCache.charCache4096.get();
+                char[] mapBitTable = ThreadCache.charCache4096v2.get();
                 Arrays.fill(countTable, false);
                 for (char c : raw) {
                     if (!countTable[c]) {

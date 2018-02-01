@@ -14,7 +14,7 @@ public final class ZlibThreadLocal implements ZlibProvider {
         deflater.reset();
         deflater.setInput(data);
         deflater.finish();
-        FastByteArrayOutputStream bos = fbaos.get();
+        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
         bos.reset();
         while (!deflater.finished()) {
             int i = deflater.deflate(buf.get());
@@ -26,7 +26,6 @@ public final class ZlibThreadLocal implements ZlibProvider {
 
     /* -=-=-=-=-=- Internal -=-=-=-=-=- Do NOT attempt to use in production -=-=-=-=-=- */
 
-    private static final ThreadLocal<FastByteArrayOutputStream> fbaos = ThreadLocal.withInitial(() -> new FastByteArrayOutputStream(1024));
     private static final ThreadLocal<byte[]> buf = ThreadLocal.withInitial(() -> new byte[1024]);
     private static final ThreadLocal<Deflater> def = ThreadLocal.withInitial(Deflater::new);
 
@@ -38,7 +37,7 @@ public final class ZlibThreadLocal implements ZlibProvider {
     @Override
     public byte[] inflate(InputStream stream) throws IOException {
         InflaterInputStream inputStream = new InflaterInputStream(stream);
-        FastByteArrayOutputStream outputStream = fbaos.get();
+        FastByteArrayOutputStream outputStream = ThreadCache.fbaos.get();
         outputStream.reset();
         int length;
 
