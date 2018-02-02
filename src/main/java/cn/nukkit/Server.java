@@ -1483,7 +1483,7 @@ public class Server {
                         .add(new DoubleTag("0", spawn.x))
                         .add(new DoubleTag("1", spawn.y))
                         .add(new DoubleTag("2", spawn.z)))
-                .putString("Level", this.getDefaultLevel().getName())
+                .putString("Level", this.getDefaultLevel().getFolderName())
                 .putList(new ListTag<>("Inventory"))
                 .putCompound("Achievements", new CompoundTag())
                 .putInt("playerGameType", this.getGamemode())
