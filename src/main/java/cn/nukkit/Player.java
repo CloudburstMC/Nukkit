@@ -1904,7 +1904,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Level level;
         if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null || !alive) {
             this.setLevel(this.server.getDefaultLevel());
-            nbt.putString("Level", this.level.getName());
+            nbt.putString("Level", this.level.getFolderName());
             nbt.getList("Pos", DoubleTag.class)
                     .add(new DoubleTag("0", this.level.getSpawnLocation().x))
                     .add(new DoubleTag("1", this.level.getSpawnLocation().y))
