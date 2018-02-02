@@ -65,7 +65,6 @@ import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
@@ -4125,7 +4124,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return DummyBossBar object
      * @see DummyBossBar#setText(String) Set BossBar text
      * @see DummyBossBar#setLength(float) Set BossBar length
-     * @see DummyBossBar#setColor(Color) Set BossBar color
+     * @see DummyBossBar#setColor(BlockColor) Set BossBar color
      */
     public DummyBossBar getDummyBossBar(long bossBarId) {
         return this.dummyBossBars.getOrDefault(bossBarId, null);
