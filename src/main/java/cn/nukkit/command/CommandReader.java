@@ -68,10 +68,6 @@ public class CommandReader extends Thread implements InterruptibleThread {
                 if (!line.trim().isEmpty()) {
                     //todo 将即时执行指令改为每tick执行
                     try {
-                        if (line.startsWith("/")) {
-                            // Convenience if user accidentally starts command with /.
-                            line = line.substring(1);
-                        }
                         Timings.serverCommandTimer.startTiming();
                         ServerCommandEvent event = new ServerCommandEvent(Server.getInstance().getConsoleSender(), line);
                         Server.getInstance().getPluginManager().callEvent(event);

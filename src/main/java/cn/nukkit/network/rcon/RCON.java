@@ -52,13 +52,7 @@ public class RCON {
             this.server.getPluginManager().callEvent(event);
 
             if (!event.isCancelled()) {
-                String cmd = command.getCommand();
-                if (cmd.startsWith("/")) {
-                    // Convenience if user accidentally starts command with /.
-                    cmd = cmd.substring(1);
-                }
-
-                this.server.dispatchCommand(sender, cmd);
+                this.server.dispatchCommand(sender, command.getCommand());
             }
 
             this.serverThread.respond(command.getSender(), command.getId(), TextFormat.clean(sender.getMessages()));
