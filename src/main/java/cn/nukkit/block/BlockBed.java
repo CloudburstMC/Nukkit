@@ -122,8 +122,8 @@ public class BlockBed extends BlockTransparentMeta {
             if (next.canBeReplaced() && !downNext.isTransparent()) {
                 int meta = player.getDirection().getHorizontalIndex();
 
-                this.getLevel().setBlock(block, Block.get(this.getId(), meta), false, true);
-                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), false, true);
+                this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
+                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
 
                 createBlockEntity(this, item.getDamage());
                 createBlockEntity(next, item.getDamage());
@@ -171,7 +171,7 @@ public class BlockBed extends BlockTransparentMeta {
         CompoundTag nbt = BlockEntity.getDefaultCompound(pos, BlockEntity.BED);
         nbt.putByte("color", color);
 
-        new BlockEntityBed(this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
+        BlockEntity.createBlockEntity(BlockEntity.BED, this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
     }
 
     @Override
