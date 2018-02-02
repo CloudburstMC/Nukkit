@@ -16,6 +16,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -84,7 +85,7 @@ public class BlockLava extends BlockLiquid {
         int result = super.onUpdate(type);
 
         if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
-            Random random = this.getLevel().rand;
+            Random random = ThreadLocalRandom.current();
 
             int i = random.nextInt(3);
 

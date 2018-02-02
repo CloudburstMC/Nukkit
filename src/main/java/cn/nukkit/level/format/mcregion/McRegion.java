@@ -172,10 +172,10 @@ public class McRegion extends BaseLevelProvider {
         if (chunk == null) {
             if (create) {
                 chunk = this.getEmptyChunk(chunkX, chunkZ);
-                this.chunks.put(index, chunk);
+                putChunk(index, chunk);
             }
         } else {
-            this.chunks.put(index, chunk);
+            putChunk(index, chunk);
         }
         this.level.timings.syncChunkLoadDataTimer.stopTiming();
         return chunk;
@@ -208,23 +208,6 @@ public class McRegion extends BaseLevelProvider {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void setChunk(int chunkX, int chunkZ, FullChunk chunk) {
-        if (!(chunk instanceof Chunk)) {
-            throw new ChunkException("Invalid Chunk class");
-        }
-        chunk.setProvider(this);
-        int regionX = chunkX >> 5;
-        int regionZ = chunkZ >> 5;
-        this.loadRegion(regionX, regionZ);
-        chunk.setPosition(chunkX, chunkZ);
-        long index = Level.chunkHash(chunkX, chunkZ);
-        if (this.chunks.containsKey(index) && !this.chunks.get(index).equals(chunk)) {
-            this.unloadChunk(chunkX, chunkZ, false);
-        }
-        this.chunks.put(index, (Chunk) chunk);
     }
 
     public static ChunkSection createChunkSection(int y) {

@@ -5,6 +5,7 @@ import cn.nukkit.level.format.anvil.palette.DataPalette;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.ThreadCache;
 import cn.nukkit.utils.Utils;
 import cn.nukkit.utils.Zlib;
 import java.io.IOException;
@@ -192,24 +193,10 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
-    private static final ThreadLocal<byte[][]> idArray = new ThreadLocal<byte[][]>() {
-        @Override
-        protected byte[][] initialValue() {
-            return new byte[16][];
-        }
-    };
-
-    private static final ThreadLocal<byte[][]> dataArray = new ThreadLocal<byte[][]>() {
-        @Override
-        protected byte[][] initialValue() {
-            return new byte[16][];
-        }
-    };
-
     @Override
     public byte[] getIdArray() {
         char[] raw = palette.getRaw();
-        byte[][] bufferLayers = idArray.get();
+        byte[][] bufferLayers = ThreadCache.idArray.get();
         byte[] buffer = bufferLayers[y];
         if (buffer == null) buffer = bufferLayers[y] = new byte[4096];
 
@@ -232,7 +219,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public byte[] getDataArray() {
         char[] raw = palette.getRaw();
-        byte[][] bufferLayers = dataArray.get();
+        byte[][] bufferLayers = ThreadCache.dataArray.get();
         byte[] buffer = bufferLayers[y];
         if (buffer == null) buffer = bufferLayers[y] = new byte[2048];
 
@@ -298,15 +285,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         return false;
     }
 
-    private static final ThreadLocal<byte[]> toXZYBuffer = new ThreadLocal<byte[]>() {
-        @Override
-        protected byte[] initialValue() {
-            return new byte[6144];
-        }
-    };
-
     private byte[] toXZY(char[] raw) {
-        byte[] buffer = toXZYBuffer.get();
+        byte[] buffer = ThreadCache.byteCache6144.get();
         for (int i = 0; i < 4096; i++) {
             buffer[i] = (byte) (raw[i] >> 4);
         }

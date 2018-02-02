@@ -160,6 +160,8 @@ public class Server {
     private boolean alwaysTickPlayers = false;
     private int baseTickRate = 1;
     private Boolean getAllowFlight = null;
+    private int difficulty = Integer.MAX_VALUE;
+    private int defaultGamemode = Integer.MAX_VALUE;
 
     private int autoSaveTicker = 0;
     private int autoSaveTicks = 6000;
@@ -332,7 +334,7 @@ public class Server {
 
         ServerScheduler.WORKERS = (int) poolSize;
 
-        this.networkZlibProvider = (int) this.getConfig("network.zlib-provider", 0);
+        this.networkZlibProvider = (int) this.getConfig("network.zlib-provider", 2);
         Zlib.setProvider(this.networkZlibProvider);
 
         this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
@@ -597,6 +599,7 @@ public class Server {
 
         Timings.playerNetworkSendTimer.startTiming();
         byte[][] payload = new byte[packets.length * 2][];
+        int size = 0;
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
             if (!p.isEncoded) {
@@ -605,9 +608,10 @@ public class Server {
             byte[] buf = p.getBuffer();
             payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
             payload[i * 2 + 1] = buf;
+            packets[i] = null;
+            size += payload[i * 2].length;
+            size += payload[i * 2 + 1].length;
         }
-        byte[] data;
-        data = Binary.appendBytes(payload);
 
         List<String> targets = new ArrayList<>();
         for (Player p : players) {
@@ -617,9 +621,10 @@ public class Server {
         }
 
         if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel));
+            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
         } else {
             try {
+                byte[] data = Binary.appendBytes(payload);
                 this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -703,7 +708,7 @@ public class Server {
         this.maxPlayers = this.getPropertyInt("max-players", 20);
 
         if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
-            this.setPropertyInt("difficulty", 3);
+            this.setPropertyInt("difficulty", difficulty = 3);
         }
 
         this.banByIP.load();
@@ -1327,7 +1332,10 @@ public class Server {
     }
 
     public int getDifficulty() {
-        return this.getPropertyInt("difficulty", 1);
+        if (this.difficulty == Integer.MAX_VALUE) {
+            this.difficulty = this.getPropertyInt("difficulty", 1);
+        }
+        return this.difficulty;
     }
 
     public boolean hasWhitelist() {
@@ -1350,7 +1358,10 @@ public class Server {
     }
 
     public int getDefaultGamemode() {
-        return this.getPropertyInt("gamemode", 0);
+        if (this.defaultGamemode == Integer.MAX_VALUE) {
+            this.defaultGamemode = this.getPropertyInt("gamemode", 0);
+        }
+        return this.defaultGamemode;
     }
 
     public String getMotd() {

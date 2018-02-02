@@ -11,6 +11,8 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.LevelException;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +22,6 @@ import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * author: MagicDroidX
@@ -39,7 +40,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     protected final Map<Long, BaseRegionLoader> regions = new HashMap<>();
 
-    protected final Map<Long, BaseFullChunk> chunks = new ConcurrentHashMap<>();
+    private final Long2ObjectOpenHashMap<BaseFullChunk> chunks = new Long2ObjectOpenHashMap<>();
 
     public BaseLevelProvider(Level level, String path) throws IOException {
         this.level = level;
@@ -67,6 +68,18 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     public abstract BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create);
+
+    public int size() {
+        return this.chunks.size();
+    }
+
+    public ObjectIterator<BaseFullChunk> getChunks() {
+        return chunks.values().iterator();
+    }
+
+    protected void putChunk(long index, BaseFullChunk chunk) {
+        this.chunks.putIfAbsent(index, chunk);
+    }
 
     @Override
     public void unloadChunks() {

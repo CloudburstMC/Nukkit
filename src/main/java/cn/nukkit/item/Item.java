@@ -930,7 +930,11 @@ public class Item implements Cloneable {
             if (c == null) {
                 item = new Item(id, meta, count);
             } else if (id < 256) {
-                item = new ItemBlock(Block.get(id, meta), meta, count);
+                if (meta >= 0) {
+                    item = new ItemBlock(Block.get(id, meta), meta, count);
+                } else {
+                    item = new ItemBlock(Block.get(id), meta, count);
+                }
             } else {
                 item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
             }

@@ -13,6 +13,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
+import cn.nukkit.utils.ThreadCache;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -136,7 +138,7 @@ public class Anvil extends BaseLevelProvider {
             extraData = null;
         }
 
-        BinaryStream stream = new BinaryStream();
+        BinaryStream stream = ThreadCache.binaryStream.get().reset();
         int count = 0;
         cn.nukkit.level.format.ChunkSection[] sections = chunk.getSections();
         for (int i = sections.length - 1; i >= 0; i--) {
@@ -168,25 +170,25 @@ public class Anvil extends BaseLevelProvider {
         return null;
     }
 
-    private Iterator<Map.Entry<Long, BaseFullChunk>> iter;
+    private int lastPosition = 0;
 
     @Override
     public void doGarbageCollection(long time) {
         long start = System.currentTimeMillis();
-        int maxIterations = chunks.size();
-        if (iter == null) {
-            iter = chunks.entrySet().iterator();
-        }
-        for (int i = 0; i < maxIterations; i++) {
-            if (iter == null || !iter.hasNext()) {
-                iter = chunks.entrySet().iterator();
+        int maxIterations = size();
+        if (lastPosition > maxIterations) lastPosition = 0;
+        ObjectIterator<BaseFullChunk> iter = getChunks();
+        if (lastPosition != 0) iter.skip(lastPosition);
+        int i;
+        for (i = 0; i < maxIterations; i++) {
+            if (!iter.hasNext()) {
+                iter = getChunks();
             }
-            Map.Entry<Long, BaseFullChunk> entry = iter.next();
-            if (entry == null) continue;
-            Chunk chunk = (Chunk) entry.getValue();
-            if (chunk.isGenerated() && chunk.isPopulated()) {
-                long hash = entry.getKey();
-                for (cn.nukkit.level.format.ChunkSection section : chunk.getSections()) {
+            BaseFullChunk chunk = iter.next();
+            if (chunk == null) continue;
+            if (chunk.isGenerated() && chunk.isPopulated() && chunk instanceof Chunk) {
+                Chunk anvilChunk = (Chunk) chunk;
+                for (cn.nukkit.level.format.ChunkSection section : anvilChunk.getSections()) {
                     if (section instanceof ChunkSection) {
                         ChunkSection anvilSection = (ChunkSection) section;
                         if (!anvilSection.isEmpty()) {
@@ -197,6 +199,7 @@ public class Anvil extends BaseLevelProvider {
                 if (System.currentTimeMillis() - start >= time) break;
             }
         }
+        lastPosition += i;
     }
 
     @Override
@@ -231,10 +234,10 @@ public class Anvil extends BaseLevelProvider {
         if (chunk == null) {
             if (create) {
                 chunk = this.getEmptyChunk(chunkX, chunkZ);
-                this.chunks.put(index, chunk);
+                putChunk(index, chunk);
             }
         } else {
-            this.chunks.put(index, chunk);
+            putChunk(index, chunk);
         }
         this.level.timings.syncChunkLoadDataTimer.stopTiming();
         return chunk;

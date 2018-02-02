@@ -10,6 +10,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: Angelic47
@@ -74,7 +75,7 @@ public class BlockSapling extends BlockFlowable {
             }
 
             this.level.addParticle(new BoneMealParticle(this));
-            if (this.level.rand.nextFloat() >= 0.45) {
+            if (ThreadLocalRandom.current().nextFloat() >= 0.45) {
                 return true;
             }
 
@@ -98,7 +99,7 @@ public class BlockSapling extends BlockFlowable {
                     }
 
                     if (!bigTree) {
-                        generator = new NewJungleTree(4 + this.level.rand.nextInt(7));
+                        generator = new NewJungleTree(4 + ThreadLocalRandom.current().nextInt(7));
                     }
                     break;
                 case ACACIA:
