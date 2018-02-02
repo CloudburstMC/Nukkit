@@ -75,7 +75,6 @@ import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
-
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -197,11 +196,13 @@ public class Server {
             levelArray = levels.values().toArray(new Level[levels.size()]);
             return result;
         }
+
         public boolean remove(Object key, Object value) {
             boolean result = super.remove(key, value);
             levelArray = levels.values().toArray(new Level[levels.size()]);
             return result;
         }
+
         public Level remove(Object key) {
             Level result = super.remove(key);
             levelArray = levels.values().toArray(new Level[levels.size()]);
@@ -388,7 +389,6 @@ public class Server {
         this.logger.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()));
         this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
-
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
 
@@ -566,7 +566,6 @@ public class Server {
         return recipients.size();
     }
 
-
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
         broadcastPacket(players.stream().toArray(Player[]::new), packet);
     }
@@ -575,7 +574,7 @@ public class Server {
         packet.encode();
         packet.isEncoded = true;
 
-        if(packet.pid() == ProtocolInfo.BATCH_PACKET) {
+        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
             for (Player player : players) {
                 player.dataPacket(packet);
             }
@@ -807,7 +806,6 @@ public class Server {
         }
 
         //todo send usage setting
-
         this.tickCounter = 0;
 
         this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
@@ -852,7 +850,9 @@ public class Server {
                                 Level level = levelArray[offset];
                                 level.doGarbageCollection(allocated - 1);
                                 allocated = next - System.currentTimeMillis();
-                                if (allocated <= 0) break;
+                                if (allocated <= 0) {
+                                    break;
+                                }
                             }
                             lastLevelGC = offset + 1;
                         }
@@ -950,11 +950,11 @@ public class Server {
         pk.type = PlayerListPacket.TYPE_ADD;
         pk.entries = this.playerList.values().stream()
                 .map(p -> new PlayerListPacket.Entry(
-                        p.getUniqueId(),
-                        p.getId(),
-                        p.getDisplayName(),
-                        p.getSkin(),
-                        p.getLoginChainData().getXUID()))
+                p.getUniqueId(),
+                p.getId(),
+                p.getDisplayName(),
+                p.getSkin(),
+                p.getLoginChainData().getXUID()))
                 .toArray(PlayerListPacket.Entry[]::new);
 
         player.dataPacket(pk);
@@ -1160,16 +1160,16 @@ public class Server {
         double used = NukkitMath.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024, 2);
         double max = NukkitMath.round(((double) runtime.maxMemory()) / 1024 / 1024, 2);
         String usage = Math.round(used / max * 100) + "%";
-        String title = (char) 0x1b + "]0;" + this.getName() + " " +
-                this.getNukkitVersion() +
-                " | Online " + this.players.size() + "/" + this.getMaxPlayers() +
-                " | Memory " + usage;
+        String title = (char) 0x1b + "]0;" + this.getName() + " "
+                + this.getNukkitVersion()
+                + " | Online " + this.players.size() + "/" + this.getMaxPlayers()
+                + " | Memory " + usage;
         if (!Nukkit.shortTitle) {
             title += " | U " + NukkitMath.round((this.network.getUpload() / 1024 * 1000), 2)
                     + " D " + NukkitMath.round((this.network.getDownload() / 1024 * 1000), 2) + " kB/s";
         }
-        title += " | TPS " + this.getTicksPerSecond() +
-                " | Load " + this.getTickUsage() + "%" + (char) 0x07;
+        title += " | TPS " + this.getTicksPerSecond()
+                + " | Load " + this.getTickUsage() + "%" + (char) 0x07;
 
         System.out.print(title);
     }
@@ -1715,8 +1715,7 @@ public class Server {
         }
 
         if (provider == null) {
-            if ((provider = LevelProviderManager.getProviderByName
-                    ((String) this.getConfig("level-settings.default-format", "anvil"))) == null) {
+            if ((provider = LevelProviderManager.getProviderByName((String) this.getConfig("level-settings.default-format", "anvil"))) == null) {
                 provider = LevelProviderManager.getProviderByName("anvil");
             }
         }
@@ -1777,7 +1776,6 @@ public class Server {
             Chunk.Entry entry = Level.getChunkXZ(index);
             level.populateChunk(entry.chunkX, entry.chunkZ, true);
         }*/
-
         return true;
     }
 
@@ -1983,11 +1981,16 @@ public class Server {
     }
 
     /**
-     * Checks the current thread against the expected primary thread for the server.
+     * Checks the current thread against the expected primary thread for the
+     * server.
      * <p>
-     * <b>Note:</b> this method should not be used to indicate the current synchronized state of the runtime. A current thread matching the main thread indicates that it is synchronized, but a mismatch does not preclude the same assumption.
+     * <b>Note:</b> this method should not be used to indicate the current
+     * synchronized state of the runtime. A current thread matching the main
+     * thread indicates that it is synchronized, but a mismatch does not
+     * preclude the same assumption.
      *
-     * @return true if the current thread matches the expected primary thread, false otherwise
+     * @return true if the current thread matches the expected primary thread,
+     * false otherwise
      */
     public boolean isPrimaryThread() {
         return (Thread.currentThread() == currentThread);
@@ -2005,28 +2008,36 @@ public class Server {
         Entity.registerEntity("Snowball", EntitySnowball.class);
         Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("Painting", EntityPainting.class);
-        //todo mobs
+        //Monsters
         Entity.registerEntity("Creeper", EntityCreeper.class);
-        Entity.registerEntity("Zombie", EntityZombie.class);
         Entity.registerEntity("Blaze", EntityBlaze.class);
         Entity.registerEntity("CaveSpider", EntityCaveSpider.class);
         Entity.registerEntity("ElderGuardian", EntityElderGuardian.class);
         Entity.registerEntity("EnderDragon", EntityEnderDragon.class);
         Entity.registerEntity("Enderman", EntityEnderman.class);
         Entity.registerEntity("Endermite", EntityEndermite.class);
+        Entity.registerEntity("Evoker", EntityEvoker.class);
         Entity.registerEntity("Ghast", EntityGhast.class);
         Entity.registerEntity("Guardian", EntityGuardian.class);
         Entity.registerEntity("Husk", EntityHusk.class);
         Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
         Entity.registerEntity("Shulker", EntityShulker.class);
-        Entity.registerEntity("Silferfish", EntitySilverfish.class);
+        Entity.registerEntity("Silverfish", EntitySilverfish.class);
         Entity.registerEntity("Skeleton", EntitySkeleton.class);
         Entity.registerEntity("SkeletonHorse", EntitySkeletonHorse.class);
         Entity.registerEntity("Slime", EntitySlime.class);
         Entity.registerEntity("Spider", EntitySpider.class);
         Entity.registerEntity("Stray", EntityStray.class);
+        Entity.registerEntity("Vindicator", EntityVindicator.class);
+        Entity.registerEntity("Vex", EntityVex.class);
+        Entity.registerEntity("WitherSkeleton", EntityWitherSkeleton.class);
+        Entity.registerEntity("Wither", EntityWither.class);
         Entity.registerEntity("Witch", EntityWitch.class);
-        //TODO: more mobs
+        Entity.registerEntity("ZombiePigman", EntityZombiePigman.class);
+        Entity.registerEntity("ZombieVillager", EntityZombieVillager.class);
+        Entity.registerEntity("Zombie", EntityZombie.class);
+
+        //Passive
         Entity.registerEntity("Bat", EntityBat.class);
         Entity.registerEntity("Chicken", EntityChicken.class);
         Entity.registerEntity("Cow", EntityCow.class);
