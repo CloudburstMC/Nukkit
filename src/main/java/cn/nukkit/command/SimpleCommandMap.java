@@ -58,6 +58,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new EnchantCommand("enchant"));
         this.register("nukkit", new ParticleCommand("particle"));
         this.register("nukkit", new GamemodeCommand("gamemode"));
+        this.register("nukkit", new GameruleCommand("gamerule"));
         this.register("nukkit", new KillCommand("kill"));
         this.register("nukkit", new SpawnpointCommand("spawnpoint"));
         this.register("nukkit", new SetWorldSpawnCommand("setworldspawn"));

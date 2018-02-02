@@ -30,8 +30,8 @@ public class PopulatorGroundCover extends Populator {
 
                     int y;
                     for (y = height + 1; y > 0; --y) {
-                        int blockId = chunk.getFullBlock(x, y, z);
-                        if (blockId != 0 && !Block.get(blockId).isTransparent()) {
+                        int fullId = chunk.getFullBlock(x, y, z);
+                        if (fullId != 0 && !Block.get(fullId >> 4).isTransparent()) {
                             break;
                         }
                     }

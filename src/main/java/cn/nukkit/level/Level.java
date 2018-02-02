@@ -820,6 +820,13 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
+        if(gameRules.isStale()) {
+            GameRulesChangedPacket packet = new GameRulesChangedPacket();
+            packet.gameRules = gameRules;
+            Server.broadcastPacket(players.values().toArray(new Player[players.size()]), packet);
+            gameRules.refresh();
+        }
+
         this.chunkPackets.clear();
         this.timings.doTick.stopTiming();
     }
@@ -1071,7 +1078,6 @@ public class Level implements ChunkManager, Metadatable {
                 int tickSpeed = 3;
 
                 if (tickSpeed > 0) {
-                    int blockId;
                     if (this.useSections) {
                         for (ChunkSection section : ((Chunk) chunk).getSections()) {
                             if (!(section instanceof EmptyChunkSection)) {
@@ -1083,9 +1089,10 @@ public class Level implements ChunkManager, Metadatable {
                                     int y = k >> 8 & 0x0f;
                                     int z = k >> 16 & 0x0f;
 
-                                    blockId = section.getBlockId(x, y, z);
+                                    int fullId = section.getFullBlock(x, y, z);
+                                    int blockId = fullId >> 4;
                                     if (randomTickBlocks[blockId]) {
-                                        Block block = Block.get(blockId << 4, this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
+                                        Block block = Block.get(fullId, this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
                                         block.onUpdate(BLOCK_UPDATE_RANDOM);
                                     }
                                 }
@@ -1101,9 +1108,11 @@ public class Level implements ChunkManager, Metadatable {
                                 int y = k >> 8 & 0x0f;
                                 int z = k >> 16 & 0x0f;
 
-                                blockTest |= blockId = chunk.getBlockId(x, y + (Y << 4), z);
+                                int fullId = chunk.getFullBlock(x, y + (Y << 4), z);
+                                int blockId = fullId >> 4;
+                                blockTest |= fullId;
                                 if (this.randomTickBlocks[blockId]) {
-                                    Block block = Block.get(blockId << 4, this, x, y + (Y << 4), z);
+                                    Block block = Block.get(fullId, this, x, y + (Y << 4), z);
                                     block.onUpdate(BLOCK_UPDATE_RANDOM);
                                 }
                             }
@@ -1135,6 +1144,7 @@ public class Level implements ChunkManager, Metadatable {
         this.provider.setThundering(this.thundering);
         this.provider.setThunderTime(this.thunderTime);
         this.provider.setCurrentTick(this.levelCurrentTick);
+        this.provider.setGameRules(this.gameRules);
         this.saveChunks();
         if (this.provider instanceof BaseLevelProvider) {
             this.provider.saveLevelData();
@@ -1871,7 +1881,7 @@ public class Level implements ChunkManager, Metadatable {
             item = new ItemBlock(new BlockAir(), 0, 0);
         }
 
-        if (this.gameRules.getBoolean("doTileDrops")) {
+        if (this.gameRules.getBoolean(GameRule.DO_TILE_DROPS)) {
             int dropExp = target.getDropExp();
             if (player != null) {
                 player.addExperience(dropExp);

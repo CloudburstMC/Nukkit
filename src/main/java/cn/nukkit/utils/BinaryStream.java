@@ -3,15 +3,14 @@ package cn.nukkit.utils;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.GameRule;
+import cn.nukkit.level.GameRules;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -403,18 +402,13 @@ public class BinaryStream {
         this.putLFloat(z);
     }
 
-    public RuleData getRuleData() {
-        RuleData rule = new RuleData();
-        rule.name = this.getString();
-        rule.unknown1 = this.getBoolean();
-        rule.unknown2 = this.getBoolean();
-        return rule;
-    }
-
-    public void putRuleData(RuleData rule) {
-        this.putString(rule.name);
-        this.putBoolean(rule.unknown1);
-        this.putBoolean(rule.unknown2);
+    public void putGameRules(GameRules gameRules) {
+        Map<GameRule, GameRules.Value> rules = gameRules.getGameRules();
+        this.putUnsignedVarInt(rules.size());
+        rules.forEach((gameRule, value) -> {
+            putString(gameRule.getName().toLowerCase());
+            value.write(this);
+        });
     }
 
     /**

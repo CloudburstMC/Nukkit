@@ -525,7 +525,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public GameRules getGamerules() {
-        GameRules rules = new GameRules();
+        GameRules rules = GameRules.getDefault();
 
         if (this.levelData.contains("GameRules"))
             rules.readNBT(this.levelData.getCompound("GameRules"));
