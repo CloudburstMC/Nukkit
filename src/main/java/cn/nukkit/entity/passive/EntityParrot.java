@@ -2,20 +2,18 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.utils.DyeColor;
 
 /**
  * @author PikyCZ
  */
-public class EntitySquid extends EntityWaterAnimal {
+public class EntityParrot extends EntityAnimal {
 
-    public static final int NETWORK_ID = 17;
+    public static final int NETWORK_ID = 105;
 
-    public EntitySquid(FullChunk chunk, CompoundTag nbt) {
+    public EntityParrot(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -24,25 +22,29 @@ public class EntitySquid extends EntityWaterAnimal {
         return NETWORK_ID;
     }
 
+    public String getName() {
+        return "Bat";
+    }
+
     @Override
     public float getWidth() {
-        return 0.8f;
+        return 0.5f;
     }
 
     @Override
     public float getHeight() {
-        return 0.8f;
+        return 0.9f;
     }
 
     @Override
     public void initEntity() {
         super.initEntity();
-        this.setMaxHealth(10);
+        this.setMaxHealth(6);
     }
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{new ItemDye(DyeColor.BLACK.getDyeData())};
+        return new Item[]{Item.get(Item.FEATHER)};
     }
 
     @Override

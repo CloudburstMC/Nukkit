@@ -39,14 +39,6 @@ public class EntityPolarBear extends EntityAnimal {
     }
 
     @Override
-    public float getEyeHeight() {
-        if (this.isBaby()) {
-            return 0.65f;
-        }
-        return 1.4f;
-    }
-
-    @Override
     public void initEntity() {
         super.initEntity();
         this.setMaxHealth(30);
