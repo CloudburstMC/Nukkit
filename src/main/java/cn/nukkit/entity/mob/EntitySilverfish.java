@@ -23,12 +23,12 @@ public class EntitySilverfish extends EntityMob {
 
     @Override
     public String getName() {
-        return "Silver fish";
+        return "Silverfish";
     }
 
     @Override
     public float getWidth() {
-        return 0.45f;
+        return 0.4f;
     }
 
     @Override

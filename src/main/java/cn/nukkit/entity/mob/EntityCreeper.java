@@ -31,12 +31,12 @@ public class EntityCreeper extends EntityMob {
 
     @Override
     public float getWidth() {
-        return 0.72f;
+        return 0.6f;
     }
 
     @Override
     public float getHeight() {
-        return 1.8f;
+        return 1.7f;
     }
 
     public EntityCreeper(FullChunk chunk, CompoundTag nbt) {
@@ -79,6 +79,11 @@ public class EntityCreeper extends EntityMob {
             this.dataProperties.putBoolean(DATA_POWERED, true);
         }
         this.setMaxHealth(20);
+    }
+
+    @Override
+    public String getName() {
+        return "Creeper";
     }
 
     @Override
