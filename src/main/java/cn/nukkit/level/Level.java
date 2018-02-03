@@ -795,7 +795,6 @@ public class Level implements ChunkManager, Metadatable {
                         for (char blockHash : blocks.keySet()) {
                             Vector3 hash = getBlockXYZ(index, blockHash);
                             blocksArray[i++] = hash;
-                            System.out.println("Send " + hash);
                         }
                         this.sendBlocks(playerArray, blocksArray, UpdateBlockPacket.FLAG_ALL);
                     }
