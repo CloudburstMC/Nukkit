@@ -2761,6 +2761,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, packet);
                         break;
                     }
+                    break;
                 case ProtocolInfo.INVENTORY_TRANSACTION_PACKET:
                     if (this.isSpectator()) {
                         this.sendAllInventories();
