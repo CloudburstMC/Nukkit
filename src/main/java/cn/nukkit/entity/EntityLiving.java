@@ -192,7 +192,11 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     @Override
     public boolean entityBaseTick(int tickDiff) {
         Timings.livingEntityBaseTickTimer.startTiming();
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_BREATHING, !this.isInsideOfWater());
+        boolean isBreathing = !this.isInsideOfWater();
+        if (this instanceof Player && ((Player) this).isCreative()) {
+            isBreathing = true;
+        }
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_BREATHING, isBreathing);
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
