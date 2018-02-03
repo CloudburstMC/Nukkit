@@ -806,7 +806,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void spawnTo(Player player) {
-        if (!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
+        if (!this.hasSpawned.containsKey(player.getLoaderId()) && chunk != null && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
             this.hasSpawned.put(player.getLoaderId(), player);
         }
 
@@ -1180,12 +1180,14 @@ public abstract class Entity extends Location implements Metadatable {
     public void addMotion(double motionX, double motionY, double motionZ) {
         int chunkX = this.getFloorX() >> 16;
         int chunkZ = this.getFloorZ() >> 16;
-        SetEntityMotionPacket pk = new SetEntityMotionPacket();
-        pk.eid = this.getId();
-        pk.motionX = (float) motionX;
-        pk.motionY = (float) motionY;
-        pk.motionZ = (float) motionZ;
-        this.level.addChunkPacket(chunkX, chunkZ, pk);
+        if (this.chunk != null) {
+            SetEntityMotionPacket pk = new SetEntityMotionPacket();
+            pk.eid = this.getId();
+            pk.motionX = (float) motionX;
+            pk.motionY = (float) motionY;
+            pk.motionZ = (float) motionZ;
+            this.level.addChunkPacket(chunkX, chunkZ, pk);
+        }
     }
 
     public Vector3 getDirectionVector() {
