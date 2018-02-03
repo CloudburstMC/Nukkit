@@ -1,6 +1,7 @@
-package cn.nukkit.entity.mob;
+package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -8,38 +9,42 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 /**
  * @author PikyCZ
  */
-public class EntityEnderDragon extends EntityMob {
+public class EntityParrot extends EntityAnimal {
 
-    public static final int NETWORK_ID = 53;
+    public static final int NETWORK_ID = 105;
+
+    public EntityParrot(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
 
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
     }
 
-    public EntityEnderDragon(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
+    public String getName() {
+        return "Bat";
     }
 
     @Override
     public float getWidth() {
-        return 13f;
+        return 0.5f;
     }
 
     @Override
     public float getHeight() {
-        return 4f;
+        return 0.9f;
     }
 
     @Override
     public void initEntity() {
         super.initEntity();
-        this.setMaxHealth(200);
+        this.setMaxHealth(6);
     }
 
     @Override
-    public String getName() {
-        return "EnderDragon";
+    public Item[] getDrops() {
+        return new Item[]{Item.get(Item.FEATHER)};
     }
 
     @Override
@@ -59,4 +64,5 @@ public class EntityEnderDragon extends EntityMob {
 
         super.spawnTo(player);
     }
+
 }

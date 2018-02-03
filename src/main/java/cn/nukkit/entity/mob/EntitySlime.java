@@ -25,17 +25,17 @@ public class EntitySlime extends EntityMob {
     @Override
     protected void initEntity() {
         super.initEntity();
-        this.setMaxHealth(4);
+        this.setMaxHealth(16);
     }
 
     @Override
     public float getWidth() {
-        return 1.02f;
+        return 2.04f;
     }
 
     @Override
     public float getHeight() {
-        return 1.02f;
+        return 2.04f;
     }
 
     @Override

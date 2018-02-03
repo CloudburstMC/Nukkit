@@ -7,8 +7,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * Author: BeYkeRYkt
- * Nukkit Project
+ * Author: BeYkeRYkt Nukkit Project
  */
 public class EntityRabbit extends EntityAnimal {
 
@@ -35,16 +34,8 @@ public class EntityRabbit extends EntityAnimal {
     }
 
     @Override
-    public float getEyeHeight() {
-        if (isBaby()) {
-            return 0.25f;
-        }
-        return 0.5f;
-    }
-
-    @Override
     public String getName() {
-        return this.getNameTag();
+        return "Rabbit";
     }
 
     @Override

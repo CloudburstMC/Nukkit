@@ -29,12 +29,17 @@ public class EntityElderGuardian extends EntityMob {
 
     @Override
     public float getWidth() {
-        return 1.9f;
+        return 1.9975f;
     }
 
     @Override
     public float getHeight() {
-        return 1.9f;
+        return 1.9975f;
+    }
+
+    @Override
+    public String getName() {
+        return "ElderGuardian";
     }
 
     @Override

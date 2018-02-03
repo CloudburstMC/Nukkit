@@ -24,7 +24,7 @@ public class EntityShulker extends EntityMob {
     @Override
     protected void initEntity() {
         super.initEntity();
-        this.setMaxHealth(15);
+        this.setMaxHealth(30);
     }
 
     @Override
