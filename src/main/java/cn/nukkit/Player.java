@@ -2757,7 +2757,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET:
                     //LevelSoundEventPacket levelSoundEventPacket = (LevelSoundEventPacket) packet;
                     //We just need to broadcast this packet to all viewers.
-                    this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, packet);
+                    if (this.chunk != null) {
+                        this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, packet);
+                        break;
+                    }
                     break;
                 case ProtocolInfo.INVENTORY_TRANSACTION_PACKET:
                     if (this.isSpectator()) {
