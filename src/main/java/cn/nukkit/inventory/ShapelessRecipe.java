@@ -15,7 +15,7 @@ public class ShapelessRecipe implements CraftingRecipe {
 
     private final Item output;
 
-    private UUID uuid = null;
+    private long least,most;
 
     private final List<Item> ingredients = new ArrayList<>();
 
@@ -30,15 +30,13 @@ public class ShapelessRecipe implements CraftingRecipe {
 
     @Override
     public UUID getId() {
-        return this.uuid;
+        return new UUID(least, most);
     }
 
     @Override
     public void setId(UUID uuid) {
-        if (this.uuid != null) {
-            throw new IllegalStateException("Id is already set");
-        }
-        this.uuid = uuid;
+        this.least = uuid.getLeastSignificantBits();
+        this.most = uuid.getMostSignificantBits();
     }
 
     public ShapelessRecipe addIngredient(Item item) {

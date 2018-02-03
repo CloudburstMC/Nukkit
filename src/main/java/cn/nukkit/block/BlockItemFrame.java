@@ -17,7 +17,7 @@ import java.util.Random;
 /**
  * Created by Pub4Game on 03.07.2016.
  */
-public class BlockItemFrame extends BlockTransparent {
+public class BlockItemFrame extends BlockTransparentMeta {
 
     public BlockItemFrame() {
         this(0);
@@ -93,16 +93,16 @@ public class BlockItemFrame extends BlockTransparent {
         if (!target.isTransparent() && face.getIndex() > 1 && !block.isSolid()) {
             switch (face) {
                 case NORTH:
-                    this.meta = 3;
+                    this.setDamage(3);
                     break;
                 case SOUTH:
-                    this.meta = 2;
+                    this.setDamage(2);
                     break;
                 case WEST:
-                    this.meta = 1;
+                    this.setDamage(1);
                     break;
                 case EAST:
-                    this.meta = 0;
+                    this.setDamage(0);
                     break;
                 default:
                     return false;
@@ -177,7 +177,7 @@ public class BlockItemFrame extends BlockTransparent {
     }
 
     public BlockFace getFacing() {
-        switch (this.meta % 8) {
+        switch (this.getDamage() % 8) {
             case 0:
                 return BlockFace.WEST;
             case 1:

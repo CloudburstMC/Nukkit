@@ -15,6 +15,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>aikar</id>
+            <url>http://ci.emc.gs/nexus/content/groups/aikar/</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>central</id>
@@ -29,6 +36,11 @@
     </distributionManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>fastutil-lite</artifactId>
+            <version>1.0</version>
+        </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>

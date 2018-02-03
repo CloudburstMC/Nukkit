@@ -25,7 +25,7 @@ public class BlockLeaves2 extends BlockLeaves {
                 "Birch Leaves",
                 "Jungle Leaves"
         };
-        return names[this.meta & 0x01];
+        return names[this.getDamage() & 0x01];
     }
 
     @Override
@@ -40,14 +40,14 @@ public class BlockLeaves2 extends BlockLeaves {
                     toItem()
             };
         } else {
-            if ((int) ((Math.random()) * 200) == 0 && this.meta == DARK_OAK) {
+            if ((int) ((Math.random()) * 200) == 0 && this.getDamage() == DARK_OAK) {
                 return new Item[]{
                         new ItemApple()
                 };
             }
             if ((int) ((Math.random()) * 20) == 0) {
                 return new Item[]{
-                        new ItemBlock(new BlockSapling(), this.meta & 0x03, 1)
+                        new ItemBlock(new BlockSapling(), this.getDamage() & 0x03, 1)
                 };
             }
         }

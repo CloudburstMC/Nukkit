@@ -13,7 +13,7 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/8 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockLadder extends BlockTransparent {
+public class BlockLadder extends BlockTransparentMeta {
 
     public BlockLadder() {
         this(0);
@@ -21,6 +21,7 @@ public class BlockLadder extends BlockTransparent {
 
     public BlockLadder(int meta) {
         super(meta);
+        calculateOffsets();
     }
 
     @Override
@@ -61,59 +62,86 @@ public class BlockLadder extends BlockTransparent {
     @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
-        entity.onGround = true;
+    }
+
+    private double offMinX;
+    private double offMinZ;
+    private double offMaxX;
+    private double offMaxZ;
+
+    private void calculateOffsets() {
+        double f = 0.1875;
+
+        switch (this.getDamage()) {
+            case 2:
+                this.offMinX = 0;
+                this.offMinZ = 1 - f;
+                this.offMaxX = 1;
+                this.offMaxZ = 1;
+                break;
+            case 3:
+                this.offMinX = 0;
+                this.offMinZ = 0;
+                this.offMaxX = 1;
+                this.offMaxZ = f;
+                break;
+            case 4:
+                this.offMinX = 1 - f;
+                this.offMinZ = 0;
+                this.offMaxX = 1;
+                this.offMaxZ = 1;
+                break;
+            case 5:
+                this.offMinX = 0;
+                this.offMinZ = 0;
+                this.offMaxX = f;
+                this.offMaxZ = 1;
+                break;
+            default:
+                this.offMinX = 0;
+                this.offMinZ = 1 ;
+                this.offMaxX = 1;
+                this.offMaxZ = 1;
+                break;
+        }
     }
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
+    public void setDamage(int meta) {
+        super.setDamage(meta);
+        calculateOffsets();
+    }
 
-        double f = 0.1875;
+    @Override
+    public double getMinX() {
+        return this.x + offMinX;
+    }
 
-        if (this.meta == 2) {
-            return new AxisAlignedBB(
-                    this.x,
-                    this.y,
-                    this.z + 1 - f,
-                    this.x + 1,
-                    this.y + 1,
-                    this.z + 1
-            );
-        } else if (this.meta == 3) {
-            return new AxisAlignedBB(
-                    this.x,
-                    this.y,
-                    this.z,
-                    this.x + 1,
-                    this.y + 1,
-                    this.z + f
-            );
-        } else if (this.meta == 4) {
-            return new AxisAlignedBB(
-                    this.x + 1 - f,
-                    this.y,
-                    this.z,
-                    this.x + 1,
-                    this.y + 1,
-                    this.z + 1
-            );
-        } else if (this.meta == 5) {
-            return new AxisAlignedBB(
-                    this.x,
-                    this.y,
-                    this.z,
-                    this.x + f,
-                    this.y + 1,
-                    this.z + 1
-            );
-        }
-        return null;
+    @Override
+    public double getMinZ() {
+        return this.z + offMinZ;
+    }
+
+    @Override
+    public double getMaxX() {
+        return this.x + offMaxX;
+    }
+
+    @Override
+    public double getMaxZ() {
+        return this.z + offMaxZ;
+    }
+
+    @Override
+    protected AxisAlignedBB recalculateCollisionBoundingBox() {
+        return super.recalculateBoundingBox();
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (!target.isTransparent()) {
             if (face.getIndex() >= 2 && face.getIndex() <= 5) {
-                this.meta = face.getIndex();
+                this.setDamage(face.getIndex());
                 this.getLevel().setBlock(block, this, true, true);
                 return true;
             }
@@ -132,7 +160,7 @@ public class BlockLadder extends BlockTransparent {
                     5,
                     4
             };
-            if (!this.getSide(BlockFace.fromIndex(faces[this.meta])).isSolid()) {
+            if (!this.getSide(BlockFace.fromIndex(faces[this.getDamage()])).isSolid()) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }

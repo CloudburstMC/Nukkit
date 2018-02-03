@@ -15,11 +15,6 @@ import cn.nukkit.nbt.tag.ListTag;
 public class BlockJukebox extends BlockSolid {
 
     public BlockJukebox() {
-        this(0);
-    }
-
-    public BlockJukebox(int meta) {
-        super(0);
     }
 
     @Override

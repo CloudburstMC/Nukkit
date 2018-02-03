@@ -9,7 +9,6 @@ import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
-
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -17,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockLiquid extends BlockTransparent {
+public abstract class BlockLiquid extends BlockTransparentMeta {
 
     public int adjacentSources = 0;
     public final boolean[] isOptimalFlowDirection = {false, false, false, false};
@@ -59,12 +58,17 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     @Override
+    public double getMaxY() {
+        return this.y + 1 - getFluidHeightPercent();
+    }
+
+    @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return new AxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 1 - getFluidHeightPercent(), this.z + 1);
+        return this;
     }
 
     public float getFluidHeightPercent() {
-        float d = (float) this.meta;
+        float d = (float) this.getDamage();
         if (d >= 8) {
             d = 0;
         }

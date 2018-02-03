@@ -13,12 +13,29 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockAnvil extends BlockFallable {
 
+    private int meta;
+
     public BlockAnvil() {
         this(0);
     }
 
     public BlockAnvil(int meta) {
-        super(meta);
+        this.meta = meta;
+    }
+
+    @Override
+    public int getFullId() {
+        return (getId() << 4) + getDamage();
+    }
+
+    @Override
+    public final int getDamage() {
+        return this.meta;
+    }
+
+    @Override
+    public final void setDamage(int meta) {
+        this.meta = meta;
     }
 
     @Override
@@ -67,7 +84,7 @@ public class BlockAnvil extends BlockFallable {
                 "Very Damaged Anvil",
                 "Very Damaged Anvil"
         };
-        return names[this.meta];
+        return names[this.getDamage()];
     }
 
     @Override
@@ -75,11 +92,11 @@ public class BlockAnvil extends BlockFallable {
         if (!target.isTransparent()) {
             int damage = this.getDamage();
             int[] faces = {1, 2, 3, 0};
-            this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
+            this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
             if (damage >= 4 && damage <= 7) {
-                this.meta |= 0x04;
+                this.setDamage(this.getDamage() | 0x04);
             } else if (damage >= 8 && damage <= 11) {
-                this.meta |= 0x08;
+                this.setDamage(this.getDamage() | 0x08);
             }
             this.getLevel().setBlock(block, this, true);
             this.getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F);

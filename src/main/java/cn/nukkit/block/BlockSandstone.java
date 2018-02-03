@@ -9,7 +9,7 @@ import cn.nukkit.utils.BlockColor;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockSandstone extends BlockSolid {
+public class BlockSandstone extends BlockSolidMeta {
     public static final int NORMAL = 0;
     public static final int CHISELED = 1;
     public static final int SMOOTH = 2;
@@ -46,7 +46,7 @@ public class BlockSandstone extends BlockSolid {
                 ""
         };
 
-        return names[this.meta & 0x03];
+        return names[this.getDamage() & 0x03];
     }
 
     @Override
@@ -62,7 +62,7 @@ public class BlockSandstone extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.meta & 0x03);
+        return new ItemBlock(this, this.getDamage() & 0x03);
     }
 
     @Override

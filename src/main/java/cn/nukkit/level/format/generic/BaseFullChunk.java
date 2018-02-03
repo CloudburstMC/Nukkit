@@ -11,7 +11,7 @@ import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
-
+import cn.nukkit.network.protocol.BatchPacket;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public abstract class BaseFullChunk implements FullChunk {
 
     protected byte[] blockLight;
 
-    protected int[] heightMap;
+    protected byte[] heightMap;
 
     protected List<CompoundTag> NBTtiles;
 
@@ -50,12 +50,15 @@ public abstract class BaseFullChunk implements FullChunk {
     protected LevelProvider provider;
     protected Class<? extends LevelProvider> providerClass;
 
-    protected int x;
-    protected int z;
+    private int x;
+    private int z;
+    private long hash;
 
-    protected boolean hasChanged = false;
+    protected long changes = 0;
 
     protected boolean isInit = false;
+
+    protected BatchPacket chunkPacket;
 
     @Override
     public BaseFullChunk clone() {
@@ -92,6 +95,14 @@ public abstract class BaseFullChunk implements FullChunk {
         return chunk;
     }
 
+    public void setChunkPacket(BatchPacket packet) {
+        this.chunkPacket = packet;
+    }
+
+    public BatchPacket getChunkPacket() {
+        return chunkPacket;
+    }
+
     protected void checkOldBiomes(byte[] data) {
         if (data.length != 256) {
             return;
@@ -117,7 +128,7 @@ public abstract class BaseFullChunk implements FullChunk {
                         continue;
                     }
                     ListTag pos = nbt.getList("Pos");
-                    if ((((NumberTag) pos.get(0)).getData().intValue() >> 4) != this.x || ((((NumberTag) pos.get(2)).getData().intValue() >> 4) != this.z)) {
+                    if ((((NumberTag) pos.get(0)).getData().intValue() >> 4) != this.getX() || ((((NumberTag) pos.get(2)).getData().intValue() >> 4) != this.getZ())) {
                         changed = true;
                         continue;
                     }
@@ -139,7 +150,7 @@ public abstract class BaseFullChunk implements FullChunk {
                             changed = true;
                             continue;
                         }
-                        if ((nbt.getInt("x") >> 4) != this.x || ((nbt.getInt("z") >> 4) != this.z)) {
+                        if ((nbt.getInt("x") >> 4) != this.getX() || ((nbt.getInt("z") >> 4) != this.getZ())) {
                             changed = true;
                             continue;
                         }
@@ -161,21 +172,35 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public int getX() {
+    public final long getIndex() {
+        return hash;
+    }
+
+    @Override
+    public final int getX() {
         return x;
     }
 
     @Override
-    public int getZ() {
+    public final int getZ() {
         return z;
     }
 
-    public void setX(int x) {
+    @Override
+    public void setPosition(int x, int z) {
         this.x = x;
+        this.z = z;
+        this.hash = Level.chunkHash(x, z);
     }
 
-    public void setZ(int z) {
+    public final void setX(int x) {
+        this.x = x;
+        this.hash = Level.chunkHash(x, getZ());
+    }
+
+    public final void setZ(int z) {
         this.z = z;
+        this.hash = Level.chunkHash(getX(), z);
     }
 
     @Override
@@ -195,7 +220,7 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public void setBiomeId(int x, int z, int biomeId) {
-        this.hasChanged = true;
+        this.setChanged();
         this.biomeColors[(z << 4) | x] = this.biomeColors[(z << 4) | x] & 0xffffff | (biomeId << 24);
     }
 
@@ -207,18 +232,18 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public void setBiomeColor(int x, int z, int r, int g, int b) {
-        this.hasChanged = true;
+        this.setChanged();
         this.biomeColors[(z << 4) | x] = this.biomeColors[(z << 4) | x] & 0xff000000 | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
     }
 
     @Override
     public int getHeightMap(int x, int z) {
-        return this.heightMap[(z << 4) | x];
+        return this.heightMap[(z << 4) | x] & 0xFF;
     }
 
     @Override
     public void setHeightMap(int x, int z, int value) {
-        this.heightMap[(z << 4) | x] = value;
+        this.heightMap[(z << 4) | x] = (byte) value;
     }
 
     @Override
@@ -283,9 +308,8 @@ public abstract class BaseFullChunk implements FullChunk {
                 return h;
             }
         }
-        byte[] column = this.getBlockIdColumn(x, z);
         for (int y = 255; y >= 0; --y) {
-            if (column[y] != 0x00) {
+            if (getBlockId(x, y, z) != 0x00) {
                 this.setHeightMap(x, z, y);
                 return y;
             }
@@ -297,7 +321,7 @@ public abstract class BaseFullChunk implements FullChunk {
     public void addEntity(Entity entity) {
         this.entities.put(entity.getId(), entity);
         if (!(entity instanceof Player) && this.isInit) {
-            this.hasChanged = true;
+            this.setChanged();
         }
     }
 
@@ -305,7 +329,7 @@ public abstract class BaseFullChunk implements FullChunk {
     public void removeEntity(Entity entity) {
         this.entities.remove(entity.getId());
         if (!(entity instanceof Player) && this.isInit) {
-            this.hasChanged = true;
+            this.setChanged();
         }
     }
 
@@ -318,7 +342,7 @@ public abstract class BaseFullChunk implements FullChunk {
         }
         this.tileList.put(index, blockEntity);
         if (this.isInit) {
-            this.hasChanged = true;
+            this.setChanged();
         }
     }
 
@@ -328,7 +352,7 @@ public abstract class BaseFullChunk implements FullChunk {
         int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
         this.tileList.remove(index);
         if (this.isInit) {
-            this.hasChanged = true;
+            this.setChanged();
         }
     }
 
@@ -384,7 +408,7 @@ public abstract class BaseFullChunk implements FullChunk {
         if (level == null) {
             return true;
         }
-        if (save && this.hasChanged) {
+        if (save && this.changes != 0) {
             level.saveChunk(this.getX(), this.getZ());
         }
         if (safe) {
@@ -444,23 +468,32 @@ public abstract class BaseFullChunk implements FullChunk {
     }
 
     @Override
-    public int[] getHeightMapArray() {
+    public byte[] getHeightMapArray() {
         return this.heightMap;
+    }
+
+    public long getChanges() {
+        return changes;
     }
 
     @Override
     public boolean hasChanged() {
-        return this.hasChanged;
+        return this.changes != 0;
     }
 
     @Override
     public void setChanged() {
-        this.setChanged(true);
+        this.changes++;
+        chunkPacket = null;
     }
 
     @Override
     public void setChanged(boolean changed) {
-        this.hasChanged = changed;
+        if (changed) {
+            setChanged();
+        } else {
+            changes = 0;
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.utils.RuleData;
+import cn.nukkit.level.GameRules;
 
 /**
  * Created on 15-10-13.
@@ -40,7 +40,7 @@ public class StartGamePacket extends DataPacket {
     public boolean broadcastToXboxLive = true;
     public boolean commandsEnabled;
     public boolean isTexturePacksRequired = false;
-    public RuleData[] ruleDatas = new RuleData[0];
+    public GameRules gameRules;
     public boolean bonusChest = false;
     public boolean trustPlayers = false;
     public int permissionLevel = 1;
@@ -87,10 +87,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.broadcastToXboxLive);
         this.putBoolean(this.commandsEnabled);
         this.putBoolean(this.isTexturePacksRequired);
-        this.putUnsignedVarInt(this.ruleDatas.length);
-        for (RuleData rule : this.ruleDatas) {
-            this.putRuleData(rule);
-        }
+        this.putGameRules(gameRules);
         this.putBoolean(this.bonusChest);
         this.putBoolean(this.trustPlayers);
         this.putVarInt(this.permissionLevel);

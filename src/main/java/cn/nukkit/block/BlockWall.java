@@ -3,12 +3,13 @@ package cn.nukkit.block;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockWall extends BlockTransparent {
+public class BlockWall extends BlockTransparentMeta {
     public static final int NONE_MOSSY_WALL = 0;
     public static final int MOSSY_WALL = 1;
 
@@ -43,7 +44,7 @@ public class BlockWall extends BlockTransparent {
 
     @Override
     public String getName() {
-        if (this.meta == 0x01) {
+        if (this.getDamage() == 0x01) {
             return "Mossy Cobblestone Wall";
         }
 
@@ -71,7 +72,7 @@ public class BlockWall extends BlockTransparent {
             s = 0.6875;
         }
 
-        return new AxisAlignedBB(
+        return new SimpleAxisAlignedBB(
                 this.x + w,
                 this.y,
                 this.z + n,

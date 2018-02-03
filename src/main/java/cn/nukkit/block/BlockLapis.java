@@ -12,11 +12,6 @@ public class BlockLapis extends BlockSolid {
 
 
     public BlockLapis() {
-        this(0);
-    }
-
-    public BlockLapis(int meta) {
-        super(meta);
     }
 
     @Override

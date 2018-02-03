@@ -57,32 +57,32 @@ public class BlockTripWire extends BlockFlowable {
     }
 
     public boolean isPowered() {
-        return (this.meta & 1) > 0;
+        return (this.getDamage() & 1) > 0;
     }
 
     public boolean isAttached() {
-        return (this.meta & 4) > 0;
+        return (this.getDamage() & 4) > 0;
     }
 
     public boolean isDisarmed() {
-        return (this.meta & 8) > 0;
+        return (this.getDamage() & 8) > 0;
     }
 
     public void setPowered(boolean value) {
         if (value ^ this.isPowered()) {
-            this.meta ^= 0x01;
+            this.setDamage(this.getDamage() ^ 0x01);
         }
     }
 
     public void setAttached(boolean value) {
         if (value ^ this.isAttached()) {
-            this.meta ^= 0x04;
+            this.setDamage(this.getDamage() ^ 0x04);
         }
     }
 
     public void setDisarmed(boolean value) {
         if (value ^ this.isDisarmed()) {
-            this.meta ^= 0x08;
+            this.setDamage(this.getDamage() ^ 0x08);
         }
     }
 
@@ -182,7 +182,12 @@ public class BlockTripWire extends BlockFlowable {
     }
 
     @Override
+    public double getMaxY() {
+        return this.y + 0.5;
+    }
+
+    @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return new AxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 0.5, this.z + 1);
+        return this;
     }
 }

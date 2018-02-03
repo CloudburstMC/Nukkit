@@ -19,6 +19,7 @@ import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecart;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.SmokeParticle;
@@ -242,7 +243,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 if (instantKill && (!hasCustomName())) {
                     kill();
                 } else {
-                    if (level.getGameRules().getBoolean("doEntityDrops")) {
+                    if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
                         dropItem();
                     }
                     close();

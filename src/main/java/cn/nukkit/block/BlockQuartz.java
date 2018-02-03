@@ -11,7 +11,7 @@ import cn.nukkit.utils.BlockColor;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockQuartz extends BlockSolid {
+public class BlockQuartz extends BlockSolidMeta {
 
     public static final int QUARTZ_NORMAL = 0;
     public static final int QUARTZ_CHISELED = 1;
@@ -51,7 +51,7 @@ public class BlockQuartz extends BlockSolid {
                 "Quartz Pillar"
         };
 
-        return names[this.meta & 0x03];
+        return names[this.getDamage() & 0x03];
     }
 
     @Override
@@ -61,7 +61,7 @@ public class BlockQuartz extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (this.meta != QUARTZ_NORMAL) {
+        if (this.getDamage() != QUARTZ_NORMAL) {
             short[] faces = new short[]{
                     0,
                     0,
@@ -71,7 +71,7 @@ public class BlockQuartz extends BlockSolid {
                     0b0100
             };
 
-            this.meta = ((this.meta & 0x03) | faces[face.getIndex()]);
+            this.setDamage(((this.getDamage() & 0x03) | faces[face.getIndex()]));
         }
         this.getLevel().setBlock(block, this, true, true);
 
@@ -91,7 +91,7 @@ public class BlockQuartz extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockQuartz(), this.meta & 0x03, 1);
+        return new ItemBlock(new BlockQuartz(), this.getDamage() & 0x03, 1);
     }
 
     @Override

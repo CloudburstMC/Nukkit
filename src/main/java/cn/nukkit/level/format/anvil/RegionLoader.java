@@ -4,8 +4,9 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseRegionLoader;
 import cn.nukkit.utils.*;
-
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Map;
@@ -39,10 +40,12 @@ public class RegionLoader extends BaseRegionLoader {
             return null;
         }
 
+        try {
         Integer[] table = this.locationTable.get(index);
-        this.randomAccessFile.seek(table[0] << 12);
-        int length = this.randomAccessFile.readInt();
-        byte compression = this.randomAccessFile.readByte();
+        RandomAccessFile raf = this.getRandomAccessFile();
+        raf.seek(table[0] << 12);
+        int length = raf.readInt();
+        byte compression = raf.readByte();
         if (length <= 0 || length >= MAX_SECTOR_LENGTH) {
             if (length >= MAX_SECTOR_LENGTH) {
                 table[0] = ++this.lastSector;
@@ -64,12 +67,16 @@ public class RegionLoader extends BaseRegionLoader {
         }
 
         byte[] data = new byte[length - 1];
-        this.randomAccessFile.read(data);
+        raf.readFully(data);
         Chunk chunk = this.unserializeChunk(data);
         if (chunk != null) {
             return chunk;
         } else {
             MainLogger.getLogger().error("Corrupted chunk detected");
+            return null;
+        }
+        } catch (EOFException e) {
+            MainLogger.getLogger().error("Your world is corrupt, because some code is bad and corrupted it. oops. ");
             return null;
         }
     }
@@ -108,7 +115,8 @@ public class RegionLoader extends BaseRegionLoader {
         table[2] = (int) (System.currentTimeMillis() / 1000d);
 
         this.locationTable.put(index, table);
-        this.randomAccessFile.seek(table[0] << 12);
+        RandomAccessFile raf = this.getRandomAccessFile();
+        raf.seek(table[0] << 12);
 
         BinaryStream stream = new BinaryStream();
         stream.put(Binary.writeInt(length));
@@ -121,7 +129,7 @@ public class RegionLoader extends BaseRegionLoader {
             data = newData;
         }
 
-        this.randomAccessFile.write(data);
+        raf.write(data);
 
         if (indexChanged) {
             this.writeLocationIndex(index);
@@ -151,20 +159,21 @@ public class RegionLoader extends BaseRegionLoader {
     @Override
     public void close() throws IOException {
         this.writeLocationTable();
-        this.randomAccessFile.close();
         this.levelProvider = null;
+        super.close();
     }
 
     @Override
     public int doSlowCleanUp() throws Exception {
+        RandomAccessFile raf = this.getRandomAccessFile();
         for (int i = 0; i < 1024; i++) {
             Integer[] table = this.locationTable.get(i);
             if (table[0] == 0 || table[1] == 0) {
                 continue;
             }
-            this.randomAccessFile.seek(table[0] << 12);
+            raf.seek(table[0] << 12);
             byte[] chunk = new byte[table[1] << 12];
-            this.randomAccessFile.read(chunk);
+            raf.readFully(chunk);
             int length = Binary.readInt(Arrays.copyOfRange(chunk, 0, 3));
             if (length <= 1) {
                 this.locationTable.put(i, (table = new Integer[]{0, 0, 0}));
@@ -175,7 +184,7 @@ public class RegionLoader extends BaseRegionLoader {
                 this.locationTable.put(i, new Integer[]{0, 0, 0});
                 continue;
             }
-            chunk = Zlib.deflate(chunk, 9);
+            chunk = Zlib.deflate(chunk, 1);
             ByteBuffer buffer = ByteBuffer.allocate(4 + 1 + chunk.length);
             buffer.put(Binary.writeInt(chunk.length + 1));
             buffer.put(COMPRESSION_ZLIB);
@@ -187,11 +196,11 @@ public class RegionLoader extends BaseRegionLoader {
                 this.lastSector += sectors;
                 this.locationTable.put(i, table);
             }
-            this.randomAccessFile.seek(table[0] << 12);
+            raf.seek(table[0] << 12);
             byte[] bytes = new byte[sectors << 12];
             ByteBuffer buffer1 = ByteBuffer.wrap(bytes);
             buffer1.put(chunk);
-            this.randomAccessFile.write(buffer1.array());
+            raf.write(buffer1.array());
         }
         this.writeLocationTable();
         int n = this.cleanGarbage();
@@ -201,11 +210,12 @@ public class RegionLoader extends BaseRegionLoader {
 
     @Override
     protected void loadLocationTable() throws IOException {
-        this.randomAccessFile.seek(0);
+        RandomAccessFile raf = this.getRandomAccessFile();
+        raf.seek(0);
         this.lastSector = 1;
         int[] data = new int[1024 * 2]; //1024 records * 2 times
         for (int i = 0; i < 1024 * 2; i++) {
-            data[i] = this.randomAccessFile.readInt();
+            data[i] = raf.readInt();
         }
         for (int i = 0; i < 1024; ++i) {
             int index = data[i];
@@ -218,18 +228,20 @@ public class RegionLoader extends BaseRegionLoader {
     }
 
     private void writeLocationTable() throws IOException {
-        this.randomAccessFile.seek(0);
+        RandomAccessFile raf = this.getRandomAccessFile();
+        raf.seek(0);
         for (int i = 0; i < 1024; ++i) {
             Integer[] array = this.locationTable.get(i);
-            this.randomAccessFile.writeInt((array[0] << 8) | array[1]);
+            raf.writeInt((array[0] << 8) | array[1]);
         }
         for (int i = 0; i < 1024; ++i) {
             Integer[] array = this.locationTable.get(i);
-            this.randomAccessFile.writeInt(array[2]);
+            raf.writeInt(array[2]);
         }
     }
 
     private int cleanGarbage() throws IOException {
+        RandomAccessFile raf = this.getRandomAccessFile();
         Map<Integer, Integer> sectors = new TreeMap<>();
         for (Map.Entry entry : this.locationTable.entrySet()) {
             Integer index = (Integer) entry.getKey();
@@ -247,7 +259,7 @@ public class RegionLoader extends BaseRegionLoader {
         int shift = 0;
         int lastSector = 1;
 
-        this.randomAccessFile.seek(8192);
+        raf.seek(8192);
         int s = 2;
         for (int sector : sectors.keySet()) {
             s = sector;
@@ -256,42 +268,44 @@ public class RegionLoader extends BaseRegionLoader {
                 shift += sector - lastSector - 1;
             }
             if (shift > 0) {
-                this.randomAccessFile.seek(sector << 12);
+                raf.seek(sector << 12);
                 byte[] old = new byte[4096];
-                this.randomAccessFile.read(old);
-                this.randomAccessFile.seek((sector - shift) << 12);
-                this.randomAccessFile.write(old);
+                raf.readFully(old);
+                raf.seek((sector - shift) << 12);
+                raf.write(old);
             }
             Integer[] v = this.locationTable.get(index);
             v[0] -= shift;
             this.locationTable.put(index, v);
             this.lastSector = sector;
         }
-        this.randomAccessFile.setLength((s + 1) << 12);
+        raf.setLength((s + 1) << 12);
         return shift;
     }
 
     @Override
     protected void writeLocationIndex(int index) throws IOException {
+        RandomAccessFile raf = this.getRandomAccessFile();
         Integer[] array = this.locationTable.get(index);
-        this.randomAccessFile.seek(index << 2);
-        this.randomAccessFile.writeInt((array[0] << 8) | array[1]);
-        this.randomAccessFile.seek(4096 + (index << 2));
-        this.randomAccessFile.writeInt(array[2]);
+        raf.seek(index << 2);
+        raf.writeInt((array[0] << 8) | array[1]);
+        raf.seek(4096 + (index << 2));
+        raf.writeInt(array[2]);
     }
 
     @Override
     protected void createBlank() throws IOException {
-        this.randomAccessFile.seek(0);
-        this.randomAccessFile.setLength(0);
+        RandomAccessFile raf = this.getRandomAccessFile();
+        raf.seek(0);
+        raf.setLength(0);
         this.lastSector = 1;
         int time = (int) (System.currentTimeMillis() / 1000d);
         for (int i = 0; i < 1024; ++i) {
             this.locationTable.put(i, new Integer[]{0, 0, time});
-            this.randomAccessFile.writeInt(0);
+            raf.writeInt(0);
         }
         for (int i = 0; i < 1024; ++i) {
-            this.randomAccessFile.writeInt(time);
+            raf.writeInt(time);
         }
     }
 

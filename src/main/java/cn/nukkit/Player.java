@@ -64,13 +64,17 @@ import cn.nukkit.resourcepacks.ResourcePack;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-
-import java.awt.*;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import java.awt.Color;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -117,8 +121,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected Map<Inventory, Integer> windows;
 
-    protected Map<Integer, Inventory> windowIndex = new HashMap<>();
-    protected Set<Integer> permanentWindows = new HashSet<>();
+    protected final Map<Integer, Inventory> windowIndex = new HashMap<>();
+    protected final Set<Integer> permanentWindows = new HashSet<>();
 
     protected int messageCounter = 2;
 
@@ -160,13 +164,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected float stepHeight = 0.6f;
 
-    public Map<Long, Boolean> usedChunks = new HashMap<>();
+    public final Map<Long, Boolean> usedChunks = new Long2ObjectOpenHashMap<>();
 
     protected int chunkLoadCount = 0;
-    protected Map<Long, Integer> loadQueue = new HashMap<>();
-    protected int nextChunkOrderRun = 5;
+    protected final Long2ObjectLinkedOpenHashMap<Boolean> loadQueue = new Long2ObjectLinkedOpenHashMap<>();
+    protected int nextChunkOrderRun = 1;
 
-    protected Map<UUID, Player> hiddenPlayers = new HashMap<>();
+    protected final Map<UUID, Player> hiddenPlayers = new HashMap<>();
 
     protected Vector3 newPosition = null;
 
@@ -184,9 +188,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected boolean checkMovement = true;
 
-    private final Map<Integer, Boolean> needACK = new HashMap<>();
+    private final Int2ObjectOpenHashMap<Boolean> needACK = new Int2ObjectOpenHashMap<>();
 
-    private Map<Integer, List<DataPacket>> batchedPackets = new TreeMap<>();
+    private final Map<Integer, List<DataPacket>> batchedPackets = new TreeMap<>();
 
     private PermissibleBase perm = null;
 
@@ -593,7 +597,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.viewDistance = this.server.getViewDistance();
         this.chunkRadius = viewDistance;
         //this.newPosition = new Vector3(0, 0, 0);
-        this.boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
+        this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
 
         this.uuid = null;
         this.rawUUID = null;
@@ -696,7 +700,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.unloadChunk(chunkX, chunkZ, oldLevel);
             }
 
-            this.usedChunks = new HashMap<>();
+            this.usedChunks.clear();
             SetTimePacket pk = new SetTimePacket();
             pk.time = this.level.getTime();
             this.dataPacket(pk);
@@ -742,7 +746,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        this.usedChunks.put(Level.chunkHash(x, z), true);
+        this.usedChunks.put(Level.chunkHash(x, z), Boolean.TRUE);
         this.chunkLoadCount++;
 
         this.dataPacket(packet);
@@ -787,38 +791,39 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         Timings.playerChunkSendTimer.startTiming();
 
-        int count = 0;
+        if (!loadQueue.isEmpty()) {
+            int count = 0;
+            ObjectIterator<Long2ObjectMap.Entry<Boolean>> iter = loadQueue.long2ObjectEntrySet().fastIterator();
+            while (iter.hasNext()) {
+                Long2ObjectMap.Entry<Boolean> entry = iter.next();
+                long index = entry.getLongKey();
 
-        List<Map.Entry<Long, Integer>> entryList = new ArrayList<>(this.loadQueue.entrySet());
-        entryList.sort(Comparator.comparingInt(Map.Entry::getValue));
-
-        for (Map.Entry<Long, Integer> entry : entryList) {
-            long index = entry.getKey();
-            if (count >= this.chunksPerTick) {
-                break;
-            }
-            int chunkX = Level.getHashX(index);
-            int chunkZ = Level.getHashZ(index);
-
-            ++count;
-
-            this.usedChunks.put(index, false);
-            this.level.registerChunkLoader(this, chunkX, chunkZ, false);
-
-            if (!this.level.populateChunk(chunkX, chunkZ)) {
-                if (this.spawned && this.teleportPosition == null) {
-                    continue;
-                } else {
+                if (count >= this.chunksPerTick) {
                     break;
                 }
-            }
+                int chunkX = Level.getHashX(index);
+                int chunkZ = Level.getHashZ(index);
 
-            this.loadQueue.remove(index);
+                ++count;
 
-            PlayerChunkRequestEvent ev = new PlayerChunkRequestEvent(this, chunkX, chunkZ);
-            this.server.getPluginManager().callEvent(ev);
-            if (!ev.isCancelled()) {
-                this.level.requestChunk(chunkX, chunkZ, this);
+                this.usedChunks.put(index, false);
+                this.level.registerChunkLoader(this, chunkX, chunkZ, false);
+
+                if (!this.level.populateChunk(chunkX, chunkZ)) {
+                    if (this.spawned && this.teleportPosition == null) {
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+
+                iter.remove();
+
+                PlayerChunkRequestEvent ev = new PlayerChunkRequestEvent(this, chunkX, chunkZ);
+                this.server.getPluginManager().callEvent(ev);
+                if (!ev.isCancelled()) {
+                    this.level.requestChunk(chunkX, chunkZ, this);
+                }
             }
         }
         if (this.chunkLoadCount >= this.spawnThreshold && !this.spawned && this.teleportPosition == null) {
@@ -849,11 +854,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         pos = respawnEvent.getRespawnPosition();
 
-        RespawnPacket respawnPacket = new RespawnPacket();
-        respawnPacket.x = (float) pos.x;
-        respawnPacket.y = (float) pos.y;
-        respawnPacket.z = (float) pos.z;
-        this.dataPacket(respawnPacket);
+        if (this.getHealth() <= 0) {
+            RespawnPacket  respawnPacket = new RespawnPacket();
+            pos = this.getSpawn();
+            respawnPacket.x = (float) pos.x;
+            respawnPacket.y = (float) pos.y;
+            respawnPacket.z = (float) pos.z;
+            this.dataPacket(respawnPacket);
+        } else {
+            RespawnPacket respawnPacket = new RespawnPacket();
+            respawnPacket.x = (float) pos.x;
+            respawnPacket.y = (float) pos.y;
+            respawnPacket.z = (float) pos.z;
+            this.dataPacket(respawnPacket);
+        }
 
         this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
 
@@ -891,8 +905,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         }
 
-        this.sendExperience(this.getExperience());
-        this.sendExperienceLevel(this.getExperienceLevel());
+        int experience = this.getExperience();
+        if (experience != 0) {
+            this.sendExperience(experience);
+        }
+
+        int level = this.getExperienceLevel();
+        if (level != 0) {
+            this.sendExperienceLevel(this.getExperienceLevel());
+        }
 
         this.teleport(pos, null); // Prevent PlayerTeleportEvent during player spawn
 
@@ -902,20 +923,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         //todo Updater
 
-        if (this.getHealth() <= 0) {
-            respawnPacket = new RespawnPacket();
-            pos = this.getSpawn();
-            respawnPacket.x = (float) pos.x;
-            respawnPacket.y = (float) pos.y;
-            respawnPacket.z = (float) pos.z;
-            this.dataPacket(respawnPacket);
-        }
-
         //Weather
+        if (this.level.isRaining() || this.level.isThundering()) {
+            this.getLevel().sendWeather(this);
+        }
         this.getLevel().sendWeather(this);
 
         //FoodLevel
-        this.getFoodData().sendFoodLevel();
+        PlayerFood food = this.getFoodData();
+        if (food.getLevel() != food.getMaxLevel()) {
+            food.sendFoodLevel();
+        }
     }
 
     protected boolean orderChunks() {
@@ -927,32 +945,75 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.nextChunkOrderRun = 200;
 
-        Map<Long, Integer> newOrder = new HashMap<>();
-        Map<Long, Boolean> lastChunk = new HashMap<>(this.usedChunks);
+        loadQueue.clear();
+        Long2ObjectOpenHashMap<Boolean> lastChunk = new Long2ObjectOpenHashMap<>(this.usedChunks);
 
         int centerX = (int) this.x >> 4;
         int centerZ = (int) this.z >> 4;
 
-        for (int x = -this.chunkRadius; x <= this.chunkRadius; x++) {
-            for (int z = -this.chunkRadius; z <= this.chunkRadius; z++) {
-                int chunkX = x + centerX;
-                int chunkZ = z + centerZ;
-                int distance = (int) Math.sqrt((double) x * x + (double) z * z);
-                if (distance <= this.chunkRadius) {
-                    long index;
-                    if (!(this.usedChunks.containsKey(index = Level.chunkHash(chunkX, chunkZ))) || !this.usedChunks.get(index)) {
-                        newOrder.put(index, distance);
+        int radius = spawned ? this.chunkRadius : (int) Math.ceil(Math.sqrt(spawnThreshold));
+        int radiusSqr = radius * radius;
+
+
+
+        long index;
+        for (int x = 0; x <= radius; x++) {
+            int xx = x * x;
+            for (int z = 0; z <= x; z++) {
+                int distanceSqr = xx + z * z;
+                if (distanceSqr > radiusSqr) continue;
+
+                /* Top right quadrant */
+                if(this.usedChunks.get(index = Level.chunkHash(centerX + x, centerZ + z)) != Boolean.TRUE) {
+                    this.loadQueue.put(index, Boolean.TRUE);
+                }
+                lastChunk.remove(index);
+                /* Top left quadrant */
+                if(this.usedChunks.get(index = Level.chunkHash(centerX - x - 1, centerZ + z)) != Boolean.TRUE) {
+                    this.loadQueue.put(index, Boolean.TRUE);
+                }
+                lastChunk.remove(index);
+                /* Bottom right quadrant */
+                if(this.usedChunks.get(index = Level.chunkHash(centerX + x, centerZ - z - 1)) != Boolean.TRUE) {
+                    this.loadQueue.put(index, Boolean.TRUE);
+                }
+                lastChunk.remove(index);
+                /* Bottom left quadrant */
+                if(this.usedChunks.get(index = Level.chunkHash(centerX - x - 1, centerZ - z - 1)) != Boolean.TRUE) {
+                    this.loadQueue.put(index, Boolean.TRUE);
+                }
+                lastChunk.remove(index);
+                if(x != z){
+                    /* Top right quadrant mirror */
+                    if(this.usedChunks.get(index = Level.chunkHash(centerX + z, centerZ + x)) != Boolean.TRUE) {
+                        this.loadQueue.put(index, Boolean.TRUE);
+                    }
+                    lastChunk.remove(index);
+                    /* Top left quadrant mirror */
+                    if(this.usedChunks.get(index = Level.chunkHash(centerX - z - 1, centerZ + x)) != Boolean.TRUE) {
+                        this.loadQueue.put(index, Boolean.TRUE);
+                    }
+                    lastChunk.remove(index);
+                    /* Bottom right quadrant mirror */
+                    if(this.usedChunks.get(index = Level.chunkHash(centerX + z, centerZ - x - 1)) != Boolean.TRUE) {
+                        this.loadQueue.put(index, Boolean.TRUE);
+                    }
+                    lastChunk.remove(index);
+                    /* Bottom left quadrant mirror */
+                    if(this.usedChunks.get(index = Level.chunkHash(centerX - z - 1, centerZ - x - 1)) != Boolean.TRUE) {
+                        this.loadQueue.put(index, Boolean.TRUE);
                     }
                     lastChunk.remove(index);
                 }
             }
         }
 
-        for (long index : new ArrayList<>(lastChunk.keySet())) {
+        LongIterator keys = lastChunk.keySet().iterator();
+        while (keys.hasNext()) {
+            index = keys.nextLong();
             this.unloadChunk(Level.getHashX(index), Level.getHashZ(index));
         }
 
-        this.loadQueue = newOrder;
         Timings.playerChunkOrderTimer.stopTiming();
         return true;
     }
@@ -1004,7 +1065,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             Integer identifier = this.interfaz.putPacket(this, packet, needACK, false);
 
             if (needACK && identifier != null) {
-                this.needACK.put(identifier, false);
+                this.needACK.put(identifier, Boolean.FALSE);
                 timing.stopTiming();
                 return identifier;
             }
@@ -1037,7 +1098,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             Integer identifier = this.interfaz.putPacket(this, packet, needACK, true);
 
             if (needACK && identifier != null) {
-                this.needACK.put(identifier, false);
+                this.needACK.put(identifier, Boolean.FALSE);
                 timing.stopTiming();
                 return identifier;
             }
@@ -1288,19 +1349,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             boolean onGround = false;
 
             AxisAlignedBB bb = this.boundingBox.clone();
-            bb.maxY = bb.minY + 0.5;
-            bb.minY -= 1;
+            bb.setMaxY(bb.getMinY() + 0.5);
+            bb.setMinY(bb.getMinY() - 1);
 
             AxisAlignedBB realBB = this.boundingBox.clone();
-            realBB.maxY = realBB.minY + 0.1;
-            realBB.minY -= 0.2;
+            realBB.setMaxY(realBB.getMinY() + 0.1);
+            realBB.setMinY(realBB.getMinY() - 0.2);
 
-            int minX = NukkitMath.floorDouble(bb.minX);
-            int minY = NukkitMath.floorDouble(bb.minY);
-            int minZ = NukkitMath.floorDouble(bb.minZ);
-            int maxX = NukkitMath.ceilDouble(bb.maxX);
-            int maxY = NukkitMath.ceilDouble(bb.maxY);
-            int maxZ = NukkitMath.ceilDouble(bb.maxZ);
+            int minX = NukkitMath.floorDouble(bb.getMinX());
+            int minY = NukkitMath.floorDouble(bb.getMinY());
+            int minZ = NukkitMath.floorDouble(bb.getMinZ());
+            int maxX = NukkitMath.ceilDouble(bb.getMaxX());
+            int maxY = NukkitMath.ceilDouble(bb.getMaxY());
+            int maxZ = NukkitMath.ceilDouble(bb.getMaxZ());
 
             for (int z = minZ; z <= maxZ; ++z) {
                 for (int x = minX; x <= maxX; ++x) {
@@ -1596,7 +1657,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.entityBaseTick(tickDiff);
 
-            if (this.getServer().getDifficulty() == 0 && this.level.getGameRules().getBoolean("naturalRegeneration")) {
+            if (this.getServer().getDifficulty() == 0 && this.level.getGameRules().getBoolean(GameRule.NATURAL_REGENERATION)) {
                 if (this.getHealth() < this.getMaxHealth() && this.ticksLived % 20 == 0) {
                     this.heal(1);
                 }
@@ -1734,19 +1795,25 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
+        if (!this.batchedPackets.isEmpty()) {
+            Player[] pArr = new Player[]{this};
+            Iterator<Entry<Integer, List<DataPacket>>> iter = this.batchedPackets.entrySet().iterator();
+            while (iter.hasNext()) {
+                Entry<Integer, List<DataPacket>> entry = iter.next();
+                List<DataPacket> packets = entry.getValue();
+                DataPacket[] arr = packets.toArray(new DataPacket[packets.size()]);
+                packets.clear();
+                this.server.batchPackets(pArr, arr, false);
+            }
+            this.batchedPackets.clear();
+        }
+
         if (this.nextChunkOrderRun-- <= 0 || this.chunk == null) {
             this.orderChunks();
         }
 
         if (!this.loadQueue.isEmpty() || !this.spawned) {
             this.sendNextChunk();
-        }
-
-        if (!this.batchedPackets.isEmpty()) {
-            for (int channel : this.batchedPackets.keySet()) {
-                this.server.batchPackets(new Player[]{this}, batchedPackets.get(channel).stream().toArray(DataPacket[]::new), false);
-            }
-            this.batchedPackets = new TreeMap<>();
         }
 
     }
@@ -1926,6 +1993,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.rainLevel = 0;
         startGamePacket.lightningLevel = 0;
         startGamePacket.commandsEnabled = this.isEnableClientCommand();
+        startGamePacket.gameRules = getLevel().getGameRules();
         startGamePacket.levelId = "";
         startGamePacket.worldName = this.getServer().getNetwork().getName();
         startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
@@ -2944,6 +3012,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage);
                                     if (this.isSpectator()) entityDamageByEntityEvent.setCancelled();
+                                    if ((target instanceof Player) && !this.level.getGameRules().getBoolean(GameRule.PVP)) {
+                                        entityDamageByEntityEvent.setCancelled();
+                                    }
+
                                     if (!target.attack(entityDamageByEntityEvent)) {
                                         if (item.isTool() && this.isSurvival()) {
                                             this.inventory.sendContents(this);
@@ -3364,7 +3436,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            this.hiddenPlayers = new HashMap<>();
+            this.hiddenPlayers.clear();
 
             this.removeAllWindows(true);
 
@@ -3397,10 +3469,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     String.valueOf(this.port),
                     this.getServer().getLanguage().translateString(reason)));
             this.windows = new HashMap<>();
-            this.windowIndex = new HashMap<>();
-            this.usedChunks = new HashMap<>();
-            this.loadQueue = new HashMap<>();
-            this.hasSpawned = new HashMap<>();
+            this.windowIndex.clear();
+            this.usedChunks.clear();
+            this.loadQueue.clear();
+            this.hasSpawned.clear();
             this.spawnPosition = null;
 
             if (this.riding instanceof EntityRideable) {
@@ -3478,7 +3550,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        boolean showMessages = this.level.getGameRules().getBoolean("showDeathMessages");
+        boolean showMessages = this.level.getGameRules().getBoolean(GameRule.SHOW_DEATH_MESSAGE);
         String message = "death.attack.generic";
 
         List<String> params = new ArrayList<>();
@@ -3604,11 +3676,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.stream().toArray(String[]::new)), this.getExperienceLevel());
 
-        ev.setKeepExperience(this.level.gameRules.getBoolean("keepInventory"));
+        ev.setKeepExperience(this.level.gameRules.getBoolean(GameRule.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());
         this.server.getPluginManager().callEvent(ev);
 
-        if (!ev.getKeepInventory() && this.level.getGameRules().getBoolean("doEntityDrops")) {
+        if (!ev.getKeepInventory() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
             for (Item item : ev.getDrops()) {
                 this.level.dropItem(this, item, null, true, 40);
             }
@@ -3618,7 +3690,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         }
 
-        if (!ev.getKeepExperience() && this.level.getGameRules().getBoolean("doEntityDrops")) {
+        if (!ev.getKeepExperience() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
             if (this.isSurvival() || this.isAdventure()) {
                 int exp = ev.getExperience() * 7;
                 if (exp > 100) exp = 100;
@@ -4061,8 +4133,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * You can find out FormWindow result by listening to PlayerFormRespondedEvent
      */
     public int showFormWindow(FormWindow window) {
-        int id = this.formWindowCount++;
+        return showFormWindow(window, this.formWindowCount++);
+    }
 
+    /**
+     * Shows a new FormWindow to the player
+     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
+     */
+    public int showFormWindow(FormWindow window, int id) {
         ModalFormRequestPacket packet = new ModalFormRequestPacket();
         packet.formId = id;
         packet.data = window.getJSONData();
@@ -4545,7 +4623,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param identification
      */
     public void notifyACK(int identification) {
-        needACK.put(identification, true);
+        needACK.put(identification, Boolean.TRUE);
     }
 
     public boolean isBreakingBlock() {

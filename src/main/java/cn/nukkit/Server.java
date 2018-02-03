@@ -75,7 +75,6 @@ import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
-
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -160,6 +159,8 @@ public class Server {
     private boolean alwaysTickPlayers = false;
     private int baseTickRate = 1;
     private Boolean getAllowFlight = null;
+    private int difficulty = Integer.MAX_VALUE;
+    private int defaultGamemode = Integer.MAX_VALUE;
 
     private int autoSaveTicker = 0;
     private int autoSaveTicks = 6000;
@@ -189,13 +190,35 @@ public class Server {
 
     private final Map<Integer, String> identifier = new HashMap<>();
 
-    private final Map<Integer, Level> levels = new HashMap<>();
+    private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
+        public Level put(Integer key, Level value) {
+            Level result = super.put(key, value);
+            levelArray = levels.values().toArray(new Level[levels.size()]);
+            return result;
+        }
+
+        public boolean remove(Object key, Object value) {
+            boolean result = super.remove(key, value);
+            levelArray = levels.values().toArray(new Level[levels.size()]);
+            return result;
+        }
+
+        public Level remove(Object key) {
+            Level result = super.remove(key);
+            levelArray = levels.values().toArray(new Level[levels.size()]);
+            return result;
+        }
+    };
+
+    private Level[] levelArray = new Level[0];
 
     private final ServiceManager serviceManager = new NKServiceManager();
 
     private Level defaultLevel = null;
 
     private Thread currentThread;
+
+    private Watchdog watchdog;
 
     Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
         Preconditions.checkState(instance == null, "Already initialized!");
@@ -312,7 +335,7 @@ public class Server {
 
         ServerScheduler.WORKERS = (int) poolSize;
 
-        this.networkZlibProvider = (int) this.getConfig("network.zlib-provider", 0);
+        this.networkZlibProvider = (int) this.getConfig("network.zlib-provider", 2);
         Zlib.setProvider(this.networkZlibProvider);
 
         this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
@@ -365,7 +388,6 @@ public class Server {
 
         this.logger.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()));
         this.logger.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
-
 
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
@@ -470,6 +492,9 @@ public class Server {
 
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
+        this.watchdog = new Watchdog(this, 60000);
+        this.watchdog.start();
+
         this.start();
     }
 
@@ -541,7 +566,6 @@ public class Server {
         return recipients.size();
     }
 
-
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
         broadcastPacket(players.stream().toArray(Player[]::new), packet);
     }
@@ -550,7 +574,7 @@ public class Server {
         packet.encode();
         packet.isEncoded = true;
 
-        if(packet.pid() == ProtocolInfo.BATCH_PACKET) {
+        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
             for (Player player : players) {
                 player.dataPacket(packet);
             }
@@ -574,6 +598,7 @@ public class Server {
 
         Timings.playerNetworkSendTimer.startTiming();
         byte[][] payload = new byte[packets.length * 2][];
+        int size = 0;
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
             if (!p.isEncoded) {
@@ -582,9 +607,10 @@ public class Server {
             byte[] buf = p.getBuffer();
             payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
             payload[i * 2 + 1] = buf;
+            packets[i] = null;
+            size += payload[i * 2].length;
+            size += payload[i * 2 + 1].length;
         }
-        byte[] data;
-        data = Binary.appendBytes(payload);
 
         List<String> targets = new ArrayList<>();
         for (Player p : players) {
@@ -594,9 +620,10 @@ public class Server {
         }
 
         if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(data, targets, this.networkCompressionLevel));
+            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
         } else {
             try {
+                byte[] data = Binary.appendBytes(payload);
                 this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -667,7 +694,7 @@ public class Server {
 
         this.logger.info("Saving levels...");
 
-        for (Level level : this.levels.values()) {
+        for (Level level : this.levelArray) {
             level.save();
         }
 
@@ -680,7 +707,7 @@ public class Server {
         this.maxPlayers = this.getPropertyInt("max-players", 20);
 
         if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
-            this.setPropertyInt("difficulty", 3);
+            this.setPropertyInt("difficulty", difficulty = 3);
         }
 
         this.banByIP.load();
@@ -700,6 +727,9 @@ public class Server {
     }
 
     public void shutdown() {
+        if (this.watchdog != null) {
+            this.watchdog.kill();
+        }
         if (this.isRunning) {
             ServerKiller killer = new ServerKiller(90);
             killer.start();
@@ -736,7 +766,7 @@ public class Server {
             }
 
             this.getLogger().debug("Unloading all levels");
-            for (Level level : new ArrayList<>(this.getLevels().values())) {
+            for (Level level : this.levelArray) {
                 this.unloadLevel(level, true);
             }
 
@@ -776,7 +806,6 @@ public class Server {
         }
 
         //todo send usage setting
-
         this.tickCounter = 0;
 
         this.logger.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
@@ -799,6 +828,8 @@ public class Server {
         }
     }
 
+    private int lastLevelGC;
+
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
         try {
@@ -810,7 +841,25 @@ public class Server {
                     long current = System.currentTimeMillis();
 
                     if (next - 0.1 > current) {
-                        Thread.sleep(next - current - 1, 900000);
+                        long allocated = next - current - 1;
+
+                        { // Instead of wasting time, do something potentially useful
+                            int offset = 0;
+                            for (int i = 0; i < levelArray.length; i++) {
+                                offset = (i + lastLevelGC) % levelArray.length;
+                                Level level = levelArray[offset];
+                                level.doGarbageCollection(allocated - 1);
+                                allocated = next - System.currentTimeMillis();
+                                if (allocated <= 0) {
+                                    break;
+                                }
+                            }
+                            lastLevelGC = offset + 1;
+                        }
+
+                        if (allocated > 0) {
+                            Thread.sleep(allocated, 900000);
+                        }
                     }
                 } catch (RuntimeException e) {
                     this.getLogger().logException(e);
@@ -901,11 +950,11 @@ public class Server {
         pk.type = PlayerListPacket.TYPE_ADD;
         pk.entries = this.playerList.values().stream()
                 .map(p -> new PlayerListPacket.Entry(
-                        p.getUniqueId(),
-                        p.getId(),
-                        p.getDisplayName(),
-                        p.getSkin(),
-                        p.getLoginChainData().getXUID()))
+                p.getUniqueId(),
+                p.getId(),
+                p.getDisplayName(),
+                p.getSkin(),
+                p.getLoginChainData().getXUID()))
                 .toArray(PlayerListPacket.Entry[]::new);
 
         player.dataPacket(pk);
@@ -930,7 +979,7 @@ public class Server {
         }
 
         //Do level ticks
-        for (Level level : this.getLevels().values()) {
+        for (Level level : this.levelArray) {
             if (level.getTickRate() > this.baseTickRate && --level.tickRateCounter > 0) {
                 continue;
             }
@@ -982,7 +1031,7 @@ public class Server {
                 }
             }
 
-            for (Level level : this.getLevels().values()) {
+            for (Level level : this.levelArray) {
                 level.save();
             }
             Timings.levelSaveTimer.stopTiming();
@@ -991,6 +1040,17 @@ public class Server {
 
     private boolean tick() {
         long tickTime = System.currentTimeMillis();
+
+        // TODO
+        long sleepTime = tickTime - this.nextTick;
+        if (sleepTime < -25) {
+            try {
+                Thread.sleep(Math.max(5, -sleepTime - 25));
+            } catch (InterruptedException e) {
+                Server.getInstance().getLogger().logException(e);
+            }
+        }
+
         long tickTimeNano = System.nanoTime();
         if ((tickTime - this.nextTick) < -25) {
             return false;
@@ -1049,8 +1109,7 @@ public class Server {
         }
 
         if (this.tickCounter % 100 == 0) {
-            for (Level level : this.levels.values()) {
-                level.clearCache();
+            for (Level level : this.levelArray) {
                 level.doChunkGarbageCollection();
             }
         }
@@ -1087,6 +1146,10 @@ public class Server {
         return true;
     }
 
+    public long getNextTick() {
+        return nextTick;
+    }
+
     // TODO: Fix title tick
     public void titleTick() {
         if (!Nukkit.ANSI) {
@@ -1097,16 +1160,16 @@ public class Server {
         double used = NukkitMath.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024, 2);
         double max = NukkitMath.round(((double) runtime.maxMemory()) / 1024 / 1024, 2);
         String usage = Math.round(used / max * 100) + "%";
-        String title = (char) 0x1b + "]0;" + this.getName() + " " +
-                this.getNukkitVersion() +
-                " | Online " + this.players.size() + "/" + this.getMaxPlayers() +
-                " | Memory " + usage;
+        String title = (char) 0x1b + "]0;" + this.getName() + " "
+                + this.getNukkitVersion()
+                + " | Online " + this.players.size() + "/" + this.getMaxPlayers()
+                + " | Memory " + usage;
         if (!Nukkit.shortTitle) {
             title += " | U " + NukkitMath.round((this.network.getUpload() / 1024 * 1000), 2)
                     + " D " + NukkitMath.round((this.network.getDownload() / 1024 * 1000), 2) + " kB/s";
         }
-        title += " | TPS " + this.getTicksPerSecond() +
-                " | Load " + this.getTickUsage() + "%" + (char) 0x07;
+        title += " | TPS " + this.getTicksPerSecond()
+                + " | Load " + this.getTickUsage() + "%" + (char) 0x07;
 
         System.out.print(title);
     }
@@ -1177,7 +1240,7 @@ public class Server {
 
     public void setAutoSave(boolean autoSave) {
         this.autoSave = autoSave;
-        for (Level level : this.getLevels().values()) {
+        for (Level level : this.levelArray) {
             level.setAutoSave(this.autoSave);
         }
     }
@@ -1269,7 +1332,10 @@ public class Server {
     }
 
     public int getDifficulty() {
-        return this.getPropertyInt("difficulty", 1);
+        if (this.difficulty == Integer.MAX_VALUE) {
+            this.difficulty = this.getPropertyInt("difficulty", 1);
+        }
+        return this.difficulty;
     }
 
     public boolean hasWhitelist() {
@@ -1292,7 +1358,10 @@ public class Server {
     }
 
     public int getDefaultGamemode() {
-        return this.getPropertyInt("gamemode", 0);
+        if (this.defaultGamemode == Integer.MAX_VALUE) {
+            this.defaultGamemode = this.getPropertyInt("gamemode", 0);
+        }
+        return this.defaultGamemode;
     }
 
     public String getMotd() {
@@ -1546,7 +1615,7 @@ public class Server {
     }
 
     public Level getLevelByName(String name) {
-        for (Level level : this.getLevels().values()) {
+        for (Level level : this.levelArray) {
             if (level.getFolderName().equals(name)) {
                 return level;
             }
@@ -1646,8 +1715,7 @@ public class Server {
         }
 
         if (provider == null) {
-            if ((provider = LevelProviderManager.getProviderByName
-                    ((String) this.getConfig("level-settings.default-format", "anvil"))) == null) {
+            if ((provider = LevelProviderManager.getProviderByName((String) this.getConfig("level-settings.default-format", "anvil"))) == null) {
                 provider = LevelProviderManager.getProviderByName("anvil");
             }
         }
@@ -1668,8 +1736,6 @@ public class Server {
             this.levels.put(level.getId(), level);
 
             level.initLevel();
-            level.getGameRules().setGameRule("spawnRadius", "" + this.getSpawnRadius());
-
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
             this.logger.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
@@ -1710,7 +1776,6 @@ public class Server {
             Chunk.Entry entry = Level.getChunkXZ(index);
             level.populateChunk(entry.chunkX, entry.chunkZ, true);
         }*/
-
         return true;
     }
 
@@ -1916,14 +1981,23 @@ public class Server {
     }
 
     /**
-     * Checks the current thread against the expected primary thread for the server.
+     * Checks the current thread against the expected primary thread for the
+     * server.
      * <p>
-     * <b>Note:</b> this method should not be used to indicate the current synchronized state of the runtime. A current thread matching the main thread indicates that it is synchronized, but a mismatch does not preclude the same assumption.
+     * <b>Note:</b> this method should not be used to indicate the current
+     * synchronized state of the runtime. A current thread matching the main
+     * thread indicates that it is synchronized, but a mismatch does not
+     * preclude the same assumption.
      *
-     * @return true if the current thread matches the expected primary thread, false otherwise
+     * @return true if the current thread matches the expected primary thread,
+     * false otherwise
      */
     public boolean isPrimaryThread() {
         return (Thread.currentThread() == currentThread);
+    }
+
+    public Thread getPrimaryThread() {
+        return currentThread;
     }
 
     private void registerEntities() {
@@ -1934,28 +2008,36 @@ public class Server {
         Entity.registerEntity("Snowball", EntitySnowball.class);
         Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("Painting", EntityPainting.class);
-        //todo mobs
+        //Monsters
         Entity.registerEntity("Creeper", EntityCreeper.class);
-        Entity.registerEntity("Zombie", EntityZombie.class);
         Entity.registerEntity("Blaze", EntityBlaze.class);
         Entity.registerEntity("CaveSpider", EntityCaveSpider.class);
         Entity.registerEntity("ElderGuardian", EntityElderGuardian.class);
         Entity.registerEntity("EnderDragon", EntityEnderDragon.class);
         Entity.registerEntity("Enderman", EntityEnderman.class);
         Entity.registerEntity("Endermite", EntityEndermite.class);
+        Entity.registerEntity("Evoker", EntityEvoker.class);
         Entity.registerEntity("Ghast", EntityGhast.class);
         Entity.registerEntity("Guardian", EntityGuardian.class);
         Entity.registerEntity("Husk", EntityHusk.class);
         Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
         Entity.registerEntity("Shulker", EntityShulker.class);
-        Entity.registerEntity("Silferfish", EntitySilverfish.class);
+        Entity.registerEntity("Silverfish", EntitySilverfish.class);
         Entity.registerEntity("Skeleton", EntitySkeleton.class);
         Entity.registerEntity("SkeletonHorse", EntitySkeletonHorse.class);
         Entity.registerEntity("Slime", EntitySlime.class);
         Entity.registerEntity("Spider", EntitySpider.class);
         Entity.registerEntity("Stray", EntityStray.class);
+        Entity.registerEntity("Vindicator", EntityVindicator.class);
+        Entity.registerEntity("Vex", EntityVex.class);
+        Entity.registerEntity("WitherSkeleton", EntityWitherSkeleton.class);
+        Entity.registerEntity("Wither", EntityWither.class);
         Entity.registerEntity("Witch", EntityWitch.class);
-        //TODO: more mobs
+        Entity.registerEntity("ZombiePigman", EntityZombiePigman.class);
+        Entity.registerEntity("ZombieVillager", EntityZombieVillager.class);
+        Entity.registerEntity("Zombie", EntityZombie.class);
+
+        //Passive
         Entity.registerEntity("Bat", EntityBat.class);
         Entity.registerEntity("Chicken", EntityChicken.class);
         Entity.registerEntity("Cow", EntityCow.class);

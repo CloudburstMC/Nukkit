@@ -20,11 +20,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockTNT extends BlockSolid {
 
     public BlockTNT() {
-        this(0);
-    }
-
-    public BlockTNT(int meta) {
-        super(0);
     }
 
     @Override
@@ -81,7 +76,7 @@ public class BlockTNT extends BlockSolid {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", 0))
                         .add(new FloatTag("", 0)))
-                .putByte("Fuse", fuse);
+                .putShort("Fuse", fuse);
         Entity tnt = new EntityPrimedTNT(
                 this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
                 nbt

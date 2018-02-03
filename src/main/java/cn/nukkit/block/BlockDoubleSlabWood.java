@@ -8,7 +8,7 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockDoubleSlabWood extends BlockSolid {
+public class BlockDoubleSlabWood extends BlockSolidMeta {
 
     public BlockDoubleSlabWood() {
         this(0);
@@ -50,12 +50,12 @@ public class BlockDoubleSlabWood extends BlockSolid {
                 "",
                 ""
         };
-        return "Double " + names[this.meta & 0x07] + " Slab";
+        return "Double " + names[this.getDamage() & 0x07] + " Slab";
     }
 
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.WOOD_SLAB, this.meta & 0x07, 2)
+                Item.get(Item.WOOD_SLAB, this.getDamage() & 0x07, 2)
         };
     }
 

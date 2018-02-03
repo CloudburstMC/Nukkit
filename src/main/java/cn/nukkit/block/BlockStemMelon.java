@@ -42,9 +42,9 @@ public class BlockStemMelon extends BlockCrops {
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             NukkitRandom random = new NukkitRandom();
             if (random.nextRange(1, 2) == 1) {
-                if (this.meta < 0x07) {
+                if (this.getDamage() < 0x07) {
                     Block block = this.clone();
-                    ++block.meta;
+                    block.setDamage(block.getDamage() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {

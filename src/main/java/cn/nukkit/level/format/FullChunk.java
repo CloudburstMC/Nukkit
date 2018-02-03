@@ -1,8 +1,8 @@
 package cn.nukkit.level.format;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -16,9 +16,16 @@ public interface FullChunk extends Cloneable {
 
     int getZ();
 
+    default void setPosition(int x, int z) {
+        setX(x);
+        setZ(z);
+    }
+
     void setX(int x);
 
     void setZ(int z);
+
+    long getIndex();
 
     LevelProvider getProvider();
 
@@ -26,11 +33,11 @@ public interface FullChunk extends Cloneable {
 
     int getFullBlock(int x, int y, int z);
 
-    boolean setBlock(int x, int y, int z);
+    Block getAndSetBlock(int x, int y, int z, Block block);
 
-    boolean setBlock(int x, int y, int z, Integer blockId);
+    boolean setBlock(int x, int y, int z, int  blockId);
 
-    boolean setBlock(int x, int y, int z, Integer blockId, Integer meta);
+    boolean setBlock(int x, int y, int z, int  blockId, int  meta);
 
     int getBlockId(int x, int y, int z);
 
@@ -69,14 +76,6 @@ public interface FullChunk extends Cloneable {
     void setBiomeId(int x, int z, int biomeId);
 
     int[] getBiomeColor(int x, int z);
-
-    byte[] getBlockIdColumn(int x, int z);
-
-    byte[] getBlockDataColumn(int x, int z);
-
-    byte[] getBlockSkyLightColumn(int x, int z);
-
-    byte[] getBlockLightColumn(int x, int z);
 
     void setBiomeColor(int x, int z, int r, int g, int b);
 
@@ -130,7 +129,7 @@ public interface FullChunk extends Cloneable {
 
     int[] getBiomeColorArray();
 
-    int[] getHeightMapArray();
+    byte[] getHeightMapArray();
 
     byte[] getBlockIdArray();
 

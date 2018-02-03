@@ -15,11 +15,6 @@ public class BlockGravel extends BlockFallable {
 
 
     public BlockGravel() {
-        this(0);
-    }
-
-    public BlockGravel(int meta) {
-        super(0);
     }
 
     @Override

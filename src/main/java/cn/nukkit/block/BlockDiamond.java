@@ -9,12 +9,7 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockDiamond extends BlockSolid {
 
-    public BlockDiamond(int meta) {
-        super(0);
-    }
-
     public BlockDiamond() {
-        this(0);
     }
 
     @Override

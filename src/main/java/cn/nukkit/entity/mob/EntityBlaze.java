@@ -24,6 +24,7 @@ public class EntityBlaze extends EntityMob {
     @Override
     protected void initEntity() {
         super.initEntity();
+        this.setMaxHealth(20);
     }
 
     @Override

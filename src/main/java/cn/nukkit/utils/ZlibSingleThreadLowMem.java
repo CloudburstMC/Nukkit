@@ -1,15 +1,29 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 public class ZlibSingleThreadLowMem implements ZlibProvider {
     static final int BUFFER_SIZE = 8192;
     Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
     byte[] buffer = new byte[BUFFER_SIZE];
+
+    @Override
+    public byte[] deflate(byte[][] datas, int level) throws Exception {
+        deflater.reset();
+        FastByteArrayOutputStream bos = new FastByteArrayOutputStream(buffer);
+        DeflaterOutputStream out = new DeflaterOutputStream(bos, deflater);
+        for (byte[] data : datas) {
+            out.write(data);
+        }
+        out.close();
+        return bos.toByteArray();
+    }
 
     @Override
     synchronized public byte[] deflate(byte[] data, int level) throws Exception {

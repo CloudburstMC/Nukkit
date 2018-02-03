@@ -44,7 +44,7 @@ public class BlockSlabStone extends BlockSlab {
                 "Nether Brick"
         };
 
-        return ((this.meta & 0x08) > 0 ? "Upper " : "") + names[this.meta & 0x07] + " Slab";
+        return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
     }
 
     @Override
@@ -60,7 +60,7 @@ public class BlockSlabStone extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.meta & 0x07);
+        return new ItemBlock(this, this.getDamage() & 0x07);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class BlockSlabStone extends BlockSlab {
 
     @Override
     public BlockColor getColor() {
-        switch (this.meta & 0x07) {
+        switch (this.getDamage() & 0x07) {
             case STONE:
                 return BlockColor.STONE_BLOCK_COLOR;
             case SANDSTONE:

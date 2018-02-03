@@ -8,11 +8,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockSnow extends BlockSolid {
 
     public BlockSnow() {
-        this(0);
-    }
-
-    public BlockSnow(int meta) {
-        super(meta);
     }
 
     @Override
