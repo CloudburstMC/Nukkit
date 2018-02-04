@@ -184,7 +184,7 @@ public class RegionLoader extends BaseRegionLoader {
                 this.locationTable.put(i, new Integer[]{0, 0, 0});
                 continue;
             }
-            chunk = Zlib.deflate(chunk, 1);
+            chunk = Zlib.deflate(chunk, 9);
             ByteBuffer buffer = ByteBuffer.allocate(4 + 1 + chunk.length);
             buffer.put(Binary.writeInt(chunk.length + 1));
             buffer.put(COMPRESSION_ZLIB);

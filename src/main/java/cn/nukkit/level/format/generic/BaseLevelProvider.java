@@ -78,7 +78,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     protected void putChunk(long index, BaseFullChunk chunk) {
-        this.chunks.putIfAbsent(index, chunk);
+        this.chunks.put(index, chunk);
     }
 
     @Override
