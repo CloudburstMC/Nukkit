@@ -2297,7 +2297,7 @@ public class Level implements ChunkManager, Metadatable {
     public BaseFullChunk getChunk(int chunkX, int chunkZ, boolean create) {
         long index = Level.chunkHash(chunkX, chunkZ);
         BaseFullChunk chunk = this.provider.getLoadedChunk(index);
-        if (chunk == null && create) {
+        if (chunk == null) {
             chunk = this.forceLoadChunk(index, chunkX, chunkZ, create);
         }
         return chunk;
@@ -3046,6 +3046,7 @@ public class Level implements ChunkManager, Metadatable {
                     int X = getHashX(index);
                     int Z = getHashZ(index);
                     if (this.unloadChunk(X, Z, true)) {
+                        this.unloadQueue.remove(index);
                         if (System.currentTimeMillis() - now >= allocatedTime) {
                             result = false;
                             break;

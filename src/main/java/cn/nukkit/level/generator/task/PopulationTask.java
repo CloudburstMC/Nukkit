@@ -23,14 +23,13 @@ public class PopulationTask extends AsyncTask {
         this.levelId = level.getId();
         this.chunk = chunk;
 
-        for (int i = 0; i < 9; i++) {
-            if (i == 4) {
-                continue;
+        int i = 0;
+        for (int z = -1; z <= 1; z++) {
+            for (int x = -1; x <= 1; x++, i++) {
+                if (i == 4) continue;
+                BaseFullChunk ck = level.getChunk(chunk.getX() + x, chunk.getZ() + z, false);
+                this.chunks[i] = ck;
             }
-            int xx = -1 + i % 3;
-            int zz = -1 + (i / 3);
-            BaseFullChunk ck = level.getChunk(chunk.getX() + xx, chunk.getZ() + zz, false);
-            this.chunks[i] = ck;
         }
     }
 

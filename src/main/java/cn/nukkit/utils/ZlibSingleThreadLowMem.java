@@ -1,11 +1,9 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 public class ZlibSingleThreadLowMem implements ZlibProvider {
@@ -14,14 +12,24 @@ public class ZlibSingleThreadLowMem implements ZlibProvider {
     byte[] buffer = new byte[BUFFER_SIZE];
 
     @Override
-    public byte[] deflate(byte[][] datas, int level) throws Exception {
+    public synchronized byte[] deflate(byte[][] datas, int level) throws Exception {
+        Deflater deflater = this.deflater;
+        if (deflater == null) throw new IllegalArgumentException("No deflate for level " + level + " !");
         deflater.reset();
-        FastByteArrayOutputStream bos = new FastByteArrayOutputStream(buffer);
-        DeflaterOutputStream out = new DeflaterOutputStream(bos, deflater);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(datas.length);;
         for (byte[] data : datas) {
-            out.write(data);
+            deflater.setInput(data);
+            while (!deflater.needsInput()) {
+                int i = deflater.deflate(buffer);
+                bos.write(buffer, 0, i);
+            }
         }
-        out.close();
+        deflater.finish();
+        while (!deflater.finished()) {
+            int i = deflater.deflate(buffer);
+            bos.write(buffer, 0, i);
+        }
+        //Deflater::end is called the time when the process exits.
         return bos.toByteArray();
     }
 
