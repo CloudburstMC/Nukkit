@@ -8,38 +8,38 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 /**
  * @author PikyCZ
  */
-public class EntityEnderDragon extends EntityMob {
+public class EntityEvoker extends EntityMob {
 
-    public static final int NETWORK_ID = 53;
+    public static final int NETWORK_ID = 104;
+
+    public EntityEvoker(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
 
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
     }
 
-    public EntityEnderDragon(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
+    @Override
+    protected void initEntity() {
+        super.initEntity();
+        this.setMaxHealth(24);
     }
 
     @Override
     public float getWidth() {
-        return 13f;
+        return 0.6f;
     }
 
     @Override
     public float getHeight() {
-        return 4f;
-    }
-
-    @Override
-    public void initEntity() {
-        super.initEntity();
-        this.setMaxHealth(200);
+        return 1.95f;
     }
 
     @Override
     public String getName() {
-        return "EnderDragon";
+        return "Evoker";
     }
 
     @Override
@@ -59,4 +59,5 @@ public class EntityEnderDragon extends EntityMob {
 
         super.spawnTo(player);
     }
+
 }
