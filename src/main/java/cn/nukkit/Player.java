@@ -70,11 +70,13 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
-import java.awt.Color;
+
+import java.awt.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -2478,13 +2480,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     ModalFormResponsePacket modalFormPacket = (ModalFormResponsePacket) packet;
 
                     if (formWindows.containsKey(modalFormPacket.formId)) {
-                        FormWindow window = formWindows.get(modalFormPacket.formId);
+                        FormWindow window = formWindows.remove(modalFormPacket.formId);
                         window.setResponse(modalFormPacket.data.trim());
 
                         PlayerFormRespondedEvent event = new PlayerFormRespondedEvent(this, modalFormPacket.formId, window);
                         getServer().getPluginManager().callEvent(event);
-
-                        formWindows.remove(modalFormPacket.formId);
                     } else if (serverSettings.containsKey(modalFormPacket.formId)) {
                         FormWindow window = serverSettings.get(modalFormPacket.formId);
                         window.setResponse(modalFormPacket.data.trim());
