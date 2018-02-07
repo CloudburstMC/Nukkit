@@ -28,7 +28,6 @@ public class PlayerActionPacket extends DataPacket {
     public static final int ACTION_STOP_GLIDE = 16;
     public static final int ACTION_BUILD_DENIED = 17;
     public static final int ACTION_CONTINUE_BREAK = 18;
-    public static final int ACTION_CHANGE_SKIN = 19;
 
     public long entityId;
     public int action;

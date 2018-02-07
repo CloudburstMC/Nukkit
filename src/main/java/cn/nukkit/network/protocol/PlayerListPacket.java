@@ -28,23 +28,17 @@ public class PlayerListPacket extends DataPacket {
         this.putByte(this.type);
         this.putUnsignedVarInt(this.entries.length);
         for (Entry entry : this.entries) {
-            this.putUUID(entry.uuid);
             if (type == TYPE_ADD) {
+                this.putUUID(entry.uuid);
                 this.putVarLong(entry.entityId);
                 this.putString(entry.name);
-                this.putString(entry.thirdPartyName);
-                this.putVarInt(entry.platformId);
                 this.putSkin(entry.skin);
-                if (entry.skin.getCape().getData().length == 0) {
-                    this.putLInt(0); // is Empty
-                } else {
-                    this.putLInt(1); // not Empty
-                    this.putByteArray(entry.skin.getCape().getData());
-                }
+                this.putByteArray(entry.skin.getCape().getData());
                 this.putString(entry.geometryModel);
                 this.putByteArray(entry.geometryData);
                 this.putString(entry.xboxUserId);
-                this.putString(entry.platformChatId);
+            } else {
+                this.putUUID(entry.uuid);
             }
         }
 
@@ -60,37 +54,27 @@ public class PlayerListPacket extends DataPacket {
         public final UUID uuid;
         public long entityId = 0;
         public String name = "";
-        public String thirdPartyName;
-        public int platformId;
         public Skin skin;
         public byte[] capeData = new byte[0]; //TODO
         public String geometryModel = "";
         public byte[] geometryData = new byte[0]; //TODO
         public String xboxUserId = ""; //TODO
-        public String platformChatId;
 
         public Entry(UUID uuid) {
             this.uuid = uuid;
         }
 
         public Entry(UUID uuid, long entityId, String name, Skin skin) {
-            this(uuid, entityId, name, "", 0, skin, "", "");
+            this(uuid, entityId, name, skin, "");
         }
 
         public Entry(UUID uuid, long entityId, String name, Skin skin, String xboxUserId) {
-            this(uuid, entityId, name, "", 0, skin, xboxUserId, "");
-        }
-
-        public Entry(UUID uuid, long entityId, String name, String thirdPartyName, int platformId, Skin skin, String xboxUserId, String platformChatId) {
             this.uuid = uuid;
             this.entityId = entityId;
             this.name = name;
-            this.thirdPartyName = thirdPartyName == null ? "" : thirdPartyName;
-            this.platformId = platformId;
             this.skin = skin;
             this.capeData = skin.getCape().getData();
             this.xboxUserId = xboxUserId == null ? "" : xboxUserId;
-            this.platformChatId = platformChatId == null ? "" : platformChatId;
         }
     }
 
