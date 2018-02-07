@@ -26,6 +26,7 @@ public class AddItemEntityPacket extends DataPacket {
     public float speedY;
     public float speedZ;
     public EntityMetadata metadata = new EntityMetadata();
+    public boolean isFromFishing;
 
     @Override
     public void decode() {
@@ -41,5 +42,6 @@ public class AddItemEntityPacket extends DataPacket {
         this.putVector3f(this.x, this.y, this.z);
         this.putVector3f(this.speedX, this.speedY, this.speedZ);
         this.put(Binary.writeMetadata(metadata));
+        this.putBoolean(isFromFishing);
     }
 }

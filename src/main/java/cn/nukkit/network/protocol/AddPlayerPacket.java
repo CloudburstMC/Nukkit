@@ -20,8 +20,11 @@ public class AddPlayerPacket extends DataPacket {
 
     public UUID uuid;
     public String username;
+    public String thirdPartyName = "";
+    public int platformId = 0;
     public long entityUniqueId;
     public long entityRuntimeId;
+    public String platformChatId = "";
     public float x;
     public float y;
     public float z;
@@ -43,8 +46,11 @@ public class AddPlayerPacket extends DataPacket {
         this.reset();
         this.putUUID(this.uuid);
         this.putString(this.username);
+        this.putString(this.thirdPartyName);
+        this.putVarInt(this.platformId);
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
+        this.putString(this.platformChatId);
         this.putVector3f(this.x, this.y, this.z);
         this.putVector3f(this.speedX, this.speedY, this.speedZ);
         this.putLFloat(this.pitch);
