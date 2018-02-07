@@ -10,12 +10,25 @@ pipeline {
     stages {
         stage ('Build') {
             steps {
-                sh 'mvn clean package javadoc:javadoc'
+                sh 'mvn clean package'
             }
             post {
                 success {
                     junit 'target/surefire-reports/**/*.xml'
                     archiveArtifacts artifacts: 'target/nukkit-*-SNAPSHOT.jar', fingerprint: true
+                }
+            }
+        }
+
+        stage ('Javadoc') {
+            when {
+                branch "master"
+            }
+            steps {
+                sh 'javadoc:javadoc -DskipTests'
+            }
+            post {
+                success {
                     step([
                         $class: 'JavadocArchiver',
                         javadocDir: 'target/site/apidocs',
