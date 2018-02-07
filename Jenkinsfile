@@ -25,7 +25,7 @@ pipeline {
                 branch "master"
             }
             steps {
-                sh 'javadoc:javadoc -DskipTests'
+                sh 'mvn javadoc:javadoc -DskipTests'
             }
             post {
                 success {
