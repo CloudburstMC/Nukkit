@@ -13,12 +13,12 @@ public interface ProtocolInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    int CURRENT_PROTOCOL = Integer.valueOf("160"); //plugins can change it
+    int CURRENT_PROTOCOL = Integer.valueOf("201"); //plugins can change it
 
-    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(140, 141, 150, CURRENT_PROTOCOL);
+    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.2.9";
-    String MINECRAFT_VERSION_NETWORK = "1.2.9";
+    String MINECRAFT_VERSION = "v1.2.10";
+    String MINECRAFT_VERSION_NETWORK = "1.2.10";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;

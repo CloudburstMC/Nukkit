@@ -4,24 +4,32 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 public class ZlibOriginal implements ZlibProvider {
 
-
     @Override
     public byte[] deflate(byte[][] datas, int level) throws Exception {
-        int len = 0;
-        for (byte[] arr : datas) len += arr.length;
         Deflater deflater = new Deflater(level);
         deflater.reset();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(len);
-        DeflaterOutputStream out = new DeflaterOutputStream(bos, deflater);
-        for (byte[] data : datas) {
-            out.write(data);
+            byte[] buffer = new byte[1024];
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(datas.length);
+        try {
+            for (byte[] data : datas) {
+                deflater.setInput(data);
+                while (!deflater.needsInput()) {
+                    int i = deflater.deflate(buffer);
+                    bos.write(buffer, 0, i);
+                }
+            }
+            deflater.finish();
+            while (!deflater.finished()) {
+                int i = deflater.deflate(buffer);
+                bos.write(buffer, 0, i);
+            }
+        } finally {
+            deflater.end();
         }
-        out.close();
         return bos.toByteArray();
     }
 
