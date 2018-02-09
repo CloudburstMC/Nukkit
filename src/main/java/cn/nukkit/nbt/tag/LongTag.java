@@ -44,7 +44,7 @@ public class LongTag extends NumberTag<Long> {
 
     @Override
     public String toString() {
-        return "LongTag" + this.getName() + " (data:" + data + ")";
+        return "LongTag " + this.getName() + " (data:" + data + ")";
     }
 
     @Override

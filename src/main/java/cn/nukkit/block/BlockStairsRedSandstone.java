@@ -55,7 +55,7 @@ public class BlockStairsRedSandstone extends BlockStairs {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.meta & 0x07);
+        return new ItemBlock(this, this.getDamage() & 0x07);
     }
 
     @Override

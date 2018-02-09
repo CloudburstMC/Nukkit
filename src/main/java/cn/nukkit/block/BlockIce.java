@@ -12,11 +12,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockIce extends BlockTransparent {
 
     public BlockIce() {
-        this(0);
-    }
-
-    public BlockIce(int meta) {
-        super(0);
     }
 
     @Override

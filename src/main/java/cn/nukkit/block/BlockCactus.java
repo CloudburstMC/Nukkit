@@ -10,13 +10,14 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
  * @author Nukkit Project Team
  */
-public class BlockCactus extends BlockTransparent {
+public class BlockCactus extends BlockTransparentMeta {
 
     public BlockCactus(int meta) {
         super(meta);
@@ -47,20 +48,38 @@ public class BlockCactus extends BlockTransparent {
     }
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
-        return new AxisAlignedBB(
-                this.x + 0.0625,
-                this.y + 0.0625,
-                this.z + 0.0625,
-                this.x + 0.9375,
-                this.y + 0.9375,
-                this.z + 0.9375
-        );
+    public double getMinX() {
+        return this.x + 0.0625;
+    }
+
+    @Override
+    public double getMinY() {
+        return this.y;
+    }
+
+    @Override
+    public double getMinZ() {
+        return this.z + 0.0625;
+    }
+
+    @Override
+    public double getMaxX() {
+        return this.x + 0.9375;
+    }
+
+    @Override
+    public double getMaxY() {
+        return this.y + 0.9375;
+    }
+
+    @Override
+    public double getMaxZ() {
+        return this.z + 0.9375;
     }
 
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return new AxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 1, this.z + 1);
+        return new SimpleAxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 1, this.z + 1);
     }
 
     @Override
@@ -84,7 +103,7 @@ public class BlockCactus extends BlockTransparent {
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (down().getId() != CACTUS) {
-                if (this.meta == 0x0F) {
+                if (this.getDamage() == 0x0F) {
                     for (int y = 1; y < 3; ++y) {
                         Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
                         if (b.getId() == AIR) {
@@ -95,10 +114,10 @@ public class BlockCactus extends BlockTransparent {
                             }
                         }
                     }
-                    this.meta = 0;
+                    this.setDamage(0);
                     this.getLevel().setBlock(this, this);
                 } else {
-                    ++this.meta;
+                    this.setDamage(this.getDamage() + 1);
                     this.getLevel().setBlock(this, this);
                 }
             }

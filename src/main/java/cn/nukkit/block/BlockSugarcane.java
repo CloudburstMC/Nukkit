@@ -94,19 +94,19 @@ public class BlockSugarcane extends BlockFlowable {
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (this.down().getId() != SUGARCANE_BLOCK) {
-                if (this.meta == 0x0F) {
+                if (this.getDamage() == 0x0F) {
                     for (int y = 1; y < 3; ++y) {
                         Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
                         if (b.getId() == AIR) {
-                            this.getLevel().setBlock(b, new BlockSugarcane(), true);
+                            this.getLevel().setBlock(b, new BlockSugarcane(), false);
                             break;
                         }
                     }
-                    this.meta = 0;
-                    this.getLevel().setBlock(this, this, true);
+                    this.setDamage(0);
+                    this.getLevel().setBlock(this, this, false);
                 } else {
-                    ++this.meta;
-                    this.getLevel().setBlock(this, this, true);
+                    this.setDamage(this.getDamage() + 1);
+                    this.getLevel().setBlock(this, this, false);
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
             }

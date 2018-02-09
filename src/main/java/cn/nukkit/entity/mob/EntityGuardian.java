@@ -34,12 +34,12 @@ public class EntityGuardian extends EntityMob {
 
     @Override
     public float getWidth() {
-        return 0.7f;
+        return 0.85f;
     }
 
     @Override
     public float getHeight() {
-        return 2.4f;
+        return 0.85f;
     }
 
     @Override

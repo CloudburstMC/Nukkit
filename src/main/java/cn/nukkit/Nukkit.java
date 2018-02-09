@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class Nukkit {
 
     public final static String VERSION = "1.0dev";
-    public final static String API_VERSION = "1.0.0";
+    public final static String API_VERSION = "1.0.5";
     public final static String CODENAME = "蘋果(Apple)派(Pie)";
     @Deprecated
     public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
@@ -46,6 +46,9 @@ public class Nukkit {
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
+        
+        // prefer IPv4 to stop any weird RakNet issues.
+        System.setProperty("java.net.preferIPv4Stack", "true");
 
         //Shorter title for windows 8/2012
         String osName = System.getProperty("os.name").toLowerCase();

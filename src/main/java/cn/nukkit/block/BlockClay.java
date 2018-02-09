@@ -10,12 +10,7 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockClay extends BlockSolid {
 
-    public BlockClay(int meta) {
-        super(0);
-    }
-
     public BlockClay() {
-        this(0);
     }
 
     @Override

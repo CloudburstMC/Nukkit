@@ -3,15 +3,14 @@ package cn.nukkit.utils;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.GameRule;
+import cn.nukkit.level.GameRules;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -20,7 +19,7 @@ import java.util.UUID;
 public class BinaryStream {
 
     public int offset;
-    private byte[] buffer = new byte[32];
+    private byte[] buffer;
     private int count;
 
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
@@ -41,10 +40,10 @@ public class BinaryStream {
         this.count = buffer.length;
     }
 
-    public void reset() {
-        this.buffer = new byte[32];
+    public BinaryStream reset() {
         this.offset = 0;
         this.count = 0;
+        return this;
     }
 
     public void setBuffer(byte[] buffer) {
@@ -403,18 +402,13 @@ public class BinaryStream {
         this.putLFloat(z);
     }
 
-    public RuleData getRuleData() {
-        RuleData rule = new RuleData();
-        rule.name = this.getString();
-        rule.unknown1 = this.getBoolean();
-        rule.unknown2 = this.getBoolean();
-        return rule;
-    }
-
-    public void putRuleData(RuleData rule) {
-        this.putString(rule.name);
-        this.putBoolean(rule.unknown1);
-        this.putBoolean(rule.unknown2);
+    public void putGameRules(GameRules gameRules) {
+        Map<GameRule, GameRules.Value> rules = gameRules.getGameRules();
+        this.putUnsignedVarInt(rules.size());
+        rules.forEach((gameRule, value) -> {
+            putString(gameRule.getName().toLowerCase());
+            value.write(this);
+        });
     }
 
     /**

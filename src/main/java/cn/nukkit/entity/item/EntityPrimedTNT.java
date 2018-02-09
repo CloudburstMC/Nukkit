@@ -8,8 +8,9 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
+import cn.nukkit.level.GameRule;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.sound.TNTPrimeSound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
@@ -83,7 +84,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_IGNITED, true);
         this.setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
 
-        this.level.addSound(new TNTPrimeSound(this));
+        this.level.addSound(this, Sound.RANDOM_FIZZ);
     }
 
 
@@ -141,7 +142,8 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
             fuse -= tickDiff;
 
             if (fuse <= 0) {
-                explode();
+                if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES))
+                    explode();
                 kill();
             }
 

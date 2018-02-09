@@ -17,7 +17,7 @@ import cn.nukkit.utils.BlockColor;
 
 import java.util.Map;
 
-public class BlockBrewingStand extends BlockSolid {
+public class BlockBrewingStand extends BlockSolidMeta {
 
     public BlockBrewingStand() {
         this(0);

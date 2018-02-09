@@ -20,7 +20,6 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -571,6 +570,7 @@ public class Item implements Cloneable {
     public static final int RECORD_11 = 510;
     public static final int RECORD_WAIT = 511;
 
+    protected static String UNKNOWN_STR = "Unknown";
     public static Class[] list = null;
 
     protected Block block = null;
@@ -584,15 +584,15 @@ public class Item implements Cloneable {
     protected String name;
 
     public Item(int id) {
-        this(id, 0, 1, "Unknown");
+        this(id, 0, 1, UNKNOWN_STR);
     }
 
     public Item(int id, Integer meta) {
-        this(id, meta, 1, "Unknown");
+        this(id, meta, 1, UNKNOWN_STR);
     }
 
     public Item(int id, Integer meta, int count) {
-        this(id, meta, count, "Unknown");
+        this(id, meta, count, UNKNOWN_STR);
     }
 
     public Item(int id, Integer meta, int count, String name) {
@@ -815,7 +815,7 @@ public class Item implements Cloneable {
             list[COOKED_SALMON] = ItemSalmonCooked.class; //463
 
             list[GOLDEN_APPLE_ENCHANTED] = ItemAppleGoldEnchanted.class; //466
-            /*list[RECORD_11] = ItemRecord11.class;
+            list[RECORD_11] = ItemRecord11.class;
             list[RECORD_CAT] = ItemRecordCat.class;
             list[RECORD_13] = ItemRecord13.class;
             list[RECORD_BLOCKS] = ItemRecordBlocks.class;
@@ -826,7 +826,7 @@ public class Item implements Cloneable {
             list[RECORD_MELLOHI] = ItemRecordMellohi.class;
             list[RECORD_STAL] = ItemRecordStal.class;
             list[RECORD_STRAD] = ItemRecordStrad.class;
-            list[RECORD_WAIT] = ItemRecordWait.class;*/
+            list[RECORD_WAIT] = ItemRecordWait.class;
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -860,7 +860,7 @@ public class Item implements Cloneable {
                 int id = (int) map.get("id");
                 int damage = (int) map.getOrDefault("damage", 0);
                 String hex = (String) map.get("nbt_hex");
-                byte[] nbt = hex != null ? DatatypeConverter.parseHexBinary(hex) : new byte[0];
+                byte[] nbt = hex != null ? Utils.parseHexBinary(hex) : new byte[0];
 
                 addCreativeItem(Item.get(id, damage, 1, nbt));
             } catch (Exception e) {
@@ -930,7 +930,11 @@ public class Item implements Cloneable {
             if (c == null) {
                 item = new Item(id, meta, count);
             } else if (id < 256) {
-                item = new ItemBlock((Block) c.getConstructor(int.class).newInstance(meta), meta, count);
+                if (meta >= 0) {
+                    item = new ItemBlock(Block.get(id, meta), meta, count);
+                } else {
+                    item = new ItemBlock(Block.get(id), meta, count);
+                }
             } else {
                 item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
             }
@@ -965,6 +969,12 @@ public class Item implements Cloneable {
         if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
 
         return get(id, meta);
+    }
+
+    public static Item fromJson(Map<String, Object> data) {
+        String nbt = (String) data.getOrDefault("nbt_hex", "");
+
+        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbt.isEmpty() ? new byte[0] : Utils.parseHexBinary(nbt));
     }
 
     public static Item[] fromStringMultiple(String str) {

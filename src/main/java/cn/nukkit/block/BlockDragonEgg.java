@@ -5,11 +5,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockDragonEgg extends BlockTransparent {
 
     public BlockDragonEgg() {
-        this(0);
-    }
-
-    public BlockDragonEgg(int meta) {
-        super(0);
     }
 
     @Override

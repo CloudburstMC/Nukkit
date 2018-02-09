@@ -31,7 +31,7 @@ public class BlockRedSandstone extends BlockSandstone {
                 ""
         };
 
-        return names[this.meta & 0x03];
+        return names[this.getDamage() & 0x03];
     }
 
     @Override
@@ -47,7 +47,7 @@ public class BlockRedSandstone extends BlockSandstone {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.meta & 0x03);
+        return new ItemBlock(this, this.getDamage() & 0x03);
     }
 
     @Override

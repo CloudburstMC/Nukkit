@@ -31,7 +31,7 @@ public class BlockSlabWood extends BlockSlab {
                 "",
                 ""
         };
-        return (((this.meta & 0x08) == 0x08) ? "Upper " : "") + names[this.meta & 0x07] + " Wooden Slab";
+        return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + names[this.getDamage() & 0x07] + " Wooden Slab";
     }
 
     @Override
@@ -63,7 +63,7 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.meta & 0x07);
+        return new ItemBlock(this, this.getDamage() & 0x07);
     }
 
     @Override

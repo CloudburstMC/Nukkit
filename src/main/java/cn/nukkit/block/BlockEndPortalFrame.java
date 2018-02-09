@@ -2,12 +2,11 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.math.AxisAlignedBB;
 
 /**
  * Created by Pub4Game on 26.12.2015.
  */
-public class BlockEndPortalFrame extends BlockTransparent {
+public class BlockEndPortalFrame extends BlockTransparentMeta {
 
     public BlockEndPortalFrame() {
         this(0);
@@ -48,15 +47,8 @@ public class BlockEndPortalFrame extends BlockTransparent {
     }
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
-        return new AxisAlignedBB(
-                x,
-                y,
-                z,
-                x + 1,
-                y + ((this.getDamage() & 0x04) > 0 ? 1 : 0.8125),
-                z + 1
-        );
+    public double getMaxY() {
+        return this.y + ((this.getDamage() & 0x04) > 0 ? 1 : 0.8125);
     }
 
     @Override
@@ -69,7 +61,7 @@ public class BlockEndPortalFrame extends BlockTransparent {
     }
 
     public int getComparatorInputOverride() {
-        return (meta & 4) != 0 ? 15 : 0;
+        return (getDamage() & 4) != 0 ? 15 : 0;
     }
 
     @Override

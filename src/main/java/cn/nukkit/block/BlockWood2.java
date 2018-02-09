@@ -30,7 +30,7 @@ public class BlockWood2 extends BlockWood {
                 ""
         };
 
-        return names[this.meta & 0x03];
+        return names[this.getDamage() & 0x03];
     }
 
 }

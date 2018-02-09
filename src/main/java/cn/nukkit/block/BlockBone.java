@@ -7,7 +7,7 @@ import cn.nukkit.item.ItemTool;
 /**
  * @author CreeperFace
  */
-public class BlockBone extends BlockSolid {
+public class BlockBone extends BlockSolidMeta {
 
     public BlockBone() {
         this(0);

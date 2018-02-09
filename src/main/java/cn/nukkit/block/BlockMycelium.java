@@ -16,11 +16,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockMycelium extends BlockSolid {
 
     public BlockMycelium() {
-        this(0);
-    }
-
-    public BlockMycelium(int meta) {
-        super(0);
     }
 
     @Override
@@ -65,7 +60,7 @@ public class BlockMycelium extends BlockSolid {
             z = random.nextRange((int) z - 1, (int) z + 1);
             Block block = this.getLevel().getBlock(new Vector3(x, y, z));
             if (block.getId() == Block.DIRT) {
-                if (block.up() instanceof BlockTransparent) {
+                if (block.up().isTransparent()) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockMycelium());
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {

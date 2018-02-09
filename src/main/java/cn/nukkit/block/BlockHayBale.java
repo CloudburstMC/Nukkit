@@ -11,11 +11,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockHayBale extends BlockSolid {
     public BlockHayBale() {
-        this(0);
-    }
-
-    public BlockHayBale(int meta) {
-        super(meta);
     }
 
     @Override
@@ -58,7 +53,7 @@ public class BlockHayBale extends BlockSolid {
                 0b0100,
                 0b0100,
         };
-        this.meta = (this.meta & 0x03) | faces[face.getIndex()];
+        this.setDamage((this.getDamage() & 0x03) | faces[face.getIndex()]);
         this.getLevel().setBlock(block, this, true, true);
 
         return true;

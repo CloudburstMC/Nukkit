@@ -13,7 +13,6 @@ import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
-import cn.nukkit.level.sound.ExplodeSound;
 import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.ExplodePacket;
 
@@ -138,7 +137,7 @@ public class Explosion {
         double minZ = NukkitMath.floorDouble(this.source.z - explosionSize - 1);
         double maxZ = NukkitMath.ceilDouble(this.source.z + explosionSize + 1);
 
-        AxisAlignedBB explosionBB = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+        AxisAlignedBB explosionBB = new SimpleAxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
 
         Entity[] list = this.level.getNearbyEntities(explosionBB, this.what instanceof Entity ? (Entity) this.what : null);
         for (Entity entity : list) {
@@ -203,7 +202,7 @@ public class Explosion {
 
         this.level.addChunkPacket((int) source.x >> 4, (int) source.z >> 4, pk);
         this.level.addParticle(new HugeExplodeSeedParticle(this.source));
-        this.level.addSound(new ExplodeSound(new Vector3(this.source.x, this.source.y, this.source.z)));
+        this.level.addSound(new Vector3(this.source.x, this.source.y, this.source.z), Sound.RANDOM_EXPLODE);
 
         return true;
     }

@@ -7,19 +7,17 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBed;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
-import cn.nukkit.utils.TextFormat;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockBed extends BlockTransparent {
+public class BlockBed extends BlockTransparentMeta {
 
     public BlockBed() {
         this(0);
@@ -55,15 +53,8 @@ public class BlockBed extends BlockTransparent {
     }
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
-        return new AxisAlignedBB(
-                this.x,
-                this.y,
-                this.z,
-                this.x + 1,
-                this.y + 0.5625,
-                this.z + 1
-        );
+    public double getMaxY() {
+        return this.y + 0.5625;
     }
 
     @Override
@@ -88,16 +79,16 @@ public class BlockBed extends BlockTransparent {
         Block blockWest = this.west();
 
         Block b;
-        if ((this.meta & 0x08) == 0x08) {
+        if ((this.getDamage() & 0x08) == 0x08) {
             b = this;
         } else {
-            if (blockNorth.getId() == this.getId() && (blockNorth.meta & 0x08) == 0x08) {
+            if (blockNorth.getId() == this.getId() && (blockNorth.getDamage() & 0x08) == 0x08) {
                 b = blockNorth;
-            } else if (blockSouth.getId() == this.getId() && (blockSouth.meta & 0x08) == 0x08) {
+            } else if (blockSouth.getId() == this.getId() && (blockSouth.getDamage() & 0x08) == 0x08) {
                 b = blockSouth;
-            } else if (blockEast.getId() == this.getId() && (blockEast.meta & 0x08) == 0x08) {
+            } else if (blockEast.getId() == this.getId() && (blockEast.getDamage() & 0x08) == 0x08) {
                 b = blockEast;
-            } else if (blockWest.getId() == this.getId() && (blockWest.meta & 0x08) == 0x08) {
+            } else if (blockWest.getId() == this.getId() && (blockWest.getDamage() & 0x08) == 0x08) {
                 b = blockWest;
             } else {
                 if (player != null) {
@@ -131,8 +122,8 @@ public class BlockBed extends BlockTransparent {
             if (next.canBeReplaced() && !downNext.isTransparent()) {
                 int meta = player.getDirection().getHorizontalIndex();
 
-                this.getLevel().setBlock(block, Block.get(this.getId(), meta), false, true);
-                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), false, true);
+                this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
+                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
 
                 createBlockEntity(this, item.getDamage());
                 createBlockEntity(next, item.getDamage());
@@ -150,24 +141,24 @@ public class BlockBed extends BlockTransparent {
         Block blockEast = this.east();
         Block blockWest = this.west();
 
-        if ((this.meta & 0x08) == 0x08) { //This is the Top part of bed
-            if (blockNorth.getId() == this.getId() && blockNorth.meta != 0x08) { //Checks if the block ID&&meta are right
+        if ((this.getDamage() & 0x08) == 0x08) { //This is the Top part of bed
+            if (blockNorth.getId() == this.getId() && blockNorth.getDamage() != 0x08) { //Checks if the block ID&&meta are right
                 this.getLevel().setBlock(blockNorth, new BlockAir(), true, true);
-            } else if (blockSouth.getId() == this.getId() && blockSouth.meta != 0x08) {
+            } else if (blockSouth.getId() == this.getId() && blockSouth.getDamage() != 0x08) {
                 this.getLevel().setBlock(blockSouth, new BlockAir(), true, true);
-            } else if (blockEast.getId() == this.getId() && blockEast.meta != 0x08) {
+            } else if (blockEast.getId() == this.getId() && blockEast.getDamage() != 0x08) {
                 this.getLevel().setBlock(blockEast, new BlockAir(), true, true);
-            } else if (blockWest.getId() == this.getId() && blockWest.meta != 0x08) {
+            } else if (blockWest.getId() == this.getId() && blockWest.getDamage() != 0x08) {
                 this.getLevel().setBlock(blockWest, new BlockAir(), true, true);
             }
         } else { //Bottom Part of Bed
-            if (blockNorth.getId() == this.getId() && (blockNorth.meta & 0x08) == 0x08) {
+            if (blockNorth.getId() == this.getId() && (blockNorth.getDamage() & 0x08) == 0x08) {
                 this.getLevel().setBlock(blockNorth, new BlockAir(), true, true);
-            } else if (blockSouth.getId() == this.getId() && (blockSouth.meta & 0x08) == 0x08) {
+            } else if (blockSouth.getId() == this.getId() && (blockSouth.getDamage() & 0x08) == 0x08) {
                 this.getLevel().setBlock(blockSouth, new BlockAir(), true, true);
-            } else if (blockEast.getId() == this.getId() && (blockEast.meta & 0x08) == 0x08) {
+            } else if (blockEast.getId() == this.getId() && (blockEast.getDamage() & 0x08) == 0x08) {
                 this.getLevel().setBlock(blockEast, new BlockAir(), true, true);
-            } else if (blockWest.getId() == this.getId() && (blockWest.meta & 0x08) == 0x08) {
+            } else if (blockWest.getId() == this.getId() && (blockWest.getDamage() & 0x08) == 0x08) {
                 this.getLevel().setBlock(blockWest, new BlockAir(), true, true);
             }
         }
@@ -180,7 +171,7 @@ public class BlockBed extends BlockTransparent {
         CompoundTag nbt = BlockEntity.getDefaultCompound(pos, BlockEntity.BED);
         nbt.putByte("color", color);
 
-        new BlockEntityBed(this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
+        BlockEntity.createBlockEntity(BlockEntity.BED, this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
     }
 
     @Override
@@ -194,11 +185,14 @@ public class BlockBed extends BlockTransparent {
     }
 
     public DyeColor getDyeColor() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        if (this.level != null) {
+            BlockEntity blockEntity = this.level.getBlockEntity(this);
 
-        if (blockEntity instanceof BlockEntityBed) {
-            return ((BlockEntityBed) blockEntity).getDyeColor();
+            if (blockEntity instanceof BlockEntityBed) {
+                return ((BlockEntityBed) blockEntity).getDyeColor();
+            }
         }
+
         return DyeColor.WHITE;
     }
 }

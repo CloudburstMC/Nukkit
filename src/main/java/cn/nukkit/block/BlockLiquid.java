@@ -4,12 +4,11 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockFromToEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
-import cn.nukkit.level.sound.FizzSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
-
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -17,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockLiquid extends BlockTransparent {
+public abstract class BlockLiquid extends BlockTransparentMeta {
 
     public int adjacentSources = 0;
     public final boolean[] isOptimalFlowDirection = {false, false, false, false};
@@ -59,12 +58,17 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     @Override
+    public double getMaxY() {
+        return this.y + 1 - getFluidHeightPercent();
+    }
+
+    @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return new AxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 1 - getFluidHeightPercent(), this.z + 1);
+        return this;
     }
 
     public float getFluidHeightPercent() {
-        float d = (float) this.meta;
+        float d = (float) this.getDamage();
         if (d >= 8) {
             d = 0;
         }
@@ -504,7 +508,7 @@ public abstract class BlockLiquid extends BlockTransparent {
      * Creates fizzing sound and smoke. Used when lava flows over block or mixes with water.
      */
     protected void triggerLavaMixEffects(Vector3 pos) {
-        this.getLevel().addSound(new FizzSound(pos.add(0.5, 0.5, 0.5), 2.6F + (ThreadLocalRandom.current().nextFloat() - ThreadLocalRandom.current().nextFloat()) * 0.8F));
+        this.getLevel().addSound(pos.add(0.5, 0.5, 0.5), Sound.RANDOM_FIZZ, 1, 2.6F + (ThreadLocalRandom.current().nextFloat() - ThreadLocalRandom.current().nextFloat()) * 0.8F);
 
         for (int i = 0; i < 8; ++i) {
             this.getLevel().addParticle(new SmokeParticle(pos.add(Math.random(), 1.2, Math.random())));

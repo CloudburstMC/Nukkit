@@ -40,10 +40,18 @@ public class BlockUpdateEntry implements Comparable<BlockUpdateEntry> {
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof BlockUpdateEntry)) {
+            if (object instanceof Vector3) {
+                return pos.equals(object);
+            }
             return false;
         } else {
             BlockUpdateEntry entry = (BlockUpdateEntry) object;
             return this.pos.equals(entry.pos) && Block.equals(this.block, entry.block, false);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.pos.hashCode();
     }
 }

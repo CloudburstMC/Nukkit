@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 
@@ -39,7 +38,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
             return false;
         }
 
-        this.meta = player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0;
+        this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
         this.level.setBlock(block, this, true, true);
 
         if (shouldBePowered()) {
@@ -64,6 +63,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
                     this.level.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
 
                     if (!shouldBePowered) {
+//                        System.out.println("schedule update 2");
                         level.scheduleUpdate(getPowered(), this, this.getDelay());
                     }
                 }
@@ -84,7 +84,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
         if (!this.isLocked()) {
             boolean shouldPowered = this.shouldBePowered();
 
-            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isUpdateScheduled(this, this)) {
+            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isBlockTickPending(this, this)) {
                 /*int priority = -1;
 
                 if (this.isFacingTowardsRepeater()) {
@@ -111,7 +111,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
             return power;
         } else {
             Block block = this.level.getBlock(pos);
-            return Math.max(power, block.getId() == Block.REDSTONE_WIRE ? block.meta : 0);
+            return Math.max(power, block.getId() == Block.REDSTONE_WIRE ? block.getDamage() : 0);
         }
     }
 
@@ -126,7 +126,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
 
     protected int getPowerOnSide(Vector3 pos, BlockFace side) {
         Block block = this.level.getBlock(pos);
-        return isAlternateInput(block) ? (block.getId() == Block.REDSTONE_BLOCK ? 15 : (block.getId() == Block.REDSTONE_WIRE ? block.meta : this.level.getStrongPower(pos, side))) : 0;
+        return isAlternateInput(block) ? (block.getId() == Block.REDSTONE_BLOCK ? 15 : (block.getId() == Block.REDSTONE_WIRE ? block.getDamage() : this.level.getStrongPower(pos, side))) : 0;
     }
 
     @Override
@@ -147,8 +147,8 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
     protected abstract Block getPowered();
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
-        return new AxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 0.125, this.z + 1);
+    public double getMaxY() {
+        return this.y + 0.125;
     }
 
     @Override

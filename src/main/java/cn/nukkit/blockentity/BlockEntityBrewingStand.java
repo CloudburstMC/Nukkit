@@ -25,7 +25,7 @@ import java.util.List;
 
 public class BlockEntityBrewingStand extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
-    protected final BrewingInventory inventory;
+    protected BrewingInventory inventory;
 
     public static final int MAX_BREW_TIME = 400;
 
@@ -41,6 +41,10 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
     public BlockEntityBrewingStand(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
+
+    @Override
+    protected void initBlockEntity() {
         inventory = new BrewingInventory(this);
 
         if (!namedTag.contains("Items") || !(namedTag.get("Items") instanceof ListTag)) {
@@ -63,6 +67,8 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         if (brewTime < MAX_BREW_TIME) {
             this.scheduleUpdate();
         }
+
+        super.initBlockEntity();
     }
 
     @Override

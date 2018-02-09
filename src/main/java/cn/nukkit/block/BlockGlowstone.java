@@ -14,11 +14,6 @@ import java.util.Random;
  */
 public class BlockGlowstone extends BlockTransparent {
     public BlockGlowstone() {
-        this(0);
-    }
-
-    public BlockGlowstone(int meta) {
-        super(0);
     }
 
     @Override

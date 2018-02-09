@@ -2,17 +2,14 @@ package cn.nukkit.level;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class SimpleChunkManager implements ChunkManager {
-    protected Map<Long, FullChunk> chunks = new ConcurrentHashMap<>();
+    protected Long2ObjectOpenHashMap<FullChunk> chunks = new Long2ObjectOpenHashMap<>();
 
     protected final long seed;
 
@@ -75,7 +72,7 @@ public class SimpleChunkManager implements ChunkManager {
     }
 
     public void cleanChunks() {
-        this.chunks = new HashMap<>();
+        this.chunks.clear();
     }
 
     @Override

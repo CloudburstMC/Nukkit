@@ -6,7 +6,7 @@ import cn.nukkit.utils.BlockColor;
  * author: Angelic47
  * Nukkit Project
  */
-public class BlockSponge extends BlockSolid {
+public class BlockSponge extends BlockSolidMeta {
 
     public static final int DRY = 0;
     public static final int WET = 1;
@@ -40,7 +40,7 @@ public class BlockSponge extends BlockSolid {
                 "Sponge",
                 "Wet sponge"
         };
-        return names[this.meta & 0x07];
+        return names[this.getDamage() & 0x07];
     }
 
     @Override

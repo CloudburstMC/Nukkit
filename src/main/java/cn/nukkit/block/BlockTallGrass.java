@@ -37,7 +37,7 @@ public class BlockTallGrass extends BlockFlowable {
                 "Fern",
                 ""
         };
-        return names[this.meta & 0x03];
+        return names[this.getDamage() & 0x03];
     }
 
     @Override
@@ -101,11 +101,11 @@ public class BlockTallGrass extends BlockFlowable {
             if (dropSeeds) {
                 return new Item[]{
                         new ItemSeedsWheat(),
-                        Item.get(Item.TALL_GRASS, this.meta, 1)
+                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
                 };
             } else {
                 return new Item[]{
-                        Item.get(Item.TALL_GRASS, this.meta, 1)
+                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
                 };
             }
         }

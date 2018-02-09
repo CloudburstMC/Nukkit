@@ -14,8 +14,15 @@ import java.nio.ByteOrder;
  * Nukkit Project
  */
 public abstract class BlockEntitySpawnable extends BlockEntity {
+
     public BlockEntitySpawnable(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
+
+    @Override
+    protected void initBlockEntity() {
+        super.initBlockEntity();
+
         this.spawnToAll();
     }
 
