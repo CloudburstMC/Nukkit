@@ -155,8 +155,7 @@ public class Chunk extends BaseChunk {
             }
         }
 
-
-        this.extraData = extraData;
+        if (!extraData.isEmpty()) this.extraData = extraData;
 
         this.NBTentities = this.nbt.getList("Entities", CompoundTag.class).getAll();
         this.NBTtiles = this.nbt.getList("TileEntities", CompoundTag.class).getAll();

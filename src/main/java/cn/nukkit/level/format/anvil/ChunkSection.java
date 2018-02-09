@@ -100,6 +100,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     @Override
+    public boolean setFullBlockId(int x, int y, int z, int id) {
+        palette.setFullBlock(x, y, z, (char) (id << 4));
+        return true;
+    }
+
+    @Override
     public int getBlockData(int x, int y, int z) {
         return palette.getBlockData(x, y, z);
     }

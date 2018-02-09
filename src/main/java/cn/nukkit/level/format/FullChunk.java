@@ -35,6 +35,8 @@ public interface FullChunk extends Cloneable {
 
     Block getAndSetBlock(int x, int y, int z, Block block);
 
+    boolean setFullBlockId(int x, int y, int z, int fullId);
+
     boolean setBlock(int x, int y, int z, int  blockId);
 
     boolean setBlock(int x, int y, int z, int  blockId, int  meta);
@@ -150,5 +152,4 @@ public interface FullChunk extends Cloneable {
     void setChanged();
 
     void setChanged(boolean changed);
-
 }

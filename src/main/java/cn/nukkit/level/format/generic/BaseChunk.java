@@ -62,6 +62,22 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     }
 
     @Override
+    public boolean setFullBlockId(int x, int y, int z, int fullId) {
+        int Y = y >> 4;
+        try {
+            setChanged();
+            return this.sections[Y].setFullBlockId(x, y & 0x0f, z, fullId);
+        } catch (ChunkException e) {
+            try {
+                this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
+                Server.getInstance().getLogger().logException(e1);
+            }
+            return this.sections[Y].setFullBlockId(x, y & 0x0f, z, fullId);
+        }
+    }
+
+    @Override
     public boolean setBlock(int x, int y, int z, int blockId, int meta) {
         int Y = y >> 4;
         try {

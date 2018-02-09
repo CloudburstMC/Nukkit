@@ -98,6 +98,12 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    public boolean setFullBlockId(int x, int y, int z, int fullId) {
+        if (fullId != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return false;
+    }
+
+    @Override
     public int getBlockLight(int x, int y, int z) {
         return 0;
     }

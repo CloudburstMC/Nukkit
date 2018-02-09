@@ -17,6 +17,14 @@ public class MathHelper {
         return a[((int) (paramFloat * 10430.378F + 16384.0F) & 0xFFFF)];
     }
 
+    public static float sin(double paramFloat) {
+        return a[((int) (paramFloat * 10430.378F) & 0xFFFF)];
+    }
+
+    public static float cos(double paramFloat) {
+        return a[((int) (paramFloat * 10430.378F + 16384.0F) & 0xFFFF)];
+    }
+
     public static int floor(double d0) {
         int i = (int) d0;
 

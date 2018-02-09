@@ -103,9 +103,9 @@ public class Chunk extends BaseFullChunk {
             this.heightMap = bytes;
         }
 
-        this.NBTentities = entityData == null ? new ArrayList<>() : entityData;
-        this.NBTtiles = tileData == null ? new ArrayList<>() : tileData;
-        this.extraData = extraData == null ? new HashMap<>() : extraData;
+        this.NBTentities = entityData;
+        this.NBTtiles = tileData;
+        this.extraData = extraData;
     }
 
     @Override

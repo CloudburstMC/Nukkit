@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.task;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.SimpleChunkManager;
+import cn.nukkit.level.generator.SimpleChunkManager;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.math.NukkitRandom;

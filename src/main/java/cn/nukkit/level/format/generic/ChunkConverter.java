@@ -74,9 +74,9 @@ public class ChunkConverter {
         System.arraycopy(chunk.getBiomeColorArray(), 0, result.biomeColors, 0, 256);
         System.arraycopy(chunk.getHeightMapArray(), 0, result.heightMap, 0, 256);
         result.NBTentities = new ArrayList<>();
-        chunk.NBTentities.forEach((nbt) -> result.NBTentities.add(nbt.copy()));
+        if (chunk.NBTentities != null) chunk.NBTentities.forEach((nbt) -> result.NBTentities.add(nbt.copy()));
         result.NBTtiles = new ArrayList<>();
-        chunk.NBTtiles.forEach((nbt) -> result.NBTtiles.add(nbt.copy()));
+        if (chunk.NBTtiles != null) chunk.NBTtiles.forEach((nbt) -> result.NBTtiles.add(nbt.copy()));
         result.setGenerated();
         result.setPopulated();
         result.setLightPopulated();

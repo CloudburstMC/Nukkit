@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.task;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.SimpleChunkManager;
+import cn.nukkit.level.generator.SimpleChunkManager;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.scheduler.AsyncTask;
@@ -50,7 +50,7 @@ public class PopulationTask extends AsyncTask {
             return;
         }
 
-        synchronized (generator.getChunkManager()) {
+        synchronized (manager) {
             BaseFullChunk[] chunks = new BaseFullChunk[9];
             BaseFullChunk chunk = this.chunk.clone();
 

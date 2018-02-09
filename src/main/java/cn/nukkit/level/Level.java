@@ -407,10 +407,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void unregisterGenerator() {
-        int size = this.server.getScheduler().getAsyncTaskPoolSize();
-        for (int i = 0; i < size; ++i) {
-            this.server.getScheduler().scheduleAsyncTask(new GeneratorUnregisterTask(this));
-        }
+        // Nothing needed
     }
 
     public BlockMetadataStore getBlockMetadata() {
@@ -1617,6 +1614,11 @@ public class Level implements ChunkManager, Metadatable {
             this.lightQueue.put(index, currentMap);
         }
         currentMap.put(Level.localBlockHash(x, y, z), changeBlocksPresent);
+    }
+
+    @Override
+    public void setBlockFullIdAt(int x, int y, int z, int fullId) {
+        setBlock(x, y, z, Block.fullList[fullId], false, false);
     }
 
     public boolean setBlock(Vector3 pos, Block block) {

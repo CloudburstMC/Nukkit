@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.populator;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.biome.CaveBiome;
 import cn.nukkit.math.MathHelper;
@@ -33,8 +34,6 @@ public class PopulatorCaves extends Populator {
 
     public int worldHeightCap = 128;
 
-    public ChunkManager chunk;
-
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
         this.random = new Random();
@@ -44,12 +43,14 @@ public class PopulatorCaves extends Populator {
 
         int size = this.checkAreaSize;
 
+        BaseFullChunk chunk = level.getChunk(chunkX, chunkZ);
+
         for (int x = chunkX - size; x <= chunkX + size; x++)
             for (int z = chunkZ - size; z <= chunkZ + size; z++) {
                 long randomX = x * worldLong1;
                 long randomZ = z * worldLong2;
                 this.random.setSeed(randomX ^ randomZ ^ level.getSeed());
-                generateChunk(x, z, level.getChunk(chunkX, chunkZ));
+                generateChunk(x, z, chunk);
             }
     }
 
