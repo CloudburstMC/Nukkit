@@ -50,7 +50,7 @@ abstract public class ItemArmor extends Item {
             if (player.getInventory().setChestplate(this))
                 player.getInventory().clear(player.getInventory().getHeldItemIndex());
         } else if (this.isLeggings() && player.getInventory().getLeggings().isNull()) {
-            if (player.getInventory().setHelmet(this))
+            if (player.getInventory().setLeggings(this))
                 player.getInventory().clear(player.getInventory().getHeldItemIndex());
         } else if (this.isBoots() && player.getInventory().getBoots().isNull()) {
             if (player.getInventory().setBoots(this))
