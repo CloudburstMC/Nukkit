@@ -6,6 +6,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.network.protocol.BlockEventPacket;
+import cn.nukkit.network.protocol.InventorySlotPacket;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.Map;
  * Nukkit Project
  */
 public class DoubleChestInventory extends ContainerInventory implements InventoryHolder {
+
     private final ChestInventory left;
     private final ChestInventory right;
 
@@ -23,7 +25,10 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
         this.holder = this;
 
         this.left = left.getRealInventory();
+        this.left.setDoubleInventory(this);
+
         this.right = right.getRealInventory();
+        this.right.setDoubleInventory(this);
 
         Map<Integer, Item> items = new HashMap<>();
         // First we add the items from the left chest
@@ -178,5 +183,21 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
 
     public ChestInventory getRightSide() {
         return this.right;
+    }
+
+    public void sendSlot(Inventory inv, int index, Player... players) {
+        InventorySlotPacket pk = new InventorySlotPacket();
+        pk.slot = inv == this.right ? this.left.getSize() + index : index;
+        pk.item = inv.getItem(index).clone();
+
+        for (Player player : players) {
+            int id = player.getWindowId(this);
+            if (id == -1) {
+                this.close(player);
+                continue;
+            }
+            pk.inventoryId = id;
+            player.dataPacket(pk);
+        }
     }
 }
