@@ -248,7 +248,11 @@ public class Server {
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             this.getLogger().info(TextFormat.GREEN + "Welcome! Please choose a language first!");
             try {
-                String[] lines = Utils.readFile(this.getClass().getClassLoader().getResourceAsStream("lang/language.list")).split("\n");
+                InputStream languageList = this.getClass().getClassLoader().getResourceAsStream("lang/language.list");
+                if (languageList == null) {
+                    throw new RuntimeException("lang/language.list is missing. If you are running a development version, make sure you have run 'git submodule update --init'.");
+                }
+                String[] lines = Utils.readFile(languageList).split("\n");
                 for (String line : lines) {
                     this.getLogger().info(line);
                 }
