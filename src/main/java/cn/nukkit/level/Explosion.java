@@ -15,9 +15,9 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.ExplodePacket;
-
+import cn.nukkit.utils.Hash;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -112,7 +112,7 @@ public class Explosion {
 
     public boolean explodeB() {
 
-        HashMap<BlockVector3, Boolean> updateBlocks = new HashMap<>();
+        LongArraySet updateBlocks = new LongArraySet();
         List<Vector3> send = new ArrayList<>();
 
         Vector3 source = (new Vector3(this.source.x, this.source.y, this.source.z)).floor();
@@ -180,14 +180,14 @@ public class Explosion {
 
             for (BlockFace side : BlockFace.values()) {
                 Vector3 sideBlock = pos.getSide(side);
-                BlockVector3 index = Level.blockHash((int) sideBlock.x, (int) sideBlock.y, (int) sideBlock.z);
-                if (!this.affectedBlocks.contains(sideBlock) && !updateBlocks.containsKey(index)) {
+                long index = Hash.hashBlock((int) sideBlock.x, (int) sideBlock.y, (int) sideBlock.z);
+                if (!this.affectedBlocks.contains(sideBlock) && !updateBlocks.contains(index)) {
                     BlockUpdateEvent ev = new BlockUpdateEvent(this.level.getBlock(sideBlock));
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         ev.getBlock().onUpdate(Level.BLOCK_UPDATE_NORMAL);
                     }
-                    updateBlocks.put(index, true);
+                    updateBlocks.add(index);
                 }
             }
             send.add(new Vector3(block.x - source.x, block.y - source.y, block.z - source.z));

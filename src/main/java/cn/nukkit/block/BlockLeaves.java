@@ -10,8 +10,9 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.ArrayList;
+import cn.nukkit.utils.Hash;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
  * author: Angelic47
@@ -110,13 +111,12 @@ public class BlockLeaves extends BlockTransparentMeta {
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if ((getDamage() & 0b00001100) == 0x08) {
                 setDamage(getDamage() & 0x03);
-                ArrayList<String> visited = new ArrayList<>();
                 int check = 0;
 
                 LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
                 Server.getInstance().getPluginManager().callEvent(ev);
-                if (ev.isCancelled() || findLog(this, visited, 0, check)) {
+                if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
                     getLevel().setBlock(this, this, false, false);
                 } else {
                     getLevel().useBreakOn(this);
@@ -127,13 +127,13 @@ public class BlockLeaves extends BlockTransparentMeta {
         return 0;
     }
 
-    private Boolean findLog(Block pos, ArrayList<String> visited, Integer distance, Integer check) {
+    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check) {
         return findLog(pos, visited, distance, check, null);
     }
 
-    private Boolean findLog(Block pos, ArrayList<String> visited, Integer distance, Integer check, BlockFace fromSide) {
+    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check, BlockFace fromSide) {
         ++check;
-        String index = pos.x + "." + pos.y + "." + pos.z;
+        long index = Hash.hashBlock((int) pos.x, (int) pos.y, (int) pos.z);
         if (visited.contains(index)) return false;
         if (pos.getId() == Block.WOOD) return true;
         if (pos.getId() == Block.LEAVES && distance < 4) {
