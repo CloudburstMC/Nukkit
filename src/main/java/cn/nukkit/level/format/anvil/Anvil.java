@@ -268,7 +268,7 @@ public class Anvil extends BaseLevelProvider {
 
     public static ChunkSection createChunkSection(int y) {
         ChunkSection cs = new ChunkSection(y);
-        Arrays.fill(cs.getSkyLightArray(), (byte) 0xff);
+        cs.hasSkyLight = true;
         return cs;
     }
 
