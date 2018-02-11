@@ -5,8 +5,8 @@ import cn.nukkit.block.BlockGlowstone;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
-import cn.nukkit.level.generator.object.ore.ObjectOre;
 import cn.nukkit.level.generator.object.ore.OreType;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
 public class PopulatorGlowStone extends Populator {
@@ -22,13 +22,15 @@ public class PopulatorGlowStone extends Populator {
         int bz = chunkZ << 4;
         int tx = bx + 15;
         int tz = bz + 15;
-        ObjectOre ore = new ObjectOre(random, type, Block.AIR);
-        for (int i = 0; i < ore.type.clusterCount; ++i) {
-            int x = random.nextRange(0, 15);
-            int z = random.nextRange(0, 15);
+
+
+        for (int i = 0; i < type.clusterCount; i++) {
+            int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
+            int z = NukkitMath.randomRange(random, chunkZ << 4, (chunkZ << 4) + 15);
             int y = this.getHighestWorkableBlock(chunk, x, z);
             if (y != -1) {
-                ore.placeObject(level, bx + x, y, bz + z);
+                if (level.getBlockIdAt(x, y, z) != 0) continue;
+                type.spawn(level, random, 0, x, y, z);
             }
         }
     }

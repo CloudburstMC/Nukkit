@@ -1,7 +1,7 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.format.anvil.palette.DataPalette;
+import cn.nukkit.level.format.anvil.palette.BlockDataPalette;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Binary;
@@ -19,7 +19,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     private final int y;
 
-    private DataPalette palette;
+    private BlockDataPalette palette;
 
     protected byte[] blockLight;
     protected byte[] skyLight;
@@ -33,7 +33,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         hasBlockLight = false;
         hasSkyLight = false;
 
-        palette = new DataPalette();
+        palette = new BlockDataPalette();
     }
 
     public ChunkSection(CompoundTag nbt) {
@@ -78,7 +78,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             x++;
         }
 
-        palette = new DataPalette(rawData);
+        palette = new BlockDataPalette(rawData);
 
         this.blockLight = nbt.getByteArray("BlockLight");
         this.skyLight = nbt.getByteArray("SkyLight");
@@ -97,6 +97,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public void setBlockId(int x, int y, int z, int id) {
         palette.setFullBlock(x, y, z, (char) (id << 4));
+    }
+
+    @Override
+    public boolean setFullBlockId(int x, int y, int z, int fullId) {
+        palette.setFullBlock(x, y, z, (char) fullId);
+        return true;
     }
 
     @Override

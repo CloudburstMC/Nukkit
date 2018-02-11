@@ -1,17 +1,15 @@
-package cn.nukkit.level;
+package cn.nukkit.level.generator;
 
+import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.format.generic.BaseFullChunk;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class SimpleChunkManager implements ChunkManager {
-    protected Long2ObjectOpenHashMap<FullChunk> chunks = new Long2ObjectOpenHashMap<>();
+public abstract class SimpleChunkManager implements ChunkManager {
 
-    protected final long seed;
+    protected long seed;
 
     public SimpleChunkManager(long seed) {
         this.seed = seed;
@@ -34,6 +32,15 @@ public class SimpleChunkManager implements ChunkManager {
         }
     }
 
+
+    @Override
+    public void setBlockFullIdAt(int x, int y, int z, int fullId) {
+        FullChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            chunk.setFullBlockId(x & 0xf, y & 0xff, z & 0xf, fullId);
+        }
+    }
+
     @Override
     public int getBlockDataAt(int x, int y, int z) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
@@ -52,31 +59,20 @@ public class SimpleChunkManager implements ChunkManager {
     }
 
     @Override
-    public BaseFullChunk getChunk(int chunkX, int chunkZ) {
-        long index = Level.chunkHash(chunkX, chunkZ);
-        return this.chunks.containsKey(index) ? (BaseFullChunk) this.chunks.get(index) : null;
-    }
-
-    @Override
     public void setChunk(int chunkX, int chunkZ) {
         this.setChunk(chunkX, chunkZ, null);
     }
 
     @Override
-    public void setChunk(int chunkX, int chunkZ, BaseFullChunk chunk) {
-        if (chunk == null) {
-            this.chunks.remove(Level.chunkHash(chunkX, chunkZ));
-            return;
-        }
-        this.chunks.put(Level.chunkHash(chunkX, chunkZ), chunk);
-    }
-
-    public void cleanChunks() {
-        this.chunks.clear();
-    }
-
-    @Override
     public long getSeed() {
         return seed;
+    }
+
+    public void setSeed(long seed) {
+        this.seed = seed;
+    }
+
+    public void cleanChunks(long seed) {
+        this.seed = seed;
     }
 }

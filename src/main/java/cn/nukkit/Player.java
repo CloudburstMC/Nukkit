@@ -61,6 +61,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePack;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -557,21 +558,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             //TODO: structure checking
             pk.commands = data;
             int identifier = this.dataPacket(pk, true); // We *need* ACK so we can be sure that the client received the packet or not
-            Thread t = new Thread() {
-                public void run() {
-                    // We are going to wait 3 seconds, if after 3 seconds we didn't receive a reply from the client, resend the packet.
-                    try {
-                        Thread.sleep(3000);
-                        Boolean status = needACK.get(identifier);
-                        if ((status == null || !status) && isOnline()) {
-                            sendCommandData();
-                            return;
-                        }
-                    } catch (InterruptedException e) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+                @Override
+                public void onRun(int currentTick) {
+                    Boolean status = needACK.get(identifier);
+                    if ((status == null || !status) && isOnline()) {
+                        sendCommandData();
+                        return;
                     }
                 }
-            };
-            t.start();
+            }, 60, true);
         }
     }
 

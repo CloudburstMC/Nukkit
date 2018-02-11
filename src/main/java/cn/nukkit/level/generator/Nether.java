@@ -105,9 +105,8 @@ public class Nether extends Generator {
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
                 Biome biome = Biome.getBiome(Biome.HELL);
-                chunk.setBiomeId(x, z, Biome.HELL);
-                int biomecolor = biome.getColor();
-                chunk.setBiomeColor(x, z, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
+                int biomeColorAndId = biome.getColor() + (biome.getId() << 24);
+                chunk.setBiomeIdAndColor(x, z, biomeColorAndId);
 
                 chunk.setBlockId(x, 0, z, Block.BEDROCK);
                 chunk.setBlockId(x, 127, z, Block.BEDROCK);

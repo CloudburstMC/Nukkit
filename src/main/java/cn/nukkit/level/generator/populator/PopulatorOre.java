@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.populator;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.generator.object.ore.ObjectOre;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
@@ -25,15 +24,19 @@ public class PopulatorOre extends Populator {
 
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
+        int sx = chunkX << 4;
+        int ex = sx + 15;
+        int sz = chunkZ << 4;
+        int ez = sz + 15;
         for (OreType type : this.oreTypes) {
-            ObjectOre ore = new ObjectOre(random, type, replaceId);
-            for (int i = 0; i < ore.type.clusterCount; ++i) {
-                int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
-                int y = NukkitMath.randomRange(random, ore.type.minHeight, ore.type.maxHeight);
-                int z = NukkitMath.randomRange(random, chunkZ << 4, (chunkZ << 4) + 15);
-                if (ore.canPlaceObject(level, x, y, z)) {
-                    ore.placeObject(level, x, y, z);
+            for (int i = 0; i < type.clusterCount; i++) {
+                int x = NukkitMath.randomRange(random, sx, ex);
+                int z = NukkitMath.randomRange(random, sz, ez);
+                int y = NukkitMath.randomRange(random, type.minHeight, type.maxHeight);
+                if (level.getBlockIdAt(x, y, z) != replaceId) {
+                    continue;
                 }
+                type.spawn(level, random, replaceId, x, y, z);
             }
         }
     }

@@ -168,15 +168,13 @@ public class Flat extends Generator {
 
     private void generateChunk(FullChunk chunk) {
         chunk.setGenerated();
-        int c = Biome.getBiome(biome).getColor();
-        int R = c >> 16;
-        int G = (c >> 8) & 0xff;
-        int B = c & 0xff;
+        Biome biomeObj = Biome.getBiome(biome);
+        int biomeColorAndId = biomeObj.getColor() + (biome << 24);
 
         for (int Z = 0; Z < 16; ++Z) {
             for (int X = 0; X < 16; ++X) {
-                chunk.setBiomeId(X, Z, biome);
-                chunk.setBiomeColor(X, Z, R, G, B);
+                chunk.setBiomeIdAndColor(X, Z, biomeColorAndId);
+
                 for (int y = 0; y < 256; ++y) {
                     int k = this.structure[y][0];
                     int l = this.structure[y][1];

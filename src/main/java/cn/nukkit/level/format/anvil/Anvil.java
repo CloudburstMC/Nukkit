@@ -188,14 +188,7 @@ public class Anvil extends BaseLevelProvider {
             if (chunk == null) continue;
             if (chunk.isGenerated() && chunk.isPopulated() && chunk instanceof Chunk) {
                 Chunk anvilChunk = (Chunk) chunk;
-                for (cn.nukkit.level.format.ChunkSection section : anvilChunk.getSections()) {
-                    if (section instanceof ChunkSection) {
-                        ChunkSection anvilSection = (ChunkSection) section;
-                        if (!anvilSection.isEmpty()) {
-                            anvilSection.compress();
-                        }
-                    }
-                }
+                chunk.compress();
                 if (System.currentTimeMillis() - start >= time) break;
             }
         }

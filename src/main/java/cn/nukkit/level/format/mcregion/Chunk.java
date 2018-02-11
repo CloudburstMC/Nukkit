@@ -5,6 +5,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.ByteArrayTag;
@@ -28,7 +29,7 @@ import java.util.Map;
  */
 public class Chunk extends BaseFullChunk {
 
-    protected final CompoundTag nbt;
+    private CompoundTag nbt;
 
     public Chunk(LevelProvider level) {
         this(level, null);
@@ -51,7 +52,6 @@ public class Chunk extends BaseFullChunk {
         }
 
         if (nbt == null) {
-            this.nbt = new CompoundTag("Level");
             return;
         }
 
@@ -104,12 +104,14 @@ public class Chunk extends BaseFullChunk {
         this.data = this.nbt.getByteArray("Data");
         this.skyLight = this.nbt.getByteArray("SkyLight");
         this.blockLight = this.nbt.getByteArray("BlockLight");
+
+        this.biomes = new BiomePalette();
         int[] biomeColors = this.nbt.getIntArray("BiomeColors");
-        if (biomeColors.length != 256) {
-            biomeColors = new int[256];
-            Arrays.fill(biomeColors, Binary.readInt(new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00}));
+        if (biomeColors.length == 256) {
+            for (int i = 0; i < biomeColors.length; i++) {
+                this.biomes.set(i, biomeColors[i]);
+            }
         }
-        this.biomeColors = biomeColors;
         int[] heightMap = this.nbt.getIntArray("HeightMap");
         this.heightMap = new byte[256];
         if (heightMap.length != 256) {
@@ -120,7 +122,7 @@ public class Chunk extends BaseFullChunk {
             }
         }
 
-        this.extraData = extraData;
+        if (!extraData.isEmpty()) this.extraData = extraData;
 
         this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).getAll();
         this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).getAll();
@@ -399,10 +401,9 @@ public class Chunk extends BaseFullChunk {
             offset += 16384;
             chunk.heightMap = Arrays.copyOfRange(data, offset, offset + 256);
             offset += 256;
-            chunk.biomeColors = new int[256];
+            chunk.biomes = new BiomePalette();
             for (int i = 0; i < 256; i++) {
-                chunk.biomeColors[i] = Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3));
-                offset += 4;
+                chunk.biomes.set(i, Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3)));
             }
             byte flags = data[offset++];
             chunk.nbt.putByte("TerrainGenerated", (flags & 0b1));
@@ -521,7 +522,7 @@ public class Chunk extends BaseFullChunk {
             chunk.blockLight = chunk.data;
 
             chunk.heightMap = new byte[256];
-            chunk.biomeColors = new int[256];
+            chunk.biomes = new BiomePalette();
 
             chunk.nbt.putByte("V", 1);
             chunk.nbt.putLong("InhabitedTime", 0);

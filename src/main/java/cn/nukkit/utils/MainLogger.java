@@ -248,14 +248,13 @@ public class MainLogger extends ThreadedLogger {
     }
 
     private void waitForMessage() {
-        if (logBuffer.isEmpty()) {
+        while (logBuffer.isEmpty()) {
             try {
                 synchronized (this) {
                     wait(25000); // Wait for next message
                 }
                 Thread.sleep(5); // Buffer for 5ms to reduce back and forth between disk
-            } catch (InterruptedException ignore) {
-            }
+            } catch (InterruptedException ignore) {}
         }
     }
 

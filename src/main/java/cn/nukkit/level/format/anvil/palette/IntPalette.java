@@ -5,37 +5,37 @@ import java.util.Arrays;
 /**
  * @author https://github.com/boy0001/
  */
-public class CharPalette {
-    private static char[] CHAR0 = new char[0];
-    private char[] keys = CHAR0;
-    private char lastIndex = Character.MAX_VALUE;
+public class IntPalette {
+    private static int[] INT0 = new int[0];
+    private int[] keys = INT0;
+    private int lastIndex = Integer.MIN_VALUE;
 
-    public void add(char key) {
+    public void add(int key) {
         keys = insert(key);
-        lastIndex = Character.MAX_VALUE;
+        lastIndex = Integer.MIN_VALUE;
     }
 
-    protected void set(char[] keys) {
+    protected void set(int[] keys) {
         this.keys = keys;
-        lastIndex = Character.MAX_VALUE;
+        lastIndex = Integer.MIN_VALUE;
     }
 
-    private char[] insert(char val) {
-        lastIndex = Character.MAX_VALUE;
+    private int[] insert(int val) {
+        lastIndex = Integer.MIN_VALUE;
         if (keys.length == 0) {
-            return new char[] { val };
+            return new int[] { val };
         }
         else if (val < keys[0]) {
-            char[] s = new char[keys.length + 1];
+            int[] s = new int[keys.length + 1];
             System.arraycopy(keys, 0, s, 1, keys.length);
             s[0] = val;
             return s;
         } else if (val > keys[keys.length - 1]) {
-            char[] s = Arrays.copyOf(keys, keys.length + 1);
+            int[] s = Arrays.copyOf(keys, keys.length + 1);
             s[keys.length] = val;
             return s;
         }
-        char[] s = Arrays.copyOf(keys, keys.length + 1);
+        int[] s = Arrays.copyOf(keys, keys.length + 1);
         for (int i = 0; i < s.length; i++) {
             if (keys[i] < val) {
                 continue;
@@ -47,16 +47,16 @@ public class CharPalette {
         return s;
     }
 
-    public char getKey(int index) {
+    public int getKey(int index) {
         return keys[index];
     }
 
-    public char getValue(char key) {
-        char lastTmp = lastIndex;
-        boolean hasLast = lastTmp != Character.MAX_VALUE;
+    public int getValue(int key) {
+        int lastTmp = lastIndex;
+        boolean hasLast = lastTmp != Integer.MIN_VALUE;
         int index;
         if (hasLast) {
-            char lastKey = keys[lastTmp];
+            int lastKey = keys[lastTmp];
             if (lastKey == key) return lastTmp;
             if (lastKey > key) {
                 index = binarySearch0(0, lastTmp, key);
@@ -67,19 +67,19 @@ public class CharPalette {
             index = binarySearch0(0, keys.length, key);
         }
         if (index >= keys.length || index < 0) {
-            return lastIndex = Character.MAX_VALUE;
+            return lastIndex = Integer.MIN_VALUE;
         } else {
-            return lastIndex = (char) index;
+            return lastIndex = (int) index;
         }
     }
 
-    private int binarySearch0(int fromIndex, int toIndex, char key) {
+    private int binarySearch0(int fromIndex, int toIndex, int key) {
         int low = fromIndex;
         int high = toIndex - 1;
 
         while (low <= high) {
             int mid = (low + high) >>> 1;
-            char midVal = keys[mid];
+            int midVal = keys[mid];
 
             if (midVal < key)
                 low = mid + 1;
@@ -89,5 +89,16 @@ public class CharPalette {
                 return mid; // key found
         }
         return -(low + 1);  // key not found.
+    }
+
+    public int length() {
+        return keys.length;
+    }
+
+    public IntPalette clone() {
+        IntPalette p = new IntPalette();
+        p.keys = this.keys != INT0 ? this.keys.clone() : INT0;
+        p.lastIndex = this.lastIndex;
+        return p;
     }
 }
