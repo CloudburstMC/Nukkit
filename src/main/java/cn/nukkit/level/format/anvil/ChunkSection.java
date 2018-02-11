@@ -133,7 +133,13 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public int getBlockSkyLight(int x, int y, int z) {
-        if (this.skyLight == null && !hasSkyLight) return 0;
+        if (this.skyLight == null) {
+            if (!hasSkyLight) {
+                return 0;
+            } else if (compressedLight == null) {
+                return 15;
+            }
+        }
         this.skyLight = getSkyLightArray();
         int sl = this.skyLight[(y << 7) | (z << 3) | (x >> 1)] & 0xff;
         if ((x & 1) == 0) {
@@ -145,9 +151,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public void setBlockSkyLight(int x, int y, int z, int level) {
         if (this.skyLight == null) {
-            if (hasSkyLight) {
+            if (hasSkyLight && compressedLight != null) {
                 this.skyLight = getSkyLightArray();
-            } else if (level == 0) {
+            } else if (level == (hasSkyLight ? 15 : 0)) {
                 return;
             } else {
                 this.skyLight = new byte[2048];
@@ -246,8 +252,11 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     public byte[] getSkyLightArray() {
         if (this.skyLight != null) return skyLight;
         if (hasSkyLight) {
-            inflate();
-            return this.skyLight;
+            if (compressedLight != null) {
+                inflate();
+                return this.skyLight;
+            }
+            return EmptyChunkSection.EMPTY_SKY_LIGHT_ARR;
         } else {
             return EmptyChunkSection.EMPTY_LIGHT_ARR;
         }
@@ -309,7 +318,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 byte[] arr2;
                 if (skyLight != null) {
                     arr2 = skyLight;
-                    hasSkyLight = !Utils.isByteArrayEmpty(skyLight);
+                    hasSkyLight = !Utils.isByteArrayEmpty(arr2);
                 } else {
                     arr2 = EmptyChunkSection.EMPTY_LIGHT_ARR;
                     hasSkyLight = false;
