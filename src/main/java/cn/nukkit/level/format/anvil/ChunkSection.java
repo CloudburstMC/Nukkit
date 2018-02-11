@@ -157,6 +157,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 return;
             } else {
                 this.skyLight = new byte[2048];
+                if (hasSkyLight) {
+                    Arrays.fill(this.skyLight, (byte) 0xFF);
+                }
             }
         }
         int i = (y << 7) | (z << 3) | (x >> 1);
@@ -267,11 +270,21 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             if (compressedLight != null && compressedLight.length != 0) {
                 byte[] inflated = Zlib.inflate(compressedLight);
                 blockLight = Arrays.copyOfRange(inflated, 0, 2048);
-                skyLight = Arrays.copyOfRange(inflated, 2048, 4096);
+                if (inflated.length > 2048) {
+                    skyLight = Arrays.copyOfRange(inflated, 2048, 4096);
+                } else {
+                    skyLight = new byte[2048];
+                    if (hasSkyLight) {
+                        Arrays.fill(skyLight, (byte) 0xFF);
+                    }
+                }
                 compressedLight = null;
             } else {
                 blockLight = new byte[2048];
                 skyLight = new byte[2048];
+                if (hasSkyLight) {
+                    Arrays.fill(skyLight, (byte) 0xFF);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -319,15 +332,23 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 if (skyLight != null) {
                     arr2 = skyLight;
                     hasSkyLight = !Utils.isByteArrayEmpty(arr2);
+                } else if (hasSkyLight) {
+                    arr2 = EmptyChunkSection.EMPTY_SKY_LIGHT_ARR;
                 } else {
                     arr2 = EmptyChunkSection.EMPTY_LIGHT_ARR;
                     hasSkyLight = false;
                 }
                 blockLight = null;
                 skyLight = null;
-                if (hasBlockLight && hasSkyLight) {
+                byte[] toDeflate = null;
+                if (hasBlockLight && hasSkyLight && arr2 != EmptyChunkSection.EMPTY_SKY_LIGHT_ARR) {
+                    toDeflate = Binary.appendBytes(arr1, arr2);
+                } else if (hasBlockLight) {
+                    toDeflate = arr1;
+                }
+                if (toDeflate != null) {
                     try {
-                        compressedLight = Zlib.deflate(Binary.appendBytes(arr1, arr2), 1);
+                        compressedLight = Zlib.deflate(toDeflate, 1);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
