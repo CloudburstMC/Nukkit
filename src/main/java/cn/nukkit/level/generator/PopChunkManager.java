@@ -4,7 +4,8 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 import java.util.Arrays;
 
 public class PopChunkManager extends SimpleChunkManager {
-    private BaseFullChunk[] chunks = new BaseFullChunk[9];
+    private boolean clean = true;
+    private final BaseFullChunk[] chunks = new BaseFullChunk[9];
     private int CX = Integer.MAX_VALUE;
     private int CZ = Integer.MAX_VALUE;
 
@@ -13,10 +14,14 @@ public class PopChunkManager extends SimpleChunkManager {
     }
 
     @Override
-    public void cleanChunks() {
-        Arrays.fill(chunks, null);
-        CX = Integer.MAX_VALUE;
-        CZ = Integer.MAX_VALUE;
+    public void cleanChunks(long seed) {
+        super.cleanChunks(seed);
+        if (!clean) {
+            Arrays.fill(chunks, null);
+            CX = Integer.MAX_VALUE;
+            CZ = Integer.MAX_VALUE;
+            clean = true;
+        }
     }
 
     @Override
@@ -82,6 +87,7 @@ public class PopChunkManager extends SimpleChunkManager {
             default:
                 throw new UnsupportedOperationException("Chunk is outside population area");
         }
+        clean = false;
         chunks[index] = chunk;
     }
 }

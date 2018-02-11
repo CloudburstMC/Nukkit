@@ -24,12 +24,18 @@ public class PopulatorOre extends Populator {
 
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
+        int sx = chunkX << 4;
+        int ex = sx + 15;
+        int sz = chunkZ << 4;
+        int ez = sz + 15;
         for (OreType type : this.oreTypes) {
             for (int i = 0; i < type.clusterCount; i++) {
-                int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
-                int z = NukkitMath.randomRange(random, chunkZ << 4, (chunkZ << 4) + 15);
-                int y = random.nextRange(type.maxHeight, type.maxHeight);
-                if (level.getBlockIdAt(x, y, z) != replaceId) continue;
+                int x = NukkitMath.randomRange(random, sx, ex);
+                int z = NukkitMath.randomRange(random, sz, ez);
+                int y = NukkitMath.randomRange(random, type.minHeight, type.maxHeight);
+                if (level.getBlockIdAt(x, y, z) != replaceId) {
+                    continue;
+                }
                 type.spawn(level, random, replaceId, x, y, z);
             }
         }

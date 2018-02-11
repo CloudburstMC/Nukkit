@@ -35,7 +35,10 @@ public class SingleChunkManager extends SimpleChunkManager {
     }
 
     @Override
-    public void cleanChunks() {
-        setChunk(0, 0, null);
+    public void cleanChunks(long seed) {
+        super.cleanChunks(seed);
+        chunk = null;
+        CX = Integer.MAX_VALUE;
+        CZ = Integer.MAX_VALUE;
     }
 }

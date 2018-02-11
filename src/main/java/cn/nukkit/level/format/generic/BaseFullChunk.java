@@ -8,28 +8,32 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.network.protocol.BatchPacket;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class BaseFullChunk implements FullChunk, ChunkManager {
-    protected Map<Long, Entity> entities = new HashMap<>();
+    protected Map<Long, Entity> entities;
 
-    protected Map<Long, BlockEntity> tiles = new HashMap<>();
+    protected Map<Long, BlockEntity> tiles;
 
-    protected Map<Integer, BlockEntity> tileList = new HashMap<>();
+    protected Map<Integer, BlockEntity> tileList;
 
-    protected int[] biomeColors;
-    protected byte[] biomes;
+    protected BiomePalette biomes;
 
     protected byte[] blocks;
 
@@ -54,9 +58,9 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     private int z;
     private long hash;
 
-    protected long changes = 0;
+    protected long changes;
 
-    protected boolean isInit = false;
+    protected boolean isInit;
 
     protected BatchPacket chunkPacket;
 
@@ -67,9 +71,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             chunk = (BaseFullChunk) super.clone();
         } catch (CloneNotSupportedException e) {
             return null;
-        }
-        if (this.biomeColors != null) {
-            chunk.biomeColors = this.getBiomeColorArray().clone();
         }
         if (this.biomes != null) {
             chunk.biomes = this.biomes.clone();
@@ -94,15 +95,21 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         if (this.heightMap != null) {
             chunk.heightMap = this.getHeightMapArray().clone();
         }
-
         return chunk;
     }
 
     public void setChunkPacket(BatchPacket packet) {
+        if (packet != null) {
+            packet.trim();
+        }
         this.chunkPacket = packet;
     }
 
     public BatchPacket getChunkPacket() {
+        BatchPacket pk = chunkPacket;
+        if (pk != null) {
+            pk.trim();
+        }
         return chunkPacket;
     }
 
@@ -218,25 +225,35 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public int getBiomeId(int x, int z) {
-        return this.biomeColors[(z << 4) | x] >> 24;
+        return this.biomes.get(x, z) >> 24;
     }
 
     @Override
     public void setBiomeId(int x, int z, int biomeId) {
         this.setChanged();
-        this.biomeColors[(z << 4) | x] = this.biomeColors[(z << 4) | x] & 0xffffff | (biomeId << 24);
+        int index = this.biomes.getIndex(x, z);
+        int current = this.biomes.get(index);
+        this.biomes.set(index, current & 0xffffff | (biomeId << 24));
     }
 
     @Override
-    public int[] getBiomeColor(int x, int z) {
-        int color = this.biomeColors[(z << 4) | x];
-        return new int[]{(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff};
+    public int getBiomeColor(int x, int z) {
+        int color = this.biomes.get(x, z);
+        return color & 0xFFFFFF;
+    }
+
+    @Override
+    public void setBiomeIdAndColor(int x, int z, int idAndColor) {
+        this.biomes.set(x, z, idAndColor);
     }
 
     @Override
     public void setBiomeColor(int x, int z, int r, int g, int b) {
         this.setChanged();
-        this.biomeColors[(z << 4) | x] = this.biomeColors[(z << 4) | x] & 0xff000000 | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
+
+        int index = this.biomes.getIndex(x, z);
+        int current = this.biomes.get(index);
+        this.biomes.set(index, current & 0xff000000 | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff));
     }
 
     @Override
@@ -325,6 +342,9 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public void addEntity(Entity entity) {
+        if (this.entities == null) {
+            this.entities = new Long2ObjectOpenHashMap<>();
+        }
         this.entities.put(entity.getId(), entity);
         if (!(entity instanceof Player) && this.isInit) {
             this.setChanged();
@@ -333,14 +353,20 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public void removeEntity(Entity entity) {
-        this.entities.remove(entity.getId());
-        if (!(entity instanceof Player) && this.isInit) {
-            this.setChanged();
+        if (this.entities != null) {
+            this.entities.remove(entity.getId());
+            if (!(entity instanceof Player) && this.isInit) {
+                this.setChanged();
+            }
         }
     }
 
     @Override
     public void addBlockEntity(BlockEntity blockEntity) {
+        if (this.tiles == null) {
+            this.tiles = new Long2ObjectOpenHashMap<>();
+            this.tileList = new Int2ObjectOpenHashMap<>();
+        }
         this.tiles.put(blockEntity.getId(), blockEntity);
         int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
         if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(blockEntity)) {
@@ -354,11 +380,13 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public void removeBlockEntity(BlockEntity blockEntity) {
-        this.tiles.remove(blockEntity.getId());
-        int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
-        this.tileList.remove(index);
-        if (this.isInit) {
-            this.setChanged();
+        if (this.tiles != null) {
+            this.tiles.remove(blockEntity.getId());
+            int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
+            this.tileList.remove(index);
+            if (this.isInit) {
+                this.setChanged();
+            }
         }
     }
 
@@ -379,8 +407,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public BlockEntity getTile(int x, int y, int z) {
-        int index = (z << 12) | (x << 8) | y;
-        return this.tileList.containsKey(index) ? this.tileList.get(index) : null;
+        return this.tileList != null ? this.tileList.get((z << 12) | (x << 8) | y) : null;
     }
 
     @Override
@@ -470,7 +497,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public int[] getBiomeColorArray() {
-        return this.biomeColors;
+        return this.biomes.toRaw();
     }
 
     @Override
@@ -534,14 +561,14 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public void setBlockFullIdAt(int x, int y, int z, int fullId) {
         if (x >> 4 == getX() && z >> 4 == getZ()) {
-            setBlockFullId(x & 15, y, z & 15, fullId);
+            setFullBlockId(x & 15, y, z & 15, fullId);
         }
     }
 
     @Override
     public void setBlockIdAt(int x, int y, int z, int id) {
         if (x >> 4 == getX() && z >> 4 == getZ()) {
-            setBlockIdAt(x & 15, y, z & 15, id);
+            setBlockId(x & 15, y, z & 15, id);
         }
     }
 
@@ -579,5 +606,14 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public long getSeed() {
         throw new UnsupportedOperationException("Chunk does not have a seed");
+    }
+
+    public boolean compress() {
+        BatchPacket pk = chunkPacket;
+        if (pk != null) {
+            pk.trim();
+            return true;
+        }
+        return false;
     }
 }

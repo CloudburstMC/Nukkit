@@ -12,6 +12,8 @@ public class ThreadCache {
         charCache4096v2.clean();
         fbaos.clean();
         binaryStream.clean();
+        intCache256.clean();
+        byteCache256.clean();
         ZlibThreadLocal.def.clean();
         ZlibThreadLocal.buf.clean();
     }
@@ -37,6 +39,13 @@ public class ThreadCache {
         }
     };
 
+    public static final IterableThreadLocal<byte[]> byteCache256 = new IterableThreadLocal<byte[]>() {
+        @Override
+        public byte[] init() {
+            return new byte[256];
+        }
+    };
+
     public static final IterableThreadLocal<boolean[]> boolCache4096 = new IterableThreadLocal<boolean[]>() {
         @Override
         public boolean[] init() {
@@ -55,6 +64,13 @@ public class ThreadCache {
         @Override
         public char[] init() {
             return new char[4096];
+        }
+    };
+
+    public static final IterableThreadLocal<int[]> intCache256 = new IterableThreadLocal<int[]>() {
+        @Override
+        public int[] init() {
+            return new int[256];
         }
     };
 

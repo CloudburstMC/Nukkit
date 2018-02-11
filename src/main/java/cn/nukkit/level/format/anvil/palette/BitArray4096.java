@@ -5,14 +5,14 @@ import cn.nukkit.utils.ThreadCache;
 /**
  * @author https://github.com/boy0001/
  */
-public final class BitArray {
+public final class BitArray4096 {
 
     private final int bitsPerEntry;
     private final int maxSeqLocIndex;
     private final int maxEntryValue;
     private final long[] data;
 
-    public BitArray(int bitsPerEntry) {
+    public BitArray4096(int bitsPerEntry) {
         this.bitsPerEntry = bitsPerEntry;
         this.maxSeqLocIndex = 64 - bitsPerEntry;
         maxEntryValue = (1 << bitsPerEntry) - 1;
@@ -21,6 +21,7 @@ public final class BitArray {
     }
 
     public final void setAt(int index, int value) {
+        if (data.length == 0) return;
         int bitIndexStart = index * bitsPerEntry;
         int longIndexStart = bitIndexStart >> 6;
         int localBitIndexStart = bitIndexStart & 63;
@@ -35,6 +36,7 @@ public final class BitArray {
     }
 
     public final int getAt(int index) {
+        if (data.length == 0) return 0;
         int bitIndexStart = index * bitsPerEntry;
 
         int longIndexStart = bitIndexStart >> 6;
@@ -93,10 +95,10 @@ public final class BitArray {
         }
     }
 
-    public BitArray grow(int newBitsPerEntry) {
+    public BitArray4096 grow(int newBitsPerEntry) {
         int amtGrow = newBitsPerEntry - this.bitsPerEntry;
         if (amtGrow <= 0) return this;
-        BitArray newBitArray = new BitArray(newBitsPerEntry);
+        BitArray4096 newBitArray = new BitArray4096(newBitsPerEntry);
 
         char[] buffer = ThreadCache.charCache4096.get();
         toRaw(buffer);
@@ -105,8 +107,8 @@ public final class BitArray {
         return newBitArray;
     }
 
-    public BitArray growSlow(int bitsPerEntry) {
-        BitArray newBitArray = new BitArray(bitsPerEntry);
+    public BitArray4096 growSlow(int bitsPerEntry) {
+        BitArray4096 newBitArray = new BitArray4096(bitsPerEntry);
         for (int i = 0; i < 4096; i++) {
             newBitArray.setAt(i, getAt(i));
         }

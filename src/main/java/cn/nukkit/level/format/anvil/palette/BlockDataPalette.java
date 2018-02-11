@@ -7,20 +7,20 @@ import java.util.Arrays;
 /**
  * @author https://github.com/boy0001/
  */
-public final class DataPalette implements Cloneable {
+public final class BlockDataPalette implements Cloneable {
     private char[] rawData;
 
-    private BitArray encodedData;
+    private BitArray4096 encodedData;
     private CharPalette palette;
 
     // TODO compress unused sections
     // private byte[] compressedData;
 
-    public DataPalette() {
+    public BlockDataPalette() {
         this(new char[4096]);
     }
 
-    public DataPalette(char[] rawData) {
+    public BlockDataPalette(char[] rawData) {
         this.rawData = rawData;
     }
 
@@ -162,14 +162,14 @@ public final class DataPalette implements Cloneable {
                 CharPalette palette = new CharPalette();
                 palette.set(keys);
 
-                int bits = MathHelper.log2nlz(unique) + 1;
-                BitArray encodedData = new BitArray(bits);
+                int bits = MathHelper.log2(unique - 1);
+                BitArray4096 encodedData = new BitArray4096(bits);
 
                 for (int i = 0; i < raw.length; i++) {
-                    raw[i] = mapFullTable[raw[i]];
+                    mapBitTable[i] = mapFullTable[raw[i]];
                 }
 
-                encodedData.fromRaw(raw);
+                encodedData.fromRaw(mapBitTable);
 
                 this.palette = palette;
                 this.encodedData = encodedData;
@@ -180,8 +180,8 @@ public final class DataPalette implements Cloneable {
         return false;
     }
 
-    public synchronized DataPalette clone() {
+    public synchronized BlockDataPalette clone() {
         char[] raw = getRaw();
-        return new DataPalette(raw.clone());
+        return new BlockDataPalette(raw.clone());
     }
 }

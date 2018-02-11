@@ -50,8 +50,8 @@ public class OreType {
         double d3 = z8 + cf;
         double d4 = z8 - cf;
 
-        double d5 = y + rand.nextRange(3) - 2;
-        double d6 = y + rand.nextRange(3) - 2;
+        double d5 = y + rand.nextRange(0, 3) - 2;
+        double d6 = y + rand.nextRange(0, 3) - 2;
 
         double xd = (d2 - d1);
         double yd = (d6 - d5);
@@ -94,8 +94,8 @@ public class OreType {
                                 double dz = (zz + 0.5D - d9) * id11o2;
                                 double dxyz2 = dxy2 + dz * dz;
                                 if ((dxyz2 < 1)) {
-                                    if (level.getBlockIdAt(x, y, z) == replaceId) {
-                                        level.setBlockFullIdAt(x, y, z, fullId);
+                                    if (level.getBlockIdAt(xx, yy, zz) == replaceId) {
+                                        level.setBlockFullIdAt(xx, yy, zz, fullId);
                                     }
                                 }
                             }

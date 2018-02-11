@@ -19,12 +19,12 @@ import java.util.Arrays;
 
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
-    protected ChunkSection[] sections = new ChunkSection[SECTION_COUNT];
+    protected ChunkSection[] sections;
 
     @Override
     public BaseChunk clone() {
         BaseChunk chunk = (BaseChunk) super.clone();
-        chunk.biomeColors = this.getBiomeColorArray().clone();
+        if (this.biomes != null) chunk.biomes = this.biomes.clone();
         chunk.heightMap = this.getHeightMapArray().clone();
         if (sections != null && sections[0] != null) {
             chunk.sections = new ChunkSection[sections.length];
@@ -258,7 +258,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     @Override
     public int[] getBiomeColorArray() {
-        return this.biomeColors;
+        return this.biomes.toRaw();
     }
 
     @Override

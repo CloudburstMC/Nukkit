@@ -211,7 +211,7 @@ public class Normal extends Generator {
     }
 
     @Override
-    public void generateChunk(int chunkX, int chunkZ) {
+    public void generateChunk(final int chunkX, final int chunkZ) {
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
 
         double[][] seaFloorNoise = Generator.getFastNoise2D(this.noiseSeaFloor, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
@@ -303,11 +303,9 @@ public class Normal extends Generator {
                         }
                     }
                 }
-                chunk.setBiomeId(genx, genz, biome.getId());
-                //biome color
-                //todo: smooth chunk color
-                int biomecolor = biome.getColor();
-                chunk.setBiomeColor(genx, genz, (biomecolor >> 16), (biomecolor >> 8) & 0xff, (biomecolor & 0xff));
+                int biomeColorAndId = biome.getColor() + (biome.getId() << 24);
+                chunk.setBiomeIdAndColor(genx, genz, biomeColorAndId);
+
                 //generating
                 int generateHeight = genyHeight > seaHeight ? genyHeight : seaHeight;
                 for (int geny = 0; geny <= generateHeight; geny++) {

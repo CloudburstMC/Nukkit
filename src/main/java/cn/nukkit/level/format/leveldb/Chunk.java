@@ -6,6 +6,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.leveldb.key.EntitiesKey;
 import cn.nukkit.level.format.leveldb.key.ExtraDataKey;
@@ -90,9 +91,9 @@ public class Chunk extends BaseFullChunk {
         this.blockLight = blockLight;
 
         if (biomeColors.length == 256) {
-            this.biomeColors = biomeColors;
+            this.biomes = new BiomePalette(biomeColors);
         } else {
-            this.biomeColors = new int[256];
+            this.biomes = new BiomePalette();
         }
 
         if (heightMap.length == 256) {

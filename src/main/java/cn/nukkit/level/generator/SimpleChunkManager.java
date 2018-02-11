@@ -9,7 +9,7 @@ import cn.nukkit.level.format.FullChunk;
  */
 public abstract class SimpleChunkManager implements ChunkManager {
 
-    protected final long seed;
+    protected long seed;
 
     public SimpleChunkManager(long seed) {
         this.seed = seed;
@@ -37,7 +37,7 @@ public abstract class SimpleChunkManager implements ChunkManager {
     public void setBlockFullIdAt(int x, int y, int z, int fullId) {
         FullChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            chunk.setBlockFullId(x & 0xf, y & 0xff, z & 0xf, fullId);
+            chunk.setFullBlockId(x & 0xf, y & 0xff, z & 0xf, fullId);
         }
     }
 
@@ -68,6 +68,11 @@ public abstract class SimpleChunkManager implements ChunkManager {
         return seed;
     }
 
+    public void setSeed(long seed) {
+        this.seed = seed;
+    }
 
-    public abstract void cleanChunks();
+    public void cleanChunks(long seed) {
+        this.seed = seed;
+    }
 }
