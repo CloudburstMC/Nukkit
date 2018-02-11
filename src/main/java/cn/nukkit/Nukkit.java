@@ -123,7 +123,6 @@ public class Nukkit {
         killer.start();
 
         logger.shutdown();
-        logger.interrupt();
         CommandReader.getInstance().removePromptLine();
 
         if (ANSI) {
