@@ -112,32 +112,7 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void log(LogLevel level, String message) {
-        switch (level) {
-            case EMERGENCY:
-                this.emergency(message);
-                break;
-            case ALERT:
-                this.alert(message);
-                break;
-            case CRITICAL:
-                this.critical(message);
-                break;
-            case ERROR:
-                this.error(message);
-                break;
-            case WARNING:
-                this.warning(message);
-                break;
-            case NOTICE:
-                this.notice(message);
-                break;
-            case INFO:
-                this.info(message);
-                break;
-            case DEBUG:
-                this.debug(message);
-                break;
-        }
+        level.log(this, message);
     }
 
     public void shutdown() {
