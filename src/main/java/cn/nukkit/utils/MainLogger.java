@@ -234,8 +234,9 @@ public class MainLogger extends ThreadedLogger {
     }
 
     private void flushBuffer(File logFile) {
+        Writer writer = null;
         try {
-            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024);
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024);
             Date now = new Date();
             String consoleDateFormat = new SimpleDateFormat("HH:mm:ss ").format(now);
             String fileDateFormat = new SimpleDateFormat("Y-M-d HH:mm:ss ").format(now);
@@ -252,9 +253,16 @@ public class MainLogger extends ThreadedLogger {
                 }
             }
             writer.flush();
-            writer.close();
         } catch (Exception e) {
             this.logException(e);
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                this.logException(e);
+            }
         }
     }
 
