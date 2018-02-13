@@ -98,7 +98,7 @@ public class Chunk extends BaseChunk {
         }
 
         int[] biomeColors = nbt.getIntArray("BiomeColors");
-        if (biomeColors != null) {
+        if (biomeColors != null && biomeColors.length == 256) {
             this.biomes = new BiomePalette(biomeColors);
         } else {
             this.biomes = new BiomePalette();
