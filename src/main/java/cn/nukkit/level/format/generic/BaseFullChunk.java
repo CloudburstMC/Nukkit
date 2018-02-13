@@ -225,7 +225,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public int getBiomeId(int x, int z) {
-        return this.biomes.get(x, z) >> 24;
+        return (this.biomes.get(x, z) >> 24) & 0xFF;
     }
 
     @Override
