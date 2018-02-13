@@ -1,6 +1,9 @@
 package cn.nukkit.level.format.anvil.palette;
 
 import cn.nukkit.Server;
+import cn.nukkit.math.MathHelper;
+import cn.nukkit.utils.ThreadCache;
+import java.util.Arrays;
 
 /**
  * @author https://github.com/boy0001/
@@ -174,46 +177,46 @@ public final class BlockDataPalette implements Cloneable {
         char[] raw = rawData;
         if (raw != null) {
             synchronized (this) {
-//                char unique = 0;
-//
-//                boolean[] countTable = ThreadCache.boolCache4096.get();
-//                char[] mapFullTable = ThreadCache.charCache4096.get();
-//                char[] mapBitTable = ThreadCache.charCache4096v2.get();
-//                Arrays.fill(countTable, false);
-//                for (char c : raw) {
-//                    if (!countTable[c]) {
-//                        mapBitTable[unique] = c;
-//                        countTable[c] = true;
-//                        unique++;
-//                    }
-//                }
-//
-//                char[] keys = Arrays.copyOfRange(mapBitTable, 0, unique);
-//                if (keys.length > 1) {
-//                    Arrays.sort(keys);
-//                    for (char c = 0; c < keys.length; c++) {
-//                        mapFullTable[keys[c]] = c;
-//                    }
-//                } else {
-//                    mapFullTable[keys[0]] = 0;
-//                }
-//
-//                CharPalette palette = new CharPalette();
-//                palette.set(keys);
-//
-//                int bits = MathHelper.log2(unique - 1);
-//                BitArray4096 encodedData = new BitArray4096(bits);
-//
-//                for (int i = 0; i < raw.length; i++) {
-//                    mapBitTable[i] = mapFullTable[raw[i]];
-//                }
-//
-//                encodedData.fromRaw(mapBitTable);
-//
-//                this.palette = palette;
-//                this.encodedData = encodedData;
-//                rawData = null;
-//                return true;
+                char unique = 0;
+
+                boolean[] countTable = ThreadCache.boolCache4096.get();
+                char[] mapFullTable = ThreadCache.charCache4096.get();
+                char[] mapBitTable = ThreadCache.charCache4096v2.get();
+                Arrays.fill(countTable, false);
+                for (char c : raw) {
+                    if (!countTable[c]) {
+                        mapBitTable[unique] = c;
+                        countTable[c] = true;
+                        unique++;
+                    }
+                }
+
+                char[] keys = Arrays.copyOfRange(mapBitTable, 0, unique);
+                if (keys.length > 1) {
+                    Arrays.sort(keys);
+                    for (char c = 0; c < keys.length; c++) {
+                        mapFullTable[keys[c]] = c;
+                    }
+                } else {
+                    mapFullTable[keys[0]] = 0;
+                }
+
+                CharPalette palette = new CharPalette();
+                palette.set(keys);
+
+                int bits = MathHelper.log2(unique - 1);
+                BitArray4096 encodedData = new BitArray4096(bits);
+
+                for (int i = 0; i < raw.length; i++) {
+                    mapBitTable[i] = mapFullTable[raw[i]];
+                }
+
+                encodedData.fromRaw(mapBitTable);
+
+                this.palette = palette;
+                this.encodedData = encodedData;
+                rawData = null;
+                return true;
             }
         }
         return false;
