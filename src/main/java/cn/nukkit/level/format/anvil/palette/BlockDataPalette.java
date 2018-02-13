@@ -9,10 +9,10 @@ import java.util.Arrays;
  * @author https://github.com/boy0001/
  */
 public final class BlockDataPalette implements Cloneable {
-    private char[] rawData;
+    private volatile char[] rawData;
 
-    private BitArray4096 encodedData;
-    private CharPalette palette;
+    private volatile BitArray4096 encodedData;
+    private volatile CharPalette palette;
 
     // TODO compress unused sections
     // private byte[] compressedData;
@@ -34,18 +34,23 @@ public final class BlockDataPalette implements Cloneable {
         return rawData;
     }
 
-    public synchronized char[] getRaw() {
-        char[] raw = rawData;
-        if (raw == null) {
-            raw = encodedData.toRaw();
-            for (int i = 0; i < 4096; i++) {
-                raw[i] = palette.getKey(raw[i]);
+    public char[] getRaw() {
+        synchronized (this) {
+            CharPalette palette = this.palette;
+            BitArray4096 encodedData = this.encodedData;
+            this.encodedData = null;
+            this.palette = null;
+
+            char[] raw = rawData;
+            if (raw == null) {
+                raw = encodedData.toRaw();
+                for (int i = 0; i < 4096; i++) {
+                    raw[i] = palette.getKey(raw[i]);
+                }
             }
+            rawData = raw;
+            return rawData;
         }
-        rawData = raw;
-        encodedData = null;
-        palette = null;
-        return rawData;
     }
 
     private int getIndex(int x, int y, int z) {
@@ -153,7 +158,9 @@ public final class BlockDataPalette implements Cloneable {
         if (palette != null && encodedData != null) {
             char encodedValue = palette.getValue(value);
             if (encodedValue != Character.MAX_VALUE) {
-                encodedData.setAt(index, encodedValue);
+                synchronized (this) {
+                    encodedData.setAt(index, encodedValue);
+                }
             } else {
                 synchronized (this) {
                     char[] raw = encodedData.toRaw();
