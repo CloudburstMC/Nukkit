@@ -485,7 +485,7 @@ public class Chunk extends BaseChunk {
 
             chunk.setPosition(chunkX, chunkZ);
 
-            chunk.heightMap = ThreadCache.byteCache256.get();
+            chunk.heightMap = new byte[256];
             chunk.inhabitedTime = 0;
             chunk.terrainGenerated = false;
             chunk.terrainPopulated = false;

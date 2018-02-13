@@ -31,7 +31,7 @@ public final class BiomePalette {
         return get(getIndex(x, z));
     }
 
-    public int get(int index) {
+    public synchronized int get(int index) {
         if (encodedData == null) return biome;
         return palette.getKey(encodedData.getAt(index));
     }
@@ -40,7 +40,7 @@ public final class BiomePalette {
         set(getIndex(x, z), value);
     }
 
-    public void set(int index, int value) {
+    public synchronized void set(int index, int value) {
         if (encodedData == null) {
             if (value == biome) return;
             if (biome == Integer.MIN_VALUE) {
@@ -98,7 +98,7 @@ public final class BiomePalette {
 
     }
 
-    public int[] toRaw() {
+    public synchronized int[] toRaw() {
         int[] buffer = ThreadCache.intCache256.get();
         if (encodedData == null) {
             Arrays.fill(buffer, biome);
