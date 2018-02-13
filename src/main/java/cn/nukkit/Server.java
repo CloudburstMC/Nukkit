@@ -216,7 +216,7 @@ public class Server {
 
     private Level defaultLevel = null;
 
-    private Thread currentThread;
+    private final Thread currentThread;
 
     private Watchdog watchdog;
 
@@ -1992,7 +1992,7 @@ public class Server {
      * @return true if the current thread matches the expected primary thread,
      * false otherwise
      */
-    public boolean isPrimaryThread() {
+    public final boolean isPrimaryThread() {
         return (Thread.currentThread() == currentThread);
     }
 

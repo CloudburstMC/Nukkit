@@ -41,18 +41,20 @@ public class GenerationTask extends AsyncTask {
         manager.cleanChunks(level.getSeed());
         synchronized (manager) {
             try {
-                BaseFullChunk chunk = this.chunk.clone();
+                BaseFullChunk chunk = this.chunk;
 
                 if (chunk == null) {
                     return;
                 }
 
-                manager.setChunk(chunk.getX(), chunk.getZ(), chunk);
-
-                generator.generateChunk(chunk.getX(), chunk.getZ());
-
-                chunk = manager.getChunk(chunk.getX(), chunk.getZ());
-                chunk.setGenerated();
+                synchronized (chunk) {
+                    if (!chunk.isGenerated()) {
+                        manager.setChunk(chunk.getX(), chunk.getZ(), chunk);
+                        generator.generateChunk(chunk.getX(), chunk.getZ());
+                        chunk = manager.getChunk(chunk.getX(), chunk.getZ());
+                        chunk.setGenerated();
+                    }
+                }
                 this.chunk = chunk;
                 state = true;
             } finally {

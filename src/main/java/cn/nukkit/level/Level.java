@@ -2357,44 +2357,47 @@ public class Level implements ChunkManager, Metadatable {
 
         long index = Level.chunkHash(chunkX, chunkZ);
         FullChunk oldChunk = this.getChunk(chunkX, chunkZ, false);
-        if (unload && oldChunk != null) {
-            this.unloadChunk(chunkX, chunkZ, false, false);
 
-            this.provider.setChunk(chunkX, chunkZ, chunk);
-        } else {
-            Map<Long, Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : Collections.emptyMap();
+        if (oldChunk != chunk) {
+            if (unload && oldChunk != null) {
+                this.unloadChunk(chunkX, chunkZ, false, false);
 
-            Map<Long, BlockEntity> oldBlockEntities = oldChunk != null ? oldChunk.getBlockEntities() : Collections.emptyMap();
+                this.provider.setChunk(chunkX, chunkZ, chunk);
+            } else {
+                Map<Long, Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : Collections.emptyMap();
 
-            if (!oldEntities.isEmpty()) {
-                Iterator<Map.Entry<Long, Entity>> iter = oldEntities.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry<Long, Entity> entry = iter.next();
-                    Entity entity = entry.getValue();
-                    chunk.addEntity(entity);
-                    if (oldChunk != null) {
-                        iter.remove();
-                        oldChunk.removeEntity(entity);
-                        entity.chunk = chunk;
+                Map<Long, BlockEntity> oldBlockEntities = oldChunk != null ? oldChunk.getBlockEntities() : Collections.emptyMap();
+
+                if (!oldEntities.isEmpty()) {
+                    Iterator<Map.Entry<Long, Entity>> iter = oldEntities.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry<Long, Entity> entry = iter.next();
+                        Entity entity = entry.getValue();
+                        chunk.addEntity(entity);
+                        if (oldChunk != null) {
+                            iter.remove();
+                            oldChunk.removeEntity(entity);
+                            entity.chunk = chunk;
+                        }
                     }
                 }
-            }
 
-            if (!oldBlockEntities.isEmpty()) {
-                Iterator<Map.Entry<Long, BlockEntity>> iter = oldBlockEntities.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry<Long, BlockEntity> entry = iter.next();
-                    BlockEntity blockEntity = entry.getValue();
-                    chunk.addBlockEntity(blockEntity);
-                    if (oldChunk != null) {
-                        iter.remove();
-                        oldChunk.removeBlockEntity(blockEntity);
-                        blockEntity.chunk = chunk;
+                if (!oldBlockEntities.isEmpty()) {
+                    Iterator<Map.Entry<Long, BlockEntity>> iter = oldBlockEntities.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry<Long, BlockEntity> entry = iter.next();
+                        BlockEntity blockEntity = entry.getValue();
+                        chunk.addBlockEntity(blockEntity);
+                        if (oldChunk != null) {
+                            iter.remove();
+                            oldChunk.removeBlockEntity(blockEntity);
+                            blockEntity.chunk = chunk;
+                        }
                     }
                 }
-            }
 
-            this.provider.setChunk(chunkX, chunkZ, chunk);
+                this.provider.setChunk(chunkX, chunkZ, chunk);
+            }
         }
 
         chunk.setChanged();

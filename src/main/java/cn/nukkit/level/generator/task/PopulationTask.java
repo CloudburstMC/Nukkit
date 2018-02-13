@@ -1,11 +1,11 @@
     package cn.nukkit.level.generator.task;
 
-import cn.nukkit.Server;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.generator.SimpleChunkManager;
-import cn.nukkit.level.format.generic.BaseFullChunk;
-import cn.nukkit.level.generator.Generator;
-import cn.nukkit.scheduler.AsyncTask;
+    import cn.nukkit.Server;
+    import cn.nukkit.level.Level;
+    import cn.nukkit.level.format.generic.BaseFullChunk;
+    import cn.nukkit.level.generator.Generator;
+    import cn.nukkit.level.generator.SimpleChunkManager;
+    import cn.nukkit.scheduler.AsyncTask;
 
 /**
  * author: MagicDroidX
@@ -25,18 +25,38 @@ public class PopulationTask extends AsyncTask {
         this.centerChunk = chunk;
         this.seed = level.getSeed();
 
+        chunks[4] = chunk;
+
         int i = 0;
         for (int z = -1; z <= 1; z++) {
             for (int x = -1; x <= 1; x++, i++) {
                 if (i == 4) continue;
-                BaseFullChunk ck = level.getChunk(chunk.getX() + x, chunk.getZ() + z, false);
+                BaseFullChunk ck = level.getChunk(chunk.getX() + x, chunk.getZ() + z, true);
                 this.chunks[i] = ck;
             }
         }
     }
 
+
     @Override
     public void onRun() {
+        syncGen(0);
+    }
+
+    private void syncGen(int i) {
+        if (i == chunks.length) {
+            generationTask();
+        } else {
+            BaseFullChunk chunk = chunks[i];
+            if (chunk != null) {
+                synchronized (chunk) {
+                    syncGen(i + 1);
+                }
+            }
+        }
+    }
+
+    private void generationTask() {
         this.state = false;
         Generator generator = level.getGenerator();
         if (generator == null) {
@@ -53,13 +73,11 @@ public class PopulationTask extends AsyncTask {
         synchronized (manager) {
             try {
                 manager.cleanChunks(this.seed);
-                BaseFullChunk centerChunk = this.centerChunk.clone();
+                BaseFullChunk centerChunk = this.centerChunk;
 
                 if (centerChunk == null) {
                     return;
                 }
-
-                this.chunks[4] = centerChunk;
 
                 int index = 0;
                 for (int x = -1; x < 2; x++) {
@@ -73,7 +91,7 @@ public class PopulationTask extends AsyncTask {
                                 throw new RuntimeException(e);
                             }
                         } else {
-                            this.chunks[index] = ck.clone();
+                            this.chunks[index] = ck;
                         }
 
                     }
@@ -86,17 +104,18 @@ public class PopulationTask extends AsyncTask {
                         BaseFullChunk newChunk = manager.getChunk(chunk.getX(), chunk.getZ());
                         newChunk.setGenerated();
                         if (newChunk != chunk) manager.setChunk(chunk.getX(), chunk.getZ(), newChunk);
-                    }
+                   }
                 }
 
-                generator.populateChunk(centerChunk.getX(), centerChunk.getZ());
-
-                centerChunk = manager.getChunk(centerChunk.getX(), centerChunk.getZ());
-                centerChunk.recalculateHeightMap();
-                centerChunk.populateSkyLight();
-                centerChunk.setLightPopulated();
-                centerChunk.setPopulated();
-                this.centerChunk = centerChunk;
+                if (!centerChunk.isPopulated()) {
+                    generator.populateChunk(centerChunk.getX(), centerChunk.getZ());
+                    centerChunk = manager.getChunk(centerChunk.getX(), centerChunk.getZ());
+                    centerChunk.setPopulated();
+                    centerChunk.recalculateHeightMap();
+                    centerChunk.populateSkyLight();
+                    centerChunk.setLightPopulated();
+                    this.centerChunk = centerChunk;
+                }
 
                 manager.setChunk(centerChunk.getX(), centerChunk.getZ());
 
