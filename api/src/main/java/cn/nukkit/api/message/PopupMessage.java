@@ -4,13 +4,14 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
  * A popup message, including a caption and message.
  */
 @Immutable
-public final class PopupMessage {
+public final class PopupMessage implements ParameterMessage {
     /**
      * The caption of the message.
      */
@@ -49,6 +50,11 @@ public final class PopupMessage {
     }
 
     @Override
+    public Type getType() {
+        return null;
+    }
+
+    @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -68,5 +74,10 @@ public final class PopupMessage {
                 "caption='" + caption + '\'' +
                 ", message='" + message + '\'' +
                 '}';
+    }
+
+    @Override
+    public Collection<String> getParameters() {
+        return null;
     }
 }

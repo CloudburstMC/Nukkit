@@ -7,16 +7,17 @@ import java.util.Objects;
 
 @Nonnull
 @Immutable
-public class GenericMessage implements Message {
+public class ChatMessage implements Message {
+    private static final Type type = Type.CHAT;
     private final String message;
 
 
-    public GenericMessage(@Nonnull String message) {
+    public ChatMessage(@Nonnull String message) {
         this.message = message;
     }
 
     /**
-     * Returns this message.
+     * Returns the message.
      * @return the message
      */
     @Nonnull
@@ -25,16 +26,21 @@ public class GenericMessage implements Message {
     }
 
     @Override
+    public Type getType() {
+        return type;
+    }
+
+    @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GenericMessage that = (GenericMessage) o;
+        ChatMessage that = (ChatMessage) o;
         return Objects.equals(message, that.message);
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(caption, message);
+        return Objects.hash(message);
     }
 
     @Override

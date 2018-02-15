@@ -9,60 +9,38 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
 @Nonnull
 @Immutable
-public class TranslatedMessage implements ParameterMessage {
-
+public class TranslationMessage implements ParameterMessage {
+    private static final Type type = Type.TRANSLATION;
     private final String name;
     private final List<String> replacements;
 
     /**
      * Creates a new translated message.
-     * @param name the name of the MCPE message
+     * @param name the name of the message
      * @param replacements the replacements to use
      */
-    public TranslatedMessage(@Nonnull String name, @Nonnull List<String> replacements) {
+    public TranslationMessage(@Nonnull String name, @Nonnull List<String> replacements) {
         this.name = Preconditions.checkNotNull(name, "name");
         this.replacements = ImmutableList.copyOf(Preconditions.checkNotNull(replacements, "replacements"));
     }
 
     /**
      * Creates a new translated message.
-     * @param name the name of the MCPE message
+     * @param name the name of the message
      * @param replacements the replacements to use
      */
-    public TranslatedMessage(@Nonnull String name, @Nonnull String... replacements) {
+    public TranslationMessage(@Nonnull String name, @Nonnull String... replacements) {
         this.name = Preconditions.checkNotNull(name, "name");
         this.replacements = ImmutableList.copyOf(replacements);
-    }
-
-    /**
-     * Returns the name of the message to use.
-     * @return the name
-     */
-    @Nonnull
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Returns an immutable list of replacements for this message.
-     * @return the replacements to use
-     */
-    @Nonnull
-    public Collection<String> getReplacements() {
-        return replacements;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TranslatedMessage that = (TranslatedMessage) o;
+        TranslationMessage that = (TranslationMessage) o;
         return Objects.equals(name, that.name) &&
                 Objects.equals(replacements, that.replacements);
     }
@@ -80,8 +58,26 @@ public class TranslatedMessage implements ParameterMessage {
                 '}';
     }
 
+    /**
+     * Returns an immutable list of replacements for this message.
+     * @return the replacements to use
+     */
     @Override
     public Collection<String> getParameters() {
         return replacements;
+    }
+
+    /**
+     * Returns the name of the message to use.
+     * @return the name
+     */
+    @Override
+    public String getMessage() {
+        return name;
+    }
+
+    @Override
+    public Type getType() {
+        return type;
     }
 }

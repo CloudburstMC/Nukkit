@@ -11,11 +11,15 @@
                 <OnStartupTriggeringPolicy/>
             </Policies>
         </RollingRandomAccessFile>
+        <Rewrite name="Rewrite">
+            <NukkitLocaleRewritePolicy />
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
+        </Rewrite>
     </Appenders>
     <Loggers>
         <Root level="INFO">
-            <AppenderRef ref="File"/>
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Rewrite"/>
         </Root>
     </Loggers>
 </Configuration>
