@@ -17,6 +17,7 @@ import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.ExplodePacket;
 import cn.nukkit.utils.Hash;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -167,7 +168,7 @@ public class Explosion {
         for (Block block : this.affectedBlocks) {
             //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
-                ((BlockTNT) block).prime(new NukkitRandom().nextRange(10, 30));
+                ((BlockTNT) block).prime(new NukkitRandom().nextRange(10, 30), this.what instanceof Entity ? (Entity) this.what : null);
             } else if (Math.random() * 100 < yield) {
                 for (Item drop : block.getDrops(air)) {
                     this.level.dropItem(block.add(0.5, 0.5, 0.5), drop);
