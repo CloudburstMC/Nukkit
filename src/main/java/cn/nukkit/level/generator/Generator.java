@@ -110,8 +110,8 @@ public abstract class Generator {
         if (xSize % samplingRate != 0) {
             throw new IllegalArgumentException("xSize % samplingRate must return 0");
         }
-        if (noiseArray.length != xSize + 1) {
-            throw new IllegalArgumentException("Length of noiseArray must be the same as xSize+1");
+        if (noiseArray.length != xSize) {
+            throw new IllegalArgumentException("Length of noiseArray must be the same as xSize");
         }
 
         for (int xx = 0; xx <= xSize; xx += samplingRate) {
@@ -177,8 +177,8 @@ public abstract class Generator {
         if (zSize % samplingRate != 0) {
             throw new IllegalArgumentException("zSize % samplingRate must return 0");
         }
-        if (noiseArray.length != xSize + 1) {
-            throw new IllegalArgumentException("Length of noiseArray must be the same as xSize+1");
+        if (noiseArray.length != xSize) {
+            throw new IllegalArgumentException("Length of noiseArray must be the same as xSize");
         }
 
         for (int xx = 0; xx <= xSize; xx += samplingRate) {
@@ -298,8 +298,8 @@ public abstract class Generator {
         if (ySize % ySamplingRate != 0) {
             throw new IllegalArgumentException("ySize % ySamplingRate must return 0");
         }
-        if (noiseArray.length != xSize + 1) {
-            throw new IllegalArgumentException("Length of noiseArray must be the same as xSize+1");
+        if (noiseArray.length != xSize) {
+            throw new IllegalArgumentException("Length of noiseArray must be the same as xSize");
         }
 
         for (int xx = 0; xx <= xSize; xx += xSamplingRate) {
