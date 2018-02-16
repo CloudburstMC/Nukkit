@@ -210,15 +210,21 @@ public class Normal extends Generator {
         this.populators.add(ores);
     }
 
+    double[][] seaFloorNoise = new double[16][16],
+            landNoise = new double[16][16],
+            mountainNoise = new double[16][16],
+            baseNoise = new double[16][16],
+            riverNoise = new double[16][16];
+
     @Override
     public void generateChunk(final int chunkX, final int chunkZ) {
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
 
-        double[][] seaFloorNoise = Generator.getFastNoise2D(this.noiseSeaFloor, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-        double[][] landNoise = Generator.getFastNoise2D(this.noiseLand, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-        double[][] mountainNoise = Generator.getFastNoise2D(this.noiseMountains, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-        double[][] baseNoise = Generator.getFastNoise2D(this.noiseBaseGround, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-        double[][] riverNoise = Generator.getFastNoise2D(this.noiseRiver, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        Generator.getFastNoise2D(this.noiseSeaFloor, this.seaFloorNoise, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        Generator.getFastNoise2D(this.noiseLand, this.landNoise, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        Generator.getFastNoise2D(this.noiseMountains, this.mountainNoise, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        Generator.getFastNoise2D(this.noiseBaseGround, this.baseNoise, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
+        Generator.getFastNoise2D(this.noiseRiver, this.riverNoise, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
