@@ -27,6 +27,7 @@ public class Nether extends Generator {
     private double bedrockDepth = 5;
     private final List<Populator> populators = new ArrayList<>();
     private List<Populator> generationPopulators = new ArrayList<>();
+    double[][][] noise = new double[16][16][128];
 
     private long localSeed1;
     private long localSeed2;
@@ -99,7 +100,7 @@ public class Nether extends Generator {
     public void generateChunk(int chunkX, int chunkZ) {
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
 
-        double[][][] noise = Generator.getFastNoise3D(this.noiseBase, 16, 128, 16, 4, 8, 4, chunkX * 16, 0, chunkZ * 16);
+        Generator.getFastNoise3D(this.noiseBase, this.noise, 16, 128, 16, 4, 8, 4, chunkX * 16, 0, chunkZ * 16);
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
         for (int x = 0; x < 16; ++x) {
@@ -118,7 +119,7 @@ public class Nether extends Generator {
                     }
                 }
                 for (int y = 1; y < 127; ++y) {
-                    double noiseValue = (Math.abs(this.emptyHeight - y) / this.emptyHeight) * this.emptyAmplitude - noise[x][z][y];
+                    double noiseValue = (Math.abs(this.emptyHeight - y) / this.emptyHeight) * this.emptyAmplitude - this.noise[x][z][y];
                     noiseValue -= 1 - this.density;
                     if (noiseValue > 0) {
                         chunk.setBlockId(x, y, z, Block.NETHERRACK);
