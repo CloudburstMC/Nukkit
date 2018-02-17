@@ -18,16 +18,11 @@ public class PopulatorGlowStone extends Populator {
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
         this.level = level;
         BaseFullChunk chunk = level.getChunk(chunkX, chunkZ);
-        int bx = chunkX << 4;
-        int bz = chunkZ << 4;
-        int tx = bx + 15;
-        int tz = bz + 15;
-
 
         for (int i = 0; i < type.clusterCount; i++) {
             int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
             int z = NukkitMath.randomRange(random, chunkZ << 4, (chunkZ << 4) + 15);
-            int y = this.getHighestWorkableBlock(chunk, x, z);
+            int y = this.getHighestWorkableBlock(chunk, x & 0xF, z & 0xF);
             if (y != -1) {
                 if (level.getBlockIdAt(x, y, z) != 0) continue;
                 type.spawn(level, random, 0, x, y, z);
