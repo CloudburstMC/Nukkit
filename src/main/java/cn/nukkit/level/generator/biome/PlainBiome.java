@@ -24,7 +24,7 @@ public class PlainBiome extends GrassyBiome {
         flower.addType(Block.RED_FLOWER, BlockFlower.TYPE_OXEYE_DAISY);
         this.addPopulator(flower);
 
-        this.setElevation(63, 74);
+        this.setElevation(67, 74);
 
         this.temperature = 0.8;
         this.rainfall = 0.4;

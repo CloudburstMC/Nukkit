@@ -257,59 +257,6 @@ public class Normal extends Generator {
                 }
             }
         }
-        //the following code is broken and buggy. nothing to see here...
-        /*for (int xBase = 0; xBase < 4; xBase++) {
-            for (int zBase = 0; zBase < 4; zBase++) {
-                double oceanBase = oceanNoise[xBase][zBase];
-                double xOceanDecr = (oceanBase - oceanNoise[xBase + 1][zBase]) / 4;
-                double zOceanDecr = (oceanBase - oceanNoise[xBase][zBase + 1]) / 4;
-                for (int xSub = 0; xSub < 4; xSub++) {
-                    for (int zSub = 0; zSub < 4; zSub++) {
-                        Biome biome;
-
-                        int realX = (xBase << 2) + xSub;
-                        int realZ = (zBase << 2) + zSub;
-                        double oceanVal = oceanBase + (xOceanDecr * xSub) + (zOceanDecr * zSub);
-                        if (oceanVal < -0.5) {
-                            biome = Biome.getBiome(Biome.OCEAN);
-                        } else {
-                            //TODO: rivers
-                            biome = pickBiome((chunkX << 4) + realX, (chunkZ << 4) + realZ);
-                        }
-                        chunk.setBiome(realX, realZ, biome);
-
-                        int min = biome.getMinElevation();
-                        int max = biome.getMaxElevation();
-                        double range = max - min;
-                        double heightDecr = 1 / range;
-                        for (int yBase = 0; yBase < 64; yBase++) {
-                            double landBase = baseNoise[xBase + 1][zBase + 1][yBase + 1];
-                            double xLandDecr = (landBase - baseNoise[xBase][zBase + 1][yBase + 1]) / 4;
-                            double zLandDecr = (landBase - baseNoise[xBase + 1][zBase][yBase + 1]) / 4;
-                            double yLandDecr = (landBase - baseNoise[xBase + 1][zBase + 1][yBase]) / 4;
-                            for (int ySub = 0; ySub < 4; ySub++) {
-                                int realY = (yBase << 2) + ySub;
-                                double landVal;
-                                if (realY <= min)   {
-                                    landVal = -1;
-                                } else if (realY > max) {
-                                    landVal = 1;
-                                } else {
-                                    landVal = landBase + (((xLandDecr * xSub) + (zLandDecr * zSub) + (yLandDecr * ySub)) / 3);
-                                    //landVal -= heightDecr * (realY - min);
-                                }
-
-                                if (landVal < 0)    {
-                                    chunk.setBlockId(realX, realY, realZ, Block.STONE);
-                                } else if (realY < seaHeight) {
-                                    chunk.setBlockId(realX, realY, realZ, Block.STILL_WATER);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
 
         //populator chunk
         for (Populator populator : this.generationPopulators) {

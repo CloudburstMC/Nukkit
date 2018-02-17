@@ -23,7 +23,7 @@ public class RoofedForestBiome extends GrassyBiome {
         this.addPopulator(tree);
         this.addPopulator(flower);
 
-        this.setElevation(62, 68);
+        this.setElevation(67, 73);
         this.temperature = 0.7f;
         this.rainfall = 0.8f;
     }
