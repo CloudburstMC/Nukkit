@@ -28,7 +28,7 @@ public abstract class ProjectileItem extends Item {
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", player.x))
-                        .add(new DoubleTag("", player.y + player.getEyeHeight()))
+                        .add(new DoubleTag("", player.y + player.getEyeHeight() - 0.10000000149011612))
                         .add(new DoubleTag("", player.z)))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("", directionVector.x))
