@@ -105,7 +105,7 @@ public class PluginManager {
                                 return plugin;
                             }
                         } catch (Exception e) {
-                            Server.getInstance().getLogger().debug("Could not load plugin", e);
+                            Server.getInstance().getLogger().critical("Could not load plugin", e);
                             return null;
                         }
                     }
