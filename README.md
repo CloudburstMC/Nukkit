@@ -4,6 +4,11 @@
 [![Build Status](https://ci.potestas.xyz/job/NukkitX/job/master/badge/icon)](https://ci.potestas.xyz/job/NukkitX/job/master/)
 [![Discord](https://img.shields.io/discord/393465748535640064.svg)](https://discord.gg/5PzMkyK)
 
+Warning
+-------------
+This branch is EXPERIMENTAL, it means, that it will likely be unstable, crash, or won't support all versions fully.
+Actually, there is support for versions 1.1.0 - 1.2.10
+
 Introduction
 -------------
 
