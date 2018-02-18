@@ -40,7 +40,7 @@ public class AddPlayerPacket extends DataPacket {
     @Override
     public void encode(PlayerProtocol protocol) {
         this.reset(protocol);
-        this.putUUID(this.uuid);
+        this.putUUID(this.uuid, protocol);
         this.putString(this.username);
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);

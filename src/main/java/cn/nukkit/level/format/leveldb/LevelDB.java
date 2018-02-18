@@ -17,6 +17,7 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
 import org.iq80.leveldb.DB;
@@ -164,21 +165,22 @@ public class LevelDB implements LevelProvider {
 
         long timestamp = chunk.getChanges();
 
-        byte[] tiles = new byte[0];
+        HashMap<PlayerProtocol, byte[]> tiles = new HashMap<>();
+        for (PlayerProtocol protocol : PlayerProtocol.values()){
+            if (!chunk.getBlockEntities().isEmpty()) {
+                List<CompoundTag> tagList = new ArrayList<>();
 
-        if (!chunk.getBlockEntities().isEmpty()) {
-            List<CompoundTag> tagList = new ArrayList<>();
-
-            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
-                if (blockEntity instanceof BlockEntitySpawnable) {
-                    tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
+                for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                    if (blockEntity instanceof BlockEntitySpawnable) {
+                        tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound(protocol));
+                    }
                 }
-            }
 
-            try {
-                tiles = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                try {
+                    tiles.put(protocol, NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 
@@ -195,23 +197,29 @@ public class LevelDB implements LevelProvider {
             extraData = null;
         }
 
-        BinaryStream stream = new BinaryStream();
-        stream.put(chunk.getBlockIdArray());
-        stream.put(chunk.getBlockDataArray());
-        stream.put(chunk.getBlockSkyLightArray());
-        stream.put(chunk.getBlockLightArray());
-        stream.put(chunk.getHeightMapArray());
-        for (int color : chunk.getBiomeColorArray()) {
-            stream.put(Binary.writeInt(color));
+        HashMap<PlayerProtocol, byte[]> buffers = new HashMap<>();
+        for (PlayerProtocol protocol : PlayerProtocol.values()){
+            BinaryStream stream = new BinaryStream();
+            stream.put(chunk.getBlockIdArray());
+            stream.put(chunk.getBlockDataArray());
+            if (protocol.getMainNumber() == 113) {
+                stream.put(chunk.getBlockSkyLightArray());
+                stream.put(chunk.getBlockLightArray());
+            }
+            stream.put(chunk.getHeightMapArray());
+            for (int color : chunk.getBiomeColorArray()) {
+                stream.put(Binary.writeInt(color));
+            }
+            if (extraData != null) {
+                stream.put(extraData.getBuffer());
+            } else {
+                stream.putLInt(0);
+            }
+            stream.put(tiles.get(protocol));
+            buffers.put(protocol, stream.getBuffer());
         }
-        if (extraData != null) {
-            stream.put(extraData.getBuffer());
-        } else {
-            stream.putLInt(0);
-        }
-        stream.put(tiles);
 
-        this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
+        this.getLevel().chunkRequestCallback(timestamp, x, z, buffers);
 
         return null;
     }
