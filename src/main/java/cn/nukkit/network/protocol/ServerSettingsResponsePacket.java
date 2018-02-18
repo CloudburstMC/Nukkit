@@ -6,18 +6,18 @@ public class ServerSettingsResponsePacket extends DataPacket {
     public String data;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.SERVER_SETTINGS_RESPONSE_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("SERVER_SETTINGS_RESPONSE_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putVarInt(this.formId);
         this.putString(this.data);
     }

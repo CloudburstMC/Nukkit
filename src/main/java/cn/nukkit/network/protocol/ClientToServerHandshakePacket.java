@@ -3,17 +3,17 @@ package cn.nukkit.network.protocol;
 public class ClientToServerHandshakePacket extends DataPacket {
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.CLIENT_TO_SERVER_HANDSHAKE_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("CLIENT_TO_SERVER_HANDSHAKE_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         //no content
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
 
     }
 }

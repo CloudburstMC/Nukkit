@@ -5,12 +5,14 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.HashMap;
 
 /**
  * author: MagicDroidX
@@ -24,7 +26,7 @@ public class ChunkRequestTask extends AsyncTask {
     protected final int chunkZ;
     protected final long timeStamp;
 
-    protected byte[] blockEntities;
+    protected HashMap<PlayerProtocol, byte[]> blockEntities = new HashMap<>();
 
     public ChunkRequestTask(Level level, Chunk chunk) {
         this.timeStamp = chunk.getChanges();
@@ -33,20 +35,22 @@ public class ChunkRequestTask extends AsyncTask {
         this.chunkX = chunk.getX();
         this.chunkZ = chunk.getZ();
 
-        byte[] buffer = new byte[0];
+        for (PlayerProtocol protocol : PlayerProtocol.values()){
+            byte[] buffer = new byte[0];
 
-        for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
-            if (blockEntity instanceof BlockEntitySpawnable) {
-                try {
-                    buffer = Binary.appendBytes(buffer, NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), ByteOrder.BIG_ENDIAN, true));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                if (blockEntity instanceof BlockEntitySpawnable) {
+                    try {
+                        buffer = Binary.appendBytes(buffer, NBTIO.write(((BlockEntitySpawnable) blockEntity)
+                                .getSpawnCompound(protocol), ByteOrder.BIG_ENDIAN, true));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-
             }
-        }
 
-        this.blockEntities = buffer;
+            this.blockEntities.put(protocol, buffer);
+        }
     }
 
     @Override
@@ -54,42 +58,55 @@ public class ChunkRequestTask extends AsyncTask {
         Chunk chunk = Chunk.fromFastBinary(this.chunk);
         byte[] ids = chunk.getBlockIdArray();
         byte[] meta = chunk.getBlockDataArray();
+        byte[] blockLight = chunk.getBlockLightArray();
+        byte[] skyLight = chunk.getBlockSkyLightArray();
         byte[] heightMap = chunk.getHeightMapArray();
         int[] biomeColors = chunk.getBiomeColorArray();
-        ByteBuffer buffer = ByteBuffer.allocate(
-                16 * 16 * (128 + 64 + 64 + 64)
-                        + 256
-                        + 256
-                        + this.blockEntities.length
-        );
 
-        ByteBuffer orderedIds = ByteBuffer.allocate(16 * 16 * 128);
-        ByteBuffer orderedData = ByteBuffer.allocate(16 * 16 * 64);
-        ByteBuffer orderedSkyLight = ByteBuffer.allocate(16 * 16 * 64);
-        ByteBuffer orderedLight = ByteBuffer.allocate(16 * 16 * 64);
+        HashMap<PlayerProtocol, byte[]> result = new HashMap<>();
 
-        for (int x = 0; x < 16; ++x) {
-            for (int z = 0; z < 16; ++z) {
-                orderedIds.put(this.getColumn(ids, x, z));
-                orderedData.put(this.getHalfColumn(meta, x, z));
+        for (PlayerProtocol protocol : PlayerProtocol.values()) {
+            ByteBuffer buffer = ByteBuffer.allocate(
+                    16 * 16 * (128 + 64 + 64 + 64)
+                            + 256
+                            + 256
+                            + this.blockEntities.get(protocol).length
+            );
+
+            ByteBuffer orderedIds = ByteBuffer.allocate(16 * 16 * 128);
+            ByteBuffer orderedData = ByteBuffer.allocate(16 * 16 * 64);
+            ByteBuffer orderedSkyLight = ByteBuffer.allocate(16 * 16 * 64);
+            ByteBuffer orderedLight = ByteBuffer.allocate(16 * 16 * 64);
+
+            for (int x = 0; x < 16; ++x) {
+                for (int z = 0; z < 16; ++z) {
+                    orderedIds.put(this.getColumn(ids, x, z));
+                    orderedData.put(this.getHalfColumn(meta, x, z));
+                    orderedSkyLight.put(this.getHalfColumn(skyLight, x, z));
+                    orderedLight.put(this.getHalfColumn(blockLight, x, z));
+                }
             }
-        }
 
-        ByteBuffer orderedHeightMap = ByteBuffer.wrap(heightMap);
-        ByteBuffer orderedBiomeColors = ByteBuffer.allocate(biomeColors.length * 4);
-        for (int i : biomeColors) {
-            orderedBiomeColors.put(Binary.writeInt(i));
+            ByteBuffer orderedHeightMap = ByteBuffer.allocate(heightMap.length);
+            for (int i : heightMap) {
+                orderedHeightMap.put((byte) (i & 0xff));
+            }
+            ByteBuffer orderedBiomeColors = ByteBuffer.allocate(biomeColors.length * 4);
+            for (int i : biomeColors) {
+                orderedBiomeColors.put(Binary.writeInt(i));
+            }
+            buffer = buffer
+                    .put(orderedIds)
+                    .put(orderedData)
+                    .put(orderedHeightMap)
+                    .put(orderedBiomeColors);
+            if (protocol.getMainNumber() == 113) {
+                buffer = buffer.put(orderedSkyLight).put(orderedLight);
+            }
+            buffer.put(this.blockEntities.get(protocol));
+            result.put(protocol, buffer.array());
         }
-
-        this.setResult(
-                buffer
-                        .put(orderedIds)
-                        .put(orderedData)
-                        .put(orderedHeightMap)
-                        .put(orderedBiomeColors)
-                        .put(this.blockEntities)
-                        .array()
-        );
+        this.setResult(result);
     }
 
     public byte[] getColumn(byte[] data, int x, int z) {
@@ -120,7 +137,8 @@ public class ChunkRequestTask extends AsyncTask {
     public void onCompletion(Server server) {
         Level level = server.getLevel(this.levelId);
         if (level != null && this.hasResult()) {
-            level.chunkRequestCallback(timeStamp, this.chunkX, this.chunkZ, (byte[]) this.getResult());
+            HashMap<PlayerProtocol, byte[]> result = (HashMap) this.getResult();
+            level.chunkRequestCallback(timeStamp, this.chunkX, this.chunkZ, result);
         }
     }
 }

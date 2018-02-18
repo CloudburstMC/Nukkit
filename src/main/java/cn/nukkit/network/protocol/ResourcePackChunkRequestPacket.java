@@ -2,26 +2,25 @@ package cn.nukkit.network.protocol;
 
 public class ResourcePackChunkRequestPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET;
-
     public String packId;
     public int chunkIndex;
 
     @Override
-    public void decode() {
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("RESOURCE_PACK_CHUNK_REQUEST_PACKET");
+    }
+
+    @Override
+    public void decode(PlayerProtocol protocol) {
         this.packId = this.getString();
         this.chunkIndex = this.getLInt();
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putString(this.packId);
         this.putLInt(this.chunkIndex);
     }
 
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
 }

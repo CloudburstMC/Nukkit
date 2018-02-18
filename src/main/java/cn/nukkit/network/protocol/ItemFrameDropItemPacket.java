@@ -7,14 +7,17 @@ import cn.nukkit.math.BlockVector3;
  */
 public class ItemFrameDropItemPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET;
-
     public int x;
     public int y;
     public int z;
 
     @Override
-    public void decode() {
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("ITEM_FRAME_DROP_ITEM_PACKET");
+    }
+
+    @Override
+    public void decode(PlayerProtocol protocol) {
         BlockVector3 v = this.getBlockVector3();
         this.z = v.z;
         this.y = v.y;
@@ -22,12 +25,8 @@ public class ItemFrameDropItemPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
 
     }
 
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
 }

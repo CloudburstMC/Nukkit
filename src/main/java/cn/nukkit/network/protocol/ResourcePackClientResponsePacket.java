@@ -2,8 +2,6 @@ package cn.nukkit.network.protocol;
 
 public class ResourcePackClientResponsePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET;
-
     public static final byte STATUS_REFUSED = 1;
     public static final byte STATUS_SEND_PACKS = 2;
     public static final byte STATUS_HAVE_ALL_PACKS = 3;
@@ -13,7 +11,12 @@ public class ResourcePackClientResponsePacket extends DataPacket {
     public String[] packIds;
 
     @Override
-    public void decode() {
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("RESOURCE_PACK_CLIENT_RESPONSE_PACKET");
+    }
+
+    @Override
+    public void decode(PlayerProtocol protocol) {
         this.responseStatus = (byte) this.getByte();
         this.packIds = new String[this.getLShort()];
         for (int i = 0; i < this.packIds.length; i++) {
@@ -22,8 +25,8 @@ public class ResourcePackClientResponsePacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putByte(this.responseStatus);
         this.putLShort(this.packIds.length);
         for (String id : this.packIds) {
@@ -31,8 +34,4 @@ public class ResourcePackClientResponsePacket extends DataPacket {
         }
     }
 
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
 }

@@ -18,8 +18,6 @@ import java.util.List;
  */
 public class CraftingDataPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_DATA_PACKET;
-
     public static final int ENTRY_SHAPELESS = 0;
     public static final int ENTRY_SHAPED = 1;
     public static final int ENTRY_FURNACE = 2;
@@ -30,11 +28,16 @@ public class CraftingDataPacket extends DataPacket {
     public List<Object> entries = new ArrayList<>();
     public boolean cleanRecipes;
 
-    private static int writeEntry(Object entry, BinaryStream stream) {
+    @Override
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("CRAFTING_DATA_PACKET");
+    }
+
+    private static int writeEntry(Object entry, BinaryStream stream, PlayerProtocol protocol) {
         if (entry instanceof ShapelessRecipe) {
-            return writeShapelessRecipe(((ShapelessRecipe) entry), stream);
+            return writeShapelessRecipe(((ShapelessRecipe) entry), stream, protocol);
         } else if (entry instanceof ShapedRecipe) {
-            return writeShapedRecipe(((ShapedRecipe) entry), stream);
+            return writeShapedRecipe(((ShapedRecipe) entry), stream, protocol);
         } else if (entry instanceof FurnaceRecipe) {
             return writeFurnaceRecipe(((FurnaceRecipe) entry), stream);
         } else if (entry instanceof EnchantmentList) {
@@ -43,7 +46,7 @@ public class CraftingDataPacket extends DataPacket {
         return -1;
     }
 
-    private static int writeShapelessRecipe(ShapelessRecipe recipe, BinaryStream stream) {
+    private static int writeShapelessRecipe(ShapelessRecipe recipe, BinaryStream stream, PlayerProtocol protocol) {
         stream.putUnsignedVarInt(recipe.getIngredientCount());
 
         for (Item item : recipe.getIngredientList()) {
@@ -52,12 +55,12 @@ public class CraftingDataPacket extends DataPacket {
 
         stream.putUnsignedVarInt(1);
         stream.putSlot(recipe.getResult());
-        stream.putUUID(recipe.getId());
+        stream.putUUID(recipe.getId(), protocol);
 
         return CraftingDataPacket.ENTRY_SHAPELESS;
     }
 
-    private static int writeShapedRecipe(ShapedRecipe recipe, BinaryStream stream) {
+    private static int writeShapedRecipe(ShapedRecipe recipe, BinaryStream stream, PlayerProtocol protocol) {
         stream.putVarInt(recipe.getWidth());
         stream.putVarInt(recipe.getHeight());
 
@@ -70,7 +73,7 @@ public class CraftingDataPacket extends DataPacket {
         stream.putUnsignedVarInt(1);
         stream.putSlot(recipe.getResult());
 
-        stream.putUUID(recipe.getId());
+        stream.putUUID(recipe.getId(), protocol);
 
         return CraftingDataPacket.ENTRY_SHAPED;
     }
@@ -128,19 +131,19 @@ public class CraftingDataPacket extends DataPacket {
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putUnsignedVarInt(entries.size());
 
         BinaryStream writer = new BinaryStream();
 
         for (Object entry : entries) {
-            int entryType = writeEntry(entry, writer);
+            int entryType = writeEntry(entry, writer, protocol);
             if (entryType >= 0) {
                 this.putVarInt(entryType);
                 this.put(writer.getBuffer());
@@ -152,11 +155,6 @@ public class CraftingDataPacket extends DataPacket {
         }
 
         this.putBoolean(cleanRecipes);
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
 }

@@ -5,8 +5,6 @@ package cn.nukkit.network.protocol;
  */
 public class AddPaintingPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ADD_PAINTING_PACKET;
-
     public long entityUniqueId;
     public long entityRuntimeId;
     public int x;
@@ -16,23 +14,23 @@ public class AddPaintingPacket extends DataPacket {
     public String title;
 
     @Override
-    public void decode() {
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("ADD_PAINTING_PACKET");
+    }
+
+    @Override
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
         this.putBlockVector3(this.x, this.y, this.z);
         this.putVarInt(this.direction);
         this.putString(this.title);
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
 }

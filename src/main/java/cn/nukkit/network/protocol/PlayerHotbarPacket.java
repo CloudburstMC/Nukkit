@@ -13,12 +13,12 @@ public class PlayerHotbarPacket extends DataPacket {
     public boolean selectHotbarSlot = true;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.PLAYER_HOTBAR_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("PLAYER_HOTBAR_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.selectedHotbarSlot = (int) this.getUnsignedVarInt();
         this.windowId = this.getByte();
         int count = (int) this.getUnsignedVarInt();
@@ -31,8 +31,8 @@ public class PlayerHotbarPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putUnsignedVarInt(this.selectedHotbarSlot);
         this.putByte((byte) this.windowId);
         this.putUnsignedVarInt(this.slots.length);

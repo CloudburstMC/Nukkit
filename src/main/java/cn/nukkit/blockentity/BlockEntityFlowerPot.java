@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 /**
  * Created by Snake1999 on 2016/2/4.
@@ -38,7 +39,7 @@ public class BlockEntityFlowerPot extends BlockEntitySpawnable {
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         return new CompoundTag()
                 .putString("id", BlockEntity.FLOWER_POT)
                 .putInt("x", (int) this.x)

@@ -1099,7 +1099,7 @@ public class Level implements ChunkManager, Metadatable {
                                 int fullId = chunk.getFullBlock(x, y + (Y << 4), z);
                                 int blockId = fullId >> 4;
                                 blockTest |= fullId;
-                                if (this.randomTickBlocks[blockId]) {
+                                if (randomTickBlocks[blockId]) {
                                     Block block = Block.get(fullId, this, x, y + (Y << 4), z);
                                     block.onUpdate(BLOCK_UPDATE_RANDOM);
                                 }
@@ -2477,11 +2477,11 @@ public class Level implements ChunkManager, Metadatable {
         this.chunkSendQueue.get(index).put(player.getLoaderId(), player);
     }
 
-    private void sendChunk(int x, int z, long index, DataPacket packet) {
+    private void sendChunk(int x, int z, long index, HashMap<PlayerProtocol, DataPacket> packets) {
         if (this.chunkSendTasks.containsKey(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
                 if (player.isConnected() && player.usedChunks.containsKey(index)) {
-                    player.sendChunk(x, z, packet);
+                    player.sendChunk(x, z, packets.get(player.getProtocol()));
                 }
             }
 
@@ -2501,31 +2501,40 @@ public class Level implements ChunkManager, Metadatable {
             this.chunkSendTasks.put(index, Boolean.TRUE);
             BaseFullChunk chunk = getChunk(x, z);
             if (chunk != null) {
-                BatchPacket packet = chunk.getChunkPacket();
-                if (packet != null) {
-                    this.sendChunk(x, z, index, packet);
+                HashMap<PlayerProtocol, DataPacket> packets = new HashMap<>();
+                boolean wasError = false;
+                for (PlayerProtocol protocol : PlayerProtocol.values()){
+                    BatchPacket pk = chunk.getChunkPacket(protocol);
+                    if (pk == null){
+                        wasError = true;
+                        break;
+                    }
+                    packets.put(protocol, pk);
+                }
+                if (!wasError) {
+                    this.sendChunk(x, z, index, packets);
                     continue;
                 }
             }
             this.timings.syncChunkSendPrepareTimer.startTiming();
             AsyncTask task = this.provider.requestChunkTask(x, z);
             if (task != null) {
-                this.server.getScheduler().scheduleAsyncTask(task);
+                this.server.getScheduler().scheduleAsyncTask(null, task);
             }
             this.timings.syncChunkSendPrepareTimer.stopTiming();
         }
         this.timings.syncChunkSendTimer.stopTiming();
     }
 
-    public void chunkRequestCallback(long timestamp, int x, int z, byte[] payload) {
+    public void chunkRequestCallback(long timestamp, int x, int z, HashMap<PlayerProtocol, byte[]> payload) {
         this.timings.syncChunkSendTimer.startTiming();
         long index = Level.chunkHash(x, z);
 
         if (this.cacheChunks) {
-            BatchPacket data = Player.getChunkCacheFromData(x, z, payload);
+            HashMap<PlayerProtocol, DataPacket> data = Player.getChunkCacheFromData(x, z, payload);
             BaseFullChunk chunk = getChunk(x, z, false);
             if (chunk != null && chunk.getChanges() <= timestamp) {
-                chunk.setChunkPacket(data);
+                chunk.setChunkPackets(data);
             }
             this.sendChunk(x, z, index, data);
             this.timings.syncChunkSendTimer.stopTiming();
@@ -2535,7 +2544,7 @@ public class Level implements ChunkManager, Metadatable {
         if (this.chunkSendTasks.containsKey(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
                 if (player.isConnected() && player.usedChunks.containsKey(index)) {
-                    player.sendChunk(x, z, payload);
+                    player.sendChunk(x, z, payload.get(player.getProtocol()));
                 }
             }
 

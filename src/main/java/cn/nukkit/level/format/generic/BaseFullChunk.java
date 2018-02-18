@@ -14,13 +14,12 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.network.protocol.BatchPacket;
+import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -62,7 +61,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     protected boolean isInit;
 
-    protected BatchPacket chunkPacket;
+    protected HashMap<PlayerProtocol, DataPacket> chunkPackets = new HashMap<>();
 
     @Override
     public BaseFullChunk clone() {
@@ -98,19 +97,21 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         return chunk;
     }
 
-    public void setChunkPacket(BatchPacket packet) {
-        if (packet != null) {
-            packet.trim();
-        }
-        this.chunkPacket = packet;
+    public void setChunkPackets(HashMap<PlayerProtocol, DataPacket> packets) {
+        HashMap<PlayerProtocol, DataPacket> newPackets = new HashMap<>();
+        packets.forEach((protocol, batchPacket) -> {
+            if (batchPacket != null) ((BatchPacket) batchPacket).trim();
+            newPackets.put(protocol, batchPacket);
+        });
+        this.chunkPackets = newPackets;
     }
 
-    public BatchPacket getChunkPacket() {
-        BatchPacket pk = chunkPacket;
+    public BatchPacket getChunkPacket(PlayerProtocol protocol) {
+        BatchPacket pk = (BatchPacket) chunkPackets.get(protocol);
         if (pk != null) {
             pk.trim();
         }
-        return chunkPacket;
+        return pk;
     }
 
     protected void checkOldBiomes(byte[] data) {
@@ -517,7 +518,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public void setChanged() {
         this.changes++;
-        chunkPacket = null;
+        chunkPackets.clear();
     }
 
     @Override
@@ -608,12 +609,16 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         throw new UnsupportedOperationException("Chunk does not have a seed");
     }
 
+    boolean wasError = false;
     public boolean compress() {
-        BatchPacket pk = chunkPacket;
-        if (pk != null) {
-            pk.trim();
-            return true;
-        }
-        return false;
+        wasError = false;
+        HashMap<PlayerProtocol, DataPacket> packets = new HashMap<>();
+        packets.forEach(((protocol, batchPacket) -> {
+            if (batchPacket != null) ((BatchPacket) batchPacket).trim();
+            else wasError = true;
+            packets.put(protocol, batchPacket);
+        }));
+        this.chunkPackets = packets;
+        return !wasError;
     }
 }

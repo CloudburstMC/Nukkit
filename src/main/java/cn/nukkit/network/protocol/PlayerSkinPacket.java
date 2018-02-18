@@ -14,13 +14,13 @@ public class PlayerSkinPacket extends DataPacket {
     public String geometryData;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.PLAYER_SKIN_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("PLAYER_SKIN_PACKET");
     }
 
     @Override
-    public void decode() {
-        this.uuid = this.getUUID();
+    public void decode(PlayerProtocol protocol) {
+        this.uuid = this.getUUID(protocol);
         String skinId = this.getString();
         this.skinName = this.getString();
         this.oldSkinName = this.getString();
@@ -33,9 +33,9 @@ public class PlayerSkinPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putUUID(this.uuid);
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
+        this.putUUID(this.uuid, protocol);
         this.putString(this.skin.getModel());
         this.putString(this.skinName);
         this.putString(this.oldSkinName);

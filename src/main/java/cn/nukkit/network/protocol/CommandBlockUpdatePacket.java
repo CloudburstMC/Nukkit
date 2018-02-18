@@ -18,12 +18,12 @@ public class CommandBlockUpdatePacket extends DataPacket {
     public boolean shouldTrackOutput;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.COMMAND_BLOCK_UPDATE_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("COMMAND_BLOCK_UPDATE_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.isBlock = this.getBoolean();
         if (this.isBlock) {
             BlockVector3 v = this.getBlockVector3();
@@ -43,8 +43,8 @@ public class CommandBlockUpdatePacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putBoolean(this.isBlock);
         if (this.isBlock) {
             this.putBlockVector3(this.x, this.y, this.z);

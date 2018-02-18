@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemPotion;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
@@ -33,7 +34,7 @@ public class CraftingManager {
 
     private static int RECIPE_COUNT = 0;
 
-    public static DataPacket packet = null;
+    public static HashMap<PlayerProtocol, DataPacket> packets = new HashMap<>();
 
     private static final Comparator<Item> recipeComparator = (i1, i2) -> {
         if (i1.getId() > i2.getId()) {
@@ -78,6 +79,7 @@ public class CraftingManager {
                         for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
                             result.addIngredient(Item.fromJson(ingredient));
                         }
+                        result.setRecipeProtocol(Utils.toInt(recipe.getOrDefault("protocol", 130)));
 
                         this.registerRecipe(result);
                         break;
@@ -101,13 +103,20 @@ public class CraftingManager {
                             extraResults.add(Item.fromJson(data));
                         }
 
-                        this.registerRecipe(new ShapedRecipe(Item.fromJson(first), shape, ingredients, extraResults));
+                        ShapedRecipe shapedRecipe = new ShapedRecipe(Item.fromJson(first), shape, ingredients, extraResults);
+                        shapedRecipe.setRecipeProtocol(Utils.toInt(recipe.getOrDefault("protocol", 130)));
+
+                        this.registerRecipe(shapedRecipe);
                         break;
                     case 2:
                     case 3:
                         Map<String, Object> resultMap = (Map) recipe.get("output");
                         Item resultItem = Item.fromJson(resultMap);
-                        this.registerRecipe(new FurnaceRecipe(resultItem, Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1)));
+
+                        FurnaceRecipe furnaceRecipe = new FurnaceRecipe(resultItem, Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1));
+                        furnaceRecipe.setRecipeProtocol(Utils.toInt(recipe.getOrDefault("protocol", 130)));
+
+                        this.registerRecipe(furnaceRecipe);
                         break;
                     default:
                         break;
@@ -166,23 +175,26 @@ public class CraftingManager {
     }
 
     public void rebuildPacket() {
-        CraftingDataPacket pk = new CraftingDataPacket();
-        pk.cleanRecipes = true;
-
-        for (Recipe recipe : this.getRecipes()) {
-            if (recipe instanceof ShapedRecipe) {
-                pk.addShapedRecipe((ShapedRecipe) recipe);
-            } else if (recipe instanceof ShapelessRecipe) {
-                pk.addShapelessRecipe((ShapelessRecipe) recipe);
+        packets.clear();
+        for (PlayerProtocol protocol : PlayerProtocol.values()){
+            CraftingDataPacket pk = new CraftingDataPacket();
+            pk.cleanRecipes = true;
+            for (Recipe recipe : this.getRecipes()) {
+                if (recipe instanceof ShapedRecipe) {
+                    if (recipe.isCompatibleWith(protocol.getNumber())) pk.addShapedRecipe((ShapedRecipe) recipe);
+                } else if (recipe instanceof ShapelessRecipe) {
+                    if (recipe.isCompatibleWith(protocol.getNumber())) pk.addShapelessRecipe((ShapelessRecipe) recipe);
+                }
             }
-        }
 
-        for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
-            pk.addFurnaceRecipe(recipe);
-        }
-        pk.encode();
+            for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
+                if (recipe.isCompatibleWith(protocol.getNumber())) pk.addFurnaceRecipe((FurnaceRecipe) recipe);
+            }
 
-        packet = pk.compress(Deflater.BEST_COMPRESSION);
+            pk.encode(protocol);
+
+            packets.put(protocol, pk.compress(Deflater.BEST_COMPRESSION));
+        }
     }
 
     public Collection<Recipe> getRecipes() {
@@ -311,6 +323,29 @@ public class CraftingManager {
         }
 
         return null;
+    }
+    public Recipe getRecipe(UUID uuid){
+        for (Recipe recipe : this.recipes){
+            if (recipe instanceof CraftingRecipe){
+                if (((CraftingRecipe) recipe).getId().equals(uuid)) return recipe;
+            }
+        }
+        return null;
+    }
+    public Recipe[] getRecipesByResult(Item... output){
+        if (output.length == 0) return new Recipe[0];
+        return this.recipes.stream().filter(recipe -> {
+            if (recipe instanceof CraftingRecipe) {
+                List<Item> neededItems = ((CraftingRecipe) recipe).getAllResults();
+                int needMatches = output.length;
+                for (Item outputItem : output) {
+                    needMatches--;
+                    if (neededItems.contains(outputItem)) neededItems.remove(outputItem);
+                }
+                return (needMatches == 0 && neededItems.size() == 0);
+            }
+            return recipe.getResult().equals(output[0]) && output.length == 1;
+        }).toArray(Recipe[]::new);
     }
 
     private Item[][] cloneItemMap(Item[][] map) {

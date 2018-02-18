@@ -27,6 +27,9 @@ public class CraftingTransaction extends InventoryTransaction {
     protected Item primaryOutput;
 
     protected CraftingRecipe recipe;
+    public void setRecipe(CraftingRecipe recipe){
+        this.recipe = recipe;
+    }
 
     public CraftingTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions, false);

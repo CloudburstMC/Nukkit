@@ -10,5 +10,8 @@ public interface Recipe {
 
     Item getResult();
 
+    boolean isCompatibleWith(int protocolVersion);
+    void setRecipeProtocol(int protocolVersion);
+
     void registerToCraftingManager(CraftingManager manager);
 }

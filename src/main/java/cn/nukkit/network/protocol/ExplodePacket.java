@@ -8,8 +8,6 @@ import cn.nukkit.math.Vector3;
  */
 public class ExplodePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.EXPLODE_PACKET;
-
     public float x;
     public float y;
     public float z;
@@ -17,8 +15,8 @@ public class ExplodePacket extends DataPacket {
     public Vector3[] records = new Vector3[0];
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("EXPLODE_PACKET");
     }
 
     @Override
@@ -28,13 +26,13 @@ public class ExplodePacket extends DataPacket {
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putVector3f(this.x, this.y, this.z);
         this.putVarInt((int) (this.radius * 32));
         this.putUnsignedVarInt(this.records.length);

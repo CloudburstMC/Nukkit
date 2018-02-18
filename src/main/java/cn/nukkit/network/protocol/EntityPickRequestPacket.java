@@ -2,20 +2,18 @@ package cn.nukkit.network.protocol;
 
 public class EntityPickRequestPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ENTITY_PICK_REQUEST_PACKET;
-
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("ENTITY_PICK_REQUEST_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
         //TODO
     }
 }

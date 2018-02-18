@@ -7,22 +7,20 @@ import cn.nukkit.entity.Attribute;
  */
 public class UpdateAttributesPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_ATTRIBUTES_PACKET;
-
     public Attribute[] entries;
     public long entityId;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("UPDATE_ATTRIBUTES_PACKET");
     }
 
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
 
         this.putEntityRuntimeId(this.entityId);
 

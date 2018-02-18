@@ -5,6 +5,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.BlockEntityDataPacket;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -26,14 +27,14 @@ public abstract class BlockEntitySpawnable extends BlockEntity {
         this.spawnToAll();
     }
 
-    public abstract CompoundTag getSpawnCompound();
+    public abstract CompoundTag getSpawnCompound(PlayerProtocol protocol);
 
     public void spawnTo(Player player) {
         if (this.closed) {
             return;
         }
 
-        CompoundTag tag = this.getSpawnCompound();
+        CompoundTag tag = this.getSpawnCompound(player.getProtocol());
         BlockEntityDataPacket pk = new BlockEntityDataPacket();
         pk.x = (int) this.x;
         pk.y = (int) this.y;

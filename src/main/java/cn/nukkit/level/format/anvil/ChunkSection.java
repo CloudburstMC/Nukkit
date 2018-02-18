@@ -4,11 +4,13 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.format.anvil.palette.BlockDataPalette;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.ThreadCache;
 import cn.nukkit.utils.Utils;
 import cn.nukkit.utils.Zlib;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
@@ -325,8 +327,38 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     @Override
-    public byte[] getBytes() {
-        return toXZY(palette.getRaw());
+    public byte[] getBytes(PlayerProtocol protocol) {
+        if (protocol.getMainNumber() >= 130) return toXZY(palette.getRaw());
+        ByteBuffer buffer;
+        byte[] blocks = new byte[4096];
+        byte[] data = new byte[2048];
+        byte[] skyLight = new byte[2048];
+        byte[] blockLight = new byte[2048];
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                int i = (x << 7) | (z << 3);
+                for (int y = 0; y < 16; y += 2) {
+                    blocks[(i << 1) | y] = (byte) this.getBlockId(x, y, z);
+                    blocks[(i << 1) | (y + 1)] = (byte) this.getBlockId(x, y + 1, z);
+                    int b1 = this.getBlockData(x, y, z);
+                    int b2 = this.getBlockData(x, y + 1, z);
+                    data[i | (y >> 1)] = (byte) ((b2 << 4) | b1);
+                    b1 = this.getBlockSkyLight(x, y, z);
+                    b2 = this.getBlockSkyLight(x, y + 1, z);
+                    skyLight[i | (y >> 1)] = (byte) ((b2 << 4) | b1);
+                    b1 = this.getBlockLight(x, y, z);
+                    b2 = this.getBlockLight(x, y + 1, z);
+                    blockLight[i | (y >> 1)] = (byte) ((b2 << 4) | b1);
+                }
+            }
+        }
+        buffer = ByteBuffer.allocate(10240);
+        return buffer
+                .put(blocks)
+                .put(data)
+                .put(skyLight)
+                .put(blockLight)
+                .array();
     }
 
     public boolean compress() {

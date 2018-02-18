@@ -72,7 +72,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
                         ServerCommandEvent event = new ServerCommandEvent(Server.getInstance().getConsoleSender(), line);
                         Server.getInstance().getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
-                            Server.getInstance().getScheduler().scheduleTask(() -> Server.getInstance().dispatchCommand(event.getSender(), event.getCommand()));
+                            Server.getInstance().getScheduler().scheduleTask(null, () -> Server.getInstance().dispatchCommand(event.getSender(), event.getCommand()));
                         }
                         Timings.serverCommandTimer.stopTiming();
                     } catch (Exception e) {

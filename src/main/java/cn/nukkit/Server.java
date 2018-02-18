@@ -50,10 +50,7 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.BatchPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.PlayerListPacket;
-import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.permission.BanEntry;
@@ -575,12 +572,17 @@ public class Server {
     }
 
     public static void broadcastPacket(Player[] players, DataPacket packet) {
-        packet.encode();
-        packet.isEncoded = true;
+        HashMap<PlayerProtocol, DataPacket> packets = new HashMap<>();
+        for (PlayerProtocol protocol : PlayerProtocol.values()) {
+            DataPacket pk = packet.clone();
+            pk.encode(protocol);
+            pk.isEncoded = true;
+            packets.put(protocol, pk);
+        }
 
-        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
+        if (packet.getClass().getSimpleName().equals("BatchPacket")) {
             for (Player player : players) {
-                player.dataPacket(packet);
+                player.dataPacket(packets.getOrDefault(player.getProtocol(), packet));
             }
         } else {
             getInstance().batchPackets(players, new DataPacket[]{packet}, true);
@@ -601,36 +603,33 @@ public class Server {
         }
 
         Timings.playerNetworkSendTimer.startTiming();
-        byte[][] payload = new byte[packets.length * 2][];
-        int size = 0;
-        for (int i = 0; i < packets.length; i++) {
-            DataPacket p = packets[i];
-            if (!p.isEncoded) {
-                p.encode();
+        for (PlayerProtocol protocol : PlayerProtocol.values()){
+            byte[][] payload = new byte[packets.length * 2][];
+            for (int i = 0; i < packets.length; i++) {
+                DataPacket p = packets[i];
+                if (!p.isEncoded) p.encode(protocol);
+                byte[] buf = p.getBuffer();
+                payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
+                payload[i * 2 + 1] = buf;
             }
-            byte[] buf = p.getBuffer();
-            payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
-            payload[i * 2 + 1] = buf;
-            packets[i] = null;
-            size += payload[i * 2].length;
-            size += payload[i * 2 + 1].length;
-        }
+            byte[] data;
+            data = Binary.appendBytes(payload);
 
-        List<String> targets = new ArrayList<>();
-        for (Player p : players) {
-            if (p.isConnected()) {
-                targets.add(this.identifier.get(p.rawHashCode()));
+            List<String> targets = new ArrayList<>();
+            for (Player p : players) {
+                if (p.isConnected()) {
+                    if (p.getProtocol().equals(protocol)) targets.add(this.identifier.get(p.rawHashCode()));
+                }
             }
-        }
 
-        if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
-        } else {
-            try {
-                byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            if (!forceSync && this.networkCompressionAsync) {
+                this.getScheduler().scheduleAsyncTask(null, new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
+            } else {
+                try {
+                    this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         Timings.playerNetworkSendTimer.stopTiming();
@@ -965,7 +964,7 @@ public class Server {
     }
 
     public void sendRecipeList(Player player) {
-        player.dataPacket(CraftingManager.packet);
+        player.dataPacket(CraftingManager.packets.get(player.getProtocol()));
     }
 
     private void checkTickUpdates(int currentTick, long tickTime) {
@@ -1517,7 +1516,7 @@ public class Server {
         if (this.shouldSavePlayerData()) {
             try {
                 if (async) {
-                    this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
+                    this.getScheduler().scheduleAsyncTask(null, new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
                 } else {
                     Utils.writeFile(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", new ByteArrayInputStream(NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
                 }
@@ -2021,6 +2020,7 @@ public class Server {
         Entity.registerEntity("Enderman", EntityEnderman.class);
         Entity.registerEntity("Endermite", EntityEndermite.class);
         Entity.registerEntity("Evoker", EntityEvoker.class);
+        Entity.registerEntity("Firework", EntityFirework.class);
         Entity.registerEntity("Ghast", EntityGhast.class);
         Entity.registerEntity("Guardian", EntityGuardian.class);
         Entity.registerEntity("Husk", EntityHusk.class);

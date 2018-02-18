@@ -20,18 +20,21 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     public Integer orderIndex = null;
     public Integer orderChannel = null;
 
-    public abstract byte pid();
+    @Deprecated
+    public byte pid(){
+        return pid(PlayerProtocol.getNewestProtocol());
+    }
 
-    public abstract void decode();
+    public abstract byte pid(PlayerProtocol protocol);
 
-    public abstract void encode();
+    public abstract void decode(PlayerProtocol protocol);
 
-    @Override
-    public DataPacket reset() {
+    public abstract void encode(PlayerProtocol protocol);
+
+    public void reset(PlayerProtocol protocol) {
         super.reset();
-        this.putByte(this.pid());
-        this.putShort(0);
-        return this;
+        this.putByte(this.pid(protocol));
+        if (protocol.getMainNumber() >= 130) this.putShort(0);
     }
 
     public void setChannel(int channel) {

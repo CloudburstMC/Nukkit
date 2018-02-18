@@ -6,18 +6,18 @@ public class ModalFormResponsePacket extends DataPacket {
     public String data;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.MODAL_FORM_RESPONSE_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("MODAL_FORM_RESPONSE_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.formId = this.getVarInt();
         this.data = this.getString(); //Data will be null if player close form without submit (by cross button or ESC)
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
 
     }
 }

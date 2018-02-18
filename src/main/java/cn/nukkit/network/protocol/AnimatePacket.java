@@ -5,14 +5,17 @@ package cn.nukkit.network.protocol;
  */
 public class AnimatePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ANIMATE_PACKET;
-
     public long eid;
     public int action;
     public float unknown;
 
     @Override
-    public void decode() {
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("ANIMATE_PACKET");
+    }
+
+    @Override
+    public void decode(PlayerProtocol protocol) {
         this.action = this.getVarInt();
         this.eid = getEntityRuntimeId();
         if ((this.action & 0x80) != 0) {
@@ -21,18 +24,13 @@ public class AnimatePacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
         this.reset();
         this.putVarInt(this.action);
         this.putEntityRuntimeId(this.eid);
         if ((this.action & 0x80) != 0) {
             this.putLFloat(this.unknown);
         }
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
 }

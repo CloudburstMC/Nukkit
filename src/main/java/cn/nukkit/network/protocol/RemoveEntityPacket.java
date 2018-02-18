@@ -5,23 +5,22 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class RemoveEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.REMOVE_ENTITY_PACKET;
 
     public long eid;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("REMOVE_ENTITY_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityUniqueId(this.eid);
     }
 }

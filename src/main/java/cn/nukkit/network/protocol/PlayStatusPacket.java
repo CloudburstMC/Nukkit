@@ -5,11 +5,9 @@ package cn.nukkit.network.protocol;
  */
 public class PlayStatusPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.PLAY_STATUS_PACKET;
-
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("PLAY_STATUS_PACKET");
     }
 
     public static final int LOGIN_SUCCESS = 0;
@@ -23,13 +21,13 @@ public class PlayStatusPacket extends DataPacket {
     public int status;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putInt(this.status);
     }
 

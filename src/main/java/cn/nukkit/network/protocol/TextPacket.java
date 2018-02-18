@@ -5,11 +5,9 @@ package cn.nukkit.network.protocol;
  */
 public class TextPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.TEXT_PACKET;
-
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("TEXT_PACKET");
     }
 
     public static final byte TYPE_RAW = 0;
@@ -28,9 +26,9 @@ public class TextPacket extends DataPacket {
     public boolean isLocalized = false;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.type = (byte) getByte();
-        this.isLocalized = this.getBoolean();
+        if (protocol.getMainNumber() >= 130) this.isLocalized = this.getBoolean();
         switch (type) {
             case TYPE_POPUP:
             case TYPE_CHAT:
@@ -54,10 +52,10 @@ public class TextPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putByte(this.type);
-        this.putBoolean(this.isLocalized);
+        if (protocol.getMainNumber() >= 130) this.putBoolean(this.isLocalized);
         switch (this.type) {
             case TYPE_POPUP:
             case TYPE_CHAT:

@@ -5,8 +5,10 @@ package cn.nukkit.network.protocol;
  */
 public class InteractPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.INTERACT_PACKET;
-
+    //Only 1.1
+    public static final int ACTION_RIGHT_CLICK = 1;
+    public static final int ACTION_LEFT_CLICK = 2;
+    //Everything
     public static final int ACTION_VEHICLE_EXIT = 3;
     public static final int ACTION_MOUSEOVER = 4;
 
@@ -16,21 +18,21 @@ public class InteractPacket extends DataPacket {
     public long target;
 
     @Override
-    public void decode() {
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("INTERACT_PACKET");
+    }
+
+    @Override
+    public void decode(PlayerProtocol protocol) {
         this.action = this.getByte();
         this.target = this.getEntityRuntimeId();
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putByte((byte) this.action);
         this.putEntityRuntimeId(this.target);
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
 }

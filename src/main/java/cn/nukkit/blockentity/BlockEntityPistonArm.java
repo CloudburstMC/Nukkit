@@ -9,6 +9,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 /**
  * @author CreeperFace
@@ -95,7 +96,7 @@ public class BlockEntityPistonArm extends BlockEntity {
         this.namedTag.putBoolean("powered", this.powered);
     }
 
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         return (new CompoundTag()).putString("id", "PistonArm").putInt("x", (int) this.x).putInt("y", (int) this.y).putInt("z", (int) this.z);
     }
 }

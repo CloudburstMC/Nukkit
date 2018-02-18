@@ -7,11 +7,10 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class MobEquipmentPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.MOB_EQUIPMENT_PACKET;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("MOB_EQUIPMENT_PACKET");
     }
 
     public long eid;
@@ -21,20 +20,24 @@ public class MobEquipmentPacket extends DataPacket {
     public int windowId;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.eid = this.getEntityRuntimeId(); //EntityRuntimeID
         this.item = this.getSlot();
         this.inventorySlot = this.getByte();
+        if (this.windowId == 0 && protocol.getMainNumber() == 113) this.inventorySlot -= 9;
+        if (this.inventorySlot < 0) this.inventorySlot += 9;
         this.hotbarSlot = this.getByte();
         this.windowId = this.getByte();
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityRuntimeId(this.eid); //EntityRuntimeID
         this.putSlot(this.item);
-        this.putByte((byte) this.inventorySlot);
+        if (this.windowId == 0 && protocol.getMainNumber() == 113) this.inventorySlot += 9;
+        if (this.inventorySlot < 0) this.inventorySlot += 9;
+        this.putByte((byte) (this.inventorySlot));
         this.putByte((byte) this.hotbarSlot);
         this.putByte((byte) this.windowId);
     }

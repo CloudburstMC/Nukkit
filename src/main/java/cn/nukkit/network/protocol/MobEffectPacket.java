@@ -6,11 +6,9 @@ package cn.nukkit.network.protocol;
  */
 public class MobEffectPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.MOB_EFFECT_PACKET;
-
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("MOB_EFFECT_PACKET");
     }
 
     public static final byte EVENT_ADD = 1;
@@ -25,13 +23,13 @@ public class MobEffectPacket extends DataPacket {
     public int duration = 0;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityRuntimeId(this.eid);
         this.putByte((byte) this.eventId);
         this.putVarInt(this.effectId);

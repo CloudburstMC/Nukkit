@@ -42,13 +42,13 @@ public class InventoryTransactionPacket extends DataPacket {
     public boolean isCraftingPart = false;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.INVENTORY_TRANSACTION_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("INVENTORY_TRANSACTION_PACKET");
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putUnsignedVarInt(this.transactionType);
 
         this.putUnsignedVarInt(this.actions.length);
@@ -95,7 +95,7 @@ public class InventoryTransactionPacket extends DataPacket {
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.transactionType = (int) this.getUnsignedVarInt();
 
         this.actions = new NetworkInventoryAction[(int) this.getUnsignedVarInt()];

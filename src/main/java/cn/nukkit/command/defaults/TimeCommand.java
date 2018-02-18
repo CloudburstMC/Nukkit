@@ -22,14 +22,14 @@ public class TimeCommand extends VanillaCommand {
                 "nukkit.command.time.stop");
         this.commandParameters.clear();
         this.commandParameters.put("1arg", new CommandParameter[]{
-                new CommandParameter("start|stop", CommandParameter.ARG_TYPE_STRING, false)
+                new CommandParameter("start|stop", false, new String[]{"start", "stop"})
         });
         this.commandParameters.put("2args", new CommandParameter[]{
-                new CommandParameter("add|set", CommandParameter.ARG_TYPE_STRING, false),
+                new CommandParameter("add|set", false, new String[]{"add", "set"}),
                 new CommandParameter("value", CommandParameter.ARG_TYPE_INT, false)
         });
         this.commandParameters.put("2args_", new CommandParameter[]{
-                new CommandParameter("add|set", CommandParameter.ARG_TYPE_STRING, false),
+                new CommandParameter("add|set", false, new String[]{"add", "set"}),
                 new CommandParameter("value", CommandParameter.ARG_TYPE_STRING, false)
         });
     }

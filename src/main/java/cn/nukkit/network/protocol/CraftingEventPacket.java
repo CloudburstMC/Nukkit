@@ -10,8 +10,6 @@ import java.util.UUID;
  */
 public class CraftingEventPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_EVENT_PACKET;
-
     public static final int TYPE_SHAPELESS = 0;
     public static final int TYPE_SHAPED = 1;
     public static final int TYPE_FURNACE = 2;
@@ -27,10 +25,23 @@ public class CraftingEventPacket extends DataPacket {
     public Item[] output;
 
     @Override
-    public void decode() {
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("CRAFTING_EVENT_PACKET");
+    }
+
+    @Override
+    public void decode(PlayerProtocol protocol) {
         this.windowId = this.getByte();
-        this.type = this.getVarInt();
-        this.id = this.getUUID();
+        switch(protocol.getMainNumber()){
+            case 130:
+            default:
+                this.type = this.getVarInt();
+                break;
+            case 113:
+                this.type = (int) this.getUnsignedVarInt();
+                break;
+        }
+        this.id = this.getUUID(protocol);
 
         int inputSize = (int) this.getUnsignedVarInt();
         this.input = new Item[inputSize];
@@ -46,13 +57,8 @@ public class CraftingEventPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
 
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
 }

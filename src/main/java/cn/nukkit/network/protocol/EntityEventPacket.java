@@ -5,8 +5,6 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class EntityEventPacket extends DataPacket {
-    public static final int NETWORK_ID = ProtocolInfo.ENTITY_EVENT_PACKET;
-
 
     public static final int HURT_ANIMATION = 2;
     public static final int DEATH_ANIMATION = 3;
@@ -25,6 +23,8 @@ public class EntityEventPacket extends DataPacket {
     public static final int AMBIENT_SOUND = 17;
     public static final int RESPAWN = 18;
 
+    public static final int FIREWORK_EXPLOSION = 25;
+
     public static final int ENCHANT = 34;
 
     public static final byte EATING_ITEM = 57;
@@ -32,8 +32,8 @@ public class EntityEventPacket extends DataPacket {
     public static final byte UNKNOWN1 = 66;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("ENTITY_EVENT_PACKET");
     }
 
     public long eid;
@@ -41,15 +41,15 @@ public class EntityEventPacket extends DataPacket {
     public int data;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.eid = this.getEntityRuntimeId();
         this.event = this.getByte();
         this.data = this.getVarInt();
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityRuntimeId(this.eid);
         this.putByte((byte) this.event);
         this.putVarInt((byte) this.data);

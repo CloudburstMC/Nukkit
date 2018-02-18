@@ -19,6 +19,7 @@ Example servers running Nukkit
 --------------------
 - **play.EaseCation.net**
 - **play.GameTeam.cz**
+- **play.MagicianGames.cz**
 - **MultiLabs.net**
 
 Get Nukkit & Plugins

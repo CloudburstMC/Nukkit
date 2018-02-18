@@ -32,18 +32,18 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
     public static final int ENTITIES_UPDATE = 8;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.CLIENTBOUND_MAP_ITEM_DATA_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("CLIENTBOUND_MAP_ITEM_DATA_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityUniqueId(mapId);
 
         int update = 0;
@@ -75,12 +75,17 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
             this.putUnsignedVarInt(decorators.length);
 
             for (MapDecorator decorator : decorators) {
-                this.putByte(decorator.rotation);
-                this.putByte(decorator.icon);
+                if (protocol.getMainNumber() == 113)
+                    this.putVarInt((decorator.rotation & 0x0f) | (decorator.icon << 4));
+                else {
+                    this.putByte(decorator.rotation);
+                    this.putByte(decorator.icon);
+                }
                 this.putByte(decorator.offsetX);
                 this.putByte(decorator.offsetZ);
                 this.putString(decorator.label);
-                this.putVarInt(decorator.color.getRGB());
+                if (protocol.getMainNumber() == 113) this.putLInt(decorator.color.getRGB());
+                else this.putVarInt(decorator.color.getRGB());
             }
         }
 

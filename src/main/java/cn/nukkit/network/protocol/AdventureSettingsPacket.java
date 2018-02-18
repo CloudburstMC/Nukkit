@@ -7,8 +7,6 @@ import cn.nukkit.Player;
  */
 public class AdventureSettingsPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
-
     public static final int PERMISSION_NORMAL = 0;
     public static final int PERMISSION_OPERATOR = 1;
     public static final int PERMISSION_HOST = 2;
@@ -50,23 +48,32 @@ public class AdventureSettingsPacket extends DataPacket {
 
     public long entityUniqueId; //This is a little-endian long, NOT a var-long. (WTF Mojang)
 
-    public void decode() {
-        this.flags = getUnsignedVarInt();
-        this.commandPermission = getUnsignedVarInt();
-        this.flags2 = getUnsignedVarInt();
-        this.playerPermission = getUnsignedVarInt();
-        this.customFlags = getUnsignedVarInt();
-        this.entityUniqueId = getLLong();
+    @Override
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("ADVENTURE_SETTINGS_PACKET");
     }
 
-    public void encode() {
-        this.reset();
+    public void decode(PlayerProtocol protocol) {
+        this.flags = getUnsignedVarInt();
+        this.commandPermission = getUnsignedVarInt();
+        if (protocol.getMainNumber() >= 130) {
+            this.flags2 = getUnsignedVarInt();
+            this.playerPermission = getUnsignedVarInt();
+            this.customFlags = getUnsignedVarInt();
+            this.entityUniqueId = getLLong();
+        }
+    }
+
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putUnsignedVarInt(this.flags);
         this.putUnsignedVarInt(this.commandPermission);
-        this.putUnsignedVarInt(this.flags2);
-        this.putUnsignedVarInt(this.playerPermission);
-        this.putUnsignedVarInt(this.customFlags);
-        this.putLLong(this.entityUniqueId);
+        if (protocol.getMainNumber() >= 130) {
+            this.putUnsignedVarInt(this.flags2);
+            this.putUnsignedVarInt(this.playerPermission);
+            this.putUnsignedVarInt(this.customFlags);
+            this.putLLong(this.entityUniqueId);
+        }
     }
 
     public boolean getFlag(int flag) {
@@ -94,8 +101,4 @@ public class AdventureSettingsPacket extends DataPacket {
         }
     }
 
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
 }

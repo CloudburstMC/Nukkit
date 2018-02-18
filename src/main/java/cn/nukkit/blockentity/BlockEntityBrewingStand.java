@@ -17,6 +17,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -320,7 +321,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.BREWING_STAND)
                 .putInt("x", (int) this.x)

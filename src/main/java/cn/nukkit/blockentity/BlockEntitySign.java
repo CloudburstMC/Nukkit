@@ -5,6 +5,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.ArrayList;
@@ -101,13 +102,26 @@ public class BlockEntitySign extends BlockEntitySpawnable {
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
+        if (protocol.getMainNumber() == 113) return new CompoundTag()
+                .putString("id", BlockEntity.SIGN)
+                .putString("Text1", getText(0))
+                .putString("Text2", getText(1))
+                .putString("Text3", getText(2))
+                .putString("Text4", getText(3))
+                .putInt("x", (int) this.x)
+                .putInt("y", (int) this.y)
+                .putInt("z", (int) this.z);
         return new CompoundTag()
                 .putString("id", BlockEntity.SIGN)
                 .putString("Text", this.namedTag.getString("Text"))
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
-
     }
+    private String getText(int split){
+        return this.namedTag.getString("Text").split("\n").length > split ?
+                this.namedTag.getString("Text").split("\n")[split] : "";
+    }
+
 }

@@ -6,23 +6,21 @@ package cn.nukkit.network.protocol;
  */
 public class RequestChunkRadiusPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET;
-
     public int radius;
 
     @Override
-    public void decode() {
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("REQUEST_CHUNK_RADIUS_PACKET");
+    }
+
+    @Override
+    public void decode(PlayerProtocol protocol) {
         this.radius = this.getVarInt();
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
 
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
 }

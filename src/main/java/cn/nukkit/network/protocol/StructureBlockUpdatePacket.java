@@ -3,17 +3,17 @@ package cn.nukkit.network.protocol;
 public class StructureBlockUpdatePacket extends DataPacket {
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.STRUCTURE_BLOCK_UPDATE_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("STRUCTURE_BLOCK_UPDATE_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
         //TODO
     }
 }

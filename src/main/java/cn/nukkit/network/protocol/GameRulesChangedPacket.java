@@ -7,22 +7,21 @@ import cn.nukkit.level.GameRules;
  * Nukkit Project
  */
 public class GameRulesChangedPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.GAME_RULES_CHANGED_PACKET;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("GAME_RULES_CHANGED_PACKET");
     }
 
     public GameRules gameRules;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         putGameRules(gameRules);
     }
 }

@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.PlayerProtocol;
 
 /**
  * Created by CreeperFace on 11.4.2017.
@@ -46,7 +47,7 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
     }
 
     @Override
-    public CompoundTag getSpawnCompound() {
+    public CompoundTag getSpawnCompound(PlayerProtocol protocol) {
         return getDefaultCompound(this, MOVING_BLOCK)
                 .putFloat("movingBlockId", this.block.getId())
                 .putFloat("movingBlockData", this.block.getDamage())

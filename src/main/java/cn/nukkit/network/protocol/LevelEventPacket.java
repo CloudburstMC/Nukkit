@@ -7,7 +7,6 @@ import cn.nukkit.math.Vector3f;
  * Nukkit Project
  */
 public class LevelEventPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.LEVEL_EVENT_PACKET;
 
     public static final int EVENT_SOUND_CLICK = 1000;
     public static final int EVENT_SOUND_CLICK_FAIL = 1001;
@@ -98,12 +97,12 @@ public class LevelEventPacket extends DataPacket {
     public int data = 0;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("LEVEL_EVENT_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         this.evid = this.getVarInt();
         Vector3f v = this.getVector3f();
         this.x = v.x;
@@ -113,8 +112,8 @@ public class LevelEventPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putVarInt(this.evid);
         this.putVector3f(this.x, this.y, this.z);
         this.putVarInt(this.data);

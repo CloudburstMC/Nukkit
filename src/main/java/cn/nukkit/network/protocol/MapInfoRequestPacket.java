@@ -7,17 +7,17 @@ public class MapInfoRequestPacket extends DataPacket {
     public long mapId;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.MAP_INFO_REQUEST_PACKET;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("MAP_INFO_REQUEST_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         mapId = this.getEntityUniqueId();
     }
 
     @Override
-    public void encode() {
+    public void encode(PlayerProtocol protocol) {
 
     }
 }

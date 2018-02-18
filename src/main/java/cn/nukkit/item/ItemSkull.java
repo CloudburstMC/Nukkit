@@ -44,4 +44,15 @@ public class ItemSkull extends Item {
                 return "Skeleton Skull";
         }
     }
+
+    @Override
+    public boolean isArmor(){
+        return true;
+    }
+
+    @Override
+    public boolean isHelmet(){
+        return true;
+    }
+
 }

@@ -5,7 +5,6 @@ package cn.nukkit.network.protocol;
  * Nukkit Project
  */
 public class ContainerSetDataPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_SET_DATA_PACKET;
 
     public static final int PROPERTY_FURNACE_TICK_COUNT = 0;
     public static final int PROPERTY_FURNACE_LIT_TIME = 1;
@@ -18,8 +17,8 @@ public class ContainerSetDataPacket extends DataPacket {
     public static final int PROPERTY_BREWING_STAND_FUEL_TOTAL = 2;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("CONTAINER_SET_DATA_PACKET");
     }
 
     public int windowId;
@@ -27,13 +26,13 @@ public class ContainerSetDataPacket extends DataPacket {
     public int value;
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putByte((byte) this.windowId);
         this.putVarInt(this.property);
         this.putVarInt(this.value);

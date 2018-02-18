@@ -7,7 +7,6 @@ import cn.nukkit.math.BlockVector3;
  * Nukkit Project
  */
 public class BlockEntityDataPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.BLOCK_ENTITY_DATA_PACKET;
 
     public int x;
     public int y;
@@ -15,12 +14,12 @@ public class BlockEntityDataPacket extends DataPacket {
     public byte[] namedTag;
 
     @Override
-    public byte pid() {
-        return NETWORK_ID;
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("BLOCK_ENTITY_DATA_PACKET");
     }
 
     @Override
-    public void decode() {
+    public void decode(PlayerProtocol protocol) {
         BlockVector3 v = this.getBlockVector3();
         this.x = v.x;
         this.y = v.y;
@@ -29,8 +28,8 @@ public class BlockEntityDataPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putBlockVector3(this.x, this.y, this.z);
         this.put(this.namedTag);
     }

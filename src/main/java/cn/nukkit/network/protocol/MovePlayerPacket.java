@@ -7,8 +7,6 @@ import cn.nukkit.math.Vector3f;
  */
 public class MovePlayerPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.MOVE_PLAYER_PACKET;
-
     public static final int MODE_NORMAL = 0;
     public static final int MODE_RESET = 1;
     public static final int MODE_TELEPORT = 2;
@@ -28,7 +26,12 @@ public class MovePlayerPacket extends DataPacket {
     public int int2 = 0;
 
     @Override
-    public void decode() {
+    public byte pid(PlayerProtocol protocol) {
+        return protocol.getPacketId("MOVE_PLAYER_PACKET");
+    }
+
+    @Override
+    public void decode(PlayerProtocol protocol) {
         this.eid = this.getEntityRuntimeId();
         Vector3f v = this.getVector3f();
         this.x = v.x;
@@ -47,8 +50,8 @@ public class MovePlayerPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    public void encode(PlayerProtocol protocol) {
+        this.reset(protocol);
         this.putEntityRuntimeId(this.eid);
         this.putVector3f(this.x, this.y, this.z);
         this.putLFloat(this.pitch);
@@ -61,11 +64,6 @@ public class MovePlayerPacket extends DataPacket {
             this.putLInt(this.int1);
             this.putLInt(this.int2);
         }
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
 }
