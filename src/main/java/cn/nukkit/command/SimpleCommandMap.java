@@ -239,7 +239,18 @@ public class SimpleCommandMap implements CommandMap {
         Command target = this.getCommand(sentCommandLabel);
 
         if (target == null) {
-            return false;
+            // If target command is not found, see if it accidentally
+            // was started with an additional slash. If so, remove it.
+            if (sentCommandLabel.startsWith("/")) {
+                sentCommandLabel = sentCommandLabel.substring(1);
+            }
+
+            target = this.getCommand(sentCommandLabel);
+
+            if (target == null) {
+                // Nah, give up.
+                return false;
+            }
         }
 
         target.timing.startTiming();
