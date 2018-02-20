@@ -9,6 +9,7 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import io.netty.util.collection.CharObjectHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.File;
@@ -85,7 +86,7 @@ public class CraftingManager {
 
                         first = output.remove(0);
                         String[] shape = ((List<String>) recipe.get("shape")).stream().toArray(String[]::new);
-                        Map<Character, Item> ingredients = new HashMap<>();
+                        Map<Character, Item> ingredients = new CharObjectHashMap<>();
                         List<Item> extraResults = new ArrayList<>();
 
                         Map<String, Map<String, Object>> input = (Map) recipe.get("input");
@@ -194,6 +195,7 @@ public class CraftingManager {
 
     public FurnaceRecipe matchFurnaceRecipe(Item input) {
         FurnaceRecipe recipe = this.furnaceRecipes.get(getItemHash(input));
+        if (recipe == null) this.furnaceRecipes.get(getItemHash(input.getId(), 0));
         return recipe;
     }
 
