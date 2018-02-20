@@ -2,6 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Utils;
+import io.netty.util.collection.CharObjectHashMap;
 
 import java.util.*;
 
@@ -18,7 +19,7 @@ public class ShapedRecipe implements CraftingRecipe {
 
     private final String[] shape;
 
-    private final Map<Character, Item> ingredients = new HashMap<>();
+    private final CharObjectHashMap<Item> ingredients = new CharObjectHashMap<>();
 
     /**
      * Constructs a ShapedRecipe instance.
