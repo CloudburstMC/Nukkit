@@ -35,7 +35,7 @@ public class CraftingManager {
     private static int RECIPE_COUNT = 0;
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
 
-    private static final Comparator<Item> recipeComparator = (i1, i2) -> {
+    public static final Comparator<Item> recipeComparator = (i1, i2) -> {
         if (i1.getId() > i2.getId()) {
             return 1;
         } else if (i1.getId() < i2.getId()) {
@@ -44,13 +44,7 @@ public class CraftingManager {
             return 1;
         } else if (i1.getDamage() < i2.getDamage()) {
             return -1;
-        } else if (i1.getCount() > i2.getCount()) {
-            return 1;
-        } else if (i1.getCount() < i2.getCount()) {
-            return -1;
-        } else {
-            return 0;
-        }
+        } else return Integer.compare(i1.getCount(), i2.getCount());
     };
 
     @SuppressWarnings("unchecked")
@@ -73,11 +67,14 @@ public class CraftingManager {
                     case 0:
                         // TODO: handle multiple result items
                         Map<String, Object> first = ((List<Map>) recipe.get("output")).get(0);
-                        ShapelessRecipe result = new ShapelessRecipe(Item.fromJson(first));
-
+                        List<Item> sorted = new ArrayList<>();
                         for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
-                            result.addIngredient(Item.fromJson(ingredient));
+                            sorted.add(Item.fromJson(ingredient));
                         }
+                        // Bake sorted list
+                        sorted.sort(recipeComparator);
+
+                        ShapelessRecipe result = new ShapelessRecipe(Item.fromJson(first), sorted);
 
                         this.registerRecipe(result);
                         break;
@@ -208,7 +205,7 @@ public class CraftingManager {
     }
 
     private static int getFullItemHash(Item item) {
-        return getItemHash(item) + item.getCount() << 4;
+        return getItemHash(item) + item.getCount() << 10;
     }
 
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
@@ -217,7 +214,7 @@ public class CraftingManager {
     }
 
     private static int getItemHash(Item item) {
-        return item.getId() + (item.getDamage() << 8);
+        return getItemHash(item.getId(), item.getDamage());
     }
 
     private static int getItemHash(int id, int meta) {
