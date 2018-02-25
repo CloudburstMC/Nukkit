@@ -41,6 +41,12 @@
             <artifactId>fastutil-lite</artifactId>
             <version>1.0</version>
         </dependency>
+        <!-- the real fastutil -->
+        <dependency>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil</artifactId>
+            <version>8.1.1</version>
+        </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
