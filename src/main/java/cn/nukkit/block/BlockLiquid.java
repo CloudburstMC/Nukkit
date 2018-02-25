@@ -254,16 +254,13 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         return 0;
     }
 
-    protected void flowIntoBlock(Block block, int newFlowDecay) {
-        if (block.canBeFlowedInto()) {
-            if (block.getId() > 0) {
-                if (this instanceof BlockLava) {
-                    this.triggerLavaMixEffects(block);
-                }
-                this.getLevel().useBreakOn(block);
+    protected void flowIntoBlock(Block block, int newFlowDecay){
+        if(this.canFlowInto(block) && !(block instanceof BlockLiquid)){
+            if(block.getId() > 0){
+                this.level.useBreakOn(block);
             }
-
-            this.getLevel().setBlock(block, this.getBlock(newFlowDecay), true);
+            this.level.setBlock(block, getBlock(newFlowDecay), true, true);
+            this.level.scheduleUpdate(block, this.tickRate());
         }
     }
 
