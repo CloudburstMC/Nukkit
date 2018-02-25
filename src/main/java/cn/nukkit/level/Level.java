@@ -62,6 +62,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import java.io.File;
@@ -131,15 +132,15 @@ public class Level implements ChunkManager, Metadatable {
         randomTickBlocks[Block.COCOA_BLOCK] = true;
     }
 
-    private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<BlockEntity> blockEntities = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<BlockEntity>());
 
-    private final Long2ObjectOpenHashMap<Player> players = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<Player> players = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Player>());
 
-    private final Long2ObjectOpenHashMap<Entity> entities = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<Entity> entities = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Entity>());
 
-    public final Long2ObjectOpenHashMap<Entity> updateEntities = new Long2ObjectOpenHashMap<>();
+    public final Long2ObjectMap<Entity> updateEntities = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Entity>());
 
-    public final Long2ObjectOpenHashMap<BlockEntity> updateBlockEntities = new Long2ObjectOpenHashMap<>();
+    public final Long2ObjectMap<BlockEntity> updateBlockEntities = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<BlockEntity>());
 
     private boolean cacheChunks = false;
 
@@ -153,13 +154,13 @@ public class Level implements ChunkManager, Metadatable {
 
     private final Map<Integer, Integer> loaderCounter = new HashMap<>();
 
-    private final Long2ObjectOpenHashMap<Map<Integer, ChunkLoader>> chunkLoaders = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<Map<Integer, ChunkLoader>> chunkLoaders = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Map<Integer, ChunkLoader>>());
 
-    private final Long2ObjectOpenHashMap<Map<Integer, Player>> playerLoaders = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<Map<Integer, Player>> playerLoaders = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Map<Integer, Player>>());
 
-    private Long2ObjectOpenHashMap<List<DataPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
+    private Long2ObjectMap<List<DataPacket>> chunkPackets = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<List<DataPacket>>());
 
-    private final Long2ObjectOpenHashMap<Long> unloadQueue = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<Long> unloadQueue = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Long>());
 
     private float time;
     public boolean stopTime;
@@ -171,7 +172,7 @@ public class Level implements ChunkManager, Metadatable {
     private Vector3 mutableBlock;
 
     // Avoid OOM, gc'd references result in whole chunk being sent (possibly higher cpu)
-    private Long2ObjectOpenHashMap<SoftReference<Map<Character, Object>>> changedBlocks = new Long2ObjectOpenHashMap<>();
+    private Long2ObjectMap<SoftReference<Map<Character, Object>>> changedBlocks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<SoftReference<Map<Character, Object>>>());
     // Storing the vector is redundant
     private final Object changeBlocksPresent = new Object();
     // Storing extra blocks past 512 is redundant
@@ -188,12 +189,12 @@ public class Level implements ChunkManager, Metadatable {
 //    private final List<BlockUpdateEntry> nextTickUpdates = Lists.newArrayList();
     //private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
 
-    private final Long2ObjectOpenHashMap<Map<Integer, Player>> chunkSendQueue = new Long2ObjectOpenHashMap<>();
-    private final Long2ObjectOpenHashMap<Boolean> chunkSendTasks = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<Map<Integer, Player>> chunkSendQueue = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Map<Integer, Player>>());
+    private final Long2ObjectMap<Boolean> chunkSendTasks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Boolean>());
 
-    private final Long2ObjectOpenHashMap<Boolean> chunkPopulationQueue = new Long2ObjectOpenHashMap<>();
-    private final Long2ObjectOpenHashMap<Boolean> chunkPopulationLock = new Long2ObjectOpenHashMap<>();
-    private final Long2ObjectOpenHashMap<Boolean> chunkGenerationQueue = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<Boolean> chunkPopulationQueue = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Boolean>());
+    private final Long2ObjectMap<Boolean> chunkPopulationLock = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Boolean>());
+    private final Long2ObjectMap<Boolean> chunkGenerationQueue = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Boolean>());
     private int chunkGenerationQueueSize = 8;
     private int chunkPopulationQueueSize = 2;
 
@@ -209,7 +210,7 @@ public class Level implements ChunkManager, Metadatable {
     public int sleepTicks = 0;
 
     private int chunkTickRadius;
-    private final Long2ObjectOpenHashMap<Integer> chunkTickList = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<Integer> chunkTickList = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<Integer>());
     private int chunksPerTicks;
     private boolean clearChunksOnTick;
 
@@ -764,7 +765,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (!this.changedBlocks.isEmpty()) {
             if (!this.players.isEmpty()) {
-                ObjectIterator<Long2ObjectMap.Entry<SoftReference<Map<Character, Object>>>> iter = changedBlocks.long2ObjectEntrySet().fastIterator();
+                ObjectIterator<Long2ObjectMap.Entry<SoftReference<Map<Character, Object>>>> iter = changedBlocks.long2ObjectEntrySet().iterator();
                 while (iter.hasNext()) {
                     Long2ObjectMap.Entry<SoftReference<Map<Character, Object>>> entry = iter.next();
                     long index = entry.getKey();
@@ -1038,7 +1039,7 @@ public class Level implements ChunkManager, Metadatable {
         int blockTest = 0;
 
         if (!chunkTickList.isEmpty()) {
-            ObjectIterator<Long2ObjectMap.Entry<Integer>> iter = chunkTickList.long2ObjectEntrySet().fastIterator();
+            ObjectIterator<Long2ObjectMap.Entry<Integer>> iter = chunkTickList.long2ObjectEntrySet().iterator();
             while (iter.hasNext()) {
                 Long2ObjectMap.Entry<Integer> entry = iter.next();
                 long index = entry.getLongKey();
@@ -2967,7 +2968,7 @@ public class Level implements ChunkManager, Metadatable {
             long now = System.currentTimeMillis();
 
             PrimitiveList toRemove = null;
-            ObjectIterator<Long2ObjectMap.Entry<Long>> iter = unloadQueue.long2ObjectEntrySet().fastIterator();
+            ObjectIterator<Long2ObjectMap.Entry<Long>> iter = unloadQueue.long2ObjectEntrySet().iterator();
             while (iter.hasNext()) {
                 Long2ObjectMap.Entry<Long> entry = iter.next();
                 long index = entry.getLongKey();
@@ -3019,14 +3020,14 @@ public class Level implements ChunkManager, Metadatable {
             int maxIterations = this.unloadQueue.size();
 
             if (lastUnloadIndex > maxIterations) lastUnloadIndex = 0;
-            ObjectIterator<Long2ObjectMap.Entry<Long>> iter = this.unloadQueue.long2ObjectEntrySet().fastIterator();
+            ObjectIterator<Long2ObjectMap.Entry<Long>> iter = this.unloadQueue.long2ObjectEntrySet().iterator();
             if (lastUnloadIndex != 0) iter.skip(lastUnloadIndex);
 
             PrimitiveList toUnload = null;
 
             for (int i = 0; i < maxIterations; i++) {
                 if (!iter.hasNext()) {
-                    iter = this.unloadQueue.long2ObjectEntrySet().fastIterator();
+                    iter = this.unloadQueue.long2ObjectEntrySet().iterator();
                 }
                 Long2ObjectMap.Entry<Long> entry = iter.next();
 
