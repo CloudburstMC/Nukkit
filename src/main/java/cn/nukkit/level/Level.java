@@ -61,6 +61,8 @@ import co.aikar.timings.TimingsHistory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2IntMap;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -209,7 +211,7 @@ public class Level implements ChunkManager, Metadatable {
     public int sleepTicks = 0;
 
     private int chunkTickRadius;
-    private final Long2ObjectOpenHashMap<Integer> chunkTickList = new Long2ObjectOpenHashMap<>();
+    private final Long2IntMap chunkTickList = new Long2IntOpenHashMap();
     private int chunksPerTicks;
     private boolean clearChunksOnTick;
 
@@ -336,6 +338,13 @@ public class Level implements ChunkManager, Metadatable {
 
     public static long chunkHash(int x, int z) {
         return (((long) x) << 32) | (z & 0xffffffffL);
+    }
+
+    public static long blockHash(int x, int y, int z){
+        if(y < 0 || y >= 256){
+            throw new IllegalArgumentException("Y coordinate y is out of range!");
+        }
+        return (((long) x & (long) 0xFFFFFFF) << 36) | (((long) y & (long) 0xFF) << 28) | ((long) z & (long) 0xFFFFFFF);
     }
 
     public static char localBlockHash(double x, double y, double z) {
@@ -1023,13 +1032,13 @@ public class Level implements ChunkManager, Metadatable {
 
                 long index = Level.chunkHash(chunkX, chunkZ);
                 int existingLoaders = Math.max(0, this.chunkTickList.getOrDefault(index, 0));
-                this.chunkTickList.put(index, (Integer) (existingLoaders + 1));
+                this.chunkTickList.put(index, existingLoaders + 1);
                 for (int chunk = 0; chunk < chunksPerLoader; ++chunk) {
                     int dx = random.nextInt(2 * randRange) - randRange;
                     int dz = random.nextInt(2 * randRange) - randRange;
                     long hash = Level.chunkHash(dx + chunkX, dz + chunkZ);
                     if (!this.chunkTickList.containsKey(hash) && provider.isChunkLoaded(hash)) {
-                        this.chunkTickList.put(hash, (Integer) (-1));
+                        this.chunkTickList.put(hash, -1);
                     }
                 }
             }
@@ -1038,16 +1047,16 @@ public class Level implements ChunkManager, Metadatable {
         int blockTest = 0;
 
         if (!chunkTickList.isEmpty()) {
-            ObjectIterator<Long2ObjectMap.Entry<Integer>> iter = chunkTickList.long2ObjectEntrySet().fastIterator();
+            ObjectIterator<Long2IntMap.Entry> iter = chunkTickList.long2IntEntrySet().iterator();
             while (iter.hasNext()) {
-                Long2ObjectMap.Entry<Integer> entry = iter.next();
+                Long2IntMap.Entry entry = iter.next();
                 long index = entry.getLongKey();
                 if (!areNeighboringChunksLoaded(index)) {
                     iter.remove();
                     continue;
                 }
 
-                int loaders = entry.getValue();
+                int loaders = entry.getIntValue();
 
                 int chunkX = getHashX(index);
                 int chunkZ = getHashZ(index);

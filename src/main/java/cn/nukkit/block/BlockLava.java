@@ -129,7 +129,6 @@ public class BlockLava extends BlockLiquid {
                     }
                 }
             }
-
         }
 
         return result;
@@ -153,5 +152,46 @@ public class BlockLava extends BlockLiquid {
     @Override
     public BlockLiquid getBlock(int meta) {
         return new BlockLava(meta);
+    }
+
+    @Override
+    public int tickRate() {
+        return 30;
+    }
+
+    @Override
+    public int getFlowDecayPerBlock() {
+        if (this.level.getDimension() == Level.DIMENSION_NETHER) {
+            return 1;
+        }
+        return 2;
+    }
+
+    @Override
+    protected void checkForHarden(){ 
+        Block colliding = null;
+        for(int side = 1; side < 6; ++side){ //don't check downwards side
+            Block blockSide = this.getSide(BlockFace.fromIndex(side));
+            if(blockSide instanceof BlockWater){
+                colliding = blockSide;
+                break;
+            }
+        }
+        if(colliding != null){
+            if(this.getDamage() == 0){
+                this.liquidCollide(colliding, new BlockObsidian());
+            }else if(this.getDamage() <= 4){
+                this.liquidCollide(colliding, new BlockCobblestone());
+            }
+        }
+    }
+
+    @Override
+    protected void flowIntoBlock(Block block, int newFlowDecay){
+        if(block instanceof BlockWater){
+            ((BlockLiquid) block).liquidCollide(this, new BlockStone());
+        }else{
+            super.flowIntoBlock(block, newFlowDecay);
+        }
     }
 }
