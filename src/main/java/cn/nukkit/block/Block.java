@@ -18,6 +18,7 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ import java.util.Optional;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockIDs {
+public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
     public static Class[] list = null;
     public static Block[] fullList = null;
     public static int[] light = null;

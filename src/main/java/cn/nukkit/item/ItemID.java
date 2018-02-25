@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-public interface ItemIDs {
+public interface ItemID {
     int IRON_SHOVEL = 256;
     int IRON_PICKAXE = 257;
     int IRON_AXE = 258;

@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-public interface BlockIDs {
+public interface BlockID {
     int AIR = 0;
     int STONE = 1;
     int GRASS = 2;

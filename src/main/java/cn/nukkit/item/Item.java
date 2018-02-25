@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
-import cn.nukkit.block.BlockIDs;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Item implements Cloneable, BlockIDs, ItemIDs {
+public class Item implements Cloneable, BlockID, ItemID {
     //Normal Item IDs
 
     protected static String UNKNOWN_STR = "Unknown";
