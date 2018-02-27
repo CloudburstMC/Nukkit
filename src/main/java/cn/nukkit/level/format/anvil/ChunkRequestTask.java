@@ -35,7 +35,7 @@ public class ChunkRequestTask extends AsyncTask {
 
         byte[] buffer = new byte[0];
 
-        for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+        for (BlockEntity blockEntity : chunk.getBlockEntities().values(new BlockEntity[0])) {
             if (blockEntity instanceof BlockEntitySpawnable) {
                 try {
                     buffer = Binary.appendBytes(buffer, NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), ByteOrder.BIG_ENDIAN, true));

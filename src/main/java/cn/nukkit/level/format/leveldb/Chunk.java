@@ -17,12 +17,16 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.hash.TIntIntHashMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * author: MagicDroidX
@@ -53,7 +57,7 @@ public class Chunk extends BaseFullChunk {
         this(level, chunkX, chunkZ, terrain, entityData, tileData, null);
     }
 
-    public Chunk(LevelProvider level, int chunkX, int chunkZ, byte[] terrain, List<CompoundTag> entityData, List<CompoundTag> tileData, Map<Integer, Integer> extraData) {
+    public Chunk(LevelProvider level, int chunkX, int chunkZ, byte[] terrain, List<CompoundTag> entityData, List<CompoundTag> tileData, TIntIntMap extraData) {
         ByteBuffer buffer = ByteBuffer.wrap(terrain).order(ByteOrder.BIG_ENDIAN);
 
         byte[] blocks = new byte[32768];
@@ -336,7 +340,7 @@ public class Chunk extends BaseFullChunk {
             List<CompoundTag> entities = new ArrayList<>();
             List<CompoundTag> tiles = new ArrayList<>();
 
-            Map<Integer, Integer> extraDataMap = new HashMap<>();
+            TIntIntMap extraDataMap = new TIntIntHashMap();
 
             if (provider instanceof LevelDB) {
                 byte[] entityData = ((LevelDB) provider).getDatabase().get(EntitiesKey.create(chunkX, chunkZ).toArray());
@@ -436,7 +440,7 @@ public class Chunk extends BaseFullChunk {
 
                 List<CompoundTag> entities = new ArrayList<>();
 
-                for (Entity entity : this.getEntities().values()) {
+                for (Entity entity : this.getEntities().values(new Entity[0])) {
                     if (!(entity instanceof Player) && !entity.closed) {
                         entity.saveNBT();
                         entities.add(entity.namedTag);
@@ -452,7 +456,7 @@ public class Chunk extends BaseFullChunk {
 
                 List<CompoundTag> tiles = new ArrayList<>();
 
-                for (BlockEntity blockEntity : this.getBlockEntities().values()) {
+                for (BlockEntity blockEntity : this.getBlockEntities().values(new BlockEntity[0])) {
                     if (!blockEntity.closed) {
                         blockEntity.saveNBT();
                         entities.add(blockEntity.namedTag);
@@ -469,9 +473,9 @@ public class Chunk extends BaseFullChunk {
                 ExtraDataKey extraDataKey = ExtraDataKey.create(this.getX(), this.getZ());
                 if (!this.getBlockExtraDataArray().isEmpty()) {
                     BinaryStream extraData = new BinaryStream();
-                    Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();
+                    TIntIntMap extraDataArray = this.getBlockExtraDataArray();
                     extraData.putInt(extraDataArray.size());
-                    for (Integer key : extraDataArray.keySet()) {
+                    for (Integer key : extraDataArray.keys()) {
                         extraData.putInt(key);
                         extraData.putShort(extraDataArray.get(key));
                     }

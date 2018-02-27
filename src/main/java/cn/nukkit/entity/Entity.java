@@ -34,6 +34,7 @@ import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
+import gnu.trove.map.TIntObjectMap;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -1770,7 +1771,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.chunk = this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true);
 
             if (!this.justCreated) {
-                Map<Integer, Player> newChunk = this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
+                TIntObjectMap<Player> newChunk = this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4);
                 for (Player player : new ArrayList<>(this.hasSpawned.values())) {
                     if (!newChunk.containsKey(player.getLoaderId())) {
                         this.despawnFrom(player);
@@ -1779,7 +1780,7 @@ public abstract class Entity extends Location implements Metadatable {
                     }
                 }
 
-                for (Player player : newChunk.values()) {
+                for (Player player : newChunk.values(new Player[0])) {
                     this.spawnTo(player);
                 }
             }
@@ -1917,7 +1918,7 @@ public abstract class Entity extends Location implements Metadatable {
             return;
         }
 
-        for (Player player : this.level.getChunkPlayers(this.chunk.getX(), this.chunk.getZ()).values()) {
+        for (Player player : this.level.getChunkPlayers(this.chunk.getX(), this.chunk.getZ()).values(new Player[0])) {
             if (player.isOnline()) {
                 this.spawnTo(player);
             }

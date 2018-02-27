@@ -58,7 +58,7 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
             pk.y = getFloorY();
             pk.z = getFloorZ();
 
-            Server.broadcastPacket(this.level.getPlayers().values(), pk);
+            Server.broadcastPacket(this.level.getPlayers(), pk);
         }
     }
 
@@ -67,7 +67,7 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
             StopSoundPacket pk = new StopSoundPacket();
             pk.name = ((ItemRecord) this.recordItem).getSoundId();
 
-            Server.broadcastPacket(this.level.getPlayers().values(), pk);
+            Server.broadcastPacket(this.level.getPlayers(), pk);
         }
     }
 

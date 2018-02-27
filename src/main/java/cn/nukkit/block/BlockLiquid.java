@@ -7,8 +7,8 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
-import it.unimi.dsi.fastutil.longs.Long2ByteMap;
-import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
+import gnu.trove.map.TLongByteMap;
+import gnu.trove.map.hash.TLongByteHashMap;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -23,7 +23,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
     private final byte BLOCKED = -1;
     public int adjacentSources = 0;
     protected Vector3 flowVector = null;
-    private Long2ByteMap flowCostVisited = new Long2ByteOpenHashMap();
+    private TLongByteMap flowCostVisited = new TLongByteHashMap();
 
     protected BlockLiquid(int meta) {
         super(meta);

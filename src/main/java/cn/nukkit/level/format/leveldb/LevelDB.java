@@ -19,6 +19,9 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
@@ -33,7 +36,7 @@ import java.util.*;
  */
 public class LevelDB implements LevelProvider {
 
-    protected Map<Long, Chunk> chunks = new HashMap<>();
+    protected TLongObjectMap<Chunk> chunks = new TLongObjectHashMap<>();
 
     protected DB db;
 
@@ -169,7 +172,7 @@ public class LevelDB implements LevelProvider {
         if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
 
-            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+            for (BlockEntity blockEntity : chunk.getBlockEntities().values(new BlockEntity[0])) {
                 if (blockEntity instanceof BlockEntitySpawnable) {
                     tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
                 }
@@ -182,7 +185,7 @@ public class LevelDB implements LevelProvider {
             }
         }
 
-        Map<Integer, Integer> extra = chunk.getBlockExtraDataArray();
+        TIntIntMap extra = chunk.getBlockExtraDataArray();
         BinaryStream extraData;
         if (!extra.isEmpty()) {
             extraData = new BinaryStream();
@@ -218,10 +221,10 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public void unloadChunks() {
-        for (Chunk chunk : new ArrayList<>(this.chunks.values())) {
+        for (Chunk chunk : this.chunks.values(new Chunk[0])) {
             this.unloadChunk(chunk.getX(), chunk.getZ(), false);
         }
-        this.chunks = new HashMap<>();
+        this.chunks = new TLongObjectHashMap<>();
     }
 
     @Override
@@ -249,7 +252,7 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public Map<Long, Chunk> getLoadedChunks() {
+    public TLongObjectMap<Chunk> getLoadedChunks() {
         return this.chunks;
     }
 
@@ -265,7 +268,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public void saveChunks() {
-        for (Chunk chunk : this.chunks.values()) {
+        for (Chunk chunk : this.chunks.values(new Chunk[0])) {
             this.saveChunk(chunk.getX(), chunk.getZ());
         }
     }

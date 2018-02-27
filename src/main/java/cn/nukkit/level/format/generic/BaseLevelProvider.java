@@ -11,8 +11,9 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.LevelException;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import gnu.trove.iterator.TLongObjectIterator;
+import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +41,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     protected final Map<Long, BaseRegionLoader> regions = new HashMap<>();
 
-    private final Long2ObjectOpenHashMap<BaseFullChunk> chunks = new Long2ObjectOpenHashMap<>();
+    private final TLongObjectMap<BaseFullChunk> chunks = new TLongObjectHashMap<>();
 
     public BaseLevelProvider(Level level, String path) throws IOException {
         this.level = level;
@@ -73,8 +74,8 @@ public abstract class BaseLevelProvider implements LevelProvider {
         return this.chunks.size();
     }
 
-    public ObjectIterator<BaseFullChunk> getChunks() {
-        return chunks.values().iterator();
+    public TLongObjectIterator<BaseFullChunk> getChunks() {
+        return chunks.iterator();
     }
 
     protected void putChunk(long index, BaseFullChunk chunk) {
@@ -83,11 +84,11 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public void unloadChunks() {
-        Iterator<Map.Entry<Long, BaseFullChunk>> iter = chunks.entrySet().iterator();
+        TLongObjectIterator<BaseFullChunk> iter = chunks.iterator();
         while (iter.hasNext()) {
-            Map.Entry<Long, BaseFullChunk> entry = iter.next();
-            long index = entry.getKey();
-            BaseFullChunk chunk = entry.getValue();
+            iter.advance();
+            long index = iter.key();
+            BaseFullChunk chunk = iter.value();
             chunk.unload(true, false);
             iter.remove();
         }
@@ -108,7 +109,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public Map<Long, BaseFullChunk> getLoadedChunks() {
+    public TLongObjectMap<BaseFullChunk> getLoadedChunks() {
         return this.chunks;
     }
 
@@ -272,7 +273,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public void saveChunks() {
-        for (BaseFullChunk chunk : this.chunks.values()) {
+        for (BaseFullChunk chunk : this.chunks.values(new BaseFullChunk[0])) {
             if (chunk.getChanges() != 0) {
                 chunk.setChanged(false);
                 this.saveChunk(chunk.getX(), chunk.getZ());
@@ -324,7 +325,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
         BaseFullChunk chunk = this.chunks.get(index);
         if (chunk != null && chunk.unload(false, safe)) {
             lastChunk = null;
-            this.chunks.remove(index, chunk);
+            this.chunks.remove(index);
             return true;
         }
         return false;

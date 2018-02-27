@@ -16,7 +16,7 @@ import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.ExplodePacket;
 import cn.nukkit.utils.Hash;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
+import gnu.trove.set.hash.TLongHashSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +113,7 @@ public class Explosion {
 
     public boolean explodeB() {
 
-        LongArraySet updateBlocks = new LongArraySet();
+        TLongHashSet updateBlocks = new TLongHashSet();
         List<Vector3> send = new ArrayList<>();
 
         Vector3 source = (new Vector3(this.source.x, this.source.y, this.source.z)).floor();
