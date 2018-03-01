@@ -8,31 +8,26 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class SlotEntityData extends EntityData<Item> {
-    public int blockId;
-    public int meta;
-    public int count;
+
+    public Item item;
 
     public SlotEntityData(int id, int blockId, int meta, int count) {
-        super(id);
-        this.blockId = blockId;
-        this.meta = meta;
-        this.count = count;
+        this (id, Item.get(blockId, meta, count));
     }
 
     public SlotEntityData(int id, Item item) {
-        this(id, item.getId(), (byte) (item.hasMeta() ? item.getDamage() : 0), item.getCount());
+        super(id);
+        this.item = item;
     }
 
     @Override
     public Item getData() {
-        return Item.get(blockId, meta, count);
+        return this.item;
     }
 
     @Override
     public void setData(Item data) {
-        this.blockId = data.getId();
-        this.meta = (data.hasMeta() ? data.getDamage() : 0);
-        this.count = data.getCount();
+        this.item = data;
     }
 
     @Override
