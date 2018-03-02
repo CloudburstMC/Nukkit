@@ -164,6 +164,7 @@ public interface ItemID {
     int CARROT_ON_A_STICK = 398;
     int NETHER_STAR = 399;
     int PUMPKIN_PIE = 400;
+    int FIREWORKS = 401;
 
     int ENCHANTED_BOOK = 403;
     int ENCHANT_BOOK = 403;
