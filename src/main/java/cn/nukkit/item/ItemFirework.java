@@ -35,14 +35,20 @@ public class ItemFirework extends Item {
             CompoundTag tag = getNamedTag();
             if (tag == null) {
                 tag = new CompoundTag();
+
+                CompoundTag ex = new CompoundTag()
+                        .putByteArray("FireworkColor", new byte[]{(byte) DyeColor.BLACK.getDyeData()})
+                        .putByteArray("FireworkFade", new byte[]{})
+                        .putBoolean("FireworkFlicker", false)
+                        .putBoolean("FireworkTrail", false)
+                        .putByte("FireworkType", FireworkExplosion.ExplosionType.CREEPER_SHAPED.ordinal());
+
+                tag.putCompound("Fireworks", new CompoundTag("Fireworks")
+                        .putList(new ListTag<CompoundTag>("Explosions").add(ex))
+                        .putByte("Flight", 1)
+                );
+                this.setNamedTag(tag);
             }
-
-            tag.putCompound("Fireworks", new CompoundTag("Fireworks")
-                    .putList(new ListTag<CompoundTag>("Explosions"))
-                    .putByte("Flight", 1)
-            );
-
-            this.setNamedTag(tag);
         }
     }
 
@@ -118,9 +124,9 @@ public class ItemFirework extends Item {
 
         private List<DyeColor> colors = new ArrayList<>();
         private List<DyeColor> fades = new ArrayList<>();
-        private boolean flicker;
-        private boolean trail;
-        private ExplosionType type;
+        private boolean flicker = false;
+        private boolean trail = false;
+        private ExplosionType type = ExplosionType.CREEPER_SHAPED;
 
         public List<DyeColor> getColors() {
             return this.colors;
