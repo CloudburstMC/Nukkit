@@ -117,25 +117,27 @@ public class ItemFirework extends Item {
     public static class FireworkExplosion {
 
         private List<DyeColor> colors = new ArrayList<>();
-        public List<DyeColor> getColors(){
+        private List<DyeColor> fades = new ArrayList<>();
+        private boolean flicker;
+        private boolean trail;
+        private ExplosionType type;
+
+        public List<DyeColor> getColors() {
             return this.colors;
         }
 
-        private List<DyeColor> fades = new ArrayList<>();
         public List<DyeColor> getFades() {
             return this.fades;
         }
 
-        private boolean flicker;
         public boolean hasFlicker() {
             return this.flicker;
         }
 
-        private boolean trail;
         public boolean hasTrail() {
             return this.trail;
         }
-        private ExplosionType type;
+
         public ExplosionType getType() {
             return this.type;
         }

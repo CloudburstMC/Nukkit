@@ -3,16 +3,13 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.data.SlotEntityData;
-import cn.nukkit.entity.data.Vector3fEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -78,9 +75,6 @@ public class EntityFirework extends Entity {
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
         if (this.isAlive()) {
-            if (this.checkObstruction(this.x, this.y, this.z)) {
-                hasUpdate = true;
-            }
 
             this.motionX *= 1.15D;
             this.motionZ *= 1.15D;
@@ -89,16 +83,16 @@ public class EntityFirework extends Entity {
 
             this.updateMovement();
 
+
             float f = (float) Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
             this.yaw = (float) (Math.atan2(this.motionX, this.motionZ) * (180D / Math.PI));
 
-            for (this.pitch = (float) (Math.atan2(this.motionY, (double) f) * (180D / Math.PI)); this.pitch - this.lastPitch < -180.0F; this.lastPitch -= 360.0F) {
-                ;
-            }
+            this.pitch = (float) (Math.atan2(this.motionY, (double) f) * (180D / Math.PI));
+
 
             if (this.fireworkAge == 0) {
                 PlaySoundPacket pk = new PlaySoundPacket();
-                pk.name = "firework.launch";
+                pk.name = Sound.FIREWORK_LAUNCH.getSound();
                 pk.volume = 1;
                 pk.pitch = 1;
                 pk.x = getFloorX();
@@ -149,7 +143,7 @@ public class EntityFirework extends Entity {
 
     public void setFirework(Item item) {
         this.firework = item;
-        this.setDataProperty(new SlotEntityData(16, item));
+        this.setDataProperty(new SlotEntityData(Entity.DATA_FIREWORK_ITEM, item));
     }
 
     @Override
