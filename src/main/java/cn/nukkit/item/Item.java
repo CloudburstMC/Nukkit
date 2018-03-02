@@ -473,13 +473,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         return this.tags != null && this.tags.length > 0;
     }
 
-    public void encodeCompoundTag() {
-        if (cachedNBT != null) {
-            this.tags = this.writeCompoundTag(this.cachedNBT);
-        }
-    }
-
-
     public boolean hasCustomBlockData() {
         if (!this.hasCompoundTag()) {
             return false;

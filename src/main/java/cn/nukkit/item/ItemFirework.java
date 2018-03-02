@@ -110,14 +110,11 @@ public class ItemFirework extends Item {
                 .putByte("FireworkType", explosion.type.ordinal());
 
         explosions.add(tag);
-        encodeCompoundTag();
     }
 
     public void clearExplosions() {
         this.getNamedTag().getCompound("Fireworks")
                 .putList(new ListTag<CompoundTag>("Explosions"));
-
-        encodeCompoundTag();
     }
 
     public static class FireworkExplosion {
