@@ -21,8 +21,8 @@
             <url>http://ci.emc.gs/nexus/content/groups/aikar/</url>
         </repository>
         <repository>
-            <id>nukkit-repo</id>
-            <url>https://repo.nukkitx.com/main/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -41,14 +41,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.sf.trove4j</groupId>
+            <groupId>com.github.NukkitX</groupId>
             <artifactId>trove</artifactId>
-            <version>3.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.trove4j</groupId>
-            <artifactId>trove-experimental</artifactId>
-            <version>3.1.0-SNAPSHOT</version>
+            <version>d6b8c38291</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
