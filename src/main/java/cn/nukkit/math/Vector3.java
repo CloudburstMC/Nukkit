@@ -52,6 +52,14 @@ public class Vector3 implements Cloneable {
         return (int) Math.floor(this.z);
     }
 
+    public int getChunkX() {
+        return getFloorX() >> 4;
+    }
+
+    public int getChunkZ() {
+        return getFloorZ() >> 4;
+    }
+
     public double getRight() {
         return this.x;
     }

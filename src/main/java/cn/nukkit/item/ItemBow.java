@@ -2,7 +2,6 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityShootBowEvent;
@@ -106,10 +105,8 @@ public class ItemBow extends ItemTool {
                     Enchantment durability = this.getEnchantment(Enchantment.ID_DURABILITY);
                     if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))) {
                         this.setDamage(this.getDamage() + 1);
-                        if (this.getDamage() >= 385) {
-                            player.getInventory().setItemInHand(new ItemBlock(new BlockAir(), 0, 0));
-                        } else {
-                            player.getInventory().setItemInHand(this);
+                        if (this.getDamage() >= getMaxDurability()) {
+                            this.count--;
                         }
                     }
                 }
