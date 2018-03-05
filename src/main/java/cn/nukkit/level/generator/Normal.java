@@ -107,7 +107,7 @@ public class Normal extends Generator {
         this.localSeed2 = this.random.nextLong();
         this.noiseOcean = new Simplex(this.nukkitRandom, 1, 1F / 8F, 1F / 512F);
         for (int i = 0; i < baseNoiseLayers; i++) {
-            this.noiseBase[i] = new Simplex(this.nukkitRandom, 8, 1 / 4F, 1 / 4F);
+            this.noiseBase[i] = new Simplex(this.nukkitRandom, 8, 1 / 4F, 1 / 64F);
         }
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.nukkitRandom, Biome.getBiome(Biome.FOREST));
@@ -157,32 +157,34 @@ public class Normal extends Generator {
                 new OreType(new BlockStone(BlockStone.DIORITE), 10, 33, 0, 80),
                 new OreType(new BlockStone(BlockStone.ANDESITE), 10, 33, 0, 80)
         });
-        this.populators.add(ores);
+        //this.populators.add(ores);
     }
 
     @Override
     public void generateChunk(final int chunkX, final int chunkZ) {
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
 
-        double[][] oceanNoise = Generator.getFastNoise2D(this.noiseOcean, 16, 16, 8, chunkX << 2, 0, chunkZ << 2);
-        double[][][][] baseNoiseGen = new double[baseNoiseLayers][][][];
-        //populate noise array
-        for (int i = 0; i < baseNoiseLayers; i++) {
-            baseNoiseGen[i] = Generator.getFastNoise3D(this.noiseBase[i], 5, 33, 5, 5, 11, 5, chunkX << 2, 0, chunkZ << 2);
-        }
-        //average all noise out
-        for (int x = 0; x < 5; x++) {
-            for (int y = 0; y < 33; y++) {
-                for (int z = 0; z < 5; z++) {
-                    double val = 0;
-                    for (int i = 0; i < baseNoiseLayers; i++) {
-                        val += baseNoiseGen[i][x][z][y];
+        double[][] oceanNoise = Generator.getFastNoise2D(this.noiseOcean, 16, 16, 8, chunkX << 4, 0, chunkZ << 4);
+        double[][][] baseNoise = new double[5][5][33];
+        //fill noise array
+        {
+            int xBase = chunkX << 4;
+            int zBase = chunkZ << 4;
+            //average all noise out
+            for (int x = 0; x < 5; x++) {
+                for (int y = 0; y < 33; y++) {
+                    for (int z = 0; z < 5; z++) {
+                        double val = 0;
+                        for (int i = 0; i < baseNoiseLayers; i++) {
+                            val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
+                        }
+                        val /= baseNoiseLayers;
+                        baseNoise[x][z][y] = val;
                     }
-                    val /= baseNoiseLayers;
-                    baseNoiseGen[0][x][z][y] = val;
                 }
             }
         }
+
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         //choose biomes
         Biome[][] biomes = new Biome[16][16];
@@ -201,33 +203,31 @@ public class Normal extends Generator {
             }
         }
         //place blocks
-        double[][][] baseNoise = baseNoiseGen[0];
         for (int xPiece = 0; xPiece < 4; xPiece++) {
             for (int zPiece = 0; zPiece < 4; zPiece++) {
                 for (int yPiece = 0; yPiece < 32; yPiece++) {
-                    double d = 0.125D;
-                    double noiseBottomMinXZ = baseNoise[xPiece][zPiece][yPiece];
-                    double noiseBottomMinXMaxZ = baseNoise[xPiece][zPiece + 1][yPiece];
-                    double noiseBottomMinZMaxX = baseNoise[xPiece + 1][zPiece][yPiece];
-                    double noiseBottomMaxXZ = baseNoise[xPiece + 1][zPiece + 1][yPiece];
-                    double noiseTopMinXZ = (baseNoise[xPiece][zPiece][yPiece + 1] - noiseBottomMinXZ) * d;
-                    double noiseTopMinXMaxZ = (baseNoise[xPiece][zPiece + 1][yPiece + 1] - noiseBottomMinXMaxZ) * d;
-                    double noiseTopMinZMaxX = (baseNoise[xPiece + 1][zPiece][yPiece + 1] - noiseBottomMinZMaxX) * d;
-                    double noiseTopMaxXZ = (baseNoise[xPiece + 1][zPiece + 1][yPiece + 1] - noiseBottomMaxXZ) * d;
+                    double scaleAmountVert = 0.125D;
+                    double noiseBase1 = baseNoise[xPiece][zPiece][yPiece];
+                    double noiseBase2 = baseNoise[xPiece][zPiece + 1][yPiece];
+                    double noiseBase3 = baseNoise[xPiece + 1][zPiece][yPiece];
+                    double noiseBase4 = baseNoise[xPiece + 1][zPiece + 1][yPiece];
+                    double noiseVertIncr1 = (baseNoise[xPiece][zPiece][yPiece + 1] - noiseBase1) * scaleAmountVert;
+                    double noiseVertIncr2 = (baseNoise[xPiece][zPiece + 1][yPiece + 1] - noiseBase2) * scaleAmountVert;
+                    double noiseVertIncr3 = (baseNoise[xPiece + 1][zPiece][yPiece + 1] - noiseBase3) * scaleAmountVert;
+                    double noiseVertIncr4 = (baseNoise[xPiece + 1][zPiece + 1][yPiece + 1] - noiseBase4) * scaleAmountVert;
 
                     for (int ySeg = 0; ySeg < 8; ySeg++) {
-                        double d1 = 0.25D;
-                        double baseOffset = noiseBottomMinXZ;
-                        double baseOffsetMinXMaxZ = noiseBottomMinXMaxZ;
-                        double scaled1 = (noiseBottomMinZMaxX - noiseBottomMinXZ) * d1;
-                        double scaled2 = (noiseBottomMaxXZ - noiseBottomMinXMaxZ) * d1;
+                        double scaleAmountHoriz = 0.25D;
+                        double baseOffset = noiseBase1;
+                        double baseOffsetMinXMaxZ = noiseBase2;
+                        double scaled1 = (noiseBase3 - noiseBase1) * scaleAmountHoriz;
+                        double scaled2 = (noiseBase4 - noiseBase2) * scaleAmountHoriz;
                         for (int xSeg = 0; xSeg < 4; xSeg++) {
                             int xLoc = xSeg + xPiece * 4;
                             int yLoc = yPiece * 8 + ySeg;
                             int zLoc = zPiece * 4;
-                            double d2 = 0.25D;
                             double noiseVal = baseOffset;
-                            double noiseIncr = (baseOffsetMinXMaxZ - baseOffset) * d2;
+                            double noiseIncr = (baseOffsetMinXMaxZ - baseOffset) * scaleAmountHoriz;
                             for (int zSeg = 0; zSeg < 4; zSeg++) {
                                 Biome biome = biomes[xLoc][zLoc];
                                 int block = Block.AIR;
@@ -245,10 +245,10 @@ public class Normal extends Generator {
                             baseOffsetMinXMaxZ += scaled2;
                         }
 
-                        noiseBottomMinXZ += noiseTopMinXZ;
-                        noiseBottomMinXMaxZ += noiseTopMinXMaxZ;
-                        noiseBottomMinZMaxX += noiseTopMinZMaxX;
-                        noiseBottomMaxXZ += noiseTopMaxXZ;
+                        noiseBase1 += noiseVertIncr1;
+                        noiseBase2 += noiseVertIncr2;
+                        noiseBase3 += noiseVertIncr3;
+                        noiseBase4 += noiseVertIncr4;
                     }
                 }
             }
