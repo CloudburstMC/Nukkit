@@ -1,8 +1,7 @@
 package cn.nukkit.api.entity.item;
 
-/**
- * @author CreeperFace
- */
-public interface ExperienceBottle extends Projectile {
+import cn.nukkit.api.entity.Entity;
+
+public interface ExperienceBottle extends Entity {
 
 }

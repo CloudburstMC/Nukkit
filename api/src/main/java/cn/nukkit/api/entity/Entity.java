@@ -2,9 +2,8 @@ package cn.nukkit.api.entity;
 
 import cn.nukkit.api.Server;
 import cn.nukkit.api.entity.component.EntityComponent;
-import cn.nukkit.api.event.entity.EntityDamageEvent;
-import cn.nukkit.api.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.api.level.Level;
+import cn.nukkit.api.util.BoundingBox;
 import cn.nukkit.api.util.Rotation;
 import com.flowpowered.math.vector.Vector3f;
 import com.google.common.base.VerifyException;
@@ -12,6 +11,7 @@ import com.google.common.base.VerifyException;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author CreeperFace
@@ -28,6 +28,21 @@ public interface Entity {
      */
     @Nonnull
     Vector3f getMotion();
+
+    UUID getUniqueId();
+
+    @Nonnull
+    Vector3f getPosition();
+
+    void setPosition(@Nonnull Vector3f position);
+
+    void setPositionFromSystem(@Nonnull Vector3f position);
+
+    @Nonnull
+    Vector3f getGamePosition();
+
+    @Nonnull
+    BoundingBox getBoundingBox();
 
     /**
      * Sets this entity's velocity
@@ -50,12 +65,7 @@ public interface Entity {
      */
     float getWidth();
 
-    /**
-     * Gets the entity's depth
-     *
-     * @return depth of entity
-     */
-    float getDepth();
+    float getOffset();
 
     /**
      * Returns true if the entity is supported by a block. This value is a
@@ -73,46 +83,42 @@ public interface Entity {
      */
     Level getLevel();
 
-    /*/**
-     * Teleports this entity to the given location. If this entity is riding a
+    /**
+     * Teleports this entity to the given position. If this entity is riding a
      * vehicle, it will be dismounted prior to teleportation.
      *
-     * @param location New location to teleport this entity to
+     * @param position New location to teleport this entity to
      * @return <code>true</code> if the teleport was successful
      */
-    //boolean teleport(Location location);
+    boolean teleport(Vector3f position);
 
-    /*/**
-     * Teleports this entity to the given location. If this entity is riding a
+    /**
+     * Teleports this entity to the given position in level. If this entity is riding a
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param location New location to teleport this entity to
-     * @param cause    The cause of this teleportation
      * @return <code>true</code> if the teleport was successful
      */
-    //boolean teleport(Location location, TeleportCause cause);
+    boolean teleport(Vector3f location, Level level);
 
     /**
      * Teleports this entity to the target Entity. If this entity is riding a
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param destination Entity to teleport this entity to
-     * @param cause       The cause of this teleportation
      * @return <code>true</code> if the teleport was successful
      */
-    boolean teleport(Entity destination, TeleportCause cause);
+    boolean teleport(Entity destination);
 
     /**
      * Returns a unique id for this entity
      *
      * @return Entity id
      */
-    long getUniqueEntityId();
-
-    long getRuntimeEntityId();
+    long getEntityId();
 
     /**
-     * Mark the entity's removal.
+     * Mark the entity for removal.
      */
     void remove();
 
@@ -144,6 +150,11 @@ public interface Entity {
      */
     //void setFallDistance(float distance);
 
+
+    long getTickCreated();
+
+    void setTickCreated(long tickCreated);
+
     /**
      * Gets the amount of ticks this entity has lived for.
      * <p>
@@ -151,7 +162,7 @@ public interface Entity {
      *
      * @return Age of entity
      */
-    int getTicksLived();
+    long getTicksLived();
 
     /**
      * Sets the amount of ticks this entity has lived for.
@@ -159,9 +170,9 @@ public interface Entity {
      * This is the equivalent to "age" in entities. May not be less than one
      * tick.
      *
-     * @param value Age of entity
+     * @param ticksLived Age of entity
      */
-    void setTicksLived(int value);
+    void setTicksLived(long ticksLived);
 
     /**
      * Returns whether this entity is inside a vehicle.
@@ -255,7 +266,11 @@ public interface Entity {
      */
     void setSneaking(boolean sneaking);
 
-    boolean attack(EntityDamageEvent source);
+    //boolean attack(EntityDamageEvent source);
+
+    boolean isAffectedByGravity();
+
+    void setAffectedByGravity(boolean affectedByGravity);
 
     Set<Class<? extends EntityComponent>> providedComponents();
 

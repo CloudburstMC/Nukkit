@@ -2,32 +2,19 @@ package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.api.event.Cancellable;
-import cn.nukkit.api.level.Level;
-import com.flowpowered.math.vector.Vector3f;
-import lombok.Getter;
-import lombok.Setter;
+import cn.nukkit.api.util.Location;
 
-@Getter
-@Setter
-public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
-
+public class PlayerTeleportEvent implements PlayerEvent, Cancellable {
+    private final Player player;
     private boolean cancelled;
-
     private TeleportCause cause;
-    private Location from;
+    private final Location from;
     private Location to;
 
     public PlayerTeleportEvent(Player player, Location from, Location to, TeleportCause cause) {
-        super(player);
+        this.player = player;
         this.from = from;
         this.to = to;
-        this.cause = cause;
-    }
-
-    public PlayerTeleportEvent(Player player, Vector3f from, Vector3f to, TeleportCause cause) {
-        super(player);
-        this.from = vectorToLocation(player.getLevel(), from);
-        this.from = vectorToLocation(player.getLevel(), to);
         this.cause = cause;
     }
 
@@ -43,10 +30,28 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         return cause;
     }
 
-    private Location vectorToLocation(Level baseLevel, Vector3f vector) {
-        return new Location(baseLevel, vector);
+    public void setCause(TeleportCause cause) {
+        this.cause = cause;
     }
 
+    public void setTo(Location to) {
+        this.to = to;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
     public enum TeleportCause {
         COMMAND,       // For Nukkit tp command only

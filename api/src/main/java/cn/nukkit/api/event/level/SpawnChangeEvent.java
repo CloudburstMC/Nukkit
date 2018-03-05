@@ -1,28 +1,23 @@
 package cn.nukkit.api.event.level;
 
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.Level;
-import cn.nukkit.server.level.Position;
+import cn.nukkit.api.level.Level;
+import com.flowpowered.math.vector.Vector3f;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class SpawnChangeEvent extends LevelEvent {
+public class SpawnChangeEvent implements LevelEvent {
+    private final Level level;
+    private final Vector3f previousSpawn;
 
-    private static final HandlerList handlers = new HandlerList();
-    private final Position previousSpawn;
-
-    public SpawnChangeEvent(Level level, Position previousSpawn) {
-        super(level);
+    public SpawnChangeEvent(Level level, Vector3f previousSpawn) {
+        this.level = level;
         this.previousSpawn = previousSpawn;
     }
 
-    public static HandlerList getHandlers() {
-        return handlers;
+    public Vector3f getPreviousSpawn() {
+        return previousSpawn;
     }
 
-    public Position getPreviousSpawn() {
-        return previousSpawn;
+    @Override
+    public Level getLevel() {
+        return level;
     }
 }

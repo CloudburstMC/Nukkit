@@ -1,36 +1,25 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Cancellable;
 
-/**
- * author: Box
- * Nukkit Project
- * <p>
- * Called when a entity decides to explode
- */
-public class ExplosionPrimeEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    protected double force;
+public class ExplosionPrimeEvent implements EntityEvent, Cancellable {
+    private final Entity entity;
+    protected float force;
     private boolean blockBreaking;
+    private boolean cancelled;
 
-    public ExplosionPrimeEvent(Entity entity, double force) {
+    public ExplosionPrimeEvent(Entity entity, float force) {
         this.entity = entity;
         this.force = force;
         this.blockBreaking = true;
     }
 
-    public double getForce() {
+    public float getForce() {
         return this.force;
     }
 
-    public void setForce(double force) {
+    public void setForce(float force) {
         this.force = force;
     }
 
@@ -38,8 +27,22 @@ public class ExplosionPrimeEvent extends EntityEvent implements Cancellable {
         return this.blockBreaking;
     }
 
-
     public void setBlockBreaking(boolean affectsBlocks) {
         this.blockBreaking = affectsBlocks;
+    }
+
+    @Override
+    public Entity getEntity() {
+        return entity;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

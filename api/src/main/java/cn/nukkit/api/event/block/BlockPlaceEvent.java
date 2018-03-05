@@ -1,39 +1,31 @@
 package cn.nukkit.api.event.block;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.item.ItemInstance;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class BlockPlaceEvent extends BlockEvent implements Cancellable {
+public class BlockPlaceEvent implements BlockEvent, Cancellable {
+    private final Player player;
+    private final ItemInstance item;
+    private final Block blockPlace;
+    private final Block blockReplace;
+    private final Block blockAgainst;
+    private boolean cancelled;
 
-    private static final HandlerList handlers = new HandlerList();
-    protected final Player player;
-    protected final Item item;
-    protected final Block blockReplace;
-    protected final Block blockAgainst;
-    public BlockPlaceEvent(Player player, Block blockPlace, Block blockReplace, Block blockAgainst, Item item) {
-        super(blockPlace);
+    public BlockPlaceEvent(Player player, Block blockPlace, Block blockReplace, Block blockAgainst, ItemInstance item) {
+        this.blockPlace = blockPlace;
         this.blockReplace = blockReplace;
         this.blockAgainst = blockAgainst;
         this.item = item;
         this.player = player;
     }
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     public Player getPlayer() {
         return player;
     }
 
-    public Item getItem() {
+    public ItemInstance getItem() {
         return item;
     }
 
@@ -43,5 +35,20 @@ public class BlockPlaceEvent extends BlockEvent implements Cancellable {
 
     public Block getBlockAgainst() {
         return blockAgainst;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Block getBlock() {
+        return blockPlace;
     }
 }

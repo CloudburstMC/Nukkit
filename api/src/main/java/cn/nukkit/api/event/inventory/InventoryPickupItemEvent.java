@@ -1,29 +1,35 @@
 package cn.nukkit.api.event.inventory;
 
-import cn.nukkit.server.entity.item.EntityItem;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.inventory.Inventory;
+import cn.nukkit.api.entity.item.DroppedItem;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.inventory.Inventory;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class InventoryPickupItemEvent extends InventoryEvent implements Cancellable {
+public class InventoryPickupItemEvent implements InventoryEvent, Cancellable {
+    private final Inventory inventory;
+    private final DroppedItem item;
+    private boolean cancelled;
 
-    private static final HandlerList handlers = new HandlerList();
-    private final EntityItem item;
-
-    public InventoryPickupItemEvent(Inventory inventory, EntityItem item) {
-        super(inventory);
+    public InventoryPickupItemEvent(Inventory inventory, DroppedItem item) {
+        this.inventory = inventory;
         this.item = item;
     }
 
-    public static HandlerList getHandlers() {
-        return handlers;
+    public DroppedItem getItem() {
+        return item;
     }
 
-    public EntityItem getItem() {
-        return item;
+    @Override
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

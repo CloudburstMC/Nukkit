@@ -1,4 +1,6 @@
 package cn.nukkit.api.entity.ee;
 
-public class Camera {
+import cn.nukkit.api.entity.Entity;
+
+public interface Camera extends Entity {
 }

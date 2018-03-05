@@ -1,29 +1,35 @@
 package cn.nukkit.api.event.inventory;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.inventory.Inventory;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.inventory.Inventory;
 
-/**
- * author: Box
- * Nukkit Project
- */
-public class InventoryOpenEvent extends InventoryEvent implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
+public class InventoryOpenEvent implements InventoryEvent, Cancellable {
+    private final Inventory inventory;
     private final Player who;
+    private boolean cancelled;
 
     public InventoryOpenEvent(Inventory inventory, Player who) {
-        super(inventory);
+        this.inventory = inventory;
         this.who = who;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 
     public Player getPlayer() {
         return this.who;
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

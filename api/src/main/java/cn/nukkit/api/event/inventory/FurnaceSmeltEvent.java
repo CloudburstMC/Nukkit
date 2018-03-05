@@ -1,4 +1,4 @@
-package cn.nukkit.api.event.inventory;
+/*package cn.nukkit.api.event.inventory;
 
 import cn.nukkit.api.event.block.BlockEvent;
 import cn.nukkit.server.blockentity.BlockEntityFurnace;
@@ -9,7 +9,7 @@ import cn.nukkit.server.item.Item;
 /**
  * author: MagicDroidX
  * Nukkit Project
- */
+ *//*
 public class FurnaceSmeltEvent extends BlockEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -43,4 +43,4 @@ public class FurnaceSmeltEvent extends BlockEvent implements Cancellable {
     public void setResult(Item result) {
         this.result = result;
     }
-}
+}*/

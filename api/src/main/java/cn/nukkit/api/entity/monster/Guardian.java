@@ -1,7 +1,6 @@
 package cn.nukkit.api.entity.monster;
 
-/**
- * @author CreeperFace
- */
-public interface Guardian extends Monster {
+import cn.nukkit.api.entity.Entity;
+
+public interface Guardian extends Entity {
 }

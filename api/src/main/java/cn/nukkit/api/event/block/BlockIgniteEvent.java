@@ -1,25 +1,21 @@
 package cn.nukkit.api.event.block;
 
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Cancellable;
 
-public class BlockIgniteEvent extends BlockEvent implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
+public class BlockIgniteEvent implements BlockEvent, Cancellable {
+    private final Block block;
     private final Block source;
     private final Entity entity;
     private final BlockIgniteCause cause;
+    private boolean cancelled;
+
     public BlockIgniteEvent(Block block, Block source, Entity entity, BlockIgniteCause cause) {
-        super(block);
+        this.block = block;
         this.source = source;
         this.entity = entity;
         this.cause = cause;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 
     public Block getSource() {
@@ -32,6 +28,21 @@ public class BlockIgniteEvent extends BlockEvent implements Cancellable {
 
     public BlockIgniteCause getCause() {
         return cause;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Block getBlock() {
+        return block;
     }
 
     public enum BlockIgniteCause {

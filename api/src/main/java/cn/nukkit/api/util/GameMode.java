@@ -15,56 +15,54 @@ public enum GameMode {
     /**
      * Survival mode is the "normal" gameplay type, with no special features.
      */
-    SURVIVAL("%gameMode.survival", "s", "0", "survival"),
+    SURVIVAL("gameMode.survival", "s", "0", "survival"),
 
     /**
      * Creative mode may fly, build instantly, become invulnerable and create
      * free items.
      */
-    CREATIVE("%gameMode.creative", "c", "1", "creative"),
+    CREATIVE("gameMode.creative", "c", "1", "creative"),
 
     /**
      * Adventure mode cannot break blocks without the correct tools.
      */
-    ADVENTURE("%gameMode.adventure", "a", "2", "adventure"),
+    ADVENTURE("gameMode.adventure", "a", "2", "adventure"),
 
     /**
      * Spectator mode cannot interact with the world in anyway and is
      * invisible to normal players. This grants the player the
      * ability to no-clip through the world.
      */
-    SPECTATOR("%gameMode.spectator", "sp", "3", "spectator");
+    SPECTATOR("gameMode.spectator", "sp", "3", "spectator");
 
-    private static final Map<String, GameMode> modes = new HashMap<>();
-    private final String translation;
-    private final String[] aliases;
+    private static final Map<String, GameMode> ALIASES = new HashMap<>();
 
-    GameMode(String translation, String... aliases) {
-        this.translation = translation;
-        this.aliases = aliases;
-        add();
+    private final String i18n;
+
+    GameMode(String i18n, String... aliases) {
+        this.i18n = i18n;
+        add(aliases);
     }
 
     @Nonnull
     public static GameMode parse(String gamemode) {
-        return modes.getOrDefault(gamemode.toLowerCase(), GameMode.SURVIVAL);
+        return ALIASES.getOrDefault(gamemode.toLowerCase(), GameMode.SURVIVAL);
     }
 
     @Nonnull
     public static GameMode parse(int gamemode) {
-        GameMode mode = GameMode.values()[gamemode];
-        return (mode == null ? GameMode.SURVIVAL : mode);
+        return (gamemode > 3 || gamemode < 0 ? GameMode.SURVIVAL : GameMode.values()[gamemode]);
     }
 
-    private void add() {
+    private void add(String[] aliases) {
         for (String s : aliases) {
-            modes.put(s, this);
+            ALIASES.put(s, this);
         }
     }
 
     @Nonnull
-    public String getTranslationString() {
-        return translation;
+    public String getI18n() {
+        return i18n;
     }
 
     /**

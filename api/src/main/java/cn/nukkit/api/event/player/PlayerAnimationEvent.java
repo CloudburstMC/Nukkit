@@ -2,24 +2,33 @@ package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.api.event.Cancellable;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class PlayerAnimationEvent extends PlayerEvent implements Cancellable {
-    private static final int ARM_SWING = 1;
+public class PlayerAnimationEvent implements PlayerEvent, Cancellable {
+    private final Player player;
+    private final Player.Animation animation;
+    private boolean cancelled;
 
-    private final int animationType;
-
-    private boolean cancelled = false;
-
-    public PlayerAnimationEvent(Player player) {
-        this(player, ARM_SWING);
+    public PlayerAnimationEvent(Player player, Player.Animation animation) {
+        this.player = player;
+        this.animation = animation;
     }
 
-    public PlayerAnimationEvent(Player player, int animation) {
-        super(player);
-        this.animationType = animation;
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Player.Animation getAnimation() {
+        return animation;
     }
 }

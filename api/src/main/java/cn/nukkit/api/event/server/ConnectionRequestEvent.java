@@ -6,7 +6,7 @@ import java.net.InetSocketAddress;
 
 /**
  * Called when RakNet receives a connection request packet.
- * This is the earliest you can
+ * This is the earliest you can deny someone from entering the server
  */
 public class ConnectionRequestEvent implements Event {
     private final InetSocketAddress address;

@@ -1,9 +1,9 @@
 package cn.nukkit.api.event.server;
 
-import cn.nukkit.api.GameMode;
 import cn.nukkit.api.Player;
 import cn.nukkit.api.Server;
 import cn.nukkit.api.plugin.Plugin;
+import cn.nukkit.api.util.GameMode;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +14,7 @@ import java.util.Collection;
 public class RefreshQueryEvent implements ServerEvent {
     private final Collection<Plugin> plugins;
     private final Collection<Player> players;
-    private GameMode gameType;
+    private GameMode gameMode;
     private int timeout;
     private String serverName;
     private String version;
@@ -30,16 +30,16 @@ public class RefreshQueryEvent implements ServerEvent {
 
     public RefreshQueryEvent(Server server, int timeout) {
         this.timeout = timeout;
-        serverName = server.getServerProperties().getMotd();
+        serverName = server.getConfiguration().getGeneral().getMotd();
         pluginListEnabled = (boolean) server.getConfig("settings.query-plugins", true);
         plugins = server.getPluginManager().getAllPlugins();
         players = new ArrayList<>(server.getOnlinePlayers().values());
-        gameType = server.getDefaultGameMode();
+        gameMode = server.getDefaultGameMode();
         version = server.getMinecraftVersion().toString();
-        map = server.getDefaultLevel() == null ? "unknown" : server.getDefaultLevel().getName();
+        map = server.getDefaultLevel().getName();
         numPlayers = players.size();
-        maxPlayers = server.getServerProperties().getMaxPlayers();
-        whitelist = server.getServerProperties().isWhitelistEnabled();
+        maxPlayers = server.getConfiguration().getGeneral().getMaximumPlayers();
+        whitelist = server.getConfiguration().getGeneral().isWhitelisted();
     }
 
     public String getVersion() {
@@ -106,12 +106,12 @@ public class RefreshQueryEvent implements ServerEvent {
         this.map = world;
     }
 
-    public GameMode getGameType() {
-        return gameType;
+    public GameMode getGameMode() {
+        return gameMode;
     }
 
-    public void setGameType(GameMode gameType) {
-        this.gameType = gameType;
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
     }
 
     public boolean isWhitelisted() {

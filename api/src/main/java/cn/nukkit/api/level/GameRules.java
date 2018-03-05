@@ -1,6 +1,6 @@
 package cn.nukkit.api.level;
 
-import cn.nukkit.api.util.data.GameRule;
+import cn.nukkit.api.level.data.GameRule;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,4 +23,6 @@ public interface GameRules {
     String getString(@Nonnull GameRule gameRule);
 
     boolean contains(@Nullable GameRule gameRule);
+
+    GameRule[] getRules();
 }

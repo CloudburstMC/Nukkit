@@ -1,4 +1,6 @@
 package cn.nukkit.api.entity.ee;
 
-public class Chalkboard {
+import cn.nukkit.api.entity.Entity;
+
+public interface Chalkboard extends Entity {
 }

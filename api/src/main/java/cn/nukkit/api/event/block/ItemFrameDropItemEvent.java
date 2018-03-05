@@ -1,42 +1,49 @@
 package cn.nukkit.api.event.block;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.blockentity.BlockEntityItemFrame;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.block.entity.ItemFrameBlockEntity;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.item.ItemInstance;
 
-/**
- * Created by Pub4Game on 03.07.2016.
- */
-public class ItemFrameDropItemEvent extends BlockEvent implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
+public class ItemFrameDropItemEvent implements BlockEvent, Cancellable {
+    private final Block block;
     private final Player player;
-    private final Item item;
-    private final BlockEntityItemFrame itemFrame;
+    private final ItemInstance item;
+    private final ItemFrameBlockEntity itemFrame;
+    private boolean cancellable;
 
-    public ItemFrameDropItemEvent(Player player, Block block, BlockEntityItemFrame itemFrame, Item item) {
-        super(block);
+    public ItemFrameDropItemEvent(Player player, Block block, ItemFrameBlockEntity itemFrame, ItemInstance item) {
+        this.block = block;
         this.player = player;
-        this.itemFrame = itemFrame;
         this.item = item;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
+        this.itemFrame = itemFrame;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public BlockEntityItemFrame getItemFrame() {
+    public ItemFrameBlockEntity getItemFrame() {
         return itemFrame;
     }
 
-    public Item getItem() {
+    public ItemInstance getItem() {
         return item;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancellable;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancellable = cancelled;
+    }
+
+    @Override
+    public Block getBlock() {
+        return block;
     }
 }

@@ -1,11 +1,10 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.block.Block;
 
-public class PlayerBedLeaveEvent extends PlayerEvent {
-    private static final HandlerList handlers = new HandlerList();
+public class PlayerBedLeaveEvent implements PlayerEvent {
+    private final Player player;
     private final Block bed;
 
     public PlayerBedLeaveEvent(Player player, Block bed) {
@@ -13,8 +12,9 @@ public class PlayerBedLeaveEvent extends PlayerEvent {
         this.bed = bed;
     }
 
-    public static HandlerList getHandlers() {
-        return handlers;
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     public Block getBed() {

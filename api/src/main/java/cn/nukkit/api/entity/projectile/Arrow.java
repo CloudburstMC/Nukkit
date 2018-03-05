@@ -1,9 +1,11 @@
 package cn.nukkit.api.entity.projectile;
 
+import cn.nukkit.api.entity.Entity;
+
 /**
  * @author CreeperFace
  */
-public interface Arrow extends Projectile {
+public interface Arrow extends Entity {
 
     /**
      * Gets the knockback strength for an arrow, which is an enchantment

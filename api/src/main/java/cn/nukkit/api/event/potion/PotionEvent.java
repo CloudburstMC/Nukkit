@@ -1,25 +1,12 @@
 package cn.nukkit.api.event.potion;
 
-import cn.nukkit.server.potion.Potion;
+import cn.nukkit.api.entity.item.Potion;
+import cn.nukkit.api.event.Event;
 
-/**
- * Created by Snake1999 on 2016/1/12.
- * Package cn.nukkit.api.event.potion in project nukkit
- */
-public abstract class PotionEvent extends Event {
+public interface PotionEvent extends Event {
 
-    private Potion potion;
+    Potion getPotion();
 
-    public PotionEvent(Potion potion) {
-        this.potion = potion;
-    }
-
-    public Potion getPotion() {
-        return potion;
-    }
-
-    public void setPotion(Potion potion) {
-        this.potion = potion;
-    }
+    void setPotion(Potion potion);
 
 }

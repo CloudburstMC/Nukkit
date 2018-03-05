@@ -1,22 +1,11 @@
 package cn.nukkit.api.event.level;
 
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.level.Level;
 
-/**
- * author: funcraft
- * Nukkit Project
- */
 public class WeatherChangeEvent extends WeatherEvent implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
-
     private final boolean to;
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
+    private boolean cancelled;
 
     public WeatherChangeEvent(Level level, boolean to) {
         super(level);
@@ -32,4 +21,13 @@ public class WeatherChangeEvent extends WeatherEvent implements Cancellable {
         return to;
     }
 
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 }

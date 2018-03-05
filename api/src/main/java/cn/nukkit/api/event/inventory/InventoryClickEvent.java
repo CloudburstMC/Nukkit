@@ -1,46 +1,53 @@
 package cn.nukkit.api.event.inventory;
 
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.inventory.Inventory;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.inventory.Inventory;
+import cn.nukkit.api.item.ItemInstance;
 
-/**
- * author: boybook
- * Nukkit Project
- */
-public class InventoryClickEvent extends InventoryEvent implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
+public class InventoryClickEvent implements InventoryEvent, Cancellable {
+    private final Inventory inventory;
     private final int slot;
-    private final Item sourceItem;
-    private final Item heldItem;
-    private final Item leftItem;
-    public InventoryClickEvent(Inventory inventory, int slot, Item sourceItem, Item heldItem, Item leftItem) {
-        super(inventory);
+    private final ItemInstance sourceItem;
+    private final ItemInstance heldItem;
+    private final ItemInstance leftItem;
+    private boolean cancelled;
+
+    public InventoryClickEvent(Inventory inventory, int slot, ItemInstance sourceItem, ItemInstance heldItem, ItemInstance leftItem) {
+        this.inventory = inventory;
         this.slot = slot;
         this.sourceItem = sourceItem;
         this.heldItem = heldItem;
         this.leftItem = leftItem;
     }
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     public int getSlot() {
         return slot;
     }
 
-    public Item getSourceItem() {
+    public ItemInstance getSourceItem() {
         return sourceItem;
     }
 
-    public Item getHeldItem() {
+    public ItemInstance getHeldItem() {
         return heldItem;
     }
 
-    public Item getLeftItem() {
+    public ItemInstance getLeftItem() {
         return leftItem;
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

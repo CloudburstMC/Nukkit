@@ -2,6 +2,7 @@ package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.api.level.Level;
+import cn.nukkit.api.util.GameMode;
 import cn.nukkit.api.util.Rotation;
 import com.flowpowered.math.vector.Vector3f;
 import com.google.common.base.Preconditions;
@@ -9,16 +10,19 @@ import com.google.common.base.Preconditions;
 /**
  * When the player has started to initialize but not spawned yet.
  */
-public class PlayerLoginEvent extends PlayerEvent {
-    private Vector3f spawnLocation;
+public class PlayerLoginEvent implements PlayerEvent {
+    private final Player player;
+    private Vector3f spawnPosition;
     private Level spawnLevel;
     private Rotation rotation;
+    private GameMode gameMode;
 
-    public PlayerLoginEvent(Player player, Vector3f spawnLocation, Level spawnLevel, Rotation rotation) {
-        super(player);
-        this.spawnLocation = Preconditions.checkNotNull(spawnLocation, "spawnLocation");
+    public PlayerLoginEvent(Player player, Vector3f spawnPosition, Level spawnLevel, Rotation rotation, GameMode gameMode) {
+        this.player = player;
+        this.spawnPosition = Preconditions.checkNotNull(spawnPosition, "spawnLocation");
         this.spawnLevel = Preconditions.checkNotNull(spawnLevel, "spawnLevel");
         this.rotation = Preconditions.checkNotNull(rotation, "rotation");
+        this.gameMode = Preconditions.checkNotNull(gameMode, "gameMode");
     }
 
     /**
@@ -55,17 +59,30 @@ public class PlayerLoginEvent extends PlayerEvent {
 
     /**
      * The spawn position that the player will spawn at.
-     * @return location
+     * @return position
      */
-    public Vector3f getSpawnLocation() {
-        return spawnLocation;
+    public Vector3f getSpawnPosition() {
+        return spawnPosition;
     }
 
     /**
      * Set the position at which the player will spawn.
-     * @param spawnLocation location
+     * @param spawnPosition location
      */
-    public void setSpawnLocation(Vector3f spawnLocation) {
-        this.spawnLocation = spawnLocation;
+    public void setSpawnLocation(Vector3f spawnPosition) {
+        this.spawnPosition = spawnPosition;
+    }
+
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 }

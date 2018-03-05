@@ -1,27 +1,20 @@
 package cn.nukkit.api.event.block;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.event.Cancellable;
+import com.google.common.base.Preconditions;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class SignChangeEvent extends BlockEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+public class SignChangeEvent implements BlockEvent, Cancellable {
+    private final Block block;
     private final Player player;
-    private String[] lines = new String[4];
+    private String[] lines;
+    private boolean cancelled;
 
     public SignChangeEvent(Block block, Player player, String[] lines) {
-        super(block);
+        this.block = block;
         this.player = player;
         this.lines = lines;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 
     public Player getPlayer() {
@@ -33,10 +26,27 @@ public class SignChangeEvent extends BlockEvent implements Cancellable {
     }
 
     public String getLine(int index) {
+        Preconditions.checkArgument(index > 0 && index < 4, "index must be from 0 to 3");
         return this.lines[index];
     }
 
     public void setLine(int index, String line) {
+        Preconditions.checkArgument(index > 0 && index < 4, "index must be from 0 to 3");
         this.lines[index] = line;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Block getBlock() {
+        return block;
     }
 }

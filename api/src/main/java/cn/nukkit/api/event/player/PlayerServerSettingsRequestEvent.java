@@ -1,25 +1,39 @@
-package cn.nukkit.api.event.player;
+/*package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.api.event.Cancellable;
-import cn.nukkit.api.form.window.FormWindow;
-import lombok.Getter;
-import lombok.Setter;
+import cn.nukkit.server.form.window.FormWindow;
 
-/**
- * @author CreeperFace
- */
-
-@Getter
-@Setter
-public class PlayerServerSettingsRequestEvent extends PlayerEvent implements Cancellable {
-
+public class PlayerServerSettingsRequestEvent implements PlayerEvent, Cancellable {
+    private final Player player;
+    private FormWindow settings;
     private boolean cancelled;
 
-    private FormWindow settings;
-
     public PlayerServerSettingsRequestEvent(Player player, FormWindow settings) {
-        super(player);
+        this.player = player;
         this.settings = settings;
     }
-}
+
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public FormWindow getSettings() {
+        return settings;
+    }
+
+    public void setSettings(FormWindow settings) {
+        this.settings = settings;
+    }
+}*/

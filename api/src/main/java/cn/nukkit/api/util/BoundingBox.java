@@ -1,12 +1,15 @@
 package cn.nukkit.api.util;
 
+import com.flowpowered.math.HashFunctions;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
 @Value
+@Immutable
 public class BoundingBox {
     private final Vector3f min;
     private final Vector3f max;
@@ -67,6 +70,26 @@ public class BoundingBox {
         return shrink(val, val, val);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BoundingBox that = (BoundingBox) o;
+        return this.min.equals(that.min) && this.max.equals(that.max);
+    }
+
+    @Override
+    public int hashCode() {
+        if (!hashed) {
+            int result = HashFunctions.hash(min);
+            this.hashCode = 31 * result + HashFunctions.hash(max);
+            this.hashed = true;
+        }
+
+        return hashCode;
+    }
+
+    @Override
     public String toString() {
         return "BoundingBox{" +
                 "min=" + min +

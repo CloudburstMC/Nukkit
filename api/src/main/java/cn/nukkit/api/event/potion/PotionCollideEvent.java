@@ -1,30 +1,39 @@
 package cn.nukkit.api.event.potion;
 
-import cn.nukkit.server.entity.item.EntityPotion;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.potion.Potion;
+import cn.nukkit.api.entity.item.Potion;
+import cn.nukkit.api.event.Cancellable;
 
-/**
- * Created by Snake1999 on 2016/1/12.
- * Package cn.nukkit.api.event.potion in project nukkit
- */
-public class PotionCollideEvent extends PotionEvent implements Cancellable {
+public class PotionCollideEvent implements PotionEvent, Cancellable {
+    private final Potion thrownPotion;
+    private Potion potion;
+    private boolean cancelled;
 
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    private final EntityPotion thrownPotion;
-
-    public PotionCollideEvent(Potion potion, EntityPotion thrownPotion) {
-        super(potion);
+    public PotionCollideEvent(Potion potion, Potion thrownPotion) {
+        this.potion = potion;
         this.thrownPotion = thrownPotion;
     }
 
-    public EntityPotion getThrownPotion() {
+    public Potion getThrownPotion() {
         return thrownPotion;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return false;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Potion getPotion() {
+        return potion;
+    }
+
+    @Override
+    public void setPotion(Potion potion) {
+        this.potion = potion;
     }
 }

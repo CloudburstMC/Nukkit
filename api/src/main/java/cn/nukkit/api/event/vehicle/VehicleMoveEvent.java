@@ -1,22 +1,15 @@
 package cn.nukkit.api.event.vehicle;
 
-import cn.nukkit.server.entity.item.EntityVehicle;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.Location;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.util.Location;
 
-public class VehicleMoveEvent extends VehicleEvent {
-
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
+public class VehicleMoveEvent implements VehicleEvent {
+    private final Entity vehicle;
     private final Location from;
     private final Location to;
 
-    public VehicleMoveEvent(EntityVehicle vehicle, Location from, Location to) {
-        super(vehicle);
+    public VehicleMoveEvent(Entity vehicle, Location from, Location to) {
+        this.vehicle = vehicle;
         this.from = from;
         this.to = to;
     }
@@ -27,5 +20,10 @@ public class VehicleMoveEvent extends VehicleEvent {
 
     public Location getTo() {
         return to;
+    }
+
+    @Override
+    public Entity getVehicle() {
+        return vehicle;
     }
 }

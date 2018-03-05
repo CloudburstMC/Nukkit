@@ -1,7 +1,7 @@
 package cn.nukkit.api.entity.component;
 
-import cn.nukkit.api.GameMode;
 import cn.nukkit.api.level.AdventureSettings;
+import cn.nukkit.api.util.GameMode;
 
 import javax.annotation.Nonnull;
 

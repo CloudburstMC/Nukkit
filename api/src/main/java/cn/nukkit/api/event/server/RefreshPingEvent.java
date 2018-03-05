@@ -1,7 +1,7 @@
 package cn.nukkit.api.event.server;
 
-import cn.nukkit.api.GameMode;
 import cn.nukkit.api.Server;
+import cn.nukkit.api.util.GameMode;
 
 /**
  * Ping sent to player's on their server list screen before joining a server.
@@ -16,9 +16,9 @@ public class RefreshPingEvent implements ServerEvent {
     private int timeout = 5;
 
     public RefreshPingEvent(Server server, int protocolVersion) {
-        motd = server.getServerProperties().getMotd();
-        subMotd = server.getServerProperties().getSubMotd();
-        maxPlayerCount = server.getServerProperties().getMaxPlayers();
+        motd = server.getConfiguration().getGeneral().getMotd();
+        subMotd = server.getConfiguration().getGeneral().getSubMotd();
+        maxPlayerCount = server.getConfiguration().getGeneral().getMaximumPlayers();
         playerCount = server.getOnlinePlayers().size();
         defaultGamemode = server.getDefaultGameMode();
         this.protocolVersion = protocolVersion;

@@ -1,13 +1,5 @@
-package cn.nukkit.api.event.inventory;
+/*package cn.nukkit.api.event.inventory;
 
-import cn.nukkit.server.blockentity.BlockEntityBrewingStand;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
-
-/**
- * @author CreeperFace
- */
 public class BrewEvent extends InventoryEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -46,7 +38,7 @@ public class BrewEvent extends InventoryEvent implements Cancellable {
 
     /**
      * @param index Potion index in range 0 - 2
-     */
+     *//*
     public Item getPotion(int index) {
         return this.potions[index];
     }
@@ -54,4 +46,4 @@ public class BrewEvent extends InventoryEvent implements Cancellable {
     public int getFuel() {
         return fuel;
     }
-}
+}*/

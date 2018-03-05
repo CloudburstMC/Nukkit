@@ -1,11 +1,7 @@
-package cn.nukkit.api.event.entity;
+/*package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.Entity;
+import cn.nukkit.api.entity.Entity;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
 public class EntityDamageByChildEntityEvent extends EntityDamageByEntityEvent {
 
     private final Entity childEntity;
@@ -18,4 +14,4 @@ public class EntityDamageByChildEntityEvent extends EntityDamageByEntityEvent {
     public Entity getChild() {
         return childEntity;
     }
-}
+}*/

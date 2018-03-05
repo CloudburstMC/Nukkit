@@ -1,22 +1,8 @@
-package cn.nukkit.api.event.potion;
+/*package cn.nukkit.api.event.potion;
 
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.potion.Effect;
-import cn.nukkit.server.potion.Potion;
+import cn.nukkit.api.event.Cancellable;
 
-/**
- * Created by Snake1999 on 2016/1/12.
- * Package cn.nukkit.api.event.potion in project nukkit
- */
-public class PotionApplyEvent extends PotionEvent implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
+public class PotionApplyEvent  implements PotionEvent, Cancellable {
 
     private Effect applyEffect;
 
@@ -39,4 +25,4 @@ public class PotionApplyEvent extends PotionEvent implements Cancellable {
     public void setApplyEffect(Effect applyEffect) {
         this.applyEffect = applyEffect;
     }
-}
+}*/

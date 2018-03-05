@@ -1,21 +1,7 @@
 package cn.nukkit.api.event.level;
 
-import cn.nukkit.server.level.format.FullChunk;
+import cn.nukkit.api.level.chunk.Chunk;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public abstract class ChunkEvent extends LevelEvent {
-
-    private final FullChunk chunk;
-
-    public ChunkEvent(FullChunk chunk) {
-        super(chunk.getProvider().getLevel());
-        this.chunk = chunk;
-    }
-
-    public FullChunk getChunk() {
-        return chunk;
-    }
+public interface ChunkEvent extends LevelEvent {
+    Chunk getChunk();
 }

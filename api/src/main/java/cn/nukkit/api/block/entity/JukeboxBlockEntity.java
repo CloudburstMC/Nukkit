@@ -1,10 +1,16 @@
 package cn.nukkit.api.block.entity;
 
-import cn.nukkit.api.item.component.RecordItemComponent;
+import cn.nukkit.api.item.ItemType;
 
 public interface JukeboxBlockEntity extends BlockEntity {
 
-    RecordItemComponent getRecordType();
+    ItemType getRecord();
 
-    default
+    /**
+     * Set the current record in the jukebox.
+     *
+     * @param record the record
+     * @throws IllegalArgumentException {@link cn.nukkit.api.item.ItemType} must be a record
+     */
+    void setRecord(ItemType record);
 }

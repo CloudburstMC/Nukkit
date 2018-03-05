@@ -1,38 +1,43 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.projectile.EntityProjectile;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.MovingObjectPosition;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Cancellable;
+import com.flowpowered.math.vector.Vector3f;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class ProjectileHitEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+public class ProjectileHitEvent implements EntityEvent, Cancellable {
+    private final Entity entity;
+    private Vector3f movingObjectPosition;
+    private boolean cancelled;
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    private MovingObjectPosition movingObjectPosition;
-
-    public ProjectileHitEvent(EntityProjectile entity) {
+    public ProjectileHitEvent(Entity entity) {
         this(entity, null);
     }
 
-    public ProjectileHitEvent(EntityProjectile entity, MovingObjectPosition movingObjectPosition) {
+    public ProjectileHitEvent(Entity entity, Vector3f movingObjectPosition) {
         this.entity = entity;
         this.movingObjectPosition = movingObjectPosition;
     }
 
-    public MovingObjectPosition getMovingObjectPosition() {
+    public Vector3f getMovingObjectPosition() {
         return movingObjectPosition;
     }
 
-    public void setMovingObjectPosition(MovingObjectPosition movingObjectPosition) {
+    public void setMovingObjectPosition(Vector3f movingObjectPosition) {
         this.movingObjectPosition = movingObjectPosition;
     }
 
+    @Override
+    public Entity getEntity() {
+        return entity;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 }

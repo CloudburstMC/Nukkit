@@ -1,9 +1,11 @@
 package cn.nukkit.api.entity.item;
 
+import cn.nukkit.api.entity.Entity;
+
 /**
  * @author CreeperFace
  */
-public interface PrimedTNT extends Explosive {
+public interface PrimedTNT extends Entity {
 
     /**
      * Retrieve the number of ticks until the explosion of this TNTPrimed

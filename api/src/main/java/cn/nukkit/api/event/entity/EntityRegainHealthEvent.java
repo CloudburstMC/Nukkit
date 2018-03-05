@@ -1,32 +1,18 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Cancellable;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class EntityRegainHealthEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static final int CAUSE_REGEN = 0;
-    public static final int CAUSE_EATING = 1;
-    public static final int CAUSE_MAGIC = 2;
-    public static final int CAUSE_CUSTOM = 3;
-
+public class EntityRegainHealthEvent implements EntityEvent, Cancellable {
+    private final Entity entity;
     private float amount;
-    private final int reason;
+    private final Cause cause;
+    private boolean cancelled;
 
-    public EntityRegainHealthEvent(Entity entity, float amount, int regainReason) {
+    public EntityRegainHealthEvent(Entity entity, float amount, Cause cause) {
         this.entity = entity;
         this.amount = amount;
-        this.reason = regainReason;
+        this.cause = cause;
     }
 
     public float getAmount() {
@@ -37,7 +23,29 @@ public class EntityRegainHealthEvent extends EntityEvent implements Cancellable 
         this.amount = amount;
     }
 
-    public int getRegainReason() {
-        return reason;
+    public Cause getRegainCause() {
+        return cause;
+    }
+
+    @Override
+    public Entity getEntity() {
+        return entity;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public enum Cause {
+        REGENERATION,
+        EATING,
+        MAGIC,
+        CUSTOM
     }
 }

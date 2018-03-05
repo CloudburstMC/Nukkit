@@ -1,18 +1,28 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import lombok.Getter;
-import lombok.Setter;
+import cn.nukkit.api.util.Location;
 
-@Getter
-@Setter
-public class PlayerRespawnEvent extends PlayerEvent {
-
+public class PlayerRespawnEvent implements PlayerEvent {
+    private final Player player;
     private Location respawnLocation;
 
     public PlayerRespawnEvent(Player player, Location respawnLocation) {
-        super(player);
+        this.player = player;
         this.respawnLocation = respawnLocation;
+    }
+
+    public Location getRespawnLocation() {
+        return respawnLocation;
+    }
+
+    public void setRespawnLocation(Location respawnLocation) {
+        this.respawnLocation = respawnLocation;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     public enum Cause {

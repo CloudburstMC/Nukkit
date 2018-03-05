@@ -1,18 +1,16 @@
 package cn.nukkit.api.event.vehicle;
 
-import cn.nukkit.server.entity.item.EntityVehicle;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.entity.Entity;
 
-public class VehicleUpdateEvent extends VehicleEvent {
+public class VehicleUpdateEvent implements VehicleEvent {
+    private final Entity vehicle;
 
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
+    public VehicleUpdateEvent(Entity vehicle) {
+        this.vehicle = vehicle;
     }
 
-    public VehicleUpdateEvent(EntityVehicle vehicle) {
-        super(vehicle);
+    @Override
+    public Entity getVehicle() {
+        return vehicle;
     }
-
 }

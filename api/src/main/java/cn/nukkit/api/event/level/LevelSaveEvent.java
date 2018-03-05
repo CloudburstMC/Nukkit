@@ -1,22 +1,16 @@
 package cn.nukkit.api.event.level;
 
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.Level;
+import cn.nukkit.api.level.Level;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class LevelSaveEvent extends LevelEvent {
-
-    private static final HandlerList handlers = new HandlerList();
+public class LevelSaveEvent implements LevelEvent {
+    private final Level level;
 
     public LevelSaveEvent(Level level) {
-        super(level);
+        this.level = level;
     }
 
-    public static HandlerList getHandlers() {
-        return handlers;
+    @Override
+    public Level getLevel() {
+        return level;
     }
-
 }

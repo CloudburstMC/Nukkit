@@ -13,11 +13,11 @@ import java.util.UUID;
 @Getter
 @EqualsAndHashCode
 public class MinecraftPackManifest {
-    protected Collection<Dependency> dependencies;
     @JsonProperty("format_version")
     private Integer formatVersion;
     private Header header;
     private Collection<Module> modules;
+    protected Collection<Dependency> dependencies;
 
     public Collection<Module> getModules() {
         return Collections.unmodifiableCollection(modules);

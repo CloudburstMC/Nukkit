@@ -9,7 +9,7 @@ import javax.annotation.Nonnegative;
 public interface Flammable extends EntityComponent {
 
     default boolean isIgnited() {
-        return getIgnitedDuration() <= 0;
+        return getIgnitedDuration() > 0;
     }
 
     /**

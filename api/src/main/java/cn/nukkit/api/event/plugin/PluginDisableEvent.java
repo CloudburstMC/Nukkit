@@ -2,13 +2,15 @@ package cn.nukkit.api.event.plugin;
 
 import cn.nukkit.api.plugin.Plugin;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class PluginDisableEvent extends PluginEvent {
+public class PluginDisableEvent implements PluginEvent {
+    private final Plugin plugin;
 
     public PluginDisableEvent(Plugin plugin) {
-        super(plugin);
+        this.plugin = plugin;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return plugin;
     }
 }

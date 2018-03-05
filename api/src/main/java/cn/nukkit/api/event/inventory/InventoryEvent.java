@@ -1,26 +1,16 @@
 package cn.nukkit.api.event.inventory;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.inventory.Inventory;
+import cn.nukkit.api.event.Event;
+import cn.nukkit.api.inventory.Inventory;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public abstract class InventoryEvent extends Event {
+import java.util.Collection;
 
-    protected final Inventory inventory;
+public interface InventoryEvent extends Event {
 
-    public InventoryEvent(Inventory inventory) {
-        this.inventory = inventory;
+    Inventory getInventory();
+
+    default Collection<Player> getObservers() {
+        return getInventory().getObservers();
     }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public Player[] getViewers() {
-        return this.inventory.getViewers().stream().toArray(Player[]::new);
-    }
-
 }

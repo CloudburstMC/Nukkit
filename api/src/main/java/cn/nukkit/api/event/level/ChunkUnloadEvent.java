@@ -1,23 +1,34 @@
 package cn.nukkit.api.event.level;
 
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.format.FullChunk;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.level.Level;
+import cn.nukkit.api.level.chunk.Chunk;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class ChunkUnloadEvent extends ChunkEvent implements Cancellable {
+public class ChunkUnloadEvent implements ChunkEvent, Cancellable {
+    private final Chunk chunk;
+    private boolean cancelled;
 
-    private static final HandlerList handlers = new HandlerList();
-
-    public ChunkUnloadEvent(FullChunk chunk) {
-        super(chunk);
+    public ChunkUnloadEvent(Chunk chunk) {
+        this.chunk = chunk;
     }
 
-    public static HandlerList getHandlers() {
-        return handlers;
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
     }
 
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Chunk getChunk() {
+        return chunk;
+    }
+
+    @Override
+    public Level getLevel() {
+        return chunk.getLevel();
+    }
 }

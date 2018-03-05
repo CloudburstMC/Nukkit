@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @author Tee7even
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandPermission {
     String value();

@@ -1,19 +1,28 @@
 package cn.nukkit.api.event.vehicle;
 
-import cn.nukkit.server.entity.item.EntityVehicle;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Cancellable;
 
-public class VehicleCreateEvent extends VehicleEvent implements Cancellable {
+public class VehicleCreateEvent implements VehicleEvent, Cancellable {
+    private final Entity vehicle;
+    private boolean cancelled;
 
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
+    public VehicleCreateEvent(Entity vehicle) {
+        this.vehicle = vehicle;
     }
 
-    public VehicleCreateEvent(EntityVehicle vehicle) {
-        super(vehicle);
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
     }
 
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Entity getVehicle() {
+        return vehicle;
+    }
 }

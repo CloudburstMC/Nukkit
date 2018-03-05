@@ -1,32 +1,10 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.event.Cancellable;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class EntityCombustEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+public interface EntityCombustEvent extends EntityEvent, Cancellable {
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
+    int getDuration();
 
-    protected int duration;
-
-    public EntityCombustEvent(Entity combustee, int duration) {
-        this.entity = combustee;
-        this.duration = duration;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
+    void setDuration(int duration);
 }

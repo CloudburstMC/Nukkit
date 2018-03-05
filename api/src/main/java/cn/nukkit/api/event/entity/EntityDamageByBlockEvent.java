@@ -1,12 +1,8 @@
-package cn.nukkit.api.event.entity;
+/*package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.entity.Entity;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.entity.Entity;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
 public class EntityDamageByBlockEvent extends EntityDamageEvent {
 
     private final Block damager;
@@ -20,4 +16,4 @@ public class EntityDamageByBlockEvent extends EntityDamageEvent {
         return damager;
     }
 
-}
+}*/

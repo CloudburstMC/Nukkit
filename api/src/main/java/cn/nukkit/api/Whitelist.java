@@ -1,20 +1,25 @@
 package cn.nukkit.api;
 
-import java.util.Map;
 import java.util.UUID;
 
 public interface Whitelist {
 
-    Map<UUID, Entry> getEntries();
+    void whitelist(String name);
 
-    void addToWhitelist(String name);
+    void whitelist(UUID uuid);
 
-    void removeFromWhitelist(String name);
+    void whitelist(Player player);
 
-    boolean isOnWhitelist(String name);
+    void deWhitelist(String name);
 
-    interface Entry {
-        UUID getUuid();
-        String getName();
-    }
+    void deWhitelist(UUID uuid);
+
+    void deWhitelist(Player player);
+
+    boolean isWhitelisted(String name);
+
+    boolean isWhitelisted(UUID uuid);
+
+    boolean isWhitelisted(Player player);
+
 }

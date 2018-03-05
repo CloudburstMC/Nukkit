@@ -1,15 +1,16 @@
 package cn.nukkit.api;
 
-import cn.nukkit.api.command.source.ConsoleCommandExecutorSource;
+import cn.nukkit.api.command.sender.ConsoleCommandSender;
 import cn.nukkit.api.event.EventManager;
-import cn.nukkit.api.item.ItemStackBuilder;
+import cn.nukkit.api.item.ItemInstanceBuilder;
+import cn.nukkit.api.level.Level;
 import cn.nukkit.api.permission.PermissionManager;
 import cn.nukkit.api.plugin.PluginManager;
 import cn.nukkit.api.scheduler.NukkitScheduler;
 import cn.nukkit.api.util.Config;
 import cn.nukkit.api.util.ConfigBuilder;
+import cn.nukkit.api.util.GameMode;
 import cn.nukkit.api.util.SemVer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,6 +31,9 @@ public interface Server {
     SemVer getApiVersion();
 
     @Nonnull
+    Level getDefaultLevel();
+
+    @Nonnull
     SemVer getNukkitVersion();
 
     @Nonnull
@@ -41,19 +45,10 @@ public interface Server {
     NukkitScheduler getScheduler();
 
     @Nonnull
-    ConsoleCommandExecutorSource getConsoleCommandExecutorSource();
+    ConsoleCommandSender getConsoleCommandSender();
 
     @Nonnull
-    ObjectMapper getJsonMapper();
-
-    @Nonnull
-    ObjectMapper getYamlMapper();
-
-    @Nonnull
-    ObjectMapper getPropertiesMapper();
-
-    @Nonnull
-    ServerProperties getServerProperties();
+    Configuration getConfiguration();
 
     @Nonnull
     Whitelist getWhitelist();
@@ -62,7 +57,7 @@ public interface Server {
     ConfigBuilder getConfigBuilder();
 
     @Nonnull
-    ItemStackBuilder getItemStackBuilder();
+    ItemInstanceBuilder getItemStackBuilder();
 
     @Nonnull
     PermissionManager getPermissionManager();
@@ -75,6 +70,7 @@ public interface Server {
 
     void forceShutdown();
 
+    @Nonnull
     GameMode getDefaultGameMode();
 
     @Nonnull

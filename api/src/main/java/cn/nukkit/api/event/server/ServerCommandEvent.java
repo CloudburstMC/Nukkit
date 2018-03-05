@@ -1,25 +1,16 @@
 package cn.nukkit.api.event.server;
 
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.command.sender.CommandSender;
+import cn.nukkit.api.event.Cancellable;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class ServerCommandEvent extends ServerEvent implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
-    protected final CommandSender sender;
-    protected String command;
+public class ServerCommandEvent implements ServerEvent, Cancellable {
+    private final CommandSender sender;
+    private String command;
+    private boolean cancelled;
 
     public ServerCommandEvent(CommandSender sender, String command) {
         this.sender = sender;
         this.command = command;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 
     public CommandSender getSender() {
@@ -32,5 +23,15 @@ public class ServerCommandEvent extends ServerEvent implements Cancellable {
 
     public void setCommand(String command) {
         this.command = command;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

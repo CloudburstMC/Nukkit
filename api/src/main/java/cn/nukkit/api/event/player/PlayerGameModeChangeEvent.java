@@ -1,23 +1,35 @@
 package cn.nukkit.api.event.player;
 
-import cn.nukkit.api.GameMode;
 import cn.nukkit.api.Player;
 import cn.nukkit.api.event.Cancellable;
-import cn.nukkit.server.AdventureSettings;
-import lombok.Getter;
-import lombok.Setter;
+import cn.nukkit.api.util.GameMode;
 
-@Getter
-@Setter
-public class PlayerGameModeChangeEvent extends PlayerEvent implements Cancellable {
-
-    protected final GameMode newGamemode;
-    protected AdventureSettings newAdventureSettings;
+public class PlayerGameModeChangeEvent implements PlayerEvent, Cancellable {
+    private final Player player;
+    private final GameMode newGamemode;
     private boolean cancelled;
 
-    public PlayerGameModeChangeEvent(Player player, GameMode newGameMode, AdventureSettings newAdventureSettings) {
-        super(player);
+    public PlayerGameModeChangeEvent(Player player, GameMode newGameMode) {
+        this.player = player;
         this.newGamemode = newGameMode;
-        this.newAdventureSettings = newAdventureSettings;
+    }
+
+    public GameMode getGameMode() {
+        return newGamemode;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 }

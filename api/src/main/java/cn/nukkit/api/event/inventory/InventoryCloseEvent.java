@@ -1,28 +1,23 @@
 package cn.nukkit.api.event.inventory;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.inventory.Inventory;
+import cn.nukkit.api.inventory.Inventory;
 
-/**
- * author: Box
- * Nukkit Project
- */
-public class InventoryCloseEvent extends InventoryEvent {
-
-    private static final HandlerList handlers = new HandlerList();
+public class InventoryCloseEvent implements InventoryEvent {
+    private final Inventory inventory;
     private final Player who;
 
     public InventoryCloseEvent(Inventory inventory, Player who) {
-        super(inventory);
+        this.inventory = inventory;
         this.who = who;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 
     public Player getPlayer() {
         return this.who;
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return inventory;
     }
 }

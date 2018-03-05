@@ -1,21 +1,23 @@
 package cn.nukkit.api;
 
-import cn.nukkit.api.command.CommandExecutorSource;
+import cn.nukkit.api.command.sender.CommandSender;
 import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.event.player.PlayerKickEvent;
-import cn.nukkit.api.form.window.FormWindow;
 import cn.nukkit.api.inventory.Inventory;
-import cn.nukkit.api.item.ItemStack;
+import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.message.Message;
+import cn.nukkit.api.permission.Permissible;
+import cn.nukkit.api.util.GameMode;
 import com.flowpowered.math.vector.Vector3d;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.util.Locale;
 import java.util.Optional;
 
-public interface Player extends Session, CommandExecutorSource, Entity, MessageRecipient {
+public interface Player extends Session, CommandSender, Entity, MessageRecipient, Permissible {
 
     @Nonnull
     Optional<String> getDisplayName();
@@ -32,6 +34,9 @@ public interface Player extends Session, CommandExecutorSource, Entity, MessageR
 
     void setGameMode(@Nullable GameMode gameMode);
 
+    @Nonnull
+    Optional<InetSocketAddress> getRemoteAddress();
+
     boolean isSneaking();
 
     void setSneaking(boolean value);
@@ -40,7 +45,7 @@ public interface Player extends Session, CommandExecutorSource, Entity, MessageR
 
     void setSprinting(boolean value);
 
-    int getExpToLevel();
+    int getExperienceLevel();
 
     void addWindow(Inventory inventory);
 
@@ -106,11 +111,11 @@ public interface Player extends Session, CommandExecutorSource, Entity, MessageR
 
     void resetTitle();
 
-    int showFormWindow(FormWindow formWindow);
+    /*int showFormWindow(FormWindow formWindow);
 
     int showFormWindow(FormWindow formWindow, int forceId);
 
-    int addServerSettings(FormWindow formWindow);
+    int addServerSettings(FormWindow formWindow);*/
 
     void setCheckMovement(boolean value);
 
@@ -118,7 +123,9 @@ public interface Player extends Session, CommandExecutorSource, Entity, MessageR
 
     void setLocale(Locale locale);
 
-    void transfer(InetSocketAddress address);
+    boolean transfer(@Nonnull InetSocketAddress address);
+
+    boolean transfer(@Nonnull String address, @Nonnegative int port);
 
     boolean isBreakingBlock();
 
@@ -152,14 +159,6 @@ public interface Player extends Session, CommandExecutorSource, Entity, MessageR
 
     void stopSleep();
 
-    boolean isSurvival();
-
-    boolean isCreative();
-
-    boolean isAdventure();
-
-    boolean isSpectator();
-
     Entity getEntityPlayerLookingAt();
 
     void setViewDistance(int distance);
@@ -180,5 +179,14 @@ public interface Player extends Session, CommandExecutorSource, Entity, MessageR
 
     void sendActionBar(String message, int fadein, int duration, int fadeout);
 
-    boolean dropItem(ItemStack item);
+    boolean dropItem(ItemInstance item);
+
+    enum Animation {
+        SWING_ARM,
+        WAKE_UP,
+        CRITICAL_HIT,
+        MAGIC_CRITICAL_HIT,
+        ROW_RIGHT,
+        ROW_LEFT
+    }
 }

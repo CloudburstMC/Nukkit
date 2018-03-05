@@ -1,23 +1,17 @@
 package cn.nukkit.api.event.vehicle;
 
+
 import cn.nukkit.api.Player;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.entity.item.EntityVehicle;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Cancellable;
 
-public class EntityExitVehicleEvent extends VehicleEvent implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
+public class EntityExitVehicleEvent implements VehicleEvent, Cancellable {
+    private final Entity vehicle;
     private final Entity riding;
+    private boolean cancelled;
 
-    public EntityExitVehicleEvent(Entity riding, EntityVehicle vehicle) {
-        super(vehicle);
+    public EntityExitVehicleEvent(Entity vehicle, Entity riding) {
+        this.vehicle = vehicle;
         this.riding = riding;
     }
 
@@ -29,4 +23,18 @@ public class EntityExitVehicleEvent extends VehicleEvent implements Cancellable 
         return riding instanceof Player;
     }
 
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Entity getVehicle() {
+        return vehicle;
+    }
 }

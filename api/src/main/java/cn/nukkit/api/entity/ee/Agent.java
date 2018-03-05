@@ -1,4 +1,6 @@
 package cn.nukkit.api.entity.ee;
 
-public class Agent {
+import cn.nukkit.api.entity.Entity;
+
+public interface Agent extends Entity {
 }

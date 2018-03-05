@@ -1,20 +1,9 @@
 package cn.nukkit.api.event.block;
 
-import cn.nukkit.server.block.Block;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.event.Event;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public abstract class BlockEvent extends Event {
+public interface BlockEvent extends Event {
 
-    protected final Block block;
-
-    public BlockEvent(Block block) {
-        this.block = block;
-    }
-
-    public Block getBlock() {
-        return block;
-    }
+    Block getBlock();
 }

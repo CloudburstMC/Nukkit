@@ -1,54 +1,55 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.Position;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Cancellable;
+import com.flowpowered.math.vector.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * author: Angelic47
- * Nukkit Project
- */
-public class EntityExplodeEvent extends EntityEvent implements Cancellable {
+public class EntityExplodeEvent implements EntityEvent, Cancellable {
+    private final Entity entity;
+    private final Vector3f position;
+    private final List<Block> blocks = new ArrayList<>();
+    private float yield;
+    private boolean cancelled;
 
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    protected final Position position;
-    protected List<Block> blocks;
-    protected double yield;
-
-    public EntityExplodeEvent(Entity entity, Position position, List<Block> blocks, double yield) {
+    public EntityExplodeEvent(Entity entity, Vector3f position, List<Block> blocks, float yield) {
         this.entity = entity;
         this.position = position;
-        this.blocks = blocks;
+        this.blocks.addAll(blocks);
         this.yield = yield;
     }
 
-    public Position getPosition() {
+    public Vector3f getPosition() {
         return this.position;
     }
 
-    public List<Block> getBlockList() {
-        return this.blocks;
-    }
-
-    public void setBlockList(List<Block> blocks) {
-        this.blocks = blocks;
-    }
-
-    public double getYield() {
+    public float getYield() {
         return this.yield;
     }
 
-    public void setYield(double yield) {
+    public void setYield(float yield) {
         this.yield = yield;
     }
 
+    @Override
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public List<Block> getBlocks() {
+        return blocks;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 }

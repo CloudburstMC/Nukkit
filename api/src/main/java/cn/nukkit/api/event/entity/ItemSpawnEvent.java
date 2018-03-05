@@ -1,25 +1,16 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.item.EntityItem;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.entity.item.DroppedItem;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class ItemSpawnEvent extends EntityEvent {
-    private static final HandlerList handlers = new HandlerList();
+public class ItemSpawnEvent implements EntityEvent {
+    private final DroppedItem item;
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public ItemSpawnEvent(EntityItem item) {
-        this.entity = item;
+    public ItemSpawnEvent(DroppedItem item) {
+        this.item = item;
     }
 
     @Override
-    public EntityItem getEntity() {
-        return (EntityItem) this.entity;
+    public DroppedItem getEntity() {
+        return item;
     }
 }

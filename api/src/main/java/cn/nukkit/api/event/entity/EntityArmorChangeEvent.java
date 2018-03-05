@@ -1,26 +1,17 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.item.ItemInstance;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class EntityArmorChangeEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    private final Item oldItem;
-    private Item newItem;
+public class EntityArmorChangeEvent implements EntityEvent, Cancellable {
+    private final Entity entity;
+    private final ItemInstance oldItem;
     private final int slot;
+    private ItemInstance newItem;
+    private boolean cancelled;
 
-    public EntityArmorChangeEvent(Entity entity, Item oldItem, Item newItem, int slot) {
+    public EntityArmorChangeEvent(Entity entity, ItemInstance oldItem, ItemInstance newItem, int slot) {
         this.entity = entity;
         this.oldItem = oldItem;
         this.newItem = newItem;
@@ -31,15 +22,30 @@ public class EntityArmorChangeEvent extends EntityEvent implements Cancellable {
         return slot;
     }
 
-    public Item getNewItem() {
+    public ItemInstance getNewItem() {
         return newItem;
     }
 
-    public void setNewItem(Item newItem) {
+    public void setNewItem(ItemInstance newItem) {
         this.newItem = newItem;
     }
 
-    public Item getOldItem() {
+    public ItemInstance getOldItem() {
         return oldItem;
+    }
+
+    @Override
+    public Entity getEntity() {
+        return entity;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

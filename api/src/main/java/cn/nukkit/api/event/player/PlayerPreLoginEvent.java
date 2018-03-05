@@ -2,7 +2,6 @@ package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Session;
 import cn.nukkit.api.event.Event;
-import lombok.Getter;
 
 public class PlayerPreLoginEvent implements Event {
     private final Session session;
@@ -37,15 +36,8 @@ public class PlayerPreLoginEvent implements Event {
         return session;
     }
 
-    @Getter
     public enum Result {
-        BANNED("disconnectionScreen.notAllowed"),
-        NOT_WHITELISTED("disconnectionScreen.notAllowed");
-
-        private final String i18n;
-
-        Result(String i18n) {
-            this.i18n = i18n;
-        }
+        BANNED,
+        NOT_WHITELISTED
     }
 }

@@ -1,21 +1,21 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import cn.nukkit.api.message.GenericMessage;
+import cn.nukkit.api.message.ChatMessage;
 import cn.nukkit.api.message.Message;
 
-public class PlayerJoinEvent extends PlayerEvent {
-
-    protected Message joinMessage;
+public class PlayerJoinEvent implements PlayerEvent {
+    private final Player player;
+    private Message joinMessage;
 
     public PlayerJoinEvent(Player player, Message joinMessage) {
-        super(player);
+        this.player = player;
         this.joinMessage = joinMessage;
     }
 
     public PlayerJoinEvent(Player player, String joinMessage) {
-        super(player);
-        this.joinMessage = new GenericMessage(joinMessage);
+        this.player = player;
+        this.joinMessage = new ChatMessage(joinMessage);
     }
 
     public Message getJoinMessage() {
@@ -23,10 +23,15 @@ public class PlayerJoinEvent extends PlayerEvent {
     }
 
     public void setJoinMessage(String joinMessage) {
-        this.setJoinMessage(new GenericMessage(joinMessage));
+        this.setJoinMessage(new ChatMessage(joinMessage));
     }
 
     public void setJoinMessage(Message joinMessage) {
         this.joinMessage = joinMessage;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 }

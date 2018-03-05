@@ -1,26 +1,28 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.item.EntityItem;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.entity.item.DroppedItem;
+import cn.nukkit.api.event.Cancellable;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class ItemDespawnEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+public class ItemDespawnEvent implements EntityEvent, Cancellable {
+    private final DroppedItem item;
+    private boolean cancelled;
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public ItemDespawnEvent(EntityItem item) {
-        this.entity = item;
+    public ItemDespawnEvent(DroppedItem item) {
+        this.item = item;
     }
 
     @Override
-    public EntityItem getEntity() {
-        return (EntityItem) this.entity;
+    public DroppedItem getEntity() {
+        return item;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

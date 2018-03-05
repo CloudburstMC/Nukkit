@@ -9,6 +9,9 @@ import java.util.Optional;
 public interface Session extends Stateless {
 
     @Nonnull
+    Server getServer();
+
+    @Nonnull
     Optional<InetSocketAddress> getRemoteAddress();
 
     boolean isXboxAuthenticated();

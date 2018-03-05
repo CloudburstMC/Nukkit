@@ -1,9 +1,6 @@
 package cn.nukkit.api.entity.item;
 
-/**
- * @author CreeperFace
- */
-public interface Potion extends Projectile {
+import cn.nukkit.api.entity.Entity;
 
-    int getPotionId();
+public interface Potion extends Entity {
 }

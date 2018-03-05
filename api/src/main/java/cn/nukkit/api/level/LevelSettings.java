@@ -1,30 +1,30 @@
 package cn.nukkit.api.level;
 
-import cn.nukkit.api.GameMode;
-import cn.nukkit.api.level.gamerule.GameRule;
-import com.flowpowered.math.vector.Vector3f;
-
-import java.util.Collection;
+import cn.nukkit.api.level.data.Difficulty;
+import cn.nukkit.api.level.data.Dimension;
+import cn.nukkit.api.level.data.Generator;
+import cn.nukkit.api.util.GameMode;
+import com.flowpowered.math.vector.Vector3i;
 
 public interface LevelSettings {
 
     int getSeed();
 
-    int getDimension();
+    Generator getGenerator();
 
-    int getGenerator();
+    Dimension getDimension();
 
-    GameMode getWorldGamemode();
+    GameMode getGameMode();
 
-    int getDifficulty();
+    Difficulty getDifficulty();
 
-    Vector3f getSpawnPosition();
+    Vector3i getDefaultSpawn();
 
     boolean isAchievementsDisabled();
 
     int getTime();
 
-    boolean isEducationLevel();
+    boolean isEduWorld();
 
     float getRainLevel();
 
@@ -34,13 +34,13 @@ public interface LevelSettings {
 
     boolean isBroadcastingToLan();
 
-    boolean isBroadcastingToXboxLive();
+    boolean isBroadcastingToXBL();
 
     boolean isCommandsEnabled();
 
-    boolean isTexturePacksRequired();
+    boolean isTexturepacksRequired();
 
-    Collection<GameRule> getGameRules();
+    GameRules getGameRules();
 
     boolean isBonusChestEnabled();
 
@@ -50,5 +50,7 @@ public interface LevelSettings {
 
     AdventureSettings.PlayerPermission getDefaultPlayerPermission();
 
-    int getXboxLiveBroadcastMode();
+    int getXBLBroadcastMode();
+
+    int getServerChunkTickRange();
 }

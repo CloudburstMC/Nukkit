@@ -1,38 +1,59 @@
-package cn.nukkit.api.event.player;
+/*package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.api.event.Cancellable;
-import cn.nukkit.api.form.response.FormResponse;
-import cn.nukkit.api.form.window.FormWindow;
+import cn.nukkit.server.form.response.FormResponse;
+import cn.nukkit.server.form.window.FormWindow;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-public class PlayerSettingsRespondedEvent extends PlayerEvent implements Cancellable {
-
-    protected final int formID;
-    protected final FormWindow window;
-    protected final boolean closed = false;
+public class PlayerSettingsRespondedEvent implements PlayerEvent, Cancellable {
+    private final Player player;
+    private final int formID;
+    private final FormWindow window;
+    private final boolean closed = false;
     private boolean cancelled;
 
     public PlayerSettingsRespondedEvent(Player player, int formID, FormWindow window) {
-        super(player);
+        this.player = player;
         this.formID = formID;
         this.window = window;
     }
 
     /**
      * Can be null if player closed the window instead of submitting it
-     */
+     *//*
     public FormResponse getResponse() {
         return window.getResponse();
     }
 
     /**
      * Defines if player closed the window or submitted it
-     */
+     *//*
     public boolean isClosed() {
         return window.wasClosed();
     }
-}
+
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
+    public FormWindow getWindow() {
+        return window;
+    }
+
+    public int getFormID() {
+        return formID;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+}*/

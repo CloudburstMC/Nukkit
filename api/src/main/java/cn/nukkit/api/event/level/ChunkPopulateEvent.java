@@ -1,22 +1,23 @@
 package cn.nukkit.api.event.level;
 
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.level.format.FullChunk;
+import cn.nukkit.api.level.Level;
+import cn.nukkit.api.level.chunk.Chunk;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class ChunkPopulateEvent extends ChunkEvent {
+public class ChunkPopulateEvent implements ChunkEvent {
+    private final Chunk chunk;
 
-    private static final HandlerList handlers = new HandlerList();
-
-    public ChunkPopulateEvent(FullChunk chunk) {
-        super(chunk);
+    public ChunkPopulateEvent(Chunk chunk) {
+        this.chunk = chunk;
     }
 
-    public static HandlerList getHandlers() {
-        return handlers;
+
+    @Override
+    public Chunk getChunk() {
+        return null;
     }
 
+    @Override
+    public Level getLevel() {
+        return chunk.getLevel();
+    }
 }

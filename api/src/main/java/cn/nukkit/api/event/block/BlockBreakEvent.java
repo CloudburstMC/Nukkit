@@ -3,53 +3,35 @@ package cn.nukkit.api.event.block;
 import cn.nukkit.api.Player;
 import cn.nukkit.api.block.Block;
 import cn.nukkit.api.event.Cancellable;
-import cn.nukkit.api.item.ItemStack;
-import lombok.Getter;
-import lombok.Setter;
+import cn.nukkit.api.item.ItemInstance;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
+import java.util.ArrayList;
+import java.util.Collection;
 
-@Getter
-public class BlockBreakEvent extends BlockEvent implements Cancellable {
+public class BlockBreakEvent implements BlockEvent, Cancellable {
 
-    @Setter
+    protected final ItemInstance item;
+    protected final Player player;
+    private final Block block;
+    protected boolean instaBreak;
+    protected Collection<ItemInstance> drops;
+    private boolean fastBreak;
     private boolean cancelled;
 
-    protected final Player player;
-    protected final ItemStack item;
-    protected boolean instaBreak = false;
-    protected ItemStack[] blockDrops = new ItemStack[][0];
-    protected boolean fastBreak = false;
-
-    public BlockBreakEvent(Player player, Block block, ItemStack item) {
-        this(player, block, item, false, false);
-    }
-
-    public BlockBreakEvent(Player player, Block block, ItemStack item, boolean instaBreak) {
-        this(player, block, item, instaBreak, false);
-    }
-
-    public BlockBreakEvent(Player player, Block block, ItemStack item, boolean instaBreak, boolean fastBreak) {
-        super(block);
+    public BlockBreakEvent(Player player, Block block, Collection<ItemInstance> drops, ItemInstance item, boolean instaBreak, boolean fastBreak) {
+        this.block = block;
         this.item = item;
         this.player = player;
         this.instaBreak = instaBreak;
-        this.blockDrops = player.isSurvival() ? block.getDrops(item) : new ItemStack[][ 0];
+        this.drops = new ArrayList<>(drops);
         this.fastBreak = fastBreak;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public Item getItem() {
+    public ItemInstance getItem() {
         return item;
     }
 
@@ -61,15 +43,26 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
         this.instaBreak = instaBreak;
     }
 
-    public Item[] getDrops() {
-        return blockDrops;
-    }
-
-    public void setDrops(Item[] drops) {
-        this.blockDrops = drops;
+    public Collection<ItemInstance> getDrops() {
+        return drops;
     }
 
     public boolean isFastBreak() {
         return this.fastBreak;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public Block getBlock() {
+        return block;
     }
 }

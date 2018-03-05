@@ -6,9 +6,10 @@ import cn.nukkit.api.metadata.Metadata;
 import java.util.Optional;
 
 public interface BlockState {
+
     BlockType getBlockType();
 
-    Optional<Metadata> getBlockData();
+    Metadata getBlockData();
 
     Optional<BlockEntity> getBlockEntity();
 }

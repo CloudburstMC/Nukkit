@@ -1,20 +1,8 @@
 package cn.nukkit.api.event.level;
 
-import cn.nukkit.server.level.Level;
+import cn.nukkit.api.event.Event;
+import cn.nukkit.api.level.Level;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public abstract class LevelEvent extends Event {
-
-    private final Level level;
-
-    public LevelEvent(Level level) {
-        this.level = level;
-    }
-
-    public Level getLevel() {
-        return level;
-    }
+public interface LevelEvent extends Event {
+    Level getLevel();
 }

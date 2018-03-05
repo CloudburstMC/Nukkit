@@ -9,4 +9,8 @@ public interface Physics extends EntityComponent {
     double getGravity();
 
     void setGravity(double gravity);
+
+    boolean isAffectedByGravity();
+
+    void setAffectedByGravity(boolean affectedByGravity);
 }

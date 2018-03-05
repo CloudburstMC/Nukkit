@@ -2,28 +2,45 @@ package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.api.event.Cancellable;
-import cn.nukkit.server.item.food.Food;
+import cn.nukkit.api.item.ItemInstance;
 
-/**
- * Created by Snake1999 on 2016/1/14.
- * Package cn.nukkit.server.event.player in project nukkit.
- */
-public class PlayerEatFoodEvent extends PlayerEvent implements Cancellable {
-
-    private Food food;
+public class PlayerEatFoodEvent implements PlayerEvent, Cancellable {
+    private final Player player;
+    private final ItemInstance food;
+    private float foodLevelAdded;
+    private int saturationAdded;
     private boolean cancelled = false;
 
-    public PlayerEatFoodEvent(final Player player, Food food) {
+    public PlayerEatFoodEvent(final Player player, ItemInstance food, float foodLevelAdded, int saturationAdded) {
         this.player = player;
         this.food = food;
+        this.foodLevelAdded = foodLevelAdded;
+        this.saturationAdded = saturationAdded;
     }
 
-    public Food getFood() {
+    public ItemInstance getFood() {
         return food;
     }
 
-    public void setFood(Food food) {
-        this.food = food;
+    public float getFoodLevelAdded() {
+        return foodLevelAdded;
+    }
+
+    public void setFoodLevelAdded(float foodLevelAdded) {
+        this.foodLevelAdded = foodLevelAdded;
+    }
+
+    public int getSaturationAdded() {
+        return saturationAdded;
+    }
+
+    public void setSaturationAdded(int staturationAdded) {
+        this.saturationAdded = staturationAdded;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     @Override

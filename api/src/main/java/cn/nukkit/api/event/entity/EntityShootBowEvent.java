@@ -1,30 +1,19 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.entity.EntityLiving;
-import cn.nukkit.server.entity.projectile.EntityProjectile;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
-import cn.nukkit.server.item.Item;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.entity.component.Projectile;
+import cn.nukkit.api.event.Cancellable;
+import cn.nukkit.api.item.ItemInstance;
+import com.google.common.base.Preconditions;
 
-/**
- * author: Box
- * Nukkit Project
- */
-public class EntityShootBowEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+public class EntityShootBowEvent implements EntityEvent, Cancellable {
+    private final Entity entity;
+    private final ItemInstance bow;
+    private Entity projectile;
+    private float force;
+    private boolean cancelled;
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    private final Item bow;
-
-    private EntityProjectile projectile;
-
-    private double force;
-
-    public EntityShootBowEvent(EntityLiving shooter, Item bow, EntityProjectile projectile, double force) {
+    public EntityShootBowEvent(Entity shooter, ItemInstance bow, Entity projectile, float force) {
         this.entity = shooter;
         this.bow = bow;
         this.projectile = projectile;
@@ -32,35 +21,45 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
     }
 
     @Override
-    public EntityLiving getEntity() {
-        return (EntityLiving) this.entity;
+    public Entity getEntity() {
+        return entity;
     }
 
-
-    public Item getBow() {
-        return this.bow;
+    public ItemInstance getBow() {
+        return bow;
     }
 
-
-    public EntityProjectile getProjectile() {
-        return this.projectile;
+    public Entity getProjectile() {
+        return projectile;
     }
 
     public void setProjectile(Entity projectile) {
-        if (projectile != this.projectile) {
+        /*if (projectile != this.projectile) {
             if (this.projectile.getViewers().size() == 0) {
                 this.projectile.kill();
                 this.projectile.close();
             }
-            this.projectile = (EntityProjectile) projectile;
-        }
+            this.projectile = projectile;
+        }*/
+        Preconditions.checkArgument(projectile.get(Projectile.class).isPresent(), "Entity is not a projectile");
+        this.projectile = projectile;
     }
 
-    public double getForce() {
+    public float getForce() {
         return this.force;
     }
 
-    public void setForce(double force) {
+    public void setForce(float force) {
         this.force = force;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

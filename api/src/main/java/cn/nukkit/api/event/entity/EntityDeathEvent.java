@@ -1,26 +1,31 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.api.item.ItemStack;
-import lombok.Getter;
-import lombok.Setter;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.item.ItemInstance;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
+public class EntityDeathEvent implements EntityEvent {
+    private final Entity entity;
+    private ItemInstance[] drops = new ItemInstance[0];
 
-@Getter
-@Setter
-public class EntityDeathEvent extends EntityEvent {
-
-    private ItemStack[] drops = new ItemStack[0];
-
-    public EntityDeathEvent(Living entity) {
-        this(entity, new ItemStack[0]);
+    public EntityDeathEvent(Entity entity) {
+        this(entity, new ItemInstance[0]);
     }
 
-    public EntityDeathEvent(Living entity, ItemStack[] drops) {
-        super(entity);
+    public EntityDeathEvent(Entity entity, ItemInstance[] drops) {
+        this.entity = entity;
+        this.drops = drops;
+    }
+
+    @Override
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public ItemInstance[] getDrops() {
+        return drops;
+    }
+
+    public void setDrops(ItemInstance[] drops) {
         this.drops = drops;
     }
 }

@@ -1,10 +1,19 @@
 package cn.nukkit.api.command;
 
-public @interface Command {
 
-    String getLabel();
+import java.util.Collection;
 
-    String getName();
+public interface Command extends CommandExecutor {
 
+    Collection<String> getAliases();
 
+    String getUsageMessage();
+
+    String getDescription();
+
+    CommandBuilder toBuilder();
+
+    enum Origin {
+
+    }
 }

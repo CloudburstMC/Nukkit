@@ -5,7 +5,7 @@ import cn.nukkit.api.entity.Entity;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public interface Rideable {
+public interface Rideable extends EntityComponent {
     /**
      * Gets a list of passengers of this vehicle.
      * <p>

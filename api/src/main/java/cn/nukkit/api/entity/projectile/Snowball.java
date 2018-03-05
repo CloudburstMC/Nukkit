@@ -1,7 +1,6 @@
 package cn.nukkit.api.entity.projectile;
 
-/**
- * @author CreeperFace
- */
-public interface Snowball extends Projectile {
+import cn.nukkit.api.entity.Entity;
+
+public interface Snowball extends Entity {
 }

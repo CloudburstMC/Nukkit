@@ -1,24 +1,16 @@
 package cn.nukkit.api.event.block;
 
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.block.Block;
 
-/**
- * Created by CreeperFace on 12.5.2017.
- */
-public class BlockRedstoneEvent extends BlockEvent {
-
-    private static final HandlerList handlers = new HandlerList();
+public class BlockRedstoneEvent implements BlockEvent {
+    private final Block block;
     private int oldPower;
     private int newPower;
+
     public BlockRedstoneEvent(Block block, int oldPower, int newPower) {
-        super(block);
+        this.block = block;
         this.oldPower = oldPower;
         this.newPower = newPower;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 
     public int getOldPower() {
@@ -27,5 +19,10 @@ public class BlockRedstoneEvent extends BlockEvent {
 
     public int getNewPower() {
         return newPower;
+    }
+
+    @Override
+    public Block getBlock() {
+        return block;
     }
 }

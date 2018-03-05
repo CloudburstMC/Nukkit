@@ -1,37 +1,28 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.mob.EntityCreeper;
-import cn.nukkit.server.entity.weather.EntityLightningStrike;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.entity.monster.Creeper;
+import cn.nukkit.api.entity.weather.Lightning;
+import cn.nukkit.api.event.Cancellable;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class CreeperPowerEvent extends EntityEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
+public class CreeperPowerEvent implements EntityEvent, Cancellable {
+    private final Creeper creeper;
     private final PowerCause cause;
-    private EntityLightningStrike bolt;
+    private Lightning bolt;
+    private boolean cancelled;
 
-    public CreeperPowerEvent(final EntityCreeper creeper, final EntityLightningStrike bolt, final PowerCause cause) {
+    public CreeperPowerEvent(final Creeper creeper, final Lightning bolt, final PowerCause cause) {
         this(creeper, cause);
         this.bolt = bolt;
     }
 
-    public CreeperPowerEvent(final EntityCreeper creeper, final PowerCause cause) {
-        this.entity = creeper;
+    public CreeperPowerEvent(final Creeper creeper, final PowerCause cause) {
+        this.creeper = creeper;
         this.cause = cause;
     }
 
     @Override
-    public EntityCreeper getEntity() {
-        return (EntityCreeper) super.getEntity();
+    public Creeper getEntity() {
+        return creeper;
     }
 
     /**
@@ -39,7 +30,7 @@ public class CreeperPowerEvent extends EntityEvent implements Cancellable {
      *
      * @return The Entity for the lightning bolt which is striking the Creeper
      */
-    public EntityLightningStrike getLightning() {
+    public Lightning getLightning() {
         return bolt;
     }
 
@@ -50,6 +41,16 @@ public class CreeperPowerEvent extends EntityEvent implements Cancellable {
      */
     public PowerCause getCause() {
         return cause;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     /**

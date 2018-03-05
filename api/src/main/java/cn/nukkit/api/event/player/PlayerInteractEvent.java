@@ -3,43 +3,27 @@ package cn.nukkit.api.event.player;
 import cn.nukkit.api.Player;
 import cn.nukkit.api.block.Block;
 import cn.nukkit.api.event.Cancellable;
-import cn.nukkit.api.item.ItemStack;
+import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.util.data.BlockFace;
 import com.flowpowered.math.vector.Vector3f;
-import lombok.Getter;
-import lombok.Setter;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-
-@Getter
-@Setter
-public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
-
-    protected final Block blockTouched;
-    protected final Vector3f touchVector;
-    protected final BlockFace blockFace;
-    protected final ItemStack item;
-    protected final Action action;
+public class PlayerInteractEvent implements PlayerEvent, Cancellable {
+    private final Player player;
+    private final Block blockTouched;
+    private final Vector3f touchVector;
+    private final BlockFace blockFace;
+    private final ItemInstance item;
+    private final Action action;
     private boolean cancelled;
 
-    public PlayerInteractEvent(Player player, ItemStack item, Vector3f block, BlockFace face) {
-        this(player, item, block, face, Action.RIGHT_CLICK_BLOCK);
+    public PlayerInteractEvent(Player player, ItemInstance item, Block block, Vector3f touch, BlockFace face) {
+        this(player, item, block, touch, face, Action.RIGHT_CLICK_BLOCK);
     }
 
-    public PlayerInteractEvent(Player player, ItemStack item, Vector3f block, BlockFace face, Action action) {
-        super(player);
-
-        if (block instanceof Block) {
-            this.blockTouched = (Block) block;
-            this.touchVector = new Vector3f(0, 0, 0);
-        } else {
-            this.touchVector = block;
-            this.blockTouched = Block.get(Block.AIR, 0, new Location(player.getLevel(), 0, 0, 0));
-        }
-
+    public PlayerInteractEvent(Player player, ItemInstance item, Block block, Vector3f touch, BlockFace face, Action action) {
+        this.player = player;
+        this.blockTouched = block;
+        this.touchVector = touch;
         this.item = item;
         this.blockFace = face;
         this.action = action;
@@ -51,5 +35,40 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
         LEFT_CLICK_AIR,
         RIGHT_CLICK_AIR,
         PHYSICAL
+    }
+
+    public ItemInstance getItem() {
+        return item;
+    }
+
+    public BlockFace getBlockFace() {
+        return blockFace;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public Block getBlockTouched() {
+        return blockTouched;
+    }
+
+    public Vector3f getTouchVector() {
+        return touchVector;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

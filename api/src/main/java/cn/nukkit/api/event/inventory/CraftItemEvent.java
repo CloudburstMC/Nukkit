@@ -1,4 +1,4 @@
-package cn.nukkit.api.event.inventory;
+/*package cn.nukkit.api.event.inventory;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.server.event.Cancellable;
@@ -6,10 +6,6 @@ import cn.nukkit.server.event.HandlerList;
 import cn.nukkit.server.inventory.Recipe;
 import cn.nukkit.server.item.Item;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
 public class CraftItemEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -43,4 +39,4 @@ public class CraftItemEvent extends Event implements Cancellable {
     public Player getPlayer() {
         return player;
     }
-}
+}*/

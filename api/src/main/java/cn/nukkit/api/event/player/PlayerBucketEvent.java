@@ -1,33 +1,60 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
+import cn.nukkit.api.block.Block;
 import cn.nukkit.api.event.Cancellable;
-import cn.nukkit.api.item.ItemStack;
+import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.util.data.BlockFace;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
-
-    @Getter
+abstract class PlayerBucketEvent implements PlayerEvent, Cancellable {
+    private final Player player;
     private final Block blockClicked;
-    @Getter
     private final BlockFace blockFace;
-    @Getter
-    private final ItemStack bucket;
-    @Getter
-    @Setter
+    private final ItemInstance bucket;
     private boolean cancelled;
-    @Getter
-    private ItemStack item;
+    private ItemInstance item;
 
 
-    public PlayerBucketEvent(Player who, Block blockClicked, BlockFace blockFace, ItemStack bucket, ItemStack itemInHand) {
+    public PlayerBucketEvent(Player who, Block blockClicked, BlockFace blockFace, ItemInstance bucket, ItemInstance itemInHand) {
         this.player = who;
         this.blockClicked = blockClicked;
         this.blockFace = blockFace;
         this.item = itemInHand;
         this.bucket = bucket;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Block getBlockClicked() {
+        return blockClicked;
+    }
+
+    public BlockFace getBlockFace() {
+        return blockFace;
+    }
+
+    public ItemInstance getBucket() {
+        return bucket;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public ItemInstance getItem() {
+        return item;
+    }
+
+    public void setItem(ItemInstance item) {
+        this.item = item;
     }
 }

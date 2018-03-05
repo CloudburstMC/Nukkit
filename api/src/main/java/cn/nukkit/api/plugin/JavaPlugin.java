@@ -2,8 +2,8 @@ package cn.nukkit.api.plugin;
 
 import cn.nukkit.api.Server;
 import cn.nukkit.api.command.Command;
-import cn.nukkit.api.command.CommandExecutorSource;
 import cn.nukkit.api.command.PluginCommand;
+import cn.nukkit.api.command.sender.CommandSender;
 import cn.nukkit.api.util.Config;
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
@@ -127,7 +127,7 @@ public abstract class JavaPlugin implements Plugin {
     }
 
     @Override
-    public boolean onCommand(CommandExecutorSource executorSource, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender executorSource, Command command, String label, String[] args) {
         return false;
     }
 

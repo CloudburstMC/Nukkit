@@ -10,75 +10,82 @@ public interface AdventureSettings {
 
     void setPlayerPermission(PlayerPermission playerPermission);
 
-    boolean isWorldImmutable();
+    Abilities getAbilities();
 
-    void setWorldImmutable(boolean worldImmutable);
+    interface Abilities {
 
-    boolean isPvpEnabled();
+        // World Permissions
 
-    void setPvpEnabled(boolean pvpEnabled);
+        boolean isWorldImmutable();
 
-    boolean isPvmEnabled();
+        void setWorldImmutable(boolean worldImmutable);
 
-    void setPvmEnabled(boolean pvmEnabled);
+        boolean isPvpEnabled();
 
-    boolean isMvpEnabled();
+        void setPvpEnabled(boolean pvpEnabled);
 
-    void setMvpEnabled(boolean mvpEnabled);
+        boolean isPvmEnabled();
 
-    boolean isAutoJumpEnabled();
+        void setPvmEnabled(boolean pvmEnabled);
 
-    void setAutoJumpEnabled(boolean autoJumpEnabled);
+        boolean isMvpEnabled();
 
-    boolean isAllowedFlight();
+        void setMvpEnabled(boolean mvpEnabled);
 
-    void setAllowedFlight(boolean allowedFlight);
+        boolean isAutoJumpEnabled();
 
-    boolean isNoClipEnabled();
+        void setAutoJumpEnabled(boolean autoJumpEnabled);
 
-    void setNoClipEnabled(boolean noClipEnabled);
+        boolean isAllowedFlight();
 
-    boolean isWorldBuilder();
+        void setAllowedFlight(boolean allowedFlight);
 
-    void setWorldBuilder(boolean worldBuilder);
+        boolean isNoClipEnabled();
 
-    boolean isFlying();
+        void setNoClipEnabled(boolean noClipEnabled);
 
-    void setFlying(boolean flying);
+        boolean isWorldBuilder();
 
-    boolean isMuted();
+        void setWorldBuilder(boolean worldBuilder);
 
-    void setMuted(boolean muted);
+        boolean isFlying();
 
-    // Action Permissions
+        void setFlying(boolean flying);
 
-    boolean canPlaceAndDestroy();
+        boolean isMuted();
 
-    void setPlaceAndDestroy(boolean placeAndDestroy);
+        void setMuted(boolean muted);
 
-    boolean canInteractWithDoorsAndSwitches();
+        // Action Permissions
 
-    void setInteractWithDoorsAndSwitches(boolean interactWithDoorsAndSwitches);
+        boolean canPlaceAndDestroy();
 
-    boolean canOpenContainers();
+        void setPlaceAndDestroy(boolean placeAndDestroy);
 
-    void setOpenContainers(boolean openContainers);
+        boolean canInteractWithDoorsAndSwitches();
 
-    boolean canAttackPlayers();
+        void setInteractWithDoorsAndSwitches(boolean interactWithDoorsAndSwitches);
 
-    void setAttackPlayers(boolean attackPlayers);
+        boolean canOpenContainers();
 
-    boolean canAttackMobs();
+        void setOpenContainers(boolean openContainers);
 
-    void setAttackMobs(boolean attackMobs);
+        boolean canAttackPlayers();
 
-    boolean isOperator();
+        void setAttackPlayers(boolean attackPlayers);
 
-    void setOperator(boolean operator);
+        boolean canAttackMobs();
 
-    boolean canTeleport();
+        void setAttackMobs(boolean attackMobs);
 
-    void setTeleport(boolean teleport);
+        boolean isOperator();
+
+        void setOperator(boolean operator);
+
+        boolean canTeleport();
+
+        void setTeleport(boolean teleport);
+    }
 
     enum PlayerPermission {
         VISITOR,

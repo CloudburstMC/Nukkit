@@ -1,14 +1,7 @@
-package cn.nukkit.api.event.entity;
+/*package cn.nukkit.api.event.entity;
 
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.potion.Effect;
+import cn.nukkit.api.entity.Entity;
 
-import java.util.Map;
-
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
 public class EntityDamageByEntityEvent extends EntityDamageEvent {
 
     private final Entity damager;
@@ -58,4 +51,4 @@ public class EntityDamageByEntityEvent extends EntityDamageEvent {
     public void setKnockBack(float knockBack) {
         this.knockBack = knockBack;
     }
-}
+}*/

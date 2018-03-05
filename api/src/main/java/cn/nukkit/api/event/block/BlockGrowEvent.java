@@ -1,29 +1,9 @@
 package cn.nukkit.api.event.block;
 
-import cn.nukkit.server.block.Block;
-import cn.nukkit.server.event.Cancellable;
-import cn.nukkit.server.event.HandlerList;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.event.Cancellable;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class BlockGrowEvent extends BlockEvent implements Cancellable {
+public interface BlockGrowEvent extends BlockEvent, Cancellable {
 
-    private static final HandlerList handlers = new HandlerList();
-    private final Block newState;
-
-    public BlockGrowEvent(Block block, Block newState) {
-        super(block);
-        this.newState = newState;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public Block getNewState() {
-        return newState;
-    }
-
+    Block getNewState();
 }

@@ -1,9 +1,9 @@
 package cn.nukkit.api.entity.component;
 
 import cn.nukkit.api.entity.Entity;
-import jdk.internal.jline.internal.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public interface Projectile extends EntityComponent {

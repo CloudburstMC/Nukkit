@@ -1,21 +1,15 @@
-package cn.nukkit.api.event.entity;
+/*package cn.nukkit.api.event.entity;
 
+import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.event.Cancellable;
-import cn.nukkit.server.entity.Entity;
-import cn.nukkit.server.potion.Effect;
-import cn.nukkit.server.util.EventException;
+import cn.nukkit.api.util.data.Effect;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class EntityDamageEvent extends EntityEvent implements Cancellable {
-
+public class EntityDamageEvent implements Cancellable, EntityEvent {
+    private final Entity entity;
     private final DamageCause cause;
-
     private final Map<DamageModifier, Float> modifiers;
     private final Map<DamageModifier, Float> originals;
 
@@ -30,9 +24,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     public EntityDamageEvent(Entity entity, DamageCause cause, Map<DamageModifier, Float> modifiers) {
         this.entity = entity;
         this.cause = cause;
-        this.modifiers = modifiers;
-
-        this.originals = this.modifiers;
+        this.originals = this.modifiers = modifiers;
 
         if (!this.modifiers.containsKey(DamageModifier.BASE)) {
             throw new EventException("BASE Damage modifier missing");
@@ -94,30 +86,45 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         return damage;
     }
 
+    @Override
+    public boolean isCancelled() {
+        return false;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+
+    }
+
+    @Override
+    public Entity getEntity() {
+        return null;
+    }
+
     public enum DamageModifier {
         /**
          * Raw amount of damage
-         */
+         *//*
         BASE,
         /**
          * Damage reduction caused by wearing armor
-         */
+         *//*
         ARMOR,
         /**
          * Additional damage caused by damager's Strength potion effect
-         */
+         *//*
         STRENGTH,
         /**
          * Damage reduction caused by damager's Weakness potion effect
-         */
+         *//*
         WEAKNESS,
         /**
          * Damage reduction caused by the Resistance potion effect
-         */
+         *//*
         RESISTANCE,
         /**
          * Damage reduction caused by the Damage absorption effect
-         */
+         *//*
         ABSORPTION
 
         //ARMOR_ENCHANTMENTS
@@ -126,67 +133,67 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     public enum DamageCause {
         /**
          * Damage caused by contact with a block such as a Cactus
-         */
+         *//*
         CONTACT,
         /**
          * Damage caused by being attacked by another entity
-         */
+         *//*
         ENTITY_ATTACK,
         /**
          * Damage caused by being hit by a projectile such as an Arrow
-         */
+         *//*
         PROJECTILE,
         /**
          * Damage caused by being put in a block
-         */
+         *//*
         SUFFOCATION,
         /**
          * Fall damage
-         */
+         *//*
         FALL,
         /**
          * Damage caused by standing in fire
-         */
+         *//*
         FIRE,
         /**
          * Burn damage
-         */
+         *//*
         FIRE_TICK,
         /**
          * Damage caused by standing in lava
-         */
+         *//*
         LAVA,
         /**
          * Damage caused by running out of air underwater
-         */
+         *//*
         DROWNING,
         /**
          * BlockType explosion damage
-         */
+         *//*
         BLOCK_EXPLOSION,
         /**
          * Entity explosion damage
-         */
+         *//*
         ENTITY_EXPLOSION,
         /**
          * Damage caused by falling into the void
-         */
+         *//*
         VOID,
         /**
          * Player commits suicide
-         */
+         *//*
         SUICIDE,
         /**
          * Potion or spell damage
-         */
+         *//*
         MAGIC,
         /**
          * Plugins
-         */
+         *//*
         CUSTOM,
         /**
          * Damage caused by being struck by lightning
-         */
+         *//*
         LIGHTNING
     }
-}
+}*/

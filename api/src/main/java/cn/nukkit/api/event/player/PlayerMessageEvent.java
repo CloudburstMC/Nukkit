@@ -1,22 +1,26 @@
 package cn.nukkit.api.event.player;
 
 import cn.nukkit.api.Player;
-import lombok.Getter;
-import lombok.Setter;
 
-/**
- * Created on 2015/12/23 by xtypr.
- * Package cn.nukkit.server.event.player in project Nukkit .
- */
-
-@Getter
-@Setter
-public abstract class PlayerMessageEvent extends PlayerEvent {
-
-    protected String message;
+public abstract class PlayerMessageEvent implements PlayerEvent {
+    private final Player player;
+    private String message;
 
     protected PlayerMessageEvent(final Player player, final String message) {
-        super(player);
+        this.player = player;
+        this.message = message;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
         this.message = message;
     }
 }
