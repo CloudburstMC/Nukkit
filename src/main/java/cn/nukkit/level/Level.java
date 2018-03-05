@@ -1446,11 +1446,11 @@ public class Level implements ChunkManager, Metadatable {
         return this.getChunk(x >> 4, z >> 4, false).getFullBlock(x & 0x0f, y & 0xff, z & 0x0f);
     }
 
-    public Block getBlock(Vector3 pos) {
+    public synchronized Block getBlock(Vector3 pos) {
         return this.getBlock(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
     }
 
-    public Block getBlock(int x, int y, int z) {
+    public synchronized Block getBlock(int x, int y, int z) {
         int fullState;
         if (y >= 0 && y < 256) {
             int cx = x >> 4;
@@ -1627,23 +1627,23 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Override
-    public void setBlockFullIdAt(int x, int y, int z, int fullId) {
+    public synchronized void setBlockFullIdAt(int x, int y, int z, int fullId) {
         setBlock(x, y, z, Block.fullList[fullId], false, false);
     }
 
-    public boolean setBlock(Vector3 pos, Block block) {
+    public synchronized boolean setBlock(Vector3 pos, Block block) {
         return this.setBlock(pos, block, false);
     }
 
-    public boolean setBlock(Vector3 pos, Block block, boolean direct) {
+    public synchronized boolean setBlock(Vector3 pos, Block block, boolean direct) {
         return this.setBlock(pos, block, direct, true);
     }
 
-    public boolean setBlock(Vector3 pos, Block block, boolean direct, boolean update) {
+    public synchronized boolean setBlock(Vector3 pos, Block block, boolean direct, boolean update) {
         return setBlock((int) pos.x, (int) pos.y, (int) pos.z, block, direct, update);
     }
 
-    public boolean setBlock(int x, int y, int z, Block block, boolean direct, boolean update) {
+    public synchronized boolean setBlock(int x, int y, int z, Block block, boolean direct, boolean update) {
         if (y < 0 || y >= 256) {
             return false;
         }
@@ -2218,12 +2218,12 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Override
-    public int getBlockIdAt(int x, int y, int z) {
+    public synchronized int getBlockIdAt(int x, int y, int z) {
         return this.getChunk(x >> 4, z >> 4, true).getBlockId(x & 0x0f, y & 0xff, z & 0x0f);
     }
 
     @Override
-    public void setBlockIdAt(int x, int y, int z, int id) {
+    public synchronized void setBlockIdAt(int x, int y, int z, int id) {
         this.getChunk(x >> 4, z >> 4, true).setBlockId(x & 0x0f, y & 0xff, z & 0x0f, id & 0xff);
         addBlockChange(x, y, z);
         temporalVector.setComponents(x, y, z);
@@ -2232,23 +2232,23 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public int getBlockExtraDataAt(int x, int y, int z) {
+    public synchronized int getBlockExtraDataAt(int x, int y, int z) {
         return this.getChunk(x >> 4, z >> 4, true).getBlockExtraData(x & 0x0f, y & 0xff, z & 0x0f);
     }
 
-    public void setBlockExtraDataAt(int x, int y, int z, int id, int data) {
+    public synchronized void setBlockExtraDataAt(int x, int y, int z, int id, int data) {
         this.getChunk(x >> 4, z >> 4, true).setBlockExtraData(x & 0x0f, y & 0xff, z & 0x0f, (data << 8) | id);
 
         this.sendBlockExtraData(x, y, z, id, data);
     }
 
     @Override
-    public int getBlockDataAt(int x, int y, int z) {
+    public synchronized int getBlockDataAt(int x, int y, int z) {
         return this.getChunk(x >> 4, z >> 4, true).getBlockData(x & 0x0f, y & 0xff, z & 0x0f);
     }
 
     @Override
-    public void setBlockDataAt(int x, int y, int z, int data) {
+    public synchronized void setBlockDataAt(int x, int y, int z, int data) {
         this.getChunk(x >> 4, z >> 4, true).setBlockData(x & 0x0f, y & 0xff, z & 0x0f, data & 0x0f);
         addBlockChange(x, y, z);
         temporalVector.setComponents(x, y, z);
@@ -2257,19 +2257,19 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public int getBlockSkyLightAt(int x, int y, int z) {
+    public synchronized int getBlockSkyLightAt(int x, int y, int z) {
         return this.getChunk(x >> 4, z >> 4, true).getBlockSkyLight(x & 0x0f, y & 0xff, z & 0x0f);
     }
 
-    public void setBlockSkyLightAt(int x, int y, int z, int level) {
+    public synchronized void setBlockSkyLightAt(int x, int y, int z, int level) {
         this.getChunk(x >> 4, z >> 4, true).setBlockSkyLight(x & 0x0f, y & 0xff, z & 0x0f, level & 0x0f);
     }
 
-    public int getBlockLightAt(int x, int y, int z) {
+    public synchronized int getBlockLightAt(int x, int y, int z) {
         return this.getChunk(x >> 4, z >> 4, true).getBlockLight(x & 0x0f, y & 0xff, z & 0x0f);
     }
 
-    public void setBlockLightAt(int x, int y, int z, int level) {
+    public synchronized void setBlockLightAt(int x, int y, int z, int level) {
         this.getChunk(x >> 4, z >> 4, true).setBlockLight(x & 0x0f, y & 0xff, z & 0x0f, level & 0x0f);
     }
 

@@ -14,7 +14,7 @@ import cn.nukkit.math.Vector3;
 import java.util.*;
 
 /**
- * This generator was written by Creeperface and Nycuro
+ * This generator was written by DaPorkchop_
  * <p>
  * The following classes are theirs and are intended for NUKKIT USAGE and should not be copied/translated to other software
  * such as BukkitPE, ClearSky, Genisys , Pocketmine-MP
@@ -35,75 +35,22 @@ import java.util.*;
  * MushroomIsland.java
  * TreeGenerator.java
  * HugeTreesGenerator.java
- * <p>
- * Created by CreeperFace on 26. 10. 2016.
  */
 public class Normal extends Generator {
-
-    /**
-     * biome IDs
-     */
-    public static final int JUNGLE = 21;
-    public static final int SAVANNA = 35;
-    public static final int ROOFED_FOREST = 29;
-    public static final int ROOFED_FOREST_M = 157;
-    public static final int MUSHROOM_ISLAND = 14;
-    public static final int SWAMP = 6;
-
-    public static final int OCEAN = 0;
-    public static final int PLAINS = 1;
-    public static final int DESERT = 2;
-    public static final int FOREST = 4;
-    public static final int TAIGA = 5;
-    public static final int RIVER = 7;
-    public static final int ICE_PLAINS = 12;
-    public static final int BEACH = 16;
-    public static final int BIRCH_FOREST = 27;
-
-    public static final int MAX_BIOMES = 256;
-
-    @Override
-    public int getId() {
-        return TYPE_INFINITE;
-    }
-
     private final List<Populator> populators = new ArrayList<>();
-
+    private final List<Populator> generationPopulators = new ArrayList<>();
+    private final int baseNoiseLayers = 2;
+    private final int seaHeight = 64;
+    private final int bedrockDepth = 5;
     private ChunkManager level;
-
     private Random random;
     private NukkitRandom nukkitRandom;
-
     private long localSeed1;
     private long localSeed2;
-
-    private final List<Populator> generationPopulators = new ArrayList<>();
-
-    private Simplex noiseSeaFloor;
-    private Simplex noiseLand;
-    private Simplex noiseMountains;
-    private Simplex noiseBaseGround;
-    private Simplex noiseRiver;
-
+    private Simplex noiseOcean;
+    //TODO: private Simplex noiseRiver;
+    private Simplex[] noiseBase = new Simplex[baseNoiseLayers];
     private BiomeSelector selector;
-
-    private int heightOffset;
-
-    private final int seaHeight = 64;
-    private final int seaFloorHeight = 48;
-    private final int beathStartHeight = 60;
-    private final int beathStopHeight = 64;
-    private final int bedrockDepth = 5;
-    private final int seaFloorGenerateRange = 5;
-    private final int landHeightRange = 18;
-    private final int mountainHeight = 13;
-    private final int basegroundHeight = 3;
-    private int waterColor = 16777215;
-    //private boolean enableSnow; Coming soon
-
-    protected float rainfall = 0.5F;
-    protected float temperature = 0.5F;
-    protected int grassColor = 0;
 
     public Normal() {
         this(new HashMap<>());
@@ -111,6 +58,11 @@ public class Normal extends Generator {
 
     public Normal(Map<String, Object> options) {
         //Nothing here. Just used for future update.
+    }
+
+    @Override
+    public int getId() {
+        return TYPE_INFINITE;
     }
 
     @Override
@@ -153,30 +105,28 @@ public class Normal extends Generator {
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
-        this.noiseSeaFloor = new Simplex(this.nukkitRandom, 1F, 1F / 8F, 1F / 64F);
-        this.noiseLand = new Simplex(this.nukkitRandom, 2F, 1F / 8F, 1F / 512F);
-        this.noiseMountains = new Simplex(this.nukkitRandom, 4F, 1F, 1F / 500F);
-        this.noiseBaseGround = new Simplex(this.nukkitRandom, 4F, 1F / 4F, 1F / 64F);
-        this.noiseRiver = new Simplex(this.nukkitRandom, 2F, 1F, 1F / 512F);
+        this.noiseOcean = new Simplex(this.nukkitRandom, 1, 1F / 8F, 1F / 512F);
+        for (int i = 0; i < baseNoiseLayers; i++) {
+            this.noiseBase[i] = new Simplex(this.nukkitRandom, 8, 1 / 4F, 1 / 4F);
+        }
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.nukkitRandom, Biome.getBiome(Biome.FOREST));
-        this.heightOffset = random.nextRange(-5, 3);
 
-        this.selector.addBiome(Biome.getBiome(OCEAN));
-        this.selector.addBiome(Biome.getBiome(PLAINS));
-        this.selector.addBiome(Biome.getBiome(DESERT));
-        this.selector.addBiome(Biome.getBiome(FOREST));
-        this.selector.addBiome(Biome.getBiome(TAIGA));
-        this.selector.addBiome(Biome.getBiome(RIVER));
-        this.selector.addBiome(Biome.getBiome(ICE_PLAINS));
-        this.selector.addBiome(Biome.getBiome(BIRCH_FOREST));
+        this.selector.addBiome(Biome.getBiome(Biome.OCEAN));
+        this.selector.addBiome(Biome.getBiome(Biome.PLAINS));
+        this.selector.addBiome(Biome.getBiome(Biome.DESERT));
+        this.selector.addBiome(Biome.getBiome(Biome.FOREST));
+        this.selector.addBiome(Biome.getBiome(Biome.TAIGA));
+        this.selector.addBiome(Biome.getBiome(Biome.RIVER));
+        this.selector.addBiome(Biome.getBiome(Biome.ICE_PLAINS));
+        this.selector.addBiome(Biome.getBiome(Biome.BIRCH_FOREST));
 
-        this.selector.addBiome(Biome.getBiome(JUNGLE));
-        this.selector.addBiome(Biome.getBiome(SAVANNA));
-        this.selector.addBiome(Biome.getBiome(ROOFED_FOREST));
-        this.selector.addBiome(Biome.getBiome(ROOFED_FOREST_M));
-        this.selector.addBiome(Biome.getBiome(MUSHROOM_ISLAND));
-        this.selector.addBiome(Biome.getBiome(SWAMP));
+        this.selector.addBiome(Biome.getBiome(Biome.JUNGLE));
+        this.selector.addBiome(Biome.getBiome(Biome.SAVANNA));
+        this.selector.addBiome(Biome.getBiome(Biome.ROOFED_FOREST));
+        this.selector.addBiome(Biome.getBiome(Biome.ROOFED_FOREST_M));
+        this.selector.addBiome(Biome.getBiome(Biome.MUSHROOM_ISLAND));
+        this.selector.addBiome(Biome.getBiome(Biome.SWAMP));
 
         this.selector.recalculate();
 
@@ -214,115 +164,148 @@ public class Normal extends Generator {
     public void generateChunk(final int chunkX, final int chunkZ) {
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
 
-        double[][] seaFloorNoise = Generator.getFastNoise2D(this.noiseSeaFloor, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-        double[][] landNoise = Generator.getFastNoise2D(this.noiseLand, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-        double[][] mountainNoise = Generator.getFastNoise2D(this.noiseMountains, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-        double[][] baseNoise = Generator.getFastNoise2D(this.noiseBaseGround, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-        double[][] riverNoise = Generator.getFastNoise2D(this.noiseRiver, 16, 16, 4, chunkX * 16, 0, chunkZ * 16);
-
-        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
-
-        for (int genx = 0; genx < 16; genx++) {
-            for (int genz = 0; genz < 16; genz++) {
-
-                Biome biome;
-                boolean canBaseGround = false;
-                boolean canRiver = true;
-
-                //using a quadratic function which smooth the world
-                //y = (2.956x)^2 - 0.6,  (0 <= x <= 2)
-                double landHeightNoise = landNoise[genx][genz] + 1F;
-                landHeightNoise *= 2.956;
-                landHeightNoise = landHeightNoise * landHeightNoise;
-                landHeightNoise = landHeightNoise - 0.6F;
-                landHeightNoise = landHeightNoise > 0 ? landHeightNoise : 0;
-
-                //generate mountains
-                double mountainHeightGenerate = mountainNoise[genx][genz] - 0.2F;
-                mountainHeightGenerate = mountainHeightGenerate > 0 ? mountainHeightGenerate : 0;
-                int mountainGenerate = (int) (mountainHeight * mountainHeightGenerate);
-
-                int landHeightGenerate = (int) (landHeightRange * landHeightNoise);
-                if (landHeightGenerate > landHeightRange) {
-                    if (landHeightGenerate > landHeightRange) {
-                        canBaseGround = true;
+        double[][] oceanNoise = Generator.getFastNoise2D(this.noiseOcean, 16, 16, 8, chunkX << 2, 0, chunkZ << 2);
+        double[][][][] baseNoiseGen = new double[baseNoiseLayers][][][];
+        //populate noise array
+        for (int i = 0; i < baseNoiseLayers; i++) {
+            baseNoiseGen[i] = Generator.getFastNoise3D(this.noiseBase[i], 5, 33, 5, 5, 11, 5, chunkX << 2, 0, chunkZ << 2);
+        }
+        //average all noise out
+        for (int x = 0; x < 5; x++) {
+            for (int y = 0; y < 33; y++) {
+                for (int z = 0; z < 5; z++) {
+                    double val = 0;
+                    for (int i = 0; i < baseNoiseLayers; i++) {
+                        val += baseNoiseGen[i][x][z][y];
                     }
-                    landHeightGenerate = landHeightRange;
+                    val /= baseNoiseLayers;
+                    baseNoiseGen[0][x][z][y] = val;
                 }
-
-                int genyHeight = seaFloorHeight + landHeightGenerate;
-                genyHeight += mountainGenerate;
-
-                //prepare for generate ocean, desert, and land
-                if (genyHeight < beathStartHeight) {
-                    if (genyHeight < beathStartHeight - 5) {
-                        genyHeight += (int) (seaFloorGenerateRange * seaFloorNoise[genx][genz]);
-                    }
+            }
+        }
+        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
+        //choose biomes
+        Biome[][] biomes = new Biome[16][16];
+        for (int x = 0; x < 16; x++)    {
+            for (int z = 0; z < 16; z++)    {
+                double ocean = oceanNoise[x][z];
+                Biome biome;
+                if (ocean < -0.25) {
                     biome = Biome.getBiome(Biome.OCEAN);
-                    if (genyHeight < seaFloorHeight - seaFloorGenerateRange) {
-                        genyHeight = seaFloorHeight;
-                    }
-                    canRiver = false;
-                } else if (genyHeight <= beathStopHeight && genyHeight >= beathStartHeight) {
+                } else if (ocean < -0.2)    {
                     biome = Biome.getBiome(Biome.BEACH);
                 } else {
-                    biome = this.pickBiome(chunkX * 16 + genx, chunkZ * 16 + genz);
-                    if (canBaseGround) {
-                        int baseGroundHeight = (int) (landHeightRange * landHeightNoise) - landHeightRange;
-                        int baseGroundHeight2 = (int) (basegroundHeight * (baseNoise[genx][genz] + 1F));
-                        if (baseGroundHeight2 > baseGroundHeight) baseGroundHeight2 = baseGroundHeight;
-                        if (baseGroundHeight2 > mountainGenerate)
-                            baseGroundHeight2 = baseGroundHeight2 - mountainGenerate;
-                        else baseGroundHeight2 = 0;
-                        genyHeight += baseGroundHeight2;
-                    }
+                    biome = pickBiome((chunkX << 4) | x, (chunkZ << 4) | z);
                 }
-                if (canRiver && genyHeight <= seaHeight - 5) {
-                    canRiver = false;
-                }
-                //generate river
-                if (canRiver) {
-                    double riverGenerate = riverNoise[genx][genz];
-                    if (riverGenerate > -0.25F && riverGenerate < 0.25F) {
-                        riverGenerate = riverGenerate > 0 ? riverGenerate : -riverGenerate;
-                        riverGenerate = 0.25F - riverGenerate;
-                        //y=x^2 * 4 - 0.0000001
-                        riverGenerate = riverGenerate * riverGenerate * 4F;
-                        //smooth again
-                        riverGenerate = riverGenerate - 0.0000001F;
-                        riverGenerate = riverGenerate > 0 ? riverGenerate : 0;
-                        genyHeight -= riverGenerate * 64;
-                        if (genyHeight < seaHeight) {
-                            biome = Biome.getBiome(Biome.RIVER);
-                            //to generate river floor
-                            if (genyHeight <= seaHeight - 8) {
-                                int genyHeight1 = seaHeight - 9 + (int) (basegroundHeight * (baseNoise[genx][genz] + 1F));
-                                int genyHeight2 = genyHeight < seaHeight - 7 ? seaHeight - 7 : genyHeight;
-                                genyHeight = genyHeight1 > genyHeight2 ? genyHeight1 : genyHeight2;
-                            }
-                        }
-                    }
-                }
-                int biomeColorAndId = biome.getColor() + (biome.getId() << 24);
-                chunk.setBiomeIdAndColor(genx, genz, biomeColorAndId);
+                chunk.setBiome(x, z, biomes[x][z] = biome);
+            }
+        }
+        //place blocks
+        double[][][] baseNoise = baseNoiseGen[0];
+        for (int xPiece = 0; xPiece < 4; xPiece++) {
+            for (int zPiece = 0; zPiece < 4; zPiece++) {
+                for (int yPiece = 0; yPiece < 32; yPiece++) {
+                    double d = 0.125D;
+                    double noiseBottomMinXZ = baseNoise[xPiece][zPiece][yPiece];
+                    double noiseBottomMinXMaxZ = baseNoise[xPiece][zPiece + 1][yPiece];
+                    double noiseBottomMinZMaxX = baseNoise[xPiece + 1][zPiece][yPiece];
+                    double noiseBottomMaxXZ = baseNoise[xPiece + 1][zPiece + 1][yPiece];
+                    double noiseTopMinXZ = (baseNoise[xPiece][zPiece][yPiece + 1] - noiseBottomMinXZ) * d;
+                    double noiseTopMinXMaxZ = (baseNoise[xPiece][zPiece + 1][yPiece + 1] - noiseBottomMinXMaxZ) * d;
+                    double noiseTopMinZMaxX = (baseNoise[xPiece + 1][zPiece][yPiece + 1] - noiseBottomMinZMaxX) * d;
+                    double noiseTopMaxXZ = (baseNoise[xPiece + 1][zPiece + 1][yPiece + 1] - noiseBottomMaxXZ) * d;
 
-                //generating
-                int generateHeight = genyHeight > seaHeight ? genyHeight : seaHeight;
-                for (int geny = 0; geny <= generateHeight; geny++) {
-                    if (geny <= bedrockDepth && (geny == 0 || nukkitRandom.nextRange(1, 5) == 1)) {
-                        chunk.setBlock(genx, geny, genz, Block.BEDROCK);
-                    } else if (geny > genyHeight) {
-                        if ((biome.getId() == Biome.ICE_PLAINS || biome.getId() == Biome.TAIGA) && geny == seaHeight) {
-                            chunk.setBlock(genx, geny, genz, Block.ICE);
-                        } else {
-                            chunk.setBlock(genx, geny, genz, Block.STILL_WATER);
+                    for (int ySeg = 0; ySeg < 8; ySeg++) {
+                        double d1 = 0.25D;
+                        double baseOffset = noiseBottomMinXZ;
+                        double baseOffsetMinXMaxZ = noiseBottomMinXMaxZ;
+                        double scaled1 = (noiseBottomMinZMaxX - noiseBottomMinXZ) * d1;
+                        double scaled2 = (noiseBottomMaxXZ - noiseBottomMinXMaxZ) * d1;
+                        for (int xSeg = 0; xSeg < 4; xSeg++) {
+                            int xLoc = xSeg + xPiece * 4;
+                            int yLoc = yPiece * 8 + ySeg;
+                            int zLoc = zPiece * 4;
+                            double d2 = 0.25D;
+                            double noiseVal = baseOffset;
+                            double noiseIncr = (baseOffsetMinXMaxZ - baseOffset) * d2;
+                            for (int zSeg = 0; zSeg < 4; zSeg++) {
+                                Biome biome = biomes[xLoc][zLoc];
+                                int block = Block.AIR;
+                                if (noiseVal + ((yLoc - (biome.getMinElevation() + 3)) * 0.03d) < 0.0D) {
+                                    block = Block.STONE;
+                                } else if (yPiece * 8 + ySeg < seaHeight)  {
+                                    block = Block.STILL_WATER;
+                                }
+                                chunk.setBlock(xLoc, yLoc, zLoc, block);
+                                zLoc++;
+                                noiseVal += noiseIncr;
+                            }
+
+                            baseOffset += scaled1;
+                            baseOffsetMinXMaxZ += scaled2;
                         }
-                    } else {
-                        chunk.setBlock(genx, geny, genz, Block.STONE);
+
+                        noiseBottomMinXZ += noiseTopMinXZ;
+                        noiseBottomMinXMaxZ += noiseTopMinXMaxZ;
+                        noiseBottomMinZMaxX += noiseTopMinZMaxX;
+                        noiseBottomMaxXZ += noiseTopMaxXZ;
                     }
                 }
             }
         }
+        //the following code is broken and buggy. nothing to see here...
+        /*for (int xBase = 0; xBase < 4; xBase++) {
+            for (int zBase = 0; zBase < 4; zBase++) {
+                double oceanBase = oceanNoise[xBase][zBase];
+                double xOceanDecr = (oceanBase - oceanNoise[xBase + 1][zBase]) / 4;
+                double zOceanDecr = (oceanBase - oceanNoise[xBase][zBase + 1]) / 4;
+                for (int xSub = 0; xSub < 4; xSub++) {
+                    for (int zSub = 0; zSub < 4; zSub++) {
+                        Biome biome;
+
+                        int realX = (xBase << 2) + xSub;
+                        int realZ = (zBase << 2) + zSub;
+                        double oceanVal = oceanBase + (xOceanDecr * xSub) + (zOceanDecr * zSub);
+                        if (oceanVal < -0.5) {
+                            biome = Biome.getBiome(Biome.OCEAN);
+                        } else {
+                            //TODO: rivers
+                            biome = pickBiome((chunkX << 4) + realX, (chunkZ << 4) + realZ);
+                        }
+                        chunk.setBiome(realX, realZ, biome);
+
+                        int min = biome.getMinElevation();
+                        int max = biome.getMaxElevation();
+                        double range = max - min;
+                        double heightDecr = 1 / range;
+                        for (int yBase = 0; yBase < 64; yBase++) {
+                            double landBase = baseNoise[xBase + 1][zBase + 1][yBase + 1];
+                            double xLandDecr = (landBase - baseNoise[xBase][zBase + 1][yBase + 1]) / 4;
+                            double zLandDecr = (landBase - baseNoise[xBase + 1][zBase][yBase + 1]) / 4;
+                            double yLandDecr = (landBase - baseNoise[xBase + 1][zBase + 1][yBase]) / 4;
+                            for (int ySub = 0; ySub < 4; ySub++) {
+                                int realY = (yBase << 2) + ySub;
+                                double landVal;
+                                if (realY <= min)   {
+                                    landVal = -1;
+                                } else if (realY > max) {
+                                    landVal = 1;
+                                } else {
+                                    landVal = landBase + (((xLandDecr * xSub) + (zLandDecr * zSub) + (yLandDecr * ySub)) / 3);
+                                    //landVal -= heightDecr * (realY - min);
+                                }
+
+                                if (landVal < 0)    {
+                                    chunk.setBlockId(realX, realY, realZ, Block.STONE);
+                                } else if (realY < seaHeight) {
+                                    chunk.setBlockId(realX, realY, realZ, Block.STILL_WATER);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }*/
 
         //populator chunk
         for (Populator populator : this.generationPopulators) {
