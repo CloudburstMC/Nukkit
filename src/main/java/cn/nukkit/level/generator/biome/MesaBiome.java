@@ -1,9 +1,19 @@
 package cn.nukkit.level.generator.biome;
 
-public class MesaBiome extends SandyBiome {
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockRedSandstone;
+import cn.nukkit.block.BlockSand;
+import cn.nukkit.block.BlockSandstone;
 
+public class MesaBiome extends SandyBiome {
     public MesaBiome() {
-        //WIP
+        this.setGroundCover(new Block[]{
+                new BlockSand(BlockSand.RED),
+                new BlockSand(BlockSand.RED),
+                new BlockSand(BlockSand.RED),
+                new BlockRedSandstone(),
+                new BlockRedSandstone()
+        });
     }
 
     @Override

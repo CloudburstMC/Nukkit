@@ -1,8 +1,6 @@
 package cn.nukkit.level.generator.biome;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockSand;
-import cn.nukkit.block.BlockSandstone;
+import cn.nukkit.level.generator.populator.PopulatorSugarcane;
 
 /**
  * Author: PeratX
@@ -10,19 +8,14 @@ import cn.nukkit.block.BlockSandstone;
  */
 public class BeachBiome extends SandyBiome {
     public BeachBiome() {
-        //Todo: SugarCane
+        PopulatorSugarcane sugarcane = new PopulatorSugarcane();
+        sugarcane.setBaseAmount(0);
+        sugarcane.setRandomAmount(3);
+        this.addPopulator(sugarcane);
 
-        this.setElevation(62, 65);
+        this.setElevation(64, 66);
         this.temperature = 2;
-        this.rainfall = 0;
-
-        this.setGroundCover(new Block[]{
-                new BlockSand(),
-                new BlockSand(),
-                new BlockSandstone(),
-                new BlockSandstone(),
-                new BlockSandstone()
-        });
+        this.rainfall = 2;
     }
 
     @Override

@@ -12,16 +12,13 @@ public class IcePlainsBiome extends SnowyBiome {
 
     public IcePlainsBiome() {
         super();
-        PopulatorTallGrass tallGrass = new PopulatorTallGrass();
-        tallGrass.setBaseAmount(5);
 
         PopulatorTree trees = new PopulatorTree(BlockSapling.SPRUCE);
         trees.setBaseAmount(1);
         trees.setRandomAmount(1);
 
-        this.addPopulator(tallGrass);
         this.addPopulator(trees);
-        this.setElevation(63, 74);
+        this.setElevation(67, 69);
         this.temperature = 0D;
         this.rainfall = 0.5D;
     }

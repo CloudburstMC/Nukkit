@@ -230,8 +230,12 @@ public class Normal extends Generator {
                             double noiseIncr = (baseOffsetMinXMaxZ - baseOffset) * scaleAmountHoriz;
                             for (int zSeg = 0; zSeg < 4; zSeg++) {
                                 Biome biome = biomes[xLoc][zLoc];
+                                int min = biome.getMinElevation();
+                                int max = biome.getMaxElevation();
+                                double range = max - min;
+                                double shrinkFactor = 1 / range;
                                 int block = Block.AIR;
-                                if (noiseVal + ((yLoc - (biome.getMinElevation() + 3)) * 0.03d) < 0.0D) {
+                                if (noiseVal + ((yLoc - (min + 3)) * shrinkFactor) < 0.0D) {
                                     block = Block.STONE;
                                 } else if (yPiece * 8 + ySeg < seaHeight)  {
                                     block = Block.STILL_WATER;

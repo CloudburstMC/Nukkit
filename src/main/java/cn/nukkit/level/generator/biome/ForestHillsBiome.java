@@ -1,25 +1,23 @@
 package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.BlockSapling;
-import cn.nukkit.level.generator.populator.PopulatorGrass;
-import cn.nukkit.level.generator.populator.PopulatorTallGrass;
 import cn.nukkit.level.generator.populator.PopulatorTree;
 
 /**
- * author: MagicDroidX
+ * author: DaPorkchop_
  * Nukkit Project
  */
-public class ForestBiome extends GrassyBiome {
+public class ForestHillsBiome extends GrassyBiome {
     public static final int TYPE_NORMAL = 0;
     public static final int TYPE_BIRCH = 1;
 
     public final int type;
 
-    public ForestBiome() {
+    public ForestHillsBiome() {
         this(TYPE_NORMAL);
     }
 
-    public ForestBiome(int type) {
+    public ForestHillsBiome(int type) {
         super();
 
         this.type = type;
@@ -28,7 +26,7 @@ public class ForestBiome extends GrassyBiome {
         trees.setBaseAmount(5);
         this.addPopulator(trees);
 
-        this.setElevation(67, 70);
+        this.setElevation(70, 90);
 
         if (type == TYPE_BIRCH) {
             this.temperature = 0.5;
@@ -41,6 +39,6 @@ public class ForestBiome extends GrassyBiome {
 
     @Override
     public String getName() {
-        return this.type == TYPE_BIRCH ? "Birch Forest" : "Forest";
+        return this.type == TYPE_BIRCH ? "Birch Forest Hills" : "Forest Hills";
     }
 }

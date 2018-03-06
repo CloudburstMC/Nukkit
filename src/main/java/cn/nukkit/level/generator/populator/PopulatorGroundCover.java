@@ -26,7 +26,7 @@ public class PopulatorGroundCover extends Populator {
                     }
 
                     int height = chunk.getHeightMap(x, z);
-                    if (height == 0 || height == 255) height = 126;
+                    if (height == 0 || height == 255) height = 254;
 
                     int y;
                     for (y = height + 1; y > 0; --y) {
@@ -35,7 +35,7 @@ public class PopulatorGroundCover extends Populator {
                             break;
                         }
                     }
-                    int startY = Math.min(127, y + diffY);
+                    int startY = Math.min(255, y + diffY);
                     int endY = startY - cover.length;
                     for (y = startY; y > endY && y >= 0; --y) {
                         Block b = cover[startY - y];

@@ -29,7 +29,7 @@ public class SwampBiome extends GrassyBiome {
         this.addPopulator(flower);
         this.addPopulator(lilypad);
 
-        this.setElevation(62, 63);
+        this.setElevation(62, 65);
 
         this.temperature = 0.8;
         this.rainfall = 0.9;

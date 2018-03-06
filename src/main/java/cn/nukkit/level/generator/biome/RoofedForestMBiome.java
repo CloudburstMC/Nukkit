@@ -12,9 +12,6 @@ public class RoofedForestMBiome extends GrassyBiome {
         DarkOakTreePopulator tree = new DarkOakTreePopulator();
         tree.setBaseAmount(20);
 
-        PopulatorGrass grass = new PopulatorGrass();
-        grass.setBaseAmount(10);
-
         PopulatorFlower flower = new PopulatorFlower();
         flower.setBaseAmount(2);
 
@@ -22,7 +19,6 @@ public class RoofedForestMBiome extends GrassyBiome {
         mushroom.setBaseAmount(1);
         mushroom.setRandomAmount(1);
 
-        this.addPopulator(grass);
         this.addPopulator(tree);
         this.addPopulator(flower);
         this.addPopulator(mushroom);
