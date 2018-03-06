@@ -57,7 +57,7 @@ public final class RawMessage implements Message {
 
     @Override
     public String toString() {
-        return "TipMessage{" +
+        return "RawMessage{" +
                 "message='" + message + '\'' +
                 '}';
     }

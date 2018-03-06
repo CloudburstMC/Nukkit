@@ -66,7 +66,7 @@ public final class ChatMessage implements SenderMessage {
 
     @Override
     public final String toString() {
-        return "WhisperMessage{message='" + message + '\'' +
+        return "ChatMessage{message='" + message + '\'' +
                 "sender='" + sender + '\'' +
                 '}';
     }

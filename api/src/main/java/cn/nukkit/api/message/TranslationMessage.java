@@ -52,7 +52,7 @@ public final class TranslationMessage implements ParameterMessage {
 
     @Override
     public String toString() {
-        return "TranslatedMessage{" +
+        return "TranslationMessage{" +
                 "name='" + name + '\'' +
                 ", replacements=" + Arrays.toString(replacements) +
                 '}';
