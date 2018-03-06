@@ -4,8 +4,8 @@ pipeline {
         maven 'Maven 3'
         jdk 'Java 8'
     }
-    option {
-        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+    options {
+        buildDiscarder(logRotator(artifactNumToKeepStr: '2'))
     }
     stages {
         stage ('Build') {
@@ -21,14 +21,17 @@ pipeline {
         }
 
         stage ('Javadoc') {
+            when {
+                branch "master"
+            }
             steps {
-                sh 'mvn javadoc:javadoc -pl api'
+                sh 'mvn javadoc:aggregate -DskipTests -pl api'
             }
             post {
                 success {
                     step([
                         $class: 'JavadocArchiver',
-                        javadocDir: 'api/target/site/apidocs',
+                        javadocDir: 'target/site/apidocs',
                         keepAll: true
                     ])
                 }
