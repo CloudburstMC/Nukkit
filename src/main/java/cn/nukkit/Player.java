@@ -3575,6 +3575,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (!this.spawned) {
             return;
         }
+        if (this.level != EnumLevel.OVERWORLD.getLevel())   {
+            this.teleportImmediate(new Location(0, -100, 0, EnumLevel.OVERWORLD.getLevel()));
+        }
 
         boolean showMessages = this.level.getGameRules().getBoolean(GameRule.SHOW_DEATH_MESSAGE);
         String message = "death.attack.generic";
