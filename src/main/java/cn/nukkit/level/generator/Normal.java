@@ -76,10 +76,12 @@ public class Normal extends Generator {
     private NukkitRandom nukkitRandom;
     private long localSeed1;
     private long localSeed2;
-    private Simplex noiseOcean;
-    //TODO: private Simplex noiseRiver;
     private Simplex[] noiseBase = new Simplex[baseNoiseLayers];
     private BiomeSelector selector;
+    private ThreadLocal<double[][][]> baseNoise = ThreadLocal.withInitial(() -> new double[5][5][33]);
+    private ThreadLocal<double[][]> minHeights = ThreadLocal.withInitial(() -> new double[16][16]);
+    private ThreadLocal<double[][]> shrinkFactors = ThreadLocal.withInitial(() -> new double[16][16]);
+    private ThreadLocal<Long2ObjectMap<Biome>> biomes = ThreadLocal.withInitial(Long2ObjectOpenHashMap::new);
 
     public Normal() {
         this(new HashMap<>());
@@ -134,7 +136,6 @@ public class Normal extends Generator {
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
-        this.noiseOcean = new Simplex(this.nukkitRandom, 1, 1F / 8F, 1F / 512F);
         for (int i = 0; i < baseNoiseLayers; i++) {
             this.noiseBase[i] = new Simplex(this.nukkitRandom, 8, 1 / 4F, 1 / 64F);
         }
@@ -177,9 +178,12 @@ public class Normal extends Generator {
     @Override
     public void generateChunk(final int chunkX, final int chunkZ) {
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
+        double[][][] baseNoise = this.baseNoise.get();
+        Long2ObjectMap<Biome> biomes = this.biomes.get();
+        biomes.clear(); //remove anything that may be left over from last chunk
+        double[][] minHeights = this.minHeights.get();
+        double[][] shrinkFactors = this.shrinkFactors.get();
 
-        double[][] oceanNoise = Generator.getFastNoise2D(this.noiseOcean, 16, 16, 8, chunkX << 4, 0, chunkZ << 4);
-        double[][][] baseNoise = new double[5][5][33];
         //fill noise array
         {
             int xBase = chunkX << 4;
@@ -200,13 +204,6 @@ public class Normal extends Generator {
         }
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
-        //choose biomes
-        Long2ObjectMap<Biome> biomes = new Long2ObjectOpenHashMap<>();
-
-        //pre-calculate minimum heights
-        //TODO: thread-local instances of all these arrays so we don't need to keep making new ones
-        double[][] minHeights = new double[16][16];
-        double[][] shrinkFactors = new double[16][16];
         double scaleAmountHoriz = 0.25D;
         double scaleAmountVert = 0.125D;
         //interpolate biome height values
