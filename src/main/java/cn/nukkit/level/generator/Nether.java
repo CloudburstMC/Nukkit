@@ -76,15 +76,6 @@ public class Nether extends Generator {
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
-        PopulatorOre ores = new PopulatorOre(Block.NETHERRACK);
-        ores.setOreTypes(new OreType[]{
-                new OreType(new BlockOreQuartz(), 20, 16, 0, 128),
-                new OreType(new BlockSoulSand(), 5, 64, 0, 128),
-                new OreType(new BlockGravel(), 5, 64, 0, 128),
-                new OreType(new BlockLava(), 1, 16, 0, (int) this.waterHeight),
-        });
-        this.populators.add(ores);
-        this.populators.add(new PopulatorGlowStone());
         PopulatorGroundFire groundFire = new PopulatorGroundFire();
         groundFire.setBaseAmount(1);
         groundFire.setRandomAmount(1);
