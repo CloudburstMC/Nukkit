@@ -22,9 +22,7 @@ public class Nether extends Generator {
     private Random random;
     private double waterHeight = 32;
     private double emptyHeight = 64;
-    private double emptyAmplitude = 1;
     private double density = 0.5;
-    private double bedrockDepth = 5;
     private final List<Populator> populators = new ArrayList<>();
     private List<Populator> generationPopulators = new ArrayList<>();
 
@@ -72,7 +70,7 @@ public class Nether extends Generator {
         this.nukkitRandom = random;
         this.random = new Random();
         this.nukkitRandom.setSeed(this.level.getSeed());
-        this.noiseBase = new Simplex(this.nukkitRandom, 26, 3 / 4f, 1 / 64f);
+        this.noiseBase = new Simplex(this.nukkitRandom, 20, 2 / 4f, 1 / 64f);
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
@@ -81,9 +79,17 @@ public class Nether extends Generator {
         groundFire.setRandomAmount(1);
         this.populators.add(groundFire);
         PopulatorLava lava = new PopulatorLava();
-        lava.setBaseAmount(0);
+        lava.setBaseAmount(1);
         lava.setRandomAmount(2);
         this.populators.add(lava);
+        this.populators.add(new PopulatorGlowStone());
+        PopulatorOre ore = new PopulatorOre(Block.NETHERRACK);
+        ore.setOreTypes(new OreType[]{
+                new OreType(new BlockOreQuartz(), 40, 16, 0, 128),
+                new OreType(new BlockSoulSand(), 1, 64, 30, 35),
+                new OreType(new BlockLava(), 32, 1, 0, 32),
+        });
+        this.populators.add(ore);
     }
 
     @Override
@@ -101,15 +107,8 @@ public class Nether extends Generator {
 
                 chunk.setBlockId(x, 0, z, Block.BEDROCK);
                 chunk.setBlockId(x, 127, z, Block.BEDROCK);
-
-                for (int y = 1; y <= bedrockDepth; y++) {
-                    if (nukkitRandom.nextRange(1, 5) == 1) {
-                        chunk.setBlockId(x, y, z, Block.BEDROCK);
-                        chunk.setBlockId(x, 127 - y, z, Block.BEDROCK);
-                    }
-                }
                 for (int y = 1; y < 127; ++y) {
-                    double noiseValue = (Math.abs(this.emptyHeight - y) / this.emptyHeight) * this.emptyAmplitude - noise[x][z][y];
+                    double noiseValue = (Math.abs(this.emptyHeight - y) / 62) - noise[x][z][y];
                     noiseValue -= 1 - this.density;
                     if (noiseValue > 0) {
                         chunk.setBlockId(x, y, z, Block.NETHERRACK);
