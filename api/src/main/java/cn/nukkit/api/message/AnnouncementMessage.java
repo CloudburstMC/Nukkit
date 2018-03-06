@@ -8,25 +8,25 @@ import java.util.Objects;
 
 @Nonnull
 @Immutable
-public final class ChatMessage implements SenderMessage {
-    private static final Type TYPE = Type.CHAT;
+public final class AnnouncementMessage implements SenderMessage {
+    private static final Type TYPE = Type.ANNOUNCEMENT;
     private final String sender;
     private final String message;
     private final boolean needsTranslating;
 
-    public ChatMessage(@Nonnull String message) {
+    public AnnouncementMessage(@Nonnull String message) {
         this("", message, false);
     }
 
-    public ChatMessage(@Nonnull String sender, @Nonnull String message) {
+    public AnnouncementMessage(@Nonnull String sender, @Nonnull String message) {
         this(sender, message, false);
     }
 
-    public ChatMessage(@Nonnull String message, boolean needsTranslating) {
+    public AnnouncementMessage(@Nonnull String message, boolean needsTranslating) {
         this("", message, needsTranslating);
     }
 
-    public ChatMessage(@Nonnull String sender, @Nonnull String message, boolean needsTranslating) {
+    public AnnouncementMessage(@Nonnull String sender, @Nonnull String message, boolean needsTranslating) {
         this.sender = Preconditions.checkNotNull(sender, "sender");
         this.message = Preconditions.checkNotNull(message, "message");
         this.needsTranslating = needsTranslating;
@@ -34,6 +34,7 @@ public final class ChatMessage implements SenderMessage {
 
     /**
      * Returns the message.
+     *
      * @return the message
      */
     @Nonnull
@@ -54,8 +55,8 @@ public final class ChatMessage implements SenderMessage {
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || ChatMessage.class != o.getClass()) return false;
-        ChatMessage that = (ChatMessage) o;
+        if (o == null || AnnouncementMessage.class != o.getClass()) return false;
+        AnnouncementMessage that = (AnnouncementMessage) o;
         return Objects.equals(message, that.message);
     }
 
@@ -66,7 +67,7 @@ public final class ChatMessage implements SenderMessage {
 
     @Override
     public final String toString() {
-        return "WhisperMessage{message='" + message + '\'' +
+        return "AnnouncementMessage{message='" + message + '\'' +
                 "sender='" + sender + '\'' +
                 '}';
     }

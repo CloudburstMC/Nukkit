@@ -5,6 +5,8 @@ public interface Message {
 
     Type getType();
 
+    boolean needsTranslating();
+
     enum Type {
         RAW,
         CHAT,

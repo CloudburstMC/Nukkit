@@ -8,22 +8,23 @@ import java.util.Objects;
 
 @Nonnull
 @Immutable
-public final class SystemMessage implements Message {
-    private static final Type TYPE = Type.SYSTEM;
+public final class TipMessage implements Message {
+    private static final Type TYPE = Type.TIP;
     private final String message;
     private final boolean needsTranslating;
 
-    public SystemMessage(@Nonnull String message) {
+    public TipMessage(@Nonnull String message) {
         this(message, false);
     }
 
-    public SystemMessage(@Nonnull String message, boolean needsTranslating) {
+    public TipMessage(@Nonnull String message, boolean needsTranslating) {
         this.message = Preconditions.checkNotNull(message, "message");
         this.needsTranslating = needsTranslating;
     }
 
     /**
      * Returns the message.
+     *
      * @return message
      */
     @Override
@@ -44,8 +45,8 @@ public final class SystemMessage implements Message {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || SystemMessage.class != o.getClass()) return false;
-        SystemMessage that = (SystemMessage) o;
+        if (o == null || TipMessage.class != o.getClass()) return false;
+        TipMessage that = (TipMessage) o;
         return Objects.equals(message, that.message);
     }
 
@@ -56,7 +57,7 @@ public final class SystemMessage implements Message {
 
     @Override
     public String toString() {
-        return "SystemMessage{" +
+        return "TipMessage{" +
                 "message='" + message + '\'' +
                 '}';
     }

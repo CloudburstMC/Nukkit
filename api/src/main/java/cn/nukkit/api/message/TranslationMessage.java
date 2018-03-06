@@ -5,25 +5,25 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 @Nonnull
 @Immutable
-public class TranslationMessage implements ParameterMessage {
-    private static final Type type = Type.TRANSLATION;
+public final class TranslationMessage implements ParameterMessage {
+    private static final Type TYPE = Type.TRANSLATION;
     private final String name;
-    private final List<String> replacements;
+    private final String[] replacements;
 
     /**
      * Creates a new translated message.
      * @param name the name of the message
      * @param replacements the replacements to use
      */
-    public TranslationMessage(@Nonnull String name, @Nonnull List<String> replacements) {
+    public TranslationMessage(@Nonnull String name, @Nonnull Collection<String> replacements) {
         this.name = Preconditions.checkNotNull(name, "name");
-        this.replacements = ImmutableList.copyOf(Preconditions.checkNotNull(replacements, "replacements"));
+        this.replacements = Preconditions.checkNotNull(replacements, "replacements").toArray(new String[0]);
     }
 
     /**
@@ -33,16 +33,16 @@ public class TranslationMessage implements ParameterMessage {
      */
     public TranslationMessage(@Nonnull String name, @Nonnull String... replacements) {
         this.name = Preconditions.checkNotNull(name, "name");
-        this.replacements = ImmutableList.copyOf(replacements);
+        this.replacements = Arrays.copyOf(replacements, replacements.length);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || TranslationMessage.class != o.getClass()) return false;
         TranslationMessage that = (TranslationMessage) o;
         return Objects.equals(name, that.name) &&
-                Objects.equals(replacements, that.replacements);
+                Arrays.equals(replacements, that.replacements);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TranslationMessage implements ParameterMessage {
     public String toString() {
         return "TranslatedMessage{" +
                 "name='" + name + '\'' +
-                ", replacements=" + replacements +
+                ", replacements=" + Arrays.toString(replacements) +
                 '}';
     }
 
@@ -64,7 +64,7 @@ public class TranslationMessage implements ParameterMessage {
      */
     @Override
     public Collection<String> getParameters() {
-        return replacements;
+        return ImmutableList.copyOf(replacements);
     }
 
     /**
@@ -78,6 +78,11 @@ public class TranslationMessage implements ParameterMessage {
 
     @Override
     public Type getType() {
-        return type;
+        return TYPE;
+    }
+
+    @Override
+    public boolean needsTranslating() {
+        return false;
     }
 }
