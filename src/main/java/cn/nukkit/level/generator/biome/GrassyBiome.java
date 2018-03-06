@@ -18,7 +18,6 @@ public abstract class GrassyBiome extends NormalBiome implements CaveBiome {
 
         PopulatorTallGrass tallGrass = new PopulatorTallGrass();
         tallGrass.setBaseAmount(5);
-
         this.addPopulator(tallGrass);
 
         this.setGroundCover(new Block[]{

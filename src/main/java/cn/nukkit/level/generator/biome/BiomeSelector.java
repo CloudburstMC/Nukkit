@@ -18,33 +18,12 @@ public class BiomeSelector {
 
     public BiomeSelector(NukkitRandom random, Biome fallback) {
         this.fallback = fallback;
-        this.temperature = new Simplex(random, 2F, 1F / 8F, 1F / 1024F);
-        this.rainfall = new Simplex(random, 2F, 1F / 8F, 1F / 1024F);
+        this.temperature = new Simplex(random, 2F, 1F / 8F, 1F / 512F);
+        this.rainfall = new Simplex(random, 2F, 1F / 8F, 1F / 512F);
     }
 
     public int lookup(double temperature, double rainfall) {
-        if (rainfall < 0.25) {
-            return Biome.SWAMP;
-        } else if (rainfall < 0.60) {
-            if (temperature < 0.25) {
-                return Biome.ICE_PLAINS;
-            } else if (temperature < 0.75) {
-                return Biome.DESERT;
-            } else {
-                return Biome.SAVANNA;
-            }
-        } else if (rainfall < 0.80) {
-            if (temperature < 0.25) {
-                return Biome.TAIGA;
-            } else {
-                return Biome.FOREST;
-            }
-        } else {
-            if (rainfall < 1.0) {
-                return Biome.JUNGLE;
-            }
-        }
-        return Biome.PLAINS;
+        return Biome.EXTREME_HILLS;
     }
 
     public void recalculate() {

@@ -2,6 +2,7 @@ package cn.nukkit.level.generator;
 
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.biome.Biome;
 import cn.nukkit.level.generator.biome.BiomeSelector;
@@ -10,8 +11,16 @@ import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.*;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
+import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import java.util.*;
+
+import static java.lang.Math.exp;
 
 /**
  * This generator was written by DaPorkchop_
@@ -37,6 +46,26 @@ import java.util.*;
  * HugeTreesGenerator.java
  */
 public class Normal extends Generator {
+    private static final int SMOOTH_SIZE = 3;
+    private static final Int2ObjectMap<Int2DoubleMap> GAUSSIAN_KERNEL;
+
+    static {
+        GAUSSIAN_KERNEL = new Int2ObjectOpenHashMap<>();
+        double bellSize = 1 / (double) SMOOTH_SIZE;
+        double bellHeight = 2 * (double) SMOOTH_SIZE;
+
+        for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; sx++) {
+            Int2DoubleMap map = new Int2DoubleOpenHashMap();
+            GAUSSIAN_KERNEL.put(sx + SMOOTH_SIZE, map);
+
+            for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; sz++) {
+                double bx = bellSize * sx;
+                double bz = bellSize * sz;
+                map.put(sz + SMOOTH_SIZE, bellHeight * exp(-(bx * bx + bz * bz) / 2));
+            }
+        }
+    }
+
     private final List<Populator> populators = new ArrayList<>();
     private final List<Populator> generationPopulators = new ArrayList<>();
     private final int baseNoiseLayers = 2;
@@ -112,22 +141,7 @@ public class Normal extends Generator {
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.nukkitRandom, Biome.getBiome(Biome.FOREST));
 
-        this.selector.addBiome(Biome.getBiome(Biome.OCEAN));
-        this.selector.addBiome(Biome.getBiome(Biome.PLAINS));
-        this.selector.addBiome(Biome.getBiome(Biome.DESERT));
-        this.selector.addBiome(Biome.getBiome(Biome.FOREST));
-        this.selector.addBiome(Biome.getBiome(Biome.TAIGA));
-        this.selector.addBiome(Biome.getBiome(Biome.RIVER));
-        this.selector.addBiome(Biome.getBiome(Biome.ICE_PLAINS));
-        this.selector.addBiome(Biome.getBiome(Biome.BIRCH_FOREST));
-
-        this.selector.addBiome(Biome.getBiome(Biome.JUNGLE));
-        this.selector.addBiome(Biome.getBiome(Biome.SAVANNA));
-        this.selector.addBiome(Biome.getBiome(Biome.ROOFED_FOREST));
-        this.selector.addBiome(Biome.getBiome(Biome.ROOFED_FOREST_M));
-        this.selector.addBiome(Biome.getBiome(Biome.MUSHROOM_ISLAND));
-        this.selector.addBiome(Biome.getBiome(Biome.SWAMP));
-
+        this.selector.addBiome(Biome.getBiome(Biome.EXTREME_HILLS));
         this.selector.recalculate();
 
 
@@ -187,26 +201,50 @@ public class Normal extends Generator {
 
         FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         //choose biomes
-        Biome[][] biomes = new Biome[16][16];
-        for (int x = 0; x < 16; x++)    {
-            for (int z = 0; z < 16; z++)    {
-                double ocean = oceanNoise[x][z];
-                Biome biome;
-                if (ocean < -0.25) {
-                    biome = Biome.getBiome(Biome.OCEAN);
-                } else if (ocean < -0.2)    {
-                    biome = Biome.getBiome(Biome.BEACH);
-                } else {
-                    biome = pickBiome((chunkX << 4) | x, (chunkZ << 4) | z);
+        Long2ObjectMap<Biome> biomes = new Long2ObjectOpenHashMap<>();
+
+        //pre-calculate minimum heights
+        //TODO: thread-local instances of all these arrays so we don't need to keep making new ones
+        double[][] minHeights = new double[16][16];
+        double[][] shrinkFactors = new double[16][16];
+        double scaleAmountHoriz = 0.25D;
+        double scaleAmountVert = 0.125D;
+        //interpolate biome height values
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                double maxSum = 0;
+                double minSum = 0;
+                int i = 0;
+
+                for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; sx++) {
+                    for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; sz++) {
+                        Biome biome;
+                        long index = Level.chunkHash((chunkX << 4) + x + sx, (chunkZ << 4) + z + sz);
+                        if (biomes.containsKey(index)) {
+                            biome = biomes.get(index);
+                        } else {
+                            biome = pickBiome(chunkX * 16 + x + sx, chunkZ * 16 + z + sz);
+                            biomes.put(index, biome);
+                        }
+
+                        maxSum += biome.getMaxElevation();
+                        minSum += biome.getMinElevation();
+                        i++;
+                    }
                 }
-                chunk.setBiome(x, z, biomes[x][z] = biome);
+
+                maxSum /= i;
+                minSum /= i;
+                minHeights[x][z] = minSum;
+                shrinkFactors[x][z] = 1 / (maxSum - minSum);
+                chunk.setBiome(x, z, biomes.get(Level.chunkHash((chunkX << 4) | x, (chunkZ << 4) | z)));
             }
         }
+
         //place blocks
         for (int xPiece = 0; xPiece < 4; xPiece++) {
             for (int zPiece = 0; zPiece < 4; zPiece++) {
                 for (int yPiece = 0; yPiece < 32; yPiece++) {
-                    double scaleAmountVert = 0.125D;
                     double noiseBase1 = baseNoise[xPiece][zPiece][yPiece];
                     double noiseBase2 = baseNoise[xPiece][zPiece + 1][yPiece];
                     double noiseBase3 = baseNoise[xPiece + 1][zPiece][yPiece];
@@ -215,9 +253,7 @@ public class Normal extends Generator {
                     double noiseVertIncr2 = (baseNoise[xPiece][zPiece + 1][yPiece + 1] - noiseBase2) * scaleAmountVert;
                     double noiseVertIncr3 = (baseNoise[xPiece + 1][zPiece][yPiece + 1] - noiseBase3) * scaleAmountVert;
                     double noiseVertIncr4 = (baseNoise[xPiece + 1][zPiece + 1][yPiece + 1] - noiseBase4) * scaleAmountVert;
-
                     for (int ySeg = 0; ySeg < 8; ySeg++) {
-                        double scaleAmountHoriz = 0.25D;
                         double baseOffset = noiseBase1;
                         double baseOffsetMinXMaxZ = noiseBase2;
                         double scaled1 = (noiseBase3 - noiseBase1) * scaleAmountHoriz;
@@ -229,26 +265,21 @@ public class Normal extends Generator {
                             double noiseVal = baseOffset;
                             double noiseIncr = (baseOffsetMinXMaxZ - baseOffset) * scaleAmountHoriz;
                             for (int zSeg = 0; zSeg < 4; zSeg++) {
-                                Biome biome = biomes[xLoc][zLoc];
-                                int min = biome.getMinElevation();
-                                int max = biome.getMaxElevation();
-                                double range = max - min;
-                                double shrinkFactor = 1 / range;
+                                double min = minHeights[xLoc][zLoc];
+                                double shrinkFactor = shrinkFactors[xLoc][zLoc];
                                 int block = Block.AIR;
-                                if (noiseVal + ((yLoc - (min + 3)) * shrinkFactor) < 0.0D) {
+                                if (noiseVal + ((yLoc - (min)) * shrinkFactor) < 0.0D) {
                                     block = Block.STONE;
-                                } else if (yPiece * 8 + ySeg < seaHeight)  {
+                                } else if (yPiece * 8 + ySeg < seaHeight) {
                                     block = Block.STILL_WATER;
                                 }
                                 chunk.setBlock(xLoc, yLoc, zLoc, block);
                                 zLoc++;
                                 noiseVal += noiseIncr;
                             }
-
                             baseOffset += scaled1;
                             baseOffsetMinXMaxZ += scaled2;
                         }
-
                         noiseBase1 += noiseVertIncr1;
                         noiseBase2 += noiseVertIncr2;
                         noiseBase3 += noiseVertIncr3;
@@ -258,11 +289,10 @@ public class Normal extends Generator {
             }
         }
 
-        //populator chunk
+        //populate chunk
         for (Populator populator : this.generationPopulators) {
             populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom);
         }
-
     }
 
     @Override
