@@ -35,12 +35,16 @@ public enum EnumLevel {
     }
 
     public static Position moveToNether(Position current)   {
-        if (current.level == OVERWORLD.level)   {
-            return new Position(mRound(current.getFloorX() >> 3, 128), mRound(current.getFloorY(), 32), mRound(current.getFloorZ() >> 3, 128), NETHER.level);
-        } else if (current.level == NETHER.level)   {
-            return new Position(mRound(current.getFloorX() << 3, 1024), mRound(current.getFloorY(), 32), mRound(current.getFloorZ() << 3, 1024), OVERWORLD.level);
+        if (NETHER.level == null) {
+            return null;
         } else {
-            throw new IllegalArgumentException("Neither overworld nor nether given!");
+            if (current.level == OVERWORLD.level) {
+                return new Position(mRound(current.getFloorX() >> 3, 128), mRound(current.getFloorY(), 32), mRound(current.getFloorZ() >> 3, 128), NETHER.level);
+            } else if (current.level == NETHER.level) {
+                return new Position(mRound(current.getFloorX() << 3, 1024), mRound(current.getFloorY(), 32), mRound(current.getFloorZ() << 3, 1024), OVERWORLD.level);
+            } else {
+                throw new IllegalArgumentException("Neither overworld nor nether given!");
+            }
         }
     }
 
