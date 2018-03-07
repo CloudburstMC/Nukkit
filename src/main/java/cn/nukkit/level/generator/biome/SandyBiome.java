@@ -8,15 +8,11 @@ import cn.nukkit.block.BlockSandstone;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class SandyBiome extends NormalBiome implements CaveBiome {
-    public SandyBiome() {
-        this.setGroundCover(new Block[]{
-                new BlockSand(),
-                new BlockSand(),
-                new BlockSand(),
-                new BlockSandstone(),
-                new BlockSandstone()
-        });
+public abstract class SandyBiome extends CoveredBiome {
+
+    @Override
+    public int getSurfaceDepth() {
+        return 3;
     }
 
     @Override
@@ -25,12 +21,12 @@ public abstract class SandyBiome extends NormalBiome implements CaveBiome {
     }
 
     @Override
-    public int getGroundBlock() {
-        return Block.SAND;
+    public int getGroundDepth() {
+        return 2;
     }
 
     @Override
-    public int getStoneBlock() {
+    public int getGroundBlock() {
         return Block.SANDSTONE;
     }
 }

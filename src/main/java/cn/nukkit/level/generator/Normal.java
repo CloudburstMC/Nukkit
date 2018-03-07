@@ -118,17 +118,18 @@ public class Normal extends Generator {
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.nukkitRandom);
 
+        //this should run before all other populators so that we don't do things like generate ground cover on bedrock or something
+        PopulatorGroundCover cover = new PopulatorGroundCover();
+        this.generationPopulators.add(cover);
+
+        PopulatorBedrock bedrock = new PopulatorBedrock();
+        this.generationPopulators.add(bedrock);
+
         PopulatorCaves caves = new PopulatorCaves();
         this.populators.add(caves);
 
         PopulatorRavines ravines = new PopulatorRavines();
         this.populators.add(ravines);
-
-//        PopulatorDungeon dungeons = new PopulatorDungeon();
-//        this.populators.add(dungeons);
-
-        PopulatorGroundCover cover = new PopulatorGroundCover();
-        this.generationPopulators.add(cover);
 
         PopulatorOre ores = new PopulatorOre();
         ores.setOreTypes(new OreType[]{
@@ -231,13 +232,15 @@ public class Normal extends Generator {
                         double scaled2 = (noiseBase4 - noiseBase2) * scaleAmountHoriz;
                         for (int xSeg = 0; xSeg < 4; xSeg++) {
                             int xLoc = xSeg + xPiece * 4;
+                            double[] minHeightsSub = minHeights[xLoc];
+                            double[] shrinkFactorsSub = shrinkFactors[xLoc];
                             int yLoc = yPiece * 8 + ySeg;
                             int zLoc = zPiece * 4;
                             double noiseVal = baseOffset;
                             double noiseIncr = (baseOffsetMinXMaxZ - baseOffset) * scaleAmountHoriz;
                             for (int zSeg = 0; zSeg < 4; zSeg++) {
-                                double min = minHeights[xLoc][zLoc];
-                                double shrinkFactor = shrinkFactors[xLoc][zLoc];
+                                double min = minHeightsSub[zLoc];
+                                double shrinkFactor = shrinkFactorsSub[zLoc];
                                 int block = Block.AIR;
                                 if (noiseVal + ((yLoc - (min)) * shrinkFactor) < 0.0D) {
                                     block = Block.STONE;
@@ -262,18 +265,18 @@ public class Normal extends Generator {
 
         //populate chunk
         for (Populator populator : this.generationPopulators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom);
+            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
         }
     }
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
+        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         this.nukkitRandom.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom);
+            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
         }
 
-        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         Biome biome = Biome.getBiome(chunk.getBiomeId(7, 7));
         biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
     }

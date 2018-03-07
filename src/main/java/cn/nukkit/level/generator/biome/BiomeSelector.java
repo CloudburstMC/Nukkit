@@ -8,9 +8,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * author: MagicDroidX
+ * author: DaPorkchop_
  * Nukkit Project
  */
+//WIP
+//do not touch lol
 public class BiomeSelector {
     private final Simplex temperature;
     private final Simplex rainfall;
@@ -47,7 +49,11 @@ public class BiomeSelector {
     public Biome pickBiome(double x, double z) {
         double noiseOcean = ocean.noise2D(x, z, true);
         if (noiseOcean < -0.15)  {
-            return Biome.getBiome(Biome.OCEAN);
+            if (noiseOcean < -0.8) {
+                return Biome.getBiome(Biome.MUSHROOM_ISLAND);
+            } else {
+                return Biome.getBiome(Biome.OCEAN);
+            }
         }
         double noiseRiver = Math.abs(river.noise2D(x, z, true));
         if (noiseRiver < 0.04)  {

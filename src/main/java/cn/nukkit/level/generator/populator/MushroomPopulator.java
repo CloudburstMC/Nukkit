@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.populator;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
@@ -32,7 +33,7 @@ public class MushroomPopulator extends Populator {
     }
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         this.level = level;
         int amount = random.nextBoundedInt(this.randomAmount + 1) + this.baseAmount;
         Vector3 v = new Vector3();

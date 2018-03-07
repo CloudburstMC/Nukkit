@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.populator;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
@@ -23,7 +24,7 @@ public class PopulatorOre extends Populator {
     }
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         int sx = chunkX << 4;
         int ex = sx + 15;
         int sz = chunkZ << 4;

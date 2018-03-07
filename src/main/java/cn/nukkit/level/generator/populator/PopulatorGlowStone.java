@@ -15,9 +15,8 @@ public class PopulatorGlowStone extends Populator {
     private OreType type = new OreType(new BlockGlowstone(), 1, 20, 128, 10);
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         this.level = level;
-        BaseFullChunk chunk = level.getChunk(chunkX, chunkZ);
 
         for (int i = 0; i < type.clusterCount; i++) {
             int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);

@@ -186,9 +186,10 @@ public class Flat extends Generator {
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
+        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
-            populator.populate(this.level, chunkX, chunkZ, this.random);
+            populator.populate(this.level, chunkX, chunkZ, this.random, chunk);
         }
     }
 

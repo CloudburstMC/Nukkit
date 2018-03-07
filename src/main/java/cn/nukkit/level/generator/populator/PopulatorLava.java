@@ -21,12 +21,11 @@ public class PopulatorLava extends Populator {
     }
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         this.random = random;
         if (random.nextRange(0, 100) < 5) {
             this.level = level;
             int amount = random.nextRange(0, this.randomAmount + 1) + this.baseAmount;
-            BaseFullChunk chunk = level.getChunk(chunkX, chunkZ);
             int bx = chunkX << 4;
             int bz = chunkZ << 4;
             int tx = bx + 15;

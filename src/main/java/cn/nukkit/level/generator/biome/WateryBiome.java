@@ -1,35 +1,28 @@
 package cn.nukkit.level.generator.biome;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockDirt;
-
 /**
- * author: Angelic47
+ * author: DaPorkchop_
  * Nukkit Project
  */
-public abstract class WateryBiome extends NormalBiome implements CaveBiome {
-    public WateryBiome() {
-        this.setGroundCover(new Block[]{
-                new BlockDirt(),
-                new BlockDirt(),
-                new BlockDirt(),
-                new BlockDirt(),
-                new BlockDirt()
-        });
+public abstract class WateryBiome extends CoveredBiome {
+    @Override
+    public int getSurfaceDepth() {
+        return 0;
     }
 
     @Override
     public int getSurfaceBlock() {
-        return Block.DIRT;
+        //doesn't matter, surface depth is 0
+        return 0;
+    }
+
+    @Override
+    public int getGroundDepth() {
+        return 5;
     }
 
     @Override
     public int getGroundBlock() {
-        return Block.DIRT;
-    }
-
-    @Override
-    public int getStoneBlock() {
-        return Block.STONE;
+        return DIRT;
     }
 }

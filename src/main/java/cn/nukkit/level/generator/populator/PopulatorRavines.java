@@ -29,7 +29,7 @@ public class PopulatorRavines extends Populator {
     private float[] a = new float[1024];
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         this.random = new Random();
         this.random.setSeed(level.getSeed());
         worldLong1 = this.random.nextLong();

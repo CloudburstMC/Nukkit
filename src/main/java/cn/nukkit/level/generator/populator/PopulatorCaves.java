@@ -3,9 +3,8 @@ package cn.nukkit.level.generator.populator;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.biome.Biome;
-import cn.nukkit.level.generator.biome.CaveBiome;
+import cn.nukkit.level.generator.biome.CoveredBiome;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
 
@@ -35,15 +34,13 @@ public class PopulatorCaves extends Populator {
     public int worldHeightCap = 128;
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         this.random = new Random();
         this.random.setSeed(level.getSeed());
         long worldLong1 = this.random.nextLong();
         long worldLong2 = this.random.nextLong();
 
         int size = this.checkAreaSize;
-
-        BaseFullChunk chunk = level.getChunk(chunkX, chunkZ);
 
         for (int x = chunkX - size; x <= chunkX + size; x++)
             for (int z = chunkZ - size; z <= chunkZ + size; z++) {
@@ -187,7 +184,7 @@ public class PopulatorCaves extends Populator {
                             double modY = ((yy - 1) + 0.5D - y) / offsetY;
                             if ((modY > -0.7D) && (modX * modX + modY * modY + modZ * modZ < 1.0D)) {
                                 Biome biome = Biome.getBiome(chunk.getBiomeId(xx, zz));
-                                if (!(biome instanceof CaveBiome)) {
+                                if (!(biome instanceof CoveredBiome)) {
                                     continue;
                                 }
 
@@ -207,7 +204,7 @@ public class PopulatorCaves extends Populator {
                                         // If grass was just deleted, try to
                                         // move it down
                                         if (grassFound && (chunk.getBlockId(xx, yy - 1, zz) == Block.DIRT)) {
-                                            chunk.setBlock(xx, yy - 1, zz, ((CaveBiome) biome).getSurfaceBlock());
+                                            chunk.setBlock(xx, yy - 1, zz, ((CoveredBiome) biome).getSurfaceBlock());
                                         }
                                     }
                                 }
@@ -221,43 +218,6 @@ public class PopulatorCaves extends Populator {
                 break;
             }
         }
-    }
-
-    protected boolean isSuitableBlock(int block, int blockAbove, Biome biome) {
-        if (!(biome instanceof CaveBiome)) {
-            return false;
-        }
-
-        CaveBiome caveBiome = (CaveBiome) biome;
-
-        if (block == caveBiome.getStoneBlock()) {
-            return true;
-        }
-
-        if (block == Block.SAND || block == Block.GRAVEL) {
-            return !(blockAbove == Block.WATER || blockAbove == Block.STILL_WATER || blockAbove == Block.LAVA || blockAbove == Block.STILL_LAVA);
-        }
-
-        if (block == caveBiome.getGroundBlock()) {
-            return true;
-        }
-
-        if (block == caveBiome.getSurfaceBlock()) {
-            return true;
-        }
-
-        // Few hardcoded cases
-        if (block == Block.TERRACOTTA) {
-            return true;
-        }
-
-        if (block == Block.SANDSTONE) {
-            return true;
-        }
-
-        // TODO: add red sandstone case in Minecraft 1.8
-        return block == Block.SNOW;
-
     }
 
     protected void generateChunk(int chunkX, int chunkZ, FullChunk generatingChunkBuffer) {

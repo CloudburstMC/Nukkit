@@ -11,18 +11,11 @@ import cn.nukkit.level.generator.populator.PopulatorTallSugarcane;
 public class OceanBiome extends WateryBiome {
 
     public OceanBiome() {
-        super();
-
-        this.setElevation(46, 63);
+        this.setElevation(46, 59);
 
         this.temperature = 0.5;
         this.rainfall = 0.5;
 
-    }
-
-    @Override
-    public Block[] getGroundCover() {
-        return super.getGroundCover();
     }
 
     @Override

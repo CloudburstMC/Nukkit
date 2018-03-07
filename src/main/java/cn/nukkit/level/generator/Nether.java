@@ -130,18 +130,18 @@ public class Nether extends Generator {
             }
         }
         for (Populator populator : this.generationPopulators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom);
+            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
         }
     }
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
+        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         this.nukkitRandom.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom);
+            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
         }
 
-        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         Biome biome = Biome.getBiome(chunk.getBiomeId(7, 7));
         biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
     }

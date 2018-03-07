@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.biome;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.math.NukkitRandom;
 
@@ -45,7 +46,6 @@ public abstract class Biome {
     private boolean registered = false;
     private int minElevation;
     private int maxElevation;
-    private Block[] groundCover;
 
     protected static void register(int id, Biome biome) {
         biome.setId(id);
@@ -125,8 +125,9 @@ public abstract class Biome {
     }
 
     public void populateChunk(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
+        FullChunk chunk = level.getChunk(chunkX, chunkZ);
         for (Populator populator : populators) {
-            populator.populate(level, chunkX, chunkZ, random);
+            populator.populate(level, chunkX, chunkZ, random, chunk);
         }
     }
 
@@ -158,14 +159,6 @@ public abstract class Biome {
         }
         this.minElevation = min;
         this.maxElevation = max;
-    }
-
-    public Block[] getGroundCover() {
-        return groundCover;
-    }
-
-    public void setGroundCover(Block[] covers) {
-        this.groundCover = covers;
     }
 
     public double getTemperature() {
