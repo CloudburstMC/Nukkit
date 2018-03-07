@@ -42,7 +42,7 @@ public abstract class Biome {
      * @param name Name of biome. Name could contain symbol "_" instead of space
      * @return Biome. Null - when biome was not found
      */
-    public static Biome getBiome(String name) {
+    static Biome getBiome(String name) {
         for (Biome biome : biomes) {
             if (biome != null) {
                 if (biome.getName().equalsIgnoreCase(name.replace("_", " "))) return biome;

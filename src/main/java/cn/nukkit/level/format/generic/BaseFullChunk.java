@@ -6,6 +6,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.anvil.palette.BiomePalette;
@@ -119,7 +120,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         }
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
-                Biome biome = Biome.getBiome(data[(z << 4) | x] & 0xff);
+                Biome biome = EnumBiome.getBiome(data[(z << 4) | x] & 0xff);
                 this.setBiomeId(x, z, biome.getId());
                 int c = biome.getColor();
                 this.setBiomeColor(x, z, c >> 16, (c >> 8) & 0xff, c & 0xff);

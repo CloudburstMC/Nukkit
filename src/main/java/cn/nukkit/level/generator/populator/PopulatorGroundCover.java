@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.populator;
 
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.type.CoveredBiome;
@@ -15,7 +16,7 @@ public class PopulatorGroundCover extends Populator {
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
-                Biome realBiome = Biome.getBiome(chunk.getBiomeId(x, z));
+                Biome realBiome = EnumBiome.getBiome(chunk.getBiomeId(x, z));
                 if (realBiome instanceof CoveredBiome) {
                     CoveredBiome biome = (CoveredBiome) realBiome;
                     int coverBlock = biome.getCoverBlock() << 4;

@@ -141,7 +141,7 @@ public class Nether extends Generator {
             populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
         }
 
-        Biome biome = Biome.getBiome(chunk.getBiomeId(7, 7));
+        Biome biome = EnumBiome.getBiome(chunk.getBiomeId(7, 7));
         biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
     }
 

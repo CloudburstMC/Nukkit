@@ -42,7 +42,16 @@ public enum EnumBiome {
     /**
      * You really shouldn't use this method if you can help it, reference the biomes directly!
      */
+    @Deprecated
     public static Biome getBiome(int id)    {
         return Biome.getBiome(id);
+    }
+
+    /**
+     * You really shouldn't use this method if you can help it, reference the biomes directly!
+     */
+    @Deprecated
+    public static Biome getBiome(String name) {
+        return Biome.getBiome(name);
     }
 }

@@ -3,6 +3,7 @@ package cn.nukkit.level.generator;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.generator.object.ore.OreType;
@@ -167,7 +168,7 @@ public class Flat extends Generator {
 
     private void generateChunk(FullChunk chunk) {
         chunk.setGenerated();
-        Biome biomeObj = Biome.getBiome(biome);
+        Biome biomeObj = EnumBiome.getBiome(biome);
         int biomeColorAndId = biomeObj.getColor() + (biome << 24);
 
         for (int Z = 0; Z < 16; ++Z) {
