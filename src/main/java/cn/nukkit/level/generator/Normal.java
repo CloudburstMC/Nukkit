@@ -11,16 +11,10 @@ import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.*;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
-import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
-import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import java.util.*;
-
-import static java.lang.Math.exp;
 
 /**
  * This generator was written by DaPorkchop_
@@ -46,25 +40,7 @@ import static java.lang.Math.exp;
  * HugeTreesGenerator.java
  */
 public class Normal extends Generator {
-    private static final int SMOOTH_SIZE = 3;
-    private static final Int2ObjectMap<Int2DoubleMap> GAUSSIAN_KERNEL;
-
-    static {
-        GAUSSIAN_KERNEL = new Int2ObjectOpenHashMap<>();
-        double bellSize = 1 / (double) SMOOTH_SIZE;
-        double bellHeight = 2 * (double) SMOOTH_SIZE;
-
-        for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; sx++) {
-            Int2DoubleMap map = new Int2DoubleOpenHashMap();
-            GAUSSIAN_KERNEL.put(sx + SMOOTH_SIZE, map);
-
-            for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; sz++) {
-                double bx = bellSize * sx;
-                double bz = bellSize * sz;
-                map.put(sz + SMOOTH_SIZE, bellHeight * exp(-(bx * bx + bz * bz) / 2));
-            }
-        }
-    }
+    private static final int SMOOTH_SIZE = 2;
 
     private final List<Populator> populators = new ArrayList<>();
     private final List<Populator> generationPopulators = new ArrayList<>();
@@ -137,14 +113,10 @@ public class Normal extends Generator {
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
         for (int i = 0; i < baseNoiseLayers; i++) {
-            this.noiseBase[i] = new Simplex(this.nukkitRandom, 8, 1 / 4F, 1 / 64F);
+            this.noiseBase[i] = new Simplex(this.nukkitRandom, 8, 2 / 4F, 1 / ((i + 1) * 64F));
         }
         this.nukkitRandom.setSeed(this.level.getSeed());
-        this.selector = new BiomeSelector(this.nukkitRandom, Biome.getBiome(Biome.FOREST));
-
-        this.selector.addBiome(Biome.getBiome(Biome.EXTREME_HILLS));
-        this.selector.recalculate();
-
+        this.selector = new BiomeSelector(this.nukkitRandom);
 
         PopulatorCaves caves = new PopulatorCaves();
         this.populators.add(caves);
@@ -194,9 +166,10 @@ public class Normal extends Generator {
                     for (int z = 0; z < 5; z++) {
                         double val = 0;
                         for (int i = 0; i < baseNoiseLayers; i++) {
-                            val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
+                            //another way (average): val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
+                            val = Math.min(val, noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true));
                         }
-                        val /= baseNoiseLayers;
+                        //val /= baseNoiseLayers;
                         baseNoise[x][z][y] = val;
                     }
                 }
@@ -224,7 +197,7 @@ public class Normal extends Generator {
                             biomes.put(index, biome);
                         }
 
-                        maxSum += biome.getMaxElevation();
+                        maxSum += biome.getMaxElevation() << 1; //multiply by two
                         minSum += biome.getMinElevation();
                         i++;
                     }
@@ -233,7 +206,8 @@ public class Normal extends Generator {
                 maxSum /= i;
                 minSum /= i;
                 minHeights[x][z] = minSum;
-                shrinkFactors[x][z] = 1 / (maxSum - minSum);
+                //we use 2 instead of 1 to offset the minimum height to the min value, not have min be the center
+                shrinkFactors[x][z] = 2 / (maxSum - minSum);
                 chunk.setBiome(x, z, biomes.get(Level.chunkHash((chunkX << 4) | x, (chunkZ << 4) | z)));
             }
         }

@@ -12,8 +12,6 @@ import java.util.ArrayList;
  * Nukkit Project
  */
 public abstract class Biome {
-
-
     public static final int OCEAN = 0;
     public static final int PLAINS = 1;
     public static final int DESERT = 2;
@@ -38,7 +36,7 @@ public abstract class Biome {
 
     public static final int MAX_BIOMES = 256;
 
-    private static final Biome[] biomes = new Biome[MAX_BIOMES];
+    public static final Biome[] biomes = new Biome[MAX_BIOMES];
     private final ArrayList<Populator> populators = new ArrayList<>();
     protected double rainfall = 0.5;
     protected double temperature = 0.5;
