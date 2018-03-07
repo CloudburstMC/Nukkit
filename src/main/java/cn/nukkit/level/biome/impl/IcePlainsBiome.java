@@ -1,7 +1,7 @@
-package cn.nukkit.level.generator.biome.impl;
+package cn.nukkit.level.biome.impl;
 
 import cn.nukkit.block.BlockSapling;
-import cn.nukkit.level.generator.biome.type.SnowyBiome;
+import cn.nukkit.level.biome.type.SnowyBiome;
 import cn.nukkit.level.generator.populator.PopulatorTree;
 
 /**

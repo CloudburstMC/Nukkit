@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.biome;
+package cn.nukkit.level.biome;
 
 import cn.nukkit.level.generator.noise.Simplex;
 import cn.nukkit.math.NukkitRandom;

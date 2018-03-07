@@ -1,6 +1,6 @@
-package cn.nukkit.level.generator.biome.impl;
+package cn.nukkit.level.biome.impl;
 
-import cn.nukkit.level.generator.biome.type.WateryBiome;
+import cn.nukkit.level.biome.type.WateryBiome;
 
 /**
  * author: MagicDroidX

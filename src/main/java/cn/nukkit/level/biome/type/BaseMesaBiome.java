@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.biome.type;
+package cn.nukkit.level.biome.type;
 
 import cn.nukkit.block.BlockSand;
 import cn.nukkit.level.generator.populator.PopulatorCactus;
