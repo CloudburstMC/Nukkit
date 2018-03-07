@@ -44,9 +44,8 @@ public class Normal extends Generator {
 
     private final List<Populator> populators = new ArrayList<>();
     private final List<Populator> generationPopulators = new ArrayList<>();
-    private final int baseNoiseLayers = 2;
+    private final int baseNoiseLayers = 3;
     private final int seaHeight = 64;
-    private final int bedrockDepth = 5;
     private ChunkManager level;
     private Random random;
     private NukkitRandom nukkitRandom;

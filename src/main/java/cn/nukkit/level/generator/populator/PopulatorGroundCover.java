@@ -18,13 +18,12 @@ public class PopulatorGroundCover extends Populator {
                 Biome realBiome = Biome.getBiome(chunk.getBiomeId(x, z));
                 if (realBiome instanceof CoveredBiome) {
                     CoveredBiome biome = (CoveredBiome) realBiome;
-                    int coverBlock = biome.getCoverBlock();
+                    int coverBlock = biome.getCoverBlock() << 4;
                     int surfaceDepth = biome.getSurfaceDepth();
-                    int surfaceBlock = biome.getSurfaceBlock();
-                    int surfaceMeta = biome.getSurfaceMeta();
+                    //setFullBlockId is twice as fast as setBlockId and setBlockData!
+                    int surfaceBlock = (biome.getSurfaceBlock() << 4) | biome.getSurfaceMeta();
                     int groundDepth = biome.getGroundDepth();
-                    int groundBlock = biome.getGroundBlock();
-                    int groundMeta = biome.getGroundMeta();
+                    int groundBlock = (biome.getGroundBlock() << 4) | biome.getGroundMeta();
                     int stone = biome.getStoneBlock();
 
                     boolean hasCovered = false;
@@ -32,15 +31,13 @@ public class PopulatorGroundCover extends Populator {
                     for (int y = 254; y > 0; y--)   {
                         if (chunk.getBlockId(x, y, z) == stone) {
                             if (!hasCovered) {
-                                chunk.setBlockId(x, y + 1, z, coverBlock);
+                                chunk.setFullBlockId(x, y + 1, z, coverBlock);
                                 for (int i = 0; i < surfaceDepth; i++) {
-                                    chunk.setBlockId(x, y - i, z, surfaceBlock);
-                                    chunk.setBlockData(x, y - i, z, surfaceMeta);
+                                    chunk.setFullBlockId(x, y - i, z, surfaceBlock);
                                 }
                                 y -= surfaceDepth;
                                 for (int i = 0; i < groundDepth; i++) {
-                                    chunk.setBlockId(x, y - i, z, groundBlock);
-                                    chunk.setBlockData(x, y - i, z, groundMeta);
+                                    chunk.setFullBlockId(x, y - i, z, groundBlock);
                                 }
                                 //don't take all of groundDepth away because we do y-- in the loop
                                 y -= groundDepth - 1;
