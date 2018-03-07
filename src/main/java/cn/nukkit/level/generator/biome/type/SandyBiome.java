@@ -1,8 +1,6 @@
-package cn.nukkit.level.generator.biome;
+package cn.nukkit.level.generator.biome.type;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockSand;
-import cn.nukkit.block.BlockSandstone;
 
 /**
  * author: MagicDroidX

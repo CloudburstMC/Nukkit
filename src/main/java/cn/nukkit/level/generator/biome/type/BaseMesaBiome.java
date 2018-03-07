@@ -1,11 +1,11 @@
-package cn.nukkit.level.generator.biome;
+package cn.nukkit.level.generator.biome.type;
 
 import cn.nukkit.block.BlockSand;
 import cn.nukkit.level.generator.populator.PopulatorCactus;
 import cn.nukkit.level.generator.populator.PopulatorDeadBush;
 
-public abstract class AbstractMesaBiome extends SandyBiome {
-    public AbstractMesaBiome() {
+public abstract class BaseMesaBiome extends SandyBiome {
+    public BaseMesaBiome() {
         PopulatorDeadBush deadBush = new PopulatorDeadBush();
         deadBush.setBaseAmount(2);
         deadBush.setRandomAmount(2);

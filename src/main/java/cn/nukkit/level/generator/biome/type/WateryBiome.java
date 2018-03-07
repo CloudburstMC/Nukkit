@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.biome;
+package cn.nukkit.level.generator.biome.type;
 
 /**
  * author: DaPorkchop_

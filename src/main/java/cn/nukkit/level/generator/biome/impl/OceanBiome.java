@@ -1,8 +1,6 @@
-package cn.nukkit.level.generator.biome;
+package cn.nukkit.level.generator.biome.impl;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.level.generator.populator.PopulatorSugarcane;
-import cn.nukkit.level.generator.populator.PopulatorTallSugarcane;
+import cn.nukkit.level.generator.biome.type.WateryBiome;
 
 /**
  * author: MagicDroidX

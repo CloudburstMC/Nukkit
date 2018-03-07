@@ -1,9 +1,5 @@
-package cn.nukkit.level.generator.biome;
+package cn.nukkit.level.generator.biome.type;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockDirt;
-import cn.nukkit.block.BlockGrass;
-import cn.nukkit.block.BlockSnowLayer;
 import cn.nukkit.level.generator.populator.PopulatorTallGrass;
 
 /**

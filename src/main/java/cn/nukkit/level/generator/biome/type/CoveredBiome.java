@@ -1,6 +1,7 @@
-package cn.nukkit.level.generator.biome;
+package cn.nukkit.level.generator.biome.type;
 
 import cn.nukkit.block.BlockID;
+import cn.nukkit.level.generator.biome.Biome;
 
 /**
  * author: DaPorkchop_

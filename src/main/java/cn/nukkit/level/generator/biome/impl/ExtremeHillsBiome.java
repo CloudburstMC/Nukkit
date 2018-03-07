@@ -1,4 +1,6 @@
-package cn.nukkit.level.generator.biome;
+package cn.nukkit.level.generator.biome.impl;
+
+import cn.nukkit.level.generator.biome.type.GrassyBiome;
 
 /**
  * author: MagicDroidX

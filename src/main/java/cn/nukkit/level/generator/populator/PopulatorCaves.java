@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.biome.Biome;
-import cn.nukkit.level.generator.biome.CoveredBiome;
+import cn.nukkit.level.generator.biome.type.CoveredBiome;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
 
