@@ -153,7 +153,7 @@ public class Flat extends Generator {
     }
 
     @Override
-    public void generateChunk(int chunkX, int chunkZ) {
+    public void generateChunk(int chunkX, int chunkZ, FullChunk chunk) {
         if (!this.init) {
             init = true;
             if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
@@ -162,7 +162,6 @@ public class Flat extends Generator {
                 this.parsePreset(this.preset, chunkX, chunkZ);
             }
         }
-        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         this.generateChunk(chunk);
     }
 
@@ -185,8 +184,7 @@ public class Flat extends Generator {
     }
 
     @Override
-    public void populateChunk(int chunkX, int chunkZ) {
-        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
+    public void populateChunk(int chunkX, int chunkZ, FullChunk chunk) {
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
             populator.populate(this.level, chunkX, chunkZ, this.random, chunk);

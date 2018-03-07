@@ -148,7 +148,7 @@ public class Normal extends Generator {
     }
 
     @Override
-    public void generateChunk(final int chunkX, final int chunkZ) {
+    public void generateChunk(final int chunkX, final int chunkZ, FullChunk chunk) {
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
         double[][][] baseNoise = this.baseNoise.get();
         Long2ObjectMap<Biome> biomes = this.biomes.get();
@@ -176,7 +176,6 @@ public class Normal extends Generator {
             }
         }
 
-        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
         double scaleAmountHoriz = 0.25D;
         double scaleAmountVert = 0.125D;
         //interpolate biome height values
@@ -269,8 +268,7 @@ public class Normal extends Generator {
     }
 
     @Override
-    public void populateChunk(int chunkX, int chunkZ) {
-        FullChunk chunk = this.level.getChunk(chunkX, chunkZ);
+    public void populateChunk(int chunkX, int chunkZ, FullChunk chunk) {
         this.nukkitRandom.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
             populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);

@@ -2,6 +2,7 @@ package cn.nukkit.level.generator;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.noise.Noise;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
@@ -215,9 +216,9 @@ public abstract class Generator {
 
     public abstract void init(ChunkManager level, NukkitRandom random);
 
-    public abstract void generateChunk(int chunkX, int chunkZ);
+    public abstract void generateChunk(int chunkX, int chunkZ, FullChunk chunk);
 
-    public abstract void populateChunk(int chunkX, int chunkZ);
+    public abstract void populateChunk(int chunkX, int chunkZ, FullChunk chunk);
 
     public abstract Map<String, Object> getSettings();
 
