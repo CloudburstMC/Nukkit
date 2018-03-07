@@ -14,24 +14,26 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.network.protocol.BatchPacket;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TIntIntHashMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class BaseFullChunk implements FullChunk, ChunkManager {
-    protected Map<Long, Entity> entities;
+    protected TLongObjectMap<Entity> entities;
 
-    protected Map<Long, BlockEntity> tiles;
+    protected TLongObjectMap<BlockEntity> tiles;
 
-    protected Map<Integer, BlockEntity> tileList;
+    protected TIntObjectMap<BlockEntity> tileList;
 
     protected BiomePalette biomes;
 
@@ -49,7 +51,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     protected List<CompoundTag> NBTentities;
 
-    protected Map<Integer, Integer> extraData;
+    protected TIntIntMap extraData;
 
     protected LevelProvider provider;
     protected Class<? extends LevelProvider> providerClass;
@@ -292,7 +294,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                 this.extraData.remove(Level.chunkBlockHash(x, y, z));
             }
         } else {
-            if (this.extraData == null) this.extraData = new Int2ObjectOpenHashMap<>();
+            if (this.extraData == null) this.extraData = new TIntIntHashMap();
             this.extraData.put(Level.chunkBlockHash(x, y, z), data);
         }
 
@@ -343,7 +345,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public void addEntity(Entity entity) {
         if (this.entities == null) {
-            this.entities = new Long2ObjectOpenHashMap<>();
+            this.entities = new TLongObjectHashMap<>();
         }
         this.entities.put(entity.getId(), entity);
         if (!(entity instanceof Player) && this.isInit) {
@@ -364,8 +366,8 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public void addBlockEntity(BlockEntity blockEntity) {
         if (this.tiles == null) {
-            this.tiles = new Long2ObjectOpenHashMap<>();
-            this.tileList = new Int2ObjectOpenHashMap<>();
+            this.tiles = new TLongObjectHashMap<>();
+            this.tileList = new TIntObjectHashMap<>();
         }
         this.tiles.put(blockEntity.getId(), blockEntity);
         int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
@@ -391,18 +393,18 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     }
 
     @Override
-    public Map<Long, Entity> getEntities() {
-        return entities == null ? Collections.emptyMap() : entities;
+    public TLongObjectMap<Entity> getEntities() {
+        return entities == null ? new TLongObjectHashMap<>() : entities;
     }
 
     @Override
-    public Map<Long, BlockEntity> getBlockEntities() {
-        return tiles == null ? Collections.emptyMap() : tiles;
+    public TLongObjectMap<BlockEntity> getBlockEntities() {
+        return tiles == null ? new TLongObjectHashMap<>() : tiles;
     }
 
     @Override
-    public Map<Integer, Integer> getBlockExtraDataArray() {
-        return extraData == null ? Collections.emptyMap() : extraData;
+    public TIntIntMap getBlockExtraDataArray() {
+        return extraData == null ? new TIntIntHashMap() : extraData;
     }
 
     @Override
@@ -445,20 +447,20 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             level.saveChunk(this.getX(), this.getZ());
         }
         if (safe) {
-            for (Entity entity : this.getEntities().values()) {
+            for (Entity entity : this.getEntities().values(new Entity[0])) {
                 if (entity instanceof Player) {
                     return false;
                 }
             }
         }
-        for (Entity entity : new ArrayList<>(this.getEntities().values())) {
+        for (Entity entity : this.getEntities().values(new Entity[0])) {
             if (entity instanceof Player) {
                 continue;
             }
             entity.close();
         }
 
-        for (BlockEntity blockEntity : new ArrayList<>(this.getBlockEntities().values())) {
+        for (BlockEntity blockEntity : this.getBlockEntities().values(new BlockEntity[0])) {
             blockEntity.close();
         }
         this.provider = null;

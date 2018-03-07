@@ -5,6 +5,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.AsyncTask;
+import gnu.trove.map.TLongObjectMap;
 
 import java.util.Map;
 
@@ -92,7 +93,7 @@ public interface LevelProvider {
 
     void setSpawn(Vector3 pos);
 
-    Map<Long, ? extends FullChunk> getLoadedChunks();
+    TLongObjectMap<? extends FullChunk> getLoadedChunks();
 
     void doGarbageCollection();
 

@@ -14,12 +14,18 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.ThreadCache;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import gnu.trove.iterator.TIntIntIterator;
+import gnu.trove.iterator.TLongObjectIterator;
+import gnu.trove.map.TIntIntMap;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -112,7 +118,7 @@ public class Anvil extends BaseLevelProvider {
         if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
 
-            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+            for (BlockEntity blockEntity : chunk.getBlockEntities().values(new BlockEntity[0])) {
                 if (blockEntity instanceof BlockEntitySpawnable) {
                     tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
                 }
@@ -125,14 +131,16 @@ public class Anvil extends BaseLevelProvider {
             }
         }
 
-        Map<Integer, Integer> extra = chunk.getBlockExtraDataArray();
+        TIntIntMap extra = chunk.getBlockExtraDataArray();
         BinaryStream extraData;
         if (!extra.isEmpty()) {
             extraData = new BinaryStream();
             extraData.putVarInt(extra.size());
-            for (Map.Entry<Integer, Integer> entry : extra.entrySet()) {
-                extraData.putVarInt(entry.getKey());
-                extraData.putLShort(entry.getValue());
+            TIntIntIterator iter = extra.iterator();
+            while (iter.hasNext()) {
+                iter.advance();
+                extraData.putVarInt(iter.key());
+                extraData.putLShort(iter.value());
             }
         } else {
             extraData = null;
@@ -177,14 +185,19 @@ public class Anvil extends BaseLevelProvider {
         long start = System.currentTimeMillis();
         int maxIterations = size();
         if (lastPosition > maxIterations) lastPosition = 0;
-        ObjectIterator<BaseFullChunk> iter = getChunks();
-        if (lastPosition != 0) iter.skip(lastPosition);
+        TLongObjectIterator<BaseFullChunk> iter = getChunks();
+        if (lastPosition != 0) {
+            for (int i = 0; i < lastPosition; i++) {
+                iter.advance();
+            }
+        }
         int i;
         for (i = 0; i < maxIterations; i++) {
             if (!iter.hasNext()) {
                 iter = getChunks();
             }
-            BaseFullChunk chunk = iter.next();
+            iter.advance();
+            BaseFullChunk chunk = iter.value();
             if (chunk == null) continue;
             if (chunk.isGenerated() && chunk.isPopulated() && chunk instanceof Chunk) {
                 Chunk anvilChunk = (Chunk) chunk;

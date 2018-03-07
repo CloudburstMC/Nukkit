@@ -11,8 +11,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Hash;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongSet;
+import gnu.trove.set.TLongSet;
+import gnu.trove.set.hash.TLongHashSet;
 
 /**
  * author: Angelic47
@@ -116,7 +116,7 @@ public class BlockLeaves extends BlockTransparentMeta {
                 LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
                 Server.getInstance().getPluginManager().callEvent(ev);
-                if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
+                if (ev.isCancelled() || findLog(this, new TLongHashSet(), 0, check)) {
                     getLevel().setBlock(this, this, false, false);
                 } else {
                     getLevel().useBreakOn(this);
@@ -127,11 +127,11 @@ public class BlockLeaves extends BlockTransparentMeta {
         return 0;
     }
 
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check) {
+    private Boolean findLog(Block pos, TLongSet visited, Integer distance, Integer check) {
         return findLog(pos, visited, distance, check, null);
     }
 
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check, BlockFace fromSide) {
+    private Boolean findLog(Block pos, TLongSet visited, Integer distance, Integer check, BlockFace fromSide) {
         ++check;
         long index = Hash.hashBlock((int) pos.x, (int) pos.y, (int) pos.z);
         if (visited.contains(index)) return false;

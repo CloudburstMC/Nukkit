@@ -9,8 +9,9 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import io.netty.util.collection.CharObjectHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,14 +27,12 @@ public class CraftingManager {
     public final Collection<Recipe> recipes = new ArrayDeque<>();
 
     public static BatchPacket packet = null;
-    protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
-
-    public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
-
-    public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
+    public final TIntObjectMap<FurnaceRecipe> furnaceRecipes = new TIntObjectHashMap<>();
+    public final TIntObjectMap<BrewingRecipe> brewingRecipes = new TIntObjectHashMap<>();
+    protected final TIntObjectMap<Map<UUID, ShapedRecipe>> shapedRecipes = new TIntObjectHashMap<>();
 
     private static int RECIPE_COUNT = 0;
-    protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
+    protected final TIntObjectMap<Map<UUID, ShapelessRecipe>> shapelessRecipes = new TIntObjectHashMap<>();
 
     public static final Comparator<Item> recipeComparator = (i1, i2) -> {
         if (i1.getId() > i2.getId()) {
@@ -174,7 +173,7 @@ public class CraftingManager {
             }
         }
 
-        for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
+        for (FurnaceRecipe recipe : this.getFurnaceRecipes()) {
             pk.addFurnaceRecipe(recipe);
         }
         pk.encode();
@@ -186,8 +185,8 @@ public class CraftingManager {
         return recipes;
     }
 
-    public Map<Integer, FurnaceRecipe> getFurnaceRecipes() {
-        return furnaceRecipes;
+    public Collection<FurnaceRecipe> getFurnaceRecipes() {
+        return furnaceRecipes.valueCollection();
     }
 
     public FurnaceRecipe matchFurnaceRecipe(Item input) {
@@ -269,7 +268,8 @@ public class CraftingManager {
         UUID hash = getMultiItemHash(list);
 
         int resultHash = getItemHash(recipe.getResult());
-        Map<UUID, ShapelessRecipe> map = shapelessRecipes.computeIfAbsent(resultHash, k -> new HashMap<>());
+        shapelessRecipes.putIfAbsent(resultHash, new HashMap<>());
+        Map<UUID, ShapelessRecipe> map = shapelessRecipes.get(resultHash);
 
         map.put(hash, recipe);
     }

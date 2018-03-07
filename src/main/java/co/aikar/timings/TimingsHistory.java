@@ -33,12 +33,12 @@ import cn.nukkit.timings.JsonUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import java.lang.management.ManagementFactory;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 import static co.aikar.timings.Timings.fullServerTickTimer;
 import static co.aikar.timings.TimingsManager.MINUTE_REPORTS;
@@ -97,12 +97,12 @@ public class TimingsHistory {
         // Information about all loaded entities/block entities
         for (Level level : Server.getInstance().getLevels().values()) {
             JsonArray jsonLevel = new JsonArray();
-            for (FullChunk chunk : level.getChunks().values()) {
+            for (FullChunk chunk : level.getChunks().valueCollection()) {
                 entityCounts.clear();
                 blockEntityCounts.clear();
 
                 //count entities
-                for (Entity entity : chunk.getEntities().values()) {
+                for (Entity entity : chunk.getEntities().values(new Player[0])) {
                     if (!entityCounts.containsKey(entity.getNetworkId()))
                         entityCounts.put(entity.getNetworkId(), new AtomicInteger(0));
                     entityCounts.get(entity.getNetworkId()).incrementAndGet();
@@ -110,7 +110,7 @@ public class TimingsHistory {
                 }
 
                 //count block entities
-                for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                for (BlockEntity blockEntity : chunk.getBlockEntities().values(new BlockEntity[0])) {
                     if (!blockEntityCounts.containsKey(blockEntity.getBlock().getId()))
                         blockEntityCounts.put(blockEntity.getBlock().getId(), new AtomicInteger(0));
                     blockEntityCounts.get(blockEntity.getBlock().getId()).incrementAndGet();

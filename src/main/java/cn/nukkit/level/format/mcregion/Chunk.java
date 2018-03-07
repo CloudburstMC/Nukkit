@@ -15,13 +15,13 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Zlib;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.hash.TIntIntHashMap;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -87,7 +87,7 @@ public class Chunk extends BaseFullChunk {
             this.nbt.putByteArray("BlockLight", new byte[16384]);
         }
 
-        Map<Integer, Integer> extraData = new HashMap<>();
+        TIntIntMap extraData = new TIntIntHashMap();
 
         if (!this.nbt.contains("ExtraData") || !(this.nbt.get("ExtraData") instanceof ByteArrayTag)) {
             this.nbt.putByteArray("ExtraData", Binary.writeInt(0));
@@ -457,7 +457,7 @@ public class Chunk extends BaseFullChunk {
 
 
         ArrayList<CompoundTag> entities = new ArrayList<>();
-        for (Entity entity : this.getEntities().values()) {
+        for (Entity entity : this.getEntities().values(new Entity[0])) {
             if (!(entity instanceof Player) && !entity.closed) {
                 entity.saveNBT();
                 entities.add(entity.namedTag);
@@ -468,7 +468,7 @@ public class Chunk extends BaseFullChunk {
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (BlockEntity blockEntity : this.getBlockEntities().values()) {
+        for (BlockEntity blockEntity : this.getBlockEntities().values(new BlockEntity[0])) {
             blockEntity.saveNBT();
             tiles.add(blockEntity.namedTag);
         }
@@ -477,9 +477,9 @@ public class Chunk extends BaseFullChunk {
         nbt.putList(tileListTag);
 
         BinaryStream extraData = new BinaryStream();
-        Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();
+        TIntIntMap extraDataArray = this.getBlockExtraDataArray();
         extraData.putInt(extraDataArray.size());
-        for (Integer key : extraDataArray.keySet()) {
+        for (Integer key : extraDataArray.keys()) {
             extraData.putInt(key);
             extraData.putShort(extraDataArray.get(key));
         }

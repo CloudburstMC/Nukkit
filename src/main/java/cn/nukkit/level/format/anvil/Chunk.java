@@ -11,14 +11,21 @@ import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.BlockUpdateEntry;
+import cn.nukkit.utils.ChunkException;
+import cn.nukkit.utils.Zlib;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.hash.TIntIntHashMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -81,10 +88,10 @@ public class Chunk extends BaseChunk {
             }
         }
 
-        Map<Integer, Integer> extraData = new HashMap<>();
+        TIntIntMap extraData = new TIntIntHashMap();
 
         Tag extra = nbt.get("ExtraData");
-        if (extra != null && extra instanceof ByteArrayTag) {
+        if (extra instanceof ByteArrayTag) {
             BinaryStream stream = new BinaryStream(((ByteArrayTag) extra).data);
             for (int i = 0; i < stream.getInt(); i++) {
                 int key = stream.getInt();
@@ -279,7 +286,7 @@ public class Chunk extends BaseChunk {
         }
 
         ArrayList<CompoundTag> entities = new ArrayList<>();
-        for (Entity entity : this.getEntities().values()) {
+        for (Entity entity : this.getEntities().values(new Entity[0])) {
             if (!(entity instanceof Player) && !entity.closed) {
                 entity.saveNBT();
                 entities.add(entity.namedTag);
@@ -290,7 +297,7 @@ public class Chunk extends BaseChunk {
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (BlockEntity blockEntity : this.getBlockEntities().values()) {
+        for (BlockEntity blockEntity : this.getBlockEntities().values(new BlockEntity[0])) {
             blockEntity.saveNBT();
             tiles.add(blockEntity.namedTag);
         }
@@ -319,9 +326,9 @@ public class Chunk extends BaseChunk {
         }
 
         BinaryStream extraData = new BinaryStream();
-        Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();
+        TIntIntMap extraDataArray = this.getBlockExtraDataArray();
         extraData.putInt(extraDataArray.size());
-        for (Integer key : extraDataArray.keySet()) {
+        for (Integer key : extraDataArray.keys()) {
             extraData.putInt(key);
             extraData.putShort(extraDataArray.get(key));
         }
@@ -370,7 +377,7 @@ public class Chunk extends BaseChunk {
         nbt.putIntArray("HeightMap", heightInts);
 
         ArrayList<CompoundTag> entities = new ArrayList<>();
-        for (Entity entity : this.getEntities().values()) {
+        for (Entity entity : this.getEntities().values(new Entity[0])) {
             if (!(entity instanceof Player) && !entity.closed) {
                 entity.saveNBT();
                 entities.add(entity.namedTag);
@@ -381,7 +388,7 @@ public class Chunk extends BaseChunk {
         nbt.putList(entityListTag);
 
         ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (BlockEntity blockEntity : this.getBlockEntities().values()) {
+        for (BlockEntity blockEntity : this.getBlockEntities().values(new BlockEntity[0])) {
             blockEntity.saveNBT();
             tiles.add(blockEntity.namedTag);
         }
@@ -410,9 +417,9 @@ public class Chunk extends BaseChunk {
         }
 
         BinaryStream extraData = new BinaryStream();
-        Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();
+        TIntIntMap extraDataArray = this.getBlockExtraDataArray();
         extraData.putInt(extraDataArray.size());
-        for (Integer key : extraDataArray.keySet()) {
+        for (Integer key : extraDataArray.keys()) {
             extraData.putInt(key);
             extraData.putShort(extraDataArray.get(key));
         }

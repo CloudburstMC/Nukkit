@@ -15,6 +15,9 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
+import gnu.trove.iterator.TIntIntIterator;
+import gnu.trove.map.TIntIntMap;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -110,7 +113,7 @@ public class McRegion extends BaseLevelProvider {
         if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
 
-            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+            for (BlockEntity blockEntity : chunk.getBlockEntities().values(new BlockEntity[0])) {
                 if (blockEntity instanceof BlockEntitySpawnable) {
                     tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
                 }
@@ -123,14 +126,16 @@ public class McRegion extends BaseLevelProvider {
             }
         }
 
-        Map<Integer, Integer> extra = chunk.getBlockExtraDataArray();
+        TIntIntMap extra = chunk.getBlockExtraDataArray();
         BinaryStream extraData;
         if (!extra.isEmpty()) {
             extraData = new BinaryStream();
             extraData.putLInt(extra.size());
-            for (Map.Entry<Integer, Integer> entry : extra.entrySet()) {
-                extraData.putLInt(entry.getKey());
-                extraData.putLShort(entry.getValue());
+            TIntIntIterator iter = extra.iterator();
+            while (iter.hasNext()) {
+                iter.advance();
+                extraData.putLInt(iter.key());
+                extraData.putLShort(iter.value());
             }
         } else {
             extraData = null;

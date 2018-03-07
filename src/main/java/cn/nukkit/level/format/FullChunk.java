@@ -4,8 +4,10 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.generator.biome.Biome;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.TLongObjectMap;
+
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -116,9 +118,9 @@ public interface FullChunk extends Cloneable {
 
     void removeBlockEntity(BlockEntity blockEntity);
 
-    Map<Long, Entity> getEntities();
+    TLongObjectMap<Entity> getEntities();
 
-    Map<Long, BlockEntity> getBlockEntities();
+    TLongObjectMap<BlockEntity> getBlockEntities();
 
     BlockEntity getTile(int x, int y, int z);
 
@@ -146,7 +148,7 @@ public interface FullChunk extends Cloneable {
 
     byte[] getBlockDataArray();
 
-    Map<Integer, Integer> getBlockExtraDataArray();
+    TIntIntMap getBlockExtraDataArray();
 
     byte[] getBlockSkyLightArray();
 
