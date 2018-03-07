@@ -3,6 +3,7 @@ package cn.nukkit.level.generator;
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.generator.noise.Simplex;
@@ -103,7 +104,7 @@ public class Nether extends Generator {
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
-                Biome biome = Biome.getBiome(Biome.HELL);
+                Biome biome = EnumBiome.HELL.biome;
                 int biomeColorAndId = biome.getColor() + (biome.getId() << 24);
                 chunk.setBiomeIdAndColor(x, z, biomeColorAndId);
 

@@ -35,7 +35,7 @@ public class BiomeSelector {
     }
 
     public Biome lookup(double temperature, double rainfall) {
-        return Biome.getBiome(Biome.EXTREME_HILLS);
+        return EnumBiome.EXTREME_HILLS.biome;
     }
 
     public double getTemperature(double x, double z) {
@@ -50,14 +50,14 @@ public class BiomeSelector {
         double noiseOcean = ocean.noise2D(x, z, true);
         if (noiseOcean < -0.15)  {
             if (noiseOcean < -0.8) {
-                return Biome.getBiome(Biome.MUSHROOM_ISLAND);
+                return EnumBiome.MUSHROOM_ISLAND.biome;
             } else {
-                return Biome.getBiome(Biome.OCEAN);
+                return EnumBiome.OCEAN.biome;
             }
         }
         double noiseRiver = Math.abs(river.noise2D(x, z, true));
         if (noiseRiver < 0.04)  {
-            return Biome.getBiome(Biome.RIVER);
+            return EnumBiome.RIVER.biome;
         }
 
         int temperature = (int) (this.getTemperature(x, z) * 63);

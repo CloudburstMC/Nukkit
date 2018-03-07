@@ -4,9 +4,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.biome.type.GrassyBiome;
 import cn.nukkit.level.generator.populator.MushroomPopulator;
 
-public class MushroomIsland extends GrassyBiome {
+public class MushroomIslandBiome extends GrassyBiome {
 
-    public MushroomIsland() {
+    public MushroomIslandBiome() {
         MushroomPopulator mushroomPopulator = new MushroomPopulator();
         mushroomPopulator.setBaseAmount(1);
         addPopulator(mushroomPopulator);

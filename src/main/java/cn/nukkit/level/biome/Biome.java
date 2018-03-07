@@ -13,28 +13,6 @@ import java.util.ArrayList;
  * Nukkit Project
  */
 public abstract class Biome {
-    public static final int OCEAN = 0;
-    public static final int PLAINS = 1;
-    public static final int DESERT = 2;
-    public static final int EXTREME_HILLS = 3;
-    public static final int FOREST = 4;
-    public static final int TAIGA = 5;
-    public static final int SWAMP = 6;
-    public static final int RIVER = 7;
-    public static final int ICE_PLAINS = 12;
-    public static final int MUSHROOM_ISLAND = 14;
-    public static final int BEACH = 16;
-    public static final int FOREST_HILLS = 18;
-    public static final int EXTREME_HILLS_EDGE = 20;
-    public static final int JUNGLE = 21;
-    public static final int BIRCH_FOREST = 27;
-    public static final int BIRCH_FOREST_HILLS = 28;
-    public static final int ROOFED_FOREST = 29;
-    public static final int SAVANNA = 35;
-    public static final int ROOFED_FOREST_M = 157;
-
-    public static final int HELL = 8;
-
     public static final int MAX_BIOMES = 256;
 
     public static final Biome[] biomes = new Biome[MAX_BIOMES];
@@ -53,33 +31,9 @@ public abstract class Biome {
         biomes[id] = biome;
     }
 
-    public static void init() {
-        register(OCEAN, new OceanBiome());
-        register(PLAINS, new PlainBiome());
-        register(DESERT, new DesertBiome());
-        register(EXTREME_HILLS, new ExtremeHillsBiome());
-        register(FOREST, new ForestBiome());
-        register(TAIGA, new TaigaBiome());
-        register(SWAMP, new SwampBiome());
-        register(RIVER, new RiverBiome());
-        register(ICE_PLAINS, new IcePlainsBiome());
-        register(MUSHROOM_ISLAND, new MushroomIsland());
-        register(BEACH, new BeachBiome());
-        register(FOREST_HILLS, new ForestHillsBiome());
-        register(EXTREME_HILLS_EDGE, new ExtremeHillsEdgeBiome());
-        register(JUNGLE, new JungleBiome());
-        register(BIRCH_FOREST, new ForestBiome(ForestBiome.TYPE_BIRCH));
-        register(BIRCH_FOREST_HILLS, new ForestHillsBiome(ForestHillsBiome.TYPE_BIRCH));
-        register(ROOFED_FOREST, new RoofedForestBiome());
-        register(SAVANNA, new SavannaBiome());
-        register(ROOFED_FOREST_M, new RoofedForestMBiome());
-
-        register(HELL, new HellBiome());
-    }
-
-    public static Biome getBiome(int id) {
+    static Biome getBiome(int id) {
         Biome biome = biomes[id];
-        return biome != null ? biome : biomes[OCEAN];
+        return biome != null ? biome : EnumBiome.OCEAN.biome;
     }
 
     /**

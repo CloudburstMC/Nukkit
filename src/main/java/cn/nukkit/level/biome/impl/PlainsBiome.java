@@ -9,9 +9,9 @@ import cn.nukkit.level.generator.populator.*;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PlainBiome extends GrassyBiome {
+public class PlainsBiome extends GrassyBiome {
 
-    public PlainBiome() {
+    public PlainsBiome() {
         super();
         PopulatorFlower flower = new PopulatorFlower();
         flower.setBaseAmount(10);
