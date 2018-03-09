@@ -7,9 +7,4 @@ public class HellBiome extends Biome {
     public String getName() {
         return "Hell";
     }
-
-    @Override
-    public int getColor() {
-        return -3394765;
-    }
 }

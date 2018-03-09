@@ -19,39 +19,21 @@ public class BiomeSelector {
     private final Simplex river;
     private final Simplex ocean;
 
-    private Biome[] map = new Biome[64 * 64];
-
     public BiomeSelector(NukkitRandom random) {
         this.temperature = new Simplex(random, 2F, 1F / 8F, 1F / 512F);
         this.rainfall = new Simplex(random, 2F, 1F / 8F, 1F / 512F);
         this.river = new Simplex(random, 6d, 2 / 4d, 1 / 256D);
         this.ocean = new Simplex(random, 6d, 2 / 4d, 1 / 512D);
-
-        for (int i = 0; i < 64; ++i) {
-            for (int j = 0; j < 64; ++j) {
-                this.map[i + (j << 6)] = this.lookup(i / 63d, j / 63d);
-            }
-        }
-    }
-
-    public Biome lookup(double temperature, double rainfall) {
-        return EnumBiome.EXTREME_HILLS.biome;
-    }
-
-    public double getTemperature(double x, double z) {
-        return (this.temperature.noise2D(x, z, true) + 1) / 2;
-    }
-
-    public double getRainfall(double x, double z) {
-        return (this.rainfall.noise2D(x, z, true) + 1) / 2;
     }
 
     public Biome pickBiome(double x, double z) {
         double noiseOcean = ocean.noise2D(x, z, true);
+        double noiseTemp = temperature.noise2D(x, z, true);
+        double noiseRain = rainfall.noise2D(x, z, true);
         if (noiseOcean < -0.15)  {
-            if (noiseOcean < -0.8) {
+            if (noiseOcean < -0.08) {
                 return EnumBiome.MUSHROOM_ISLAND.biome;
-            } else {
+            } else if (noiseTemp < -0.25) {
                 return EnumBiome.OCEAN.biome;
             }
         }
@@ -59,10 +41,7 @@ public class BiomeSelector {
         if (noiseRiver < 0.04)  {
             return EnumBiome.RIVER.biome;
         }
-
-        int temperature = (int) (this.getTemperature(x, z) * 63);
-        int rainfall = (int) (this.getRainfall(x, z) * 63);
-        return this.map[temperature + (rainfall << 6)];
+        return EnumBiome.OCEAN.biome;
     }
 }
 

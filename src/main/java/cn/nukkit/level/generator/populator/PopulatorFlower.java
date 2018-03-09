@@ -10,6 +10,8 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cn.nukkit.block.BlockID.DOUBLE_PLANT;
+
 /**
  * author: Angelic47
  * contributer: Niall Lindsay <Niall7459>
@@ -64,8 +66,10 @@ public class PopulatorFlower extends Populator {
 
             if (y != -1 && this.canFlowerStay(x, y, z)) {
                 int[] type = this.flowerTypes.get(random.nextRange(0, endNum - 1));
-                this.level.setBlockIdAt(x, y, z, type[0]);
-                this.level.setBlockDataAt(x, y, z, type[1]);
+                this.level.setBlockFullIdAt(x, y, z, (type[0] << 4) | type[1]);
+                if (type[0] == DOUBLE_PLANT)    {
+                    this.level.setBlockFullIdAt(x, y + 1, z,(type[0] << 4) | (8 | type[1]));
+                }
             }
         }
     }
@@ -77,7 +81,7 @@ public class PopulatorFlower extends Populator {
 
     private int getHighestWorkableBlock(int x, int z) {
         int y;
-        for (y = 127; y >= 0; --y) {
+        for (y = 255; y >= 0; --y) {
             int b = this.level.getBlockIdAt(x, y, z);
             if (b != Block.AIR && b != Block.LEAVES && b != Block.LEAVES2 && b != Block.SNOW_LAYER) {
                 break;

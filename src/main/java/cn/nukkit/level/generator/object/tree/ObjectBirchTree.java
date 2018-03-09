@@ -34,7 +34,7 @@ public class ObjectBirchTree extends ObjectTree {
 
     @Override
     public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        this.treeHeight = random.nextBoundedInt(3) + 5;
+        this.treeHeight = random.nextBoundedInt(2) + 5;
         super.placeObject(level, x, y, z, random);
     }
 }

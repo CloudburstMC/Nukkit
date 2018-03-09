@@ -257,11 +257,6 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     }
 
     @Override
-    public int[] getBiomeColorArray() {
-        return this.biomes.toRaw();
-    }
-
-    @Override
     public byte[] getHeightMapArray() {
         return this.heightMap;
     }

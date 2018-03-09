@@ -2277,8 +2277,8 @@ public class Level implements ChunkManager, Metadatable {
         return this.getChunk(x >> 4, z >> 4, true).getBiomeId(x & 0x0f, z & 0x0f);
     }
 
-    public void setBiomeId(int x, int z, int biomeId) {
-        this.getChunk(x >> 4, z >> 4, true).setBiomeId(x & 0x0f, z & 0x0f, biomeId & 0x0f);
+    public void setBiomeId(int x, int z, byte biomeId) {
+        this.getChunk(x >> 4, z >> 4, true).setBiomeId(x & 0x0f, z & 0x0f, biomeId);
     }
 
     public int getHeightMap(int x, int z) {
@@ -2287,14 +2287,6 @@ public class Level implements ChunkManager, Metadatable {
 
     public void setHeightMap(int x, int z, int value) {
         this.getChunk(x >> 4, z >> 4, true).setHeightMap(x & 0x0f, z & 0x0f, value & 0x0f);
-    }
-
-    public int getBiomeColor(int x, int z) {
-        return this.getChunk(x >> 4, z >> 4, true).getBiomeColor(x & 0x0f, z & 0x0f);
-    }
-
-    public void setBiomeColor(int x, int z, int R, int G, int B) {
-        this.getChunk(x >> 4, z >> 4, true).setBiomeColor(x & 0x0f, z & 0x0f, R, G, B);
     }
 
     public Map<Long,? extends FullChunk> getChunks() {

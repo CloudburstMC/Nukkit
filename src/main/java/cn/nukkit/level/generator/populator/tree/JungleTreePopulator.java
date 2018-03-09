@@ -46,13 +46,13 @@ public class JungleTreePopulator extends Populator {
             if (y == -1) {
                 continue;
             }
-            new NewJungleTree(4 + random.nextBoundedInt(7)).generate(level, random, v.setComponents(x, y, z));
+            new NewJungleTree(4 + random.nextBoundedInt(7), 3).generate(level, random, v.setComponents(x, y, z));
         }
     }
 
     private int getHighestWorkableBlock(int x, int z) {
         int y;
-        for (y = 127; y > 0; --y) {
+        for (y = 255; y > 0; --y) {
             int b = this.level.getBlockIdAt(x, y, z);
             if (b == Block.DIRT || b == Block.GRASS) {
                 break;

@@ -34,7 +34,12 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     protected Map<Integer, BlockEntity> tileList;
 
-    protected BiomePalette biomes;
+    /**
+     * encoded as:
+     *
+     * (x << 4) | z
+     */
+    protected byte[] biomes;
 
     protected byte[] blocks;
 
@@ -112,20 +117,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             pk.trim();
         }
         return chunkPacket;
-    }
-
-    protected void checkOldBiomes(byte[] data) {
-        if (data.length != 256) {
-            return;
-        }
-        for (int x = 0; x < 16; ++x) {
-            for (int z = 0; z < 16; ++z) {
-                Biome biome = EnumBiome.getBiome(data[(z << 4) | x] & 0xff);
-                this.setBiomeId(x, z, biome.getId());
-                int c = biome.getColor();
-                this.setBiomeColor(x, z, c >> 16, (c >> 8) & 0xff, c & 0xff);
-            }
-        }
     }
 
     public void initChunk() {
@@ -226,35 +217,13 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public int getBiomeId(int x, int z) {
-        return (this.biomes.get(x, z) >> 24) & 0xFF;
+        return this.biomes[(x << 4) | z] & 0xFF;
     }
 
     @Override
-    public void setBiomeId(int x, int z, int biomeId) {
+    public void setBiomeId(int x, int z, byte biomeId) {
         this.setChanged();
-        int index = this.biomes.getIndex(x, z);
-        int current = this.biomes.get(index);
-        this.biomes.set(index, current & 0xffffff | (biomeId << 24));
-    }
-
-    @Override
-    public int getBiomeColor(int x, int z) {
-        int color = this.biomes.get(x, z);
-        return color & 0xFFFFFF;
-    }
-
-    @Override
-    public void setBiomeIdAndColor(int x, int z, int idAndColor) {
-        this.biomes.set(x, z, idAndColor);
-    }
-
-    @Override
-    public void setBiomeColor(int x, int z, int r, int g, int b) {
-        this.setChanged();
-
-        int index = this.biomes.getIndex(x, z);
-        int current = this.biomes.get(index);
-        this.biomes.set(index, current & 0xff000000 | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff));
+        this.biomes[(x << 4) | z] = biomeId;
     }
 
     @Override
@@ -488,17 +457,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public byte[] getBiomeIdArray() {
-        byte[] ids = new byte[this.getBiomeColorArray().length];
-        for (int i = 0; i < this.getBiomeColorArray().length; i++) {
-            int d = this.getBiomeColorArray()[i];
-            ids[i] = (byte) (d >> 24);
-        }
-        return ids;
-    }
-
-    @Override
-    public int[] getBiomeColorArray() {
-        return this.biomes.toRaw();
+        return this.biomes;
     }
 
     @Override

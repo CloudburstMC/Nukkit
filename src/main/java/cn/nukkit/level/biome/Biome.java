@@ -1,5 +1,6 @@
 package cn.nukkit.level.biome;
 
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.impl.*;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Biome {
+public abstract class Biome implements BlockID {
     public static final int MAX_BIOMES = 256;
 
     public static final Biome[] biomes = new Biome[MAX_BIOMES];
@@ -123,8 +124,6 @@ public abstract class Biome {
         return rainfall;
     }
 
-    abstract public int getColor();
-
     @Override
     public int hashCode() {
         return getId();
@@ -133,5 +132,10 @@ public abstract class Biome {
     @Override
     public boolean equals(Object obj) {
         return hashCode() == obj.hashCode();
+    }
+
+    //whether or not water should freeze into ice on generation
+    public boolean isFreezing() {
+        return false;
     }
 }

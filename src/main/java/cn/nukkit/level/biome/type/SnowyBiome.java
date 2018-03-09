@@ -1,16 +1,12 @@
 package cn.nukkit.level.biome.type;
 
-import cn.nukkit.level.generator.populator.PopulatorTallGrass;
-
 /**
- * author: MagicDroidX
+ * author: DaPorkchop_
  * Nukkit Project
  */
 public abstract class SnowyBiome extends GrassyBiome {
     public SnowyBiome() {
-        PopulatorTallGrass tallGrass = new PopulatorTallGrass();
-        tallGrass.setBaseAmount(5);
-        this.addPopulator(tallGrass);
+        super();
     }
 
     @Override

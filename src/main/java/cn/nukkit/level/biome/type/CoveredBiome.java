@@ -1,6 +1,5 @@
 package cn.nukkit.level.biome.type;
 
-import cn.nukkit.block.BlockID;
 import cn.nukkit.level.biome.Biome;
 
 /**
@@ -9,11 +8,8 @@ import cn.nukkit.level.biome.Biome;
  *
  * A biome with ground covering
  */
-public abstract class CoveredBiome extends Biome implements BlockID {
-    @Override
-    public int getColor() {
-        return this.grassColor;
-    }
+public abstract class CoveredBiome extends Biome {
+    public final Object synchronizeCover = new Object();
 
     /**
      * A single block placed on top of the surface blocks
@@ -27,19 +23,19 @@ public abstract class CoveredBiome extends Biome implements BlockID {
      *
      * If < 0 bad things will happen!
      */
-    public int getSurfaceDepth()    {
+    public int getSurfaceDepth(int y)    {
         return 1;
     }
 
     /**
      * Between cover and ground
      */
-    public abstract int getSurfaceBlock();
+    public abstract int getSurfaceBlock(int y);
 
     /**
      * The metadata of the surface block
      */
-    public int getSurfaceMeta() {
+    public int getSurfaceMeta(int y) {
         return 0;
     }
 
@@ -48,19 +44,19 @@ public abstract class CoveredBiome extends Biome implements BlockID {
      *
      * If < 0 bad things will happen!
      */
-    public int getGroundDepth() {
+    public int getGroundDepth(int y) {
         return 4;
     }
 
     /**
      * Between surface and stone
      */
-    public abstract int getGroundBlock();
+    public abstract int getGroundBlock(int y);
 
     /**
      * The metadata of the ground block
      */
-    public int getGroundMeta()  {
+    public int getGroundMeta(int y)  {
         return 0;
     }
 
@@ -69,5 +65,14 @@ public abstract class CoveredBiome extends Biome implements BlockID {
      */
     public int getStoneBlock() {
         return STONE;
+    }
+
+    /**
+     * Called before a new block column is covered. Biomes can update any relevant variables here before covering.
+     *
+     * Biome covering is synchronized on the biome, so thread safety isn't an issue.
+     */
+    public void preCover(int x, int z)  {
+
     }
 }

@@ -4,6 +4,7 @@ import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.biome.EnumBiome;
+import cn.nukkit.level.biome.type.CoveredBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.BiomeSelector;
@@ -57,6 +58,7 @@ public class Normal extends Generator {
     private ThreadLocal<double[][][]> baseNoise = ThreadLocal.withInitial(() -> new double[5][5][33]);
     private ThreadLocal<double[][]> minHeights = ThreadLocal.withInitial(() -> new double[16][16]);
     private ThreadLocal<double[][]> shrinkFactors = ThreadLocal.withInitial(() -> new double[16][16]);
+    private ThreadLocal<int[][]> stoneBlocks = ThreadLocal.withInitial(() -> new int[16][16]);
     private ThreadLocal<Long2ObjectMap<Biome>> biomes = ThreadLocal.withInitial(Long2ObjectOpenHashMap::new);
 
     public Normal() {
@@ -156,6 +158,7 @@ public class Normal extends Generator {
         biomes.clear(); //remove anything that may be left over from last chunk
         double[][] minHeights = this.minHeights.get();
         double[][] shrinkFactors = this.shrinkFactors.get();
+        int[][] stoneBlocks = this.stoneBlocks.get();
 
         //fill noise array
         {
@@ -208,7 +211,9 @@ public class Normal extends Generator {
                 minHeights[x][z] = minSum;
                 //we use 2 instead of 1 to offset the minimum height to the min value, not have min be the center
                 shrinkFactors[x][z] = 2 / (maxSum - minSum);
-                chunk.setBiome(x, z, biomes.get(Level.chunkHash((chunkX << 4) | x, (chunkZ << 4) | z)));
+                Biome biome = biomes.get(Level.chunkHash((chunkX << 4) | x, (chunkZ << 4) | z));
+                chunk.setBiome(x, z, biome);
+                stoneBlocks[x][z] = biome instanceof CoveredBiome ? ((CoveredBiome) biome).getStoneBlock() : BlockID.STONE;
             }
         }
 
@@ -233,6 +238,7 @@ public class Normal extends Generator {
                             int xLoc = xSeg + xPiece * 4;
                             double[] minHeightsSub = minHeights[xLoc];
                             double[] shrinkFactorsSub = shrinkFactors[xLoc];
+                            int[] stoneBlocksSub = stoneBlocks[xLoc];
                             int yLoc = yPiece * 8 + ySeg;
                             int zLoc = zPiece * 4;
                             double noiseVal = baseOffset;
@@ -242,11 +248,11 @@ public class Normal extends Generator {
                                 double shrinkFactor = shrinkFactorsSub[zLoc];
                                 int block = Block.AIR;
                                 if (noiseVal + ((yLoc - (min)) * shrinkFactor) < 0.0D) {
-                                    block = Block.STONE;
+                                    block = stoneBlocksSub[zLoc];
                                 } else if (yPiece * 8 + ySeg < seaHeight) {
                                     block = Block.STILL_WATER;
                                 }
-                                chunk.setBlock(xLoc, yLoc, zLoc, block);
+                                chunk.setBlock(xLoc, yLoc, zLoc, block << 4);
                                 zLoc++;
                                 noiseVal += noiseIncr;
                             }
