@@ -2,7 +2,6 @@ package cn.nukkit.level.biome.impl.iceplains;
 
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.biome.type.SnowyBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.math.NukkitRandom;
@@ -36,7 +35,7 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
 
     /**
      * @author DaPorkchop_
-     *
+     * <p>
      * Please excuse this mess, but it runs way faster than the correct method
      */
     private static class PopulatorIceSpikes extends Populator {
@@ -61,16 +60,16 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
                         level.setBlockFullIdAt(x, y, z + 1, PACKED_ICE);
                         level.setBlockFullIdAt(x, y, z - 1, PACKED_ICE);
                         //additional blocks on the side
-                        if (random.nextBoolean())   {
+                        if (random.nextBoolean()) {
                             level.setBlockFullIdAt(x + 1, y, z + 1, PACKED_ICE);
                         }
-                        if (random.nextBoolean())   {
+                        if (random.nextBoolean()) {
                             level.setBlockFullIdAt(x + 1, y, z - 1, PACKED_ICE);
                         }
-                        if (random.nextBoolean())   {
+                        if (random.nextBoolean()) {
                             level.setBlockFullIdAt(x - 1, y, z + 1, PACKED_ICE);
                         }
-                        if (random.nextBoolean())   {
+                        if (random.nextBoolean()) {
                             level.setBlockFullIdAt(x - 1, y, z - 1, PACKED_ICE);
                         }
                     }
@@ -79,7 +78,7 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
                     level.setBlockFullIdAt(x - 1, maxY, z, PACKED_ICE);
                     level.setBlockFullIdAt(x, maxY, z + 1, PACKED_ICE);
                     level.setBlockFullIdAt(x, maxY, z - 1, PACKED_ICE);
-                    for (int y = maxY; y < maxY + 3; maxY++)    {
+                    for (int y = maxY; y < maxY + 3; maxY++) {
                         level.setBlockFullIdAt(x, y, z, PACKED_ICE);
                     }
                 } else {
@@ -88,10 +87,10 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
                     float shrinkFactor = baseWidth / height;
                     float currWidth = baseWidth;
                     for (int y = startY; y < maxY; y++) {
-                        for (int xx = (int) -currWidth; xx < currWidth; xx++)  {
-                            for (int zz = (int) -currWidth; zz < currWidth; zz++)   {
+                        for (int xx = (int) -currWidth; xx < currWidth; xx++) {
+                            for (int zz = (int) -currWidth; zz < currWidth; zz++) {
                                 int currDist = (int) Math.sqrt(xx * xx + zz * zz);
-                                if (random.nextBoundedInt((int) Math.abs(currWidth - currDist)) * 2 == 0)   {
+                                if (random.nextBoundedInt((int) Math.abs(currWidth - currDist)) * 2 == 0) {
                                     level.setBlockFullIdAt(x + xx, y, z + zz, PACKED_ICE);
                                 }
                             }
@@ -102,7 +101,7 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
             }
         }
 
-        public int getHighestWorkableBlock(int x, int z, FullChunk chunk)   {
+        public int getHighestWorkableBlock(int x, int z, FullChunk chunk) {
             return chunk.getHighestBlockAt(x & 0xF, z & 0xF) - 5;
         }
     }

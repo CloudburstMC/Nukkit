@@ -2,9 +2,7 @@ package cn.nukkit.level.biome.impl.forest;
 
 import cn.nukkit.block.BlockDoublePlant;
 import cn.nukkit.block.BlockFlower;
-import cn.nukkit.level.biome.type.GrassyBiome;
 import cn.nukkit.level.generator.populator.PopulatorFlower;
-import cn.nukkit.level.generator.populator.PopulatorTree;
 
 /**
  * author: DaPorkchop_

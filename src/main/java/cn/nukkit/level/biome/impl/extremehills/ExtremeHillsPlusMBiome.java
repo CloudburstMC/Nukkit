@@ -1,8 +1,5 @@
 package cn.nukkit.level.biome.impl.extremehills;
 
-import cn.nukkit.level.generator.noise.Simplex;
-import cn.nukkit.math.NukkitRandom;
-
 /**
  * author: DaPorkchop_
  * Nukkit Project

@@ -1,11 +1,9 @@
 package cn.nukkit.level.biome.impl.extremehills;
 
-import cn.nukkit.level.biome.type.GrassyBiome;
-
 /**
  * author: DaPorkchop_
  * Nukkit Project
- *
+ * <p>
  * make sure this is touching another extreme hills type or it'll look dumb
  */
 public class ExtremeHillsPlusBiome extends ExtremeHillsBiome {

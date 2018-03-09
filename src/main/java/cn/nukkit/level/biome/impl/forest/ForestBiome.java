@@ -40,7 +40,7 @@ public class ForestBiome extends GrassyBiome {
 
     @Override
     public String getName() {
-        switch (this.type)  {
+        switch (this.type) {
             case TYPE_BIRCH:
                 return "Birch Forest";
             case TYPE_BIRCH_TALL:

@@ -1,6 +1,6 @@
 package cn.nukkit.level.biome;
 
-import cn.nukkit.level.biome.impl.*;
+import cn.nukkit.level.biome.impl.HellBiome;
 import cn.nukkit.level.biome.impl.beach.BeachBiome;
 import cn.nukkit.level.biome.impl.beach.ColdBeachBiome;
 import cn.nukkit.level.biome.impl.desert.DesertBiome;

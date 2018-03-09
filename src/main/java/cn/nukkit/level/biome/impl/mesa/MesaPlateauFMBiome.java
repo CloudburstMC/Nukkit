@@ -1,8 +1,5 @@
 package cn.nukkit.level.biome.impl.mesa;
 
-import cn.nukkit.block.BlockSapling;
-import cn.nukkit.level.generator.populator.PopulatorTree;
-
 /**
  * @author DaPorkchop_
  */

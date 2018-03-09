@@ -5,7 +5,7 @@ package cn.nukkit.level.biome.impl.mesa;
  */
 //porktodo: the plateaus here are smaller and less frequent than in the normal counterpart (which is one giant plateau)
 public class MesaPlateauMBiome extends MesaPlateauBiome {
-    public MesaPlateauMBiome()  {
+    public MesaPlateauMBiome() {
         super();
 
         this.setElevation(80, 84);

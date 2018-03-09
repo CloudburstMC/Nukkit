@@ -30,15 +30,15 @@ public class BiomeSelector {
         double noiseOcean = ocean.noise2D(x, z, true);
         double noiseTemp = temperature.noise2D(x, z, true);
         double noiseRain = rainfall.noise2D(x, z, true);
-        if (noiseOcean < -0.15)  {
+        if (noiseOcean < -0.15) {
             if (noiseOcean < -0.08) {
                 return EnumBiome.MUSHROOM_ISLAND.biome;
-            } else if (noiseTemp < -0.25) {
+            } else {
                 return EnumBiome.OCEAN.biome;
             }
         }
         double noiseRiver = Math.abs(river.noise2D(x, z, true));
-        if (noiseRiver < 0.04)  {
+        if (noiseRiver < 0.04) {
             return EnumBiome.RIVER.biome;
         }
         return EnumBiome.OCEAN.biome;
@@ -50,14 +50,14 @@ public class BiomeSelector {
  *
  * @author DaPorkchop_
  */
-final class DoNotTouch_RiverNoiseTests   {
+final class DoNotTouch_RiverNoiseTests {
     public static void main(String... args) {
         Simplex river = new Simplex(new NukkitRandom(System.currentTimeMillis()), 4d, 1 / 4d, 1 / 64D);
         Simplex ocean = new Simplex(new NukkitRandom(System.currentTimeMillis() + 1), 4d, 1 / 4d, 1 / 128D);
 
         BufferedImage test_min = new BufferedImage(512, 512, BufferedImage.TYPE_INT_RGB);
-        for (int x = 0; x < 512; x++)   {
-            for (int z = 0; z < 512; z++)   {
+        for (int x = 0; x < 512; x++) {
+            for (int z = 0; z < 512; z++) {
                 double noiseRiver = Math.abs(river.noise2D(x, z, true));
                 double noiseOcean = ocean.noise2D(x, z, true);
                 test_min.setRGB(x, z, noiseRiver < 0.05 || noiseOcean < -0.25 ? 0xFFFFFF : 0x0);

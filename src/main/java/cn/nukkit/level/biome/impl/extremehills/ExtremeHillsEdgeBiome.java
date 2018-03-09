@@ -1,7 +1,5 @@
 package cn.nukkit.level.biome.impl.extremehills;
 
-import cn.nukkit.level.generator.populator.PopulatorTree;
-
 /**
  * author: DaPorkchop_
  * Nukkit Project

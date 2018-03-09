@@ -7,7 +7,7 @@ import cn.nukkit.level.generator.populator.PopulatorTree;
  * @author DaPorkchop_
  */
 public class MesaPlateauFBiome extends MesaPlateauBiome {
-    public MesaPlateauFBiome()  {
+    public MesaPlateauFBiome() {
         super();
 
         PopulatorTree tree = new PopulatorTree(BlockSapling.OAK);

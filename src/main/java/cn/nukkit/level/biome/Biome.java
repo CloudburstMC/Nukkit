@@ -3,7 +3,6 @@ package cn.nukkit.level.biome;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.biome.impl.*;
 import cn.nukkit.level.generator.populator.Populator;
 import cn.nukkit.math.NukkitRandom;
 
@@ -109,7 +108,7 @@ public abstract class Biome implements BlockID {
     }
 
     public void setElevation(int min, int max) {
-        if (min > max)  {
+        if (min > max) {
             throw new IllegalArgumentException("Min elevation must be less than max!");
         }
         this.minElevation = min;

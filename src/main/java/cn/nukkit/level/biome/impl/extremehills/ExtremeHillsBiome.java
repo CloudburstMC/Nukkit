@@ -7,11 +7,11 @@ import cn.nukkit.level.generator.populator.PopulatorTree;
 /**
  * author: DaPorkchop_
  * Nukkit Project
- *
+ * <p>
  * make sure this is touching another extreme hills type or it'll look dumb
  */
 public class ExtremeHillsBiome extends GrassyBiome {
-    public ExtremeHillsBiome()  {
+    public ExtremeHillsBiome() {
         this(true);
     }
 

@@ -5,7 +5,7 @@ import cn.nukkit.level.biome.Biome;
 /**
  * author: DaPorkchop_
  * Nukkit Project
- *
+ * <p>
  * A biome with ground covering
  */
 public abstract class CoveredBiome extends Biome {
@@ -14,16 +14,16 @@ public abstract class CoveredBiome extends Biome {
     /**
      * A single block placed on top of the surface blocks
      */
-    public int getCoverBlock()  {
+    public int getCoverBlock() {
         return AIR;
     }
 
     /**
      * The amount of times the surface block should be used
-     *
+     * <p>
      * If < 0 bad things will happen!
      */
-    public int getSurfaceDepth(int y)    {
+    public int getSurfaceDepth(int y) {
         return 1;
     }
 
@@ -41,7 +41,7 @@ public abstract class CoveredBiome extends Biome {
 
     /**
      * The amount of times the ground block should be used
-     *
+     * <p>
      * If < 0 bad things will happen!
      */
     public int getGroundDepth(int y) {
@@ -56,7 +56,7 @@ public abstract class CoveredBiome extends Biome {
     /**
      * The metadata of the ground block
      */
-    public int getGroundMeta(int y)  {
+    public int getGroundMeta(int y) {
         return 0;
     }
 
@@ -69,10 +69,10 @@ public abstract class CoveredBiome extends Biome {
 
     /**
      * Called before a new block column is covered. Biomes can update any relevant variables here before covering.
-     *
+     * <p>
      * Biome covering is synchronized on the biome, so thread safety isn't an issue.
      */
-    public void preCover(int x, int z)  {
+    public void preCover(int x, int z) {
 
     }
 }

@@ -3,11 +3,11 @@ package cn.nukkit.level.generator;
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.biome.Biome;
+import cn.nukkit.level.biome.BiomeSelector;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.biome.type.CoveredBiome;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.biome.Biome;
-import cn.nukkit.level.biome.BiomeSelector;
 import cn.nukkit.level.generator.noise.Simplex;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.*;
@@ -182,7 +182,7 @@ public class Normal extends Generator {
 
         double scaleAmountHoriz = 0.25D;
         double scaleAmountVert = 0.125D;
-        //interpolate biome height values
+        //smooth biome height values
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 double maxSum = 0;
@@ -220,7 +220,9 @@ public class Normal extends Generator {
         //place blocks
         for (int xPiece = 0; xPiece < 4; xPiece++) {
             for (int zPiece = 0; zPiece < 4; zPiece++) {
-                for (int yPiece = 0; yPiece < 32; yPiece++) {
+                int yLoc = 255;
+                //iterate from top to bottom of chunk
+                for (int yPiece = 31; yPiece > -1; yPiece--) {
                     double noiseBase1 = baseNoise[xPiece][zPiece][yPiece];
                     double noiseBase2 = baseNoise[xPiece][zPiece + 1][yPiece];
                     double noiseBase3 = baseNoise[xPiece + 1][zPiece][yPiece];
@@ -229,31 +231,27 @@ public class Normal extends Generator {
                     double noiseVertIncr2 = (baseNoise[xPiece][zPiece + 1][yPiece + 1] - noiseBase2) * scaleAmountVert;
                     double noiseVertIncr3 = (baseNoise[xPiece + 1][zPiece][yPiece + 1] - noiseBase3) * scaleAmountVert;
                     double noiseVertIncr4 = (baseNoise[xPiece + 1][zPiece + 1][yPiece + 1] - noiseBase4) * scaleAmountVert;
-                    for (int ySeg = 0; ySeg < 8; ySeg++) {
+                    for (int ySeg = 7; ySeg > -1; ySeg--, yLoc--) {
                         double baseOffset = noiseBase1;
                         double baseOffsetMinXMaxZ = noiseBase2;
                         double scaled1 = (noiseBase3 - noiseBase1) * scaleAmountHoriz;
                         double scaled2 = (noiseBase4 - noiseBase2) * scaleAmountHoriz;
-                        for (int xSeg = 0; xSeg < 4; xSeg++) {
-                            int xLoc = xSeg + xPiece * 4;
+                        int xLoc = xPiece * 4;
+                        for (int xSeg = 0; xSeg < 4; xSeg++, xLoc++) {
                             double[] minHeightsSub = minHeights[xLoc];
                             double[] shrinkFactorsSub = shrinkFactors[xLoc];
                             int[] stoneBlocksSub = stoneBlocks[xLoc];
-                            int yLoc = yPiece * 8 + ySeg;
                             int zLoc = zPiece * 4;
                             double noiseVal = baseOffset;
                             double noiseIncr = (baseOffsetMinXMaxZ - baseOffset) * scaleAmountHoriz;
-                            for (int zSeg = 0; zSeg < 4; zSeg++) {
-                                double min = minHeightsSub[zLoc];
-                                double shrinkFactor = shrinkFactorsSub[zLoc];
+                            for (int zSeg = 0; zSeg < 4; zSeg++, zLoc++) {
                                 int block = Block.AIR;
-                                if (noiseVal + ((yLoc - (min)) * shrinkFactor) < 0.0D) {
+                                if (noiseVal + ((yLoc - (minHeightsSub[zLoc])) * shrinkFactorsSub[zLoc]) < 0.0D) {
                                     block = stoneBlocksSub[zLoc];
-                                } else if (yPiece * 8 + ySeg < seaHeight) {
+                                } else if (yLoc < seaHeight) {
                                     block = Block.STILL_WATER;
                                 }
                                 chunk.setBlock(xLoc, yLoc, zLoc, block << 4);
-                                zLoc++;
                                 noiseVal += noiseIncr;
                             }
                             baseOffset += scaled1;

@@ -1,9 +1,5 @@
 package cn.nukkit.level.biome.impl.taiga;
 
-import cn.nukkit.block.BlockSapling;
-import cn.nukkit.level.biome.type.GrassyBiome;
-import cn.nukkit.level.generator.populator.PopulatorTree;
-
 /**
  * author: DaPorkchop_
  * Nukkit Project

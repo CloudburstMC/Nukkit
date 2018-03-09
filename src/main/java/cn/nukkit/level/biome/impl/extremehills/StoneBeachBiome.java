@@ -4,11 +4,11 @@ import cn.nukkit.level.biome.type.CoveredBiome;
 
 /**
  * @author DaPorkchop_
- *
+ * <p>
  * Occurs when Extreme hills and variants touch the ocean. Very steep cliffs!
  */
 public class StoneBeachBiome extends CoveredBiome {
-    public StoneBeachBiome()    {
+    public StoneBeachBiome() {
         this.setElevation(80, 90);
     }
 

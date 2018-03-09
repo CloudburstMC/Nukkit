@@ -1,12 +1,5 @@
 package cn.nukkit.level.biome.impl.savanna;
 
-import cn.nukkit.block.BlockDirt;
-import cn.nukkit.block.BlockSapling;
-import cn.nukkit.level.biome.type.GrassyBiome;
-import cn.nukkit.level.generator.noise.Simplex;
-import cn.nukkit.level.generator.populator.tree.SavannaTreePopulator;
-import cn.nukkit.math.NukkitRandom;
-
 /**
  * @author DaPorkchop_
  */

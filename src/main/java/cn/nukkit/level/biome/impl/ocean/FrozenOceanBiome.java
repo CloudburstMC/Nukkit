@@ -5,7 +5,7 @@ import cn.nukkit.level.generator.populator.WaterIcePopulator;
 /**
  * author: DaPorkchop_
  * Nukkit Project
- *
+ * <p>
  * This biome does not generate naturally
  */
 public class FrozenOceanBiome extends OceanBiome {
