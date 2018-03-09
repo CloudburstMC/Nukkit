@@ -116,7 +116,6 @@ public class Chunk extends BaseFullChunk {
                     }
                 }
             }
-            this.nbt.remove("BiomeColors");
         } else {
             this.biomes = this.nbt.getByteArray("Biomes");
         }
