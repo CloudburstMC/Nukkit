@@ -8,6 +8,7 @@ import cn.nukkit.math.Vector3;
 
 public abstract class BasicGenerator {
 
+    //also autism, see below
     public abstract boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position);
 
     public void setDecorationDefaults() {
@@ -21,8 +22,8 @@ public abstract class BasicGenerator {
         setBlock(level, pos, state);
     }
 
+    //what autism is this? why are we using floating-point vectors for setting block IDs?
     protected void setBlock(ChunkManager level, Vector3 v, Block b) {
-        level.setBlockIdAt((int) v.x, (int) v.y, (int) v.z, b.getId());
-        level.setBlockDataAt((int) v.x, (int) v.y, (int) v.z, b.getDamage());
+        level.setBlockFullIdAt((int) v.x, (int) v.y, (int) v.z, (b.getId() << 4) | b.getDamage());
     }
 }

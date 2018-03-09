@@ -1,8 +1,8 @@
 package cn.nukkit.level.biome.type;
 
 import cn.nukkit.block.BlockDoublePlant;
-import cn.nukkit.level.generator.populator.PopulatorDoublePlant;
-import cn.nukkit.level.generator.populator.PopulatorGrass;
+import cn.nukkit.level.generator.populator.impl.PopulatorDoublePlant;
+import cn.nukkit.level.generator.populator.impl.PopulatorGrass;
 
 /**
  * author: MagicDroidX

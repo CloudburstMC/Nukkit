@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.beach;
 
 import cn.nukkit.level.biome.type.SandyBiome;
-import cn.nukkit.level.generator.populator.WaterIcePopulator;
+import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
 
 public class ColdBeachBiome extends SandyBiome {
     public ColdBeachBiome() {

@@ -1,6 +1,6 @@
 package cn.nukkit.level.biome.impl.jungle;
 
-import cn.nukkit.level.generator.populator.tree.JungleFloorPopulator;
+import cn.nukkit.level.generator.populator.impl.tree.JungleFloorPopulator;
 
 /**
  * @author DaPorkchop_

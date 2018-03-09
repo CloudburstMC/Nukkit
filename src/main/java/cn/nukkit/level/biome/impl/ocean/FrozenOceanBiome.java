@@ -1,6 +1,6 @@
 package cn.nukkit.level.biome.impl.ocean;
 
-import cn.nukkit.level.generator.populator.WaterIcePopulator;
+import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
 
 /**
  * author: DaPorkchop_

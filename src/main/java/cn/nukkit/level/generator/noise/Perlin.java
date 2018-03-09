@@ -7,12 +7,6 @@ import cn.nukkit.math.NukkitRandom;
  * Nukkit Project
  */
 public class Perlin extends Noise {
-    public static final int[][] grad3 = {
-            {1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
-            {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1},
-            {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1}
-    };
-
     public Perlin(NukkitRandom random, double octaves, double persistence) {
         this(random, octaves, persistence, 1);
     }

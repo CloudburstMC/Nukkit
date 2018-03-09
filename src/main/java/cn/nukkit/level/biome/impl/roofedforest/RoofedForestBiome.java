@@ -1,9 +1,9 @@
 package cn.nukkit.level.biome.impl.roofedforest;
 
 import cn.nukkit.level.biome.type.GrassyBiome;
-import cn.nukkit.level.generator.populator.MushroomPopulator;
-import cn.nukkit.level.generator.populator.PopulatorFlower;
-import cn.nukkit.level.generator.populator.tree.DarkOakTreePopulator;
+import cn.nukkit.level.generator.populator.impl.MushroomPopulator;
+import cn.nukkit.level.generator.populator.impl.PopulatorFlower;
+import cn.nukkit.level.generator.populator.impl.tree.DarkOakTreePopulator;
 
 public class RoofedForestBiome extends GrassyBiome {
 

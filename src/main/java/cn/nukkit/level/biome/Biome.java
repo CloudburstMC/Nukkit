@@ -3,7 +3,7 @@ package cn.nukkit.level.biome;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.generator.populator.Populator;
+import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
 import java.util.ArrayList;

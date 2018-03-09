@@ -8,7 +8,11 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.generator.noise.Simplex;
 import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.*;
+import cn.nukkit.level.generator.populator.impl.PopulatorGlowStone;
+import cn.nukkit.level.generator.populator.impl.PopulatorGroundFire;
+import cn.nukkit.level.generator.populator.impl.PopulatorLava;
+import cn.nukkit.level.generator.populator.impl.PopulatorOre;
+import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 

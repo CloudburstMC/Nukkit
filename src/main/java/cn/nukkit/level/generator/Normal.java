@@ -10,7 +10,8 @@ import cn.nukkit.level.biome.type.CoveredBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.noise.Simplex;
 import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.*;
+import cn.nukkit.level.generator.populator.impl.*;
+import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -90,20 +91,7 @@ public class Normal extends Generator {
     }
 
     public Biome pickBiome(int x, int z) {
-        long hash = x * 2345803 ^ z * 9236449 ^ this.level.getSeed();
-        hash *= hash + 223;
-
-        long xNoise = hash >> 20 & 3;
-        long zNoise = hash >> 22 & 3;
-
-        if (xNoise == 3) {
-            xNoise = 1;
-        }
-        if (zNoise == 3) {
-            zNoise = 1;
-        }
-
-        return this.selector.pickBiome(x + xNoise - 1, z + zNoise - 1);
+        return this.selector.pickBiome(x, z);
     }
 
     @Override

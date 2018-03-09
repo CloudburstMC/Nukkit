@@ -1,6 +1,6 @@
 package cn.nukkit.level.biome.impl.taiga;
 
-import cn.nukkit.level.generator.populator.tree.SpruceBigTreePopulator;
+import cn.nukkit.level.generator.populator.impl.tree.SpruceBigTreePopulator;
 
 /**
  * author: DaPorkchop_

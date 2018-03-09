@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.beach;
 
 import cn.nukkit.level.biome.type.SandyBiome;
-import cn.nukkit.level.generator.populator.PopulatorSugarcane;
+import cn.nukkit.level.generator.populator.impl.PopulatorSugarcane;
 
 /**
  * Author: PeratX

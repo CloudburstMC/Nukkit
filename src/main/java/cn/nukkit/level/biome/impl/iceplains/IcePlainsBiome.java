@@ -2,7 +2,7 @@ package cn.nukkit.level.biome.impl.iceplains;
 
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.biome.type.SnowyBiome;
-import cn.nukkit.level.generator.populator.PopulatorTree;
+import cn.nukkit.level.generator.populator.impl.PopulatorTree;
 
 /**
  * author: MagicDroidX
