@@ -3,6 +3,7 @@ package cn.nukkit.level.biome.impl.mesa;
 import cn.nukkit.block.BlockSand;
 import cn.nukkit.level.biome.type.CoveredBiome;
 import cn.nukkit.level.generator.noise.Simplex;
+import cn.nukkit.level.generator.noise.SimplexF;
 import cn.nukkit.level.generator.populator.impl.PopulatorCactus;
 import cn.nukkit.level.generator.populator.impl.PopulatorDeadBush;
 import cn.nukkit.math.NukkitRandom;
@@ -15,7 +16,7 @@ import cn.nukkit.math.NukkitRandom;
 //porktodo: have biomes be able to offset their own height
 public class MesaBiome extends CoveredBiome {
     static final int[] colors;
-    static final Simplex quickNoise = new Simplex(new NukkitRandom(0), 1d, 1 / 4F, 1 / 3.5F);
+    static final SimplexF quickNoise = new SimplexF(new NukkitRandom(0), 1f, 1 / 4f, 1 / 3.5f);
 
     static {
         colors = new int[16];
@@ -109,7 +110,7 @@ public class MesaBiome extends CoveredBiome {
     @Override
     public void preCover(int x, int z) {
         //random noise from 0-3
-        randY = (int) ((quickNoise.noise2D(x, z, true) + 1) * 1.5D);
+        randY = (int) ((quickNoise.noise2D(x, z, true) + 1) * 1.5f);
         redSandThreshold = 71 + randY;
     }
 }
