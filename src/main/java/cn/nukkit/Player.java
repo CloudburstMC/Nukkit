@@ -42,6 +42,7 @@ import cn.nukkit.item.food.Food;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
+import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.particle.CriticalParticle;
@@ -1528,6 +1529,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     } else {
                         this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
                     }
+                    Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
+                    sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getMinElevation() + "-" + biome.getMaxElevation() + ")");
                 } else {
                     this.blocksAround = blocksAround;
                     this.collisionBlocks = collidingBlocks;

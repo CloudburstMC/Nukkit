@@ -78,7 +78,7 @@ public class MesaBiome extends CoveredBiome {
         if (isRedSand) {
             return SAND;
         } else {
-            currMeta = colors[(startY - (y + randY)) & 0xF];
+            currMeta = colors[(randY + y) & 0xF];
             return currMeta == -1 ? TERRACOTTA : STAINED_TERRACOTTA;
         }
     }

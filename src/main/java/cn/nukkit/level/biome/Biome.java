@@ -18,6 +18,7 @@ import java.util.Set;
 public abstract class Biome implements BlockID {
     public static final int MAX_BIOMES = 256;
     public static final Biome[] biomes = new Biome[MAX_BIOMES];
+    public static final boolean[] overhang = new boolean[MAX_BIOMES];
     public static final List<Biome> unorderedBiomes = new ArrayList<>();
 
     private final ArrayList<Populator> populators = new ArrayList<>();
@@ -30,6 +31,7 @@ public abstract class Biome implements BlockID {
     protected static void register(int id, Biome biome) {
         biome.setId(id);
         biomes[id] = biome;
+        overhang[id] = biome.doesOverhang();
         unorderedBiomes.add(biome);
     }
 

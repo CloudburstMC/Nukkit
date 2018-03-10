@@ -6,9 +6,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.BiomeSelector;
 import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.biome.type.CoveredBiome;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.generator.noise.Simplex;
 import cn.nukkit.level.generator.noise.SimplexF;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.impl.*;
@@ -44,7 +42,7 @@ import java.util.*;
  * HugeTreesGenerator.java
  */
 public class Normal extends Generator {
-    private static final int SMOOTH_SIZE = 2;
+    private static final int SMOOTH_SIZE = 3;
 
     private final List<Populator> populators = new ArrayList<>();
     private final List<Populator> generationPopulators = new ArrayList<>();
@@ -58,7 +56,8 @@ public class Normal extends Generator {
     private SimplexF[] noiseBase = new SimplexF[baseNoiseLayers];
     private BiomeSelector selector;
     private ThreadLocal<float[][][]> baseNoise = ThreadLocal.withInitial(() -> new float[5][5][33]);
-    private ThreadLocal<float[][]> minHeights = ThreadLocal.withInitial(() -> new float[16][16]);
+    private ThreadLocal<short[][]> minHeights = ThreadLocal.withInitial(() -> new short[16][16]);
+    private ThreadLocal<short[][]> maxHeights = ThreadLocal.withInitial(() -> new short[16][16]);
     private ThreadLocal<float[][]> shrinkFactors = ThreadLocal.withInitial(() -> new float[16][16]);
     private ThreadLocal<Long2ObjectMap<Biome>> biomes = ThreadLocal.withInitial(Long2ObjectOpenHashMap::new);
 
@@ -103,7 +102,7 @@ public class Normal extends Generator {
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
         for (int i = 0; i < baseNoiseLayers; i++) {
-            this.noiseBase[i] = new SimplexF(this.nukkitRandom, 8, 2 / 4F, 1 / ((i + 1) * 64F));
+            this.noiseBase[i] = new SimplexF(this.nukkitRandom, 4, 2 / 4F, 1 / ((i + 1) * 64F));
         }
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.nukkitRandom);
@@ -143,38 +142,18 @@ public class Normal extends Generator {
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
         float[][][] baseNoise = this.baseNoise.get();
         Long2ObjectMap<Biome> biomes = this.biomes.get();
-        biomes.clear(); //remove anything that may be left over from last chunk
-        float[][] minHeights = this.minHeights.get();
+        short[][] minHeights = this.minHeights.get();
+        short[][] maxHeights = this.maxHeights.get();
         float[][] shrinkFactors = this.shrinkFactors.get();
 
-        //fill noise array
-        {
-            int xBase = chunkX << 4;
-            int zBase = chunkZ << 4;
-            //average all noise out
-            for (int x = 0; x < 5; x++) {
-                for (int y = 32; y > -1; y--) {
-                    for (int z = 0; z < 5; z++) {
-                        float val = 0;
-                        for (int i = 0; i < baseNoiseLayers; i++) {
-                            //another way (average): val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
-                            val = Math.min(val, noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true));
-                        }
-                        //val /= baseNoiseLayers;
-                        baseNoise[x][z][y] = val;
-                    }
-                }
-            }
-        }
-
-        float scaleAmountHoriz = 0.25f;
-        float scaleAmountVert = 0.125f;
         //smooth biome height values
         for (int x = 0; x < 16; x++) {
+            short[] maxHeightsSub = maxHeights[x];
+            short[] minHeightsSub = minHeights[x];
             for (int z = 0; z < 16; z++) {
                 float maxSum = 0;
                 float minSum = 0;
-                int i = 0;
+                float i = 0;
 
                 for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; sx++) {
                     for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; sz++) {
@@ -195,20 +174,79 @@ public class Normal extends Generator {
 
                 maxSum /= i;
                 minSum /= i;
-                minHeights[x][z] = minSum;
+                minHeightsSub[z] = (short) minSum;
+                maxHeightsSub[z] = (short) maxSum;
                 //we use 2 instead of 1 to offset the minimum height to the min value, not have min be the center
                 shrinkFactors[x][z] = 2 / (maxSum - minSum);
                 Biome biome = biomes.get(Level.chunkHash((chunkX << 4) | x, (chunkZ << 4) | z));
                 chunk.setBiome(x, z, biome);
             }
         }
+        biomes.clear(); //remove all temporary data because we don't need it
 
+        //fill noise array
+        {
+            int xBase = chunkX << 4;
+            int zBase = chunkZ << 4;
+            //average all noise out
+            for (int x = 0; x < 5; x++) {
+                int xx = x << 2;
+                int X = Math.min(15, xx);
+                short[] minHeightsSub = minHeights[X];
+                short[] maxHeightsSub = maxHeights[X];
+                float[] shrinkFactorsSub = shrinkFactors[X];
+                for (int z = 0; z < 5; z++) {
+                    int zz = z << 2;
+                    int Z = Math.min(15, zz);
+                    short maxHeight = maxHeightsSub[Z];
+                    int minScan = (minHeightsSub[Z] >> 3) - 1;
+                    for (int y = (maxHeight >> 3) + 1; y < 33; y++)    {
+                        baseNoise[x][z][y] = 1f;
+                    }
+                    if (!Biome.overhang[chunk.getBiomeId(X, Z)]) {
+                        boolean normal = true;
+                        float shrinkFactor = shrinkFactorsSub[Z];
+                        for (int y = Math.min(32, (maxHeight >> 3) + 1); y > minScan; y--) {
+                            int yy = y << 3;
+                            if (normal) {
+                                float val = 0;
+                                for (int i = 0; i < baseNoiseLayers; i++) {
+                                    //another way (average): val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
+                                    val = Math.min(val, noiseBase[i].noise3D(xBase + xx, yy, zBase + zz, true));
+                                }
+                                //val /= baseNoiseLayers;
+                                if (val + (yy - minScan) * shrinkFactor < 0.0f) {
+                                    normal = false;
+                                }
+                                baseNoise[x][z][y] = val;
+                            } else {
+                                baseNoise[x][z][y] = -1.0f;
+                            }
+                        }
+                    } else {
+                        for (int y = Math.min(32, (maxHeight >> 3) + 1); y > minScan; y--) {
+                            int yy = y << 3;
+                            float val = 0;
+                            for (int i = 0; i < baseNoiseLayers; i++) {
+                                //another way (average): val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
+                                val = Math.min(val, noiseBase[i].noise3D(xBase + xx, yy, zBase + zz, true));
+                            }
+                            //val /= baseNoiseLayers;
+                            baseNoise[x][z][y] = val;
+                        }
+                    }
+                }
+            }
+        }
+
+        float scaleAmountHoriz = 0.25f;
+        float scaleAmountVert = 0.125f;
         //place blocks
         for (int xPiece = 0; xPiece < 4; xPiece++) {
             for (int zPiece = 0; zPiece < 4; zPiece++) {
-                int yLoc = 255;
+                int yLoc = 0;
                 //iterate from top to bottom of chunk
-                for (int yPiece = 31; yPiece > -1; yPiece--) {
+                for (int yPiece = 0; yPiece < 32; yPiece++) {
                     float noiseBase1 = baseNoise[xPiece][zPiece][yPiece];
                     float noiseBase2 = baseNoise[xPiece][zPiece + 1][yPiece];
                     float noiseBase3 = baseNoise[xPiece + 1][zPiece][yPiece];
@@ -217,14 +255,14 @@ public class Normal extends Generator {
                     float noiseVertIncr2 = (baseNoise[xPiece][zPiece + 1][yPiece + 1] - noiseBase2) * scaleAmountVert;
                     float noiseVertIncr3 = (baseNoise[xPiece + 1][zPiece][yPiece + 1] - noiseBase3) * scaleAmountVert;
                     float noiseVertIncr4 = (baseNoise[xPiece + 1][zPiece + 1][yPiece + 1] - noiseBase4) * scaleAmountVert;
-                    for (int ySeg = 7; ySeg > -1; ySeg--, yLoc--) {
+                    for (int ySeg = 0; ySeg < 8; ySeg++, yLoc++) {
                         float baseOffset = noiseBase1;
                         float baseOffsetMinXMaxZ = noiseBase2;
                         float scaled1 = (noiseBase3 - noiseBase1) * scaleAmountHoriz;
                         float scaled2 = (noiseBase4 - noiseBase2) * scaleAmountHoriz;
                         int xLoc = xPiece * 4;
                         for (int xSeg = 0; xSeg < 4; xSeg++, xLoc++) {
-                            float[] minHeightsSub = minHeights[xLoc];
+                            short[] minHeightsSub = minHeights[xLoc];
                             float[] shrinkFactorsSub = shrinkFactors[xLoc];
                             int zLoc = zPiece * 4;
                             float noiseVal = baseOffset;
@@ -242,10 +280,10 @@ public class Normal extends Generator {
                             baseOffset += scaled1;
                             baseOffsetMinXMaxZ += scaled2;
                         }
-                        noiseBase1 -= noiseVertIncr1;
-                        noiseBase2 -= noiseVertIncr2;
-                        noiseBase3 -= noiseVertIncr3;
-                        noiseBase4 -= noiseVertIncr4;
+                        noiseBase1 += noiseVertIncr1;
+                        noiseBase2 += noiseVertIncr2;
+                        noiseBase3 += noiseVertIncr3;
+                        noiseBase4 += noiseVertIncr4;
                     }
                 }
             }
