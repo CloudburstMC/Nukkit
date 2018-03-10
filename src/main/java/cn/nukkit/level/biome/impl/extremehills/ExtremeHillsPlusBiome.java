@@ -5,6 +5,8 @@ package cn.nukkit.level.biome.impl.extremehills;
  * Nukkit Project
  * <p>
  * make sure this is touching another extreme hills type or it'll look dumb
+ *
+ * vertical cliffs, flat on top and on bottom
  */
 public class ExtremeHillsPlusBiome extends ExtremeHillsBiome {
 

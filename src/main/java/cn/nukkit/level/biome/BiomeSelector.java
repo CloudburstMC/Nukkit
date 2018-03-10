@@ -6,6 +6,7 @@ import cn.nukkit.math.NukkitRandom;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: DaPorkchop_
@@ -27,7 +28,7 @@ public class BiomeSelector {
     }
 
     public Biome pickBiome(double x, double z) {
-        double noiseOcean = ocean.noise2D(x, z, true);
+        /*double noiseOcean = ocean.noise2D(x, z, true);
         double noiseTemp = temperature.noise2D(x, z, true);
         double noiseRain = rainfall.noise2D(x, z, true);
         if (noiseOcean < -0.15) {
@@ -41,7 +42,10 @@ public class BiomeSelector {
         if (noiseRiver < 0.04) {
             return EnumBiome.RIVER.biome;
         }
-        return EnumBiome.OCEAN.biome;
+        return EnumBiome.OCEAN.biome;*/
+
+        // > using actual biome selectors in 2018
+        return Biome.unorderedBiomes.get(Math.abs(((int) x >> 5) ^ 6457109 * ((int) z >> 5) ^ 9800471) % Biome.unorderedBiomes.size());
     }
 }
 

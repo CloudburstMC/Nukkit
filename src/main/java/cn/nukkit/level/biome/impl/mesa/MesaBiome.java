@@ -18,7 +18,7 @@ public class MesaBiome extends CoveredBiome {
     static final Simplex quickNoise = new Simplex(new NukkitRandom(0), 1d, 1 / 4F, 1 / 3.5F);
 
     static {
-        colors = new int[7];
+        colors = new int[16];
         //0: white
         //1: orange
         //4: yellow
@@ -26,13 +26,21 @@ public class MesaBiome extends CoveredBiome {
         //12: brown
         //14: red
         //-1: use plain terracotta instead of stained terracotta
-        colors[0] = 0;
         colors[1] = 1;
         colors[2] = 4;
-        colors[3] = 8;
-        colors[4] = 12;
-        colors[5] = 14;
-        colors[6] = -1;
+        colors[3] = 12;
+        colors[4] = 14;
+        colors[5] = 8;
+        colors[6] = 1;
+        colors[7] = 4;
+        colors[8] = 0;
+        colors[9] = 12;
+        colors[10] = -1;
+        colors[11] = 14;
+        colors[12] = 1;
+        colors[13] = 8;
+        colors[14] = 12;
+        colors[15] = 14;
     }
 
     int randY = 0;
@@ -69,7 +77,7 @@ public class MesaBiome extends CoveredBiome {
         if (isRedSand) {
             return SAND;
         } else {
-            currMeta = colors[(startY - (y + randY)) % colors.length];
+            currMeta = colors[(startY - (y + randY)) & 0xF];
             return currMeta == -1 ? TERRACOTTA : STAINED_TERRACOTTA;
         }
     }

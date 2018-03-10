@@ -59,7 +59,6 @@ public class Normal extends Generator {
     private ThreadLocal<double[][][]> baseNoise = ThreadLocal.withInitial(() -> new double[5][5][33]);
     private ThreadLocal<double[][]> minHeights = ThreadLocal.withInitial(() -> new double[16][16]);
     private ThreadLocal<double[][]> shrinkFactors = ThreadLocal.withInitial(() -> new double[16][16]);
-    private ThreadLocal<int[][]> stoneBlocks = ThreadLocal.withInitial(() -> new int[16][16]);
     private ThreadLocal<Long2ObjectMap<Biome>> biomes = ThreadLocal.withInitial(Long2ObjectOpenHashMap::new);
 
     public Normal() {
@@ -146,7 +145,6 @@ public class Normal extends Generator {
         biomes.clear(); //remove anything that may be left over from last chunk
         double[][] minHeights = this.minHeights.get();
         double[][] shrinkFactors = this.shrinkFactors.get();
-        int[][] stoneBlocks = this.stoneBlocks.get();
 
         //fill noise array
         {
@@ -154,7 +152,7 @@ public class Normal extends Generator {
             int zBase = chunkZ << 4;
             //average all noise out
             for (int x = 0; x < 5; x++) {
-                for (int y = 0; y < 33; y++) {
+                for (int y = 32; y > -1; y--) {
                     for (int z = 0; z < 5; z++) {
                         double val = 0;
                         for (int i = 0; i < baseNoiseLayers; i++) {
@@ -201,7 +199,6 @@ public class Normal extends Generator {
                 shrinkFactors[x][z] = 2 / (maxSum - minSum);
                 Biome biome = biomes.get(Level.chunkHash((chunkX << 4) | x, (chunkZ << 4) | z));
                 chunk.setBiome(x, z, biome);
-                stoneBlocks[x][z] = biome instanceof CoveredBiome ? ((CoveredBiome) biome).getStoneBlock() : BlockID.STONE;
             }
         }
 
@@ -228,18 +225,17 @@ public class Normal extends Generator {
                         for (int xSeg = 0; xSeg < 4; xSeg++, xLoc++) {
                             double[] minHeightsSub = minHeights[xLoc];
                             double[] shrinkFactorsSub = shrinkFactors[xLoc];
-                            int[] stoneBlocksSub = stoneBlocks[xLoc];
                             int zLoc = zPiece * 4;
                             double noiseVal = baseOffset;
                             double noiseIncr = (baseOffsetMinXMaxZ - baseOffset) * scaleAmountHoriz;
                             for (int zSeg = 0; zSeg < 4; zSeg++, zLoc++) {
                                 int block = Block.AIR;
                                 if (noiseVal + ((yLoc - (minHeightsSub[zLoc])) * shrinkFactorsSub[zLoc]) < 0.0D) {
-                                    block = stoneBlocksSub[zLoc];
+                                    block = Block.STONE;
                                 } else if (yLoc < seaHeight) {
                                     block = Block.STILL_WATER;
                                 }
-                                chunk.setBlock(xLoc, yLoc, zLoc, block << 4);
+                                chunk.setFullBlockId(xLoc, yLoc, zLoc, block << 4);
                                 noiseVal += noiseIncr;
                             }
                             baseOffset += scaled1;

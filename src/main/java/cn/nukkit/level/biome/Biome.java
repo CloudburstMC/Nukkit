@@ -7,6 +7,9 @@ import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -14,19 +17,20 @@ import java.util.ArrayList;
  */
 public abstract class Biome implements BlockID {
     public static final int MAX_BIOMES = 256;
-
     public static final Biome[] biomes = new Biome[MAX_BIOMES];
+    public static final List<Biome> unorderedBiomes = new ArrayList<>();
+
     private final ArrayList<Populator> populators = new ArrayList<>();
     protected double rainfall = 0.5;
     protected double temperature = 0.5;
     private int id;
-    private boolean registered = false;
     private int minElevation;
     private int maxElevation;
 
     protected static void register(int id, Biome biome) {
         biome.setId(id);
         biomes[id] = biome;
+        unorderedBiomes.add(biome);
     }
 
     static Biome getBiome(int id) {
@@ -114,6 +118,15 @@ public abstract class Biome implements BlockID {
 
     //whether or not water should freeze into ice on generation
     public boolean isFreezing() {
+        return false;
+    }
+
+    /**
+     * Whether or not overhangs should generate in this biome (places where solid blocks generate over air)
+     *
+     * This should probably be used with a custom max elevation or things can look stupid
+     */
+    public boolean doesOverhang()   {
         return false;
     }
 }

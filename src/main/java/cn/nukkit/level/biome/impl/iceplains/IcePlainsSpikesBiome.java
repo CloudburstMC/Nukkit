@@ -84,13 +84,13 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
                 } else {
                     //the maximum possible radius in blocks
                     int baseWidth = random.nextBoundedInt(1) + 4;
-                    float shrinkFactor = baseWidth / height;
+                    float shrinkFactor = baseWidth / (float) height;
                     float currWidth = baseWidth;
                     for (int y = startY; y < maxY; y++) {
                         for (int xx = (int) -currWidth; xx < currWidth; xx++) {
                             for (int zz = (int) -currWidth; zz < currWidth; zz++) {
                                 int currDist = (int) Math.sqrt(xx * xx + zz * zz);
-                                if (random.nextBoundedInt((int) Math.abs(currWidth - currDist)) * 2 == 0) {
+                                if ((int) currWidth != (int) currDist && random.nextBoolean()) {
                                     level.setBlockFullIdAt(x + xx, y, z + zz, PACKED_ICE);
                                 }
                             }

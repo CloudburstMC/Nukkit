@@ -29,4 +29,9 @@ public class SavannaMBiome extends SavannaBiome {
     //public void preCover(int x, int z) {
     //    coarseDirt = coarseDirtNoise.noise2D(x, z, true) < 0;
     //}
+
+    @Override
+    public boolean doesOverhang() {
+        return true;
+    }
 }

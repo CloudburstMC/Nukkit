@@ -8,8 +8,9 @@ import cn.nukkit.math.NukkitRandom;
  * Nukkit Project
  * <p>
  * make sure this is touching another extreme hills type or it'll look dumb
+ *
+ * very smooth hills with flat areas between
  */
-//porktodo: this has no overhangs!
 public class ExtremeHillsMBiome extends ExtremeHillsPlusBiome {
     private static final Simplex gravelNoise = new Simplex(new NukkitRandom(0), 1d, 1 / 4d, 1 / 3.5d);
     private boolean isGravel = false;
@@ -46,5 +47,10 @@ public class ExtremeHillsMBiome extends ExtremeHillsPlusBiome {
     public void preCover(int x, int z) {
         //-0.75 is farily rare, so there'll be much more gravel than grass
         isGravel = gravelNoise.noise2D(x, z, true) < -0.75;
+    }
+
+    @Override
+    public boolean doesOverhang() {
+        return false;
     }
 }

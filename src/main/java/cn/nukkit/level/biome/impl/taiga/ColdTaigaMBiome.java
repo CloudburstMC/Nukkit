@@ -16,4 +16,9 @@ public class ColdTaigaMBiome extends ColdTaigaBiome {
     public String getName() {
         return "Cold Taiga M";
     }
+
+    @Override
+    public boolean doesOverhang() {
+        return true;
+    }
 }

@@ -9,6 +9,8 @@ import cn.nukkit.level.generator.populator.impl.PopulatorTree;
  * Nukkit Project
  * <p>
  * make sure this is touching another extreme hills type or it'll look dumb
+ *
+ * steep mountains with flat areas between
  */
 public class ExtremeHillsBiome extends GrassyBiome {
     public ExtremeHillsBiome() {
@@ -34,5 +36,10 @@ public class ExtremeHillsBiome extends GrassyBiome {
     @Override
     public String getName() {
         return "Extreme Hills";
+    }
+
+    @Override
+    public boolean doesOverhang() {
+        return true;
     }
 }
