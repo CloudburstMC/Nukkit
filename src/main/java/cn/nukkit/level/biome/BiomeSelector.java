@@ -27,7 +27,7 @@ public class BiomeSelector {
         this.ocean = new Simplex(random, 6d, 2 / 4d, 1 / 512D);
     }
 
-    public Biome pickBiome(double x, double z) {
+    public Biome pickBiome(int x, int z) {
         /*double noiseOcean = ocean.noise2D(x, z, true);
         double noiseTemp = temperature.noise2D(x, z, true);
         double noiseRain = rainfall.noise2D(x, z, true);
@@ -45,7 +45,26 @@ public class BiomeSelector {
         return EnumBiome.OCEAN.biome;*/
 
         // > using actual biome selectors in 2018
-        return Biome.unorderedBiomes.get(Math.abs(((int) x >> 5) ^ 6457109 * ((int) z >> 5) ^ 9800471) % Biome.unorderedBiomes.size());
+        x >>= 6;
+        z >>= 6;
+        //return Biome.unorderedBiomes.get(Math.abs(((int) x >> 5) ^ 6457109 * ((int) z >> 5) ^ 9800471) % Biome.unorderedBiomes.size());
+        boolean doPlateau = (((x * z) ^ 6457109) & 0x1) == 0;
+        boolean doM = (((x * z) ^ 9800471) & 0x1) == 0;
+        boolean doF = (((x * z) ^ 7003231) & 0x8) == 0;
+        if (doPlateau)  {
+            /*if (doM && doF)    {
+                return EnumBiome.MESA_PLATEAU_F_M.biome;
+            } else if (doM) {
+                return EnumBiome.MESA_PLATEAU_M.biome;
+            } else if (doF) {
+                return EnumBiome.MESA_PLATEAU_F.biome;
+            } else {
+                return EnumBiome.MESA_PLATEAU.biome;
+            }*/
+            return doM ? EnumBiome.MESA_PLATEAU_M.biome : EnumBiome.MESA_PLATEAU.biome;
+        } else {
+            return doF ? EnumBiome.MESA_BRYCE.biome : EnumBiome.MESA.biome;
+        }
     }
 }
 

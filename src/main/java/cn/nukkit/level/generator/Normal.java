@@ -42,7 +42,9 @@ import java.util.*;
  * HugeTreesGenerator.java
  */
 public class Normal extends Generator {
-    private static final int SMOOTH_SIZE = 3;
+    private static final int SMOOTH_SIZE = 3 << 1;
+    private static final int STONE = BlockID.STONE << 4;
+    private static final int STILL_WATER = BlockID.STILL_WATER << 4;
 
     private final List<Populator> populators = new ArrayList<>();
     private final List<Populator> generationPopulators = new ArrayList<>();
@@ -55,10 +57,6 @@ public class Normal extends Generator {
     private long localSeed2;
     private SimplexF[] noiseBase = new SimplexF[baseNoiseLayers];
     private BiomeSelector selector;
-    private ThreadLocal<float[][][]> baseNoise = ThreadLocal.withInitial(() -> new float[5][5][33]);
-    private ThreadLocal<short[][]> minHeights = ThreadLocal.withInitial(() -> new short[16][16]);
-    private ThreadLocal<short[][]> maxHeights = ThreadLocal.withInitial(() -> new short[16][16]);
-    private ThreadLocal<float[][]> shrinkFactors = ThreadLocal.withInitial(() -> new float[16][16]);
     private ThreadLocal<Long2ObjectMap<Biome>> biomes = ThreadLocal.withInitial(Long2ObjectOpenHashMap::new);
 
     public Normal() {
@@ -139,155 +137,95 @@ public class Normal extends Generator {
 
     @Override
     public void generateChunk(final int chunkX, final int chunkZ, FullChunk chunk) {
+        int baseX = chunkX << 4;
+        int baseZ = chunkZ << 4;
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
-        float[][][] baseNoise = this.baseNoise.get();
         Long2ObjectMap<Biome> biomes = this.biomes.get();
-        short[][] minHeights = this.minHeights.get();
-        short[][] maxHeights = this.maxHeights.get();
-        float[][] shrinkFactors = this.shrinkFactors.get();
 
         //smooth biome height values
-        for (int x = 0; x < 16; x++) {
-            short[] maxHeightsSub = maxHeights[x];
-            short[] minHeightsSub = minHeights[x];
-            for (int z = 0; z < 16; z++) {
-                float maxSum = 0;
-                float minSum = 0;
-                float i = 0;
+        int xPos = baseX;
+        for (int x = 0; x < 16; x++, xPos++) {
+            int zPos = baseZ;
+            for (int z = 0; z < 16; z++, zPos++) {
+                int maxSum = 0;
+                int minSum = 0;
+                int count = 0;
 
-                for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; sx++) {
-                    for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; sz++) {
+                for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; sx += 2) {
+                    for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; sz += 2) {
                         Biome biome;
-                        long index = Level.chunkHash((chunkX << 4) + x + sx, (chunkZ << 4) + z + sz);
+                        long index = Level.chunkHash(xPos + sx, zPos + sz);
                         if (biomes.containsKey(index)) {
                             biome = biomes.get(index);
                         } else {
-                            biome = pickBiome(chunkX * 16 + x + sx, chunkZ * 16 + z + sz);
+                            biome = pickBiome(xPos + sx, zPos + sz);
                             biomes.put(index, biome);
                         }
 
                         maxSum += biome.getMaxElevation() << 1; //multiply by two
                         minSum += biome.getMinElevation();
-                        i++;
+                        count++;
                     }
                 }
 
-                maxSum /= i;
-                minSum /= i;
-                minHeightsSub[z] = (short) minSum;
-                maxHeightsSub[z] = (short) maxSum;
+                maxSum /= count;
+                minSum /= count;
                 //we use 2 instead of 1 to offset the minimum height to the min value, not have min be the center
-                shrinkFactors[x][z] = 2 / (maxSum - minSum);
-                Biome biome = biomes.get(Level.chunkHash((chunkX << 4) | x, (chunkZ << 4) | z));
+                float shrinkFactor = 2f / (float) (maxSum - minSum);
+                Biome biome = biomes.get(Level.chunkHash(xPos, zPos));
                 chunk.setBiome(x, z, biome);
+
+                //place blocks
+                //we use two different methods depending on whether or not there'll be overhangs, helping us optimize everything a lot
+                if (biome.doesOverhang())   {
+                    //iterate from the max height to the min height
+                    //this doesn't fill stone blocks to the bottom, meaning overhangs can spawn
+                    //it also means that more noise samples need to be taken, though
+                    for (int y = maxSum; y > minSum; y--)   {
+                        int block = 0;
+                        float noise = getNoiseAt(xPos, y, zPos) + (y - minSum) * shrinkFactor;
+                        if (noise < 0f) {
+                            block = STONE;
+                        } else if (y < seaHeight) {
+                            block = STILL_WATER;
+                        }
+
+                        if (block != 0) {
+                            chunk.setFullBlockId(x, y, z, block);
+                        }
+                    }
+                } else {
+                    boolean flag = false;
+                    //iterate from the max height to the min height
+                    //as soon as we find a block that isn't air, set every block below that to stone
+                    //this prevents overhangs from spawning in biomes where they shouldn't
+                    for (int y = maxSum; y > minSum; y--)   {
+                        if (flag)   {
+                            chunk.setFullBlockId(x, y, z, STONE);
+                        } else {
+                            int block = 0;
+                            float noise = getNoiseAt(xPos, y, zPos) + (y - minSum) * shrinkFactor;
+                            if (noise < 0f) {
+                                block = STONE;
+                                flag = true;
+                            } else if (y < seaHeight) {
+                                block = STILL_WATER;
+                            }
+
+                            if (block != 0) {
+                                chunk.setFullBlockId(x, y, z, block);
+                            }
+                        }
+                    }
+                }
+                //everything below the min height can be safely filled with stone
+                //we don't need to fill everything above the max height with air because all blocks default to that
+                for (int y = minSum; y > -1; y--)   {
+                    chunk.setFullBlockId(x, y, z, STONE);
+                }
             }
         }
         biomes.clear(); //remove all temporary data because we don't need it
-
-        //fill noise array
-        {
-            int xBase = chunkX << 4;
-            int zBase = chunkZ << 4;
-            //average all noise out
-            for (int x = 0; x < 5; x++) {
-                int xx = x << 2;
-                int X = Math.min(15, xx);
-                short[] minHeightsSub = minHeights[X];
-                short[] maxHeightsSub = maxHeights[X];
-                float[] shrinkFactorsSub = shrinkFactors[X];
-                for (int z = 0; z < 5; z++) {
-                    int zz = z << 2;
-                    int Z = Math.min(15, zz);
-                    short maxHeight = maxHeightsSub[Z];
-                    int minScan = (minHeightsSub[Z] >> 3) - 1;
-                    for (int y = (maxHeight >> 3) + 1; y < 33; y++)    {
-                        baseNoise[x][z][y] = 1f;
-                    }
-                    if (!Biome.overhang[chunk.getBiomeId(X, Z)]) {
-                        boolean normal = true;
-                        float shrinkFactor = shrinkFactorsSub[Z];
-                        for (int y = Math.min(32, (maxHeight >> 3) + 1); y > minScan; y--) {
-                            int yy = y << 3;
-                            if (normal) {
-                                float val = 0;
-                                for (int i = 0; i < baseNoiseLayers; i++) {
-                                    //another way (average): val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
-                                    val = Math.min(val, noiseBase[i].noise3D(xBase + xx, yy, zBase + zz, true));
-                                }
-                                //val /= baseNoiseLayers;
-                                if (val + (yy - minScan) * shrinkFactor < 0.0f) {
-                                    normal = false;
-                                }
-                                baseNoise[x][z][y] = val;
-                            } else {
-                                baseNoise[x][z][y] = -1.0f;
-                            }
-                        }
-                    } else {
-                        for (int y = Math.min(32, (maxHeight >> 3) + 1); y > minScan; y--) {
-                            int yy = y << 3;
-                            float val = 0;
-                            for (int i = 0; i < baseNoiseLayers; i++) {
-                                //another way (average): val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
-                                val = Math.min(val, noiseBase[i].noise3D(xBase + xx, yy, zBase + zz, true));
-                            }
-                            //val /= baseNoiseLayers;
-                            baseNoise[x][z][y] = val;
-                        }
-                    }
-                }
-            }
-        }
-
-        float scaleAmountHoriz = 0.25f;
-        float scaleAmountVert = 0.125f;
-        //place blocks
-        for (int xPiece = 0; xPiece < 4; xPiece++) {
-            for (int zPiece = 0; zPiece < 4; zPiece++) {
-                int yLoc = 0;
-                //iterate from top to bottom of chunk
-                for (int yPiece = 0; yPiece < 32; yPiece++) {
-                    float noiseBase1 = baseNoise[xPiece][zPiece][yPiece];
-                    float noiseBase2 = baseNoise[xPiece][zPiece + 1][yPiece];
-                    float noiseBase3 = baseNoise[xPiece + 1][zPiece][yPiece];
-                    float noiseBase4 = baseNoise[xPiece + 1][zPiece + 1][yPiece];
-                    float noiseVertIncr1 = (baseNoise[xPiece][zPiece][yPiece + 1] - noiseBase1) * scaleAmountVert;
-                    float noiseVertIncr2 = (baseNoise[xPiece][zPiece + 1][yPiece + 1] - noiseBase2) * scaleAmountVert;
-                    float noiseVertIncr3 = (baseNoise[xPiece + 1][zPiece][yPiece + 1] - noiseBase3) * scaleAmountVert;
-                    float noiseVertIncr4 = (baseNoise[xPiece + 1][zPiece + 1][yPiece + 1] - noiseBase4) * scaleAmountVert;
-                    for (int ySeg = 0; ySeg < 8; ySeg++, yLoc++) {
-                        float baseOffset = noiseBase1;
-                        float baseOffsetMinXMaxZ = noiseBase2;
-                        float scaled1 = (noiseBase3 - noiseBase1) * scaleAmountHoriz;
-                        float scaled2 = (noiseBase4 - noiseBase2) * scaleAmountHoriz;
-                        int xLoc = xPiece * 4;
-                        for (int xSeg = 0; xSeg < 4; xSeg++, xLoc++) {
-                            short[] minHeightsSub = minHeights[xLoc];
-                            float[] shrinkFactorsSub = shrinkFactors[xLoc];
-                            int zLoc = zPiece * 4;
-                            float noiseVal = baseOffset;
-                            float noiseIncr = (baseOffsetMinXMaxZ - baseOffset) * scaleAmountHoriz;
-                            for (int zSeg = 0; zSeg < 4; zSeg++, zLoc++) {
-                                int block = Block.AIR;
-                                if (noiseVal + ((yLoc - (minHeightsSub[zLoc])) * shrinkFactorsSub[zLoc]) < 0.0f) {
-                                    block = Block.STONE;
-                                } else if (yLoc < seaHeight) {
-                                    block = Block.STILL_WATER;
-                                }
-                                chunk.setFullBlockId(xLoc, yLoc, zLoc, block << 4);
-                                noiseVal += noiseIncr;
-                            }
-                            baseOffset += scaled1;
-                            baseOffsetMinXMaxZ += scaled2;
-                        }
-                        noiseBase1 += noiseVertIncr1;
-                        noiseBase2 += noiseVertIncr2;
-                        noiseBase3 += noiseVertIncr3;
-                        noiseBase4 += noiseVertIncr4;
-                    }
-                }
-            }
-        }
 
         //populate chunk
         for (Populator populator : this.generationPopulators) {
@@ -309,5 +247,15 @@ public class Normal extends Generator {
     @Override
     public Vector3 getSpawn() {
         return new Vector3(127.5, 256, 127.5);
+    }
+
+    public float getNoiseAt(int x, int y, int z)    {
+        float val = 0;
+        for (int i = 0; i < baseNoiseLayers; i++) {
+            //another way (average): val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
+            val = Math.min(val, noiseBase[i].noise3D(x, y, z, true));
+        }
+        //val /= baseNoiseLayers;
+        return val;
     }
 }

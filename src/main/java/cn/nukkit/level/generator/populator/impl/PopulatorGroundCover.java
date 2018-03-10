@@ -18,6 +18,8 @@ public class PopulatorGroundCover extends Populator {
 
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
+        int realX = chunkX << 4;
+        int realZ = chunkZ << 4;
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
                 Biome realBiome = EnumBiome.getBiome(chunk.getBiomeId(x, z));
@@ -25,6 +27,7 @@ public class PopulatorGroundCover extends Populator {
                     final CoveredBiome biome = (CoveredBiome) realBiome;
                     //just in case!
                     synchronized (biome.synchronizeCover) {
+                        biome.preCover(realX | x, realZ | z);
                         int coverBlock = biome.getCoverBlock() << 4;
 
                         boolean hasCovered = false;

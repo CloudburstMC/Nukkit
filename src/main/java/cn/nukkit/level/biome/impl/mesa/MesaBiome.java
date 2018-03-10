@@ -2,11 +2,13 @@ package cn.nukkit.level.biome.impl.mesa;
 
 import cn.nukkit.block.BlockSand;
 import cn.nukkit.level.biome.type.CoveredBiome;
-import cn.nukkit.level.generator.noise.Simplex;
 import cn.nukkit.level.generator.noise.SimplexF;
 import cn.nukkit.level.generator.populator.impl.PopulatorCactus;
 import cn.nukkit.level.generator.populator.impl.PopulatorDeadBush;
 import cn.nukkit.math.NukkitRandom;
+
+import java.util.Arrays;
+import java.util.Random;
 
 /**
  * @author DaPorkchop_
@@ -15,33 +17,40 @@ import cn.nukkit.math.NukkitRandom;
  */
 //porktodo: have biomes be able to offset their own height
 public class MesaBiome extends CoveredBiome {
-    static final int[] colors;
-    static final SimplexF quickNoise = new SimplexF(new NukkitRandom(0), 1f, 1 / 4f, 1 / 3.5f);
+    static final int[] colorLayer = new int[64];
+    static final SimplexF redSandNoise = new SimplexF(new NukkitRandom(937478913), 1f, 1 / 4f, 1 / 4f);
+    static final SimplexF colorNoise = new SimplexF(new NukkitRandom(193759875), 1f, 1 / 4f, 1 / 32f);
 
     static {
-        colors = new int[16];
-        //0: white
-        //1: orange
-        //4: yellow
-        //8: light gray
-        //12: brown
-        //14: red
-        //-1: use plain terracotta instead of stained terracotta
-        colors[1] = 1;
-        colors[2] = 4;
-        colors[3] = 12;
-        colors[4] = 14;
-        colors[5] = 8;
-        colors[6] = 1;
-        colors[7] = 4;
-        colors[8] = 0;
-        colors[9] = 12;
-        colors[10] = -1;
-        colors[11] = 14;
-        colors[12] = 1;
-        colors[13] = 8;
-        colors[14] = 12;
-        colors[15] = 14;
+        Random random = new Random(29864);
+
+        Arrays.fill(colorLayer, -1); // hard clay, other values are stained clay
+        setRandomLayerColor(random, 7, 1); // orange
+        setRandomLayerColor(random, 4, 4); // yellow
+        setRandomLayerColor(random, 4, 12); // brown
+        setRandomLayerColor(random, 7, 14); // red
+        for (int i = 0, j = 0; i < random.nextInt(3) + 3; i++) {
+            j += random.nextInt(6) + 4;
+            if (j >= colorLayer.length -3) {
+                break;
+            }
+            if (random.nextInt(2) == 0 || j < colorLayer.length - 1 && random.nextInt(2) == 0) {
+                colorLayer[j - 1] = 8; // light gray
+            } else {
+                colorLayer[j] = 0; // white
+            }
+        }
+    }
+
+    private static void setRandomLayerColor(Random random, int sliceCount, int color) {
+        for (int i = 0; i < random.nextInt(4) + sliceCount; i++) {
+            int j = random.nextInt(colorLayer.length);
+            int k = 0;
+            while (k < random.nextInt(2) + 1 && j < colorLayer.length) {
+                colorLayer[j++] = color;
+                k++;
+            }
+        }
     }
 
     int randY = 0;
@@ -78,7 +87,7 @@ public class MesaBiome extends CoveredBiome {
         if (isRedSand) {
             return SAND;
         } else {
-            currMeta = colors[(randY + y) & 0xF];
+            currMeta = colorLayer[(y + randY) & 0x3F];
             return currMeta == -1 ? TERRACOTTA : STAINED_TERRACOTTA;
         }
     }
@@ -110,7 +119,7 @@ public class MesaBiome extends CoveredBiome {
     @Override
     public void preCover(int x, int z) {
         //random noise from 0-3
-        randY = (int) ((quickNoise.noise2D(x, z, true) + 1) * 1.5f);
-        redSandThreshold = 71 + randY;
+        randY = Math.round((colorNoise.noise2D(x, z, true) + 1) * 1.5f);
+        redSandThreshold = 71 + Math.round((redSandNoise.noise2D(x, z, true) + 1) * 1.5f);
     }
 }

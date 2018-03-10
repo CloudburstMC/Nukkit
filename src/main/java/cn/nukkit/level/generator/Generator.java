@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator;
 
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
@@ -14,7 +15,7 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Generator {
+public abstract class Generator implements BlockID {
     public static final int TYPE_OLD = 0;
     public static final int TYPE_INFINITE = 1;
     public static final int TYPE_FLAT = 2;

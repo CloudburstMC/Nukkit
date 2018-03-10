@@ -770,17 +770,17 @@ public class Server {
                 player.close(player.getLeaveMessage(), (String) this.getConfig("settings.shutdown-message", "Server closed"));
             }
 
-            this.getLogger().debug("Unloading all levels");
-            for (Level level : this.levelArray) {
-                this.unloadLevel(level, true);
-            }
-
             this.getLogger().debug("Removing event handlers");
             HandlerList.unregisterAll();
 
             this.getLogger().debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
             this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
+
+            this.getLogger().debug("Unloading all levels");
+            for (Level level : this.levelArray) {
+                this.unloadLevel(level, true);
+            }
 
             this.getLogger().debug("Closing console");
             this.console.interrupt();
