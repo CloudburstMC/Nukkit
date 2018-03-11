@@ -88,7 +88,7 @@ public abstract class Biome implements BlockID {
         return minElevation;
     }
 
-    public int getMaxElevation() {
+    public int getMaxElevationOffset() {
         return maxElevation;
     }
 
@@ -97,7 +97,7 @@ public abstract class Biome implements BlockID {
             throw new IllegalArgumentException("Min elevation must be less than max!");
         }
         this.minElevation = min;
-        this.maxElevation = max;
+        this.maxElevation = max - min;
     }
 
     public double getTemperature() {
@@ -130,5 +130,13 @@ public abstract class Biome implements BlockID {
      */
     public boolean doesOverhang()   {
         return false;
+    }
+
+    /**
+     * How much offset should be added to the min/max heights at this position
+     * @return
+     */
+    public int getHeightOffset(int x, int z)    {
+        return 0;
     }
 }

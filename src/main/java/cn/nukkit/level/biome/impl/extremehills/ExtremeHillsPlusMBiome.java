@@ -8,7 +8,6 @@ package cn.nukkit.level.biome.impl.extremehills;
  *
  * very steep (1-2 block at a time) hills with round tops. flat in between
  */
-//porktodo: this has no overhangs!
 public class ExtremeHillsPlusMBiome extends ExtremeHillsMBiome {
 
     public ExtremeHillsPlusMBiome() {

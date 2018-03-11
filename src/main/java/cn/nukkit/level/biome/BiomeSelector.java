@@ -51,7 +51,7 @@ public class BiomeSelector {
         boolean doPlateau = (((x * z) ^ 6457109) & 0x1) == 0;
         boolean doM = (((x * z) ^ 9800471) & 0x1) == 0;
         boolean doF = (((x * z) ^ 7003231) & 0x8) == 0;
-        if (doPlateau)  {
+        if (false && doPlateau)  {
             /*if (doM && doF)    {
                 return EnumBiome.MESA_PLATEAU_F_M.biome;
             } else if (doM) {

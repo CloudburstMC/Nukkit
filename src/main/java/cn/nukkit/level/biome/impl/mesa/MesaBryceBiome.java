@@ -3,7 +3,6 @@ package cn.nukkit.level.biome.impl.mesa;
 /**
  * @author DaPorkchop_
  */
-//porktodo: the tall, flat areas in this biome are tall, thin and nearly vertical
 public class MesaBryceBiome extends MesaBiome {
     public MesaBryceBiome() {
         super();
@@ -12,5 +11,20 @@ public class MesaBryceBiome extends MesaBiome {
     @Override
     public String getName() {
         return "Mesa (Bryce)";
+    }
+
+    @Override
+    public int getMaxElevationOffset() {
+        return super.getMaxElevationOffset();
+    }
+
+    @Override
+    protected float getMoundFrequency() {
+        return 1 / 16f;
+    }
+
+    @Override
+    protected float minHill() {
+        return 0.3f;
     }
 }

@@ -5,7 +5,6 @@ import cn.nukkit.level.generator.populator.impl.tree.JungleFloorPopulator;
 /**
  * @author DaPorkchop_
  */
-//porktodo: melons + pumpkins (GroundBlockPopulator)
 public class JungleMBiome extends JungleBiome {
     public JungleMBiome() {
         super();

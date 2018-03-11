@@ -42,7 +42,7 @@ import java.util.*;
  * HugeTreesGenerator.java
  */
 public class Normal extends Generator {
-    private static final int SMOOTH_SIZE = 3 << 1;
+    private static final int SMOOTH_SIZE = 3;
     private static final int STONE = BlockID.STONE << 4;
     private static final int STILL_WATER = BlockID.STILL_WATER << 4;
 
@@ -151,8 +151,8 @@ public class Normal extends Generator {
                 int minSum = 0;
                 int count = 0;
 
-                for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; sx += 2) {
-                    for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; sz += 2) {
+                for (int sx = -SMOOTH_SIZE; sx <= SMOOTH_SIZE; sx++) {
+                    for (int sz = -SMOOTH_SIZE; sz <= SMOOTH_SIZE; sz++) {
                         Biome biome;
                         long index = Level.chunkHash(xPos + sx, zPos + sz);
                         if (biomes.containsKey(index)) {
@@ -162,8 +162,8 @@ public class Normal extends Generator {
                             biomes.put(index, biome);
                         }
 
-                        maxSum += biome.getMaxElevation() << 1; //multiply by two
-                        minSum += biome.getMinElevation();
+                        maxSum += biome.getMaxElevationOffset() + 1;
+                        minSum += biome.getMinElevation() + biome.getHeightOffset(xPos, zPos);
                         count++;
                     }
                 }
@@ -171,7 +171,7 @@ public class Normal extends Generator {
                 maxSum /= count;
                 minSum /= count;
                 //we use 2 instead of 1 to offset the minimum height to the min value, not have min be the center
-                float shrinkFactor = 2f / (float) (maxSum - minSum);
+                float shrinkFactor = (2f / (((maxSum * count) / (float) count) * 2f));
                 Biome biome = biomes.get(Level.chunkHash(xPos, zPos));
                 chunk.setBiome(x, z, biome);
 
@@ -181,7 +181,7 @@ public class Normal extends Generator {
                     //iterate from the max height to the min height
                     //this doesn't fill stone blocks to the bottom, meaning overhangs can spawn
                     //it also means that more noise samples need to be taken, though
-                    for (int y = maxSum; y > minSum; y--)   {
+                    for (int y = maxSum + minSum; y > minSum; y--)   {
                         int block = 0;
                         float noise = getNoiseAt(xPos, y, zPos) + (y - minSum) * shrinkFactor;
                         if (noise < 0f) {
@@ -199,7 +199,7 @@ public class Normal extends Generator {
                     //iterate from the max height to the min height
                     //as soon as we find a block that isn't air, set every block below that to stone
                     //this prevents overhangs from spawning in biomes where they shouldn't
-                    for (int y = maxSum; y > minSum; y--)   {
+                    for (int y = maxSum + minSum; y > minSum; y--)   {
                         if (flag)   {
                             chunk.setFullBlockId(x, y, z, STONE);
                         } else {
