@@ -19,10 +19,12 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.*;
 
 /**
- * This generator was written by DaPorkchop_
+ * Nukkit's terrain generator
+ * Originally adapted from the PocketMine-MP generator by NycuRO and CreeperFace
+ * Mostly rewritten from scratch by DaPorkchop_
  * <p>
- * The following classes are theirs and are intended for NUKKIT USAGE and should not be copied/translated to other software
- * such as BukkitPE, ClearSky, Genisys , Pocketmine-MP
+ * The following classes, and others related to terrain generation are theirs and are intended for NUKKIT USAGE and should not be copied/translated to other server software
+ * such as BukkitPE, ClearSky, Genisys, PocketMine-MP, or others
  * <p>
  * Normal.java
  * MushroomPopulator.java
@@ -32,14 +34,71 @@ import java.util.*;
  * SavannaTreePopulator.java
  * SwampTreePopulator.java
  * BasicPopulator.java
- * MesaBiome.java
- * JungleBiome.java
- * SavannaBiome.java
- * RoofedForestBiome.java
- * RoofedForestMBiome.java
- * MushroomIsland.java
  * TreeGenerator.java
  * HugeTreesGenerator.java
+ * BeachBiome.java
+ * ColdBeachBiome.java
+ * DesertBiome.java
+ * DesertHillsBiome.java
+ * DesertMBiome.java
+ * ExtremeHillsBiome.java
+ * ExtremeHillsEdgeBiome.java
+ * ExtremeHillsMBiome.java
+ * ExtremeHillsPlusBiome.java
+ * ExtremeHillsPlusMBiome.java
+ * StoneBeachBiome.java
+ * FlowerForestBiome.java
+ * ForestBiome.java
+ * ForestHillsBiome.java
+ * IcePlainsBiome.java
+ * IcePlainsSpikesBiome.java
+ * JungleBiome.java
+ * JungleEdgeBiome.java
+ * JungleEdgeMBiome.java
+ * JungleHillsBiome.java
+ * JungleMBiome.java
+ * MesaBiome.java
+ * MesaBryceBiome.java
+ * MesaPlateauBiome.java
+ * MesaPlateauFBiome.java
+ * MesaPlateauFMBiome.java
+ * MesaPlateauMBiome.java
+ * MushroomIslandBiome.java
+ * MushroomIslandShoreBiome.java
+ * DeepOceanBiome.java
+ * FrozenOceanBiome.java
+ * OceanBiome.java
+ * PlainsBiome.java
+ * SunflowerPlainsBiome.java
+ * FrozenRiverBiome.java
+ * RiverBiome.java
+ * RoofedForestBiome.java
+ * RoofedForestMBiome.java
+ * SavannaBiome.java
+ * SavannaMBiome.java
+ * SavannaPlateauBiome.java
+ * SavannaPlateauMBiome.java
+ * SwampBiome.java
+ * SwamplandMBiome.java
+ * ColdTaigaBiome.java
+ * ColdTaigaHillsBiome.java
+ * ColdTaigaMBiome.java
+ * MegaSpruceTaigaBiome.java
+ * MegaTaigaBiome.java
+ * MegaTagaHillsBiome.java
+ * TaigaBiome.java
+ * TaigaHillsBiome.java
+ * TaigaMBiome.java
+ * CoveredBiome.java
+ * GrassyBiome.java
+ * SandyBiome.java
+ * WateryBiome.java
+ * EnumBiomeBiome.java
+ * PopulatorCount.java
+ * PopulatorSurfaceBlock.java
+ * Normal.java
+ * Nether.java
+ * End.java
  */
 public class Normal extends Generator {
     private static final int SMOOTH_SIZE = 3;
@@ -48,14 +107,15 @@ public class Normal extends Generator {
 
     private final List<Populator> populators = new ArrayList<>();
     private final List<Populator> generationPopulators = new ArrayList<>();
-    private final int baseNoiseLayers = 3;
+    private final int noise3dLayers = 2;
     private final int seaHeight = 64;
     private ChunkManager level;
     private Random random;
     private NukkitRandom nukkitRandom;
     private long localSeed1;
     private long localSeed2;
-    private SimplexF[] noiseBase = new SimplexF[baseNoiseLayers];
+    private SimplexF[] noise3d = new SimplexF[noise3dLayers];
+    private SimplexF heightNoise;
     private BiomeSelector selector;
     private ThreadLocal<Long2ObjectMap<Biome>> biomes = ThreadLocal.withInitial(Long2ObjectOpenHashMap::new);
 
@@ -99,9 +159,10 @@ public class Normal extends Generator {
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
-        for (int i = 0; i < baseNoiseLayers; i++) {
-            this.noiseBase[i] = new SimplexF(this.nukkitRandom, 4, 2 / 4F, 1 / ((i + 1) * 64F));
+        for (int i = 0; i < noise3dLayers; i++) {
+            this.noise3d[i] = new SimplexF(this.nukkitRandom, 4, 2 / 4F, 1 / ((i + 1) * 64F));
         }
+        this.heightNoise = new SimplexF(this.nukkitRandom, 6, 1 / 4f, 1 / 32f);
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.selector = new BiomeSelector(this.nukkitRandom);
 
@@ -175,17 +236,20 @@ public class Normal extends Generator {
                 Biome biome = biomes.get(Level.chunkHash(xPos, zPos));
                 chunk.setBiome(x, z, biome);
 
+                int startHeight = (int) ((getHeightNoiseAt(xPos, zPos) * maxSum) + minSum);
                 //place blocks
                 //we use two different methods depending on whether or not there'll be overhangs, helping us optimize everything a lot
-                if (biome.doesOverhang())   {
+                if (biome.doesOverhang()) {
                     //iterate from the max height to the min height
                     //this doesn't fill stone blocks to the bottom, meaning overhangs can spawn
                     //it also means that more noise samples need to be taken, though
-                    for (int y = maxSum + minSum; y > minSum; y--)   {
+                    for (int y = maxSum + minSum; y > minSum; y--) {
                         int block = 0;
-                        float noise = getNoiseAt(xPos, y, zPos) + (y - minSum) * shrinkFactor;
-                        if (noise < 0f) {
-                            block = STONE;
+                        if (y <= startHeight) {
+                            float noise = getNoiseAt(xPos, y, zPos) + (y - minSum) * shrinkFactor;
+                            if (noise < 0f) {
+                                block = STONE;
+                            }
                         } else if (y < seaHeight) {
                             block = STILL_WATER;
                         }
@@ -195,32 +259,26 @@ public class Normal extends Generator {
                         }
                     }
                 } else {
-                    boolean flag = false;
                     //iterate from the max height to the min height
-                    //as soon as we find a block that isn't air, set every block below that to stone
+                    //as soon as we get to the start height, set every block below that to stone
                     //this prevents overhangs from spawning in biomes where they shouldn't
-                    for (int y = maxSum + minSum; y > minSum; y--)   {
-                        if (flag)   {
-                            chunk.setFullBlockId(x, y, z, STONE);
-                        } else {
-                            int block = 0;
-                            float noise = getNoiseAt(xPos, y, zPos) + (y - minSum) * shrinkFactor;
-                            if (noise < 0f) {
-                                block = STONE;
-                                flag = true;
-                            } else if (y < seaHeight) {
-                                block = STILL_WATER;
-                            }
+                    //it would be possible to start at the start height, but it'd make ocean generation impossible
+                    for (int y = startHeight; y > minSum; y--) {
+                        int block = 0;
+                        if (y <= startHeight) {
+                            block = STONE;
+                        } else if (y < seaHeight) {
+                            block = STILL_WATER;
+                        }
 
-                            if (block != 0) {
-                                chunk.setFullBlockId(x, y, z, block);
-                            }
+                        if (block != 0) {
+                            chunk.setFullBlockId(x, y, z, block);
                         }
                     }
                 }
                 //everything below the min height can be safely filled with stone
                 //we don't need to fill everything above the max height with air because all blocks default to that
-                for (int y = minSum; y > -1; y--)   {
+                for (int y = minSum; y > -1; y--) {
                     chunk.setFullBlockId(x, y, z, STONE);
                 }
             }
@@ -249,13 +307,18 @@ public class Normal extends Generator {
         return new Vector3(127.5, 256, 127.5);
     }
 
-    public float getNoiseAt(int x, int y, int z)    {
+    public float getNoiseAt(int x, int y, int z) {
         float val = 0;
-        for (int i = 0; i < baseNoiseLayers; i++) {
-            //another way (average): val += noiseBase[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
-            val = Math.min(val, noiseBase[i].noise3D(x, y, z, true));
+        for (int i = 0; i < noise3dLayers; i++) {
+            //another way (average): val += noise3d[i].noise3D(xBase + (x << 2), y << 3, zBase + (z << 2), true);
+            val = Math.min(val, noise3d[i].noise3D(x, y, z, true));
         }
-        //val /= baseNoiseLayers;
+        //val /= noise3dLayers;
         return val;
+    }
+
+    public float getHeightNoiseAt(int x, int z) {
+        //value will be between 0 and 1
+        return (heightNoise.noise2D(x, z, true) / 2f) + 0.5f;
     }
 }

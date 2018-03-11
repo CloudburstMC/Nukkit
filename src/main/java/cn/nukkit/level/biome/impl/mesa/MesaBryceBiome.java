@@ -14,11 +14,6 @@ public class MesaBryceBiome extends MesaBiome {
     }
 
     @Override
-    public int getMaxElevationOffset() {
-        return super.getMaxElevationOffset();
-    }
-
-    @Override
     protected float getMoundFrequency() {
         return 1 / 16f;
     }

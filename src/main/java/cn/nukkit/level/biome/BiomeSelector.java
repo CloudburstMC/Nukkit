@@ -25,6 +25,7 @@ public class BiomeSelector {
         this.rainfall = new Simplex(random, 2F, 1F / 8F, 1F / 512F);
         this.river = new Simplex(random, 6d, 2 / 4d, 1 / 256D);
         this.ocean = new Simplex(random, 6d, 2 / 4d, 1 / 512D);
+        //this.ocean = new Simplex(random, 6d, 2 / 4d, 1 / 64D);
     }
 
     public Biome pickBiome(int x, int z) {
@@ -32,7 +33,7 @@ public class BiomeSelector {
         double noiseTemp = temperature.noise2D(x, z, true);
         double noiseRain = rainfall.noise2D(x, z, true);
         if (noiseOcean < -0.15) {
-            if (noiseOcean < -0.08) {
+            if (noiseOcean < -0.9) {
                 return EnumBiome.MUSHROOM_ISLAND.biome;
             } else {
                 return EnumBiome.OCEAN.biome;
@@ -45,14 +46,20 @@ public class BiomeSelector {
         return EnumBiome.OCEAN.biome;*/
 
         // > using actual biome selectors in 2018
-        x >>= 6;
-        z >>= 6;
+        //x >>= 6;
+        //z >>= 6;
+
+        //here's a test for just every biome, for making sure there's no crashes:
         //return Biome.unorderedBiomes.get(Math.abs(((int) x >> 5) ^ 6457109 * ((int) z >> 5) ^ 9800471) % Biome.unorderedBiomes.size());
-        boolean doPlateau = (((x * z) ^ 6457109) & 0x1) == 0;
-        boolean doM = (((x * z) ^ 9800471) & 0x1) == 0;
-        boolean doF = (((x * z) ^ 7003231) & 0x8) == 0;
-        if (false && doPlateau)  {
-            /*if (doM && doF)    {
+
+        //a couple random high primes: 6457109 9800471 7003231
+
+        //here's a test for mesas
+        boolean doPlateau = ocean.noise2D(x, z, true) < 0f;
+        boolean doF = rainfall.noise2D(x, z, true) < -0.5f;
+        if (doPlateau)  {
+            boolean doM = temperature.noise2D(x, z, true) < 0f;
+            if (doM && doF)    {
                 return EnumBiome.MESA_PLATEAU_F_M.biome;
             } else if (doM) {
                 return EnumBiome.MESA_PLATEAU_M.biome;
@@ -60,11 +67,19 @@ public class BiomeSelector {
                 return EnumBiome.MESA_PLATEAU_F.biome;
             } else {
                 return EnumBiome.MESA_PLATEAU.biome;
-            }*/
-            return doM ? EnumBiome.MESA_PLATEAU_M.biome : EnumBiome.MESA_PLATEAU.biome;
+            }
         } else {
             return doF ? EnumBiome.MESA_BRYCE.biome : EnumBiome.MESA.biome;
         }
+
+        //here's a test for extremem hills
+        /*if (noiseOcean < -0.15f) {
+            return EnumBiome.OCEAN.biome;
+        } else if (noiseOcean < -0.19f)  {
+            return EnumBiome.STONE_BEACH.biome;
+        } else {
+
+        }*/
     }
 }
 

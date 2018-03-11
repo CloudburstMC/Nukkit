@@ -7,7 +7,7 @@ public class MesaPlateauBiome extends MesaBiome {
     public MesaPlateauBiome() {
         super();
 
-        this.setElevation(95, 99);
+        this.setElevation(95, 100);
 
         this.setMoundHeight(0);
     }

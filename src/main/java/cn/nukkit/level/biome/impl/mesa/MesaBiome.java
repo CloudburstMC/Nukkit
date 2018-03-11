@@ -86,7 +86,7 @@ public class MesaBiome extends CoveredBiome {
         isRedSand = y < redSandThreshold;
         startY = y;
         //if true, we'll be generating red sand
-        return isRedSand ? 3 : y - 68;
+        return isRedSand ? 3 : y - 66;
     }
 
     @Override

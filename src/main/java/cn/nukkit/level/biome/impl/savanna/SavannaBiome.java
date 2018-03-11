@@ -16,7 +16,7 @@ public class SavannaBiome extends GrassyBiome {
         tree.setBaseAmount(1);
         this.addPopulator(tree);
 
-        this.setElevation(67, 71);
+        this.setElevation(67, 74);
 
         this.temperature = 1.2f;
         this.rainfall = 0.0f;
