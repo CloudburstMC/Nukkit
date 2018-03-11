@@ -3469,6 +3469,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 int chunkZ = Level.getHashZ(index);
                 this.level.unregisterChunkLoader(this, chunkX, chunkZ);
                 this.usedChunks.remove(index);
+
+                for (Entity entity : level.getChunkEntities(chunkX, chunkZ).values()) {
+                    if (entity != this) {
+                        entity.getViewers().remove(getLoaderId());
+                    }
+                }
             }
 
             super.close();
