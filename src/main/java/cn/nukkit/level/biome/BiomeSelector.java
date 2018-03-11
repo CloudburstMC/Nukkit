@@ -55,7 +55,7 @@ public class BiomeSelector {
         //a couple random high primes: 6457109 9800471 7003231
 
         //here's a test for mesas
-        boolean doPlateau = ocean.noise2D(x, z, true) < 0f;
+        /*boolean doPlateau = ocean.noise2D(x, z, true) < 0f;
         boolean doF = rainfall.noise2D(x, z, true) < -0.5f;
         if (doPlateau)  {
             boolean doM = temperature.noise2D(x, z, true) < 0f;
@@ -70,16 +70,35 @@ public class BiomeSelector {
             }
         } else {
             return doF ? EnumBiome.MESA_BRYCE.biome : EnumBiome.MESA.biome;
-        }
+        }*/
 
-        //here's a test for extremem hills
-        /*if (noiseOcean < -0.15f) {
+        //here's a test for extreme hills + oceans
+        double noiseOcean = ocean.noise2D(x, z, true);
+        if (noiseOcean < -0.15f) {
             return EnumBiome.OCEAN.biome;
         } else if (noiseOcean < -0.19f)  {
             return EnumBiome.STONE_BEACH.biome;
         } else {
+            boolean plus = temperature.noise2D(x, z, true) < 0f;
+            boolean m = rainfall.noise2D(x, z, true) < 0f;
+            if(plus && m)   {
+                return EnumBiome.EXTREME_HILLS_PLUS_M.biome;
+            } else if (m)   {
+                return EnumBiome.EXTREME_HILLS_M.biome;
+            } else if (plus)    {
+                return EnumBiome.EXTREME_HILLS_PLUS.biome;
+            } else {
+                return EnumBiome.EXTREME_HILLS.biome;
+            }
+        }
+    }
 
-        }*/
+    public void getBiomes(Biome[] biomes, int x, int z)  {
+        for (int xx = 0; xx < 10; xx++)    {
+            for (int zz = 0; zz < 10; zz++)    {
+                biomes[x + z * 10] = pickBiome(x + xx, z + zz);
+            }
+        }
     }
 }
 

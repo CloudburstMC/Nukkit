@@ -25,8 +25,8 @@ public abstract class Biome implements BlockID {
     protected double rainfall = 0.5;
     protected double temperature = 0.5;
     private int id;
-    private int minElevation;
-    private int maxElevation;
+    private float baseHeight;
+    private float heightVariation;
 
     protected static void register(int id, Biome biome) {
         biome.setId(id);
@@ -84,20 +84,20 @@ public abstract class Biome implements BlockID {
 
     public abstract String getName();
 
-    public int getMinElevation() {
-        return minElevation;
+    public void setBaseHeight(float baseHeight) {
+        this.baseHeight = baseHeight;
     }
 
-    public int getMaxElevationOffset() {
-        return maxElevation;
+    public void setHeightVariation(float heightVariation)   {
+        this.heightVariation = heightVariation;
     }
 
-    public void setElevation(int min, int max) {
-        if (min > max) {
-            throw new IllegalArgumentException("Min elevation must be less than max!");
-        }
-        this.minElevation = min;
-        this.maxElevation = max - min;
+    public float getBaseHeight() {
+        return baseHeight;
+    }
+
+    public float getHeightVariation() {
+        return heightVariation;
     }
 
     public double getTemperature() {
