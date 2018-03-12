@@ -25,6 +25,7 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.level.EnumLevel;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.biome.EnumBiome;
@@ -490,6 +491,8 @@ public class Server {
 
             return;
         }
+
+        EnumLevel.initLevels();
 
         if ((int) this.getConfig("ticks-per.autosave", 6000) > 0) {
             this.autoSaveTicks = (int) this.getConfig("ticks-per.autosave", 6000);
