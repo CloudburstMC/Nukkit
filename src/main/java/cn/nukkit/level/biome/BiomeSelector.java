@@ -139,9 +139,7 @@ public class BiomeSelector {
             } else if (temperature < 0f)    {
                 //cold
                 if (hills < 0.2f)    {
-                    if (noiseOcean < -0.1f) {
-                        biome = EnumBiome.STONE_BEACH;
-                    } else if (rainfall < -0.5f)   {
+                    if (rainfall < -0.5f)   {
                         biome = EnumBiome.EXTREME_HILLS_M;
                     } else if (rainfall > 0.5f) {
                         biome = EnumBiome.EXTREME_HILLS_PLUS_M;
