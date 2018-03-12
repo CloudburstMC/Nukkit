@@ -115,7 +115,7 @@ public class BiomeSelector {
             }
         } else {
             float hills = this.hills.noise2D(x, z, true);
-            if (temperature < -0.5f) {
+            if (temperature < -0.379f) {
                 //freezing
                 if (noiseOcean < -0.12f) {
                     biome = EnumBiome.COLD_BEACH;

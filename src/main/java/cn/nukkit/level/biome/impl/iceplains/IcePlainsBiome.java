@@ -18,6 +18,8 @@ public class IcePlainsBiome extends SnowyBiome {
         trees.setRandomAmount(1);
         this.addPopulator(trees);
 
+
+
         this.setBaseHeight(0.125f);
         this.setHeightVariation(0.05f);
     }
