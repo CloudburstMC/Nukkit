@@ -338,25 +338,25 @@ public class Normal extends Generator {
                     double height8 = (heightMap[zScaleEnd2 + ySeg + 1] - height4) * 0.125f;
 
                     for (int yIn = 0; yIn < 8; ++yIn) {
-                        double d10 = height1;
-                        double d11 = height2;
-                        double d12 = (height3 - height1) * 0.25f;
-                        double d13 = (height4 - height2) * 0.25f;
+                        double baseIncr = height1;
+                        double baseIncr2 = height2;
+                        double scaleY = (height3 - height1) * 0.25f;
+                        double scaleY2 = (height4 - height2) * 0.25f;
 
                         for (int zIn = 0; zIn < 4; ++zIn) {
-                            double d16 = (d11 - d10) * 0.25f;
-                            double lvt_45_1_ = d10 - d16;
+                            double scaleZ = (baseIncr2 - baseIncr) * 0.25f;
+                            double scaleZ2 = baseIncr - scaleZ;
 
                             for (int xIn = 0; xIn < 4; ++xIn) {
-                                if ((lvt_45_1_ += d16) > 0.0f) {
+                                if ((scaleZ2 += scaleZ) > 0.0f) {
                                     chunk.setBlockId(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, STONE);
                                 } else if (ySeg * 8 + yIn <= seaHeight) {
                                     chunk.setBlockId(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, STILL_WATER);
                                 }
                             }
 
-                            d10 += d12;
-                            d11 += d13;
+                            baseIncr += scaleY;
+                            baseIncr2 += scaleY2;
                         }
 
                         height1 += height5;
