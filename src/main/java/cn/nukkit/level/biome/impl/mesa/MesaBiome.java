@@ -2,7 +2,7 @@ package cn.nukkit.level.biome.impl.mesa;
 
 import cn.nukkit.block.BlockSand;
 import cn.nukkit.level.biome.type.CoveredBiome;
-import cn.nukkit.level.generator.noise.SimplexF;
+import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
 import cn.nukkit.level.generator.populator.impl.PopulatorCactus;
 import cn.nukkit.level.generator.populator.impl.PopulatorDeadBush;
 import cn.nukkit.math.NukkitRandom;
@@ -71,8 +71,6 @@ public class MesaBiome extends CoveredBiome {
         deadBush.setBaseAmount(3);
         deadBush.setRandomAmount(2);
         this.addPopulator(deadBush);
-
-        this.setElevation(67, 71);
 
         this.setMoundHeight(17);
     }

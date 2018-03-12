@@ -1530,7 +1530,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
                     }
                     Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
-                    sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getMinElevation() + "-" + biome.getMaxElevationOffset() + ")");
+                    sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getBaseHeight() + "-" + biome.getHeightVariation() + ")");
                 } else {
                     this.blocksAround = blocksAround;
                     this.collisionBlocks = collidingBlocks;

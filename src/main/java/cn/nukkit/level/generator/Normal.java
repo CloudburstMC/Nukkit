@@ -6,8 +6,8 @@ import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.BiomeSelector;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.generator.noise.f.NoiseGeneratorOctavesF;
-import cn.nukkit.level.generator.noise.f.NoiseGeneratorPerlinF;
+import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorOctavesF;
+import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorPerlinF;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.impl.*;
 import cn.nukkit.level.generator.populator.type.Populator;
@@ -370,6 +370,14 @@ public class Normal extends Generator {
                         height4 += height8;
                     }
                 }
+            }
+        }
+
+        for (int x = 0; x < 16; x++)    {
+            for (int z = 0; z < 16; z++)    {
+                Biome biome = selector.pickBiome(baseX | x, baseZ | z);
+
+                chunk.setBiome(x, z, biome);
             }
         }
 

@@ -6,7 +6,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
-import cn.nukkit.level.generator.noise.Simplex;
+import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.impl.PopulatorGlowStone;
 import cn.nukkit.level.generator.populator.impl.PopulatorGroundFire;
@@ -36,7 +36,7 @@ public class Nether extends Generator {
     private long localSeed1;
     private long localSeed2;
 
-    private Simplex noiseBase;
+    private SimplexF noiseBase;
 
     public Nether() {
         this(new HashMap<>());
@@ -77,7 +77,7 @@ public class Nether extends Generator {
         this.nukkitRandom = random;
         this.random = new Random();
         this.nukkitRandom.setSeed(this.level.getSeed());
-        this.noiseBase = new Simplex(this.nukkitRandom, 16, 1 / 4f, 1 / 64f);
+        this.noiseBase = new SimplexF(this.nukkitRandom, 16, 1 / 4f, 1 / 64f);
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
@@ -102,9 +102,9 @@ public class Nether extends Generator {
 
     @Override
     public void generateChunk(int chunkX, int chunkZ, FullChunk chunk) {
+        int baseX = chunkX << 4;
+        int baseZ = chunkZ << 4;
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
-
-        double[][][] noise = Generator.getFastNoise3D(this.noiseBase, 16, 128, 16, 4, 8, 4, chunkX * 16, 0, chunkZ * 16);
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -121,7 +121,7 @@ public class Nether extends Generator {
                     }
                 }
                 for (int y = 1; y < 127; ++y) {
-                    double noiseValue = (Math.abs(this.emptyHeight - y) / this.emptyHeight) * this.emptyAmplitude - noise[x][z][y];
+                    double noiseValue = (Math.abs(this.emptyHeight - y) / this.emptyHeight) * this.emptyAmplitude - noiseBase.noise3D(baseX | x, y, baseZ | z, true);
                     noiseValue -= 1 - this.density;
                     if (noiseValue > 0) {
                         chunk.setBlockId(x, y, z, Block.NETHERRACK);
