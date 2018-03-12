@@ -18,10 +18,8 @@ public class IcePlainsBiome extends SnowyBiome {
         trees.setRandomAmount(1);
         this.addPopulator(trees);
 
-        this.setElevation(67, 74);
-
-        this.temperature = 0D;
-        this.rainfall = 0.5D;
+        this.setBaseHeight(0.125f);
+        this.setHeightVariation(0.05f);
     }
 
     public String getName() {

@@ -14,7 +14,8 @@ public class JungleMBiome extends JungleBiome {
         floor.setRandomAmount(5);
         this.addPopulator(floor);
 
-        this.setElevation(73, 90);
+        this.setBaseHeight(0.2f);
+        this.setHeightVariation(0.4f);
     }
 
     @Override

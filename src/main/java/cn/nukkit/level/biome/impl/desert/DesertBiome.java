@@ -18,10 +18,8 @@ public class DesertBiome extends SandyBiome {
         deadbush.setBaseAmount(2);
         this.addPopulator(deadbush);
 
-        this.setElevation(66, 71);
-
-        this.temperature = 2;
-        this.rainfall = 0;
+        this.setBaseHeight(0.125f);
+        this.setHeightVariation(0.05f);
     }
 
     @Override

@@ -30,10 +30,8 @@ public class SwampBiome extends GrassyBiome {
         flower.addType(Block.RED_FLOWER, BlockFlower.TYPE_BLUE_ORCHID);
         this.addPopulator(flower);
 
-        this.setElevation(62, 65);
-
-        this.temperature = 0.8;
-        this.rainfall = 0.9;
+        this.setBaseHeight(-0.2f);
+        this.setHeightVariation(0.1f);
     }
 
     @Override

@@ -9,8 +9,6 @@ public class SwamplandMBiome extends SwampBiome {
 
     public SwamplandMBiome() {
         super();
-
-        this.setElevation(62, 75);
     }
 
     @Override

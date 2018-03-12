@@ -22,11 +22,9 @@ public abstract class Biome implements BlockID {
     public static final List<Biome> unorderedBiomes = new ArrayList<>();
 
     private final ArrayList<Populator> populators = new ArrayList<>();
-    protected double rainfall = 0.5;
-    protected double temperature = 0.5;
     private int id;
-    private float baseHeight;
-    private float heightVariation;
+    private float baseHeight = 0.1f;
+    private float heightVariation = 0.3f;
 
     protected static void register(int id, Biome biome) {
         biome.setId(id);
@@ -98,14 +96,6 @@ public abstract class Biome implements BlockID {
 
     public float getHeightVariation() {
         return heightVariation;
-    }
-
-    public double getTemperature() {
-        return temperature;
-    }
-
-    public double getRainfall() {
-        return rainfall;
     }
 
     @Override

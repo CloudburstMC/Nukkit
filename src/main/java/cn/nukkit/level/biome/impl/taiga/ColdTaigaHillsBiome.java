@@ -8,7 +8,8 @@ public class ColdTaigaHillsBiome extends ColdTaigaBiome {
     public ColdTaigaHillsBiome() {
         super();
 
-        this.setElevation(70, 90);
+        this.setBaseHeight(0.45f);
+        this.setHeightVariation(0.3f);
     }
 
     @Override

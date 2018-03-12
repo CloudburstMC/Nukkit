@@ -100,7 +100,6 @@ import java.util.*;
  * End.java
  */
 public class Normal extends Generator {
-    private static final int SMOOTH_SIZE = 2;
     private static final float[] biomeWeights = new float[25];
 
     static {
@@ -218,8 +217,6 @@ public class Normal extends Generator {
         int baseX = chunkX << 4;
         int baseZ = chunkZ << 4;
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
-        Biome[] biomes = this.biomes.get();
-        this.selector.getBiomes(biomes, baseX - 2, baseZ - 2);
 
         //generate base noise values
         float[] depthRegion = this.depthNoise.generateNoiseOctaves(this.depthRegion.get(), chunkX * 4, chunkZ * 4, 5, 5, 200f, 200f, 0.5f);
@@ -233,90 +230,88 @@ public class Normal extends Generator {
         float[] heightMap = this.heightMap.get();
 
         //generate heightmap and smooth biome heights
-        int counter1 = 0;
-        int counter2 = 0;
-        for (int xSeg = 0; xSeg < 5; xSeg++) {
-            for (int zSeg = 0; zSeg < 5; zSeg++) {
-                float scaleOffsetSum = 0f;
-                float baseHeightSum = 0f;
-                float biomeWeightSum = 0f;
-                Biome biome = biomes[xSeg + 2 + (zSeg + 2) * 10];
+        int horizCounter = 0;
+        int vertCounter = 0;
+        for (int xSeg = 0; xSeg < 5; ++xSeg) {
+            for (int zSeg = 0; zSeg < 5; ++zSeg) {
+                float heightVariationSum = 0.0F;
+                float baseHeightSum = 0.0F;
+                float biomeWeightSum = 0.0F;
+                Biome biome = pickBiome(baseX + (xSeg * 4), baseZ + (zSeg * 4));
 
-                for (int xSmooth = -SMOOTH_SIZE; xSmooth <= SMOOTH_SIZE; xSmooth++) {
-                    for (int zSmooth = -SMOOTH_SIZE; zSmooth <= SMOOTH_SIZE; zSmooth++) {
-                        Biome biome1 = biomes[xSeg + xSmooth + 2 + (zSeg + zSmooth + 2) * 10];
+                for (int xSmooth = -2; xSmooth <= 2; ++xSmooth) {
+                    for (int zSmooth = -2; zSmooth <= 2; ++zSmooth) {
+                        Biome biome1 = pickBiome(baseX + (xSeg * 4) + xSmooth, baseZ + (zSeg * 4) + zSmooth);
                         float baseHeight = biome1.getBaseHeight();
-                        float scaleOffset = biome1.getHeightVariation();
+                        float heightVariation = biome1.getHeightVariation();
 
-                        //TODO: we can implement amplified worlds using this generator!
+                        float scaledWeight = biomeWeights[xSmooth + 2 + (zSmooth + 2) * 5] / (baseHeight + 2.0F);
 
-                        float biomeWeight = biomeWeights[xSmooth + 2 + (zSmooth + 2) * 5] / (baseHeight + 2f);
-
-                        if (baseHeight > biome.getBaseHeight()) {
-                            biomeWeight /= 2f;
+                        if (biome1.getBaseHeight() > biome.getBaseHeight()) {
+                            scaledWeight /= 2.0F;
                         }
 
-                        baseHeightSum += baseHeight;
-                        scaleOffsetSum += scaleOffset;
-                        biomeWeightSum += biomeWeight;
+                        heightVariationSum += heightVariation * scaledWeight;
+                        baseHeightSum += baseHeight * scaledWeight;
+                        biomeWeightSum += scaledWeight;
                     }
                 }
 
-                scaleOffsetSum /= biomeWeightSum;
-                baseHeightSum /= biomeWeightSum;
-                scaleOffsetSum = scaleOffsetSum * 0.9f + 0.1f;
-                baseHeightSum = (baseHeightSum * 4f - 1f) / 8f;
-                float depthNoise = depthRegion[counter2] / 8000f;
+                heightVariationSum = heightVariationSum / biomeWeightSum;
+                baseHeightSum = baseHeightSum / biomeWeightSum;
+                heightVariationSum = heightVariationSum * 0.9F + 0.1F;
+                baseHeightSum = (baseHeightSum * 4.0F - 1.0F) / 8.0F;
+                float depthNoise = depthRegion[vertCounter] / 8000.0f;
 
-                if (depthNoise < 0f) {
+                if (depthNoise < 0.0f) {
                     depthNoise = -depthNoise * 0.3f;
                 }
 
-                depthNoise = depthNoise * 3f - 2f;
+                depthNoise = depthNoise * 3.0f - 2.0f;
 
-                if (depthNoise < 0f) {
-                    depthNoise /= 2f;
+                if (depthNoise < 0.0f) {
+                    depthNoise = depthNoise / 2.0f;
 
-                    if (depthNoise < -1f) {
-                        depthNoise = -1f;
+                    if (depthNoise < -1.0f) {
+                        depthNoise = -1.0f;
                     }
 
-                    depthNoise /= 1.4f;
-                    depthNoise /= 2f;
+                    depthNoise = depthNoise / 1.4f;
+                    depthNoise = depthNoise / 2.0f;
                 } else {
-                    if (depthNoise > 1f) {
-                        depthNoise = 1f;
+                    if (depthNoise > 1.0f) {
+                        depthNoise = 1.0f;
                     }
 
-                    depthNoise /= 8f;
+                    depthNoise = depthNoise / 8.0f;
                 }
 
-                counter2++;
+                ++vertCounter;
+                float baseHeightClone = baseHeightSum;
+                float heightVariationClone = heightVariationSum;
+                baseHeightClone = baseHeightClone + depthNoise * 0.2f;
+                baseHeightClone = baseHeightClone * 8.5f / 8.0f;
+                float baseHeightFactor = 8.5f + baseHeightClone * 4.0f;
 
-                float baseHeightCopy = baseHeightSum;
-                float scaleOffsetCopy = scaleOffsetSum;
-                baseHeightCopy = baseHeightCopy + depthNoise * 0.2f;
-                baseHeightCopy = baseHeightCopy * 8.5f / 8f;
-                float scaleBaseHeight = 8.5f + baseHeightCopy * 4f;
+                for (int ySeg = 0; ySeg < 33; ++ySeg) {
+                    float baseScale = ((float) ySeg - baseHeightFactor) * 12f * 128.0f / 256.0f / heightVariationClone;
 
-                for (int ySeg = 0; ySeg < 33; ySeg++) {
-                    float heightScale = ((float) ySeg - scaleBaseHeight) * 12f * 128f / 256f / scaleOffsetCopy;
-
-                    if (heightScale < 0f) {
-                        heightScale *= 4f;
+                    if (baseScale < 0.0f) {
+                        baseScale *= 4.0f;
                     }
 
-                    float lowerScale = minLimitRegion[counter1] / 512f;
-                    float upperScale = maxLimitRegion[counter1] / 512f;
-                    float mainScale = (mainNoiseRegion[counter1] / 10f + 1f) / 2f;
-                    float clamp = MathHelper.denormalizeClamp(lowerScale, upperScale, mainScale) - heightScale;
+                    float minScaled = minLimitRegion[horizCounter] / 512f;
+                    float maxScaled = maxLimitRegion[horizCounter] / 512f;
+                    float noiseScaled = (mainNoiseRegion[horizCounter] / 10.0f + 1.0f) / 2.0f;
+                    float clamp = MathHelper.denormalizeClamp(minScaled, maxScaled, noiseScaled) - baseScale;
 
                     if (ySeg > 29) {
-                        float yShrink = (ySeg - 29f) / 3f;
-                        clamp = clamp * (1f - yShrink) + -10f * yShrink;
+                        float yScaled = ((float) (ySeg - 29) / 3.0F);
+                        clamp = clamp * (1.0f - yScaled) + -10.0f * yScaled;
                     }
 
-                    heightMap[counter1++] = clamp;
+                    heightMap[horizCounter] = clamp;
+                    ++horizCounter;
                 }
             }
         }
@@ -373,8 +368,8 @@ public class Normal extends Generator {
             }
         }
 
-        for (int x = 0; x < 16; x++)    {
-            for (int z = 0; z < 16; z++)    {
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
                 Biome biome = selector.pickBiome(baseX | x, baseZ | z);
 
                 chunk.setBiome(x, z, biome);

@@ -14,9 +14,8 @@ public class BeachBiome extends SandyBiome {
         sugarcane.setRandomAmount(3);
         this.addPopulator(sugarcane);
 
-        this.setElevation(64, 67);
-        this.temperature = 2;
-        this.rainfall = 2;
+        this.setBaseHeight(0f);
+        this.setHeightVariation(0.025f);
     }
 
     @Override

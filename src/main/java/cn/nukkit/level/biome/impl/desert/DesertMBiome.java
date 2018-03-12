@@ -8,7 +8,8 @@ public class DesertMBiome extends DesertBiome {
     public DesertMBiome() {
         super();
 
-        this.setElevation(63, 71);
+        this.setBaseHeight(0.225f);
+        this.setHeightVariation(0.25f);
     }
 
     @Override

@@ -8,7 +8,8 @@ public class ColdBeachBiome extends SandyBiome {
         WaterIcePopulator ice = new WaterIcePopulator();
         this.addPopulator(ice);
 
-        this.setElevation(64, 67);
+        this.setBaseHeight(0f);
+        this.setHeightVariation(0.025f);
     }
 
     @Override

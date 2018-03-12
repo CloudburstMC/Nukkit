@@ -17,10 +17,8 @@ public class ExtremeHillsPlusBiome extends ExtremeHillsBiome {
     public ExtremeHillsPlusBiome(boolean tree) {
         super(tree);
 
-        this.setElevation(85, 140);
-
-        this.temperature = 0.4;
-        this.rainfall = 0.5;
+        this.setBaseHeight(1f);
+        this.setHeightVariation(0.5f);
     }
 
     @Override

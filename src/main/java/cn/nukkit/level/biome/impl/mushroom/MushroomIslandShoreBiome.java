@@ -7,7 +7,8 @@ public class MushroomIslandShoreBiome extends MushroomIslandBiome {
     public MushroomIslandShoreBiome() {
         super();
 
-        this.setElevation(63, 67);
+        this.setBaseHeight(0f);
+        this.setHeightVariation(0.025f);
     }
 
     @Override

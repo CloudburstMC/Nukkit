@@ -9,10 +9,8 @@ import cn.nukkit.level.biome.type.WateryBiome;
 public class OceanBiome extends WateryBiome {
 
     public OceanBiome() {
-        this.setElevation(46, 59);
-
-        this.temperature = 0.5;
-        this.rainfall = 0.5;
+        this.setBaseHeight(-1f);
+        this.setHeightVariation(0.1f);
     }
 
     @Override

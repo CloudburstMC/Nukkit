@@ -34,8 +34,6 @@ public class ForestBiome extends GrassyBiome {
             trees.setBaseAmount(3);
             this.addPopulator(trees);
         }
-
-        this.setElevation(67, 72);
     }
 
     @Override

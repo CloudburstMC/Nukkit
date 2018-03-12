@@ -3,11 +3,6 @@ package cn.nukkit.level.biome;
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
 import cn.nukkit.math.NukkitRandom;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
  * author: DaPorkchop_
  * Nukkit Project
@@ -76,27 +71,19 @@ public class BiomeSelector {
         double noiseOcean = ocean.noise2D(x, z, true);
         if (noiseOcean < -0.15f) {
             return EnumBiome.OCEAN.biome;
-        } else if (noiseOcean < -0.19f)  {
+        } else if (noiseOcean < -0.19f) {
             return EnumBiome.STONE_BEACH.biome;
         } else {
             boolean plus = temperature.noise2D(x, z, true) < 0f;
             boolean m = rainfall.noise2D(x, z, true) < 0f;
-            if(plus && m)   {
+            if (plus && m) {
                 return EnumBiome.EXTREME_HILLS_PLUS_M.biome;
-            } else if (m)   {
+            } else if (m) {
                 return EnumBiome.EXTREME_HILLS_M.biome;
-            } else if (plus)    {
+            } else if (plus) {
                 return EnumBiome.EXTREME_HILLS_PLUS.biome;
             } else {
                 return EnumBiome.EXTREME_HILLS.biome;
-            }
-        }
-    }
-
-    public void getBiomes(Biome[] biomes, int x, int z)  {
-        for (int xx = 0; xx < 10; xx++)    {
-            for (int zz = 0; zz < 10; zz++)    {
-                biomes[x + z * 10] = pickBiome(x + xx, z + zz);
             }
         }
     }

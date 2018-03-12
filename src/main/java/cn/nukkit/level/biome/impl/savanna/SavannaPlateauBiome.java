@@ -8,7 +8,8 @@ public class SavannaPlateauBiome extends SavannaBiome {
     public SavannaPlateauBiome() {
         super();
 
-        this.setElevation(90, 94);
+        this.setBaseHeight(1.5f);
+        this.setHeightVariation(0.025f);
     }
 
     @Override

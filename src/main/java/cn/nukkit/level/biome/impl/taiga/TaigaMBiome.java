@@ -9,7 +9,8 @@ public class TaigaMBiome extends TaigaBiome {
     public TaigaMBiome() {
         super();
 
-        this.setElevation(67, 90);
+        this.setBaseHeight(0.3f);
+        this.setHeightVariation(0.4f);
     }
 
     @Override

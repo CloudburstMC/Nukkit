@@ -12,7 +12,8 @@ public class ForestHillsBiome extends ForestBiome {
     public ForestHillsBiome(int type) {
         super(type);
 
-        this.setElevation(70, 90);
+        this.setBaseHeight(0.45f);
+        this.setHeightVariation(0.3f);
     }
 
     @Override

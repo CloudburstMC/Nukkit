@@ -33,7 +33,7 @@ public class FlowerForestBiome extends ForestBiome {
         flower.addType(DOUBLE_PLANT, BlockDoublePlant.PEONY);
         this.addPopulator(flower);
 
-        this.setElevation(67, 70);
+        this.setHeightVariation(0.4f);
     }
 
     @Override

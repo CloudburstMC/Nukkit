@@ -5,7 +5,8 @@ public class RoofedForestMBiome extends RoofedForestBiome {
     public RoofedForestMBiome() {
         super();
 
-        this.setElevation(67, 85);
+        this.setBaseHeight(0.2f);
+        this.setHeightVariation(0.4f);
     }
 
     @Override

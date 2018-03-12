@@ -9,7 +9,8 @@ public class ExtremeHillsEdgeBiome extends ExtremeHillsBiome {
     public ExtremeHillsEdgeBiome() {
         super();
 
-        this.setElevation(67, 85);
+        this.setBaseHeight(0.8f);
+        this.setHeightVariation(0.3f);
     }
 
     @Override

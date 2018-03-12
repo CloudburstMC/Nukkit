@@ -8,8 +8,6 @@ package cn.nukkit.level.biome.impl.taiga;
 public class ColdTaigaMBiome extends ColdTaigaBiome {
     public ColdTaigaMBiome() {
         super();
-
-        this.setElevation(70, 90);
     }
 
     @Override

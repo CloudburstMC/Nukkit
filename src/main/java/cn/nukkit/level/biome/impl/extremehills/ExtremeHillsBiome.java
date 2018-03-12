@@ -27,10 +27,8 @@ public class ExtremeHillsBiome extends GrassyBiome {
             this.addPopulator(trees);
         }
 
-        this.setElevation(85, 120);
-
-        this.temperature = 0.4;
-        this.rainfall = 0.5;
+        this.setBaseHeight(1f);
+        this.setHeightVariation(0.5f);
     }
 
     @Override

@@ -10,10 +10,8 @@ public class MushroomIslandBiome extends GrassyBiome {
         mushroomPopulator.setBaseAmount(1);
         addPopulator(mushroomPopulator);
 
-        this.setElevation(67, 74);
-
-        temperature = 0.9f;
-        rainfall = 1.0f;
+        this.setBaseHeight(0.2f);
+        this.setHeightVariation(0.3f);
     }
 
     @Override

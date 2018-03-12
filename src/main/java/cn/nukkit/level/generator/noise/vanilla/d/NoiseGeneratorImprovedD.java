@@ -17,18 +17,18 @@ public class NoiseGeneratorImprovedD {
         this(new NukkitRandom(System.currentTimeMillis()));
     }
 
-    public NoiseGeneratorImprovedD(NukkitRandom p_i45469_1_) {
+    public NoiseGeneratorImprovedD(NukkitRandom random) {
         this.permutations = new int[512];
-        this.xCoord = p_i45469_1_.nextDouble() * 256.0D;
-        this.yCoord = p_i45469_1_.nextDouble() * 256.0D;
-        this.zCoord = p_i45469_1_.nextDouble() * 256.0D;
+        this.xCoord = random.nextDouble() * 256.0D;
+        this.yCoord = random.nextDouble() * 256.0D;
+        this.zCoord = random.nextDouble() * 256.0D;
 
         for (int i = 0; i < 256; this.permutations[i] = i++) {
             ;
         }
 
         for (int l = 0; l < 256; ++l) {
-            int j = p_i45469_1_.nextBoundedInt(256 - l) + l;
+            int j = random.nextBoundedInt(256 - l) + l;
             int k = this.permutations[l];
             this.permutations[l] = this.permutations[j];
             this.permutations[j] = k;

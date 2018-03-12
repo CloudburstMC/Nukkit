@@ -10,7 +10,8 @@ public class DeepOceanBiome extends OceanBiome {
         super();
 
         //TODO: ocean monuments
-        this.setElevation(30, 46);
+        this.setBaseHeight(-1.8f);
+        this.setHeightVariation(0.1f);
     }
 
     @Override

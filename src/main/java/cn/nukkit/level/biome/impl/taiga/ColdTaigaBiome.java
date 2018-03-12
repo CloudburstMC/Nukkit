@@ -13,7 +13,8 @@ public class ColdTaigaBiome extends TaigaBiome {
         WaterIcePopulator ice = new WaterIcePopulator();
         this.addPopulator(ice);
 
-        this.setElevation(67, 70);
+        this.setBaseHeight(0.2f);
+        this.setHeightVariation(0.2f);
     }
 
     @Override

@@ -7,8 +7,6 @@ package cn.nukkit.level.biome.impl.jungle;
 public class JungleEdgeMBiome extends JungleEdgeBiome {
     public JungleEdgeMBiome() {
         super();
-
-        this.setElevation(67, 90);
     }
 
     @Override

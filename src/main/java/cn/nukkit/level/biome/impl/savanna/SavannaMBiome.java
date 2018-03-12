@@ -12,7 +12,8 @@ public class SavannaMBiome extends SavannaBiome {
         super();
 
         //this is set to be above the build limit so that it'll actually hit it sometimes
-        this.setElevation(67, 260);
+        this.setBaseHeight(0.3625f);
+        this.setHeightVariation(1.225f);
     }
 
     @Override

@@ -16,7 +16,8 @@ public class TaigaBiome extends GrassyBiome {
         trees.setBaseAmount(10);
         this.addPopulator(trees);
 
-        this.setElevation(67, 70);
+        this.setBaseHeight(0.2f);
+        this.setHeightVariation(0.2f);
     }
 
     @Override
