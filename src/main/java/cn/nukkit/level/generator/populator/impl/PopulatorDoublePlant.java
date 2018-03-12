@@ -33,4 +33,10 @@ public class PopulatorDoublePlant extends PopulatorSurfaceBlock {
     protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
         return (DOUBLE_PLANT << 4) | type;
     }
+
+    @Override
+    protected void placeBlock(int x, int y, int z, int id, FullChunk chunk, NukkitRandom random) {
+        super.placeBlock(x, y, z, id, chunk, random);
+        chunk.setFullBlockId(x, y + 1, z, 8 | id);
+    }
 }
