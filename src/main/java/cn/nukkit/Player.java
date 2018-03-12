@@ -703,6 +703,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.unloadChunk(chunkX, chunkZ, oldLevel);
             }
 
+            setDimension(targetLevel.getDimension());
+            PlayStatusPacket statusPacket0 = new PlayStatusPacket();
+            statusPacket0.status = PlayStatusPacket.PLAYER_SPAWN;
+            dataPacket(statusPacket0);
+
             this.usedChunks.clear();
             SetTimePacket pk = new SetTimePacket();
             pk.time = this.level.getTime();
@@ -3740,6 +3745,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.x = (float) pos.x;
         pk.y = (float) pos.y;
         pk.z = (float) pos.z;
+
+        //this is a dirty hack to prevent dying in a different level than the respawn point from breaking everything
+        if (this.level != pos.level)   {
+            this.teleportImmediate(new Location(0, -100, 0, pos.level));
+        }
+
         this.dataPacket(pk);
     }
 
@@ -4065,6 +4076,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (event.isCancelled()) return false;
             to = event.getTo();
             if (from.getLevel().getId() != to.getLevel().getId()) { //Different level, update compass position
+                //setDimension(to.level.getDimension());
                 SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
                 pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
                 Position spawn = to.getLevel().getSpawnLocation();
