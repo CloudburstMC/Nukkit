@@ -25,18 +25,14 @@ public class Nether extends Generator {
      */
     private NukkitRandom nukkitRandom;
     private Random random;
-    private double waterHeight = 32;
-    private double emptyHeight = 64;
-    private double emptyAmplitude = 1;
-    private double density = 0.5;
+    private double lavaHeight = 32;
     private double bedrockDepth = 5;
+    private SimplexF[] noiseGen = new SimplexF[3];
     private final List<Populator> populators = new ArrayList<>();
     private List<Populator> generationPopulators = new ArrayList<>();
 
     private long localSeed1;
     private long localSeed2;
-
-    private SimplexF noiseBase;
 
     public Nether() {
         this(new HashMap<>());
@@ -77,23 +73,31 @@ public class Nether extends Generator {
         this.nukkitRandom = random;
         this.random = new Random();
         this.nukkitRandom.setSeed(this.level.getSeed());
-        this.noiseBase = new SimplexF(this.nukkitRandom, 16, 1 / 4f, 1 / 64f);
+
+        for (int i = 0; i < noiseGen.length; i++)   {
+            noiseGen[i] = new SimplexF(nukkitRandom, 8, 1 / 4f, 1 / 64f);
+        }
+
         this.nukkitRandom.setSeed(this.level.getSeed());
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
+
         PopulatorOre ores = new PopulatorOre(Block.NETHERRACK);
         ores.setOreTypes(new OreType[]{
                 new OreType(new BlockOreQuartz(), 20, 16, 0, 128),
                 new OreType(new BlockSoulSand(), 5, 64, 0, 128),
                 new OreType(new BlockGravel(), 5, 64, 0, 128),
-                new OreType(new BlockLava(), 1, 16, 0, (int) this.waterHeight),
+                new OreType(new BlockLava(), 1, 16, 0, (int) this.lavaHeight),
         });
         this.populators.add(ores);
+
         this.populators.add(new PopulatorGlowStone());
+
         PopulatorGroundFire groundFire = new PopulatorGroundFire();
         groundFire.setBaseAmount(1);
         groundFire.setRandomAmount(1);
         this.populators.add(groundFire);
+
         PopulatorLava lava = new PopulatorLava();
         lava.setBaseAmount(0);
         lava.setRandomAmount(2);
@@ -121,11 +125,9 @@ public class Nether extends Generator {
                     }
                 }
                 for (int y = 1; y < 127; ++y) {
-                    double noiseValue = (Math.abs(this.emptyHeight - y) / this.emptyHeight) * this.emptyAmplitude - noiseBase.noise3D(baseX | x, y, baseZ | z, true);
-                    noiseValue -= 1 - this.density;
-                    if (noiseValue > 0) {
+                    if (getNoise(baseX | x, y, baseZ | z) > 0) {
                         chunk.setBlockId(x, y, z, Block.NETHERRACK);
-                    } else if (y <= this.waterHeight) {
+                    } else if (y <= this.lavaHeight) {
                         chunk.setBlockId(x, y, z, Block.STILL_LAVA);
                         chunk.setBlockLight(x, y + 1, z, 15);
                     }
@@ -150,5 +152,13 @@ public class Nether extends Generator {
 
     public Vector3 getSpawn() {
         return new Vector3(0, 64, 0);
+    }
+
+    public float getNoise(int x, int y, int z)  {
+        float val = 0f;
+        for (int i = 0; i < noiseGen.length; i++)   {
+            val = Math.min(val, noiseGen[i].noise3D(x >> i, y, z >> i, true));
+        }
+        return val;
     }
 }

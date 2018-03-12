@@ -6,6 +6,7 @@ import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.type.CoveredBiome;
+import cn.nukkit.level.generator.Normal;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
@@ -37,15 +38,17 @@ public class PopulatorGroundCover extends Populator {
                             if (chunk.getFullBlock(x, y, z) == STONE) {
                                 COVER:
                                 if (!hasCovered) {
-                                    chunk.setFullBlockId(x, y + 1, z, coverBlock);
-                                    int surfaceDepth = biome.getSurfaceDepth(y);
-                                    for (int i = 0; i < surfaceDepth; i++) {
-                                        realY = y - i;
-                                        if (chunk.getFullBlock(x, realY, z) == STONE) {
-                                            chunk.setFullBlockId(x, realY, z, (biome.getSurfaceBlock(realY) << 4) | biome.getSurfaceMeta(realY));
-                                        } else break COVER;
+                                    if (y >= Normal.seaHeight) {
+                                        chunk.setFullBlockId(x, y + 1, z, coverBlock);
+                                        int surfaceDepth = biome.getSurfaceDepth(y);
+                                        for (int i = 0; i < surfaceDepth; i++) {
+                                            realY = y - i;
+                                            if (chunk.getFullBlock(x, realY, z) == STONE) {
+                                                chunk.setFullBlockId(x, realY, z, (biome.getSurfaceBlock(realY) << 4) | biome.getSurfaceMeta(realY));
+                                            } else break COVER;
+                                        }
+                                        y -= surfaceDepth;
                                     }
-                                    y -= surfaceDepth;
                                     int groundDepth = biome.getGroundDepth(y);
                                     for (int i = 0; i < groundDepth; i++) {
                                         realY = y - i;

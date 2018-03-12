@@ -112,7 +112,7 @@ public class Normal extends Generator {
 
     private final List<Populator> populators = new ArrayList<>();
     private final List<Populator> generationPopulators = new ArrayList<>();
-    private final int seaHeight = 64;
+    public static final int seaHeight = 64;
     public NoiseGeneratorOctavesF scaleNoise;
     public NoiseGeneratorOctavesF depthNoise;
     private ChunkManager level;
@@ -350,7 +350,7 @@ public class Normal extends Generator {
                             for (int xIn = 0; xIn < 4; ++xIn) {
                                 if ((lvt_45_1_ += d16) > 0.0f) {
                                     chunk.setBlockId(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, STONE);
-                                } else if (ySeg * 8 + yIn < seaHeight) {
+                                } else if (ySeg * 8 + yIn <= seaHeight) {
                                     chunk.setBlockId(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, STILL_WATER);
                                 }
                             }
