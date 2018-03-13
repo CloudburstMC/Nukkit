@@ -15,12 +15,6 @@ It has a few key advantages over other server software:
 
 Nukkit is **under improvement** yet, we welcome contributions. 
 
-Example servers running Nukkit
---------------------
-- **play.EaseCation.net**
-- **play.GameTeam.cz**
-- **MultiLabs.net**
-
 Get Nukkit & Plugins
 --------------------
 

@@ -9,7 +9,7 @@ import cn.nukkit.math.Vector3;
  * author: ItsLucas
  * Nukkit Project
  */
-
+//porktodo: biomes have specific flower types that can grow in them
 public class ObjectTallGrass {
     public static void growGrass(ChunkManager level, Vector3 pos, NukkitRandom random, int count, int radius) {
         int[][] arr = {
@@ -27,8 +27,7 @@ public class ObjectTallGrass {
 
             if (level.getBlockIdAt(x, (int) (pos.y + 1), z) == Block.AIR && level.getBlockIdAt(x, (int) (pos.y), z) == Block.GRASS) {
                 int[] t = arr[random.nextRange(0, arrC)];
-                level.setBlockIdAt(x, (int) (pos.y + 1), z, t[0]);
-                level.setBlockDataAt(x, (int) (pos.y + 1), z, t[1]);
+                level.setBlockFullIdAt(x, (int) (pos.y + 1), z, (t[0] << 4) | t[1]);
             }
         }
     }

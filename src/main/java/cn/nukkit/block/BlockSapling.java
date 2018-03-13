@@ -20,6 +20,10 @@ public class BlockSapling extends BlockFlowable {
     public static final int OAK = 0;
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
+    /**
+     * placeholder
+     */
+    public static final int BIRCH_TALL = 8 | BIRCH;
     public static final int JUNGLE = 3;
     public static final int ACACIA = 4;
     public static final int DARK_OAK = 5;
@@ -99,7 +103,7 @@ public class BlockSapling extends BlockFlowable {
                     }
 
                     if (!bigTree) {
-                        generator = new NewJungleTree(4 + ThreadLocalRandom.current().nextInt(7));
+                        generator = new NewJungleTree(4, 7);
                     }
                     break;
                 case ACACIA:

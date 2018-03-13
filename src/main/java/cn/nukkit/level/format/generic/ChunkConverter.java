@@ -72,7 +72,7 @@ public class ChunkConverter {
             }
         }
         for (int i = 0; i < 256; i++) {
-            result.biomes.set(i, chunk.biomes.get(i));
+            result.biomes[i] = chunk.biomes[i];
         }
         System.arraycopy(chunk.getHeightMapArray(), 0, result.heightMap, 0, 256);
         if (chunk.NBTentities != null && !chunk.NBTentities.isEmpty()) {

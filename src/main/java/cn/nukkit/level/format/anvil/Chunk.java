@@ -57,7 +57,7 @@ public class Chunk extends BaseChunk {
         }
 
         if (nbt == null) {
-            this.biomes = new BiomePalette();
+            this.biomes = new byte[16 * 16];
             this.sections = new cn.nukkit.level.format.ChunkSection[16];
             for (int layer = 0; layer < 16; layer++) {
                 this.sections[layer] = EmptyChunkSection.EMPTY[layer];
@@ -97,11 +97,19 @@ public class Chunk extends BaseChunk {
             throw new ChunkException("Invalid amount of chunks");
         }
 
-        int[] biomeColors = nbt.getIntArray("BiomeColors");
-        if (biomeColors != null && biomeColors.length == 256) {
-            this.biomes = new BiomePalette(biomeColors);
+        if (nbt.contains("BiomeColors")) {
+            this.biomes = new byte[16 * 16];
+            int[] biomeColors = nbt.getIntArray("BiomeColors");
+            if (biomeColors != null && biomeColors.length == 256) {
+                BiomePalette palette = new BiomePalette(biomeColors);
+                for (int x = 0; x < 16; x++)    {
+                    for (int z = 0; z < 16; z++)    {
+                        this.biomes[(x << 4) | z] = (byte) (palette.get(x, z) >> 24);
+                    }
+                }
+            }
         } else {
-            this.biomes = new BiomePalette();
+            this.biomes = nbt.getByteArray("Biomes");
         }
 
         int[] heightMap = nbt.getIntArray("HeightMap");
@@ -153,10 +161,6 @@ public class Chunk extends BaseChunk {
 
                 this.provider.getLevel().scheduleUpdate(block, block, entryNBT.getInt("t"), entryNBT.getInt("p"), false);
             }
-        }
-
-        if (nbt.contains("Biomes")) {
-            checkOldBiomes(nbt.getByteArray("Biomes"));
         }
 
         this.inhabitedTime = nbt.getLong("InhabitedTime");
@@ -255,10 +259,12 @@ public class Chunk extends BaseChunk {
     @Override
     public byte[] toFastBinary() {
         CompoundTag nbt = this.getNBT().copy();
+        nbt.remove("BiomeColors");
+
         nbt.putInt("xPos", this.getX());
         nbt.putInt("zPos", this.getZ());
 
-        nbt.putIntArray("BiomeColors", this.getBiomeColorArray());
+        nbt.putByteArray("Biomes", this.getBiomeIdArray());
         int[] heightInts = new int[256];
         byte[] heightBytes = this.getHeightMapArray();
         for (int i = 0; i < heightInts.length; i++) {
@@ -342,6 +348,7 @@ public class Chunk extends BaseChunk {
     @Override
     public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
+        nbt.remove("BiomeColors");
 
         nbt.putInt("xPos", this.getX());
         nbt.putInt("zPos", this.getZ());
@@ -361,7 +368,7 @@ public class Chunk extends BaseChunk {
         }
         nbt.putList(sectionList);
 
-        nbt.putIntArray("BiomeColors", this.getBiomeColorArray());
+        nbt.putByteArray("Biomes", this.getBiomeIdArray());
         int[] heightInts = new int[256];
         byte[] heightBytes = this.getHeightMapArray();
         for (int i = 0; i < heightInts.length; i++) {

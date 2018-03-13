@@ -201,9 +201,7 @@ public class LevelDB implements LevelProvider {
         stream.put(chunk.getBlockSkyLightArray());
         stream.put(chunk.getBlockLightArray());
         stream.put(chunk.getHeightMapArray());
-        for (int color : chunk.getBiomeColorArray()) {
-            stream.put(Binary.writeInt(color));
-        }
+        stream.put(chunk.getBiomeIdArray());
         if (extraData != null) {
             stream.put(extraData.getBuffer());
         } else {
