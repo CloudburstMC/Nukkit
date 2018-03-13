@@ -136,10 +136,7 @@ private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer ch
                     getLevel().useBreakOn(this);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
-            }else{ 
-            int i = getDamage() & 0b00001100;
-            System.out.println(i+"");}
-        }
+            }
         return 0;
     }
 }
