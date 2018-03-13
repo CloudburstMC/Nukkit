@@ -15,11 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Nukkit Project Team
  */
 public class ServerScheduler {
-
-    public static int WORKERS = 4;
-
-    private final AsyncPool asyncPool;
-
     private final Queue<TaskHandler> pending;
     private final Map<Integer, ArrayDeque<TaskHandler>> queueMap;
     private final Map<Integer, TaskHandler> taskMap;
@@ -32,7 +27,6 @@ public class ServerScheduler {
         this.currentTaskId = new AtomicInteger();
         this.queueMap = new ConcurrentHashMap<>();
         this.taskMap = new ConcurrentHashMap<>();
-        this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
 
     public TaskHandler scheduleTask(Task task) {
@@ -61,31 +55,6 @@ public class ServerScheduler {
 
     public TaskHandler scheduleTask(Plugin plugin, Runnable task, boolean asynchronous) {
         return addTask(plugin, task, 0, 0, asynchronous);
-    }
-
-    /**
-     * @deprecated Use {@link #scheduleAsyncTask(Plugin, AsyncTask)
-     */
-    @Deprecated
-    public TaskHandler scheduleAsyncTask(AsyncTask task) {
-        return addTask(null, task, 0, 0, true);
-    }
-
-    public TaskHandler scheduleAsyncTask(Plugin plugin, AsyncTask task) {
-        return addTask(plugin, task, 0, 0, true);
-    }
-
-    @Deprecated
-    public void scheduleAsyncTaskToWorker(AsyncTask task, int worker) {
-        scheduleAsyncTask(task);
-    }
-
-    public int getAsyncTaskPoolSize() {
-        return asyncPool.getCorePoolSize();
-    }
-
-    public void increaseAsyncTaskPoolSize(int newSize) {
-        throw new UnsupportedOperationException("Cannot increase a working pool size."); //wtf?
     }
 
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
@@ -277,7 +246,6 @@ public class ServerScheduler {
             }
         }
         this.currentTick = currentTick;
-        AsyncTask.collectTask();
     }
 
     private void runTasks(int currentTick) {
@@ -288,7 +256,7 @@ public class ServerScheduler {
                     taskMap.remove(taskHandler.getTaskId());
                     continue;
                 } else if (taskHandler.isAsynchronous()) {
-                    asyncPool.execute(taskHandler.getTask());
+                    //TODO: asyncPool.execute(taskHandler.getTask());
                 } else {
                     taskHandler.timing.startTiming();
                     try {

@@ -72,6 +72,8 @@ import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
 import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
+import cn.nukkit.tick.ServerTickManager;
+import cn.nukkit.tick.thread.ServerTickThread;
 import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
@@ -141,7 +143,7 @@ public class Server {
 
     private boolean autoSave;
 
-    private RCON rcon;
+    public RCON rcon;
 
     private EntityMetadataStore entityMetadata;
 
@@ -149,7 +151,7 @@ public class Server {
 
     private LevelMetadataStore levelMetadata;
 
-    private Network network;
+    public Network network;
 
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
@@ -185,7 +187,9 @@ public class Server {
     private Config properties;
     private Config config;
 
-    private final Map<String, Player> players = new HashMap<>();
+    public final ServerTickManager tickManager;
+
+    public final Map<String, Player> players = new HashMap<>();
 
     private final Map<UUID, Player> playerList = new HashMap<>();
 
@@ -329,6 +333,7 @@ public class Server {
         this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
         this.logger.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.WHITE));
 
+        this.tickManager = new ServerTickManager(this);
         Object poolSize = this.getConfig("settings.async-workers", "auto");
         if (!(poolSize instanceof Integer)) {
             try {
@@ -337,8 +342,10 @@ public class Server {
                 poolSize = Math.max(Runtime.getRuntime().availableProcessors() + 1, 4);
             }
         }
-
-        ServerScheduler.WORKERS = (int) poolSize;
+        int workerCount = (int) poolSize;
+        for (int i = 0; i < workerCount; i++)   {
+            this.tickManager.addWorkerThread(new ServerTickThread(this, this.tickManager));
+        }
 
         this.networkZlibProvider = (int) this.getConfig("network.zlib-provider", 2);
         Zlib.setProvider(this.networkZlibProvider);
@@ -626,8 +633,8 @@ public class Server {
             }
         }
 
-        if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
+        if (false && !forceSync && this.networkCompressionAsync) {
+            //this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
         } else {
             try {
                 byte[] data = Binary.appendBytes(payload);
@@ -1067,23 +1074,19 @@ public class Server {
 
         ++this.tickCounter;
 
-        Timings.connectionTimer.startTiming();
+        /*Timings.connectionTimer.startTiming();
         this.network.processInterfaces();
 
         if (this.rcon != null) {
             this.rcon.check();
         }
-        Timings.connectionTimer.stopTiming();
+        Timings.connectionTimer.stopTiming();*/
 
         Timings.schedulerTimer.startTiming();
         this.scheduler.mainThreadHeartbeat(this.tickCounter);
         Timings.schedulerTimer.stopTiming();
 
         this.checkTickUpdates(this.tickCounter, tickTime);
-
-        for (Player player : new ArrayList<>(this.players.values())) {
-            player.checkNetwork();
-        }
 
         if ((this.tickCounter & 0b1111) == 0) {
             this.titleTick();
@@ -1519,8 +1522,8 @@ public class Server {
     public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
         if (this.shouldSavePlayerData()) {
             try {
-                if (async) {
-                    this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
+                if (false && async) {
+                    //this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
                 } else {
                     Utils.writeFile(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", new ByteArrayInputStream(NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
                 }
