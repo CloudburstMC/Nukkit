@@ -135,7 +135,7 @@ public class Attribute implements Cloneable {
     }
 
     public Attribute setValue(float value) {
-        return setValue(value, false);
+        return setValue(value, true);
     }
 
     public Attribute setValue(float value, boolean fit) {

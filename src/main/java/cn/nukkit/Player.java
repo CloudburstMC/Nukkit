@@ -704,10 +704,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.unloadChunk(chunkX, chunkZ, oldLevel);
             }
 
-            setDimension(targetLevel.getDimension());
-            PlayStatusPacket statusPacket0 = new PlayStatusPacket();
-            statusPacket0.status = PlayStatusPacket.PLAYER_SPAWN;
-            dataPacket(statusPacket0);
+            if (oldLevel.getDimension() != targetLevel.getDimension()) {
+                setDimension(targetLevel.getDimension());
+                PlayStatusPacket statusPacket0 = new PlayStatusPacket();
+                statusPacket0.status = PlayStatusPacket.PLAYER_SPAWN;
+                dataPacket(statusPacket0);
+            }
 
             this.usedChunks.clear();
             SetTimePacket pk = new SetTimePacket();
@@ -3840,6 +3842,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void sendExperience(int exp) {
         if (this.spawned) {
             float percent = ((float) exp) / calculateRequireExperience(this.getExperienceLevel());
+            percent = Math.max(0f, Math.min(1f, percent));
             this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE).setValue(percent));
         }
     }
