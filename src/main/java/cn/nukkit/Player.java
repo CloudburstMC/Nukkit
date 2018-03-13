@@ -1894,12 +1894,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         int exp = nbt.getInt("EXP");
         int expLevel = nbt.getInt("expLevel");
-        try {
-            this.setExperience(exp, expLevel);
-        }
-        catch (Exception attributeException){
-            this.setExperience(0, 0);
-        }
+        this.setExperience(exp, expLevel);
 
         this.gamemode = nbt.getInt("playerGameType") & 0x03;
         if (this.server.getForceGamemode()) {
@@ -3847,6 +3842,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void sendExperience(int exp) {
         if (this.spawned) {
             float percent = ((float) exp) / calculateRequireExperience(this.getExperienceLevel());
+            percent = Math.max(0f, Math.min(1f, max));
             this.setAttribute(Attribute.getAttribute(Attribute.EXPERIENCE).setValue(percent));
         }
     }
