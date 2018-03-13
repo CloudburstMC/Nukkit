@@ -10,7 +10,6 @@ import co.aikar.timings.Timings;
  */
 public class TaskHandler {
     private final int taskId;
-    private final boolean asynchronous;
 
     private final Plugin plugin;
     private final Runnable task;
@@ -25,8 +24,7 @@ public class TaskHandler {
 
     public final Timing timing;
 
-    public TaskHandler(Plugin plugin, Runnable task, int taskId, boolean asynchronous) {
-        this.asynchronous = asynchronous;
+    public TaskHandler(Plugin plugin, Runnable task, int taskId) {
         this.plugin = plugin;
         this.task = task;
         this.taskId = taskId;
@@ -105,10 +103,6 @@ public class TaskHandler {
     @Deprecated
     public String getTaskName() {
         return "Unknown";
-    }
-
-    public boolean isAsynchronous() {
-        return asynchronous;
     }
 
     public void setDelay(int delay) {

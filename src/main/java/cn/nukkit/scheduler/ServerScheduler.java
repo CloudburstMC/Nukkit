@@ -255,8 +255,6 @@ public class ServerScheduler {
                 if (taskHandler.isCancelled()) {
                     taskMap.remove(taskHandler.getTaskId());
                     continue;
-                } else if (taskHandler.isAsynchronous()) {
-                    //TODO: asyncPool.execute(taskHandler.getTask());
                 } else {
                     taskHandler.timing.startTiming();
                     try {

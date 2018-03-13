@@ -109,9 +109,9 @@ public class Server {
 
     private int profilingTickrate = 20;
 
-    private ServerScheduler scheduler = null;
+    public ServerScheduler scheduler = null;
 
-    private int tickCounter;
+    public int tickCounter;
 
     private long nextTick;
 
@@ -123,7 +123,7 @@ public class Server {
 
     private float maxUse = 0;
 
-    private int sendUsageTicker = 0;
+    public int sendUsageTicker = 0;
 
     private boolean dispatchSignals = false;
 
@@ -141,7 +141,7 @@ public class Server {
 
     private int maxPlayers;
 
-    private boolean autoSave;
+    public boolean autoSave;
 
     public RCON rcon;
 
@@ -165,8 +165,8 @@ public class Server {
     private int difficulty = Integer.MAX_VALUE;
     private int defaultGamemode = Integer.MAX_VALUE;
 
-    private int autoSaveTicker = 0;
-    private int autoSaveTicks = 6000;
+    public int autoSaveTicker = 0;
+    public int autoSaveTicks = 6000;
 
     private BaseLang baseLang;
 
@@ -215,7 +215,7 @@ public class Server {
         }
     };
 
-    private Level[] levelArray = new Level[0];
+    public Level[] levelArray = new Level[0];
 
     private final ServiceManager serviceManager = new NKServiceManager();
 
@@ -987,6 +987,7 @@ public class Server {
             client freezes when applying resource packs
             todo: fix*/
 
+            //porktodo: tick players as entities with other entities in chunk
             if (this.alwaysTickPlayers) {
                 p.onUpdate(currentTick);
             }
@@ -1082,9 +1083,9 @@ public class Server {
         }
         Timings.connectionTimer.stopTiming();*/
 
-        Timings.schedulerTimer.startTiming();
+        /*Timings.schedulerTimer.startTiming();
         this.scheduler.mainThreadHeartbeat(this.tickCounter);
-        Timings.schedulerTimer.stopTiming();
+        Timings.schedulerTimer.stopTiming();*/
 
         this.checkTickUpdates(this.tickCounter, tickTime);
 
@@ -1108,7 +1109,7 @@ public class Server {
             this.getNetwork().updateName();
         }
 
-        if (this.autoSave && ++this.autoSaveTicker >= this.autoSaveTicks) {
+        /*if (this.autoSave && ++this.autoSaveTicker >= this.autoSaveTicks) {
             this.autoSaveTicker = 0;
             this.doAutoSave();
         }
@@ -1116,7 +1117,7 @@ public class Server {
         if (this.sendUsageTicker > 0 && --this.sendUsageTicker == 0) {
             this.sendUsageTicker = 6000;
             //todo sendUsage
-        }
+        }*/
 
         if (this.tickCounter % 100 == 0) {
             for (Level level : this.levelArray) {

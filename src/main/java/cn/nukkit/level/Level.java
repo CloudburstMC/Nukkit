@@ -52,7 +52,6 @@ import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.BlockUpdateScheduler;
 import cn.nukkit.timings.LevelTimings;
 import cn.nukkit.utils.*;
@@ -219,10 +218,6 @@ public class Level implements ChunkManager, Metadatable {
 
     public LevelTimings timings;
 
-    private int tickRate;
-    public int tickRateTime = 0;
-    public int tickRateCounter = 0;
-
     private Class<? extends Generator> generatorClass;
     private IterableThreadLocal<Generator> generators = new IterableThreadLocal<Generator>() {
         @Override
@@ -331,7 +326,6 @@ public class Level implements ChunkManager, Metadatable {
         this.cacheChunks = (boolean) this.server.getConfig("chunk-sending.cache-chunks", false);
         this.temporalPosition = new Position(0, 0, 0, this);
         this.temporalVector = new Vector3(0, 0, 0);
-        this.tickRate = 1;
 
         this.skyLightSubtracted = this.calculateSkylightSubtracted(1);
     }
@@ -388,18 +382,6 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             throw new IllegalStateException("ChunkLoader has a loader id already assigned: " + loader.getLoaderId());
         }
-    }
-
-    public int getTickRate() {
-        return tickRate;
-    }
-
-    public int getTickRateTime() {
-        return tickRateTime;
-    }
-
-    public void setTickRate(int tickRate) {
-        this.tickRate = tickRate;
     }
 
     public void initLevel() {
@@ -661,7 +643,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void checkTime() {
         if (!this.stopTime) {
-            this.time += tickRate;
+            this.time++;
         }
     }
 
@@ -686,10 +668,10 @@ public class Level implements ChunkManager, Metadatable {
         return gameRules;
     }
 
-    public void doTick(int currentTick) {
-        this.timings.doTick.startTiming();
-
-        updateBlockLight(lightQueue);
+    /**
+     * Does any actions that are too trivial to be done by workers
+     */
+    public void doBaseTick(int currentTick) {
         this.checkTime();
 
         // Tick Weather
@@ -735,10 +717,35 @@ public class Level implements ChunkManager, Metadatable {
 
         this.levelCurrentTick++;
 
+        if (this.sleepTicks > 0 && --this.sleepTicks <= 0) {
+            this.checkSleep();
+        }
+
+        if(gameRules.isStale()) {
+            GameRulesChangedPacket packet = new GameRulesChangedPacket();
+            packet.gameRules = gameRules;
+            Server.broadcastPacket(players.values().toArray(new Player[players.size()]), packet);
+            gameRules.refresh();
+        }
+
+        this.chunkPackets.clear();
+    }
+
+    /**
+     * Handles tasks that are somewhat more bulky and require more power.
+     * This includes ticking block/entities
+     *
+     * This is called by all worker threads every tick, and is therefore engineered to work with multiple threads executing it at the same time
+     */
+    public void threadedTick(int currentTick)   {
+
+    }
+
+    public void doTick(int currentTick) {
+        updateBlockLight(lightQueue);
+
         this.unloadChunks();
         this.timings.doTickPending.startTiming();
-
-        int polled = 0;
 
         this.updateQueue.tick(this.getCurrentTick());
         this.timings.doTickPending.stopTiming();
@@ -804,10 +811,6 @@ public class Level implements ChunkManager, Metadatable {
 
         this.processChunkRequest();
 
-        if (this.sleepTicks > 0 && --this.sleepTicks <= 0) {
-            this.checkSleep();
-        }
-
         for (long index : this.chunkPackets.keySet()) {
             int chunkX = Level.getHashX(index);
             int chunkZ = Level.getHashZ(index);
@@ -819,14 +822,6 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        if(gameRules.isStale()) {
-            GameRulesChangedPacket packet = new GameRulesChangedPacket();
-            packet.gameRules = gameRules;
-            Server.broadcastPacket(players.values().toArray(new Player[players.size()]), packet);
-            gameRules.refresh();
-        }
-
-        this.chunkPackets.clear();
         this.timings.doTick.stopTiming();
     }
 
@@ -2517,10 +2512,12 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
             this.timings.syncChunkSendPrepareTimer.startTiming();
-            AsyncTask task = this.provider.requestChunkTask(x, z);
+            //porktodo: async chunk loading
+            //porktodo: or even load chunks in the first place lol
+            /*AsyncTask task = this.provider.requestChunkTask(x, z);
             if (task != null) {
                 this.server.getScheduler().scheduleAsyncTask(task);
-            }
+            }*/
             this.timings.syncChunkSendPrepareTimer.stopTiming();
         }
         this.timings.syncChunkSendTimer.stopTiming();
