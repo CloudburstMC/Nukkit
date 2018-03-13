@@ -704,10 +704,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.unloadChunk(chunkX, chunkZ, oldLevel);
             }
 
-            setDimension(targetLevel.getDimension());
+            /*setDimension(targetLevel.getDimension());
             PlayStatusPacket statusPacket0 = new PlayStatusPacket();
             statusPacket0.status = PlayStatusPacket.PLAYER_SPAWN;
-            dataPacket(statusPacket0);
+            dataPacket(statusPacket0);*/
 
             this.usedChunks.clear();
             SetTimePacket pk = new SetTimePacket();
