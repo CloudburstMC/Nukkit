@@ -119,15 +119,15 @@ public class Server {
 
     private final float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    private float maxTick = 20;
+    public float maxTick = 20;
 
-    private float maxUse = 0;
+    public float maxUse = 0;
 
     public int sendUsageTicker = 0;
 
     private boolean dispatchSignals = false;
 
-    private final MainLogger logger;
+    public final MainLogger logger;
 
     private final CommandReader console;
 
@@ -180,9 +180,9 @@ public class Server {
 
     private final Set<UUID> uniquePlayers = new HashSet<>();
 
-    private QueryHandler queryHandler;
+    public QueryHandler queryHandler;
 
-    private QueryRegenerateEvent queryRegenerateEvent;
+    public QueryRegenerateEvent queryRegenerateEvent;
 
     private Config properties;
     private Config config;
@@ -1056,7 +1056,7 @@ public class Server {
 
         //this.checkTickUpdates(this.tickCounter, tickTime);
 
-        if ((this.tickCounter & 0b1111) == 0) {
+        /*if ((this.tickCounter & 0b1111) == 0) {
             this.titleTick();
             this.network.resetStatistics();
             this.maxTick = 20;
@@ -1074,7 +1074,7 @@ public class Server {
             }
 
             this.getNetwork().updateName();
-        }
+        }*/
 
         /*if (this.autoSave && ++this.autoSaveTicker >= this.autoSaveTicks) {
             this.autoSaveTicker = 0;
