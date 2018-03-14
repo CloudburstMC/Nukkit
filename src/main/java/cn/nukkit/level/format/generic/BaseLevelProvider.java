@@ -11,6 +11,8 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.LevelException;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
@@ -40,7 +42,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     protected final Map<Long, BaseRegionLoader> regions = new HashMap<>();
 
-    private final Long2ObjectOpenHashMap<BaseFullChunk> chunks = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<BaseFullChunk> chunks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
     public BaseLevelProvider(Level level, String path) throws IOException {
         this.level = level;
@@ -73,8 +75,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
         return this.chunks.size();
     }
 
-    public ObjectIterator<BaseFullChunk> getChunks() {
-        return chunks.values().iterator();
+    @Override
+    public ObjectIterator<? extends FullChunk> getLoadedChunkIterator() {
+        return this.chunks.values().iterator();
     }
 
     protected void putChunk(long index, BaseFullChunk chunk) {
@@ -108,7 +111,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public Map<Long, BaseFullChunk> getLoadedChunks() {
+    public Long2ObjectMap<? extends FullChunk> getLoadedChunks() {
         return this.chunks;
     }
 

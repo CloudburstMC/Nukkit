@@ -199,11 +199,10 @@ public class Level implements ChunkManager, Metadatable {
     //private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
 
     private final Long2ObjectOpenHashMap<Map<Integer, Player>> chunkSendQueue = new Long2ObjectOpenHashMap<>();
-    private final Long2ObjectOpenHashMap<Boolean> chunkSendTasks = new Long2ObjectOpenHashMap<>();
-
-    private final Long2ObjectOpenHashMap<Boolean> chunkPopulationQueue = new Long2ObjectOpenHashMap<>();
-    private final Long2ObjectOpenHashMap<Boolean> chunkPopulationLock = new Long2ObjectOpenHashMap<>();
-    private final Long2ObjectOpenHashMap<Boolean> chunkGenerationQueue = new Long2ObjectOpenHashMap<>();
+    private final Long2BooleanMap chunkSendTasks = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
+    private final Long2BooleanMap chunkPopulationQueue = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
+    private final Long2BooleanMap chunkPopulationLock = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
+    private final Long2BooleanMap chunkGenerationQueue = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
     private int chunkGenerationQueueSize = 8;
     private int chunkPopulationQueueSize = 2;
 
@@ -218,9 +217,8 @@ public class Level implements ChunkManager, Metadatable {
 
     public int sleepTicks = 0;
 
-    private int chunkTickRadius;
+    //porktodo: see if this can be removed
     private final Long2IntMap chunkTickList = new Long2IntOpenHashMap();
-    private int chunksPerTicks;
     private boolean clearChunksOnTick;
 
     protected int updateLCG = (new Random()).nextInt();
@@ -325,9 +323,6 @@ public class Level implements ChunkManager, Metadatable {
         this.levelCurrentTick = this.provider.getCurrentTick();
         this.updateQueue = new BlockUpdateScheduler(this, levelCurrentTick);
 
-        this.chunkTickRadius = Math.min(this.server.getViewDistance(),
-                Math.max(1, (Integer) this.server.getConfig("chunk-ticking.tick-radius", 4)));
-        this.chunksPerTicks = (int) this.server.getConfig("chunk-ticking.per-tick", 40);
         this.chunkGenerationQueueSize = (int) this.server.getConfig("chunk-generation.queue-size", 8);
         this.chunkPopulationQueueSize = (int) this.server.getConfig("chunk-generation.population-queue-size", 2);
         this.chunkTickList.clear();
@@ -777,6 +772,12 @@ public class Level implements ChunkManager, Metadatable {
         this.timings.doTickPending.startTiming();
         this.updateQueue.threadedTick(this.getCurrentTick());
         this.timings.doTickPending.stopTiming();
+
+
+
+        this.timings.tickChunks.startTiming();
+        this.tickChunks();
+        this.timings.tickChunks.stopTiming();
     }
 
     public void doTick(int currentTick) {
@@ -804,9 +805,9 @@ public class Level implements ChunkManager, Metadatable {
         }
         this.timings.blockEntityTick.stopTiming();
 
-        this.timings.tickChunks.startTiming();
+        /*this.timings.tickChunks.startTiming();
         this.tickChunks();
-        this.timings.tickChunks.stopTiming();
+        this.timings.tickChunks.stopTiming();*/
 
         if (!this.changedBlocks.isEmpty()) {
             if (!this.players.isEmpty()) {
@@ -1039,6 +1040,56 @@ public class Level implements ChunkManager, Metadatable {
         this.server.batchPackets(target, packets);
     }
 
+    private ObjectIterator<? extends FullChunk> chunkTickIterator;
+    private final Object chunkTickIteratorSync = new Object();
+
+    private void threadedTickChunks()   {
+        synchronized (chunkTickIteratorSync)    {
+            if (chunkTickIterator == null)  {
+                chunkTickIterator = this.provider.getLoadedChunkIterator();
+            }
+        }
+
+        while (true)    {
+            FullChunk chunk;
+
+            synchronized (chunkTickIterator)    {
+                if (!chunkTickIterator.hasNext())   {
+                    break;
+                }
+                chunk = chunkTickIterator.next();
+            }
+
+            int x = chunk.getX();
+            int z = chunk.getZ();
+            long index = chunkHash(x, z);
+            if (!areNeighboringChunksLoaded(index)) {
+                continue;
+            }
+
+            //porktodo: make this thread-safe (or maybe i don't need to)
+            chunk.getEntities().forEach((id, entity) -> {
+                //porktodo: do entity ticking here instead
+            });
+
+            for (int ySeg = 0; ySeg < 16; ySeg++)   {
+                //two random block updates per section per tick
+                for (int i = 0; i < 2; i++) {
+                    int randomData = (this.updateLCG ^= 398475233987429L);
+                    int blockX = randomData & 0xF;
+                    int blockY = (randomData >> 4) & 0xF;
+                    int blockZ = (randomData >> 8) & 0xF;
+
+                    int fullId = chunk.getFullBlock(blockX, (ySeg << 4) | blockY, blockZ);
+                    if (randomTickBlocks[fullId >> 4])  {
+                        Block block = Block.get(fullId, this, x, (ySeg << 4) | blockY, z);
+                        block.onUpdate(BLOCK_UPDATE_RANDOM);
+                    }
+                }
+            }
+        }
+    }
+
     private void tickChunks() {
         if (this.chunksPerTicks <= 0 || this.loaders.isEmpty()) {
             this.chunkTickList.clear();
@@ -1097,30 +1148,6 @@ public class Level implements ChunkManager, Metadatable {
                 for (Entity entity : chunk.getEntities().values()) {
                     entity.scheduleUpdate();
                 }
-                int tickSpeed = 3;
-
-                if (tickSpeed > 0) {
-                    if (this.useSections) {
-                        for (ChunkSection section : ((Chunk) chunk).getSections()) {
-                            if (!(section instanceof EmptyChunkSection)) {
-                                int Y = section.getY();
-                                this.updateLCG = this.updateLCG * 3 + 1013904223;
-                                int k = this.updateLCG >> 2;
-                                for (int i = 0; i < tickSpeed; ++i, k >>= 10) {
-                                    int x = k & 0x0f;
-                                    int y = k >> 8 & 0x0f;
-                                    int z = k >> 16 & 0x0f;
-
-                                    int fullId = section.getFullBlock(x, y, z);
-                                    int blockId = fullId >> 4;
-                                    if (randomTickBlocks[blockId]) {
-                                        Block block = Block.get(fullId, this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
-                                        block.onUpdate(BLOCK_UPDATE_RANDOM);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
                         for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
                             blockTest = 0;
                             this.updateLCG = this.updateLCG * 3 + 1013904223;
@@ -1139,8 +1166,8 @@ public class Level implements ChunkManager, Metadatable {
                                 }
                             }
                         }
-                    }
-                }
+
+
             }
         }
 
