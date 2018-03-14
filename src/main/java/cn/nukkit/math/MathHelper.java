@@ -5,6 +5,14 @@ import java.util.Random;
 public class MathHelper {
     private static float[] a = new float[65536];
 
+    static {
+        for (int i = 0; i < 65536; i++)
+            a[i] = (float) Math.sin(i * 3.141592653589793D * 2.0D / 65536.0D);
+    }
+
+    private MathHelper() {
+    }
+
     public static float sqrt(float paramFloat) {
         return (float) Math.sqrt(paramFloat);
     }
@@ -44,7 +52,7 @@ public class MathHelper {
         }
     }
 
-        public static int log2( int bits ) {
+    public static int log2(int bits) {
         return Integer.SIZE - Integer.numberOfLeadingZeros(bits);
     }
 
@@ -58,11 +66,6 @@ public class MathHelper {
      */
     public static int getRandomNumberInRange(Random random, int min, int max) {
         return min + random.nextInt(max - min + 1);
-    }
-
-    static {
-        for (int i = 0; i < 65536; i++)
-            a[i] = (float) Math.sin(i * 3.141592653589793D * 2.0D / 65536.0D);
     }
 
     public static double max(double first, double second, double third, double fourth) {
@@ -87,6 +90,13 @@ public class MathHelper {
         return check > max ? max : (check < min ? min : check);
     }
 
-    private MathHelper() {
+    public static int roundUpToPowerOfTwo(int value) {
+        int i = value - 1;
+        i = i | i >> 1;
+        i = i | i >> 2;
+        i = i | i >> 4;
+        i = i | i >> 8;
+        i = i | i >> 16;
+        return i + 1;
     }
 }

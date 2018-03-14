@@ -210,7 +210,7 @@ public class ServerScheduler {
             throw new PluginException("Attempted to register a task with negative delay or period.");
         }
 
-        TaskHandler taskHandler = new TaskHandler(plugin, task, nextTaskId(), asynchronous);
+        TaskHandler taskHandler = new TaskHandler(plugin, task, nextTaskId());
         taskHandler.setDelay(delay);
         taskHandler.setPeriod(period);
         taskHandler.setNextRunTick(taskHandler.isDelayed() ? currentTick + taskHandler.getDelay() : currentTick);

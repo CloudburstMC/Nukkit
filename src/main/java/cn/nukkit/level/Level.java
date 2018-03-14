@@ -104,6 +104,15 @@ public class Level implements ChunkManager, Metadatable {
     // Lower values use less memory
     public static final int MAX_BLOCK_CACHE = 512;
 
+    private static final int NUM_X_BITS = 1 + MathHelper.log2(MathHelper.roundUpToPowerOfTwo(30000000));
+    private static final int NUM_Z_BITS = NUM_X_BITS;
+    private static final int NUM_Y_BITS = 64 - NUM_X_BITS - NUM_Z_BITS;
+    private static final int Y_SHIFT = NUM_Z_BITS;
+    private static final int X_SHIFT = Y_SHIFT + NUM_Y_BITS;
+    private static final long X_MASK = (1L << NUM_X_BITS) - 1L;
+    private static final long Y_MASK = (1L << NUM_Y_BITS) - 1L;
+    private static final long Z_MASK = (1L << NUM_Z_BITS) - 1L;
+
     // The blocks that can randomly tick
     private static final boolean[] randomTickBlocks = new boolean[256];
     static {
@@ -334,11 +343,34 @@ public class Level implements ChunkManager, Metadatable {
         return (((long) x) << 32) | (z & 0xffffffffL);
     }
 
+    public static long blockHash(Vector3 vector3)   {
+        return blockHash(vector3.getFloorX(), vector3.getFloorY(), vector3.getFloorZ());
+    }
+
     public static long blockHash(int x, int y, int z){
         if(y < 0 || y >= 256){
             throw new IllegalArgumentException("Y coordinate y is out of range!");
         }
         return (((long) x & (long) 0xFFFFFFF) << 36) | (((long) y & (long) 0xFF) << 28) | ((long) z & (long) 0xFFFFFFF);
+    }
+
+    public static BlockVector3 fromLong(long serialized) {
+        int x = getXFrom(serialized);
+        int y = getYFrom(serialized);
+        int z = getZFrom(serialized);
+        return new BlockVector3(x, y, z);
+    }
+
+    public static int getXFrom(long serialized) {
+        return (int) (serialized << 64 - X_SHIFT - NUM_X_BITS >> 64 - NUM_X_BITS);
+    }
+
+    public static int getYFrom(long serialized) {
+        return (int)(serialized << 64 - Y_SHIFT - NUM_Y_BITS >> 64 - NUM_Y_BITS);
+    }
+
+    public static int getZFrom(long serialized) {
+        return (int)(serialized << 64 - NUM_Z_BITS >> 64 - NUM_Z_BITS);
     }
 
     public static char localBlockHash(double x, double y, double z) {
@@ -741,14 +773,13 @@ public class Level implements ChunkManager, Metadatable {
         threadedBlockLightUpdate();
 
         threadedUnloadChunks();
+
+        this.timings.doTickPending.startTiming();
+        this.updateQueue.threadedTick(this.getCurrentTick());
+        this.timings.doTickPending.stopTiming();
     }
 
     public void doTick(int currentTick) {
-        this.timings.doTickPending.startTiming();
-
-        this.updateQueue.tick(this.getCurrentTick());
-        this.timings.doTickPending.stopTiming();
-
         TimingsHistory.entityTicks += this.updateEntities.size();
         this.timings.entityTick.startTiming();
 
@@ -1222,47 +1253,38 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public void scheduleUpdate(Block pos, int delay) {
-        this.scheduleUpdate(pos, pos, delay, 0, true);
+    public void scheduleUpdate(Vector3 pos, int delay) {
+        this.scheduleUpdate(pos, delay, 0, true);
     }
 
-    public void scheduleUpdate(Block block, Vector3 pos, int delay) {
-        this.scheduleUpdate(block, pos, delay, 0, true);
+    public void scheduleUpdate(Vector3 pos, int delay, int priority) {
+        this.scheduleUpdate(pos, delay, priority, true);
     }
 
-    public void scheduleUpdate(Block block, Vector3 pos, int delay, int priority) {
-        this.scheduleUpdate(block, pos, delay, priority, true);
-    }
-
-    public void scheduleUpdate(Block block, Vector3 pos, int delay, int priority, boolean checkArea) {
-        if (block.getId() == 0 || (checkArea && !this.isChunkLoaded(block.getFloorX() >> 4, block.getFloorZ() >> 4))) {
+    public void scheduleUpdate(Vector3 pos, int delay, int priority, boolean checkArea) {
+        if (checkArea && !this.isChunkLoaded(pos.getFloorX() >> 4, pos.getFloorZ() >> 4)) {
             return;
         }
-
-        if (block instanceof BlockRedstoneComparator) {
-            MainLogger.getLogger().notice("schedule update: " + getCurrentTick());
-        }
-
-        BlockUpdateEntry entry = new BlockUpdateEntry(pos.floor(), block, ((long) delay) + getCurrentTick(), priority);
+        long entry = blockHash(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
 
         if (!this.updateQueue.contains(entry)) {
             this.updateQueue.add(entry);
         }
     }
 
-    public boolean cancelSheduledUpdate(Vector3 pos, Block block) {
-        return this.updateQueue.remove(new BlockUpdateEntry(pos, block));
+    public boolean cancelSheduledUpdate(Vector3 pos) {
+        return this.updateQueue.remove(blockHash(pos));
     }
 
-    public boolean isUpdateScheduled(Vector3 pos, Block block) {
-        return this.updateQueue.contains(new BlockUpdateEntry(pos, block));
+    public boolean isUpdateScheduled(Vector3 pos) {
+        return this.updateQueue.contains(blockHash(pos));
     }
 
-    public boolean isBlockTickPending(Vector3 pos, Block block) {
-        return this.updateQueue.isBlockTickPending(pos, block);
+    public boolean isBlockTickPending(Vector3 pos) {
+        return this.updateQueue.isBlockTickPending(pos);
     }
 
-    public Set<BlockUpdateEntry> getPendingBlockUpdates(FullChunk chunk) {
+    public LongSet getPendingBlockUpdates(FullChunk chunk) {
         int minX = (chunk.getX() << 4) - 2;
         int maxX = minX + 16 + 2;
         int minZ = (chunk.getZ() << 4) - 2;
@@ -1271,7 +1293,7 @@ public class Level implements ChunkManager, Metadatable {
         return this.getPendingBlockUpdates(new SimpleAxisAlignedBB(minX, 0, minZ, maxX, 256, maxZ));
     }
 
-    public Set<BlockUpdateEntry> getPendingBlockUpdates(AxisAlignedBB boundingBox) {
+    public LongSet getPendingBlockUpdates(AxisAlignedBB boundingBox) {
         return updateQueue.getPendingBlockUpdates(boundingBox);
     }
 
@@ -2663,7 +2685,8 @@ public class Level implements ChunkManager, Metadatable {
 
         if (!chunk.isLightPopulated() && chunk.isPopulated()
                 && (boolean) this.getServer().getConfig("chunk-ticking.light-updates", false)) {
-            this.getServer().getScheduler().scheduleAsyncTask(new LightPopulationTask(this, chunk));
+            //porktodo: light updates!
+            //this.getServer().getScheduler().scheduleAsyncTask(new LightPopulationTask(this, chunk));
         }
 
         if (this.isChunkInUse(index)) {
@@ -2672,7 +2695,7 @@ public class Level implements ChunkManager, Metadatable {
                 loader.onChunkLoaded(chunk);
             }
         } else {
-            this.unloadQueue.put(index, (Long) System.currentTimeMillis());
+            this.unloadQueue.put(index, System.currentTimeMillis());
         }
         this.timings.syncChunkLoadTimer.stopTiming();
         return chunk;
@@ -2680,7 +2703,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private void queueUnloadChunk(int x, int z) {
         long index = Level.chunkHash(x, z);
-        this.unloadQueue.put(index, (Long) System.currentTimeMillis());
+        this.unloadQueue.put(index, System.currentTimeMillis());
     }
 
     public boolean unloadChunkRequest(int x, int z) {
@@ -2906,7 +2929,8 @@ public class Level implements ChunkManager, Metadatable {
                     }
 
                     PopulationTask task = new PopulationTask(this, chunk);
-                    this.server.getScheduler().scheduleAsyncTask(task);
+                    //porktodo: chunk population
+                    //this.server.getScheduler().scheduleAsyncTask(task);
                 }
             }
             Timings.populationTimer.stopTiming();
@@ -2930,7 +2954,8 @@ public class Level implements ChunkManager, Metadatable {
             Timings.generationTimer.startTiming();
             this.chunkGenerationQueue.put(index, Boolean.TRUE);
             GenerationTask task = new GenerationTask(this, this.getChunk(x, z, true));
-            this.server.getScheduler().scheduleAsyncTask(task);
+            //porktodo: chunk generation
+            //this.server.getScheduler().scheduleAsyncTask(task);
             Timings.generationTimer.stopTiming();
         }
     }
