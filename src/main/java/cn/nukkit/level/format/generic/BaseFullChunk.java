@@ -426,7 +426,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public boolean load(boolean generate) throws IOException {
-        return this.getProvider() != null && this.getProvider().getChunk(this.getX(), this.getZ(), true) != null;
+        return this.getProvider() != null && this.getProvider().getChunk(this.getX(), this.getZ(), true, ) != null;
     }
 
     @Override

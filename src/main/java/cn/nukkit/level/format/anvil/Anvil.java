@@ -10,7 +10,6 @@ import cn.nukkit.level.format.generic.BaseRegionLoader;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.ThreadCache;
@@ -177,14 +176,14 @@ public class Anvil extends BaseLevelProvider {
         long start = System.currentTimeMillis();
         int maxIterations = size();
         if (lastPosition > maxIterations) lastPosition = 0;
-        ObjectIterator<BaseFullChunk> iter = getChunks();
+        ObjectIterator<? extends FullChunk> iter = getLoadedChunkIterator();
         if (lastPosition != 0) iter.skip(lastPosition);
         int i;
         for (i = 0; i < maxIterations; i++) {
             if (!iter.hasNext()) {
-                iter = getChunks();
+                iter = getLoadedChunkIterator();
             }
-            BaseFullChunk chunk = iter.next();
+            BaseFullChunk chunk = (BaseFullChunk) iter.next();
             if (chunk == null) continue;
             if (chunk.isGenerated() && chunk.isPopulated() && chunk instanceof Chunk) {
                 Chunk anvilChunk = (Chunk) chunk;
