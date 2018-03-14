@@ -189,12 +189,6 @@ public class Normal extends Generator {
         PopulatorBedrock bedrock = new PopulatorBedrock();
         this.generationPopulators.add(bedrock);
 
-        PopulatorCaves caves = new PopulatorCaves();
-        this.populators.add(caves);
-
-        PopulatorRavines ravines = new PopulatorRavines();
-        this.populators.add(ravines);
-
         PopulatorOre ores = new PopulatorOre();
         ores.setOreTypes(new OreType[]{
                 new OreType(new BlockOreCoal(), 20, 17, 0, 128),
@@ -210,6 +204,12 @@ public class Normal extends Generator {
                 new OreType(new BlockStone(BlockStone.ANDESITE), 10, 33, 0, 80)
         });
         this.populators.add(ores);
+
+        PopulatorCaves caves = new PopulatorCaves();
+        this.populators.add(caves);
+
+        PopulatorRavines ravines = new PopulatorRavines();
+        this.populators.add(ravines);
     }
 
     @Override
