@@ -14,11 +14,15 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.ThreadCache;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+
+import javax.security.auth.callback.Callback;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -98,7 +102,7 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
+    public void encodeChunkForSending(int x, int z, BiConsumer<Long, byte[]> callback) throws ChunkException {
         Chunk chunk = (Chunk) this.getChunk(x, z, false);
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk Set");
@@ -164,9 +168,8 @@ public class Anvil extends BaseLevelProvider {
         }
         stream.put(blockEntities);
 
+        callback.accept(timestamp, stream.getBuffer());
         this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
-
-        return null;
     }
 
     private int lastPosition = 0;

@@ -56,6 +56,7 @@ import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.CharArraySet;
 import it.unimi.dsi.fastutil.chars.CharSet;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -171,7 +172,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private final BlockUpdateScheduler updateQueue;
 
-    private final Long2ObjectOpenHashMap<Map<Integer, Player>> chunkSendQueue = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<Int2ObjectMap<Player>> chunkSendQueue = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
     private final LongSet chunkSendTasks = LongSets.synchronize(new LongArraySet());
     private final LongSet chunkPopulationQueue = LongSets.synchronize(new LongArraySet());
     private final LongSet chunkPopulationLock = LongSets.synchronize(new LongArraySet());
@@ -734,6 +735,8 @@ public class Level implements ChunkManager, Metadatable {
         this.timings.tickChunks.stopTiming();
 
         this.threadedSendBlockUpdates();
+
+        this.threadedProcessChunkRequest();
     }
 
     public void doTick(int currentTick) {
@@ -796,7 +799,7 @@ public class Level implements ChunkManager, Metadatable {
             this.changedBlocks.clear();
         }*/
 
-        this.processChunkRequest();
+        //this.processChunkRequest();
 
         for (long index : this.chunkPackets.keySet()) {
             int chunkX = Level.getHashX(index);
@@ -2474,7 +2477,7 @@ public class Level implements ChunkManager, Metadatable {
 
 
         if (!this.chunkSendQueue.containsKey(index)) {
-            this.chunkSendQueue.put(index, new HashMap<>());
+            this.chunkSendQueue.put(index, new Int2ObjectOpenHashMap<>());
         }
 
         this.chunkSendQueue.get(index).put(player.getLoaderId(), player);
@@ -2493,12 +2496,28 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    private void processChunkRequest() {
-        this.timings.syncChunkSendTimer.startTiming();
-        for (Long index : ImmutableList.copyOf(this.chunkSendQueue.keySet())) {
-            if (this.chunkSendTasks.contains(index)) {
-                continue;
+    //porktodo: reset this to null afterwards
+    private LongIterator chunkSendQueueIterator;
+
+    private void threadedProcessChunkRequest()  {
+        synchronized (chunkSendQueue)   {
+            if (chunkSendQueueIterator == null)  {
+                LongSet set = new LongArraySet();
+                set.addAll(chunkSendQueue.keySet());
+                chunkSendQueueIterator = set.iterator();
             }
+        }
+
+        while (true)    {
+            long index;
+
+            synchronized (chunkSendQueueIterator)   {
+                if (!chunkSendQueueIterator.hasNext())  {
+                    break;
+                }
+                index = chunkSendQueueIterator.nextLong();
+            }
+
             int x = getHashX(index);
             int z = getHashZ(index);
             this.chunkSendTasks.add(index);
@@ -2511,15 +2530,9 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
             this.timings.syncChunkSendPrepareTimer.startTiming();
-            //porktodo: async chunk loading
-            //porktodo: or even load chunks in the first place lol
-            /*AsyncTask task = this.provider.requestChunkTask(x, z);
-            if (task != null) {
-                this.server.getScheduler().scheduleAsyncTask(task);
-            }*/
+            this.provider.encodeChunkForSending(x, z, (timestamp, data) -> chunkRequestCallback(timestamp, x, z, data));
             this.timings.syncChunkSendPrepareTimer.stopTiming();
         }
-        this.timings.syncChunkSendTimer.stopTiming();
     }
 
     public void chunkRequestCallback(long timestamp, int x, int z, byte[] payload) {

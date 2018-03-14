@@ -8,6 +8,8 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * author: MagicDroidX
@@ -325,4 +327,12 @@ public interface LevelProvider {
      * @return
      */
     ObjectIterator<? extends FullChunk> getLoadedChunkIterator();
+
+    /**
+     * Encode a chunk to be sent over the network
+     * @param x
+     * @param z
+     * @param callback
+     */
+    void encodeChunkForSending(int x, int z, BiConsumer<Long, byte[]> callback);
 }
