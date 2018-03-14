@@ -5,6 +5,8 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
 
+import static cn.nukkit.block.BlockID.STONE;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -16,13 +18,19 @@ public class OreType {
     public final int clusterSize;
     public final int maxHeight;
     public final int minHeight;
+    public final int replaceBlockId;
 
     public OreType(Block material, int clusterCount, int clusterSize, int minHeight, int maxHeight) {
+        this(material, clusterCount, clusterSize, minHeight, maxHeight, STONE);
+    }
+
+    public OreType(Block material, int clusterCount, int clusterSize, int minHeight, int maxHeight, int replaceBlockId) {
         this.fullId = material.getFullId();
         this.clusterCount = clusterCount;
         this.clusterSize = clusterSize;
         this.maxHeight = maxHeight;
         this.minHeight = minHeight;
+        this.replaceBlockId = replaceBlockId;
     }
 
     public boolean spawn(ChunkManager level, NukkitRandom rand, int replaceId, int x, int y, int z) {
@@ -61,7 +69,9 @@ public class OreType {
                                 double zVal = ((double) zSeg + 0.5D - scaleZ) / (randVec1 / 2.0D);
 
                                 if (xVal * xVal + yVal * yVal + zVal * zVal < 1.0D) {
-                                    level.setBlockFullIdAt(xSeg, ySeg, zSeg, fullId);
+                                    if (level.getBlockIdAt(xSeg, ySeg, zSeg) == replaceBlockId) {
+                                        level.setBlockFullIdAt(xSeg, ySeg, zSeg, fullId);
+                                    }
                                 }
                             }
                         }
