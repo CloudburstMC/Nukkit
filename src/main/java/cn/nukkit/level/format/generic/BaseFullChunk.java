@@ -14,7 +14,11 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.network.protocol.BatchPacket;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,11 +31,11 @@ import java.util.Map;
  * Nukkit Project
  */
 public abstract class BaseFullChunk implements FullChunk, ChunkManager {
-    protected Map<Long, Entity> entities;
+    protected Long2ObjectMap<Entity> entities;
 
-    protected Map<Long, BlockEntity> tiles;
+    protected Long2ObjectMap<BlockEntity> tileIds;
 
-    protected Map<Integer, BlockEntity> tileList;
+    protected Int2ObjectMap<BlockEntity> tilePositions;
 
     protected BiomePalette biomes;
 
@@ -134,7 +138,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                 this.getProvider().getLevel().timings.syncChunkLoadEntitiesTimer.startTiming();
                 for (CompoundTag nbt : NBTentities) {
                     if (!nbt.contains("id")) {
-                        this.setChanged();
+                        this.markDirty();
                         continue;
                     }
                     ListTag pos = nbt.getList("Pos");
@@ -175,7 +179,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                 this.NBTtiles = null;
             }
 
-            this.setChanged(changed);
+            this.markDirty(changed);
 
             this.isInit = true;
         }
@@ -230,7 +234,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public void setBiomeId(int x, int z, int biomeId) {
-        this.setChanged();
+        this.markDirty();
         int index = this.biomes.getIndex(x, z);
         int current = this.biomes.get(index);
         this.biomes.set(index, current & 0xffffff | (biomeId << 24));
@@ -249,7 +253,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public void setBiomeColor(int x, int z, int r, int g, int b) {
-        this.setChanged();
+        this.markDirty();
 
         int index = this.biomes.getIndex(x, z);
         int current = this.biomes.get(index);
@@ -296,7 +300,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             this.extraData.put(Level.chunkBlockHash(x, y, z), data);
         }
 
-        this.setChanged(true);
+        this.markDirty(true);
     }
 
     @Override
@@ -347,7 +351,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         }
         this.entities.put(entity.getId(), entity);
         if (!(entity instanceof Player) && this.isInit) {
-            this.setChanged();
+            this.markDirty();
         }
     }
 
@@ -356,48 +360,48 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         if (this.entities != null) {
             this.entities.remove(entity.getId());
             if (!(entity instanceof Player) && this.isInit) {
-                this.setChanged();
+                this.markDirty();
             }
         }
     }
 
     @Override
     public void addBlockEntity(BlockEntity blockEntity) {
-        if (this.tiles == null) {
-            this.tiles = new Long2ObjectOpenHashMap<>();
-            this.tileList = new Int2ObjectOpenHashMap<>();
+        if (this.tileIds == null) {
+            this.tileIds = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
+            this.tilePositions = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
         }
-        this.tiles.put(blockEntity.getId(), blockEntity);
+        this.tileIds.put(blockEntity.getId(), blockEntity);
         int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
-        if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(blockEntity)) {
-            this.tileList.get(index).close();
+        if (this.tilePositions.containsKey(index) && !this.tilePositions.get(index).equals(blockEntity)) {
+            this.tilePositions.get(index).close();
         }
-        this.tileList.put(index, blockEntity);
+        this.tilePositions.put(index, blockEntity);
         if (this.isInit) {
-            this.setChanged();
+            this.markDirty();
         }
     }
 
     @Override
     public void removeBlockEntity(BlockEntity blockEntity) {
-        if (this.tiles != null) {
-            this.tiles.remove(blockEntity.getId());
+        if (this.tileIds != null) {
+            this.tileIds.remove(blockEntity.getId());
             int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
-            this.tileList.remove(index);
+            this.tilePositions.remove(index);
             if (this.isInit) {
-                this.setChanged();
+                this.markDirty();
             }
         }
     }
 
     @Override
-    public Map<Long, Entity> getEntities() {
-        return entities == null ? Collections.emptyMap() : entities;
+    public Long2ObjectMap<Entity> getEntities() {
+        return entities == null ? Long2ObjectMaps.emptyMap() : entities;
     }
 
     @Override
     public Map<Long, BlockEntity> getBlockEntities() {
-        return tiles == null ? Collections.emptyMap() : tiles;
+        return tileIds == null ? Collections.emptyMap() : tileIds;
     }
 
     @Override
@@ -407,7 +411,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public BlockEntity getTile(int x, int y, int z) {
-        return this.tileList != null ? this.tileList.get((z << 12) | (x << 8) | y) : null;
+        return this.tilePositions != null ? this.tilePositions.get((z << 12) | (x << 8) | y) : null;
     }
 
     @Override
@@ -515,15 +519,15 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     }
 
     @Override
-    public void setChanged() {
+    public void markDirty() {
         this.changes++;
         chunkPacket = null;
     }
 
     @Override
-    public void setChanged(boolean changed) {
+    public void markDirty(boolean changed) {
         if (changed) {
-            setChanged();
+            markDirty();
         } else {
             changes = 0;
         }

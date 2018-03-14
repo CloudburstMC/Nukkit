@@ -4,11 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
-import cn.nukkit.block.BlockRedstoneComparator;
 import cn.nukkit.block.BlockRedstoneDiode;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
-import cn.nukkit.collection.PrimitiveList;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -26,19 +24,16 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.Chunk;
-import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
-import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.level.format.leveldb.LevelDB;
 import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.PopChunkManager;
 import cn.nukkit.level.generator.task.GenerationTask;
-import cn.nukkit.level.generator.task.LightPopulationTask;
 import cn.nukkit.level.generator.task.PopulationTask;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
@@ -60,7 +55,6 @@ import co.aikar.timings.TimingsHistory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
-import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.chars.CharArraySet;
 import it.unimi.dsi.fastutil.chars.CharSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -70,7 +64,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -143,43 +136,28 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();
-
     private final Long2ObjectOpenHashMap<Player> players = new Long2ObjectOpenHashMap<>();
-
     private final Long2ObjectOpenHashMap<Entity> entities = new Long2ObjectOpenHashMap<>();
-
     public final Long2ObjectOpenHashMap<Entity> updateEntities = new Long2ObjectOpenHashMap<>();
-
     public final Long2ObjectOpenHashMap<BlockEntity> updateBlockEntities = new Long2ObjectOpenHashMap<>();
 
     private boolean cacheChunks = false;
-
     private final Server server;
-
     private final int levelId;
-
     private LevelProvider provider;
 
     private final Int2ObjectOpenHashMap<ChunkLoader> loaders = new Int2ObjectOpenHashMap<>();
-
     private final Map<Integer, Integer> loaderCounter = new HashMap<>();
-
     private final Long2ObjectOpenHashMap<Map<Integer, ChunkLoader>> chunkLoaders = new Long2ObjectOpenHashMap<>();
-
     private final Long2ObjectOpenHashMap<Map<Integer, Player>> playerLoaders = new Long2ObjectOpenHashMap<>();
-
     private Long2ObjectOpenHashMap<List<DataPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
-
     private final Long2LongMap unloadQueue = Long2LongMaps.synchronize(new Long2LongOpenHashMap());
 
     private float time;
     public boolean stopTime;
-
     public float skyLightSubtracted;
 
     private String folderName;
-
-    private Vector3 mutableBlock;
 
     // Avoid OOM, gc'd references result in whole chunk being sent (possibly higher cpu)
     //porktodo: use fastutil for all of this
@@ -194,11 +172,9 @@ public class Level implements ChunkManager, Metadatable {
 
 
     private final BlockUpdateScheduler updateQueue;
-//    private final TreeSet<BlockUpdateEntry> updateQueue = new TreeSet<>();
-//    private final List<BlockUpdateEntry> nextTickUpdates = Lists.newArrayList();
-    //private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
 
     private final Long2ObjectOpenHashMap<Map<Integer, Player>> chunkSendQueue = new Long2ObjectOpenHashMap<>();
+    //porktodo: all of these can be replaced by sets, as we just need to check if
     private final Long2BooleanMap chunkSendTasks = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
     private final Long2BooleanMap chunkPopulationQueue = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
     private final Long2BooleanMap chunkPopulationLock = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
@@ -210,16 +186,9 @@ public class Level implements ChunkManager, Metadatable {
 
     private BlockMetadataStore blockMetadata;
 
-    private boolean useSections;
-
-    private Position temporalPosition;
     private Vector3 temporalVector;
 
     public int sleepTicks = 0;
-
-    //porktodo: see if this can be removed
-    private final Long2IntMap chunkTickList = new Long2IntOpenHashMap();
-    private boolean clearChunksOnTick;
 
     protected int updateLCG = (new Random()).nextInt();
 
@@ -299,12 +268,6 @@ public class Level implements ChunkManager, Metadatable {
 
         this.generatorClass = Generator.getGenerator(this.provider.getGenerator());
 
-        try {
-            this.useSections = (boolean) provider.getMethod("usesChunkSection").invoke(null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
         this.folderName = name;
         this.time = this.provider.getTime();
 
@@ -325,10 +288,7 @@ public class Level implements ChunkManager, Metadatable {
 
         this.chunkGenerationQueueSize = (int) this.server.getConfig("chunk-generation.queue-size", 8);
         this.chunkPopulationQueueSize = (int) this.server.getConfig("chunk-generation.population-queue-size", 2);
-        this.chunkTickList.clear();
-        this.clearChunksOnTick = (boolean) this.server.getConfig("chunk-ticking.clear-tick-list", true);
         this.cacheChunks = (boolean) this.server.getConfig("chunk-sending.cache-chunks", false);
-        this.temporalPosition = new Position(0, 0, 0, this);
         this.temporalVector = new Vector3(0, 0, 0);
 
         this.skyLightSubtracted = this.calculateSkylightSubtracted(1);
@@ -445,7 +405,6 @@ public class Level implements ChunkManager, Metadatable {
         this.provider.close();
         this.provider = null;
         this.blockMetadata = null;
-        this.temporalPosition = null;
         this.server.getLevels().remove(this.levelId);
         this.generators.clean();
     }
@@ -776,7 +735,7 @@ public class Level implements ChunkManager, Metadatable {
 
 
         this.timings.tickChunks.startTiming();
-        this.tickChunks();
+        this.threadedTickChunks(currentTick);
         this.timings.tickChunks.stopTiming();
     }
 
@@ -1043,7 +1002,7 @@ public class Level implements ChunkManager, Metadatable {
     private ObjectIterator<? extends FullChunk> chunkTickIterator;
     private final Object chunkTickIteratorSync = new Object();
 
-    private void threadedTickChunks()   {
+    private void threadedTickChunks(int currentTick)   {
         synchronized (chunkTickIteratorSync)    {
             if (chunkTickIterator == null)  {
                 chunkTickIterator = this.provider.getLoadedChunkIterator();
@@ -1069,7 +1028,12 @@ public class Level implements ChunkManager, Metadatable {
 
             //porktodo: make this thread-safe (or maybe i don't need to)
             chunk.getEntities().forEach((id, entity) -> {
-                //porktodo: do entity ticking here instead
+                entity.onUpdate(currentTick);
+            });
+
+            //porktodo: make this thread-safe (or maybe i don't need to)
+            chunk.getBlockEntities().forEach((id, entity) -> {
+                entity.onUpdate();
             });
 
             for (int ySeg = 0; ySeg < 16; ySeg++)   {
@@ -1087,92 +1051,6 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
             }
-        }
-    }
-
-    private void tickChunks() {
-        if (this.chunksPerTicks <= 0 || this.loaders.isEmpty()) {
-            this.chunkTickList.clear();
-            return;
-        }
-
-        int chunksPerLoader = Math.min(200, Math.max(1, (int) (((double) (this.chunksPerTicks - this.loaders.size()) / this.loaders.size() + 0.5))));
-        int randRange = 3 + chunksPerLoader / 30;
-        randRange = randRange > this.chunkTickRadius ? this.chunkTickRadius : randRange;
-
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        if (!this.loaders.isEmpty()) {
-            for (ChunkLoader loader : this.loaders.values()) {
-                int chunkX = (int) loader.getX() >> 4;
-                int chunkZ = (int) loader.getZ() >> 4;
-
-                long index = Level.chunkHash(chunkX, chunkZ);
-                int existingLoaders = Math.max(0, this.chunkTickList.getOrDefault(index, 0));
-                this.chunkTickList.put(index, existingLoaders + 1);
-                for (int chunk = 0; chunk < chunksPerLoader; ++chunk) {
-                    int dx = random.nextInt(2 * randRange) - randRange;
-                    int dz = random.nextInt(2 * randRange) - randRange;
-                    long hash = Level.chunkHash(dx + chunkX, dz + chunkZ);
-                    if (!this.chunkTickList.containsKey(hash) && provider.isChunkLoaded(hash)) {
-                        this.chunkTickList.put(hash, -1);
-                    }
-                }
-            }
-        }
-
-        int blockTest = 0;
-
-        if (!chunkTickList.isEmpty()) {
-            ObjectIterator<Long2IntMap.Entry> iter = chunkTickList.long2IntEntrySet().iterator();
-            while (iter.hasNext()) {
-                Long2IntMap.Entry entry = iter.next();
-                long index = entry.getLongKey();
-                if (!areNeighboringChunksLoaded(index)) {
-                    iter.remove();
-                    continue;
-                }
-
-                int loaders = entry.getIntValue();
-
-                int chunkX = getHashX(index);
-                int chunkZ = getHashZ(index);
-
-                FullChunk chunk;
-                if ((chunk = this.getChunk(chunkX, chunkZ, false)) == null) {
-                    iter.remove();
-                    continue;
-                } else if (loaders <= 0) {
-                    iter.remove();
-                }
-
-                for (Entity entity : chunk.getEntities().values()) {
-                    entity.scheduleUpdate();
-                }
-                        for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
-                            blockTest = 0;
-                            this.updateLCG = this.updateLCG * 3 + 1013904223;
-                            int k = this.updateLCG >> 2;
-                            for (int i = 0; i < tickSpeed; ++i, k >>= 10) {
-                                int x = k & 0x0f;
-                                int y = k >> 8 & 0x0f;
-                                int z = k >> 16 & 0x0f;
-
-                                int fullId = chunk.getFullBlock(x, y + (Y << 4), z);
-                                int blockId = fullId >> 4;
-                                blockTest |= fullId;
-                                if (this.randomTickBlocks[blockId]) {
-                                    Block block = Block.get(fullId, this, x, y + (Y << 4), z);
-                                    block.onUpdate(BLOCK_UPDATE_RANDOM);
-                                }
-                            }
-                        }
-
-
-            }
-        }
-
-        if (this.clearChunksOnTick) {
-            this.chunkTickList.clear();
         }
     }
 
@@ -2480,7 +2358,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        chunk.setChanged();
+        chunk.markDirty();
 
         if (!this.isChunkInUse(index)) {
             this.unloadChunkRequest(chunkX, chunkZ);
@@ -2948,10 +2826,10 @@ public class Level implements ChunkManager, Metadatable {
 
             if (populate) {
                 if (!this.chunkPopulationQueue.containsKey(index)) {
-                    this.chunkPopulationQueue.put(index, Boolean.TRUE);
+                    this.chunkPopulationQueue.put(index, true);
                     for (int xx = -1; xx <= 1; ++xx) {
                         for (int zz = -1; zz <= 1; ++zz) {
-                            this.chunkPopulationLock.put(Level.chunkHash(x + xx, z + zz), Boolean.TRUE);
+                            this.chunkPopulationLock.put(Level.chunkHash(x + xx, z + zz), true);
                         }
                     }
 
@@ -2979,7 +2857,7 @@ public class Level implements ChunkManager, Metadatable {
         long index = Level.chunkHash(x, z);
         if (!this.chunkGenerationQueue.containsKey(index)) {
             Timings.generationTimer.startTiming();
-            this.chunkGenerationQueue.put(index, Boolean.TRUE);
+            this.chunkGenerationQueue.put(index, true);
             GenerationTask task = new GenerationTask(this, this.getChunk(x, z, true));
             //porktodo: chunk generation
             //this.server.getScheduler().scheduleAsyncTask(task);

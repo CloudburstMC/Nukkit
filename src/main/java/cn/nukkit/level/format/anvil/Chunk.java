@@ -178,7 +178,7 @@ public class Chunk extends BaseChunk {
     public void setPopulated(boolean value) {
         if (value != this.terrainPopulated) {
             this.terrainPopulated = value;
-            setChanged();
+            markDirty();
         }
     }
 
@@ -196,7 +196,7 @@ public class Chunk extends BaseChunk {
     public void setGenerated(boolean value) {
         if (this.terrainGenerated != value) {
             this.terrainGenerated = value;
-            setChanged();
+            markDirty();
         }
     }
 

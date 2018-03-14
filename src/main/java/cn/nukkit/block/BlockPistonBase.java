@@ -100,7 +100,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
                     this.level.getServer().getPluginManager().callEvent(new BlockPistonChangeEvent(this, powered ? 0 : 15, powered ? 15 : 0));
                     arm.powered = !arm.powered;
                     if (arm.chunk != null) {
-                        arm.chunk.setChanged();
+                        arm.chunk.markDirty();
                     }
                 }
             }

@@ -161,7 +161,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
             if (transfer || pickup) {
                 //this.setTransferCooldown(8); TODO: maybe we should update hopper every tick if nothing happens?
-                this.chunk.setChanged(true);
+                this.chunk.markDirty(true);
             }
 
             this.setTransferCooldown(8);

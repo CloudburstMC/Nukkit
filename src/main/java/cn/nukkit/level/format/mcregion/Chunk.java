@@ -149,7 +149,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockId(int x, int y, int z, int id) {
         this.blocks[(x << 11) | (z << 7) | y] = (byte) id;
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -171,7 +171,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.data[i] = (byte) (((data & 0x0f) << 4) | (old & 0x0f));
         }
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -218,7 +218,7 @@ public class Chunk extends BaseFullChunk {
         }
 
         if (changed) {
-            setChanged();
+            markDirty();
         }
         return changed;
     }
@@ -258,7 +258,7 @@ public class Chunk extends BaseFullChunk {
         }
 
         if (changed) {
-            setChanged();
+            markDirty();
         }
         return Block.get(previousId, previousData);
     }
@@ -282,7 +282,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.skyLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -304,7 +304,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.blockLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -320,7 +320,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setLightPopulated(boolean value) {
         this.nbt.putBoolean("LightPopulated", value);
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -336,7 +336,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setPopulated(boolean value) {
         this.nbt.putBoolean("TerrainPopulated", value);
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -357,7 +357,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setGenerated(boolean value) {
         this.nbt.putBoolean("TerrainGenerated", value);
-        setChanged();
+        markDirty();
     }
 
     public static Chunk fromBinary(byte[] data) {
