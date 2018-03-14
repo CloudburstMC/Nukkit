@@ -978,60 +978,27 @@ public class Server {
         player.dataPacket(CraftingManager.packet);
     }
 
-    private void checkTickUpdates(int currentTick, long tickTime) {
-        for (Player p : new ArrayList<>(this.players.values())) {
-            /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
-                continue;
-            }
+    //porktodo: reset this to null after tick
+    private Iterator<Player> threadPlayerIterator;
 
-            client freezes when applying resource packs
-            todo: fix*/
-
-            //porktodo: tick players as entities with other entities in chunk
-            if (this.alwaysTickPlayers) {
-                p.onUpdate(currentTick);
+    public void threadedTick() {
+        synchronized (players)  {
+            if (threadPlayerIterator == null)   {
+                threadPlayerIterator = new ArrayList<>(this.players.values()).iterator();
             }
         }
 
-        //Do level ticks
-        for (Level level : this.levelArray) {
-            if (level.getTickRate() > this.baseTickRate && --level.tickRateCounter > 0) {
-                continue;
+        while (true)    {
+            Player player;
+
+            synchronized (threadPlayerIterator) {
+                if (!threadPlayerIterator.hasNext())    {
+                    break;
+                }
+                player = threadPlayerIterator.next();
             }
 
-            try {
-                long levelTime = System.currentTimeMillis();
-                level.doTick(currentTick);
-                int tickMs = (int) (System.currentTimeMillis() - levelTime);
-                level.tickRateTime = tickMs;
-
-                if (this.autoTickRate) {
-                    if (tickMs < 50 && level.getTickRate() > this.baseTickRate) {
-                        int r;
-                        level.setTickRate(r = level.getTickRate() - 1);
-                        if (r > this.baseTickRate) {
-                            level.tickRateCounter = level.getTickRate();
-                        }
-                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + level.getTickRate() + " ticks");
-                    } else if (tickMs >= 50) {
-                        if (level.getTickRate() == this.baseTickRate) {
-                            level.setTickRate((int) Math.max(this.baseTickRate + 1, Math.min(this.autoTickRateLimit, Math.floor(tickMs / 50))));
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
-                        } else if ((tickMs / level.getTickRate()) >= 50 && level.getTickRate() < this.autoTickRateLimit) {
-                            level.setTickRate(level.getTickRate() + 1);
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
-                        }
-                        level.tickRateCounter = level.getTickRate();
-                    }
-                }
-            } catch (Exception e) {
-                if (Nukkit.DEBUG > 1 && this.logger != null) {
-                    this.logger.logException(e);
-                }
-
-                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.toString()}));
-                this.logger.logException(e);
-            }
+            player.onUpdate(0);
         }
     }
 
@@ -1087,7 +1054,7 @@ public class Server {
         this.scheduler.mainThreadHeartbeat(this.tickCounter);
         Timings.schedulerTimer.stopTiming();*/
 
-        this.checkTickUpdates(this.tickCounter, tickTime);
+        //this.checkTickUpdates(this.tickCounter, tickTime);
 
         if ((this.tickCounter & 0b1111) == 0) {
             this.titleTick();

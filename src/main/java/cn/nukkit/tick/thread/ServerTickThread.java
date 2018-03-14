@@ -18,6 +18,8 @@ public class ServerTickThread extends ServerExecutorThread {
 
     @Override
     public void doRun() {
+        this.server.threadedTick();
+
         for (Level level : this.server.levelArray)  {
             level.threadedTick(this.server.tickCounter);
         }

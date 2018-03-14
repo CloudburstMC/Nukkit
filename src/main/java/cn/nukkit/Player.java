@@ -1417,6 +1417,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
+    //porktodo: remove that whole tickDiff system, that's old and no longer required
     protected void processMovement(int tickDiff) {
         if (!this.isAlive() || !this.spawned || this.newPosition == null || this.teleportPosition != null || this.isSleeping()) {
             return;

@@ -737,86 +737,28 @@ public class Level implements ChunkManager, Metadatable {
         this.threadedSendBlockUpdates();
 
         this.threadedProcessChunkRequest();
-    }
 
-    public void doTick(int currentTick) {
-        /*TimingsHistory.entityTicks += this.updateEntities.size();
-        this.timings.entityTick.startTiming();
-
-        if (!this.updateEntities.isEmpty()) {
-            for (long id : new ArrayList<>(this.updateEntities.keySet())) {
-                Entity entity = this.updateEntities.get(id);
-                if (entity.closed || !entity.onUpdate(currentTick)) {
-                    this.updateEntities.remove(id);
-                }
-            }
-        }
-        this.timings.entityTick.stopTiming();
-
-        TimingsHistory.tileEntityTicks += this.updateBlockEntities.size();
-        this.timings.blockEntityTick.startTiming();
-        if (!this.updateBlockEntities.isEmpty()) {
-            for (long id : new ArrayList<>(this.updateBlockEntities.keySet())) {
-                if (!this.updateBlockEntities.get(id).onUpdate()) {
-                    this.updateBlockEntities.remove(id);
-                }
-            }
-        }
-        this.timings.blockEntityTick.stopTiming();*/
-
-        /*this.timings.tickChunks.startTiming();
-        this.tickChunks();
-        this.timings.tickChunks.stopTiming();*/
-
-        /*if (!this.changedBlocks.isEmpty()) {
-            if (!this.players.isEmpty()) {
-                ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> iter = changedBlocks.long2ObjectEntrySet().iterator();
-                while (iter.hasNext()) {
-                    Long2ObjectMap.Entry<SoftReference<CharSet>> entry = iter.next();
-                    long index = entry.getKey();
-                    CharSet blocks = entry.getValue().get();
-                    int chunkX = Level.getHashX(index);
-                    int chunkZ = Level.getHashZ(index);
-                    if (blocks == null || blocks.size() > MAX_BLOCK_CACHE) {
-                        FullChunk chunk = this.getChunk(chunkX, chunkZ);
-                        for (Player p : this.getChunkPlayers(chunkX, chunkZ).values()) {
-                            p.onChunkChanged(chunk);
-                        }
-                    } else {
-                        Collection<Player> toSend = this.getChunkPlayers(chunkX, chunkZ).values();
-                        Player[] playerArray = toSend.toArray(new Player[toSend.size()]);
-                        Vector3[] blocksArray = new Vector3[blocks.size()];
-                        int i = 0;
-                        for (char blockHash : blocks) {
-                            Vector3 hash = getBlockXYZ(index, blockHash);
-                            blocksArray[i++] = hash;
-                        }
-                        this.sendBlocks(playerArray, blocksArray, UpdateBlockPacket.FLAG_ALL);
-                    }
-                }
-            }
-
-            this.changedBlocks.clear();
-        }*/
-
-        //this.processChunkRequest();
-
-        for (long index : this.chunkPackets.keySet()) {
-            int chunkX = Level.getHashX(index);
-            int chunkZ = Level.getHashZ(index);
-            Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().stream().toArray(Player[]::new);
-            if (chunkPlayers.length > 0) {
-                for (DataPacket pk : this.chunkPackets.get(index)) {
-                    Server.broadcastPacket(chunkPlayers, pk);
-                }
-            }
-        }
-
-        this.timings.doTick.stopTiming();
+        this.threadedSendChunkPackets();
     }
 
     //porktodo: reset this after tick
     private ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> changedBlocksIterator;
+
+    private void threadedSendChunkPackets() {
+        //just synchronize it to make sure it's only executed once, this doesn't need to be multithreaded
+        synchronized (chunkPackets) {
+            for (long index : this.chunkPackets.keySet()) {
+                int chunkX = Level.getHashX(index);
+                int chunkZ = Level.getHashZ(index);
+                Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().stream().toArray(Player[]::new);
+                if (chunkPlayers.length > 0) {
+                    for (DataPacket pk : this.chunkPackets.get(index)) {
+                        Server.broadcastPacket(chunkPlayers, pk);
+                    }
+                }
+            }
+        }
+    }
 
     private void threadedSendBlockUpdates() {
         synchronized (changedBlocks) {
@@ -1076,7 +1018,10 @@ public class Level implements ChunkManager, Metadatable {
 
             //porktodo: make this thread-safe (or maybe i don't need to)
             chunk.getEntities().forEach((id, entity) -> {
-                entity.onUpdate(currentTick);
+                //this check allows us to tick players separately, which ensures that they're ticked, even when they're in a chunk that has unloaded neighbors
+                if (!(entity instanceof Player)) {
+                    entity.onUpdate(currentTick);
+                }
             });
 
             //porktodo: make this thread-safe (or maybe i don't need to)
