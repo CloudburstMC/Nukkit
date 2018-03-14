@@ -160,7 +160,6 @@ public class Level implements ChunkManager, Metadatable {
     private String folderName;
 
     // Avoid OOM, gc'd references result in whole chunk being sent (possibly higher cpu)
-    //porktodo: use fastutil for all of this
     private Long2ObjectMap<SoftReference<CharSet>> changedBlocks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
     // Storing extra blocks past 512 is redundant
     private final Map<Character, Object> changeBlocksFullMap = new HashMap<Character, Object>() {
@@ -174,11 +173,10 @@ public class Level implements ChunkManager, Metadatable {
     private final BlockUpdateScheduler updateQueue;
 
     private final Long2ObjectOpenHashMap<Map<Integer, Player>> chunkSendQueue = new Long2ObjectOpenHashMap<>();
-    //porktodo: all of these can be replaced by sets, as we just need to check if
-    private final Long2BooleanMap chunkSendTasks = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
-    private final Long2BooleanMap chunkPopulationQueue = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
-    private final Long2BooleanMap chunkPopulationLock = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
-    private final Long2BooleanMap chunkGenerationQueue = Long2BooleanMaps.synchronize(new Long2BooleanOpenHashMap());
+    private final LongSet chunkSendTasks = LongSets.synchronize(new LongArraySet());
+    private final LongSet chunkPopulationQueue = LongSets.synchronize(new LongArraySet());
+    private final LongSet chunkPopulationLock = LongSets.synchronize(new LongArraySet());
+    private final LongSet chunkGenerationQueue = LongSets.synchronize(new LongArraySet());
     private int chunkGenerationQueueSize = 8;
     private int chunkPopulationQueueSize = 2;
 
@@ -732,15 +730,15 @@ public class Level implements ChunkManager, Metadatable {
         this.updateQueue.threadedTick(this.getCurrentTick());
         this.timings.doTickPending.stopTiming();
 
-
-
         this.timings.tickChunks.startTiming();
         this.threadedTickChunks(currentTick);
         this.timings.tickChunks.stopTiming();
+
+        this.threadedSendBlockUpdates();
     }
 
     public void doTick(int currentTick) {
-        TimingsHistory.entityTicks += this.updateEntities.size();
+        /*TimingsHistory.entityTicks += this.updateEntities.size();
         this.timings.entityTick.startTiming();
 
         if (!this.updateEntities.isEmpty()) {
@@ -762,13 +760,13 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
         }
-        this.timings.blockEntityTick.stopTiming();
+        this.timings.blockEntityTick.stopTiming();*/
 
         /*this.timings.tickChunks.startTiming();
         this.tickChunks();
         this.timings.tickChunks.stopTiming();*/
 
-        if (!this.changedBlocks.isEmpty()) {
+        /*if (!this.changedBlocks.isEmpty()) {
             if (!this.players.isEmpty()) {
                 ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> iter = changedBlocks.long2ObjectEntrySet().iterator();
                 while (iter.hasNext()) {
@@ -797,7 +795,7 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             this.changedBlocks.clear();
-        }
+        }*/
 
         this.processChunkRequest();
 
@@ -813,6 +811,54 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         this.timings.doTick.stopTiming();
+    }
+
+    //porktodo: reset this after tick
+    private ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> changedBlocksIterator;
+
+    private void threadedSendBlockUpdates() {
+        synchronized (changedBlocks) {
+            if (changedBlocksIterator == null)  {
+                changedBlocksIterator = changedBlocks.long2ObjectEntrySet().iterator();
+            }
+        }
+
+        while (true)    {
+            Long2ObjectMap.Entry<SoftReference<CharSet>> entry;
+
+            synchronized (changedBlocksIterator)    {
+                if (!changedBlocksIterator.hasNext())   {
+                    break;
+                }
+                entry = changedBlocksIterator.next();
+            }
+
+            long index = entry.getLongKey();
+            CharSet blocks = entry.getValue().get();
+            int chunkX = Level.getHashX(index);
+            int chunkZ = Level.getHashZ(index);
+            if (blocks == null || blocks.size() > MAX_BLOCK_CACHE) {
+                FullChunk chunk = this.getChunk(chunkX, chunkZ);
+                for (Player p : this.getChunkPlayers(chunkX, chunkZ).values()) {
+                    p.onChunkChanged(chunk);
+                }
+            } else {
+                Collection<Player> toSend = this.getChunkPlayers(chunkX, chunkZ).values();
+                Player[] playerArray = toSend.toArray(new Player[toSend.size()]);
+                Vector3[] blocksArray = new Vector3[blocks.size()];
+                int i = 0;
+                for (char blockHash : blocks) {
+                    Vector3 hash = getBlockXYZ(index, blockHash);
+                    blocksArray[i++] = hash;
+                }
+                this.sendBlocks(playerArray, blocksArray, UpdateBlockPacket.FLAG_ALL);
+            }
+        }
+
+        synchronized (changedBlocks)    {
+            //this is executed multiple times by any threads that happen to be here, but that doesn't really matter
+            changedBlocks.clear();
+        }
     }
 
     private void performThunder(long index, FullChunk chunk) {
@@ -2267,7 +2313,7 @@ public class Level implements ChunkManager, Metadatable {
     public void generateChunkCallback(int x, int z, BaseFullChunk chunk) {
         Timings.generationCallbackTimer.startTiming();
         long index = Level.chunkHash(x, z);
-        if (this.chunkPopulationQueue.containsKey(index)) {
+        if (this.chunkPopulationQueue.contains(index)) {
             FullChunk oldChunk = this.getChunk(x, z, false);
             for (int xx = -1; xx <= 1; ++xx) {
                 for (int zz = -1; zz <= 1; ++zz) {
@@ -2286,7 +2332,7 @@ public class Level implements ChunkManager, Metadatable {
                     loader.onChunkPopulated(chunk);
                 }
             }
-        } else if (this.chunkGenerationQueue.containsKey(index) || this.chunkPopulationLock.containsKey(index)) {
+        } else if (this.chunkGenerationQueue.contains(index) || this.chunkPopulationLock.contains(index)) {
             this.chunkGenerationQueue.remove(index);
             this.chunkPopulationLock.remove(index);
             chunk.setProvider(this.provider);
@@ -2436,7 +2482,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private void sendChunk(int x, int z, long index, DataPacket packet) {
-        if (this.chunkSendTasks.containsKey(index)) {
+        if (this.chunkSendTasks.contains(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
                 if (player.isConnected() && player.usedChunks.containsKey(index)) {
                     player.sendChunk(x, z, packet);
@@ -2451,12 +2497,12 @@ public class Level implements ChunkManager, Metadatable {
     private void processChunkRequest() {
         this.timings.syncChunkSendTimer.startTiming();
         for (Long index : ImmutableList.copyOf(this.chunkSendQueue.keySet())) {
-            if (this.chunkSendTasks.containsKey(index)) {
+            if (this.chunkSendTasks.contains(index)) {
                 continue;
             }
             int x = getHashX(index);
             int z = getHashZ(index);
-            this.chunkSendTasks.put(index, Boolean.TRUE);
+            this.chunkSendTasks.add(index);
             BaseFullChunk chunk = getChunk(x, z);
             if (chunk != null) {
                 BatchPacket packet = chunk.getChunkPacket();
@@ -2492,7 +2538,7 @@ public class Level implements ChunkManager, Metadatable {
             return;
         }
 
-        if (this.chunkSendTasks.containsKey(index)) {
+        if (this.chunkSendTasks.contains(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
                 if (player.isConnected() && player.usedChunks.containsKey(index)) {
                     player.sendChunk(x, z, payload);
@@ -2805,7 +2851,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public boolean populateChunk(int x, int z, boolean force) {
         long index = Level.chunkHash(x, z);
-        if (this.chunkPopulationQueue.containsKey(index) || this.chunkPopulationQueue.size() >= this.chunkPopulationQueueSize && !force) {
+        if (this.chunkPopulationQueue.contains(index) || this.chunkPopulationQueue.size() >= this.chunkPopulationQueueSize && !force) {
             return false;
         }
 
@@ -2816,7 +2862,7 @@ public class Level implements ChunkManager, Metadatable {
             populate = true;
             for (int xx = -1; xx <= 1; ++xx) {
                 for (int zz = -1; zz <= 1; ++zz) {
-                    if (this.chunkPopulationLock.containsKey(Level.chunkHash(x + xx, z + zz))) {
+                    if (this.chunkPopulationLock.contains(Level.chunkHash(x + xx, z + zz))) {
 
                         populate = false;
                         break;
@@ -2825,11 +2871,11 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             if (populate) {
-                if (!this.chunkPopulationQueue.containsKey(index)) {
-                    this.chunkPopulationQueue.put(index, true);
+                if (!this.chunkPopulationQueue.contains(index)) {
+                    this.chunkPopulationQueue.add(index);
                     for (int xx = -1; xx <= 1; ++xx) {
                         for (int zz = -1; zz <= 1; ++zz) {
-                            this.chunkPopulationLock.put(Level.chunkHash(x + xx, z + zz), true);
+                            this.chunkPopulationLock.add(Level.chunkHash(x + xx, z + zz));
                         }
                     }
 
@@ -2855,9 +2901,9 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         long index = Level.chunkHash(x, z);
-        if (!this.chunkGenerationQueue.containsKey(index)) {
+        if (!this.chunkGenerationQueue.contains(index)) {
             Timings.generationTimer.startTiming();
-            this.chunkGenerationQueue.put(index, true);
+            this.chunkGenerationQueue.add(index);
             GenerationTask task = new GenerationTask(this, this.getChunk(x, z, true));
             //porktodo: chunk generation
             //this.server.getScheduler().scheduleAsyncTask(task);
