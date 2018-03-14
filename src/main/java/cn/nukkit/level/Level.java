@@ -161,7 +161,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private Long2ObjectOpenHashMap<List<DataPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
 
-    private final Long2ObjectOpenHashMap<Long> unloadQueue = new Long2ObjectOpenHashMap<>();
+    private final Long2LongMap unloadQueue = Long2LongMaps.synchronize(new Long2LongOpenHashMap());
 
     private float time;
     public boolean stopTime;
@@ -174,7 +174,7 @@ public class Level implements ChunkManager, Metadatable {
 
     // Avoid OOM, gc'd references result in whole chunk being sent (possibly higher cpu)
     //porktodo: use fastutil for all of this
-    private Long2ObjectOpenHashMap<SoftReference<Map<Character, Object>>> changedBlocks = new Long2ObjectOpenHashMap<>();
+    private Long2ObjectMap<SoftReference<CharSet>> changedBlocks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
     // Storing extra blocks past 512 is redundant
     private final Map<Character, Object> changeBlocksFullMap = new HashMap<Character, Object>() {
         @Override
@@ -738,13 +738,12 @@ public class Level implements ChunkManager, Metadatable {
      * This is called by all worker threads every tick, and is therefore engineered to work with multiple threads executing it at the same time
      */
     public void threadedTick(int currentTick)   {
+        threadedBlockLightUpdate();
 
+        threadedUnloadChunks();
     }
 
     public void doTick(int currentTick) {
-        threadedBlockLightUpdate();
-
-        this.unloadChunks();
         this.timings.doTickPending.startTiming();
 
         this.updateQueue.tick(this.getCurrentTick());
@@ -780,11 +779,11 @@ public class Level implements ChunkManager, Metadatable {
 
         if (!this.changedBlocks.isEmpty()) {
             if (!this.players.isEmpty()) {
-                ObjectIterator<Long2ObjectMap.Entry<SoftReference<Map<Character, Object>>>> iter = changedBlocks.long2ObjectEntrySet().fastIterator();
+                ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> iter = changedBlocks.long2ObjectEntrySet().iterator();
                 while (iter.hasNext()) {
-                    Long2ObjectMap.Entry<SoftReference<Map<Character, Object>>> entry = iter.next();
+                    Long2ObjectMap.Entry<SoftReference<CharSet>> entry = iter.next();
                     long index = entry.getKey();
-                    Map<Character, Object> blocks = entry.getValue().get();
+                    CharSet blocks = entry.getValue().get();
                     int chunkX = Level.getHashX(index);
                     int chunkZ = Level.getHashZ(index);
                     if (blocks == null || blocks.size() > MAX_BLOCK_CACHE) {
@@ -797,7 +796,7 @@ public class Level implements ChunkManager, Metadatable {
                         Player[] playerArray = toSend.toArray(new Player[toSend.size()]);
                         Vector3[] blocksArray = new Vector3[blocks.size()];
                         int i = 0;
-                        for (char blockHash : blocks.keySet()) {
+                        for (char blockHash : blocks) {
                             Vector3 hash = getBlockXYZ(index, blockHash);
                             blocksArray[i++] = hash;
                         }
@@ -1718,13 +1717,13 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private void addBlockChange(long index, int x, int y, int z) {
-        SoftReference<Map<Character, Object>> current = changedBlocks.computeIfAbsent(index, k -> new SoftReference(new HashMap<>()));
-        Map<Character, Object> currentMap = current.get();
-        if (currentMap != changeBlocksFullMap && currentMap != null) {
-            if (currentMap.size() > MAX_BLOCK_CACHE) {
+        SoftReference<CharSet> current = changedBlocks.computeIfAbsent(index, k -> new SoftReference(new HashMap<>()));
+        CharSet currentUpdates = current.get();
+        if (currentUpdates != changeBlocksFullMap && currentUpdates != null) {
+            if (currentUpdates.size() > MAX_BLOCK_CACHE) {
                 this.changedBlocks.put(index, new SoftReference(changeBlocksFullMap));
             } else {
-                currentMap.put(Level.localBlockHash(x, y, z), changeBlocksPresent);
+                currentUpdates.add(Level.localBlockHash(x, y, z));
             }
         }
     }
@@ -2980,124 +2979,54 @@ public class Level implements ChunkManager, Metadatable {
         this.timings.doChunkGC.stopTiming();
     }
 
-    public void doGarbageCollection(long allocatedTime) {
-        long start = System.currentTimeMillis();
-        if (unloadChunks(start, allocatedTime, false)) {
-            allocatedTime = allocatedTime - (System.currentTimeMillis() - start);
-            provider.doGarbageCollection(allocatedTime);
-        }
-    }
+    //porktodo: reset this at end of tick
+    private ObjectIterator<Long2LongMap.Entry> unloadQueueIterator;
+    private ThreadLocal<LongSet> unloadQueueToRemove = ThreadLocal.withInitial(LongArraySet::new);
 
-    public void unloadChunks() {
-        this.unloadChunks(false);
-    }
-
-    public void unloadChunks(boolean force) {
-        unloadChunks(96, force);
-    }
-
-    public void unloadChunks(int maxUnload, boolean force) {
-        if (!this.unloadQueue.isEmpty()) {
-            long now = System.currentTimeMillis();
-
-            PrimitiveList toRemove = null;
-            ObjectIterator<Long2ObjectMap.Entry<Long>> iter = unloadQueue.long2ObjectEntrySet().fastIterator();
-            while (iter.hasNext()) {
-                Long2ObjectMap.Entry<Long> entry = iter.next();
-                long index = entry.getLongKey();
-
-                if (isChunkInUse(index)) {
-                    continue;
-                }
-
-                if (!force) {
-                    long time = entry.getValue();
-                    if (maxUnload <= 0) {
-                        break;
-                    } else if (time > (now - 30000)) {
-                        continue;
-                    }
-                }
-
-                if (toRemove == null) toRemove = new PrimitiveList(long.class);
-                toRemove.add(index);
-            }
-
-            if (toRemove != null) {
-                int size = toRemove.size();
-                for (int i = 0; i < size; i++) {
-                    long index = toRemove.getLong(i);
-                    int X = getHashX(index);
-                    int Z = getHashZ(index);
-
-                    if (this.unloadChunk(X, Z, true)) {
-                        this.unloadQueue.remove(index);
-                        --maxUnload;
-                    }
-                }
+    public void threadedUnloadChunks()  {
+        synchronized (unloadQueue)  {
+            if (unloadQueueIterator == null)    {
+                unloadQueueIterator = unloadQueue.long2LongEntrySet().iterator();
             }
         }
-    }
 
-    private int lastUnloadIndex;
+        long removalThreshold = System.currentTimeMillis() - 30000L;
+        LongSet toRemove = unloadQueueToRemove.get();
 
-    /**
-     * @param now
-     * @param allocatedTime
-     * @param force
-     * @return true if there is allocated time remaining
-     */
-    private boolean unloadChunks(long now, long allocatedTime, boolean force) {
-        if (!this.unloadQueue.isEmpty()) {
-            boolean result = true;
-            int maxIterations = this.unloadQueue.size();
-
-            if (lastUnloadIndex > maxIterations) lastUnloadIndex = 0;
-            ObjectIterator<Long2ObjectMap.Entry<Long>> iter = this.unloadQueue.long2ObjectEntrySet().fastIterator();
-            if (lastUnloadIndex != 0) iter.skip(lastUnloadIndex);
-
-            PrimitiveList toUnload = null;
-
-            for (int i = 0; i < maxIterations; i++) {
-                if (!iter.hasNext()) {
-                    iter = this.unloadQueue.long2ObjectEntrySet().fastIterator();
-                }
-                Long2ObjectMap.Entry<Long> entry = iter.next();
-
-                long index = entry.getLongKey();
-
-                if (isChunkInUse(index)) {
-                    continue;
+        while (true)    {
+            Long2LongMap.Entry entry;
+            synchronized (unloadQueueIterator)  {
+                if (!unloadQueueIterator.hasNext()) {
+                    break;
                 }
 
-                if (!force) {
-                    long time = entry.getValue();
-                    if (time > (now - 30000)) {
-                        continue;
-                    }
-                }
-                if (toUnload == null) toUnload = new PrimitiveList(long.class);
-                toUnload.add(index);
+                entry = unloadQueueIterator.next();
             }
 
-            if (toUnload != null) {
-                long[] arr = (long[]) toUnload.getArray();
-                for (long index : arr) {
-                    int X = getHashX(index);
-                    int Z = getHashZ(index);
-                    if (this.unloadChunk(X, Z, true)) {
-                        this.unloadQueue.remove(index);
-                        if (System.currentTimeMillis() - now >= allocatedTime) {
-                            result = false;
-                            break;
-                        }
-                    }
-                }
+            long index = entry.getLongKey();
+
+            if (isChunkInUse(index))    {
+                continue;
             }
-            return result;
-        } else {
-            return true;
+
+            long time = entry.getLongValue();
+            if (time > removalThreshold)    {
+                continue;
+            }
+
+            toRemove.add(index);
         }
+
+        toRemove.forEach((long index) -> {
+            int X = getHashX(index);
+            int Z = getHashZ(index);
+
+            if (this.unloadChunk(X, Z, true)) {
+                this.unloadQueue.remove(index);
+            }
+        });
+        //empty it out so that we don't try to remove the same chunks on the next tick
+        toRemove.clear();
     }
 
     @Override
