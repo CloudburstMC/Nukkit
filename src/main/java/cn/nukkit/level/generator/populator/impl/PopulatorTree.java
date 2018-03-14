@@ -40,7 +40,7 @@ public class PopulatorTree extends PopulatorCount {
 
     private int getHighestWorkableBlock(int x, int z) {
         int y;
-        for (y = 255; y > 0; --y) {
+        for (y = 254; y > 0; --y) {
             int b = this.level.getBlockIdAt(x, y, z);
             if (b == Block.DIRT || b == Block.GRASS) {
                 break;
