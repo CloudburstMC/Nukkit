@@ -38,7 +38,7 @@ public class MushroomPopulator extends PopulatorCount {
         int y;
         x &= 0xF;
         z &= 0xF;
-        for (y = 255; y > 0; --y) {
+        for (y = 254; y > 0; --y) {
             int b = chunk.getBlockId(x, y, z);
             if (b == Block.DIRT || b == Block.GRASS) {
                 break;
