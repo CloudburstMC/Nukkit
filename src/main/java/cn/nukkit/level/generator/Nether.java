@@ -75,7 +75,7 @@ public class Nether extends Generator {
         this.nukkitRandom.setSeed(this.level.getSeed());
 
         for (int i = 0; i < noiseGen.length; i++)   {
-            noiseGen[i] = new SimplexF(nukkitRandom, 8, 1 / 4f, 1 / 64f);
+            noiseGen[i] = new SimplexF(nukkitRandom, 4, 1 / 4f, 1 / 64f);
         }
 
         this.nukkitRandom.setSeed(this.level.getSeed());
@@ -105,9 +105,9 @@ public class Nether extends Generator {
         this.populators.add(new PopulatorGlowStone());
         PopulatorOre ore = new PopulatorOre(Block.NETHERRACK);
         ore.setOreTypes(new OreType[]{
-                new OreType(new BlockOreQuartz(), 40, 16, 0, 128),
-                new OreType(new BlockSoulSand(), 1, 64, 30, 35),
-                new OreType(new BlockLava(), 32, 1, 0, 32),
+                new OreType(new BlockOreQuartz(), 40, 16, 0, 128, NETHERRACK),
+                new OreType(new BlockSoulSand(), 1, 64, 30, 35, NETHERRACK),
+                new OreType(new BlockLava(), 32, 1, 0, 32, NETHERRACK),
         });
         this.populators.add(ore);
     }
@@ -158,7 +158,7 @@ public class Nether extends Generator {
     public float getNoise(int x, int y, int z)  {
         float val = 0f;
         for (int i = 0; i < noiseGen.length; i++)   {
-            val = Math.min(val, noiseGen[i].noise3D(x >> i, y, z >> i, true));
+            val += noiseGen[i].noise3D(x >> i, y, z >> i, true);
         }
         return val;
     }
