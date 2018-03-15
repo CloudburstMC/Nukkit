@@ -741,7 +741,6 @@ public class Level implements ChunkManager, Metadatable {
         this.threadedSendChunkPackets();
     }
 
-    //porktodo: reset this after tick
     private volatile ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> changedBlocksIterator;
 
     private void threadedSendChunkPackets() {
@@ -1395,12 +1394,10 @@ public class Level implements ChunkManager, Metadatable {
         // todo
     }
 
-    //porktodo: clear these after the tick is over
-    private final Queue<Long> lightPropagationQueue = new ConcurrentLinkedQueue<>();
+    private final LongPriorityQueue lightPropagationQueue = LongPriorityQueues.synchronize(new LongArrayPriorityQueue());
     private final Queue<Object[]> lightRemovalQueue = new ConcurrentLinkedQueue<>();
     private final LongSet visited = LongSets.synchronize(new LongArraySet(), new Object());
     private final LongSet removalVisited = LongSets.synchronize(new LongArraySet(), new Object());
-    //porktodo: reset these after the tick is over
     private volatile ObjectIterator<Long2ObjectMap.Entry<Char2ObjectMap<Object>>> lightUpdateIterator = null;
 
     /**
@@ -1454,7 +1451,7 @@ public class Level implements ChunkManager, Metadatable {
                             lightRemovalQueue.add(new Object[]{Hash.hashBlock(x, y, z), oldLevel});
                         } else {
                             visited.add(Hash.hashBlock(x, y, z));
-                            lightPropagationQueue.add(Hash.hashBlock(x, y, z));
+                            lightPropagationQueue.enqueue(Hash.hashBlock(x, y, z));
                         }
                     }
                 }
@@ -1496,7 +1493,7 @@ public class Level implements ChunkManager, Metadatable {
                     break;
                 }
 
-                node = lightPropagationQueue.poll();
+                node = lightPropagationQueue.dequeueLong();
             }
 
             int x = Hash.hashBlockX(node);
@@ -1533,7 +1530,7 @@ public class Level implements ChunkManager, Metadatable {
             if (!visited.contains(index)) {
                 visited.add(index);
                 synchronized (lightPropagationQueue) {
-                    lightPropagationQueue.add(Hash.hashBlock(x, y, z));
+                    lightPropagationQueue.enqueue(Hash.hashBlock(x, y, z));
                 }
             }
         }
@@ -1550,7 +1547,7 @@ public class Level implements ChunkManager, Metadatable {
                 visited.add(index);
                 if (currentLight > 1) {
                     synchronized (lightPropagationQueue) {
-                        lightPropagationQueue.add(Hash.hashBlock(x, y, z));
+                        lightPropagationQueue.enqueue(Hash.hashBlock(x, y, z));
                     }
                 }
             }
@@ -2442,7 +2439,6 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    //porktodo: reset this at end of tick
     private volatile LongIterator chunkSendQueueIterator;
 
     private void threadedProcessChunkRequest()  {
@@ -2877,13 +2873,10 @@ public class Level implements ChunkManager, Metadatable {
         this.generateChunk(x, z);
     }
 
-    //porktodo: reset this at end of tick
     private volatile ObjectIterator<Long2ObjectMap.Entry<BlockEntity>> gcTileIterator;
     private final ThreadLocal<LongSet> gcToRemoveTiles = ThreadLocal.withInitial(LongArraySet::new);
-    //porktodo: reset this at end of tick
     private volatile ObjectIterator<? extends FullChunk> gcChunkIterator;
     private final Object gcChunkSyncDummy = new Object();
-    //porktodo: reset this at end of tick
     private volatile boolean gcProviderDoneThisTick = false;
 
     public void threadedGarbageCollection() {
@@ -2959,7 +2952,6 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    //porktodo: reset this at end of tick
     private volatile ObjectIterator<Long2LongMap.Entry> unloadQueueIterator;
     private final ThreadLocal<LongSet> unloadQueueToRemove = ThreadLocal.withInitial(LongArraySet::new);
 
@@ -3269,5 +3261,23 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         return true;
+    }
+
+    /**
+     * Reset anything at the end of the tick that needs to be reset
+     */
+    public synchronized void doPostTick()    {
+        changedBlocksIterator = null;
+        lightUpdateIterator = null;
+        chunkSendQueueIterator = null;
+        gcTileIterator = null;
+        gcChunkIterator = null;
+        gcProviderDoneThisTick = false;
+        unloadQueueIterator = null;
+
+        lightPropagationQueue.clear();
+        lightRemovalQueue.clear();
+        visited.clear();
+        removalVisited.clear();
     }
 }

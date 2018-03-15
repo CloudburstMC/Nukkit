@@ -101,7 +101,7 @@ public class Server {
 
     private Config whitelist = null;
 
-    private boolean isRunning = true;
+    public volatile boolean isRunning = true;
 
     private boolean hasStopped = false;
 
@@ -978,7 +978,6 @@ public class Server {
         player.dataPacket(CraftingManager.packet);
     }
 
-    //porktodo: reset this to null after tick
     private volatile Iterator<Player> threadPlayerIterator;
 
     public void threadedTick() {
@@ -1005,6 +1004,18 @@ public class Server {
             for (Level level : this.levelArray) {
                 level.threadedGarbageCollection();
             }
+        }
+
+        for (Level level : this.levelArray)  {
+            level.threadedTick(this.tickCounter);
+        }
+    }
+
+    public synchronized void doPostTick()    {
+        threadPlayerIterator = null;
+
+        for (Level level : this.levelArray)  {
+            level.doPostTick();
         }
     }
 

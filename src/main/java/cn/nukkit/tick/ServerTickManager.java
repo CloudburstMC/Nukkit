@@ -28,9 +28,13 @@ public class ServerTickManager {
             throw new IllegalStateException("Attempted to tick server before ending previous tick!");
         }
 
+        this.server.tickCounter++;
+
         //wait on all threads
         this.waitingOnThreads = this.totalThreadCount;
+
         //notify all threads (since the previous tick is finished, they're all waiting on the dummy object)
+        //this is where the actual tick starts doing things
         this.syncPostTickWaitQueue.notifyAll();
 
         try {
@@ -39,14 +43,26 @@ public class ServerTickManager {
         } catch (InterruptedException e)    {
             this.server.getLogger().logException(e);
         }
+
+        this.server.doPostTick();
+    }
+
+    public void shutdown()  {
+        this.server.isRunning = false;
+
+        //notify workers so that they stop waiting and then terminate as the server is flagged as not running
+        this.syncEndOfTick.notifyAll();
     }
 
     public void onWorkerFinish()   {
+        //decrement the waiting thread count to check if the tick is finished
         if (--this.waitingOnThreads <= 0)    {
             this.syncEndOfTick.notifyAll();
         }
 
         try {
+            //wait on the dummy object
+            //this object won't be notified until the next tick starts
             this.syncPostTickWaitQueue.wait();
         } catch (InterruptedException e)    {
             this.server.getLogger().logException(e);
