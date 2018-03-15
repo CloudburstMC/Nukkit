@@ -4496,7 +4496,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.unloadChunk(chunkX, chunkZ, oldLevel);
         }
 
-        int oldDimension = this.level.getDimension();
+        int oldDimension = oldLevel.getDimension();
         int newDimension = level.getDimension();
         setDimension(oldDimension);
         sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN, true);
