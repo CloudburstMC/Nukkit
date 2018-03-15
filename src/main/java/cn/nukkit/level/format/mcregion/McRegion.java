@@ -11,7 +11,6 @@ import cn.nukkit.level.format.generic.BaseRegionLoader;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 /**
@@ -97,8 +97,8 @@ public class McRegion extends BaseLevelProvider {
     }
 
     @Override
-    public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
-        BaseFullChunk chunk = this.getChunk(x, z, false, );
+    public void encodeChunkForSending(int x, int z, BiConsumer<Long, byte[]> callback) throws ChunkException {
+        BaseFullChunk chunk = this.getChunk(x, z, false);
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk Sent");
         }
@@ -152,9 +152,7 @@ public class McRegion extends BaseLevelProvider {
         }
         stream.put(tiles);
 
-        this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
-
-        return null;
+        callback.accept(timestamp, stream.getBuffer());
     }
 
     @Override

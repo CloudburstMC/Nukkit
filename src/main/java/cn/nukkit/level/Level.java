@@ -1008,12 +1008,12 @@ public class Level implements ChunkManager, Metadatable {
                 chunk = chunkTickIterator.next();
             }
 
-            int x = chunk.getX();
-            int z = chunk.getZ();
-            long index = chunkHash(x, z);
-            if (!areNeighboringChunksLoaded(index)) {
+            if (!chunk.shouldDoRandomTick(this))    {
                 continue;
             }
+
+            int x = chunk.getX() << 4;
+            int z = chunk.getZ() << 4;
 
             //porktodo: make this thread-safe (or maybe i don't need to)
             chunk.getEntities().forEach((id, entity) -> {
@@ -1038,7 +1038,7 @@ public class Level implements ChunkManager, Metadatable {
 
                     int fullId = chunk.getFullBlock(blockX, (ySeg << 4) | blockY, blockZ);
                     if (randomTickBlocks[fullId >> 4])  {
-                        Block block = Block.get(fullId, this, x, (ySeg << 4) | blockY, z);
+                        Block block = Block.get(fullId, this, blockX | x, (ySeg << 4) | blockY, blockZ | z);
                         block.onUpdate(BLOCK_UPDATE_RANDOM);
                     }
                 }
@@ -2378,7 +2378,7 @@ public class Level implements ChunkManager, Metadatable {
         return this.provider.isChunkLoaded(x, z);
     }
 
-    private boolean areNeighboringChunksLoaded(long hash) {
+    public boolean areNeighboringChunksLoaded(long hash) {
         return this.provider.isChunkLoaded(hash + 1) &&
                 this.provider.isChunkLoaded(hash - 1) &&
                 this.provider.isChunkLoaded(hash + (1L << 32)) &&

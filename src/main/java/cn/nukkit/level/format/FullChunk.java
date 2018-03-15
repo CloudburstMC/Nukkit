@@ -3,6 +3,7 @@ package cn.nukkit.level.format;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.biome.Biome;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 
@@ -163,4 +164,6 @@ public interface FullChunk extends Cloneable {
     void markDirty();
 
     void markDirty(boolean changed);
+
+    boolean shouldDoRandomTick(Level level);
 }

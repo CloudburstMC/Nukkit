@@ -68,6 +68,10 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     protected BatchPacket chunkPacket;
 
+    protected boolean shouldTick = false;
+
+    protected boolean shouldTickDirty = false;
+
     @Override
     public BaseFullChunk clone() {
         BaseFullChunk chunk;
@@ -426,7 +430,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public boolean load(boolean generate) throws IOException {
-        return this.getProvider() != null && this.getProvider().getChunk(this.getX(), this.getZ(), true, ) != null;
+        return this.getProvider() != null && this.getProvider().getChunk(this.getX(), this.getZ(), true) != null;
     }
 
     @Override
@@ -522,6 +526,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     public void markDirty() {
         this.changes++;
         chunkPacket = null;
+        shouldTickDirty = true;
     }
 
     @Override
@@ -530,6 +535,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             markDirty();
         } else {
             changes = 0;
+            shouldTickDirty = false;
         }
     }
 
@@ -619,5 +625,14 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public synchronized boolean shouldDoRandomTick(Level level) {
+        if (shouldTickDirty)    {
+            shouldTickDirty = false;
+            shouldTick = level.areNeighboringChunksLoaded(Level.chunkHash(getX(), getZ()));
+        }
+        return shouldTick;
     }
 }

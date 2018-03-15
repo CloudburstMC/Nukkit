@@ -29,6 +29,7 @@ import org.iq80.leveldb.impl.Iq80DBFactory;
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  * author: MagicDroidX
@@ -160,8 +161,8 @@ public class LevelDB implements LevelProvider {
 
     //porktodo: fix this
     @Override
-    public AsyncTask requestChunkTask(int x, int z) {
-        Chunk chunk = this.getChunk(x, z, false, );
+    public void encodeChunkForSending(int x, int z, BiConsumer<Long, byte[]> callback) throws ChunkException {
+        Chunk chunk = this.getChunk(x, z, false);
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk sent");
         }
@@ -215,9 +216,7 @@ public class LevelDB implements LevelProvider {
         }
         stream.put(tiles);
 
-        this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
-
-        return null;
+        callback.accept(timestamp, stream.getBuffer());
     }
 
     @Override
@@ -366,11 +365,11 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public Chunk getChunk(int x, int z) {
-        return this.getChunk(x, z, false, );
+        return this.getChunk(x, z, false);
     }
 
     @Override
-    public Chunk getChunk(int x, int z, boolean create, boolean loadFromDisk) {
+    public Chunk getChunk(int x, int z, boolean create) {
         long index = Level.chunkHash(x, z);
         if (this.chunks.containsKey(index)) {
             return this.chunks.get(index);
@@ -411,7 +410,7 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public boolean isChunkGenerated(int x, int z) {
-        return this.chunkExists(x, z) && this.getChunk(x, z, false, ) != null;
+        return this.chunkExists(x, z) && this.getChunk(x, z, false) != null;
 
     }
 
