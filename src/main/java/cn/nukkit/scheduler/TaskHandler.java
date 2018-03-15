@@ -24,11 +24,14 @@ public class TaskHandler {
 
     public final Timing timing;
 
-    public TaskHandler(Plugin plugin, Runnable task, int taskId) {
+    public final boolean async;
+
+    public TaskHandler(Plugin plugin, Runnable task, int taskId, boolean async) {
         this.plugin = plugin;
         this.task = task;
         this.taskId = taskId;
         this.timing = Timings.getTaskTiming(this, period);
+        this.async = async;
     }
 
     public boolean isCancelled() {

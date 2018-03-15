@@ -64,7 +64,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
 
                     if (!shouldBePowered) {
 //                        System.out.println("schedule update 2");
-                        level.scheduleUpdate(getPowered(), this, this.getDelay());
+                        level.scheduleUpdate(getPowered(), this.getDelay());
                     }
                 }
             }
@@ -84,7 +84,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
         if (!this.isLocked()) {
             boolean shouldPowered = this.shouldBePowered();
 
-            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isBlockTickPending(this, this)) {
+            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isBlockTickPending(this)) {
                 /*int priority = -1;
 
                 if (this.isFacingTowardsRepeater()) {
@@ -93,7 +93,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
                     priority = -2;
                 }*/
 
-                this.level.scheduleUpdate(this, this, this.getDelay());
+                this.level.scheduleUpdate(this, this.getDelay());
             }
         }
     }

@@ -57,7 +57,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public void updateState() {
-        if (!this.level.isBlockTickPending(this, this)) {
+        if (!this.level.isBlockTickPending(this)) {
             int output = this.calculateOutput();
             BlockEntity blockEntity = this.level.getBlockEntity(this);
             int power = blockEntity instanceof BlockEntityComparator ? ((BlockEntityComparator) blockEntity).getOutputSignal() : 0;
@@ -70,7 +70,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                 }*/
 
                 //System.out.println("schedule update 0");
-                this.level.scheduleUpdate(this, this, 2);
+                this.level.scheduleUpdate(this, 2);
             }
         }
     }

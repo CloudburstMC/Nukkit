@@ -57,6 +57,7 @@ import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.CharArraySet;
 import it.unimi.dsi.fastutil.chars.CharSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -146,7 +147,7 @@ public class Level implements ChunkManager, Metadatable {
     private final int levelId;
     private LevelProvider provider;
 
-    private final Int2ObjectOpenHashMap<ChunkLoader> loaders = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<ChunkLoader> loaders = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
     private final Map<Integer, Integer> loaderCounter = new HashMap<>();
     private final Long2ObjectOpenHashMap<Map<Integer, ChunkLoader>> chunkLoaders = new Long2ObjectOpenHashMap<>();
     private final Long2ObjectOpenHashMap<Map<Integer, Player>> playerLoaders = new Long2ObjectOpenHashMap<>();
@@ -724,8 +725,6 @@ public class Level implements ChunkManager, Metadatable {
     public void threadedTick(int currentTick)   {
         threadedBlockLightUpdate();
 
-        threadedUnloadChunks();
-
         this.timings.doTickPending.startTiming();
         this.updateQueue.threadedTick(this.getCurrentTick());
         this.timings.doTickPending.stopTiming();
@@ -1165,8 +1164,8 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public boolean cancelSheduledUpdate(Vector3 pos) {
-        return this.updateQueue.remove(blockHash(pos));
+    public boolean cancelSheduledUpdate(Vector3 pos, long tick) {
+        return this.updateQueue.remove(blockHash(pos), tick);
     }
 
     public boolean isUpdateScheduled(Vector3 pos) {
@@ -1177,7 +1176,7 @@ public class Level implements ChunkManager, Metadatable {
         return this.updateQueue.isBlockTickPending(pos);
     }
 
-    public LongSet getPendingBlockUpdates(FullChunk chunk) {
+    public Long2ObjectMap<LongSet> getPendingBlockUpdates(FullChunk chunk) {
         int minX = (chunk.getX() << 4) - 2;
         int maxX = minX + 16 + 2;
         int minZ = (chunk.getZ() << 4) - 2;
@@ -1186,7 +1185,7 @@ public class Level implements ChunkManager, Metadatable {
         return this.getPendingBlockUpdates(new SimpleAxisAlignedBB(minX, 0, minZ, maxX, 256, maxZ));
     }
 
-    public LongSet getPendingBlockUpdates(AxisAlignedBB boundingBox) {
+    public Long2ObjectMap<LongSet> getPendingBlockUpdates(AxisAlignedBB boundingBox) {
         return updateQueue.getPendingBlockUpdates(boundingBox);
     }
 
@@ -2041,6 +2040,10 @@ public class Level implements ChunkManager, Metadatable {
         return entities.values().stream().toArray(Entity[]::new);
     }
 
+    public int countEntities()  {
+        return entities.size();
+    }
+
     public Entity[] getCollidingEntities(AxisAlignedBB bb) {
         return this.getCollidingEntities(bb, null);
     }
@@ -2117,7 +2120,7 @@ public class Level implements ChunkManager, Metadatable {
         return copy;
     }
 
-    public Map<Long, BlockEntity> getBlockEntities() {
+    public Long2ObjectMap<BlockEntity> getBlockEntities() {
         return blockEntities;
     }
 
@@ -2125,11 +2128,11 @@ public class Level implements ChunkManager, Metadatable {
         return this.blockEntities.containsKey(blockEntityId) ? this.blockEntities.get(blockEntityId) : null;
     }
 
-    public Map<Long, Player> getPlayers() {
+    public Long2ObjectMap<Player> getPlayers() {
         return players;
     }
 
-    public Map<Integer, ChunkLoader> getLoaders() {
+    public Int2ObjectMap<ChunkLoader> getLoaders() {
         return loaders;
     }
 

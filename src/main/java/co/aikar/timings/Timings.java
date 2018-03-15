@@ -220,7 +220,7 @@ public final class Timings {
         if (handler.getTask() instanceof PluginTask) {
             String owner = ((PluginTask) handler.getTask()).getOwner().getName();
             return TimingsManager.getTiming(owner, "PluginTask: " + handler.getTaskId() + repeating, schedulerSyncTimer);
-        } else if (!handler.isAsynchronous()) {
+        } else if (!handler.async) {
             return TimingsManager.getTiming(DEFAULT_GROUP.name, "Task: " + handler.getTaskId() + repeating, schedulerSyncTimer);
         } else {
             return null;

@@ -4,11 +4,15 @@ import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -19,6 +23,8 @@ public class ServerScheduler {
     private final Map<Integer, ArrayDeque<TaskHandler>> queueMap;
     private final Map<Integer, TaskHandler> taskMap;
     private final AtomicInteger currentTaskId;
+
+    private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Nukkit Asynchronous Task Handler #%d").build());
 
     private volatile int currentTick = -1;
 
@@ -192,6 +198,7 @@ public class ServerScheduler {
         this.taskMap.clear();
         this.queueMap .clear();
         this.currentTaskId.set(0);
+        this.service.shutdownNow();
     }
 
     public boolean isQueued(int taskId) {
@@ -210,7 +217,7 @@ public class ServerScheduler {
             throw new PluginException("Attempted to register a task with negative delay or period.");
         }
 
-        TaskHandler taskHandler = new TaskHandler(plugin, task, nextTaskId());
+        TaskHandler taskHandler = new TaskHandler(plugin, task, nextTaskId(), asynchronous);
         taskHandler.setDelay(delay);
         taskHandler.setPeriod(period);
         taskHandler.setNextRunTick(taskHandler.isDelayed() ? currentTick + taskHandler.getDelay() : currentTick);
@@ -223,6 +230,18 @@ public class ServerScheduler {
         taskMap.put(taskHandler.getTaskId(), taskHandler);
 
         return taskHandler;
+    }
+
+    public TaskHandler scheduleAsyncTask(AsyncTask task)    {
+        return addTask(null, task, 0, 0, true);
+    }
+
+    public TaskHandler scheduleAsyncTask(AsyncTask task, int delay)    {
+        return addTask(null, task, delay, 0, true);
+    }
+
+    public TaskHandler scheduleAsyncTask(AsyncTask task, int delay, int period)    {
+        return addTask(null, task, delay, period, true);
     }
 
     public void mainThreadHeartbeat(int currentTick) {
@@ -255,6 +274,15 @@ public class ServerScheduler {
                 if (taskHandler.isCancelled()) {
                     taskMap.remove(taskHandler.getTaskId());
                     continue;
+                } else if (taskHandler.async)   {
+                    service.submit(() -> {
+                        try {
+                            taskHandler.run(currentTick);
+                        } catch (Throwable e) {
+                            Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskId() + ": " + e.getMessage());
+                            Server.getInstance().getLogger().logException(e instanceof Exception ? (Exception) e : new RuntimeException(e));
+                        }
+                    });
                 } else {
                     taskHandler.timing.startTiming();
                     try {

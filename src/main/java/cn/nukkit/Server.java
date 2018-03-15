@@ -951,6 +951,22 @@ public class Server {
 
     private volatile Iterator<Player> threadPlayerIterator;
 
+    private volatile boolean doGC = false;
+    private final Object doGCDummyObject = new Object();
+
+    /**
+     * Forces the server to do garbage collection in the next tick.
+     * Waits until the next tick has done garbage collection to return
+     */
+    public void forceGC()   {
+        doGC = true;
+        try {
+            doGCDummyObject.wait();
+        } catch (InterruptedException e)    {
+            e.printStackTrace();
+        }
+    }
+
     public void threadedTick() {
         synchronized (players)  {
             if (threadPlayerIterator == null)   {
@@ -971,9 +987,17 @@ public class Server {
             player.onUpdate(0);
         }
 
-        if (this.tickCounter % 100 == 0) {
+        if (this.doGC && this.tickCounter % 100 == 0) {
             for (Level level : this.levelArray) {
                 level.threadedGarbageCollection();
+                level.threadedUnloadChunks();
+            }
+
+            synchronized (doGCDummyObject)  {
+                if (doGC)   {
+                    doGC = false;
+                    doGCDummyObject.notifyAll();
+                }
             }
         }
 

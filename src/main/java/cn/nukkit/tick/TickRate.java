@@ -1,5 +1,7 @@
 package cn.nukkit.tick;
 
+import cn.nukkit.math.NukkitMath;
+
 import java.text.DecimalFormat;
 
 /**
@@ -23,8 +25,6 @@ public class TickRate {
     public long lastUpdate = -1;
 
     public float[] tpsCounts = new float[20];
-
-    public DecimalFormat format = new DecimalFormat("##.0#");
 
     /**
      * Notify the tick rate counter that the next tick is starting
@@ -60,7 +60,7 @@ public class TickRate {
             total = 20.0;
         }
 
-        currentTps = Float.parseFloat(format.format(total));
+        currentTps = (float) NukkitMath.round(total, 2);
         lastUpdate = currentTime;
     }
 

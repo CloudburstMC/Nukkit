@@ -66,19 +66,25 @@ public class BlockUpdateScheduler {
         }
     }
 
-    public LongSet getPendingBlockUpdates(AxisAlignedBB boundingBox) {
-        LongSet set = new LongArraySet();
+    public Long2ObjectMap<LongSet> getPendingBlockUpdates(AxisAlignedBB boundingBox) {
+        Long2ObjectMap<LongSet> map = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
         synchronized (queuedUpdates) {
-            queuedUpdates.forEach((tick, updates) -> updates.forEach((long entry) -> {
-                int x = Level.getXFrom(entry);
-                int z = Level.getZFrom(entry);
+            queuedUpdates.forEach((tick, updates) -> {
+                LongSet set = LongSets.synchronize(new LongArraySet());
+                updates.forEach((long entry) -> {
+                    int x = Level.getXFrom(entry);
+                    int z = Level.getZFrom(entry);
 
-                if (x >= boundingBox.getMinX() && x < boundingBox.getMaxX() && z >= boundingBox.getMinZ() && z < boundingBox.getMaxZ()) {
-                    set.add(entry);
+                    if (x >= boundingBox.getMinX() && x < boundingBox.getMaxX() && z >= boundingBox.getMinZ() && z < boundingBox.getMaxZ()) {
+                        set.add(entry);
+                    }
+                });
+                if (!set.isEmpty()) {
+                    map.put((long) tick, set);
                 }
-            }));
+            });
         }
-        return set;
+        return map;
     }
 
     public boolean isBlockTickPending(Vector3 pos) {
