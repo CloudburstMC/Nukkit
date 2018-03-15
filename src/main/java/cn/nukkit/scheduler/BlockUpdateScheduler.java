@@ -16,7 +16,6 @@ import it.unimi.dsi.fastutil.objects.ObjectIterator;
 public class BlockUpdateScheduler {
     private final Level level;
     private final Long2ObjectMap<LongSet> queuedUpdates;
-    //porktodo: reset this at end of tick to null
     private volatile LongIterator iterator;
     private volatile long currentTick;
 
@@ -128,5 +127,7 @@ public class BlockUpdateScheduler {
         synchronized (queuedUpdates)    {
             queuedUpdates.long2ObjectEntrySet().removeIf(entry -> entry.getLongKey() < currentTick);
         }
+
+        iterator = null;
     }
 }

@@ -159,7 +159,6 @@ public class LevelDB implements LevelProvider {
         }
     }
 
-    //porktodo: fix this
     @Override
     public void encodeChunkForSending(int x, int z, BiConsumer<Long, byte[]> callback) throws ChunkException {
         Chunk chunk = this.getChunk(x, z, false);

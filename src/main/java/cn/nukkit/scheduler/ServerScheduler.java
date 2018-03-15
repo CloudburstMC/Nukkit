@@ -265,6 +265,7 @@ public class ServerScheduler {
             }
         }
         this.currentTick = currentTick;
+        AsyncTask.collectTask();
     }
 
     private void runTasks(int currentTick) {

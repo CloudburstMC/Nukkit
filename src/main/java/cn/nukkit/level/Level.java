@@ -34,6 +34,7 @@ import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.PopChunkManager;
 import cn.nukkit.level.generator.task.GenerationTask;
+import cn.nukkit.level.generator.task.LightPopulationTask;
 import cn.nukkit.level.generator.task.PopulationTask;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
@@ -1404,7 +1405,6 @@ public class Level implements ChunkManager, Metadatable {
                 return;
             }
 
-            //porktodo: this needs to be set to null somehow
             if (lightUpdateIterator == null) {
                 lightQueue.long2ObjectEntrySet().iterator();
             }
@@ -2589,8 +2589,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (!chunk.isLightPopulated() && chunk.isPopulated()
                 && (boolean) this.getServer().getConfig("chunk-ticking.light-updates", false)) {
-            //porktodo: light updates!
-            //this.getServer().getScheduler().scheduleAsyncTask(new LightPopulationTask(this, chunk));
+            this.getServer().getScheduler().scheduleAsyncTask(new LightPopulationTask(this, chunk));
         }
 
         if (this.isChunkInUse(index)) {
@@ -2833,8 +2832,7 @@ public class Level implements ChunkManager, Metadatable {
                     }
 
                     PopulationTask task = new PopulationTask(this, chunk);
-                    //porktodo: chunk population
-                    //this.server.getScheduler().scheduleAsyncTask(task);
+                    this.server.getScheduler().scheduleAsyncTask(task);
                 }
             }
             Timings.populationTimer.stopTiming();
@@ -2858,8 +2856,7 @@ public class Level implements ChunkManager, Metadatable {
             Timings.generationTimer.startTiming();
             this.chunkGenerationQueue.add(index);
             GenerationTask task = new GenerationTask(this, this.getChunk(x, z, true));
-            //porktodo: chunk generation
-            //this.server.getScheduler().scheduleAsyncTask(task);
+            this.server.getScheduler().scheduleAsyncTask(task);
             Timings.generationTimer.stopTiming();
         }
     }
