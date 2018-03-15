@@ -44,6 +44,11 @@ public class MathHelper {
         return d >= (double) l ? l : l - 1L;
     }
 
+    public static int floor_float_int(float f) {
+        int i = (int) f;
+        return f >= i ? i : i - 1;
+    }
+
     public static int abs(int number) {
         if (number > 0) {
             return number;
@@ -98,5 +103,13 @@ public class MathHelper {
         i = i | i >> 8;
         i = i | i >> 16;
         return i + 1;
+    }
+
+    public static double denormalizeClamp(double lowerBnd, double upperBnd, double slide) {
+        return slide < 0.0D ? lowerBnd : (slide > 1.0D ? upperBnd : lowerBnd + (upperBnd - lowerBnd) * slide);
+    }
+
+    public static float denormalizeClamp(float lowerBnd, float upperBnd, float slide) {
+        return slide < 0.0f ? lowerBnd : (slide > 1.0f ? upperBnd : lowerBnd + (upperBnd - lowerBnd) * slide);
     }
 }

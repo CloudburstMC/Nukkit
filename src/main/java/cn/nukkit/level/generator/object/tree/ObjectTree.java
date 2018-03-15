@@ -10,7 +10,7 @@ import cn.nukkit.math.NukkitRandom;
  * Nukkit Project
  */
 public abstract class ObjectTree {
-    private boolean overridable(int id) {
+    protected boolean overridable(int id) {
         switch (id) {
             case Block.AIR:
             case Block.SAPLING:
@@ -49,21 +49,16 @@ public abstract class ObjectTree {
         ObjectTree tree;
         switch (type) {
             case BlockSapling.SPRUCE:
-                if (random.nextBoundedInt(39) == 0) {
-                    tree = new ObjectSpruceTree();
-                } else {
-                    tree = new ObjectSpruceTree();
-                }
+                tree = new ObjectSpruceTree();
                 break;
             case BlockSapling.BIRCH:
-                if (random.nextBoundedInt(39) == 0) {
-                    tree = new ObjectTallBirchTree();
-                } else {
-                    tree = new ObjectBirchTree();
-                }
+                tree = new ObjectBirchTree();
                 break;
             case BlockSapling.JUNGLE:
                 tree = new ObjectJungleTree();
+                break;
+            case BlockSapling.BIRCH_TALL:
+                tree = new ObjectTallBirchTree();
                 break;
             case BlockSapling.OAK:
             default:
@@ -111,9 +106,7 @@ public abstract class ObjectTree {
                         continue;
                     }
                     if (!Block.solid[level.getBlockIdAt(xx, yy, zz)]) {
-
-                        level.setBlockIdAt(xx, yy, zz, this.getLeafBlock());
-                        level.setBlockDataAt(xx, yy, zz, this.getType());
+                        level.setBlockFullIdAt(xx, yy, zz, (this.getLeafBlock() << 4) | this.getType());
                     }
                 }
             }
@@ -127,8 +120,7 @@ public abstract class ObjectTree {
         for (int yy = 0; yy < trunkHeight; ++yy) {
             int blockId = level.getBlockIdAt(x, y + yy, z);
             if (this.overridable(blockId)) {
-                level.setBlockIdAt(x, y + yy, z, this.getTrunkBlock());
-                level.setBlockDataAt(x, y + yy, z, this.getType());
+                level.setBlockFullIdAt(x, y + yy, z, (this.getTrunkBlock() << 4) | this.getType());
             }
         }
     }

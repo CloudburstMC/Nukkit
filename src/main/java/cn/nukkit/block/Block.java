@@ -260,6 +260,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[END_ROD] = BlockEndRod.class; //208
             list[END_GATEWAY] = BlockEndGateway.class; //209
 
+            list[MAGMA] = BlockMagma.class; //213
+            list[BLOCK_NETHER_WART_BLOCK] = BlockNetherWartBlock.class; //214
+            list[RED_NETHER_BRICK] = BlockBricksRedNether.class; //215
+            list[BONE_BLOCK] = BlockBone.class; //216
+
             list[BONE_BLOCK] = BlockBone.class; //216
 
             //TODO: list[SHULKER_BOX] = BlockShulkerBox.class; //218

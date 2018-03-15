@@ -9,6 +9,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
+import cn.nukkit.scheduler.Task;
 
 import java.util.Arrays;
 import java.util.List;
@@ -160,7 +161,12 @@ public class CraftingTransaction extends InventoryTransaction {
 		 */
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = ContainerIds.NONE;
-        this.source.dataPacket(pk);
+        source.getServer().getScheduler().scheduleDelayedTask(new Task() {
+            @Override
+            public void onRun(int currentTick) {
+                source.dataPacket(pk);
+            }
+        }, 20);
 
         this.source.resetCraftingGridType();
     }

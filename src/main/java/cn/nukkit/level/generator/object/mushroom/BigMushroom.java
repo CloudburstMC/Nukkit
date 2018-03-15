@@ -23,7 +23,6 @@ public class BigMushroom extends BasicGenerator {
     public static final int ALL_OUTSIDE = 14;
     public static final int ALL_STEM = 15;
 
-
     public static final int BROWN = 0;
     public static final int RED = 1;
     /**

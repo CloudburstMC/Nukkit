@@ -28,6 +28,7 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.EnumLevel;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
@@ -37,7 +38,7 @@ import cn.nukkit.level.generator.Flat;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.Nether;
 import cn.nukkit.level.generator.Normal;
-import cn.nukkit.level.generator.biome.Biome;
+import cn.nukkit.level.biome.Biome;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
@@ -401,7 +402,7 @@ public class Server {
         Block.init();
         Enchantment.init();
         Item.init();
-        Biome.init();
+        EnumBiome.values(); //load class, this also registers biomes
         Effect.init();
         Potion.init();
         Attribute.init();
@@ -770,17 +771,17 @@ public class Server {
                 player.close(player.getLeaveMessage(), (String) this.getConfig("settings.shutdown-message", "Server closed"));
             }
 
-            this.getLogger().debug("Unloading all levels");
-            for (Level level : this.levelArray) {
-                this.unloadLevel(level, true);
-            }
-
             this.getLogger().debug("Removing event handlers");
             HandlerList.unregisterAll();
 
             this.getLogger().debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
             this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
+
+            this.getLogger().debug("Unloading all levels");
+            for (Level level : this.levelArray) {
+                this.unloadLevel(level, true);
+            }
 
             this.getLogger().debug("Closing console");
             this.console.interrupt();
