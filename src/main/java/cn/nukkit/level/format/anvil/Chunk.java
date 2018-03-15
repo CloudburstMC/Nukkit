@@ -32,8 +32,7 @@ public class Chunk extends BaseChunk {
 
     @Override
     public Chunk clone() {
-        Chunk chunk = (Chunk) super.clone();
-        return chunk;
+        return (Chunk) super.clone();
     }
 
     public Chunk(LevelProvider level) {

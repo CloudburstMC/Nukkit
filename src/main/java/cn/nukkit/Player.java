@@ -694,36 +694,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.setDataProperty(new StringEntityData(Entity.DATA_INTERACTIVE_TAG, this.buttonText));
     }
 
-    @Override
-    protected boolean switchLevel(Level targetLevel) {
-        Level oldLevel = this.level;
-        if (super.switchLevel(targetLevel)) {
-            for (long index : new ArrayList<>(this.usedChunks.keySet())) {
-                int chunkX = Level.getHashX(index);
-                int chunkZ = Level.getHashZ(index);
-                this.unloadChunk(chunkX, chunkZ, oldLevel);
-            }
-
-            if (oldLevel.getDimension() != targetLevel.getDimension()) {
-                setDimension(targetLevel.getDimension());
-                PlayStatusPacket statusPacket0 = new PlayStatusPacket();
-                statusPacket0.status = PlayStatusPacket.PLAYER_SPAWN;
-                dataPacket(statusPacket0);
-            }
-
-            this.usedChunks.clear();
-            SetTimePacket pk = new SetTimePacket();
-            pk.time = this.level.getTime();
-            this.dataPacket(pk);
-
-            // TODO: Remove this hack
-            int distance = this.viewDistance * 2 * 16 * 2;
-            this.sendPosition(this.add(distance, 0, distance), this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
-            return true;
-        }
-        return false;
-    }
-
     public void unloadChunk(int x, int z) {
         this.unloadChunk(x, z, null);
     }
@@ -4081,16 +4051,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().callEvent(event);
             if (event.isCancelled()) return false;
             to = event.getTo();
-            if (from.getLevel().getId() != to.getLevel().getId()) { //Different level, update compass position
-                //setDimension(to.level.getDimension());
-                SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
-                pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
-                Position spawn = to.getLevel().getSpawnLocation();
-                pk.x = spawn.getFloorX();
-                pk.y = spawn.getFloorY();
-                pk.z = spawn.getFloorZ();
-                dataPacket(pk);
-            }
+            switchLevel(to.getLevel()); // Force level check.
         }
 
         //TODO Remove it! A hack to solve the client-side teleporting bug! (inside into the block)
@@ -4509,10 +4470,69 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     //todo a lot on dimension
 
-    public void setDimension(int dimension) {
+    private void setDimension(int dimension) {
         ChangeDimensionPacket pk = new ChangeDimensionPacket();
         pk.dimension = getLevel().getDimension();
+        pk.x = (float) x;
+        pk.y = (float) y;
+        pk.z = (float) z;
+        this.directDataPacket(pk);
+    }
+
+    @Override
+    public boolean switchLevel(Level level) {
+        if (this.level == level) {
+            return false; // We are in this level.
+        }
+        Level oldLevel = this.level;
+        if (!super.switchLevel(level)) {
+            return false;
+        }
+
+        // Remove old chunks
+        for (long index : new ArrayList<>(this.usedChunks.keySet())) {
+            int chunkX = Level.getHashX(index);
+            int chunkZ = Level.getHashZ(index);
+            this.unloadChunk(chunkX, chunkZ, oldLevel);
+        }
+
+        int oldDimension = this.level.getDimension();
+        int newDimension = level.getDimension();
+        setDimension(oldDimension);
+        sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN, true);
+
+        int chunkX = getPosition().getChunkX();
+        int chunkZ = getPosition().getChunkZ();
+
+        // Send empty chunks
+        for (int x = -chunkRadius; x < chunkRadius; x++) {
+            for (int z = -chunkRadius; z < chunkRadius; z++) {
+                FullChunkDataPacket data = new FullChunkDataPacket();
+
+                data.chunkX = (chunkX + x);
+                data.chunkZ = (chunkZ + z);
+                data.data = new byte[0];
+                directDataPacket(data);
+            }
+        }
+
+        setDimension(newDimension);
+        sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN, true);
+
+        this.usedChunks.clear();
+
+        SetTimePacket pk = new SetTimePacket();
+        pk.time = this.level.getTime();
         this.dataPacket(pk);
+
+        SetSpawnPositionPacket spawnPosition = new SetSpawnPositionPacket();
+        spawnPosition.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+        Position spawn = level.getSpawnLocation();
+        spawnPosition.x = spawn.getFloorX();
+        spawnPosition.y = spawn.getFloorY();
+        spawnPosition.z = spawn.getFloorZ();
+
+        return true;
     }
 
     public void setCheckMovement(boolean checkMovement) {
