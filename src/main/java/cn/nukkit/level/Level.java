@@ -135,11 +135,11 @@ public class Level implements ChunkManager, Metadatable {
         randomTickBlocks[Block.COCOA_BLOCK] = true;
     }
 
-    private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();
-    private final Long2ObjectOpenHashMap<Player> players = new Long2ObjectOpenHashMap<>();
-    private final Long2ObjectOpenHashMap<Entity> entities = new Long2ObjectOpenHashMap<>();
-    public final Long2ObjectOpenHashMap<Entity> updateEntities = new Long2ObjectOpenHashMap<>();
-    public final Long2ObjectOpenHashMap<BlockEntity> updateBlockEntities = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<BlockEntity> blockEntities = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
+    private final Long2ObjectMap<Player> players = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
+    private final Long2ObjectMap<Entity> entities = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
+    public final Long2ObjectMap<Entity> updateEntities = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
+    public final Long2ObjectMap<BlockEntity> updateBlockEntities = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
     private boolean cacheChunks = false;
     private final Server server;
@@ -655,7 +655,7 @@ public class Level implements ChunkManager, Metadatable {
     /**
      * Does any actions that are too trivial to be done by workers
      */
-    public void doBaseTick(int currentTick) {
+    public synchronized void doBaseTick(int currentTick) {
         this.checkTime();
 
         // Tick Weather
@@ -742,7 +742,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     //porktodo: reset this after tick
-    private ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> changedBlocksIterator;
+    private volatile ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> changedBlocksIterator;
 
     private void threadedSendChunkPackets() {
         //just synchronize it to make sure it's only executed once, this doesn't need to be multithreaded
@@ -1395,12 +1395,13 @@ public class Level implements ChunkManager, Metadatable {
         // todo
     }
 
+    //porktodo: clear these after the tick is over
     private final Queue<Long> lightPropagationQueue = new ConcurrentLinkedQueue<>();
     private final Queue<Object[]> lightRemovalQueue = new ConcurrentLinkedQueue<>();
-    //porktodo: reset these after the tick is over
     private final LongSet visited = LongSets.synchronize(new LongArraySet(), new Object());
     private final LongSet removalVisited = LongSets.synchronize(new LongArraySet(), new Object());
-    private ObjectIterator<Long2ObjectMap.Entry<Char2ObjectMap<Object>>> lightUpdateIterator = null;
+    //porktodo: reset these after the tick is over
+    private volatile ObjectIterator<Long2ObjectMap.Entry<Char2ObjectMap<Object>>> lightUpdateIterator = null;
 
     /**
      * Processes light updates, potentially on multiple threads simultaniously
@@ -2441,8 +2442,8 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    //porktodo: reset this to null afterwards
-    private LongIterator chunkSendQueueIterator;
+    //porktodo: reset this at end of tick
+    private volatile LongIterator chunkSendQueueIterator;
 
     private void threadedProcessChunkRequest()  {
         synchronized (chunkSendQueue)   {
@@ -2876,45 +2877,91 @@ public class Level implements ChunkManager, Metadatable {
         this.generateChunk(x, z);
     }
 
-    public void doChunkGarbageCollection() {
-        this.timings.doChunkGC.startTiming();
-        // remove all invaild block entities.
-        List<BlockEntity> toClose = new ArrayList<>();
-        if (!blockEntities.isEmpty()) {
-            Iterator<Map.Entry<Long, BlockEntity>> iter = blockEntities.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<Long, BlockEntity> entry = iter.next();
+    //porktodo: reset this at end of tick
+    private volatile ObjectIterator<Long2ObjectMap.Entry<BlockEntity>> gcTileIterator;
+    private final ThreadLocal<LongSet> gcToRemoveTiles = ThreadLocal.withInitial(LongArraySet::new);
+    //porktodo: reset this at end of tick
+    private volatile ObjectIterator<? extends FullChunk> gcChunkIterator;
+    private final Object gcChunkSyncDummy = new Object();
+    //porktodo: reset this at end of tick
+    private volatile boolean gcProviderDoneThisTick = false;
+
+    public void threadedGarbageCollection() {
+        if (!blockEntities.isEmpty())   {
+            synchronized (blockEntities)    {
+                gcTileIterator = blockEntities.long2ObjectEntrySet().iterator();
+            }
+
+            LongSet toRemoveTiles = gcToRemoveTiles.get();
+            while (true)    {
+                Long2ObjectMap.Entry<BlockEntity> entry;
+
+                synchronized (gcTileIterator)   {
+                    if(!gcTileIterator.hasNext())   {
+                        break;
+                    }
+                    entry = gcTileIterator.next();
+                }
+
+                //remove all invalid tile entities
                 BlockEntity aBlockEntity = entry.getValue();
-                if (aBlockEntity != null) {
+                if (aBlockEntity == null) {
+                    toRemoveTiles.add(entry.getLongKey());
+                } else {
                     if (!aBlockEntity.isValid()) {
-                        iter.remove();
+                        toRemoveTiles.add(entry.getLongKey());
                         aBlockEntity.close();
                     }
-                } else {
-                    iter.remove();
+                }
+            }
+            //remove all tiles marked as removable
+            synchronized (blockEntities)    {
+                toRemoveTiles.forEach((long id) -> blockEntities.remove(id));
+            }
+            //finally, clear the set becase we don't need it anymore
+            toRemoveTiles.clear();
+        }
+
+        synchronized (gcChunkSyncDummy) {
+            if (gcChunkIterator == null)    {
+                gcChunkIterator = provider.getLoadedChunkIterator();
+            }
+        }
+
+        while (true)    {
+            FullChunk chunk;
+
+            synchronized (gcChunkIterator)  {
+                if (!gcChunkIterator.hasNext())  {
+                    break;
+                }
+                chunk = gcChunkIterator.next();
+            }
+
+            int x = chunk.getX();
+            int z = chunk.getZ();
+            long index = chunkHash(x, z);
+            if (!this.unloadQueue.containsKey(index))   {
+                if (!this.isSpawnChunk(x, z)) {
+                    this.unloadChunkRequest(x, z, true);
                 }
             }
         }
 
-        for (Map.Entry<Long, ? extends FullChunk> entry : provider.getLoadedChunks().entrySet()) {
-            long index = entry.getKey();
-            if (!this.unloadQueue.containsKey(index)) {
-                FullChunk chunk = entry.getValue();
-                int X = chunk.getX();
-                int Z = chunk.getZ();
-                if (!this.isSpawnChunk(X, Z)) {
-                    this.unloadChunkRequest(X, Z, true);
-                }
+        boolean flag = false;
+        synchronized (gcChunkSyncDummy) {
+            if (!gcProviderDoneThisTick) {
+                flag = true;
             }
         }
-
-        this.provider.doGarbageCollection();
-        this.timings.doChunkGC.stopTiming();
+        if (flag)   {
+            this.provider.doGarbageCollection();
+        }
     }
 
     //porktodo: reset this at end of tick
-    private ObjectIterator<Long2LongMap.Entry> unloadQueueIterator;
-    private ThreadLocal<LongSet> unloadQueueToRemove = ThreadLocal.withInitial(LongArraySet::new);
+    private volatile ObjectIterator<Long2LongMap.Entry> unloadQueueIterator;
+    private final ThreadLocal<LongSet> unloadQueueToRemove = ThreadLocal.withInitial(LongArraySet::new);
 
     public void threadedUnloadChunks()  {
         synchronized (unloadQueue)  {

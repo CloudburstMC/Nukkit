@@ -979,7 +979,7 @@ public class Server {
     }
 
     //porktodo: reset this to null after tick
-    private Iterator<Player> threadPlayerIterator;
+    private volatile Iterator<Player> threadPlayerIterator;
 
     public void threadedTick() {
         synchronized (players)  {
@@ -999,6 +999,12 @@ public class Server {
             }
 
             player.onUpdate(0);
+        }
+
+        if (this.tickCounter % 100 == 0) {
+            for (Level level : this.levelArray) {
+                level.threadedGarbageCollection();
+            }
         }
     }
 
@@ -1086,11 +1092,11 @@ public class Server {
             //todo sendUsage
         }*/
 
-        if (this.tickCounter % 100 == 0) {
+        /*if (this.tickCounter % 100 == 0) {
             for (Level level : this.levelArray) {
                 level.doChunkGarbageCollection();
             }
-        }
+        }*/
 
         Timings.fullServerTickTimer.stopTiming();
         //long now = System.currentTimeMillis();

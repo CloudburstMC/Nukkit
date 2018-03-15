@@ -16,7 +16,7 @@ public class BlockUpdateScheduler {
     private final Level level;
     private final LongSet queuedUpdates;
     //porktodo: reset this at end of tick to null
-    private LongIterator iterator;
+    private volatile LongIterator iterator;
 
     public BlockUpdateScheduler(Level level, long currentTick) {
         queuedUpdates = LongSets.synchronize(new LongArraySet());
