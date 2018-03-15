@@ -70,7 +70,7 @@ private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer ch
         if (pos.getId() == Block.LEAVES2 && distance < 4) {
             visited.add(index);
             Integer down = pos.down().getId();
-            if (down == Item.WOOD) {
+            if (down == Item.WOOD2) {
                 return true;
             }
             if (fromSide == null) {
@@ -137,6 +137,7 @@ private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer ch
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             }
+	}
         return 0;
     }
 }
