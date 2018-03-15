@@ -4,29 +4,43 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongIterator;
-import it.unimi.dsi.fastutil.longs.LongSet;
-import it.unimi.dsi.fastutil.longs.LongSets;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
 /**
  * @author DaPorkchop_
  */
 public class BlockUpdateScheduler {
     private final Level level;
-    private final LongSet queuedUpdates;
+    private final Long2ObjectMap<LongSet> queuedUpdates;
     //porktodo: reset this at end of tick to null
     private volatile LongIterator iterator;
+    private volatile long currentTick;
 
     public BlockUpdateScheduler(Level level, long currentTick) {
-        queuedUpdates = LongSets.synchronize(new LongArraySet());
+        queuedUpdates = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
         this.level = level;
+        this.currentTick = currentTick;
     }
 
     public void threadedTick(long currentTick) {
         synchronized (queuedUpdates) {
+            if (this.currentTick <= currentTick) {
+                this.currentTick = currentTick;
+            } else {
+                //don't do the same tick again
+                return;
+            }
+
             if (iterator == null) {
-                iterator = queuedUpdates.iterator();
+                LongSet queuedUpdatesThisTick = queuedUpdates.get(currentTick);
+                if (queuedUpdatesThisTick == null) {
+                    queuedUpdatesThisTick = LongSets.EMPTY_SET;
+                }
+                iterator = queuedUpdatesThisTick.iterator();
             }
         }
 
@@ -54,36 +68,59 @@ public class BlockUpdateScheduler {
 
     public LongSet getPendingBlockUpdates(AxisAlignedBB boundingBox) {
         LongSet set = new LongArraySet();
-        synchronized (queuedUpdates)    {
-            queuedUpdates.forEach((long entry) -> {
+        synchronized (queuedUpdates) {
+            queuedUpdates.forEach((tick, updates) -> updates.forEach((long entry) -> {
                 int x = Level.getXFrom(entry);
                 int z = Level.getZFrom(entry);
 
                 if (x >= boundingBox.getMinX() && x < boundingBox.getMaxX() && z >= boundingBox.getMinZ() && z < boundingBox.getMaxZ()) {
                     set.add(entry);
                 }
-            });
+            }));
         }
         return set;
     }
 
     public boolean isBlockTickPending(Vector3 pos) {
-        return queuedUpdates.contains(Level.blockHash(pos));
+        return contains(Level.blockHash(pos));
     }
 
-    public boolean contains(long entry) {
-        return queuedUpdates.contains(entry);
+    public boolean contains(long hash) {
+        for (LongSet set : queuedUpdates.values())  {
+            if (set.contains(hash)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public boolean add(long entry)  {
-        return queuedUpdates.add(entry);
+    public boolean add(long entry, long tick) {
+        if (tick <= currentTick) {
+            return false;
+        }
+        LongSet set = queuedUpdates.get(tick);
+        if (set == null)    {
+            set = LongSets.synchronize(new LongArraySet());
+            queuedUpdates.put(tick, set);
+        }
+        return set.add(entry);
     }
 
-    public boolean remove(long entry) {
-        return queuedUpdates.remove(entry);
+    public boolean remove(long entry, long tick) {
+        LongSet set = queuedUpdates.get(tick);
+        if (set == null)    {
+            return false;
+        }
+        return set.remove(entry);
     }
 
-    public boolean remove(Vector3 pos) {
-        return remove(Level.blockHash(pos));
+    public boolean remove(Vector3 pos, long tick) {
+        return remove(Level.blockHash(pos), tick);
+    }
+
+    public void doPostTick()    {
+        synchronized (queuedUpdates)    {
+            queuedUpdates.long2ObjectEntrySet().removeIf(entry -> entry.getLongKey() < currentTick);
+        }
     }
 }

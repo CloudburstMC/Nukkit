@@ -1151,21 +1151,17 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void scheduleUpdate(Vector3 pos, int delay) {
-        this.scheduleUpdate(pos, delay, 0, true);
+        this.scheduleUpdate(pos, delay, true);
     }
 
-    public void scheduleUpdate(Vector3 pos, int delay, int priority) {
-        this.scheduleUpdate(pos, delay, priority, true);
-    }
-
-    public void scheduleUpdate(Vector3 pos, int delay, int priority, boolean checkArea) {
+    public void scheduleUpdate(Vector3 pos, int delay, boolean checkArea) {
         if (checkArea && !this.isChunkLoaded(pos.getFloorX() >> 4, pos.getFloorZ() >> 4)) {
             return;
         }
         long entry = blockHash(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
 
         if (!this.updateQueue.contains(entry)) {
-            this.updateQueue.add(entry);
+            this.updateQueue.add(entry, delay + levelCurrentTick);
         }
     }
 
@@ -3279,5 +3275,7 @@ public class Level implements ChunkManager, Metadatable {
         lightRemovalQueue.clear();
         visited.clear();
         removalVisited.clear();
+
+        updateQueue.doPostTick();
     }
 }
