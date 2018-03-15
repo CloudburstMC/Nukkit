@@ -49,7 +49,7 @@ public class StatusCommand extends VanillaCommand {
             tpsColor = TextFormat.RED;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Current TPS: " + tpsColor + NukkitMath.round(tps, 2));
+        sender.sendMessage(TextFormat.GOLD + "Current currentTps: " + tpsColor + NukkitMath.round(tps, 2));
 
         sender.sendMessage(TextFormat.GOLD + "Load: " + tpsColor + server.getTickUsage() + "%");
 

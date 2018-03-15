@@ -47,7 +47,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
@@ -70,9 +69,9 @@ import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
-import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.tick.ServerTickManager;
+import cn.nukkit.tick.TickRate;
 import cn.nukkit.tick.thread.ServerTickThread;
 import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
@@ -107,17 +106,9 @@ public class Server {
 
     private PluginManager pluginManager = null;
 
-    private int profilingTickrate = 20;
-
     public ServerScheduler scheduler = null;
 
     public int tickCounter;
-
-    private long nextTick;
-
-    private final float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
-
-    private final float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     public float maxTick = 20;
 
@@ -842,39 +833,19 @@ public class Server {
         }
     }
 
-    private int lastLevelGC;
-
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
         try {
             while (this.isRunning) {
                 try {
-                    this.tick();
+                    long nextTickTime = this.nextTick = System.currentTimeMillis() + 50;
 
-                    long next = this.nextTick;
-                    long current = System.currentTimeMillis();
+                    //do actual server tick logic
+                    this.tickManager.tick();
 
-                    if (next - 0.1 > current) {
-                        long allocated = next - current - 1;
-
-                        { // Instead of wasting time, do something potentially useful
-                            int offset = 0;
-                            for (int i = 0; i < levelArray.length; i++) {
-                                offset = (i + lastLevelGC) % levelArray.length;
-                                Level level = levelArray[offset];
-                                level.doGarbageCollection(allocated - 1);
-                                allocated = next - System.currentTimeMillis();
-                                if (allocated <= 0) {
-                                    break;
-                                }
-                            }
-                            lastLevelGC = offset + 1;
-                        }
-
-                        if (allocated > 0) {
-                            Thread.sleep(allocated, 900000);
-                        }
-                    }
+                    //sleep the remaining time until next tick should happen
+                    //if negative then it won't sleep, can be negative if a tick takes longer than 50ms
+                    Thread.sleep(Math.min(0, nextTickTime - System.currentTimeMillis()));
                 } catch (RuntimeException e) {
                     this.getLogger().logException(e);
                 }
@@ -1038,10 +1009,10 @@ public class Server {
     }
 
     private boolean tick() {
-        long tickTime = System.currentTimeMillis();
+        //long tickTime = System.currentTimeMillis();
 
         // TODO
-        long sleepTime = tickTime - this.nextTick;
+        /*long sleepTime = tickTime - this.nextTick;
         if (sleepTime < -25) {
             try {
                 Thread.sleep(Math.max(5, -sleepTime - 25));
@@ -1053,7 +1024,7 @@ public class Server {
         long tickTimeNano = System.nanoTime();
         if ((tickTime - this.nextTick) < -25) {
             return false;
-        }
+        }*/
 
         Timings.fullServerTickTimer.startTiming();
 
@@ -1111,11 +1082,11 @@ public class Server {
 
         Timings.fullServerTickTimer.stopTiming();
         //long now = System.currentTimeMillis();
-        long nowNano = System.nanoTime();
+        //long nowNano = System.nanoTime();
         //float tick = Math.min(20, 1000 / Math.max(1, now - tickTime));
         //float use = Math.min(1, (now - tickTime) / 50);
 
-        float tick = (float) Math.min(20, 1000000000 / Math.max(1000000, ((double) nowNano - tickTimeNano)));
+        /*float tick = (float) Math.min(20, 1000000000 / Math.max(1000000, ((double) nowNano - tickTimeNano)));
         float use = (float) Math.min(1, ((double) (nowNano - tickTimeNano)) / 50000000);
 
         if (this.maxTick > tick) {
@@ -1136,10 +1107,12 @@ public class Server {
             this.nextTick = tickTime;
         } else {
             this.nextTick += 50;
-        }
+        }*/
 
         return true;
     }
+
+    private volatile long nextTick;
 
     public long getNextTick() {
         return nextTick;
@@ -1163,7 +1136,7 @@ public class Server {
             title += " | U " + NukkitMath.round((this.network.getUpload() / 1024 * 1000), 2)
                     + " D " + NukkitMath.round((this.network.getDownload() / 1024 * 1000), 2) + " kB/s";
         }
-        title += " | TPS " + this.getTicksPerSecond()
+        title += " | currentTps " + this.getTicksPerSecond()
                 + " | Load " + this.getTickUsage() + "%" + (char) 0x07;
 
         System.out.print(title);
@@ -1408,29 +1381,15 @@ public class Server {
     }
 
     public float getTicksPerSecond() {
-        return ((float) Math.round(this.maxTick * 100)) / 100;
+        return TickRate.INSTANCE.currentTps;
     }
 
     public float getTicksPerSecondAverage() {
-        float sum = 0;
-        int count = this.tickAverage.length;
-        for (float aTickAverage : this.tickAverage) {
-            sum += aTickAverage;
-        }
-        return (float) NukkitMath.round(sum / count, 2);
+        return getTicksPerSecond();
     }
 
     public float getTickUsage() {
         return (float) NukkitMath.round(this.maxUse * 100, 2);
-    }
-
-    public float getTickUsageAverage() {
-        float sum = 0;
-        int count = this.useAverage.length;
-        for (float aUseAverage : this.useAverage) {
-            sum += aUseAverage;
-        }
-        return ((float) Math.round(sum / count * 100)) / 100;
     }
 
     public SimpleCommandMap getCommandMap() {
@@ -1675,8 +1634,6 @@ public class Server {
 
         this.getPluginManager().callEvent(new LevelLoadEvent(level));
 
-        level.setTickRate(this.baseTickRate);
-
         return true;
     }
 
@@ -1731,7 +1688,6 @@ public class Server {
             this.levels.put(level.getId(), level);
 
             level.initLevel();
-            level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
             this.logger.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
             this.logger.logException(e);

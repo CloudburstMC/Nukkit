@@ -28,6 +28,7 @@ public class ServerTickManager {
             throw new IllegalStateException("Attempted to tick server before ending previous tick!");
         }
 
+        TickRate.INSTANCE.update();
         this.server.tickCounter++;
 
         //wait on all threads
