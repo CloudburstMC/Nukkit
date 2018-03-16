@@ -68,6 +68,9 @@ import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -83,6 +86,7 @@ import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * author: MagicDroidX & Box
@@ -194,9 +198,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected boolean checkMovement = true;
 
-    private final Int2ObjectOpenHashMap<Boolean> needACK = new Int2ObjectOpenHashMap<>();
+    private final Int2BooleanOpenHashMap needACK = new Int2BooleanOpenHashMap();
 
-    private final Map<Integer, List<DataPacket>> batchedPackets = new TreeMap<>();
+    private final Int2ObjectMap<List<DataPacket>> batchedPackets = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
 
     private PermissibleBase perm = null;
 
@@ -567,8 +571,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
                 @Override
                 public void onRun(int currentTick) {
-                    Boolean status = needACK.get(identifier);
-                    if ((status == null || !status) && isOnline()) {
+                    boolean status = needACK.get(identifier);
+                    if (!status && isOnline()) {
                         sendCommandData();
                         return;
                     }
@@ -1011,11 +1015,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 return false;
             }
 
-            if (!this.batchedPackets.containsKey(packet.getChannel())) {
-                this.batchedPackets.put(packet.getChannel(), new ArrayList<>());
-            }
+            synchronized (this.batchedPackets) {
+                List<DataPacket> queue = this.batchedPackets.get(packet.getChannel());
+                if (queue == null) {
+                    queue = new ArrayList<>();
+                    this.batchedPackets.put(packet.getChannel(), queue);
+                }
 
-            this.batchedPackets.get(packet.getChannel()).add(packet.clone());
+                queue.add(packet.clone());
+            }
         }
         return true;
     }
@@ -1044,7 +1052,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             Integer identifier = this.interfaz.putPacket(this, packet, needACK, false);
 
             if (needACK && identifier != null) {
-                this.needACK.put(identifier, Boolean.FALSE);
+                this.needACK.put((int) identifier, false);
                 return identifier;
             }
         }
@@ -1075,7 +1083,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             Integer identifier = this.interfaz.putPacket(this, packet, needACK, true);
 
             if (needACK && identifier != null) {
-                this.needACK.put(identifier, Boolean.FALSE);
+                this.needACK.put((int) identifier, false);
                 return identifier;
             }
         }
@@ -1774,16 +1782,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        if (!this.batchedPackets.isEmpty()) {
-            Player[] pArr = new Player[]{this};
-            Iterator<Entry<Integer, List<DataPacket>>> iter = this.batchedPackets.entrySet().iterator();
-            while (iter.hasNext()) {
-                Entry<Integer, List<DataPacket>> entry = iter.next();
-                List<DataPacket> packets = entry.getValue();
-                DataPacket[] arr = packets.toArray(new DataPacket[packets.size()]);
-                packets.clear();
-                this.server.batchPackets(pArr, arr, false);
-            }
+        synchronized (this.batchedPackets)  {
+            this.batchedPackets.values().forEach(queue -> {
+                this.server.batchPackets(this, queue);
+            });
             this.batchedPackets.clear();
         }
 
@@ -4689,7 +4691,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param identification
      */
     public void notifyACK(int identification) {
-        needACK.put(identification, Boolean.TRUE);
+        needACK.put(identification, true);
     }
 
     public boolean isBreakingBlock() {

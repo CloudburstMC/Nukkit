@@ -24,6 +24,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Nukkit Project Team
  */
 public class ServerScheduler {
+    private static final ArrayDeque<TaskHandler> EMPTY_QUEUE = new ArrayDeque<TaskHandler>() {
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+    };
+
     private final Queue<TaskHandler> pending;
     private final Int2ObjectMap<ArrayDeque<TaskHandler>> queueMap;
     private final Int2ObjectMap<TaskHandler> taskMap;
@@ -249,6 +256,19 @@ public class ServerScheduler {
         return addTask(null, task, delay, period, true);
     }
 
+    public TaskHandler forceRunAsync(AsyncTask task) {
+        TaskHandler handler = new TaskHandler(null, task, nextTaskId(), true);
+        service.submit(() -> {
+            try {
+                handler.run(currentTick);
+            } catch (Throwable e) {
+                Server.getInstance().getLogger().critical("Could not execute async taskHandler " + handler.getTaskId() + ": " + e.getMessage());
+                Server.getInstance().getLogger().logException(e instanceof Exception ? (Exception) e : new RuntimeException(e));
+            }
+        });
+        return handler;
+    }
+
     private final Lock heartbeatLock = new ReentrantLock();
     private volatile ArrayDeque<TaskHandler> currentQueue;
 
@@ -265,12 +285,7 @@ public class ServerScheduler {
         if (currentQueue == null) {
             currentQueue = queueMap.remove(currentTick);
             if (currentQueue == null) {
-                currentQueue = new ArrayDeque<TaskHandler>() {
-                    @Override
-                    public boolean isEmpty() {
-                        return true;
-                    }
-                };
+                currentQueue = EMPTY_QUEUE;
             }
         }
         while (!currentQueue.isEmpty()) {

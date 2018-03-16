@@ -20,7 +20,7 @@ public abstract class ServerExecutorThread extends Thread {
 
     @Override
     public void run() {
-        tickManager.workerWait();
+        tickManager.onWorkerStart();
 
         while (server.isRunning)  {
             doRun();

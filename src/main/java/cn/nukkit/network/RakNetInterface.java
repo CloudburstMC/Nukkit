@@ -18,6 +18,7 @@ import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import cn.nukkit.utils.Zlib;
+import com.google.common.collect.Lists;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -251,7 +252,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
             if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
                 buffer = ((BatchPacket) packet).payload;
             } else if (!needACK) {
-                this.server.batchPackets(new Player[]{player}, new DataPacket[]{packet}, true);
+                this.server.batchPackets(player, Lists.newArrayList(packet), true);
                 return null;
             } else {
                 if (!packet.isEncoded) {

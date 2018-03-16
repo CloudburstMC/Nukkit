@@ -154,7 +154,7 @@ public class Level implements ChunkManager, Metadatable {
     private final Map<Integer, Integer> loaderCounter = new HashMap<>();
     private final Long2ObjectOpenHashMap<Map<Integer, ChunkLoader>> chunkLoaders = new Long2ObjectOpenHashMap<>();
     private final Long2ObjectOpenHashMap<Map<Integer, Player>> playerLoaders = new Long2ObjectOpenHashMap<>();
-    private Long2ObjectOpenHashMap<List<DataPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
+    private Long2ObjectMap<List<DataPacket>> chunkPackets = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
     private final Long2LongMap unloadQueue = Long2LongMaps.synchronize(new Long2LongOpenHashMap());
 
     private float time;

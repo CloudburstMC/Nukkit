@@ -330,7 +330,7 @@ public class Server {
             try {
                 poolSize = Integer.valueOf((String) poolSize);
             } catch (Exception e) {
-                poolSize = Math.max(Runtime.getRuntime().availableProcessors() + 1, 4);
+                poolSize = Math.max(Runtime.getRuntime().availableProcessors(), 4);
             }
         }
         int workerCount = (int) poolSize;
@@ -592,6 +592,44 @@ public class Server {
         }
     }
 
+    public void batchPackets(Player target, List<DataPacket> packets)   {
+        this.batchPackets(target, packets, false);
+    }
+
+    public void batchPackets(Player target, List<DataPacket> packets, boolean forceSync)   {
+        if (target == null || packets == null || packets.size() == 0) {
+            return;
+        }
+
+        Timings.playerNetworkSendTimer.startTiming();
+        byte[][] payload = new byte[packets.size() * 2][];
+        //int size = 0;
+        for (int i = 0; i < packets.size(); i++) {
+            DataPacket p = packets.get(i);
+            if (!p.isEncoded) {
+                p.encode();
+            }
+            byte[] buf = p.getBuffer();
+            payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
+            payload[i * 2 + 1] = buf;
+            //size += payload[i * 2].length;
+            //size += payload[i * 2 + 1].length;
+        }
+
+        //porktodo: fix this
+        if (false && !forceSync && this.networkCompressionAsync) {
+            //this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
+        } else {
+            try {
+                byte[] data = Binary.appendBytes(payload);
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), target);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Timings.playerNetworkSendTimer.stopTiming();
+    }
+
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
@@ -603,7 +641,7 @@ public class Server {
 
         Timings.playerNetworkSendTimer.startTiming();
         byte[][] payload = new byte[packets.length * 2][];
-        int size = 0;
+        //int size = 0;
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
             if (!p.isEncoded) {
@@ -613,23 +651,17 @@ public class Server {
             payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
             payload[i * 2 + 1] = buf;
             packets[i] = null;
-            size += payload[i * 2].length;
-            size += payload[i * 2 + 1].length;
+            //size += payload[i * 2].length;
+            //size += payload[i * 2 + 1].length;
         }
 
-        List<String> targets = new ArrayList<>();
-        for (Player p : players) {
-            if (p.isConnected()) {
-                targets.add(this.identifier.get(p.rawHashCode()));
-            }
-        }
-
+        //porktodo: fix this
         if (false && !forceSync && this.networkCompressionAsync) {
             //this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
         } else {
             try {
                 byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), players);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -637,13 +669,22 @@ public class Server {
         Timings.playerNetworkSendTimer.stopTiming();
     }
 
-    public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
+    public void broadcastPacketsCallback(byte[] data, Player player)    {
+        if (player.isConnected()) {
+            BatchPacket packet = new BatchPacket();
+            packet.payload = data;
+
+            player.dataPacket(packet);
+        }
+    }
+
+    public void broadcastPacketsCallback(byte[] data, Player[] players) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
 
-        for (String i : identifiers) {
-            if (this.players.containsKey(i)) {
-                this.players.get(i).dataPacket(pk);
+        for (Player player : players)   {
+            if (player.isConnected())   {
+                player.dataPacket(pk);
             }
         }
     }
@@ -981,8 +1022,6 @@ public class Server {
     }
 
     public void threadedTick() {
-        this.scheduler.threadedHeartbeat(this.tickCounter);
-
         threadedTickLock.lock();
         if (threadPlayerIterator == null)   {
             threadPlayerIterator = new ArrayList<>(this.players.values()).iterator();
@@ -1016,6 +1055,8 @@ public class Server {
         for (Level level : this.levelArray)  {
             level.threadedTick(this.tickCounter);
         }
+
+        this.scheduler.threadedHeartbeat(this.tickCounter);
     }
 
     public synchronized void doPostTick()    {
