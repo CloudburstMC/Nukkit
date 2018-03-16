@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.network.CacheEncapsulatedPacket;
 
 /**
@@ -35,5 +36,10 @@ public class BatchPacket extends DataPacket {
                 if (cached.internalData != null) cached.buffer = null;
             }
         }
+    }
+
+    @Override
+    public void handle(Player player) {
+        player.server.getNetwork().processBatch(this, player);
     }
 }

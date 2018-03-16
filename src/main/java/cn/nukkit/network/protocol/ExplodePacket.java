@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
 
 /**
@@ -45,4 +46,8 @@ public class ExplodePacket extends DataPacket {
         }
     }
 
+    @Override
+    protected void handle(Player player) {
+
+    }
 }

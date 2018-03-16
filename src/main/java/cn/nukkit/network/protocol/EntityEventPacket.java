@@ -1,5 +1,9 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
+import static cn.nukkit.Player.CRAFTING_SMALL;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -55,5 +59,25 @@ public class EntityEventPacket extends DataPacket {
         this.putEntityRuntimeId(this.eid);
         this.putByte((byte) this.event);
         this.putVarInt((byte) this.data);
+    }
+
+    @Override
+    public void handle(Player player) {
+        if (!player.spawned || !player.isAlive()) {
+            return;
+        }
+        player.craftingType = CRAFTING_SMALL;
+        //this.resetCraftingGridType();
+
+        switch (this.event) {
+            case EntityEventPacket.EATING_ITEM:
+                if (this.data == 0) {
+                    break;
+                }
+
+                /*this.dataPacket(packet); //bug?
+                Server.broadcastPacket(this.getViewers().values(), packet);*/
+                break;
+        }
     }
 }

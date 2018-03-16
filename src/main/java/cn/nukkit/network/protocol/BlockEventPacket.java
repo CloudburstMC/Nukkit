@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -29,5 +31,10 @@ public class BlockEventPacket extends DataPacket {
         this.putBlockVector3(this.x, this.y, this.z);
         this.putVarInt(this.case1);
         this.putVarInt(this.case2);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

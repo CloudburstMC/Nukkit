@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -27,5 +29,10 @@ public class FullChunkDataPacket extends DataPacket {
         this.putVarInt(this.chunkX);
         this.putVarInt(this.chunkZ);
         this.putByteArray(this.data);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

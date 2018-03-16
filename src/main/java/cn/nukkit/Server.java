@@ -1427,7 +1427,7 @@ public class Server {
         return this.getPropertyString("sub-motd", "Powered by Nukkit");
     }
 
-    public boolean getForceResources() {
+    public boolean forceResources() {
         return this.getPropertyBoolean("force-resources", false);
     }
 

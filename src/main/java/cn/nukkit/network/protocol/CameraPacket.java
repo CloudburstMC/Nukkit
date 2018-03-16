@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class CameraPacket extends DataPacket {
 
     public long cameraUniqueId;
@@ -21,5 +23,10 @@ public class CameraPacket extends DataPacket {
         this.reset();
         this.putEntityUniqueId(this.cameraUniqueId);
         this.putEntityUniqueId(this.playerUniqueId);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

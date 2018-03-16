@@ -155,7 +155,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                     pk = this.getPacket(packet.buffer);
                     if (pk != null) {
                         pk.decode();
-                        this.players.get(identifier).handleDataPacket(pk);
+                        pk.doHandle(this.players.get(identifier));
                     }
                 }
             } catch (Exception e) {

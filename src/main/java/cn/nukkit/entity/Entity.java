@@ -187,7 +187,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected final Map<Integer, Effect> effects = new ConcurrentHashMap<>();
 
-    protected long id;
+    public long id;
 
     protected final EntityMetadata dataProperties = new EntityMetadata()
             .putLong(DATA_FLAGS, 0)
@@ -268,7 +268,7 @@ public abstract class Entity extends Location implements Metadatable {
     public boolean fireProof;
     public boolean invulnerable;
 
-    protected Server server;
+    public Server server;
 
     public double highestPosition;
 

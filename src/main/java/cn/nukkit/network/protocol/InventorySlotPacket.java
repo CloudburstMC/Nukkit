@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
 /**
@@ -31,5 +32,10 @@ public class InventorySlotPacket extends DataPacket {
         this.putUnsignedVarInt((byte) this.inventoryId);
         this.putUnsignedVarInt(this.slot);
         this.putSlot(this.item);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

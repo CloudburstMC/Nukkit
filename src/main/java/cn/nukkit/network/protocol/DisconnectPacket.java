@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * Created by on 15-10-12.
  */
@@ -29,5 +31,8 @@ public class DisconnectPacket extends DataPacket {
         }
     }
 
+    @Override
+    protected void handle(Player player) {
 
+    }
 }

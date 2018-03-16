@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Attribute;
 
 /**
@@ -17,10 +18,12 @@ public class UpdateAttributesPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
     public void decode() {
 
     }
 
+    @Override
     public void encode() {
         this.reset();
 
@@ -40,4 +43,8 @@ public class UpdateAttributesPacket extends DataPacket {
         }
     }
 
+    @Override
+    protected void handle(Player player) {
+
+    }
 }

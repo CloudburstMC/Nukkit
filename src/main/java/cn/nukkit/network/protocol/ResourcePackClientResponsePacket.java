@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.resourcepacks.ResourcePack;
+
 public class ResourcePackClientResponsePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET;
@@ -34,5 +37,44 @@ public class ResourcePackClientResponsePacket extends DataPacket {
     @Override
     public byte pid() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public void handle(Player player) {
+        switch (this.responseStatus) {
+            case ResourcePackClientResponsePacket.STATUS_REFUSED:
+                player.close("", "disconnectionScreen.noReason");
+                break;
+            case ResourcePackClientResponsePacket.STATUS_SEND_PACKS:
+                for (String id : this.packIds) {
+                    ResourcePack resourcePack = player.server.getResourcePackManager().getPackById(id);
+                    if (resourcePack == null) {
+                        player.close("", "disconnectionScreen.resourcePack");
+                        break;
+                    }
+
+                    ResourcePackDataInfoPacket dataInfoPacket = new ResourcePackDataInfoPacket();
+                    dataInfoPacket.packId = resourcePack.getPackId();
+                    dataInfoPacket.maxChunkSize = 1048576; //megabyte
+                    dataInfoPacket.chunkCount = resourcePack.getPackSize() / dataInfoPacket.maxChunkSize;
+                    dataInfoPacket.compressedPackSize = resourcePack.getPackSize();
+                    dataInfoPacket.sha256 = resourcePack.getSha256();
+                    player.dataPacket(dataInfoPacket);
+                }
+                break;
+            case ResourcePackClientResponsePacket.STATUS_HAVE_ALL_PACKS:
+                ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
+                stackPacket.mustAccept = player.server.forceResources();
+                stackPacket.resourcePackStack = player.server.getResourcePackManager().getResourceStack();
+                player.dataPacket(stackPacket);
+                break;
+            case ResourcePackClientResponsePacket.STATUS_COMPLETED:
+                if (player.preLoginEventTask.isFinished()) {
+                    player.completeLoginSequence();
+                } else {
+                    player.shouldLogin = true;
+                }
+                break;
+        }
     }
 }

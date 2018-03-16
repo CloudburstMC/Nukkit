@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class PlaySoundPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.PLAY_SOUND_PACKET;
@@ -28,5 +30,10 @@ public class PlaySoundPacket extends DataPacket {
         this.putBlockVector3(this.x * 8, this.y * 8, this.z * 8);
         this.putLFloat(this.volume);
         this.putLFloat(this.pitch);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class StructureBlockUpdatePacket extends DataPacket {
 
     @Override
@@ -15,5 +17,10 @@ public class StructureBlockUpdatePacket extends DataPacket {
     @Override
     public void encode() {
         //TODO
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

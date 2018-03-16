@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.entity.item.EntityBoat;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 
 /**
@@ -68,4 +71,43 @@ public class MovePlayerPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    public void handle(Player player) {
+        if (player.teleportPosition != null) {
+            return;
+        }
+
+        Vector3 newPos = new Vector3(this.x, this.y - player.getEyeHeight(), this.z);
+
+        if (newPos.distanceSquared(player) < 0.01 && this.yaw % 360 == this.yaw && this.pitch % 360 == this.pitch) {
+            return;
+        }
+
+        boolean revert = false;
+        if (!player.isAlive() || !player.spawned) {
+            revert = true;
+            player.forceMovement = new Vector3(this.x, this.y, this.z);
+        }
+
+        if (player.forceMovement != null && (newPos.distanceSquared(player.forceMovement) > 0.1 || revert)) {
+            player.sendPosition(player.forceMovement, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+        } else {
+            this.yaw %= 360;
+            this.pitch %= 360;
+
+            if (this.yaw < 0) {
+                this.yaw += 360;
+            }
+
+            player.setRotation(this.yaw, this.pitch);
+            player.newPosition = newPos;
+            player.forceMovement = null;
+        }
+
+        if (player.riding != null) {
+            if (player.riding instanceof EntityBoat) {
+                player.riding.setPositionAndRotation(player.temporalVector.setComponents(this.x, this.y - 1, this.z), (this.headYaw + 90) % 360, 0);
+            }
+        }
+    }
 }

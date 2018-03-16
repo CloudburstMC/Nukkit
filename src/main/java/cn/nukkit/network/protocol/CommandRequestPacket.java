@@ -1,6 +1,9 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.network.protocol.types.CommandOriginData;
+import co.aikar.timings.Timings;
 
 import java.util.UUID;
 
@@ -50,4 +53,20 @@ public class CommandRequestPacket extends DataPacket {
     public void encode() {
     }
 
+    @Override
+    public void handle(Player player) {
+        if (!player.spawned || !player.isAlive()) {
+            return;
+        }
+        player.craftingType = 0;
+        PlayerCommandPreprocessEvent playerCommandPreprocessEvent = new PlayerCommandPreprocessEvent(player, this.command);
+        player.server.getPluginManager().callEvent(playerCommandPreprocessEvent);
+        if (playerCommandPreprocessEvent.isCancelled()) {
+            return;
+        }
+
+        Timings.playerCommandTimer.startTiming();
+        player.server.dispatchCommand(playerCommandPreprocessEvent.getPlayer(), playerCommandPreprocessEvent.getMessage().substring(1));
+        Timings.playerCommandTimer.stopTiming();
+    }
 }

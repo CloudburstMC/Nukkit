@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.utils.Binary;
@@ -54,5 +55,10 @@ public class AddEntityPacket extends DataPacket {
             this.putVarLong((long) link[1]);
             this.putByte((byte) link[2]);
         }
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

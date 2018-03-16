@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class SimpleEventPacket extends DataPacket {
 
     public short unknown;
@@ -18,5 +20,10 @@ public class SimpleEventPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putShort(this.unknown);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

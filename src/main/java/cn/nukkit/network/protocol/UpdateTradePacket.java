@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class UpdateTradePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.UPDATE_TRADE_PACKET;
@@ -38,4 +40,8 @@ public class UpdateTradePacket extends DataPacket {
         this.put(this.offers);
     }
 
+    @Override
+    protected void handle(Player player) {
+
+    }
 }

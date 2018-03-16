@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -27,5 +29,10 @@ public class SetEntityMotionPacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.eid);
         this.putVector3f(this.motionX, this.motionY, this.motionZ);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

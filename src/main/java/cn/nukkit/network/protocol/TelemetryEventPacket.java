@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class TelemetryEventPacket extends DataPacket {
 
     public long eid;
@@ -22,5 +24,10 @@ public class TelemetryEventPacket extends DataPacket {
         this.putVarLong(this.eid);
         this.putVarInt(this.unknown1);
         this.putByte(this.unknown2);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

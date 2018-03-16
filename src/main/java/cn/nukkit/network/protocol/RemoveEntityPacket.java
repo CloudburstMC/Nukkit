@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -23,5 +25,10 @@ public class RemoveEntityPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putEntityUniqueId(this.eid);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

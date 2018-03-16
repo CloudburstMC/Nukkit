@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 // A wild TransferPacket appeared!
 public class TransferPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.TRANSFER_PACKET;
@@ -23,5 +25,10 @@ public class TransferPacket extends DataPacket {
     @Override
     public byte pid() {
         return ProtocolInfo.TRANSFER_PACKET;
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

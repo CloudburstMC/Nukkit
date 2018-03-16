@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.level.GameRules;
 
 /**
@@ -24,5 +25,10 @@ public class GameRulesChangedPacket extends DataPacket {
     public void encode() {
         this.reset();
         putGameRules(gameRules);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

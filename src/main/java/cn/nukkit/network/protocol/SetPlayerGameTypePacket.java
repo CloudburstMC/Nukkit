@@ -1,5 +1,10 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.command.Command;
+import cn.nukkit.lang.TranslationContainer;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -23,5 +28,20 @@ public class SetPlayerGameTypePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putVarInt(this.gamemode);
+    }
+
+    @Override
+    public void handle(Player player) {
+        if (this.gamemode != player.gamemode) {
+            if (!player.hasPermission("nukkit.command.gamemode")) {
+                SetPlayerGameTypePacket setPlayerGameTypePacket1 = new SetPlayerGameTypePacket();
+                setPlayerGameTypePacket1.gamemode = player.gamemode & 0x01;
+                player.dataPacket(setPlayerGameTypePacket1);
+                player.getAdventureSettings().update();
+                return;
+            }
+            player.setGamemode(this.gamemode, true);
+            Command.broadcastCommandMessage(player, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(player.gamemode)));
+        }
     }
 }

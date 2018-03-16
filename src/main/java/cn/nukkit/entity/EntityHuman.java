@@ -27,8 +27,8 @@ public class EntityHuman extends EntityHumanType {
     public static final int DATA_PLAYER_BED_POSITION = 29;
     public static final int DATA_PLAYER_BUTTON_TEXT = 40;
 
-    protected UUID uuid;
-    protected byte[] rawUUID;
+    public UUID uuid;
+    public byte[] rawUUID;
 
     @Override
     public float getWidth() {

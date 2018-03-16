@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.utils.Binary;
 
@@ -41,5 +42,14 @@ public class PlayerHotbarPacket extends DataPacket {
         }
 
         this.putBoolean(this.selectHotbarSlot);
+    }
+
+    @Override
+    public void handle(Player player) {
+        if (this.windowId != ContainerIds.INVENTORY) {
+            return; //In PE this should never happen
+        }
+
+        player.inventory.equipItem(this.selectedHotbarSlot);
     }
 }

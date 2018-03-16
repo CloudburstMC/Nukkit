@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
 /**
@@ -35,5 +36,10 @@ public class MobArmorEquipmentPacket extends DataPacket {
         this.putSlot(this.slots[1]);
         this.putSlot(this.slots[2]);
         this.putSlot(this.slots[3]);
+    }
+
+    @Override
+    public void handle(Player player) {
+        //TODO
     }
 }

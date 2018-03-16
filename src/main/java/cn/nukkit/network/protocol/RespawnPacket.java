@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.math.Vector3f;
 
 /**
@@ -32,4 +33,8 @@ public class RespawnPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    protected void handle(Player player) {
+
+    }
 }

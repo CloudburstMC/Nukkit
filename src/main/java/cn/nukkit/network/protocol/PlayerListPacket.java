@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 
 import java.util.UUID;
@@ -49,6 +50,11 @@ public class PlayerListPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    protected void handle(Player player) {
+
+    }
+
     public static class Entry {
 
         public final UUID uuid;
@@ -77,5 +83,4 @@ public class PlayerListPacket extends DataPacket {
             this.xboxUserId = xboxUserId == null ? "" : xboxUserId;
         }
     }
-
 }

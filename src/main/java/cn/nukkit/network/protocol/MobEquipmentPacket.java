@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
 /**
@@ -37,5 +38,24 @@ public class MobEquipmentPacket extends DataPacket {
         this.putByte((byte) this.inventorySlot);
         this.putByte((byte) this.hotbarSlot);
         this.putByte((byte) this.windowId);
+    }
+
+    @Override
+    public void handle(Player player) {
+        if (!player.spawned || !player.isAlive()) {
+            return;
+        }
+
+        Item item = player.inventory.getItem(this.hotbarSlot);
+
+        if (!item.equals(this.item)) {
+            player.server.getLogger().debug("Tried to equip " + this.item + " but have " + item + " in target slot");
+            player.inventory.sendContents(player);
+            return;
+        }
+
+        player.inventory.equipItem(this.hotbarSlot);
+
+        player.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
     }
 }

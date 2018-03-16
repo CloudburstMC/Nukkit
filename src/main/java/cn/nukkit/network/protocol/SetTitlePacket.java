@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * @author Tee7even
  */
@@ -41,5 +43,10 @@ public class SetTitlePacket extends DataPacket {
         this.putVarInt(fadeInTime);
         this.putVarInt(stayTime);
         this.putVarInt(fadeOutTime);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

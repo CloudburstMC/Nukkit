@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class GUIDataPickItemPacket extends DataPacket {
 
     public int hotbarSlot;
@@ -18,5 +20,10 @@ public class GUIDataPickItemPacket extends DataPacket {
     @Override
     public void decode() {
         this.hotbarSlot = this.getLInt();
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * Created on 15-10-13.
  */
@@ -33,4 +35,8 @@ public class PlayStatusPacket extends DataPacket {
         this.putInt(this.status);
     }
 
+    @Override
+    protected void handle(Player player) {
+
+    }
 }

@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class ServerSettingsResponsePacket extends DataPacket {
 
     public int formId;
@@ -20,5 +22,10 @@ public class ServerSettingsResponsePacket extends DataPacket {
         this.reset();
         this.putVarInt(this.formId);
         this.putString(this.data);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

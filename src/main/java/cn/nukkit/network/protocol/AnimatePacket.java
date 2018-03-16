@@ -1,5 +1,9 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.event.player.PlayerAnimationEvent;
+
 /**
  * @author Nukkit Project Team
  */
@@ -35,4 +39,21 @@ public class AnimatePacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    public void handle(Player player) {
+        if (!player.spawned || !player.isAlive()) {
+            return;
+        }
+
+        PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(player, this.action);
+        player.server.getPluginManager().callEvent(animationEvent);
+        if (animationEvent.isCancelled()) {
+            return;
+        }
+
+        AnimatePacket animatePacket = new AnimatePacket();
+        animatePacket.eid = player.getId();
+        animatePacket.action = animationEvent.getAnimationType();
+        Server.broadcastPacket(player.getViewers().values(), animatePacket);
+    }
 }

@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -37,5 +39,10 @@ public class ContainerSetDataPacket extends DataPacket {
         this.putByte((byte) this.windowId);
         this.putVarInt(this.property);
         this.putVarInt(this.value);
+    }
+
+    @Override
+    protected void handle(Player player) {
+
     }
 }

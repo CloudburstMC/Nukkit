@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
 import java.util.UUID;
@@ -55,4 +56,8 @@ public class CraftingEventPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    public void handle(Player player) {
+        //TODO: why the actual **HECK** is this empty?
+    }
 }
