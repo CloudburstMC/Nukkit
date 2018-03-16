@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import com.google.common.primitives.Ints;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import java.util.List;
 
@@ -17,8 +18,8 @@ public interface ProtocolInfo {
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.2.10";
-    String MINECRAFT_VERSION_NETWORK = "1.2.10";
+    String MINECRAFT_VERSION = "v1.2.11";
+    String MINECRAFT_VERSION_NETWORK = "1.2.11";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
