@@ -12,13 +12,15 @@ import java.util.concurrent.CompletableFuture;
 
 public interface Level {
 
-    long getRandomSeed();
-
     String getId();
+
+    String getName();
+
+    int getTime();
 
     long getCurrentTick();
 
-    String getName();
+    LevelData getData();
 
     Optional<Chunk> getChunkIfLoaded(int x, int z);
 

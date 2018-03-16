@@ -2,10 +2,7 @@ package cn.nukkit.api;
 
 import cn.nukkit.api.command.sender.CommandSender;
 import cn.nukkit.api.entity.Entity;
-import cn.nukkit.api.event.player.PlayerKickEvent;
-import cn.nukkit.api.inventory.Inventory;
 import cn.nukkit.api.item.ItemInstance;
-import cn.nukkit.api.message.Message;
 import cn.nukkit.api.permission.Permissible;
 import cn.nukkit.api.util.GameMode;
 import com.flowpowered.math.vector.Vector3d;
@@ -25,11 +22,6 @@ public interface Player extends Session, CommandSender, Entity, MessageRecipient
     void setDisplayName(@Nullable String name);
 
     @Nonnull
-    Optional<String> getPlayerListName();
-
-    void setPlayerListName(@Nullable String name);
-
-    @Nonnull
     GameMode getGameMode();
 
     void setGameMode(@Nullable GameMode gameMode);
@@ -39,71 +31,33 @@ public interface Player extends Session, CommandSender, Entity, MessageRecipient
 
     boolean isSneaking();
 
-    void setSneaking(boolean value);
+    void setSneaking(boolean sneaking);
 
     boolean isSprinting();
 
-    void setSprinting(boolean value);
+    void setSprinting(boolean sprinting);
 
     int getExperienceLevel();
 
-    void addWindow(Inventory inventory);
+    void disconnect();
 
-    void addWindow(Inventory inventory, int forceId);
-
-    int getWindowId(Inventory inventory);
-
-    Inventory getWindowById();
-
-    void removeWindow(Inventory inventory);
-
-    void removeAllWindows();
-
-    void sendAllInventories();
-
-    String getAddress();
-
-    int getPort();
-
-    void kick();
-
-    void kick(String reason);
-
-    void kick(PlayerKickEvent.Reason reason);
+    void disconnect(String reason);
 
     void chat(String message);
 
-    void saveData();
-
-    void saveData(boolean async);
-
-    void loadData();
-
-    void addExp(int exp);
-
-    int getExp();
-
-    void addExpLevel(int level);
-
-    int getExpLevel();
-
     boolean getAllowFlight();
 
-    void setAllowFlight(boolean value);
+    void setAllowFlight(boolean allowFlight);
 
-    void hidePlayer(Player player);
+    void hideEntity(Entity entity);
 
-    void showPlayer(Player player);
+    void showEntity(Entity entity);
 
-    boolean canSee(Player player);
+    boolean canSee(Entity entity);
 
     boolean isFlying();
 
     void setFlying(boolean value);
-
-    void setMovementSpeed();
-
-    int getMovementSpeed();
 
     void sendTitle(String title, String subtitle);
 
@@ -131,6 +85,8 @@ public interface Player extends Session, CommandSender, Entity, MessageRecipient
 
     void showXboxProfile(String xuid);
 
+    void showXboxProfile(Player player);
+
     boolean getRemoveFormat();
 
     boolean setRemoveFormat(boolean value);
@@ -138,8 +94,6 @@ public interface Player extends Session, CommandSender, Entity, MessageRecipient
     boolean isEnabledClientCommand();
 
     void setEnabledClientCommand(boolean value);
-
-    boolean isConnected();
 
     Skin getSkin();
 
@@ -165,21 +119,16 @@ public interface Player extends Session, CommandSender, Entity, MessageRecipient
 
     int getViewDistance();
 
-    void sendMessage(String message);
-
-    void sendMessage(Message message);
-
-    void sendTranslation(String message, String... parameters);
-
-    void sendPopup(String popup);
-
-    void sendTip(String tip);
-
     void sendActionBar(String message);
 
     void sendActionBar(String message, int fadein, int duration, int fadeout);
 
     boolean dropItem(ItemInstance item);
+
+    @Override
+    default boolean isOnline() {
+        return true;
+    }
 
     enum Animation {
         SWING_ARM,

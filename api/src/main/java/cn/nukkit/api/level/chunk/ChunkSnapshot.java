@@ -1,6 +1,7 @@
 package cn.nukkit.api.level.chunk;
 
 import cn.nukkit.api.block.BlockSnapshot;
+import cn.nukkit.api.level.data.Biome;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -17,4 +18,6 @@ public interface ChunkSnapshot {
     byte getSkyLight(int x, int y, int z);
 
     byte getBlockLight(int x, int y, int z);
+
+    Biome getBiome(int x, int z);
 }

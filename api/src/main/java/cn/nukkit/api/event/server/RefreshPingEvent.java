@@ -20,7 +20,7 @@ public class RefreshPingEvent implements ServerEvent {
         subMotd = server.getConfiguration().getGeneral().getSubMotd();
         maxPlayerCount = server.getConfiguration().getGeneral().getMaximumPlayers();
         playerCount = server.getOnlinePlayers().size();
-        defaultGamemode = server.getDefaultGameMode();
+        defaultGamemode = server.getConfiguration().getMechanics().getDefaultGamemode();
         this.protocolVersion = protocolVersion;
     }
 

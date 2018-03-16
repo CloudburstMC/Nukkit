@@ -6,7 +6,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 public enum EnchantmentType {
 
     PROTECTION(0, "protection", 5),
-    FIRE_ROTECTION(1, "protection_fire", 5),
+    FIRE_PROTECTION(1, "protection_fire", 5),
     FALL_PROTECTION(2, "protection_fall", 5),
     EXPLOSION_PROTECTION(3, "protection_explosion", 5),
     PROJECTILE_PROTECTION(4, "protection, projectile", 5),

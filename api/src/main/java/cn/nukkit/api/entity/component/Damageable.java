@@ -33,6 +33,8 @@ public interface Damageable extends EntityComponent {
      */
     void damage(@Nonnegative float damage);
 
+    void replenish(@Nonnegative float replenish);
+
     /*/**
      * Deals the given amount of damage to this entity, from a specified
      * entity.

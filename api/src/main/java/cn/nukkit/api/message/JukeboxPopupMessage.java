@@ -14,11 +14,11 @@ import java.util.Objects;
 public final class JukeboxPopupMessage implements ParameterMessage {
     private static final Type TYPE = Type.JUKEBOX_POPUP;
     /**
-     * The caption of the message.
+     * The message.
      */
     private final String message;
     /**
-     * The message this popup is using.
+     * The captions for the message.
      */
     private final String[] captions;
     /**

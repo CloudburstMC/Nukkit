@@ -83,6 +83,6 @@ public final class TranslationMessage implements ParameterMessage {
 
     @Override
     public boolean needsTranslating() {
-        return false;
+        return false; // This is a translation container.
     }
 }

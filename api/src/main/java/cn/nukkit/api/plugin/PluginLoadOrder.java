@@ -6,7 +6,8 @@ import javax.annotation.Nullable;
 
 public enum PluginLoadOrder {
     STARTUP,
-    POSTWORLD;
+    POSTWORLD,
+    POSTNETWORK;
 
     @Nullable
     public static PluginLoadOrder parse(String order) {

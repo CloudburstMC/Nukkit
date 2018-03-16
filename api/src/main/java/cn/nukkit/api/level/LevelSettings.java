@@ -3,8 +3,9 @@ package cn.nukkit.api.level;
 import cn.nukkit.api.level.data.Difficulty;
 import cn.nukkit.api.level.data.Dimension;
 import cn.nukkit.api.level.data.Generator;
+import cn.nukkit.api.permission.PlayerPermission;
 import cn.nukkit.api.util.GameMode;
-import com.flowpowered.math.vector.Vector3i;
+import com.flowpowered.math.vector.Vector3f;
 
 public interface LevelSettings {
 
@@ -18,7 +19,7 @@ public interface LevelSettings {
 
     Difficulty getDifficulty();
 
-    Vector3i getDefaultSpawn();
+    Vector3f getDefaultSpawn();
 
     boolean isAchievementsDisabled();
 
@@ -48,7 +49,7 @@ public interface LevelSettings {
 
     boolean isTrustingPlayers();
 
-    AdventureSettings.PlayerPermission getDefaultPlayerPermission();
+    PlayerPermission getDefaultPlayerPermission();
 
     int getXBLBroadcastMode();
 

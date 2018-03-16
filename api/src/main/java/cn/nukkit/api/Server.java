@@ -4,18 +4,16 @@ import cn.nukkit.api.command.sender.ConsoleCommandSender;
 import cn.nukkit.api.event.EventManager;
 import cn.nukkit.api.item.ItemInstanceBuilder;
 import cn.nukkit.api.level.Level;
+import cn.nukkit.api.permission.Abilities;
 import cn.nukkit.api.permission.PermissionManager;
 import cn.nukkit.api.plugin.PluginManager;
 import cn.nukkit.api.scheduler.NukkitScheduler;
-import cn.nukkit.api.util.Config;
 import cn.nukkit.api.util.ConfigBuilder;
-import cn.nukkit.api.util.GameMode;
 import cn.nukkit.api.util.SemVer;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.UUID;
+import java.util.Collection;
+import java.util.Optional;
 
 public interface Server {
 
@@ -32,6 +30,9 @@ public interface Server {
 
     @Nonnull
     Level getDefaultLevel();
+
+    @Nonnull
+    Abilities getDefaultAbilities();
 
     @Nonnull
     SemVer getNukkitVersion();
@@ -54,34 +55,22 @@ public interface Server {
     Whitelist getWhitelist();
 
     @Nonnull
-    ConfigBuilder getConfigBuilder();
+    ItemInstanceBuilder createItemStackBuilder();
 
     @Nonnull
-    ItemInstanceBuilder getItemStackBuilder();
+    ConfigBuilder createConfigBuilder();
 
     @Nonnull
     PermissionManager getPermissionManager();
 
-    Player getPlayer(String name);
+    Optional<Player> getPlayer(String name);
 
-    Player getPlayerExact(String name);
+    Optional<Player> getPlayerExact(String name);
 
     void shutdown();
 
-    void forceShutdown();
+    void shutdown(String reason);
 
     @Nonnull
-    GameMode getDefaultGameMode();
-
-    @Nonnull
-    Config getConfig();
-
-    @Nullable
-    Object getConfig(String variable);
-
-    @Nullable
-    Object getConfig(String variable, Object defaultValue);
-
-    @Nonnull
-    Map<UUID, Player> getOnlinePlayers();
+    Collection<Player> getOnlinePlayers();
 }

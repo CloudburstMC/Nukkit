@@ -34,7 +34,7 @@ public abstract class JavaPlugin implements Plugin {
             this.dataFolder = dataFolder;
             this.logger = logger;
             this.configPath = dataFolder.resolve("config.yml");
-            this.config = server.getConfigBuilder().file(configPath.toFile()).build();
+            this.config = server.createConfigBuilder().file(configPath.toFile()).build();
             this.pluginCommands = pluginCommands;
         }
     }
@@ -61,10 +61,6 @@ public abstract class JavaPlugin implements Plugin {
 
     public final Path getDataFolder() {
         return dataFolder;
-    }
-
-    public final Path getPath() {
-        return description.getPath().get();
     }
 
     public final Path getConfigPath() {
@@ -130,8 +126,6 @@ public abstract class JavaPlugin implements Plugin {
     public boolean onCommand(CommandSender executorSource, Command command, String label, String[] args) {
         return false;
     }
-
-
 
     @Override
     public boolean saveResource(String filename, String outputName, boolean replace) {

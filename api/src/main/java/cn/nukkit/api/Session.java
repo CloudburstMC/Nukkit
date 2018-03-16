@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
 import java.util.Optional;
 
-public interface Session extends Stateless {
+public interface Session extends OfflinePlayer {
 
     @Nonnull
     Server getServer();
@@ -15,9 +15,6 @@ public interface Session extends Stateless {
     Optional<InetSocketAddress> getRemoteAddress();
 
     boolean isXboxAuthenticated();
-
-    @Nonnull
-    Optional<String> getXuid();
 
     @Nonnull
     DeviceOS getDeviceOS();

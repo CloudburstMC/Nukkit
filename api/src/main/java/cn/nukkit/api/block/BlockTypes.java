@@ -9,9 +9,14 @@ import cn.nukkit.api.metadata.Wood;
 import cn.nukkit.api.metadata.block.Cake;
 import cn.nukkit.api.metadata.block.Crops;
 import cn.nukkit.api.metadata.block.TopSnow;
+import com.google.common.base.Preconditions;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Builder;
+
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BlockTypes {
     public static final BlockType AIR = IntBlock.builder().name("air").id(0).maxStackSize(0).diggable(false).transparent(true).solid(true).emitLight(0).filterLight(0).hardness(0f).build();
@@ -257,7 +262,25 @@ public class BlockTypes {
     public static final BlockType OBSERVER = IntBlock.builder().name("observer").id(251).maxStackSize(64).diggable(true).transparent(true).solid(true).emitLight(0).filterLight(0).hardness(3f).build();
     public static final BlockType STRUCTURE_BLOCK = IntBlock.builder().name("structure_block").id(252).maxStackSize(64).diggable(false).transparent(false).solid(true).emitLight(0).filterLight(15).hardness(-1f).build();
     public static final BlockType RESERVED6 = IntBlock.builder().name("reserved6").id(255).maxStackSize(64).diggable(true).transparent(false).solid(true).emitLight(0).filterLight(15).hardness(-1f).build();
-    private static TIntObjectMap<BlockType> BY_ID = new TIntObjectHashMap<>(192);
+    private static final TIntObjectMap<BlockType> BY_ID = new TIntObjectHashMap<>(192);
+    private static final Map<String, BlockType> BY_NAME = new HashMap<>();
+
+    public static BlockType byName(@Nonnull String name) {
+        Preconditions.checkNotNull(name, "name");
+        BlockType type = BY_NAME.get(name);
+        if (type == null) {
+            throw new IllegalArgumentException("Name " + name + " is not valid.");
+        }
+        return type;
+    }
+
+    public static BlockType byId(int data) {
+        BlockType type = BY_ID.get(data);
+        if (type == null) {
+            throw new IllegalArgumentException("ID " + data + " is not valid.");
+        }
+        return type;
+    }
 
     @Builder
     private static class IntBlock implements BlockType {
@@ -291,6 +314,7 @@ public class BlockTypes {
             this.blockEntityClass = blockEntityClass;
 
             BY_ID.put(id, this);
+            BY_NAME.put(name, this);
         }
 
         @Override
@@ -357,13 +381,5 @@ public class BlockTypes {
         public String toString() {
             return name;
         }
-    }
-
-    public static BlockType byId(int data) {
-        BlockType type = BY_ID.get(data);
-        if (type == null) {
-            throw new IllegalArgumentException("ID " + data + " is not valid.");
-        }
-        return type;
     }
 }

@@ -1,5 +1,8 @@
 package cn.nukkit.api;
 
+import cn.nukkit.api.level.data.Difficulty;
+import cn.nukkit.api.util.GameMode;
+
 import java.util.List;
 
 public interface Configuration {
@@ -7,6 +10,14 @@ public interface Configuration {
     GeneralConfiguration getGeneral();
 
     MechanicsConfiguration getMechanics();
+
+    NetworkConfiguration getNetwork();
+
+    LevelConfiguration getDefaultLevel();
+
+    TimingsConfiguration getTimings();
+
+    AdvancedConfiguration getAdvanced();
 
     interface GeneralConfiguration {
 
@@ -37,15 +48,17 @@ public interface Configuration {
 
     interface MechanicsConfiguration {
 
-        int getDifficulty();
+        Difficulty getDifficulty();
 
         boolean isHardcore();
 
         boolean isPvpEnabled();
 
-        String getDefaultGamemode();
+        GameMode getDefaultGamemode();
 
         boolean isGamemodeForced();
+
+        int getMaximumChunkRadius();
 
         int getViewDistance();
 
@@ -63,6 +76,8 @@ public interface Configuration {
         int getPort();
 
         boolean isQueryEnabled();
+
+        boolean isQueryingPlugins();
     }
 
     interface RconConfiguration {
@@ -77,8 +92,6 @@ public interface Configuration {
     interface LevelConfiguration {
 
         String getId();
-
-        String getName();
 
         String getGenerator();
 

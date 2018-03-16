@@ -2,6 +2,7 @@ package cn.nukkit.api.util;
 
 import com.google.common.base.Preconditions;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.Value;
 
 import javax.annotation.Nonnull;
@@ -10,6 +11,7 @@ import java.awt.image.BufferedImage;
 
 @Value
 @Nonnull
+@ToString(exclude = {"skinData", "capeData", "geometryData"})
 public class Skin {
     @NonNull
     private final String skinId;

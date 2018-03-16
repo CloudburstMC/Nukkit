@@ -20,8 +20,16 @@ public final class Rotation {
     private final float yaw;
     private final float headYaw;
 
+    public Rotation(Vector2f rotation) {
+        this(rotation.getX(), rotation.getY(), 0);
+    }
+
+    public Rotation(float pitch, float yaw) {
+        this(pitch, yaw, 0);
+    }
+
     public Rotation(Vector2f rotation, float headYaw) {
-        this(rotation.getX(), rotation.getFloorY(), headYaw);
+        this(rotation.getX(), rotation.getY(), headYaw);
     }
 
     public Rotation(float pitch, float yaw, float headYaw) {

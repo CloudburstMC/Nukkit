@@ -6,11 +6,11 @@ public interface Physics extends EntityComponent {
 
     void setDrag(float drag);
 
-    double getGravity();
+    float getGravity();
 
-    void setGravity(double gravity);
+    void setGravity(float gravity);
 
-    boolean isAffectedByGravity();
+    boolean isPhysicsDisabled();
 
-    void setAffectedByGravity(boolean affectedByGravity);
+    void setPhysicsDisabled(boolean physicsDisabled);
 }

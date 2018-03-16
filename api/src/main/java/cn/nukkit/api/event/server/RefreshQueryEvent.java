@@ -5,7 +5,6 @@ import cn.nukkit.api.Server;
 import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.api.util.GameMode;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -31,12 +30,12 @@ public class RefreshQueryEvent implements ServerEvent {
     public RefreshQueryEvent(Server server, int timeout) {
         this.timeout = timeout;
         serverName = server.getConfiguration().getGeneral().getMotd();
-        pluginListEnabled = (boolean) server.getConfig("settings.query-plugins", true);
+        pluginListEnabled = server.getConfiguration().getNetwork().isQueryingPlugins();
         plugins = server.getPluginManager().getAllPlugins();
-        players = new ArrayList<>(server.getOnlinePlayers().values());
-        gameMode = server.getDefaultGameMode();
+        players = server.getOnlinePlayers();
+        gameMode = server.getConfiguration().getMechanics().getDefaultGamemode();
         version = server.getMinecraftVersion().toString();
-        map = server.getDefaultLevel().getName();
+        map = server.getDefaultLevel().getData().getName();
         numPlayers = players.size();
         maxPlayers = server.getConfiguration().getGeneral().getMaximumPlayers();
         whitelist = server.getConfiguration().getGeneral().isWhitelisted();
