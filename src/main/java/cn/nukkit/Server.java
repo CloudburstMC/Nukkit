@@ -839,7 +839,7 @@ public class Server {
         try {
             while (this.isRunning) {
                 try {
-                    long nextTickTime = this.nextTick = System.currentTimeMillis() + 50;
+                    long nextTickTime = this.nextTick = System.currentTimeMillis() + 1000;
 
                     //do actual server tick logic
                     this.tickManager.tick();

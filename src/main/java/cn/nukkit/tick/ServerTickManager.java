@@ -1,11 +1,15 @@
 package cn.nukkit.tick;
 
 import cn.nukkit.Server;
-import cn.nukkit.tick.thread.NetworkingTickThread;
+import cn.nukkit.tick.thread.*;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author DaPorkchop_
- *
+ * <p>
  * Manages all the worker threads, informing them of when to start
  */
 public class ServerTickManager {
@@ -15,16 +19,24 @@ public class ServerTickManager {
         this.server = server;
 
         this.addWorkerThread(new NetworkingTickThread(server, this));
+        this.addWorkerThread(new AutoSaveTickThread(server, this));
+        this.addWorkerThread(new SchedulerTickThread(server, this));
+        this.addWorkerThread(new ServerBaseTickThread(server, this));
+        int max = Runtime.getRuntime().availableProcessors();
+        for (int i = 0; i < max; i++) {
+            this.addWorkerThread(new ServerTickThread(server, this));
+        }
     }
 
-    private final Object syncPostTickWaitQueue = new Object();
-    private final Object syncEndOfTick = new Object();
+    private final Lock lock = new ReentrantLock();
+    private final Condition doTick = lock.newCondition();
+    private final Condition endTick = lock.newCondition();
 
     private int totalThreadCount = 0;
     private int waitingOnThreads = 0;
 
-    public void tick()  {
-        if (this.waitingOnThreads != 0)  {
+    public void tick() {
+        if (this.waitingOnThreads > 0) {
             throw new IllegalStateException("Attempted to tick server before ending previous tick!");
         }
 
@@ -36,41 +48,55 @@ public class ServerTickManager {
 
         //notify all threads (since the previous tick is finished, they're all waiting on the dummy object)
         //this is where the actual tick starts doing things
-        this.syncPostTickWaitQueue.notifyAll();
+        this.lock.lock();
+        doTick.signalAll();
+        this.lock.unlock();
 
         try {
             //wait for all worker threads to finish execution before proceeding to the next tick
-            this.syncEndOfTick.wait();
-        } catch (InterruptedException e)    {
+            this.lock.lock();
+            this.endTick.await();
+        } catch (InterruptedException e) {
             this.server.getLogger().logException(e);
+        } finally {
+            this.lock.unlock();
         }
 
         this.server.doPostTick();
     }
 
-    public void shutdown()  {
+    public void shutdown() {
         this.server.isRunning = false;
 
         //notify workers so that they stop waiting and then terminate as the server is flagged as not running
-        this.syncEndOfTick.notifyAll();
+        this.lock.lock();
+        doTick.signalAll();
+        this.lock.unlock();
     }
 
-    public void onWorkerFinish()   {
+    public void onWorkerFinish() {
         //decrement the waiting thread count to check if the tick is finished
-        if (--this.waitingOnThreads <= 0)    {
-            this.syncEndOfTick.notifyAll();
+        if (--this.waitingOnThreads <= 0) {
+            this.lock.lock();
+            this.endTick.signalAll();
+            this.lock.unlock();
         }
 
+        workerWait();
+    }
+
+    public void workerWait() {
         try {
-            //wait on the dummy object
-            //this object won't be notified until the next tick starts
-            this.syncPostTickWaitQueue.wait();
+            this.lock.lock();
+            this.doTick.await();
         } catch (InterruptedException e)    {
             this.server.getLogger().logException(e);
+        } finally {
+            this.lock.unlock();
         }
     }
 
-    public void addWorkerThread(ServerExecutorThread thread)    {
+    public void addWorkerThread(ServerExecutorThread thread) {
         if (thread.server == this.server && thread.tickManager == this) {
             totalThreadCount++;
         }

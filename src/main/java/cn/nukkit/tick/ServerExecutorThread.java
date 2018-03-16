@@ -14,10 +14,13 @@ public abstract class ServerExecutorThread extends Thread {
     public ServerExecutorThread(Server server, ServerTickManager tickManager)  {
         this.server = server;
         this.tickManager = tickManager;
+        this.start();
     }
 
     @Override
     public void run() {
+        tickManager.workerWait();
+
         while (server.isRunning)  {
             doRun();
             tickManager.onWorkerFinish();
