@@ -55,18 +55,10 @@ public class ChunkRequestTask extends AsyncTask {
         byte[] ids = chunk.getBlockIdArray();
         byte[] meta = chunk.getBlockDataArray();
         byte[] heightMap = chunk.getHeightMapArray();
-        int[] biomeColors = chunk.getBiomeColorArray();
-        ByteBuffer buffer = ByteBuffer.allocate(
-                16 * 16 * (128 + 64 + 64 + 64)
-                        + 256
-                        + 256
-                        + this.blockEntities.length
-        );
+        byte[] biomes = chunk.getBiomeIdArray();
 
         ByteBuffer orderedIds = ByteBuffer.allocate(16 * 16 * 128);
         ByteBuffer orderedData = ByteBuffer.allocate(16 * 16 * 64);
-        ByteBuffer orderedSkyLight = ByteBuffer.allocate(16 * 16 * 64);
-        ByteBuffer orderedLight = ByteBuffer.allocate(16 * 16 * 64);
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -76,17 +68,18 @@ public class ChunkRequestTask extends AsyncTask {
         }
 
         ByteBuffer orderedHeightMap = ByteBuffer.wrap(heightMap);
-        ByteBuffer orderedBiomeColors = ByteBuffer.allocate(biomeColors.length * 4);
-        for (int i : biomeColors) {
-            orderedBiomeColors.put(Binary.writeInt(i));
-        }
 
         this.setResult(
-                buffer
+                ByteBuffer.allocate(
+                                16 * 16 * 128
+                                + 16 * 16 * 64
+                                + heightMap.length
+                                + biomes.length
+                                + this.blockEntities.length)
                         .put(orderedIds)
                         .put(orderedData)
                         .put(orderedHeightMap)
-                        .put(orderedBiomeColors)
+                        .put(biomes)
                         .put(this.blockEntities)
                         .array()
         );

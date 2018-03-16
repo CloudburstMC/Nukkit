@@ -37,9 +37,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>co.aikar</groupId>
-            <artifactId>fastutil-lite</artifactId>
-            <version>1.0</version>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil</artifactId>
+            <version>8.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
@@ -89,11 +89,6 @@
             <version>4.1.6.Final</version>
             <scope>compile</scope>
             <classifier>linux-x86_64</classifier>
-        </dependency>
-        <dependency>
-            <groupId>com.github.dblock</groupId>
-            <artifactId>oshi-core</artifactId>
-            <version>3.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

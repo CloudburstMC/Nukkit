@@ -21,6 +21,7 @@ public class CharPalette {
     }
 
     private char[] insert(char val) {
+        lastIndex = Character.MAX_VALUE;
         if (keys.length == 0) {
             return new char[] { val };
         }
@@ -66,9 +67,9 @@ public class CharPalette {
             index = binarySearch0(0, keys.length, key);
         }
         if (index >= keys.length || index < 0) {
-            return lastTmp = Character.MAX_VALUE;
+            return lastIndex = Character.MAX_VALUE;
         } else {
-            return lastTmp = (char) index;
+            return lastIndex = (char) index;
         }
     }
 

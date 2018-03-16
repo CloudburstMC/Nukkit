@@ -73,6 +73,6 @@ public class NukkitRandom {
     }
 
     public int nextBoundedInt(int bound) {
-        return this.nextInt() % bound;
+        return bound == 0 ? 0 : this.nextInt() % bound;
     }
 }

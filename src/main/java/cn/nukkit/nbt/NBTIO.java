@@ -247,5 +247,4 @@ public class NBTIO {
         write(tag, tmpFile);
         Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
     }
-
 }

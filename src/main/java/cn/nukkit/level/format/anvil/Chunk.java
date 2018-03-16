@@ -6,16 +6,14 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.stream.NBTInputStream;
-import cn.nukkit.nbt.stream.NBTOutputStream;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.utils.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -28,22 +26,13 @@ import java.util.*;
  */
 public class Chunk extends BaseChunk {
 
-    protected CompoundTag nbt;
+    protected long inhabitedTime;
+    protected boolean terrainPopulated;
+    protected boolean terrainGenerated;
 
     @Override
-    public BaseChunk clone() {
-        Chunk chunk = (Chunk) super.clone();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        NBTOutputStream out = new NBTOutputStream(baos);
-        try {
-            nbt.write(out);
-            NBTInputStream in = new NBTInputStream(new ByteArrayInputStream(baos.toByteArray()));
-            chunk.nbt = new CompoundTag();
-            chunk.nbt.load(in);
-        } catch (IOException e) {
-
-        }
-        return chunk;
+    public Chunk clone() {
+        return (Chunk) super.clone();
     }
 
     public Chunk(LevelProvider level) {
@@ -67,38 +56,16 @@ public class Chunk extends BaseChunk {
         }
 
         if (nbt == null) {
-            this.nbt = new CompoundTag("Level");
+            this.biomes = new byte[16 * 16];
+            this.sections = new cn.nukkit.level.format.ChunkSection[16];
+            for (int layer = 0; layer < 16; layer++) {
+                this.sections[layer] = EmptyChunkSection.EMPTY[layer];
+            }
             return;
         }
 
-        this.nbt = nbt;
-
-        if (!(this.nbt.contains("Entities") && (this.nbt.get("Entities") instanceof ListTag))) {
-            this.nbt.putList(new ListTag<CompoundTag>("Entities"));
-        }
-
-        if (!(this.nbt.contains("TileEntities") && (this.nbt.get("TileEntities") instanceof ListTag))) {
-            this.nbt.putList(new ListTag<CompoundTag>("Entities"));
-        }
-
-        if (!(this.nbt.contains("TileTicks") && (this.nbt.get("TileTicks") instanceof ListTag))) {
-            this.nbt.putList(new ListTag<CompoundTag>("TileTicks"));
-        }
-
-        if (!(this.nbt.contains("Sections") && (this.nbt.get("Sections") instanceof ListTag))) {
-            this.nbt.putList(new ListTag<CompoundTag>("Sections"));
-        }
-
-        if (!(this.nbt.contains("BiomeColors") && (this.nbt.get("BiomeColors") != null))) {
-            this.nbt.putIntArray("BiomeColors", new int[256]);
-        }
-
-        if (!(this.nbt.contains("HeightMap") && (this.nbt.get("HeightMap") instanceof IntArrayTag))) {
-            this.nbt.putIntArray("HeightMap", new int[256]);
-        }
-
-        cn.nukkit.level.format.ChunkSection[] sections = new cn.nukkit.level.format.ChunkSection[16];
-        for (Tag section : this.nbt.getList("Sections").getAll()) {
+        this.sections = new cn.nukkit.level.format.ChunkSection[16];
+        for (Tag section : nbt.getList("Sections").getAll()) {
             if (section instanceof CompoundTag) {
                 int y = ((CompoundTag) section).getByte("Y");
                 if (y < 16) {
@@ -115,37 +82,36 @@ public class Chunk extends BaseChunk {
 
         Map<Integer, Integer> extraData = new HashMap<>();
 
-        if (!this.nbt.contains("ExtraData") || !(this.nbt.get("ExtraData") instanceof ByteArrayTag)) {
-            this.nbt.putByteArray("ExtraData", Binary.writeInt(0));
-        } else {
-            BinaryStream stream = new BinaryStream(this.nbt.getByteArray("ExtraData"));
+        Tag extra = nbt.get("ExtraData");
+        if (extra != null && extra instanceof ByteArrayTag) {
+            BinaryStream stream = new BinaryStream(((ByteArrayTag) extra).data);
             for (int i = 0; i < stream.getInt(); i++) {
                 int key = stream.getInt();
                 extraData.put(key, stream.getShort());
             }
         }
 
-        this.setPosition(this.nbt.getInt("xPos"), this.nbt.getInt("zPos"));
-        for (int Y = 0; Y < sections.length; ++Y) {
-            cn.nukkit.level.format.ChunkSection section = sections[Y];
-            if (section != null) {
-                this.sections[Y] = section;
-            } else {
-                throw new ChunkException("Received invalid ChunkSection instance");
-            }
-            if (Y >= SECTION_COUNT) {
-                throw new ChunkException("Invalid amount of chunks");
-            }
+        this.setPosition(nbt.getInt("xPos"), nbt.getInt("zPos"));
+        if (sections.length > SECTION_COUNT) {
+            throw new ChunkException("Invalid amount of chunks");
         }
 
-        int[] biomeColors = this.nbt.getIntArray("BiomeColors");
-        if (biomeColors.length != 256) {
-            biomeColors = new int[256];
-            Arrays.fill(biomeColors, Binary.readInt(new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00}));
+        if (nbt.contains("BiomeColors")) {
+            this.biomes = new byte[16 * 16];
+            int[] biomeColors = nbt.getIntArray("BiomeColors");
+            if (biomeColors != null && biomeColors.length == 256) {
+                BiomePalette palette = new BiomePalette(biomeColors);
+                for (int x = 0; x < 16; x++)    {
+                    for (int z = 0; z < 16; z++)    {
+                        this.biomes[(x << 4) | z] = (byte) (palette.get(x, z) >> 24);
+                    }
+                }
+            }
+        } else {
+            this.biomes = nbt.getByteArray("Biomes");
         }
-        this.biomeColors = biomeColors;
 
-        int[] heightMap = this.nbt.getIntArray("HeightMap");
+        int[] heightMap = nbt.getIntArray("HeightMap");
         this.heightMap = new byte[256];
         if (heightMap.length != 256) {
             Arrays.fill(this.heightMap, (byte) 255);
@@ -155,11 +121,12 @@ public class Chunk extends BaseChunk {
             }
         }
 
+        if (!extraData.isEmpty()) this.extraData = extraData;
 
-        this.extraData = extraData;
-
-        this.NBTentities = this.nbt.getList("Entities", CompoundTag.class).getAll();
-        this.NBTtiles = this.nbt.getList("TileEntities", CompoundTag.class).getAll();
+        this.NBTentities = nbt.getList("Entities", CompoundTag.class).getAll();
+        this.NBTtiles = nbt.getList("TileEntities", CompoundTag.class).getAll();
+        if (this.NBTentities.isEmpty()) this.NBTentities = null;
+        if (this.NBTtiles.isEmpty()) this.NBTtiles = null;
 
         ListTag<CompoundTag> updateEntries = nbt.getList("TileTicks", CompoundTag.class);
 
@@ -195,18 +162,14 @@ public class Chunk extends BaseChunk {
             }
         }
 
-        if (this.nbt.contains("Biomes")) {
-            this.checkOldBiomes(this.nbt.getByteArray("Biomes"));
-            this.nbt.remove("Biomes");
-        }
-
-        this.nbt.remove("Sections");
-        this.nbt.remove("ExtraData");
+        this.inhabitedTime = nbt.getLong("InhabitedTime");
+        this.terrainPopulated = nbt.getBoolean("TerrainPopulated");
+        this.terrainGenerated = nbt.getBoolean("TerrainGenerated");
     }
 
     @Override
     public boolean isPopulated() {
-        return this.nbt.contains("TerrainPopulated") && this.nbt.getBoolean("TerrainPopulated");
+        return this.terrainPopulated;
     }
 
     @Override
@@ -216,18 +179,15 @@ public class Chunk extends BaseChunk {
 
     @Override
     public void setPopulated(boolean value) {
-        this.nbt.putBoolean("TerrainPopulated", value);
-        setChanged();
+        if (value != this.terrainPopulated) {
+            this.terrainPopulated = value;
+            setChanged();
+        }
     }
 
     @Override
     public boolean isGenerated() {
-        if (this.nbt.contains("TerrainGenerated")) {
-            return this.nbt.getBoolean("TerrainGenerated");
-        } else if (this.nbt.contains("TerrainPopulated")) {
-            return this.nbt.getBoolean("TerrainPopulated");
-        }
-        return false;
+        return this.terrainGenerated || this.terrainPopulated;
     }
 
     @Override
@@ -237,12 +197,24 @@ public class Chunk extends BaseChunk {
 
     @Override
     public void setGenerated(boolean value) {
-        this.nbt.putBoolean("TerrainGenerated", value);
-        setChanged();
+        if (this.terrainGenerated != value) {
+            this.terrainGenerated = value;
+            setChanged();
+        }
     }
 
     public CompoundTag getNBT() {
-        return nbt;
+        CompoundTag tag = new CompoundTag();
+
+        tag.put("LightPopulated", new ByteTag("LightPopulated", (byte) (isLightPopulated() ? 1 : 0)));
+        tag.put("InhabitedTime", new LongTag("InhabitedTime", this.inhabitedTime));
+
+        tag.put("V", new ByteTag("V", (byte) 1));
+
+        tag.put("TerrainGenerated", new ByteTag("TerrainGenerated", (byte) (isGenerated() ? 1 : 0)));
+        tag.put("TerrainPopulated", new ByteTag("TerrainPopulated", (byte) (isPopulated() ? 1 : 0)));
+
+        return tag;
     }
 
     public static Chunk fromBinary(byte[] data) {
@@ -286,10 +258,12 @@ public class Chunk extends BaseChunk {
     @Override
     public byte[] toFastBinary() {
         CompoundTag nbt = this.getNBT().copy();
+        nbt.remove("BiomeColors");
+
         nbt.putInt("xPos", this.getX());
         nbt.putInt("zPos", this.getZ());
 
-        nbt.putIntArray("BiomeColors", this.getBiomeColorArray());
+        nbt.putByteArray("Biomes", this.getBiomeIdArray());
         int[] heightInts = new int[256];
         byte[] heightBytes = this.getHeightMapArray();
         for (int i = 0; i < heightInts.length; i++) {
@@ -373,6 +347,7 @@ public class Chunk extends BaseChunk {
     @Override
     public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
+        nbt.remove("BiomeColors");
 
         nbt.putInt("xPos", this.getX());
         nbt.putInt("zPos", this.getZ());
@@ -392,7 +367,7 @@ public class Chunk extends BaseChunk {
         }
         nbt.putList(sectionList);
 
-        nbt.putIntArray("BiomeColors", this.getBiomeColorArray());
+        nbt.putByteArray("Biomes", this.getBiomeIdArray());
         int[] heightInts = new int[256];
         byte[] heightBytes = this.getHeightMapArray();
         for (int i = 0; i < heightInts.length; i++) {
@@ -516,23 +491,29 @@ public class Chunk extends BaseChunk {
 
             chunk.setPosition(chunkX, chunkZ);
 
-            chunk.sections = new cn.nukkit.level.format.ChunkSection[16];
-            for (int y = 0; y < 16; ++y) {
-                chunk.sections[y] = EmptyChunkSection.EMPTY[y];
-            }
-
             chunk.heightMap = new byte[256];
-            chunk.biomeColors = new int[256];
-
-            chunk.nbt.putByte("V", 1);
-            chunk.nbt.putLong("InhabitedTime", 0);
-            chunk.nbt.putBoolean("TerrainGenerated", false);
-            chunk.nbt.putBoolean("TerrainPopulated", false);
-            chunk.nbt.putBoolean("LightPopulated", false);
-
+            chunk.inhabitedTime = 0;
+            chunk.terrainGenerated = false;
+            chunk.terrainPopulated = false;
+//            chunk.lightPopulated = false;
             return chunk;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public boolean compress() {
+        super.compress();
+        boolean result = false;
+        for (cn.nukkit.level.format.ChunkSection section : getSections()) {
+            if (section instanceof ChunkSection) {
+                ChunkSection anvilSection = (ChunkSection) section;
+                if (!anvilSection.isEmpty()) {
+                    result |= anvilSection.compress();
+                }
+            }
+        }
+        return result;
     }
 }

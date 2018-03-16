@@ -6,6 +6,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.leveldb.key.EntitiesKey;
 import cn.nukkit.level.format.leveldb.key.ExtraDataKey;
@@ -89,10 +90,14 @@ public class Chunk extends BaseFullChunk {
         this.skyLight = skyLight;
         this.blockLight = blockLight;
 
+        this.biomes = new byte[16 * 16];
         if (biomeColors.length == 256) {
-            this.biomeColors = biomeColors;
-        } else {
-            this.biomeColors = new int[256];
+            BiomePalette palette = new BiomePalette(biomeColors);
+            for (int x = 0; x < 16; x++)    {
+                for (int z = 0; z < 16; z++)    {
+                    biomes[(x << 4) | z] = (byte) (palette.get(x, z) >> 24);
+                }
+            }
         }
 
         if (heightMap.length == 256) {
@@ -103,9 +108,9 @@ public class Chunk extends BaseFullChunk {
             this.heightMap = bytes;
         }
 
-        this.NBTentities = entityData == null ? new ArrayList<>() : entityData;
-        this.NBTtiles = tileData == null ? new ArrayList<>() : tileData;
-        this.extraData = extraData == null ? new HashMap<>() : extraData;
+        this.NBTentities = entityData;
+        this.NBTtiles = tileData;
+        this.extraData = extraData;
     }
 
     @Override
@@ -483,9 +488,9 @@ public class Chunk extends BaseFullChunk {
 
             byte[] heightMap = this.getHeightMapArray();
 
-            byte[] biomeColors = new byte[this.getBiomeColorArray().length * 4];
-            for (int i = 0; i < this.getBiomeColorArray().length; i++) {
-                byte[] bytes = Binary.writeInt(this.getBiomeColorArray()[i]);
+            byte[] biomeColors = new byte[this.biomes.length * 4];
+            for (int i = 0; i < this.biomes.length; i++) {
+                byte[] bytes = Binary.writeInt(this.biomes[i] << 24);
                 biomeColors[i * 4] = bytes[0];
                 biomeColors[i * 4 + 1] = bytes[1];
                 biomeColors[i * 4 + 2] = bytes[2];
@@ -506,7 +511,6 @@ public class Chunk extends BaseFullChunk {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ) {

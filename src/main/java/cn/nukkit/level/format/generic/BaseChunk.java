@@ -19,12 +19,12 @@ import java.util.Arrays;
 
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
-    protected ChunkSection[] sections = new ChunkSection[SECTION_COUNT];
+    protected ChunkSection[] sections;
 
     @Override
     public BaseChunk clone() {
         BaseChunk chunk = (BaseChunk) super.clone();
-        chunk.biomeColors = this.getBiomeColorArray().clone();
+        if (this.biomes != null) chunk.biomes = this.biomes.clone();
         chunk.heightMap = this.getHeightMapArray().clone();
         if (sections != null && sections[0] != null) {
             chunk.sections = new ChunkSection[sections.length];
@@ -58,6 +58,22 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 Server.getInstance().getLogger().logException(e1);
             }
             return this.sections[Y].getAndSetBlock(x, y & 0x0f, z, block);
+        }
+    }
+
+    @Override
+    public boolean setFullBlockId(int x, int y, int z, int fullId) {
+        int Y = y >> 4;
+        try {
+            setChanged();
+            return this.sections[Y].setFullBlockId(x, y & 0x0f, z, fullId);
+        } catch (ChunkException e) {
+            try {
+                this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
+                Server.getInstance().getLogger().logException(e1);
+            }
+            return this.sections[Y].setFullBlockId(x, y & 0x0f, z, fullId);
         }
     }
 
@@ -238,11 +254,6 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @Override
     public ChunkSection[] getSections() {
         return sections;
-    }
-
-    @Override
-    public int[] getBiomeColorArray() {
-        return this.biomeColors;
     }
 
     @Override

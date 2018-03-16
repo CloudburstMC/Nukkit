@@ -4,17 +4,22 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
-import cn.nukkit.level.generator.biome.Biome;
+import cn.nukkit.level.format.anvil.palette.BiomePalette;
+import cn.nukkit.level.biome.Biome;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.network.protocol.BatchPacket;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +27,19 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BaseFullChunk implements FullChunk {
-    protected final Map<Long, Entity> entities = new HashMap<>();
+public abstract class BaseFullChunk implements FullChunk, ChunkManager {
+    protected Map<Long, Entity> entities;
 
-    protected final Map<Long, BlockEntity> tiles = new HashMap<>();
+    protected Map<Long, BlockEntity> tiles;
 
-    protected final Map<Integer, BlockEntity> tileList = new HashMap<>();
+    protected Map<Integer, BlockEntity> tileList;
 
-    protected int[] biomeColors;
+    /**
+     * encoded as:
+     *
+     * (x << 4) | z
+     */
+    protected byte[] biomes;
 
     protected byte[] blocks;
 
@@ -45,7 +55,7 @@ public abstract class BaseFullChunk implements FullChunk {
 
     protected List<CompoundTag> NBTentities;
 
-    protected Map<Integer, Integer> extraData = new HashMap<>();
+    protected Map<Integer, Integer> extraData;
 
     protected LevelProvider provider;
     protected Class<? extends LevelProvider> providerClass;
@@ -54,9 +64,9 @@ public abstract class BaseFullChunk implements FullChunk {
     private int z;
     private long hash;
 
-    protected long changes = 0;
+    protected long changes;
 
-    protected boolean isInit = false;
+    protected boolean isInit;
 
     protected BatchPacket chunkPacket;
 
@@ -68,8 +78,8 @@ public abstract class BaseFullChunk implements FullChunk {
         } catch (CloneNotSupportedException e) {
             return null;
         }
-        if (this.biomeColors != null) {
-            chunk.biomeColors = this.getBiomeColorArray().clone();
+        if (this.biomes != null) {
+            chunk.biomes = this.biomes.clone();
         }
 
         if (this.blocks != null) {
@@ -91,30 +101,22 @@ public abstract class BaseFullChunk implements FullChunk {
         if (this.heightMap != null) {
             chunk.heightMap = this.getHeightMapArray().clone();
         }
-
         return chunk;
     }
 
     public void setChunkPacket(BatchPacket packet) {
+        if (packet != null) {
+            packet.trim();
+        }
         this.chunkPacket = packet;
     }
 
     public BatchPacket getChunkPacket() {
+        BatchPacket pk = chunkPacket;
+        if (pk != null) {
+            pk.trim();
+        }
         return chunkPacket;
-    }
-
-    protected void checkOldBiomes(byte[] data) {
-        if (data.length != 256) {
-            return;
-        }
-        for (int x = 0; x < 16; ++x) {
-            for (int z = 0; z < 16; ++z) {
-                Biome biome = Biome.getBiome(data[(z << 4) | x] & 0xff);
-                this.setBiomeId(x, z, biome.getId());
-                int c = biome.getColor();
-                this.setBiomeColor(x, z, c >> 16, (c >> 8) & 0xff, c & 0xff);
-            }
-        }
     }
 
     public void initChunk() {
@@ -215,25 +217,13 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public int getBiomeId(int x, int z) {
-        return this.biomeColors[(z << 4) | x] >> 24;
+        return this.biomes[(x << 4) | z] & 0xFF;
     }
 
     @Override
-    public void setBiomeId(int x, int z, int biomeId) {
+    public void setBiomeId(int x, int z, byte biomeId) {
         this.setChanged();
-        this.biomeColors[(z << 4) | x] = this.biomeColors[(z << 4) | x] & 0xffffff | (biomeId << 24);
-    }
-
-    @Override
-    public int[] getBiomeColor(int x, int z) {
-        int color = this.biomeColors[(z << 4) | x];
-        return new int[]{(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff};
-    }
-
-    @Override
-    public void setBiomeColor(int x, int z, int r, int g, int b) {
-        this.setChanged();
-        this.biomeColors[(z << 4) | x] = this.biomeColors[(z << 4) | x] & 0xff000000 | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
+        this.biomes[(x << 4) | z] = biomeId;
     }
 
     @Override
@@ -258,7 +248,7 @@ public abstract class BaseFullChunk implements FullChunk {
     @Override
     public int getBlockExtraData(int x, int y, int z) {
         int index = Level.chunkBlockHash(x, y, z);
-        if (this.extraData.containsKey(index)) {
+        if (this.extraData != null && this.extraData.containsKey(index)) {
             return this.extraData.get(index);
         }
 
@@ -268,8 +258,11 @@ public abstract class BaseFullChunk implements FullChunk {
     @Override
     public void setBlockExtraData(int x, int y, int z, int data) {
         if (data == 0) {
-            this.extraData.remove(Level.chunkBlockHash(x, y, z));
+            if (this.extraData != null) {
+                this.extraData.remove(Level.chunkBlockHash(x, y, z));
+            }
         } else {
+            if (this.extraData == null) this.extraData = new Int2ObjectOpenHashMap<>();
             this.extraData.put(Level.chunkBlockHash(x, y, z), data);
         }
 
@@ -319,6 +312,9 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public void addEntity(Entity entity) {
+        if (this.entities == null) {
+            this.entities = new Long2ObjectOpenHashMap<>();
+        }
         this.entities.put(entity.getId(), entity);
         if (!(entity instanceof Player) && this.isInit) {
             this.setChanged();
@@ -327,14 +323,20 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public void removeEntity(Entity entity) {
-        this.entities.remove(entity.getId());
-        if (!(entity instanceof Player) && this.isInit) {
-            this.setChanged();
+        if (this.entities != null) {
+            this.entities.remove(entity.getId());
+            if (!(entity instanceof Player) && this.isInit) {
+                this.setChanged();
+            }
         }
     }
 
     @Override
     public void addBlockEntity(BlockEntity blockEntity) {
+        if (this.tiles == null) {
+            this.tiles = new Long2ObjectOpenHashMap<>();
+            this.tileList = new Int2ObjectOpenHashMap<>();
+        }
         this.tiles.put(blockEntity.getId(), blockEntity);
         int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
         if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(blockEntity)) {
@@ -348,33 +350,34 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public void removeBlockEntity(BlockEntity blockEntity) {
-        this.tiles.remove(blockEntity.getId());
-        int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
-        this.tileList.remove(index);
-        if (this.isInit) {
-            this.setChanged();
+        if (this.tiles != null) {
+            this.tiles.remove(blockEntity.getId());
+            int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
+            this.tileList.remove(index);
+            if (this.isInit) {
+                this.setChanged();
+            }
         }
     }
 
     @Override
     public Map<Long, Entity> getEntities() {
-        return entities;
+        return entities == null ? Collections.emptyMap() : entities;
     }
 
     @Override
     public Map<Long, BlockEntity> getBlockEntities() {
-        return tiles;
+        return tiles == null ? Collections.emptyMap() : tiles;
     }
 
     @Override
     public Map<Integer, Integer> getBlockExtraDataArray() {
-        return this.extraData;
+        return extraData == null ? Collections.emptyMap() : extraData;
     }
 
     @Override
     public BlockEntity getTile(int x, int y, int z) {
-        int index = (z << 12) | (x << 8) | y;
-        return this.tileList.containsKey(index) ? this.tileList.get(index) : null;
+        return this.tileList != null ? this.tileList.get((z << 12) | (x << 8) | y) : null;
     }
 
     @Override
@@ -454,17 +457,7 @@ public abstract class BaseFullChunk implements FullChunk {
 
     @Override
     public byte[] getBiomeIdArray() {
-        byte[] ids = new byte[this.getBiomeColorArray().length];
-        for (int i = 0; i < this.getBiomeColorArray().length; i++) {
-            int d = this.getBiomeColorArray()[i];
-            ids[i] = (byte) (d >> 24);
-        }
-        return ids;
-    }
-
-    @Override
-    public int[] getBiomeColorArray() {
-        return this.biomeColors;
+        return this.biomes;
     }
 
     @Override
@@ -516,4 +509,71 @@ public abstract class BaseFullChunk implements FullChunk {
 
     }
 
+
+    @Override
+    public int getBlockIdAt(int x, int y, int z) {
+        if (x >> 4 == getX() && z >> 4 == getZ()) {
+            return getBlockId(x & 15, y, z & 15);
+        }
+        return 0;
+    }
+
+    @Override
+    public void setBlockFullIdAt(int x, int y, int z, int fullId) {
+        if (x >> 4 == getX() && z >> 4 == getZ()) {
+            setFullBlockId(x & 15, y, z & 15, fullId);
+        }
+    }
+
+    @Override
+    public void setBlockIdAt(int x, int y, int z, int id) {
+        if (x >> 4 == getX() && z >> 4 == getZ()) {
+            setBlockId(x & 15, y, z & 15, id);
+        }
+    }
+
+    @Override
+    public int getBlockDataAt(int x, int y, int z) {
+        if (x >> 4 == getX() && z >> 4 == getZ()) {
+            return getBlockIdAt(x & 15, y, z & 15);
+        }
+        return 0;
+    }
+
+    @Override
+    public void setBlockDataAt(int x, int y, int z, int data) {
+        if (x >> 4 == getX() && z >> 4 == getZ()) {
+            setBlockData(x & 15, y, z & 15, data);
+        }
+    }
+
+    @Override
+    public BaseFullChunk getChunk(int chunkX, int chunkZ) {
+        if (chunkX == getX() && chunkZ == getZ()) return this;
+        return null;
+    }
+
+    @Override
+    public void setChunk(int chunkX, int chunkZ) {
+        setChunk(chunkX, chunkZ, null);
+    }
+
+    @Override
+    public void setChunk(int chunkX, int chunkZ, BaseFullChunk chunk) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public long getSeed() {
+        throw new UnsupportedOperationException("Chunk does not have a seed");
+    }
+
+    public boolean compress() {
+        BatchPacket pk = chunkPacket;
+        if (pk != null) {
+            pk.trim();
+            return true;
+        }
+        return false;
+    }
 }

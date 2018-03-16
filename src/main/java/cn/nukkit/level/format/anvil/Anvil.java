@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
  * Nukkit Project
  */
 public class Anvil extends BaseLevelProvider {
+    public static final int VERSION = 19133;
     static private final byte[] PAD_256 = new byte[256];
 
     public Anvil(Level level, String path) throws IOException {
@@ -87,7 +88,7 @@ public class Anvil extends BaseLevelProvider {
                 .putInt("SpawnZ", 128)
                 .putBoolean("thundering", false)
                 .putInt("thunderTime", 0)
-                .putInt("version", 19133)
+                .putInt("version", VERSION)
                 .putLong("Time", 0)
                 .putLong("SizeOnDisk", 0);
 
@@ -188,14 +189,7 @@ public class Anvil extends BaseLevelProvider {
             if (chunk == null) continue;
             if (chunk.isGenerated() && chunk.isPopulated() && chunk instanceof Chunk) {
                 Chunk anvilChunk = (Chunk) chunk;
-                for (cn.nukkit.level.format.ChunkSection section : anvilChunk.getSections()) {
-                    if (section instanceof ChunkSection) {
-                        ChunkSection anvilSection = (ChunkSection) section;
-                        if (!anvilSection.isEmpty()) {
-                            anvilSection.compress();
-                        }
-                    }
-                }
+                chunk.compress();
                 if (System.currentTimeMillis() - start >= time) break;
             }
         }
@@ -275,7 +269,7 @@ public class Anvil extends BaseLevelProvider {
 
     public static ChunkSection createChunkSection(int y) {
         ChunkSection cs = new ChunkSection(y);
-        Arrays.fill(cs.getSkyLightArray(), (byte) 0xff);
+        cs.hasSkyLight = true;
         return cs;
     }
 

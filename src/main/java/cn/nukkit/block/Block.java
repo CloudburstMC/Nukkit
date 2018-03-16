@@ -18,6 +18,7 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Objects;
@@ -27,311 +28,7 @@ import java.util.Optional;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB {
-    public static final int AIR = 0;
-    public static final int STONE = 1;
-    public static final int GRASS = 2;
-    public static final int DIRT = 3;
-    public static final int COBBLESTONE = 4;
-    public static final int COBBLE = 4;
-    public static final int PLANK = 5;
-    public static final int PLANKS = 5;
-    public static final int WOODEN_PLANK = 5;
-    public static final int WOODEN_PLANKS = 5;
-    public static final int SAPLING = 6;
-    public static final int SAPLINGS = 6;
-    public static final int BEDROCK = 7;
-    public static final int WATER = 8;
-    public static final int STILL_WATER = 9;
-    public static final int LAVA = 10;
-    public static final int STILL_LAVA = 11;
-    public static final int SAND = 12;
-    public static final int GRAVEL = 13;
-    public static final int GOLD_ORE = 14;
-    public static final int IRON_ORE = 15;
-    public static final int COAL_ORE = 16;
-    public static final int LOG = 17;
-    public static final int WOOD = 17;
-    public static final int TRUNK = 17;
-    public static final int LEAVES = 18;
-    public static final int LEAVE = 18;
-    public static final int SPONGE = 19;
-    public static final int GLASS = 20;
-    public static final int LAPIS_ORE = 21;
-    public static final int LAPIS_BLOCK = 22;
-    public static final int DISPENSER = 23;
-    public static final int SANDSTONE = 24;
-    public static final int NOTEBLOCK = 25;
-    public static final int BED_BLOCK = 26;
-    public static final int POWERED_RAIL = 27;
-    public static final int DETECTOR_RAIL = 28;
-    public static final int STICKY_PISTON = 29;
-    public static final int COBWEB = 30;
-    public static final int TALL_GRASS = 31;
-    public static final int BUSH = 32;
-    public static final int DEAD_BUSH = 32;
-    public static final int PISTON = 33;
-    public static final int PISTON_HEAD = 34;
-    public static final int WOOL = 35;
-    public static final int DANDELION = 37;
-    public static final int POPPY = 38;
-    public static final int ROSE = 38;
-    public static final int FLOWER = 38;
-    public static final int RED_FLOWER = 38;
-    public static final int BROWN_MUSHROOM = 39;
-    public static final int RED_MUSHROOM = 40;
-    public static final int GOLD_BLOCK = 41;
-    public static final int IRON_BLOCK = 42;
-    public static final int DOUBLE_SLAB = 43;
-    public static final int DOUBLE_STONE_SLAB = 43;
-    public static final int DOUBLE_SLABS = 43;
-    public static final int SLAB = 44;
-    public static final int STONE_SLAB = 44;
-    public static final int SLABS = 44;
-    public static final int BRICKS = 45;
-    public static final int BRICKS_BLOCK = 45;
-    public static final int TNT = 46;
-    public static final int BOOKSHELF = 47;
-    public static final int MOSS_STONE = 48;
-    public static final int MOSSY_STONE = 48;
-    public static final int OBSIDIAN = 49;
-    public static final int TORCH = 50;
-    public static final int FIRE = 51;
-    public static final int MONSTER_SPAWNER = 52;
-    public static final int WOOD_STAIRS = 53;
-    public static final int WOODEN_STAIRS = 53;
-    public static final int OAK_WOOD_STAIRS = 53;
-    public static final int OAK_WOODEN_STAIRS = 53;
-    public static final int CHEST = 54;
-    public static final int REDSTONE_WIRE = 55;
-    public static final int DIAMOND_ORE = 56;
-    public static final int DIAMOND_BLOCK = 57;
-    public static final int CRAFTING_TABLE = 58;
-    public static final int WORKBENCH = 58;
-    public static final int WHEAT_BLOCK = 59;
-    public static final int FARMLAND = 60;
-    public static final int FURNACE = 61;
-    public static final int BURNING_FURNACE = 62;
-    public static final int LIT_FURNACE = 62;
-    public static final int SIGN_POST = 63;
-    public static final int DOOR_BLOCK = 64;
-    public static final int WOODEN_DOOR_BLOCK = 64;
-    public static final int WOOD_DOOR_BLOCK = 64;
-    public static final int LADDER = 65;
-    public static final int RAIL = 66;
-    public static final int COBBLE_STAIRS = 67;
-    public static final int COBBLESTONE_STAIRS = 67;
-    public static final int WALL_SIGN = 68;
-    public static final int LEVER = 69;
-    public static final int STONE_PRESSURE_PLATE = 70;
-    public static final int IRON_DOOR_BLOCK = 71;
-    public static final int WOODEN_PRESSURE_PLATE = 72;
-
-    public static final int REDSTONE_ORE = 73;
-    public static final int GLOWING_REDSTONE_ORE = 74;
-    public static final int LIT_REDSTONE_ORE = 74;
-    public static final int UNLIT_REDSTONE_TORCH = 75;
-    public static final int REDSTONE_TORCH = 76;
-    public static final int STONE_BUTTON = 77;
-    public static final int SNOW = 78;
-    public static final int SNOW_LAYER = 78;
-    public static final int ICE = 79;
-    public static final int SNOW_BLOCK = 80;
-    public static final int CACTUS = 81;
-    public static final int CLAY_BLOCK = 82;
-    public static final int REEDS = 83;
-    public static final int SUGARCANE_BLOCK = 83;
-    public static final int JUKEBOX = 84;
-    public static final int FENCE = 85;
-    public static final int PUMPKIN = 86;
-    public static final int NETHERRACK = 87;
-    public static final int SOUL_SAND = 88;
-    public static final int GLOWSTONE = 89;
-    public static final int GLOWSTONE_BLOCK = 89;
-    public static final int NETHER_PORTAL = 90;
-    public static final int LIT_PUMPKIN = 91;
-    public static final int JACK_O_LANTERN = 91;
-    public static final int CAKE_BLOCK = 92;
-    public static final int UNPOWERED_REPEATER = 93;
-    public static final int POWERED_REPEATER = 94;
-    public static final int INVISIBLE_BEDROCK = 95;
-    public static final int TRAPDOOR = 96;
-    public static final int MONSTER_EGG = 97;
-    public static final int STONE_BRICKS = 98;
-    public static final int STONE_BRICK = 98;
-    public static final int BROWN_MUSHROOM_BLOCK = 99;
-    public static final int RED_MUSHROOM_BLOCK = 100;
-    public static final int IRON_BAR = 101;
-    public static final int IRON_BARS = 101;
-    public static final int GLASS_PANE = 102;
-    public static final int GLASS_PANEL = 102;
-    public static final int MELON_BLOCK = 103;
-    public static final int PUMPKIN_STEM = 104;
-    public static final int MELON_STEM = 105;
-    public static final int VINE = 106;
-    public static final int VINES = 106;
-    public static final int FENCE_GATE = 107;
-    public static final int FENCE_GATE_OAK = 107;
-    public static final int BRICK_STAIRS = 108;
-    public static final int STONE_BRICK_STAIRS = 109;
-    public static final int MYCELIUM = 110;
-    public static final int WATER_LILY = 111;
-    public static final int LILY_PAD = 111;
-    public static final int NETHER_BRICKS = 112;
-    public static final int NETHER_BRICK_BLOCK = 112;
-    public static final int NETHER_BRICK_FENCE = 113;
-    public static final int NETHER_BRICKS_STAIRS = 114;
-    public static final int NETHER_WART_BLOCK = 115;
-    public static final int ENCHANTING_TABLE = 116;
-    public static final int ENCHANT_TABLE = 116;
-    public static final int ENCHANTMENT_TABLE = 116;
-    public static final int BREWING_STAND_BLOCK = 117;
-    public static final int BREWING_BLOCK = 117;
-    public static final int CAULDRON_BLOCK = 118;
-    public static final int END_PORTAL = 119;
-    public static final int END_PORTAL_FRAME = 120;
-    public static final int END_STONE = 121;
-    public static final int DRAGON_EGG = 122;
-    public static final int REDSTONE_LAMP = 123;
-    public static final int LIT_REDSTONE_LAMP = 124;
-    //Note: dropper CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
-    public static final int DROPPER = 125;
-    public static final int ACTIVATOR_RAIL = 126;
-    public static final int COCOA = 127;
-    public static final int COCOA_BLOCK = 127;
-    public static final int SANDSTONE_STAIRS = 128;
-    public static final int EMERALD_ORE = 129;
-    public static final int ENDER_CHEST = 130;
-    public static final int TRIPWIRE_HOOK = 131;
-    public static final int TRIPWIRE = 132;
-    public static final int EMERALD_BLOCK = 133;
-    public static final int SPRUCE_WOOD_STAIRS = 134;
-    public static final int SPRUCE_WOODEN_STAIRS = 134;
-    public static final int BIRCH_WOOD_STAIRS = 135;
-    public static final int BIRCH_WOODEN_STAIRS = 135;
-    public static final int JUNGLE_WOOD_STAIRS = 136;
-    public static final int JUNGLE_WOODEN_STAIRS = 136;
-
-    public static final int BEACON = 138;
-    public static final int COBBLE_WALL = 139;
-    public static final int STONE_WALL = 139;
-    public static final int COBBLESTONE_WALL = 139;
-    public static final int FLOWER_POT_BLOCK = 140;
-    public static final int CARROT_BLOCK = 141;
-    public static final int POTATO_BLOCK = 142;
-    public static final int WOODEN_BUTTON = 143;
-    public static final int SKULL_BLOCK = 144;
-    public static final int ANVIL = 145;
-    public static final int TRAPPED_CHEST = 146;
-    public static final int LIGHT_WEIGHTED_PRESSURE_PLATE = 147;
-    public static final int HEAVY_WEIGHTED_PRESSURE_PLATE = 148;
-    public static final int UNPOWERED_COMPARATOR = 149;
-    public static final int POWERED_COMPARATOR = 150;
-    public static final int DAYLIGHT_DETECTOR = 151;
-    public static final int REDSTONE_BLOCK = 152;
-    public static final int QUARTZ_ORE = 153;
-    public static final int HOPPER_BLOCK = 154;
-    public static final int QUARTZ_BLOCK = 155;
-    public static final int QUARTZ_STAIRS = 156;
-    public static final int DOUBLE_WOOD_SLAB = 157;
-    public static final int DOUBLE_WOODEN_SLAB = 157;
-    public static final int DOUBLE_WOOD_SLABS = 157;
-    public static final int DOUBLE_WOODEN_SLABS = 157;
-    public static final int WOOD_SLAB = 158;
-    public static final int WOODEN_SLAB = 158;
-    public static final int WOOD_SLABS = 158;
-    public static final int WOODEN_SLABS = 158;
-    public static final int STAINED_TERRACOTTA = 159;
-    public static final int STAINED_HARDENED_CLAY = 159;
-    public static final int STAINED_GLASS_PANE = 160;
-    public static final int LEAVES2 = 161;
-    public static final int LEAVE2 = 161;
-    public static final int WOOD2 = 162;
-    public static final int TRUNK2 = 162;
-    public static final int LOG2 = 162;
-    public static final int ACACIA_WOOD_STAIRS = 163;
-    public static final int ACACIA_WOODEN_STAIRS = 163;
-    public static final int DARK_OAK_WOOD_STAIRS = 164;
-    public static final int DARK_OAK_WOODEN_STAIRS = 164;
-    public static final int SLIME_BLOCK = 165;
-
-    public static final int IRON_TRAPDOOR = 167;
-    public static final int PRISMARINE = 168;
-    public static final int SEA_LANTERN = 169;
-    public static final int HAY_BALE = 170;
-    public static final int CARPET = 171;
-    public static final int TERRACOTTA = 172;
-    public static final int COAL_BLOCK = 173;
-    public static final int PACKED_ICE = 174;
-    public static final int DOUBLE_PLANT = 175;
-
-    public static final int DAYLIGHT_DETECTOR_INVERTED = 178;
-    public static final int RED_SANDSTONE = 179;
-    public static final int RED_SANDSTONE_STAIRS = 180;
-    public static final int DOUBLE_RED_SANDSTONE_SLAB = 181;
-    public static final int RED_SANDSTONE_SLAB = 182;
-    public static final int FENCE_GATE_SPRUCE = 183;
-    public static final int FENCE_GATE_BIRCH = 184;
-    public static final int FENCE_GATE_JUNGLE = 185;
-    public static final int FENCE_GATE_DARK_OAK = 186;
-    public static final int FENCE_GATE_ACACIA = 187;
-
-    public static final int SPRUCE_DOOR_BLOCK = 193;
-    public static final int BIRCH_DOOR_BLOCK = 194;
-    public static final int JUNGLE_DOOR_BLOCK = 195;
-    public static final int ACACIA_DOOR_BLOCK = 196;
-    public static final int DARK_OAK_DOOR_BLOCK = 197;
-    public static final int GRASS_PATH = 198;
-    public static final int ITEM_FRAME_BLOCK = 199;
-    public static final int CHORUS_FLOWER = 200;
-    public static final int PURPUR_BLOCK = 201;
-
-    public static final int PURPUR_STAIRS = 203;
-    public static final int DOUBLE_PURPUR_SLAB = 204;
-    public static final int PURPUR_SLAB = 205;
-    public static final int END_BRICKS = 206;
-    //Note: frosted ice CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
-    public static final int ICE_FROSTED = 207;
-    public static final int END_ROD = 208;
-    public static final int END_GATEWAY = 209;
-
-    public static final int MAGMA = 213;
-    public static final int BLOCK_NETHER_WART_BLOCK = 214;
-    public static final int RED_NETHER_BRICK = 215;
-    public static final int BONE_BLOCK = 216;
-
-    public static final int SHULKER_BOX = 218;
-    public static final int PURPLE_GLAZED_TERRACOTTA = 219;
-    public static final int WHITE_GLAZED_TERRACOTTA = 220;
-    public static final int ORANGE_GLAZED_TERRACOTTA = 221;
-    public static final int MAGENTA_GLAZED_TERRACOTTA = 222;
-    public static final int LIGHT_BLUE_GLAZED_TERRACOTTA = 223;
-    public static final int YELLOW_GLAZED_TERRACOTTA = 224;
-    public static final int LIME_GLAZED_TERRACOTTA = 225;
-    public static final int PINK_GLAZED_TERRACOTTA = 226;
-    public static final int GRAY_GLAZED_TERRACOTTA = 227;
-    public static final int SILVER_GLAZED_TERRACOTTA = 228;
-    public static final int CYAN_GLAZED_TERRACOTTA = 229;
-    public static final int BLUE_GLAZED_TERRACOTTA = 231;
-    public static final int BROWN_GLAZED_TERRACOTTA = 232;
-    public static final int GREEN_GLAZED_TERRACOTTA = 233;
-    public static final int RED_GLAZED_TERRACOTTA = 234;
-    public static final int BLACK_GLAZED_TERRACOTTA = 235;
-    public static final int CONCRETE = 236;
-    public static final int CONCRETE_POWDER = 237;
-
-    public static final int CHORUS_PLANT = 240;
-    public static final int STAINED_GLASS = 241;
-    public static final int PODZOL = 243;
-    public static final int BEETROOT_BLOCK = 244;
-    public static final int STONECUTTER = 245;
-    public static final int GLOWING_OBSIDIAN = 246;
-    public static final int NETHER_REACTOR = 247; //Should not be removed
-
-    public static final int PISTON_EXTENSION = 250;
-
-    public static final int OBSERVER = 251;
-
+public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
     public static Class[] list = null;
     public static Block[] fullList = null;
     public static int[] light = null;
@@ -562,6 +259,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[END_ROD] = BlockEndRod.class; //208
             list[END_GATEWAY] = BlockEndGateway.class; //209
+
+            list[MAGMA] = BlockMagma.class; //213
+            list[BLOCK_NETHER_WART_BLOCK] = BlockNetherWartBlock.class; //214
+            list[RED_NETHER_BRICK] = BlockBricksRedNether.class; //215
+            list[BONE_BLOCK] = BlockBone.class; //216
 
             list[BONE_BLOCK] = BlockBone.class; //216
 
@@ -983,14 +685,25 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public Block getSide(BlockFace face) {
+        if (this.isValid()) {
+            return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
+        }
         return this.getSide(face, 1);
     }
 
     public Block getSide(BlockFace face, int step) {
         if (this.isValid()) {
-            return this.getLevel().getBlock(super.getSide(face, step));
+            if (step == 1) {
+                return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
+            } else {
+                return this.getLevel().getBlock((int) x + face.getXOffset() * step, (int) y + face.getYOffset() * step, (int) z + face.getZOffset() * step);
+            }
         }
-        return Block.get(Item.AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(face, step)));
+        Block block = Block.get(Item.AIR, 0);
+        block.x = (int) x + face.getXOffset() * step;
+        block.y = (int) y + face.getYOffset() * step;
+        block.z = (int) z + face.getZOffset() * step;
+        return block;
     }
 
     public Block up() {

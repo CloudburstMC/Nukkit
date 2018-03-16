@@ -62,4 +62,9 @@ public class BlockWater extends BlockLiquid {
             entity.extinguish();
         }
     }
+
+    @Override
+    public int tickRate() {
+        return 5;
+    }
 }

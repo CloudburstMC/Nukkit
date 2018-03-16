@@ -25,8 +25,10 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.level.EnumLevel;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
@@ -36,7 +38,7 @@ import cn.nukkit.level.generator.Flat;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.Nether;
 import cn.nukkit.level.generator.Normal;
-import cn.nukkit.level.generator.biome.Biome;
+import cn.nukkit.level.biome.Biome;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
@@ -216,7 +218,7 @@ public class Server {
 
     private Level defaultLevel = null;
 
-    private Thread currentThread;
+    private final Thread currentThread;
 
     private Watchdog watchdog;
 
@@ -248,7 +250,11 @@ public class Server {
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             this.getLogger().info(TextFormat.GREEN + "Welcome! Please choose a language first!");
             try {
-                String[] lines = Utils.readFile(this.getClass().getClassLoader().getResourceAsStream("lang/language.list")).split("\n");
+                InputStream languageList = this.getClass().getClassLoader().getResourceAsStream("lang/language.list");
+                if (languageList == null) {
+                    throw new RuntimeException("lang/language.list is missing. If you are running a development version, make sure you have run 'git submodule update --init'.");
+                }
+                String[] lines = Utils.readFile(languageList).split("\n");
                 for (String line : lines) {
                     this.getLogger().info(line);
                 }
@@ -398,7 +404,7 @@ public class Server {
         Block.init();
         Enchantment.init();
         Item.init();
-        Biome.init();
+        EnumBiome.values(); //load class, this also registers biomes
         Effect.init();
         Potion.init();
         Attribute.init();
@@ -485,6 +491,8 @@ public class Server {
 
             return;
         }
+
+        EnumLevel.initLevels();
 
         if ((int) this.getConfig("ticks-per.autosave", 6000) > 0) {
             this.autoSaveTicks = (int) this.getConfig("ticks-per.autosave", 6000);
@@ -765,17 +773,17 @@ public class Server {
                 player.close(player.getLeaveMessage(), (String) this.getConfig("settings.shutdown-message", "Server closed"));
             }
 
-            this.getLogger().debug("Unloading all levels");
-            for (Level level : this.levelArray) {
-                this.unloadLevel(level, true);
-            }
-
             this.getLogger().debug("Removing event handlers");
             HandlerList.unregisterAll();
 
             this.getLogger().debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
             this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
+
+            this.getLogger().debug("Unloading all levels");
+            for (Level level : this.levelArray) {
+                this.unloadLevel(level, true);
+            }
 
             this.getLogger().debug("Closing console");
             this.console.interrupt();
@@ -1992,7 +2000,7 @@ public class Server {
      * @return true if the current thread matches the expected primary thread,
      * false otherwise
      */
-    public boolean isPrimaryThread() {
+    public final boolean isPrimaryThread() {
         return (Thread.currentThread() == currentThread);
     }
 
@@ -2017,6 +2025,7 @@ public class Server {
         Entity.registerEntity("Enderman", EntityEnderman.class);
         Entity.registerEntity("Endermite", EntityEndermite.class);
         Entity.registerEntity("Evoker", EntityEvoker.class);
+        Entity.registerEntity("Firework", EntityFirework.class);
         Entity.registerEntity("Ghast", EntityGhast.class);
         Entity.registerEntity("Guardian", EntityGuardian.class);
         Entity.registerEntity("Husk", EntityHusk.class);

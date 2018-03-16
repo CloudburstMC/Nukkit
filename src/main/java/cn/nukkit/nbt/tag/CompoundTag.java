@@ -124,6 +124,11 @@ public class CompoundTag extends Tag implements Cloneable {
         return this;
     }
 
+    public <T extends Tag> T removeAndGet(String name) {
+        return (T) tags.remove(name);
+    }
+
+
     public int getByte(String name) {
         if (!tags.containsKey(name)) return (byte) 0;
         return ((NumberTag) tags.get(name)).getData().intValue();

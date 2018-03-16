@@ -1,4 +1,4 @@
-<!--- Please do not ask questions or create discussion in the bug tracker. Use https://potestas.xyz -->
+<!--- Please do not ask questions or create discussion in the bug tracker. Use https://nukkitx.com -->
 <!--- ONLY POST ISSUES WITH A CLEAN SERVER ON THE LATEST VERSION -->
 ### Expected Behavior
 <!--- What would you expect to happen -->
