@@ -119,7 +119,7 @@ public interface FullChunk extends Cloneable {
 
     Long2ObjectMap<Entity> getEntities();
 
-    Map<Long, BlockEntity> getBlockEntities();
+    Long2ObjectMap<BlockEntity> getBlockEntities();
 
     BlockEntity getTile(int x, int y, int z);
 

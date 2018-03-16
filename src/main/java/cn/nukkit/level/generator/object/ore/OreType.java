@@ -11,7 +11,6 @@ import static cn.nukkit.block.BlockID.STONE;
  * author: MagicDroidX
  * Nukkit Project
  */
-//porktodo: rewrite this, the whole class is terrible and generated ores look stupid
 public class OreType {
     public final int fullId;
     public final int clusterCount;

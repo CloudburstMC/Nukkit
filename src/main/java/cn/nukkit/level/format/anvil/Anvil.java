@@ -13,6 +13,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.ThreadCache;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
 import javax.security.auth.callback.Callback;
@@ -201,6 +202,18 @@ public class Anvil extends BaseLevelProvider {
     @Override
     public void doGarbageCollection() {
         int limit = (int) (System.currentTimeMillis() - 50);
+        ObjectIterator<BaseRegionLoader> iter = this.regions.values().iterator();
+        while (iter.hasNext())  {
+            BaseRegionLoader region = iter.next();
+            if (region.lastUsed <= limit) {
+                try {
+                    region.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                iter.remove();
+            }
+        }
         for (Map.Entry<Long, BaseRegionLoader> entry : this.regions.entrySet()) {
             long index = entry.getKey();
             BaseRegionLoader region = entry.getValue();

@@ -374,8 +374,8 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     }
 
     @Override
-    public Map<Long, BlockEntity> getBlockEntities() {
-        return tileIds == null ? Collections.emptyMap() : tileIds;
+    public Long2ObjectMap<BlockEntity> getBlockEntities() {
+        return tileIds == null ? Long2ObjectMaps.emptyMap() : tileIds;
     }
 
     @Override

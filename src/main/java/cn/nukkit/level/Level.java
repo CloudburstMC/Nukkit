@@ -924,7 +924,7 @@ public class Level implements ChunkManager, Metadatable {
         int packetIndex = 0;
         UpdateBlockPacket[] packets = new UpdateBlockPacket[size];
         if (optimizeRebuilds) {
-            Map<Long, Boolean> chunks = new HashMap<>();
+            Long2BooleanMap chunks = new Long2BooleanOpenHashMap();
             for (Vector3 b : blocks) {
                 if (b == null) {
                     continue;
@@ -2124,14 +2124,14 @@ public class Level implements ChunkManager, Metadatable {
         return null;
     }
 
-    public Map<Long, Entity> getChunkEntities(int X, int Z) {
+    public Long2ObjectMap<Entity> getChunkEntities(int X, int Z) {
         FullChunk chunk;
-        return (chunk = this.getChunk(X, Z)) != null ? chunk.getEntities() : Collections.emptyMap();
+        return (chunk = this.getChunk(X, Z)) != null ? chunk.getEntities() : Long2ObjectMaps.emptyMap();
     }
 
-    public Map<Long, BlockEntity> getChunkBlockEntities(int X, int Z) {
+    public Long2ObjectMap<BlockEntity> getChunkBlockEntities(int X, int Z) {
         FullChunk chunk;
-        return (chunk = this.getChunk(X, Z)) != null ? chunk.getBlockEntities() : Collections.emptyMap();
+        return (chunk = this.getChunk(X, Z)) != null ? chunk.getBlockEntities() : Long2ObjectMaps.emptyMap();
     }
 
     @Override
@@ -2282,15 +2282,14 @@ public class Level implements ChunkManager, Metadatable {
 
                 this.provider.setChunk(chunkX, chunkZ, chunk);
             } else {
-                Map<Long, Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : Collections.emptyMap();
+                Long2ObjectMap<Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : Long2ObjectMaps.emptyMap();
 
-                Map<Long, BlockEntity> oldBlockEntities = oldChunk != null ? oldChunk.getBlockEntities() : Collections.emptyMap();
+                Long2ObjectMap<BlockEntity> oldBlockEntities = oldChunk != null ? oldChunk.getBlockEntities() : Long2ObjectMaps.emptyMap();
 
                 if (!oldEntities.isEmpty()) {
-                    Iterator<Map.Entry<Long, Entity>> iter = oldEntities.entrySet().iterator();
+                    ObjectIterator<Entity> iter = oldEntities.values().iterator();
                     while (iter.hasNext()) {
-                        Map.Entry<Long, Entity> entry = iter.next();
-                        Entity entity = entry.getValue();
+                        Entity entity = iter.next();
                         chunk.addEntity(entity);
                         if (oldChunk != null) {
                             iter.remove();
@@ -2301,10 +2300,9 @@ public class Level implements ChunkManager, Metadatable {
                 }
 
                 if (!oldBlockEntities.isEmpty()) {
-                    Iterator<Map.Entry<Long, BlockEntity>> iter = oldBlockEntities.entrySet().iterator();
+                    ObjectIterator<BlockEntity> iter = oldBlockEntities.values().iterator();
                     while (iter.hasNext()) {
-                        Map.Entry<Long, BlockEntity> entry = iter.next();
-                        BlockEntity blockEntity = entry.getValue();
+                        BlockEntity blockEntity = iter.next();
                         chunk.addBlockEntity(blockEntity);
                         if (oldChunk != null) {
                             iter.remove();

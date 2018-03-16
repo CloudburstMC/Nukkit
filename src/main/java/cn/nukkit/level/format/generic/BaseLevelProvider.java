@@ -40,7 +40,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     protected BaseRegionLoader lastRegion;
 
-    protected final Map<Long, BaseRegionLoader> regions = new HashMap<>();
+    protected final Long2ObjectMap<BaseRegionLoader> regions = new Long2ObjectOpenHashMap<>();
 
     private final Long2ObjectMap<BaseFullChunk> chunks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
@@ -86,12 +86,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public void unloadChunks() {
-        Iterator<Map.Entry<Long, BaseFullChunk>> iter = chunks.entrySet().iterator();
+        ObjectIterator<BaseFullChunk> iter = chunks.values().iterator();
         while (iter.hasNext()) {
-            Map.Entry<Long, BaseFullChunk> entry = iter.next();
-            long index = entry.getKey();
-            BaseFullChunk chunk = entry.getValue();
-            chunk.unload(true, false);
+            iter.next().unload(true, false);
             iter.remove();
         }
     }
@@ -257,10 +254,8 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public void doGarbageCollection() {
-        int limit = (int) (System.currentTimeMillis() - 50);
-        for (Map.Entry<Long, BaseRegionLoader> entry : this.regions.entrySet()) {
-            long index = entry.getKey();
-            BaseRegionLoader region = entry.getValue();
+        final long limit = System.currentTimeMillis() - 50;
+        this.regions.forEach((index, region) -> {
             if (region.lastUsed <= limit) {
                 try {
                     region.close();
@@ -270,7 +265,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
                 lastRegion = null;
                 this.regions.remove(index);
             }
-        }
+        });
     }
 
     @Override
@@ -401,11 +396,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
     @Override
     public synchronized void close() {
         this.unloadChunks();
-        Iterator<Map.Entry<Long, BaseRegionLoader>> iter = this.regions.entrySet().iterator();
+        ObjectIterator<BaseRegionLoader> iter = this.regions.values().iterator();
         while (iter.hasNext()) {
-            Map.Entry<Long, BaseRegionLoader> entry = iter.next();
-            long index = entry.getKey();
-            BaseRegionLoader region = entry.getValue();
+            BaseRegionLoader region = iter.next();
             try {
                 region.close();
             } catch (IOException e) {

@@ -66,14 +66,10 @@ import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.ints.*;
+import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
 import java.awt.*;
@@ -126,10 +122,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected int windowCnt = 4;
 
-    //porktodo: fastutil for this
-    protected Map<Inventory, Integer> windows;
-    public final Map<Integer, Inventory> windowIndex = new HashMap<>();
-    public final Set<Integer> permanentWindows = new HashSet<>();
+    protected Object2IntMap<Inventory> windows;
+    public final Int2ObjectMap<Inventory> windowIndex = new Int2ObjectOpenHashMap<>();
+    public final IntSet permanentWindows = new IntOpenHashSet();
 
     protected int messageCounter = 2;
 
@@ -171,11 +166,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected float stepHeight = 0.6f;
 
-    public final Map<Long, Boolean> usedChunks = new Long2ObjectOpenHashMap<>();
+    public final Long2BooleanMap usedChunks = new Long2BooleanOpenHashMap();
 
     protected int chunkLoadCount = 0;
-    //porktodo: fastutil
-    protected final Long2ObjectLinkedOpenHashMap<Boolean> loadQueue = new Long2ObjectLinkedOpenHashMap<>();
+    protected final Long2BooleanMap loadQueue = new Long2BooleanOpenHashMap();
     protected int nextChunkOrderRun = 1;
 
     protected final Map<UUID, Player> hiddenPlayers = new HashMap<>();
@@ -228,10 +222,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public int pickedXPOrb = 0;
 
     protected int formWindowCount = 0;
-    //porktodo: fastutil maps for all of these
-    public Map<Integer, FormWindow> formWindows = new HashMap<>();
-    public Map<Integer, FormWindow> serverSettings = new HashMap<>();
-    public Map<Long, DummyBossBar> dummyBossBars = new HashMap<>();
+    public final Int2ObjectMap<FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
+    public final Int2ObjectMap<FormWindow> serverSettings = new Int2ObjectOpenHashMap<>();
+    public final Long2ObjectMap<DummyBossBar> dummyBossBars = new Long2ObjectOpenHashMap<>();
 
     public AsyncTask preLoginEventTask = null;
     public boolean shouldLogin = false;
@@ -587,7 +580,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public Player(SourceInterface interfaz, Long clientID, String ip, int port) {
         super(null, new CompoundTag());
         this.interfaz = interfaz;
-        this.windows = new HashMap<>();
+        this.windows = new Object2IntOpenHashMap<>();
         this.perm = new PermissibleBase(this);
         this.server = Server.getInstance();
         this.lastBreak = Long.MAX_VALUE;
@@ -729,7 +722,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        this.usedChunks.put(Level.chunkHash(x, z), Boolean.TRUE);
+        this.usedChunks.put(Level.chunkHash(x, z), true);
         this.chunkLoadCount++;
 
         this.dataPacket(packet);
@@ -776,10 +769,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (!loadQueue.isEmpty()) {
             int count = 0;
-            ObjectIterator<Long2ObjectMap.Entry<Boolean>> iter = loadQueue.long2ObjectEntrySet().fastIterator();
+            LongIterator iter = loadQueue.keySet().iterator();
             while (iter.hasNext()) {
-                Long2ObjectMap.Entry<Boolean> entry = iter.next();
-                long index = entry.getLongKey();
+                long index = iter.nextLong();
 
                 if (count >= this.chunksPerTick) {
                     break;
@@ -929,15 +921,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.nextChunkOrderRun = 200;
 
         loadQueue.clear();
-        Long2ObjectOpenHashMap<Boolean> lastChunk = new Long2ObjectOpenHashMap<>(this.usedChunks);
+        Long2BooleanMap lastChunk = new Long2BooleanOpenHashMap(this.usedChunks);
 
         int centerX = (int) this.x >> 4;
         int centerZ = (int) this.z >> 4;
 
         int radius = spawned ? this.chunkRadius : (int) Math.ceil(Math.sqrt(spawnThreshold));
         int radiusSqr = radius * radius;
-
-
 
         long index;
         for (int x = 0; x <= radius; x++) {
@@ -947,44 +937,44 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 if (distanceSqr > radiusSqr) continue;
 
                 /* Top right quadrant */
-                if(this.usedChunks.get(index = Level.chunkHash(centerX + x, centerZ + z)) != Boolean.TRUE) {
-                    this.loadQueue.put(index, Boolean.TRUE);
+                if(this.usedChunks.get(index = Level.chunkHash(centerX + x, centerZ + z)) != true) {
+                    this.loadQueue.put(index, true);
                 }
                 lastChunk.remove(index);
                 /* Top left quadrant */
-                if(this.usedChunks.get(index = Level.chunkHash(centerX - x - 1, centerZ + z)) != Boolean.TRUE) {
-                    this.loadQueue.put(index, Boolean.TRUE);
+                if(this.usedChunks.get(index = Level.chunkHash(centerX - x - 1, centerZ + z)) != true) {
+                    this.loadQueue.put(index, true);
                 }
                 lastChunk.remove(index);
                 /* Bottom right quadrant */
-                if(this.usedChunks.get(index = Level.chunkHash(centerX + x, centerZ - z - 1)) != Boolean.TRUE) {
-                    this.loadQueue.put(index, Boolean.TRUE);
+                if(this.usedChunks.get(index = Level.chunkHash(centerX + x, centerZ - z - 1)) != true) {
+                    this.loadQueue.put(index, true);
                 }
                 lastChunk.remove(index);
                 /* Bottom left quadrant */
-                if(this.usedChunks.get(index = Level.chunkHash(centerX - x - 1, centerZ - z - 1)) != Boolean.TRUE) {
-                    this.loadQueue.put(index, Boolean.TRUE);
+                if(this.usedChunks.get(index = Level.chunkHash(centerX - x - 1, centerZ - z - 1)) != true) {
+                    this.loadQueue.put(index, true);
                 }
                 lastChunk.remove(index);
                 if(x != z){
                     /* Top right quadrant mirror */
-                    if(this.usedChunks.get(index = Level.chunkHash(centerX + z, centerZ + x)) != Boolean.TRUE) {
-                        this.loadQueue.put(index, Boolean.TRUE);
+                    if(this.usedChunks.get(index = Level.chunkHash(centerX + z, centerZ + x)) != true) {
+                        this.loadQueue.put(index, true);
                     }
                     lastChunk.remove(index);
                     /* Top left quadrant mirror */
-                    if(this.usedChunks.get(index = Level.chunkHash(centerX - z - 1, centerZ + x)) != Boolean.TRUE) {
-                        this.loadQueue.put(index, Boolean.TRUE);
+                    if(this.usedChunks.get(index = Level.chunkHash(centerX - z - 1, centerZ + x)) != true) {
+                        this.loadQueue.put(index, true);
                     }
                     lastChunk.remove(index);
                     /* Bottom right quadrant mirror */
-                    if(this.usedChunks.get(index = Level.chunkHash(centerX + z, centerZ - x - 1)) != Boolean.TRUE) {
-                        this.loadQueue.put(index, Boolean.TRUE);
+                    if(this.usedChunks.get(index = Level.chunkHash(centerX + z, centerZ - x - 1)) != true) {
+                        this.loadQueue.put(index, true);
                     }
                     lastChunk.remove(index);
                     /* Bottom left quadrant mirror */
-                    if(this.usedChunks.get(index = Level.chunkHash(centerX - z - 1, centerZ - x - 1)) != Boolean.TRUE) {
-                        this.loadQueue.put(index, Boolean.TRUE);
+                    if(this.usedChunks.get(index = Level.chunkHash(centerX - z - 1, centerZ - x - 1)) != true) {
+                        this.loadQueue.put(index, true);
                     }
                     lastChunk.remove(index);
                 }
@@ -2328,7 +2318,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.ip,
                     String.valueOf(this.port),
                     this.getServer().getLanguage().translateString(reason)));
-            this.windows = new HashMap<>();
+            this.windows = new Object2IntOpenHashMap<>();
             this.windowIndex.clear();
             this.usedChunks.clear();
             this.loadQueue.clear();
@@ -3064,7 +3054,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      *
      * @return DummyBossBars Map
      */
-    public Map<Long, DummyBossBar> getDummyBossBars() {
+    public Long2ObjectMap<DummyBossBar> getDummyBossBars() {
         return dummyBossBars;
     }
 
