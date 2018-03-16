@@ -249,7 +249,6 @@ public class BinaryStream {
 
     public void putSkin(Skin skin) {
         this.putString(skin.getModel());
-        this.putLInt(1);
         this.putByteArray(skin.getData());
     }
 
