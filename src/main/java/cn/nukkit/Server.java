@@ -81,6 +81,8 @@ import com.google.common.base.Preconditions;
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author MagicDroidX
@@ -840,6 +842,7 @@ public class Server {
         this.nextTick = System.currentTimeMillis();
         try {
             while (this.isRunning) {
+                //System.out.println("Running tick " + this.tickCounter);
                 long nextTickTime = this.nextTick = System.currentTimeMillis() + 50;
                 try {
                     //do actual server tick logic
@@ -847,14 +850,17 @@ public class Server {
                 } catch (RuntimeException e) {
                     this.getLogger().logException(e);
                 }
-                //sleep outside of try/catch so that if there is an exception thrown we won't tick too fast
-                long sleepTime = Math.max(0, nextTickTime - System.currentTimeMillis());
-                if (sleepTime != 0) {
-                    //sleep the remaining time until next tick should happen
-                    //if negative then it won't sleep, can be negative if a tick takes longer than 50ms
-                    Thread.sleep(sleepTime);
+                if (this.isRunning) {
+                    //sleep outside of try/catch so that if there is an exception thrown we won't tick too fast
+                    long sleepTime = Math.max(0, nextTickTime - System.currentTimeMillis());
+                    if (sleepTime != 0) {
+                        //sleep the remaining time until next tick should happen
+                        //if negative then it won't sleep, can be negative if a tick takes longer than 50ms
+                        Thread.sleep(sleepTime);
+                    }
                 }
             }
+            this.tickManager.shutdown();
         } catch (Throwable e) {
             this.logger.emergency("Exception happened while ticking server");
             this.logger.alert(Utils.getExceptionMessage(e));
@@ -954,6 +960,7 @@ public class Server {
         player.dataPacket(CraftingManager.packet);
     }
 
+    private final Lock threadedTickLock = new ReentrantLock();
     private volatile Iterator<Player> threadPlayerIterator;
 
     private volatile boolean doGC = false;
@@ -975,24 +982,19 @@ public class Server {
     public void threadedTick() {
         this.scheduler.threadedHeartbeat(this.tickCounter);
 
-        synchronized (players)  {
-            if (threadPlayerIterator == null)   {
-                threadPlayerIterator = new ArrayList<>(this.players.values()).iterator();
-            }
+        threadedTickLock.lock();
+        if (threadPlayerIterator == null)   {
+            threadPlayerIterator = new ArrayList<>(this.players.values()).iterator();
         }
-
-        while (true)    {
-            Player player;
-
-            synchronized (threadPlayerIterator) {
-                if (!threadPlayerIterator.hasNext())    {
-                    break;
-                }
-                player = threadPlayerIterator.next();
-            }
+        while (threadPlayerIterator.hasNext())    {
+            Player player = threadPlayerIterator.next();
+            threadedTickLock.unlock();
 
             player.onUpdate(0);
+
+            threadedTickLock.lock();
         }
+        threadedTickLock.unlock();
 
         if (this.doGC && this.tickCounter % 100 == 0) {
             for (Level level : this.levelArray) {
@@ -1000,12 +1002,12 @@ public class Server {
                 level.threadedUnloadChunks();
             }
 
-            synchronized (doGCDummyObject)  {
-                if (doGC)   {
-                    doGC = false;
-                    doGCDummyObject.notifyAll();
-                }
+            threadedTickLock.lock();
+            if (doGC)   {
+                doGC = false;
+                doGCDummyObject.notifyAll();
             }
+            threadedTickLock.unlock();
         }
 
         for (Level level : this.levelArray)  {
@@ -1021,6 +1023,14 @@ public class Server {
         }
 
         this.scheduler.doPostTick();
+    }
+
+    public synchronized void doPreTick()    {
+        this.tickCounter++;
+
+        for (Level level : this.levelArray) {
+            level.doPreTick();
+        }
     }
 
     public void doAutoSave() {

@@ -237,78 +237,78 @@ public class ServerScheduler {
         return taskHandler;
     }
 
-    public TaskHandler scheduleAsyncTask(AsyncTask task)    {
+    public TaskHandler scheduleAsyncTask(AsyncTask task) {
         return addTask(null, task, 0, 0, true);
     }
 
-    public TaskHandler scheduleAsyncTask(AsyncTask task, int delay)    {
+    public TaskHandler scheduleAsyncTask(AsyncTask task, int delay) {
         return addTask(null, task, delay, 0, true);
     }
 
-    public TaskHandler scheduleAsyncTask(AsyncTask task, int delay, int period)    {
+    public TaskHandler scheduleAsyncTask(AsyncTask task, int delay, int period) {
         return addTask(null, task, delay, period, true);
     }
 
     private final Lock heartbeatLock = new ReentrantLock();
     private volatile ArrayDeque<TaskHandler> currentQueue;
 
-    public void threadedHeartbeat(int currentTick)  {
+    public void threadedHeartbeat(int currentTick) {
         TaskHandler task;
-        //add pending tasks on multiple threads
+        //add pending tasks on single thread
         heartbeatLock.lock();
         while ((task = pending.poll()) != null) {
-            heartbeatLock.unlock();
             int tick = Math.max(currentTick, task.getNextRunTick()); // Do not schedule in the past
             ArrayDeque<TaskHandler> queue = Utils.getOrCreate(queueMap, ArrayDeque.class, tick);
             queue.add(task);
-            heartbeatLock.lock();
         }
-        heartbeatLock.unlock();
         //execute tasks on multiple threads
-        for (int i = this.currentTick + 1; i <= currentTick; i++)   {
-            heartbeatLock.lock();
-            if (currentQueue == null)   {
-                currentQueue = queueMap.remove(i);
+        if (currentQueue == null) {
+            currentQueue = queueMap.remove(currentTick);
+            if (currentQueue == null) {
+                currentQueue = new ArrayDeque<TaskHandler>() {
+                    @Override
+                    public boolean isEmpty() {
+                        return true;
+                    }
+                };
             }
-            while (!currentQueue.isEmpty()) {
-                TaskHandler handler = currentQueue.poll();
-                heartbeatLock.unlock();
-                if (handler.isCancelled())  {
-                    taskMap.remove(handler.getTaskId());
-                } else if (handler.async)   {
-                    service.submit(() -> {
-                        try {
-                            handler.run(currentTick);
-                        } catch (Throwable e) {
-                            Server.getInstance().getLogger().critical("Could not execute async taskHandler " + handler.getTaskId() + ": " + e.getMessage());
-                            Server.getInstance().getLogger().logException(e instanceof Exception ? (Exception) e : new RuntimeException(e));
-                        }
-                    });
-                } else {
+        }
+        while (!currentQueue.isEmpty()) {
+            TaskHandler handler = currentQueue.poll();
+            heartbeatLock.unlock();
+            if (handler.isCancelled()) {
+                taskMap.remove(handler.getTaskId());
+            } else if (handler.async) {
+                service.submit(() -> {
                     try {
                         handler.run(currentTick);
                     } catch (Throwable e) {
-                        Server.getInstance().getLogger().critical("Could not execute taskHandler " + handler.getTaskId() + ": " + e.getMessage());
+                        Server.getInstance().getLogger().critical("Could not execute async taskHandler " + handler.getTaskId() + ": " + e.getMessage());
                         Server.getInstance().getLogger().logException(e instanceof Exception ? (Exception) e : new RuntimeException(e));
                     }
+                });
+            } else {
+                try {
+                    handler.run(currentTick);
+                } catch (Throwable e) {
+                    Server.getInstance().getLogger().critical("Could not execute taskHandler " + handler.getTaskId() + ": " + e.getMessage());
+                    Server.getInstance().getLogger().logException(e instanceof Exception ? (Exception) e : new RuntimeException(e));
                 }
-                if (handler.isRepeating()) {
-                    handler.setNextRunTick(currentTick + handler.getPeriod());
-                    pending.offer(handler);
-                } else {
-                    try {
-                        TaskHandler removed = taskMap.remove(handler.getTaskId());
-                        if (removed != null) removed.cancel();
-                    } catch (RuntimeException ex) {
-                        Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
-                    }
-                }
-                heartbeatLock.lock();
             }
-            heartbeatLock.unlock();
+            if (handler.isRepeating()) {
+                handler.setNextRunTick(currentTick + handler.getPeriod());
+                pending.offer(handler);
+            } else {
+                try {
+                    TaskHandler removed = taskMap.remove(handler.getTaskId());
+                    if (removed != null) removed.cancel();
+                } catch (RuntimeException ex) {
+                    Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+                }
+            }
+            heartbeatLock.lock();
         }
 
-        heartbeatLock.lock();
         this.currentTick = currentTick;
         heartbeatLock.unlock();
         AsyncTask.threadedCollectTask();
@@ -326,7 +326,7 @@ public class ServerScheduler {
         return currentTaskId.incrementAndGet();
     }
 
-    public void doPostTick()    {
+    public void doPostTick() {
         currentQueue = null;
     }
 }

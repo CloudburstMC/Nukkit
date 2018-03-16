@@ -10,12 +10,16 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * @author DaPorkchop_
  */
 public class BlockUpdateScheduler {
     private final Level level;
     private final Long2ObjectMap<LongSet> queuedUpdates;
+    private final Lock tickLock = new ReentrantLock();
     private volatile LongIterator iterator;
     private volatile long currentTick;
 
@@ -26,32 +30,20 @@ public class BlockUpdateScheduler {
     }
 
     public void threadedTick(long currentTick) {
-        synchronized (queuedUpdates) {
-            if (this.currentTick <= currentTick) {
-                this.currentTick = currentTick;
-            } else {
-                //don't do the same tick again
+        tickLock.lock();
+        if (iterator == null) {
+            LongSet queuedUpdatesThisTick = queuedUpdates.get(currentTick);
+            if (queuedUpdatesThisTick == null) {
+                tickLock.unlock();
                 return;
             }
-
-            if (iterator == null) {
-                LongSet queuedUpdatesThisTick = queuedUpdates.get(currentTick);
-                if (queuedUpdatesThisTick == null) {
-                    queuedUpdatesThisTick = LongSets.EMPTY_SET;
-                }
-                iterator = queuedUpdatesThisTick.iterator();
-            }
+            iterator = queuedUpdatesThisTick.iterator();
         }
 
-        while (true) {
-            long pos;
-            synchronized (iterator) {
-                if (!iterator.hasNext()) {
-                    break;
-                }
+        while (iterator.hasNext()) {
+            long pos = iterator.nextLong();
+            tickLock.unlock();
 
-                pos = iterator.nextLong();
-            }
             int x = Level.getXFrom(pos);
             int y = Level.getYFrom(pos);
             int z = Level.getZFrom(pos);
@@ -60,9 +52,15 @@ public class BlockUpdateScheduler {
 
                 block.onUpdate(Level.BLOCK_UPDATE_SCHEDULED);
             } else {
+                //porktodo: this does nothing, we somehow need to force-enqueue these block updates for unloaded and potentially non-existant chunks
                 level.scheduleUpdate(new Vector3(x, y, z), 0);
             }
+
+            tickLock.lock();
         }
+
+        this.currentTick = currentTick;
+        tickLock.unlock();
     }
 
     public Long2ObjectMap<LongSet> getPendingBlockUpdates(AxisAlignedBB boundingBox) {

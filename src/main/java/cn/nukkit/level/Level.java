@@ -68,6 +68,8 @@ import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * author: MagicDroidX Nukkit Project
@@ -658,6 +660,8 @@ public class Level implements ChunkManager, Metadatable {
      * Does any actions that are too trivial to be done by workers
      */
     public synchronized void doBaseTick(int currentTick) {
+        this.levelCurrentTick++;
+
         this.checkTime();
 
         // Tick Weather
@@ -684,24 +688,10 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (this.isThundering()) {
-            Map<Long, ? extends FullChunk> chunks = getChunks();
-            if (chunks instanceof Long2ObjectOpenHashMap) {
-                Long2ObjectOpenHashMap<? extends FullChunk> fastChunks = (Long2ObjectOpenHashMap) chunks;
-                ObjectIterator<? extends Long2ObjectMap.Entry<? extends FullChunk>> iter = fastChunks.long2ObjectEntrySet().fastIterator();
-                while (iter.hasNext()) {
-                    Long2ObjectMap.Entry<? extends FullChunk> entry = iter.next();
-                    performThunder(entry.getLongKey(), entry.getValue());
-                }
-            } else {
-                for (Map.Entry<Long, ? extends FullChunk> entry : getChunks().entrySet()) {
-                    performThunder(entry.getKey(), entry.getValue());
-                }
-            }
+            getChunks().forEach(this::performThunder);
         }
 
         this.skyLightSubtracted = this.calculateSkylightSubtracted(1);
-
-        this.levelCurrentTick++;
 
         if (this.sleepTicks > 0 && --this.sleepTicks <= 0) {
             this.checkSleep();
@@ -713,9 +703,9 @@ public class Level implements ChunkManager, Metadatable {
             Server.broadcastPacket(players.values().toArray(new Player[players.size()]), packet);
             gameRules.refresh();
         }
-
-        this.chunkPackets.clear();
     }
+
+    private final Lock tickLock = new ReentrantLock();
 
     /**
      * Handles tasks that are somewhat more bulky and require more power.
@@ -742,39 +732,43 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private volatile ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> changedBlocksIterator;
+    private volatile LongIterator chunkPacketsIterator;
 
     private void threadedSendChunkPackets() {
-        //just synchronize it to make sure it's only executed once, this doesn't need to be multithreaded
-        synchronized (chunkPackets) {
-            for (long index : this.chunkPackets.keySet()) {
-                int chunkX = Level.getHashX(index);
-                int chunkZ = Level.getHashZ(index);
-                Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().stream().toArray(Player[]::new);
-                if (chunkPlayers.length > 0) {
-                    for (DataPacket pk : this.chunkPackets.get(index)) {
-                        Server.broadcastPacket(chunkPlayers, pk);
-                    }
+        tickLock.lock();
+        if (chunkPacketsIterator == null)   {
+            chunkPacketsIterator = this.chunkPackets.keySet().iterator();
+        }
+
+        while (chunkPacketsIterator.hasNext())  {
+            long index = chunkPacketsIterator.nextLong();
+            tickLock.unlock();
+
+            int chunkX = Level.getHashX(index);
+            int chunkZ = Level.getHashZ(index);
+            Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().stream().toArray(Player[]::new);
+            if (chunkPlayers.length > 0) {
+                for (DataPacket pk : this.chunkPackets.get(index)) {
+                    Server.broadcastPacket(chunkPlayers, pk);
                 }
             }
+
+            tickLock.lock();
         }
+
+        chunkPackets.clear();
+        tickLock.unlock();
     }
 
     private void threadedSendBlockUpdates() {
-        synchronized (changedBlocks) {
-            if (changedBlocksIterator == null)  {
-                changedBlocksIterator = changedBlocks.long2ObjectEntrySet().iterator();
-            }
+        tickLock.lock();
+        if (changedBlocksIterator == null)  {
+            changedBlocksIterator = changedBlocks.long2ObjectEntrySet().iterator();
         }
 
-        while (true)    {
-            Long2ObjectMap.Entry<SoftReference<CharSet>> entry;
-
-            synchronized (changedBlocksIterator)    {
-                if (!changedBlocksIterator.hasNext())   {
-                    break;
-                }
-                entry = changedBlocksIterator.next();
-            }
+        while (changedBlocksIterator.hasNext())    {
+            Long2ObjectMap.Entry<SoftReference<CharSet>> entry = changedBlocksIterator.next();
+            tickLock.unlock();
 
             long index = entry.getLongKey();
             CharSet blocks = entry.getValue().get();
@@ -796,16 +790,17 @@ public class Level implements ChunkManager, Metadatable {
                 }
                 this.sendBlocks(playerArray, blocksArray, UpdateBlockPacket.FLAG_ALL);
             }
+
+            tickLock.lock();
         }
 
-        synchronized (changedBlocks)    {
-            //this is executed multiple times by any threads that happen to be here, but that doesn't really matter
-            changedBlocks.clear();
-        }
+        //this is executed multiple times by any threads that happen to be here, but that doesn't really matter
+        changedBlocks.clear();
+        tickLock.unlock();
     }
 
     private void performThunder(long index, FullChunk chunk) {
-        if (areNeighboringChunksLoaded(index)) return;
+        if (!chunk.shouldDoRandomTick(this)) return;
         if (ThreadLocalRandom.current().nextInt(10000) == 0) {
             this.updateLCG = this.updateLCG * 3 + 1013904223;
             int LCG = this.updateLCG >> 2;
@@ -992,21 +987,14 @@ public class Level implements ChunkManager, Metadatable {
     private final Object chunkTickIteratorSync = new Object();
 
     private void threadedTickChunks(int currentTick)   {
-        synchronized (chunkTickIteratorSync)    {
-            if (chunkTickIterator == null)  {
-                chunkTickIterator = this.provider.getLoadedChunkIterator();
-            }
+        tickLock.lock();
+        if (chunkTickIterator == null)  {
+            chunkTickIterator = this.provider.getLoadedChunkIterator();
         }
 
-        while (true)    {
-            FullChunk chunk;
-
-            synchronized (chunkTickIterator)    {
-                if (!chunkTickIterator.hasNext())   {
-                    break;
-                }
-                chunk = chunkTickIterator.next();
-            }
+        while (chunkTickIterator.hasNext())    {
+            FullChunk chunk = chunkTickIterator.next();
+            tickLock.unlock();
 
             if (!chunk.shouldDoRandomTick(this))    {
                 continue;
@@ -1043,7 +1031,10 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
             }
+
+            tickLock.lock();
         }
+        tickLock.unlock();
     }
 
     public boolean save() {
@@ -1394,40 +1385,32 @@ public class Level implements ChunkManager, Metadatable {
     private final Queue<Object[]> lightRemovalQueue = new ConcurrentLinkedQueue<>();
     private final LongSet visited = LongSets.synchronize(new LongArraySet(), new Object());
     private final LongSet removalVisited = LongSets.synchronize(new LongArraySet(), new Object());
-    private volatile ObjectIterator<Long2ObjectMap.Entry<Char2ObjectMap<Object>>> lightUpdateIterator = null;
+    private volatile ObjectIterator<Long2ObjectMap.Entry<CharSet>> lightUpdateIterator = null;
 
     /**
-     * Processes light updates, potentially on multiple threads simultaniously
+     * Processes light updates, potentially on multiple threads simultaneously
      */
     public void threadedBlockLightUpdate() {
-        synchronized (lightQueue) {
-            if (lightQueue.size() == 0) {
-                return;
-            }
-
-            if (lightUpdateIterator == null) {
-                lightQueue.long2ObjectEntrySet().iterator();
-            }
+        tickLock.lock();
+        if (lightQueue.size() == 0) {
+            tickLock.unlock();
+            return;
+        }
+        if (lightUpdateIterator == null) {
+            lightUpdateIterator = lightQueue.long2ObjectEntrySet().iterator();
         }
 
-        while (true)   {
-            Long2ObjectMap.Entry<Char2ObjectMap<Object>> entry;
-            //synchronize block to make sure that other threads updating light don't break everything
-            synchronized (lightUpdateIterator)  {
-                if (!lightUpdateIterator.hasNext()) {
-                    break;
-                }
-                entry = lightUpdateIterator.next();
-                lightUpdateIterator.remove();
-            }
+        while (lightUpdateIterator.hasNext())   {
+            Long2ObjectMap.Entry<CharSet> entry = lightUpdateIterator.next();
+            tickLock.unlock();
 
             long index = entry.getLongKey();
-            Char2ObjectMap<Object> blocks = entry.getValue();
+            CharSet blocks = entry.getValue();
             int chunkX = Level.getHashX(index);
             int chunkZ = Level.getHashZ(index);
             int bx = chunkX << 4;
             int bz = chunkZ << 4;
-            for (char blockHash : blocks.keySet()) {
+            blocks.forEach((int blockHash) -> {
                 int hi = (byte) (blockHash >>> 8);
                 int lo = (byte) blockHash;
                 int y = lo & 0xFF;
@@ -1450,20 +1433,16 @@ public class Level implements ChunkManager, Metadatable {
                         }
                     }
                 }
-            }
+            });
+
+            tickLock.lock();
         }
+        tickLock.unlock();
 
-        while (true) {
-            Object[] val;
-
-            //again, synchronize access to queue
-            synchronized (lightRemovalQueue)    {
-                if (lightRemovalQueue.isEmpty())    {
-                    break;
-                }
-
-                val = lightRemovalQueue.poll();
-            }
+        //we're still locked from the previous loop, no need to give up lock and then lock it again
+        while (!lightRemovalQueue.isEmpty()) {
+            Object[] val = lightRemovalQueue.poll();
+            tickLock.unlock();
 
             long node = (long) val[0];
             int x = Hash.hashBlockX(node);
@@ -1478,18 +1457,14 @@ public class Level implements ChunkManager, Metadatable {
             this.computeRemoveBlockLight(x, y + 1, z, lightLevel);
             this.computeRemoveBlockLight(x, y, z - 1, lightLevel);
             this.computeRemoveBlockLight(x, y, z + 1, lightLevel);
+
+            tickLock.lock();
         }
+        tickLock.unlock();
 
         while (!lightPropagationQueue.isEmpty()) {
-            long node;
-
-            synchronized (lightPropagationQueue)    {
-                if (lightPropagationQueue.isEmpty())    {
-                    break;
-                }
-
-                node = lightPropagationQueue.dequeueLong();
-            }
+            long node = lightPropagationQueue.dequeueLong();
+            tickLock.unlock();
 
             int x = Hash.hashBlockX(node);
             int y = Hash.hashBlockY(node);
@@ -1505,7 +1480,10 @@ public class Level implements ChunkManager, Metadatable {
                 this.computeSpreadBlockLight(x, y, z - 1, lightLevel);
                 this.computeSpreadBlockLight(x, y, z + 1, lightLevel);
             }
+
+            tickLock.lock();
         }
+        tickLock.unlock();
     }
 
     private void computeRemoveBlockLight(int x, int y, int z, int currentLight) {
@@ -2228,7 +2206,7 @@ public class Level implements ChunkManager, Metadatable {
         this.getChunk(x >> 4, z >> 4, true).setHeightMap(x & 0x0f, z & 0x0f, value & 0x0f);
     }
 
-    public Map<Long,? extends FullChunk> getChunks() {
+    public Long2ObjectMap<? extends FullChunk> getChunks() {
         return provider.getLoadedChunks();
     }
 
@@ -2433,23 +2411,14 @@ public class Level implements ChunkManager, Metadatable {
     private volatile LongIterator chunkSendQueueIterator;
 
     private void threadedProcessChunkRequest()  {
-        synchronized (chunkSendQueue)   {
-            if (chunkSendQueueIterator == null)  {
-                LongSet set = new LongArraySet();
-                set.addAll(chunkSendQueue.keySet());
-                chunkSendQueueIterator = set.iterator();
-            }
+        tickLock.lock();
+        if (chunkSendQueueIterator == null)  {
+            chunkSendQueueIterator = chunkSendQueue.keySet().iterator();
         }
 
-        while (true)    {
-            long index;
-
-            synchronized (chunkSendQueueIterator)   {
-                if (!chunkSendQueueIterator.hasNext())  {
-                    break;
-                }
-                index = chunkSendQueueIterator.nextLong();
-            }
+        while (chunkSendQueueIterator.hasNext())    {
+            long index = chunkSendQueueIterator.nextLong();
+            tickLock.unlock();
 
             int x = getHashX(index);
             int z = getHashZ(index);
@@ -2465,7 +2434,10 @@ public class Level implements ChunkManager, Metadatable {
             this.timings.syncChunkSendPrepareTimer.startTiming();
             this.provider.encodeChunkForSending(x, z, (timestamp, data) -> chunkRequestCallback(timestamp, x, z, data));
             this.timings.syncChunkSendPrepareTimer.stopTiming();
+
+            tickLock.lock();
         }
+        tickLock.unlock();
     }
 
     public void chunkRequestCallback(long timestamp, int x, int z, byte[] payload) {
@@ -3262,6 +3234,7 @@ public class Level implements ChunkManager, Metadatable {
         gcChunkIterator = null;
         gcProviderDoneThisTick = false;
         unloadQueueIterator = null;
+        chunkPacketsIterator = null;
 
         lightPropagationQueue.clear();
         lightRemovalQueue.clear();
@@ -3269,5 +3242,9 @@ public class Level implements ChunkManager, Metadatable {
         removalVisited.clear();
 
         updateQueue.doPostTick();
+    }
+
+    public synchronized void doPreTick()    {
+        this.levelCurrentTick++;
     }
 }

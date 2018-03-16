@@ -21,7 +21,7 @@ public class ServerTickManager {
         this.addWorkerThread(new NetworkingTickThread(server, this));
         this.addWorkerThread(new AutoSaveTickThread(server, this));
         this.addWorkerThread(new ServerBaseTickThread(server, this));
-        int max = Runtime.getRuntime().availableProcessors();
+        int max = 4;
         for (int i = 0; i < max; i++) {
             this.addWorkerThread(new ServerTickThread(server, this));
         }
@@ -32,7 +32,7 @@ public class ServerTickManager {
     private final Condition endTick = lock.newCondition();
 
     private int totalThreadCount = 0;
-    private int waitingOnThreads = 0;
+    private volatile int waitingOnThreads = 0;
 
     public void tick() {
         if (this.waitingOnThreads > 0) {
@@ -40,7 +40,7 @@ public class ServerTickManager {
         }
 
         TickRate.INSTANCE.update();
-        this.server.tickCounter++;
+        this.server.doPreTick();
 
         //wait on all threads
         this.waitingOnThreads = this.totalThreadCount;
@@ -69,8 +69,22 @@ public class ServerTickManager {
 
         //notify workers so that they stop waiting and then terminate as the server is flagged as not running
         this.lock.lock();
-        doTick.signalAll();
+        this.endTick.signalAll();
+        this.doTick.signalAll();
         this.lock.unlock();
+    }
+
+    public void onWorkerShutdown()  {
+        this.server.logger.debug("Worker " + Thread.currentThread().getName() + " shutting down");
+        this.totalThreadCount--;
+        synchronized (this) {
+            //decrement the waiting thread count to check if the tick is finished
+            if (--this.waitingOnThreads <= 0) {
+                this.lock.lock();
+                this.endTick.signalAll();
+                this.lock.unlock();
+            }
+        }
     }
 
     public void onWorkerFinish() {

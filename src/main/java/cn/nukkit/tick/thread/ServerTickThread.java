@@ -15,7 +15,7 @@ public class ServerTickThread extends ServerExecutorThread {
     private static int count = 0;
 
     public ServerTickThread(Server server, ServerTickManager tickManager) {
-        super(server, tickManager, "Nukkit tick thread #" + ++count);
+        super(server, tickManager, "Nukkit tick thread #" + (++count));
     }
 
     @Override

@@ -24,8 +24,13 @@ public abstract class ServerExecutorThread extends Thread {
 
         while (server.isRunning)  {
             doRun();
-            tickManager.onWorkerFinish();
+            //shutdown is called by tick threads, this prevents an infinite shutdown cycle where one thread never exits
+            if (server.isRunning) {
+                tickManager.onWorkerFinish();
+            }
         }
+
+        tickManager.onWorkerShutdown();
     }
 
     /**
