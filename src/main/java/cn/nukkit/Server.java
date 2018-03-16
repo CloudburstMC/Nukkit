@@ -81,6 +81,7 @@ import com.google.common.base.Preconditions;
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -112,10 +113,6 @@ public class Server {
     public ServerScheduler scheduler = null;
 
     public int tickCounter;
-
-    public float maxTick = 20;
-
-    public float maxUse = 0;
 
     public int sendUsageTicker = 0;
 
@@ -964,7 +961,8 @@ public class Server {
     private volatile Iterator<Player> threadPlayerIterator;
 
     private volatile boolean doGC = false;
-    private final Object doGCDummyObject = new Object();
+    private final Lock doGcLock = new ReentrantLock();
+    private final Condition doGcWait = doGcLock.newCondition();
 
     /**
      * Forces the server to do garbage collection in the next tick.
@@ -973,9 +971,12 @@ public class Server {
     public void forceGC()   {
         doGC = true;
         try {
-            doGCDummyObject.wait();
+            doGcLock.lock();
+            doGcWait.await();
         } catch (InterruptedException e)    {
             e.printStackTrace();
+        } finally {
+            doGcLock.unlock();
         }
     }
 
@@ -1005,7 +1006,9 @@ public class Server {
             threadedTickLock.lock();
             if (doGC)   {
                 doGC = false;
-                doGCDummyObject.notifyAll();
+                doGcLock.lock();
+                doGcWait.signalAll();
+                doGcLock.unlock();
             }
             threadedTickLock.unlock();
         }
@@ -1432,7 +1435,7 @@ public class Server {
     }
 
     public float getTickUsage() {
-        return (float) NukkitMath.round(this.maxUse * 100, 2);
+        return TickRate.INSTANCE.currentLoad;
     }
 
     public SimpleCommandMap getCommandMap() {

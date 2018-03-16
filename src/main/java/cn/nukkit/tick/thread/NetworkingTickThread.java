@@ -36,8 +36,6 @@ public class NetworkingTickThread extends ServerExecutorThread {
         if ((this.server.tickCounter & 0b1111) == 0) {
             this.server.titleTick();
             this.server.network.resetStatistics();
-            this.server.maxTick = 20;
-            this.server.maxUse = 0;
 
             if ((this.server.tickCounter & 0b111111111) == 0) {
                 try {

@@ -1,5 +1,6 @@
 package cn.nukkit.tick;
 
+import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitMath;
 
 import java.text.DecimalFormat;
@@ -21,6 +22,7 @@ public class TickRate {
     }
 
     public float currentTps = 20.0f;
+    public float currentLoad = 0.0f;
 
     public long lastUpdate = -1;
 
@@ -29,7 +31,7 @@ public class TickRate {
     /**
      * Notify the tick rate counter that the next tick is starting
      */
-    public synchronized void update() {
+    synchronized void update() {
         long currentTime = System.currentTimeMillis();
 
         if (lastUpdate == -1) {
@@ -37,11 +39,11 @@ public class TickRate {
             return;
         }
         long timeDiff = currentTime - lastUpdate;
-        float tickTime = timeDiff / 20;
+        float tickTime = timeDiff / 20f;
         if (tickTime == 0) {
-            tickTime = 50;
+            tickTime = 50f;
         }
-        float tps = 1000 / tickTime;
+        float tps = 50f / tickTime;
         if (tps > 20.0f) {
             tps = 20.0f;
         }
@@ -50,18 +52,22 @@ public class TickRate {
         }
         tpsCounts[0] = tps;
 
-        double total = 0.0;
+        double total = 0.0d;
         for (float f : tpsCounts) {
             total += f;
         }
-        total /= tpsCounts.length;
+        total /= (double) tpsCounts.length;
 
-        if (total > 20.0) {
-            total = 20.0;
+        if (total > 20.0f) {
+            total = 20.0f;
         }
 
         currentTps = (float) NukkitMath.round(total, 2);
         lastUpdate = currentTime;
+    }
+
+    synchronized void endTick() {
+        currentLoad = Math.max(0.0f, Math.min(1.0f, (System.currentTimeMillis() - lastUpdate) / 50f)) * 100f;
     }
 
     public void reset() {

@@ -61,6 +61,7 @@ public class ServerTickManager {
             this.lock.unlock();
         }
 
+        TickRate.INSTANCE.endTick();
         this.server.doPostTick();
     }
 
