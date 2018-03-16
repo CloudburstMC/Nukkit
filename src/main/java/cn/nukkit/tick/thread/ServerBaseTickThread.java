@@ -13,7 +13,7 @@ import cn.nukkit.tick.ServerTickManager;
  */
 public class ServerBaseTickThread extends ServerExecutorThread {
     public ServerBaseTickThread(Server server, ServerTickManager tickManager) {
-        super(server, tickManager);
+        super(server, tickManager, "Nukkit server base tick thread");
     }
 
     @Override

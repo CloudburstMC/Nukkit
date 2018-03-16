@@ -12,8 +12,10 @@ import cn.nukkit.tick.ServerTickManager;
  * This thread should only handle a fragment of the actual world
  */
 public class ServerTickThread extends ServerExecutorThread {
+    private static int count = 0;
+
     public ServerTickThread(Server server, ServerTickManager tickManager) {
-        super(server, tickManager);
+        super(server, tickManager, "Nukkit tick thread #" + ++count);
     }
 
     @Override

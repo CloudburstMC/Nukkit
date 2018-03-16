@@ -11,7 +11,8 @@ public abstract class ServerExecutorThread extends Thread {
     public final Server server;
     public final ServerTickManager tickManager;
 
-    public ServerExecutorThread(Server server, ServerTickManager tickManager)  {
+    public ServerExecutorThread(Server server, ServerTickManager tickManager, String name)  {
+        super(name);
         this.server = server;
         this.tickManager = tickManager;
         this.start();

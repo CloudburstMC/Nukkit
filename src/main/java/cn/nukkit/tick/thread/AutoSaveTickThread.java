@@ -11,7 +11,7 @@ import cn.nukkit.tick.ServerTickManager;
  */
 public class AutoSaveTickThread extends ServerExecutorThread {
     public AutoSaveTickThread(Server server, ServerTickManager tickManager) {
-        super(server, tickManager);
+        super(server, tickManager, "Nukkit auto-save thread");
     }
 
     @Override

@@ -20,7 +20,6 @@ public class ServerTickManager {
 
         this.addWorkerThread(new NetworkingTickThread(server, this));
         this.addWorkerThread(new AutoSaveTickThread(server, this));
-        this.addWorkerThread(new SchedulerTickThread(server, this));
         this.addWorkerThread(new ServerBaseTickThread(server, this));
         int max = Runtime.getRuntime().availableProcessors();
         for (int i = 0; i < max; i++) {
@@ -75,11 +74,13 @@ public class ServerTickManager {
     }
 
     public void onWorkerFinish() {
-        //decrement the waiting thread count to check if the tick is finished
-        if (--this.waitingOnThreads <= 0) {
-            this.lock.lock();
-            this.endTick.signalAll();
-            this.lock.unlock();
+        synchronized (this) {
+            //decrement the waiting thread count to check if the tick is finished
+            if (--this.waitingOnThreads <= 0) {
+                this.lock.lock();
+                this.endTick.signalAll();
+                this.lock.unlock();
+            }
         }
 
         workerWait();

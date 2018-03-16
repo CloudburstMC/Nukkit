@@ -776,7 +776,9 @@ public class Server {
 
             this.getLogger().debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
-            this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
+
+            this.getLogger().debug("Stopping tick manager");
+            this.tickManager.shutdown();
 
             this.getLogger().debug("Unloading all levels");
             for (Level level : this.levelArray) {
@@ -838,17 +840,19 @@ public class Server {
         this.nextTick = System.currentTimeMillis();
         try {
             while (this.isRunning) {
+                long nextTickTime = this.nextTick = System.currentTimeMillis() + 50;
                 try {
-                    long nextTickTime = this.nextTick = System.currentTimeMillis() + 1000;
-
                     //do actual server tick logic
                     this.tickManager.tick();
-
-                    //sleep the remaining time until next tick should happen
-                    //if negative then it won't sleep, can be negative if a tick takes longer than 50ms
-                    Thread.sleep(Math.min(0, nextTickTime - System.currentTimeMillis()));
                 } catch (RuntimeException e) {
                     this.getLogger().logException(e);
+                }
+                //sleep outside of try/catch so that if there is an exception thrown we won't tick too fast
+                long sleepTime = Math.max(0, nextTickTime - System.currentTimeMillis());
+                if (sleepTime != 0) {
+                    //sleep the remaining time until next tick should happen
+                    //if negative then it won't sleep, can be negative if a tick takes longer than 50ms
+                    Thread.sleep(sleepTime);
                 }
             }
         } catch (Throwable e) {
@@ -969,6 +973,8 @@ public class Server {
     }
 
     public void threadedTick() {
+        this.scheduler.threadedHeartbeat(this.tickCounter);
+
         synchronized (players)  {
             if (threadPlayerIterator == null)   {
                 threadPlayerIterator = new ArrayList<>(this.players.values()).iterator();
@@ -1013,6 +1019,8 @@ public class Server {
         for (Level level : this.levelArray)  {
             level.doPostTick();
         }
+
+        this.scheduler.doPostTick();
     }
 
     public void doAutoSave() {
@@ -1969,7 +1977,7 @@ public class Server {
      * false otherwise
      */
     public final boolean isPrimaryThread() {
-        return (Thread.currentThread() == currentThread);
+        return Thread.currentThread() instanceof ServerTickThread;
     }
 
     public Thread getPrimaryThread() {

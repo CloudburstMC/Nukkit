@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class NetworkingTickThread extends ServerExecutorThread {
     public NetworkingTickThread(Server server, ServerTickManager tickManager)   {
-        super(server, tickManager);
+        super(server, tickManager, "Nukkit networking update thread");
     }
 
     @Override
