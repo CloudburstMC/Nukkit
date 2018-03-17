@@ -4496,13 +4496,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.unloadChunk(chunkX, chunkZ, oldLevel);
         }
 
-        int oldDimension = oldLevel.getDimension();
-        int newDimension = level.getDimension();
-        setDimension(oldDimension);
-        sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN, true);
-
         int chunkX = getPosition().getChunkX();
         int chunkZ = getPosition().getChunkZ();
+
+        setDimension(level.getDimension());
 
         // Send empty chunks
         for (int x = -chunkRadius; x < chunkRadius; x++) {
@@ -4516,7 +4513,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         }
 
-        setDimension(newDimension);
         sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN, true);
 
         this.usedChunks.clear();
