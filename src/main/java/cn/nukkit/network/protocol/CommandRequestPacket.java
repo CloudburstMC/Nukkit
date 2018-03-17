@@ -1,6 +1,9 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.network.protocol.types.CommandOriginData;
+import co.aikar.timings.Timings;
 
 import java.util.UUID;
 
@@ -50,4 +53,8 @@ public class CommandRequestPacket extends DataPacket {
     public void encode() {
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

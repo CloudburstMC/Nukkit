@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
 /**
@@ -49,6 +50,11 @@ public class InventoryContentPacket extends DataPacket {
         for (Item slot : this.slots) {
             this.putSlot(slot);
         }
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 
     @Override

@@ -6,10 +6,9 @@ import co.aikar.timings.Timings;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * @author Nukkit Project Team
- */
 public abstract class AsyncTask implements Runnable {
 
     public static final Queue<AsyncTask> FINISHED_LIST = new ConcurrentLinkedQueue<>();
@@ -75,10 +74,13 @@ public abstract class AsyncTask implements Runnable {
         this.finished = false;
     }
 
-    public static void collectTask() {
-        Timings.schedulerAsyncTimer.startTiming();
+    private static Lock collectionLock = new ReentrantLock();
+
+    public static void threadedCollectTask() {
+        collectionLock.lock();
         while (!FINISHED_LIST.isEmpty()) {
             AsyncTask task = FINISHED_LIST.poll();
+            collectionLock.unlock();
             try {
                 task.onCompletion(Server.getInstance());
             } catch (Exception e) {
@@ -86,8 +88,8 @@ public abstract class AsyncTask implements Runnable {
                         + task.getTaskId()
                         + " invoking onCompletion", e);
             }
+            collectionLock.lock();
         }
-        Timings.schedulerAsyncTimer.stopTiming();
+        collectionLock.unlock();
     }
-
 }

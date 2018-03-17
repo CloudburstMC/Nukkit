@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
 /**
@@ -37,5 +38,10 @@ public class MobEquipmentPacket extends DataPacket {
         this.putByte((byte) this.inventorySlot);
         this.putByte((byte) this.hotbarSlot);
         this.putByte((byte) this.windowId);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

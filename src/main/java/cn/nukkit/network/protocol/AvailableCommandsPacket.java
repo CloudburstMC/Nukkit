@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.command.data.CommandDataVersions;
 import cn.nukkit.command.data.CommandOverload;
 import cn.nukkit.command.data.CommandParameter;
@@ -98,5 +99,10 @@ public class AvailableCommandsPacket extends DataPacket {
             default:
                 return 0;
         }
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

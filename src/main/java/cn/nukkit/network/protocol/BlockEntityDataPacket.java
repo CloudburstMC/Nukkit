@@ -1,6 +1,17 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
+
+import java.io.IOException;
+import java.nio.ByteOrder;
+
+import static cn.nukkit.Player.CRAFTING_SMALL;
 
 /**
  * author: MagicDroidX
@@ -33,5 +44,10 @@ public class BlockEntityDataPacket extends DataPacket {
         this.reset();
         this.putBlockVector3(this.x, this.y, this.z);
         this.put(this.namedTag);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

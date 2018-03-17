@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 
 import java.util.UUID;
@@ -43,5 +44,10 @@ public class PlayerSkinPacket extends DataPacket {
         this.putByteArray(this.skin.getCape().getData());
         this.putString(this.geometryModel);
         this.putString(this.geometryData);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.raknet.protocol.EncapsulatedPacket;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
@@ -25,6 +27,22 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     public abstract void decode();
 
     public abstract void encode();
+
+    protected abstract void handle(Player player);
+
+    public final void doHandle(Player player)   {
+        if (!player.isConnected())  {
+            return;
+        }
+
+        DataPacketReceiveEvent ev = new DataPacketReceiveEvent(player, this);
+        player.server.getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+
+        this.handle(player);
+    }
 
     @Override
     public DataPacket reset() {

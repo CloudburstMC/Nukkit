@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class UpdateEquipmentPacket extends DataPacket {
 
     public int windowId;
@@ -26,5 +28,10 @@ public class UpdateEquipmentPacket extends DataPacket {
         this.putByte((byte) this.windowType);
         this.putEntityUniqueId(this.eid);
         this.put(this.namedtag);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

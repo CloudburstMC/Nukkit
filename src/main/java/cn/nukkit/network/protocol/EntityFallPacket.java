@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class EntityFallPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.ENTITY_FALL_PACKET;
 
@@ -22,5 +24,10 @@ public class EntityFallPacket extends DataPacket {
     @Override
     public byte pid() {
         return NETWORK_ID;
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

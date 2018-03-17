@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.utils.Utils;
 
 import java.awt.*;
@@ -111,6 +112,11 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
                 }
             }
         }
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 
     public class MapDecorator {

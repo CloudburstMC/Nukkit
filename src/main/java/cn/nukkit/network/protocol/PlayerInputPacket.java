@@ -1,5 +1,9 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.entity.item.EntityMinecartAbstract;
+import cn.nukkit.entity.item.EntityMinecartEmpty;
+
 /**
  * @author Nukkit Project Team
  */
@@ -31,4 +35,8 @@ public class PlayerInputPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

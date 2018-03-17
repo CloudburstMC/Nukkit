@@ -1,10 +1,43 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockDoor;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntitySpawnable;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.player.PlayerInteractEntityEvent;
+import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.event.player.PlayerItemConsumeEvent;
+import cn.nukkit.inventory.transaction.CraftingTransaction;
+import cn.nukkit.inventory.transaction.InventoryTransaction;
+import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.TransactionData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemBucket;
+import cn.nukkit.item.ItemGlassBottle;
+import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.item.food.Food;
+import cn.nukkit.level.GameRule;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
+import cn.nukkit.potion.Potion;
+
+import java.util.*;
+
+import static cn.nukkit.Player.SURVIVAL;
+import static cn.nukkit.entity.Entity.DATA_FLAGS;
+import static cn.nukkit.entity.Entity.DATA_FLAG_ACTION;
 
 public class InventoryTransactionPacket extends DataPacket {
 
@@ -146,5 +179,10 @@ public class InventoryTransactionPacket extends DataPacket {
             default:
                 throw new RuntimeException("Unknown transaction type " + this.transactionType);
         }
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

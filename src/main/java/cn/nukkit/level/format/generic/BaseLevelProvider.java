@@ -11,6 +11,8 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.LevelException;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
@@ -38,9 +40,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     protected BaseRegionLoader lastRegion;
 
-    protected final Map<Long, BaseRegionLoader> regions = new HashMap<>();
+    protected final Long2ObjectMap<BaseRegionLoader> regions = new Long2ObjectOpenHashMap<>();
 
-    private final Long2ObjectOpenHashMap<BaseFullChunk> chunks = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<BaseFullChunk> chunks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
     public BaseLevelProvider(Level level, String path) throws IOException {
         this.level = level;
@@ -73,8 +75,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
         return this.chunks.size();
     }
 
-    public ObjectIterator<BaseFullChunk> getChunks() {
-        return chunks.values().iterator();
+    @Override
+    public ObjectIterator<? extends FullChunk> getLoadedChunkIterator() {
+        return this.chunks.values().iterator();
     }
 
     protected void putChunk(long index, BaseFullChunk chunk) {
@@ -83,12 +86,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public void unloadChunks() {
-        Iterator<Map.Entry<Long, BaseFullChunk>> iter = chunks.entrySet().iterator();
+        ObjectIterator<BaseFullChunk> iter = chunks.values().iterator();
         while (iter.hasNext()) {
-            Map.Entry<Long, BaseFullChunk> entry = iter.next();
-            long index = entry.getKey();
-            BaseFullChunk chunk = entry.getValue();
-            chunk.unload(true, false);
+            iter.next().unload(true, false);
             iter.remove();
         }
     }
@@ -108,7 +108,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public Map<Long, BaseFullChunk> getLoadedChunks() {
+    public Long2ObjectMap<? extends FullChunk> getLoadedChunks() {
         return this.chunks;
     }
 
@@ -254,10 +254,8 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public void doGarbageCollection() {
-        int limit = (int) (System.currentTimeMillis() - 50);
-        for (Map.Entry<Long, BaseRegionLoader> entry : this.regions.entrySet()) {
-            long index = entry.getKey();
-            BaseRegionLoader region = entry.getValue();
+        final long limit = System.currentTimeMillis() - 50;
+        this.regions.forEach((index, region) -> {
             if (region.lastUsed <= limit) {
                 try {
                     region.close();
@@ -267,14 +265,14 @@ public abstract class BaseLevelProvider implements LevelProvider {
                 lastRegion = null;
                 this.regions.remove(index);
             }
-        }
+        });
     }
 
     @Override
     public void saveChunks() {
         for (BaseFullChunk chunk : this.chunks.values()) {
             if (chunk.getChanges() != 0) {
-                chunk.setChanged(false);
+                chunk.markDirty(false);
                 this.saveChunk(chunk.getX(), chunk.getZ());
             }
         }
@@ -398,11 +396,9 @@ public abstract class BaseLevelProvider implements LevelProvider {
     @Override
     public synchronized void close() {
         this.unloadChunks();
-        Iterator<Map.Entry<Long, BaseRegionLoader>> iter = this.regions.entrySet().iterator();
+        ObjectIterator<BaseRegionLoader> iter = this.regions.values().iterator();
         while (iter.hasNext()) {
-            Map.Entry<Long, BaseRegionLoader> entry = iter.next();
-            long index = entry.getKey();
-            BaseRegionLoader region = entry.getValue();
+            BaseRegionLoader region = iter.next();
             try {
                 region.close();
             } catch (IOException e) {

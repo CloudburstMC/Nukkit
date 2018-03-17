@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.inventory.FurnaceRecipe;
 import cn.nukkit.inventory.ShapedRecipe;
 import cn.nukkit.inventory.ShapelessRecipe;
@@ -159,4 +160,8 @@ public class CraftingDataPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

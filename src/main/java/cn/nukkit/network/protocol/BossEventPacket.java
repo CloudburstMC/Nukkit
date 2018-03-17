@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * Created by CreeperFace on 30. 10. 2016.
  */
@@ -92,5 +94,10 @@ public class BossEventPacket extends DataPacket {
                 this.putString(this.title);
                 break;
         }
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

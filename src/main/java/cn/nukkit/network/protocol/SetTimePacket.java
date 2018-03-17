@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -25,4 +27,8 @@ public class SetTimePacket extends DataPacket {
         this.putVarInt(this.time);
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

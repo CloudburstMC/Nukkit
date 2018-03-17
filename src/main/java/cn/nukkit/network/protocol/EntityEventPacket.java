@@ -1,5 +1,9 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
+import static cn.nukkit.Player.CRAFTING_SMALL;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -55,5 +59,10 @@ public class EntityEventPacket extends DataPacket {
         this.putEntityRuntimeId(this.eid);
         this.putByte((byte) this.event);
         this.putVarInt((byte) this.data);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

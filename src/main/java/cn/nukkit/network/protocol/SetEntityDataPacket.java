@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.utils.Binary;
 
@@ -28,5 +29,10 @@ public class SetEntityDataPacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.eid);
         this.put(Binary.writeMetadata(this.metadata));
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

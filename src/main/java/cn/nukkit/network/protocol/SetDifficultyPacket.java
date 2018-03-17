@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * @author Nukkit Project Team
  */
@@ -25,4 +27,8 @@ public class SetDifficultyPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

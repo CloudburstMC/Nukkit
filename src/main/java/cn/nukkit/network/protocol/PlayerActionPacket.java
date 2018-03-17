@@ -1,6 +1,19 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockNoteblock;
+import cn.nukkit.entity.data.ShortEntityData;
+import cn.nukkit.event.player.*;
+import cn.nukkit.level.Position;
+import cn.nukkit.level.particle.PunchBlockParticle;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3;
+
+import static cn.nukkit.Player.CRAFTING_SMALL;
+import static cn.nukkit.Player.DEFAULT_SPEED;
 
 /**
  * @author Nukkit Project Team
@@ -62,4 +75,8 @@ public class PlayerActionPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

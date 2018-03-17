@@ -1,15 +1,24 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.data.StringEntityData;
+import cn.nukkit.event.player.PlayerAsyncPreLoginEvent;
+import cn.nukkit.event.player.PlayerKickEvent;
+import cn.nukkit.event.player.PlayerPreLoginEvent;
+import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.ClientChainData;
+import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+
+import static cn.nukkit.entity.Entity.DATA_NAMETAG;
 
 
 /**
@@ -100,5 +109,10 @@ public class LoginPacket extends DataPacket {
     @Override
     public Skin getSkin() {
         return this.skin;
+    }
+
+    @Override
+    public void handle(Player player) {
+        player.handle(this);
     }
 }

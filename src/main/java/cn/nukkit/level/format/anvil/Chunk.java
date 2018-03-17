@@ -5,13 +5,17 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.utils.*;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.LongSet;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -132,33 +136,7 @@ public class Chunk extends BaseChunk {
 
         if (updateEntries != null && updateEntries.size() > 0) {
             for (CompoundTag entryNBT : updateEntries.getAll()) {
-                Block block = null;
-
-                try {
-                    Tag tag = entryNBT.get("i");
-                    if (tag instanceof StringTag) {
-                        String name = ((StringTag) tag).data;
-
-                        @SuppressWarnings("unchecked")
-                        Class<? extends Block> clazz = (Class<? extends Block>) Class.forName("cn.nukkit.block." + name);
-
-                        Constructor constructor = clazz.getDeclaredConstructor();
-                        constructor.setAccessible(true);
-                        block = (Block) constructor.newInstance();
-                    }
-                } catch (Throwable e) {
-                    continue;
-                }
-
-                if (block == null) {
-                    continue;
-                }
-
-                block.x = entryNBT.getInt("x");
-                block.y = entryNBT.getInt("y");
-                block.z = entryNBT.getInt("z");
-
-                this.provider.getLevel().scheduleUpdate(block, block, entryNBT.getInt("t"), entryNBT.getInt("p"), false);
+                this.provider.getLevel().scheduleUpdate(new Vector3(entryNBT.getInt("x"), entryNBT.getInt("y"), entryNBT.getInt("z")), entryNBT.getInt("t"), false);
             }
         }
 
@@ -181,7 +159,7 @@ public class Chunk extends BaseChunk {
     public void setPopulated(boolean value) {
         if (value != this.terrainPopulated) {
             this.terrainPopulated = value;
-            setChanged();
+            markDirty();
         }
     }
 
@@ -199,7 +177,7 @@ public class Chunk extends BaseChunk {
     public void setGenerated(boolean value) {
         if (this.terrainGenerated != value) {
             this.terrainGenerated = value;
-            setChanged();
+            markDirty();
         }
     }
 
@@ -303,22 +281,23 @@ public class Chunk extends BaseChunk {
         tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
 
-        Set<BlockUpdateEntry> entries = this.provider.getLevel().getPendingBlockUpdates(this);
+        Long2ObjectMap<LongSet> entries = this.provider.getLevel().getPendingBlockUpdates(this);
 
         if (entries != null) {
             ListTag<CompoundTag> tileTickTag = new ListTag<>("TileTicks");
             long totalTime = this.provider.getLevel().getCurrentTick();
 
-            for (BlockUpdateEntry entry : entries) {
-                CompoundTag entryNBT = new CompoundTag()
-                        .putString("i", entry.block.getSaveId())
-                        .putInt("x", entry.pos.getFloorX())
-                        .putInt("y", entry.pos.getFloorY())
-                        .putInt("z", entry.pos.getFloorZ())
-                        .putInt("t", (int) (entry.delay - totalTime))
-                        .putInt("p", entry.priority);
-                tileTickTag.add(entryNBT);
-            }
+            entries.forEach((obj, set) -> {
+                long tick = obj;
+                set.forEach((long key) -> {
+                    CompoundTag entryNBT = new CompoundTag()
+                            .putInt("x", Level.getXFrom(key))
+                            .putInt("y", Level.getYFrom(key))
+                            .putInt("z", Level.getZFrom(key))
+                            .putInt("t", (int) (tick - totalTime));
+                    tileTickTag.add(entryNBT);
+                });
+            });
 
             nbt.putList(tileTickTag);
         }
@@ -395,22 +374,23 @@ public class Chunk extends BaseChunk {
         tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
 
-        Set<BlockUpdateEntry> entries = this.provider.getLevel().getPendingBlockUpdates(this);
+        Long2ObjectMap<LongSet> entries = this.provider.getLevel().getPendingBlockUpdates(this);
 
         if (entries != null) {
             ListTag<CompoundTag> tileTickTag = new ListTag<>("TileTicks");
             long totalTime = this.provider.getLevel().getCurrentTick();
 
-            for (BlockUpdateEntry entry : entries) {
-                CompoundTag entryNBT = new CompoundTag()
-                        .putString("i", entry.block.getSaveId())
-                        .putInt("x", entry.pos.getFloorX())
-                        .putInt("y", entry.pos.getFloorY())
-                        .putInt("z", entry.pos.getFloorZ())
-                        .putInt("t", (int) (entry.delay - totalTime))
-                        .putInt("p", entry.priority);
-                tileTickTag.add(entryNBT);
-            }
+            entries.forEach((obj, set) -> {
+                long tick = obj;
+                set.forEach((long key) -> {
+                    CompoundTag entryNBT = new CompoundTag()
+                            .putInt("x", Level.getXFrom(key))
+                            .putInt("y", Level.getYFrom(key))
+                            .putInt("z", Level.getZFrom(key))
+                            .putInt("t", (int) (tick - totalTime));
+                    tileTickTag.add(entryNBT);
+                });
+            });
 
             nbt.putList(tileTickTag);
         }

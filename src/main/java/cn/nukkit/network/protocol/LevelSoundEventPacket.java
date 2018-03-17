@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 
+import cn.nukkit.Player;
 import cn.nukkit.math.Vector3f;
 
 public class LevelSoundEventPacket extends DataPacket {
@@ -210,4 +211,9 @@ public class LevelSoundEventPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
+
+	@Override
+	protected void handle(Player player) {
+		player.handle(this);
+	}
 }

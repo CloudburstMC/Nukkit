@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.math.Vector3f;
 
 /**
@@ -48,5 +49,10 @@ public class MoveEntityPacket extends DataPacket {
         this.putByte((byte) (this.yaw / (360d / 256d)));
         this.putBoolean(this.onGround);
         this.putBoolean(this.teleport);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class SpawnExperienceOrbPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.SPAWN_EXPERIENCE_ORB_PACKET;
@@ -24,5 +26,10 @@ public class SpawnExperienceOrbPacket extends DataPacket {
     @Override
     public byte pid() {
         return NETWORK_ID;
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

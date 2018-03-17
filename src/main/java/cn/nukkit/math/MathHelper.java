@@ -95,6 +95,16 @@ public class MathHelper {
         return check > max ? max : (check < min ? min : check);
     }
 
+    public static int roundUpToPowerOfTwo(int value) {
+        int i = value - 1;
+        i = i | i >> 1;
+        i = i | i >> 2;
+        i = i | i >> 4;
+        i = i | i >> 8;
+        i = i | i >> 16;
+        return i + 1;
+    }
+
     public static double denormalizeClamp(double lowerBnd, double upperBnd, double slide) {
         return slide < 0.0D ? lowerBnd : (slide > 1.0D ? upperBnd : lowerBnd + (upperBnd - lowerBnd) * slide);
     }

@@ -48,7 +48,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
@@ -71,8 +70,10 @@ import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
-import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
+import cn.nukkit.tick.ServerTickManager;
+import cn.nukkit.tick.TickRate;
+import cn.nukkit.tick.thread.ServerTickThread;
 import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
@@ -80,6 +81,9 @@ import com.google.common.base.Preconditions;
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author MagicDroidX
@@ -100,33 +104,21 @@ public class Server {
 
     private Config whitelist = null;
 
-    private boolean isRunning = true;
+    public volatile boolean isRunning = true;
 
     private boolean hasStopped = false;
 
     private PluginManager pluginManager = null;
 
-    private int profilingTickrate = 20;
+    public ServerScheduler scheduler = null;
 
-    private ServerScheduler scheduler = null;
+    public int tickCounter;
 
-    private int tickCounter;
-
-    private long nextTick;
-
-    private final float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
-
-    private final float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-    private float maxTick = 20;
-
-    private float maxUse = 0;
-
-    private int sendUsageTicker = 0;
+    public int sendUsageTicker = 0;
 
     private boolean dispatchSignals = false;
 
-    private final MainLogger logger;
+    public final MainLogger logger;
 
     private final CommandReader console;
 
@@ -140,9 +132,9 @@ public class Server {
 
     private int maxPlayers;
 
-    private boolean autoSave;
+    public boolean autoSave;
 
-    private RCON rcon;
+    public RCON rcon;
 
     private EntityMetadataStore entityMetadata;
 
@@ -150,7 +142,7 @@ public class Server {
 
     private LevelMetadataStore levelMetadata;
 
-    private Network network;
+    public Network network;
 
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
@@ -164,8 +156,8 @@ public class Server {
     private int difficulty = Integer.MAX_VALUE;
     private int defaultGamemode = Integer.MAX_VALUE;
 
-    private int autoSaveTicker = 0;
-    private int autoSaveTicks = 6000;
+    public int autoSaveTicker = 0;
+    public int autoSaveTicks = 6000;
 
     private BaseLang baseLang;
 
@@ -179,14 +171,16 @@ public class Server {
 
     private final Set<UUID> uniquePlayers = new HashSet<>();
 
-    private QueryHandler queryHandler;
+    public QueryHandler queryHandler;
 
-    private QueryRegenerateEvent queryRegenerateEvent;
+    public QueryRegenerateEvent queryRegenerateEvent;
 
     private Config properties;
     private Config config;
 
-    private final Map<String, Player> players = new HashMap<>();
+    public final ServerTickManager tickManager;
+
+    public final Map<String, Player> players = new HashMap<>();
 
     private final Map<UUID, Player> playerList = new HashMap<>();
 
@@ -212,7 +206,7 @@ public class Server {
         }
     };
 
-    private Level[] levelArray = new Level[0];
+    public Level[] levelArray = new Level[0];
 
     private final ServiceManager serviceManager = new NKServiceManager();
 
@@ -330,16 +324,19 @@ public class Server {
         this.logger.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
         this.logger.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.WHITE));
 
+        this.tickManager = new ServerTickManager(this);
         Object poolSize = this.getConfig("settings.async-workers", "auto");
         if (!(poolSize instanceof Integer)) {
             try {
                 poolSize = Integer.valueOf((String) poolSize);
             } catch (Exception e) {
-                poolSize = Math.max(Runtime.getRuntime().availableProcessors() + 1, 4);
+                poolSize = Math.max(Runtime.getRuntime().availableProcessors(), 4);
             }
         }
-
-        ServerScheduler.WORKERS = (int) poolSize;
+        int workerCount = (int) poolSize;
+        for (int i = 0; i < workerCount; i++)   {
+            this.tickManager.addWorkerThread(new ServerTickThread(this, this.tickManager));
+        }
 
         this.networkZlibProvider = (int) this.getConfig("network.zlib-provider", 2);
         Zlib.setProvider(this.networkZlibProvider);
@@ -595,6 +592,44 @@ public class Server {
         }
     }
 
+    public void batchPackets(Player target, List<DataPacket> packets)   {
+        this.batchPackets(target, packets, false);
+    }
+
+    public void batchPackets(Player target, List<DataPacket> packets, boolean forceSync)   {
+        if (target == null || packets == null || packets.size() == 0) {
+            return;
+        }
+
+        Timings.playerNetworkSendTimer.startTiming();
+        byte[][] payload = new byte[packets.size() * 2][];
+        //int size = 0;
+        for (int i = 0; i < packets.size(); i++) {
+            DataPacket p = packets.get(i);
+            if (!p.isEncoded) {
+                p.encode();
+            }
+            byte[] buf = p.getBuffer();
+            payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
+            payload[i * 2 + 1] = buf;
+            //size += payload[i * 2].length;
+            //size += payload[i * 2 + 1].length;
+        }
+
+        //porktodo: fix this
+        if (false && !forceSync && this.networkCompressionAsync) {
+            //this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
+        } else {
+            try {
+                byte[] data = Binary.appendBytes(payload);
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), target);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Timings.playerNetworkSendTimer.stopTiming();
+    }
+
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
@@ -606,7 +641,7 @@ public class Server {
 
         Timings.playerNetworkSendTimer.startTiming();
         byte[][] payload = new byte[packets.length * 2][];
-        int size = 0;
+        //int size = 0;
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
             if (!p.isEncoded) {
@@ -616,23 +651,17 @@ public class Server {
             payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
             payload[i * 2 + 1] = buf;
             packets[i] = null;
-            size += payload[i * 2].length;
-            size += payload[i * 2 + 1].length;
+            //size += payload[i * 2].length;
+            //size += payload[i * 2 + 1].length;
         }
 
-        List<String> targets = new ArrayList<>();
-        for (Player p : players) {
-            if (p.isConnected()) {
-                targets.add(this.identifier.get(p.rawHashCode()));
-            }
-        }
-
-        if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
+        //porktodo: fix this
+        if (false && !forceSync && this.networkCompressionAsync) {
+            //this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
         } else {
             try {
                 byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), players);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -640,13 +669,22 @@ public class Server {
         Timings.playerNetworkSendTimer.stopTiming();
     }
 
-    public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
+    public void broadcastPacketsCallback(byte[] data, Player player)    {
+        if (player.isConnected()) {
+            BatchPacket packet = new BatchPacket();
+            packet.payload = data;
+
+            player.dataPacket(packet);
+        }
+    }
+
+    public void broadcastPacketsCallback(byte[] data, Player[] players) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
 
-        for (String i : identifiers) {
-            if (this.players.containsKey(i)) {
-                this.players.get(i).dataPacket(pk);
+        for (Player player : players)   {
+            if (player.isConnected())   {
+                player.dataPacket(pk);
             }
         }
     }
@@ -778,7 +816,9 @@ public class Server {
 
             this.getLogger().debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
-            this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
+
+            this.getLogger().debug("Stopping tick manager");
+            this.tickManager.shutdown();
 
             this.getLogger().debug("Unloading all levels");
             for (Level level : this.levelArray) {
@@ -836,43 +876,29 @@ public class Server {
         }
     }
 
-    private int lastLevelGC;
-
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
         try {
             while (this.isRunning) {
+                //System.out.println("Running tick " + this.tickCounter);
+                long nextTickTime = this.nextTick = System.currentTimeMillis() + 50;
                 try {
-                    this.tick();
-
-                    long next = this.nextTick;
-                    long current = System.currentTimeMillis();
-
-                    if (next - 0.1 > current) {
-                        long allocated = next - current - 1;
-
-                        { // Instead of wasting time, do something potentially useful
-                            int offset = 0;
-                            for (int i = 0; i < levelArray.length; i++) {
-                                offset = (i + lastLevelGC) % levelArray.length;
-                                Level level = levelArray[offset];
-                                level.doGarbageCollection(allocated - 1);
-                                allocated = next - System.currentTimeMillis();
-                                if (allocated <= 0) {
-                                    break;
-                                }
-                            }
-                            lastLevelGC = offset + 1;
-                        }
-
-                        if (allocated > 0) {
-                            Thread.sleep(allocated, 900000);
-                        }
-                    }
+                    //do actual server tick logic
+                    this.tickManager.tick();
                 } catch (RuntimeException e) {
                     this.getLogger().logException(e);
                 }
+                if (this.isRunning) {
+                    //sleep outside of try/catch so that if there is an exception thrown we won't tick too fast
+                    long sleepTime = Math.max(0, nextTickTime - System.currentTimeMillis());
+                    if (sleepTime != 0) {
+                        //sleep the remaining time until next tick should happen
+                        //if negative then it won't sleep, can be negative if a tick takes longer than 50ms
+                        Thread.sleep(sleepTime);
+                    }
+                }
             }
+            this.tickManager.shutdown();
         } catch (Throwable e) {
             this.logger.emergency("Exception happened while ticking server");
             this.logger.alert(Utils.getExceptionMessage(e));
@@ -972,59 +998,82 @@ public class Server {
         player.dataPacket(CraftingManager.packet);
     }
 
-    private void checkTickUpdates(int currentTick, long tickTime) {
-        for (Player p : new ArrayList<>(this.players.values())) {
-            /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
-                continue;
+    private final Lock threadedTickLock = new ReentrantLock();
+    private volatile Iterator<Player> threadPlayerIterator;
+
+    private volatile boolean doGC = false;
+    private final Lock doGcLock = new ReentrantLock();
+    private final Condition doGcWait = doGcLock.newCondition();
+
+    /**
+     * Forces the server to do garbage collection in the next tick.
+     * Waits until the next tick has done garbage collection to return
+     */
+    public void forceGC()   {
+        doGC = true;
+        try {
+            doGcLock.lock();
+            doGcWait.await();
+        } catch (InterruptedException e)    {
+            e.printStackTrace();
+        } finally {
+            doGcLock.unlock();
+        }
+    }
+
+    public void threadedTick() {
+        threadedTickLock.lock();
+        if (threadPlayerIterator == null)   {
+            threadPlayerIterator = new ArrayList<>(this.players.values()).iterator();
+        }
+        while (threadPlayerIterator.hasNext())    {
+            Player player = threadPlayerIterator.next();
+            threadedTickLock.unlock();
+
+            player.onUpdate(0);
+
+            threadedTickLock.lock();
+        }
+        threadedTickLock.unlock();
+
+        if (this.doGC && this.tickCounter % 100 == 0) {
+            for (Level level : this.levelArray) {
+                level.threadedGarbageCollection();
+                level.threadedUnloadChunks();
             }
 
-            client freezes when applying resource packs
-            todo: fix*/
-
-            if (this.alwaysTickPlayers) {
-                p.onUpdate(currentTick);
+            threadedTickLock.lock();
+            if (doGC)   {
+                doGC = false;
+                doGcLock.lock();
+                doGcWait.signalAll();
+                doGcLock.unlock();
             }
+            threadedTickLock.unlock();
         }
 
-        //Do level ticks
+        for (Level level : this.levelArray)  {
+            level.threadedTick(this.tickCounter);
+        }
+
+        this.scheduler.threadedHeartbeat(this.tickCounter);
+    }
+
+    public synchronized void doPostTick()    {
+        threadPlayerIterator = null;
+
+        for (Level level : this.levelArray)  {
+            level.doPostTick();
+        }
+
+        this.scheduler.doPostTick();
+    }
+
+    public synchronized void doPreTick()    {
+        this.tickCounter++;
+
         for (Level level : this.levelArray) {
-            if (level.getTickRate() > this.baseTickRate && --level.tickRateCounter > 0) {
-                continue;
-            }
-
-            try {
-                long levelTime = System.currentTimeMillis();
-                level.doTick(currentTick);
-                int tickMs = (int) (System.currentTimeMillis() - levelTime);
-                level.tickRateTime = tickMs;
-
-                if (this.autoTickRate) {
-                    if (tickMs < 50 && level.getTickRate() > this.baseTickRate) {
-                        int r;
-                        level.setTickRate(r = level.getTickRate() - 1);
-                        if (r > this.baseTickRate) {
-                            level.tickRateCounter = level.getTickRate();
-                        }
-                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + level.getTickRate() + " ticks");
-                    } else if (tickMs >= 50) {
-                        if (level.getTickRate() == this.baseTickRate) {
-                            level.setTickRate((int) Math.max(this.baseTickRate + 1, Math.min(this.autoTickRateLimit, Math.floor(tickMs / 50))));
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
-                        } else if ((tickMs / level.getTickRate()) >= 50 && level.getTickRate() < this.autoTickRateLimit) {
-                            level.setTickRate(level.getTickRate() + 1);
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
-                        }
-                        level.tickRateCounter = level.getTickRate();
-                    }
-                }
-            } catch (Exception e) {
-                if (Nukkit.DEBUG > 1 && this.logger != null) {
-                    this.logger.logException(e);
-                }
-
-                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.toString()}));
-                this.logger.logException(e);
-            }
+            level.doPreTick();
         }
     }
 
@@ -1047,10 +1096,10 @@ public class Server {
     }
 
     private boolean tick() {
-        long tickTime = System.currentTimeMillis();
+        //long tickTime = System.currentTimeMillis();
 
         // TODO
-        long sleepTime = tickTime - this.nextTick;
+        /*long sleepTime = tickTime - this.nextTick;
         if (sleepTime < -25) {
             try {
                 Thread.sleep(Math.max(5, -sleepTime - 25));
@@ -1062,31 +1111,27 @@ public class Server {
         long tickTimeNano = System.nanoTime();
         if ((tickTime - this.nextTick) < -25) {
             return false;
-        }
+        }*/
 
         Timings.fullServerTickTimer.startTiming();
 
         ++this.tickCounter;
 
-        Timings.connectionTimer.startTiming();
+        /*Timings.connectionTimer.startTiming();
         this.network.processInterfaces();
 
         if (this.rcon != null) {
             this.rcon.check();
         }
-        Timings.connectionTimer.stopTiming();
+        Timings.connectionTimer.stopTiming();*/
 
-        Timings.schedulerTimer.startTiming();
+        /*Timings.schedulerTimer.startTiming();
         this.scheduler.mainThreadHeartbeat(this.tickCounter);
-        Timings.schedulerTimer.stopTiming();
+        Timings.schedulerTimer.stopTiming();*/
 
-        this.checkTickUpdates(this.tickCounter, tickTime);
+        //this.checkTickUpdates(this.tickCounter, tickTime);
 
-        for (Player player : new ArrayList<>(this.players.values())) {
-            player.checkNetwork();
-        }
-
-        if ((this.tickCounter & 0b1111) == 0) {
+        /*if ((this.tickCounter & 0b1111) == 0) {
             this.titleTick();
             this.network.resetStatistics();
             this.maxTick = 20;
@@ -1104,9 +1149,9 @@ public class Server {
             }
 
             this.getNetwork().updateName();
-        }
+        }*/
 
-        if (this.autoSave && ++this.autoSaveTicker >= this.autoSaveTicks) {
+        /*if (this.autoSave && ++this.autoSaveTicker >= this.autoSaveTicks) {
             this.autoSaveTicker = 0;
             this.doAutoSave();
         }
@@ -1114,21 +1159,21 @@ public class Server {
         if (this.sendUsageTicker > 0 && --this.sendUsageTicker == 0) {
             this.sendUsageTicker = 6000;
             //todo sendUsage
-        }
+        }*/
 
-        if (this.tickCounter % 100 == 0) {
+        /*if (this.tickCounter % 100 == 0) {
             for (Level level : this.levelArray) {
                 level.doChunkGarbageCollection();
             }
-        }
+        }*/
 
         Timings.fullServerTickTimer.stopTiming();
         //long now = System.currentTimeMillis();
-        long nowNano = System.nanoTime();
+        //long nowNano = System.nanoTime();
         //float tick = Math.min(20, 1000 / Math.max(1, now - tickTime));
         //float use = Math.min(1, (now - tickTime) / 50);
 
-        float tick = (float) Math.min(20, 1000000000 / Math.max(1000000, ((double) nowNano - tickTimeNano)));
+        /*float tick = (float) Math.min(20, 1000000000 / Math.max(1000000, ((double) nowNano - tickTimeNano)));
         float use = (float) Math.min(1, ((double) (nowNano - tickTimeNano)) / 50000000);
 
         if (this.maxTick > tick) {
@@ -1149,10 +1194,12 @@ public class Server {
             this.nextTick = tickTime;
         } else {
             this.nextTick += 50;
-        }
+        }*/
 
         return true;
     }
+
+    private volatile long nextTick;
 
     public long getNextTick() {
         return nextTick;
@@ -1176,7 +1223,7 @@ public class Server {
             title += " | U " + NukkitMath.round((this.network.getUpload() / 1024 * 1000), 2)
                     + " D " + NukkitMath.round((this.network.getDownload() / 1024 * 1000), 2) + " kB/s";
         }
-        title += " | TPS " + this.getTicksPerSecond()
+        title += " | currentTps " + this.getTicksPerSecond()
                 + " | Load " + this.getTickUsage() + "%" + (char) 0x07;
 
         System.out.print(title);
@@ -1380,7 +1427,7 @@ public class Server {
         return this.getPropertyString("sub-motd", "Powered by Nukkit");
     }
 
-    public boolean getForceResources() {
+    public boolean forceResources() {
         return this.getPropertyBoolean("force-resources", false);
     }
 
@@ -1421,29 +1468,15 @@ public class Server {
     }
 
     public float getTicksPerSecond() {
-        return ((float) Math.round(this.maxTick * 100)) / 100;
+        return TickRate.INSTANCE.currentTps;
     }
 
     public float getTicksPerSecondAverage() {
-        float sum = 0;
-        int count = this.tickAverage.length;
-        for (float aTickAverage : this.tickAverage) {
-            sum += aTickAverage;
-        }
-        return (float) NukkitMath.round(sum / count, 2);
+        return getTicksPerSecond();
     }
 
     public float getTickUsage() {
-        return (float) NukkitMath.round(this.maxUse * 100, 2);
-    }
-
-    public float getTickUsageAverage() {
-        float sum = 0;
-        int count = this.useAverage.length;
-        for (float aUseAverage : this.useAverage) {
-            sum += aUseAverage;
-        }
-        return ((float) Math.round(sum / count * 100)) / 100;
+        return TickRate.INSTANCE.currentLoad;
     }
 
     public SimpleCommandMap getCommandMap() {
@@ -1520,8 +1553,8 @@ public class Server {
     public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
         if (this.shouldSavePlayerData()) {
             try {
-                if (async) {
-                    this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
+                if (false && async) {
+                    //this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
                 } else {
                     Utils.writeFile(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", new ByteArrayInputStream(NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
                 }
@@ -1688,8 +1721,6 @@ public class Server {
 
         this.getPluginManager().callEvent(new LevelLoadEvent(level));
 
-        level.setTickRate(this.baseTickRate);
-
         return true;
     }
 
@@ -1744,7 +1775,6 @@ public class Server {
             this.levels.put(level.getId(), level);
 
             level.initLevel();
-            level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
             this.logger.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
             this.logger.logException(e);
@@ -2001,7 +2031,7 @@ public class Server {
      * false otherwise
      */
     public final boolean isPrimaryThread() {
-        return (Thread.currentThread() == currentThread);
+        return Thread.currentThread() instanceof ServerTickThread;
     }
 
     public Thread getPrimaryThread() {

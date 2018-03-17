@@ -175,7 +175,7 @@ public class Network {
      */
     public void processPackets(Player player, List<DataPacket> packets) {
         if (packets.isEmpty()) return;
-        packets.forEach(player::handleDataPacket);
+        packets.forEach(dataPacket -> dataPacket.doHandle(player));
     }
 
 

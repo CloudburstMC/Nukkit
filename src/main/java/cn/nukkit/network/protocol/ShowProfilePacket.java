@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -25,4 +27,8 @@ public class ShowProfilePacket extends DataPacket {
         this.putString(this.xuid);
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

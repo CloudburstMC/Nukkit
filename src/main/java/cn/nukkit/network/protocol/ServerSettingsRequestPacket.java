@@ -1,5 +1,10 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.event.player.PlayerServerSettingsRequestEvent;
+
+import java.util.HashMap;
+
 public class ServerSettingsRequestPacket extends DataPacket {
 
     @Override
@@ -15,5 +20,10 @@ public class ServerSettingsRequestPacket extends DataPacket {
     @Override
     public void encode() {
 
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

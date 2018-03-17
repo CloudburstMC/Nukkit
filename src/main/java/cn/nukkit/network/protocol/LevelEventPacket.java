@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.math.Vector3f;
 
 /**
@@ -118,5 +119,10 @@ public class LevelEventPacket extends DataPacket {
         this.putVarInt(this.evid);
         this.putVector3f(this.x, this.y, this.z);
         this.putVarInt(this.data);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

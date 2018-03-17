@@ -1,5 +1,10 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.command.Command;
+import cn.nukkit.lang.TranslationContainer;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -23,5 +28,10 @@ public class SetPlayerGameTypePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putVarInt(this.gamemode);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

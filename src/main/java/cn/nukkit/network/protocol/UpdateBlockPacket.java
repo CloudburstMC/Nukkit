@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 
+import cn.nukkit.Player;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -40,6 +42,11 @@ public class UpdateBlockPacket extends DataPacket {
         this.putBlockVector3(x, y, z);
         this.putUnsignedVarInt(blockId);
         this.putUnsignedVarInt((0xb << 4) | blockData & 0xf);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 
     public static class Entry {

@@ -1,5 +1,17 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityRideable;
+import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.item.EntityXPOrb;
+import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.event.player.PlayerKickEvent;
+import cn.nukkit.event.player.PlayerMouseOverEntityEvent;
+import cn.nukkit.item.Item;
+
+import static cn.nukkit.Player.CRAFTING_SMALL;
+
 /**
  * Created on 15-10-15.
  */
@@ -33,4 +45,8 @@ public class InteractPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

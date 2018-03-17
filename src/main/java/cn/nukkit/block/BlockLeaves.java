@@ -12,6 +12,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Hash;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 /**
@@ -116,7 +117,7 @@ public class BlockLeaves extends BlockTransparentMeta {
                 LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
                 Server.getInstance().getPluginManager().callEvent(ev);
-                if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
+                if (ev.isCancelled() || findLog(this, new LongOpenHashSet(), 0, check)) {
                     getLevel().setBlock(this, this, false, false);
                 } else {
                     getLevel().useBreakOn(this);

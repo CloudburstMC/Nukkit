@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+import cn.nukkit.entity.item.EntityBoat;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 
 /**
@@ -68,4 +71,8 @@ public class MovePlayerPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

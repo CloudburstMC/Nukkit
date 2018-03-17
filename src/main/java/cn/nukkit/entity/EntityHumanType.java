@@ -21,8 +21,8 @@ import java.util.Random;
 
 public abstract class EntityHumanType extends EntityCreature implements InventoryHolder {
 
-    protected PlayerInventory inventory;
-    protected PlayerEnderChestInventory enderChestInventory;
+    public PlayerInventory inventory;
+    public PlayerEnderChestInventory enderChestInventory;
 
     public EntityHumanType(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);

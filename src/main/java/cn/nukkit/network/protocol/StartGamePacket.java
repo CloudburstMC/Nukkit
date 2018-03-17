@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.level.GameRules;
 
 /**
@@ -98,4 +99,8 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.enchantmentSeed);
     }
 
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
+    }
 }

@@ -3,133 +3,129 @@ package cn.nukkit.scheduler;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.BlockUpdateEntry;
-import com.google.common.collect.Maps;
-import java.util.*;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * @author DaPorkchop_
+ */
 public class BlockUpdateScheduler {
     private final Level level;
-    private long lastTick;
-    private Map<Long, LinkedHashSet<BlockUpdateEntry>> queuedUpdates;
-
-    private Set<BlockUpdateEntry> pendingUpdates;
+    private final Long2ObjectMap<LongSet> queuedUpdates;
+    private final Lock tickLock = new ReentrantLock();
+    private volatile LongIterator iterator;
+    private volatile long currentTick;
 
     public BlockUpdateScheduler(Level level, long currentTick) {
-        queuedUpdates = Maps.newHashMap(); // Change to ConcurrentHashMap if this needs to be concurrent
-        lastTick = currentTick;
+        queuedUpdates = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
         this.level = level;
+        this.currentTick = currentTick;
     }
 
-    public synchronized void tick(long currentTick) {
-        // Should only perform once, unless ticks were skipped
-        if (currentTick - lastTick < Short.MAX_VALUE) {// Arbitrary
-            for (long tick = lastTick + 1; tick <= currentTick; tick++) {
-                perform(tick);
+    public void threadedTick(long currentTick) {
+        tickLock.lock();
+        if (iterator == null) {
+            LongSet queuedUpdatesThisTick = queuedUpdates.get(currentTick);
+            if (queuedUpdatesThisTick == null) {
+                tickLock.unlock();
+                return;
             }
-        } else {
-            ArrayList<Long> times = new ArrayList<>(queuedUpdates.keySet());
-            Collections.sort(times);
-            for (long tick : times) {
-                if (tick <= currentTick) {
-                    perform(tick);
-                } else {
-                    break;
-                }
-            }
+            iterator = queuedUpdatesThisTick.iterator();
         }
-        lastTick = currentTick;
+
+        while (iterator.hasNext()) {
+            long pos = iterator.nextLong();
+            tickLock.unlock();
+
+            int x = Level.getXFrom(pos);
+            int y = Level.getYFrom(pos);
+            int z = Level.getZFrom(pos);
+            if (level.isChunkLoaded(x >> 4, z >> 4)) {
+                Block block = level.getBlock(x, y, z);
+
+                block.onUpdate(Level.BLOCK_UPDATE_SCHEDULED);
+            } else {
+                //porktodo: this does nothing, we somehow need to force-enqueue these block updates for unloaded and potentially non-existant chunks
+                level.scheduleUpdate(new Vector3(x, y, z), 0);
+            }
+
+            tickLock.lock();
+        }
+
+        this.currentTick = currentTick;
+        tickLock.unlock();
     }
 
-    private void perform(long tick) {
-        try {
-            lastTick = tick;
-            Set<BlockUpdateEntry> updates = pendingUpdates = queuedUpdates.remove(tick);
-            if (updates != null) {
-                for (BlockUpdateEntry entry : updates) {
-                    Vector3 pos = entry.pos;
-                    if (level.isChunkLoaded(NukkitMath.floorDouble(pos.x) >> 4, NukkitMath.floorDouble(pos.z) >> 4)) {
-                        Block block = level.getBlock(entry.pos);
+    public Long2ObjectMap<LongSet> getPendingBlockUpdates(AxisAlignedBB boundingBox) {
+        Long2ObjectMap<LongSet> map = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
+        synchronized (queuedUpdates) {
+            queuedUpdates.forEach((tick, updates) -> {
+                LongSet set = LongSets.synchronize(new LongOpenHashSet());
+                updates.forEach((long entry) -> {
+                    int x = Level.getXFrom(entry);
+                    int z = Level.getZFrom(entry);
 
-                        if (Block.equals(block, entry.block, false)) {
-                            block.onUpdate(level.BLOCK_UPDATE_SCHEDULED);
-                        }
-                    } else {
-                        level.scheduleUpdate(entry.block, entry.pos, 0);
+                    if (x >= boundingBox.getMinX() && x < boundingBox.getMaxX() && z >= boundingBox.getMinZ() && z < boundingBox.getMaxZ()) {
+                        set.add(entry);
                     }
+                });
+                if (!set.isEmpty()) {
+                    map.put((long) tick, set);
                 }
-            }
-        } finally {
-            pendingUpdates = null;
+            });
         }
+        return map;
     }
 
-    public Set<BlockUpdateEntry> getPendingBlockUpdates(AxisAlignedBB boundingBox) {
-        Set<BlockUpdateEntry> set = null;
-
-        for (Map.Entry<Long, LinkedHashSet<BlockUpdateEntry>> tickEntries : this.queuedUpdates.entrySet()) {
-            LinkedHashSet<BlockUpdateEntry> tickSet = tickEntries.getValue();
-            for (BlockUpdateEntry update : tickSet) {
-                Vector3 pos = update.pos;
-
-                if (pos.getX() >= boundingBox.getMinX() && pos.getX() < boundingBox.getMaxX() && pos.getZ() >= boundingBox.getMinZ() && pos.getZ() < boundingBox.getMaxZ()) {
-                    if (set == null) {
-                        set = new LinkedHashSet<>();
-                    }
-
-                    set.add(update);
-                }
-            }
-        }
-
-        return set;
+    public boolean isBlockTickPending(Vector3 pos) {
+        return contains(Level.blockHash(pos));
     }
 
-    public boolean isBlockTickPending(Vector3 pos, Block block) {
-        Set<BlockUpdateEntry> tmpUpdates = pendingUpdates;
-        if (tmpUpdates == null || tmpUpdates.isEmpty()) return false;
-        return tmpUpdates.contains(new BlockUpdateEntry(pos, block));
-    }
-
-    private long getMinTime(BlockUpdateEntry entry) {
-        return Math.max(entry.delay, lastTick + 1);
-    }
-
-    public void add(BlockUpdateEntry entry) {
-        long time = getMinTime(entry);
-        LinkedHashSet<BlockUpdateEntry> updateSet = queuedUpdates.get(time);
-        if (updateSet == null) {
-            LinkedHashSet<BlockUpdateEntry> tmp = queuedUpdates.putIfAbsent(time, updateSet = new LinkedHashSet<>());
-            if (tmp != null) updateSet = tmp;
-        }
-        updateSet.add(entry);
-    }
-
-    public boolean contains(BlockUpdateEntry entry) {
-        for (Map.Entry<Long, LinkedHashSet<BlockUpdateEntry>> tickUpdateSet : queuedUpdates.entrySet()) {
-            if (tickUpdateSet.getValue().contains(entry)) {
+    public boolean contains(long hash) {
+        for (LongSet set : queuedUpdates.values())  {
+            if (set.contains(hash)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean remove(BlockUpdateEntry entry) {
-        for (Map.Entry<Long, LinkedHashSet<BlockUpdateEntry>> tickUpdateSet : queuedUpdates.entrySet()) {
-            if (tickUpdateSet.getValue().remove(entry)) {
-                return true;
-            }
+    public boolean add(long entry, long tick) {
+        if (tick <= currentTick) {
+            return false;
         }
-        return false;
+        LongSet set = queuedUpdates.get(tick);
+        if (set == null)    {
+            set = LongSets.synchronize(new LongOpenHashSet());
+            queuedUpdates.put(tick, set);
+        }
+        return set.add(entry);
     }
 
-    public boolean remove(Vector3 pos) {
-        for (Map.Entry<Long, LinkedHashSet<BlockUpdateEntry>> tickUpdateSet : queuedUpdates.entrySet()) {
-            if (tickUpdateSet.getValue().remove(pos)) {
-                return true;
-            }
+    public boolean remove(long entry, long tick) {
+        LongSet set = queuedUpdates.get(tick);
+        if (set == null)    {
+            return false;
         }
-        return false;
+        return set.remove(entry);
+    }
+
+    public boolean remove(Vector3 pos, long tick) {
+        return remove(Level.blockHash(pos), tick);
+    }
+
+    public void doPostTick()    {
+        synchronized (queuedUpdates)    {
+            queuedUpdates.long2ObjectEntrySet().removeIf(entry -> entry.getLongKey() < currentTick);
+        }
+
+        iterator = null;
     }
 }

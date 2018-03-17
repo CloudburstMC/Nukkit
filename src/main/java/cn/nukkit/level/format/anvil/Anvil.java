@@ -10,16 +10,20 @@ import cn.nukkit.level.format.generic.BaseRegionLoader;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.ThreadCache;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+
+import javax.security.auth.callback.Callback;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -100,7 +104,7 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
+    public void encodeChunkForSending(int x, int z, BiConsumer<Long, byte[]> callback) throws ChunkException {
         Chunk chunk = (Chunk) this.getChunk(x, z, false);
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk Set");
@@ -166,9 +170,8 @@ public class Anvil extends BaseLevelProvider {
         }
         stream.put(blockEntities);
 
+        callback.accept(timestamp, stream.getBuffer());
         this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
-
-        return null;
     }
 
     private int lastPosition = 0;
@@ -178,14 +181,14 @@ public class Anvil extends BaseLevelProvider {
         long start = System.currentTimeMillis();
         int maxIterations = size();
         if (lastPosition > maxIterations) lastPosition = 0;
-        ObjectIterator<BaseFullChunk> iter = getChunks();
+        ObjectIterator<? extends FullChunk> iter = getLoadedChunkIterator();
         if (lastPosition != 0) iter.skip(lastPosition);
         int i;
         for (i = 0; i < maxIterations; i++) {
             if (!iter.hasNext()) {
-                iter = getChunks();
+                iter = getLoadedChunkIterator();
             }
-            BaseFullChunk chunk = iter.next();
+            BaseFullChunk chunk = (BaseFullChunk) iter.next();
             if (chunk == null) continue;
             if (chunk.isGenerated() && chunk.isPopulated() && chunk instanceof Chunk) {
                 Chunk anvilChunk = (Chunk) chunk;
@@ -199,6 +202,18 @@ public class Anvil extends BaseLevelProvider {
     @Override
     public void doGarbageCollection() {
         int limit = (int) (System.currentTimeMillis() - 50);
+        ObjectIterator<BaseRegionLoader> iter = this.regions.values().iterator();
+        while (iter.hasNext())  {
+            BaseRegionLoader region = iter.next();
+            if (region.lastUsed <= limit) {
+                try {
+                    region.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                iter.remove();
+            }
+        }
         for (Map.Entry<Long, BaseRegionLoader> entry : this.regions.entrySet()) {
             long index = entry.getKey();
             BaseRegionLoader region = entry.getValue();

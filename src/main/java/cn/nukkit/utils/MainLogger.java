@@ -22,7 +22,7 @@ public class MainLogger extends ThreadedLogger {
     protected final String logPath;
     protected final ConcurrentLinkedQueue<String> logBuffer = new ConcurrentLinkedQueue<>();
     protected boolean shutdown = false;
-    private boolean isShutdown = false;
+    private volatile boolean isShutdown = false;
     protected LogLevel logLevel = LogLevel.DEFAULT_LEVEL;
     private final Map<TextFormat, String> replacements = new EnumMap<>(TextFormat.class);
     private final TextFormat[] colors = TextFormat.values();
@@ -121,7 +121,7 @@ public class MainLogger extends ThreadedLogger {
             this.interrupt();
             while (!this.isShutdown) {
                 try {
-                    wait(1000);
+                    wait();
                 } catch (InterruptedException e) {
                     // Ignore exception and treat it as we're done
                     return;
@@ -166,7 +166,8 @@ public class MainLogger extends ThreadedLogger {
             flushBuffer(logFile);
         } while (!this.shutdown);
 
-        flushBuffer(logFile);
+        //this is redundant i think
+        //flushBuffer(logFile);
         synchronized (this) {
             this.isShutdown = true;
             this.notify();
@@ -223,7 +224,7 @@ public class MainLogger extends ThreadedLogger {
     }
 
     private void waitForMessage() {
-        while (logBuffer.isEmpty()) {
+        while (!shutdown && logBuffer.isEmpty()) {
             try {
                 synchronized (this) {
                     wait(25000); // Wait for next message

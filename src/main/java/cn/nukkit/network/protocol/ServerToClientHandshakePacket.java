@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class ServerToClientHandshakePacket extends DataPacket {
 
     @Override
@@ -19,5 +21,10 @@ public class ServerToClientHandshakePacket extends DataPacket {
     @Override
     public void encode() {
         //TODO
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

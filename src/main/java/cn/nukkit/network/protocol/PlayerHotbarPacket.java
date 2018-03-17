@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.utils.Binary;
 
@@ -41,5 +42,10 @@ public class PlayerHotbarPacket extends DataPacket {
         }
 
         this.putBoolean(this.selectHotbarSlot);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

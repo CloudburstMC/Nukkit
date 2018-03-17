@@ -105,7 +105,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         int currentLevel = getPowerLevel();
         if (level != currentLevel) {
             namedTag.putInt("Level", level);
-            chunk.setChanged();
+            chunk.markDirty();
             this.spawnToAll();
         }
     }

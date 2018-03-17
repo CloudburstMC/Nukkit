@@ -121,7 +121,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockId(int x, int y, int z, int id) {
         this.blocks[(x << 11) | (z << 7) | y] = (byte) id;
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.data[i] = (byte) (((data & 0x0f) << 4) | (old & 0x0f));
         }
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -193,7 +193,7 @@ public class Chunk extends BaseFullChunk {
         }
 
         if (changed) {
-            setChanged();
+            markDirty();
         }
         return Block.get(previousId, previousData);
     }
@@ -230,7 +230,7 @@ public class Chunk extends BaseFullChunk {
         }
 
         if (changed) {
-            setChanged();
+            markDirty();
         }
         return changed;
     }
@@ -254,7 +254,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.skyLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -276,7 +276,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.blockLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
-        setChanged();
+        markDirty();
     }
 
     @Override
@@ -383,12 +383,12 @@ public class Chunk extends BaseFullChunk {
                 /*if (!entities.isEmpty() || !blockEntities.isEmpty()) {
                     CompoundTag ct = new CompoundTag();
                     ListTag<CompoundTag> entityList = new ListTag<>("entities");
-                    ListTag<CompoundTag> tileList = new ListTag<>("blockEntities");
+                    ListTag<CompoundTag> tilePositions = new ListTag<>("blockEntities");
 
                     entityList.list = entities;
-                    tileList.list = blockEntities;
+                    tilePositions.list = blockEntities;
                     ct.putList(entityList);
-                    ct.putList(tileList);
+                    ct.putList(tilePositions);
                     NBTIO.write(ct, new File(Nukkit.DATA_PATH + chunkX + "_" + chunkZ + ".dat"));
                 }*/
 

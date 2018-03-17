@@ -47,7 +47,7 @@ public class TimingsManager {
     }
 
     /**
-     * Called every tick to count the number of times a timer caused TPS loss.
+     * Called every tick to count the number of times a timer caused currentTps loss.
      */
     static void tick() {
         if (Timings.isTimingsEnabled()) {

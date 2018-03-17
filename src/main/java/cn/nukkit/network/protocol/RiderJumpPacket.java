@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class RiderJumpPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RIDER_JUMP_PACKET;
@@ -20,5 +22,10 @@ public class RiderJumpPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putVarInt(this.unknown);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

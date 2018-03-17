@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.resourcepacks.ResourcePack;
 
 public class ResourcePackStackPacket extends DataPacket {
@@ -36,5 +37,10 @@ public class ResourcePackStackPacket extends DataPacket {
     @Override
     public byte pid() {
         return NETWORK_ID;
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

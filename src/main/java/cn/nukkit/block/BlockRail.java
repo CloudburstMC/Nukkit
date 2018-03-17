@@ -143,7 +143,7 @@ public class BlockRail extends BlockFlowable {
         }
         this.level.setBlock(this, this, true, true);
         if (!isAbstract()) {
-            level.scheduleUpdate(this, this, 0);
+            level.scheduleUpdate(this, 0);
         }
         return true;
     }

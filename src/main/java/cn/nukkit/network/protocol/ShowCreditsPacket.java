@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 public class ShowCreditsPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.SHOW_CREDITS_PACKET;
@@ -25,5 +27,10 @@ public class ShowCreditsPacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.eid);
         this.putVarInt(this.status);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

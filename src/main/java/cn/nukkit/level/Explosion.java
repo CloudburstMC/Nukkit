@@ -17,6 +17,9 @@ import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.ExplodePacket;
 import cn.nukkit.utils.Hash;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.longs.LongSets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +116,7 @@ public class Explosion {
 
     public boolean explodeB() {
 
-        LongArraySet updateBlocks = new LongArraySet();
+        LongSet updateBlocks = new LongOpenHashSet();
         List<Vector3> send = new ArrayList<>();
 
         Vector3 source = (new Vector3(this.source.x, this.source.y, this.source.z)).floor();

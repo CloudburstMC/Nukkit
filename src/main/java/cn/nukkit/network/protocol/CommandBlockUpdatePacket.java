@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.math.BlockVector3;
 
 public class CommandBlockUpdatePacket extends DataPacket {
@@ -58,5 +59,10 @@ public class CommandBlockUpdatePacket extends DataPacket {
         this.putString(this.lastOutput);
         this.putString(this.name);
         this.putBoolean(this.shouldTrackOutput);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

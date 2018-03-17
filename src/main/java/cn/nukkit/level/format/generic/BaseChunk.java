@@ -49,7 +49,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     public Block getAndSetBlock(int x, int y, int z, Block block) {
         int Y = y >> 4;
         try {
-            setChanged();
+            markDirty();
             return this.sections[Y].getAndSetBlock(x, y & 0x0f, z, block);
         } catch (ChunkException e) {
             try {
@@ -65,7 +65,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     public boolean setFullBlockId(int x, int y, int z, int fullId) {
         int Y = y >> 4;
         try {
-            setChanged();
+            markDirty();
             return this.sections[Y].setFullBlockId(x, y & 0x0f, z, fullId);
         } catch (ChunkException e) {
             try {
@@ -81,7 +81,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     public boolean setBlock(int x, int y, int z, int blockId, int meta) {
         int Y = y >> 4;
         try {
-            setChanged();
+            markDirty();
             return this.sections[Y].setBlock(x, y & 0x0f, z, blockId, meta);
         } catch (ChunkException e) {
             try {
@@ -98,7 +98,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         int Y = y >> 4;
         try {
             this.sections[Y].setBlockId(x, y & 0x0f, z, id);
-            setChanged();
+            markDirty();
         } catch (ChunkException e) {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
@@ -124,7 +124,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         int Y = y >> 4;
         try {
             this.sections[Y].setBlockData(x, y & 0x0f, z, data);
-            setChanged();
+            markDirty();
         } catch (ChunkException e) {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
@@ -145,7 +145,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         int Y = y >> 4;
         try {
             this.sections[Y].setBlockSkyLight(x, y & 0x0f, z, level);
-            setChanged();
+            markDirty();
         } catch (ChunkException e) {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
@@ -166,7 +166,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         int Y = y >> 4;
         try {
             this.sections[Y].setBlockLight(x, y & 0x0f, z, level);
-            setChanged();
+            markDirty();
         } catch (ChunkException e) {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
@@ -196,13 +196,13 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         } else {
             this.sections[(int) fY] = section;
         }
-        setChanged();
+        markDirty();
         return true;
     }
 
     private void setInternalSection(float fY, ChunkSection section) {
         this.sections[(int) fY] = section;
-        setChanged();
+        markDirty();
     }
 
     @Override

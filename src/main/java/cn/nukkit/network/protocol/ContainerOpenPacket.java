@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
 import cn.nukkit.math.BlockVector3;
 
 /**
@@ -39,5 +40,10 @@ public class ContainerOpenPacket extends DataPacket {
         this.putByte((byte) this.type);
         this.putBlockVector3(this.x, this.y, this.z);
         this.putEntityUniqueId(this.entityId);
+    }
+
+    @Override
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }
