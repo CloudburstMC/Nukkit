@@ -210,10 +210,7 @@ public class LoginPacket extends DataPacket {
             public void onRun() {
                 e = new PlayerAsyncPreLoginEvent(player.username, player.uuid, player.ip, player.port);
                 player.server.getPluginManager().callEvent(e);
-            }
 
-            @Override
-            public void onCompletion(Server server) {
                 if (!player.closed) {
                     if (e.getLoginResult() == PlayerAsyncPreLoginEvent.LoginResult.KICK) {
                         player.close(e.getKickMessage(), e.getKickMessage());
@@ -221,6 +218,11 @@ public class LoginPacket extends DataPacket {
                         player.completeLoginSequence();
                     }
                 }
+            }
+
+            @Override
+            public void onCompletion(Server server) {
+
             }
         };
         player.server.getScheduler().scheduleAsyncTask(player.preLoginEventTask);

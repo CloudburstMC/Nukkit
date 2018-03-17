@@ -69,6 +69,7 @@ public class ResourcePackClientResponsePacket extends DataPacket {
                 player.dataPacket(stackPacket);
                 break;
             case ResourcePackClientResponsePacket.STATUS_COMPLETED:
+                player.server.logger.debug("Resource pack handshake complete! isFinished:" + player.preLoginEventTask.isFinished());
                 if (player.preLoginEventTask.isFinished()) {
                     player.completeLoginSequence();
                 } else {

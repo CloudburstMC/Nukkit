@@ -115,6 +115,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected final SourceInterface interfaz;
 
     public boolean playedBefore;
+    public boolean requestedChunks = false;
     public boolean spawned = false;
     public boolean loggedIn = false;
     public int gamemode;
@@ -723,6 +724,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.usedChunks.put(Level.chunkHash(x, z), true);
+        this.server.logger.debug("Sent chunk: " + x + "," + z);
         this.chunkLoadCount++;
 
         this.dataPacket(packet);
@@ -742,6 +744,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.usedChunks.put(Level.chunkHash(x, z), true);
+        this.server.logger.debug("Sent chunk: " + x + "," + z);
         this.chunkLoadCount++;
 
         FullChunkDataPacket pk = new FullChunkDataPacket();
@@ -801,13 +804,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
         }
-        if (this.chunkLoadCount >= this.spawnThreshold && !this.spawned && this.teleportPosition == null) {
+        if (this.chunkLoadCount >= this.spawnThreshold
+                && !this.spawned
+                /*&& this.teleportPosition == null*/) {
             this.doFirstSpawn();
         }
         Timings.playerChunkSendTimer.stopTiming();
     }
 
     protected void doFirstSpawn() {
+        server.logger.debug("Do first spawn");
         this.spawned = true;
 
         this.getAdventureSettings().update();
@@ -911,7 +917,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
-    protected boolean orderChunks() {
+    public boolean orderChunks() {
         if (!this.connected) {
             return false;
         }
@@ -1777,14 +1783,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.batchedPackets.clear();
         }
 
-        if (this.nextChunkOrderRun-- <= 0 || this.chunk == null) {
+        if (this.requestedChunks && (this.nextChunkOrderRun-- <= 0 || this.chunk == null)) {
             this.orderChunks();
         }
 
-        if (!this.loadQueue.isEmpty() || !this.spawned) {
+        if (this.requestedChunks && (!this.loadQueue.isEmpty() || !this.spawned)) {
             this.sendNextChunk();
         }
-
     }
 
     public boolean canInteract(Vector3 pos, double maxDistance) {
@@ -1803,6 +1808,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void processLogin() {
+        server.logger.debug("Process login");
         if (!this.server.isWhitelisted((this.getName()).toLowerCase())) {
             this.kick(PlayerKickEvent.Reason.NOT_WHITELISTED, "Server is white-listed");
 
@@ -1926,6 +1932,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void completeLoginSequence() {
+        server.logger.debug("Complete login sequence");
         PlayerLoginEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerLoginEvent(this, "Plugin reason"));
         if (ev.isCancelled()) {

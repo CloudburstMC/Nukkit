@@ -56,6 +56,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.CharArraySet;
+import it.unimi.dsi.fastutil.chars.CharOpenHashSet;
 import it.unimi.dsi.fastutil.chars.CharSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
@@ -177,10 +178,10 @@ public class Level implements ChunkManager, Metadatable {
     private final BlockUpdateScheduler updateQueue;
 
     private final Long2ObjectMap<Int2ObjectMap<Player>> chunkSendQueue = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
-    private final LongSet chunkSendTasks = LongSets.synchronize(new LongArraySet());
-    private final LongSet chunkPopulationQueue = LongSets.synchronize(new LongArraySet());
-    private final LongSet chunkPopulationLock = LongSets.synchronize(new LongArraySet());
-    private final LongSet chunkGenerationQueue = LongSets.synchronize(new LongArraySet());
+    private final LongSet chunkSendTasks = LongSets.synchronize(new LongOpenHashSet());
+    private final LongSet chunkPopulationQueue = LongSets.synchronize(new LongOpenHashSet());
+    private final LongSet chunkPopulationLock = LongSets.synchronize(new LongOpenHashSet());
+    private final LongSet chunkGenerationQueue = LongSets.synchronize(new LongOpenHashSet());
     private int chunkGenerationQueueSize = 8;
     private int chunkPopulationQueueSize = 2;
 
@@ -561,12 +562,17 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
+    private final Lock addChunkLock = new ReentrantLock();
+
     public void addChunkPacket(int chunkX, int chunkZ, DataPacket packet) {
         long index = Level.chunkHash(chunkX, chunkZ);
-        if (!this.chunkPackets.containsKey(index)) {
-            this.chunkPackets.put(index, new ArrayList<>());
+        addChunkLock.lock();
+        List<DataPacket> packets = this.chunkPackets.get(index);
+        if (packets == null) {
+            this.chunkPackets.put(index, packets = new ArrayList<>());
         }
-        this.chunkPackets.get(index).add(packet);
+        packets.add(packet);
+        addChunkLock.unlock();
     }
 
     public void registerChunkLoader(ChunkLoader loader, int chunkX, int chunkZ) {
@@ -732,23 +738,25 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private volatile ObjectIterator<Long2ObjectMap.Entry<SoftReference<CharSet>>> changedBlocksIterator;
-    private volatile LongIterator chunkPacketsIterator;
+    private volatile ObjectIterator<Long2ObjectMap.Entry<List<DataPacket>>> chunkPacketsIterator;
 
     private void threadedSendChunkPackets() {
         tickLock.lock();
         if (chunkPacketsIterator == null)   {
-            chunkPacketsIterator = this.chunkPackets.keySet().iterator();
+            chunkPacketsIterator = new Long2ObjectArrayMap<>(this.chunkPackets).long2ObjectEntrySet().iterator();
         }
 
         while (chunkPacketsIterator.hasNext())  {
-            long index = chunkPacketsIterator.nextLong();
+            Long2ObjectMap.Entry<List<DataPacket>> entry = chunkPacketsIterator.next();
             tickLock.unlock();
 
+            long index = entry.getLongKey();
             int chunkX = Level.getHashX(index);
             int chunkZ = Level.getHashZ(index);
-            Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().stream().toArray(Player[]::new);
-            if (chunkPlayers.length > 0) {
-                for (DataPacket pk : this.chunkPackets.get(index)) {
+            Collection<Player> chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values();
+
+            if (!chunkPlayers.isEmpty()) {
+                for (DataPacket pk : entry.getValue()) {
                     Server.broadcastPacket(chunkPlayers, pk);
                 }
             }
@@ -763,7 +771,7 @@ public class Level implements ChunkManager, Metadatable {
     private void threadedSendBlockUpdates() {
         tickLock.lock();
         if (changedBlocksIterator == null)  {
-            changedBlocksIterator = changedBlocks.long2ObjectEntrySet().iterator();
+            changedBlocksIterator = new Long2ObjectOpenHashMap<>(changedBlocks).long2ObjectEntrySet().iterator();
         }
 
         while (changedBlocksIterator.hasNext())    {
@@ -1383,8 +1391,8 @@ public class Level implements ChunkManager, Metadatable {
 
     private final LongPriorityQueue lightPropagationQueue = LongPriorityQueues.synchronize(new LongArrayPriorityQueue());
     private final Queue<Object[]> lightRemovalQueue = new ConcurrentLinkedQueue<>();
-    private final LongSet visited = LongSets.synchronize(new LongArraySet(), new Object());
-    private final LongSet removalVisited = LongSets.synchronize(new LongArraySet(), new Object());
+    private final LongSet visited = LongSets.synchronize(new LongOpenHashSet(), new Object());
+    private final LongSet removalVisited = LongSets.synchronize(new LongOpenHashSet(), new Object());
     private volatile ObjectIterator<Long2ObjectMap.Entry<CharSet>> lightUpdateIterator = null;
 
     /**
@@ -1439,7 +1447,7 @@ public class Level implements ChunkManager, Metadatable {
         }
         tickLock.unlock();
 
-        //we're still locked from the previous loop, no need to give up lock and then lock it again
+        tickLock.lock();
         while (!lightRemovalQueue.isEmpty()) {
             Object[] val = lightRemovalQueue.poll();
             tickLock.unlock();
@@ -1462,6 +1470,7 @@ public class Level implements ChunkManager, Metadatable {
         }
         tickLock.unlock();
 
+        tickLock.lock();
         while (!lightPropagationQueue.isEmpty()) {
             long node = lightPropagationQueue.dequeueLong();
             tickLock.unlock();
@@ -1533,7 +1542,7 @@ public class Level implements ChunkManager, Metadatable {
         long index = chunkHash((int) x >> 4, (int) z >> 4);
         CharSet currentMap = lightQueue.get(index);
         if (currentMap == null) {
-            currentMap = new CharArraySet();
+            currentMap = new CharOpenHashSet();
             this.lightQueue.put(index, currentMap);
         }
         currentMap.add(Level.localBlockHash(x, y, z));
@@ -1608,7 +1617,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private void addBlockChange(long index, int x, int y, int z) {
-        SoftReference<CharSet> current = changedBlocks.computeIfAbsent(index, k -> new SoftReference(new HashMap<>()));
+        SoftReference<CharSet> current = changedBlocks.computeIfAbsent(index, k -> new SoftReference(new CharOpenHashSet()));
         CharSet currentUpdates = current.get();
         if (currentUpdates != changeBlocksFullMap && currentUpdates != null) {
             if (currentUpdates.size() > MAX_BLOCK_CACHE) {
@@ -2411,7 +2420,7 @@ public class Level implements ChunkManager, Metadatable {
     private void threadedProcessChunkRequest()  {
         tickLock.lock();
         if (chunkSendQueueIterator == null)  {
-            chunkSendQueueIterator = chunkSendQueue.keySet().iterator();
+            chunkSendQueueIterator = new LongOpenHashSet(chunkSendQueue.keySet()).iterator();
         }
 
         while (chunkSendQueueIterator.hasNext())    {
@@ -2832,7 +2841,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private volatile ObjectIterator<Long2ObjectMap.Entry<BlockEntity>> gcTileIterator;
-    private final ThreadLocal<LongSet> gcToRemoveTiles = ThreadLocal.withInitial(LongArraySet::new);
+    private final ThreadLocal<LongSet> gcToRemoveTiles = ThreadLocal.withInitial(LongOpenHashSet::new);
     private volatile ObjectIterator<? extends FullChunk> gcChunkIterator;
     private final Object gcChunkSyncDummy = new Object();
     private volatile boolean gcProviderDoneThisTick = false;
@@ -2911,7 +2920,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private volatile ObjectIterator<Long2LongMap.Entry> unloadQueueIterator;
-    private final ThreadLocal<LongSet> unloadQueueToRemove = ThreadLocal.withInitial(LongArraySet::new);
+    private final ThreadLocal<LongSet> unloadQueueToRemove = ThreadLocal.withInitial(LongOpenHashSet::new);
 
     public void threadedUnloadChunks()  {
         synchronized (unloadQueue)  {

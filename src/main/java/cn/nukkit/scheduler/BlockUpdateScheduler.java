@@ -67,7 +67,7 @@ public class BlockUpdateScheduler {
         Long2ObjectMap<LongSet> map = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
         synchronized (queuedUpdates) {
             queuedUpdates.forEach((tick, updates) -> {
-                LongSet set = LongSets.synchronize(new LongArraySet());
+                LongSet set = LongSets.synchronize(new LongOpenHashSet());
                 updates.forEach((long entry) -> {
                     int x = Level.getXFrom(entry);
                     int z = Level.getZFrom(entry);
@@ -103,7 +103,7 @@ public class BlockUpdateScheduler {
         }
         LongSet set = queuedUpdates.get(tick);
         if (set == null)    {
-            set = LongSets.synchronize(new LongArraySet());
+            set = LongSets.synchronize(new LongOpenHashSet());
             queuedUpdates.put(tick, set);
         }
         return set.add(entry);

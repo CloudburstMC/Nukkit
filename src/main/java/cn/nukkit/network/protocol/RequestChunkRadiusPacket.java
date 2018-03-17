@@ -29,9 +29,12 @@ public class RequestChunkRadiusPacket extends DataPacket {
 
     @Override
     public void handle(Player player) {
-        ChunkRadiusUpdatedPacket chunkRadiusUpdatePacket = new ChunkRadiusUpdatedPacket();
-        player.chunkRadius = Math.max(3, Math.min(this.radius, player.viewDistance));
-        chunkRadiusUpdatePacket.radius = player.chunkRadius;
-        player.dataPacket(chunkRadiusUpdatePacket);
+        player.server.logger.debug("Request chunk radius packet");
+        player.setViewDistance(Math.max(3, Math.min(this.radius, player.viewDistance)));
+
+        if (!player.spawned)    {
+            player.requestedChunks = true;
+            player.orderChunks();
+        }
     }
 }
