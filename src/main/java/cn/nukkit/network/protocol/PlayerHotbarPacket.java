@@ -45,11 +45,7 @@ public class PlayerHotbarPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        if (this.windowId != ContainerIds.INVENTORY) {
-            return; //In PE this should never happen
-        }
-
-        player.inventory.equipItem(this.selectedHotbarSlot);
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

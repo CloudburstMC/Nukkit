@@ -25,7 +25,7 @@ public class SetHealthPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        //use UpdateAttributePacket instead
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

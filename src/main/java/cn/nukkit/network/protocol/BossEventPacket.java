@@ -98,6 +98,6 @@ public class BossEventPacket extends DataPacket {
 
     @Override
     protected void handle(Player player) {
-
+        player.handle(this);
     }
 }

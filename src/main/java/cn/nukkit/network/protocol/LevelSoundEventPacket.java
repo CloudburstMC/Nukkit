@@ -213,8 +213,7 @@ public class LevelSoundEventPacket extends DataPacket {
     }
 
 	@Override
-	public void handle(Player player) {
-		//We just need to broadcast this packet to all viewers.
-		player.level.addChunkPacket(player.getFloorX() >> 4, player.getFloorZ() >> 4, this);
+	protected void handle(Player player) {
+		player.handle(this);
 	}
 }

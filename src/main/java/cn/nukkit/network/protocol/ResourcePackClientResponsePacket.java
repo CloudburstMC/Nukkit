@@ -41,41 +41,6 @@ public class ResourcePackClientResponsePacket extends DataPacket {
 
     @Override
     public void handle(Player player) {
-        switch (this.responseStatus) {
-            case ResourcePackClientResponsePacket.STATUS_REFUSED:
-                player.close("", "disconnectionScreen.noReason");
-                break;
-            case ResourcePackClientResponsePacket.STATUS_SEND_PACKS:
-                for (String id : this.packIds) {
-                    ResourcePack resourcePack = player.server.getResourcePackManager().getPackById(id);
-                    if (resourcePack == null) {
-                        player.close("", "disconnectionScreen.resourcePack");
-                        break;
-                    }
-
-                    ResourcePackDataInfoPacket dataInfoPacket = new ResourcePackDataInfoPacket();
-                    dataInfoPacket.packId = resourcePack.getPackId();
-                    dataInfoPacket.maxChunkSize = 1048576; //megabyte
-                    dataInfoPacket.chunkCount = resourcePack.getPackSize() / dataInfoPacket.maxChunkSize;
-                    dataInfoPacket.compressedPackSize = resourcePack.getPackSize();
-                    dataInfoPacket.sha256 = resourcePack.getSha256();
-                    player.dataPacket(dataInfoPacket);
-                }
-                break;
-            case ResourcePackClientResponsePacket.STATUS_HAVE_ALL_PACKS:
-                ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
-                stackPacket.mustAccept = player.server.forceResources();
-                stackPacket.resourcePackStack = player.server.getResourcePackManager().getResourceStack();
-                player.dataPacket(stackPacket);
-                break;
-            case ResourcePackClientResponsePacket.STATUS_COMPLETED:
-                player.server.logger.debug("Resource pack handshake complete! isFinished:" + player.preLoginEventTask.isFinished());
-                if (player.preLoginEventTask.isFinished()) {
-                    player.completeLoginSequence();
-                } else {
-                    player.shouldLogin = true;
-                }
-                break;
-        }
+        player.handle(this);
     }
 }

@@ -62,22 +62,7 @@ public class EntityEventPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        if (!player.spawned || !player.isAlive()) {
-            return;
-        }
-        player.craftingType = CRAFTING_SMALL;
-        //this.resetCraftingGridType();
-
-        switch (this.event) {
-            case EntityEventPacket.EATING_ITEM:
-                if (this.data == 0) {
-                    break;
-                }
-
-                /*this.dataPacket(packet); //bug?
-                Server.broadcastPacket(this.getViewers().values(), packet);*/
-                break;
-        }
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

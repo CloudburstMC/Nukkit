@@ -116,7 +116,7 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
 
     @Override
     protected void handle(Player player) {
-
+        player.handle(this);
     }
 
     public class MapDecorator {

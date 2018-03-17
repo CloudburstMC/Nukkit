@@ -46,39 +46,7 @@ public class InteractPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        if (!player.spawned || !player.isAlive()) {
-            return;
-        }
-
-        player.craftingType = CRAFTING_SMALL;
-        //this.resetCraftingGridType();
-
-        Entity targetEntity = player.level.getEntity(this.target);
-
-        if (targetEntity == null || !targetEntity.isAlive()) {
-            return;
-        }
-
-        if (targetEntity instanceof EntityItem || targetEntity instanceof EntityArrow || targetEntity instanceof EntityXPOrb) {
-            player.kick(PlayerKickEvent.Reason.INVALID_PVE, "Attempting to interact with an invalid entity");
-            player.server.getLogger().warning(player.server.getLanguage().translateString("nukkit.player.invalidEntity", player.getName()));
-            return;
-        }
-
-        Item item = player.inventory.getItemInHand();
-
-        switch (this.action) {
-            case InteractPacket.ACTION_MOUSEOVER:
-                player.server.getPluginManager().callEvent(new PlayerMouseOverEntityEvent(player, targetEntity));
-                break;
-            case InteractPacket.ACTION_VEHICLE_EXIT:
-                if (!(targetEntity instanceof EntityRideable) || player.riding == null) {
-                    break;
-                }
-
-                ((EntityRideable) player.riding).mountEntity(player);
-                break;
-        }
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

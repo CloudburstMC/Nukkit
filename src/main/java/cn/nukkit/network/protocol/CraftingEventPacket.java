@@ -57,7 +57,7 @@ public class CraftingEventPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        //TODO: why the actual **HECK** is this empty?
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

@@ -29,18 +29,7 @@ public class ResourcePackChunkRequestPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        ResourcePack resourcePack = player.server.getResourcePackManager().getPackById(this.packId);
-        if (resourcePack == null) {
-            player.close("", "disconnectionScreen.resourcePack");
-            return;
-        }
-
-        ResourcePackChunkDataPacket dataPacket = new ResourcePackChunkDataPacket();
-        dataPacket.packId = resourcePack.getPackId();
-        dataPacket.chunkIndex = this.chunkIndex;
-        dataPacket.data = resourcePack.getPackChunk(1048576 * this.chunkIndex, 1048576);
-        dataPacket.progress = 1048576 * this.chunkIndex;
-        player.dataPacket(dataPacket);
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

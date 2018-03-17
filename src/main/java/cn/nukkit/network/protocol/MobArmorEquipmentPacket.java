@@ -39,7 +39,7 @@ public class MobArmorEquipmentPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        //TODO
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

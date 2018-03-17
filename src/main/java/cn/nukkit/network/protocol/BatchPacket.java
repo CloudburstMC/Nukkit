@@ -39,7 +39,7 @@ public class BatchPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        player.server.getNetwork().processBatch(this, player);
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

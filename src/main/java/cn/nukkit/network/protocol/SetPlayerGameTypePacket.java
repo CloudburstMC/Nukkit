@@ -31,17 +31,7 @@ public class SetPlayerGameTypePacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        if (this.gamemode != player.gamemode) {
-            if (!player.hasPermission("nukkit.command.gamemode")) {
-                SetPlayerGameTypePacket setPlayerGameTypePacket1 = new SetPlayerGameTypePacket();
-                setPlayerGameTypePacket1.gamemode = player.gamemode & 0x01;
-                player.dataPacket(setPlayerGameTypePacket1);
-                player.getAdventureSettings().update();
-                return;
-            }
-            player.setGamemode(this.gamemode, true);
-            Command.broadcastCommandMessage(player, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(player.gamemode)));
-        }
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

@@ -63,6 +63,6 @@ public class CommandBlockUpdatePacket extends DataPacket {
 
     @Override
     protected void handle(Player player) {
-        //TODO
+        player.handle(this);
     }
 }

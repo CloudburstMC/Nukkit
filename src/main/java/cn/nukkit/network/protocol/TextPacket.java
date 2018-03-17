@@ -82,13 +82,7 @@ public class TextPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        if (!player.spawned || !player.isAlive()) {
-            return;
-        }
-
-        if (this.type == TextPacket.TYPE_CHAT) {
-            player.chat(this.message);
-        }
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

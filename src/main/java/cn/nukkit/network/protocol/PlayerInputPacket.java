@@ -36,13 +36,7 @@ public class PlayerInputPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        if (!player.isAlive() || !player.spawned) {
-            return;
-        }
-
-        if (player.riding instanceof EntityMinecartAbstract) {
-            ((EntityMinecartEmpty) player.riding).setCurrentSpeed(this.motionY);
-        }
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

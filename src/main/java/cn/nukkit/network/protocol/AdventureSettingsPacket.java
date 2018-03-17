@@ -103,18 +103,7 @@ public class AdventureSettingsPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        //TODO: player abilities, check for other changes
-        if (this.getFlag(AdventureSettingsPacket.ALLOW_FLIGHT) && !player.getAdventureSettings().get(AdventureSettings.Type.ALLOW_FLIGHT)) {
-            player.kick(PlayerKickEvent.Reason.FLYING_DISABLED, "Flying is not enabled on this server");
-            return;
-        }
-        PlayerToggleFlightEvent playerToggleFlightEvent = new PlayerToggleFlightEvent(player, this.getFlag(AdventureSettingsPacket.ALLOW_FLIGHT));
-        player.server.getPluginManager().callEvent(playerToggleFlightEvent);
-        if (playerToggleFlightEvent.isCancelled()) {
-            player.getAdventureSettings().update();
-        } else {
-            player.getAdventureSettings().set(AdventureSettings.Type.FLYING, playerToggleFlightEvent.isFlying());
-        }
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

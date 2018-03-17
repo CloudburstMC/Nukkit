@@ -40,33 +40,7 @@ public class BlockPickRequestPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        Block block = player.level.getBlock(player.temporalVector.setComponents(this.x, this.y, this.z));
-        Item item = block.toItem();
-
-        if (this.addUserData) {
-            BlockEntity blockEntity = player.getLevel().getBlockEntity(new Vector3(this.x, this.y, this.z));
-            if (blockEntity != null) {
-                CompoundTag nbt = blockEntity.getCleanedNBT();
-                if (nbt != null) {
-                    Item item1 = player.getInventory().getItemInHand();
-                    item1.setCustomBlockData(nbt);
-                    item1.setLore("+(DATA)");
-                    player.getInventory().setItemInHand(item1);
-                }
-            }
-        }
-
-        PlayerBlockPickEvent pickEvent = new PlayerBlockPickEvent(player, block, item);
-        if (!player.isCreative()) {
-            player.server.getLogger().debug("Got block-pick request from " + player.getName() + " when not in creative mode (gamemode " + player.getGamemode() + ")");
-            pickEvent.setCancelled();
-        }
-
-        player.server.getPluginManager().callEvent(pickEvent);
-
-        if (!pickEvent.isCancelled()) {
-            player.inventory.setItemInHand(pickEvent.getItem());
-        }
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

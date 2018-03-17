@@ -40,20 +40,7 @@ public class AnimatePacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        if (!player.spawned || !player.isAlive()) {
-            return;
-        }
-
-        PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(player, this.action);
-        player.server.getPluginManager().callEvent(animationEvent);
-        if (animationEvent.isCancelled()) {
-            return;
-        }
-
-        AnimatePacket animatePacket = new AnimatePacket();
-        animatePacket.eid = player.getId();
-        animatePacket.action = animationEvent.getAnimationType();
-        Server.broadcastPacket(player.getViewers().values(), animatePacket);
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

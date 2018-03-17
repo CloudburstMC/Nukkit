@@ -26,6 +26,6 @@ public class ModalFormRequestPacket extends DataPacket {
 
     @Override
     protected void handle(Player player) {
-
+        player.handle(this);
     }
 }

@@ -31,18 +31,7 @@ public class ContainerClosePacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        if (!player.spawned || this.windowId == 0) {
-            return;
-        }
-        player.craftingType = CRAFTING_SMALL;
-        player.resetCraftingGridType();
-
-        if (player.windowIndex.containsKey(this.windowId)) {
-            player.server.getPluginManager().callEvent(new InventoryCloseEvent(player.windowIndex.get(this.windowId), player));
-            player.removeWindow(player.windowIndex.get(this.windowId));
-        } else {
-            player.windowIndex.remove(this.windowId);
-        }
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }

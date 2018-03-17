@@ -42,26 +42,7 @@ public class ItemFrameDropItemPacket extends DataPacket {
     }
 
     @Override
-    public void handle(Player player) {
-        Vector3 vector3 = player.temporalVector.setComponents(this.x, this.y, this.z);
-        BlockEntity blockEntityItemFrame = player.level.getBlockEntity(vector3);
-        BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntityItemFrame;
-        if (itemFrame != null) {
-            Block block = itemFrame.getBlock();
-            Item itemDrop = itemFrame.getItem();
-            ItemFrameDropItemEvent itemFrameDropItemEvent = new ItemFrameDropItemEvent(player, block, itemFrame, itemDrop);
-            player.server.getPluginManager().callEvent(itemFrameDropItemEvent);
-            if (!itemFrameDropItemEvent.isCancelled()) {
-                if (itemDrop.getId() != Item.AIR) {
-                    vector3 = player.temporalVector.setComponents(itemFrame.x + 0.5, itemFrame.y, itemFrame.z + 0.5);
-                    player.level.dropItem(vector3, itemDrop);
-                    itemFrame.setItem(new ItemBlock(new BlockAir()));
-                    itemFrame.setItemRotation(0);
-                    player.getLevel().addSound(player, Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
-                }
-            } else {
-                itemFrame.spawnTo(player);
-            }
-        }
+    protected void handle(Player player) {
+        player.handle(this);
     }
 }
