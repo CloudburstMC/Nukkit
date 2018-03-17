@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
@@ -152,7 +153,7 @@ public class Flat extends Generator {
     }
 
     @Override
-    public void generateChunk(int chunkX, int chunkZ, FullChunk chunk) {
+    public void generateChunk(int chunkX, int chunkZ) {
         if (!this.init) {
             init = true;
             if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
@@ -161,7 +162,7 @@ public class Flat extends Generator {
                 this.parsePreset(this.preset, chunkX, chunkZ);
             }
         }
-        this.generateChunk(chunk);
+        this.generateChunk(level.getChunk(chunkX, chunkZ));
     }
 
     private void generateChunk(FullChunk chunk) {
@@ -181,7 +182,8 @@ public class Flat extends Generator {
     }
 
     @Override
-    public void populateChunk(int chunkX, int chunkZ, FullChunk chunk) {
+    public void populateChunk(int chunkX, int chunkZ) {
+        BaseFullChunk chunk = level.getChunk(chunkX, chunkZ);
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
             populator.populate(this.level, chunkX, chunkZ, this.random, chunk);

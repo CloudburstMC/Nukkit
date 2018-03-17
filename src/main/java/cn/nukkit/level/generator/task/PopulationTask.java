@@ -100,12 +100,16 @@ public class PopulationTask extends AsyncTask {
                 for (BaseFullChunk chunk : this.chunks) {
                     manager.setChunk(chunk.getX(), chunk.getZ(), chunk);
                     if (!chunk.isGenerated()) {
-                        generator.generateChunk(chunk.getX(), chunk.getZ(), chunk);
+                        generator.generateChunk(chunk.getX(), chunk.getZ());
+                        BaseFullChunk newChunk = manager.getChunk(chunk.getX(), chunk.getZ());
+                        newChunk.setGenerated();
+                        if (newChunk != chunk) manager.setChunk(chunk.getX(), chunk.getZ(), newChunk);
                    }
                 }
 
                 if (!centerChunk.isPopulated()) {
-                    generator.populateChunk(centerChunk.getX(), centerChunk.getZ(), centerChunk);
+                    generator.populateChunk(centerChunk.getX(), centerChunk.getZ());
+                    centerChunk = manager.getChunk(centerChunk.getX(), centerChunk.getZ());
                     centerChunk.setPopulated();
                     centerChunk.recalculateHeightMap();
                     centerChunk.populateSkyLight();

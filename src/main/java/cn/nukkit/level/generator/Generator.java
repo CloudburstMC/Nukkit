@@ -3,10 +3,8 @@ package cn.nukkit.level.generator;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,9 +80,9 @@ public abstract class Generator implements BlockID {
 
     public abstract void init(ChunkManager level, NukkitRandom random);
 
-    public abstract void generateChunk(int chunkX, int chunkZ, FullChunk chunk);
+    public abstract void generateChunk(int chunkX, int chunkZ);
 
-    public abstract void populateChunk(int chunkX, int chunkZ, FullChunk chunk);
+    public abstract void populateChunk(int chunkX, int chunkZ);
 
     public abstract Map<String, Object> getSettings();
 
