@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.block.BlockFromToEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -124,14 +125,18 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             int x = (int) this.x;
             int y = (int) this.y;
             int z = (int) this.z;
-            if (j == 0) {
-                --x;
-            } else if (j == 1) {
-                ++x;
-            } else if (j == 2) {
-                --z;
-            } else {
-                ++z;
+            switch (j) {
+                case 0:
+                    --x;
+                    break;
+                case 1:
+                    x++;
+                    break;
+                case 2:
+                    z--;
+                    break;
+                default:
+                    z++;
             }
             Block sideBlock = this.level.getBlock(x, y, z);
             int blockDecay = this.getEffectiveFlowDecay(sideBlock);
@@ -214,11 +219,19 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                 }
                 if (newDecay != decay) {
                     decay = newDecay;
-                    if (decay < 0) {
-                        this.level.setBlock(this, new BlockAir(), true, true);
+                    boolean decayed = decay < 0;
+                    Block to;
+                    if (decayed) {
+                        to = new BlockAir();
                     } else {
-                        this.level.setBlock(this, getBlock(decay), true, true);
-                        this.level.scheduleUpdate(this, this.tickRate());
+                        to = getBlock(decay);
+                    }
+                    BlockFromToEvent event = new BlockFromToEvent(this, to);
+                    if (!event.isCancelled()) {
+                        this.level.setBlock(this, to, true, true);
+                        if (!decayed) {
+                            this.level.scheduleUpdate(this, this.tickRate());
+                        }
                     }
                 }
             }
@@ -259,8 +272,12 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             if(block.getId() > 0){
                 this.level.useBreakOn(block);
             }
-            this.level.setBlock(block, getBlock(newFlowDecay), true, true);
-            this.level.scheduleUpdate(block, this.tickRate());
+            Block to = getBlock(newFlowDecay);
+            BlockFromToEvent event = new BlockFromToEvent(block, to);
+            if (!event.isCancelled()) {
+                this.level.setBlock(block, getBlock(newFlowDecay), true, true);
+                this.level.scheduleUpdate(block, this.tickRate());
+            }
         }
     }
 
@@ -405,6 +422,11 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
     }
 
     protected boolean liquidCollide(Block cause, Block result) {
+        BlockFromToEvent event = new BlockFromToEvent(cause, result);
+        this.level.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
         this.level.setBlock(this, result, true, true);
         this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_FIZZ);
         return true;
