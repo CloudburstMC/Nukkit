@@ -422,7 +422,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
     }
 
     protected boolean liquidCollide(Block cause, Block result) {
-        BlockFromToEvent event = new BlockFromToEvent(cause, result);
+        BlockFromToEvent event = new BlockFromToEvent(this, result);
         this.level.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
