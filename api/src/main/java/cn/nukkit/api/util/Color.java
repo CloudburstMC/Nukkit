@@ -1,7 +1,8 @@
 package cn.nukkit.api.util;
 
 import com.google.common.base.Preconditions;
-import jdk.nashorn.internal.ir.annotations.Immutable;
+
+import javax.annotation.concurrent.Immutable;
 
 @Immutable
 public final class Color {

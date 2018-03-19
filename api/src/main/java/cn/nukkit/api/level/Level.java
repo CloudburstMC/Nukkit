@@ -1,8 +1,10 @@
 package cn.nukkit.api.level;
 
 import cn.nukkit.api.block.Block;
-import cn.nukkit.api.entity.component.system.System;
+import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.entity.system.System;
 import cn.nukkit.api.level.chunk.Chunk;
+import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
 
@@ -26,6 +28,8 @@ public interface Level {
 
     CompletableFuture<Chunk> getChunk(int x, int z);
 
+    void save();
+
     default CompletableFuture<Chunk> getChunkForPosition(Vector3i position) {
         return getChunk(position.getX() >> 4, position.getY() >> 4);
     }
@@ -48,6 +52,8 @@ public interface Level {
         Optional<Chunk> chunkOptional = getChunkIfLoaded(x >> 4, z >> 4);
         return chunkOptional.map(c -> c.getBlock(x & 0x0f, y, z & 0x0f));
     }
+
+    <T extends Entity> CompletableFuture<T> spawn(Class<? extends Entity> clazz, Vector3f position);
 
     void registerSystem(System system);
 

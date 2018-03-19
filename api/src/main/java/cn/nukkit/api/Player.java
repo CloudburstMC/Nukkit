@@ -4,7 +4,7 @@ import cn.nukkit.api.command.sender.CommandSender;
 import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.permission.Permissible;
-import cn.nukkit.api.util.GameMode;
+import cn.nukkit.api.util.Skin;
 import com.flowpowered.math.vector.Vector3d;
 
 import javax.annotation.Nonnegative;
@@ -14,17 +14,12 @@ import java.net.InetSocketAddress;
 import java.util.Locale;
 import java.util.Optional;
 
-public interface Player extends Session, CommandSender, Entity, MessageRecipient, Permissible {
+public interface Player extends Session, CommandSender, Entity, Permissible {
 
     @Nonnull
     Optional<String> getDisplayName();
 
     void setDisplayName(@Nullable String name);
-
-    @Nonnull
-    GameMode getGameMode();
-
-    void setGameMode(@Nullable GameMode gameMode);
 
     @Nonnull
     Optional<InetSocketAddress> getRemoteAddress();
@@ -45,19 +40,13 @@ public interface Player extends Session, CommandSender, Entity, MessageRecipient
 
     void chat(String message);
 
-    boolean getAllowFlight();
-
-    void setAllowFlight(boolean allowFlight);
+    void executeCommand(String command);
 
     void hideEntity(Entity entity);
 
     void showEntity(Entity entity);
 
     boolean canSee(Entity entity);
-
-    boolean isFlying();
-
-    void setFlying(boolean value);
 
     void sendTitle(String title, String subtitle);
 
@@ -70,8 +59,6 @@ public interface Player extends Session, CommandSender, Entity, MessageRecipient
     int showFormWindow(FormWindow formWindow, int forceId);
 
     int addServerSettings(FormWindow formWindow);*/
-
-    void setCheckMovement(boolean value);
 
     Locale getLocale();
 
@@ -91,9 +78,9 @@ public interface Player extends Session, CommandSender, Entity, MessageRecipient
 
     boolean setRemoveFormat(boolean value);
 
-    boolean isEnabledClientCommand();
+    boolean hasCommandsEnabled();
 
-    void setEnabledClientCommand(boolean value);
+    void setCommandsEnabled(boolean value);
 
     Skin getSkin();
 
@@ -124,6 +111,8 @@ public interface Player extends Session, CommandSender, Entity, MessageRecipient
     void sendActionBar(String message, int fadein, int duration, int fadeout);
 
     boolean dropItem(ItemInstance item);
+
+    boolean isSpawned();
 
     @Override
     default boolean isOnline() {

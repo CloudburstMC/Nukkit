@@ -3,7 +3,7 @@ package cn.nukkit.api.metadata.block;
 import cn.nukkit.api.metadata.Metadata;
 import com.google.common.base.Preconditions;
 
-public class Cake implements Metadata{
+public class Cake implements Metadata {
     public static final Cake NEW = new Cake(0);
     public static final Cake ALMOST_EATEN = new Cake(6);
     private final int level;

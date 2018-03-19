@@ -1,6 +1,6 @@
 package cn.nukkit.api.event.inventory;
 
-import cn.nukkit.api.entity.item.DroppedItem;
+import cn.nukkit.api.entity.misc.DroppedItem;
 import cn.nukkit.api.event.Cancellable;
 import cn.nukkit.api.inventory.Inventory;
 

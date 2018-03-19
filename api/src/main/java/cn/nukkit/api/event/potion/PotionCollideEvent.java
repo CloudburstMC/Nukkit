@@ -1,6 +1,6 @@
 package cn.nukkit.api.event.potion;
 
-import cn.nukkit.api.entity.item.Potion;
+import cn.nukkit.api.entity.misc.Potion;
 import cn.nukkit.api.event.Cancellable;
 
 public class PotionCollideEvent implements PotionEvent, Cancellable {

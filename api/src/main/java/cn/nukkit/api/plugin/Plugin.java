@@ -1,7 +1,6 @@
 package cn.nukkit.api.plugin;
 
 import cn.nukkit.api.Server;
-import cn.nukkit.api.command.CommandExecutor;
 import cn.nukkit.api.util.Config;
 import org.slf4j.Logger;
 
@@ -22,7 +21,7 @@ import java.nio.file.Path;
  * @see cn.nukkit.api.plugin.PluginDescription
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
-public interface Plugin extends CommandExecutor {
+public interface Plugin {
     /**
      * 在一个Nukkit插件被加载时调用的方法。这个方法会在{@link Plugin#onEnable()}之前调用。<br>
      * Called when a Nukkit plugin is loaded, before {@link Plugin#onEnable()} .

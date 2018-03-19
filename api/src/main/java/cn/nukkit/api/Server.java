@@ -55,7 +55,7 @@ public interface Server {
     Whitelist getWhitelist();
 
     @Nonnull
-    ItemInstanceBuilder createItemStackBuilder();
+    ItemInstanceBuilder itemInstanceBuilder();
 
     @Nonnull
     ConfigBuilder createConfigBuilder();

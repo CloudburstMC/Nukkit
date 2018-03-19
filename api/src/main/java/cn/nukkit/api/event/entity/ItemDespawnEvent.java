@@ -1,6 +1,6 @@
 package cn.nukkit.api.event.entity;
 
-import cn.nukkit.api.entity.item.DroppedItem;
+import cn.nukkit.api.entity.misc.DroppedItem;
 import cn.nukkit.api.event.Cancellable;
 
 public class ItemDespawnEvent implements EntityEvent, Cancellable {

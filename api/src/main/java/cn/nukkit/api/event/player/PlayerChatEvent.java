@@ -1,7 +1,7 @@
 package cn.nukkit.api.event.player;
 
-import cn.nukkit.api.MessageRecipient;
 import cn.nukkit.api.Player;
+import cn.nukkit.api.command.MessageRecipient;
 import cn.nukkit.api.event.Cancellable;
 import cn.nukkit.api.message.Message;
 

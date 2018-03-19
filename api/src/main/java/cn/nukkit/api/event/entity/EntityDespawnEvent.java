@@ -5,7 +5,7 @@ import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.entity.component.Damageable;
 import cn.nukkit.api.entity.component.Projectile;
 import cn.nukkit.api.entity.component.Rideable;
-import cn.nukkit.api.entity.item.DroppedItem;
+import cn.nukkit.api.entity.misc.DroppedItem;
 import com.flowpowered.math.vector.Vector3f;
 
 public class EntityDespawnEvent implements EntityEvent {
