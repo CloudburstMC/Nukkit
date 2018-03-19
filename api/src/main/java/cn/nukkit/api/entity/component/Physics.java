@@ -9,8 +9,4 @@ public interface Physics extends EntityComponent {
     float getGravity();
 
     void setGravity(float gravity);
-
-    boolean isPhysicsDisabled();
-
-    void setPhysicsDisabled(boolean physicsDisabled);
 }

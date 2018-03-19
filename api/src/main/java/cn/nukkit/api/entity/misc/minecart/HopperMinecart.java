@@ -1,4 +1,4 @@
-package cn.nukkit.api.entity.item.minecart;
+package cn.nukkit.api.entity.misc.minecart;
 
 /**
  * @author CreeperFace

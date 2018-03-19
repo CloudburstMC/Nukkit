@@ -2,9 +2,6 @@ package cn.nukkit.api.entity.component;
 
 import javax.annotation.Nonnegative;
 
-/**
- * @author CreeperFace
- */
 public interface Ageable extends EntityComponent {
 
     /**
@@ -41,6 +38,13 @@ public interface Ageable extends EntityComponent {
      * Sets the age of the animal to a baby
      */
     void setBaby();
+
+    /**
+     * Returns whether the animal is a baby
+     *
+     * @return baby
+     */
+    boolean isBaby();
 
     /**
      * Sets the age of the animal to an adult

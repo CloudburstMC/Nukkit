@@ -1,4 +1,4 @@
-package cn.nukkit.api.entity.component.system;
+package cn.nukkit.api.entity.system;
 
 import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.entity.component.EntityComponent;

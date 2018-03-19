@@ -1,4 +1,4 @@
-package cn.nukkit.api.entity.item.minecart;
+package cn.nukkit.api.entity.misc.minecart;
 
 import cn.nukkit.api.entity.vehicle.Minecart;
 

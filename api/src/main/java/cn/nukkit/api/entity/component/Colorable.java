@@ -2,6 +2,8 @@ package cn.nukkit.api.entity.component;
 
 import cn.nukkit.api.util.data.DyeColor;
 
+import javax.annotation.Nonnull;
+
 public interface Colorable extends EntityComponent {
     /**
      * Get the color of this entity
@@ -15,5 +17,5 @@ public interface Colorable extends EntityComponent {
      *
      * @param color the color to apply
      */
-    void setColor(DyeColor color);
+    void setColor(@Nonnull DyeColor color);
 }

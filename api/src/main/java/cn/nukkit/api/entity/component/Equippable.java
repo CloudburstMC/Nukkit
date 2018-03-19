@@ -64,18 +64,4 @@ public interface Equippable extends EntityComponent {
      * @param boots the boots to wear
      */
     void setBoots(ItemInstance boots);
-
-    /**
-     * Gets the item the entity has in it's offhand.
-     *
-     * @return item in offhand
-     */
-    Optional<ItemInstance> getOffHand();
-
-    /**
-     * Sets the item the entity will have in it's offhand.
-     *
-     * @param offHand item for offhand
-     */
-    void setOffHand(ItemInstance offHand);
 }
