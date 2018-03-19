@@ -1,7 +1,7 @@
 package cn.nukkit.api.command.simple;
 
-import cn.nukkit.api.MessageRecipient;
 import cn.nukkit.api.command.Command;
+import cn.nukkit.api.command.MessageRecipient;
 
 public interface SimpleCommand extends Command {
 

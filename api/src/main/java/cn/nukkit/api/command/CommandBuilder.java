@@ -1,7 +1,5 @@
 package cn.nukkit.api.command;
 
-import cn.nukkit.api.permission.Permission;
-
 import java.util.Collection;
 
 public interface CommandBuilder {
@@ -23,8 +21,6 @@ public interface CommandBuilder {
     CommandBuilder setUsageMessage(String usageMessage);
 
     CommandBuilder setDescription(String description);
-
-    CommandBuilder setPermission(Permission permission);
 
     CommandBuilder setPermission(String permission);
 
