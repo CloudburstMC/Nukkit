@@ -24,4 +24,8 @@ public interface BlockType extends ItemType {
     boolean isFloodable();
 
     boolean isSolid();
+
+    int burnChance();
+
+    int burnability();
 }

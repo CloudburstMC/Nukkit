@@ -295,10 +295,14 @@ public class BlockTypes {
         private final int emitLight;
         private final int filterLight;
         private final float hardness;
+        private final int burnChance;
+        private final int burnability;
         private final Class<? extends Metadata> metadataClass;
         private final Class<? extends BlockEntity> blockEntityClass;
 
-        public IntBlock(int id, String name, int maxStackSize, boolean diggable, boolean transparent, boolean flammable, boolean floodable, boolean solid, int emitLight, int filterLight, float hardness, Class<? extends Metadata> aClass, Class<? extends BlockEntity> blockEntityClass) {
+        public IntBlock(int id, String name, int maxStackSize, boolean diggable, boolean transparent, boolean flammable,
+                        boolean floodable, boolean solid, int emitLight, int filterLight, float hardness, int burnChance,
+                        int burnability, Class<? extends Metadata> aClass, Class<? extends BlockEntity> blockEntityClass) {
             this.id = id;
             this.name = name;
             this.maxStackSize = maxStackSize;
@@ -310,6 +314,8 @@ public class BlockTypes {
             this.emitLight = emitLight;
             this.filterLight = filterLight;
             this.hardness = hardness;
+            this.burnChance = burnChance;
+            this.burnability = burnability;
             this.metadataClass = aClass;
             this.blockEntityClass = blockEntityClass;
 
@@ -375,6 +381,16 @@ public class BlockTypes {
         @Override
         public boolean isSolid() {
             return false;
+        }
+
+        @Override
+        public int burnChance() {
+            return burnChance;
+        }
+
+        @Override
+        public int burnability() {
+            return burnability;
         }
 
         @Override
