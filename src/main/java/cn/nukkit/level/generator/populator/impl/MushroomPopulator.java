@@ -5,7 +5,6 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.level.generator.populator.type.PopulatorCount;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 

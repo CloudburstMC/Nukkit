@@ -17,7 +17,10 @@
  */
 package cn.nukkit.nbt.stream;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 

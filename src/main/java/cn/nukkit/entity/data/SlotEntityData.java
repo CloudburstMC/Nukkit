@@ -2,7 +2,6 @@ package cn.nukkit.entity.data;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
  * author: MagicDroidX

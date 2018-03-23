@@ -1,8 +1,6 @@
 package cn.nukkit.level;
 
 import cn.nukkit.Server;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 
 public enum EnumLevel {
     OVERWORLD,

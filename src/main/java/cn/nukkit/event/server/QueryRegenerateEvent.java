@@ -7,6 +7,7 @@ import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.utils.Binary;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;

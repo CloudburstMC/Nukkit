@@ -7,9 +7,6 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
-import static cn.nukkit.block.BlockID.ICE;
-import static cn.nukkit.block.BlockID.STILL_WATER;
-
 public class WaterIcePopulator extends Populator {
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {

@@ -5,8 +5,6 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
-import static cn.nukkit.block.BlockID.BEDROCK;
-
 /**
  * @author DaPorkchop_
  *

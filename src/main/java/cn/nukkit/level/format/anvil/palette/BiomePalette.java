@@ -2,6 +2,7 @@ package cn.nukkit.level.format.anvil.palette;
 
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.ThreadCache;
+
 import java.util.Arrays;
 
 @Deprecated

@@ -1,15 +1,12 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.helper.EnsureBelow;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
-import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
 /**

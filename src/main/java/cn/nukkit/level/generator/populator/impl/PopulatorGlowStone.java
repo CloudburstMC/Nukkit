@@ -7,9 +7,6 @@ import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
-import static cn.nukkit.block.BlockID.GLOWSTONE;
-import static cn.nukkit.block.BlockID.NETHERRACK;
-
 public class PopulatorGlowStone extends Populator {
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {

@@ -9,15 +9,12 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
-import static cn.nukkit.math.BlockFace.EAST;
-import static cn.nukkit.math.BlockFace.NORTH;
-import static cn.nukkit.math.BlockFace.SOUTH;
-import static cn.nukkit.math.BlockFace.WEST;
+import static cn.nukkit.math.BlockFace.*;
 import static cn.nukkit.utils.Rail.Orientation.*;
 
 /**

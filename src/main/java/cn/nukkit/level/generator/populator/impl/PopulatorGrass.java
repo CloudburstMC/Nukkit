@@ -1,11 +1,8 @@
 package cn.nukkit.level.generator.populator.impl;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.helper.PopulatorHelpers;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
 /**

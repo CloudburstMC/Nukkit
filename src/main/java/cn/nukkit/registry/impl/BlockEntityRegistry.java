@@ -1,30 +1,12 @@
 package cn.nukkit.registry.impl;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityBeacon;
-import cn.nukkit.blockentity.BlockEntityBed;
-import cn.nukkit.blockentity.BlockEntityBrewingStand;
-import cn.nukkit.blockentity.BlockEntityCauldron;
-import cn.nukkit.blockentity.BlockEntityChest;
-import cn.nukkit.blockentity.BlockEntityComparator;
-import cn.nukkit.blockentity.BlockEntityEnchantTable;
-import cn.nukkit.blockentity.BlockEntityEnderChest;
-import cn.nukkit.blockentity.BlockEntityFlowerPot;
-import cn.nukkit.blockentity.BlockEntityFurnace;
-import cn.nukkit.blockentity.BlockEntityHopper;
-import cn.nukkit.blockentity.BlockEntityItemFrame;
-import cn.nukkit.blockentity.BlockEntityJukebox;
-import cn.nukkit.blockentity.BlockEntityPistonArm;
-import cn.nukkit.blockentity.BlockEntitySign;
-import cn.nukkit.blockentity.BlockEntitySkull;
+import cn.nukkit.blockentity.*;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.AbstractRegistry;
 import cn.nukkit.registry.RegistryType;
 import cn.nukkit.registry.function.BiObjectObjectFunction;
-import cn.nukkit.registry.function.IntObjectFunction;
 
 public final class BlockEntityRegistry extends AbstractRegistry<BlockEntity, BiObjectObjectFunction<FullChunk, CompoundTag, BlockEntity>> implements BlockID {
     public static final BlockEntityRegistry INSTANCE = new BlockEntityRegistry();

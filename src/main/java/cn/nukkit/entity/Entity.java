@@ -12,6 +12,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.EnumLevel;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
@@ -31,14 +32,10 @@ import cn.nukkit.registry.function.BiObjectObjectFunction;
 import cn.nukkit.registry.impl.EntityRegistry;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
-import cn.nukkit.registry.function.IntObjectFunction;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
-import cn.nukkit.level.EnumLevel;
 
-import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 

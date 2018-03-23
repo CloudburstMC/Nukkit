@@ -10,12 +10,8 @@ import cn.nukkit.registry.RegistryName;
 import cn.nukkit.registry.function.BiObjectObjectFunction;
 import cn.nukkit.registry.impl.BlockEntityRegistry;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author MagicDroidX

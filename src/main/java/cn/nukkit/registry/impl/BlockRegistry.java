@@ -1,10 +1,10 @@
 package cn.nukkit.registry.impl;
 
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.registry.AbstractRegistry;
 import cn.nukkit.registry.RegistryType;
 import cn.nukkit.registry.function.IntObjectFunction;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
 public final class BlockRegistry extends AbstractRegistry<Block, IntObjectFunction<Block>> implements BlockID {
     public static final BlockRegistry INSTANCE = new BlockRegistry();
