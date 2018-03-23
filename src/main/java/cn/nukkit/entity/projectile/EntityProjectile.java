@@ -40,6 +40,7 @@ public abstract class EntityProjectile extends Entity {
 
     public EntityProjectile(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt);
+        if (nbt.contains("shooter")) shootingEntity = chunk.getProvider().getLevel().getEntity(nbt.getLong("shooter"));
         this.shootingEntity = shootingEntity;
         if (shootingEntity != null) {
             this.setDataProperty(new LongEntityData(DATA_SHOOTER_ID, shootingEntity.getId()));

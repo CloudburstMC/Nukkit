@@ -36,11 +36,12 @@ public abstract class ProjectileItem extends Item {
                         .add(new DoubleTag("", directionVector.z)))
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (float) player.yaw))
-                        .add(new FloatTag("", (float) player.pitch)));
+                        .add(new FloatTag("", (float) player.pitch)))
+                .putLong("shooter", player.getId());
 
         this.correctNBT(nbt);
 
-        Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
+        Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt);
         if (projectile != null) {
             projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
             this.count--;

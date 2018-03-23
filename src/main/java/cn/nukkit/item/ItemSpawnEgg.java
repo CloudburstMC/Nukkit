@@ -10,6 +10,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.registry.impl.EntityRegistry;
 
 import java.util.Random;
 
@@ -23,11 +24,11 @@ public class ItemSpawnEgg extends Item {
         this(0, 1);
     }
 
-    public ItemSpawnEgg(Integer meta) {
+    public ItemSpawnEgg(int meta) {
         this(meta, 1);
     }
 
-    public ItemSpawnEgg(Integer meta, int count) {
+    public ItemSpawnEgg(int meta, int count) {
         super(SPAWN_EGG, meta, count, "Spawn EntityEgg");
     }
 
@@ -61,7 +62,7 @@ public class ItemSpawnEgg extends Item {
             nbt.putString("CustomName", this.getCustomName());
         }
 
-        Entity entity = Entity.createEntity(this.meta, chunk, nbt);
+        Entity entity = Entity.createEntity(EntityRegistry.INSTANCE.getName(this.meta), chunk, nbt);
 
         if (entity != null) {
             if (player.isSurvival()) {
