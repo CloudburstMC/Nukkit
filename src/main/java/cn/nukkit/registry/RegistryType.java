@@ -8,7 +8,8 @@ package cn.nukkit.registry;
 public enum RegistryType {
     BLOCK,
     ITEM,
-    ENTITY;
+    ENTITY,
+    BLOCK_ENTITY;
 
     private AbstractRegistry registry;
 

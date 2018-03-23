@@ -76,6 +76,7 @@ public final class EntityRegistry extends AbstractRegistry<Entity, BiObjectObjec
         register("arrow", EntityArrow::new, EntityArrow.class);
         register("item", EntityItem::new, EntityItem.class);
         register("falling_block", EntityFallingBlock::new, EntityFallingBlock.class);
+        register("firework", EntityFirework::new, EntityFirework.class);
         register("primed_tnt", EntityPrimedTNT::new, EntityPrimedTNT.class);
         register("snowball", EntitySnowball::new, EntitySnowball.class);
         register("painting", EntityPainting::new, EntityPainting.class);
@@ -88,7 +89,6 @@ public final class EntityRegistry extends AbstractRegistry<Entity, BiObjectObjec
         register("enderman", EntityEnderman::new, EntityEnderman.class);
         register("endermite", EntityEndermite::new, EntityEndermite.class);
         register("evoker", EntityEvoker::new, EntityEvoker.class);
-        register("firework", EntityFirework::new, EntityFirework.class);
         register("ghast", EntityGhast::new, EntityGhast.class);
         register("guardian", EntityGuardian::new, EntityGuardian.class);
         register("husk", EntityHusk::new, EntityHusk.class);
