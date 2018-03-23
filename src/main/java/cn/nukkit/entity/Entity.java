@@ -27,6 +27,7 @@ import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.RegistryName;
+import cn.nukkit.registry.function.BiObjectObjectFunction;
 import cn.nukkit.registry.impl.EntityRegistry;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.ChunkException;
@@ -182,8 +183,6 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_GRAVITY = 46;
 
     public static long entityCount = 1;
-
-    private static final EntityRegistry REGISTRY = new EntityRegistry();
 
     protected final Map<Integer, Player> hasSpawned = new HashMap<>();
 
@@ -648,65 +647,38 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public static Entity createEntity(String name, Position pos, Object... args) {
-        return createEntity(name, pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+    @Deprecated
+    public static Entity createEntity(String name, Position pos) {
+        return createEntity(new RegistryName("nukkit", name), pos);
     }
 
-    public static Entity createEntity(int type, Position pos, Object... args) {
-        return createEntity(String.valueOf(type), pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+    public static Entity createEntity(RegistryName name, Position pos)  {
+        return createEntity(name, pos.getLevel().getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), getDefaultNBT(pos));
     }
 
-    public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
-        Entity entity = null;
-
-        if (knownEntities.containsKey(name)) {
-            Class<? extends Entity> clazz = knownEntities.get(name);
-
-            if (clazz == null) {
-                return null;
-            }
-
-            for (Constructor constructor : clazz.getConstructors()) {
-                if (entity != null) {
-                    break;
-                }
-
-                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
-                    continue;
-                }
-
-                try {
-                    if (args == null || args.length == 0) {
-                        entity = (Entity) constructor.newInstance(chunk, nbt);
-                    } else {
-                        Object[] objects = new Object[args.length + 2];
-
-                        objects[0] = chunk;
-                        objects[1] = nbt;
-                        System.arraycopy(args, 0, objects, 2, args.length);
-                        entity = (Entity) constructor.newInstance(objects);
-
-                    }
-                } catch (Exception e) {
-                    MainLogger.getLogger().logException(e);
-                }
-
-            }
-        }
-
-        return entity;
+    public static Entity createEntity(Class<? extends Entity> clazz, Position pos)  {
+        return createEntity(clazz, pos.getLevel().getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), getDefaultNBT(pos));
     }
 
-    public static Entity createEntity(int type, FullChunk chunk, CompoundTag nbt, Object... args) {
-        return createEntity(String.valueOf(type), chunk, nbt, args);
+    @Deprecated
+    public static Entity createEntity(String name, FullChunk chunk, CompoundTag tag)    {
+        return createEntity(new RegistryName("nukkit", name), chunk, tag);
     }
 
-    public static boolean registerEntity(RegistryName name, IntObjectFunction<Entity> func, Class<? extends Entity> clazz) {
+    public static Entity createEntity(RegistryName name, FullChunk chunk, CompoundTag tag)    {
+        return EntityRegistry.INSTANCE.getInstance(name, 0, chunk, tag);
+    }
+
+    public static Entity createEntity(Class<? extends Entity> clazz, FullChunk chunk, CompoundTag tag)    {
+        return EntityRegistry.INSTANCE.getInstance(clazz, 0, chunk, tag);
+    }
+
+    public static boolean registerEntity(RegistryName name, BiObjectObjectFunction<FullChunk, CompoundTag, Entity> func, Class<? extends Entity> clazz) {
         return registerEntity(name, func, clazz, false);
     }
 
-    public static boolean registerEntity(RegistryName name, IntObjectFunction<Entity> func, Class<? extends Entity> clazz, boolean force)  {
-        return REGISTRY.addEntry(name, func, clazz, force);
+    public static boolean registerEntity(RegistryName name, BiObjectObjectFunction<FullChunk, CompoundTag, Entity> func, Class<? extends Entity> clazz, boolean force)  {
+        return EntityRegistry.INSTANCE.addEntry(name, func, clazz, force);
     }
 
     public static CompoundTag getDefaultNBT(Vector3 pos) {

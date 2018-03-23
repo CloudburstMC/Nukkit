@@ -35,27 +35,21 @@ public final class BlockEntityRegistry extends AbstractRegistry<BlockEntity, BiO
 
     @Override
     protected void init() {
-        //porktodo: all tile entities marked as "REMOVE" have data that is either uneeded, or can be stored in metadata
         register("furnace", BlockEntityFurnace::new, BlockEntityFurnace.class);
         register("chest", BlockEntityChest::new, BlockEntityChest.class);
         register("sign", BlockEntitySign::new, BlockEntitySign.class);
-        //REMOVE - don't think this is needed
         register("enchantment_table", BlockEntityEnchantTable::new, BlockEntityEnchantTable.class);
         register("skull", BlockEntitySkull::new, BlockEntitySkull.class);
         register("flower_pot", BlockEntityFlowerPot::new, BlockEntityFlowerPot.class);
         register("brewing_stand", BlockEntityBrewingStand::new, BlockEntityBrewingStand.class);
         register("item_frame", BlockEntityItemFrame::new, BlockEntityItemFrame.class);
-        //REMOVE - useless
         register("cauldron", BlockEntityCauldron::new, BlockEntityCauldron.class);
-        //REMOVE - useless
         register("ender_chest", BlockEntityEnderChest::new, BlockEntityEnderChest.class);
         register("beacon", BlockEntityBeacon::new, BlockEntityBeacon.class);
         register("piston_arm", BlockEntityPistonArm::new, BlockEntityPistonArm.class);
-        //REMOVE - meta
         register("comparator", BlockEntityComparator::new, BlockEntityComparator.class);
         register("hopper", BlockEntityHopper::new, BlockEntityHopper.class);
         register("bed", BlockEntityBed::new, BlockEntityBed.class);
-        //REMOVE - meta
         register("jukebox", BlockEntityJukebox::new, BlockEntityJukebox.class);
     }
 

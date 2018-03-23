@@ -1,7 +1,6 @@
 package cn.nukkit.registry;
 
 import cn.nukkit.registry.function.BaseFunction;
-import cn.nukkit.registry.function.IntObjectFunction;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
@@ -87,12 +86,30 @@ public abstract class AbstractRegistry<T, F extends BaseFunction<T>> {
     }
 
     /**
+     * Convenience method to serve as a wrapper for Lcn/nukkit/registry/AbstractRegistry;getInstance(Lcn/nukkit/registry/RegistryName;I[Ljava/lang/Object;)Ljava/lang/Object;
+     *
+     * @param clazz The class of the entry to get
+     * @param i     An integer code used by the function
+     * @param args  Optional, additional arguments passed to the object
+     * @return An instance of <T>
+     */
+    public T getInstance(Class<? extends T> clazz, int i, Object... args) {
+        RegistryName name = names.get(clazz);
+        if (name == null)   {
+            throw new IllegalArgumentException("No name for class: " + clazz.getCanonicalName());
+        } else {
+            return getInstance(name, i, args);
+        }
+    }
+
+    /**
      * Convenience method to register an entry in the init() method
-     * @param name The name of the entry
-     * @param func The initialization method for the entry
+     *
+     * @param name  The name of the entry
+     * @param func  The initialization method for the entry
      * @param clazz The class of the entry
      */
-    protected void register(String name, F func, Class<? extends T> clazz)    {
+    protected void register(String name, F func, Class<? extends T> clazz) {
         addEntry(new RegistryName("nukkit", name), func, clazz, true);
     }
 

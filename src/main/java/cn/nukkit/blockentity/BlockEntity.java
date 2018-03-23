@@ -6,6 +6,9 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.registry.RegistryName;
+import cn.nukkit.registry.function.BiObjectObjectFunction;
+import cn.nukkit.registry.impl.BlockEntityRegistry;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
@@ -42,9 +45,6 @@ public abstract class BlockEntity extends Position {
 
 
     public static long count = 1;
-
-    private static final Map<String, Class<? extends BlockEntity>> knownBlockEntities = new HashMap<>();
-    private static final Map<String, String> shortNames = new HashMap<>();
 
     public FullChunk chunk;
     public String name;
@@ -86,62 +86,33 @@ public abstract class BlockEntity extends Position {
 
     }
 
-    public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
-        type = type.replaceFirst("BlockEntity", ""); //TODO: Remove this after the first release
-        BlockEntity blockEntity = null;
-
-        if (knownBlockEntities.containsKey(type)) {
-            Class<? extends BlockEntity> clazz = knownBlockEntities.get(type);
-
-            if (clazz == null) {
-                return null;
-            }
-
-            for (Constructor constructor : clazz.getConstructors()) {
-                if (blockEntity != null) {
-                    break;
-                }
-
-                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
-                    continue;
-                }
-
-                try {
-                    if (args == null || args.length == 0) {
-                        blockEntity = (BlockEntity) constructor.newInstance(chunk, nbt);
-                    } else {
-                        Object[] objects = new Object[args.length + 2];
-
-                        objects[0] = chunk;
-                        objects[1] = nbt;
-                        System.arraycopy(args, 0, objects, 2, args.length);
-                        blockEntity = (BlockEntity) constructor.newInstance(objects);
-
-                    }
-                } catch (Exception e) {
-                    MainLogger.getLogger().logException(e);
-                }
-
-            }
-        }
-
-        return blockEntity;
+    public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt) {
+        return createBlockEntity(new RegistryName("nukkit", type), chunk, nbt);
     }
 
-    public static boolean registerBlockEntity(String name, Class<? extends BlockEntity> c) {
-        if (c == null) {
+    public static BlockEntity createBlockEntity(RegistryName name, FullChunk chunk, CompoundTag nbt)    {
+        return BlockEntityRegistry.INSTANCE.getInstance(name, 0, chunk, nbt);
+    }
+
+    public static BlockEntity createBlockEntity(Class<? extends BlockEntity> clazz, FullChunk chunk, CompoundTag nbt) {
+        return BlockEntityRegistry.INSTANCE.getInstance(clazz, 0, chunk, nbt);
+    }
+
+    public static boolean registerBlockEntity(RegistryName name, BiObjectObjectFunction<FullChunk, CompoundTag, BlockEntity> function, Class<? extends BlockEntity> clazz)    {
+        return registerBlockEntity(name, function, clazz, false);
+    }
+
+    public static boolean registerBlockEntity(RegistryName name, BiObjectObjectFunction<FullChunk, CompoundTag, BlockEntity> function, Class<? extends BlockEntity> clazz, boolean force) {
+        if (clazz == null) {
             return false;
         }
 
-        knownBlockEntities.put(name, c);
-        shortNames.put(c.getSimpleName(), name);
-        return true;
+        return BlockEntityRegistry.INSTANCE.addEntry(name, function, clazz, force);
     }
 
     public final String getSaveId() {
-        String simpleName = getClass().getName();
-        simpleName = simpleName.substring(22, simpleName.length());
-        return shortNames.getOrDefault(simpleName, "");
+        //TODO: this might break things
+        return BlockEntityRegistry.INSTANCE.getName(this.getClass()).id;
     }
 
     public long getId() {
