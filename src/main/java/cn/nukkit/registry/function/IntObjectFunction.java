@@ -1,4 +1,4 @@
-package cn.nukkit.utils.function;
+package cn.nukkit.registry.function;
 
 /**
  * A function that accepts an int as a primitive type, and returns an instance of <T>
@@ -6,6 +6,6 @@ package cn.nukkit.utils.function;
  *
  * @author DaPorkchop_
  */
-public interface IntObjectFunction<T> {
+public interface IntObjectFunction<T> extends BaseFunction<T> {
     T accept(int i);
 }

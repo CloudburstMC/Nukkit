@@ -26,9 +26,12 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.registry.RegistryName;
+import cn.nukkit.registry.impl.EntityRegistry;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.MainLogger;
+import cn.nukkit.registry.function.IntObjectFunction;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
@@ -180,8 +183,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     public static long entityCount = 1;
 
-    private static final Map<String, Class<? extends Entity>> knownEntities = new HashMap<>();
-    private static final Map<String, String> shortNames = new HashMap<>();
+    private static final EntityRegistry REGISTRY = new EntityRegistry();
 
     protected final Map<Integer, Player> hasSpawned = new HashMap<>();
 
@@ -699,26 +701,12 @@ public abstract class Entity extends Location implements Metadatable {
         return createEntity(String.valueOf(type), chunk, nbt, args);
     }
 
-    public static boolean registerEntity(String name, Class<? extends Entity> clazz) {
-        return registerEntity(name, clazz, false);
+    public static boolean registerEntity(RegistryName name, IntObjectFunction<Entity> func, Class<? extends Entity> clazz) {
+        return registerEntity(name, func, clazz, false);
     }
 
-    public static boolean registerEntity(String name, Class<? extends Entity> clazz, boolean force) {
-        if (clazz == null) {
-            return false;
-        }
-        try {
-            int networkId = clazz.getField("NETWORK_ID").getInt(null);
-            knownEntities.put(String.valueOf(networkId), clazz);
-        } catch (Exception e) {
-            if (!force) {
-                return false;
-            }
-        }
-
-        knownEntities.put(name, clazz);
-        shortNames.put(clazz.getSimpleName(), name);
-        return true;
+    public static boolean registerEntity(RegistryName name, IntObjectFunction<Entity> func, Class<? extends Entity> clazz, boolean force)  {
+        return REGISTRY.addEntry(name, func, clazz, force);
     }
 
     public static CompoundTag getDefaultNBT(Vector3 pos) {
@@ -740,7 +728,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void saveNBT() {
         if (!(this instanceof Player)) {
-            this.namedTag.putString("id", this.getSaveId());
+            this.namedTag.putString("id", this.getLocalizedName());
             if (!this.getNameTag().equals("")) {
                 this.namedTag.putString("CustomName", this.getNameTag());
                 this.namedTag.putBoolean("CustomNameVisible", this.isNameTagVisible());
@@ -796,12 +784,13 @@ public abstract class Entity extends Location implements Metadatable {
         if (this.hasCustomName()) {
             return this.getNameTag();
         } else {
-            return this.getSaveId();
+            return this.getLocalizedName();
         }
     }
 
-    public final String getSaveId() {
-        return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
+    public final String getLocalizedName() {
+        //TODO: locales
+        return null;
     }
 
     public void spawnTo(Player player) {

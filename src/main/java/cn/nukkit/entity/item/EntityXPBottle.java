@@ -14,7 +14,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 /**
  * @author xtypr
  */
-public class EntityExpBottle extends EntityProjectile {
+public class EntityXPBottle extends EntityProjectile {
 
     public static final int NETWORK_ID = 68;
 
@@ -48,11 +48,11 @@ public class EntityExpBottle extends EntityProjectile {
         return 0.01f;
     }
 
-    public EntityExpBottle(FullChunk chunk, CompoundTag nbt) {
+    public EntityXPBottle(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public EntityExpBottle(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityXPBottle(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 
@@ -96,7 +96,7 @@ public class EntityExpBottle extends EntityProjectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = EntityExpBottle.NETWORK_ID;
+        pk.type = EntityXPBottle.NETWORK_ID;
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;
