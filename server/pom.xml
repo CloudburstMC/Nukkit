@@ -11,7 +11,7 @@
 
     <artifactId>nukkit-server</artifactId>
     <name>NukkitX-Server</name>
-    <version>1.2.10-SNAPSHOT</version>
+    <version>1.2.13-SNAPSHOT</version>
 
     <properties>
         <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
@@ -25,6 +25,13 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <repositories>
+        <repository>
+            <id>leveldb</id>
+            <url>https://repo.gomint.io/content/groups/public</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.nukkitx</groupId>
@@ -33,8 +40,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.voxelwind</groupId>
-            <artifactId>voxelwind-natives</artifactId>
+            <groupId>cn.nukkit</groupId>
+            <artifactId>nukkit-natives</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

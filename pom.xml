@@ -17,6 +17,10 @@
             <id>sonatype-oss-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>nukkitx-repo</id>
+            <url>https://repo.nukkitx.com</url>
+        </repository>
     </repositories>
 
     <properties>
