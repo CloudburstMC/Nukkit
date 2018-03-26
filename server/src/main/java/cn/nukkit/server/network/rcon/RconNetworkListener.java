@@ -65,7 +65,7 @@ public class RconNetworkListener extends ChannelInitializer<SocketChannel> imple
         } catch (InterruptedException e) {
             // Ignore
         }
-        bootstrap.config().group().shutdownGracefully();
+        bootstrap.group().shutdownGracefully();
         if (channel != null) {
             channel.close().syncUninterruptibly();
         }
@@ -78,7 +78,7 @@ public class RconNetworkListener extends ChannelInitializer<SocketChannel> imple
 
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
-        this.channel = channel;
+        this.channel = socketChannel;
 
         channel.pipeline().addLast("lengthDecoder", new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, 4096, 0, 4, 0, 4, true));
         channel.pipeline().addLast("rconDecoder", new RconCodec());

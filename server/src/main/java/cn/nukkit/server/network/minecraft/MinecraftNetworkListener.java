@@ -78,7 +78,7 @@ public class MinecraftNetworkListener extends ChannelInitializer<DatagramChannel
 
     @Override
     public void close() {
-        bootstrap.config().group().shutdownGracefully();
+        bootstrap.group().shutdownGracefully();
         if (channel != null) {
             channel.close().syncUninterruptibly();
         }
