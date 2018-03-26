@@ -223,6 +223,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public Block breakingBlock = null;
 
     public int pickedXPOrb = 0;
+    private Random random = new Random();
 
     protected int formWindowCount = 0;
     protected Map<Integer, FormWindow> formWindows = new HashMap<>();
@@ -4623,7 +4624,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 int exp = xpOrb.getExp();
                 this.addExperience(exp);
                 entity.kill();
-                this.getLevel().addSound(this, Sound.RANDOM_ORB);
+                this.getLevel().addSound(this, Sound.RANDOM_ORB, 0.1F, 0.5F * ((this.random.nextFloat() - this.random.nextFloat()) * 0.7F + 1.8F));
                 pickedXPOrb = tick;
                 return true;
             }
