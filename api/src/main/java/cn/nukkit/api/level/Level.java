@@ -2,7 +2,9 @@ package cn.nukkit.api.level;
 
 import cn.nukkit.api.block.Block;
 import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.entity.misc.DroppedItem;
 import cn.nukkit.api.entity.system.System;
+import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.level.chunk.Chunk;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
@@ -54,6 +56,8 @@ public interface Level {
     }
 
     <T extends Entity> CompletableFuture<T> spawn(Class<? extends Entity> clazz, Vector3f position);
+
+    CompletableFuture<DroppedItem> dropItem(ItemInstance item, Vector3f position);
 
     void registerSystem(System system);
 

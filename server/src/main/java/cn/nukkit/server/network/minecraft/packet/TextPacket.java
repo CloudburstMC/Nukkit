@@ -1,60 +1,55 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.api.message.ParameterMessage;
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.api.message.*;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import java.util.Collection;
-
-import static cn.nukkit.server.nbt.util.VarInt.writeUnsignedInt;
+import static cn.nukkit.server.nbt.util.VarInt.readUnsignedInt;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.readString;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeString;
 
 @Data
 public class TextPacket implements MinecraftPacket {
-    private Type type;
-    private boolean translationNeeded;
-    private String source;
-    private String message;
-    private ParameterMessage parameterMessage;
+    private Message message;
     private String xuid;
+    private String platformChatId = "";
 
     @Override
     public void encode(ByteBuf buffer) {
-        buffer.writeByte(type.ordinal());
-        buffer.writeBoolean(translationNeeded);
-        switch (type) {
-            case CHAT:
-            case WHISPER:
-            case ANNOUNCEMENT:
-                writeString(buffer, source);
-            case RAW:
-            case TIP:
-            case SYSTEM:
-                writeString(buffer, message);
-                break;
-            case TRANSLATION:
-            case POPUP:
-            case JUKEBOX_POPUP:
-                writeString(buffer, message);
-                Collection<String> parameters = parameterMessage.getParameters();
-                writeUnsignedInt(buffer, parameters.size());
-                parameters.forEach(param -> writeString(buffer, param));
+        buffer.writeByte(message.getType().ordinal());
+        buffer.writeBoolean(message.needsTranslating());
+        if (message instanceof SourceMessage) {
+            writeString(buffer, ((SourceMessage) message).getSender());
+        }
+        writeString(buffer, message.getMessage());
+
+        if (message instanceof ParameterMessage) {
+            for (String param : ((ParameterMessage) message).getParameters()) {
+                writeString(buffer, param);
+            }
         }
         writeString(buffer, xuid);
+        writeString(buffer, platformChatId);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
-        type = Type.values()[buffer.readByte()];
-        translationNeeded = buffer.readBoolean();
+        Type type = Type.values()[buffer.readByte()];
+        boolean needsTranslating = buffer.readBoolean();
+        String source = "";
+        String sourceThirdPartyName = "";
+        int platformId; //TODO: Implement these into message api
+        String message = null;
+        String[] parameters = null;
         switch (type) {
             case CHAT:
             case WHISPER:
             case ANNOUNCEMENT:
                 source = readString(buffer);
+                sourceThirdPartyName = readString(buffer);
+                platformId = readUnsignedInt(buffer);
             case RAW:
             case TIP:
             case SYSTEM:
@@ -64,9 +59,43 @@ public class TextPacket implements MinecraftPacket {
             case POPUP:
             case JUKEBOX_POPUP:
                 message = readString(buffer);
-                // TODO:
+                int parameterSize = readUnsignedInt(buffer);
+                parameters = new String[parameterSize];
+                for (int i = 0; i < parameterSize; i++) {
+                    parameters[i] = readString(buffer);
+                }
         }
-        writeString(buffer, xuid);
+        xuid = readString(buffer);
+        platformChatId = readString(buffer);
+
+        switch (type) {
+            case CHAT:
+                this.message = new ChatMessage(source, message, needsTranslating);
+                break;
+            case WHISPER:
+                this.message = new WhisperMessage(source, message, needsTranslating);
+                break;
+            case ANNOUNCEMENT:
+                this.message = new AnnouncementMessage(source, message, needsTranslating);
+                break;
+            case RAW:
+                this.message = new RawMessage(message, needsTranslating);
+                break;
+            case TIP:
+                this.message = new TipMessage(message, needsTranslating);
+                break;
+            case SYSTEM:
+                this.message = new SystemMessage(message, needsTranslating);
+                break;
+            case TRANSLATION:
+                this.message = new TranslationMessage(message, parameters);
+                break;
+            case POPUP:
+                this.message = new PopupMessage(message, needsTranslating, parameters);
+                break;
+            case JUKEBOX_POPUP:
+                this.message = new JukeboxPopupMessage(message, needsTranslating, parameters);
+        }
     }
 
     @Override

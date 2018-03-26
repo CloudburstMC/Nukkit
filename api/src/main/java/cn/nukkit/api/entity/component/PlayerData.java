@@ -16,6 +16,8 @@ public interface PlayerData extends EntityComponent {
 
     GameMode getGameMode();
 
+    float getEffectiveSpeed();
+
     void setGamemode(GameMode gamemode);
 
     Skin getSkin();
@@ -41,6 +43,10 @@ public interface PlayerData extends EntityComponent {
     int getExperience();
 
     void setExperience(@Nonnegative int experience);
+
+    boolean isSprinting();
+
+    void setSprinting(boolean sprinting);
 
     @Nonnull
     PlayerPermission getPlayerPermission();

@@ -1,7 +1,7 @@
 package cn.nukkit.api.util.data;
 
 public enum FlowerType {
-    NONE,
+    EMPTY,
     ROSE,
     BLUE_ORCHID,
     ALLIUM,

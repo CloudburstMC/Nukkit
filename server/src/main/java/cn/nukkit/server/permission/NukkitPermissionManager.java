@@ -3,7 +3,6 @@ package cn.nukkit.server.permission;
 import cn.nukkit.api.permission.Permissible;
 import cn.nukkit.api.permission.Permission;
 import cn.nukkit.api.permission.PermissionManager;
-import co.aikar.timings.Timings;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -66,17 +65,15 @@ public class NukkitPermissionManager implements PermissionManager {
     }
 
     private void calculatePermissionDefault(Permission permission) {
-        Timings.permissionDefaultTimer.startTiming();
-        if (permission.getDefault().equals(NukkitPermission.DEFAULT_OP) || permission.getDefault().equals(NukkitPermission.DEFAULT_TRUE)) {
+        if (permission.getDefault().equals(Permission.DEFAULT_OP) || permission.getDefault().equals(Permission.DEFAULT_TRUE)) {
             this.defaultPermsOp.put(permission.getName(), permission);
             this.dirtyPermissibles(true);
         }
 
-        if (permission.getDefault().equals(Permission.DEFAULT_NOT_OP) || permission.getDefault().equals(NukkitPermission.DEFAULT_TRUE)) {
+        if (permission.getDefault().equals(Permission.DEFAULT_NOT_OP) || permission.getDefault().equals(Permission.DEFAULT_TRUE)) {
             this.defaultPerms.put(permission.getName(), permission);
             this.dirtyPermissibles(false);
         }
-        Timings.permissionDefaultTimer.startTiming();
     }
 
     private void dirtyPermissibles(boolean op) {

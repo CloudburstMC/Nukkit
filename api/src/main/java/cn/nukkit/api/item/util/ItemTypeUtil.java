@@ -5,14 +5,15 @@ import com.google.common.base.Preconditions;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static cn.nukkit.api.item.ItemTypes.*;
 
 @UtilityClass
 public class ItemTypeUtil {
 
-    public static boolean isRecord(@Nonnull ItemType type) {
-        Preconditions.checkNotNull(type, "type");
+    public static boolean isRecord(@Nullable ItemType type) {
+        if (type == null) return false;
         return type == DISC_13 || type == DISC_CAT || type == DISC_BLOCKS || type == DISC_CHIRP ||
                 type == DISC_FAR || type == DISC_MALL || type == DISC_MELLOHI || type == DISC_STAL ||
                 type == DISC_STRAD || type == DISC_WARD || type == DISC_11 || type == DISC_WAIT;

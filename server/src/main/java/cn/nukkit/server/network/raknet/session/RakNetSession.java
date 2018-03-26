@@ -1,7 +1,7 @@
 package cn.nukkit.server.network.raknet.session;
 
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.network.raknet.NetworkPacket;
+import cn.nukkit.server.network.raknet.RakNetPacket;
 import cn.nukkit.server.network.raknet.datagram.EncapsulatedRakNetPacket;
 import cn.nukkit.server.network.raknet.datagram.RakNetDatagram;
 import cn.nukkit.server.network.raknet.datagram.SentDatagram;
@@ -145,7 +145,7 @@ public class RakNetSession implements SessionConnection {
         channel.flush();
     }
 
-    public void sendDirectPackage(NetworkPacket netPackage) {
+    public void sendDirectPackage(RakNetPacket netPackage) {
         checkForClosed();
         channel.writeAndFlush(new DirectAddressedRakNetPacket(netPackage, remoteAddress), channel.voidPromise());
     }

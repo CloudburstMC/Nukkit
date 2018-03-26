@@ -2,7 +2,7 @@ package cn.nukkit.server.inventory.transaction;
 
 
 import cn.nukkit.server.inventory.transaction.record.TransactionRecord;
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import io.netty.buffer.ByteBuf;
 
 import java.util.Collection;
@@ -34,7 +34,7 @@ public interface InventoryTransaction {
 
     Type getType();
 
-    void handle(NetworkPacketHandler session);
+    void handle(PlayerSession.PlayerNetworkPacketHandler session);
 
     enum Type {
         NORMAL,

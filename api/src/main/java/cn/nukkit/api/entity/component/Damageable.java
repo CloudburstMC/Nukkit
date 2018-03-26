@@ -4,7 +4,8 @@ import javax.annotation.Nonnegative;
 
 public interface Damageable extends EntityComponent {
 
-    int getRoundedHealth();
+    @Nonnegative
+    float getFixedHealth();
 
     /**
      * Gets the entity's health from 0 to max health, where 0 is dead.

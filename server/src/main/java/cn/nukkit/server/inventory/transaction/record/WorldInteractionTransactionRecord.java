@@ -30,16 +30,6 @@ public class WorldInteractionTransactionRecord extends TransactionRecord {
         return type;
     }
 
-    @Override
-    public void execute(PlayerSession session) {
-        switch (action) {
-            case DROP_ITEM:
-                session.getLevel().dropItem(getNewItem(), session.getGamePosition(), session.getDirectionVector().mul(0.4f), (short) 20);
-                break;
-            case PICKUP_ITEM:
-        }
-    }
-
     public enum Action {
         DROP_ITEM,
         PICKUP_ITEM

@@ -1,8 +1,13 @@
 package cn.nukkit.server.network.util;
 
 import cn.nukkit.server.network.minecraft.packet.ServerToClientHandshakePacket;
-import com.nimbusds.jose.*;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 
@@ -50,10 +55,8 @@ public class EncryptionUtil {
         URI x5u = URI.create(Base64.getEncoder().encodeToString(pair.getPublic().getEncoded()));
         ServerToClientHandshakePacket packet = new ServerToClientHandshakePacket();
 
-        JWSObject jwt = new JWSObject(
-                new JWSHeader.Builder(JWSAlgorithm.ES384).x509CertURL(x5u).build(),
-                new Payload("{salt:\"" + Base64.getEncoder().encodeToString(token) + "\"")
-        );
+        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().claim("salt", Base64.getEncoder().encodeToString(token)).build();
+        SignedJWT jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.ES384).x509CertURL(x5u).build(), claimsSet);
 
         try {
             JWSSigner signer = new ECDSASigner(privKey);

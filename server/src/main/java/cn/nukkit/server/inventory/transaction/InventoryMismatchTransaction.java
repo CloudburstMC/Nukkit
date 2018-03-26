@@ -1,6 +1,6 @@
 package cn.nukkit.server.inventory.transaction;
 
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +15,7 @@ public class InventoryMismatchTransaction extends SimpleTransaction {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(PlayerSession.PlayerNetworkPacketHandler handler) {
         handler.handle(this);
     }
 

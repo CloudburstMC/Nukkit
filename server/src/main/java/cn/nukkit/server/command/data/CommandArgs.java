@@ -1,9 +1,9 @@
 package cn.nukkit.server.command.data;
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.HashMap;
 
-public class CommandArgs extends HashMap<String, JsonElement> {
+public class CommandArgs extends HashMap<String, JsonNode> {
 
 }

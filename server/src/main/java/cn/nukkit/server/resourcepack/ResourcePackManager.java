@@ -5,6 +5,7 @@ import cn.nukkit.api.resourcepack.MinecraftPackManifest;
 import cn.nukkit.api.resourcepack.PackLoader;
 import cn.nukkit.api.resourcepack.ResourcePack;
 import cn.nukkit.server.NukkitServer;
+import cn.nukkit.server.console.TranslatableMessage;
 import cn.nukkit.server.math.graph.DirectedAcyclicGraph;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
@@ -14,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +30,7 @@ public class ResourcePackManager {
     private Set<BehaviorPack> behaviorPacks = new ConcurrentSet<>();
     private Map<UUID, ResourcePack> packsById = new ConcurrentHashMap<>();
 
-    public ResourcePackManager(NukkitServer server) throws Exception {
+    public ResourcePackManager(NukkitServer server) {
         this.server = server;
     }
 
@@ -49,7 +51,7 @@ public class ResourcePackManager {
         loaders.remove(loaderClass);
     }
 
-    public void loadResourcePacks(Path resourceDirectory, Collection<Class<? extends PackLoader>> loaderClasses) throws Exception {
+    public void loadResourcePacks(Path resourceDirectory, Collection<Class<? extends PackLoader>> loaderClasses) throws IOException {
         Preconditions.checkNotNull(resourceDirectory, "directory");
         Preconditions.checkArgument(Files.isDirectory(resourceDirectory), "provided path isn't a directory");
         Collection<PackLoader> packLoaders = getPluginLoaders(loaderClasses);
@@ -76,7 +78,7 @@ public class ResourcePackManager {
                             found.add(manifest);
                             foundResourceMap.put(manifest, loader);
                         } catch (Exception e) {
-                            log.error("Unable to enumerate plugin {}", path, e);
+                            log.error("Unable to enumerate resource pack {}", path, e);
                         }
                     }
                 }
@@ -97,7 +99,7 @@ public class ResourcePackManager {
             }
 
             if (packsById.containsKey(pack.getHeader().getUuid())) {
-                server.getLanguage().translateString("nukkit.plugin.duplicateError", pack.getHeader().getName());
+                log.error(TranslatableMessage.of("nukkit.plugin.duplicateError", pack.getHeader().getName()));
                 continue;
             }
 

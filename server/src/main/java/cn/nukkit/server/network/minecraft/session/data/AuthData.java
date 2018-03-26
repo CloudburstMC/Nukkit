@@ -13,4 +13,5 @@ public class AuthData {
     private UUID identity;
     @JsonProperty("XUID")
     private String xuid;
+    private UUID offlineIdentity;
 }

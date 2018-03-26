@@ -1,34 +1,34 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.api.item.ItemStack;
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
 import static cn.nukkit.server.nbt.util.VarInt.readUnsignedInt;
 import static cn.nukkit.server.nbt.util.VarInt.writeUnsignedInt;
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.readItemStack;
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeItemStack;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.readItemInstance;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeItemInstance;
 
 @Data
 public class InventorySlotPacket implements MinecraftPacket {
     private int windowId;
     private int inventorySlot;
-    private ItemStack slot;
+    private ItemInstance slot;
 
     @Override
     public void encode(ByteBuf buffer) {
         writeUnsignedInt(buffer, windowId);
         writeUnsignedInt(buffer, inventorySlot);
-        writeItemStack(buffer, slot);
+        writeItemInstance(buffer, slot);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
         windowId = readUnsignedInt(buffer);
         inventorySlot = readUnsignedInt(buffer);
-        slot = readItemStack(buffer);
+        slot = readItemInstance(buffer);
     }
 
     @Override

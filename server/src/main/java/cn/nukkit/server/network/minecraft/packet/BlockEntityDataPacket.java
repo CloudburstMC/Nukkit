@@ -1,11 +1,11 @@
 package cn.nukkit.server.network.minecraft.packet;
 
 import cn.nukkit.server.nbt.NBTEncodingType;
-import cn.nukkit.server.nbt.stream.NBTReader;
-import cn.nukkit.server.nbt.stream.NBTWriter;
+import cn.nukkit.server.nbt.stream.NBTInputStream;
+import cn.nukkit.server.nbt.stream.NBTOutputStream;
 import cn.nukkit.server.nbt.tag.Tag;
-import cn.nukkit.server.network.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import cn.nukkit.server.network.util.LittleEndianByteBufInputStream;
 import cn.nukkit.server.network.util.LittleEndianByteBufOutputStream;
 import com.flowpowered.math.vector.Vector3i;
@@ -25,7 +25,7 @@ public class BlockEntityDataPacket implements MinecraftPacket {
     @Override
     public void encode(ByteBuf buffer) {
         writeVector3i(buffer, blockPostion);
-        try (NBTWriter writer = new NBTWriter(new LittleEndianByteBufOutputStream(buffer), NBTEncodingType.MCPE)) {
+        try (NBTOutputStream writer = new NBTOutputStream(new LittleEndianByteBufOutputStream(buffer), NBTEncodingType.BEDROCK)) {
             writer.write(data);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -35,7 +35,7 @@ public class BlockEntityDataPacket implements MinecraftPacket {
     @Override
     public void decode(ByteBuf buffer) {
         blockPostion = readVector3i(buffer);
-        try (NBTReader reader = new NBTReader(new LittleEndianByteBufInputStream(buffer), NBTEncodingType.MCPE)) {
+        try (NBTInputStream reader = new NBTInputStream(new LittleEndianByteBufInputStream(buffer), NBTEncodingType.BEDROCK)) {
             data = reader.readTag();
         } catch (IOException e) {
             throw new RuntimeException(e);

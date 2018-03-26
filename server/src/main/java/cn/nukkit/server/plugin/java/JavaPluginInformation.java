@@ -14,10 +14,7 @@ import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class JavaPluginInformation {
     private String name;
@@ -55,11 +52,11 @@ public class JavaPluginInformation {
         }
 
         if (softdepend == null) {
-            softdepend = new ArrayList<>();
+            softdepend = Collections.emptyList();
         }
 
         if (loadbefore == null) {
-            loadbefore = new ArrayList<>();
+            loadbefore = Collections.emptyList();
         }
 
         ImmutableMap<String, PermissionDescription> permissions = ImmutableMap.of();

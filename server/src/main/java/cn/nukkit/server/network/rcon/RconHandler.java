@@ -35,7 +35,7 @@ public class RconHandler extends SimpleChannelInboundHandler<RconMessage> {
                 return;
             }
 
-            byte[] sentPassword = rconMessage.getBody().getBytes(StandardCharsets.US_ASCII);
+            byte[] sentPassword = rconMessage.getBody().getBytes(StandardCharsets.UTF_8);
 
             ctx.channel().writeAndFlush(new RconMessage(rconMessage.getId(), RconMessage.RESPONSE_VALUE, ""));
 

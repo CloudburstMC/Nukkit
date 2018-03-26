@@ -1,15 +1,16 @@
 package cn.nukkit.server.nbt;
 
-import cn.nukkit.api.item.ItemStack;
-import cn.nukkit.api.item.ItemStackBuilder;
+import cn.nukkit.api.item.ItemInstance;
+import cn.nukkit.api.item.ItemInstanceBuilder;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.item.ItemTypes;
-import cn.nukkit.server.item.NukkitItemStackBuilder;
-import cn.nukkit.server.nbt.stream.NBTReader;
-import cn.nukkit.server.nbt.stream.NBTWriter;
+import cn.nukkit.server.item.NukkitItemInstanceBuilder;
+import cn.nukkit.server.metadata.MetadataSerializer;
+import cn.nukkit.server.nbt.stream.LittleEndianDataInputStream;
+import cn.nukkit.server.nbt.stream.LittleEndianDataOutputStream;
+import cn.nukkit.server.nbt.stream.NBTInputStream;
+import cn.nukkit.server.nbt.stream.NBTOutputStream;
 import cn.nukkit.server.nbt.tag.*;
-import cn.nukkit.server.nbt.util.LittleEndianDataInputStream;
-import cn.nukkit.server.nbt.util.LittleEndianDataOutputStream;
 import com.google.common.base.Preconditions;
 import lombok.experimental.UtilityClass;
 
@@ -23,41 +24,41 @@ import java.util.zip.GZIPOutputStream;
 public class NBTIO {
     public static int MAX_DEPTH = 16;
 
-    public static NBTReader createLittleEndianReader(InputStream stream) {
+    public static NBTInputStream createReaderLE(InputStream stream) {
         Objects.requireNonNull(stream, "stream");
-        return new NBTReader(new LittleEndianDataInputStream(stream));
+        return new NBTInputStream(new LittleEndianDataInputStream(stream));
     }
 
-    public static NBTReader createBigEndianReader(InputStream stream) {
+    public static NBTInputStream createReader(InputStream stream) {
         Objects.requireNonNull(stream, "stream");
-        return new NBTReader(new DataInputStream(stream));
+        return new NBTInputStream(new DataInputStream(stream));
     }
 
-    public static NBTWriter createLittleEndianWriter(OutputStream stream) {
+    public static NBTOutputStream createWriterLE(OutputStream stream) {
         Objects.requireNonNull(stream, "stream");
-        return new NBTWriter(new LittleEndianDataOutputStream(stream));
+        return new NBTOutputStream(new LittleEndianDataOutputStream(stream));
     }
 
-    public static NBTWriter createBigEndianWriter(OutputStream stream) {
+    public static NBTOutputStream createWriter(OutputStream stream) {
         Objects.requireNonNull(stream, "stream");
-        return new NBTWriter(new DataOutputStream(stream));
+        return new NBTOutputStream(new DataOutputStream(stream));
     }
 
-    public static NBTReader createCompressedReader(InputStream stream) throws IOException {
-        return createBigEndianReader(new GZIPInputStream(stream));
+    public static NBTInputStream createGZIPReader(InputStream stream) throws IOException {
+        return createReader(new GZIPInputStream(stream));
     }
 
-    public static NBTWriter createCompressedWriter(OutputStream stream) throws IOException {
-        return createBigEndianWriter(new GZIPOutputStream(stream));
+    public static NBTOutputStream createGZIPWriter(OutputStream stream) throws IOException {
+        return createWriter(new GZIPOutputStream(stream));
     }
 
-    public static ItemStack createItemStack(Map<String, Tag<?>> map) {
+    public static ItemInstance createItemStack(Map<String, Tag<?>> map) {
         ByteTag countTag = (ByteTag) map.get("Count");
         ShortTag damageTag = (ShortTag) map.get("Damage");
         ShortTag idTag = (ShortTag) map.get("id");
-        ItemType type = ItemTypes.forId(idTag.getValue());
+        ItemType type = ItemTypes.byId(idTag.getValue());
 
-        ItemStackBuilder builder = new NukkitItemStackBuilder()
+        ItemInstanceBuilder builder = new NukkitItemInstanceBuilder()
                 .itemType(type)
                 .amount(countTag.getValue())
                 .itemData(MetadataSerializer.deserializeMetadata(type, damageTag.getValue()));
@@ -70,7 +71,7 @@ public class NBTIO {
         return builder.build();
     }
 
-    public static void applyItemData(ItemStackBuilder builder, Map<String, Tag<?>> map) {
+    public static void applyItemData(ItemInstanceBuilder builder, Map<String, Tag<?>> map) {
         if (map.containsKey("display")) {
             Map<String, Tag<?>> displayTag = ((CompoundTag) map.get("display")).getValue();
             if (displayTag.containsKey("Name")) {
@@ -79,8 +80,8 @@ public class NBTIO {
         }
     }
 
-    public static ItemStack[] createItemStacks(ListTag<CompoundTag> tag, int knownSize) {
-        ItemStack[] all = new ItemStack[knownSize];
+    public static ItemInstance[] createItemStacks(ListTag<CompoundTag> tag, int knownSize) {
+        ItemInstance[] all = new ItemInstance[knownSize];
         for (CompoundTag slotTag : tag.getValue()) {
             Map<String, Tag<?>> slotMap = slotTag.getValue();
             Tag<?> inSlotTagRaw = slotMap.get("Slot");

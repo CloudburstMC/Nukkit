@@ -1,352 +1,436 @@
 package cn.nukkit.server.network.minecraft.session;
 
-import cn.nukkit.api.GameMode;
 import cn.nukkit.api.Player;
-import cn.nukkit.api.Skin;
+import cn.nukkit.api.block.BlockTypes;
+import cn.nukkit.api.command.CommandException;
+import cn.nukkit.api.command.CommandNotFoundException;
 import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.entity.component.Damageable;
 import cn.nukkit.api.entity.component.PlayerData;
-import cn.nukkit.api.event.player.PlayerKickEvent;
-import cn.nukkit.api.form.window.FormWindow;
+import cn.nukkit.api.entity.system.System;
+import cn.nukkit.api.entity.system.SystemRunner;
+import cn.nukkit.api.event.player.*;
 import cn.nukkit.api.inventory.Inventory;
-import cn.nukkit.api.item.ItemStack;
-import cn.nukkit.api.level.AdventureSettings;
-import cn.nukkit.api.level.Level;
+import cn.nukkit.api.inventory.PlayerInventory;
+import cn.nukkit.api.item.ItemInstance;
+import cn.nukkit.api.level.chunk.Chunk;
+import cn.nukkit.api.message.ChatMessage;
 import cn.nukkit.api.message.Message;
+import cn.nukkit.api.message.RawMessage;
+import cn.nukkit.api.message.TranslationMessage;
 import cn.nukkit.api.permission.Permission;
+import cn.nukkit.api.permission.PermissionAttachment;
+import cn.nukkit.api.permission.PermissionAttachmentInfo;
+import cn.nukkit.api.permission.PlayerPermission;
 import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.api.resourcepack.BehaviorPack;
 import cn.nukkit.api.resourcepack.ResourcePack;
+import cn.nukkit.api.util.Rotation;
+import cn.nukkit.api.util.Skin;
 import cn.nukkit.api.util.data.DeviceOS;
-import cn.nukkit.server.entity.EntityTypeData;
+import cn.nukkit.server.NukkitServer;
+import cn.nukkit.server.entity.Attribute;
+import cn.nukkit.server.entity.BaseEntity;
+import cn.nukkit.server.entity.EntityType;
 import cn.nukkit.server.entity.LivingEntity;
+import cn.nukkit.server.entity.component.DamageableComponent;
 import cn.nukkit.server.entity.component.PlayerDataComponent;
+import cn.nukkit.server.inventory.InventoryObserver;
+import cn.nukkit.server.inventory.NukkitInventory;
+import cn.nukkit.server.inventory.NukkitInventoryType;
+import cn.nukkit.server.inventory.NukkitPlayerInventory;
 import cn.nukkit.server.inventory.transaction.*;
-import cn.nukkit.server.network.NetworkPacketHandler;
-import cn.nukkit.server.network.minecraft.data.NukkitAdventureSettings;
+import cn.nukkit.server.inventory.transaction.record.ContainerTransactionRecord;
+import cn.nukkit.server.inventory.transaction.record.WorldInteractionTransactionRecord;
+import cn.nukkit.server.level.NukkitLevel;
+import cn.nukkit.server.level.chunk.FullChunkDataPacketCreator;
+import cn.nukkit.server.level.util.AroundPointChunkComparator;
+import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
+import cn.nukkit.server.network.minecraft.data.ContainerIds;
 import cn.nukkit.server.network.minecraft.packet.*;
+import cn.nukkit.server.permission.NukkitAbilities;
 import cn.nukkit.server.resourcepack.loader.file.PackFile;
 import com.flowpowered.math.vector.Vector3d;
+import com.flowpowered.math.vector.Vector3f;
+import com.google.common.base.Preconditions;
+import com.spotify.futures.CompletableFutures;
+import gnu.trove.TCollections;
+import gnu.trove.set.TLongSet;
+import gnu.trove.set.hash.TLongHashSet;
+import joptsimple.internal.Strings;
+import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class PlayerSession extends LivingEntity implements Player {
+@Log4j2
+public class PlayerSession extends LivingEntity implements Player, InventoryObserver {
     private final MinecraftSession session;
-    private final Level level;
-    private String displayName;
-    private String playerListName;
+    private final NukkitServer server;
+    private final NukkitLevel level;
+    private final TLongSet viewableEntities = new TLongHashSet();
+    private final TLongSet hiddenEntities = TCollections.synchronizedSet(new TLongHashSet());
+    private final TLongSet sentChunks = TCollections.synchronizedSet(new TLongHashSet());
+    private final NukkitPlayerInventory inventory = new NukkitPlayerInventory(this);
+    private final AtomicReference<Locale> locale = new AtomicReference<>();
+    private boolean commandsEnabled = true;
+    //private final PlayerData data;
+    private boolean hasMoved;
+    private Inventory openInventory;
+    private int enchantmentSeed;
+    private int viewDistance;
 
-    public PlayerSession(MinecraftSession session, Level level) {
-        super(EntityTypeData.PLAYER, level, level.getLevelSettings().getSpawnPosition(), session.getServer(), 20);
+    private boolean spawned = false;
+
+    public PlayerSession(MinecraftSession session, NukkitLevel level) {
+        super(EntityType.PLAYER, level.getData().getDefaultSpawn(), level, session.getServer(), 20);
         this.session = session;
+        this.server = session.getServer();
         this.level = level;
-        playerListName = displayName = session.getAuthData().getDisplayName();
+        Path playerDatPath = server.getPlayersPath().resolve(getXuid().isPresent() ? getUniqueId().toString() : getName());
+
+        enchantmentSeed = ThreadLocalRandom.current().nextInt();
+        viewDistance = server.getConfiguration().getMechanics().getViewDistance();
 
         // Register components
-        registerComponent(PlayerData.class, new PlayerDataComponent());
+        registerComponent(PlayerData.class, new PlayerDataComponent(this));
+    }
+
+    public MinecraftSession getMinecraftSession() {
+        return session;
+    }
+
+    public boolean isChunkInView(int x, int z) {
+        return sentChunks.contains(getChunkKey(x, z));
+    }
+
+    public CompletableFuture<List<Chunk>> sendNewChunks() {
+        return getChunksForRadius(viewDistance).whenComplete(((chunks, throwable) -> {
+            if (throwable != null) {
+                log.error("Cannot load chunks for" + session.getAuthData().getDisplayName());
+                session.disconnect("Internal Error");
+                return;
+            }
+
+            // Send closest chunks first.
+            Vector3f position = getPosition();
+            int chunkX = position.getFloorX() >> 4;
+            int chunkZ = position.getFloorZ() >> 4;
+
+            chunks.sort(new AroundPointChunkComparator(chunkX, chunkZ));
+
+            for (Chunk chunk : chunks) {
+                // Already wrapped so we can send immediately.
+                session.sendImmediatePackage(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
+            }
+        }));
+    }
+
+    public void updateViewableEntities() {
+        synchronized (viewableEntities) {
+            Collection<BaseEntity> inView = level.getEntityManager().getEntitiesInDistance(getPosition(), server.getConfiguration().getMechanics().getViewDistance());
+            TLongSet toRemove = new TLongHashSet();
+            Collection<BaseEntity> toAdd = new ArrayList<>();
+
+            // Remove entities out of range
+            viewableEntities.forEach(id -> {
+                Optional<BaseEntity> optionalEntity = level.getEntityManager().getEntityById(id);
+                if (optionalEntity.isPresent()) {
+                    if (!inView.contains(optionalEntity.get())) {
+                        toRemove.add(id);
+                    }
+                    if (hiddenEntities.contains(id)) {
+                        toRemove.add(id);
+                    }
+                } else {
+                    toRemove.add(id);
+                }
+                return true;
+            });
+
+            for (BaseEntity entity : inView) {
+                if (entity.getEntityId() == getEntityId()) {
+                    continue; // Can't add our self.
+                }
+
+                long chunkKey = getChunkKey(entity.getPosition().getFloorX() >> 4, entity.getPosition().getFloorZ() >> 4);
+                if (sentChunks.contains(chunkKey) && viewableEntities.add(entity.getEntityId()) && !hiddenEntities.contains(entity.getEntityId())) {
+                    toAdd.add(entity);
+                }
+            }
+
+            viewableEntities.removeAll(toRemove);
+
+            toRemove.forEach(id -> {
+                RemoveEntityPacket packet = new RemoveEntityPacket();
+                packet.setRuntimeEntityId(id);
+                session.addToSendQueue(packet);
+                return true;
+            });
+
+            for (BaseEntity entity : toAdd) {
+                session.addToSendQueue(entity.createAddEntityPacket());
+            }
+        }
+    }
+
+    public void save() {
+    }
+
+    public CompletableFuture<List<Chunk>> getChunksForRadius(int radius) {
+        int chunkX = getPosition().getFloorX() >> 4;
+        int chunkZ = getPosition().getFloorZ() >> 4;
+
+        TLongSet chunksForRadius = new TLongHashSet();
+        List<CompletableFuture<Chunk>> chunkFutures = new ArrayList<>();
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                int cx = chunkX + x;
+                int cz = chunkZ + z;
+                long key = getChunkKey(cx, cz);
+
+                chunksForRadius.add(key);
+                if (!sentChunks.add(key)) {
+                    continue;
+                }
+
+                chunkFutures.add(getLevel().getChunk(cx, cz));
+            }
+        }
+
+        sentChunks.retainAll(chunksForRadius);
+
+        return CompletableFutures.allAsList(chunkFutures);
     }
 
     private void startGame() {
-        //PlayerLoginEvent event = new PlayerLoginEvent(this, );
+        PlayerLoginEvent event = new PlayerLoginEvent(this, level.getData().getDefaultSpawn(), level, getRotation(), level.getData().getGameMode());
+        server.getEventManager().fire(event);
+
+        if (level != event.getSpawnLevel()) {
+            level.getEntityManager().deregisterEntity(this);
+            NukkitLevel newLevel = (NukkitLevel) event.getSpawnLevel();
+            newLevel.getEntityManager().registerEntity(this);
+            setEntityId(newLevel.getEntityManager().allocateEntityId());
+        }
+
+        log.info(event.getSpawnPosition());
+
+        setPosition(event.getSpawnPosition());
+        setRotation(event.getRotation());
+        hasMoved = false;
 
         StartGamePacket startGame = new StartGamePacket();
-        startGame.setUniqueEntityId(getUniqueEntityId());
-        startGame.setRuntimeEntityId(getRuntimeEntityId());
-        startGame.setGamemode(level.getDefaultGamemode());
-        startGame.setPlayerPosition(level.getLevelSettings().getSpawnPosition());
-        startGame.setRotation(getRotation().getBodyRotation());
-        startGame.setLevelSettings(level.getLevelSettings());
-        startGame.setLevelId(level.getId());
-        startGame.setWorldName(level.getName());
+        startGame.setUniqueEntityId(getEntityId());
+        startGame.setRuntimeEntityId(getEntityId());
+        startGame.setGamemode(event.getGameMode());
+        startGame.setPlayerPosition(event.getSpawnPosition());
+        startGame.setRotation(event.getRotation());
+        startGame.setLevelSettings(event.getSpawnLevel().getData());
+        startGame.setLevelId(event.getSpawnLevel().getId());
+        startGame.setWorldName("world"); //level.getName()
         startGame.setPremiumWorldTemplateId("");
         startGame.setTrial(false);
-        startGame.setCurrentTick(level.getTick());
+        startGame.setCurrentTick(event.getSpawnLevel().getCurrentTick());
         startGame.setEnchantmentSeed(enchantmentSeed);
+
+        session.addToSendQueue(startGame);
+
+        sendAttributes();
+        sendPlayerInventory();
     }
 
-    private void sendInventory() {
+    @Override
+    public boolean isOnGround() {
+        Vector3f position = getPosition();
+        int chunkX = position.getFloorX() >> 4;
+        int chunkY = position.getFloorY() >> 4;
+        level.getChunk(chunkX, chunkY).join();// Make sure the chunk is loaded before checking
+        return super.isOnGround();
+    }
 
+    @Override
+    public boolean isSpawned() {
+        return spawned;
+    }
+
+    private void sendAttributes() {
+        Damageable damageable = ensureAndGet(Damageable.class);
+        PlayerDataComponent data = (PlayerDataComponent) ensureAndGet(PlayerData.class);
+        Attribute health = new Attribute("minecraft:health", damageable.getFixedHealth(), 0f,
+                damageable.getMaximumHealth());
+
+        UpdateAttributesPacket packet = new UpdateAttributesPacket();
+        packet.setRuntimeEntityId(getEntityId());
+        packet.getAttributes().add(health);
+        packet.getAttributes().addAll(data.getAttributes());
+        session.addToSendQueue(packet);
     }
 
     private void sendCreativeInventory() {
 
     }
 
+    private void sendPlayerInventory() {
+
+    }
+
+    private void sendMovePlayer() {
+        MovePlayerPacket packet = new MovePlayerPacket();
+        packet.setRuntimeEntityId(getEntityId());
+
+        packet.setPosition(getGamePosition());
+        packet.setRotation(getRotation());
+        packet.setOnGround(isOnGround());
+        packet.setRidingRuntimeEntityId(0);
+        if (isTeleported()) {
+            packet.setMode(MovePlayerPacket.Mode.TELEPORT);
+            packet.setTeleportationCause(MovePlayerPacket.TeleportationCause.UNKNOWN);
+            packet.setUnknown0(1);
+        } else {
+            packet.setMode(MovePlayerPacket.Mode.NORMAL);
+        }
+        session.addToSendQueue(packet);
+    }
+
+    private void sendEntityData() {
+        SetEntityDataPacket packet = new SetEntityDataPacket();
+        packet.setRuntimeEntityId(getEntityId());
+        packet.getMetadata().putAll(getMetadata());
+        session.addToSendQueue(packet);
+    }
+
     private void sendHealth() {
         Damageable damageable = ensureAndGet(Damageable.class);
         SetHealthPacket packet = new SetHealthPacket();
-        packet.setHealth(damageable.getRoundedHealth());
+        packet.setHealth(Math.round(damageable.getFixedHealth()));
         session.addToSendQueue(packet);
     }
 
     private void sendGamerules() {
         GameRulesChangedPacket packet = new GameRulesChangedPacket();
-        packet.getRules().addAll(level.getLevelSettings().getGameRules());
+        packet.setGameRules(level.getData().getGameRules());
         session.addToSendQueue(packet);
     }
 
     private void sendAdventureSettings() {
-        PlayerData data = ensureAndGet(PlayerData.class);
-        NukkitAdventureSettings settings = (NukkitAdventureSettings) data.getAdventureSettings();
+        PlayerDataComponent data = (PlayerDataComponent) ensureAndGet(PlayerData.class);
+        NukkitAbilities abilities = data.getAbilities();
+
         AdventureSettingsPacket packet = new AdventureSettingsPacket();
-        packet.setWorldPermissions(settings.getWorldPermissions());
-        packet.setCommandPermission(settings.getCommandPermission());
-        packet.setActionPermissions(settings.getActionPermissions());
-        packet.setPlayerPermission(settings.getPlayerPermission());
-        packet.setCustomStoredPermissions(settings.getCustomStoredPermissions());
-        packet.setUniqueEntityId(getUniqueEntityId());
+        packet.setUniqueEntityId(getEntityId());
+        packet.setFlags(abilities.getFlags());
+        packet.setFlags2(abilities.getFlags2());
+        packet.setCustomFlags(abilities.getCustomFlags());
+        packet.setCommandPermission(data.getCommandPermission());
+        packet.setPlayerPermission(data.getPlayerPermission());
         session.addToSendQueue(packet);
     }
 
-
-
-    @Nonnull
-    @Override
-    public Optional<String> getDisplayName() {
-        return Optional.ofNullable(displayName);
+    private void sendCommandsEnabled() {
+        SetCommandsEnabledPacket packet = new SetCommandsEnabledPacket();
+        packet.setCommandsEnabled(this.commandsEnabled);
+        session.addToSendQueue(packet);
     }
 
-    @Override
-    public void setDisplayName(@Nullable String name) {
-        this.displayName = name;
-    }
-
-    @Nonnull
-    @Override
-    public Optional<String> getPlayerListName() {
-        return Optional.ofNullable(playerListName);
-    }
-
-    @Override
-    public void setPlayerListName(@Nullable String name) {
-        playerListName = name;
+    private OptionalInt testInventoryChange(Inventory inventory) {
+        byte windowId;
+        if (inventory == openInventory) {
+            windowId = NukkitInventoryType.fromApi(openInventory.getInventoryType()).getId();
+        } else if (inventory instanceof PlayerInventory) {
+            windowId = NukkitInventoryType.PLAYER.getId();
+        } else {
+            return OptionalInt.empty(); // Player shouldn't be observing this inventory.
+        }
+        return OptionalInt.of(windowId);
     }
 
     @Nonnull
     @Override
-    public GameMode getGameMode() {
-        return ensureAndGet(PlayerData.class).getGameMode();
+    public String getName() {
+        return session.getAuthData().getDisplayName();
+    }
+
+    @Nonnull
+    @Override
+    public UUID getUniqueId() {
+        return session.getAuthData().getIdentity();
+    }
+
+    @Nonnull
+    @Override
+    public Optional<String> getXuid() {
+        return Optional.ofNullable(session.getAuthData().getXuid());
     }
 
     @Override
-    public void setGameMode(@Nullable GameMode gameMode) {
-        ensureAndGet(PlayerData.class).setGamemode(gameMode == null ? GameMode.SURVIVAL : gameMode);
-    }
-
-    @Override
-    public boolean isSprinting() {
+    public boolean isBanned() {
         return false;
     }
 
     @Override
-    public void setSprinting(boolean value) {
-
+    public void setBanned(boolean value) {
     }
 
     @Override
-    public int getExpToLevel() {
-        return 0;
+    public boolean isWhitelisted() {
+        return server.getWhitelist().isWhitelisted(this);
     }
 
     @Override
-    public void addWindow(Inventory inventory) {
+    public void setWhitelisted(boolean value) {
+        server.getWhitelist().whitelist(this);
+    }
 
+    public Optional<UUID> getOfflineUniqueId() {
+        return Optional.ofNullable(session.getAuthData().getOfflineIdentity());
     }
 
     @Override
-    public void addWindow(Inventory inventory, int forceId) {
-
+    public MinecraftPacket createAddEntityPacket() {
+        AddPlayerPacket addPlayer = new AddPlayerPacket();
+        addPlayer.setUuid(session.getAuthData().getIdentity());
+        addPlayer.setUsername(session.getAuthData().getDisplayName());
+        addPlayer.setUniqueEntityId(getEntityId());
+        addPlayer.setRuntimeEntityId(getEntityId());
+        addPlayer.setPosition(getPosition());
+        addPlayer.setMotion(getMotion());
+        addPlayer.setRotation(getRotation());
+        addPlayer.setHand(inventory.getItemInHand().orElse(null));
+        addPlayer.getMetadata().putAll(getMetadata());
+        // TODO: Adventure settings
+        return addPlayer;
     }
 
     @Override
-    public int getWindowId(Inventory inventory) {
-        return 0;
+    public boolean transfer(@Nonnull InetSocketAddress address) {
+        Preconditions.checkNotNull(address, "address");
+        return transfer(address.getAddress().getHostAddress(), address.getPort());
     }
 
     @Override
-    public Inventory getWindowById() {
-        return null;
-    }
-
-    @Override
-    public void removeWindow(Inventory inventory) {
-
-    }
-
-    @Override
-    public void removeAllWindows() {
-
-    }
-
-    @Override
-    public void sendAllInventories() {
-
-    }
-
-    @Override
-    public String getAddress() {
-        return null;
-    }
-
-    @Override
-    public int getPort() {
-        return 0;
-    }
-
-    @Override
-    public void kick() {
-
-    }
-
-    @Override
-    public void kick(String reason) {
-
-    }
-
-    @Override
-    public void kick(PlayerKickEvent.Reason reason) {
-
-    }
-
-    @Override
-    public void chat(String message) {
-
-    }
-
-    @Override
-    public void saveData() {
-
-    }
-
-    @Override
-    public void saveData(boolean async) {
-
-    }
-
-    @Override
-    public void loadData() {
-
-    }
-
-    @Override
-    public void addExp(int exp) {
-
-    }
-
-    @Override
-    public int getExp() {
-        return 0;
-    }
-
-    @Override
-    public void addExpLevel(int level) {
-
-    }
-
-    @Override
-    public int getExpLevel() {
-        return 0;
-    }
-
-    @Override
-    public boolean getAllowFlight() {
-        return false;
-    }
-
-    @Override
-    public void setAllowFlight(boolean value) {
-
-    }
-
-    @Override
-    public void hidePlayer(Player player) {
-
-    }
-
-    @Override
-    public void showPlayer(Player player) {
-
-    }
-
-    @Override
-    public boolean canSee(Player player) {
-        return false;
-    }
-
-    @Override
-    public boolean isFlying() {
-        return false;
-    }
-
-    @Override
-    public void setFlying(boolean value) {
-
-    }
-
-    @Override
-    public void setMovementSpeed() {
-
-    }
-
-    @Override
-    public int getMovementSpeed() {
-        return 0;
-    }
-
-    @Override
-    public void sendTitle(String title, String subtitle) {
-
-    }
-
-    @Override
-    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-
-    }
-
-    @Override
-    public void resetTitle() {
-
-    }
-
-    @Override
-    public int showFormWindow(FormWindow formWindow) {
-        return 0;
-    }
-
-    @Override
-    public int showFormWindow(FormWindow formWindow, int forceId) {
-        return 0;
-    }
-
-    @Override
-    public int addServerSettings(FormWindow formWindow) {
-        return 0;
-    }
-
-    @Override
-    public void setCheckMovement(boolean value) {
-
-    }
-
-    @Override
-    public Locale getLocale() {
-        return null;
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-
-    }
-
-    @Override
-    public void transfer(InetSocketAddress address) {
-
+    public boolean transfer(@Nonnull String address, @Nonnegative int port) {
+        Preconditions.checkNotNull(address, "address");
+        Preconditions.checkArgument(port <= 0xffff, "Port must be between 0 - 65535");
+        PlayerTransferEvent event = new PlayerTransferEvent(this, address, port);
+        server.getEventManager().fire(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+        TransferPacket packet = new TransferPacket();
+        packet.setAddress(address);
+        packet.setPort(port);
+        session.addToSendQueue(packet);
+        return true;
     }
 
     @Override
@@ -356,7 +440,15 @@ public class PlayerSession extends LivingEntity implements Player {
 
     @Override
     public void showXboxProfile(String xuid) {
+        Preconditions.checkState(Strings.isNullOrEmpty(xuid), "xuid is null or empty");
+        ShowProfilePacket packet = new ShowProfilePacket();
+        packet.setXuid(xuid);
+        session.addToSendQueue(packet);
+    }
 
+    @Override
+    public void showXboxProfile(Player player) {
+        player.getXuid().ifPresent(this::showXboxProfile);
     }
 
     @Override
@@ -370,38 +462,45 @@ public class PlayerSession extends LivingEntity implements Player {
     }
 
     @Override
-    public boolean isEnabledClientCommand() {
-        return false;
+    public boolean hasCommandsEnabled() {
+        return commandsEnabled;
     }
 
     @Override
-    public void setEnabledClientCommand(boolean value) {
-
-    }
-
-    @Override
-    public boolean isConnected() {
-        return false;
+    public void setCommandsEnabled(boolean commandsEnabled) {
+        if (this.commandsEnabled != commandsEnabled) {
+            this.commandsEnabled = commandsEnabled;
+            sendCommandsEnabled();
+        }
     }
 
     @Override
     public Skin getSkin() {
-        return null;
+        return ensureAndGet(PlayerData.class).getSkin();
     }
 
     @Override
     public void setSkin(Skin skin) {
+        PlayerData data = ensureAndGet(PlayerData.class);
+        PlayerSkinPacket packet = new PlayerSkinPacket();
+        packet.setSkin(skin);
+        packet.setOldSkinName(data.getSkin().getSkinId());
+        packet.setNewSkinName(skin.getSkinId());
+        packet.setUuid(getUniqueId());
+
+        //TODO: Update player list
+
+        ensureAndGet(PlayerData.class).setSkin(skin);
+    }
+
+    @Override
+    public void setButtonText(String text) {
 
     }
 
     @Override
     public String getButtonText() {
         return null;
-    }
-
-    @Override
-    public void setButtonText(String text) {
-
     }
 
     @Override
@@ -430,63 +529,18 @@ public class PlayerSession extends LivingEntity implements Player {
     }
 
     @Override
-    public boolean isSurvival() {
-        return false;
-    }
-
-    @Override
-    public boolean isCreative() {
-        return false;
-    }
-
-    @Override
-    public boolean isAdventure() {
-        return false;
-    }
-
-    @Override
-    public boolean isSpectator() {
-        return false;
-    }
-
-    @Override
     public Entity getEntityPlayerLookingAt() {
         return null;
     }
 
     @Override
+    public void setViewDistance(int viewDistance) {
+        this.viewDistance = viewDistance;
+    }
+
+    @Override
     public int getViewDistance() {
-        return 0;
-    }
-
-    @Override
-    public void setViewDistance(int distance) {
-
-    }
-
-    @Override
-    public void sendMessage(String message) {
-
-    }
-
-    @Override
-    public void sendMessage(Message message) {
-
-    }
-
-    @Override
-    public void sendTranslation(String message, String... parameters) {
-
-    }
-
-    @Override
-    public void sendPopup(String popup) {
-
-    }
-
-    @Override
-    public void sendTip(String tip) {
-
+        return viewDistance;
     }
 
     @Override
@@ -500,112 +554,220 @@ public class PlayerSession extends LivingEntity implements Player {
     }
 
     @Override
-    public boolean dropItem(ItemStack item) {
-        return false;
-    }
-
-    @Override
-    public boolean isOnline() {
+    public boolean dropItem(ItemInstance item) {
         return false;
     }
 
     @Nonnull
     @Override
-    public String getName() {
-        return session.getAuthData().getDisplayName();
-    }
-
-    @Nonnull
-    @Override
-    public UUID getUniqueId() {
-        return null;
+    public Optional<String> getDisplayName() {
+        return Optional.empty();
     }
 
     @Override
-    public boolean isBanned() {
-        return false;
-    }
+    public void setDisplayName(@Nullable String name) {
 
-    @Override
-    public void setBanned(boolean value) {
-
-    }
-
-    @Override
-    public boolean isWhitelisted() {
-        return false;
-    }
-
-    @Override
-    public void setWhitelisted(boolean value) {
-
-    }
-
-
-    public PlayerPacketHandler getPacketHandler() {
-        return new PlayerPacketHandler();
     }
 
     @Nonnull
     @Override
     public Optional<InetSocketAddress> getRemoteAddress() {
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean isXboxAuthenticated() {
-        return false;
+        return session.getRemoteAddress();
     }
 
     @Nonnull
     @Override
-    public Optional<String> getXuid() {
-        return Optional.empty();
+    public Optional<UUID> getOfflineUuid() {
+        return Optional.ofNullable(session.getAuthData().getOfflineIdentity());
+    }
+
+    @Override
+    public boolean isXboxAuthenticated() {
+        return getXuid().isPresent();
     }
 
     @Nonnull
     @Override
     public DeviceOS getDeviceOS() {
-        return null;
+        return session.getClientData().getDeviceOs();
     }
 
     @Override
     public boolean isEducationEdition() {
-        return false;
+        return session.getClientData().isEducationMode();
     }
 
     @Nonnull
     @Override
     public String getDeviceModel() {
-        return null;
+        return session.getClientData().getDeviceModel();
     }
 
     @Nonnull
     @Override
     public String getGameVersion() {
-        return null;
+        return session.getClientData().getGameVersion();
     }
 
     @Nonnull
     @Override
     public String getServerAddress() {
-        return null;
+        return session.getClientData().getServerAddress();
     }
 
     @Nonnull
     @Override
     public Optional<String> getActiveDirectoryRole() {
-        return Optional.empty();
+        return Optional.ofNullable(session.getClientData().getActiveDirectoryRole());
     }
 
     @Override
-    public boolean isSneaking() {
+    public boolean isSprinting() {
         return false;
     }
 
     @Override
-    public void setSneaking(boolean sneaking) {
+    public void setSprinting(boolean sprinting) {
 
+    }
+
+    @Override
+    public int getExperienceLevel() {
+        return 0;
+    }
+
+    @Override
+    public void disconnect() {
+        session.disconnect();
+    }
+
+    @Override
+    public void disconnect(String reason) {
+        session.disconnect(reason);
+    }
+
+    @Override
+    public void chat(String message) {
+
+    }
+
+    @Override
+    public void executeCommand(String command) {
+        if (!commandsEnabled) {
+            return;
+        }
+        command = command.trim();
+        if (command.isEmpty() || command.contains("\0")) {
+            sendMessage(new TranslationMessage("commands.generic.unknown"));
+            return;
+        }
+
+        try {
+            server.getCommandManager().executeCommand(PlayerSession.this, command);
+        } catch (CommandNotFoundException e) {
+            sendMessage(new TranslationMessage("commands.generic.unknown", command));
+        } catch (CommandException e) {
+            sendMessage(new TranslationMessage("commands.generic.exception"));
+            throw new RuntimeException("An error occurred whilst running command " + command + " for " + getName(), e);
+        }
+    }
+
+    @Override
+    public void hideEntity(@Nonnull Entity entity) {
+        Preconditions.checkNotNull(entity, "entity");
+        hiddenEntities.add(entity.getEntityId());
+        updateViewableEntities();
+    }
+
+    @Override
+    public void showEntity(@Nonnull Entity entity) {
+        Preconditions.checkNotNull(entity, "entity");
+        hiddenEntities.remove(entity.getEntityId());
+        updateViewableEntities();
+    }
+
+    @Override
+    public boolean canSee(@Nonnull Entity entity) {
+        Preconditions.checkNotNull(entity, "entity");
+        return viewableEntities.contains(entity.getEntityId());
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle) {
+
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+
+    }
+
+    @Override
+    public void resetTitle() {
+
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale.get();
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+        this.locale.set(locale);
+    }
+
+    @Override
+    public boolean onItemPickup(ItemInstance item) {
+        return inventory.addItem(item);
+    }
+
+    public NetworkPacketHandler getNetworkPacketHandler() {
+        return new PlayerNetworkPacketHandler();
+    }
+
+    @Override
+    public void onInventorySlotChange(int slot, @Nullable ItemInstance oldItem, @Nullable ItemInstance newItem, @Nonnull Inventory inventory, @Nullable PlayerSession session) {
+        OptionalInt optionalId = testInventoryChange(inventory);
+        if (!optionalId.isPresent()) {
+            return;
+        }
+        byte windowId = (byte) optionalId.getAsInt();
+
+        // The session that sent the inventory change updates without the need of a packet.
+        if (session != this) {
+            InventorySlotPacket packet = new InventorySlotPacket();
+            packet.setSlot(newItem);
+            packet.setInventorySlot(slot);
+            packet.setWindowId(windowId);
+            this.session.addToSendQueue(packet);
+        }
+    }
+
+    @Override
+    public void onInventoryContentsChange(@Nonnull ItemInstance[] contents, @Nonnull Inventory inventory) {
+        OptionalInt optionalId = testInventoryChange(inventory);
+        if (!optionalId.isPresent()) {
+            return;
+        }
+        byte windowId = (byte) optionalId.getAsInt();
+
+        InventoryContentPacket packet = new InventoryContentPacket();
+        packet.setWindowId(windowId);
+        packet.setItems(contents);
+    }
+
+    @Override
+    public void sendMessage(@Nonnull String text) {
+        sendMessage(new RawMessage(text));
+    }
+
+    @Override
+    public void sendMessage(@Nonnull Message text) {
+        TextPacket packet = new TextPacket();
+        packet.setMessage(text);
+        packet.setXuid(getXuid().orElse(""));
+        session.addToSendQueue(packet);
     }
 
     @Override
@@ -668,27 +830,57 @@ public class PlayerSession extends LivingEntity implements Player {
 
     }
 
-    private class PlayerPacketHandler extends NetworkPacketHandler {
+    @Override
+    public void setPosition(@Nonnull Vector3f position) {
+        super.setPosition(position);
+        hasMoved = true;
+    }
+
+    @Override
+    public void setRotation(@Nonnull Rotation rotation) {
+        super.setRotation(rotation);
+        hasMoved = true;
+    }
+
+    @Override
+    public void onAttributeUpdate(Attribute attribute) {
+        Preconditions.checkNotNull(attribute, "attribute");
+        UpdateAttributesPacket packet = new UpdateAttributesPacket();
+        packet.getAttributes().add(attribute);
+        session.addToSendQueue(packet);
+    }
+
+    public class PlayerNetworkPacketHandler implements NetworkPacketHandler {
 
         @Override
         public void handle(AdventureSettingsPacket packet) {
-            NukkitAdventureSettings settings = (NukkitAdventureSettings) ensureAndGet(PlayerData.class).getAdventureSettings();
+            PlayerDataComponent data = (PlayerDataComponent) ensureAndGet(PlayerData.class);
 
-            if (settings.getPlayerPermission() == AdventureSettings.PlayerPermission.OPERATOR) {
-                settings.setAll(
-                        packet.getWorldPermissions(),
-                        packet.getCommandPermission(),
-                        packet.getActionPermissions(),
-                        packet.getCustomStoredPermissions(),
-                        packet.getPlayerPermission()
-                );
+            if (data.getPlayerPermission() == PlayerPermission.OPERATOR) {
+                NukkitAbilities abilities = data.getAbilities();
+                abilities.setFlags(packet.getFlags());
+                abilities.setFlags2(packet.getFlags2());
+                //abilities.setCustomFlags(packet.getCustomFlags());
+                data.setCommandPermission(packet.getCommandPermission());
+                data.setPlayerPermission(packet.getPlayerPermission());
             }
             // TODO: Check that the player has permission to change these settings.
         }
 
         @Override
         public void handle(AnimatePacket packet) {
+            Damageable damageable = ensureAndGet(Damageable.class);
+            if (!spawned || damageable.isDead()) {
+                return;
+            }
 
+            PlayerAnimationEvent event = new PlayerAnimationEvent(PlayerSession.this, packet.getAction());
+            server.getEventManager().fire(event);
+            if (event.isCancelled()) {
+                return;
+            }
+
+            level.getPacketManager().queuePacketForViewers(PlayerSession.this, packet);
         }
 
         @Override
@@ -707,23 +899,37 @@ public class PlayerSession extends LivingEntity implements Player {
         }
 
         @Override
-        public void handle(ClientToServerHandshakePacket packet) {
-
-        }
-
-        @Override
         public void handle(CommandBlockUpdatePacket packet) {
 
         }
 
         @Override
         public void handle(CommandRequestPacket packet) {
+            Damageable damageable = ensureAndGet(Damageable.class);
+            if (!spawned || damageable.isDead()) {
+                return;
+            }
 
+            PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(PlayerSession.this, packet.getCommand());
+            server.getEventManager().fire(event);
+            if (event.isCancelled()) {
+                return;
+            }
+
+            executeCommand(packet.getCommand());
         }
 
         @Override
         public void handle(ContainerClosePacket packet) {
+            Damageable damageable = ensureAndGet(Damageable.class);
+            if (!spawned || damageable.isDead()) {
+                return;
+            }
 
+            if (openInventory != null) {
+                ((NukkitInventory) openInventory).getObservers().remove(PlayerSession.this);
+                openInventory = null;
+            }
         }
 
         @Override
@@ -733,11 +939,6 @@ public class PlayerSession extends LivingEntity implements Player {
 
         @Override
         public void handle(EntityEventPacket packet) {
-
-        }
-
-        @Override
-        public void handle(EntityFallPacket packet) {
 
         }
 
@@ -753,7 +954,23 @@ public class PlayerSession extends LivingEntity implements Player {
 
         @Override
         public void handle(InteractPacket packet) {
+            Damageable damageable = ensureAndGet(Damageable.class);
+            if (!spawned || damageable.isDead()) {
+                return;
+            }
 
+            Optional<BaseEntity> entity = level.getEntityManager().getEntityById(packet.getRuntimeEntityId());
+            if (!entity.isPresent()) {
+                return;
+            }
+
+            switch (packet.getAction()) {
+                default:
+                    if (log.isDebugEnabled()) {
+                        log.debug("Unhandled InteractPacket received from {} with action: {}", getName(), packet.getAction().name());
+                    }
+                    break;
+            }
         }
 
         @Override
@@ -778,7 +995,11 @@ public class PlayerSession extends LivingEntity implements Player {
 
         @Override
         public void handle(LevelSoundEventPacket packet) {
-
+            Damageable damageable = ensureAndGet(Damageable.class);
+            if (!spawned || damageable.isDead()) {
+                return;
+            }
+            level.getPacketManager().queuePacketForViewers(PlayerSession.this, packet);
         }
 
         @Override
@@ -808,7 +1029,31 @@ public class PlayerSession extends LivingEntity implements Player {
 
         @Override
         public void handle(MovePlayerPacket packet) {
+            Damageable damageable = ensureAndGet(Damageable.class);
+            if (!spawned || damageable.isDead()) {
+                return;
+            }
 
+            Vector3f oldPosition = getPosition();
+            Vector3f newPosition = packet.getPosition().sub(0, getOffset(), 0);
+
+            if (newPosition.distanceSquared(newPosition) >= 10000) {
+                setPosition(oldPosition);
+                setRotation(packet.getRotation());
+                return;
+            }
+
+            setPosition(newPosition);
+            setRotation(packet.getRotation());
+            // If we haven't moved in the X or Z axis, don't update viewable entities or try updating chunks - they haven't changed.
+            if (hasSubstantiallyMoved(oldPosition, newPosition)) {
+                updateViewableEntities();
+                sendNewChunks().exceptionally(throwable -> {
+                    log.error("Unable to send chunks", throwable);
+                    disconnect("disconnect.disconnected");
+                    return null;
+                });
+            }
         }
 
         @Override
@@ -818,7 +1063,40 @@ public class PlayerSession extends LivingEntity implements Player {
 
         @Override
         public void handle(PlayerActionPacket packet) {
+            Damageable damageable = ensureAndGet(Damageable.class);
+            if (!spawned || damageable.isDead()) {
+                return;
+            }
+            PlayerData data = ensureAndGet(PlayerData.class);
 
+            switch (packet.getAction()) {
+                case START_BREAK:
+                case ABORT_BREAK:
+                case STOP_BREAK:
+                case GET_UPDATED_BLOCK:
+                case DROP_ITEM:
+                case START_SLEEP:
+                case STOP_SLEEP:
+                case RESPAWN:
+                    sendHealth();
+                case JUMP:
+                case START_SPRINT:
+                    data.setSprinting(true);
+                    break;
+                case STOP_SPRINT:
+                    data.setSprinting(false);
+                    break;
+                case START_SNEAK:
+                case STOP_SNEAK:
+                case DIMENSION_CHANGE_REQUEST:
+                case DIMENSION_CHANGE_SUCCESS:
+                case START_GLIDE:
+                case STOP_GLIDE:
+                case BUILD_DENIED:
+                case CONTINUE_BREAK:
+                case CHANGE_SKIN:
+                case SET_ENCHANTMENT_SEED:
+            }
         }
 
         @Override
@@ -843,12 +1121,43 @@ public class PlayerSession extends LivingEntity implements Player {
 
         @Override
         public void handle(RequestChunkRadiusPacket packet) {
+            int radius = Math.max(5, Math.min(server.getConfiguration().getMechanics().getMaximumChunkRadius(), packet.getRadius()));
+            ChunkRadiusUpdatePacket radiusPacket = new ChunkRadiusUpdatePacket();
+            radiusPacket.setRadius(radius);
+            session.addToSendQueue(radiusPacket);
+            viewDistance = radius;
+
+            sendNewChunks().whenComplete((chunks, throwable) -> {
+                // If the player has not spawned, we need to start the spawning sequence.
+                if (!spawned) {
+                    sendEntityData();
+                    PlayStatusPacket playStatus = new PlayStatusPacket();
+                    playStatus.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
+                    session.addToSendQueue(playStatus);
+
+                    SetTimePacket setTime = new SetTimePacket();
+                    setTime.setTime(level.getTime());
+                    session.addToSendQueue(setTime);
+
+                    updateViewableEntities();
+                    sendMovePlayer();
+
+                    //session.addToSendQueue(server.getCommandManager().createAvailableCommandsPacket(PlayerSession.this));
+
+                    spawned = true;
+
+                    PlayerJoinEvent event = new PlayerJoinEvent(PlayerSession.this, new TranslationMessage("\u00A7emultiplayer.player.joined", getName()));
+                    server.getEventManager().fire(event);
+
+                    event.getJoinMessage().ifPresent(PlayerSession.this::sendMessage);
+                }
+            });
 
         }
 
         @Override
         public void handle(ResourcePackChunkRequestPacket packet) {
-            Optional<ResourcePack> optionalPack = session.getServer().getResourcePackManager().getPackById(packet.getPackId());
+            Optional<ResourcePack> optionalPack = server.getResourcePackManager().getPackById(packet.getPackId());
             if (!optionalPack.isPresent()) {
                 session.disconnect("disconnectionScreen.resourcePack");
                 return;
@@ -865,13 +1174,14 @@ public class PlayerSession extends LivingEntity implements Player {
 
         @Override
         public void handle(ResourcePackClientResponsePacket packet) {
+            boolean forcePacks = server.getConfiguration().getGeneral().isForcingResourcePacks();
             switch (packet.getStatus()) {
                 case HAVE_ALL_PACKS:
                     ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
-                    stackPacket.setForcedToAccept(session.getServer().getServerProperties().isResourcesForced());
-                    packet.getPackIds().forEach(id -> session.getServer().getResourcePackManager().getPackById(id));
+                    stackPacket.setForcedToAccept(forcePacks);
+                    packet.getPackIds().forEach(id -> server.getResourcePackManager().getPackById(id));
                     for (UUID id: packet.getPackIds()) {
-                        Optional<ResourcePack> optionalPack = session.getServer().getResourcePackManager().getPackById(id);
+                        Optional<ResourcePack> optionalPack = server.getResourcePackManager().getPackById(id);
                         if (!optionalPack.isPresent()) {
                             session.disconnect( "disconnectionScreen.resourcePack");
                             return;
@@ -883,10 +1193,11 @@ public class PlayerSession extends LivingEntity implements Player {
                         }
                         stackPacket.getResourcePacks().add(pack);
                     }
+                    session.addToSendQueue(stackPacket);
                     return;
                 case SEND_PACKS:
                     for (UUID packId: packet.getPackIds()) {
-                        Optional<ResourcePack> optionalPack = session.getServer().getResourcePackManager().getPackById(packId);
+                        Optional<ResourcePack> optionalPack = server.getResourcePackManager().getPackById(packId);
                         if (!optionalPack.isPresent()) {
                             session.disconnect( "disconnectionScreen.resourcePack");
                             return;
@@ -903,19 +1214,17 @@ public class PlayerSession extends LivingEntity implements Player {
                     }
                     return;
                 case REFUSED:
-                    if (session.getServer().getServerProperties().isResourcesForced()) {
+                    if (forcePacks) {
                         session.disconnect("disconnectionScreen.resourcePack");
                         return;
                     }
                     // Fall through
-                default:
+                case COMPLETED:
                     startGame();
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown resource pack status");
             }
-        }
-
-        @Override
-        public void handle(RespawnPacket packet) {
-
         }
 
         @Override
@@ -934,11 +1243,6 @@ public class PlayerSession extends LivingEntity implements Player {
         }
 
         @Override
-        public void handle(SetEntityMotionPacket packet) {
-
-        }
-
-        @Override
         public void handle(SetPlayerGameTypePacket packet) {
 
         }
@@ -949,8 +1253,38 @@ public class PlayerSession extends LivingEntity implements Player {
         }
 
         @Override
-        public void handle(TextPacket textPacket) {
+        public void handle(TextPacket packet) {
+            Damageable health = ensureAndGet(Damageable.class);
+            if (!spawned || health.isDead()) {
+                return;
+            }
 
+            if (!(packet.getMessage() instanceof ChatMessage)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("{} sent {} when only ChatMessages are allowed", getName(), packet.getMessage().getClass().getName());
+                }
+                return;
+            }
+            ChatMessage message = (ChatMessage) packet.getMessage();
+            String messageString = message.getMessage().trim();
+            if (messageString.isEmpty() || messageString.contains("\0")) {
+                return;
+            }
+
+            if (message.getMessage().startsWith("/")) {
+                // Command
+                String command = messageString.substring(1);
+                executeCommand(command);
+            }
+
+            PlayerChatEvent event = new PlayerChatEvent(PlayerSession.this, message);
+            if (event.isCancelled()) {
+                return;
+            }
+
+            packet.setXuid(""); // Stop chat issues
+            packet.setMessage(new ChatMessage(getName(), messageString, false)); // To stop any name forgery.
+            session.addToSendQueue(packet);
         }
 
         // Transactions (Not packets but here for convenience)
@@ -974,5 +1308,93 @@ public class PlayerSession extends LivingEntity implements Player {
         public void handle(ItemReleaseTransaction transaction) {
 
         }
+
+        public void handle(ContainerTransactionRecord record) {
+            switch (record.getInventoryId()) {
+                case ContainerIds.INVENTORY:
+                    Optional<ItemInstance> actualItem = inventory.getItem(record.getSlot());
+
+                    if ((actualItem.isPresent() && !actualItem.get().equals(record.getOldItem())) ||
+                            !actualItem.isPresent() && record.getOldItem().getItemType() != BlockTypes.AIR) {
+                        // Not actually the same item.
+                        sendPlayerInventory();
+                        return;
+                    }
+
+                    inventory.setItem(record.getSlot(), record.getNewItem());
+                    break;
+                case ContainerIds.CURSOR:
+                    Optional<ItemInstance> cursorItem = inventory.getCursorItem();
+
+                    if (cursorItem.isPresent() && !cursorItem.get().equals(record.getOldItem()) ||
+                            !cursorItem.isPresent() && record.getOldItem().getItemType() != BlockTypes.AIR) {
+                        // Not actually the same item.
+                        sendPlayerInventory();
+                        return;
+                    }
+
+                    inventory.setCursorItem(record.getNewItem());
+                    break;
+            }
+        }
+
+        public void handle(WorldInteractionTransactionRecord record) {
+            switch (record.getAction()) {
+                case DROP_ITEM:
+                    level.dropItem(record.getNewItem(), getGamePosition()).whenComplete((droppedItem, throwable) -> {
+                        if (throwable != null) {
+                            return;
+                        }
+                        droppedItem.setMotion(getDirectionVector().mul(0.4f));
+                    });
+                    break;
+                case PICKUP_ITEM:
+
+            }
+        }
+    }
+
+    public static final System SYSTEM = System.builder()
+            .expectComponent(PlayerData.class)
+            .runner(new PlayerTickSystem())
+            .build();
+
+    private static class PlayerTickSystem implements SystemRunner {
+
+        @Override
+        public void run(Entity entity) {
+            Preconditions.checkArgument(entity instanceof PlayerSession, "Entity was not of type PlayerSession");
+            PlayerSession session = (PlayerSession) entity;
+
+            DamageableComponent damageable = (DamageableComponent) session.ensureAndGet(Damageable.class);
+            if (!session.spawned || session.getMinecraftSession().isClosed() || damageable.isDead()) {
+                return;
+            }
+
+            PlayerDataComponent playerData = (PlayerDataComponent) session.ensureAndGet(PlayerData.class);
+
+            if (session.hasMoved) {
+                session.hasMoved = false;
+                if (session.isTeleported()) {
+                    session.sendMovePlayer();
+                }
+                session.updateViewableEntities();
+                session.sendNewChunks().exceptionally(throwable -> {
+                    log.error("Unable to send chunks", throwable);
+                    session.disconnect("Internal server error");
+                    return null;
+                });
+            }
+
+
+        }
+    }
+
+    private static long getChunkKey(int x, int z) {
+        return ((long) x << 32) + z - Integer.MIN_VALUE;
+    }
+
+    private static boolean hasSubstantiallyMoved(Vector3f oldPos, Vector3f newPos) {
+        return (Float.compare(oldPos.getX(), newPos.getX()) != 0 || Float.compare(oldPos.getZ(), newPos.getZ()) != 0);
     }
 }

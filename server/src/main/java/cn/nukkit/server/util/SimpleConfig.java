@@ -1,4 +1,4 @@
-package cn.nukkit.server.util;
+/*package cn.nukkit.server.util;
 
 import java.io.File;
 import java.lang.annotation.ElementType;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * SimpleConfig for Nukkit
  * added 11/02/2016 by fromgate
- */
+ *//*
 public abstract class SimpleConfig {
 
     private final File configFile;
@@ -138,4 +138,4 @@ public abstract class SimpleConfig {
 
         boolean skipLoad() default true;
     }
-}
+}*/

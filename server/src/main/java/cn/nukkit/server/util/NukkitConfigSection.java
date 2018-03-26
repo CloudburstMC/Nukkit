@@ -1,4 +1,4 @@
-package cn.nukkit.server.util;
+/*package cn.nukkit.server.util;
 
 import cn.nukkit.api.util.ConfigSection;
 
@@ -6,12 +6,12 @@ import java.util.*;
 
 /**
  * Created by fromgate on 26.04.2016.
- */
+ *//*
 public class NukkitConfigSection extends LinkedHashMap<String, Object> implements ConfigSection {
 
     /**
      * Empty ConfigSection constructor
-     */
+     *//*
     public NukkitConfigSection() {
         super();
     }
@@ -21,7 +21,7 @@ public class NukkitConfigSection extends LinkedHashMap<String, Object> implement
      *
      * @param key
      * @param value
-     */
+     *//*
     public NukkitConfigSection(String key, Object value) {
         this();
         this.set(key, value);
@@ -31,7 +31,7 @@ public class NukkitConfigSection extends LinkedHashMap<String, Object> implement
      * Constructor of ConfigSection, based on values stored in map.
      *
      * @param map
-     */
+     *//*
     public NukkitConfigSection(LinkedHashMap<String, Object> map) {
         this();
         if (map == null || map.isEmpty()) return;
@@ -497,4 +497,4 @@ public class NukkitConfigSection extends LinkedHashMap<String, Object> implement
     public Set<String> getKeys() {
         return this.getKeys(true);
     }
-}
+}*/

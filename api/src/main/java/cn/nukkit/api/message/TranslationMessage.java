@@ -28,11 +28,27 @@ public final class TranslationMessage implements ParameterMessage {
 
     /**
      * Creates a new translated message.
+     *
+     * @param name         the name of the message
+     * @param replacements the replacements to use
+     */
+    public TranslationMessage(@Nonnull String name, @Nonnull Object... replacements) {
+        this.name = Preconditions.checkNotNull(name, "name");
+        Preconditions.checkNotNull(replacements, "replacements");
+        this.replacements = new String[replacements.length];
+        for (int i = 0; i < replacements.length; i++) {
+            this.replacements[i] = replacements[i].toString();
+        }
+    }
+
+    /**
+     * Creates a new translated message.
      * @param name the name of the message
      * @param replacements the replacements to use
      */
     public TranslationMessage(@Nonnull String name, @Nonnull String... replacements) {
         this.name = Preconditions.checkNotNull(name, "name");
+        Preconditions.checkNotNull(replacements, "replacements");
         this.replacements = Arrays.copyOf(replacements, replacements.length);
     }
 

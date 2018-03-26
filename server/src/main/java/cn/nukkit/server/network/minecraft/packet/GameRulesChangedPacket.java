@@ -1,23 +1,20 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.api.level.gamerule.GameRule;
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.api.level.GameRules;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeGameRules;
 
 @Data
 public class GameRulesChangedPacket implements MinecraftPacket {
-    private final List<GameRule> rules = new ArrayList<>();
+    private GameRules gameRules;
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeGameRules(buffer, rules);
+        writeGameRules(buffer, gameRules);
     }
 
     @Override
@@ -27,6 +24,6 @@ public class GameRulesChangedPacket implements MinecraftPacket {
 
     @Override
     public void handle(NetworkPacketHandler handler) {
-
+        // Client bound only.
     }
 }

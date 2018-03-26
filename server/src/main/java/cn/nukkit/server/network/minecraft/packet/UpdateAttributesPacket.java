@@ -1,8 +1,8 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.server.entity.PlayerAttribute;
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.server.entity.Attribute;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -15,7 +15,7 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeRuntimeEntit
 @Data
 public class UpdateAttributesPacket implements MinecraftPacket {
     private long runtimeEntityId;
-    private List<PlayerAttribute> attributes = new ArrayList<>();
+    private List<Attribute> attributes = new ArrayList<>();
 
     @Override
     public void encode(ByteBuf buffer) {

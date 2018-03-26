@@ -1,18 +1,16 @@
 package cn.nukkit.server.command.simple;
 
-import cn.nukkit.api.MessageRecipient;
-import cn.nukkit.api.command.CommandExecutorSource;
+import cn.nukkit.api.command.CommandData;
+import cn.nukkit.api.command.MessageRecipient;
+import cn.nukkit.api.command.sender.CommandSender;
+import cn.nukkit.api.command.sender.ConsoleCommandSender;
 import cn.nukkit.api.command.simple.SimpleCommand;
-import cn.nukkit.api.command.source.ConsoleCommandExecutorSource;
-import cn.nukkit.api.message.TranslatedMessage;
+import cn.nukkit.api.message.TranslationMessage;
 import cn.nukkit.server.command.NukkitCommand;
 import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Method;
 
-/**
- * @author Tee7even
- */
 @Log4j2
 public class NukkitSimpleCommand extends NukkitCommand implements SimpleCommand {
     private Object object;
@@ -21,8 +19,8 @@ public class NukkitSimpleCommand extends NukkitCommand implements SimpleCommand 
     private int maxArgs;
     private int minArgs;
 
-    public NukkitSimpleCommand(Object object, Method method, String name, String description, String usageMessage, String[] aliases) {
-        super(name, description, usageMessage, aliases);
+    public NukkitSimpleCommand(Object object, Method method, String name, CommandData data) {
+        super(name, data);
         this.object = object;
         this.method = method;
     }
@@ -44,47 +42,40 @@ public class NukkitSimpleCommand extends NukkitCommand implements SimpleCommand 
 
     @Override
     public void sendUsageMessage(MessageRecipient recipient) {
-        if (!this.usageMessage.equals("")) {
-            recipient.sendMessage(new TranslatedMessage("commands.generic.usage", this.usageMessage));
-        }
+        data.getUsage().ifPresent(usage -> recipient.sendMessage(new TranslationMessage("commands.generic.usage", usage)));
     }
 
     @Override
     public void sendInGameMessage(MessageRecipient recipient) {
-        recipient.sendMessage(new TranslatedMessage("commands.generic.ingame"));
+        recipient.sendMessage(new TranslationMessage("commands.generic.ingame"));
     }
 
     @Override
-    public boolean execute(CommandExecutorSource sender, String commandLabel, String[] args) {
-        boolean canReceiveMessage = (sender instanceof MessageRecipient);
+    public boolean onCommand(CommandSender sender, String commandLabel, String[] args) {
 
-        if (forbidConsole && sender instanceof ConsoleCommandExecutorSource) {
-            sendInGameMessage((ConsoleCommandExecutorSource) sender);
+        if (forbidConsole && sender instanceof ConsoleCommandSender) {
+            sendInGameMessage(sender);
             return false;
         } else if (!testPermission(sender)) {
             return false;
         } else if (maxArgs != 0 && args.length > maxArgs) {
-            if (canReceiveMessage) {
-                sendUsageMessage((MessageRecipient) sender);
-            }
+            sendUsageMessage(sender);
             return false;
         } else if (minArgs != 0 && args.length < minArgs) {
-            if (canReceiveMessage) {
-                sendUsageMessage((MessageRecipient) sender);
-            }
+            sendUsageMessage(sender);
             return false;
         }
 
         boolean success = false;
 
         try {
-            success = (Boolean) method.invoke(object, sender, commandLabel, args);
+            success = (boolean) method.invoke(object, sender, commandLabel, args);
         } catch (Exception e) {
             log.throwing(e);
         }
 
-        if (!success && canReceiveMessage) {
-            sendUsageMessage((MessageRecipient) sender);
+        if (!success) {
+            sendUsageMessage(sender);
         }
 
         return success;

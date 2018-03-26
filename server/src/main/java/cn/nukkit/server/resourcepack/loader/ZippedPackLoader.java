@@ -5,6 +5,7 @@ import cn.nukkit.api.resourcepack.PackLoader;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.resourcepack.NukkitBehaviorPack;
 import cn.nukkit.server.resourcepack.NukkitMinecraftPackManifest;
+import cn.nukkit.server.resourcepack.NukkitResourcePack;
 import cn.nukkit.server.resourcepack.loader.file.ZippedPackFile;
 
 import javax.annotation.Nonnull;

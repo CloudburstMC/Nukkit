@@ -10,8 +10,16 @@ public class ByteTag extends Tag<Byte> {
         this.value = value;
     }
 
+    public ByteTag(String name, boolean value) {
+        this(name, (byte) (value ? 1 : 0));
+    }
+
     public byte getPrimitiveValue() {
         return value;
+    }
+
+    public boolean getAsBoolean() {
+        return value != 0;
     }
 
     @Override

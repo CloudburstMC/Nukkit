@@ -1,8 +1,8 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.server.math.BlockFace;
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.api.util.data.BlockFace;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -56,7 +56,7 @@ public class PlayerActionPacket implements MinecraftPacket {
         STOP_GLIDE,
         BUILD_DENIED,
         CONTINUE_BREAK,
-        UNKNOWN_19,
+        CHANGE_SKIN,
         SET_ENCHANTMENT_SEED
     }
 }

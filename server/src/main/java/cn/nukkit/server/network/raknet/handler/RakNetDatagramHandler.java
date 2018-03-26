@@ -1,12 +1,12 @@
 package cn.nukkit.server.network.raknet.handler;
 
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.network.Packets;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.packet.WrappedPacket;
 import cn.nukkit.server.network.minecraft.session.MinecraftSession;
 import cn.nukkit.server.network.raknet.NetworkPacket;
-import cn.nukkit.server.network.raknet.RakNetPackets;
+import cn.nukkit.server.network.raknet.RakNetPacket;
+import cn.nukkit.server.network.raknet.RakNetPacketRegistry;
 import cn.nukkit.server.network.raknet.datagram.EncapsulatedRakNetPacket;
 import cn.nukkit.server.network.raknet.enveloped.AddressedRakNetDatagram;
 import cn.nukkit.server.network.raknet.enveloped.DirectAddressedRakNetPacket;
@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.InetAddress;
@@ -65,17 +66,13 @@ public class RakNetDatagramHandler extends SimpleChannelInboundHandler<Addressed
                 if (packet.isHasSplit()) {
                     Optional<ByteBuf> possiblyReassembled = rakNetSession.addSplitPacket(packet);
                     if (possiblyReassembled.isPresent()) {
-                        ByteBuf reassembled = possiblyReassembled.get();
-                        try {
-                            NetworkPacket pk = Packets.getCodec(RakNetPackets.TYPE).tryDecode(reassembled);
-                            handlePackage(pk, session);
-                        } finally {
-                            reassembled.release();
-                        }
+                        @Cleanup("release") ByteBuf reassembled = possiblyReassembled.get();
+                        RakNetPacket pk = RakNetPacketRegistry.decode(reassembled);
+                        handlePackage(pk, session);
                     }
                 } else {
                     // Try to decode the full packet.
-                    NetworkPacket pk = Packets.getCodec(RakNetPackets.TYPE).tryDecode(packet.getBuffer());
+                    NetworkPacket pk = RakNetPacketRegistry.decode(packet.getBuffer());
                     handlePackage(pk, session);
                 }
             }
@@ -102,13 +99,13 @@ public class RakNetDatagramHandler extends SimpleChannelInboundHandler<Addressed
                 if (session.isEncrypted()) {
                     unwrappedData = PooledByteBufAllocator.DEFAULT.directBuffer(wrappedData.readableBytes());
                     session.getDecryptionCipher().cipher(wrappedData, unwrappedData);
-                    // TODO: Check adler checksum for tampering?
+                    // TODO: Check adler32 checksum?
                     unwrappedData = unwrappedData.slice(0, unwrappedData.readableBytes() - 8);
                 } else {
                     unwrappedData = wrappedData;
                 }
 
-                packets = session.getWrapperCompressionHandler().decompressPackets(unwrappedData);
+                packets = session.getWrapperHandler().decompressPackets(unwrappedData);
             } finally {
                 if (unwrappedData != null && unwrappedData != wrappedData) {
                     unwrappedData.release();
@@ -148,7 +145,7 @@ public class RakNetDatagramHandler extends SimpleChannelInboundHandler<Addressed
             return;
         }
         if (packet instanceof DisconnectNotificationPacket) {
-            session.disconnect("User disconnected from server", false);
+            session.disconnect("disconnect.disconnected", false);
             return;
         }
 

@@ -1,35 +1,63 @@
 package cn.nukkit.server.level;
 
-import cn.nukkit.api.level.AdventureSettings;
+import cn.nukkit.api.level.GameRules;
 import cn.nukkit.api.level.LevelSettings;
-import com.flowpowered.math.vector.Vector3i;
-import io.netty.util.internal.ConcurrentSet;
-import lombok.Data;
+import cn.nukkit.api.level.data.Difficulty;
+import cn.nukkit.api.level.data.Dimension;
+import cn.nukkit.api.level.data.Generator;
+import cn.nukkit.api.permission.PlayerPermission;
+import cn.nukkit.api.util.GameMode;
+import cn.nukkit.server.permission.NukkitAbilities;
+import com.flowpowered.math.vector.Vector3f;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Set;
 
-@Data
-public class NukkitLevelSettings implements LevelSettings {
+@Getter
+@Setter
+@AllArgsConstructor
+public abstract class NukkitLevelSettings implements LevelSettings {
     private final int seed;
-    private final int dimension;
-    private final int generator;
-    private final Set<GameRules> gameRules = new ConcurrentSet<>();
-    private int worldGamemode;
-    private int difficulty;
-    private Vector3i spawnPosition;
+    private final Dimension dimension;
+    private final Generator generator;
+    private final GameRules gameRules;
+    private GameMode gameMode;
+    private Difficulty difficulty;
+    private Vector3f defaultSpawn;
     private boolean achievementsDisabled;
     private int time;
-    private boolean educationLevel;
+    private boolean eduWorld;
     private float rainLevel;
     private float lightningLevel;
-    private boolean multiplayerGame = true;
-    private boolean broadcastingToLan = true;
-    private boolean broadcastingToXboxLive = true;
-    private boolean commandsEnabled = true;
-    private boolean texturePacksRequired;
+    private boolean forceGameType;
+    private boolean multiplayerGame;
+    private boolean broadcastingToLan;
+    private boolean broadcastingToXBL;
+    private boolean commandsEnabled;
+    private boolean texturepacksRequired;
     private boolean bonusChestEnabled;
     private boolean startingWithMap;
     private boolean trustingPlayers;
-    private AdventureSettings.PlayerPermission defaultPlayerPermission;
-    private int xboxLiveBroadcastMode;
+    private NukkitAbilities defaultAbilities;
+    private PlayerPermission defaultPlayerPermission;
+    private int XBLBroadcastMode;
+    private int serverChunkTickRange;
+    private boolean broadcastingToPlatform;
+    private int platformBroadcastMode;
+    private boolean broadcastingXBLWithIntent;
+    private boolean immutableWorld;
+
+    public boolean achievementsDisabledOnLoad() {
+        boolean enabled = !achievementsDisabled;
+
+        if (!achievementsDisabled) {
+            enabled = !commandsEnabled;
+        }
+
+        if (enabled) {
+            return gameMode == GameMode.CREATIVE;
+        }
+        return true;
+    }
 }

@@ -2,6 +2,7 @@ package cn.nukkit.server.network.minecraft.session;
 
 import cn.nukkit.api.Session;
 import cn.nukkit.api.util.data.DeviceOS;
+import cn.nukkit.server.NukkitServer;
 
 import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
@@ -17,6 +18,12 @@ public class LoginSession implements Session {
 
     public MinecraftSession getSession() {
         return session;
+    }
+
+    @Nonnull
+    @Override
+    public NukkitServer getServer() {
+        return session.getServer();
     }
 
     @Nonnull
@@ -43,7 +50,7 @@ public class LoginSession implements Session {
 
     @Nonnull
     @Override
-    public String getDisplayName() {
+    public String getName() {
         return session.getAuthData().getDisplayName();
     }
 

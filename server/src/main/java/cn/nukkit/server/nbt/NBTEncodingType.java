@@ -2,5 +2,5 @@ package cn.nukkit.server.nbt;
 
 public enum NBTEncodingType {
     NOTCHIAN,
-    MCPE
+    BEDROCK
 }

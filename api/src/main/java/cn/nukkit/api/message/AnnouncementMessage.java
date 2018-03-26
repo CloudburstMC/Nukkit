@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Nonnull
 @Immutable
-public final class AnnouncementMessage implements SenderMessage {
+public final class AnnouncementMessage implements SourceMessage {
     private static final Type TYPE = Type.ANNOUNCEMENT;
     private final String sender;
     private final String message;

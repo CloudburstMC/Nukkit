@@ -1,8 +1,8 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.api.item.ItemStack;
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -11,27 +11,27 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.*;
 @Data
 public class MobArmorEquipmentPacket implements MinecraftPacket {
     private long runtimeEntityId;
-    private ItemStack helmet;
-    private ItemStack chestplate;
-    private ItemStack leggings;
-    private ItemStack boots;
+    private ItemInstance helmet;
+    private ItemInstance chestplate;
+    private ItemInstance leggings;
+    private ItemInstance boots;
 
     @Override
     public void encode(ByteBuf buffer) {
         writeRuntimeEntityId(buffer, runtimeEntityId);
-        writeItemStack(buffer, helmet);
-        writeItemStack(buffer, chestplate);
-        writeItemStack(buffer, leggings);
-        writeItemStack(buffer, boots);
+        writeItemInstance(buffer, helmet);
+        writeItemInstance(buffer, chestplate);
+        writeItemInstance(buffer, leggings);
+        writeItemInstance(buffer, boots);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
         runtimeEntityId = readRuntimeEntityId(buffer);
-        helmet = readItemStack(buffer);
-        chestplate = readItemStack(buffer);
-        leggings = readItemStack(buffer);
-        boots = readItemStack(buffer);
+        helmet = readItemInstance(buffer);
+        chestplate = readItemInstance(buffer);
+        leggings = readItemInstance(buffer);
+        boots = readItemInstance(buffer);
     }
 
     @Override

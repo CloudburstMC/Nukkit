@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BlockTypes {
+    private static final TIntObjectMap<BlockType> BY_ID = new TIntObjectHashMap<>(192);
+    private static final Map<String, BlockType> BY_NAME = new HashMap<>();
+
     public static final BlockType AIR = IntBlock.builder().name("air").id(0).maxStackSize(0).diggable(false).transparent(true).solid(true).emitLight(0).filterLight(0).hardness(0f).build();
     public static final BlockType STONE = IntBlock.builder().name("stone").id(1).maxStackSize(64).diggable(true).transparent(false).solid(true).emitLight(0).filterLight(15).hardness(1.5f).build();
     public static final BlockType GRASS_BLOCK = IntBlock.builder().name("grass").id(2).maxStackSize(64).diggable(true).transparent(false).solid(true).emitLight(0).filterLight(15).hardness(0.6f).build();
@@ -262,8 +265,6 @@ public class BlockTypes {
     public static final BlockType OBSERVER = IntBlock.builder().name("observer").id(251).maxStackSize(64).diggable(true).transparent(true).solid(true).emitLight(0).filterLight(0).hardness(3f).build();
     public static final BlockType STRUCTURE_BLOCK = IntBlock.builder().name("structure_block").id(252).maxStackSize(64).diggable(false).transparent(false).solid(true).emitLight(0).filterLight(15).hardness(-1f).build();
     public static final BlockType RESERVED6 = IntBlock.builder().name("reserved6").id(255).maxStackSize(64).diggable(true).transparent(false).solid(true).emitLight(0).filterLight(15).hardness(-1f).build();
-    private static final TIntObjectMap<BlockType> BY_ID = new TIntObjectHashMap<>(192);
-    private static final Map<String, BlockType> BY_NAME = new HashMap<>();
 
     public static BlockType byName(@Nonnull String name) {
         Preconditions.checkNotNull(name, "name");
@@ -297,12 +298,13 @@ public class BlockTypes {
         private final float hardness;
         private final int burnChance;
         private final int burnability;
+        private final float resistance;
         private final Class<? extends Metadata> metadataClass;
         private final Class<? extends BlockEntity> blockEntityClass;
 
         public IntBlock(int id, String name, int maxStackSize, boolean diggable, boolean transparent, boolean flammable,
                         boolean floodable, boolean solid, int emitLight, int filterLight, float hardness, int burnChance,
-                        int burnability, Class<? extends Metadata> aClass, Class<? extends BlockEntity> blockEntityClass) {
+                        int burnability, float resistance, Class<? extends Metadata> aClass, Class<? extends BlockEntity> blockEntityClass) {
             this.id = id;
             this.name = name;
             this.maxStackSize = maxStackSize;
@@ -316,6 +318,7 @@ public class BlockTypes {
             this.hardness = hardness;
             this.burnChance = burnChance;
             this.burnability = burnability;
+            this.resistance = resistance;
             this.metadataClass = aClass;
             this.blockEntityClass = blockEntityClass;
 
@@ -391,6 +394,11 @@ public class BlockTypes {
         @Override
         public int burnability() {
             return burnability;
+        }
+
+        @Override
+        public float resistance() {
+            return resistance;
         }
 
         @Override

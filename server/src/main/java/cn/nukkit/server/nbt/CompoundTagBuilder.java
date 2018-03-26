@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -26,50 +27,44 @@ public class CompoundTagBuilder {
         return this;
     }
 
-    public CompoundTagBuilder tagByte (String name, byte value) {
+    public CompoundTagBuilder byteTag(String name, byte value) {
         return tag(new ByteTag(name, value));
     }
 
-    public CompoundTagBuilder tagByteArray (String name, byte [] value) {
+    public CompoundTagBuilder byteArrayTag(String name, byte[] value) {
         return tag(new ByteArrayTag(name, value));
     }
 
-    public CompoundTagBuilder tagDouble (String name, double value) {
+    public CompoundTagBuilder doubleTag(String name, double value) {
         return tag(new DoubleTag(name, value));
     }
 
-    public CompoundTagBuilder tagFloat (String name, float value) {
+    public CompoundTagBuilder floatTag(String name, float value) {
         return tag(new FloatTag(name, value));
     }
 
-    public CompoundTagBuilder tagIntArray (String name, int[] value) {
+    public CompoundTagBuilder intArrayTag(String name, int[] value) {
         return tag(new IntArrayTag(name, value));
     }
 
-    public CompoundTagBuilder tagInt (String name, int value) {
+    public CompoundTagBuilder intTag(String name, int value) {
         return tag(new IntTag(name, value));
     }
 
-    public CompoundTagBuilder tagLong (String name, long value) {
+    public CompoundTagBuilder longTag(String name, long value) {
         return tag(new LongTag(name, value));
     }
 
-    public CompoundTagBuilder tagShort (String name, short value) {
+    public CompoundTagBuilder shortTag(String name, short value) {
         return tag(new ShortTag(name, value));
     }
 
-    public CompoundTagBuilder tagString (String name, String value) {
+    public CompoundTagBuilder stringTag(String name, String value) {
         return tag(new StringTag(name, value));
     }
 
-    public CompoundTagBuilder tagCompoundTag (String name, CompoundTag value) {
-        tagMap.put(name, value);
-        return this;
-    }
-
-    public CompoundTagBuilder tagListTag(String name, ListTag value) {
-        tagMap.put(name, value);
-        return this;
+    public <T extends Tag> CompoundTagBuilder listTag(String name, Class<T> tagClass, List<T> values) {
+        return tag(new ListTag<>(name, tagClass, values));
     }
 
     public CompoundTag buildRootTag() {

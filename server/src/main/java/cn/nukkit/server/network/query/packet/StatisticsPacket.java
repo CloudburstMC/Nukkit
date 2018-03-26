@@ -19,7 +19,7 @@ public class StatisticsPacket implements QueryPacket {
     public void decode(ByteBuf buffer) {
         sessionId = buffer.readInt();
         token = buffer.readInt();
-        full = (buffer.readableBytes() > 0);
+        full = (buffer.isReadable());
         buffer.skipBytes(buffer.readableBytes());
     }
 

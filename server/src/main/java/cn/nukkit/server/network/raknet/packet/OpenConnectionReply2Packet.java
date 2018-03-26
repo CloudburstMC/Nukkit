@@ -1,6 +1,6 @@
 package cn.nukkit.server.network.raknet.packet;
 
-import cn.nukkit.server.network.raknet.NetworkPacket;
+import cn.nukkit.server.network.raknet.RakNetPacket;
 import cn.nukkit.server.network.raknet.RakNetUtil;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.Data;
 import java.net.InetSocketAddress;
 
 @Data
-public class OpenConnectionReply2Packet implements NetworkPacket {
+public class OpenConnectionReply2Packet implements RakNetPacket {
     private long serverId;
     private InetSocketAddress clientAddress;
     private short mtuSize;

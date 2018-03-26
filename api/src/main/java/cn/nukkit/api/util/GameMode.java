@@ -37,11 +37,20 @@ public enum GameMode {
 
     private static final Map<String, GameMode> ALIASES = new HashMap<>();
 
+    static {
+        for (GameMode gameMode : values()) {
+            for (String s : gameMode.aliases) {
+                ALIASES.put(s, gameMode);
+            }
+        }
+    }
+
     private final String i18n;
+    private final String[] aliases;
 
     GameMode(String i18n, String... aliases) {
         this.i18n = i18n;
-        add(aliases);
+        this.aliases = aliases;
     }
 
     @Nonnull
@@ -52,12 +61,6 @@ public enum GameMode {
     @Nonnull
     public static GameMode parse(int gamemode) {
         return (gamemode > 3 || gamemode < 0 ? GameMode.SURVIVAL : GameMode.values()[gamemode]);
-    }
-
-    private void add(String[] aliases) {
-        for (String s : aliases) {
-            ALIASES.put(s, this);
-        }
     }
 
     @Nonnull

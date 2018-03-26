@@ -1,5 +1,6 @@
 package cn.nukkit.server.permission;
 
+import cn.nukkit.api.permission.Permission;
 import cn.nukkit.server.NukkitServer;
 
 /**
@@ -9,32 +10,32 @@ import cn.nukkit.server.NukkitServer;
 public abstract class DefaultPermissions {
     public static final String ROOT = "nukkit";
 
-    public static NukkitPermission registerPermission(NukkitPermission perm) {
+    public static Permission registerPermission(Permission perm) {
         return registerPermission(perm, null);
     }
 
-    public static NukkitPermission registerPermission(NukkitPermission perm, NukkitPermission parent) {
+    public static Permission registerPermission(Permission perm, Permission parent) {
         if (parent != null) {
             parent.getChildren().put(perm.getName(), true);
         }
-        NukkitServer.getInstance().getPluginManager().addPermission(perm);
+        NukkitServer.getInstance().getPermissionManager().addPermission(perm);
 
-        return NukkitServer.getInstance().getPluginManager().getPermission(perm.getName());
+        return NukkitServer.getInstance().getPermissionManager().getPermission(perm.getName()).orElse(null);
     }
 
     public static void registerCorePermissions() {
-        NukkitPermission parent = registerPermission(new NukkitPermission(ROOT, "Allows using all Nukkit commands and utilities"));
+        Permission parent = registerPermission(new NukkitPermission(ROOT, "Allows using all Nukkit commands and utilities"));
 
-        NukkitPermission broadcasts = registerPermission(new NukkitPermission(ROOT + ".broadcast", "Allows the user to receive all broadcast messages"), parent);
+        Permission broadcasts = registerPermission(new NukkitPermission(ROOT + ".broadcast", "Allows the user to receive all broadcast messages"), parent);
 
         registerPermission(new NukkitPermission(ROOT + ".broadcast.admin", "Allows the user to receive administrative broadcasts", NukkitPermission.DEFAULT_OP), broadcasts);
         registerPermission(new NukkitPermission(ROOT + ".broadcast.user", "Allows the user to receive user broadcasts", NukkitPermission.DEFAULT_TRUE), broadcasts);
 
         broadcasts.recalculatePermissibles();
 
-        NukkitPermission commands = registerPermission(new NukkitPermission(ROOT + ".command", "Allows using all Nukkit commands"), parent);
+        Permission commands = registerPermission(new NukkitPermission(ROOT + ".command", "Allows using all Nukkit commands"), parent);
 
-        NukkitPermission whitelist = registerPermission(new NukkitPermission(ROOT + ".command.whitelist", "Allows the user to modify the NukkitServer whitelist", NukkitPermission.DEFAULT_OP), commands);
+        Permission whitelist = registerPermission(new NukkitPermission(ROOT + ".command.whitelist", "Allows the user to modify the NukkitServer whitelist", NukkitPermission.DEFAULT_OP), commands);
         registerPermission(new NukkitPermission(ROOT + ".command.whitelist.add", "Allows the user to add a player to the NukkitServer whitelist"), whitelist);
         registerPermission(new NukkitPermission(ROOT + ".command.whitelist.remove", "Allows the user to remove a player to the NukkitServer whitelist"), whitelist);
         registerPermission(new NukkitPermission(ROOT + ".command.whitelist.reload", "Allows the user to reload the NukkitServer whitelist"), whitelist);
@@ -43,29 +44,29 @@ public abstract class DefaultPermissions {
         registerPermission(new NukkitPermission(ROOT + ".command.whitelist.list", "Allows the user to list all the players on the NukkitServer whitelist"), whitelist);
         whitelist.recalculatePermissibles();
 
-        NukkitPermission ban = registerPermission(new NukkitPermission(ROOT + ".command.ban", "Allows the user to ban people", NukkitPermission.DEFAULT_OP), commands);
+        Permission ban = registerPermission(new NukkitPermission(ROOT + ".command.ban", "Allows the user to ban people", NukkitPermission.DEFAULT_OP), commands);
         registerPermission(new NukkitPermission(ROOT + ".command.ban.player", "Allows the user to ban players"), ban);
         registerPermission(new NukkitPermission(ROOT + ".command.ban.ip", "Allows the user to ban IP addresses"), ban);
         registerPermission(new NukkitPermission(ROOT + ".command.ban.list", "Allows the user to list all the banned ips or players"), ban);
         ban.recalculatePermissibles();
 
-        NukkitPermission unban = registerPermission(new NukkitPermission(ROOT + ".command.unban", "Allows the user to unban people", NukkitPermission.DEFAULT_OP), commands);
+        Permission unban = registerPermission(new NukkitPermission(ROOT + ".command.unban", "Allows the user to unban people", NukkitPermission.DEFAULT_OP), commands);
         registerPermission(new NukkitPermission(ROOT + ".command.unban.player", "Allows the user to unban players"), unban);
         registerPermission(new NukkitPermission(ROOT + ".command.unban.ip", "Allows the user to unban IP addresses"), unban);
         unban.recalculatePermissibles();
 
-        NukkitPermission op = registerPermission(new NukkitPermission(ROOT + ".command.op", "Allows the user to change operators", NukkitPermission.DEFAULT_OP), commands);
+        Permission op = registerPermission(new NukkitPermission(ROOT + ".command.op", "Allows the user to change operators", NukkitPermission.DEFAULT_OP), commands);
         registerPermission(new NukkitPermission(ROOT + ".command.op.give", "Allows the user to give a player operator status"), op);
         registerPermission(new NukkitPermission(ROOT + ".command.op.take", "Allows the user to take a players operator status"), op);
         op.recalculatePermissibles();
 
-        NukkitPermission save = registerPermission(new NukkitPermission(ROOT + ".command.save", "Allows the user to save the worlds", NukkitPermission.DEFAULT_OP), commands);
+        Permission save = registerPermission(new NukkitPermission(ROOT + ".command.save", "Allows the user to save the worlds", NukkitPermission.DEFAULT_OP), commands);
         registerPermission(new NukkitPermission(ROOT + ".command.save.enable", "Allows the user to enable automatic saving"), save);
         registerPermission(new NukkitPermission(ROOT + ".command.save.disable", "Allows the user to disable automatic saving"), save);
         registerPermission(new NukkitPermission(ROOT + ".command.save.perform", "Allows the user to perform a manual save"), save);
         save.recalculatePermissibles();
 
-        NukkitPermission time = registerPermission(new NukkitPermission(ROOT + ".command.time", "Allows the user to alter the time", NukkitPermission.DEFAULT_OP), commands);
+        Permission time = registerPermission(new NukkitPermission(ROOT + ".command.time", "Allows the user to alter the time", NukkitPermission.DEFAULT_OP), commands);
         registerPermission(new NukkitPermission(ROOT + ".command.time.add", "Allows the user to fast-forward time"), time);
         registerPermission(new NukkitPermission(ROOT + ".command.time.set", "Allows the user to change the time"), time);
         registerPermission(new NukkitPermission(ROOT + ".command.time.start", "Allows the user to restart the time"), time);
@@ -73,12 +74,12 @@ public abstract class DefaultPermissions {
         registerPermission(new NukkitPermission(ROOT + ".command.time.query", "Allows the user query the time"), time);
         time.recalculatePermissibles();
 
-        NukkitPermission kill = registerPermission(new NukkitPermission(ROOT + ".command.kill", "Allows the user to kill players", NukkitPermission.DEFAULT_OP), commands);
+        Permission kill = registerPermission(new NukkitPermission(ROOT + ".command.kill", "Allows the user to kill players", NukkitPermission.DEFAULT_OP), commands);
         registerPermission(new NukkitPermission(ROOT + ".command.kill.self", "Allows the user to commit suicide", NukkitPermission.DEFAULT_TRUE), kill);
         registerPermission(new NukkitPermission(ROOT + ".command.kill.other", "Allows the user to kill other players"), kill);
         kill.recalculatePermissibles();
 
-        NukkitPermission gamemode = registerPermission(new NukkitPermission(ROOT + ".command.gamemode", "Allows the user to change the gamemode of players", NukkitPermission.DEFAULT_OP), commands);
+        Permission gamemode = registerPermission(new NukkitPermission(ROOT + ".command.gamemode", "Allows the user to change the gamemode of players", NukkitPermission.DEFAULT_OP), commands);
         registerPermission(new NukkitPermission(ROOT + ".command.gamemode.survival", "Allows the user to change the gamemode to survival", NukkitPermission.DEFAULT_OP), gamemode);
         registerPermission(new NukkitPermission(ROOT + ".command.gamemode.creative", "Allows the user to change the gamemode to creative", NukkitPermission.DEFAULT_OP), gamemode);
         registerPermission(new NukkitPermission(ROOT + ".command.gamemode.adventure", "Allows the user to change the gamemode to adventure", NukkitPermission.DEFAULT_OP), gamemode);

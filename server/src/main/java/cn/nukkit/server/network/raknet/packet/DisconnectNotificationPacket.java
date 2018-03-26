@@ -1,11 +1,11 @@
 package cn.nukkit.server.network.raknet.packet;
 
-import cn.nukkit.server.network.raknet.NetworkPacket;
+import cn.nukkit.server.network.raknet.RakNetPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
 @Data
-public class DisconnectNotificationPacket implements NetworkPacket {
+public class DisconnectNotificationPacket implements RakNetPacket {
 
     @Override
     public void encode(ByteBuf buffer) {

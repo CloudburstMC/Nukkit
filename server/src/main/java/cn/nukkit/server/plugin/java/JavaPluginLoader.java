@@ -5,7 +5,7 @@ import cn.nukkit.api.event.plugin.PluginDisableEvent;
 import cn.nukkit.api.event.plugin.PluginEnableEvent;
 import cn.nukkit.api.plugin.*;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.command.NukkitPluginCommand;
+import cn.nukkit.server.console.TranslatableMessage;
 import cn.nukkit.server.plugin.NukkitPluginDescription;
 import cn.nukkit.server.plugin.PluginClassLoader;
 import cn.nukkit.server.util.PluginException;
@@ -28,9 +28,6 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-/**
- * Created by NukkitX Team.
- */
 @Log4j2
 public class JavaPluginLoader implements PluginLoader {
     private static final String FILE_EXTENSION = ".jar";
@@ -69,7 +66,7 @@ public class JavaPluginLoader implements PluginLoader {
 
     @SuppressWarnings("unchecked")
     private Plugin createPlugin(Path path, NukkitJavaPluginDescription description) throws Exception {
-        log.info(this.server.getLanguage().translateString("nukkit.plugin.load", description.getName() + " v" + description.getVersion()));
+        log.info(TranslatableMessage.of("nukkit.plugin.load", description.getName(), " v" + description.getVersion()));
         Path dataFolder = path.resolve(description.getName());
         if (!Files.isDirectory(dataFolder)) {
             throw new IllegalStateException("Projected dataFolder '" + dataFolder.toString() + "' for " + description.getName() + " exists and is not a directory");
@@ -122,7 +119,7 @@ public class JavaPluginLoader implements PluginLoader {
             if (command.contains(":")) {
                 return;
             }
-            NukkitPluginCommand newCommand = new NukkitPluginCommand<>(command, plugin);
+            /*NukkitPluginCommand newCommand = new NukkitPluginCommand<>(command, plugin);
 
             if (description.getDescription().isPresent()) {
                 newCommand.setDescription(description.getDescription().get());
@@ -137,7 +134,7 @@ public class JavaPluginLoader implements PluginLoader {
             }
 
             newCommand.setAliases(description.getAliases().toArray(new String[0]));
-            pluginCommands.add(newCommand);
+            pluginCommands.add(newCommand);*/
         });
         return ImmutableList.copyOf(pluginCommands);
     }

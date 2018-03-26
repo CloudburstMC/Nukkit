@@ -9,7 +9,6 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +32,7 @@ public class ServerScheduler implements NukkitScheduler {
 
     private volatile int currentTick;
 
-    public ServerScheduler() {
+    public ServerScheduler(NukkitServer server) {
         this.pending = new ConcurrentLinkedQueue<>();
         this.currentTaskId = new AtomicInteger();
         this.queue = new PriorityQueue<>(11, (left, right) -> {
@@ -44,7 +43,11 @@ public class ServerScheduler implements NukkitScheduler {
             return i;
         });
         this.taskMap = new ConcurrentHashMap<>();
-        this.asyncPool = new AsyncPool(NukkitServer.getInstance(), WORKERS);
+        this.asyncPool = new AsyncPool(server, WORKERS);
+    }
+
+    public AsyncPool getAsyncPool() {
+        return asyncPool;
     }
 
     public TaskHandler scheduleTask(Plugin plugin, Runnable task) {
@@ -56,7 +59,7 @@ public class ServerScheduler implements NukkitScheduler {
     }
 
     public int getAsyncTaskPoolSize() {
-        return asyncPool.getCorePoolSize();
+        return asyncPool.getPoolSize();
     }
 
     public void increaseAsyncTaskPoolSize(int newSize) {
@@ -144,7 +147,7 @@ public class ServerScheduler implements NukkitScheduler {
         return taskHandler;
     }
 
-    public void mainThreadHeartbeat(int currentTick) {
+    /*public void mainThreadHeartbeat(int currentTick) {
         this.currentTick = currentTick;
         // Accepts pending.
         while (!pending.isEmpty()) {
@@ -154,6 +157,7 @@ public class ServerScheduler implements NukkitScheduler {
         while (isReady(currentTick)) {
             TaskHandler taskHandler = queue.poll();
             if (taskHandler.isCancelled()) {
+                
                 taskMap.remove(taskHandler.getTaskId());
                 continue;
             } else if (taskHandler.isAsync()) {
@@ -179,7 +183,7 @@ public class ServerScheduler implements NukkitScheduler {
             }
         }
         AsyncTask.collectTask();
-    }
+    }*/
 
     public int getQueueSize() {
         return queue.size() + pending.size();

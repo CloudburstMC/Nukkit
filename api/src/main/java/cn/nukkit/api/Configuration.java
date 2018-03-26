@@ -64,7 +64,7 @@ public interface Configuration {
 
         boolean isSpawningAnimals();
 
-        boolean isSpawningMobs();
+        boolean isSpawningMonsters();
 
         boolean isFlightAllowed();
     }

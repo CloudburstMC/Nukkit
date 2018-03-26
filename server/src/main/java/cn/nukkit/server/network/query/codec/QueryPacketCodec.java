@@ -52,13 +52,13 @@ public class QueryPacketCodec extends MessageToMessageCodec<DatagramPacket, Dire
                     networkPacket = new StatisticsPacket();
                     break;
                 default:
-                    buf.readerIndex(0);
+                    buf.resetReaderIndex();
                     return;
             }
             networkPacket.decode(buf);
             list.add(new DirectAddressedQueryPacket(networkPacket, packet.recipient(), packet.sender()));
         } else {
-            buf.readerIndex(0);
+            buf.resetReaderIndex();
         }
     }
 }

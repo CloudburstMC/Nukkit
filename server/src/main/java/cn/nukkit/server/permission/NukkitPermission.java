@@ -12,13 +12,6 @@ import java.util.*;
  */
 public class NukkitPermission implements Permission {
 
-    public final static String DEFAULT_OP = "op";
-    public final static String DEFAULT_NOT_OP = "notop";
-    public final static String DEFAULT_TRUE = "true";
-    public final static String DEFAULT_FALSE = "false";
-
-    public static final String DEFAULT_PERMISSION = DEFAULT_OP;
-
     public static String getByName(String value) {
         switch (value.toLowerCase()) {
             case "op":
@@ -102,13 +95,13 @@ public class NukkitPermission implements Permission {
     }
 
     public Set<Permissible> getPermissibles() {
-        return NukkitServer.getInstance().getPluginManager().getPermissionSubscriptions(this.name);
+        return NukkitServer.getInstance().getPermissionManager().getPermissionSubscriptions(this.name);
     }
 
     public void recalculatePermissibles() {
         Set<Permissible> perms = this.getPermissibles();
 
-        NukkitServer.getInstance().getPluginManager().recalculatePermissionDefaults(this);
+        NukkitServer.getInstance().getPermissionManager().recalculatePermissionDefaults(this);
 
         for (Permissible p : perms) {
             p.recalculatePermissions();
@@ -176,21 +169,24 @@ public class NukkitPermission implements Permission {
         return new NukkitPermission(name, desc, defaultValue, children);
     }
 
-    public void addParent(NukkitPermission nukkitPermission, boolean value) {
+    @Override
+    public void addParent(Permission permission, boolean value) {
         this.getChildren().put(this.getName(), value);
-        nukkitPermission.recalculatePermissibles();
+        permission.recalculatePermissibles();
     }
 
-    public NukkitPermission addParent(String name, boolean value) {
-        NukkitPermission perm = NukkitServer.getInstance().getPluginManager().getPermission(name);
-        if (perm == null) {
-            perm = new NukkitPermission(name);
-            NukkitServer.getInstance().getPluginManager().addPermission(perm);
+    public Permission addParent(String name, boolean value) {
+        Optional<Permission> perm = NukkitServer.getInstance().getPermissionManager().getPermission(name);
+        Permission parentPerm;
+        if (!perm.isPresent()) {
+            NukkitServer.getInstance().getPermissionManager().addPermission((parentPerm = new NukkitPermission(name)));
+        } else {
+            parentPerm = perm.get();
         }
 
-        this.addParent(perm, value);
+        this.addParent(parentPerm, value);
 
-        return perm;
+        return parentPerm;
     }
 
 }

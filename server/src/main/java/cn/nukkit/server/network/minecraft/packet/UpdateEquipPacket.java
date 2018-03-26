@@ -1,10 +1,10 @@
 package cn.nukkit.server.network.minecraft.packet;
 
 import cn.nukkit.server.nbt.NBTEncodingType;
-import cn.nukkit.server.nbt.stream.NBTWriter;
+import cn.nukkit.server.nbt.stream.NBTOutputStream;
 import cn.nukkit.server.nbt.tag.Tag;
-import cn.nukkit.server.network.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import cn.nukkit.server.network.util.LittleEndianByteBufOutputStream;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class UpdateEquipPacket implements MinecraftPacket {
         buffer.writeByte(windowType);
         writeSignedInt(buffer, unknown0);
         writeUniqueEntityId(buffer, uniqueEntityId);
-        try (NBTWriter writer = new NBTWriter(new LittleEndianByteBufOutputStream(buffer), NBTEncodingType.MCPE)) {
+        try (NBTOutputStream writer = new NBTOutputStream(new LittleEndianByteBufOutputStream(buffer), NBTEncodingType.BEDROCK)) {
             writer.write(tag);
         } catch (IOException e) {
             throw new RuntimeException(e);

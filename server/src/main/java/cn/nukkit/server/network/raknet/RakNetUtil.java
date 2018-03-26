@@ -2,11 +2,13 @@ package cn.nukkit.server.network.raknet;
 
 import io.netty.buffer.ByteBuf;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+@Log4j2
 @UtilityClass
 public class RakNetUtil {
     public static final byte[] RAKNET_UNCONNECTED_MAGIC = new byte[]{
@@ -42,7 +44,7 @@ public class RakNetUtil {
         } else if (type == 6) {
             buffer.skipBytes(2); // Family, AF_INET6
             port = buffer.readUnsignedShort();
-            buffer.skipBytes(8); // Flow information
+            buffer.skipBytes(4); // Flow information
             address = new byte[16];
             buffer.readBytes(address);
             buffer.readInt(); // Scope ID

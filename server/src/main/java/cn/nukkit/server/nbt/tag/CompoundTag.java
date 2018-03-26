@@ -1,6 +1,6 @@
 package cn.nukkit.server.nbt.tag;
 
-import com.voxelwind.nbt.util.CompoundTagBuilder;
+import cn.nukkit.server.nbt.CompoundTagBuilder;
 
 import java.util.*;
 
@@ -123,4 +123,47 @@ public class CompoundTag extends Tag<Map<String, Tag<?>>> {
         return value.get(key);
     }
 
+    public Optional<ByteArrayTag> getAsByteArray(String key) {
+        return Optional.ofNullable((ByteArrayTag) value.get(key));
+    }
+
+    public Optional<ByteTag> getAsByte(String key) {
+        return Optional.ofNullable((ByteTag) value.get(key));
+    }
+
+    public Optional<CompoundTag> getAsCompound(String key) {
+        return Optional.ofNullable((CompoundTag) value.get(key));
+    }
+
+    public Optional<DoubleTag> getAsDouble(String key) {
+        return Optional.ofNullable((DoubleTag) value.get(key));
+    }
+
+    public Optional<FloatTag> getAsFloat(String key) {
+        return Optional.ofNullable((FloatTag) value.get(key));
+    }
+
+    public Optional<IntArrayTag> getAsIntArray(String key) {
+        return Optional.ofNullable((IntArrayTag) value.get(key));
+    }
+
+    public Optional<IntTag> getAsInt(String key) {
+        return Optional.ofNullable((IntTag) value.get(key));
+    }
+
+    public <T extends Tag> Optional<ListTag<T>> getAsList(String key, Class<T> tagClass) {
+        return Optional.ofNullable((ListTag<T>) value.get(key));
+    }
+
+    public Optional<LongTag> getAsLong(String key) {
+        return Optional.ofNullable((LongTag) value.get(key));
+    }
+
+    public Optional<ShortTag> getAsShort(String key) {
+        return Optional.ofNullable((ShortTag) value.get(key));
+    }
+
+    public Optional<StringTag> getAsString(String key) {
+        return Optional.ofNullable((StringTag) value.get(key));
+    }
 }

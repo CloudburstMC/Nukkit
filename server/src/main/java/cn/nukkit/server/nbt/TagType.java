@@ -57,7 +57,7 @@ public enum TagType {
     }
 
     public int getId() {
-        return this.ordinal();
+        return ordinal();
     }
 
     public String getTypeName() {

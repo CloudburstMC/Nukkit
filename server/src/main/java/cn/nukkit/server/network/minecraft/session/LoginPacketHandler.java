@@ -2,8 +2,8 @@ package cn.nukkit.server.network.minecraft.session;
 
 import cn.nukkit.api.event.player.PlayerPreLoginEvent;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.network.NetworkPacketHandler;
-import cn.nukkit.server.network.minecraft.MinecraftPackets;
+import cn.nukkit.server.network.minecraft.MinecraftPacketRegistry;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.packet.ClientToServerHandshakePacket;
 import cn.nukkit.server.network.minecraft.packet.LoginPacket;
 import cn.nukkit.server.network.minecraft.packet.PlayStatusPacket;
@@ -17,24 +17,28 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Preconditions;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.crypto.ECDSAVerifier;
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.voxelwind.server.jni.CryptoUtil;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Log4j2
-public class LoginPacketHandler extends NetworkPacketHandler {
+public class LoginPacketHandler implements NetworkPacketHandler {
     private static final boolean CAN_USE_ENCRYPTION = CryptoUtil.isJCEUnlimitedStrength() || NativeCodeFactory.cipher.isLoaded();
     private static final String MOJANG_PUBLIC_KEY_BASE64 =
             "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
     private static final ECPublicKey MOJANG_PUBLIC_KEY;
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9 ]*$");
 
     static {
         try {
@@ -64,7 +68,8 @@ public class LoginPacketHandler extends NetworkPacketHandler {
         session.setProtocolVersion(packet.getProtocolVersion());
         if (packet.getChainData() == null) {
             // Client has incompatible version.
-            if (packet.getProtocolVersion() > MinecraftPackets.BROADCAST_PROTOCOL_VERSION) {
+            PlayStatusPacket status = new PlayStatusPacket();
+            if (packet.getProtocolVersion() > MinecraftPacketRegistry.BROADCAST_PROTOCOL_VERSION) {
                 session.disconnect("disconnectionScreen.outdatedServer");
             } else {
                 session.disconnect("disconnectionScreen.outdatedClient");
@@ -89,10 +94,9 @@ public class LoginPacketHandler extends NetworkPacketHandler {
             validChain = validateChainData(certChainData);
 
             JWSObject jwt = JWSObject.parse(certChainData.get(certChainData.size() - 1).asText());
-            // TODO: Maybe check expire date, etc for possible forgery?
-            JsonNode payload = NukkitServer.JSON_MAPPER.readTree(jwt.getPayload().toString());
+            JsonNode payload = NukkitServer.JSON_MAPPER.readTree(jwt.getPayload().toBytes());
 
-            if (payload.get("extraData").getNodeType() != JsonNodeType.ARRAY) {
+            if (payload.get("extraData").getNodeType() != JsonNodeType.OBJECT) {
                 throw new RuntimeException("AuthData was not found!");
             }
             AuthData authData = NukkitServer.JSON_MAPPER.convertValue(payload.get("extraData"), AuthData.class);
@@ -106,10 +110,11 @@ public class LoginPacketHandler extends NetworkPacketHandler {
             JWSObject clientJwt = JWSObject.parse(packet.getSkinData().toString());
 
             verifyJwt(clientJwt, identityPublicKey);
-            ClientData clientData = NukkitServer.JSON_MAPPER.convertValue(clientJwt.getPayload().toString(), ClientData.class);
+            JsonNode clientPayload = NukkitServer.JSON_MAPPER.readTree(clientJwt.getPayload().toBytes());
+            ClientData clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientData.class);
             session.setClientData(clientData);
 
-            if (!validChain && session.getServer().getServerProperties().isAuthEnabled()) {
+            if (!validChain && session.getServer().getConfiguration().getGeneral().isXboxAuthenticated()) {
                 session.disconnect("disconnectionScreen.notAuthenticated");
                 return;
             }
@@ -117,6 +122,12 @@ public class LoginPacketHandler extends NetworkPacketHandler {
             if (!validChain) {
                 // Stop spoofing.
                 session.getAuthData().setXuid(null);
+                // Check for valid name characters
+                if (USERNAME_PATTERN.matcher(authData.getDisplayName()).find()) {
+                    session.disconnect("disconnectionScreen.invalidName");
+                }
+                // Use server side UUID.
+                session.getAuthData().setOfflineIdentity(UUID.nameUUIDFromBytes(authData.getDisplayName().toLowerCase().getBytes(StandardCharsets.UTF_8)));
             }
 
             if (CAN_USE_ENCRYPTION) {
@@ -126,6 +137,7 @@ public class LoginPacketHandler extends NetworkPacketHandler {
             }
         } catch (Exception e) {
             session.disconnect("disconnectionScreen.internalError.cantConnect");
+            throw new RuntimeException("Unable to complete login", e);
         }
     }
 
@@ -149,7 +161,7 @@ public class LoginPacketHandler extends NetworkPacketHandler {
         PlayerPreLoginEvent.Result result;
         if (loginSession.isBanned()) {
             result = PlayerPreLoginEvent.Result.BANNED;
-        } else if (!loginSession.isWhitelisted()) {
+        } else if (session.getServer().getConfiguration().getGeneral().isWhitelisted() && !loginSession.isWhitelisted()) {
             result = PlayerPreLoginEvent.Result.NOT_WHITELISTED;
         } else {
             result = null;
@@ -158,11 +170,15 @@ public class LoginPacketHandler extends NetworkPacketHandler {
         PlayerPreLoginEvent event = new PlayerPreLoginEvent(loginSession, result);
         session.getServer().getEventManager().fire(event);
 
-
         if (event.willDisconnect()) {
-            if (event.getDisconnectMessage() == null) {
-                session.disconnect(event.getResult().getI18n());
+            String message;
+            if (event.getDisconnectMessage() != null) {
+                message = event.getDisconnectMessage();
+            } else {
+                message = event.getResult().getDisconnectMessage().i18n();
             }
+            session.disconnect(message);
+            return;
         }
 
         PlayStatusPacket status = new PlayStatusPacket();
@@ -170,7 +186,7 @@ public class LoginPacketHandler extends NetworkPacketHandler {
         session.addToSendQueue(status);
 
         PlayerSession playerSession = session.initializePlayerSession(session.getServer().getDefaultLevel());
-        session.setHandler(playerSession.getPacketHandler());
+        session.setHandler(playerSession.getNetworkPacketHandler());
 
         ResourcePacksInfoPacket info = new ResourcePacksInfoPacket();
         session.addToSendQueue(info);
@@ -199,9 +215,6 @@ public class LoginPacketHandler extends NetworkPacketHandler {
     }
 
     private boolean verifyJwt(JWSObject jwt, ECPublicKey key) throws JOSEException {
-        if (!jwt.verify(new ECDSAVerifier(key))) {
-            throw new IllegalStateException("Unable to verify JWT with key");
-        }
-        return true;
+        return jwt.verify(new DefaultJWSVerifierFactory().createJWSVerifier(jwt.getHeader(), key));
     }
 }

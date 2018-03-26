@@ -11,10 +11,10 @@ public interface Block extends BlockSnapshot {
 
     Chunk getChunk();
 
-    Vector3i getLevelLocation();
+    Vector3i getBlockPosition();
 
-    default Vector3i getBlockPosition() {
-        Vector3i level = getLevelLocation();
+    default Vector3i getChunkLocation() {
+        Vector3i level = getBlockPosition();
         return new Vector3i(level.getX() & 0x0f, level.getY(), level.getZ() & 0x0f);
     }
 

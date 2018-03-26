@@ -81,7 +81,7 @@ public class QueryPacketHandler extends SimpleChannelInboundHandler<DirectAddres
         ByteBuf shortStat = PooledByteBufAllocator.DEFAULT.buffer();
         longStat.writeBytes(QueryUtil.LONG_RESPONSE_PADDING_TOP);
         String gametype = "SMP";
-        switch (event.getGameType()) {
+        switch (event.getGameMode()) {
             case ADVENTURE:
                 gametype = "AMP";
                 break;
@@ -95,8 +95,8 @@ public class QueryPacketHandler extends SimpleChannelInboundHandler<DirectAddres
                 .put("map", event.getWorld())
                 .put("numplayers", Integer.toString(event.getPlayerCount()))
                 .put("maxplayers", Integer.toString(event.getMaxPlayerCount()))
-                .put("hostport", Integer.toString(server.getServerProperties().getServerPort()))
-                .put("hostip", server.getServerProperties().getServerAddress())
+                .put("hostport", Integer.toString(server.getConfiguration().getNetwork().getPort()))
+                .put("hostip", server.getConfiguration().getNetwork().getAddress())
                 .put("game_id", "MINECRAFTPE")
                 .put("version", event.getVersion())
                 .put("plugins", "Nukkit " + server.getMinecraftVersion() + "-API-" + server.getApiVersion() +
@@ -111,8 +111,8 @@ public class QueryPacketHandler extends SimpleChannelInboundHandler<DirectAddres
         longStat.writeByte(0);
 
         kvs.values().asList().subList(0, 4).forEach(value -> QueryUtil.writeNullTerminatedString(shortStat, value));
-        shortStat.writeShortLE(server.getServerProperties().getServerPort());
-        QueryUtil.writeNullTerminatedString(shortStat, server.getServerProperties().getServerAddress());
+        shortStat.writeShortLE(server.getConfiguration().getNetwork().getPort());
+        QueryUtil.writeNullTerminatedString(shortStat, server.getConfiguration().getNetwork().getAddress());
 
         longStat.writeBytes(QueryUtil.LONG_RESPONSE_PADDING_BOTTOM);
         event.getPlayers().forEach(player -> QueryUtil.writeNullTerminatedString(longStat, player.getName()));

@@ -1,6 +1,6 @@
 package cn.nukkit.server.inventory.transaction;
 
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
@@ -21,7 +21,7 @@ public class ItemUseTransaction extends ComplexTransaction {
 
     public void read(ByteBuf buffer){
         action = Action.values()[readUnsignedInt(buffer)];
-        position = readBlockPosition(buffer);
+        position = readVector3i(buffer);
         face = readSignedInt(buffer);
         super.read(buffer);
         clickPosition = readVector3f(buffer);
@@ -29,7 +29,7 @@ public class ItemUseTransaction extends ComplexTransaction {
 
     public void write(ByteBuf buffer){
         writeUnsignedInt(buffer, action.ordinal());
-        writeBlockPosition(buffer, position);
+        writeVector3i(buffer, position);
         writeSignedInt(buffer, face);
         super.write(buffer);
         writeVector3f(buffer, clickPosition);
@@ -41,7 +41,7 @@ public class ItemUseTransaction extends ComplexTransaction {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(PlayerSession.PlayerNetworkPacketHandler handler) {
         handler.handle(this);
     }
 

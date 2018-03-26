@@ -3,16 +3,19 @@ package cn.nukkit.server.network.minecraft.session;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.event.player.PlayerInitializationEvent;
 import cn.nukkit.server.level.NukkitLevel;
-import cn.nukkit.server.network.NetworkPacketHandler;
-import cn.nukkit.server.network.Packets;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.MinecraftPacketRegistry;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.annotations.NoEncryption;
 import cn.nukkit.server.network.minecraft.packet.DisconnectPacket;
 import cn.nukkit.server.network.minecraft.packet.WrappedPacket;
 import cn.nukkit.server.network.minecraft.session.data.AuthData;
 import cn.nukkit.server.network.minecraft.session.data.ClientData;
+import cn.nukkit.server.network.minecraft.wrapper.DefaultWrapperHandler;
+import cn.nukkit.server.network.minecraft.wrapper.WrapperHandler;
 import cn.nukkit.server.network.raknet.NetworkPacket;
-import cn.nukkit.server.network.raknet.RakNetPackets;
+import cn.nukkit.server.network.raknet.RakNetPacket;
+import cn.nukkit.server.network.raknet.RakNetPacketRegistry;
 import cn.nukkit.server.network.raknet.session.RakNetSession;
 import cn.nukkit.server.network.raknet.session.SessionConnection;
 import cn.nukkit.server.util.NativeCodeFactory;
@@ -23,14 +26,13 @@ import io.netty.buffer.PooledByteBufAllocator;
 import lombok.extern.log4j.Log4j2;
 import net.md_5.bungee.jni.cipher.BungeeCipher;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -46,7 +48,7 @@ public class MinecraftSession {
     private final AtomicLong sentEncryptedPacketCount = new AtomicLong();
     private final NukkitServer server;
     private NetworkPacketHandler handler;
-    private WrapperCompressionHandler wrapperCompressionHandler;
+    private WrapperHandler wrapperCompressionHandler;
     private SessionConnection connection;
     private AuthData authData;
     private ClientData clientData;
@@ -60,6 +62,7 @@ public class MinecraftSession {
         this.server = server;
         this.handler = handler;
         this.connection = connection;
+        this.wrapperCompressionHandler = new DefaultWrapperHandler();
     }
 
     public AuthData getAuthData() {
@@ -81,11 +84,11 @@ public class MinecraftSession {
         this.handler = handler;
     }
 
-    public WrapperCompressionHandler getWrapperCompressionHandler() {
+    public WrapperHandler getWrapperHandler() {
         return wrapperCompressionHandler;
     }
 
-    public void setWrapperCompressionHandler(WrapperCompressionHandler wrapperCompressionHandler) {
+    public void setWrapperHandler(WrapperHandler wrapperCompressionHandler) {
         checkForClosed();
         Preconditions.checkNotNull(handler, "wrapperCompressionHandler");
         this.wrapperCompressionHandler = wrapperCompressionHandler;
@@ -100,7 +103,7 @@ public class MinecraftSession {
         Preconditions.checkNotNull(packet, "packet");
 
         // Verify that the packet ID exists.
-        Packets.getId(packet);
+        MinecraftPacketRegistry.getId(packet);
 
         currentlyQueued.add(packet);
     }
@@ -152,8 +155,10 @@ public class MinecraftSession {
             } finally {
                 compressed.release();
             }
+        } else if (packet instanceof RakNetPacket) {
+            dataToSend = RakNetPacketRegistry.encode((RakNetPacket) packet);
         } else {
-            dataToSend = Packets.getCodec(RakNetPackets.TYPE).tryEncode(packet);
+            throw new IllegalStateException("Unknown packet type");
         }
 
         connection.sendPacket(dataToSend);
@@ -165,7 +170,7 @@ public class MinecraftSession {
         }
 
         if (isTimedOut()) {
-            disconnect("User timed out after " + TIMEOUT_MS + "ms of no new packets being sent.");
+            disconnect("disconnect.timeout");
             return;
         }
 
@@ -292,14 +297,18 @@ public class MinecraftSession {
 
     public PlayerSession initializePlayerSession(NukkitLevel level) {
         checkForClosed();
-        Preconditions.checkState(playerSession == null, "Player session already initialized");
+        Preconditions.checkState(playerSession == null, "PlayerOld session already initialized");
 
         PlayerInitializationEvent event = new PlayerInitializationEvent(this, level);
 
-        if (event.getPlayerSession() == null) {
-            return event.getPlayerSession();
+        if (event.getPlayerSession() != null) {
+            playerSession = event.getPlayerSession();
+        } else {
+            playerSession = new PlayerSession(this, level);
         }
-        playerSession = new PlayerSession(this, level);
+        if (!server.getSessionManager().add(this)) {
+            throw new IllegalStateException("Player could not be added to SessionManager");
+        }
         return playerSession;
     }
 
@@ -320,20 +329,22 @@ public class MinecraftSession {
     }
 
     public void disconnect() {
-        disconnect("disconnectionScreen.disconnected");
+        disconnect(null, true);
     }
 
-    public void disconnect(@Nonnull String reason) {
-        disconnect(reason, true);
+    public void disconnect(@Nullable String reason) {
+        disconnect(reason, false);
     }
 
-    public void disconnect(@Nonnull String reason, boolean hideReason) {
-        Preconditions.checkNotNull(reason, "reason");
+    public void disconnect(@Nullable String reason, boolean hideReason) {
         checkForClosed();
 
         DisconnectPacket packet = new DisconnectPacket();
-        packet.setDisconnectScreenHidden(hideReason);
-        packet.setKickMessage(reason);
+        if (reason == null || hideReason) {
+            packet.setDisconnectScreenHidden(true);
+        } else {
+            packet.setKickMessage(reason);
+        }
         sendImmediatePackage(packet);
 
         if (authData != null) {
@@ -370,16 +381,5 @@ public class MinecraftSession {
 
     public NukkitServer getServer() {
         return server;
-    }
-
-    public interface WrapperCompressionHandler {
-
-        default ByteBuf compressPackets(MinecraftPacket... packets) {
-            return compressPackets(Arrays.asList(packets));
-        }
-
-        ByteBuf compressPackets(Collection<MinecraftPacket> packets);
-
-        Collection<MinecraftPacket> decompressPackets(ByteBuf compressed);
     }
 }

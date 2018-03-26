@@ -1,34 +1,29 @@
 package cn.nukkit.server.scheduler;
 
 import cn.nukkit.server.NukkitServer;
+import lombok.extern.log4j.Log4j2;
 
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ForkJoinPool;
 
-/**
- * @author Nukkit Project Team
- */
-public class AsyncPool extends ThreadPoolExecutor {
+@Log4j2
+public class AsyncPool extends ForkJoinPool {
+
     private final NukkitServer server;
 
     public AsyncPool(NukkitServer server, int size) {
-        super(size, Integer.MAX_VALUE, 60, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
-        this.setThreadFactory(runnable -> new Thread(runnable) {{
-            setDaemon(true);
-            setName(String.format("Nukkit Asynchronous Task Handler #%s", getPoolSize()));
-        }});
+        super(size, defaultForkJoinWorkerThreadFactory, new AsyncExceptionHandler(), true);
         this.server = server;
-    }
-
-    @Override
-    protected void afterExecute(Runnable runnable, Throwable throwable) {
-        if (throwable != null) {
-            server.getLogger().critical("Exception in asynchronous task", throwable);
-        }
     }
 
     public NukkitServer getServer() {
         return server;
+    }
+
+    private static class AsyncExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+        @Override
+        public void uncaughtException(Thread thread, Throwable throwable) {
+            log.fatal("Exception in asynchronous task on thread {}\n{}", thread.getName(), throwable);
+        }
     }
 }

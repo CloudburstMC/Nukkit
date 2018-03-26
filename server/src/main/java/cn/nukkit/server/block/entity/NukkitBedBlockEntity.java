@@ -6,10 +6,15 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class NukkitBedBlockEntity implements BedBlockEntity {
-    private final DyeColor dyeColor;
+    private DyeColor dyeColor;
 
     @Override
     public DyeColor getDyeColor() {
-        return null;
+        return dyeColor;
+    }
+
+    @Override
+    public void setDyeColor(DyeColor dyeColor) {
+        this.dyeColor = dyeColor;
     }
 }

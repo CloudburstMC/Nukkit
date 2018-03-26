@@ -3,7 +3,7 @@ package cn.nukkit.server.resourcepack;
 import cn.nukkit.api.resourcepack.MinecraftPackManifest;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 
 public class NukkitMinecraftPackManifest extends MinecraftPackManifest {
@@ -13,7 +13,7 @@ public class NukkitMinecraftPackManifest extends MinecraftPackManifest {
         this.path = path;
 
         if (dependencies == null) {
-            dependencies = new ArrayList<>();
+            dependencies = Collections.emptyList();
         }
         return getFormatVersion() != null && getHeader() != null && getModules() != null && getHeader().getDescription() != null &&
                 getHeader().getName() != null && getHeader().getUuid() != null && getHeader().getVersion() != null;

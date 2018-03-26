@@ -1,28 +1,26 @@
 package cn.nukkit.server.network.minecraft;
 
 import cn.nukkit.api.block.BlockTypes;
-import cn.nukkit.api.item.ItemStack;
-import cn.nukkit.api.item.ItemStackBuilder;
+import cn.nukkit.api.item.ItemInstance;
+import cn.nukkit.api.item.ItemInstanceBuilder;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.item.ItemTypes;
+import cn.nukkit.api.level.GameRules;
 import cn.nukkit.api.level.LevelSettings;
-import cn.nukkit.api.level.gamerule.BooleanGameRule;
-import cn.nukkit.api.level.gamerule.FloatGameRule;
-import cn.nukkit.api.level.gamerule.GameRule;
-import cn.nukkit.api.level.gamerule.IntGameRule;
+import cn.nukkit.api.level.data.GameRule;
 import cn.nukkit.api.resourcepack.ResourcePack;
 import cn.nukkit.api.util.BoundingBox;
 import cn.nukkit.api.util.Rotation;
 import cn.nukkit.api.util.Skin;
-import cn.nukkit.server.entity.EntityAttribute;
+import cn.nukkit.server.entity.Attribute;
 import cn.nukkit.server.entity.EntityLink;
-import cn.nukkit.server.entity.PlayerAttribute;
-import cn.nukkit.server.item.NukkitItemStack;
-import cn.nukkit.server.item.NukkitItemStackBuilder;
-import cn.nukkit.server.metadata.serializer.MetadataSerializer;
+import cn.nukkit.server.item.NukkitItemInstance;
+import cn.nukkit.server.item.NukkitItemInstanceBuilder;
+import cn.nukkit.server.level.NukkitGameRules;
+import cn.nukkit.server.metadata.MetadataSerializer;
 import cn.nukkit.server.nbt.NBTIO;
-import cn.nukkit.server.nbt.stream.NBTReader;
-import cn.nukkit.server.nbt.stream.NBTWriter;
+import cn.nukkit.server.nbt.stream.NBTInputStream;
+import cn.nukkit.server.nbt.stream.NBTOutputStream;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.Tag;
 import cn.nukkit.server.network.minecraft.data.CommandOriginData;
@@ -41,10 +39,7 @@ import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static cn.nukkit.server.nbt.util.VarInt.*;
 
@@ -161,9 +156,9 @@ public final class MinecraftUtil {
         buffer.writeFloatLE(vector2f.getY());
     }
 
-    public static List<EntityAttribute> readEntityAttributes(ByteBuf buffer) {
+    public static List<Attribute> readEntityAttributes(ByteBuf buffer) {
         Preconditions.checkNotNull(buffer, "buffer");
-        List<EntityAttribute> attributeList = new ArrayList<>();
+        List<Attribute> attributeList = new ArrayList<>();
         int size = readUnsignedInt(buffer);
 
         for (int i = 0; i < size; i++) {
@@ -172,16 +167,16 @@ public final class MinecraftUtil {
             float max = buffer.readFloatLE();
             float val = buffer.readFloatLE();
 
-            attributeList.add(new EntityAttribute(name, min, max, val));
+            attributeList.add(new Attribute(name, val, min, max));
         }
         return attributeList;
     }
 
-    public static void writeEntityAttributes(ByteBuf buffer, Collection<EntityAttribute> attributeList) {
+    public static void writeEntityAttributes(ByteBuf buffer, Collection<Attribute> attributeList) {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(attributeList, "attributeList");
         writeUnsignedInt(buffer, attributeList.size());
-        for (EntityAttribute attribute : attributeList) {
+        for (Attribute attribute : attributeList) {
             writeString(buffer, attribute.getName());
             buffer.writeFloatLE(attribute.getMinimumValue());
             buffer.writeFloatLE(attribute.getMaximumValue());
@@ -189,33 +184,33 @@ public final class MinecraftUtil {
         }
     }
 
-    public static List<PlayerAttribute> readPlayerAttributes(ByteBuf buffer) {
+    public static List<Attribute> readPlayerAttributes(ByteBuf buffer) {
         Preconditions.checkNotNull(buffer, "buffer");
-        List<PlayerAttribute> attributeList = new ArrayList<>();
+        List<Attribute> attributeList = new ArrayList<>();
         int size = readUnsignedInt(buffer);
 
         for (int i = 0; i < size; i++) {
-            String name = readString(buffer);
             float min = buffer.readFloatLE();
             float max = buffer.readFloatLE();
             float val = buffer.readFloatLE();
             float def = buffer.readFloatLE();
+            String name = readString(buffer);
 
-            attributeList.add(new PlayerAttribute(name, min, max, val, def));
+            attributeList.add(new Attribute(name, val, min, max, def));
         }
         return attributeList;
     }
 
-    public static void writePlayerAttributes(ByteBuf buffer, Collection<PlayerAttribute> attributeList) {
+    public static void writePlayerAttributes(ByteBuf buffer, Collection<Attribute> attributeList) {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(attributeList, "attributeList");
         writeUnsignedInt(buffer, attributeList.size());
-        for (PlayerAttribute attribute : attributeList) {
-            writeString(buffer, attribute.getName());
+        for (Attribute attribute : attributeList) {
             buffer.writeFloatLE(attribute.getMinimumValue());
             buffer.writeFloatLE(attribute.getMaximumValue());
             buffer.writeFloatLE(attribute.getValue());
             buffer.writeFloatLE(attribute.getDefaultValue());
+            writeString(buffer, attribute.getName());
         }
     }
 
@@ -281,11 +276,11 @@ public final class MinecraftUtil {
         writeSignedInt(buffer, blockPosition.getZ());
     }
 
-    public static ItemStack readItemStack(ByteBuf buffer) {
+    public static ItemInstance readItemInstance(ByteBuf buffer) {
         Preconditions.checkNotNull(buffer, "buffer");
         int id = readSignedInt(buffer);
         if (id <= 0) {
-            return new NukkitItemStack(BlockTypes.AIR, 1, null);
+            return new NukkitItemInstance(BlockTypes.AIR, 1, null);
         }
 
         int aux = readSignedInt(buffer);
@@ -296,13 +291,13 @@ public final class MinecraftUtil {
 
         ItemType type = ItemTypes.byId(id);
 
-        ItemStackBuilder builder = new NukkitItemStackBuilder()
+        ItemInstanceBuilder builder = new NukkitItemInstanceBuilder()
                 .itemType(type)
                 .itemData(MetadataSerializer.deserializeMetadata(type, damage))
                 .amount(count);
 
         if (nbtSize > 0) {
-            try (NBTReader reader = new NBTReader(new LittleEndianByteBufInputStream(buffer.readSlice(nbtSize)))) {
+            try (NBTInputStream reader = new NBTInputStream(new LittleEndianByteBufInputStream(buffer.readSlice(nbtSize)))) {
                 Tag<?> tag = reader.readTag();
                 if (tag instanceof CompoundTag) {
                     NBTIO.applyItemData(builder, ((CompoundTag) tag).getValue());
@@ -325,26 +320,26 @@ public final class MinecraftUtil {
         return builder.build();
     }
 
-    public static void writeItemStack(ByteBuf buffer, ItemStack itemStack) {
+    public static void writeItemInstance(ByteBuf buffer, ItemInstance itemInstance) {
         Preconditions.checkNotNull(buffer, "buffer");
-        if (itemStack == null || itemStack.getItemType() == BlockTypes.AIR) {
+        if (itemInstance == null || itemInstance.getItemType() == BlockTypes.AIR) {
             buffer.writeByte(0); // Save having to send all other data.
             return;
         }
 
-        writeSignedInt(buffer, itemStack.getItemType().getId());
-        short metadataValue = MetadataSerializer.serializeMetadata(itemStack);
+        writeSignedInt(buffer, itemInstance.getItemType().getId());
+        short metadataValue = MetadataSerializer.serializeMetadata(itemInstance);
         if (metadataValue == -1) metadataValue = Short.MAX_VALUE;
-        writeSignedInt(buffer, (metadataValue << 8) | itemStack.getAmount());
+        writeSignedInt(buffer, (metadataValue << 8) | itemInstance.getAmount());
 
         // Remember this position, since we'll be writing the true NBT size here later:
         int sizeIndex = buffer.writerIndex();
         buffer.writeShort(0);
         int afterSizeIndex = buffer.writerIndex();
 
-        if (itemStack instanceof NukkitItemStack) {
-            try (NBTWriter stream = new NBTWriter(new LittleEndianByteBufOutputStream(buffer))) {
-                stream.write(((NukkitItemStack) itemStack).toSpecificNBT());
+        if (itemInstance instanceof NukkitItemInstance) {
+            try (NBTOutputStream stream = new NBTOutputStream(new LittleEndianByteBufOutputStream(buffer))) {
+                stream.write(((NukkitItemInstance) itemInstance).toSpecificNBT());
             } catch (IOException e) {
                 // This shouldn't happen (as this is backed by a Netty ByteBuf), but okay...
                 throw new IllegalStateException("Unable to save NBT data", e);
@@ -404,7 +399,7 @@ public final class MinecraftUtil {
         CommandOriginData.Origin origin = CommandOriginData.Origin.values()[readUnsignedInt(buffer)];
         UUID uuid = readUuid(buffer);
         String requestId = readString(buffer);
-        Long varLong = null;
+        long varLong = -1;
         if (origin == CommandOriginData.Origin.DEV_CONSOLE || origin == CommandOriginData.Origin.TEST) {
             varLong = readSignedLong(buffer);
         }
@@ -417,30 +412,19 @@ public final class MinecraftUtil {
         writeUnsignedInt(buffer, commandOriginData.getOrigin().ordinal());
         writeUuid(buffer, commandOriginData.getUuid());
         writeString(buffer, commandOriginData.getRequestId());
-        if (commandOriginData.getOrigin() == CommandOriginData.Origin.DEV_CONSOLE ||
-                commandOriginData.getOrigin() == CommandOriginData.Origin.TEST && commandOriginData.getUnknown0().isPresent()) {
-            writeSignedLong(buffer, commandOriginData.getUnknown0().getAsLong());
-        }
+        commandOriginData.getUnknown0().ifPresent(unknown0 -> writeSignedLong(buffer, unknown0));
     }
 
-    public static void writeGameRules(ByteBuf buffer, Collection<GameRule> gameRules) {
+    public static void writeGameRules(ByteBuf buffer, GameRules gameRules) {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(gameRules, "gameRules");
-        writeUnsignedInt(buffer, gameRules.size());
-        for (GameRule rule: gameRules) {
-            writeString(buffer, rule.getName().toLowerCase());
-            if (rule instanceof BooleanGameRule) {
-                buffer.writeByte(1);
-                buffer.writeBoolean(((BooleanGameRule) rule).getPrimitiveValue());
-            }
-            if (rule instanceof IntGameRule) {
-                buffer.writeByte(2);
-                writeSignedInt(buffer, ((IntGameRule) rule).getPrimitiveValue());
-            }
-            if (rule instanceof FloatGameRule) {
-                buffer.writeByte(3);
-                buffer.writeFloatLE(((FloatGameRule) rule).getPrimitiveValue());
-            }
+        Preconditions.checkArgument(gameRules instanceof NukkitGameRules, "gameRules are not of class NukkitGameRules");
+
+        Map<GameRule, NukkitGameRules.Value> rules = ((NukkitGameRules) gameRules).getGameRules();
+        writeUnsignedInt(buffer, rules.size());
+        for (Map.Entry<GameRule, NukkitGameRules.Value> entry : rules.entrySet()) {
+            writeString(buffer, entry.getKey().getName().toLowerCase());
+            entry.getValue().write(buffer);
         }
     }
 
@@ -488,27 +472,31 @@ public final class MinecraftUtil {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(levelSettings, "levelSettings");
         writeSignedInt(buffer, levelSettings.getSeed());
-        writeSignedInt(buffer, levelSettings.getDimension());
-        writeSignedInt(buffer, levelSettings.getGenerator());
-        writeSignedInt(buffer, levelSettings.getWorldGamemode().ordinal());
-        writeSignedInt(buffer, levelSettings.getDifficulty());
-        writeVector3f(buffer, levelSettings.getSpawnPosition());
+        writeSignedInt(buffer, levelSettings.getDimension().ordinal());
+        writeSignedInt(buffer, levelSettings.getGenerator().ordinal());
+        writeSignedInt(buffer, levelSettings.getGameMode().ordinal());
+        writeSignedInt(buffer, levelSettings.getDifficulty().ordinal());
+        writeVector3f(buffer, levelSettings.getDefaultSpawn());
         buffer.writeBoolean(levelSettings.isAchievementsDisabled());
         writeSignedInt(buffer, levelSettings.getTime());
-        buffer.writeBoolean(levelSettings.isEducationLevel());
+        buffer.writeBoolean(levelSettings.isEduWorld());
         buffer.writeFloatLE(levelSettings.getRainLevel());
         buffer.writeFloatLE(levelSettings.getLightningLevel());
         buffer.writeBoolean(levelSettings.isMultiplayerGame());
         buffer.writeBoolean(levelSettings.isBroadcastingToLan());
-        buffer.writeBoolean(levelSettings.isBroadcastingToXboxLive());
+        buffer.writeBoolean(levelSettings.isBroadcastingToXBL());
         buffer.writeBoolean(levelSettings.isCommandsEnabled());
-        buffer.writeBoolean(levelSettings.isTexturePacksRequired());
+        buffer.writeBoolean(levelSettings.isTexturepacksRequired());
         writeGameRules(buffer, levelSettings.getGameRules());
         buffer.writeBoolean(levelSettings.isBonusChestEnabled());
         buffer.writeBoolean(levelSettings.isStartingWithMap());
         buffer.writeBoolean(levelSettings.isTrustingPlayers());
         writeSignedInt(buffer, levelSettings.getDefaultPlayerPermission().ordinal());
-        writeSignedInt(buffer, levelSettings.getXboxLiveBroadcastMode());
+        writeSignedInt(buffer, levelSettings.getXBLBroadcastMode());
+        buffer.writeIntLE(levelSettings.getServerChunkTickRange());
+        buffer.writeBoolean(levelSettings.isBroadcastingToPlatform());
+        writeUnsignedInt(buffer, levelSettings.getPlatformBroadcastMode());
+        buffer.writeBoolean(levelSettings.isIntentOnXBLBroadcast());
     }
 
     public static void writeStructureEditorData(ByteBuf buffer, StructureEditorData structureEditorData) {

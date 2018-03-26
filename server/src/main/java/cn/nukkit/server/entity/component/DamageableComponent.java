@@ -1,27 +1,30 @@
 package cn.nukkit.server.entity.component;
 
 import cn.nukkit.api.entity.component.Damageable;
-import cn.nukkit.api.event.entity.EntityDamageEvent;
+import cn.nukkit.server.entity.Attribute;
+import cn.nukkit.server.entity.BaseEntity;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Optional;
 
 public class DamageableComponent implements Damageable {
-    private int maximumHealth;
-    private float health;
-    private EntityDamageEvent last;
+    private final BaseEntity entity;
+    private volatile int maximumHealth;
+    private volatile float health;
+    private volatile boolean stale = false;
+    //private EntityDamageEvent last;
 
-    public DamageableComponent(int maximumHealth) {
+    public DamageableComponent(BaseEntity entity, int maximumHealth) {
+        this.entity = entity;
         this.maximumHealth = maximumHealth;
         health = maximumHealth;
-        last = null;
+        //last = null;
     }
 
-    public int getRoundedHealth() {
-        return (health < 0 ? 0 : Math.round(health));
+    @Override
+    @Nonnegative
+    public float getFixedHealth() {
+        return (health < 0 ? 0 : health);
     }
 
     @Override
@@ -32,7 +35,10 @@ public class DamageableComponent implements Damageable {
     @Override
     public void setHealth(@Nonnegative float health) {
         Preconditions.checkArgument(health <= maximumHealth, "health cannot be larger than maximum health");
-        this.health = health;
+        if (this.health != health) {
+            this.health = health;
+            entity.onAttributeUpdate(new Attribute("minecraft:health", health, 0f, maximumHealth, maximumHealth));
+        }
     }
 
     @Override
@@ -44,14 +50,26 @@ public class DamageableComponent implements Damageable {
     @Override
     public void setMaximumHealth(int maximumHealth) {
         this.maximumHealth = maximumHealth;
+        this.stale = true;
     }
 
     @Override
     public void damage(@Nonnegative float damage) {
-        health -= damage;
+        setHealth(getHealth() - damage);
+        this.stale = true;
     }
 
     @Override
+    public void replenish(float replenish) {
+        setHealth(getHealth() + replenish);
+        this.stale = true;
+    }
+
+    public boolean isStale() {
+        return stale;
+    }
+
+    /*@Override
     public void damage(@Nonnegative float damage, @Nullable EntityDamageEvent source) {
         damage(damage);
         this.last = source;
@@ -66,5 +84,5 @@ public class DamageableComponent implements Damageable {
     @Override
     public void setLastDamageCause(@Nullable EntityDamageEvent last) {
         this.last = last;
-    }
+    }*/
 }

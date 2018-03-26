@@ -1,8 +1,7 @@
 package cn.nukkit.server.network.raknet.codec;
 
-import cn.nukkit.server.network.Packets;
-import cn.nukkit.server.network.raknet.NetworkPacket;
-import cn.nukkit.server.network.raknet.RakNetPackets;
+import cn.nukkit.server.network.raknet.RakNetPacket;
+import cn.nukkit.server.network.raknet.RakNetPacketRegistry;
 import cn.nukkit.server.network.raknet.datagram.RakNetDatagramFlags;
 import cn.nukkit.server.network.raknet.enveloped.DirectAddressedRakNetPacket;
 import cn.nukkit.server.network.raknet.packet.AckPacket;
@@ -18,13 +17,13 @@ public class DatagramRakNetPacketCodec extends MessageToMessageCodec<DatagramPac
     private static final int USER_ID_START = 0x80;
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, DirectAddressedRakNetPacket pkg, List<Object> list) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, DirectAddressedRakNetPacket packet, List<Object> list) throws Exception {
         // Certain RakNet packets do not require special encapsulation. This encoder tries to handle them.
         try {
-            ByteBuf buf = Packets.getCodec(RakNetPackets.TYPE).tryEncode(pkg.content());
-            list.add(new DatagramPacket(buf, pkg.recipient(), pkg.sender()));
+            ByteBuf buf = RakNetPacketRegistry.encode(packet.content());
+            list.add(new DatagramPacket(buf, packet.recipient(), packet.sender()));
         } finally {
-            pkg.release();
+            packet.release();
         }
     }
 
@@ -44,9 +43,9 @@ public class DatagramRakNetPacketCodec extends MessageToMessageCodec<DatagramPac
             buf.resetReaderIndex();
 
             // We can decode a packet immediately.
-            NetworkPacket netPackage = Packets.getCodec(RakNetPackets.TYPE).tryDecode(buf);
-            if (netPackage != null) {
-                list.add(new DirectAddressedRakNetPacket(netPackage, packet.recipient(), packet.sender()));
+            RakNetPacket rakNetPacket = RakNetPacketRegistry.decode(buf);
+            if (rakNetPacket != null) {
+                list.add(new DirectAddressedRakNetPacket(rakNetPacket, packet.recipient(), packet.sender()));
             }
         } else {
             // We can decode some datagrams directly.

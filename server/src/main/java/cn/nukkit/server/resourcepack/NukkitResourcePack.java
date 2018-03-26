@@ -1,7 +1,7 @@
 package cn.nukkit.server.resourcepack;
 
-import cn.nukkit.api.resourcepack.MinecraftPack;
 import cn.nukkit.api.resourcepack.MinecraftPackManifest;
+import cn.nukkit.api.resourcepack.ResourcePack;
 import cn.nukkit.api.util.SemVer;
 import cn.nukkit.server.resourcepack.loader.file.PackFile;
 
@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class NukkitResourcePack implements MinecraftPack {
+public class NukkitResourcePack implements ResourcePack {
     private final MinecraftPackManifest manifest;
     private final PackFile packFile;
 

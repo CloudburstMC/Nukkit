@@ -1,6 +1,6 @@
 package cn.nukkit.server.inventory.transaction.record;
 
-import cn.nukkit.api.item.ItemStack;
+import cn.nukkit.api.item.ItemInstance;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.netty.buffer.ByteBuf;
@@ -11,30 +11,28 @@ import javax.annotation.Nonnull;
 
 import static cn.nukkit.server.nbt.util.VarInt.readUnsignedInt;
 import static cn.nukkit.server.nbt.util.VarInt.writeUnsignedInt;
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.readItemStack;
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeItemStack;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.readItemInstance;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeItemInstance;
 
 @Data
 public abstract class TransactionRecord {
     private int slot;
-    private ItemStack oldItem;
-    private ItemStack newItem;
+    private ItemInstance oldItem;
+    private ItemInstance newItem;
 
     public void write(ByteBuf buffer){
         writeUnsignedInt(buffer, slot);
-        writeItemStack(buffer, oldItem);
-        writeItemStack(buffer, newItem);
+        writeItemInstance(buffer, oldItem);
+        writeItemInstance(buffer, newItem);
     }
 
     public void read(ByteBuf buffer){
         slot = readUnsignedInt(buffer);
-        oldItem = readItemStack(buffer);
-        newItem = readItemStack(buffer);
+        oldItem = readItemInstance(buffer);
+        newItem = readItemInstance(buffer);
     }
 
     public abstract Type getType();
-
-    public abstract void execute(PlayerSession session);
 
     public enum Type {
         CONTAINER,

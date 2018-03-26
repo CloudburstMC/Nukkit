@@ -9,6 +9,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.fusesource.jansi.Ansi;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -58,7 +59,7 @@ public class NukkitConsoleAppender extends AbstractAppender {
             initialized = true;
 
             try {
-                terminal = TerminalBuilder.builder().jansi(true).build();
+                terminal = TerminalBuilder.builder().jansi(Ansi.isDetected()).build();
             } catch (IllegalStateException e) {
                 log.warn("The environment you're running is unsupported.");
                 if (log.isDebugEnabled()) {

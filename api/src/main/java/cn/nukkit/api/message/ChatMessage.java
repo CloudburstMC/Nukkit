@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Nonnull
 @Immutable
-public final class ChatMessage implements SenderMessage {
+public final class ChatMessage implements SourceMessage {
     private static final Type TYPE = Type.CHAT;
     private final String sender;
     private final String message;

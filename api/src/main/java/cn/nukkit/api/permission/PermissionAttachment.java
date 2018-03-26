@@ -2,18 +2,28 @@ package cn.nukkit.api.permission;
 
 import cn.nukkit.api.plugin.Plugin;
 
-import java.util.Set;
+import java.util.Map;
 
 public interface PermissionAttachment {
     Plugin getPlugin();
 
-    Set<Permission> getPermissions();
+    Map<String, Boolean> getPermissions();
+
+    PermissionRemovedExecutor getRemovalCallback();
+
+    void setRemovalCallback(PermissionRemovedExecutor executor);
 
     void clearPermissions();
 
-    void addPermission(Permission permission);
+    void setPermissions(Map<String, Boolean> permissions);
 
-    void removePermission(Permission permission);
+    void setPermission(Permission nukkitPermission, boolean value);
+
+    void setPermission(String name, boolean value);
+
+    void unsetPermission(Permission nukkitPermission, boolean value);
+
+    void unsetPermission(String name, boolean value);
 
     void remove();
 }

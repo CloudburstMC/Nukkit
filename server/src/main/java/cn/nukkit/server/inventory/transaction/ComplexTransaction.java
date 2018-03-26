@@ -1,6 +1,6 @@
 package cn.nukkit.server.inventory.transaction;
 
-import cn.nukkit.api.item.ItemStack;
+import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.server.inventory.transaction.record.TransactionRecord;
 import com.flowpowered.math.vector.Vector3f;
 import io.netty.buffer.ByteBuf;
@@ -21,7 +21,7 @@ public abstract class ComplexTransaction implements InventoryTransaction {
     private final long creationTime;
     private final List<TransactionRecord> records = new ArrayList<>();
     private int slot;
-    private ItemStack item;
+    private ItemInstance item;
     private Vector3f fromPosition;
 
     public ComplexTransaction() {
@@ -30,13 +30,13 @@ public abstract class ComplexTransaction implements InventoryTransaction {
 
     public void read(ByteBuf buffer) {
         slot = readSignedInt(buffer);
-        item = readItemStack(buffer);
+        item = readItemInstance(buffer);
         fromPosition = readVector3f(buffer);
     }
 
     public void write(ByteBuf buffer) {
         writeSignedInt(buffer, slot);
-        writeItemStack(buffer, item);
+        writeItemInstance(buffer, item);
         writeVector3f(buffer, fromPosition);
     }
 

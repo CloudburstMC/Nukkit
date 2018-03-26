@@ -1,12 +1,15 @@
 package cn.nukkit.server.network.minecraft.session.data;
 
 import cn.nukkit.api.util.data.DeviceOS;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
-import lombok.experimental.NonFinal;
 
 @Value
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClientData {
+    @JsonProperty("TenantId")
+    private final String tenantId;
     @JsonProperty("ADRole")
     private final String activeDirectoryRole;
     @JsonProperty("CapeData")
@@ -20,7 +23,7 @@ public class ClientData {
     @JsonProperty("DeviceModel")
     private final String deviceModel;
     @JsonProperty("DeviceOS")
-    private final int deviceOs;
+    private final DeviceOS deviceOs;
     @JsonProperty("GameVersion")
     private final String gameVersion;
     @JsonProperty("GuiScale")
@@ -29,8 +32,14 @@ public class ClientData {
     private final boolean EducationMode;
     @JsonProperty("LanguageCode")
     private final String languageCode;
+    @JsonProperty("ThirdPartyName")
+    private final String thirdPartyName;
+    @JsonProperty("PlatformChatId")
+    private final String platformChatId;
     @JsonProperty("ServerAddress")
     private final String serverAddress;
+    @JsonProperty("SkinDataLength")
+    private final int skinDataLength;
     @JsonProperty("SkinData")
     private final byte[] skinData; // deserialized
     @JsonProperty("SkinGeometry")
@@ -41,13 +50,4 @@ public class ClientData {
     private final String skinId;
     @JsonProperty("UIProfile")
     private final int uiProfile;
-
-    @NonFinal private transient DeviceOS deviceOS;
-
-    public DeviceOS getDeviceOs() {
-        if (deviceOS == null) {
-            deviceOS = DeviceOS.values()[deviceOs];
-        }
-        return deviceOS;
-    }
 }

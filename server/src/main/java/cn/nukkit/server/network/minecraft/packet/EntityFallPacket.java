@@ -1,7 +1,7 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.server.network.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.readRuntimeEntity
 public class EntityFallPacket implements MinecraftPacket {
     private long runtimeEntityId;
     private float fallDistance;
-    private boolean unknown0;
+    private boolean inVoid;
 
     @Override
     public void encode(ByteBuf buffer) {
@@ -22,7 +22,7 @@ public class EntityFallPacket implements MinecraftPacket {
     public void decode(ByteBuf buffer) {
         runtimeEntityId = readRuntimeEntityId(buffer);
         fallDistance = buffer.readFloatLE();
-        unknown0 = buffer.readBoolean();
+        inVoid = buffer.readBoolean();
     }
 
     @Override

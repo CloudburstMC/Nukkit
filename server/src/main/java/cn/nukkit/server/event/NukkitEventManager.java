@@ -99,9 +99,9 @@ public class NukkitEventManager implements EventManager {
         }
     }
 
-    public void getEventListenerMethods(Class<? extends Event> eventClass) {
+    public List<EventFireHandler.ListenerMethod> getEventListenerMethods(Class<? extends Event> eventClass) {
         Preconditions.checkNotNull(eventClass, "eventClass");
-        eventHandlers.get(eventClass).getMethods();
+        return eventHandlers.get(eventClass).getMethods();
     }
 
     private void bakeHandlers() {

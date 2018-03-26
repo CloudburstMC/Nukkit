@@ -1,12 +1,12 @@
 package cn.nukkit.server.network.raknet.packet;
 
-import cn.nukkit.server.network.raknet.NetworkPacket;
+import cn.nukkit.server.network.raknet.RakNetPacket;
 import cn.nukkit.server.network.raknet.RakNetUtil;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
 @Data
-public class UnconnectedPongPacket implements NetworkPacket {
+public class UnconnectedPongPacket implements RakNetPacket {
     private long pingId;
     private long serverId;
     private String advertise;

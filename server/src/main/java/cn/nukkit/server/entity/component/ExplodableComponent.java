@@ -1,10 +1,26 @@
 package cn.nukkit.server.entity.component;
 
-import cn.nukkit.api.entity.component.Explodable;
+import cn.nukkit.api.entity.component.Explode;
 
-public class ExplodableComponent implements Explodable {
+public class ExplodableComponent implements Explode {
+    private final int fuse;
     private int radius;
     private boolean incendiary;
+
+    public ExplodableComponent(int fuse, int radius, boolean incendiary) {
+        this.fuse = fuse;
+        this.radius = radius;
+        this.incendiary = incendiary;
+    }
+
+    public int getFuse() {
+        return fuse;
+    }
+
+    @Override
+    public boolean isPrimed() {
+        return false; //TODO
+    }
 
     @Override
     public int getRadius() {

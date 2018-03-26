@@ -1,10 +1,10 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.api.GameMode;
 import cn.nukkit.api.level.LevelSettings;
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.api.util.GameMode;
+import cn.nukkit.api.util.Rotation;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
-import com.flowpowered.math.vector.Vector2f;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import com.flowpowered.math.vector.Vector3f;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class StartGamePacket implements MinecraftPacket {
     private long runtimeEntityId;
     private GameMode gamemode;
     private Vector3f playerPosition;
-    private Vector2f rotation;
+    private Rotation rotation;
     private LevelSettings levelSettings;
     private String levelId;
     private String worldName;
@@ -33,7 +33,7 @@ public class StartGamePacket implements MinecraftPacket {
         writeRuntimeEntityId(buffer, runtimeEntityId);
         writeSignedInt(buffer, gamemode.ordinal());
         writeVector3f(buffer, playerPosition);
-        writeVector2f(buffer, rotation);
+        writeVector2f(buffer, rotation.getBodyRotation());
         writeLevelSettings(buffer, levelSettings);
         writeString(buffer, levelId);
         writeString(buffer, worldName);

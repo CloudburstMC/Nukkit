@@ -1,6 +1,6 @@
 package cn.nukkit.server.network.raknet.packet;
 
-import cn.nukkit.server.network.raknet.NetworkPacket;
+import cn.nukkit.server.network.raknet.RakNetPacket;
 import cn.nukkit.server.network.raknet.util.IntRange;
 import com.google.common.collect.ImmutableList;
 import gnu.trove.list.TIntList;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Data
-public abstract class AcknowledgePacket implements NetworkPacket {
+public abstract class AcknowledgePacket implements RakNetPacket {
     private final List<IntRange> ids = new ArrayList<>();
 
     public static List<IntRange> intoRanges(TIntList ids) {

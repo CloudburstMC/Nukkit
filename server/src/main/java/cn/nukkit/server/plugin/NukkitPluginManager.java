@@ -1,13 +1,10 @@
 package cn.nukkit.server.plugin;
 
-import cn.nukkit.api.permission.Permission;
-import cn.nukkit.api.plugin.Plugin;
-import cn.nukkit.api.plugin.PluginDescription;
-import cn.nukkit.api.plugin.PluginLoader;
-import cn.nukkit.api.plugin.PluginManager;
+import cn.nukkit.api.plugin.*;
 import cn.nukkit.server.NukkitServer;
+import cn.nukkit.server.console.TranslatableMessage;
 import cn.nukkit.server.math.graph.DirectedAcyclicGraph;
-import cn.nukkit.server.permission.NukkitPermission;
+import cn.nukkit.server.permission.DefaultPermissions;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
@@ -37,9 +34,8 @@ public class NukkitPluginManager implements PluginManager {
 
     public NukkitPluginManager(NukkitServer server) {
         this.server = server;
-        String[] api = NukkitServer.API_VERSION.split("\\.");
-        API_MINOR = Integer.parseInt(api[1]);
-        API_REGEX = Pattern.compile("(?:v)(" + api[0] +")\\.([0-9])\\.([0-9])");
+        API_MINOR = NukkitServer.API_VERSION.getMinor();
+        API_REGEX = Pattern.compile("(?:v)(" + NukkitServer.API_VERSION.getMajor() + ")\\.([0-9])\\.([0-9])");
     }
 
     public <T extends PluginLoader> void registerPluginLoader(Class<T> loaderClass, T loaderInstance) {
@@ -103,12 +99,12 @@ public class NukkitPluginManager implements PluginManager {
         pluginLoad: for (PluginDescription plugin : sortedPlugins) {
             // Verify API version is compatible.
             if (incompatibleApiVersion(plugin.getApiVersions())) {
-                log.error(server.getLanguage().translateString("nukkit.plugin.loadError", plugin.getName(), "Wrong API format"));
+                log.error(TranslatableMessage.of("nukkit.plugin.loadError", plugin.getName(), "Wrong API format"));
                 continue;
             }
 
             if (plugins.containsKey(plugin.getName())) {
-                server.getLanguage().translateString("nukkit.plugin.duplicateError", plugin.getName());
+                log.error(TranslatableMessage.of("nukkit.plugin.duplicateError", plugin.getName()));
                 continue;
             }
 
@@ -176,14 +172,29 @@ public class NukkitPluginManager implements PluginManager {
     public void enablePlugin(Plugin plugin) {
         if (!plugin.isEnabled()) {
             try {
-                for (NukkitPermission nukkitPermission : plugin.getDescription().getPermissions()) {
+                /*for (NukkitPermission nukkitPermission : plugin.getDescription().getPermissions()) {
                     server.getPermissionManager().addPermission(nukkitPermission);
-                }
+                }*/
                 plugin.getPluginLoader().enablePlugin(plugin);
             } catch (Throwable e) {
                 log.throwing(e);
                 disablePlugin(plugin);
             }
+        }
+    }
+
+    public void enablePlugins(PluginLoadOrder type) {
+        for (Plugin plugin : plugins.values()) {
+            if (plugin.isEnabled()) continue;
+            PluginLoadOrder order = plugin.getDescription().getLoadOrder().orElse(PluginLoadOrder.POSTNETWORK);
+            if (type == order) {
+                enablePlugin(plugin);
+            }
+        }
+
+        if (type == PluginLoadOrder.POSTNETWORK) {
+            //server.getCommandManager().registerServerAliases();
+            DefaultPermissions.registerCorePermissions();
         }
     }
 
@@ -199,11 +210,11 @@ public class NukkitPluginManager implements PluginManager {
                 log.throwing(e);
             }
 
-            server.getScheduler().cancelTasks(object);
-            server.getEventManager().unregisterAllListeners(object);
-            for (Permission nukkitPermission : plugin.getPermissions()) {
+            server.getScheduler().cancelTasks(plugin);
+            server.getEventManager().unregisterAllListeners(plugin);
+            /*for (Permission nukkitPermission : plugin.getPermission()) {
                 server.getPermissionManager().removePermission(nukkitPermission);
-            }
+            }*/
         }
     }
 

@@ -5,6 +5,7 @@ import cn.nukkit.api.entity.component.EntityComponent;
 import cn.nukkit.api.level.Level;
 import cn.nukkit.api.util.BoundingBox;
 import cn.nukkit.api.util.Rotation;
+import com.flowpowered.math.GenericMath;
 import com.flowpowered.math.vector.Vector3f;
 import com.google.common.base.VerifyException;
 
@@ -269,6 +270,15 @@ public interface Entity {
     boolean isAffectedByGravity();
 
     void setAffectedByGravity(boolean affectedByGravity);
+
+    default Vector3f getDirectionVector() {
+        Rotation rotation = getRotation();
+        double xzLen = Math.cos(Math.toRadians(rotation.getPitch()));
+        double x = -xzLen * Math.sin(Math.toRadians(rotation.getYaw()));
+        double y = -Math.sin(Math.toRadians(rotation.getPitch()));
+        double z = xzLen * Math.cos(Math.toRadians(rotation.getYaw()));
+        return GenericMath.normalizeSafe(new Vector3f(x, y, z));
+    }
 
     Set<Class<? extends EntityComponent>> providedComponents();
 

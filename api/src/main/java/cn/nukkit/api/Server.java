@@ -4,6 +4,7 @@ import cn.nukkit.api.command.sender.ConsoleCommandSender;
 import cn.nukkit.api.event.EventManager;
 import cn.nukkit.api.item.ItemInstanceBuilder;
 import cn.nukkit.api.level.Level;
+import cn.nukkit.api.level.LevelCreator;
 import cn.nukkit.api.permission.Abilities;
 import cn.nukkit.api.permission.PermissionManager;
 import cn.nukkit.api.plugin.PluginManager;
@@ -12,9 +13,12 @@ import cn.nukkit.api.util.ConfigBuilder;
 import cn.nukkit.api.util.SemVer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
+@ParametersAreNonnullByDefault
 public interface Server {
 
     void broadcastMessage(String message);
@@ -35,7 +39,7 @@ public interface Server {
     Abilities getDefaultAbilities();
 
     @Nonnull
-    SemVer getNukkitVersion();
+    String getNukkitVersion();
 
     @Nonnull
     EventManager getEventManager();
@@ -50,6 +54,9 @@ public interface Server {
 
     @Nonnull
     Configuration getConfiguration();
+
+    @Nonnull
+    Banlist getBanlist();
 
     @Nonnull
     Whitelist getWhitelist();
@@ -73,4 +80,7 @@ public interface Server {
 
     @Nonnull
     Collection<Player> getOnlinePlayers();
+
+    @Nonnull
+    CompletableFuture<Level> loadLevel(LevelCreator creator);
 }

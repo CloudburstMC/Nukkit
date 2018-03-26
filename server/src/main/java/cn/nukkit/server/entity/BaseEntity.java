@@ -1,78 +1,95 @@
 package cn.nukkit.server.entity;
 
-import cn.nukkit.api.Server;
+import cn.nukkit.api.block.BlockTypes;
 import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.entity.component.Ageable;
 import cn.nukkit.api.entity.component.EntityComponent;
-import cn.nukkit.api.entity.component.Flammable;
-import cn.nukkit.api.event.entity.EntityDamageEvent;
-import cn.nukkit.api.event.player.PlayerTeleportEvent;
+import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.level.Level;
+import cn.nukkit.api.level.chunk.Chunk;
+import cn.nukkit.api.util.BoundingBox;
 import cn.nukkit.api.util.Rotation;
 import cn.nukkit.server.NukkitServer;
+import cn.nukkit.server.level.NukkitLevel;
+import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.data.MetadataConstants;
+import cn.nukkit.server.network.minecraft.packet.AddEntityPacket;
+import cn.nukkit.server.network.minecraft.util.MetadataDictionary;
 import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import javafx.geometry.BoundingBox;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import static cn.nukkit.server.network.minecraft.data.metadata.EntityMetadataData.Flag.*;
+import static cn.nukkit.server.network.minecraft.data.MetadataConstants.*;
+import static cn.nukkit.server.network.minecraft.data.MetadataConstants.Flag.*;
 
+@Log4j2
 public class BaseEntity implements Entity {
     private final NukkitServer server;
-    private final EntityTypeData data;
+    private final EntityType entityType;
     private final Map<Class<? extends EntityComponent>, EntityComponent> componentMap = new HashMap<>();
     // Flags
-    protected boolean sneaking = false;
-    protected boolean sprinting = false;
-    protected long tickCreated;
+    private long tickCreated;
     private long entityId;
-    private Level level;
+    private NukkitLevel level;
     private Vector3f position;
     private Vector3f motion;
     private Rotation rotation;
-    private boolean needsUpdate = true;
     private boolean teleported = false;
-    private boolean invisible = false;
-    private boolean affectedByGravity = true;
-    private boolean alwaysShowNameTag = false;
-    private boolean action = false;
-    private boolean angry = false;
-    private boolean visibleNamtag = true;
-    //
     private boolean removed = false;
     private BoundingBox boundingBox;
+    private boolean movementStale;
+    private boolean metadataStale;
+    protected final BitSet metadataFlags = new BitSet(64);
 
-    public BaseEntity(EntityTypeData data, Vector3f position, Level level, NukkitServer server) {
-        this.data = data;
-        this.position = position;
+    public BaseEntity(EntityType entityType, Vector3f position, NukkitLevel level, NukkitServer server) {
         this.level = level;
         this.server = server;
+        this.entityType = entityType;
+        this.position = position;
+        this.rotation = Rotation.ZERO;
+        this.motion = Vector3f.ZERO;
+        this.entityId = level.getEntityManager().allocateEntityId();
+        this.level.getEntityManager().registerEntity(this);
+        this.tickCreated = level.getCurrentTick();
+
+        setFlag(HAS_COLLISION, true);
+        setFlag(AFFECTED_BY_GRAVITY, true);
+        setFlag(CAN_SHOW_NAMETAG, true);
+
+        refreshBoundingBox();
     }
 
-    protected long getMetadataFlagValue() {
-        BitSet flags = new BitSet(64);
-        flags.set(ON_FIRE.id(), (get(Flammable.class).isPresent() && ensureAndGet(Flammable.class).isIgnited()));
-        flags.set(AFFECTED_BY_GRAVITY.id(), affectedByGravity);
-        flags.set(ALWAYS_SHOW_NAMETAG.id(), alwaysShowNameTag);
-        flags.set(CAN_SHOW_NAMETAG.id(), visibleNamtag);
-        flags.set(SNEAKING.id(), sneaking);
-        flags.set(ANGRY.id(), angry);
-        flags.set(ACTION.id(), action);
-        flags.set(SPRINTING.id(), sprinting);
-        flags.set(INVISIBLE.id(), invisible);
-
-
-        long[] array = flags.toLongArray();
-        return array.length == 0 ? 0 : array[0];
+    public MinecraftPacket createAddEntityPacket() {
+        AddEntityPacket packet = new AddEntityPacket();
+        packet.setUniqueEntityId(entityId);
+        packet.setRuntimeEntityId(entityId);
+        packet.setEntityType(entityType.getType());
+        packet.setPosition(position);
+        packet.setMotion(motion);
+        packet.setRotation(rotation);
+        packet.getMetadata().putAll(getMetadata());
+        return packet;
     }
-
 
     @Nonnull
     @Override
     public Rotation getRotation() {
-        return null;
+        return rotation;
+    }
+
+    public void setRotation(@Nonnull Rotation rotation) {
+        Preconditions.checkNotNull(rotation, "rotation");
+        checkIfAlive();
+
+        if (this.rotation.equals(rotation)) {
+            this.rotation = rotation;
+            movementStale = true;
+        }
     }
 
     @Nonnull
@@ -82,50 +99,132 @@ public class BaseEntity implements Entity {
     }
 
     @Override
-    public void setMotion(Vector3f vector) {
-        Preconditions.checkNotNull(vector, "vector");
-        this.motion = vector;
+    public UUID getUniqueId() {
+        return null;
+    }
+
+    @Nonnull
+    @Override
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    @Override
+    public void setPosition(@Nonnull Vector3f position) {
+        Preconditions.checkNotNull(position, "position");
+        checkIfAlive();
+
+        if (!this.position.equals(position)) {
+            this.position = position;
+            movementStale = true;
+
+            refreshBoundingBox();
+        }
+    }
+
+    public void setPositionFromSystem(@Nonnull Vector3f position) {
+        Preconditions.checkState(level.getEntityManager().isTicking(), "entities in level are not being ticked");
+        setPosition(position);
+    }
+
+    @Nonnull
+    @Override
+    public Vector3f getGamePosition() {
+        return position.add(0, entityType.getOffset(), 0);
+    }
+
+    @Nonnull
+    @Override
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
+    @Override
+    public void setMotion(Vector3f motion) {
+        Preconditions.checkNotNull(motion, "vector");
+        checkIfAlive();
+
+        if (!this.motion.equals(motion)) {
+            this.motion = motion;
+            movementStale = true;
+        }
     }
 
     @Override
     public float getHeight() {
-        return data.getHeight();
+        float height = entityType.getHeight();
+        if (get(Ageable.class).map(Ageable::isBaby).orElse(false)) {
+            height /= 2;
+        }
+        return height;
     }
 
     @Override
     public float getWidth() {
-        return data.getWidth();
+        float width = entityType.getWidth();
+        if (get(Ageable.class).map(Ageable::isBaby).orElse(false)) {
+            width /= 2;
+        }
+        return width;
+    }
+
+    public float getLength() {
+        float length = entityType.getLength();
+        if (get(Ageable.class).map(Ageable::isBaby).orElse(false)) {
+            length /= 2;
+        }
+        return length;
     }
 
     @Override
-    public float getDepth() {
-        return data.getDepth();
+    public float getOffset() {
+        float offset = entityType.getOffset();
+        if (get(Ageable.class).map(Ageable::isBaby).orElse(false)) {
+            offset /= 2;
+        }
+        return offset;
     }
 
     @Override
     public boolean isOnGround() {
-        return false;
+        Vector3i blockPosition = getPosition().sub(0f, 0.1f, 0f).toInt();
+
+        if (blockPosition.getY() < 0) {
+            return false;
+        }
+
+        int chunkX = blockPosition.getX() >> 4;
+        int chunkZ = blockPosition.getZ() >> 4;
+        int chunkInX = blockPosition.getX() & 0x0f;
+        int chunkInZ = blockPosition.getZ() & 0x0f;
+
+        Optional<Chunk> chunkOptional = level.getChunkIfLoaded(chunkX, chunkZ);
+        return chunkOptional.isPresent() && chunkOptional.get().getBlock(chunkInX, blockPosition.getY(), chunkInZ).getBlockState().getBlockType() != BlockTypes.AIR;
     }
 
     @Override
-    public Level getLevel() {
+    public NukkitLevel getLevel() {
         return level;
     }
 
     @Override
-    public boolean teleport(Entity destination, PlayerTeleportEvent.TeleportCause cause) {
+    public boolean teleport(Vector3f position) {
         return false;
     }
 
     @Override
-    public long getUniqueEntityId() {
-        return entityId;
+    public boolean teleport(Vector3f location, Level level) {
+        return false;
     }
 
     @Override
-    public long getRuntimeEntityId() {
+    public boolean teleport(Entity destination) {
+        return false;
+    }
+
+    @Override
+    public long getEntityId() {
         return entityId;
-        // TODO
     }
 
     @Override
@@ -134,28 +233,39 @@ public class BaseEntity implements Entity {
         removed = true;
     }
 
-    final void checkIfAlive() {
+    @Override
+    public boolean isAlive() {
+        return false;
+    }
+
+    public final void checkIfAlive() {
         Preconditions.checkState(!removed, "Entity has been removed.");
     }
 
+    @Nonnull
     @Override
-    public boolean isAlive() {
-        return !removed;
+    public NukkitServer getServer() {
+        return server;
     }
 
     @Override
-    public Server getServer() {
-        return null;
+    public long getTickCreated() {
+        return tickCreated;
     }
 
     @Override
-    public int getTicksLived() {
-        return 0;
+    public void setTickCreated(long tickCreated) {
+        this.tickCreated = tickCreated;
     }
 
     @Override
-    public void setTicksLived(int value) {
+    public long getTicksLived() {
+        return level.getCurrentTick() - tickCreated;
+    }
 
+    @Override
+    public void setTicksLived(long ticks) {
+        this.tickCreated = level.getCurrentTick() - ticks;
     }
 
     @Override
@@ -204,18 +314,27 @@ public class BaseEntity implements Entity {
     }
 
     @Override
-    public boolean isSilent() {
-        return sneaking;
-    }
-
-    @Override
-    public void setSilent(boolean silent) {
-        this.sneaking = silent;
-    }
-
-    @Override
-    public boolean attack(EntityDamageEvent source) {
+    public boolean isSneaking() {
         return false;
+    }
+
+    @Override
+    public void setSneaking(boolean sneaking) {
+
+    }
+
+    public boolean isRemoved() {
+        return removed;
+    }
+
+    @Override
+    public boolean isAffectedByGravity() {
+        return getFlag(AFFECTED_BY_GRAVITY);
+    }
+
+    @Override
+    public void setAffectedByGravity(boolean affectedByGravity) {
+        setFlag(AFFECTED_BY_GRAVITY, affectedByGravity);
     }
 
     @Override
@@ -237,5 +356,79 @@ public class BaseEntity implements Entity {
     public <C extends EntityComponent> Optional<C> get(@Nonnull Class<C> clazz) {
         Preconditions.checkNotNull(clazz, "clazz");
         return Optional.ofNullable((C) componentMap.get(clazz));
+    }
+
+    protected void setFlag(MetadataConstants.Flag flag, boolean value) {
+        if (value != metadataFlags.get(flag.ordinal())) {
+            metadataFlags.set(flag.ordinal(), value);
+            metadataStale = true;
+        }
+
+    }
+
+    protected boolean getFlag(MetadataConstants.Flag flag) {
+        return metadataFlags.get(flag.ordinal());
+    }
+
+    protected void setEntityId(long entityId) {
+        this.entityId = entityId;
+    }
+
+    protected boolean isTeleported() {
+        return teleported;
+    }
+
+    protected long getMetadataFlagValue() {
+        long[] array = metadataFlags.toLongArray();
+        return array.length == 0 ? 0 : array[0];
+    }
+
+    public MetadataDictionary getMetadata() {
+        MetadataDictionary dictionary = new MetadataDictionary();
+        dictionary.put(MetadataConstants.FLAGS, getMetadataFlagValue());
+        dictionary.put(NAMETAG, "");
+        dictionary.put(ENTITY_AGE, 0);
+        dictionary.put(SCALE, 1f);
+        dictionary.put(MAX_AIR, (short) 400);
+        dictionary.put(AIR, (short) 0);
+        dictionary.put(BOUNDING_BOX_HEIGHT, entityType.getHeight());
+        dictionary.put(BOUNDING_BOX_WIDTH, entityType.getWidth());
+        return dictionary;
+    }
+
+    public void onAttributeUpdate(Attribute attribute) {
+        Preconditions.checkNotNull(attribute, "attribute");
+        // TODO
+    }
+
+    public boolean isMovementStale() {
+        return movementStale;
+    }
+
+    public void resetStaleMovement() {
+        checkIfAlive();
+        movementStale = false;
+        teleported = false;
+    }
+
+    public boolean isMetadataStale() {
+        return metadataStale;
+    }
+
+    public void resetStaleMetadata() {
+        checkIfAlive();
+        metadataStale = false;
+    }
+
+    public boolean onItemPickup(ItemInstance item) {
+        return false;
+    }
+
+    protected void save() {
+
+    }
+
+    private void refreshBoundingBox() {
+        boundingBox = new BoundingBox(getPosition(), getPosition()).grow(getWidth() / 2, getHeight() / 2, getLength() / 2);
     }
 }

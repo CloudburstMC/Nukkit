@@ -28,4 +28,6 @@ public interface BlockType extends ItemType {
     int burnChance();
 
     int burnability();
+
+    float resistance();
 }

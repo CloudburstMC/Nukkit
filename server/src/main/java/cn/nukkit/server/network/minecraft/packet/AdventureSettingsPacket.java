@@ -1,8 +1,9 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.api.level.AdventureSettings;
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.api.permission.CommandPermission;
+import cn.nukkit.api.permission.PlayerPermission;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -11,30 +12,30 @@ import static cn.nukkit.server.nbt.util.VarInt.writeUnsignedInt;
 
 @Data
 public class AdventureSettingsPacket implements MinecraftPacket {
-    private int worldPermissions;
-    private AdventureSettings.CommandPermission commandPermission;
-    private int actionPermissions;
-    private AdventureSettings.PlayerPermission playerPermission;
-    private int customStoredPermissions;
+    private int flags;
+    private CommandPermission commandPermission;
+    private int flags2;
+    private PlayerPermission playerPermission;
+    private int customFlags;
     private long uniqueEntityId;
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeUnsignedInt(buffer, worldPermissions);
+        writeUnsignedInt(buffer, flags);
         writeUnsignedInt(buffer, commandPermission.ordinal());
-        writeUnsignedInt(buffer, actionPermissions);
+        writeUnsignedInt(buffer, flags2);
         writeUnsignedInt(buffer, playerPermission.ordinal());
-        writeUnsignedInt(buffer, customStoredPermissions);
+        writeUnsignedInt(buffer, customFlags);
         buffer.writeLongLE(uniqueEntityId);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
-        worldPermissions = readUnsignedInt(buffer);
-        commandPermission = AdventureSettings.CommandPermission.values()[readUnsignedInt(buffer)];
-        actionPermissions = readUnsignedInt(buffer);
-        playerPermission = AdventureSettings.PlayerPermission.values()[readUnsignedInt(buffer)];
-        customStoredPermissions = readUnsignedInt(buffer);
+        flags = readUnsignedInt(buffer);
+        commandPermission = CommandPermission.values()[readUnsignedInt(buffer)];
+        flags2 = readUnsignedInt(buffer);
+        playerPermission = PlayerPermission.values()[readUnsignedInt(buffer)];
+        customFlags = readUnsignedInt(buffer);
         uniqueEntityId = buffer.readLongLE();
     }
 

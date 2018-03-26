@@ -1,12 +1,9 @@
-package cn.nukkit.server.util;
+/*package cn.nukkit.server.util;
 
 import cn.nukkit.api.util.Config;
 import cn.nukkit.api.util.ConfigSection;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.scheduler.FileWriteTask;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import lombok.extern.log4j.Log4j2;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -21,11 +18,11 @@ import java.util.regex.Pattern;
 /**
  * author: MagicDroidX
  * Nukkit
- */
+ *//*
 @Log4j2
 public class NukkitConfig implements Config {
 
-    /*public static final int DETECT = -1; //Detect by file extension
+    public static final int DETECT = -1; //Detect by file extension
     public static final int PROPERTIES = 0; // .properties
     public static final int CNF = Config.PROPERTIES; // .cnf
     public static final int JSON = 1; // .js, .json
@@ -33,7 +30,7 @@ public class NukkitConfig implements Config {
     //public static final int EXPORT = 3; // .export, .xport
     //public static final int SERIALIZED = 4; // .sl
     public static final int ENUM = 5; // .txt, .list, .enum
-    public static final int ENUMERATION = Config.ENUM;*/
+    public static final int ENUMERATION = Config.ENUM;
 
     public static final Map<String, Config.Type> format = new TreeMap<>();
 
@@ -62,7 +59,7 @@ public class NukkitConfig implements Config {
      * Constructor for Config instance with undefined file object
      *
      * @param type - Config type
-     */
+     *//*
     public NukkitConfig(Config.Type type) {
         this.type = type;
         this.correct = true;
@@ -71,7 +68,7 @@ public class NukkitConfig implements Config {
 
     /**
      * Constructor for Config (YAML) instance with undefined file object
-     */
+     *//*
     public NukkitConfig() {
         this(Config.Type.YAML);
     }
@@ -202,7 +199,7 @@ public class NukkitConfig implements Config {
      * @param file
      * @param async
      * @return
-     */
+     *//*
     public boolean save(File file, boolean async) {
         this.file = file;
         return save(async);
@@ -502,7 +499,7 @@ public class NukkitConfig implements Config {
 
     /**
      * @deprecated use {@link #get(String)} instead
-     */
+     *//*
     @Deprecated
     public Object getNested(String key) {
         return get(key);
@@ -510,7 +507,7 @@ public class NukkitConfig implements Config {
 
     /**
      * @deprecated use {@link #get(String, T)} instead
-     */
+     *//*
     @Deprecated
     public <T> T getNested(String key, T defaultValue) {
         return get(key, defaultValue);
@@ -518,7 +515,7 @@ public class NukkitConfig implements Config {
 
     /**
      * @deprecated use {@link #get(String)} instead
-     */
+     *//*
     @Deprecated
     @SuppressWarnings("unchecked")
     public <T> T getNestedAs(String key, Class<T> type) {
@@ -527,7 +524,7 @@ public class NukkitConfig implements Config {
 
     /**
      * @deprecated use {@link #remove(String)} instead
-     */
+     *//*
     @Deprecated
     public void removeNested(String key) {
         remove(key);
@@ -572,4 +569,4 @@ public class NukkitConfig implements Config {
         if (this.correct) return config.getKeys(child);
         return new HashSet<>();
     }
-}
+}*/

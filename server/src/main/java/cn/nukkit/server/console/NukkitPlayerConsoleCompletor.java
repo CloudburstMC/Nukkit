@@ -24,7 +24,7 @@ public class NukkitPlayerConsoleCompletor implements Completer {
         Preconditions.checkNotNull(list, "list");
 
         if (parsedLine.wordIndex() == 0) {
-            server.getOnlinePlayers().values().forEach((p) -> list.add(new Candidate(p.getName())));
+            server.getOnlinePlayers().forEach((p) -> list.add(new Candidate(p.getName())));
         } else {
             // We are auto completing player names, so 99% of the times we are doing this, it will be something like
             // "say John*TAB*"
@@ -36,7 +36,7 @@ public class NukkitPlayerConsoleCompletor implements Completer {
             split[split.length - 1] = ""; // And now clear the last value
             String cmd = String.join(" ", split);
             SortedSet<String> names = new TreeSet<String>();
-            NukkitServer.getInstance().getOnlinePlayers().values().forEach((p) -> names.add(p.getName()));
+            NukkitServer.getInstance().getOnlinePlayers().forEach((p) -> names.add(p.getName()));
             for (String match : names) {
                 if (!match.toLowerCase().startsWith(buffer.toLowerCase())) {
                     continue;

@@ -1,56 +1,64 @@
 package cn.nukkit.server.scheduler;
 
 import cn.nukkit.server.util.Utils;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class FileWriteTask extends AsyncTask {
-    private final File file;
+@Log4j2
+public class FileWriteTask extends AsyncTask<Path> {
+    private Path path;
     private final InputStream contents;
 
     public FileWriteTask(String path, String contents) {
-        this(new File(path), contents);
+        this(Paths.get(path), contents);
     }
 
     public FileWriteTask(String path, byte[] contents) {
-        this(new File(path), contents);
+        this(Paths.get(path), contents);
     }
 
     public FileWriteTask(String path, InputStream contents) {
-        this.file = new File(path);
+        this.path = Paths.get(path);
         this.contents = contents;
     }
 
-    public FileWriteTask(File file, String contents) {
-        this.file = file;
+    public FileWriteTask(Path path, String contents) {
+        this.path = path;
         this.contents = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
     }
 
-    public FileWriteTask(File file, byte[] contents) {
-        this.file = file;
+    public FileWriteTask(Path path, byte[] contents) {
+        this.path = path;
         this.contents = new ByteArrayInputStream(contents);
     }
 
-    public FileWriteTask(File file, InputStream contents) {
-        this.file = file;
+    public FileWriteTask(Path path, InputStream contents) {
+        this.path = path;
         this.contents = contents;
     }
 
     @Override
-    public void onRun() {
+    public void run() {
         try {
-            Utils.writeFile(file, contents);
+            Utils.writeFile(path, contents);
         } catch (IOException e) {
-            log.logException(e);
+            log.throwing(e);
         }
     }
 
+    @Override
+    public Path getRawResult() {
+        return path;
+    }
+
+    @Override
+    protected void setRawResult(Path path) {
+        this.path = path;
+    }
 }

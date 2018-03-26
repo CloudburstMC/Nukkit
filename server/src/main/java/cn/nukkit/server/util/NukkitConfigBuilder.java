@@ -1,4 +1,4 @@
-package cn.nukkit.server.util;
+/*package cn.nukkit.server.util;
 
 import cn.nukkit.api.util.Config;
 import cn.nukkit.api.util.ConfigBuilder;
@@ -60,4 +60,4 @@ public class NukkitConfigBuilder implements ConfigBuilder {
         }
         return new NukkitConfig(type);
     }
-}
+}*/

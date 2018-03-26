@@ -1,6 +1,6 @@
 package cn.nukkit.server.inventory.transaction;
 
-import cn.nukkit.server.network.NetworkPacketHandler;
+import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import com.flowpowered.math.vector.Vector3f;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -40,7 +40,7 @@ public class ItemUseOnEntityTransaction extends ComplexTransaction {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(PlayerSession.PlayerNetworkPacketHandler handler) {
         handler.handle(this);
     }
 

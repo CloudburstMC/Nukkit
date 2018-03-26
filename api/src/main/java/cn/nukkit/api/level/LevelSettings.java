@@ -21,6 +21,8 @@ public interface LevelSettings {
 
     Vector3f getDefaultSpawn();
 
+    void setDefaultSpawn(Vector3f defaultSpawn);
+
     boolean isAchievementsDisabled();
 
     int getTime();
@@ -54,4 +56,10 @@ public interface LevelSettings {
     int getXBLBroadcastMode();
 
     int getServerChunkTickRange();
+
+    boolean isBroadcastingToPlatform();
+
+    int getPlatformBroadcastMode();
+
+    boolean isIntentOnXBLBroadcast();
 }

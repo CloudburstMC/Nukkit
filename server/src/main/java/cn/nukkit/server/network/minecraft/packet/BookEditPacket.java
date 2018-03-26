@@ -1,7 +1,7 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.server.network.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -18,6 +18,7 @@ public class BookEditPacket implements MinecraftPacket {
     private String photoName;
     private String title;
     private String author;
+    private String xuid;
 
     @Override
     public void encode(ByteBuf buffer) {
@@ -40,6 +41,7 @@ public class BookEditPacket implements MinecraftPacket {
             case SIGN_BOOK:
                 writeString(buffer, title);
                 writeString(buffer, author);
+                writeString(buffer, xuid);
                 break;
             default:
                 throw new RuntimeException("BookEdit type was null or unknown!");
@@ -67,6 +69,7 @@ public class BookEditPacket implements MinecraftPacket {
             case SIGN_BOOK:
                 title = readString(buffer);
                 author = readString(buffer);
+                xuid = readString(buffer);
                 break;
             default:
                 throw new RuntimeException("BookEdit type was null or unknown!");

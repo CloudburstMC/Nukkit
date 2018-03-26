@@ -52,6 +52,12 @@ public final class SemVer {
      * @return compatible
      */
     public boolean isCompatibleMajor(SemVer ver) {
-        return Integer.compare(ver.major, major) >= 0;
+        return ver.major == major;
+    }
+
+    public boolean isNewerOrEqual(SemVer ver) {
+        return Integer.compare(major, ver.major) >= 0 &&
+                Integer.compare(minor, ver.minor) >= 0 &&
+                Integer.compare(patch, ver.patch) >= 0;
     }
 }

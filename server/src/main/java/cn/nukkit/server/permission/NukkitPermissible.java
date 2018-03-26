@@ -1,18 +1,12 @@
 package cn.nukkit.server.permission;
 
-import cn.nukkit.api.permission.Permissible;
-import cn.nukkit.api.permission.Permission;
-import cn.nukkit.api.permission.ServerOperator;
+import cn.nukkit.api.permission.*;
 import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.util.PluginException;
 import cn.nukkit.server.util.ServerException;
-import co.aikar.timings.Timings;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -24,7 +18,7 @@ public class NukkitPermissible implements Permissible {
 
     private Permissible parent = null;
 
-    private final Set<PermissionAttachment> attachments = new HashSet<>();
+    private final Set<NukkitPermissionAttachment> attachments = new HashSet<>();
 
     private final Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
 
@@ -65,10 +59,10 @@ public class NukkitPermissible implements Permissible {
             return this.permissions.get(name).getValue();
         }
 
-        NukkitPermission perm = NukkitServer.getInstance().getPluginManager().getPermission(name);
+        Optional<Permission> perm = NukkitServer.getInstance().getPermissionManager().getPermission(name);
 
-        if (perm != null) {
-            String permission = perm.getDefault();
+        if (perm.isPresent()) {
+            String permission = perm.get().getDefault();
 
             return NukkitPermission.DEFAULT_TRUE.equals(permission) || (this.isOp() && NukkitPermission.DEFAULT_OP.equals(permission)) || (!this.isOp() && NukkitPermission.DEFAULT_NOT_OP.equals(permission));
         } else {
@@ -77,27 +71,27 @@ public class NukkitPermissible implements Permissible {
     }
 
     @Override
-    public boolean hasPermission(NukkitPermission nukkitPermission) {
+    public boolean hasPermission(Permission nukkitPermission) {
         return this.hasPermission(nukkitPermission.getName());
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin) {
+    public NukkitPermissionAttachment addAttachment(Plugin plugin) {
         return this.addAttachment(plugin, null, null);
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String name) {
+    public NukkitPermissionAttachment addAttachment(Plugin plugin, String name) {
         return this.addAttachment(plugin, name, null);
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String name, Boolean value) {
+    public NukkitPermissionAttachment addAttachment(Plugin plugin, String name, Boolean value) {
         if (!plugin.isEnabled()) {
             throw new PluginException("Plugin " + plugin.getDescription().getName() + " is disabled");
         }
 
-        PermissionAttachment result = new PermissionAttachment(plugin, this.parent != null ? this.parent : this);
+        NukkitPermissionAttachment result = new NukkitPermissionAttachment(plugin, this.parent != null ? this.parent : this);
         this.attachments.add(result);
         if (name != null && value != null) {
             result.setPermission(name, value);
@@ -121,49 +115,44 @@ public class NukkitPermissible implements Permissible {
 
     @Override
     public void recalculatePermissions() {
-        Timings.permissibleCalculationTimer.startTiming();
-
         this.clearPermissions();
-        Map<String, NukkitPermission> defaults = NukkitServer.getInstance().getPluginManager().getDefaultPermissions(this.isOp());
-        NukkitServer.getInstance().getPluginManager().subscribeToDefaultPerms(this.isOp(), this.parent != null ? this.parent : this);
+        Map<String, Permission> defaults = NukkitServer.getInstance().getPermissionManager().getDefaultPermissions(this.isOp());
+        NukkitServer.getInstance().getPermissionManager().subscribeToDefaultPerms(this.isOp(), this.parent != null ? this.parent : this);
 
-        for (NukkitPermission perm : defaults.values()) {
+        for (Permission perm : defaults.values()) {
             String name = perm.getName();
-            this.permissions.put(name, new PermissionAttachmentInfo(this.parent != null ? this.parent : this, name, null, true));
-            NukkitServer.getInstance().getPluginManager().subscribeToPermission(name, this.parent != null ? this.parent : this);
+            this.permissions.put(name, new NukkitPermissionAttachmentInfo(this.parent != null ? this.parent : this, name, null, true));
+            NukkitServer.getInstance().getPermissionManager().subscribeToPermission(name, this.parent != null ? this.parent : this);
             this.calculateChildPermissions(perm.getChildren(), false, null);
         }
 
-        for (PermissionAttachment attachment : this.attachments) {
+        for (NukkitPermissionAttachment attachment : this.attachments) {
             this.calculateChildPermissions(attachment.getPermissions(), false, attachment);
         }
-        Timings.permissibleCalculationTimer.stopTiming();
     }
 
     public void clearPermissions() {
         for (String name : this.permissions.keySet()) {
-            NukkitServer.getInstance().getPluginManager().unsubscribeFromPermission(name, this.parent != null ? this.parent : this);
+            NukkitServer.getInstance().getPermissionManager().unsubscribeFromPermission(name, this.parent != null ? this.parent : this);
         }
 
 
-        NukkitServer.getInstance().getPluginManager().unsubscribeFromDefaultPerms(false, this.parent != null ? this.parent : this);
-        NukkitServer.getInstance().getPluginManager().unsubscribeFromDefaultPerms(true, this.parent != null ? this.parent : this);
+        NukkitServer.getInstance().getPermissionManager().unsubscribeFromDefaultPerms(false, this.parent != null ? this.parent : this);
+        NukkitServer.getInstance().getPermissionManager().unsubscribeFromDefaultPerms(true, this.parent != null ? this.parent : this);
 
         this.permissions.clear();
     }
 
-    private void calculateChildPermissions(Map<String, Boolean> children, boolean invert, PermissionAttachment attachment) {
+    private void calculateChildPermissions(Map<String, Boolean> children, boolean invert, NukkitPermissionAttachment attachment) {
         for (Map.Entry<String, Boolean> entry : children.entrySet()) {
             String name = entry.getKey();
-            NukkitPermission perm = NukkitServer.getInstance().getPluginManager().getPermission(name);
+            Optional<Permission> perm = NukkitServer.getInstance().getPermissionManager().getPermission(name);
             boolean v = entry.getValue();
             boolean value = (v ^ invert);
-            this.permissions.put(name, new PermissionAttachmentInfo(this.parent != null ? this.parent : this, name, attachment, value));
-            NukkitServer.getInstance().getPluginManager().subscribeToPermission(name, this.parent != null ? this.parent : this);
+            this.permissions.put(name, new NukkitPermissionAttachmentInfo(this.parent != null ? this.parent : this, name, attachment, value));
+            NukkitServer.getInstance().getPermissionManager().subscribeToPermission(name, this.parent != null ? this.parent : this);
 
-            if (perm != null) {
-                this.calculateChildPermissions(perm.getChildren(), !value, attachment);
-            }
+            perm.ifPresent(permission -> calculateChildPermissions(permission.getChildren(), !value, attachment));
         }
     }
 

@@ -26,9 +26,9 @@ public class NukkitCommandConsoleCompletor implements Completer {
         Preconditions.checkNotNull(list, "list");
 
         if (parsedLine.wordIndex() == 0) {
-            server.getCommandMap().getCommands().keySet().forEach((cmd) ->  list.add(new Candidate(cmd)));
+            server.getCommandManager().getCommandNames().forEach((cmd) -> list.add(new Candidate(cmd)));
         } else {
-            SortedSet<String> names = new TreeSet<>(server.getCommandMap().getCommands().keySet());
+            SortedSet<String> names = new TreeSet<>(server.getCommandManager().getCommandNames());
             for (String match : names) {
                 if (!match.toLowerCase().startsWith(parsedLine.line().toLowerCase())) {
                     continue;

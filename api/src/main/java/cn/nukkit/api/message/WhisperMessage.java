@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Nonnull
 @Immutable
-public final class WhisperMessage implements SenderMessage {
+public final class WhisperMessage implements SourceMessage {
     private static final Type TYPE = Type.WHISPER;
     private final String sender;
     private final String message;

@@ -12,11 +12,20 @@ public enum Difficulty {
 
     private static final Map<String, Difficulty> ALIASES = new HashMap<>();
 
+    static {
+        for (Difficulty difficulty : values()) {
+            for (String alias : difficulty.aliases) {
+                ALIASES.put(alias, difficulty);
+            }
+        }
+    }
+
     private final String i18n;
+    private final String[] aliases;
 
     Difficulty(String i18n, String... aliases) {
         this.i18n = i18n;
-        add(aliases);
+        this.aliases = aliases;
     }
 
     @Nonnull
@@ -27,12 +36,6 @@ public enum Difficulty {
     @Nonnull
     public static Difficulty parse(String difficulty) {
         return ALIASES.getOrDefault(difficulty, NORMAL);
-    }
-
-    private void add(String[] aliases) {
-        for (String alias : aliases) {
-            ALIASES.put(alias, this);
-        }
     }
 
     public String getI18n() {

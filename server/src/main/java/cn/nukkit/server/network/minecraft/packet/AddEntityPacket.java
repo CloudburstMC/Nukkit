@@ -1,16 +1,15 @@
 package cn.nukkit.server.network.minecraft.packet;
 
 import cn.nukkit.api.util.Rotation;
-import cn.nukkit.server.entity.EntityAttribute;
+import cn.nukkit.server.entity.Attribute;
 import cn.nukkit.server.entity.EntityLink;
-import cn.nukkit.server.entity.data.EntityMetadata;
 import cn.nukkit.server.nbt.util.VarInt;
-import cn.nukkit.server.network.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
+import cn.nukkit.server.network.minecraft.util.MetadataDictionary;
 import com.flowpowered.math.vector.Vector3f;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +18,15 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.*;
 
 @Data
 public class AddEntityPacket implements MinecraftPacket {
-    @Getter
-    private final List<EntityAttribute> entityAttributes = new ArrayList<>();
-    @Getter
-    private final EntityMetadata metadata = new EntityMetadata();
-    @Getter
-    private final List<EntityLink> links = new ArrayList<>();
     private long uniqueEntityId;
     private long runtimeEntityId;
     private int entityType;
     private Vector3f position;
     private Vector3f motion;
     private Rotation rotation;
+    private final List<Attribute> entityAttributes = new ArrayList<>();
+    private final MetadataDictionary metadata = new MetadataDictionary();
+    private final List<EntityLink> links = new ArrayList<>();
 
     @Override
     public void encode(ByteBuf buffer) {
@@ -41,7 +37,7 @@ public class AddEntityPacket implements MinecraftPacket {
         writeVector3f(buffer, motion);
         writeVector2f(buffer, rotation.getBodyRotation());
         writeEntityAttributes(buffer, entityAttributes);
-        //metadata.writeTo(buffer);
+        metadata.writeTo(buffer);
         writeEntityLinks(buffer, links);
     }
 

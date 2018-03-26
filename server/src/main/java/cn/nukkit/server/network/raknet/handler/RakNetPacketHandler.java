@@ -3,7 +3,7 @@ package cn.nukkit.server.network.raknet.handler;
 import cn.nukkit.api.event.server.ConnectionRequestEvent;
 import cn.nukkit.api.event.server.RefreshPingEvent;
 import cn.nukkit.server.NukkitServer;
-import cn.nukkit.server.network.minecraft.MinecraftPackets;
+import cn.nukkit.server.network.minecraft.MinecraftPacketRegistry;
 import cn.nukkit.server.network.minecraft.session.LoginPacketHandler;
 import cn.nukkit.server.network.minecraft.session.MinecraftSession;
 import cn.nukkit.server.network.raknet.enveloped.DirectAddressedRakNetPacket;
@@ -12,22 +12,21 @@ import cn.nukkit.server.network.raknet.session.RakNetSession;
 import cn.nukkit.server.network.util.EncryptionUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.StringJoiner;
-import java.util.Timer;
 
 import static cn.nukkit.server.network.raknet.RakNetUtil.MAXIMUM_MTU_SIZE;
 import static cn.nukkit.server.network.raknet.RakNetUtil.RAKNET_PROTOCOL_VERSION;
 
+@Log4j2
 public class RakNetPacketHandler extends SimpleChannelInboundHandler<DirectAddressedRakNetPacket> {
     private static final long SERVER_ID = EncryptionUtil.generateServerId();
     private final NukkitServer server;
-    private final Timer timer;
     private String advert;
 
     public RakNetPacketHandler(NukkitServer server) {
         this.server = server;
-        this.timer = new Timer("PingRefreshTicker");
         refreshPing();
     }
 
@@ -35,6 +34,10 @@ public class RakNetPacketHandler extends SimpleChannelInboundHandler<DirectAddre
     protected void channelRead0(ChannelHandlerContext ctx, DirectAddressedRakNetPacket packet) throws Exception {
         try {
             MinecraftSession session = server.getSessionManager().get(packet.sender());
+
+            /*if (log.isTraceEnabled()) {
+                log.trace("Inbound {}: {}", packet.sender(), packet.content());
+            }*/
 
             // Sessionless packets
             if (session == null) {
@@ -49,7 +52,7 @@ public class RakNetPacketHandler extends SimpleChannelInboundHandler<DirectAddre
                 }
                 if (packet.content() instanceof OpenConnectionRequest1Packet) {
                     OpenConnectionRequest1Packet request = (OpenConnectionRequest1Packet) packet.content();
-                    int maximum = server.getServerProperties().getMaxPlayers();
+                    int maximum = server.getConfiguration().getGeneral().getMaximumPlayers();
                     ConnectionRequestEvent.Result result;
                     if (request.getProtocolVersion() != RAKNET_PROTOCOL_VERSION) {
                         result = ConnectionRequestEvent.Result.INCOMPATIBLE_VERSION;
@@ -116,7 +119,7 @@ public class RakNetPacketHandler extends SimpleChannelInboundHandler<DirectAddre
     }
 
     private void refreshPing() {
-        RefreshPingEvent event = new RefreshPingEvent(server, MinecraftPackets.BROADCAST_PROTOCOL_VERSION);
+        RefreshPingEvent event = new RefreshPingEvent(server, MinecraftPacketRegistry.BROADCAST_PROTOCOL_VERSION);
         server.getEventManager().fire(event);
         StringJoiner joiner = new StringJoiner(";")
                 .add("MCPE") // MCEE for Education Edition

@@ -34,9 +34,4 @@ public class CraftTransactionRecord extends TransactionRecord {
     public Type getType() {
         return type;
     }
-
-    @Override
-    public void execute(PlayerSession session) {
-        // TODO
-    }
 }

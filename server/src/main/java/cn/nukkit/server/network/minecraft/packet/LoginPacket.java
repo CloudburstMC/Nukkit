@@ -1,8 +1,8 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.server.network.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
-import cn.nukkit.server.network.minecraft.MinecraftPackets;
+import cn.nukkit.server.network.minecraft.MinecraftPacketRegistry;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.AsciiString;
 import lombok.Data;
@@ -34,7 +34,7 @@ public class LoginPacket implements MinecraftPacket {
             buffer.resetReaderIndex();
             protocolVersion = buffer.readUnsignedShort();
         }
-        if (MinecraftPackets.isProtocolCompatible(protocolVersion)) {
+        if (!MinecraftPacketRegistry.isProtocolCompatible(protocolVersion)) {
             return; // No point in reading anymore data.
         }
 

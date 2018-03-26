@@ -1,12 +1,11 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.server.network.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import com.flowpowered.math.vector.Vector3f;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.readVector3f;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3f;
 
 @Data
@@ -20,11 +19,11 @@ public class RespawnPacket implements MinecraftPacket {
 
     @Override
     public void decode(ByteBuf buffer) {
-        position = readVector3f(buffer);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void handle(NetworkPacketHandler handler) {
-        handler.handle(this);
+        // Client bound only.
     }
 }
