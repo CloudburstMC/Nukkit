@@ -169,7 +169,7 @@ public class EntityBoat extends EntityVehicle {
         if (this.isAlive()) {
             super.onUpdate(currentTick);
 
-            this.motionY = (this.level.getBlock(new Vector3(this.x, this.y, this.z)).getBoundingBox() != null || this.isInsideOfWater()) ? getGravity() : -0.08;
+            this.motionY = (this.level.getBlock(new Vector3(this.x, this.y, this.z)).getBoundingBox() != null || this.isWading()) ? getGravity() : -0.08;
 
             if (this.checkObstruction(this.x, this.y, this.z)) {
                 hasUpdate = true;
