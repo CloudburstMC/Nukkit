@@ -3679,6 +3679,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.health = 0;
+        this.fireTicks = 0;
         this.scheduleUpdate();
 
         PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.stream().toArray(String[]::new)), this.getExperienceLevel());
