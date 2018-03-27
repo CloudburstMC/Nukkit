@@ -86,7 +86,7 @@ public class SessionManager {
     }
 
     private void adjustPoolSize() {
-        int threads = Math.max(1, sessions.size() / SESSIONS_PER_THREAD);
+        int threads = Math.min(Math.max(1, sessions.size() / SESSIONS_PER_THREAD), Runtime.getRuntime().availableProcessors() - 1);
         if (sessionTicker.getMaximumPoolSize() != threads) {
             sessionTicker.setMaximumPoolSize(threads);
         }
