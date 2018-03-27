@@ -14,7 +14,12 @@ public final class NativeUtil {
     private static final boolean REUSEPORT_AVAILABLE;
 
     static {
-        String kernelVersion = Native.KERNEL_VERSION;
+        String kernelVersion;
+        try {
+            kernelVersion = Native.KERNEL_VERSION;
+        } catch (Exception e) {
+            kernelVersion = null;
+        }
         if (kernelVersion != null && kernelVersion.contains("-")) {
             int index = kernelVersion.indexOf('-');
             if (index > -1) {
