@@ -1,7 +1,6 @@
 package cn.nukkit.server.util;
 
 import cn.nukkit.api.util.SemVer;
-import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.Native;
 import lombok.experimental.UtilityClass;
 
@@ -15,8 +14,8 @@ public final class NativeUtil {
     private static final boolean REUSEPORT_AVAILABLE;
 
     static {
-        if (Epoll.isAvailable()) {
-            String kernelVersion = Native.KERNEL_VERSION;
+        String kernelVersion = Native.KERNEL_VERSION;
+        if (kernelVersion != null && kernelVersion.contains("-")) {
             int index = kernelVersion.indexOf('-');
             if (index > -1) {
                 kernelVersion = kernelVersion.substring(0, index);
@@ -24,7 +23,6 @@ public final class NativeUtil {
             SemVer kernalVer = SemVer.fromString(kernelVersion);
             KERNEL_VERSION = Optional.of(kernalVer);
             REUSEPORT_AVAILABLE = kernalVer.isNewerOrEqual(REUSEPORT_VERSION);
-
         } else {
             KERNEL_VERSION = Optional.empty();
             REUSEPORT_AVAILABLE = false;

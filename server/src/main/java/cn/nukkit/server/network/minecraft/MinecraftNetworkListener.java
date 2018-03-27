@@ -18,6 +18,7 @@ import io.netty.channel.epoll.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.unix.UnixChannelOption;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.InetSocketAddress;
@@ -40,15 +41,15 @@ public class MinecraftNetworkListener extends ChannelInitializer<DatagramChannel
                     .channel(EpollDatagramChannel.class)
                     .group(new EpollEventLoopGroup(0, listenerThreadFactory))
                     .option(EpollChannelOption.EPOLL_MODE, EpollMode.EDGE_TRIGGERED);
-            if (NativeUtil.isReusePortAvailable()) {
-                log.debug("SO_REUSEPORT compatible kernel detected. Binding with multiple listeners.");
-                bootstrap.option(EpollChannelOption.SO_REUSEPORT, true);
-            }
         } else {
             bootstrap = new Bootstrap()
                     .channel(NioDatagramChannel.class)
                     .group(new NioEventLoopGroup(0, listenerThreadFactory));
             log.info("Epoll is unavailable. Reverting to NioEventLoop.");
+        }
+        if (NativeUtil.isReusePortAvailable()) {
+            log.debug("SO_REUSEPORT compatible kernel detected. Binding with multiple listeners.");
+            bootstrap.option(UnixChannelOption.SO_REUSEPORT, true);
         }
         bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT).handler(this);
     }
