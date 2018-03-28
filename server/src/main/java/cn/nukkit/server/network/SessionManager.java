@@ -2,6 +2,7 @@ package cn.nukkit.server.network;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.server.network.minecraft.session.MinecraftSession;
+import com.flowpowered.math.GenericMath;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.log4j.Log4j2;
@@ -32,8 +33,10 @@ public class SessionManager {
 
     public boolean remove(MinecraftSession session) {
         boolean removed = sessions.values().remove(session);
+        if (session.getPlayerSession() != null) {
+            playerSessions.values().remove(session.getPlayerSession());
+        }
         if (removed) {
-            playerSessions.remove(session.getAuthData().getIdentity());
             adjustPoolSize();
         }
         return removed;
@@ -86,7 +89,7 @@ public class SessionManager {
     }
 
     private void adjustPoolSize() {
-        int threads = Math.min(Math.max(1, sessions.size() / SESSIONS_PER_THREAD), Runtime.getRuntime().availableProcessors() - 1);
+        int threads = GenericMath.clamp(sessions.size() / SESSIONS_PER_THREAD, 1, Runtime.getRuntime().availableProcessors());
         if (sessionTicker.getMaximumPoolSize() != threads) {
             sessionTicker.setMaximumPoolSize(threads);
         }
