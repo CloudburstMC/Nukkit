@@ -28,7 +28,8 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 
@@ -322,8 +323,10 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
     @Synchronized
     public WrappedPacket createFullChunkDataPacket() {
         if (precompressed != null) {
+            ByteBuf payload = PooledByteBufAllocator.DEFAULT.directBuffer(precompressed.length);
+            payload.writeBytes(precompressed);
             WrappedPacket packet = new WrappedPacket();
-            packet.setPayload(Unpooled.directBuffer(precompressed.length));
+            packet.setPayload(payload);
             return packet;
         }
 
