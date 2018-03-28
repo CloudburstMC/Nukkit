@@ -31,9 +31,9 @@ public class SessionManager {
     }
 
     public boolean remove(MinecraftSession session) {
-        playerSessions.remove(session.getAuthData().getIdentity());
         boolean removed = sessions.values().remove(session);
         if (removed) {
+            playerSessions.remove(session.getAuthData().getIdentity());
             adjustPoolSize();
         }
         return removed;

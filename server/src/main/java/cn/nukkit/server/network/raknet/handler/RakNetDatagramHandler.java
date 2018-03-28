@@ -4,7 +4,6 @@ import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.packet.WrappedPacket;
 import cn.nukkit.server.network.minecraft.session.MinecraftSession;
-import cn.nukkit.server.network.raknet.NetworkPacket;
 import cn.nukkit.server.network.raknet.RakNetPacket;
 import cn.nukkit.server.network.raknet.RakNetPacketRegistry;
 import cn.nukkit.server.network.raknet.datagram.EncapsulatedRakNetPacket;
@@ -41,8 +40,9 @@ public class RakNetDatagramHandler extends SimpleChannelInboundHandler<Addressed
     protected void channelRead0(ChannelHandlerContext ctx, AddressedRakNetDatagram datagram) throws Exception {
         MinecraftSession session = server.getSessionManager().get(datagram.sender());
 
-        if (session == null)
+        if (session == null) {
             return;
+        }
 
         // Make sure a RakNet session is backing this packet.
         if (!(session.getConnection() instanceof RakNetSession)) {
@@ -72,14 +72,14 @@ public class RakNetDatagramHandler extends SimpleChannelInboundHandler<Addressed
                     }
                 } else {
                     // Try to decode the full packet.
-                    NetworkPacket pk = RakNetPacketRegistry.decode(packet.getBuffer());
+                    RakNetPacket pk = RakNetPacketRegistry.decode(packet.getBuffer());
                     handlePackage(pk, session);
                 }
             }
         }
     }
 
-    private void handlePackage(NetworkPacket packet, MinecraftSession session) throws Exception {
+    private void handlePackage(RakNetPacket packet, MinecraftSession session) throws Exception {
         if (packet == null) {
             return;
         }

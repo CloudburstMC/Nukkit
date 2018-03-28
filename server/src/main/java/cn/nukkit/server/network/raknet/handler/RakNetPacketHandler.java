@@ -35,10 +35,6 @@ public class RakNetPacketHandler extends SimpleChannelInboundHandler<DirectAddre
         try {
             MinecraftSession session = server.getSessionManager().get(packet.sender());
 
-            /*if (log.isTraceEnabled()) {
-                log.trace("Inbound {}: {}", packet.sender(), packet.content());
-            }*/
-
             // Sessionless packets
             if (session == null) {
                 if (packet.content() instanceof UnconnectedPingPacket) {

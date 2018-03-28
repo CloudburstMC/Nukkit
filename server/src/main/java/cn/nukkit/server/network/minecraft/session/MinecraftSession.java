@@ -279,7 +279,7 @@ public class MinecraftSession {
 
         // Make sure the entity is no longer being ticked
         if (playerSession != null) {
-            playerSession.remove();
+            playerSession.removeInternal();
         }
     }
 

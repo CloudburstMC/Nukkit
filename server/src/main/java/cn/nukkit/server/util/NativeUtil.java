@@ -17,7 +17,7 @@ public final class NativeUtil {
         String kernelVersion;
         try {
             kernelVersion = Native.KERNEL_VERSION;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             kernelVersion = null;
         }
         if (kernelVersion != null && kernelVersion.contains("-")) {

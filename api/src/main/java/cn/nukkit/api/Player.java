@@ -5,7 +5,7 @@ import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.permission.Permissible;
 import cn.nukkit.api.util.Skin;
-import com.flowpowered.math.vector.Vector3d;
+import com.flowpowered.math.vector.Vector3i;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -96,7 +96,7 @@ public interface Player extends Session, CommandSender, Entity, Permissible {
 
     int getPing();
 
-    void sleepOn(Vector3d pos);
+    void sleepOn(Vector3i position);
 
     boolean isSleeping();
 

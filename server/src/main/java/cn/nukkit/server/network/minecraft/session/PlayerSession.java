@@ -51,8 +51,8 @@ import cn.nukkit.server.network.minecraft.data.ContainerIds;
 import cn.nukkit.server.network.minecraft.packet.*;
 import cn.nukkit.server.permission.NukkitAbilities;
 import cn.nukkit.server.resourcepack.loader.file.PackFile;
-import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
 import com.spotify.futures.CompletableFutures;
 import gnu.trove.TCollections;
@@ -92,9 +92,9 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     public PlayerSession(MinecraftSession session, NukkitLevel level) {
         super(EntityType.PLAYER, level.getData().getDefaultSpawn(), level, session.getServer(), 20);
+        this.level = level;
         this.session = session;
         this.server = session.getServer();
-        this.level = level;
         Path playerDatPath = server.getPlayersPath().resolve(getXuid().isPresent() ? getUniqueId().toString() : getName());
 
         enchantmentSeed = ThreadLocalRandom.current().nextInt();
@@ -223,8 +223,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             setEntityId(newLevel.getEntityManager().allocateEntityId());
         }
 
-        log.info(event.getSpawnPosition());
-
         setPosition(event.getSpawnPosition());
         setRotation(event.getRotation());
         hasMoved = false;
@@ -254,7 +252,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         Vector3f position = getPosition();
         int chunkX = position.getFloorX() >> 4;
         int chunkY = position.getFloorY() >> 4;
-        level.getChunk(chunkX, chunkY).join();// Make sure the chunk is loaded before checking
+        getLevel().getChunk(chunkX, chunkY).join();// Make sure the chunk is loaded before checking
         return super.isOnGround();
     }
 
@@ -471,6 +469,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         if (this.commandsEnabled != commandsEnabled) {
             this.commandsEnabled = commandsEnabled;
             sendCommandsEnabled();
+            return;
         }
     }
 
@@ -509,7 +508,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     }
 
     @Override
-    public void sleepOn(Vector3d pos) {
+    public void sleepOn(Vector3i pos) {
 
     }
 
@@ -583,7 +582,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     @Override
     public boolean isXboxAuthenticated() {
-        return getXuid().isPresent();
+        return session.getAuthData().getXuid() != null;
     }
 
     @Nonnull
@@ -848,6 +847,16 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         UpdateAttributesPacket packet = new UpdateAttributesPacket();
         packet.getAttributes().add(attribute);
         session.addToSendQueue(packet);
+    }
+
+    @Override
+    @Deprecated
+    public void remove() {
+        session.disconnect();
+    }
+
+    void removeInternal() {
+        super.remove();
     }
 
     public class PlayerNetworkPacketHandler implements NetworkPacketHandler {
@@ -1124,7 +1133,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             int radius = Math.max(5, Math.min(server.getConfiguration().getMechanics().getMaximumChunkRadius(), packet.getRadius()));
             ChunkRadiusUpdatePacket radiusPacket = new ChunkRadiusUpdatePacket();
             radiusPacket.setRadius(radius);
-            session.addToSendQueue(radiusPacket);
+            session.sendImmediatePackage(radiusPacket);
             viewDistance = radius;
 
             sendNewChunks().whenComplete((chunks, throwable) -> {
@@ -1133,7 +1142,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                     sendEntityData();
                     PlayStatusPacket playStatus = new PlayStatusPacket();
                     playStatus.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
-                    session.addToSendQueue(playStatus);
+                    session.sendImmediatePackage(playStatus);
 
                     SetTimePacket setTime = new SetTimePacket();
                     setTime.setTime(level.getTime());
@@ -1179,7 +1188,11 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 case HAVE_ALL_PACKS:
                     ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
                     stackPacket.setForcedToAccept(forcePacks);
-                    packet.getPackIds().forEach(id -> server.getResourcePackManager().getPackById(id));
+                    if (server.getResourcePackManager().getResourceStack().length == 0) {
+                        // We can skip the rest and go straight to start game.
+                        startGame();
+                        return;
+                    }
                     for (UUID id: packet.getPackIds()) {
                         Optional<ResourcePack> optionalPack = server.getResourcePackManager().getPackById(id);
                         if (!optionalPack.isPresent()) {

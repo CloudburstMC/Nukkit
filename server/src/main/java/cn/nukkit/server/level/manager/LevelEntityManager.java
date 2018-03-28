@@ -152,7 +152,7 @@ public class LevelEntityManager {
                 try {
                     if (entity.isRemoved()) {
                         if (log.isDebugEnabled()) {
-                            log.debug("{} was removed");
+                            log.debug("{} was removed", entity);
                         }
                         synchronized (entities) {
                             entities.remove(entity.getEntityId());
@@ -170,7 +170,7 @@ public class LevelEntityManager {
                     // Check if entity has been removed after ticking systems.
                     if (entity.isRemoved()) {
                         if (log.isDebugEnabled()) {
-                            log.debug("{} was removed after systems ticked, discarding.", entity);
+                            log.debug("{} was removed after systems ticked", entity);
                         }
                         entitiesChanged.set(true);
                         synchronized (entities) {
