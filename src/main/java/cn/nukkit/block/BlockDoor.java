@@ -30,10 +30,10 @@ public abstract class BlockDoor extends BlockTransparentMeta {
         return false;
     }
 
-    @Override
+    /*@Override
     public boolean canPassThrough() {
         return true;
-    }
+    }*/
 
     private int getFullDamage() {
         int damage = this.getDamage();
