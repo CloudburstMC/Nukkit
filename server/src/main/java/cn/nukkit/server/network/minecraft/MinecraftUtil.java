@@ -538,9 +538,9 @@ public final class MinecraftUtil {
         Preconditions.checkNotNull(infos, "infos");
         writeUnsignedInt(buffer, infos.size());
         for (ScoreInfo info : infos) {
-            writeUuid(buffer, info.getUuid());
-            writeString(buffer, info.getUnknownString0());
-            buffer.writeIntLE(info.getUnknownIntLE0());
+            writeUuid(buffer, info.getPlayerUuid());
+            writeString(buffer, info.getObjectiveId());
+            buffer.writeIntLE(info.getScore());
         }
     }
 }
