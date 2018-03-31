@@ -1,6 +1,8 @@
 package cn.nukkit.server.network.minecraft.packet;
 
 import cn.nukkit.api.item.ItemInstance;
+import cn.nukkit.api.permission.CommandPermission;
+import cn.nukkit.api.permission.PlayerPermission;
 import cn.nukkit.api.util.Rotation;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
@@ -12,6 +14,7 @@ import lombok.Data;
 import java.util.UUID;
 
 import static cn.nukkit.server.nbt.util.VarInt.writeSignedInt;
+import static cn.nukkit.server.nbt.util.VarInt.writeUnsignedInt;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.*;
 
 @Data
@@ -28,6 +31,11 @@ public class AddPlayerPacket implements MinecraftPacket {
     private Rotation rotation;
     private ItemInstance hand;
     private final MetadataDictionary metadata = new MetadataDictionary();
+    private int flags;
+    private CommandPermission commandPermission;
+    private int flags2;
+    private PlayerPermission playerPermission;
+    private int customFlags;
     //private final AdventureSettings adventureSettings = new AdventureSettings;
     //private final List<EntityLink> entityLinks = new ArrayList<>();
 
@@ -45,8 +53,13 @@ public class AddPlayerPacket implements MinecraftPacket {
         writeRotation(buffer, rotation);
         writeItemInstance(buffer, hand);
         metadata.writeTo(buffer);
-        //writeAdventureSettings(buffer, adventureSettings);
-        //writeEntityLinks(buffer, entityLinks);
+        writeUnsignedInt(buffer, flags);
+        writeUnsignedInt(buffer, commandPermission.ordinal());
+        writeUnsignedInt(buffer, flags2);
+        writeUnsignedInt(buffer, playerPermission.ordinal());
+        writeUnsignedInt(buffer, customFlags);
+        buffer.writeLongLE(uniqueEntityId);
+        writeUnsignedInt(buffer, 0);//writeEntityLinks(buffer, entityLinks);
     }
 
     @Override

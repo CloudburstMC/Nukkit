@@ -24,6 +24,7 @@ import cn.nukkit.server.nbt.stream.NBTOutputStream;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.Tag;
 import cn.nukkit.server.network.minecraft.data.CommandOriginData;
+import cn.nukkit.server.network.minecraft.data.ScoreInfo;
 import cn.nukkit.server.network.minecraft.data.StructureEditorData;
 import cn.nukkit.server.network.minecraft.data.StructureSettings;
 import cn.nukkit.server.network.util.LittleEndianByteBufInputStream;
@@ -530,5 +531,16 @@ public final class MinecraftUtil {
         Preconditions.checkNotNull(bb, "bb");
         writeVector3i(buffer, bb.getMax().toInt());
         writeVector3i(buffer, bb.getMin().toInt());
+    }
+
+    public static void writeScoreInfo(ByteBuf buffer, Collection<ScoreInfo> infos) {
+        Preconditions.checkNotNull(buffer, "buffer");
+        Preconditions.checkNotNull(infos, "infos");
+        writeUnsignedInt(buffer, infos.size());
+        for (ScoreInfo info : infos) {
+            writeUuid(buffer, info.getUuid());
+            writeString(buffer, info.getUnknownString0());
+            buffer.writeIntLE(info.getUnknownIntLE0());
+        }
     }
 }

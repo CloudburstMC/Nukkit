@@ -2,21 +2,18 @@ package cn.nukkit.server.network.minecraft.packet;
 
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
-import cn.nukkit.server.network.minecraft.util.MetadataDictionary;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeRuntimeEntityId;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeString;
 
 @Data
-public class SetEntityDataPacket implements MinecraftPacket {
-    private long runtimeEntityId;
-    private final MetadataDictionary metadata = new MetadataDictionary();
+public class RemoveObjectivePacket implements MinecraftPacket {
+    private String objectiveId;
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeRuntimeEntityId(buffer, runtimeEntityId);
-        metadata.writeTo(buffer);
+        writeString(buffer, objectiveId);
     }
 
     @Override
@@ -26,6 +23,6 @@ public class SetEntityDataPacket implements MinecraftPacket {
 
     @Override
     public void handle(NetworkPacketHandler handler) {
-        // Only client bound.
+        // Client bound only
     }
 }

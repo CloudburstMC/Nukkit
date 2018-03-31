@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 @Log4j2
 public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
-    public static final int BROADCAST_PROTOCOL_VERSION = 223;
+    public static final int BROADCAST_PROTOCOL_VERSION = 240;
     private static final MinecraftPacketRegistry INSTANCE = new MinecraftPacketRegistry();
     private static final TIntSet SUPPORTED_PROTOCOL_VERSIONS = new TIntHashSet();
     private static final ImmutableBiMap<Integer, String> VERSION_STRINGS;
@@ -26,7 +26,7 @@ public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
 
     static {
         // Support protocol versions for Nukkit
-        SUPPORTED_PROTOCOL_VERSIONS.addAll(new int[]{220, 221, 222, BROADCAST_PROTOCOL_VERSION});
+        SUPPORTED_PROTOCOL_VERSIONS.addAll(new int[]{BROADCAST_PROTOCOL_VERSION});
 
         // Version Strings
         VERSION_STRINGS = ImmutableBiMap.<Integer, String>builder()
@@ -155,6 +155,10 @@ public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
         factories[103] = ServerSettingsResponsePacket::new;
         factories[104] = ShowProfilePacket::new;
         factories[105] = SetDefaultGameTypePacket::new;
+        factories[106] = RemoveObjectivePacket::new;
+        factories[107] = SetDisplayObjectivePacket::new;
+        factories[108] = SetScorePacket::new;
+        factories[109] = UpdateBlockSyncedPacket::new;
 
         for (int i = 0; i < factories.length; i++) {
             if (factories[i] == null) continue;

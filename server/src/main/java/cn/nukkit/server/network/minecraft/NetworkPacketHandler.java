@@ -61,6 +61,9 @@ public interface NetworkPacketHandler {
     default void handle(ItemFrameDropItemPacket packet) {
     }
 
+    default void handle(LabTablePacket packet) {
+    }
+
     default void handle(LevelSoundEventPacket packet) {
     }
 
@@ -127,6 +130,6 @@ public interface NetworkPacketHandler {
     default void handle(SubClientLoginPacket packet) {
     }
 
-    default void handle(TextPacket textPacket) {
+    default void handle(TextPacket packet) {
     }
 }

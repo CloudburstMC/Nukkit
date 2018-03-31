@@ -1,6 +1,8 @@
 package cn.nukkit.server.network.minecraft.session;
 
 import cn.nukkit.api.Player;
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.block.BlockState;
 import cn.nukkit.api.block.BlockTypes;
 import cn.nukkit.api.command.CommandException;
 import cn.nukkit.api.command.CommandNotFoundException;
@@ -25,10 +27,15 @@ import cn.nukkit.api.permission.PlayerPermission;
 import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.api.resourcepack.BehaviorPack;
 import cn.nukkit.api.resourcepack.ResourcePack;
+import cn.nukkit.api.util.GameMode;
 import cn.nukkit.api.util.Rotation;
 import cn.nukkit.api.util.Skin;
 import cn.nukkit.api.util.data.DeviceOS;
 import cn.nukkit.server.NukkitServer;
+import cn.nukkit.server.block.BlockUtil;
+import cn.nukkit.server.block.behavior.BlockBehavior;
+import cn.nukkit.server.block.behavior.BlockBehaviors;
+import cn.nukkit.server.console.TranslatableMessage;
 import cn.nukkit.server.entity.Attribute;
 import cn.nukkit.server.entity.BaseEntity;
 import cn.nukkit.server.entity.EntityType;
@@ -45,9 +52,11 @@ import cn.nukkit.server.inventory.transaction.record.WorldInteractionTransaction
 import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.chunk.FullChunkDataPacketCreator;
 import cn.nukkit.server.level.util.AroundPointChunkComparator;
+import cn.nukkit.server.metadata.MetadataSerializer;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import cn.nukkit.server.network.minecraft.data.ContainerIds;
+import cn.nukkit.server.network.minecraft.data.MetadataConstants;
 import cn.nukkit.server.network.minecraft.packet.*;
 import cn.nukkit.server.permission.NukkitAbilities;
 import cn.nukkit.server.resourcepack.loader.file.PackFile;
@@ -82,7 +91,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     private final NukkitPlayerInventory inventory = new NukkitPlayerInventory(this);
     private final AtomicReference<Locale> locale = new AtomicReference<>();
     private boolean commandsEnabled = true;
-    //private final PlayerData data;
     private boolean hasMoved;
     private Inventory openInventory;
     private int enchantmentSeed;
@@ -240,10 +248,10 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         startGame.setTrial(false);
         startGame.setCurrentTick(event.getSpawnLevel().getCurrentTick());
         startGame.setEnchantmentSeed(enchantmentSeed);
-
         session.addToSendQueue(startGame);
 
         sendAttributes();
+        sendAdventureSettings();
         sendPlayerInventory();
     }
 
@@ -284,8 +292,8 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     private void sendMovePlayer() {
         MovePlayerPacket packet = new MovePlayerPacket();
-        packet.setRuntimeEntityId(getEntityId());
 
+        packet.setRuntimeEntityId(getEntityId());
         packet.setPosition(getGamePosition());
         packet.setRotation(getRotation());
         packet.setOnGround(isOnGround());
@@ -303,7 +311,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     private void sendEntityData() {
         SetEntityDataPacket packet = new SetEntityDataPacket();
         packet.setRuntimeEntityId(getEntityId());
-        packet.getMetadata().putAll(getMetadata());
+        packet.getMetadata().put(MetadataConstants.FLAGS, getMetadataFlagValue());
         session.addToSendQueue(packet);
     }
 
@@ -395,6 +403,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     @Override
     public MinecraftPacket createAddEntityPacket() {
+        PlayerDataComponent data = (PlayerDataComponent) ensureAndGet(PlayerData.class);
         AddPlayerPacket addPlayer = new AddPlayerPacket();
         addPlayer.setUuid(session.getAuthData().getIdentity());
         addPlayer.setUsername(session.getAuthData().getDisplayName());
@@ -405,6 +414,11 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         addPlayer.setRotation(getRotation());
         addPlayer.setHand(inventory.getItemInHand().orElse(null));
         addPlayer.getMetadata().putAll(getMetadata());
+        addPlayer.setFlags(data.getAbilities().getFlags());
+        addPlayer.setFlags2(data.getAbilities().getFlags2());
+        addPlayer.setCommandPermission(data.getCommandPermission());
+        addPlayer.setCustomFlags(data.getAbilities().getCustomFlags());
+        addPlayer.setPlayerPermission(data.getPlayerPermission());
         // TODO: Adventure settings
         return addPlayer;
     }
@@ -994,7 +1008,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
         @Override
         public void handle(InventoryTransactionPacket packet) {
-
         }
 
         @Override
@@ -1080,8 +1093,42 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
             switch (packet.getAction()) {
                 case START_BREAK:
+                    if (data.getGameMode() != GameMode.SURVIVAL) {
+                        return;
+                    }
+                    Optional<Block> block = getLevel().getBlockIfChunkLoaded(packet.getBlockPosition());
+                    if (!block.isPresent()) {
+                        log.debug("{} attempted to break an unloaded block at {}", getName(), packet.getBlockPosition());
+                        return;
+                    }
+
+                    ItemInstance inHand = inventory.getItemInHand().orElse(BlockUtil.AIR);
+
+                    BlockBehavior blockBehavior = BlockBehaviors.getBlockBehavior(block.get().getBlockState().getBlockType());
+                    float breakTime = blockBehavior.getBreakTime(PlayerSession.this, block.get(), inHand);
+                    getLevel().getPacketManager().queueLevelEvent(LevelEventPacket.Event.BLOCK_START_BREAK,
+                            packet.getBlockPosition().toFloat(), (int) (65535 / breakTime));
+                    return;
+                case CONTINUE_BREAK:
+                    if (data.getGameMode() != GameMode.SURVIVAL) {
+                        return;
+                    }
+                    Optional<Block> blockBreakingOptional = getLevel().getBlockIfChunkLoaded(packet.getBlockPosition());
+                    if (!blockBreakingOptional.isPresent()) {
+                        log.debug("{} attempted to break an unloaded block at {}", getName(), packet.getBlockPosition());
+                        return;
+                    }
+                    BlockState blockBreakingState = blockBreakingOptional.get().getBlockState();
+                    if (!blockBreakingState.getBlockType().isDiggable()) {
+                        return;
+                    }
+                    int damage = MetadataSerializer.serializeMetadata(blockBreakingState);
+                    int blockData = blockBreakingState.getBlockType().getId() | (damage << 8) | (packet.getFace().ordinal() << 16);
+                    getLevel().getPacketManager().queueLevelEvent(LevelEventPacket.Event.PARTICLE_PUNCH_BLOCK, packet.getBlockPosition().toFloat(), blockData);
+                    return;
                 case ABORT_BREAK:
                 case STOP_BREAK:
+                    getLevel().getPacketManager().queueLevelEvent(LevelEventPacket.Event.BLOCK_STOP_BREAK, packet.getBlockPosition().toFloat(), 0);
                 case GET_UPDATED_BLOCK:
                 case DROP_ITEM:
                 case START_SLEEP:
@@ -1102,7 +1149,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 case START_GLIDE:
                 case STOP_GLIDE:
                 case BUILD_DENIED:
-                case CONTINUE_BREAK:
                 case CHANGE_SKIN:
                 case SET_ENCHANTMENT_SEED:
             }
@@ -1140,13 +1186,14 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 // If the player has not spawned, we need to start the spawning sequence.
                 if (!spawned) {
                     sendEntityData();
+
                     PlayStatusPacket playStatus = new PlayStatusPacket();
                     playStatus.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
                     session.sendImmediatePackage(playStatus);
 
                     SetTimePacket setTime = new SetTimePacket();
                     setTime.setTime(level.getTime());
-                    session.addToSendQueue(setTime);
+                    session.sendImmediatePackage(setTime);
 
                     updateViewableEntities();
                     sendMovePlayer();
@@ -1155,7 +1202,9 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
                     spawned = true;
 
-                    PlayerJoinEvent event = new PlayerJoinEvent(PlayerSession.this, new TranslationMessage("\u00A7emultiplayer.player.joined", getName()));
+                    log.info(TranslatableMessage.of("multiplayer.player.joined", getName()));
+
+                    PlayerJoinEvent event = new PlayerJoinEvent(PlayerSession.this, new TranslationMessage("multiplayer.player.joined", getName()));
                     server.getEventManager().fire(event);
 
                     event.getJoinMessage().ifPresent(PlayerSession.this::sendMessage);
@@ -1188,11 +1237,11 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 case HAVE_ALL_PACKS:
                     ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
                     stackPacket.setForcedToAccept(forcePacks);
-                    if (server.getResourcePackManager().getResourceStack().length == 0) {
+                    /*if (server.getResourcePackManager().getResourceStack().length == 0) {
                         // We can skip the rest and go straight to start game.
                         startGame();
                         return;
-                    }
+                    }*/
                     for (UUID id: packet.getPackIds()) {
                         Optional<ResourcePack> optionalPack = server.getResourcePackManager().getPackById(id);
                         if (!optionalPack.isPresent()) {

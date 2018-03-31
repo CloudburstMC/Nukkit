@@ -7,11 +7,22 @@ import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
+import java.util.concurrent.Callable;
+
 import static cn.nukkit.server.nbt.util.VarInt.readUnsignedInt;
 import static cn.nukkit.server.nbt.util.VarInt.writeUnsignedInt;
 
 @Data
 public class InventoryTransactionPacket implements MinecraftPacket {
+    @SuppressWarnings("unchecked")
+    private static final Callable<InventoryTransaction>[] TRANSACTIONS = new Callable[]{
+            NormalTransaction::new,
+            InventoryMismatchTransaction::new,
+            ItemUseTransaction::new,
+            ItemUseOnEntityTransaction::new,
+            ItemReleaseTransaction::new
+    };
+
     private InventoryTransaction transaction;
 
     @Override
@@ -27,24 +38,11 @@ public class InventoryTransactionPacket implements MinecraftPacket {
 
     @Override
     public void decode(ByteBuf buffer) {
-        InventoryTransaction.Type type = InventoryTransaction.Type.values()[readUnsignedInt(buffer)];
 
-        switch (type) {
-            case NORMAL:
-                transaction = new NormalTransaction();
-                break;
-            case INVENTORY_MISMATCH:
-                transaction = new InventoryMismatchTransaction();
-                break;
-            case ITEM_USE:
-                transaction = new ItemUseTransaction();
-                break;
-            case ITEM_USE_ON_ENTITY:
-                transaction = new ItemUseOnEntityTransaction();
-                break;
-            case ITEM_RELEASE:
-                transaction = new ItemReleaseTransaction();
-                break;
+        try {
+            transaction = TRANSACTIONS[readUnsignedInt(buffer)].call();
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to initialize transaction type");
         }
 
         int count = readUnsignedInt(buffer);
