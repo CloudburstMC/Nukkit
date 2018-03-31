@@ -4,16 +4,19 @@ import cn.nukkit.api.entity.Entity;
 import cn.nukkit.server.entity.BaseEntity;
 import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
+import cn.nukkit.server.network.minecraft.packet.LevelEventPacket;
 import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import com.flowpowered.math.vector.Vector3f;
 import com.google.common.base.Preconditions;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import lombok.Synchronized;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Log4j2
 public class LevelPacketManager {
     private final Queue<MinecraftPacket> broadcastQueue = new ConcurrentLinkedQueue<>();
     private final Map<Vector3f, Queue<MinecraftPacket>> specificPositionViewerQueue = new HashMap<>();
@@ -48,6 +51,7 @@ public class LevelPacketManager {
 
                         if (session.getPosition().distanceSquared(entity.getPosition()) <= viewDistanceSquared && !session.isRemoved()) {
                             for (MinecraftPacket packet : queue) {
+
                                 session.getMinecraftSession().addToSendQueue(packet);
                             }
                         }
@@ -60,14 +64,16 @@ public class LevelPacketManager {
 
         synchronized (specificPositionViewerQueue) {
             specificPositionViewerQueue.forEach((position, queue) -> {
-                for (PlayerSession sessions : playersInWorld) {
-                    if (sessions.getPosition().distanceSquared(position) <= viewDistanceSquared && !sessions.isRemoved()) {
+                for (PlayerSession session : playersInWorld) {
+                    if (session.getPosition().distanceSquared(position) <= viewDistanceSquared && !session.isRemoved()) {
+                        log.debug("Sending packets to {} from position {}", session.getName(), position);
                         for (MinecraftPacket packet : queue) {
-                            sessions.getMinecraftSession().addToSendQueue(packet);
+                            session.getMinecraftSession().addToSendQueue(packet);
                         }
                     }
                 }
             });
+            specificPositionViewerQueue.clear();
         }
     }
 
@@ -97,5 +103,14 @@ public class LevelPacketManager {
     public void queuePacketForPlayers(MinecraftPacket packet) {
         Preconditions.checkNotNull(packet, "packet");
         broadcastQueue.add(packet);
+    }
+
+    public void queueLevelEvent(LevelEventPacket.Event event, Vector3f position, int data) {
+        LevelEventPacket packet = new LevelEventPacket();
+        packet.setEvent(event);
+        packet.setPosition(position);
+        packet.setData(data);
+
+        queuePacketForViewers(position, packet);
     }
 }

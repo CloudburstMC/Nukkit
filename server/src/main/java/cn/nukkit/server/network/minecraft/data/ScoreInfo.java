@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Value
 public class ScoreInfo {
-    private final UUID uuid;
-    private final String unknownString0;
-    private final int unknownIntLE0;
+    private final UUID playerUuid;
+    private final String objectiveId;
+    private final int score;
 }

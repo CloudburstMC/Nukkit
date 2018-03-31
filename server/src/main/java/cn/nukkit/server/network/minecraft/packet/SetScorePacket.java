@@ -13,12 +13,12 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeScoreInfo;
 
 @Data
 public class SetScorePacket implements MinecraftPacket {
-    private byte unknownByte0;
+    private Action action;
     private List<ScoreInfo> info = new ArrayList<>();
 
     @Override
     public void encode(ByteBuf buffer) {
-        buffer.writeByte(unknownByte0);
+        buffer.writeByte(action.ordinal());
         writeScoreInfo(buffer, info);
     }
 
@@ -30,5 +30,10 @@ public class SetScorePacket implements MinecraftPacket {
     @Override
     public void handle(NetworkPacketHandler handler) {
         // Client bound only
+    }
+
+    public enum Action {
+        MODIFY,
+        RESET
     }
 }
