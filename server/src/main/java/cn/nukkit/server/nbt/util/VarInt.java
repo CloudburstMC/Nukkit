@@ -28,11 +28,11 @@ public class VarInt {
         return (n >>> 1) ^ -(n & 1);
     }
 
-    public static void writeUnsignedInt(ByteBuf buffer, int integer) {
+    public static void writeUnsignedInt(ByteBuf buffer, long integer) {
         encodeUnsigned(buffer, integer);
     }
 
-    public static void writeUnsignedInt(DataOutput buffer, int integer) throws IOException {
+    public static void writeUnsignedInt(DataOutput buffer, long integer) throws IOException {
         encodeUnsigned(buffer, integer);
     }
 

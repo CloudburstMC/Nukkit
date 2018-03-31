@@ -30,7 +30,7 @@ public class PlayerDataComponent implements PlayerData {
     private volatile float speed = 0.1f;
     private volatile int hunger = 20;
     private volatile float saturation = 20f;
-    private volatile float exhaustion = 4f;
+    private volatile float exhaustion = 0f;
     private volatile int experience;
 
     public PlayerDataComponent(PlayerSession session) {
@@ -66,7 +66,9 @@ public class PlayerDataComponent implements PlayerData {
 
     @Override
     public void setGamemode(GameMode gamemode) {
-        this.gameMode = gamemode;
+        if (this.gameMode != gameMode) {
+            this.gameMode = gamemode;
+        }
     }
 
     @Override

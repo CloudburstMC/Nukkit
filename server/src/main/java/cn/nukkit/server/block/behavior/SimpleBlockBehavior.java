@@ -4,6 +4,7 @@ import cn.nukkit.api.Player;
 import cn.nukkit.api.block.Block;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemInstanceBuilder;
+import cn.nukkit.server.item.behavior.ItemBehaviorUtil;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
@@ -31,13 +32,14 @@ public class SimpleBlockBehavior implements BlockBehavior {
     @Override
     public float getBreakTime(Player player, Block block, @Nullable ItemInstance item) {
         float breakTime = block.getBlockState().getBlockType().hardness();
-        breakTime *= isToolCompatible(block, item) ? 1.5 : 5;
 
-        float efficiency = getMiningEfficiency(block, item);
-        if (efficiency <= 0) {
-            throw new IllegalStateException("Invalid item efficiency was given");
+        if (isToolCompatible(block, item)) {
+            breakTime *= 1.5;
+            breakTime /= ItemBehaviorUtil.getMiningEfficiency(item);
+        } else {
+            breakTime *= 5;
+            breakTime /= 1;
         }
-        breakTime /= efficiency;
 
         return breakTime;
     }

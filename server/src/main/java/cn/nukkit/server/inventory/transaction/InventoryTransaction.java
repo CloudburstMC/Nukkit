@@ -7,9 +7,6 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.Collection;
 
-/**
- * @author CreeperFace
- */
 public interface InventoryTransaction {
 
     long getCreationTime();

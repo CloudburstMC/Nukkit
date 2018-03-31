@@ -20,8 +20,8 @@ public class SessionManager {
 
     private final ConcurrentMap<InetSocketAddress, MinecraftSession> sessions = new ConcurrentHashMap<>();
     private final ConcurrentMap<UUID, Player> playerSessions = new ConcurrentHashMap<>();
-    private final ThreadPoolExecutor sessionTicker = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors(),
-            1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat("Session Ticker - #%d").setDaemon(true).build());
+    private final ThreadPoolExecutor sessionTicker = new ThreadPoolExecutor(1, 1, 1, TimeUnit.MINUTES,
+            new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat("Session Ticker - #%d").setDaemon(true).build());
 
     public boolean add(InetSocketAddress address, MinecraftSession session) {
         boolean added = sessions.putIfAbsent(address, session) == null;

@@ -22,19 +22,23 @@ import java.util.*;
 @Immutable
 @EqualsAndHashCode
 public class NukkitItemInstance implements ItemInstance {
-    private final ItemType itemType;
+    private final ItemType type;
     private final int amount;
     private final Metadata data;
     private final String itemName;
     private final List<String> itemLore;
     private final Set<EnchantmentInstance> enchantments;
 
-    public NukkitItemInstance(ItemType itemType, int amount, Metadata data) {
-        this(itemType, amount, data, null, null, null);
+    public NukkitItemInstance(ItemType type) {
+        this(type, 0, null, null, null, null);
     }
 
-    public NukkitItemInstance(ItemType itemType, int amount, Metadata data, String itemName, List<String> itemLore, Collection<EnchantmentInstance> enchantments) {
-        this.itemType = itemType;
+    public NukkitItemInstance(ItemType type, int amount, Metadata data) {
+        this(type, amount, data, null, null, null);
+    }
+
+    public NukkitItemInstance(ItemType type, int amount, Metadata data, String itemName, List<String> itemLore, Collection<EnchantmentInstance> enchantments) {
+        this.type = type;
         this.amount = amount;
         this.data = data;
         this.itemName = itemName;
@@ -44,7 +48,7 @@ public class NukkitItemInstance implements ItemInstance {
 
     @Override
     public ItemType getItemType() {
-        return itemType;
+        return type;
     }
 
     @Override
@@ -74,7 +78,7 @@ public class NukkitItemInstance implements ItemInstance {
 
     @Override
     public ItemInstanceBuilder toBuilder() {
-        return new NukkitItemInstanceBuilder().itemType(itemType).amount(amount).itemData(data).name(itemName);
+        return new NukkitItemInstanceBuilder().itemType(type).amount(amount).itemData(data).name(itemName);
     }
 
     @Override
@@ -92,7 +96,7 @@ public class NukkitItemInstance implements ItemInstance {
         if (this == other) return true;
         if (other == null || this.getClass() != other.getClass()) return false;
         NukkitItemInstance that = (NukkitItemInstance) other;
-        return this.itemType == that.itemType && (!checkAmount || this.amount == that.amount) &&
+        return this.type == that.type && (!checkAmount || this.amount == that.amount) &&
                 (!checkName || (this.itemName.equals(that.itemName) && this.itemLore.equals(that.itemLore))) &&
                 (!checkEnchantments || this.enchantments.equals(that.enchantments)) &&
                 (!checkMeta || this.data.equals(that.data)); // TODO: Custom data.
@@ -108,7 +112,7 @@ public class NukkitItemInstance implements ItemInstance {
         return CompoundTagBuilder.builder()
                 .byteTag("Count", (byte) amount)
                 .shortTag("Damage", MetadataSerializer.serializeMetadata(this))
-                .shortTag("id", (short) itemType.getId())
+                .shortTag("id", (short) type.getId())
                 .tag(toSpecificNBT())
                 .buildRootTag();
     }
