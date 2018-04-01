@@ -1245,10 +1245,6 @@ public class Level implements ChunkManager, Metadatable {
             return;
         }
 
-        if (block instanceof BlockRedstoneComparator) {
-            MainLogger.getLogger().notice("schedule update: " + getCurrentTick());
-        }
-
         BlockUpdateEntry entry = new BlockUpdateEntry(pos.floor(), block, ((long) delay) + getCurrentTick(), priority);
 
         if (!this.updateQueue.contains(entry)) {
