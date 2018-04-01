@@ -1,7 +1,7 @@
 package cn.nukkit.server.block.entity;
 
 import cn.nukkit.api.block.entity.JukeboxBlockEntity;
-import cn.nukkit.api.item.ItemType;
+import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.util.ItemTypeUtil;
 import com.google.common.base.Preconditions;
 
@@ -9,20 +9,22 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class NukkitJukeboxBlockEntity implements JukeboxBlockEntity {
-    private ItemType record;
+    private ItemInstance record;
 
     @Override
-    public Optional<ItemType> getRecord() {
+    public Optional<ItemInstance> getRecord() {
         return Optional.ofNullable(record);
     }
 
     @Override
-    public void setRecord(@Nullable ItemType record) {
-        Preconditions.checkArgument(ItemTypeUtil.isRecord(record), "ItemType must be a record");
-        if (this.record != null) {
-
+    public void setRecord(@Nullable ItemInstance record) {
+        if (!this.record.equals(record)) {
+            if (record != null) {
+                Preconditions.checkArgument(ItemTypeUtil.isRecord(record.getItemType()), "ItemType must be a record");
+            }
+            this.record = record;
+            // onRecordChange(oldRecord, newRecord);
         }
-        this.record = record;
     }
 
     public void removeRecord() {

@@ -12,6 +12,24 @@ public interface BrewingStandBlockEntity extends BlockEntity, InventoryHolder {
 
     void setName(@Nullable String name);
 
+    int getFuelAmount();
+
+    void setFuelAmount(int fuelAmount);
+
+    int getFuelTotal();
+
+    void setFuelTotal(int fuelTotal);
+
+    int getBrewTime();
+
+    void setBrewTime(int brewTime);
+
+    boolean canBrew();
+
+    void brew();
+
+    boolean isFinished();
+
     @Override
     BrewingInventory getInventory();
 }

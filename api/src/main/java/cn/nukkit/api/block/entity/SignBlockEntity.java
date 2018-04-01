@@ -7,4 +7,8 @@ public interface SignBlockEntity extends BlockEntity {
     String setLine(int num, String line);
 
     String[] getLines();
+
+    boolean isEditable();
+
+    void setEditable(boolean editable);
 }

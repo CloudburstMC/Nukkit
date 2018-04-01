@@ -29,6 +29,16 @@ public class NukkitSignBlockEntity implements SignBlockEntity {
         return Arrays.copyOf(lines, 4);
     }
 
+    @Override
+    public boolean isEditable() {
+        return false;
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+
+    }
+
     public static void checkLineNumber(int num) {
         Preconditions.checkArgument(num >= 0 && num < 4, "Line number must be between 0 and 3");
     }
