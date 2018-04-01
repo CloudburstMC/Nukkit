@@ -25,7 +25,7 @@ public class PlayerDataComponent implements PlayerData {
     private volatile PlayerPermission playerPermission = PlayerPermission.MEMBER;
     private volatile CommandPermission commandPermission = CommandPermission.NORMAL;
     private volatile Skin skin;
-    private volatile GameMode gameMode;
+    private volatile GameMode gameMode = GameMode.SURVIVAL;
     private volatile boolean sprinting = false;
     private volatile float speed = 0.1f;
     private volatile int hunger = 20;
