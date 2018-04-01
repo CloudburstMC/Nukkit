@@ -158,7 +158,8 @@ public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
         factories[106] = RemoveObjectivePacket::new;
         factories[107] = SetDisplayObjectivePacket::new;
         factories[108] = SetScorePacket::new;
-        factories[109] = UpdateBlockSyncedPacket::new;
+        factories[109] = LabTablePacket::new;
+        factories[110] = UpdateBlockSyncedPacket::new;
 
         for (int i = 0; i < factories.length; i++) {
             if (factories[i] == null) continue;

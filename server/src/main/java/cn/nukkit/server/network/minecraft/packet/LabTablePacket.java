@@ -13,20 +13,20 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3i;
 public class LabTablePacket implements MinecraftPacket {
     private byte unknownByte0;
     private Vector3i blockEntityPosition;
-    private byte unknownByte1;
+    private byte reactionType;
 
     @Override
     public void encode(ByteBuf buffer) {
         buffer.writeByte(unknownByte0);
         writeVector3i(buffer, blockEntityPosition);
-        buffer.writeByte(unknownByte1);
+        buffer.writeByte(reactionType);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
         unknownByte0 = buffer.readByte();
         blockEntityPosition = readVector3i(buffer);
-        unknownByte1 = buffer.readByte();
+        reactionType = buffer.readByte();
     }
 
     @Override

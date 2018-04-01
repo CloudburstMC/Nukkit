@@ -10,19 +10,19 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeString;
 
 @Data
 public class SetDisplayObjectivePacket implements MinecraftPacket {
-    private String unknownString0;
-    private String unknownString1;
-    private String unknownString2;
-    private String unknownString3;
-    private int unknownVarInt0;
+    private DisplaySlot displaySlot;
+    private String objectiveId;
+    private String displayName;
+    private Criteria criteria;
+    private int sortOrder;
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeString(buffer, unknownString0);
-        writeString(buffer, unknownString1);
-        writeString(buffer, unknownString2);
-        writeString(buffer, unknownString3);
-        writeSignedInt(buffer, unknownVarInt0);
+        writeString(buffer, displaySlot.name().toLowerCase());
+        writeString(buffer, objectiveId);
+        writeString(buffer, displayName);
+        writeString(buffer, criteria.name().toLowerCase());
+        writeSignedInt(buffer, sortOrder);
     }
 
     @Override
@@ -33,5 +33,15 @@ public class SetDisplayObjectivePacket implements MinecraftPacket {
     @Override
     public void handle(NetworkPacketHandler handler) {
         // Client bound only
+    }
+
+    public enum Criteria {
+        DUMMY
+    }
+
+    public enum DisplaySlot {
+        LIST,
+        SIDEBAR,
+        BELOWNAME
     }
 }
