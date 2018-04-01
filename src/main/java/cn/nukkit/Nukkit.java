@@ -46,9 +46,6 @@ public class Nukkit {
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
-        
-        // prefer IPv4 to stop any weird RakNet issues.
-        System.setProperty("java.net.preferIPv4Stack", "true");
 
         //Shorter title for windows 8/2012
         String osName = System.getProperty("os.name").toLowerCase();
