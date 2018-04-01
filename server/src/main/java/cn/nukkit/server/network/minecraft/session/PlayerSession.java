@@ -1129,6 +1129,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 case ABORT_BREAK:
                 case STOP_BREAK:
                     getLevel().getPacketManager().queueLevelEvent(LevelEventPacket.Event.BLOCK_STOP_BREAK, packet.getBlockPosition().toFloat(), 0);
+                    return;
                 case GET_UPDATED_BLOCK:
                 case DROP_ITEM:
                 case START_SLEEP:
