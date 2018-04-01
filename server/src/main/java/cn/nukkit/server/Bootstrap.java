@@ -14,7 +14,6 @@ public class Bootstrap {
 
     public static void main(String... args) {
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.ADVANCED);
-        System.setProperty("java.net.preferIPv4Stack", "true"); // IPv4 over v6
 
         boolean ansiEnabled = true;
         Path path = Paths.get(System.getProperty("user.dir"));
