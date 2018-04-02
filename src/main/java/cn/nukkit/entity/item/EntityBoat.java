@@ -37,8 +37,8 @@ public class EntityBoat extends EntityVehicle {
 
         this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
 
-        this.setHealth(4);
         this.setMaxHealth(4);
+        this.setHealth(4);
     }
 
     @Override
@@ -83,8 +83,8 @@ public class EntityBoat extends EntityVehicle {
         pk.speedX = 0;
         pk.speedY = 0;
         pk.speedZ = 0;
-        pk.yaw = (float) this.yaw;
-        pk.pitch = (float) this.pitch;
+        pk.yaw = (float) this.yaw / 360;
+        pk.pitch = (float) this.pitch / 360;
         pk.metadata = this.dataProperties;
         player.dataPacket(pk);
 
@@ -208,7 +208,7 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public boolean onInteract(Player player, Item item) {
-        if (this.linkedEntity != null) {
+        if (this.linkedEntity.length() > 2) {
             return false;
         }
 
