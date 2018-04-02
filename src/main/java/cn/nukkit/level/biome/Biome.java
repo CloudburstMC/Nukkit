@@ -31,7 +31,7 @@ public abstract class Biome implements BlockID {
         unorderedBiomes.add(biome);
     }
 
-    static Biome getBiome(int id) {
+    public static Biome getBiome(int id) {
         Biome biome = biomes[id];
         return biome != null ? biome : EnumBiome.OCEAN.biome;
     }
@@ -42,7 +42,7 @@ public abstract class Biome implements BlockID {
      * @param name Name of biome. Name could contain symbol "_" instead of space
      * @return Biome. Null - when biome was not found
      */
-    static Biome getBiome(String name) {
+    public static Biome getBiome(String name) {
         for (Biome biome : biomes) {
             if (biome != null) {
                 if (biome.getName().equalsIgnoreCase(name.replace("_", " "))) return biome;
