@@ -1,6 +1,7 @@
 package cn.nukkit;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.GlobalBlockPalette;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.entity.Attribute;
@@ -38,7 +39,6 @@ import cn.nukkit.level.generator.Flat;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.Nether;
 import cn.nukkit.level.generator.Normal;
-import cn.nukkit.level.biome.Biome;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
@@ -77,6 +77,7 @@ import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
+
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -408,6 +409,7 @@ public class Server {
         Effect.init();
         Potion.init();
         Attribute.init();
+        GlobalBlockPalette.getOrCreateRuntimeId(0, 0); //Force it to load
 
         this.craftingManager = new CraftingManager();
         this.resourcePackManager = new ResourcePackManager(new File(Nukkit.DATA_PATH, "resource_packs"));

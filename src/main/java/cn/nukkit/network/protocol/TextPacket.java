@@ -24,8 +24,11 @@ public class TextPacket extends DataPacket {
     public byte type;
     public String source = "";
     public String message = "";
+    public String thirdPartyName = "";
+    public int platformId = 0;
     public String[] parameters = new String[0];
     public boolean isLocalized = false;
+    public String platformChatId = "";
 
     @Override
     public void decode() {
@@ -37,6 +40,8 @@ public class TextPacket extends DataPacket {
             case TYPE_WHISPER:
             case TYPE_ANNOUNCEMENT:
                 this.source = this.getString();
+                this.thirdPartyName = this.getString();
+                this.platformId = this.getVarInt();
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
@@ -51,6 +56,7 @@ public class TextPacket extends DataPacket {
                     this.parameters[i] = this.getString();
                 }
         }
+        this.platformChatId = this.getString();
     }
 
     @Override
@@ -64,6 +70,8 @@ public class TextPacket extends DataPacket {
             case TYPE_WHISPER:
             case TYPE_ANNOUNCEMENT:
                 this.putString(this.source);
+                this.putString(this.thirdPartyName);
+                this.putVarInt(this.platformId);
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
@@ -77,6 +85,7 @@ public class TextPacket extends DataPacket {
                     this.putString(parameter);
                 }
         }
+        this.putString(this.platformChatId);
     }
 
 }

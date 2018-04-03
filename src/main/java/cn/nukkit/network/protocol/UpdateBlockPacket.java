@@ -20,8 +20,7 @@ public class UpdateBlockPacket extends DataPacket {
     public int x;
     public int z;
     public int y;
-    public int blockId;
-    public int blockData;
+    public int blockRuntimeId;
     public int flags;
 
     @Override
@@ -38,8 +37,8 @@ public class UpdateBlockPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putBlockVector3(x, y, z);
-        this.putUnsignedVarInt(blockId);
-        this.putUnsignedVarInt((0xb << 4) | blockData & 0xf);
+        this.putUnsignedVarInt(blockRuntimeId);
+        this.putUnsignedVarInt(flags);
     }
 
     public static class Entry {
