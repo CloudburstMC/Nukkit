@@ -35,7 +35,7 @@ public class BlockIcePacked extends BlockIce {
         }
         return this.getLevel().setBlock(this, new BlockWater(), true);
     }
-    
+
     @Override
     public Item[] getDrops(Item item) {
         if(item.hasEnchant(Enchantment.ID_SILK_TOUCH)==true) {
@@ -45,7 +45,6 @@ public class BlockIcePacked extends BlockIce {
         }
         return new Item[0];
     }
-        
 
     @Override
     public int onUpdate(int type) {
