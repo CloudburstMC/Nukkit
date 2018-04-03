@@ -1,21 +1,9 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBookEnchanted;
-import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.enchantment.EnchantmentEntry;
-import cn.nukkit.item.enchantment.EnchantmentList;
 import cn.nukkit.level.Position;
-import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.network.protocol.CraftingDataPacket;
-import cn.nukkit.utils.DyeColor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -40,7 +28,7 @@ public class EnchantInventory extends ContainerInventory {
         return (FakeBlockMenu) this.holder;
     }
 
-    @Override
+    /*@Override //TODO: server side enchant
     public void onOpen(Player who) {
         super.onOpen(who);
 
@@ -67,8 +55,8 @@ public class EnchantInventory extends ContainerInventory {
     }
 
     @Override
-    public void onSlotChange(int index, Item before) {
-        super.onSlotChange(index, before);
+    public void onSlotChange(int index, Item before, boolean send) {
+        super.onSlotChange(index, before, send);
 
         if (index == 0) {
             Item item = this.getItem(0);
@@ -218,8 +206,38 @@ public class EnchantInventory extends ContainerInventory {
     }
 
     public int countBookshelf() {
-        return 15;
-        //todo calculate bookshelf
+        int count = 0;
+        Location loc = this.getHolder().getLocation();
+        Level level = loc.getLevel();
+
+        for (int y = 0; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    if (z == 0 && x == 0) continue;
+                    if (level.getBlock(loc.add(x, 0, z)).isTransparent()) {
+                        if (level.getBlock(loc.add(0, 1, 0)).isTransparent()) {
+                            //diagonal and straight
+                            if (level.getBlock(loc.add(x << 1, y, z << 1)).getId() == Block.BOOKSHELF) {
+                                count++;
+                            }
+
+                            if (x != 0 && z != 0) {
+                                //one block diagonal and one straight
+                                if (level.getBlock(loc.add(x << 1, y, z)).getId() == Block.BOOKSHELF) {
+                                    ++count;
+                                }
+
+                                if (level.getBlock(loc.add(x, y, z << 1)).getId() == Block.BOOKSHELF) {
+                                    ++count;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return count;
     }
 
     public void sendEnchantmentList() {
@@ -232,7 +250,21 @@ public class EnchantInventory extends ContainerInventory {
             pk.addEnchantList(list);
         }
 
-        Server.broadcastPacket(this.getViewers(), pk);
+        //Server.broadcastPacket(this.getViewers(), pk); //TODO: fix this, causes crash in 1.2
+    }*/
+
+   /*@Override
+    public void sendSlot(int index, Player... players) {
+
     }
 
+    @Override
+    public void sendContents(Player... players) {
+
+    }
+
+    @Override
+    public boolean setItem(int index, Item item, boolean send) {
+        return super.setItem(index, item, false);
+    }*/
 }

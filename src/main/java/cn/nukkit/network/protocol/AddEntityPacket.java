@@ -39,8 +39,8 @@ public class AddEntityPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarLong(this.entityUniqueId);
-        this.putVarLong(this.entityRuntimeId);
+        this.putEntityUniqueId(this.entityUniqueId);
+        this.putEntityRuntimeId(this.entityRuntimeId);
         this.putUnsignedVarInt(this.type);
         this.putVector3f(this.x, this.y, this.z);
         this.putVector3f(this.speedX, this.speedY, this.speedZ);

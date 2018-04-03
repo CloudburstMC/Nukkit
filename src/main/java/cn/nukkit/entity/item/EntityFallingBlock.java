@@ -8,8 +8,9 @@ import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.GameRule;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.sound.AnvilFallSound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -132,7 +133,7 @@ public class EntityFallingBlock extends Entity {
                 kill();
                 Block block = level.getBlock(pos);
                 if (block.getId() > 0 && block.isTransparent() && !block.canBeReplaced()) {
-                    if (this.level.getGameRules().getBoolean("doEntityDrops")) {
+                    if (this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
                         getLevel().dropItem(this, Item.get(this.getBlock(), this.getDamage(), 1));
                     }
                 } else {
@@ -142,7 +143,7 @@ public class EntityFallingBlock extends Entity {
                         getLevel().setBlock(pos, event.getTo(), true);
 
                         if (event.getTo().getId() == Item.ANVIL) {
-                            getLevel().addSound(new AnvilFallSound(pos));
+                            getLevel().addSound(pos, Sound.RANDOM_ANVIL_LAND);
                         }
                     }
                 }
@@ -194,5 +195,4 @@ public class EntityFallingBlock extends Entity {
         player.dataPacket(packet);
         super.spawnTo(player);
     }
-
 }

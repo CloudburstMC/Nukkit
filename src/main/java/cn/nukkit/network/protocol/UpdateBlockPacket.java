@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -36,7 +37,7 @@ public class UpdateBlockPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putBlockCoords(x, y, z);
+        this.putBlockVector3(x, y, z);
         this.putUnsignedVarInt(blockId);
         this.putUnsignedVarInt((0xb << 4) | blockData & 0xf);
     }

@@ -15,24 +15,25 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
     public BlockVector3 piston;
     public int progress;
 
-    public boolean isMovable;
-
     public BlockEntityMovingBlock(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
 
-        if (nbt.contains("movingBlockData") && nbt.contains("movingBlockId")) {
-            this.block = Block.get(nbt.getInt("movingBlockId"), nbt.getInt("movingBlockData"));
+    @Override
+    protected void initBlockEntity() {
+        if (namedTag.contains("movingBlockData") && namedTag.contains("movingBlockId")) {
+            this.block = Block.get(namedTag.getInt("movingBlockId"), namedTag.getInt("movingBlockData"));
         } else {
             this.close();
         }
 
-        if (nbt.contains("pistonPosX") && nbt.contains("pistonPosY") && nbt.contains("pistonPosZ")) {
-            this.piston = new BlockVector3(nbt.getInt("pistonPosX"), nbt.getInt("pistonPosY"), nbt.getInt("pistonPosZ"));
+        if (namedTag.contains("pistonPosX") && namedTag.contains("pistonPosY") && namedTag.contains("pistonPosZ")) {
+            this.piston = new BlockVector3(namedTag.getInt("pistonPosX"), namedTag.getInt("pistonPosY"), namedTag.getInt("pistonPosZ"));
         } else {
             this.close();
         }
 
-        this.isMovable = nbt.getBoolean("isMovable");
+        super.initBlockEntity();
     }
 
     public Block getBlock() {
@@ -46,12 +47,7 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        return new CompoundTag()
-                .putString("id", BlockEntity.MOVING_BLOCK)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
-                .putBoolean("isMovable", this.isMovable)
+        return getDefaultCompound(this, MOVING_BLOCK)
                 .putFloat("movingBlockId", this.block.getId())
                 .putFloat("movingBlockData", this.block.getDamage())
                 .putInt("pistonPosX", this.piston.x)

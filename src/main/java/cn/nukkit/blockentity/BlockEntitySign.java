@@ -1,8 +1,15 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.TextFormat;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * author: MagicDroidX
@@ -12,19 +19,29 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     public BlockEntitySign(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        if (!nbt.contains("Text1")) {
-            nbt.putString("Text1", "");
+    }
+
+    @Override
+    protected void initBlockEntity() {
+        if (!namedTag.contains("Text")) {
+            List<String> lines = new ArrayList<>();
+
+            for (int i = 1; i <= 4; i++) {
+                String key = "Text" + i;
+
+                if (namedTag.contains(key)) {
+                    String line = namedTag.getString(key);
+
+                    lines.add(line);
+
+                    namedTag.remove(key);
+                }
+            }
+
+            namedTag.putString("Text", String.join("\n", lines));
         }
-        if (!nbt.contains("Text2")) {
-            nbt.putString("Text2", "");
-        }
-        if (!nbt.contains("Text3")) {
-            nbt.putString("Text3", "");
-        }
-        if (!nbt.contains("Text4")) {
-            nbt.putString("Text4", "");
-        }
-        this.namedTag = nbt;
+
+        super.initBlockEntity();
     }
 
     @Override
@@ -39,58 +56,58 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         return blockID == Block.SIGN_POST || blockID == Block.WALL_SIGN;
     }
 
-    public boolean setText() {
-        return this.setText("");
-    }
-
-    public boolean setText(String line1) {
-        return this.setText(line1, "");
-    }
-
-    public boolean setText(String line1, String line2) {
-        return this.setText(line1, line2, "");
-    }
-
-    public boolean setText(String line1, String line2, String line3) {
-        return this.setText(line1, line2, line3, "");
-    }
-
-    public boolean setText(String line1, String line2, String line3, String line4) {
-        this.namedTag.putString("Text1", line1);
-        this.namedTag.putString("Text2", line2);
-        this.namedTag.putString("Text3", line3);
-        this.namedTag.putString("Text4", line4);
+    public boolean setText(String... lines) {
+        this.namedTag.putString("Text", String.join("\n", lines));
         this.spawnToAll();
 
         if (this.chunk != null) {
             this.chunk.setChanged();
-            this.level.clearChunkCache(this.chunk.getX(), this.chunk.getZ());
         }
 
         return true;
     }
 
     public String[] getText() {
-        return new String[]{
-                this.namedTag.getString("Text1"),
-                this.namedTag.getString("Text2"),
-                this.namedTag.getString("Text3"),
-                this.namedTag.getString("Text4")
-        };
+        return this.namedTag.getString("Text").split("\n");
+    }
+
+    @Override
+    public boolean updateCompoundTag(CompoundTag nbt, Player player) {
+        if (!nbt.getString("id").equals(BlockEntity.SIGN)) {
+            return false;
+        }
+        String[] text = nbt.getString("Text").split("\n", 4);
+
+        SignChangeEvent signChangeEvent = new SignChangeEvent(this.getBlock(), player, text);
+
+        if (!this.namedTag.contains("Creator") || !Objects.equals(player.getUniqueId().toString(), this.namedTag.getString("Creator"))) {
+            signChangeEvent.setCancelled();
+        }
+
+        if (player.getRemoveFormat()) {
+            for (int i = 0; i < text.length; i++) {
+                text[i] = TextFormat.clean(text[i]);
+            }
+        }
+
+        this.server.getPluginManager().callEvent(signChangeEvent);
+
+        if (!signChangeEvent.isCancelled()) {
+            this.setText(signChangeEvent.getLines());
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public CompoundTag getSpawnCompound() {
         return new CompoundTag()
                 .putString("id", BlockEntity.SIGN)
-                .putString("Text1", this.namedTag.getString("Text1"))
-                .putString("Text2", this.namedTag.getString("Text2"))
-                .putString("Text3", this.namedTag.getString("Text3"))
-                .putString("Text4", this.namedTag.getString("Text4"))
+                .putString("Text", this.namedTag.getString("Text"))
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
     }
-
 }

@@ -10,11 +10,6 @@ import cn.nukkit.item.ItemTool;
 public class BlockMossStone extends BlockSolid {
 
     public BlockMossStone() {
-        this(0);
-    }
-
-    public BlockMossStone(int meta) {
-        super(meta);
     }
 
     @Override

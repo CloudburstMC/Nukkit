@@ -113,7 +113,7 @@ public class BlockFlowerPot extends BlockFlowable {
         blockEntity.namedTag.putShort("item", itemID);
         blockEntity.namedTag.putInt("data", itemMeta);
 
-        this.meta = 1;
+        this.setDamage(1);
         this.getLevel().setBlock(this, this, true);
         ((BlockEntityFlowerPot) blockEntity).spawnToAll();
 
@@ -150,11 +150,41 @@ public class BlockFlowerPot extends BlockFlowable {
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-        return new AxisAlignedBB(this.x + 0.3125, this.y, this.z + 0.3125, this.x + 0.6875, this.y + 0.375, this.z + 0.6875);
+        return this;
+    }
+
+    @Override
+    public double getMinX() {
+        return this.x + 0.3125;
+    }
+
+    @Override
+    public double getMinZ() {
+        return this.z + 0.3125;
+    }
+
+    @Override
+    public double getMaxX() {
+        return this.x + 0.6875;
+    }
+
+    @Override
+    public double getMaxY() {
+        return this.y + 0.375;
+    }
+
+    @Override
+    public double getMaxZ() {
+        return this.z + 0.6875;
     }
 
     @Override
     public boolean canPassThrough() {
         return false;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemFlowerPot();
     }
 }

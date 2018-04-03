@@ -40,7 +40,7 @@ public class BlockRedstoneTorch extends BlockTorch {
         Vector3 pos = getLocation();
 
         if (!target.isTransparent() && face != BlockFace.DOWN) {
-            this.meta = getFacing(face.getIndex()).getIndex();
+            this.setDamage(getFacing(face.getIndex()).getIndex());
             this.getLevel().setBlock(block, this, true, true);
 
             for (BlockFace side : BlockFace.values()) {
@@ -48,7 +48,7 @@ public class BlockRedstoneTorch extends BlockTorch {
             }
             return true;
         } else if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLE_WALL) {
-            this.meta = 0;
+            this.setDamage(0);
             this.getLevel().setBlock(block, this, true, true);
 
             for (BlockFace side : BlockFace.values()) {

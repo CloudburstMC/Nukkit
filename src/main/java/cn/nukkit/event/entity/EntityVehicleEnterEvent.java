@@ -12,7 +12,7 @@ public class EntityVehicleEnterEvent extends EntityEvent implements Cancellable 
     public static HandlerList getHandlers() {
         return handlers;
     }
-    
+
     private final EntityVehicle vehicle;
 
     public EntityVehicleEnterEvent(Entity entity, EntityVehicle vehicle) {

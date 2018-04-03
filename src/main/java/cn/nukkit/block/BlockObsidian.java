@@ -11,11 +11,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockObsidian extends BlockSolid {
 
     public BlockObsidian() {
-        this(0);
-    }
-
-    public BlockObsidian(int meta) {
-        super(0);
     }
 
     @Override
@@ -35,7 +30,7 @@ public class BlockObsidian extends BlockSolid {
 
     @Override
     public double getHardness() {
-        return 50;
+        return 35; //50 in PC
     }
 
     @Override

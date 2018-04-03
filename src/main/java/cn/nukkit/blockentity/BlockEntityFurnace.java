@@ -25,7 +25,7 @@ import java.util.HashSet;
  */
 public class BlockEntityFurnace extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
-    protected final FurnaceInventory inventory;
+    protected FurnaceInventory inventory;
 
     private int burnTime = 0;
     private int burnDuration = 0;
@@ -34,6 +34,10 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
     public BlockEntityFurnace(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
+
+    @Override
+    protected void initBlockEntity() {
         this.inventory = new FurnaceInventory(this);
 
         if (!this.namedTag.contains("Items") || !(this.namedTag.get("Items") instanceof ListTag)) {
@@ -71,6 +75,8 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         if (burnTime > 0) {
             this.scheduleUpdate();
         }
+
+        super.initBlockEntity();
     }
 
     @Override
@@ -262,14 +268,15 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
             int windowId = player.getWindowId(this.getInventory());
             if (windowId > 0) {
                 ContainerSetDataPacket pk = new ContainerSetDataPacket();
-                pk.windowid = (byte) windowId;
-                pk.property = 0;
+                pk.windowId = windowId;
+                pk.property = ContainerSetDataPacket.PROPERTY_FURNACE_TICK_COUNT;
+                ;
                 pk.value = cookTime;
                 player.dataPacket(pk);
 
                 pk = new ContainerSetDataPacket();
-                pk.windowid = (byte) windowId;
-                pk.property = 1;
+                pk.windowId = windowId;
+                pk.property = ContainerSetDataPacket.PROPERTY_FURNACE_LIT_TIME;
                 pk.value = burnDuration;
                 player.dataPacket(pk);
             }

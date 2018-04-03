@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
-import cn.nukkit.level.sound.AnvilUseSound;
+import cn.nukkit.level.Sound;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,12 +33,12 @@ public class AnvilInventory extends ContainerInventory {
         Item local = getItem(TARGET);
         Item second = getItem(SACRIFICE);
 
-        if (!resultItem.deepEquals(local, true, false) || resultItem.getCount() != local.getCount()) {
+        if (!resultItem.equals(local, true, false) || resultItem.getCount() != local.getCount()) {
             //Item does not match target item. Everything must match except the tags.
             return false;
         }
 
-        if (local.deepEquals(resultItem)) {
+        if (local.equals(resultItem)) {
             //just item transaction
             return true;
         }
@@ -51,7 +51,7 @@ public class AnvilInventory extends ContainerInventory {
             player.getInventory().sendContents(player);
             sendContents(player);
 
-            player.getLevel().addSound(new AnvilUseSound(player));
+            player.getLevel().addSound(player, Sound.RANDOM_ANVIL_USE);
             return true;
         } else if (local.getId() != 0 && second.getId() != 0) { //enchants combining
             if (!local.equals(second, true, false)) {
@@ -118,7 +118,7 @@ public class AnvilInventory extends ContainerInventory {
                 clearAll();
                 sendContents(player);
 
-                player.getLevel().addSound(new AnvilUseSound(player));
+                player.getLevel().addSound(player, Sound.RANDOM_ANVIL_USE);
                 return true;
             }
         }
@@ -130,6 +130,7 @@ public class AnvilInventory extends ContainerInventory {
     public void onClose(Player who) {
         super.onClose(who);
         who.craftingType = Player.CRAFTING_SMALL;
+        who.resetCraftingGridType();
 
         for (int i = 0; i < 2; ++i) {
             this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
@@ -142,4 +143,19 @@ public class AnvilInventory extends ContainerInventory {
         super.onOpen(who);
         who.craftingType = Player.CRAFTING_ANVIL;
     }
+
+    /*@Override
+    public boolean setItem(int index, Item item, boolean send) {
+        return super.setItem(index, item, false);
+    }
+
+    @Override
+    public void sendSlot(int index, Player... players) {
+
+    }
+
+    @Override
+    public void sendContents(Player... player) {
+
+    }*/
 }

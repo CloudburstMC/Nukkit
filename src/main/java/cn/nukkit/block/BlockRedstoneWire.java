@@ -88,7 +88,7 @@ public class BlockRedstoneWire extends BlockFlowable {
     private void calculateCurrentChanges(boolean force) {
         Vector3 pos = this.getLocation();
 
-        int meta = this.meta;
+        int meta = this.getDamage();
         int maxStrength = meta;
         this.canProvidePower = false;
         int power = this.getIndirectPower();
@@ -133,7 +133,7 @@ public class BlockRedstoneWire extends BlockFlowable {
         if (meta != maxStrength) {
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, meta, maxStrength));
 
-            this.meta = maxStrength;
+            this.setDamage(maxStrength);
             this.level.setBlock(this, this, false, false);
 
             this.level.updateAroundRedstone(this, null);
@@ -220,7 +220,7 @@ public class BlockRedstoneWire extends BlockFlowable {
         if (!this.canProvidePower) {
             return 0;
         } else {
-            int power = this.meta;
+            int power = this.getDamage();
 
             if (power == 0) {
                 return 0;

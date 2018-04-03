@@ -20,11 +20,6 @@ import java.util.Map;
  */
 public class BlockEnchantingTable extends BlockTransparent {
     public BlockEnchantingTable() {
-        this(0);
-    }
-
-    public BlockEnchantingTable(int meta) {
-        super(meta);
     }
 
     @Override
@@ -122,7 +117,7 @@ public class BlockEnchantingTable extends BlockTransparent {
                 }
             }
 
-            player.addWindow(new EnchantInventory(this.getLocation()));
+            player.addWindow(new EnchantInventory(this.getLocation()), Player.ENCHANT_WINDOW_ID);
         }
 
         return true;

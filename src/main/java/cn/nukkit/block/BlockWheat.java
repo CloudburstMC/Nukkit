@@ -30,7 +30,7 @@ public class BlockWheat extends BlockCrops {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (this.meta >= 0x07) {
+        if (this.getDamage() >= 0x07) {
             return new Item[]{
                     new ItemWheat(),
                     new ItemSeedsWheat(0, (int) (4d * Math.random()))

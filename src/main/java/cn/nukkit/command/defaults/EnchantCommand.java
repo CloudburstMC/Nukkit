@@ -71,7 +71,7 @@ public class EnchantCommand extends VanillaCommand {
     }
 
     public int getIdByName(String value) throws NumberFormatException {
-        switch (value){
+        switch (value) {
             case "protection":
                 return 0;
             case "fire_protection":

@@ -5,25 +5,25 @@ import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class ObjectTree {
-    public final Map<Integer, Boolean> overridable = new HashMap<Integer, Boolean>() {
-        {
-            put(Block.AIR, true);
-            put(Block.SAPLING, true);
-            put(Block.LOG, true);
-            put(Block.LEAVES, true);
-            put(Block.SNOW_LAYER, true);
-            put(Block.LOG2, true);
-            put(Block.LEAVES2, true);
+    protected boolean overridable(int id) {
+        switch (id) {
+            case Block.AIR:
+            case Block.SAPLING:
+            case Block.LOG:
+            case Block.LEAVES:
+            case Block.SNOW_LAYER:
+            case Block.LOG2:
+            case Block.LEAVES2:
+                return true;
+            default:
+                return false;
         }
-    };
+    }
 
     public int getType() {
         return 0;
@@ -49,21 +49,16 @@ public abstract class ObjectTree {
         ObjectTree tree;
         switch (type) {
             case BlockSapling.SPRUCE:
-                if (random.nextBoundedInt(39) == 0) {
-                    tree = new ObjectSpruceTree();
-                } else {
-                    tree = new ObjectSpruceTree();
-                }
+                tree = new ObjectSpruceTree();
                 break;
             case BlockSapling.BIRCH:
-                if (random.nextBoundedInt(39) == 0) {
-                    tree = new ObjectTallBirchTree();
-                } else {
-                    tree = new ObjectBirchTree();
-                }
+                tree = new ObjectBirchTree();
                 break;
             case BlockSapling.JUNGLE:
                 tree = new ObjectJungleTree();
+                break;
+            case BlockSapling.BIRCH_TALL:
+                tree = new ObjectTallBirchTree();
                 break;
             case BlockSapling.OAK:
             default:
@@ -86,7 +81,7 @@ public abstract class ObjectTree {
             }
             for (int xx = -radiusToCheck; xx < (radiusToCheck + 1); ++xx) {
                 for (int zz = -radiusToCheck; zz < (radiusToCheck + 1); ++zz) {
-                    if (!this.overridable.containsKey(level.getBlockIdAt(x + xx, y + yy, z + zz))) {
+                    if (!this.overridable(level.getBlockIdAt(x + xx, y + yy, z + zz))) {
                         return false;
                     }
                 }
@@ -111,9 +106,7 @@ public abstract class ObjectTree {
                         continue;
                     }
                     if (!Block.solid[level.getBlockIdAt(xx, yy, zz)]) {
-
-                        level.setBlockIdAt(xx, yy, zz, this.getLeafBlock());
-                        level.setBlockDataAt(xx, yy, zz, this.getType());
+                        level.setBlockFullIdAt(xx, yy, zz, (this.getLeafBlock() << 4) | this.getType());
                     }
                 }
             }
@@ -126,9 +119,8 @@ public abstract class ObjectTree {
 
         for (int yy = 0; yy < trunkHeight; ++yy) {
             int blockId = level.getBlockIdAt(x, y + yy, z);
-            if (this.overridable.containsKey(blockId)) {
-                level.setBlockIdAt(x, y + yy, z, this.getTrunkBlock());
-                level.setBlockDataAt(x, y + yy, z, this.getType());
+            if (this.overridable(blockId)) {
+                level.setBlockFullIdAt(x, y + yy, z, (this.getTrunkBlock() << 4) | this.getType());
             }
         }
     }

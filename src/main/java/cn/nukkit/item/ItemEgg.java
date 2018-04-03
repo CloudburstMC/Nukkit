@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ItemEgg extends Item {
+public class ItemEgg extends ProjectileItem {
 
     public ItemEgg() {
         this(0, 1);
@@ -16,5 +16,15 @@ public class ItemEgg extends Item {
 
     public ItemEgg(Integer meta, int count) {
         super(EGG, meta, count, "Egg");
+    }
+
+    @Override
+    public String getProjectileEntityType() {
+        return "Egg";
+    }
+
+    @Override
+    public float getThrowForce() {
+        return 1.5f;
     }
 }

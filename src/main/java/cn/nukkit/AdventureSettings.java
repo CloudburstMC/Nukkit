@@ -2,6 +2,9 @@ package cn.nukkit;
 
 import cn.nukkit.network.protocol.AdventureSettingsPacket;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * Nukkit Project
  * Author: MagicDroidX
@@ -14,27 +17,12 @@ public class AdventureSettings implements Cloneable {
     public static final int PERMISSION_AUTOMATION = 3;
     public static final int PERMISSION_ADMIN = 4;
 
-    private boolean canDestroyBlock = true;
-
-    private boolean autoJump = true;
-
-    private boolean canFly = false;
-
-    private boolean flying = false;
-
-    private boolean noclip = false;
-
-    private boolean noPvp = false;
-
-    private boolean noPvm = false;
-
-    private boolean noMvp = false;
-
-    private boolean muted = false;
+    private Map<Type, Boolean> values = new EnumMap<>(Type.class);
 
     private Player player;
 
-    private AdventureSettings() {
+    public AdventureSettings(Player player) {
+        this.player = player;
     }
 
     public AdventureSettings clone(Player newPlayer) {
@@ -47,129 +35,63 @@ public class AdventureSettings implements Cloneable {
         }
     }
 
-    public void setCanDestroyBlock(boolean canDestroyBlock) {
-        this.canDestroyBlock = canDestroyBlock;
+    public AdventureSettings set(Type type, boolean value) {
+        this.values.put(type, value);
+        return this;
     }
 
-    public void setAutoJump(boolean autoJump) {
-        this.autoJump = autoJump;
-    }
+    public boolean get(Type type) {
+        Boolean value = this.values.get(type);
 
-    public void setCanFly(boolean canFly) {
-        this.canFly = canFly;
-    }
-
-    public void setFlying(boolean flying) {
-        this.flying = flying;
-    }
-
-    public void setNoclip(boolean noclip) {
-        this.noclip = noclip;
-    }
-
-    public void setNoPvp(boolean noPvp) {
-        this.noPvp = noPvp;
-    }
-
-    public void setNoPvm(boolean noPvm) {
-        this.noPvm = noPvm;
-    }
-
-    public void setNoMvp(boolean noMvp) {
-        this.noMvp = noMvp;
-    }
-
-    public void setMuted(boolean muted) {
-        this.muted = muted;
-    }
-
-    public boolean canDestroyBlock() {
-        return canDestroyBlock;
-    }
-
-    public boolean isAutoJumpEnabled() {
-        return autoJump;
-    }
-
-    public boolean canFly() {
-        return canFly;
-    }
-
-    public boolean isFlying() {
-        return flying;
-    }
-
-    public boolean isNoclipEnabled() {
-        return noclip;
-    }
-
-    public boolean isNoPvp() {
-        return noPvp;
-    }
-
-    public boolean isNoPvm() {
-        return noPvm;
-    }
-
-    public boolean isNoMvp() {
-        return noMvp;
-    }
-
-    public boolean isMuted() {
-        return muted;
+        return value == null ? type.getDefaultValue() : value;
     }
 
     public void update() {
         AdventureSettingsPacket pk = new AdventureSettingsPacket();
-        pk.flags = 0;
-        pk.worldImmutable = !canDestroyBlock;
-        pk.autoJump = autoJump;
-        pk.allowFlight = canFly;
-        pk.noClip = noclip;
-        pk.isFlying = flying;
-        pk.noPvp = noPvp;
-        pk.noPvm = noPvm;
-        pk.noMvp = noMvp;
-        pk.muted = muted;
-        pk.userPermission = (this.player.isOp() ? PERMISSION_OPERATOR : PERMISSION_NORMAL);
+        for (Type t : Type.values()) {
+            pk.setFlag(t.getId(), get(t));
+        }
+
+        pk.commandPermission = (player.isOp() ? AdventureSettingsPacket.PERMISSION_OPERATOR : AdventureSettingsPacket.PERMISSION_NORMAL);
+        pk.playerPermission = (player.isOp() ? Player.PERMISSION_OPERATOR : Player.PERMISSION_MEMBER);
+        pk.entityUniqueId = player.getId();
+
+        Server.broadcastPacket(player.getViewers().values(), pk);
         player.dataPacket(pk);
 
         player.resetInAirTicks();
     }
 
-    public static class Builder {
-        private final AdventureSettings settings = new AdventureSettings();
+    public enum Type {
+        WORLD_IMMUTABLE(AdventureSettingsPacket.WORLD_IMMUTABLE, false),
+        AUTO_JUMP(AdventureSettingsPacket.AUTO_JUMP, true),
+        ALLOW_FLIGHT(AdventureSettingsPacket.ALLOW_FLIGHT, false),
+        NO_CLIP(AdventureSettingsPacket.NO_CLIP, false),
+        WORLD_BUILDER(AdventureSettingsPacket.WORLD_BUILDER, true),
+        FLYING(AdventureSettingsPacket.FLYING, false),
+        MUTED(AdventureSettingsPacket.MUTED, false),
+        BUILD_AND_MINE(AdventureSettingsPacket.BUILD_AND_MINE, true),
+        DOORS_AND_SWITCHED(AdventureSettingsPacket.DOORS_AND_SWITCHES, true),
+        OPEN_CONTAINERS(AdventureSettingsPacket.OPEN_CONTAINERS, true),
+        ATTACK_PLAYERS(AdventureSettingsPacket.ATTACK_PLAYERS, true),
+        ATTACK_MOBS(AdventureSettingsPacket.ATTACK_MOBS, true),
+        OPERATOR(AdventureSettingsPacket.OPERATOR, false),
+        TELEPORT(AdventureSettingsPacket.TELEPORT, false);
 
-        public Builder(Player player) {
-            if (player == null) {
-                throw new IllegalArgumentException("Player can not be null.");
-            }
+        private final int id;
+        private final boolean defaultValue;
 
-            settings.player = player;
+        Type(int id, boolean defaultValue) {
+            this.id = id;
+            this.defaultValue = defaultValue;
         }
 
-        public Builder canFly(boolean can) {
-            settings.canFly = can;
-            return this;
+        public int getId() {
+            return id;
         }
 
-        public Builder noclip(boolean noclip) {
-            settings.noclip = noclip;
-            return this;
-        }
-
-        public Builder canDestroyBlock(boolean can) {
-            settings.canDestroyBlock = can;
-            return this;
-        }
-
-        public Builder autoJump(boolean autoJump) {
-            settings.autoJump = autoJump;
-            return this;
-        }
-
-        public AdventureSettings build() {
-            return this.settings;
+        public boolean getDefaultValue() {
+            return this.defaultValue;
         }
     }
 }

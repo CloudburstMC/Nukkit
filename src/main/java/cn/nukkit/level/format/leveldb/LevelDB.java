@@ -3,11 +3,12 @@ package cn.nukkit.level.format.leveldb;
 import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.GameRules;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.leveldb.key.BaseKey;
 import cn.nukkit.level.format.leveldb.key.FlagsKey;
 import cn.nukkit.level.format.leveldb.key.TerrainKey;
@@ -156,10 +157,12 @@ public class LevelDB implements LevelProvider {
 
     @Override
     public AsyncTask requestChunkTask(int x, int z) {
-        FullChunk chunk = this.getChunk(x, z, false);
+        Chunk chunk = this.getChunk(x, z, false);
         if (chunk == null) {
             throw new ChunkException("Invalid Chunk sent");
         }
+
+        long timestamp = chunk.getChanges();
 
         byte[] tiles = new byte[0];
 
@@ -197,12 +200,8 @@ public class LevelDB implements LevelProvider {
         stream.put(chunk.getBlockDataArray());
         stream.put(chunk.getBlockSkyLightArray());
         stream.put(chunk.getBlockLightArray());
-        for (int height : chunk.getHeightMapArray()) {
-            stream.putByte((byte) height);
-        }
-        for (int color : chunk.getBiomeColorArray()) {
-            stream.put(Binary.writeInt(color));
-        }
+        stream.put(chunk.getHeightMapArray());
+        stream.put(chunk.getBiomeIdArray());
         if (extraData != null) {
             stream.put(extraData.getBuffer());
         } else {
@@ -210,7 +209,7 @@ public class LevelDB implements LevelProvider {
         }
         stream.put(tiles);
 
-        this.getLevel().chunkRequestCallback(x, z, stream.getBuffer());
+        this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
 
         return null;
     }
@@ -238,13 +237,28 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
+    public BaseFullChunk getLoadedChunk(int X, int Z) {
+        return this.getLoadedChunk(Level.chunkHash(X, Z));
+    }
+
+    @Override
+    public BaseFullChunk getLoadedChunk(long hash) {
+        return this.chunks.get(hash);
+    }
+
+    @Override
     public Map<Long, Chunk> getLoadedChunks() {
         return this.chunks;
     }
 
     @Override
     public boolean isChunkLoaded(int x, int z) {
-        return this.chunks.containsKey(Level.chunkHash(x, z));
+        return this.isChunkLoaded(Level.chunkHash(x, z));
+    }
+
+    @Override
+    public boolean isChunkLoaded(long hash) {
+        return this.chunks.containsKey(hash);
     }
 
     @Override
@@ -366,8 +380,7 @@ public class LevelDB implements LevelProvider {
         }
         chunk.setProvider(this);
 
-        chunk.setX(chunkX);
-        chunk.setZ(chunkZ);
+        chunk.setPosition(chunkX, chunkZ);
         long index = Level.chunkHash(chunkX, chunkZ);
 
         if (this.chunks.containsKey(index) && !this.chunks.get(index).equals(chunk)) {
@@ -507,10 +520,10 @@ public class LevelDB implements LevelProvider {
         this.levelData.putInt("SpawnY", (int) pos.y);
         this.levelData.putInt("SpawnZ", (int) pos.z);
     }
-    
+
     @Override
     public GameRules getGamerules() {
-        GameRules rules = new GameRules();
+        GameRules rules = GameRules.getDefault();
 
         if (this.levelData.contains("GameRules"))
             rules.readNBT(this.levelData.getCompound("GameRules"));

@@ -90,7 +90,7 @@ public abstract class Enchantment implements Cloneable {
     }
 
     public static Enchantment getEnchantment(int id) {
-        return get(id) == null ? null : get(id).clone();
+        return get(id).clone();
     }
 
     public static Enchantment[] getEnchantments() {

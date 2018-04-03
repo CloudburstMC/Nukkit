@@ -36,10 +36,26 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof LinkedHashMap) {
                 super.put(entry.getKey(), new ConfigSection((LinkedHashMap) entry.getValue()));
+            } else if (entry.getValue() instanceof List) {
+                super.put(entry.getKey(), parseList((List) entry.getValue()));
             } else {
                 super.put(entry.getKey(), entry.getValue());
             }
         }
+    }
+
+    private List parseList(List list) {
+        List<Object> newList = new ArrayList<>();
+
+        for (Object o : list) {
+            if (o instanceof LinkedHashMap) {
+                newList.add(new ConfigSection((LinkedHashMap) o));
+            } else {
+                newList.add(o);
+            }
+        }
+
+        return newList;
     }
 
     /**
@@ -133,17 +149,17 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
     /**
      * Get all ConfigSections in root path.
      * Example config:
-     * a1:
-     * b1:
-     * c1:
-     * c2:
-     * a2:
-     * b2:
-     * c3:
-     * c4:
-     * a3: true
-     * a4: "hello"
-     * a5: 100
+     *  a1:
+     *    b1:
+     *      c1:
+     *      c2:
+     *  a2:
+     *    b2:
+     *      c3:
+     *      c4:
+     *  a3: true
+     *  a4: "hello"
+     *  a5: 100
      * <p>
      * getSections() will return new ConfigSection, that contains sections a1 and a2 only.
      *

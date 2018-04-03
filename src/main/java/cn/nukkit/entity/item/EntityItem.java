@@ -100,6 +100,7 @@ public class EntityItem extends Entity {
         }
 
         this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE, true);
 
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }
@@ -261,5 +262,10 @@ public class EntityItem extends Entity {
         player.dataPacket(pk);
 
         super.spawnTo(player);
+    }
+
+    @Override
+    public boolean doesTriggerPressurePlate() {
+        return true;
     }
 }

@@ -18,22 +18,21 @@ public class PlayerItemHeldEvent extends PlayerEvent implements Cancellable {
     }
 
     private final Item item;
-    private final int slot;
-    private final int inventorySlot;
+    private final int hotbarSlot;
 
-    public PlayerItemHeldEvent(Player player, Item item, int inventorySlot, int slot) {
+    public PlayerItemHeldEvent(Player player, Item item, int hotbarSlot) {
         this.player = player;
         this.item = item;
-        this.inventorySlot = inventorySlot;
-        this.slot = slot;
+        this.hotbarSlot = hotbarSlot;
     }
 
     public int getSlot() {
-        return slot;
+        return this.hotbarSlot;
     }
 
+    @Deprecated
     public int getInventorySlot() {
-        return inventorySlot;
+        return hotbarSlot;
     }
 
     public Item getItem() {

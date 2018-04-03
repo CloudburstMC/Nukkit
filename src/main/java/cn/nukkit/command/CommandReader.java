@@ -37,7 +37,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
             this.reader = new ConsoleReader();
             reader.setPrompt("> ");
             instance = this;
-            
+
             reader.addCompleter(new PlayersCompleter()); // Add player TAB completer
             reader.addCompleter(new CommandsCompleter()); // Add command TAB completer
         } catch (IOException e) {
@@ -54,11 +54,11 @@ public class CommandReader extends Thread implements InterruptibleThread {
         }
         return null;
     }
-    
+
     public void run() {
         Long lastLine = System.currentTimeMillis();
         String line;
-        
+
         try {
             while ((line = reader.readLine()) != null) {
                 if (Server.getInstance().getConsoleSender() == null || Server.getInstance().getPluginManager() == null) {
@@ -81,7 +81,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
 
                 } else if (System.currentTimeMillis() - lastLine <= 1) {
                     try {
-                        sleep(40);
+                        sleep(250);
                     } catch (InterruptedException e) {
                         Server.getInstance().getLogger().logException(e);
                     }

@@ -1,17 +1,21 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemPotion;
+import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import io.netty.util.collection.CharObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.zip.Deflater;
 
 /**
  * author: MagicDroidX
@@ -19,66 +23,94 @@ import java.util.*;
  */
 public class CraftingManager {
 
-    public final Map<UUID, Recipe> recipes = new HashMap<>();
+    public final Collection<Recipe> recipes = new ArrayDeque<>();
 
-    protected final Map<String, Map<String, Recipe>> recipeLookup = new HashMap<>();
+    public static BatchPacket packet = null;
+    protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
 
-    public final Map<String, FurnaceRecipe> furnaceRecipes = new HashMap<>();
+    public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
 
-    public final Map<String, BrewingRecipe> brewingRecipes = new HashMap<>();
+    public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
 
     private static int RECIPE_COUNT = 0;
+    protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
 
-    public static CraftingDataPacket packet = null;
+    public static final Comparator<Item> recipeComparator = (i1, i2) -> {
+        if (i1.getId() > i2.getId()) {
+            return 1;
+        } else if (i1.getId() < i2.getId()) {
+            return -1;
+        } else if (i1.getDamage() > i2.getDamage()) {
+            return 1;
+        } else if (i1.getDamage() < i2.getDamage()) {
+            return -1;
+        } else return Integer.compare(i1.getCount(), i2.getCount());
+    };
 
+    @SuppressWarnings("unchecked")
     public CraftingManager() {
-        try {
-            Utils.writeFile(Server.getInstance().getDataPath() + "recipes.json", Server.class.getClassLoader().getResourceAsStream("recipes.json"));
-        } catch (IOException e) {
-            MainLogger.getLogger().logException(e);
-            //return;
-        }
-        List<Map> recipes = new Config(Server.getInstance().getDataPath() + "recipes.json", Config.JSON).getMapList("recipes");
-        MainLogger.getLogger().info("Loading recipes...");
-        for (Map<String, Object> recipe : recipes) { //TODO: implement this better
-            switch (Utils.toInt(recipe.get("type"))) {
-                case 0:
-                    // TODO: handle multiple result items
-                    Map<String, Object> first = ((List<Map>) recipe.get("output")).get(0);
-                    ShapelessRecipe result = new ShapelessRecipe(Item.get(Utils.toInt(first.get("id")), Utils.toInt(first.get("damage")), Utils.toInt(first.get("count")), first.get("nbt").toString().getBytes()));
-                    for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
-                        result.addIngredient(Item.get(Utils.toInt(ingredient.get("id")), Utils.toInt(ingredient.get("damage")), /*Utils.toInt(ingredient.get("count"))*/ 1, ingredient.get("nbt").toString().getBytes())); //ingredient count should be always 1 for now
-                    }
-                    this.registerRecipe(result);
-                    break;
-                case 1:
-                    // TODO: handle multiple result items
-                    first = ((List<Map>) recipe.get("output")).get(0);
-                    ShapedRecipe shapedRecipe = new ShapedRecipe(Item.get(Utils.toInt(first.get("id")), Utils.toInt(first.get("damage")), Utils.toInt(first.get("count")), first.get("nbt").toString().getBytes()), Utils.toInt(recipe.get("height")), Utils.toInt(recipe.get("width")));
-                    Object[][] shape = Utils.splitArray(((List) recipe.get("input")).stream().toArray(), Utils.toInt(recipe.get("width")));
-                    for (int y = 0; y < shape.length; y++) {
-                        Object[] row = shape[y];
-                        for (int x = 0; x < row.length; x++) {
-                            Object data = row[x];
+        String path = Server.getInstance().getDataPath() + "recipes.json";
 
-                            if (data instanceof Map) {
-                                Map<String, Object> ingredient = (Map) data;
-                                shapedRecipe.addIngredient(x, y, Item.get(Utils.toInt(ingredient.get("id")), Utils.toInt(ingredient.get("damage")), /*Utils.toInt(ingredient.get("count"))*/ 1, ingredient.get("nbt").toString().getBytes()));
-                            } else {
-                                shapedRecipe.addIngredient(x, y, new ItemBlock(new BlockAir()));
-                            }
+        if (!new File(path).exists()) {
+            try {
+                Utils.writeFile(path, Server.class.getClassLoader().getResourceAsStream("recipes.json"));
+            } catch (IOException e) {
+                MainLogger.getLogger().logException(e);
+            }
+        }
+
+        List<Map> recipes = new Config(path, Config.JSON).getMapList("recipes");
+        MainLogger.getLogger().info("Loading recipes...");
+        for (Map<String, Object> recipe : recipes) {
+            try {
+                switch (Utils.toInt(recipe.get("type"))) {
+                    case 0:
+                        // TODO: handle multiple result items
+                        Map<String, Object> first = ((List<Map>) recipe.get("output")).get(0);
+                        List<Item> sorted = new ArrayList<>();
+                        for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
+                            sorted.add(Item.fromJson(ingredient));
                         }
-                    }
-                    this.registerRecipe(shapedRecipe);
-                    break;
-                case 2:
-                case 3:
-                    Map<String, Object> resultMap = (Map) recipe.get("output");
-                    Item resultItem = Item.get(Utils.toInt(resultMap.get("id")), Utils.toInt(resultMap.get("damage")), Utils.toInt(resultMap.get("count")), ((String) resultMap.get("nbt")).getBytes());
-                    this.registerRecipe(new FurnaceRecipe(resultItem, Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1)));
-                    break;
-                default:
-                    break;
+                        // Bake sorted list
+                        sorted.sort(recipeComparator);
+
+                        ShapelessRecipe result = new ShapelessRecipe(Item.fromJson(first), sorted);
+
+                        this.registerRecipe(result);
+                        break;
+                    case 1:
+                        List<Map> output = (List<Map>) recipe.get("output");
+
+                        first = output.remove(0);
+                        String[] shape = ((List<String>) recipe.get("shape")).stream().toArray(String[]::new);
+                        Map<Character, Item> ingredients = new CharObjectHashMap<>();
+                        List<Item> extraResults = new ArrayList<>();
+
+                        Map<String, Map<String, Object>> input = (Map) recipe.get("input");
+                        for (Map.Entry<String, Map<String, Object>> ingredientEntry : input.entrySet()) {
+                            char ingredientChar = ingredientEntry.getKey().charAt(0);
+                            Item ingredient = Item.fromJson(ingredientEntry.getValue());
+
+                            ingredients.put(ingredientChar, ingredient);
+                        }
+
+                        for (Map<String, Object> data : output) {
+                            extraResults.add(Item.fromJson(data));
+                        }
+
+                        this.registerRecipe(new ShapedRecipe(Item.fromJson(first), shape, ingredients, extraResults));
+                        break;
+                    case 2:
+                    case 3:
+                        Map<String, Object> resultMap = (Map) recipe.get("output");
+                        Item resultItem = Item.fromJson(resultMap);
+                        this.registerRecipe(new FurnaceRecipe(resultItem, Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1)));
+                        break;
+                    default:
+                        break;
+                }
+            } catch (Exception e) {
+                MainLogger.getLogger().error("Exception during registering recipe", e);
             }
         }
 
@@ -134,7 +166,7 @@ public class CraftingManager {
         CraftingDataPacket pk = new CraftingDataPacket();
         pk.cleanRecipes = true;
 
-        for (Recipe recipe : this.getRecipes().values()) {
+        for (Recipe recipe : this.getRecipes()) {
             if (recipe instanceof ShapedRecipe) {
                 pk.addShapedRecipe((ShapedRecipe) recipe);
             } else if (recipe instanceof ShapelessRecipe) {
@@ -145,176 +177,169 @@ public class CraftingManager {
         for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
             pk.addFurnaceRecipe(recipe);
         }
-
         pk.encode();
-        pk.isEncoded = true;
 
-        packet = pk;
+        packet = pk.compress(Deflater.BEST_COMPRESSION);
     }
 
-    public final Comparator<Item> comparator = (i1, i2) -> {
-        if (i1.getId() > i2.getId()) {
-            return 1;
-        } else if (i1.getId() < i2.getId()) {
-            return -1;
-        } else if (i1.getDamage() > i2.getDamage()) {
-            return 1;
-        } else if (i1.getDamage() < i2.getDamage()) {
-            return -1;
-        } else if (i1.getCount() > i2.getCount()) {
-            return 1;
-        } else if (i1.getCount() < i2.getCount()) {
-            return -1;
-        } else {
-            return 0;
-        }
-    };
-
-    public Recipe getRecipe(UUID id) {
-        return this.recipes.containsKey(id) ? this.recipes.get(id) : null;
-    }
-
-    public Map<UUID, Recipe> getRecipes() {
+    public Collection<Recipe> getRecipes() {
         return recipes;
     }
 
-    public Map<String, FurnaceRecipe> getFurnaceRecipes() {
+    public Map<Integer, FurnaceRecipe> getFurnaceRecipes() {
         return furnaceRecipes;
     }
 
     public FurnaceRecipe matchFurnaceRecipe(Item input) {
-        if (this.furnaceRecipes.containsKey(input.getId() + ":" + input.getDamage())) {
-            return this.furnaceRecipes.get(input.getId() + ":" + input.getDamage());
-        } else if (this.furnaceRecipes.containsKey(input.getId() + ":?")) {
-            return this.furnaceRecipes.get(input.getId() + ":?");
-        }
-
-        return null;
+        FurnaceRecipe recipe = this.furnaceRecipes.get(getItemHash(input));
+        if (recipe == null) this.furnaceRecipes.get(getItemHash(input.getId(), 0));
+        return recipe;
     }
 
-    public void registerShapedRecipe(ShapedRecipe recipe) {
-        Item result = recipe.getResult();
-        this.recipes.put(recipe.getId(), recipe);
-        Map<Integer, Map<Integer, Item>> ingredients = recipe.getIngredientMap();
-        String hash = "";
-        for (Map<Integer, Item> v : ingredients.values()) {
-            for (Item item : v.values()) {
-                if (item != null && item.getId() != Item.AIR) {
-                    hash += item.getId() + ":" + (!item.hasMeta() ? "?" : item.getDamage()) + "x" + item.getCount() + ",";
-                }
-            }
-
-            hash += ";";
+    private static UUID getMultiItemHash(Collection<Item> items) {
+        BinaryStream stream = new BinaryStream();
+        for (Item item : items) {
+            stream.putVarInt(getFullItemHash(item));
         }
-
-        String index = result.getId() + ":" + (result.hasMeta() ? result.getDamage() : "");
-        if (!this.recipeLookup.containsKey(index)) {
-            this.recipeLookup.put(index, new HashMap<>());
-        }
-
-        this.recipeLookup.get(index).put(hash, recipe);
+        return UUID.nameUUIDFromBytes(stream.getBuffer());
     }
 
-    public void registerShapelessRecipe(ShapelessRecipe recipe) {
-        Item result = recipe.getResult();
-        this.recipes.put(recipe.getId(), recipe);
-        String hash = "";
-        List<Item> ingredients = recipe.getIngredientList();
-        ingredients.sort(this.comparator);
-        for (Item item : ingredients) {
-            hash += item.getId() + ":" + (!item.hasMeta() ? "?" : item.getDamage()) + "x" + item.getCount() + ",";
-        }
-
-        if (!this.recipeLookup.containsKey(result.getId() + ":" + result.getDamage())) {
-            this.recipeLookup.put(result.getId() + ":" + result.getDamage(), new HashMap<>());
-        }
-        this.recipeLookup.get(result.getId() + ":" + result.getDamage()).put(hash, recipe);
+    private static int getFullItemHash(Item item) {
+        return getItemHash(item) + item.getCount() << 10;
     }
 
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
         Item input = recipe.getInput();
-        this.furnaceRecipes.put(input.getId() + ":" + (!input.hasMeta() ? "?" : input.getDamage()), recipe);
+        this.furnaceRecipes.put(getItemHash(input), recipe);
+    }
+
+    private static int getItemHash(Item item) {
+        return getItemHash(item.getId(), item.getDamage());
+    }
+
+    private static int getItemHash(int id, int meta) {
+        return id + (meta << 8);
+    }
+
+    public void registerShapedRecipe(ShapedRecipe recipe) {
+        int resultHash = getItemHash(recipe.getResult());
+        Map<UUID, ShapedRecipe> map = shapedRecipes.get(resultHash);
+        if (map == null) {
+            map = new HashMap<>();
+            shapedRecipes.put(resultHash, map);
+        }
+        map.put(getMultiItemHash(recipe.getIngredientList()), recipe);
+    }
+
+    private Item[][] cloneItemMap(Item[][] map) {
+        Item[][] newMap = new Item[map.length][];
+        for (int i = 0; i < newMap.length; i++) {
+            Item[] old = map[i];
+            Item[] n = new Item[old.length];
+
+            System.arraycopy(old, 0, n, 0, n.length);
+            newMap[i] = n;
+        }
+
+        for (int y = 0; y < newMap.length; y++) {
+            Item[] row = newMap[y];
+            for (int x = 0; x < row.length; x++) {
+                Item item = newMap[y][x];
+                newMap[y][x] = item.clone();
+            }
+        }
+        return newMap;
+    }
+
+    public void registerRecipe(Recipe recipe) {
+        if (recipe instanceof CraftingRecipe) {
+            UUID id = Utils.dataToUUID(String.valueOf(++RECIPE_COUNT), String.valueOf(recipe.getResult().getId()), String.valueOf(recipe.getResult().getDamage()), String.valueOf(recipe.getResult().getCount()), Arrays.toString(recipe.getResult().getCompoundTag()));
+
+            ((CraftingRecipe) recipe).setId(id);
+            this.recipes.add(recipe);
+        }
+
+        recipe.registerToCraftingManager(this);
+    }
+
+    public void registerShapelessRecipe(ShapelessRecipe recipe) {
+        List<Item> list = recipe.getIngredientList();
+        list.sort(recipeComparator);
+
+        UUID hash = getMultiItemHash(list);
+
+        int resultHash = getItemHash(recipe.getResult());
+        Map<UUID, ShapelessRecipe> map = shapelessRecipes.computeIfAbsent(resultHash, k -> new HashMap<>());
+
+        map.put(hash, recipe);
     }
 
     public void registerBrewingRecipe(BrewingRecipe recipe) {
         Item input = recipe.getInput();
         Item potion = recipe.getPotion();
 
-        this.brewingRecipes.put(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()), recipe);
+        this.brewingRecipes.put(getItemHash(input.getId(), potion.getDamage()), recipe);
     }
 
     public BrewingRecipe matchBrewingRecipe(Item input, Item potion) {
-        if (brewingRecipes.containsKey(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()))) {
-            return brewingRecipes.get(input.getId() + ":" + (!potion.hasMeta() ? 0 : potion.getDamage()));
-        }
-        return null;
+        return brewingRecipes.get(getItemHash(input.getId(), potion.getDamage()));
     }
 
-    public boolean matchRecipe(ShapelessRecipe recipe) {
-        String idx = recipe.getResult().getId() + ":" + recipe.getResult().getDamage();
-        if (!this.recipeLookup.containsKey(idx)) {
-            return false;
-        }
+    public CraftingRecipe matchRecipe(Item[][] inputMap, Item primaryOutput, Item[][] extraOutputMap) {
+        //TODO: try to match special recipes before anything else (first they need to be implemented!)
 
-        String hash = "";
-        List<Item> ingredients = recipe.getIngredientList();
-        ingredients.sort(this.comparator);
-        for (Item item : ingredients) {
-            hash += item.getId() + ":" + (!item.hasMeta() ? "?" : item.getDamage()) + "x" + item.getCount() + ",";
-        }
+        int outputHash = getItemHash(primaryOutput);
+        if (this.shapedRecipes.containsKey(outputHash)) {
+            List<Item> itemCol = new ArrayList<>();
+            for (Item[] items : inputMap) itemCol.addAll(Arrays.asList(items));
+            UUID inputHash = getMultiItemHash(itemCol);
 
-        if (this.recipeLookup.get(idx).containsKey(hash)) {
-            return true;
-        }
+            Map<UUID, ShapedRecipe> recipeMap = shapedRecipes.get(outputHash);
 
-        Recipe hasRecipe = null;
+            if (recipeMap != null) {
+                ShapedRecipe recipe = recipeMap.get(inputHash);
 
-        for (Recipe r : this.recipeLookup.get(idx).values()) {
-            if (r instanceof ShapelessRecipe) {
-                if (((ShapelessRecipe) r).getIngredientCount() != ingredients.size()) {
-                    continue;
+                if (recipe != null && recipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) { //matched a recipe by hash
+                    return recipe;
                 }
-                List<Item> checkInput = ((ShapelessRecipe) r).getIngredientList();
-                for (Item item : ingredients) {
-                    int amount = item.getCount();
-                    for (Item checkItem : checkInput) {
-                        if (checkItem.equals(item, checkItem.hasMeta())) {
-                            int remove = Math.min(checkItem.getCount(), amount);
-                            checkItem.setCount(checkItem.getCount() - amount);
-                            if (checkItem.getCount() == 0) {
-                                checkInput.remove(checkItem);
-                            }
-                            amount -= remove;
-                            if (amount == 0) {
-                                break;
-                            }
-                        }
+
+                for (ShapedRecipe shapedRecipe : recipeMap.values()) {
+                    if (shapedRecipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) {
+                        return shapedRecipe;
                     }
-                }
-
-                if (checkInput.isEmpty()) {
-                    hasRecipe = r;
-                    break;
                 }
             }
         }
-        return hasRecipe != null;
-    }
 
-    public void registerRecipe(Recipe recipe) {
-        recipe.setId(Utils.dataToUUID(String.valueOf(++RECIPE_COUNT), String.valueOf(recipe.getResult().getId()), String.valueOf(recipe.getResult().getDamage()), String.valueOf(recipe.getResult().getCount()), Arrays.toString(recipe.getResult().getCompoundTag())));
+        if (shapelessRecipes.containsKey(outputHash)) {
+            List<Item> list = new ArrayList<>();
+            for (Item[] a : inputMap) {
+                list.addAll(Arrays.asList(a));
+            }
+            list.sort(recipeComparator);
 
-        if (recipe instanceof ShapedRecipe) {
-            this.registerShapedRecipe((ShapedRecipe) recipe);
-        } else if (recipe instanceof ShapelessRecipe) {
-            this.registerShapelessRecipe((ShapelessRecipe) recipe);
-        } else if (recipe instanceof FurnaceRecipe) {
-            this.registerFurnaceRecipe((FurnaceRecipe) recipe);
+            UUID inputHash = getMultiItemHash(list);
+
+            Map<UUID, ShapelessRecipe> recipes = shapelessRecipes.get(outputHash);
+
+            if (recipes == null) {
+                return null;
+            }
+
+            ShapelessRecipe recipe = recipes.get(inputHash);
+
+            if (recipe != null && recipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) {
+                return recipe;
+            }
+
+            for (ShapelessRecipe shapelessRecipe : recipes.values()) {
+                if (shapelessRecipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) {
+                    return shapelessRecipe;
+                }
+            }
         }
-    }
 
-    public Recipe[] getRecipesByResult(Item result) {
-        return recipeLookup.get(result.getId() + ":" + result.getDamage()).values().stream().toArray(Recipe[]::new);
+        return null;
     }
 
     public static class Entry {

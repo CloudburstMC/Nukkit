@@ -2,9 +2,11 @@ package cn.nukkit.level.format.leveldb;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.leveldb.key.EntitiesKey;
 import cn.nukkit.level.format.leveldb.key.ExtraDataKey;
@@ -66,9 +68,9 @@ public class Chunk extends BaseFullChunk {
         byte[] blockLight = new byte[16384];
         buffer.get(blockLight);
 
-        int[] heightMap = new int[256];
+        byte[] heightMap = new byte[256];
         for (int i = 0; i < 256; i++) {
-            heightMap[i] = buffer.get() & 0xff;
+            heightMap[i] = buffer.get();
         }
 
         int[] biomeColors = new int[256];
@@ -81,31 +83,34 @@ public class Chunk extends BaseFullChunk {
             this.providerClass = level.getClass();
         }
 
-        this.x = chunkX;
-        this.z = chunkZ;
+        this.setPosition(chunkX, chunkZ);
 
         this.blocks = blocks;
         this.data = data;
         this.skyLight = skyLight;
         this.blockLight = blockLight;
 
+        this.biomes = new byte[16 * 16];
         if (biomeColors.length == 256) {
-            this.biomeColors = biomeColors;
-        } else {
-            this.biomeColors = new int[256];
+            BiomePalette palette = new BiomePalette(biomeColors);
+            for (int x = 0; x < 16; x++)    {
+                for (int z = 0; z < 16; z++)    {
+                    biomes[(x << 4) | z] = (byte) (palette.get(x, z) >> 24);
+                }
+            }
         }
 
         if (heightMap.length == 256) {
             this.heightMap = heightMap;
         } else {
-            int[] ints = new int[256];
-            Arrays.fill(ints, 127);
-            this.heightMap = ints;
+            byte[] bytes = new byte[256];
+            Arrays.fill(bytes, (byte) 256);
+            this.heightMap = bytes;
         }
 
-        this.NBTentities = entityData == null ? new ArrayList<>() : entityData;
-        this.NBTtiles = tileData == null ? new ArrayList<>() : tileData;
-        this.extraData = extraData == null ? new HashMap<>() : extraData;
+        this.NBTentities = entityData;
+        this.NBTtiles = tileData;
+        this.extraData = extraData;
     }
 
     @Override
@@ -116,7 +121,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockId(int x, int y, int z, int id) {
         this.blocks[(x << 11) | (z << 7) | y] = (byte) id;
-        this.hasChanged = true;
+        setChanged();
     }
 
     @Override
@@ -138,7 +143,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.data[i] = (byte) (((data & 0x0f) << 4) | (old & 0x0f));
         }
-        this.hasChanged = true;
+        setChanged();
     }
 
     @Override
@@ -154,28 +159,61 @@ public class Chunk extends BaseFullChunk {
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z) {
-        return setBlock(x, y, z, null, null);
-    }
-
-    @Override
-    public boolean setBlock(int x, int y, int z, Integer blockId) {
-        return setBlock(x, y, z, blockId, null);
-    }
-
-    @Override
-    public boolean setBlock(int x, int y, int z, Integer blockId, Integer meta) {
+    public Block getAndSetBlock(int x, int y, int z, Block block) {
         int i = (x << 11) | (z << 7) | y;
         boolean changed = false;
-        if (blockId != null) {
-            byte id = blockId.byteValue();
-            if (this.blocks[i] != id) {
-                this.blocks[i] = id;
-                changed = true;
+        byte id = (byte) block.getId();
+
+        byte previousId = this.blocks[i];
+
+        if (previousId != id) {
+            this.blocks[i] = id;
+            changed = true;
+        }
+
+        int previousData;
+        i >>= 1;
+        int old = this.data[i] & 0xff;
+        if ((y & 1) == 0) {
+            previousData = old & 0x0f;
+            if (Block.hasMeta[block.getId()]) {
+                this.data[i] = (byte) ((old & 0xf0) | (block.getDamage() & 0x0f));
+                if (block.getDamage() != previousData) {
+                    changed = true;
+                }
+            }
+        } else {
+            previousData = old >> 4;
+            if (Block.hasMeta[block.getId()]) {
+                this.data[i] = (byte) (((block.getDamage() & 0x0f) << 4) | (old & 0x0f));
+                if (block.getDamage() != previousData) {
+                    changed = true;
+                }
             }
         }
 
-        if (meta != null) {
+        if (changed) {
+            setChanged();
+        }
+        return Block.get(previousId, previousData);
+    }
+
+    @Override
+    public boolean setBlock(int x, int y, int z, int blockId) {
+        return setBlock(x, y, z, blockId, 0);
+    }
+
+    @Override
+    public boolean setBlock(int x, int y, int z, int blockId, int meta) {
+        int i = (x << 11) | (z << 7) | y;
+        boolean changed = false;
+        byte id = (byte) blockId;
+        if (this.blocks[i] != id) {
+            this.blocks[i] = id;
+            changed = true;
+        }
+
+        if (Block.hasMeta[blockId]) {
             i >>= 1;
             int old = this.data[i] & 0xff;
             if ((y & 1) == 0) {
@@ -185,14 +223,14 @@ public class Chunk extends BaseFullChunk {
                 }
             } else {
                 this.data[i] = (byte) (((meta & 0x0f) << 4) | (old & 0x0f));
-                if (!meta.equals(old >> 4)) {
+                if (meta != (old >> 4)) {
                     changed = true;
                 }
             }
         }
 
         if (changed) {
-            this.hasChanged = true;
+            setChanged();
         }
         return changed;
     }
@@ -216,7 +254,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.skyLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
-        this.hasChanged = true;
+        setChanged();
     }
 
     @Override
@@ -238,35 +276,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.blockLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
-        this.hasChanged = true;
-    }
-
-    @Override
-    public byte[] getBlockIdColumn(int x, int z) {
-        byte[] b = new byte[128];
-        System.arraycopy(this.blocks, (x << 11) + (z << 7), b, 0, 128);
-        return b;
-    }
-
-    @Override
-    public byte[] getBlockDataColumn(int x, int z) {
-        byte[] b = new byte[64];
-        System.arraycopy(this.data, (x << 10) + (z << 6), b, 0, 64);
-        return b;
-    }
-
-    @Override
-    public byte[] getBlockSkyLightColumn(int x, int z) {
-        byte[] b = new byte[64];
-        System.arraycopy(this.skyLight, (x << 10) + (z << 6), b, 0, 64);
-        return b;
-    }
-
-    @Override
-    public byte[] getBlockLightColumn(int x, int z) {
-        byte[] b = new byte[64];
-        System.arraycopy(this.blockLight, (x << 10) + (z << 6), b, 0, 64);
-        return b;
+        setChanged();
     }
 
     @Override
@@ -476,14 +486,11 @@ public class Chunk extends BaseFullChunk {
 
             }
 
-            byte[] heightMap = new byte[this.getHeightMapArray().length];
-            for (int i = 0; i < this.getHeightMapArray().length; i++) {
-                heightMap[i] = (byte) this.getHeightMapArray()[i];
-            }
+            byte[] heightMap = this.getHeightMapArray();
 
-            byte[] biomeColors = new byte[this.getBiomeColorArray().length * 4];
-            for (int i = 0; i < this.getBiomeColorArray().length; i++) {
-                byte[] bytes = Binary.writeInt(this.getBiomeColorArray()[i]);
+            byte[] biomeColors = new byte[this.biomes.length * 4];
+            for (int i = 0; i < this.biomes.length; i++) {
+                byte[] bytes = Binary.writeInt(this.biomes[i] << 24);
                 biomeColors[i * 4] = bytes[0];
                 biomeColors[i * 4 + 1] = bytes[1];
                 biomeColors[i * 4 + 2] = bytes[2];
@@ -504,7 +511,6 @@ public class Chunk extends BaseFullChunk {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public static Chunk getEmptyChunk(int chunkX, int chunkZ) {

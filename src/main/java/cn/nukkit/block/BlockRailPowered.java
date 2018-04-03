@@ -5,7 +5,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Rail;
 
 /**
- * Created by Snake1999 on 2016/1/11. 
+ * Created by Snake1999 on 2016/1/11.
  * Contributed by: larryTheCoder on 2017/7/18.
  * <p>
  * Nukkit Project,
@@ -62,9 +62,9 @@ public class BlockRailPowered extends BlockRail {
     /**
      * Check the surrounding of the rail
      *
-     * @param pos The rail position
+     * @param pos      The rail position
      * @param relative The relative of the rail that will be checked
-     * @param power The count of the rail that had been counted
+     * @param power    The count of the rail that had been counted
      * @return Boolean of the surrounding area. Where the powered rail on!
      */
     protected boolean checkSurrounding(Vector3 pos, boolean relative, int power) {
@@ -86,7 +86,7 @@ public class BlockRailPowered extends BlockRail {
         } else {
             return false;
         }
-        
+
         // Used to check if the next ascending rail should be what
         Rail.Orientation base = null;
         boolean onStraight = true;
@@ -150,7 +150,7 @@ public class BlockRailPowered extends BlockRail {
                 // Unable to determinate the rail orientation
                 // Wrong rail?
                 return false;
-       } 
+        }
         // Next check the if rail is on power state
         return canPowered(new Vector3(dx, dy, dz), base, power, relative)
                 || onStraight && canPowered(new Vector3(dx, dy - 1, dz), base, power, relative);
@@ -168,14 +168,14 @@ public class BlockRailPowered extends BlockRail {
 
         // Possible way how to know when the rail is activated is rail were directly powered
         // OR recheck the surrounding... Which will returns here =w=        
-        return (state != Rail.Orientation.STRAIGHT_EAST_WEST 
-                || base != Rail.Orientation.STRAIGHT_NORTH_SOUTH 
-                && base != Rail.Orientation.ASCENDING_NORTH 
-                && base != Rail.Orientation.ASCENDING_SOUTH) 
-                && (state != Rail.Orientation.STRAIGHT_NORTH_SOUTH 
-                || base != Rail.Orientation.STRAIGHT_EAST_WEST 
-                && base != Rail.Orientation.ASCENDING_EAST 
-                && base != Rail.Orientation.ASCENDING_WEST) 
+        return (state != Rail.Orientation.STRAIGHT_EAST_WEST
+                || base != Rail.Orientation.STRAIGHT_NORTH_SOUTH
+                && base != Rail.Orientation.ASCENDING_NORTH
+                && base != Rail.Orientation.ASCENDING_SOUTH)
+                && (state != Rail.Orientation.STRAIGHT_NORTH_SOUTH
+                || base != Rail.Orientation.STRAIGHT_EAST_WEST
+                && base != Rail.Orientation.ASCENDING_EAST
+                && base != Rail.Orientation.ASCENDING_WEST)
                 && (level.isBlockPowered(pos) || checkSurrounding(pos, relative, power + 1));
     }
 

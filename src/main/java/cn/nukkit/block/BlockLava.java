@@ -8,6 +8,7 @@ import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
@@ -15,6 +16,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -52,9 +54,13 @@ public class BlockLava extends BlockLiquid {
             entity.attack(new EntityDamageByBlockEvent(this, entity, DamageCause.LAVA, 4));
         }
 
+        // Always setting the duration to 15 seconds? TODO
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 15);
         Server.getInstance().getPluginManager().callEvent(ev);
-        if (!ev.isCancelled()) {
+        if (!ev.isCancelled()
+                // Making sure the entity is acutally alive and not invulnerable.
+                && entity.isAlive()
+                && entity.noDamageTicks == 0) {
             entity.setOnFire(ev.getDuration());
         }
 
@@ -78,8 +84,8 @@ public class BlockLava extends BlockLiquid {
     public int onUpdate(int type) {
         int result = super.onUpdate(type);
 
-        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean("doFireTick")) {
-            Random random = this.getLevel().rand;
+        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
+            Random random = ThreadLocalRandom.current();
 
             int i = random.nextInt(3);
 
@@ -123,7 +129,6 @@ public class BlockLava extends BlockLiquid {
                     }
                 }
             }
-
         }
 
         return result;
@@ -147,5 +152,46 @@ public class BlockLava extends BlockLiquid {
     @Override
     public BlockLiquid getBlock(int meta) {
         return new BlockLava(meta);
+    }
+
+    @Override
+    public int tickRate() {
+        return 30;
+    }
+
+    @Override
+    public int getFlowDecayPerBlock() {
+        if (this.level.getDimension() == Level.DIMENSION_NETHER) {
+            return 1;
+        }
+        return 2;
+    }
+
+    @Override
+    protected void checkForHarden(){ 
+        Block colliding = null;
+        for(int side = 1; side < 6; ++side){ //don't check downwards side
+            Block blockSide = this.getSide(BlockFace.fromIndex(side));
+            if(blockSide instanceof BlockWater){
+                colliding = blockSide;
+                break;
+            }
+        }
+        if(colliding != null){
+            if(this.getDamage() == 0){
+                this.liquidCollide(colliding, new BlockObsidian());
+            }else if(this.getDamage() <= 4){
+                this.liquidCollide(colliding, new BlockCobblestone());
+            }
+        }
+    }
+
+    @Override
+    protected void flowIntoBlock(Block block, int newFlowDecay){
+        if(block instanceof BlockWater){
+            ((BlockLiquid) block).liquidCollide(this, new BlockStone());
+        }else{
+            super.flowIntoBlock(block, newFlowDecay);
+        }
     }
 }

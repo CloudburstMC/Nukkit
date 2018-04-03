@@ -9,11 +9,6 @@ import cn.nukkit.item.Item;
 public class BlockBedrock extends BlockSolid {
 
     public BlockBedrock() {
-        this(0);
-    }
-
-    public BlockBedrock(int meta) {
-        super(meta);
     }
 
     @Override

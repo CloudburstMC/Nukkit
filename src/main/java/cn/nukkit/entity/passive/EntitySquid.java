@@ -11,7 +11,7 @@ import cn.nukkit.utils.DyeColor;
 /**
  * @author PikyCZ
  */
-public class EntitySquid extends EntityAnimal {
+public class EntitySquid extends EntityWaterAnimal {
 
     public static final int NETWORK_ID = 17;
 
@@ -26,17 +26,12 @@ public class EntitySquid extends EntityAnimal {
 
     @Override
     public float getWidth() {
-        return 0.95f;
+        return 0.8f;
     }
 
     @Override
     public float getHeight() {
-        return 0.95f;
-    }
-
-    @Override
-    public float getEyeHeight() {
-        return 0.7f;
+        return 0.8f;
     }
 
     @Override

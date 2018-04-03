@@ -50,10 +50,10 @@ public abstract class BlockCrops extends BlockFlowable {
         //Bone meal
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
             BlockCrops block = (BlockCrops) this.clone();
-            if (this.meta < 7) {
-                block.meta += new Random().nextInt(3) + 2;
-                if (block.meta > 7) {
-                    block.meta = 7;
+            if (this.getDamage() < 7) {
+                block.setDamage(block.getDamage() + new Random().nextInt(3) + 2);
+                if (block.getDamage() > 7) {
+                    block.setDamage(7);
                 }
                 BlockGrowEvent ev = new BlockGrowEvent(this, block);
                 Server.getInstance().getPluginManager().callEvent(ev);
@@ -62,7 +62,7 @@ public abstract class BlockCrops extends BlockFlowable {
                     return false;
                 }
 
-                this.getLevel().setBlock(this, ev.getNewState(), true, true);
+                this.getLevel().setBlock(this, ev.getNewState(), false, true);
             }
 
             this.level.addParticle(new BoneMealParticle(this.add(0.5, 0.5, 0.5)));
@@ -82,14 +82,14 @@ public abstract class BlockCrops extends BlockFlowable {
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (new Random().nextInt(2) == 1) {
-                if (this.meta < 0x07) {
+                if (this.getDamage() < 0x07) {
                     BlockCrops block = (BlockCrops) this.clone();
-                    ++block.meta;
+                    block.setDamage(block.getDamage() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
 
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), true, true);
+                        this.getLevel().setBlock(this, ev.getNewState(), false, true);
                     } else {
                         return Level.BLOCK_UPDATE_RANDOM;
                     }

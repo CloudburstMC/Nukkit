@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMelon;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
@@ -15,11 +16,6 @@ import java.util.Random;
 public class BlockMelon extends BlockSolid {
 
     public BlockMelon() {
-        this(0);
-    }
-
-    public BlockMelon(int meta) {
-        super(0);
     }
 
     @Override
@@ -42,8 +38,16 @@ public class BlockMelon extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
+        Random random = new Random();
+        int count = 3 + random.nextInt(5);
+
+        Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
+        if (fortune != null && fortune.getLevel() >= 1) {
+            count += random.nextInt(fortune.getLevel() + 1);
+        }
+
         return new Item[]{
-                new ItemMelon(0, new Random().nextInt(4) + 3)
+                new ItemMelon(0, Math.min(9, count))
         };
     }
 

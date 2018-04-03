@@ -31,15 +31,17 @@ public class BaseLang {
 
     public BaseLang(String lang, String path, String fallback) {
         this.langName = lang.toLowerCase();
+        boolean useFallback = !lang.equals(fallback);
 
         if (path == null) {
             path = "lang/";
             this.lang = this.loadLang(this.getClass().getClassLoader().getResourceAsStream(path + this.langName + "/lang.ini"));
-            this.fallbackLang = this.loadLang(this.getClass().getClassLoader().getResourceAsStream(path + fallback + "/lang.ini"));
+            if (useFallback) this.fallbackLang = this.loadLang(this.getClass().getClassLoader().getResourceAsStream(path + fallback + "/lang.ini"));
         } else {
             this.lang = this.loadLang(path + this.langName + "/lang.ini");
-            this.fallbackLang = this.loadLang(path + fallback + "/lang.ini");
+            if (useFallback) this.fallbackLang = this.loadLang(path + fallback + "/lang.ini");
         }
+        if (this.fallbackLang == null) this.fallbackLang = this.lang;
 
 
     }

@@ -11,11 +11,6 @@ public class BlockOreIron extends BlockSolid {
 
 
     public BlockOreIron() {
-        this(0);
-    }
-
-    public BlockOreIron(int meta) {
-        super(0);
     }
 
     @Override
@@ -47,7 +42,7 @@ public class BlockOreIron extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
             return new Item[]{
-                    toItem()
+                    Item.get(IRON_ORE)
             };
         } else {
             return new Item[0];

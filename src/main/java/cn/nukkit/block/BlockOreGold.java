@@ -10,11 +10,6 @@ import cn.nukkit.item.ItemTool;
 public class BlockOreGold extends BlockSolid {
 
     public BlockOreGold() {
-        this(0);
-    }
-
-    public BlockOreGold(int meta) {
-        super(0);
     }
 
     @Override
@@ -46,7 +41,7 @@ public class BlockOreGold extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
             return new Item[]{
-                    toItem()
+                    Item.get(GOLD_ORE)
             };
         } else {
             return new Item[0];

@@ -1,73 +1,97 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Player;
+
 /**
  * @author Nukkit Project Team
  */
 public class AdventureSettingsPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
 
-    public boolean worldImmutable;
-    public boolean noPvp;
-    public boolean noPvm;
-    public boolean noMvp;
+    public static final int PERMISSION_NORMAL = 0;
+    public static final int PERMISSION_OPERATOR = 1;
+    public static final int PERMISSION_HOST = 2;
+    public static final int PERMISSION_AUTOMATION = 3;
+    public static final int PERMISSION_ADMIN = 4;
+    //TODO: check level 3
+    /**
+     * This constant is used to identify flags that should be set on the second field. In a sensible world, these
+     * flags would all be set on the same packet field, but as of MCPE 1.2, the new abilities flags have for some
+     * reason been assigned a separate field.
+     */
+    public static final int BITFLAG_SECOND_SET = 1 << 16;
 
-    public boolean autoJump;
-    public boolean allowFlight;
-    public boolean noClip;
-    public boolean worldBuilder;
-    public boolean isFlying;
-    public boolean muted;
+    public static final int WORLD_IMMUTABLE = 0x01;
+    public static final int NO_PVP = 0x02;
+    public static final int AUTO_JUMP = 0x20;
+    public static final int ALLOW_FLIGHT = 0x40;
+    public static final int NO_CLIP = 0x80;
+    public static final int WORLD_BUILDER = 0x100;
+    public static final int FLYING = 0x200;
+    public static final int MUTED = 0x400;
+    public static final int BUILD_AND_MINE = 0x01 | BITFLAG_SECOND_SET;
+    public static final int DOORS_AND_SWITCHES = 0x02 | BITFLAG_SECOND_SET;
+    public static final int OPEN_CONTAINERS = 0x04 | BITFLAG_SECOND_SET;
+    public static final int ATTACK_PLAYERS = 0x08 | BITFLAG_SECOND_SET;
+    public static final int ATTACK_MOBS = 0x10 | BITFLAG_SECOND_SET;
+    public static final int OPERATOR = 0x20 | BITFLAG_SECOND_SET;
+    public static final int TELEPORT = 0x80 | BITFLAG_SECOND_SET;
 
-    /*
-     bit mask | flag name
-	0x00000001 world_immutable
-	0x00000002 no_pvp
-	0x00000004 no_pvm
-	0x00000008 no_mvp
-	0x00000010 ?
-	0x00000020 auto_jump
-	0x00000040 allow_fly
-	0x00000080 noclip
-	0x00000100 ?
-	0x00000200 is_flying
-	*/
+    public long flags = 0;
 
-    public int flags = 0;
-    public int userPermission;
+    public long commandPermission = PERMISSION_NORMAL;
 
-    @Override
+    public long flags2 = -1;
+
+    public long playerPermission = Player.PERMISSION_MEMBER;
+
+    public long customFlags; //...
+
+    public long entityUniqueId; //This is a little-endian long, NOT a var-long. (WTF Mojang)
+
     public void decode() {
-        this.flags = (int) this.getUnsignedVarInt();
-        this.userPermission = (int) this.getUnsignedVarInt();
-        this.worldImmutable = (this.flags & 1) != 0;
-        this.noPvp = (this.flags & (1 << 1)) != 0;
-        this.noPvm = (this.flags & (1 << 2)) != 0;
-        this.noMvp = (this.flags & (1 << 3)) != 0;
-
-        this.autoJump = (this.flags & (1 << 5)) != 0;
-        this.allowFlight = (this.flags & (1 << 6)) != 0;
-        this.noClip = (this.flags & (1 << 7)) != 0;
-        this.worldBuilder = (this.flags & (1 << 8)) != 0;
-        this.isFlying = (this.flags & (1 << 9)) != 0;
-        this.muted = (this.flags & (1 << 10)) != 0;
+        this.flags = getUnsignedVarInt();
+        this.commandPermission = getUnsignedVarInt();
+        this.flags2 = getUnsignedVarInt();
+        this.playerPermission = getUnsignedVarInt();
+        this.customFlags = getUnsignedVarInt();
+        this.entityUniqueId = getLLong();
     }
 
-    @Override
     public void encode() {
         this.reset();
-        if (this.worldImmutable) this.flags |= 1;
-        if (this.noPvp) this.flags |= 1 << 1;
-        if (this.noPvm) this.flags |= 1 << 2;
-        if (this.noMvp) this.flags |= 1 << 3;
-
-        if (this.autoJump) this.flags |= 1 << 5;
-        if (this.allowFlight) this.flags |= 1 << 6;
-        if (this.noClip) this.flags |= 1 << 7;
-        if (this.worldBuilder) this.flags |= 1 << 8;
-        if (this.isFlying) this.flags |= 1 << 9;
-        if (this.muted) this.flags |= 1 << 10;
         this.putUnsignedVarInt(this.flags);
-        this.putUnsignedVarInt(this.userPermission);
+        this.putUnsignedVarInt(this.commandPermission);
+        this.putUnsignedVarInt(this.flags2);
+        this.putUnsignedVarInt(this.playerPermission);
+        this.putUnsignedVarInt(this.customFlags);
+        this.putLLong(this.entityUniqueId);
+    }
+
+    public boolean getFlag(int flag) {
+        if ((flag & BITFLAG_SECOND_SET) != 0) {
+            return (this.flags2 & flag) != 0;
+        }
+        return (this.flags & flag) != 0;
+    }
+
+    public void setFlag(int flag, boolean value) {
+        boolean flags = (flag & BITFLAG_SECOND_SET) != 0;
+
+        if (value) {
+            if (flags) {
+                this.flags2 |= flag;
+            } else {
+                this.flags |= flag;
+            }
+        } else {
+            if (flags) {
+                this.flags2 &= ~flag;
+            } else {
+                this.flags &= ~flag;
+            }
+        }
     }
 
     @Override

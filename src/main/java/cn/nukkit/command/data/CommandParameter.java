@@ -41,25 +41,25 @@ public class CommandParameter {
         this(name, false);
     }
 
-    public CommandParameter(String name, boolean optional, String enumType){
+    public CommandParameter(String name, boolean optional, String enumType) {
         this.name = name;
         this.type = ARG_TYPE_STRING_ENUM;
         this.optional = optional;
         this.enum_type = enumType;
     }
 
-    public CommandParameter(String name, boolean optional, String[] enumValues){
+    public CommandParameter(String name, boolean optional, String[] enumValues) {
         this.name = name;
         this.type = ARG_TYPE_STRING_ENUM;
         this.optional = optional;
         this.enum_values = enumValues;
     }
 
-    public CommandParameter(String name, String enumType){
+    public CommandParameter(String name, String enumType) {
         this(name, false, enumType);
     }
 
-    public CommandParameter(String name, String[] enumValues){
+    public CommandParameter(String name, String[] enumValues) {
         this(name, false, enumValues);
     }
 

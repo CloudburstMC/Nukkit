@@ -28,7 +28,7 @@ public class QueryHandler {
         this.server = Server.getInstance();
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.start"));
         String ip = this.server.getIp();
-        String addr = (!"".equals(ip)) ? ip : "0.0.0.0";
+        String addr = (!ip.isEmpty()) ? ip : "0.0.0.0";
         int port = this.server.getPort();
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.info", String.valueOf(port)));
 
@@ -40,8 +40,8 @@ public class QueryHandler {
 
     public void regenerateInfo() {
         QueryRegenerateEvent ev = this.server.getQueryInformation();
-        this.longData = ev.getLongQuery();
-        this.shortData = ev.getShortQuery();
+        this.longData = ev.getLongQuery(this.longData);
+        this.shortData = ev.getShortQuery(this.shortData);
         this.timeout = System.currentTimeMillis() + ev.getTimeout();
     }
 

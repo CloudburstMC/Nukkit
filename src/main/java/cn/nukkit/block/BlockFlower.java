@@ -54,7 +54,7 @@ public class BlockFlower extends BlockFlowable {
                 "Unknown",
                 "Unknown"
         };
-        return names[this.meta & 0x0f];
+        return names[this.getDamage() & 0x0f];
     }
 
     @Override

@@ -37,16 +37,16 @@ public class BlockTrappedChest extends BlockChest {
         int[] faces = {2, 5, 3, 4};
 
         BlockEntityChest chest = null;
-        this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
+        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
         for (BlockFace side : Plane.HORIZONTAL) {
-            if ((this.meta == 4 || this.meta == 5) && (side == BlockFace.WEST || side == BlockFace.EAST)) {
+            if ((this.getDamage() == 4 || this.getDamage() == 5) && (side == BlockFace.WEST || side == BlockFace.EAST)) {
                 continue;
-            } else if ((this.meta == 3 || this.meta == 2) && (side == BlockFace.NORTH || side == BlockFace.SOUTH)) {
+            } else if ((this.getDamage() == 3 || this.getDamage() == 2) && (side == BlockFace.NORTH || side == BlockFace.SOUTH)) {
                 continue;
             }
             Block c = this.getSide(side);
-            if (c instanceof BlockTrappedChest && c.getDamage() == this.meta) {
+            if (c instanceof BlockTrappedChest && c.getDamage() == this.getDamage()) {
                 BlockEntity blockEntity = this.getLevel().getBlockEntity(c);
                 if (blockEntity instanceof BlockEntityChest && !((BlockEntityChest) blockEntity).isPaired()) {
                     chest = (BlockEntityChest) blockEntity;

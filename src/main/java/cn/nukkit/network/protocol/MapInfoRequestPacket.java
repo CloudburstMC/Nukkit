@@ -13,7 +13,7 @@ public class MapInfoRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-        mapId = this.getVarLong();
+        mapId = this.getEntityUniqueId();
     }
 
     @Override

@@ -21,12 +21,14 @@ public class MainLogger extends ThreadedLogger {
 
     protected final String logPath;
     protected final ConcurrentLinkedQueue<String> logBuffer = new ConcurrentLinkedQueue<>();
-    protected boolean shutdown;
+    protected boolean shutdown = false;
+    private boolean isShutdown = false;
     protected LogLevel logLevel = LogLevel.DEFAULT_LEVEL;
     private final Map<TextFormat, String> replacements = new EnumMap<>(TextFormat.class);
     private final TextFormat[] colors = TextFormat.values();
 
     protected static MainLogger logger;
+    private File logFile;
 
     public MainLogger(String logFile) {
         this(logFile, LogLevel.DEFAULT_LEVEL);
@@ -39,6 +41,8 @@ public class MainLogger extends ThreadedLogger {
         }
         logger = this;
         this.logPath = logFile;
+        this.setName("Logger");
+        this.initialize();
         this.start();
     }
 
@@ -52,54 +56,54 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void emergency(String message) {
-        if (logLevel.getLevel() <= LogLevel.EMERGENCY.getLevel())
+        if (LogLevel.EMERGENCY.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.RED + "[EMERGENCY] " + message);
     }
 
     @Override
     public void alert(String message) {
-        if (logLevel.getLevel() <= LogLevel.ALERT.getLevel())
+        if (LogLevel.ALERT.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.RED + "[ALERT] " + message);
     }
 
     @Override
     public void critical(String message) {
-        if (logLevel.getLevel() <= LogLevel.CRITICAL.getLevel())
+        if (LogLevel.CRITICAL.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.RED + "[CRITICAL] " + message);
     }
 
     @Override
     public void error(String message) {
-        if (logLevel.getLevel() <= LogLevel.ERROR.getLevel())
+        if (LogLevel.ERROR.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.DARK_RED + "[ERROR] " + message);
     }
 
     @Override
     public void warning(String message) {
-        if (logLevel.getLevel() <= LogLevel.WARNING.getLevel())
+        if (LogLevel.WARNING.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.YELLOW + "[WARNING] " + message);
     }
 
     @Override
     public void notice(String message) {
-        if (logLevel.getLevel() <= LogLevel.NOTICE.getLevel())
+        if (LogLevel.NOTICE.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.AQUA + "[NOTICE] " + message);
     }
 
     @Override
     public void info(String message) {
-        if (logLevel.getLevel() <= LogLevel.INFO.getLevel())
+        if (LogLevel.INFO.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.WHITE + "[INFO] " + message);
     }
 
     @Override
     public void debug(String message) {
-        if (logLevel.getLevel() <= LogLevel.DEBUG.getLevel())
+        if (LogLevel.DEBUG.getLevel() <= logLevel.getLevel())
             this.send(TextFormat.GRAY + "[DEBUG] " + message);
     }
 
     public void setLogDebug(Boolean logDebug) {
-        this.logLevel = logDebug ? LogLevel.INFO : LogLevel.DEBUG;
+        this.logLevel = logDebug ? LogLevel.DEBUG : LogLevel.INFO;
     }
 
     public void logException(Exception e) {
@@ -108,36 +112,22 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void log(LogLevel level, String message) {
-        switch (level) {
-            case EMERGENCY:
-                this.emergency(message);
-                break;
-            case ALERT:
-                this.alert(message);
-                break;
-            case CRITICAL:
-                this.critical(message);
-                break;
-            case ERROR:
-                this.error(message);
-                break;
-            case WARNING:
-                this.warning(message);
-                break;
-            case NOTICE:
-                this.notice(message);
-                break;
-            case INFO:
-                this.info(message);
-                break;
-            case DEBUG:
-                this.debug(message);
-                break;
-        }
+        level.log(this, message);
     }
 
     public void shutdown() {
-        this.shutdown = true;
+        synchronized (this) {
+            this.shutdown = true;
+            this.interrupt();
+            while (!this.isShutdown) {
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    // Ignore exception and treat it as we're done
+                    return;
+                }
+            }
+        }
     }
 
     protected void send(String message) {
@@ -171,8 +161,21 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void run() {
+        do {
+            waitForMessage();
+            flushBuffer(logFile);
+        } while (!this.shutdown);
+
+        flushBuffer(logFile);
+        synchronized (this) {
+            this.isShutdown = true;
+            this.notify();
+        }
+    }
+
+    private void initialize() {
         AnsiConsole.systemInstall();
-        File logFile = new File(logPath);
+        logFile = new File(logPath);
         if (!logFile.exists()) {
             try {
                 logFile.createNewFile();
@@ -217,25 +220,23 @@ public class MainLogger extends ThreadedLogger {
         replacements.put(TextFormat.UNDERLINE, Ansi.ansi().a(Ansi.Attribute.UNDERLINE).toString());
         replacements.put(TextFormat.ITALIC, Ansi.ansi().a(Ansi.Attribute.ITALIC).toString());
         replacements.put(TextFormat.RESET, Ansi.ansi().a(Ansi.Attribute.RESET).toString());
-        this.shutdown = false;
-        do {
-            flushBuffer(logFile);
-        } while (!this.shutdown);
-        flushBuffer(logFile);
     }
 
-    private void flushBuffer(File logFile) {
-        if (logBuffer.isEmpty()) {
+    private void waitForMessage() {
+        while (logBuffer.isEmpty()) {
             try {
                 synchronized (this) {
                     wait(25000); // Wait for next message
                 }
                 Thread.sleep(5); // Buffer for 5ms to reduce back and forth between disk
-            } catch (InterruptedException ignore) {
-            }
+            } catch (InterruptedException ignore) {}
         }
+    }
+
+    private void flushBuffer(File logFile) {
+        Writer writer = null;
         try {
-            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024);
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024);
             Date now = new Date();
             String consoleDateFormat = new SimpleDateFormat("HH:mm:ss ").format(now);
             String fileDateFormat = new SimpleDateFormat("Y-M-d HH:mm:ss ").format(now);
@@ -252,9 +253,16 @@ public class MainLogger extends ThreadedLogger {
                 }
             }
             writer.flush();
-            writer.close();
         } catch (Exception e) {
             this.logException(e);
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                this.logException(e);
+            }
         }
     }
 

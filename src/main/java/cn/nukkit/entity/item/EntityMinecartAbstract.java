@@ -19,6 +19,7 @@ import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecart;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.SmokeParticle;
@@ -242,7 +243,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 if (instantKill && (!hasCustomName())) {
                     kill();
                 } else {
-                    if (level.getGameRules().getBoolean("doEntityDrops")) {
+                    if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
                         dropItem();
                     }
                     close();
@@ -687,26 +688,26 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             if (namedTag.getBoolean("CustomDisplayTile")) {
                 int display = namedTag.getInt("DisplayTile");
                 int offSet = namedTag.getInt("DisplayOffset");
-                setDataProperty(new ByteEntityData(DATA_MINECART_HAS_DISPLAY, 1));
-                setDataProperty(new IntEntityData(DATA_MINECART_DISPLAY_BLOCK, display));
-                setDataProperty(new IntEntityData(DATA_MINECART_DISPLAY_OFFSET, offSet));
+                setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 1));
+                setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, display));
+                setDataProperty(new IntEntityData(DATA_DISPLAY_OFFSET, offSet));
             }
         } else {
             int display = blockInside == null ? 0
                     : blockInside.getId()
                     | blockInside.getDamage() << 16;
             if (display == 0) {
-                setDataProperty(new ByteEntityData(DATA_MINECART_HAS_DISPLAY, 0));
+                setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 0));
                 return;
             }
-            setDataProperty(new ByteEntityData(DATA_MINECART_HAS_DISPLAY, 1));
-            setDataProperty(new IntEntityData(DATA_MINECART_DISPLAY_BLOCK, display));
-            setDataProperty(new IntEntityData(DATA_MINECART_DISPLAY_OFFSET, 6));
+            setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 1));
+            setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, display));
+            setDataProperty(new IntEntityData(DATA_DISPLAY_OFFSET, 6));
         }
     }
 
     private void saveEntityData() {
-        boolean hasDisplay = super.getDataPropertyByte(DATA_MINECART_HAS_DISPLAY) == 1
+        boolean hasDisplay = super.getDataPropertyByte(DATA_HAS_DISPLAY) == 1
                 || blockInside != null;
         int display;
         int offSet;
@@ -714,7 +715,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         if (hasDisplay) {
             display = blockInside.getId()
                     | blockInside.getDamage() << 16;
-            offSet = getDataPropertyInt(DATA_MINECART_DISPLAY_OFFSET);
+            offSet = getDataPropertyInt(DATA_DISPLAY_OFFSET);
             namedTag.putInt("DisplayTile", display);
             namedTag.putInt("DisplayOffset", offSet);
         }
@@ -733,15 +734,15 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 blockInside = block;
                 int display = blockInside.getId()
                         | blockInside.getDamage() << 16;
-                setDataProperty(new ByteEntityData(DATA_MINECART_HAS_DISPLAY, 1));
-                setDataProperty(new IntEntityData(DATA_MINECART_DISPLAY_BLOCK, display));
+                setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 1));
+                setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, display));
                 setDisplayBlockOffset(6);
             }
         } else {
             // Set block to air (default).
             blockInside = null;
-            setDataProperty(new ByteEntityData(DATA_MINECART_HAS_DISPLAY, 0));
-            setDataProperty(new IntEntityData(DATA_MINECART_DISPLAY_BLOCK, 0));
+            setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 0));
+            setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, 0));
             setDisplayBlockOffset(0);
         }
         return true;
@@ -764,7 +765,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      */
     @API(usage = Usage.EXPERIMENTAL, definition = Definition.PLATFORM_NATIVE)
     public void setDisplayBlockOffset(int offset) {
-        setDataProperty(new IntEntityData(DATA_MINECART_DISPLAY_OFFSET, offset));
+        setDataProperty(new IntEntityData(DATA_DISPLAY_OFFSET, offset));
     }
 
     /**
@@ -774,7 +775,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      */
     @API(usage = Usage.EXPERIMENTAL, definition = Definition.UNIVERSAL)
     public int getDisplayBlockOffset() {
-        return super.getDataPropertyInt(DATA_MINECART_DISPLAY_OFFSET);
+        return super.getDataPropertyInt(DATA_DISPLAY_OFFSET);
     }
 
     /**

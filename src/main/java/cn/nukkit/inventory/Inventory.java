@@ -27,7 +27,11 @@ public interface Inventory {
 
     Item getItem(int index);
 
-    boolean setItem(int index, Item item);
+    default boolean setItem(int index, Item item) {
+        return setItem(index, item, true);
+    }
+
+    boolean setItem(int index, Item item, boolean send);
 
     Item[] addItem(Item... slots);
 
@@ -41,13 +45,13 @@ public interface Inventory {
 
     void sendContents(Player player);
 
-    void sendContents(Player[] players);
+    void sendContents(Player... players);
 
     void sendContents(Collection<Player> players);
 
     void sendSlot(int index, Player player);
 
-    void sendSlot(int index, Player[] players);
+    void sendSlot(int index, Player... players);
 
     void sendSlot(int index, Collection<Player> players);
 
@@ -55,13 +59,23 @@ public interface Inventory {
 
     Map<Integer, Item> all(Item item);
 
-    int first(Item item);
+    default int first(Item item) {
+        return first(item, false);
+    }
+
+    int first(Item item, boolean exact);
 
     int firstEmpty(Item item);
 
+    void decreaseCount(int slot);
+
     void remove(Item item);
 
-    boolean clear(int index);
+    default boolean clear(int index) {
+        return clear(index, true);
+    }
+
+    boolean clear(int index, boolean send);
 
     void clearAll();
 
@@ -83,5 +97,5 @@ public interface Inventory {
 
     void onClose(Player who);
 
-    void onSlotChange(int index, Item before);
+    void onSlotChange(int index, Item before, boolean send);
 }

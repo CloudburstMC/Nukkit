@@ -1,9 +1,11 @@
 package cn.nukkit.level.format.mcregion;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.ByteArrayTag;
@@ -27,7 +29,7 @@ import java.util.Map;
  */
 public class Chunk extends BaseFullChunk {
 
-    protected final CompoundTag nbt;
+    private CompoundTag nbt;
 
     public Chunk(LevelProvider level) {
         this(level, null);
@@ -50,7 +52,6 @@ public class Chunk extends BaseFullChunk {
         }
 
         if (nbt == null) {
-            this.nbt = new CompoundTag("Level");
             return;
         }
 
@@ -68,8 +69,8 @@ public class Chunk extends BaseFullChunk {
             this.nbt.putList(new ListTag<CompoundTag>("TileTicks"));
         }
 
-        if (!(this.nbt.contains("BiomeColors") && (this.nbt.get("BiomeColors") instanceof IntArrayTag))) {
-            this.nbt.putIntArray("BiomeColors", new int[256]);
+        if (!(this.nbt.contains("Biomes") && (this.nbt.get("Biomes") instanceof ByteArrayTag))) {
+            this.nbt.putByteArray("Biomes", new byte[256]);
         }
 
         if (!(this.nbt.contains("HeightMap") && (this.nbt.get("HeightMap") instanceof IntArrayTag))) {
@@ -98,34 +99,41 @@ public class Chunk extends BaseFullChunk {
             }
         }
 
-        this.x = this.nbt.getInt("xPos");
-        this.z = this.nbt.getInt("zPos");
+        this.setPosition(this.nbt.getInt("xPos"), this.nbt.getInt("zPos"));
         this.blocks = this.nbt.getByteArray("Blocks");
         this.data = this.nbt.getByteArray("Data");
         this.skyLight = this.nbt.getByteArray("SkyLight");
         this.blockLight = this.nbt.getByteArray("BlockLight");
-        int[] biomeColors = this.nbt.getIntArray("BiomeColors");
-        if (biomeColors.length != 256) {
-            biomeColors = new int[256];
-            Arrays.fill(biomeColors, Binary.readInt(new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00}));
-        }
-        this.biomeColors = biomeColors;
-        int[] heightMap = this.nbt.getIntArray("HeightMap");
-        if (heightMap.length != 256) {
-            heightMap = new int[256];
-            Arrays.fill(heightMap, 127);
-        }
-        this.heightMap = heightMap;
 
-        this.extraData = extraData;
+        if (this.nbt.contains("BiomeColors")) {
+            this.biomes = new byte[16 * 16];
+            int[] biomeColors = this.nbt.getIntArray("BiomeColors");
+            if (biomeColors.length == 256) {
+                BiomePalette palette = new BiomePalette(biomeColors);
+                for (int x = 0; x < 16; x++)    {
+                    for (int z = 0; z < 16; z++)    {
+                        this.biomes[(x << 4) | z] = (byte) (palette.get(x, z) >> 24);
+                    }
+                }
+            }
+        } else {
+            this.biomes = this.nbt.getByteArray("Biomes");
+        }
+
+        int[] heightMap = this.nbt.getIntArray("HeightMap");
+        this.heightMap = new byte[256];
+        if (heightMap.length != 256) {
+            Arrays.fill(this.heightMap, (byte) 255);
+        } else {
+            for (int i = 0; i < heightMap.length; i++) {
+                this.heightMap[i] = (byte) heightMap[i];
+            }
+        }
+
+        if (!extraData.isEmpty()) this.extraData = extraData;
 
         this.NBTentities = ((ListTag<CompoundTag>) this.nbt.getList("Entities")).getAll();
         this.NBTtiles = ((ListTag<CompoundTag>) this.nbt.getList("TileEntities")).getAll();
-
-        if (this.nbt.contains("Biomes")) {
-            this.checkOldBiomes(this.nbt.getByteArray("Biomes"));
-            this.nbt.remove("Biomes");
-        }
 
         this.nbt.remove("Blocks");
         this.nbt.remove("Data");
@@ -144,7 +152,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setBlockId(int x, int y, int z, int id) {
         this.blocks[(x << 11) | (z << 7) | y] = (byte) id;
-        this.hasChanged = true;
+        setChanged();
     }
 
     @Override
@@ -166,7 +174,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.data[i] = (byte) (((data & 0x0f) << 4) | (old & 0x0f));
         }
-        this.hasChanged = true;
+        setChanged();
     }
 
     @Override
@@ -182,28 +190,21 @@ public class Chunk extends BaseFullChunk {
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z) {
-        return setBlock(x, y, z, null, null);
+    public boolean setBlock(int x, int y, int z, int blockId) {
+        return setBlock(x, y, z, blockId, 0);
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z, Integer blockId) {
-        return setBlock(x, y, z, blockId, null);
-    }
-
-    @Override
-    public boolean setBlock(int x, int y, int z, Integer blockId, Integer meta) {
+    public boolean setBlock(int x, int y, int z, int blockId, int meta) {
         int i = (x << 11) | (z << 7) | y;
         boolean changed = false;
-        if (blockId != null) {
-            byte id = blockId.byteValue();
-            if (this.blocks[i] != id) {
-                this.blocks[i] = id;
-                changed = true;
-            }
+        byte id = (byte) blockId;
+        if (this.blocks[i] != id) {
+            this.blocks[i] = id;
+            changed = true;
         }
 
-        if (meta != null) {
+        if (Block.hasMeta[blockId]) {
             i >>= 1;
             int old = this.data[i] & 0xff;
             if ((y & 1) == 0) {
@@ -213,16 +214,56 @@ public class Chunk extends BaseFullChunk {
                 }
             } else {
                 this.data[i] = (byte) (((meta & 0x0f) << 4) | (old & 0x0f));
-                if (!meta.equals(old >> 4)) {
+                if (meta != (old >> 4)) {
                     changed = true;
                 }
             }
         }
 
         if (changed) {
-            this.hasChanged = true;
+            setChanged();
         }
         return changed;
+    }
+
+    @Override
+    public Block getAndSetBlock(int x, int y, int z, Block block) {
+        int i = (x << 11) | (z << 7) | y;
+        boolean changed = false;
+        byte id = (byte) block.getId();
+
+        byte previousId = this.blocks[i];
+
+        if (previousId != id) {
+            this.blocks[i] = id;
+            changed = true;
+        }
+
+        int previousData;
+        i >>= 1;
+        int old = this.data[i] & 0xff;
+        if ((y & 1) == 0) {
+            previousData = old & 0x0f;
+            if (Block.hasMeta[block.getId()]) {
+                this.data[i] = (byte) ((old & 0xf0) | (block.getDamage() & 0x0f));
+                if (block.getDamage() != previousData) {
+                    changed = true;
+                }
+            }
+        } else {
+            previousData = old >> 4;
+            if (Block.hasMeta[block.getId()]) {
+                this.data[i] = (byte) (((block.getDamage() & 0x0f) << 4) | (old & 0x0f));
+                if (block.getDamage() != previousData) {
+                    changed = true;
+                }
+            }
+        }
+
+        if (changed) {
+            setChanged();
+        }
+        return Block.get(previousId, previousData);
     }
 
     @Override
@@ -244,7 +285,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.skyLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
-        this.hasChanged = true;
+        setChanged();
     }
 
     @Override
@@ -266,35 +307,7 @@ public class Chunk extends BaseFullChunk {
         } else {
             this.blockLight[i] = (byte) (((level & 0x0f) << 4) | (old & 0x0f));
         }
-        this.hasChanged = true;
-    }
-
-    @Override
-    public byte[] getBlockIdColumn(int x, int z) {
-        byte[] b = new byte[128];
-        System.arraycopy(this.blocks, (x << 11) | (z << 7), b, 0, 128);
-        return b;
-    }
-
-    @Override
-    public byte[] getBlockDataColumn(int x, int z) {
-        byte[] b = new byte[64];
-        System.arraycopy(this.data, (x << 10) | (z << 6), b, 0, 64);
-        return b;
-    }
-
-    @Override
-    public byte[] getBlockSkyLightColumn(int x, int z) {
-        byte[] b = new byte[64];
-        System.arraycopy(this.skyLight, (x << 10) | (z << 6), b, 0, 64);
-        return b;
-    }
-
-    @Override
-    public byte[] getBlockLightColumn(int x, int z) {
-        byte[] b = new byte[64];
-        System.arraycopy(this.blockLight, (x << 10) | (z << 6), b, 0, 64);
-        return b;
+        setChanged();
     }
 
     @Override
@@ -310,7 +323,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setLightPopulated(boolean value) {
         this.nbt.putBoolean("LightPopulated", value);
-        this.hasChanged = true;
+        setChanged();
     }
 
     @Override
@@ -326,7 +339,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setPopulated(boolean value) {
         this.nbt.putBoolean("TerrainPopulated", value);
-        this.hasChanged = true;
+        setChanged();
     }
 
     @Override
@@ -347,7 +360,7 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setGenerated(boolean value) {
         this.nbt.putBoolean("TerrainGenerated", value);
-        this.hasChanged = true;
+        setChanged();
     }
 
     public static Chunk fromBinary(byte[] data) {
@@ -376,9 +389,10 @@ public class Chunk extends BaseFullChunk {
             int offset = 0;
             Chunk chunk = new Chunk(provider != null ? provider : McRegion.class.newInstance(), null);
             chunk.provider = provider;
-            chunk.x = Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3));
+            int chunkX = (Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3)));
             offset += 4;
-            chunk.z = Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3));
+            int chunkZ = (Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3)));
+            chunk.setPosition(chunkX, chunkZ);
             offset += 4;
             chunk.blocks = Arrays.copyOfRange(data, offset, offset + 32767);
             offset += 32768;
@@ -388,16 +402,10 @@ public class Chunk extends BaseFullChunk {
             offset += 16384;
             chunk.blockLight = Arrays.copyOfRange(data, offset, offset + 16383);
             offset += 16384;
-            chunk.heightMap = new int[256];
-            for (int i = 0; i < 256; i++) {
-                chunk.heightMap[i] = data[offset] & 0xff;
-                offset++;
-            }
-            chunk.biomeColors = new int[256];
-            for (int i = 0; i < 256; i++) {
-                chunk.biomeColors[i] = Binary.readInt(Arrays.copyOfRange(data, offset, offset + 3));
-                offset += 4;
-            }
+            chunk.heightMap = Arrays.copyOfRange(data, offset, offset + 256);
+            offset += 256;
+            chunk.biomes = Arrays.copyOfRange(data, offset, offset + 256);
+            offset += 256;
             byte flags = data[offset++];
             chunk.nbt.putByte("TerrainGenerated", (flags & 0b1));
             chunk.nbt.putByte("TerrainPopulated", ((flags >> 1) & 0b1));
@@ -412,18 +420,14 @@ public class Chunk extends BaseFullChunk {
     @Override
     public byte[] toFastBinary() {
         BinaryStream stream = new BinaryStream(new byte[65536]);
-        stream.put(Binary.writeInt(this.x));
-        stream.put(Binary.writeInt(this.z));
+        stream.put(Binary.writeInt(this.getX()));
+        stream.put(Binary.writeInt(this.getZ()));
         stream.put(this.getBlockIdArray());
         stream.put(this.getBlockDataArray());
         stream.put(this.getBlockSkyLightArray());
         stream.put(this.getBlockLightArray());
-        for (int height : this.getHeightMapArray()) {
-            stream.putByte((byte) height);
-        }
-        for (int color : this.getBiomeColorArray()) {
-            stream.put(Binary.writeInt(color));
-        }
+        stream.put(this.getHeightMapArray());
+        stream.put(this.getBiomeIdArray());
         stream.putByte((byte) ((this.isLightPopulated() ? 1 << 2 : 0) + (this.isPopulated() ? 1 << 2 : 0) + (this.isGenerated() ? 1 : 0)));
         return stream.getBuffer();
     }
@@ -431,17 +435,24 @@ public class Chunk extends BaseFullChunk {
     @Override
     public byte[] toBinary() {
         CompoundTag nbt = this.getNBT().copy();
+        nbt.remove("BiomeColors");
 
-        nbt.putInt("xPos", this.x);
-        nbt.putInt("zPos", this.z);
+        nbt.putInt("xPos", this.getX());
+        nbt.putInt("zPos", this.getZ());
 
         if (this.isGenerated()) {
             nbt.putByteArray("Blocks", this.getBlockIdArray());
             nbt.putByteArray("Data", this.getBlockDataArray());
             nbt.putByteArray("SkyLight", this.getBlockSkyLightArray());
             nbt.putByteArray("BlockLight", this.getBlockLightArray());
-            nbt.putIntArray("BiomeColors", this.getBiomeColorArray());
-            nbt.putIntArray("HeightMap", this.getHeightMapArray());
+            nbt.putByteArray("Biomes", this.getBiomeIdArray());
+
+            int[] heightInts = new int[256];
+            byte[] heightBytes = this.getHeightMapArray();
+            for (int i = 0; i < heightInts.length; i++) {
+                heightInts[i] = heightBytes[i] & 0xFF;
+            }
+            nbt.putIntArray("HeightMap", heightInts);
         }
 
 
@@ -502,8 +513,7 @@ public class Chunk extends BaseFullChunk {
                 chunk = new Chunk(McRegion.class, null);
             }
 
-            chunk.x = chunkX;
-            chunk.z = chunkZ;
+            chunk.setPosition(chunkX, chunkZ);
             chunk.data = new byte[16384];
             chunk.blocks = new byte[32768];
             byte[] skyLight = new byte[16384];
@@ -511,8 +521,8 @@ public class Chunk extends BaseFullChunk {
             chunk.skyLight = skyLight;
             chunk.blockLight = chunk.data;
 
-            chunk.heightMap = new int[256];
-            chunk.biomeColors = new int[256];
+            chunk.heightMap = new byte[256];
+            chunk.biomes = new byte[16 * 16];
 
             chunk.nbt.putByte("V", 1);
             chunk.nbt.putLong("InhabitedTime", 0);

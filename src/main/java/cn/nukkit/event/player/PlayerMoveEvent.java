@@ -15,10 +15,17 @@ public class PlayerMoveEvent extends PlayerEvent implements Cancellable {
     private Location from;
     private Location to;
 
+    private boolean resetBlocksAround;
+
     public PlayerMoveEvent(Player player, Location from, Location to) {
+        this(player, from, to, true);
+    }
+
+    public PlayerMoveEvent(Player player, Location from, Location to, boolean resetBlocks) {
         this.player = player;
         this.from = from;
         this.to = to;
+        this.resetBlocksAround = resetBlocks;
     }
 
     public Location getFrom() {
@@ -35,5 +42,18 @@ public class PlayerMoveEvent extends PlayerEvent implements Cancellable {
 
     public void setTo(Location to) {
         this.to = to;
+    }
+
+    public boolean isResetBlocksAround() {
+        return resetBlocksAround;
+    }
+
+    public void setResetBlocksAround(boolean value) {
+        this.resetBlocksAround = value;
+    }
+
+    @Override
+    public void setCancelled() {
+        super.setCancelled();
     }
 }

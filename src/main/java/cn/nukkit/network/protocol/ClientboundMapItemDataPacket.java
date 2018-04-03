@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 /**
  * Created by CreeperFace on 5.3.2017.
  */
-public class ClientboundMapItemDataPacket extends DataPacket {
+public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to 1.2
 
     public int[] eids = new int[0];
 
@@ -19,6 +19,8 @@ public class ClientboundMapItemDataPacket extends DataPacket {
     public int height;
     public int offsetX;
     public int offsetZ;
+
+    public byte dimensionId;
 
     public MapDecorator[] decorators = new MapDecorator[0];
     public int[] colors = new int[0];
@@ -42,7 +44,7 @@ public class ClientboundMapItemDataPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarLong(mapId);
+        this.putEntityUniqueId(mapId);
 
         int update = 0;
         if (eids.length > 0) {
@@ -51,15 +53,18 @@ public class ClientboundMapItemDataPacket extends DataPacket {
         if (decorators.length > 0) {
             update |= DECORATIONS_UPDATE;
         }
+
         if (image != null || colors.length > 0) {
             update |= TEXTURE_UPDATE;
         }
+
         this.putUnsignedVarInt(update);
+        this.putByte(this.dimensionId);
 
         if ((update & 0x08) != 0) { //TODO: find out what these are for
             this.putUnsignedVarInt(eids.length);
             for (int eid : eids) {
-                this.putVarInt(eid);
+                this.putEntityUniqueId(eid);
             }
         }
         if ((update & (TEXTURE_UPDATE | DECORATIONS_UPDATE)) != 0) {
@@ -70,11 +75,12 @@ public class ClientboundMapItemDataPacket extends DataPacket {
             this.putUnsignedVarInt(decorators.length);
 
             for (MapDecorator decorator : decorators) {
-                this.putVarInt((decorator.rotation & 0x0f) | (decorator.icon << 4));
+                this.putByte(decorator.rotation);
+                this.putByte(decorator.icon);
                 this.putByte(decorator.offsetX);
                 this.putByte(decorator.offsetZ);
                 this.putString(decorator.label);
-                this.putLInt(decorator.color.getRGB());
+                this.putVarInt(decorator.color.getRGB());
             }
         }
 
@@ -83,6 +89,8 @@ public class ClientboundMapItemDataPacket extends DataPacket {
             this.putVarInt(height);
             this.putVarInt(offsetX);
             this.putVarInt(offsetZ);
+
+            this.putUnsignedVarInt(width * height);
 
             if (image != null) {
                 for (int y = 0; y < width; y++) {

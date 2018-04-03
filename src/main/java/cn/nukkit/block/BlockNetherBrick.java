@@ -11,11 +11,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockNetherBrick extends BlockSolid {
 
     public BlockNetherBrick() {
-        this(0);
-    }
-
-    public BlockNetherBrick(int meta) {
-        super(0);
     }
 
     @Override

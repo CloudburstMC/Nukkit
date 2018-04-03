@@ -7,8 +7,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * Author: BeYkeRYkt
- * Nukkit Project
+ * Author: BeYkeRYkt Nukkit Project
  */
 public class EntityOcelot extends EntityAnimal {
 
@@ -35,21 +34,8 @@ public class EntityOcelot extends EntityAnimal {
     }
 
     @Override
-    public float getEyeHeight() {
-        if (isBaby()) {
-            return 0.35f * getHeight(); // No have information
-        }
-        return 0.7f * getHeight();
-    }
-
-    @Override
     public String getName() {
-        return this.getNameTag();
-    }
-
-    @Override
-    public Item[] getDrops() {
-        return new Item[]{};
+        return "Ocelot";
     }
 
     @Override
@@ -60,7 +46,7 @@ public class EntityOcelot extends EntityAnimal {
     @Override
     public void initEntity() {
         super.initEntity();
-        setMaxHealth(8);
+        setMaxHealth(10);
     }
 
     @Override

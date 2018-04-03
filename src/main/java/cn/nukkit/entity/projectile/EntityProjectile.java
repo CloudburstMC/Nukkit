@@ -55,7 +55,7 @@ public abstract class EntityProjectile extends Entity {
     }
 
     public void onCollideWithEntity(Entity entity) {
-        this.server.getPluginManager().callEvent(new ProjectileHitEvent(this));
+        this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity)));
         float damage = this.getResultDamage();
 
         EntityDamageEvent ev;

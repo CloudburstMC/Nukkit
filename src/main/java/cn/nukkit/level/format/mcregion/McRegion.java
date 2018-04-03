@@ -7,6 +7,7 @@ import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
+import cn.nukkit.level.format.generic.BaseRegionLoader;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -14,7 +15,6 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,10 +30,6 @@ import java.util.regex.Pattern;
  * Nukkit Project
  */
 public class McRegion extends BaseLevelProvider {
-
-    protected final Map<Long, RegionLoader> regions = new HashMap<>();
-
-    protected Map<Long, Chunk> chunks = new HashMap<>();
 
     public McRegion(Level level, String path) throws IOException {
         super(level, path);
@@ -107,6 +103,8 @@ public class McRegion extends BaseLevelProvider {
             throw new ChunkException("Invalid Chunk Sent");
         }
 
+        long timestamp = chunk.getChanges();
+
         byte[] tiles = new byte[0];
 
         if (!chunk.getBlockEntities().isEmpty()) {
@@ -143,12 +141,8 @@ public class McRegion extends BaseLevelProvider {
         stream.put(chunk.getBlockDataArray());
         stream.put(chunk.getBlockSkyLightArray());
         stream.put(chunk.getBlockLightArray());
-        for (int height : chunk.getHeightMapArray()) {
-            stream.putByte((byte) height);
-        }
-        for (int color : chunk.getBiomeColorArray()) {
-            stream.put(Binary.writeInt(color));
-        }
+        stream.put(chunk.getHeightMapArray());
+        stream.put(chunk.getBiomeIdArray());
         if (extraData != null) {
             stream.put(extraData.getBuffer());
         } else {
@@ -156,119 +150,37 @@ public class McRegion extends BaseLevelProvider {
         }
         stream.put(tiles);
 
-        this.getLevel().chunkRequestCallback(x, z, stream.getBuffer());
+        this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
 
         return null;
     }
 
     @Override
-    public void unloadChunks() {
-        for (Chunk chunk : new ArrayList<>(this.chunks.values())) {
-            this.unloadChunk(chunk.getX(), chunk.getZ(), false);
-        }
-        this.chunks = new HashMap<>();
-    }
-
-    @Override
-    public String getGenerator() {
-        return this.levelData.getString("generatorName");
-    }
-
-    @Override
-    public Map<String, Object> getGeneratorOptions() {
-        return new HashMap<String, Object>() {
-            {
-                put("preset", levelData.getString("generatorOptions"));
-            }
-        };
-    }
-
-    @Override
-    public Map<Long, Chunk> getLoadedChunks() {
-        return this.chunks;
-    }
-
-    @Override
-    public boolean isChunkLoaded(int x, int z) {
-        return this.chunks.containsKey(Level.chunkHash(x, z));
-    }
-
-    @Override
-    public void saveChunks() {
-        for (Chunk chunk : this.chunks.values()) {
-            this.saveChunk(chunk.getX(), chunk.getZ());
-        }
-    }
-
-    @Override
-    public void doGarbageCollection() {
-        int limit = (int) (System.currentTimeMillis() - 50);
-        for (Map.Entry<Long, RegionLoader> entry : this.regions.entrySet()) {
-            long index = entry.getKey();
-            RegionLoader region = entry.getValue();
-            if (region.lastUsed <= limit) {
-                try {
-                    region.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                this.regions.remove(index);
-            }
-        }
-    }
-
-    @Override
-    public boolean loadChunk(int x, int z) {
-        return this.loadChunk(x, z, false);
-    }
-
-    @Override
-    public boolean loadChunk(int x, int z, boolean create) {
-        long index = Level.chunkHash(x, z);
-        if (this.chunks.containsKey(index)) {
-            return true;
-        }
-        int regionX = x >> 5;
-        int regionZ = z >> 5;
-        this.loadRegion(regionX, regionZ);
+    public BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create) {
+        int regionX = getRegionIndexX(chunkX);
+        int regionZ = getRegionIndexZ(chunkZ);
+        BaseRegionLoader region = this.loadRegion(regionX, regionZ);
         this.level.timings.syncChunkLoadDataTimer.startTiming();
-        Chunk chunk;
+        BaseFullChunk chunk;
         try {
-            chunk = this.getRegion(regionX, regionZ).readChunk(x & 0x1f, z & 0x1f);
+            chunk = region.readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        if (chunk == null && create) {
-            chunk = this.getEmptyChunk(x, z);
+        if (chunk == null) {
+            if (create) {
+                chunk = this.getEmptyChunk(chunkX, chunkZ);
+                putChunk(index, chunk);
+            }
+        } else {
+            putChunk(index, chunk);
         }
         this.level.timings.syncChunkLoadDataTimer.stopTiming();
-
-        if (chunk != null) {
-            this.chunks.put(index, chunk);
-            return true;
-        }
-        return false;
+        return chunk;
     }
 
     public Chunk getEmptyChunk(int chunkX, int chunkZ) {
         return Chunk.getEmptyChunk(chunkX, chunkZ, this);
-    }
-
-    @Override
-    public boolean unloadChunk(int x, int z) {
-        return this.unloadChunk(x, z, true);
-    }
-
-    @Override
-    public boolean unloadChunk(int x, int z, boolean safe) {
-        long index = Level.chunkHash(x, z);
-        Chunk chunk = this.chunks.containsKey(index) ? this.chunks.get(index) : null;
-        if (chunk != null && chunk.unload(false, safe)) {
-            this.chunks.remove(index);
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -288,8 +200,7 @@ public class McRegion extends BaseLevelProvider {
             throw new ChunkException("Invalid Chunk class");
         }
         this.loadRegion(x >> 5, z >> 5);
-        chunk.setX(x);
-        chunk.setZ(z);
+        chunk.setPosition(x, z);
         try {
             this.getRegion(x >> 5, z >> 5).writeChunk(chunk);
         } catch (Exception e) {
@@ -297,80 +208,23 @@ public class McRegion extends BaseLevelProvider {
         }
     }
 
-    protected RegionLoader getRegion(int x, int z) {
-        long index = Level.chunkHash(x, z);
-        return this.regions.containsKey(index) ? this.regions.get(index) : null;
-    }
-
-    @Override
-    public Chunk getChunk(int x, int z) {
-        return this.getChunk(x, z, false);
-    }
-
-    @Override
-    public Chunk getChunk(int x, int z, boolean create) {
-        long index = Level.chunkHash(x, z);
-        if (this.chunks.containsKey(index)) {
-            return this.chunks.get(index);
-        } else {
-            this.loadChunk(x, z, create);
-            return this.chunks.containsKey(index) ? this.chunks.get(index) : null;
-        }
-    }
-
-    @Override
-    public void setChunk(int chunkX, int chunkZ, FullChunk chunk) {
-        if (!(chunk instanceof Chunk)) {
-            throw new ChunkException("Invalid Chunk class");
-        }
-        chunk.setProvider(this);
-        int regionX = chunkX >> 5;
-        int regionZ = chunkZ >> 5;
-        this.loadRegion(regionX, regionZ);
-        chunk.setX(chunkX);
-        chunk.setZ(chunkZ);
-        long index = Level.chunkHash(chunkX, chunkZ);
-        if (this.chunks.containsKey(index) && !this.chunks.get(index).equals(chunk)) {
-            this.unloadChunk(chunkX, chunkZ, false);
-        }
-        this.chunks.put(index, (Chunk) chunk);
-    }
-
     public static ChunkSection createChunkSection(int y) {
         return null;
     }
 
-    @Override
-    public boolean isChunkGenerated(int x, int z) {
-        RegionLoader region = this.getRegion(x >> 5, z >> 5);
-        return region != null && region.chunkExists(x & 0x1f, z & 0x1f) && this.getChunk(x & 0x1f, z & 0x1f, true).isGenerated();
-    }
-
-    @Override
-    public boolean isChunkPopulated(int x, int z) {
-        Chunk chunk = this.getChunk(x, z);
-        return chunk != null && chunk.isPopulated();
-    }
-
-    protected void loadRegion(int x, int z) {
+    protected BaseRegionLoader loadRegion(int x, int z) {
+        BaseRegionLoader tmp = lastRegion;
+        if (tmp != null && x == tmp.getX() && z == tmp.getZ()) {
+            return tmp;
+        }
         long index = Level.chunkHash(x, z);
-        if (!this.regions.containsKey(index)) {
-            this.regions.put(index, new RegionLoader(this, x, z));
+        BaseRegionLoader region = this.regions.get(index);
+        if (region == null) {
+            region = new RegionLoader(this, x, z);
+            this.regions.put(index, region);
+            return lastRegion = region;
+        } else {
+            return lastRegion = region;
         }
-    }
-
-    @Override
-    public void close() {
-        this.unloadChunks();
-        for (long index : new ArrayList<>(this.regions.keySet())) {
-            RegionLoader region = this.regions.get(index);
-            try {
-                region.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            this.regions.remove(index);
-        }
-        this.level = null;
     }
 }

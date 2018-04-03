@@ -8,7 +8,7 @@ import cn.nukkit.math.NukkitRandom;
 /**
  * Created by Pub4Game on 28.01.2016.
  */
-public class BlockHugeMushroomBrown extends BlockSolid {
+public class BlockHugeMushroomBrown extends BlockSolidMeta {
 
     public BlockHugeMushroomBrown() {
         this(0);

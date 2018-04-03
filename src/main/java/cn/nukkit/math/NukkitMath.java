@@ -45,7 +45,7 @@ public class NukkitMath {
     public static double round(double d, int precision) {
         return ((double) Math.round(d * Math.pow(10, precision))) / Math.pow(10, precision);
     }
-    
+
     public static double clamp(double check, double min, double max) {
         return check > max ? max : (check < min ? min : check);
     }

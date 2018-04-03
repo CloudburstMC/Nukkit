@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -11,11 +10,6 @@ import cn.nukkit.utils.BlockColor;
 public class BlockGrassPath extends BlockGrass {
 
     public BlockGrassPath() {
-        this(0);
-    }
-
-    public BlockGrassPath(int meta) {
-        super(0);
     }
 
     @Override
@@ -34,15 +28,8 @@ public class BlockGrassPath extends BlockGrass {
     }
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
-        return new AxisAlignedBB(
-                this.x,
-                this.y,
-                this.z,
-                this.x + 1,
-                this.y + 0.9375,
-                this.z + 1
-        );
+    public double getMaxY() {
+        return this.y + 0.9375;
     }
 
     @Override

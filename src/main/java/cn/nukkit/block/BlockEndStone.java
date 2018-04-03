@@ -10,11 +10,6 @@ import cn.nukkit.item.ItemTool;
 public class BlockEndStone extends BlockSolid {
 
     public BlockEndStone() {
-        this(0);
-    }
-
-    public BlockEndStone(int meta) {
-        super(0);
     }
 
     @Override
@@ -44,7 +39,7 @@ public class BlockEndStone extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() > ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
                     toItem()
             };
