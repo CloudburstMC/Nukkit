@@ -30,7 +30,7 @@ public class BlockIcePacked extends BlockIce {
 
     @Override
     public boolean onBreak(Item item) {
-        if(item.hasEnchant(Enchantment.ID_SILK_TOUCH)==true) {
+        if(item.getEnchantment(Enchantment.ID_SILK_TOUCH)!=null) {
             return true;
         }
         return this.getLevel().setBlock(this, new BlockWater(), true);
@@ -38,7 +38,7 @@ public class BlockIcePacked extends BlockIce {
 
     @Override
     public Item[] getDrops(Item item) {
-        if(item.hasEnchant(Enchantment.ID_SILK_TOUCH)==true) {
+        if(item.getEnchantment(Enchantment.ID_SILK_TOUCH)!=null) {
             return new Item[]{
                     this.toItem()
             };
