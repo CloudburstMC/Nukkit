@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
@@ -24,6 +25,11 @@ public class BlockIcePacked extends BlockIce {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public boolean onBreak(Item item) {
+        return true;
     }
 
     @Override
