@@ -29,14 +29,6 @@ public class BlockIcePacked extends BlockIce {
     }
 
     @Override
-    public boolean onBreak(Item item) {
-        if(item.getEnchantment(Enchantment.ID_SILK_TOUCH)!=null) {
-            return true;
-        }
-        return this.getLevel().setBlock(this, new BlockWater(), true);
-    }
-
-    @Override
     public Item[] getDrops(Item item) {
         if(item.getEnchantment(Enchantment.ID_SILK_TOUCH)!=null) {
             return new Item[]{
