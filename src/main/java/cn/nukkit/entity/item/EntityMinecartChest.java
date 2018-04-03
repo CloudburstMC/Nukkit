@@ -16,7 +16,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
 
     public EntityMinecartChest(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        super.setDisplayBlock(new BlockChest());
+        super.setDisplayBlock(new BlockChest(), false);
     }
 
     // TODO: 2016/1/30 inventory
@@ -24,6 +24,11 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
     @Override
     public MinecartType getType() {
         return MinecartType.valueOf(1);
+    }
+
+    @Override
+    public boolean isRideable(){
+        return false;
     }
 
     @Override
