@@ -223,6 +223,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public Block breakingBlock = null;
 
     public int pickedXPOrb = 0;
+    private Random random = new Random();
 
     protected int formWindowCount = 0;
     protected Map<Integer, FormWindow> formWindows = new HashMap<>();
@@ -1529,7 +1530,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 //UpdateFoodExpLevel
                 if (distance >= 0.05) {
                     double jump = 0;
-                    double swimming = this.isInsideOfWater() ? 0.015 * distance : 0;
+                    double swimming = this.isWading() ? 0.015 * distance : 0;
                     if (swimming != 0) distance = 0;
                     if (this.isSprinting()) {  //Running
                         if (this.inAirTicks == 3 && swimming == 0) {
@@ -3678,6 +3679,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.health = 0;
+        this.fireTicks = 0;
         this.scheduleUpdate();
 
         PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.stream().toArray(String[]::new)), this.getExperienceLevel());
@@ -4623,7 +4625,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 int exp = xpOrb.getExp();
                 this.addExperience(exp);
                 entity.kill();
-                this.getLevel().addSound(this, Sound.RANDOM_ORB);
+                this.getLevel().addSound(this, Sound.RANDOM_ORB, 0.1F, 0.5F * ((this.random.nextFloat() - this.random.nextFloat()) * 0.7F + 1.8F));
                 pickedXPOrb = tick;
                 return true;
             }

@@ -56,7 +56,7 @@ public abstract class BlockButton extends BlockFlowable {
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         this.setDamage(this.getDamage() ^ 0x08);
         this.level.setBlock(this, this, true, false);
-        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
+        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK, 0.3F, 0.6F);
         this.level.scheduleUpdate(this, 30);
         Vector3 pos = getLocation();
 
@@ -78,7 +78,7 @@ public abstract class BlockButton extends BlockFlowable {
 
                 this.setDamage(this.getDamage() ^ 0x08);
                 this.level.setBlock(this, this, true, false);
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
+                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK, 0.3F, 0.5F);
 
                 Vector3 pos = getLocation();
                 level.updateAroundRedstone(pos, null);

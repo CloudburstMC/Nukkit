@@ -60,7 +60,7 @@ public class BlockLever extends BlockFlowable {
         this.setDamage(this.getDamage() ^ 0x08);
 
         this.getLevel().setBlock(this, this, false, true);
-        this.getLevel().addSound(this, Sound.RANDOM_CLICK); //TODO: coorect pitcj
+        this.getLevel().addSound(this, Sound.RANDOM_CLICK, 0.3F, isPowerOn() ? 0.6F : 0.5F);
 
         LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage());
         BlockFace face = orientation.getFacing();
