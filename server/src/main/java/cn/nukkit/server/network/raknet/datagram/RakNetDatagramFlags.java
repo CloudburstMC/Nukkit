@@ -1,12 +1,12 @@
 package cn.nukkit.server.network.raknet.datagram;
 
-import java.util.BitSet;
+import cn.nukkit.server.util.bitset.ByteBitSet;
 
 public class RakNetDatagramFlags {
-    private final BitSet flags;
+    private final ByteBitSet flags;
 
     public RakNetDatagramFlags(byte flags) {
-        this.flags = BitSet.valueOf(new byte[]{flags});
+        this.flags = new ByteBitSet(flags);
     }
 
     public boolean isValid() {
@@ -34,7 +34,7 @@ public class RakNetDatagramFlags {
     }
 
     public byte getFlagByte() {
-        return flags.toByteArray()[0];
+        return flags.get();
     }
 
     @Override
