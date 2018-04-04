@@ -1252,7 +1252,7 @@ public abstract class Entity extends Location implements Metadatable {
         return hasUpdate;
     }
 
-    private boolean updateRidden() {
+    protected boolean updateRidden() {
         if (this.linkedEntity != null) {
             if (!linkedEntity.isAlive()) {
                 return false;

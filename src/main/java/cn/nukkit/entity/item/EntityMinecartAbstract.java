@@ -71,8 +71,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     public abstract MinecartType getType();
 
-    public abstract boolean isRideable();
-
     public EntityMinecartAbstract(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -114,6 +112,11 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     @Override
     public boolean canDoInteraction() {
         return linkedEntity == null && this.getDisplayBlock() == null;
+    }
+
+    @Override
+    public float getMountedYOffset() {
+        return 0.45F; // Real minecart offset
     }
 
     @Override
@@ -183,7 +186,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             double diffZ = this.lastZ - this.z;
             double yawToChange = yaw;
             if (diffX * diffX + diffZ * diffZ > 0.001D) {
-                yawToChange = (Math.atan2(diffZ, diffX) * 180 / Math.PI);
+                yawToChange = (Math.atan2(diffZ, diffX) * 180 / 3.141592653589793D);
             }
 
             // Reverse yaw if yaw is below 0
@@ -270,12 +273,14 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     @Override
     public boolean onInteract(Player p, Item item) {
-        if (linkedEntity != null && isRideable()) {
+        if (linkedEntity != null) {
             return false;
         }
 
-        // Simple
-        return blockInside == null && mountEntity(p);
+        if (blockInside == null) {
+            mountEntity(p); // Simple
+        }
+        return true;
     }
 
     @Override
@@ -378,7 +383,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 } else {
                     motionX -= motiveX;
                     motionZ -= motiveZ;
-                }
+                }                
             }
         }
     }
@@ -484,8 +489,8 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             expectedSpeed = currentSpeed;
             if (expectedSpeed > 0) {
                 // This is a trajectory (Angle of elevation)
-                playerYawNeg = -Math.sin(linkedEntity.yaw * Math.PI / 180.0F);
-                playerYawPos = Math.cos(linkedEntity.yaw * Math.PI / 180.0F);
+                playerYawNeg = -Math.sin(linkedEntity.yaw * 3.1415927F / 180.0F);
+                playerYawPos = Math.cos(linkedEntity.yaw * 3.1415927F / 180.0F);
                 motion = motionX * motionX + motionZ * motionZ;
                 if (motion < 0.01D) {
                     motionX += playerYawNeg * 0.1D;
@@ -717,32 +722,13 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     }
 
     /**
-     * Set the minecart display block
+     * Set the minecart display block!
      *
      * @param block The block that will changed. Set {@code null} for BlockAir
-     * @return {@code true} if the block is normal block
-     */
-    public boolean setDisplayBlock(Block block){
-        return setDisplayBlock(block, true);
-    }
-
-    /**
-     * Set the minecart display block
-     *
-     * @param block The block that will changed. Set {@code null} for BlockAir
-     * @param update Do update for the block. (This state changes if you want to show the block)
      * @return {@code true} if the block is normal block
      */
     @API(usage = Usage.MAINTAINED, definition = Definition.UNIVERSAL)
-    public boolean setDisplayBlock(Block block, boolean update) {
-        if(!update){
-            if (block.isNormalBlock()) {
-                blockInside = block;
-            } else {
-                blockInside = null;
-            }
-            return true;
-        }
+    public boolean setDisplayBlock(Block block) {
         if (block != null) {
             if (block.isNormalBlock()) {
                 blockInside = block;

@@ -12,7 +12,7 @@ public class EntityMinecartHopper extends EntityMinecartAbstract {
 
     public EntityMinecartHopper(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        super.setDisplayBlock(new BlockHopper(), false);
+        super.setDisplayBlock(new BlockHopper());
     }
 
     // TODO: 2016/12/18 inventory
@@ -20,11 +20,6 @@ public class EntityMinecartHopper extends EntityMinecartAbstract {
     @Override
     public MinecartType getType() {
         return MinecartType.valueOf(5);
-    }
-
-    @Override
-    public boolean isRideable(){
-        return false;
     }
 
     @Override

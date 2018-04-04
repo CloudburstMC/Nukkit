@@ -27,11 +27,6 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
     }
 
     @Override
-    public boolean isRideable(){
-        return true;
-    }
-
-    @Override
     protected void activate(int x, int y, int z, boolean flag) {
         if (flag) {
             if (this.riding != null) {
