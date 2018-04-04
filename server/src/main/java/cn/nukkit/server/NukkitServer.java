@@ -80,6 +80,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Log4j2
 public class NukkitServer implements Server {
@@ -349,10 +351,17 @@ public class NukkitServer implements Server {
         }
         pluginManager.enablePlugins(PluginLoadOrder.POSTNETWORK);
 
+        loop();
+    }
+
+    private void loop() {
+        Lock lock = new ReentrantLock();
+
         while (running.get()) {
-            if (!inputLines.isEmpty()) {
-                String command;
-                while ((command = inputLines.poll()) != null) {
+            lock.lock();
+            try {
+                while (!inputLines.isEmpty()) {
+                    String command = inputLines.take();
                     try {
                         commandManager.executeCommand(consoleCommandSender, command);
                     } catch (CommandNotFoundException e) {
@@ -362,8 +371,14 @@ public class NukkitServer implements Server {
                         log.error("An error occurred whilst running command " + command + " for " + getName(), e);
                     }
                 }
+                lock.newCondition().await(50, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                //Ignore
             }
+            lock.unlock();
         }
+
+        shutdown();
     }
 
     @Override
@@ -676,10 +691,7 @@ public class NukkitServer implements Server {
                 while (newLocale == null) {
                     Locale l = null;
                     try {
-                        String input;
-                        if ((input = inputLines.poll()) == null) {
-                            continue;
-                        }
+                        String input = inputLines.take();
                         l = localeManager.getLocaleByString(input);
                     } catch (Exception ex) {
                         // Ignore
@@ -825,7 +837,7 @@ public class NukkitServer implements Server {
                         // Read line
                         line = lineReader.readLine("> ");
                         inputLines.offer(line);
-                    } catch (UserInterruptException e) {
+                    } catch (UserInterruptException | NullPointerException e) {
                         shutdown();
                     } catch (EndOfFileException e) {
                         // Ignore
