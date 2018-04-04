@@ -1,6 +1,5 @@
 package cn.nukkit.server;
 
-import io.netty.util.ResourceLeakDetector;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import lombok.extern.log4j.Log4j2;
@@ -13,21 +12,19 @@ public class Bootstrap {
     public static final long START_TIME = System.currentTimeMillis();
 
     public static void main(String... args) {
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.ADVANCED);
-
-        boolean ansiEnabled = true;
+        boolean ansiEnabled = false;
         Path path = Paths.get(System.getProperty("user.dir"));
 
-        OptionParser parser = new OptionParser(){{
-            accepts("disable-ansi");
+        OptionParser parser = new OptionParser() {{
+            accepts("enable-ansi");
             accepts("data-path").withRequiredArg().ofType(String.class);
             accepts("plugin-path").withRequiredArg().ofType(String.class);
         }};
         // Get arguments
         OptionSet options = parser.parse(args);
 
-        if (options.has("disable-ansi")) {
-            ansiEnabled = false;
+        if (options.has("enable-ansi")) {
+            ansiEnabled = true;
         }
 
         Path dataPath;
@@ -54,7 +51,7 @@ public class Bootstrap {
         try {
             server.boot();
         } catch (Exception e) {
-            log.throwing(e);
+            throw new RuntimeException("Exception occurred whilst server was running", e);
         }
 
         log.info("Stopping server...");
