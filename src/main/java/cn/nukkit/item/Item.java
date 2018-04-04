@@ -631,6 +631,10 @@ public class Item implements Cloneable, BlockID, ItemID {
         return enchantments.stream().toArray(Enchantment[]::new);
     }
 
+    public boolean hasEnchantment(Enchantment ench) {
+        return this.getEnchantment(ench) != null;
+    }
+
     public boolean hasCustomName() {
         if (!this.hasCompoundTag()) {
             return false;
