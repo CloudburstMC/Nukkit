@@ -54,6 +54,6 @@ public class ByteBitSet implements BitSet {
         if (o == this) return true;
         if (!(o instanceof BitSet)) return false;
         BitSet that = (BitSet) o;
-        return this.bitset == that.getAsLong();
+        return this.bitset == that.getAsByte();
     }
 }
