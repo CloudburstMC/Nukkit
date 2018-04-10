@@ -32,9 +32,10 @@ public enum EnumLevel {
             // Generate the nether world
             Server.getInstance().generateLevel("nether", seed, generator);
 
-            // Finally, load the level if not already loaded
+            // Finally, load the level if not already loaded and set the level
             if (!Server.getInstance().isLevelLoaded("nether")) {
                 Server.getInstance().loadLevel("nether");
+                NETHER.level = Server.getInstance().getLevelByName("nether");
             }
 
         } else if (NETHER.level == null && !Server.getInstance().isNetherAllowed()) {
