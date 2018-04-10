@@ -20,7 +20,7 @@ public enum EnumLevel {
     public static void initLevels() {
         OVERWORLD.level = Server.getInstance().getDefaultLevel();
 
-        // attempt to load the nether world
+        // attempt to load the nether world if it is allowed in server properties
         if (Server.getInstance().isNetherAllowed() && !Server.getInstance().loadLevel("nether")) {
 
             // Nether is allowed, and not found, create the default nether world
@@ -42,14 +42,8 @@ public enum EnumLevel {
 
         NETHER.level = Server.getInstance().getLevelByName("nether");
 
-        if (NETHER.level == null && Server.getInstance().isNetherAllowed())   {
-            // Nether is allowed, and not found, alert the user
-            Server.getInstance().getLogger().alert("No level called \"nether\" found or nether is disabled in server properties! Nether functionality will be disabled.");
-        } else if (NETHER.level == null && !Server.getInstance().isNetherAllowed()) {
-            // don't load nether world
-            Server.getInstance().getLogger().alert("No level called \"nether\" found or nether is disabled in server properties! Nether functionality will be disabled.");
-        } else if (NETHER.level != null && !Server.getInstance().isNetherAllowed()) {
-            // don't load the nether world
+        if (NETHER.level == null) {
+            // Nether is not found or disabled
             Server.getInstance().getLogger().alert("No level called \"nether\" found or nether is disabled in server properties! Nether functionality will be disabled.");
         }
     }
