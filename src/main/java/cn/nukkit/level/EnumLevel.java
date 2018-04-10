@@ -3,6 +3,7 @@ package cn.nukkit.level;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.generator.Generator;
 
 public enum EnumLevel {
     OVERWORLD,
@@ -19,8 +20,29 @@ public enum EnumLevel {
     public static void initLevels() {
         OVERWORLD.level = Server.getInstance().getDefaultLevel();
         NETHER.level = Server.getInstance().getLevelByName("nether");
-        if (NETHER.level == null)   {
-            Server.getInstance().getLogger().alert("No level called \"nether\" found! Nether functionality will be disabled.");
+
+        if (NETHER.level == null && Server.getInstance().isNetherAllowed())   {
+            // Nether is allowed, and not found, create the default nether world
+            Server.getInstance().getLogger().info("No level called \"nether\" found, creating default nether level.");
+
+            // Generate seed for nether and get nether generator
+            long seed = System.currentTimeMillis();
+            Class<? extends Generator> generator = Generator.getGenerator("nether");
+
+            // Generate the nether world
+            Server.getInstance().generateLevel("nether", seed, generator);
+
+            // Finally, load the level if not already loaded
+            if (!Server.getInstance().isLevelLoaded("nether")) {
+                Server.getInstance().loadLevel("nether");
+            }
+
+        } else if (NETHER.level == null && !Server.getInstance().isNetherAllowed()) {
+            // don't load nether world
+            Server.getInstance().getLogger().alert("No level called \"nether\" found or nether is disabled in server properties! Nether functionality will be disabled.");
+        } else if (NETHER.level != null && !Server.getInstance().isNetherAllowed()) {
+            // don't load the nether world
+            Server.getInstance().getLogger().alert("No level called \"nether\" found or nether is disabled in server properties! Nether functionality will be disabled.");
         }
     }
 
