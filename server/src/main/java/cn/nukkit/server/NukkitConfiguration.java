@@ -72,6 +72,12 @@ public final class NukkitConfiguration implements Configuration {
         private String shutdownMessage = "Server Closed";
         @JsonProperty("auto-save-interval")
         private int autoSaveInterval = 5;
+        @JsonProperty("allow-nether")
+        private boolean allowNether = true;
+        @JsonProperty("allow-end")
+        private boolean allowEnd = true;
+        @JsonProperty("create-default-world")
+        private boolean createDefaultWorld = true;
     }
 
     @Getter

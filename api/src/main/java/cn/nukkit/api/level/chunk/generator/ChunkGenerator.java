@@ -2,6 +2,7 @@ package cn.nukkit.api.level.chunk.generator;
 
 import cn.nukkit.api.level.Level;
 import cn.nukkit.api.level.chunk.Chunk;
+import cn.nukkit.api.level.data.Biome;
 import cn.nukkit.api.level.data.Dimension;
 import cn.nukkit.api.level.data.Generator;
 import com.flowpowered.math.vector.Vector3f;

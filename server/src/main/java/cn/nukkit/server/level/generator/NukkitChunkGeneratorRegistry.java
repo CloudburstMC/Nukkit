@@ -16,10 +16,19 @@ public class NukkitChunkGeneratorRegistry implements ChunkGeneratorRegistry {
     private final ConcurrentMap<String, ChunkGeneratorFactory> generators = new ConcurrentHashMap<>();
     private final NukkitServer server;
 
+    /**
+     * Nukkit Chunk Generator Registry
+     * Registers the default chunk generators
+     * @param server the NukkitServer instance
+     */
     public NukkitChunkGeneratorRegistry(NukkitServer server) {
         this.server = server;
+
         // Register default chunk generators.
         register("FLAT", new FlatChunkGeneratorFactory());
+        register("NORMAL", new NormalChunkGeneratorFactory()); // Overworld Generator
+        register("NETHER", new NetherChunkGeneratorFactory()); // Nether Generator
+        register("ENDER", new EnderChunkGeneratorFactory()); // End Generator
     }
 
     @Override

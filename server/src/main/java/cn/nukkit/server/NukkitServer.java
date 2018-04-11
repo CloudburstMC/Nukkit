@@ -495,6 +495,9 @@ public class NukkitServer implements Server {
         }
     }
 
+    /**
+     * Saves player data and world data if autosave is enabled.
+     */
     public void doAutoSave() {
         // Save player data
         for (Player player : getSessionManager().allPlayers()) {
@@ -503,6 +506,7 @@ public class NukkitServer implements Server {
             }
         }
 
+        // Save level data
         levelManager.getLevels().forEach(Level::save);
     }
 
