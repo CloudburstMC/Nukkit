@@ -23,6 +23,7 @@ import cn.nukkit.api.command.Command;
 import cn.nukkit.api.command.CommandData;
 import cn.nukkit.api.command.CommandExecutor;
 import cn.nukkit.api.command.sender.CommandSender;
+import cn.nukkit.api.command.sender.ConsoleCommandSender;
 import cn.nukkit.api.message.TranslationMessage;
 import cn.nukkit.api.util.TextFormat;
 import com.google.common.base.Preconditions;
@@ -63,7 +64,7 @@ public class NukkitCommand implements Command {
     }
 
     public boolean testPermission(CommandSender target) {
-        if (this.testPermissionSilent(target)) {
+        if (this.testPermissionSilent(target) || (target instanceof ConsoleCommandSender)) {
             return true;
         }
 

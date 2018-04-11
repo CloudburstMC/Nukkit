@@ -23,6 +23,7 @@ import cn.nukkit.api.Player;
 import cn.nukkit.api.command.*;
 import cn.nukkit.api.command.sender.CommandSender;
 import cn.nukkit.server.NukkitServer;
+import cn.nukkit.server.command.defaults.VersionCommand;
 import cn.nukkit.server.network.minecraft.packet.AvailableCommandsPacket;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -44,6 +45,11 @@ public class NukkitCommandManager implements CommandManager {
     }
 
     private void setDefaultCommands() {
+        try {
+            register("version", new VersionCommand(server));
+        } catch (CommandException e) {
+            throw new AssertionError("Could not register default commands", e);
+        }
         /*try {
             register("nukkit", new VersionCommand(server));
             register("nukkit", new PluginsCommand());
