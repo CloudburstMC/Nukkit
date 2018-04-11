@@ -78,7 +78,7 @@ public class VersionCommand extends NukkitCommand implements SimpleCommand {
             return false;
         }
 
-        sender.sendMessage("Nukkit Version " + server.getNukkitVersion() + " implementing Minecraft Version " + server.getMinecraftVersion());
+        sender.sendMessage(new TranslationMessage("commands.version.success", server.getName(), server.getNukkitVersion(), server.getMinecraftVersion()));
         return true;
     }
 
