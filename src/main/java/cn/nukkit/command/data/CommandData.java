@@ -5,10 +5,12 @@ import java.util.Map;
 
 public class CommandData implements Cloneable {
 
-    public String[] aliases = new String[0];
+    public CommandEnum aliases = null;
     public String description = "description";
     public Map<String, CommandOverload> overloads = new HashMap<>();
-    public String permission = "any";
+
+    public int flags;
+    public int permission;
 
     @Override
     public CommandData clone() {

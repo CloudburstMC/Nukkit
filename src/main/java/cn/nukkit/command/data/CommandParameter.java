@@ -1,6 +1,9 @@
 package cn.nukkit.command.data;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class CommandParameter {
 
     public final static String ARG_TYPE_STRING = "string";
@@ -21,20 +24,25 @@ public class CommandParameter {
     public static final String ENUM_TYPE_PARTICLE_LIST = "particleType";
 
     public String name;
-    public String type;
+    public CommandParamType type;
     public boolean optional;
 
-    public String enum_type;
-    public String[] enum_values;
+    public CommandEnum enumData;
+    public String postFix;
 
+    @Deprecated
     public CommandParameter(String name, String type, boolean optional) {
+        this(name, fromString(type), optional);
+    }
+
+    public CommandParameter(String name, CommandParamType type, boolean optional) {
         this.name = name;
         this.type = type;
         this.optional = optional;
     }
 
     public CommandParameter(String name, boolean optional) {
-        this(name, ARG_TYPE_RAW_TEXT, optional);
+        this(name, CommandParamType.RAWTEXT, optional);
     }
 
     public CommandParameter(String name) {
@@ -43,16 +51,16 @@ public class CommandParameter {
 
     public CommandParameter(String name, boolean optional, String enumType) {
         this.name = name;
-        this.type = ARG_TYPE_STRING_ENUM;
+        this.type = CommandParamType.RAWTEXT;
         this.optional = optional;
-        this.enum_type = enumType;
+        this.enumData = new CommandEnum(enumType, new ArrayList<>());
     }
 
     public CommandParameter(String name, boolean optional, String[] enumValues) {
         this.name = name;
-        this.type = ARG_TYPE_STRING_ENUM;
+        this.type = CommandParamType.RAWTEXT;
         this.optional = optional;
-        this.enum_values = enumValues;
+        this.enumData = new CommandEnum(name + "Enums", Arrays.asList(enumValues));
     }
 
     public CommandParameter(String name, String enumType) {
@@ -63,4 +71,21 @@ public class CommandParameter {
         this(name, false, enumValues);
     }
 
+    protected static CommandParamType fromString(String param) {
+        switch (param) {
+            case "string":
+            case "stringenum":
+                return CommandParamType.STRING;
+            case "target":
+                return CommandParamType.TARGET;
+            case "blockpos":
+                return CommandParamType.POSITION;
+            case "rawtext":
+                return CommandParamType.RAWTEXT;
+            case "int":
+                return CommandParamType.INT;
+        }
+
+        return CommandParamType.RAWTEXT;
+    }
 }
