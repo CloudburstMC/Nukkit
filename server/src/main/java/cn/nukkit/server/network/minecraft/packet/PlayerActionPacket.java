@@ -57,6 +57,8 @@ public class PlayerActionPacket implements MinecraftPacket {
         BUILD_DENIED,
         CONTINUE_BREAK,
         CHANGE_SKIN,
-        SET_ENCHANTMENT_SEED
+        SET_ENCHANTMENT_SEED,
+        START_SWIMMING,
+        STOP_SWIMMING
     }
 }
