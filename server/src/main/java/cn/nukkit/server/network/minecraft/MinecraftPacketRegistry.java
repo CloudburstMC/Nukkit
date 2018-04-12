@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 @Log4j2
 public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
-    public static final int BROADCAST_PROTOCOL_VERSION = 240;
+    public static final int BROADCAST_PROTOCOL_VERSION = 260;
     private static final MinecraftPacketRegistry INSTANCE = new MinecraftPacketRegistry();
     private static final TIntSet SUPPORTED_PROTOCOL_VERSIONS = new TIntHashSet();
     private static final ImmutableBiMap<Integer, String> VERSION_STRINGS;
@@ -46,6 +46,7 @@ public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
                 .put(150, "1.2.6")
                 .put(160, "1.2.8")
                 .put(161, "1.2.10")
+                .put(223, "1.2.13")
                 .build();
     }
 

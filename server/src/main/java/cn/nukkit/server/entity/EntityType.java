@@ -22,7 +22,7 @@ public enum EntityType {
     POLAR_BEAR(28, 1.4f, 1.3f),
     LLAMA(29, 1.87f, 0.9f),
     PARROT(30, 0.9f, 0.5f),
-
+    DOLPHIN(31, 0f), //TODO
     ZOMBIE(32, 1.8f, 0.6f, 0.6f, 1.62f),
     CREEPER(33, 1.7f, 0.6f, 0.6f, 1.62f),
     SKELETON(34, 1.8f, 0.6f, 0.6f, 1.62f),
@@ -63,7 +63,7 @@ public enum EntityType {
     EYE_OF_ENDER(70, 0f),
     ENDER_CRYSTAL(71, 0f),
     FIREWORKS_ROCKET(72, 0f),
-
+    TRIDENT(73, 0f),
 
     SHULKER_BULLET(76, 0f),
     FISHING_HOOK(77, 0f),
@@ -93,7 +93,14 @@ public enum EntityType {
     LLAMA_SPIT(102, 0f),
     EVOCATION_FANG(103, 0f),
     EVOCATION_ILLAGER(104, 0f),
-    VEX(105, 0f);
+    VEX(105, 0f),
+    ICE_BOMB(106, 0f),
+    BALLOON(107, 0f), //TODO
+    PUFFER_FISH(108, 0.7f, 0.7f),
+    SALMON(109, 0.5f, 0.7f),
+    TROPICAL_FISH(111, 0.6f, 0.6f),
+    FISH(112, 0.25f, 0.5f);
+
 
     private final int type;
     private final float height;
