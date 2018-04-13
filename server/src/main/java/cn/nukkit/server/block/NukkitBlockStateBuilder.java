@@ -5,6 +5,7 @@ import cn.nukkit.api.block.BlockStateBuilder;
 import cn.nukkit.api.block.BlockType;
 import cn.nukkit.api.block.entity.BlockEntity;
 import cn.nukkit.api.metadata.Metadata;
+import cn.nukkit.server.metadata.MetadataSerializers;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
@@ -35,6 +36,9 @@ public class NukkitBlockStateBuilder implements BlockStateBuilder {
     @Override
     public BlockState build() {
         Preconditions.checkState(type != null, "BlockType must be set");
+        if (type.getMetadataClass() != null && metadata == null) {
+            metadata = MetadataSerializers.deserializeMetadata(type, (short) 0);
+        }
         return new NukkitBlockState(type, metadata, metadata instanceof BlockEntity ? (BlockEntity) metadata : null);
     }
 }
