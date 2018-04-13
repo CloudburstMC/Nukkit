@@ -1,22 +1,22 @@
 package cn.nukkit.server.level.manager;
 
 import cn.nukkit.api.entity.Entity;
+import cn.nukkit.api.level.SoundEvent;
 import cn.nukkit.server.entity.BaseEntity;
 import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.packet.LevelEventPacket;
+import cn.nukkit.server.network.minecraft.packet.LevelSoundEventPacket;
 import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import com.flowpowered.math.vector.Vector3f;
 import com.google.common.base.Preconditions;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import lombok.Synchronized;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@Log4j2
 public class LevelPacketManager {
     private final Queue<MinecraftPacket> broadcastQueue = new ConcurrentLinkedQueue<>();
     private final Map<Vector3f, Queue<MinecraftPacket>> specificPositionViewerQueue = new HashMap<>();
@@ -66,7 +66,6 @@ public class LevelPacketManager {
             specificPositionViewerQueue.forEach((position, queue) -> {
                 for (PlayerSession session : playersInWorld) {
                     if (session.getPosition().distanceSquared(position) <= viewDistanceSquared && !session.isRemoved()) {
-                        log.debug("Sending packets to {} from position {}", session.getName(), position);
                         for (MinecraftPacket packet : queue) {
                             session.getMinecraftSession().addToSendQueue(packet);
                         }
@@ -105,12 +104,43 @@ public class LevelPacketManager {
         broadcastQueue.add(packet);
     }
 
-    public void queueLevelEvent(LevelEventPacket.Event event, Vector3f position, int data) {
+    public void queueEventForViewers(Vector3f position, LevelEventPacket.Event event, int data) {
         LevelEventPacket packet = new LevelEventPacket();
         packet.setEvent(event);
         packet.setPosition(position);
         packet.setData(data);
 
         queuePacketForViewers(position, packet);
+    }
+
+    public void queueEventForViewers(Entity entity, LevelEventPacket.Event event, int data) {
+        LevelEventPacket packet = new LevelEventPacket();
+        packet.setEvent(event);
+        packet.setPosition(entity.getPosition());
+        packet.setData(data);
+
+        queuePacketForViewers(entity, packet);
+    }
+
+    public void queueSoundForViewers(Vector3f position, SoundEvent soundEvent, int pitch, int extraData, boolean disableRelativeVolume) {
+        LevelSoundEventPacket packet = new LevelSoundEventPacket();
+        packet.setPosition(position);
+        packet.setSoundEvent(soundEvent);
+        packet.setPitch(pitch);
+        packet.setExtraData(extraData);
+        packet.setRelativeVolumeDisabled(disableRelativeVolume);
+
+        queuePacketForViewers(position, packet);
+    }
+
+    public void queueSoundForViewers(Entity entity, SoundEvent soundEvent, int pitch, int extraData, boolean disableRelativeVolume) {
+        LevelSoundEventPacket packet = new LevelSoundEventPacket();
+        packet.setPosition(entity.getPosition());
+        packet.setSoundEvent(soundEvent);
+        packet.setPitch(pitch);
+        packet.setExtraData(extraData);
+        packet.setRelativeVolumeDisabled(disableRelativeVolume);
+
+        queuePacketForViewers(entity, packet);
     }
 }
