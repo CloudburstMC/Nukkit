@@ -1,7 +1,7 @@
 package cn.nukkit.server.network.minecraft.packet;
 
 import cn.nukkit.server.inventory.transaction.*;
-import cn.nukkit.server.inventory.transaction.record.*;
+import cn.nukkit.server.inventory.transaction.action.*;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
@@ -29,7 +29,7 @@ public class InventoryTransactionPacket implements MinecraftPacket {
     public void encode(ByteBuf buffer) {
         writeUnsignedInt(buffer, transaction.getType().ordinal());
         writeUnsignedInt(buffer, transaction.getRecords().size());
-        for (TransactionRecord record: transaction.getRecords()) {
+        for (InventoryAction record : transaction.getRecords()) {
             writeUnsignedInt(buffer, record.getType().getId());
             record.write(buffer);
         }
@@ -47,24 +47,24 @@ public class InventoryTransactionPacket implements MinecraftPacket {
 
         int count = readUnsignedInt(buffer);
         for(int i = 0; i < count; i++) {
-            TransactionRecord record = null;
-            TransactionRecord.Type transactionType = TransactionRecord.Type.byId(readUnsignedInt(buffer));
+            InventoryAction record = null;
+            InventoryAction.Type transactionType = InventoryAction.Type.byId(readUnsignedInt(buffer));
 
             switch (transactionType) {
                 case CONTAINER:
-                    record = new ContainerTransactionRecord();
+                    record = new ContainerInventoryAction();
                     break;
                 case GLOBAL:
-                    record = new GlobalTransactionRecord();
+                    record = new GlobalInventoryAction();
                     break;
                 case WORLD_INTERACTION:
-                    record = new WorldInteractionTransactionRecord();
+                    record = new WorldInteractionInventoryAction();
                     break;
                 case CREATIVE:
-                    record = new CreativeTransactionRecord();
+                    record = new CreativeInventoryAction();
                     break;
                 case CRAFT:
-                    record = new CraftTransactionRecord();
+                    record = new CraftInventoryAction();
                     break;
                 default:
                     break;

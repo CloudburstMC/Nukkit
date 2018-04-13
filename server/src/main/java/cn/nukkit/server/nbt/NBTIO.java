@@ -5,7 +5,7 @@ import cn.nukkit.api.item.ItemInstanceBuilder;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.item.ItemTypes;
 import cn.nukkit.server.item.NukkitItemInstanceBuilder;
-import cn.nukkit.server.metadata.MetadataSerializer;
+import cn.nukkit.server.metadata.MetadataSerializers;
 import cn.nukkit.server.nbt.stream.LittleEndianDataInputStream;
 import cn.nukkit.server.nbt.stream.LittleEndianDataOutputStream;
 import cn.nukkit.server.nbt.stream.NBTInputStream;
@@ -61,7 +61,7 @@ public class NBTIO {
         ItemInstanceBuilder builder = new NukkitItemInstanceBuilder()
                 .itemType(type)
                 .amount(countTag.getValue())
-                .itemData(MetadataSerializer.deserializeMetadata(type, damageTag.getValue()));
+                .itemData(MetadataSerializers.deserializeMetadata(type, damageTag.getValue()));
 
         Tag<?> tagTag = map.get("tag");
         if (tagTag != null) {

@@ -15,6 +15,11 @@ public class ItemReleaseTransaction extends ComplexTransaction {
     private Action action;
 
     @Override
+    public void execute(PlayerSession session) {
+
+    }
+
+    @Override
     public void read(ByteBuf buffer){
         action = Action.values()[readUnsignedInt(buffer)];
         super.read(buffer);

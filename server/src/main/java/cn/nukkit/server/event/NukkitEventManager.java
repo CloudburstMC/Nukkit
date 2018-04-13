@@ -104,6 +104,7 @@ public class NukkitEventManager implements EventManager {
         return eventHandlers.get(eventClass).getMethods();
     }
 
+    @SuppressWarnings("unchecked")
     private void bakeHandlers() {
         Map<Class<? extends Event>, List<ReflectionEventFireHandler.ListenerMethod>> listenerMap = new HashMap<>();
 

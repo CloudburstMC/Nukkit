@@ -3,7 +3,7 @@ package cn.nukkit.server.entity.passive;
 import cn.nukkit.api.entity.component.Colorable;
 import cn.nukkit.api.entity.component.Shearable;
 import cn.nukkit.api.entity.passive.Sheep;
-import cn.nukkit.api.util.data.DyeColor;
+import cn.nukkit.api.metadata.data.DyeColor;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.entity.EntityType;
 import cn.nukkit.server.entity.LivingEntity;

@@ -10,7 +10,7 @@ import cn.nukkit.server.nbt.tag.CompoundTag;
 import java.util.Optional;
 
 @SuppressWarnings("unchecked")
-public interface Serializer {
+public interface MetadataSerializer {
     CompoundTag readNBT(BlockState block);
 
     short readMetadata(BlockState block);

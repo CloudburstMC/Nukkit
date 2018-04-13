@@ -12,7 +12,7 @@ import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.server.block.NukkitBlock;
 import cn.nukkit.server.block.NukkitBlockState;
 import cn.nukkit.server.level.biome.NukkitBiome;
-import cn.nukkit.server.metadata.MetadataSerializer;
+import cn.nukkit.server.metadata.MetadataSerializers;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
 import gnu.trove.map.TIntObjectMap;
@@ -92,7 +92,7 @@ public class SectionedChunkSnapshot implements ChunkSnapshot {
         BlockType type = BlockTypes.byId(section.getBlockId(x, y & 15, z));
         Optional<Metadata> createdData;
         if (type.getMetadataClass() != null) {
-            createdData = Optional.ofNullable(MetadataSerializer.deserializeMetadata(type, section.getBlockData(x, y & 15, z)));
+            createdData = Optional.ofNullable(MetadataSerializers.deserializeMetadata(type, section.getBlockData(x, y & 15, z)));
         } else {
             createdData = Optional.empty();
         }

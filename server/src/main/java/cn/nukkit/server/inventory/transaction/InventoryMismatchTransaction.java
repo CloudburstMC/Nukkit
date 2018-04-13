@@ -10,6 +10,11 @@ public class InventoryMismatchTransaction extends SimpleTransaction {
     private static final Type type = Type.INVENTORY_MISMATCH;
 
     @Override
+    public void execute(PlayerSession session) {
+
+    }
+
+    @Override
     public Type getType() {
         return type;
     }

@@ -1,6 +1,7 @@
 package cn.nukkit.server.block.behavior;
 
 import cn.nukkit.api.block.BlockType;
+import cn.nukkit.api.block.BlockTypes;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import lombok.experimental.UtilityClass;
@@ -13,6 +14,8 @@ public class BlockBehaviors {
 
     static {
         BLOCK_BEHAVIORS = ImmutableMap.<BlockType, BlockBehavior>builder()
+                .put(BlockTypes.DIRT, DirtBlockBehavior.INSTANCE)
+                .put(BlockTypes.GRASS_BLOCK, DirtBlockBehavior.INSTANCE)
                 .build();
     }
 

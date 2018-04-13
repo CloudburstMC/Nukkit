@@ -1,6 +1,5 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.api.level.Sound;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import com.flowpowered.math.vector.Vector3i;
@@ -12,14 +11,14 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3i;
 
 @Data
 public class PlaySoundPacket implements MinecraftPacket {
-    private Sound sound;
+    private String sound;
     private Vector3i blockPosition;
     private float volume;
     private float pitch;
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeString(buffer, sound.getName());
+        writeString(buffer, sound);
         writeVector3i(buffer, blockPosition);
         buffer.writeFloatLE(volume);
         buffer.writeFloatLE(pitch);

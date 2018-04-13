@@ -1,6 +1,7 @@
-package cn.nukkit.server.inventory.transaction.record;
+package cn.nukkit.server.inventory.transaction.action;
 
 import cn.nukkit.api.item.ItemInstance;
+import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.netty.buffer.ByteBuf;
@@ -15,7 +16,7 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.readItemInstance;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeItemInstance;
 
 @Data
-public abstract class TransactionRecord {
+public abstract class InventoryAction {
     private int slot;
     private ItemInstance oldItem;
     private ItemInstance newItem;
@@ -67,5 +68,11 @@ public abstract class TransactionRecord {
         private void add() {
             BY_ID.put(id, this);
         }
+    }
+
+    public abstract void execute(PlayerSession session);
+
+    public boolean testOldItem(ItemInstance serverItem) {
+        return oldItem.equals(serverItem);
     }
 }

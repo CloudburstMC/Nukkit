@@ -1,7 +1,7 @@
 package cn.nukkit.server.entity.component;
 
 import cn.nukkit.api.entity.component.Colorable;
-import cn.nukkit.api.util.data.DyeColor;
+import cn.nukkit.api.metadata.data.DyeColor;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;

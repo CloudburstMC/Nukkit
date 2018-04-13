@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class NukkitPlayerInventory extends NukkitInventory implements PlayerInventory {
     private final PlayerSession session;
     private final int[] hotbarLinks = new int[9];
-    private int heldHotbarSlot = -1;
+    private int heldHotbarSlot = 1;
     private AtomicReference<ItemInstance> cursorItem = new AtomicReference<>(null);
 
     public NukkitPlayerInventory(PlayerSession session) {
@@ -44,6 +44,10 @@ public class NukkitPlayerInventory extends NukkitInventory implements PlayerInve
             return -1;
         }
         return hotbarLinks[slot];
+    }
+
+    public Optional<ItemInstance> getHotbarItem(int hotbarSlot) {
+        return getItem(hotbarLinks[hotbarSlot]);
     }
 
     @Override

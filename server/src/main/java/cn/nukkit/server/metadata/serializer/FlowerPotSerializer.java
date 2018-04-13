@@ -5,12 +5,12 @@ import cn.nukkit.api.block.entity.BlockEntity;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
-import cn.nukkit.api.util.data.FlowerType;
+import cn.nukkit.api.metadata.data.FlowerType;
 import cn.nukkit.server.block.entity.NukkitFlowerPotBlockEntity;
 import cn.nukkit.server.nbt.CompoundTagBuilder;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 
-public class FlowerPotSerializer implements Serializer {
+public class FlowerPotSerializer implements MetadataSerializer {
     @Override
     public CompoundTag readNBT(BlockState block) {
         NukkitFlowerPotBlockEntity blockEntity = getBlockStateEntityOrNull(block);

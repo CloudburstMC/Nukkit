@@ -5,6 +5,7 @@ import cn.nukkit.api.block.Block;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemInstanceBuilder;
 import cn.nukkit.server.item.behavior.ItemBehaviorUtil;
+import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
@@ -38,7 +39,6 @@ public class SimpleBlockBehavior implements BlockBehavior {
             breakTime /= ItemBehaviorUtil.getMiningEfficiency(item);
         } else {
             breakTime *= 5;
-            breakTime /= 1;
         }
 
         return breakTime;
@@ -47,5 +47,10 @@ public class SimpleBlockBehavior implements BlockBehavior {
     @Override
     public boolean isToolCompatible(Block block, @Nullable ItemInstance item) {
         return block.getBlockState().getBlockType().isDiggable();
+    }
+
+    @Override
+    public Result onBreak(PlayerSession session, Block block, ItemInstance withItem) {
+        return Result.BREAK_BLOCK;
     }
 }

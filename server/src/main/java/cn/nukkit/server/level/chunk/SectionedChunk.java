@@ -10,7 +10,7 @@ import cn.nukkit.api.level.chunk.Chunk;
 import cn.nukkit.api.level.chunk.ChunkSnapshot;
 import cn.nukkit.api.level.data.Biome;
 import cn.nukkit.server.level.biome.NukkitBiome;
-import cn.nukkit.server.metadata.MetadataSerializer;
+import cn.nukkit.server.metadata.MetadataSerializers;
 import cn.nukkit.server.nbt.NBTEncodingType;
 import cn.nukkit.server.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.server.nbt.stream.NBTOutputStream;
@@ -82,7 +82,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
 
         ChunkSection section = getOrCreateSection(y >> 4);
         section.setBlockId(x, y & 15, z, (byte) state.getBlockType().getId());
-        section.setBlockData(x, y & 15, z, (byte) MetadataSerializer.serializeMetadata(state));
+        section.setBlockData(x, y & 15, z, (byte) MetadataSerializers.serializeMetadata(state));
 
         if (shouldRecalculateLight) {
             // Recalculate the height map and lighting for this chunk section.
@@ -101,7 +101,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         int pos = xyzIdx(x, y, z);
         Optional<BlockEntity> entity = state.getBlockEntity();
         if (entity.isPresent()) {
-            CompoundTag blockEntityTag = MetadataSerializer.serializeNBT(state);
+            CompoundTag blockEntityTag = MetadataSerializers.serializeNBT(state);
             Map<String, Tag<?>> beModifiedMap = new HashMap<>(blockEntityTag.getValue());
             beModifiedMap.put("x", new IntTag("x", x + (this.x << 4)));
             beModifiedMap.put("y", new IntTag("y", y));

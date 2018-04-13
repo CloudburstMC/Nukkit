@@ -6,7 +6,7 @@ import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static cn.nukkit.server.nbt.util.VarInt.readUnsignedInt;
+import static cn.nukkit.server.nbt.util.VarInt.*;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.readString;
 import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeString;
 
@@ -20,15 +20,19 @@ public class TextPacket implements MinecraftPacket {
     public void encode(ByteBuf buffer) {
         buffer.writeByte(message.getType().ordinal());
         buffer.writeBoolean(message.needsTranslating());
+
         if (message instanceof SourceMessage) {
             writeString(buffer, ((SourceMessage) message).getSender());
+            writeString(buffer, ""); //sourceThirdPartyName
+            writeSignedInt(buffer, 0); //PlatformID
         }
+
         writeString(buffer, message.getMessage());
 
         if (message instanceof ParameterMessage) {
-            for (String param : ((ParameterMessage) message).getParameters()) {
-                writeString(buffer, param);
-            }
+            ParameterMessage parameterMessage = (ParameterMessage) message;
+            writeUnsignedInt(buffer, parameterMessage.getParameters().size());
+            parameterMessage.getParameters().forEach(s -> writeString(buffer, s));
         }
         writeString(buffer, xuid);
         writeString(buffer, platformChatId);
@@ -39,8 +43,6 @@ public class TextPacket implements MinecraftPacket {
         Type type = Type.values()[buffer.readByte()];
         boolean needsTranslating = buffer.readBoolean();
         String source = "";
-        String sourceThirdPartyName = "";
-        int platformId; //TODO: Implement these into message api
         String message = null;
         String[] parameters = null;
         switch (type) {
@@ -48,8 +50,8 @@ public class TextPacket implements MinecraftPacket {
             case WHISPER:
             case ANNOUNCEMENT:
                 source = readString(buffer);
-                sourceThirdPartyName = readString(buffer);
-                platformId = readUnsignedInt(buffer);
+                readString(buffer);//TODO
+                readSignedInt(buffer);//TODO
             case RAW:
             case TIP:
             case SYSTEM:

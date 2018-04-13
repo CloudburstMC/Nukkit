@@ -19,6 +19,11 @@ public class ItemUseOnEntityTransaction extends ComplexTransaction {
     private Vector3f clickPosition;
 
     @Override
+    public void execute(PlayerSession session) {
+
+    }
+
+    @Override
     public void read(ByteBuf buffer){
         runtimeEntityId = readRuntimeEntityId(buffer);
         action = Action.values()[readUnsignedInt(buffer)];

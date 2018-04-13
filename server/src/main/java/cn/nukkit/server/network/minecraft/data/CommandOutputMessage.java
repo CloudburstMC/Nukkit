@@ -1,6 +1,6 @@
 package cn.nukkit.server.network.minecraft.data;
 
-import lombok.experimental.Value;
+import lombok.Value;
 
 import java.util.List;
 

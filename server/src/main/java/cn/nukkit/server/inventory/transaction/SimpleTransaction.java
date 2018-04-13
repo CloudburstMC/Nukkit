@@ -1,6 +1,6 @@
 package cn.nukkit.server.inventory.transaction;
 
-import cn.nukkit.server.inventory.transaction.record.TransactionRecord;
+import cn.nukkit.server.inventory.transaction.action.InventoryAction;
 import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.List;
 @EqualsAndHashCode
 public abstract class SimpleTransaction implements InventoryTransaction {
     private final long creationTime;
-    private final List<TransactionRecord> records = new ArrayList<>();
+    private final List<InventoryAction> records = new ArrayList<>();
 
     public SimpleTransaction() {
         creationTime = System.currentTimeMillis();

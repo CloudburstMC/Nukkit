@@ -12,10 +12,11 @@ public enum NukkitInventoryType {
     WORKBENCH(10, 1),
     BREWING_STAND(5, 4),
     ANVIL(3, 5),
-    ENCHANTMENT_TABLE(2, 4, 12),
+    ENCHANTMENT_TABLE(2, 4, 3),
     DISPENSER(9, 6),
     DROPPER(9, 7),
-    HOPPER(5, 8);
+    HOPPER(5, 8),
+    CURSOR(1, -1);
 
     private static final InventoryType[] API_VALUES = InventoryType.values();
     private static final NukkitInventoryType[] VALUES = values();

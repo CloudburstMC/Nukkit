@@ -1,7 +1,7 @@
 package cn.nukkit.server.inventory.transaction;
 
 
-import cn.nukkit.server.inventory.transaction.record.TransactionRecord;
+import cn.nukkit.server.inventory.transaction.action.InventoryAction;
 import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import io.netty.buffer.ByteBuf;
 
@@ -23,7 +23,9 @@ public interface InventoryTransaction {
 
     boolean hasExecuted();*/
 
-    Collection<TransactionRecord> getRecords();
+    void execute(PlayerSession session);
+
+    Collection<InventoryAction> getRecords();
 
     void read(ByteBuf buffer);
 

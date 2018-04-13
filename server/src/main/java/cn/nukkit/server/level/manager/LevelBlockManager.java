@@ -52,7 +52,7 @@ public class LevelBlockManager {
 
             Block block = blockOptional.get();
             BlockBehavior behavior = BlockBehaviors.getBlockBehavior(block.getBlockState().getBlockType());
-            if (!behavior.onTick(level.getServer(), block)) {
+            if (!behavior.onUpdate(block)) {
                 blocksToTick.add(blockPos);
             }
         }

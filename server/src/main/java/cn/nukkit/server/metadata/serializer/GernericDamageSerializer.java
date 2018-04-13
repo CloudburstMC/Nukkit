@@ -10,7 +10,7 @@ import cn.nukkit.server.nbt.tag.CompoundTag;
 
 import java.util.Optional;
 
-public class GernericDamageSerializer implements Serializer {
+public class GernericDamageSerializer implements MetadataSerializer {
 
     @Override
     public CompoundTag readNBT(BlockState block) {

@@ -56,4 +56,10 @@ public class ByteBitSet implements BitSet {
         BitSet that = (BitSet) o;
         return this.bitset == that.getAsByte();
     }
+
+    private static void checkIndex(int index) {
+        if (!(index >= 0 && index < 8)) {
+            throw new IndexOutOfBoundsException("Expected value 0-7");
+        }
+    }
 }

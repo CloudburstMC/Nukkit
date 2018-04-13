@@ -18,6 +18,11 @@ public class NormalTransaction extends SimpleTransaction {
     private static final Type type = Type.NORMAL;
 
     @Override
+    public void execute(PlayerSession session) {
+
+    }
+
+    @Override
     public Type getType() {
         return type;
     }

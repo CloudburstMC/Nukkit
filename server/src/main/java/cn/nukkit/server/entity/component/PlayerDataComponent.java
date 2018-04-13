@@ -1,6 +1,7 @@
 package cn.nukkit.server.entity.component;
 
 import cn.nukkit.api.entity.component.PlayerData;
+import cn.nukkit.api.event.player.PlayerGameModeChangeEvent;
 import cn.nukkit.api.permission.CommandPermission;
 import cn.nukkit.api.permission.PlayerPermission;
 import cn.nukkit.api.util.GameMode;
@@ -67,7 +68,12 @@ public class PlayerDataComponent implements PlayerData {
     @Override
     public void setGamemode(GameMode gamemode) {
         if (this.gameMode != gameMode) {
-            this.gameMode = gamemode;
+            PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent(session, gameMode);
+            session.getServer().getEventManager().fire(event);
+            if (!event.isCancelled()) {
+                this.gameMode = gamemode;
+                // session.onGameModeChange(GameMode gamemode);
+            }
         }
     }
 

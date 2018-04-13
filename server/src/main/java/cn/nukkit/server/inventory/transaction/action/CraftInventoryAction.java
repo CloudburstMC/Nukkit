@@ -1,5 +1,6 @@
-package cn.nukkit.server.inventory.transaction.record;
+package cn.nukkit.server.inventory.transaction.action;
 
+import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +10,7 @@ import static cn.nukkit.server.nbt.util.VarInt.writeSignedInt;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class CraftTransactionRecord extends TransactionRecord {
+public class CraftInventoryAction extends InventoryAction {
     public static final int TYPE_CRAFTING_ADD_INGREDIENT = -2;
     public static final int TYPE_CRAFTING_REMOVE_INGREDIENT = -2;
     public static final int TYPE_CRAFTING_RESULT = -2;
@@ -33,5 +34,10 @@ public class CraftTransactionRecord extends TransactionRecord {
     @Override
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public void execute(PlayerSession session) {
+
     }
 }

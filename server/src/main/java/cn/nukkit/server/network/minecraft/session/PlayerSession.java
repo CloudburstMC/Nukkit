@@ -3,7 +3,6 @@ package cn.nukkit.server.network.minecraft.session;
 import cn.nukkit.api.Player;
 import cn.nukkit.api.block.Block;
 import cn.nukkit.api.block.BlockState;
-import cn.nukkit.api.block.BlockTypes;
 import cn.nukkit.api.command.CommandException;
 import cn.nukkit.api.command.CommandNotFoundException;
 import cn.nukkit.api.entity.Entity;
@@ -47,17 +46,14 @@ import cn.nukkit.server.inventory.NukkitInventory;
 import cn.nukkit.server.inventory.NukkitInventoryType;
 import cn.nukkit.server.inventory.NukkitPlayerInventory;
 import cn.nukkit.server.inventory.transaction.*;
-import cn.nukkit.server.inventory.transaction.record.ContainerTransactionRecord;
-import cn.nukkit.server.inventory.transaction.record.WorldInteractionTransactionRecord;
 import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.chunk.FullChunkDataPacketCreator;
 import cn.nukkit.server.level.util.AroundPointChunkComparator;
-import cn.nukkit.server.metadata.MetadataSerializer;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
-import cn.nukkit.server.network.minecraft.data.ContainerIds;
 import cn.nukkit.server.network.minecraft.data.MetadataConstants;
 import cn.nukkit.server.network.minecraft.packet.*;
+import cn.nukkit.server.network.minecraft.util.MetadataDictionary;
 import cn.nukkit.server.permission.NukkitAbilities;
 import cn.nukkit.server.resourcepack.loader.file.PackFile;
 import com.flowpowered.math.vector.Vector3f;
@@ -68,6 +64,7 @@ import gnu.trove.TCollections;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import joptsimple.internal.Strings;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnegative;
@@ -88,10 +85,12 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     private final TLongSet viewableEntities = new TLongHashSet();
     private final TLongSet hiddenEntities = TCollections.synchronizedSet(new TLongHashSet());
     private final TLongSet sentChunks = TCollections.synchronizedSet(new TLongHashSet());
-    private final NukkitPlayerInventory inventory = new NukkitPlayerInventory(this);
     private final AtomicReference<Locale> locale = new AtomicReference<>();
     private boolean commandsEnabled = true;
     private boolean hasMoved;
+    @Getter
+    private final NukkitPlayerInventory inventory = new NukkitPlayerInventory(this);
+    @Getter
     private Inventory openInventory;
     private int enchantmentSeed;
     private int viewDistance;
@@ -286,7 +285,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     }
 
-    private void sendPlayerInventory() {
+    public void sendPlayerInventory() {
 
     }
 
@@ -311,7 +310,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     private void sendEntityData() {
         SetEntityDataPacket packet = new SetEntityDataPacket();
         packet.setRuntimeEntityId(getEntityId());
-        packet.getMetadata().put(MetadataConstants.FLAGS, getMetadataFlagValue());
+        packet.getMetadata().putAll(getMetadataFlags());
         session.addToSendQueue(packet);
     }
 
@@ -864,6 +863,16 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     }
 
     @Override
+    protected void onMetadataUpdate(MetadataDictionary metadata) {
+        SetEntityDataPacket packet = new SetEntityDataPacket();
+        packet.setRuntimeEntityId(getEntityId());
+        packet.getMetadata().putAll(metadata);
+
+        getLevel().getPacketManager().queuePacketForViewers(this, packet);
+        session.addToSendQueue(packet);
+    }
+
+    @Override
     @Deprecated
     public void remove() {
         session.disconnect();
@@ -1008,6 +1017,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
         @Override
         public void handle(InventoryTransactionPacket packet) {
+            packet.getTransaction().execute(PlayerSession.this);
         }
 
         @Override
@@ -1036,7 +1046,19 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
         @Override
         public void handle(MobEquipmentPacket packet) {
+            Damageable damageable = ensureAndGet(Damageable.class);
+            if (!spawned || damageable.isDead()) {
+                return;
+            }
 
+            ItemInstance serverItem = inventory.getHotbarItem(packet.getHotbarSlot()).orElse(BlockUtil.AIR);
+            if (!serverItem.equals(packet.getItem())) {
+                log.debug("{} tried to equip {} but has {} in slot {}", getName(), packet.getItem(), serverItem, packet.getHotbarSlot());
+                sendPlayerInventory();
+                return;
+            }
+
+            inventory.setHeldHotbarSlot(packet.getHotbarSlot(), false);
         }
 
         @Override
@@ -1106,8 +1128,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
                     BlockBehavior blockBehavior = BlockBehaviors.getBlockBehavior(block.get().getBlockState().getBlockType());
                     float breakTime = blockBehavior.getBreakTime(PlayerSession.this, block.get(), inHand);
-                    getLevel().getPacketManager().queueLevelEvent(LevelEventPacket.Event.BLOCK_START_BREAK,
-                            packet.getBlockPosition().toFloat(), (int) (65535 / breakTime));
+                    getLevel().getPacketManager().queueEventForViewers(packet.getBlockPosition().toFloat(), LevelEventPacket.Event.BLOCK_START_BREAK, (int) (65535 / breakTime));
                     return;
                 case CONTINUE_BREAK:
                     if (data.getGameMode() != GameMode.SURVIVAL) {
@@ -1122,13 +1143,12 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                     if (!blockBreakingState.getBlockType().isDiggable()) {
                         return;
                     }
-                    int damage = MetadataSerializer.serializeMetadata(blockBreakingState);
-                    int blockData = blockBreakingState.getBlockType().getId() | (damage << 8) | (packet.getFace().ordinal() << 16);
-                    getLevel().getPacketManager().queueLevelEvent(LevelEventPacket.Event.PARTICLE_PUNCH_BLOCK, packet.getBlockPosition().toFloat(), blockData);
+                    int blockData = NukkitLevel.getPaletteManager().getOrCreateRuntimeId(blockBreakingState) | (packet.getFace().ordinal() << 24);
+                    getLevel().getPacketManager().queueEventForViewers(packet.getBlockPosition().toFloat(), LevelEventPacket.Event.PARTICLE_PUNCH_BLOCK, blockData);
                     return;
                 case ABORT_BREAK:
                 case STOP_BREAK:
-                    getLevel().getPacketManager().queueLevelEvent(LevelEventPacket.Event.BLOCK_STOP_BREAK, packet.getBlockPosition().toFloat(), 0);
+                    getLevel().getPacketManager().queueEventForViewers(packet.getBlockPosition().toFloat(), LevelEventPacket.Event.BLOCK_STOP_BREAK, 0);
                     return;
                 case GET_UPDATED_BLOCK:
                 case DROP_ITEM:
@@ -1144,7 +1164,9 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                     data.setSprinting(false);
                     break;
                 case START_SNEAK:
+                    setFlag(MetadataConstants.Flag.SNEAKING, true);
                 case STOP_SNEAK:
+                    setFlag(MetadataConstants.Flag.SNEAKING, false);
                 case DIMENSION_CHANGE_REQUEST:
                 case DIMENSION_CHANGE_SUCCESS:
                 case START_GLIDE:
@@ -1371,50 +1393,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         public void handle(ItemReleaseTransaction transaction) {
 
         }
-
-        public void handle(ContainerTransactionRecord record) {
-            switch (record.getInventoryId()) {
-                case ContainerIds.INVENTORY:
-                    Optional<ItemInstance> actualItem = inventory.getItem(record.getSlot());
-
-                    if ((actualItem.isPresent() && !actualItem.get().equals(record.getOldItem())) ||
-                            !actualItem.isPresent() && record.getOldItem().getItemType() != BlockTypes.AIR) {
-                        // Not actually the same item.
-                        sendPlayerInventory();
-                        return;
-                    }
-
-                    inventory.setItem(record.getSlot(), record.getNewItem());
-                    break;
-                case ContainerIds.CURSOR:
-                    Optional<ItemInstance> cursorItem = inventory.getCursorItem();
-
-                    if (cursorItem.isPresent() && !cursorItem.get().equals(record.getOldItem()) ||
-                            !cursorItem.isPresent() && record.getOldItem().getItemType() != BlockTypes.AIR) {
-                        // Not actually the same item.
-                        sendPlayerInventory();
-                        return;
-                    }
-
-                    inventory.setCursorItem(record.getNewItem());
-                    break;
-            }
-        }
-
-        public void handle(WorldInteractionTransactionRecord record) {
-            switch (record.getAction()) {
-                case DROP_ITEM:
-                    level.dropItem(record.getNewItem(), getGamePosition()).whenComplete((droppedItem, throwable) -> {
-                        if (throwable != null) {
-                            return;
-                        }
-                        droppedItem.setMotion(getDirectionVector().mul(0.4f));
-                    });
-                    break;
-                case PICKUP_ITEM:
-
-            }
-        }
     }
 
     public static final System SYSTEM = System.builder()
@@ -1459,5 +1437,12 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     private static boolean hasSubstantiallyMoved(Vector3f oldPos, Vector3f newPos) {
         return (Float.compare(oldPos.getX(), newPos.getX()) != 0 || Float.compare(oldPos.getZ(), newPos.getZ()) != 0);
+    }
+
+    public String toString() {
+        return "PlayerSession(" +
+                "name='" + getName() +
+                "', address=" + getRemoteAddress().map(InetSocketAddress::toString).orElse("UNKNOWN") +
+                ')';
     }
 }

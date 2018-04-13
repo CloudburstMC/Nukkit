@@ -19,18 +19,19 @@ public class UpdateBlockPacket implements MinecraftPacket {
     public static final Set<Flag> FLAG_ALL_PRIORITY = Sets.newHashSet(Flag.NEIGBORS, Flag.NETWORK, Flag.PRIORITY);
     private final Set<Flag> flags = new HashSet<>();
     private Vector3i blockPosition;
-    private int blockId;
-    private int metadata;
+    private int runtimeId;
+    private DataLayer dataLayer;
 
     @Override
     public void encode(ByteBuf buffer) {
         writeVector3i(buffer, blockPosition);
-        writeUnsignedInt(buffer, blockId);
+        writeUnsignedInt(buffer, runtimeId);
         int flagValue = 0;
         for (Flag flag: flags) {
             flagValue |= flag.id;
         }
-        writeUnsignedInt(buffer, (flagValue << 4) | metadata);
+        writeUnsignedInt(buffer, flagValue);
+        writeUnsignedInt(buffer, dataLayer.ordinal());
     }
 
     @Override
@@ -41,6 +42,11 @@ public class UpdateBlockPacket implements MinecraftPacket {
     @Override
     public void handle(NetworkPacketHandler handler) {
         // Only client bound.
+    }
+
+    public enum DataLayer {
+        NORMAL,
+        LIQUID
     }
 
     public enum Flag {

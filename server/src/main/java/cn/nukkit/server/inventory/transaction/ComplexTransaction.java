@@ -1,7 +1,7 @@
 package cn.nukkit.server.inventory.transaction;
 
 import cn.nukkit.api.item.ItemInstance;
-import cn.nukkit.server.inventory.transaction.record.TransactionRecord;
+import cn.nukkit.server.inventory.transaction.action.InventoryAction;
 import com.flowpowered.math.vector.Vector3f;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -19,7 +19,7 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.*;
 @EqualsAndHashCode
 public abstract class ComplexTransaction implements InventoryTransaction {
     private final long creationTime;
-    private final List<TransactionRecord> records = new ArrayList<>();
+    private final List<InventoryAction> records = new ArrayList<>();
     private int slot;
     private ItemInstance item;
     private Vector3f fromPosition;

@@ -1,7 +1,7 @@
 package cn.nukkit.server.block.entity;
 
 import cn.nukkit.api.block.entity.FlowerPotBlockEntity;
-import cn.nukkit.api.util.data.FlowerType;
+import cn.nukkit.api.metadata.data.FlowerType;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

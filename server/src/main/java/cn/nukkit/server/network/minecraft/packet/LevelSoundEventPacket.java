@@ -1,6 +1,6 @@
 package cn.nukkit.server.network.minecraft.packet;
 
-import cn.nukkit.api.level.Sound;
+import cn.nukkit.api.level.SoundEvent;
 import cn.nukkit.server.network.minecraft.MinecraftPacket;
 import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import com.flowpowered.math.vector.Vector3f;
@@ -14,7 +14,7 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeVector3f;
 
 @Data
 public class LevelSoundEventPacket implements MinecraftPacket {
-    private Sound sound;
+    private SoundEvent soundEvent;
     private Vector3f position;
     private int extraData;
     private int pitch;
@@ -23,7 +23,7 @@ public class LevelSoundEventPacket implements MinecraftPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        buffer.writeByte(sound.ordinal());
+        buffer.writeByte(soundEvent.ordinal());
         writeVector3f(buffer, position);
         writeSignedInt(buffer, extraData);
         writeSignedInt(buffer, pitch);
@@ -33,7 +33,7 @@ public class LevelSoundEventPacket implements MinecraftPacket {
 
     @Override
     public void decode(ByteBuf buffer) {
-        sound = Sound.values()[buffer.readByte()];
+        soundEvent = SoundEvent.values()[buffer.readByte()];
         position = readVector3f(buffer);
         extraData = readSignedInt(buffer);
         pitch = readSignedInt(buffer);

@@ -17,7 +17,7 @@ import cn.nukkit.server.entity.EntityLink;
 import cn.nukkit.server.item.NukkitItemInstance;
 import cn.nukkit.server.item.NukkitItemInstanceBuilder;
 import cn.nukkit.server.level.NukkitGameRules;
-import cn.nukkit.server.metadata.MetadataSerializer;
+import cn.nukkit.server.metadata.MetadataSerializers;
 import cn.nukkit.server.nbt.NBTIO;
 import cn.nukkit.server.nbt.stream.NBTInputStream;
 import cn.nukkit.server.nbt.stream.NBTOutputStream;
@@ -294,7 +294,7 @@ public final class MinecraftUtil {
 
         ItemInstanceBuilder builder = new NukkitItemInstanceBuilder()
                 .itemType(type)
-                .itemData(MetadataSerializer.deserializeMetadata(type, damage))
+                .itemData(MetadataSerializers.deserializeMetadata(type, damage))
                 .amount(count);
 
         if (nbtSize > 0) {
@@ -329,7 +329,7 @@ public final class MinecraftUtil {
         }
 
         writeSignedInt(buffer, itemInstance.getItemType().getId());
-        short metadataValue = MetadataSerializer.serializeMetadata(itemInstance);
+        short metadataValue = MetadataSerializers.serializeMetadata(itemInstance);
         if (metadataValue == -1) metadataValue = Short.MAX_VALUE;
         writeSignedInt(buffer, (metadataValue << 8) | itemInstance.getAmount());
 
