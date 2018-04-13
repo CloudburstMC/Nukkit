@@ -1,6 +1,6 @@
 package cn.nukkit.api.entity.component;
 
-import cn.nukkit.api.util.data.DyeColor;
+import cn.nukkit.api.metadata.data.DyeColor;
 
 import javax.annotation.Nonnull;
 

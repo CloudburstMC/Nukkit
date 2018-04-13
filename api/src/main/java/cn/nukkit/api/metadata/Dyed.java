@@ -1,6 +1,6 @@
 package cn.nukkit.api.metadata;
 
-import cn.nukkit.api.util.data.DyeColor;
+import cn.nukkit.api.metadata.data.DyeColor;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;

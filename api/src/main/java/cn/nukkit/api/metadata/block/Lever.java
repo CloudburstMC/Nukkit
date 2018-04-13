@@ -1,26 +1,44 @@
 package cn.nukkit.api.metadata.block;
 
-import cn.nukkit.api.metadata.Redstone;
+import cn.nukkit.api.metadata.Powerable;
 import cn.nukkit.api.util.data.BlockFace;
 import com.google.common.base.Preconditions;
-import lombok.Getter;
-import lombok.Setter;
 
-/**
- * @author CreeperFace
- */
-public class Lever extends Directional implements Redstone {
+public class Lever extends Directional implements Powerable {
+    private final boolean powered;
 
-    @Getter
-    @Setter
-    private boolean powered;
-
-    private Lever(BlockFace face) {
-        this.setFace(face);
+    private Lever(BlockFace face, boolean powered) {
+        super(face);
+        this.powered = powered;
     }
 
-    public static Lever of(BlockFace face) {
+    public static Lever of(BlockFace face, boolean powered) {
         Preconditions.checkArgument(face != null, "BlockFace cannot be null");
-        return new Lever(face);
+        return new Lever(face, powered);
+    }
+
+    public boolean isPowered() {
+        return powered;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Lever that = (Lever) o;
+        return this.powered == that.powered && this.getFace() == that.getFace();
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * (powered ? 1 : 0);
+    }
+
+    @Override
+    public String toString() {
+        return "Lever(" +
+                "powered=" + powered +
+                ", face=" + getFace() +
+                ')';
     }
 }

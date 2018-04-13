@@ -1,12 +1,13 @@
 package cn.nukkit.api.util;
 
-import com.flowpowered.math.HashFunctions;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
 import jdk.nashorn.internal.ir.annotations.Immutable;
 import lombok.Value;
 import lombok.experimental.NonFinal;
+
+import java.util.Objects;
 
 @Value
 @Immutable
@@ -81,8 +82,7 @@ public class BoundingBox {
     @Override
     public int hashCode() {
         if (!hashed) {
-            int result = HashFunctions.hash(min);
-            this.hashCode = 31 * result + HashFunctions.hash(max);
+            this.hashCode = Objects.hash(min, max);
             this.hashed = true;
         }
 
@@ -91,9 +91,9 @@ public class BoundingBox {
 
     @Override
     public String toString() {
-        return "BoundingBox{" +
+        return "BoundingBox(" +
                 "min=" + min +
                 ", max=" + max +
-                "}";
+                ')';
     }
 }

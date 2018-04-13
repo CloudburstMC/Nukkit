@@ -1,6 +1,6 @@
 package cn.nukkit.api.block.entity;
 
-import cn.nukkit.api.util.data.FlowerType;
+import cn.nukkit.api.metadata.data.FlowerType;
 
 public interface FlowerPotBlockEntity extends BlockEntity {
 

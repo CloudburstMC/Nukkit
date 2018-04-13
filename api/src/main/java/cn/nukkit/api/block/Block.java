@@ -5,6 +5,9 @@ import cn.nukkit.api.level.chunk.Chunk;
 import cn.nukkit.api.util.BoundingBox;
 import com.flowpowered.math.vector.Vector3i;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 public interface Block extends BlockSnapshot {
 
     Level getLevel();
@@ -19,4 +22,8 @@ public interface Block extends BlockSnapshot {
     }
 
     BoundingBox getBoundingBox();
+
+    List<Block> getNeighboringBlocksIfLoaded();
+
+    CompletableFuture<List<Block>> getNeighboringBlocks();
 }

@@ -7,11 +7,13 @@ import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.api.metadata.Wood;
 import cn.nukkit.api.metadata.block.Cake;
 import cn.nukkit.api.metadata.block.Crops;
+import cn.nukkit.api.metadata.block.Dirt;
 import cn.nukkit.api.metadata.block.TopSnow;
 import com.google.common.base.Preconditions;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Builder;
+import lombok.NonNull;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -24,7 +26,7 @@ public class BlockTypes {
     public static final BlockType AIR = IntBlock.builder().name("air").id(0).maxStackSize(0).transparent(true).solid(true).build();
     public static final BlockType STONE = IntBlock.builder().name("stone").id(1).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
     public static final BlockType GRASS_BLOCK = IntBlock.builder().name("grass").id(2).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.6f).build();
-    public static final BlockType DIRT = IntBlock.builder().name("dirt").id(3).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.5f).build();
+    public static final BlockType DIRT = IntBlock.builder().name("dirt").id(3).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.5f).metadataClass(Dirt.class).build();
     public static final BlockType COBBLESTONE = IntBlock.builder().name("cobblestone").id(4).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).build();
     public static final BlockType WOOD_PLANKS = IntBlock.builder().name("planks").id(5).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).metadataClass(Wood.class).flammable(true).build();
     public static final BlockType SAPLING = IntBlock.builder().name("sapling").id(6).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).floodable(true).build();
@@ -57,6 +59,7 @@ public class BlockTypes {
     public static final BlockType PISTON = IntBlock.builder().name("piston").id(33).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).build();
     public static final BlockType PISTON_HEAD = IntBlock.builder().name("pistonarmcollision").id(34).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).blockEntityClass(PistonBlockEntity.class).build();
     public static final BlockType WOOL = IntBlock.builder().name("wool").id(35).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.8f).metadataClass(Dyed.class).flammable(true).build();
+    public static final BlockType ELEMENT_0 = IntBlock.builder().name("element_0").id(36).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
     public static final BlockType DANDELION = IntBlock.builder().name("yellow_flower").id(37).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).floodable(true).build();
     public static final BlockType FLOWER = IntBlock.builder().name("red_flower").id(38).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).floodable(true).build();
     public static final BlockType BROWN_MUSHROOM = IntBlock.builder().name("brown_mushroom").id(39).maxStackSize(64).diggable(true).solid(true).emitLight(1).filterLight(15).hardness(0f).build();
@@ -186,6 +189,7 @@ public class BlockTypes {
     public static final BlockType ACACIA_WOOD_STAIRS = IntBlock.builder().name("acacia_stairs").id(163).maxStackSize(64).diggable(true).transparent(true).solid(true).filterLight(15).flammable(true).hardness(2f).build();
     public static final BlockType DARK_OAK_WOOD_STAIRS = IntBlock.builder().name("dark_oak_stairs").id(164).maxStackSize(64).diggable(true).transparent(true).solid(true).filterLight(15).flammable(true).hardness(2f).build();
     public static final BlockType SLIME_BLOCK = IntBlock.builder().name("slime").id(165).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).build();
+    public static final BlockType GLOW_STICK = IntBlock.builder().name("glow_stick").id(166).maxStackSize(64).diggable(true).transparent(true).solid(true).emitLight(14).hardness(0f).floodable(true).build();
     public static final BlockType IRON_TRAPDOOR = IntBlock.builder().name("iron_trapdoor").id(167).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(5f).build();
     public static final BlockType PRISMARINE = IntBlock.builder().name("prismarine").id(168).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
     public static final BlockType SEA_LANTERN = IntBlock.builder().name("sealantern").id(169).maxStackSize(64).diggable(true).transparent(true).solid(true).emitLight(15).hardness(0.3f).build();
@@ -209,6 +213,9 @@ public class BlockTypes {
     public static final BlockType ACACIA_FENCE_GATE = IntBlock.builder().name("acacia_fence_gate").id(187).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(2f).build();
     public static final BlockType REPEATING_COMMAND_BLOCK = IntBlock.builder().name("repeating_command_block").id(188).maxStackSize(64).solid(true).filterLight(15).hardness(-1f).blockEntityClass(CommandBlockEntity.class).build();
     public static final BlockType CHAIN_COMMAND_BLOCK = IntBlock.builder().name("chain_command_block").id(189).maxStackSize(64).solid(true).filterLight(15).hardness(-1f).blockEntityClass(CommandBlockEntity.class).build();
+    public static final BlockType HARD_GLASS_PANE = IntBlock.builder().name("hard_glass_pane").id(190).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.8f).build();
+    public static final BlockType HARD_STAINED_GLASS_PANE = IntBlock.builder().name("hard_stained_glass_pane").id(191).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.8f).build();
+    public static final BlockType CHEMICAL_HEAT = IntBlock.builder().name("chemical_heat").id(192).maxStackSize(64).diggable(false).transparent(true).build();
     public static final BlockType SPRUCE_DOOR = IntBlock.builder().name("spruce_door").id(193).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).build();
     public static final BlockType BIRCH_DOOR = IntBlock.builder().name("birch_door").id(194).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).build();
     public static final BlockType JUNGLE_DOOR = IntBlock.builder().name("jungle_door").id(195).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).build();
@@ -218,7 +225,9 @@ public class BlockTypes {
     public static final BlockType ITEM_FRAME = IntBlock.builder().name("frame").id(199).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0f).floodable(true).blockEntityClass(ItemFrameBlockEntity.class).build();
     public static final BlockType CHORUS_FLOWER = IntBlock.builder().name("chorus_flower").id(200).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.4f).build();
     public static final BlockType PURPUR_BLOCK = IntBlock.builder().name("purpur_block").id(201).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
-    public static final BlockType PURPUR_STAIRS = IntBlock.builder().name("purpur_stairs").id(202).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.5f).build();
+    public static final BlockType COLORED_TORCH_RG = IntBlock.builder().name("colored_torch_rg").id(202).maxStackSize(64).diggable(true).solid(true).transparent(true).build();
+    public static final BlockType PURPUR_STAIRS = IntBlock.builder().name("purpur_stairs").id(203).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.5f).build();
+    public static final BlockType COLORED_TORCH_BP = IntBlock.builder().name("colored_torch_bp").id(204).maxStackSize(64).diggable(true).solid(true).transparent(true).build();
     public static final BlockType SHULKER_BOX_UNDYED = IntBlock.builder().name("undyed_shulker_box").id(205).maxStackSize(1).diggable(true).transparent(true).solid(true).hardness(2f).blockEntityClass(ShulkerBoxBlockEntity.class).build();
     public static final BlockType END_STONE_BRICKS = IntBlock.builder().name("end_bricks").id(206).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).build();
     public static final BlockType FROSTED_ICE = IntBlock.builder().name("frosted_ice").id(207).maxStackSize(64).diggable(true).transparent(true).solid(true).filterLight(2).hardness(0.5f).build();
@@ -251,6 +260,8 @@ public class BlockTypes {
     public static final BlockType BLACK_GLAZED_TERRACOTTA = IntBlock.builder().name("black_glazed_terracotta").id(235).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.4f).build();
     public static final BlockType CONCRETE = IntBlock.builder().name("conrete").id(236).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.8f).build();
     public static final BlockType CONCRETE_POWDER = IntBlock.builder().name("concretepowder").id(237).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.5f).build();
+    public static final BlockType CHEMISTRY_TABLE = IntBlock.builder().name("chemistry_table").id(238).maxStackSize(64).diggable(true).solid(true).hardness(0.5f).blockEntityClass(ChemistryTableBlockEntity.class).build();
+    public static final BlockType UNDERWATER_TORCH = IntBlock.builder().name("underwater_torch").id(239).maxStackSize(64).diggable(true).solid(true).transparent(true).build();
     public static final BlockType CHORUS_PLANT = IntBlock.builder().name("chorus_plant").id(240).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.4f).build();
     public static final BlockType STAINED_GLASS = IntBlock.builder().name("stained_glass").id(241).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.3f).build();
     public static final BlockType CAMERA = IntBlock.builder().name("camera").id(242).maxStackSize(64).solid(true).filterLight(15).hardness(-1f).build();
@@ -264,7 +275,52 @@ public class BlockTypes {
     public static final BlockType MOVED_BY_PISTON = IntBlock.builder().name("movingblock").id(250).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).blockEntityClass(MovingBlockEntity.class).build();
     public static final BlockType OBSERVER = IntBlock.builder().name("observer").id(251).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).build();
     public static final BlockType STRUCTURE_BLOCK = IntBlock.builder().name("structure_block").id(252).maxStackSize(64).solid(true).filterLight(15).hardness(-1f).blockEntityClass(StructureBlockEntity.class).build();
+    public static final BlockType HARD_GLASS = IntBlock.builder().name("hard_glass").id(253).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.8f).build();
+    public static final BlockType HARD_STAINED_GLASS = IntBlock.builder().name("hard_stained_glass").id(254).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.8f).build();
     public static final BlockType RESERVED6 = IntBlock.builder().name("reserved6").id(255).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(-1f).build();
+    public static final BlockType PRISMARINE_STAIRS = IntBlock.builder().name("prismarine_stairs").id(257).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
+    public static final BlockType DARK_PRISMARINE_STAIRS = IntBlock.builder().name("dark_prismarine_stairs").id(258).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
+    public static final BlockType PRISMARINE_BRICKS_STAIRS = IntBlock.builder().name("prismarine_bricks_stairs").id(259).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
+    public static final BlockType STRIPPED_SPRUCE_LOG = IntBlock.builder().name("stripped_spruce_log").id(260).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).build();
+    public static final BlockType STRIPPED_BIRCH_LOG = IntBlock.builder().name("stripped_birch_log").id(261).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).build();
+    public static final BlockType STRIPPED_JUNGLE_LOG = IntBlock.builder().name("stripped_jungle_log").id(262).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).build();
+    public static final BlockType STRIPPED_ACACIA_LOG = IntBlock.builder().name("stripped_acacia_log").id(263).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).build();
+    public static final BlockType STRIPPED_DARK_OAK_LOG = IntBlock.builder().name("stripped_dark_oak_log").id(264).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).build();
+    public static final BlockType STRIPPED_OAK_LOG = IntBlock.builder().name("stripped_oak_log").id(265).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).build();
+    public static final BlockType BLUE_ICE = IntBlock.builder().name("blue_ice").id(266).maxStackSize(64).diggable(true).transparent(true).solid(true).filterLight(2).hardness(0.5f).build();
+
+    static { // Lazy
+        for (int i = 1; i <= 118; i++) {
+            IntBlock.builder().name("element_" + i).id(266 + i).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.5f).build();
+        }
+    }
+
+    public static final BlockType SEA_GRASS = IntBlock.builder().name("seagrass").id(385).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).build();
+    public static final BlockType CORAL = IntBlock.builder().name("coral").id(386).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.5f).build();
+    public static final BlockType CORAL_BLOCK = IntBlock.builder().name("coral_block").id(387).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
+    public static final BlockType CORAL_FAN = IntBlock.builder().name("coral_fan").id(388).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.5f).build();
+    public static final BlockType CORAL_FAN_DEAD = IntBlock.builder().name("coral_fan_dead").id(389).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.5f).build();
+    public static final BlockType CORAL_FAN_HANG = IntBlock.builder().name("coral_fan_hang").id(390).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.5f).build();
+    public static final BlockType CORAL_FAN_HANG_2 = IntBlock.builder().name("coral_fan_hang2").id(391).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.5f).build();
+    public static final BlockType CORAL_FAN_HANG_3 = IntBlock.builder().name("coral_fan_hang3").id(392).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(1.5f).build();
+    public static final BlockType KELP = IntBlock.builder().name("kelp").id(393).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).build();
+    public static final BlockType DRIED_KELP_BLOCK = IntBlock.builder().name("dried_kelp_block").id(394).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
+    public static final BlockType ACACIA_BUTTON = IntBlock.builder().name("acacia_button").id(395).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType BIRCH_BUTTON = IntBlock.builder().name("acacia_button").id(396).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType DARK_OAK_BUTTON = IntBlock.builder().name("acacia_button").id(397).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType JUNGLE_BUTTON = IntBlock.builder().name("acacia_button").id(398).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType SPRUCE_BUTTON = IntBlock.builder().name("acacia_button").id(399).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType ACACIA_TRAPDOOR = IntBlock.builder().name("acacia_trapdoor").id(400).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType BIRCH_TRAPDOOR = IntBlock.builder().name("acacia_trapdoor").id(401).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).floodable(true).build();
+    public static final BlockType DARK_OAK_TRAPDOOR = IntBlock.builder().name("acacia_trapdoor").id(402).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).floodable(true).build();
+    public static final BlockType JUNGLE_TRAPDOOR = IntBlock.builder().name("acacia_trapdoor").id(403).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).floodable(true).build();
+    public static final BlockType SPRUCE_TRAPDOOR = IntBlock.builder().name("acacia_trapdoor").id(404).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).floodable(true).build();
+    public static final BlockType ACACIA_PRESSURE_PLATE = IntBlock.builder().name("acacia_pressure_plate").id(405).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType BIRCH_PRESSURE_PLATE = IntBlock.builder().name("acacia_pressure_plate").id(406).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType DARK_OAK_PRESSURE_PLATE = IntBlock.builder().name("acacia_pressure_plate").id(407).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType JUNGLE_PRESSURE_PLATE = IntBlock.builder().name("acacia_pressure_plate").id(408).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType SPRUCE_PRESSURE_PLATE = IntBlock.builder().name("acacia_pressure_plate").id(409).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
+    public static final BlockType CARVED_PUMPKIN = IntBlock.builder().name("carved_pumpkin").id(410).maxStackSize(64).diggable(true).transparent(true).solid(true).filterLight(15).hardness(1f).build();
 
     public static BlockType byName(@Nonnull String name) {
         Preconditions.checkNotNull(name, "name");
@@ -286,6 +342,7 @@ public class BlockTypes {
     @Builder
     private static class IntBlock implements BlockType {
         private final int id;
+        @NonNull
         private final String name;
         private final int maxStackSize;
         private final boolean diggable;
@@ -404,6 +461,11 @@ public class BlockTypes {
         @Override
         public String toString() {
             return name;
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
         }
     }
 }

@@ -35,8 +35,8 @@ public class TopSnow implements Metadata {
 
     @Override
     public String toString() {
-        return "TopSnow{" +
+        return "TopSnow(" +
                 "layers=" + layers +
-                '}';
+                ')';
     }
 }

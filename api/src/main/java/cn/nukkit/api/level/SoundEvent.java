@@ -1,6 +1,6 @@
 package cn.nukkit.api.level;
 
-public enum Sound {
+public enum SoundEvent {
     ITEM_USE_ON,
     HIT,
     STEP,
@@ -39,6 +39,7 @@ public enum Sound {
     LAND,
     SADDLE,
     ARMOR,
+    MOB_ARMOR_STAND_PLACE,
     ADD_CHEST,
     THROW,
     ATTACK,
@@ -71,6 +72,8 @@ public enum Sound {
     CHEST_CLOSED,
     SHULKERBOX_OPEN,
     SHULKERBOX_CLOSED,
+    ENDERCHEST_OPEN,
+    ENDERCHEST_CLOSED,
     POWER_ON,
     POWER_OFF,
     ATTACH,
@@ -92,6 +95,13 @@ public enum Sound {
     BUCKET_FILL_LAVA,
     BUCKET_EMPTY_WATER,
     BUCKET_EMPTY_LAVA,
+    ARMOR_EQUIP_CHAIN,
+    ARMOR_EQUIP_DIAMOND,
+    ARMOR_EQUIP_GENERIC,
+    ARMOR_EQUIP_GOLD,
+    ARMOR_EQUIP_IRON,
+    ARMOR_EQUIP_LEATHER,
+    ARMOR_EQUIP_ELYTRA,
     RECORD_13,
     RECORD_CAT,
     RECORD_BLOCKS,
@@ -118,6 +128,7 @@ public enum Sound {
     CHORUSGROW,
     CHORUSDEATH,
     GLASS,
+    POTION_BREWED,
     CAST_SPELL,
     PREPARE_ATTACK,
     PREPARE_SUMMON,
@@ -165,11 +176,7 @@ public enum Sound {
     BLOCK_END_PORTAL_SPAWN,
     RANDOM_ANVIL_USE,
     BOTTLE_DRAGONBREATH,
+    PORTAL_TRAVEL,
     DEFAULT,
-    UNDEFINED;
-
-    public String getName() {
-        // TODO: This doesn't work.
-        return name();
-    }
+    UNDEFINED
 }

@@ -2,16 +2,19 @@ package cn.nukkit.api.metadata.block;
 
 import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.api.util.data.BlockFace;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Objects;
 
-public abstract class Directional implements Metadata {
+public class Directional implements Metadata {
+    private final BlockFace face;
 
-    @Getter
-    @Setter
-    private BlockFace face;
+    Directional(BlockFace face) {
+        this.face = face;
+    }
+
+    public BlockFace getFace() {
+        return face;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -28,8 +31,8 @@ public abstract class Directional implements Metadata {
 
     @Override
     public String toString() {
-        return "Directional{" +
+        return "Directional(" +
                 "face=" + face +
-                '}';
+                ')';
     }
 }

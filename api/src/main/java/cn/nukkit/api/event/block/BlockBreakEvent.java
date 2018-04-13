@@ -1,54 +1,53 @@
 package cn.nukkit.api.event.block;
 
-import cn.nukkit.api.Player;
 import cn.nukkit.api.block.Block;
+import cn.nukkit.api.block.BlockState;
+import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.event.Cancellable;
 import cn.nukkit.api.item.ItemInstance;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.List;
 
 public class BlockBreakEvent implements BlockEvent, Cancellable {
-
-    protected final ItemInstance item;
-    protected final Player player;
+    private final Entity entity;
     private final Block block;
-    protected boolean instaBreak;
-    protected Collection<ItemInstance> drops;
-    private boolean fastBreak;
+    private BlockState newState;
+    private final ItemInstance withItem;
+    private boolean instantBreak;
+    private final List<ItemInstance> drops;
     private boolean cancelled;
 
-    public BlockBreakEvent(Player player, Block block, Collection<ItemInstance> drops, ItemInstance item, boolean instaBreak, boolean fastBreak) {
+    public BlockBreakEvent(Entity entity, Block block, BlockState newState, ItemInstance withItem, Collection<ItemInstance> drops, boolean instantBreak) {
+        this.entity = entity;
         this.block = block;
-        this.item = item;
-        this.player = player;
-        this.instaBreak = instaBreak;
-        this.drops = new ArrayList<>(drops);
-        this.fastBreak = fastBreak;
+        this.newState = newState;
+        this.withItem = withItem;
+        this.instantBreak = instantBreak;
+        this.drops = Lists.newArrayList(drops);
     }
 
-    public Player getPlayer() {
-        return player;
+    public Entity getEntity() {
+        return entity;
     }
 
-    public ItemInstance getItem() {
-        return item;
+    public ItemInstance getWithItem() {
+        return withItem;
     }
 
-    public boolean getInstaBreak() {
-        return this.instaBreak;
+    public boolean willInstantBreak() {
+        return instantBreak;
     }
 
-    public void setInstaBreak(boolean instaBreak) {
-        this.instaBreak = instaBreak;
+    public void setInstantBreak(boolean instantBreak) {
+        this.instantBreak = instantBreak;
     }
 
     public Collection<ItemInstance> getDrops() {
         return drops;
-    }
-
-    public boolean isFastBreak() {
-        return this.fastBreak;
     }
 
     @Override
@@ -64,5 +63,14 @@ public class BlockBreakEvent implements BlockEvent, Cancellable {
     @Override
     public Block getBlock() {
         return block;
+    }
+
+    public BlockState getNewState() {
+        return newState;
+    }
+
+    public void setNewState(@Nonnull BlockState newState) {
+        Preconditions.checkNotNull(newState, "newState");
+        this.newState = newState;
     }
 }

@@ -265,17 +265,17 @@ public class ItemTypes {
         }
     }
 
-    public static ItemType byId(int data) {
-        return byId(data, false);
+    public static ItemType byId(int id) {
+        return byId(id, false);
     }
 
-    public static ItemType byId(int data, boolean itemsOnly) {
-        ItemType type = BY_ID.get(data);
+    public static ItemType byId(int id, boolean itemsOnly) {
+        ItemType type = BY_ID.get(id);
         if (type == null) {
             if (itemsOnly) {
-                throw new IllegalArgumentException("ID " + data + " is not valid.");
+                throw new IllegalArgumentException("ID " + id + " is not valid.");
             } else {
-                return BlockTypes.byId(data);
+                return BlockTypes.byId(id);
             }
         }
         return type;

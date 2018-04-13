@@ -1,4 +1,4 @@
-package cn.nukkit.api.util.data;
+package cn.nukkit.api.metadata.data;
 
 public enum LogDirection {
     VERTICAL,

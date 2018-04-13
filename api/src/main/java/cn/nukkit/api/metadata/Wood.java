@@ -1,6 +1,6 @@
 package cn.nukkit.api.metadata;
 
-import cn.nukkit.api.util.data.TreeSpecies;
+import cn.nukkit.api.metadata.data.TreeSpecies;
 import com.google.common.base.Preconditions;
 import lombok.AllArgsConstructor;
 
