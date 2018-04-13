@@ -5,13 +5,12 @@ import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemInstanceBuilder;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
-import cn.nukkit.server.metadata.MetadataSerializer;
+import cn.nukkit.server.metadata.MetadataSerializers;
 import cn.nukkit.server.nbt.CompoundTagBuilder;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.StringTag;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
@@ -20,7 +19,6 @@ import java.util.*;
 
 @ToString
 @Immutable
-@EqualsAndHashCode
 public class NukkitItemInstance implements ItemInstance {
     private final ItemType type;
     private final int amount;
@@ -30,7 +28,7 @@ public class NukkitItemInstance implements ItemInstance {
     private final Set<EnchantmentInstance> enchantments;
 
     public NukkitItemInstance(ItemType type) {
-        this(type, 0, null, null, null, null);
+        this(type, 1, null, null, null, null);
     }
 
     public NukkitItemInstance(ItemType type, int amount, Metadata data) {
@@ -97,21 +95,26 @@ public class NukkitItemInstance implements ItemInstance {
         if (other == null || this.getClass() != other.getClass()) return false;
         NukkitItemInstance that = (NukkitItemInstance) other;
         return this.type == that.type && (!checkAmount || this.amount == that.amount) &&
-                (!checkName || (this.itemName.equals(that.itemName) && this.itemLore.equals(that.itemLore))) &&
-                (!checkEnchantments || this.enchantments.equals(that.enchantments)) &&
-                (!checkMeta || this.data.equals(that.data)); // TODO: Custom data.
+                (!checkName || Objects.equals(this.itemName, that.itemName)) &&
+                (!checkEnchantments || Objects.equals(this.enchantments, that.enchantments)) &&
+                (!checkMeta || Objects.equals(this.data, that.data)); // TODO: Custom data.
     }
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (!(o instanceof ItemInstance)) return false;
         return equals((ItemInstance) o, true, true, true, true, true);
+    }
+
+    public int hashCode() {
+        return Objects.hash(type, amount, data, itemName, itemLore, enchantments);
     }
 
     public CompoundTag toFullNBT() {
         return CompoundTagBuilder.builder()
                 .byteTag("Count", (byte) amount)
-                .shortTag("Damage", MetadataSerializer.serializeMetadata(this))
+                .shortTag("Damage", MetadataSerializers.serializeMetadata(this))
                 .shortTag("id", (short) type.getId())
                 .tag(toSpecificNBT())
                 .buildRootTag();
