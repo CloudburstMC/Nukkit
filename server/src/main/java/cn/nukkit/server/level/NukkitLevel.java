@@ -1,5 +1,7 @@
 package cn.nukkit.server.level;
 
+import cn.nukkit.api.block.Block;
+import cn.nukkit.api.block.BlockState;
 import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.entity.misc.DroppedItem;
 import cn.nukkit.api.entity.system.System;
@@ -11,20 +13,26 @@ import cn.nukkit.api.level.chunk.generator.ChunkGenerator;
 import cn.nukkit.server.NukkitServer;
 import cn.nukkit.server.entity.misc.DroppedItemEntity;
 import cn.nukkit.server.entity.system.*;
-import cn.nukkit.server.level.manager.LevelBlockManager;
-import cn.nukkit.server.level.manager.LevelChunkManager;
-import cn.nukkit.server.level.manager.LevelEntityManager;
-import cn.nukkit.server.level.manager.LevelPacketManager;
+import cn.nukkit.server.level.manager.*;
 import cn.nukkit.server.level.provider.ChunkProvider;
+import cn.nukkit.server.metadata.MetadataSerializers;
+import cn.nukkit.server.nbt.tag.CompoundTag;
+import cn.nukkit.server.network.minecraft.packet.BlockEntityDataPacket;
+import cn.nukkit.server.network.minecraft.packet.UpdateBlockPacket;
 import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector3i;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+@Log4j2
 public class NukkitLevel implements Level {
+    @Getter
+    private static final LevelPaletteManager paletteManager = new LevelPaletteManager();
     private static final int FULL_TIME = 24000;
     private final LevelData levelData;
     private final String levelId;
@@ -154,5 +162,35 @@ public class NukkitLevel implements Level {
         });
 
         return future;
+    }
+
+    public void broadcastBlockUpdate(Entity entity, Vector3i position) {
+        Optional<Block> block = getBlockIfChunkLoaded(position);
+        if (!block.isPresent()) {
+            log.warn("Cannot update block at {} as chunk is not loaded", position);
+            return;
+        }
+
+        BlockState state = block.get().getBlockState();
+        UpdateBlockPacket packet = new UpdateBlockPacket();
+        packet.setRuntimeId(paletteManager.getOrCreateRuntimeId(state));
+        packet.setBlockPosition(position);
+        packet.setDataLayer(UpdateBlockPacket.DataLayer.NORMAL);
+        packetManager.queuePacketForViewers(entity, packet);
+
+        if (state.getBlockEntity().isPresent()) {
+            CompoundTag tag = MetadataSerializers.serializeNBT(state);
+            if (tag == null) {
+                throw new IllegalStateException("Serialized BlockEntity tag was null");
+            }
+            tag.tagInt("x", position.getX());
+            tag.tagInt("y", position.getY());
+            tag.tagInt("z", position.getZ());
+
+            BlockEntityDataPacket packet1 = new BlockEntityDataPacket();
+            packet1.setBlockPostion(position);
+            packet1.setData(tag);
+            packetManager.queuePacketForViewers(entity, packet1);
+        }
     }
 }
