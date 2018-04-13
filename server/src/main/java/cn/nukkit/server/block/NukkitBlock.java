@@ -6,6 +6,11 @@ import cn.nukkit.api.level.Level;
 import cn.nukkit.api.level.chunk.Chunk;
 import cn.nukkit.api.util.BoundingBox;
 import com.flowpowered.math.vector.Vector3i;
+import com.spotify.futures.CompletableFutures;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class NukkitBlock implements Block {
     private final Level level;
@@ -43,5 +48,28 @@ public class NukkitBlock implements Block {
     @Override
     public BlockState getBlockState() {
         return state;
+    }
+
+    public List<Block> getNeighboringBlocksIfLoaded() {
+        List<Block> blocks = new ArrayList<>();
+        level.getBlockIfChunkLoaded(blockPosition.add(1, 0, 0)).ifPresent(blocks::add);
+        level.getBlockIfChunkLoaded(blockPosition.add(-1, 0, 0)).ifPresent(blocks::add);
+        level.getBlockIfChunkLoaded(blockPosition.add(0, 1, 0)).ifPresent(blocks::add);
+        level.getBlockIfChunkLoaded(blockPosition.add(0, -1, 0)).ifPresent(blocks::add);
+        level.getBlockIfChunkLoaded(blockPosition.add(0, 0, 1)).ifPresent(blocks::add);
+        level.getBlockIfChunkLoaded(blockPosition.add(0, 0, -1)).ifPresent(blocks::add);
+        return blocks;
+    }
+
+    public CompletableFuture<List<Block>> getNeighboringBlocks() {
+        List<CompletableFuture<Block>> blockFutures = new ArrayList<>();
+        blockFutures.add(level.getBlock(blockPosition.add(1, 0, 0)));
+        blockFutures.add(level.getBlock(blockPosition.add(-1, 0, 0)));
+        blockFutures.add(level.getBlock(blockPosition.add(0, 1, 0)));
+        blockFutures.add(level.getBlock(blockPosition.add(0, -1, 0)));
+        blockFutures.add(level.getBlock(blockPosition.add(0, 0, 1)));
+        blockFutures.add(level.getBlock(blockPosition.add(0, 0, -1)));
+
+        return CompletableFutures.allAsList(blockFutures);
     }
 }
