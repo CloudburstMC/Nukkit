@@ -21,7 +21,7 @@ pipeline {
 
         stage ('Javadoc') {
             when {
-                branch "master"
+                branch "main"
             }
             steps {
                 sh 'mvn javadoc:aggregate -DskipTests -pl api'
@@ -39,7 +39,7 @@ pipeline {
 
         stage ('Deploy') {
             when {
-                branch "master"
+                branch "rewrite"
             }
             steps {
                 sh 'mvn deploy -DskipTests'
