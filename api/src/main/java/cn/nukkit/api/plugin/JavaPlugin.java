@@ -37,44 +37,54 @@ public abstract class JavaPlugin implements Plugin {
         }
     }
 
+    @Override
     public final PluginLoader getPluginLoader() {
         return loader;
     }
 
+    @Override
     public final Server getServer() {
         return server;
     }
 
-    public final PluginDescription getPluginDescription() {
-        return description;
-    }
-
+    @Override
     public final String getVersion() {
         return description.getVersion();
     }
 
+    @Override
     public final String getName() {
         return description.getName();
     }
 
+    @Override
     public final Path getDataFolder() {
         return dataFolder;
     }
 
+    @Override
     public final Path getConfigPath() {
         return configPath;
     }
 
+    @Override
     public final Config getConfig() {
         return config;
     }
 
+    @Override
     public final Logger getLogger() {
         return logger;
     }
 
+    @Override
     public final boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public PluginDescription getDescription() {
+        return description;
     }
 
     public final void setEnabled(boolean enabled) {
@@ -88,16 +98,20 @@ public abstract class JavaPlugin implements Plugin {
         }
     }
 
+    @Override
     public final boolean isDisabled() {
         return !enabled;
     }
 
+    @Override
     public void onLoad() {
     }
 
+    @Override
     public void onEnable() {
     }
 
+    @Override
     public void onDisable() {
     }
 
@@ -153,6 +167,21 @@ public abstract class JavaPlugin implements Plugin {
             logger.warn("Could not save " + out.getName() + " to " + out + " because " + out.getName() + " already exists.");
         }
         return false;
+    }
+
+    @Override
+    public void saveConfig() {
+        //TODO
+    }
+
+    @Override
+    public void saveDefaultConfig() {
+        //TODO
+    }
+
+    @Override
+    public void reloadConfig() {
+        //TODO
     }
 
     @Override

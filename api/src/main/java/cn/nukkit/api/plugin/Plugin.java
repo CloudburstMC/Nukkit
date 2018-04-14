@@ -95,6 +95,8 @@ public interface Plugin {
      */
     Path getDataFolder();
 
+    Path getConfigPath();
+
     /**
      * 返回描述这个Nukkit插件的{@link PluginDescription}对象。<br>
      * The description this Nukkit plugin as a {@link PluginDescription} object.
