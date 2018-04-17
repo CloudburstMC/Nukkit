@@ -85,6 +85,10 @@ public class EntityPotion extends EntityProjectile {
         return 0.01f;
     }
 
+    @Override
+    public void onCollideWithEntity(Entity entity) {
+        this.hadCollision = true;
+    }
 
     @Override
     public boolean onUpdate(int currentTick) {
