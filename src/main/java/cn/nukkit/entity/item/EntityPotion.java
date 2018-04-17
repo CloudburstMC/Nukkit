@@ -107,7 +107,7 @@ public class EntityPotion extends EntityProjectile {
         }
 
         if (this.isCollided) {
-            this.close();
+            this.kill();
 
             Potion potion = Potion.getPotion(this.potionId);
 
