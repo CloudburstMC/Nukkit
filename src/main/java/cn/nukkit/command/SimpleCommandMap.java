@@ -1,19 +1,22 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.defaults.*;
-import cn.nukkit.command.simple.Arguments;
-import cn.nukkit.command.simple.CommandPermission;
-import cn.nukkit.command.simple.ForbidConsole;
-import cn.nukkit.command.simple.SimpleCommand;
+import cn.nukkit.command.simple.*;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
+import com.google.common.collect.Sets;
 
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * author: MagicDroidX
@@ -70,11 +73,11 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new XpCommand("xp"));
 
 //        if ((boolean) this.server.getConfig("debug.commands", false)) {
-            this.register("nukkit", new StatusCommand("status"));
-            this.register("nukkit", new GarbageCollectorCommand("gc"));
-            this.register("nukkit", new TimingsCommand("timings"));
-            this.register("nukkit", new DebugPasteCommand("debugpaste"));
-            //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
+        this.register("nukkit", new StatusCommand("status"));
+        this.register("nukkit", new GarbageCollectorCommand("gc"));
+        this.register("nukkit", new TimingsCommand("timings"));
+        this.register("nukkit", new DebugPasteCommand("debugpaste"));
+        //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
 //        }
     }
 
@@ -139,6 +142,17 @@ public class SimpleCommandMap implements CommandMap {
 
                 if (method.isAnnotationPresent(ForbidConsole.class)) {
                     sc.setForbidConsole(true);
+                }
+
+                CommandParameters commandParameters = method.getAnnotation(CommandParameters.class);
+                if (commandParameters != null) {
+                    Map<String, CommandParameter[]> map = Arrays.stream(commandParameters.parameters())
+                            .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
+                                    .map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional()))
+                                    .distinct()
+                                    .toArray(CommandParameter[]::new)));
+
+                    sc.commandParameters.putAll(map);
                 }
 
                 this.register(def.name(), sc);
