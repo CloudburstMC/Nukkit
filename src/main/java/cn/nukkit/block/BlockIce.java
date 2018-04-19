@@ -60,7 +60,7 @@ public class BlockIce extends BlockTransparent {
             }
         }
         return 0;
-    }    
+    }
 
     @Override
     public Item[] getDrops(Item item) {
