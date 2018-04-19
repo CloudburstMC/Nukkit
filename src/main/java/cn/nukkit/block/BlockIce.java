@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
@@ -59,10 +60,15 @@ public class BlockIce extends BlockTransparent {
             }
         }
         return 0;
-    }
+    }    
 
     @Override
     public Item[] getDrops(Item item) {
+        if(item.hasEnchantment(Enchantment.ID_SILK_TOUCH)==true) {
+            return new Item[] {
+                    this.toItem()
+            };
+        }
         return new Item[0];
     }
 
