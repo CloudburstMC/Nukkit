@@ -2,15 +2,22 @@ package cn.nukkit.server.util.bitset;
 
 public interface BitSet {
 
+    void flip(int index);
+
     void set(int index, boolean value);
 
     boolean get(int index);
 
-    long getAsLong();
+    long[] getLongs();
 
-    int getAsInt();
+    int[] getInts();
 
-    short getAsShort();
+    short[] getShorts();
 
-    byte getAsByte();
+    byte[] getBytes();
+
+    /**
+     * Set all bits to 0
+     */
+    void clear();
 }

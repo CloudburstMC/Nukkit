@@ -1,11 +1,12 @@
 package cn.nukkit.server.level.provider.leveldb;
 
 import cn.nukkit.api.level.Level;
-import cn.nukkit.api.level.LevelException;
 import cn.nukkit.api.level.chunk.Chunk;
 import cn.nukkit.server.level.chunk.ChunkSection;
 import cn.nukkit.server.level.chunk.SectionedChunk;
 import cn.nukkit.server.level.provider.ChunkProvider;
+import cn.nukkit.server.level.provider.LegacyChunkConverter;
+import com.google.common.base.Preconditions;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
@@ -28,7 +29,7 @@ public class LevelDBChunkProvider implements ChunkProvider, Closeable {
     private static final byte TAG_DATA_2D = 0x2d;
     private static final byte TAG_CHUNK_SECTION = 0x2f;
     private static final byte TAG_VERSION = 0x76;
-    private static final int BLOCKID_ARRAY_SIZE = 4096;
+    private static final int BLOCK_ARRAY_SIZE = 4096;
     private static final int NIBBLE_ARRAY_SIZE = 2048;
 
     private static final byte CHUNK_SECTION_COUNT = 16;
@@ -52,32 +53,32 @@ public class LevelDBChunkProvider implements ChunkProvider, Closeable {
 
             try {
                 byte[] version = this.db.get(getKey(x, z, TAG_VERSION));
-                if (version == null || version.length != 1) {
+                if (version == null || version.length != 1 || version[0] < 4) {
                     chunkFuture.complete(null);
                     return;
                 }
-                if (version[0] < 4) {
-                    throw new LevelException("Incompatible chunk version found.");
-                }
                 ChunkSection[] chunkSections = new ChunkSection[CHUNK_SECTION_COUNT];
                 for (byte y = 0; y < CHUNK_SECTION_COUNT; y++) {
-                    byte[] chunkSection = this.db.get(getKey(x, z, TAG_CHUNK_SECTION, y));
-                    if (chunkSection == null || chunkSection.length < BLOCKID_ARRAY_SIZE + NIBBLE_ARRAY_SIZE) {
-                        continue;
+                    ByteBuffer buffer = ByteBuffer.wrap(db.get(getKey(x, z, TAG_CHUNK_SECTION, y)));
+                    byte chunkSectionVersion = buffer.get();
+                    switch (chunkSectionVersion) {
+                        case 1:
+                            break;
+                        case 0:
+                            Preconditions.checkArgument(buffer.remaining() >= (BLOCK_ARRAY_SIZE + NIBBLE_ARRAY_SIZE), "Buffer too small for blockIDs and blockData");
+                            byte[] blockIds = new byte[BLOCK_ARRAY_SIZE];
+                            byte[] blockData = new byte[NIBBLE_ARRAY_SIZE];
+                            byte[] skyLight = new byte[NIBBLE_ARRAY_SIZE];
+                            byte[] blockLight = new byte[NIBBLE_ARRAY_SIZE];
+                            buffer.get(blockIds);
+                            buffer.get(blockData);
+                            if (buffer.remaining() >= BLOCK_ARRAY_SIZE) {
+                                buffer.get(skyLight);
+                                buffer.get(blockLight);
+                            }
+                            chunkSections[y] = LegacyChunkConverter.convertFromLegacy(blockIds, blockData, skyLight, blockLight);
+                            break;
                     }
-                    ByteBuffer buffer = ByteBuffer.wrap(chunkSection);
-                    buffer.get(); // Chunk version.
-                    byte[] blockIds = new byte[BLOCKID_ARRAY_SIZE];
-                    byte[] blockData = new byte[NIBBLE_ARRAY_SIZE];
-                    byte[] skyLight = new byte[NIBBLE_ARRAY_SIZE];
-                    byte[] blockLight = new byte[NIBBLE_ARRAY_SIZE];
-                    buffer.get(blockIds);
-                    buffer.get(blockData);
-                    if (buffer.remaining() >= NIBBLE_ARRAY_SIZE * 2) {
-                        buffer.get(skyLight);
-                        buffer.get(blockLight);
-                    }
-                    chunkSections[y] = new ChunkSection(blockIds, blockData, skyLight, blockLight);
                 }
 
 

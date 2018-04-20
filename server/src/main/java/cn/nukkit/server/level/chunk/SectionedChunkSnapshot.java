@@ -1,18 +1,17 @@
 package cn.nukkit.server.level.chunk;
 
 import cn.nukkit.api.block.BlockSnapshot;
-import cn.nukkit.api.block.BlockType;
+import cn.nukkit.api.block.BlockState;
 import cn.nukkit.api.block.BlockTypes;
 import cn.nukkit.api.block.entity.BlockEntity;
 import cn.nukkit.api.level.Level;
 import cn.nukkit.api.level.chunk.Chunk;
 import cn.nukkit.api.level.chunk.ChunkSnapshot;
 import cn.nukkit.api.level.data.Biome;
-import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.server.block.NukkitBlock;
 import cn.nukkit.server.block.NukkitBlockState;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.biome.NukkitBiome;
-import cn.nukkit.server.metadata.MetadataSerializers;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
 import gnu.trove.map.TIntObjectMap;
@@ -89,15 +88,15 @@ public class SectionedChunkSnapshot implements ChunkSnapshot {
             return new NukkitBlock(level, chunk, full, new NukkitBlockState(BlockTypes.AIR, null, null));
         }
 
-        BlockType type = BlockTypes.byId(section.getBlockId(x, y & 15, z));
-        Optional<Metadata> createdData;
-        if (type.getMetadataClass() != null) {
-            createdData = Optional.ofNullable(MetadataSerializers.deserializeMetadata(type, section.getBlockData(x, y & 15, z)));
-        } else {
-            createdData = Optional.empty();
+        Optional<BlockState> blockState = NukkitLevel.getPaletteManager().getBlockState(section.getBlockId(x, y & 15, z, 0));
+        BlockState state = blockState.orElse(NukkitBlockState.AIR);
+        BlockEntity blockEntity = blockEntities.get(xyzIdx(x, y, z));
+
+        if (blockEntity != null) {
+            state = new NukkitBlockState(state.getBlockType(), state.getBlockData(), blockEntity);
         }
 
-        return new NukkitBlock(level, chunk, full, new NukkitBlockState(type, createdData.orElse(null), blockEntities.get(xyzIdx(x, y, z))));
+        return new NukkitBlock(level, chunk, full, state);
     }
 
     @Nonnull

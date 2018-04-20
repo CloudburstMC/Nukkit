@@ -16,7 +16,6 @@ import cn.nukkit.server.network.minecraft.data.MetadataConstants;
 import cn.nukkit.server.network.minecraft.packet.AddEntityPacket;
 import cn.nukkit.server.network.minecraft.packet.SetEntityDataPacket;
 import cn.nukkit.server.network.minecraft.util.MetadataDictionary;
-import cn.nukkit.server.util.bitset.BitSet;
 import cn.nukkit.server.util.bitset.SyncLongBitSet;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
@@ -47,7 +46,7 @@ public class BaseEntity implements Entity {
     private BoundingBox boundingBox;
     private boolean movementStale;
     private boolean metadataStale;
-    protected final BitSet metadataFlags = new SyncLongBitSet();
+    protected final SyncLongBitSet metadataFlags = new SyncLongBitSet();
 
     public BaseEntity(EntityType entityType, Vector3f position, NukkitLevel level, NukkitServer server) {
         this.level = level;
@@ -395,13 +394,13 @@ public class BaseEntity implements Entity {
 
     protected MetadataDictionary getMetadataFlags() {
         MetadataDictionary dictionary = new MetadataDictionary();
-        dictionary.put(FLAGS, metadataFlags.getAsLong());
+        dictionary.put(FLAGS, metadataFlags.get());
         return dictionary;
     }
 
     public MetadataDictionary getMetadata() {
         MetadataDictionary dictionary = new MetadataDictionary();
-        dictionary.put(MetadataConstants.FLAGS, metadataFlags.getAsLong());
+        dictionary.put(MetadataConstants.FLAGS, metadataFlags.get());
         dictionary.put(NAMETAG, "");
         dictionary.put(ENTITY_AGE, 0);
         dictionary.put(SCALE, 1f);

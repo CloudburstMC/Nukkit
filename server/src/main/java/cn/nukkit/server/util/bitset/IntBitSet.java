@@ -1,21 +1,20 @@
 package cn.nukkit.server.util.bitset;
 
-public class ByteBitSet implements BitSet {
-    private byte bitset;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
-    public ByteBitSet() {
+public class IntBitSet implements BitSet {
+    private int bitset;
+
+    public IntBitSet() {
         bitset = 0;
     }
 
-    public ByteBitSet(byte bitset) {
-        this.bitset = bitset;
-    }
-
-    public ByteBitSet(int bitset) {
+    public IntBitSet(int bitset) {
         this.bitset = (byte) bitset;
     }
 
-    public ByteBitSet(ByteBitSet bitSet) {
+    public IntBitSet(IntBitSet bitSet) {
         this.bitset = bitSet.bitset;
     }
 
@@ -46,12 +45,16 @@ public class ByteBitSet implements BitSet {
 
     @Override
     public short[] getShorts() {
-        return new short[]{bitset};
+        ByteBuffer buffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putInt(bitset);
+        return buffer.asShortBuffer().array();
     }
 
     @Override
     public byte[] getBytes() {
-        return new byte[]{bitset};
+        ByteBuffer buffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putInt(bitset);
+        return buffer.array();
     }
 
     @Override
@@ -59,21 +62,21 @@ public class ByteBitSet implements BitSet {
         bitset = 0;
     }
 
-    public byte get() {
+    public int get() {
         return bitset;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (!(o instanceof ByteBitSet)) return false;
-        ByteBitSet that = (ByteBitSet) o;
+        if (!(o instanceof IntBitSet)) return false;
+        IntBitSet that = (IntBitSet) o;
         return this.bitset == that.get();
     }
 
     private static void checkIndex(int index) {
-        if (!(index >= 0 && index < 8)) {
-            throw new IndexOutOfBoundsException("Expected value 0-7");
+        if (!(index >= 0 && index < 32)) {
+            throw new IndexOutOfBoundsException("Expected value 0-32");
         }
     }
 }

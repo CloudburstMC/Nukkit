@@ -2,6 +2,7 @@ package cn.nukkit.server.level.provider.anvil;
 
 import cn.nukkit.api.level.Level;
 import cn.nukkit.api.level.chunk.Chunk;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.chunk.ChunkSection;
 import cn.nukkit.server.level.chunk.SectionedChunk;
 import cn.nukkit.server.level.util.NibbleArray;
@@ -43,8 +44,7 @@ public class AnvilConversion {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 16; y++) {
                         int pos = anvilBlockPosition(x, y, z);
-                        section.setBlockId(x, y, z, blockIds[pos]);
-                        section.setBlockData(x, y, z, data.get(pos));
+                        section.setBlockId(x, y, z, 0, NukkitLevel.getPaletteManager().fromLegacy(blockIds[pos], data.get(pos)));
                         section.setSkyLight(x, y, z, skyLight.get(pos));
                         section.setBlockLight(x, y, z, blockLight.get(pos));
                     }
@@ -84,8 +84,8 @@ public class AnvilConversion {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 16; y++) {
                         int pos = anvilBlockPosition(x, y, z);
-                        blockIds[pos] = (byte) section.getBlockId(x, y, z);
-                        data.set(pos, section.getBlockData(x, y, z));
+                        blockIds[pos] = (byte) section.getBlockId(x, y, z, 0);
+                        //data.set(pos, section.getBlockData(x, y, z)); TODO
                         skyLight.set(pos, section.getSkyLight(x, y, z));
                         blockLight.set(pos, section.getBlockLight(x, y, z));
                     }

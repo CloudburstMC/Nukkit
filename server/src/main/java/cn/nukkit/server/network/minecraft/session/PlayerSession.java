@@ -1206,6 +1206,11 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             viewDistance = radius;
 
             sendNewChunks().whenComplete((chunks, throwable) -> {
+                if (throwable != null) {
+                    log.error("Unable to load chunks", throwable);
+                    session.disconnect();
+                    return;
+                }
                 // If the player has not spawned, we need to start the spawning sequence.
                 if (!spawned) {
                     sendEntityData();

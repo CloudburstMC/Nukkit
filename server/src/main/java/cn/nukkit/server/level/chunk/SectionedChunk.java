@@ -9,15 +9,17 @@ import cn.nukkit.api.level.Level;
 import cn.nukkit.api.level.chunk.Chunk;
 import cn.nukkit.api.level.chunk.ChunkSnapshot;
 import cn.nukkit.api.level.data.Biome;
+import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.level.biome.NukkitBiome;
 import cn.nukkit.server.metadata.MetadataSerializers;
 import cn.nukkit.server.nbt.NBTEncodingType;
 import cn.nukkit.server.nbt.stream.FastByteArrayOutputStream;
+import cn.nukkit.server.nbt.stream.LittleEndianDataOutputStream;
 import cn.nukkit.server.nbt.stream.NBTOutputStream;
-import cn.nukkit.server.nbt.stream.SwappedDataOutputStream;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import cn.nukkit.server.nbt.tag.IntTag;
 import cn.nukkit.server.nbt.tag.Tag;
+import cn.nukkit.server.nbt.util.VarInt;
 import cn.nukkit.server.network.minecraft.packet.FullChunkDataPacket;
 import cn.nukkit.server.network.minecraft.packet.WrappedPacket;
 import cn.nukkit.server.network.minecraft.wrapper.DefaultWrapperHandler;
@@ -30,11 +32,11 @@ import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.Unpooled;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.*;
 
 @Log4j2
@@ -81,8 +83,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         checkPosition(x, y, z);
 
         ChunkSection section = getOrCreateSection(y >> 4);
-        section.setBlockId(x, y & 15, z, (byte) state.getBlockType().getId());
-        section.setBlockData(x, y & 15, z, (byte) MetadataSerializers.serializeMetadata(state));
+        section.setBlockId(x, y & 15, z, 0, NukkitLevel.getPaletteManager().getOrCreateRuntimeId(state));
 
         if (shouldRecalculateLight) {
             // Recalculate the height map and lighting for this chunk section.
@@ -150,7 +151,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
             ChunkSection section = sections[i];
             if (section != null) {
                 for (int j = 15; j >= 0; j--) {
-                    if (section.getBlockId(x, j, z) != 0) {
+                    if (section.getBlockId(x, j, z, 0) != 0) {
                         return j + (i << 4);
                     }
                 }
@@ -172,7 +173,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         // From the top, however...
         boolean blocked = false;
         for (int y = maxHeight; y > 0; y--) {
-            BlockType type = BlockTypes.byId(sections[y >> 4].getBlockId(x, y & 15, z));
+            BlockType type = BlockTypes.byId(sections[y >> 4].getBlockId(x, y & 15, z, 0));
             byte light = 15;
             if (!blocked) {
                 if (!type.isTransparent()) {
@@ -238,7 +239,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         TLongSet visitedRemove = new TLongHashSet();
 
         ChunkSection section = getOrCreateSection(y >> 4);
-        BlockType ourType = BlockTypes.byId(section.getBlockId(x, y & 15, z));
+        BlockType ourType = BlockTypes.byId(section.getBlockId(x, y & 15, z, 0));
         byte currentBlockLight = section.getBlockLight(x, y & 15, z);
         byte newBlockLight = (byte) ourType.emitsLight();
 
@@ -268,7 +269,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         while ((toSpread = spread.poll()) != null) {
             ChunkSection cs = getOrCreateSection(toSpread.getY() >> 4);
             byte adjustedLight = (byte) (cs.getBlockLight(toSpread.getX(), toSpread.getY() & 15, toSpread.getZ())
-                    - BlockTypes.byId(cs.getBlockId(toSpread.getX(), toSpread.getY() & 15, toSpread.getZ())).filtersLight());
+                    - BlockTypes.byId(cs.getBlockId(toSpread.getX(), toSpread.getY() & 15, toSpread.getZ(), 0)).filtersLight());
 
             if (adjustedLight >= 1) {
                 computeSpreadBlockLight(toSpread.sub(1, 0, 0), adjustedLight, spread, visitedSpread);
@@ -330,16 +331,12 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
             return packet;
         }
 
-        FullChunkDataPacket packet = new FullChunkDataPacket();
-        packet.setChunkX(x);
-        packet.setChunkZ(z);
-
         // Block Entities
         int nbtSize = 0;
         CanWriteToBB blockEntitiesStream = null;
         if (!serializedBlockEntities.isEmpty()) {
             blockEntitiesStream = new CanWriteToBB();
-            try (NBTOutputStream writer = new NBTOutputStream(new SwappedDataOutputStream(blockEntitiesStream), NBTEncodingType.BEDROCK)) {
+            try (NBTOutputStream writer = new NBTOutputStream(new LittleEndianDataOutputStream(blockEntitiesStream), NBTEncodingType.BEDROCK)) {
                 for (CompoundTag blockEntity : serializedBlockEntities.valueCollection()) {
                     writer.write(blockEntity);
                 }
@@ -361,34 +358,34 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         }
 
         // Chunk sections
-        int bufferSize = 1 + 6145 * topBlank + 768 + 2 + nbtSize;
-        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-        buffer.put((byte) topBlank);
+        int bufferSize = 1 + 4096 * topBlank + 768 + 2 + nbtSize;
+        ByteBuf byteBuf = Unpooled.buffer(bufferSize);
+        byteBuf.markReaderIndex();
+        byteBuf.writeByte((byte) topBlank);
 
         for (int i = 0; i < topBlank; i++) {
-            ChunkSection section = sections[i];
-            buffer.put((byte) 0); // Chunk section version
-            if (section != null) {
-                buffer.put(section.getIds());
-                buffer.put(section.getData().getData());
-            } else {
-                buffer.position(buffer.position() + 6144);
-            }
+            getOrCreateSection(i).writeTo(byteBuf);
         }
 
         // Heightmap
-        buffer.put(height);
+        byteBuf.writeBytes(height);
         // Biomes
-        buffer.put(biomeId);
+        byteBuf.writeBytes(biomeId);
 
         // Extra data TODO: Implement
-        buffer.putShort((short) 0);
+        VarInt.writeSignedInt(byteBuf, 0);
+        VarInt.writeSignedInt(byteBuf, 0);
 
         if (blockEntitiesStream != null) {
-            blockEntitiesStream.writeTo(buffer);
+            blockEntitiesStream.writeTo(byteBuf);
         }
 
-        packet.setData(buffer.array());
+        FullChunkDataPacket packet = new FullChunkDataPacket();
+        packet.setChunkX(x);
+        packet.setChunkZ(z);
+        byte[] chunkData = new byte[byteBuf.readableBytes()];
+        byteBuf.readBytes(chunkData);
+        packet.setData(chunkData);
 
         WrappedPacket wrappedPacket = new WrappedPacket();
         wrappedPacket.setPayload(compressionHandler.compressPackets(Collections.singletonList(packet)));
@@ -403,8 +400,8 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
             super(8192);
         }
 
-        public void writeTo(ByteBuffer byteBuffer) {
-            byteBuffer.put(array, 0, position);
+        public void writeTo(ByteBuf buf) {
+            buf.writeBytes(array, 0, position);
         }
     }
 

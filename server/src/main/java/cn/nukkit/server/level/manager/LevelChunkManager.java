@@ -130,8 +130,8 @@ public class LevelChunkManager {
                 loadedTimes.remove(chunkKey);
                 level.getEntityManager().getEntitiesInChunk(x, z).forEach(Entity::remove);
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Cleared chunk ({},{}) from {}", x, z, level.getId());
+                if (log.isTraceEnabled()) {
+                    log.trace("Cleared chunk ({},{}) from {}", x, z, level.getId());
                 }
             }
         }
@@ -162,8 +162,8 @@ public class LevelChunkManager {
                 // No chunk found so we need to generate it.
                 if (chunk == null) {
                     long seed = getChunkSeed(x, z);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Generating chunk {},{} using {} with seed {}", x, z, chunkGenerator.getClass().getName(), seed);
+                    if (log.isTraceEnabled()) {
+                        log.trace("Generating chunk {},{} using {} with seed {}", x, z, chunkGenerator.getClass().getName(), seed);
                     }
                     SectionedChunk newChunk = new SectionedChunk(x, z, level);
                     chunkGenerator.generateChunk(level, newChunk, new Random(seed));
