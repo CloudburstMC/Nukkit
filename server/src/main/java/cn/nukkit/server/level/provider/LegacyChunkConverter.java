@@ -14,7 +14,7 @@ public class LegacyChunkConverter {
         NibbleArray data = new NibbleArray(blockData);
         TIntArrayList runtimeIds = new TIntArrayList();
         for (int i = 0; i < 4096; i++) {
-            int runtimeId = NukkitLevel.getPaletteManager().fromLegacy(blockIds[i] << 4,  data.get(i));
+            int runtimeId = NukkitLevel.getPaletteManager().fromLegacy(blockIds[i],  data.get(i));
 
             if (!runtimeIds.contains(runtimeId)) {
                 runtimeIds.add(runtimeId);
