@@ -3863,13 +3863,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             //source.setCancelled();
             return false;
         } else if (source.getCause() == DamageCause.FALL) {
-            if (this.getLevel().getBlock(this.getPosition().floor().add(0.5, -1, 0.5)).getId() == Block.SLIME_BLOCK) {
+            int id = this.getLevel().getBlock(this.getPosition().floor().add(0.5, -1, 0.5)).getId();
+            if (id == Block.WATER || id == Block.STILL_WATER) {
+                this.resetFallDistance();
+                return false;
+            } else if (id == Block.SLIME_BLOCK) {
                 if (!this.isSneaking()) {
                     //source.setCancelled();
                     this.resetFallDistance();
                     return false;
                 }
-            }
+            } 
         }
 
         if (source instanceof EntityDamageByEntityEvent) {
