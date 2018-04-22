@@ -168,8 +168,8 @@ public interface BlockID {
     int REDSTONE_LAMP = 123;
     int LIT_REDSTONE_LAMP = 124;
     //Note: dropper CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
-    int DROPPER = 125;
-    int ACTIVATOR_RAIL = 126;
+    int DROPPER = 158;
+    int ACTIVATOR_RAIL = 157;
     int COCOA = 127;
     int COCOA_BLOCK = 127;
     int SANDSTONE_STAIRS = 128;
@@ -206,14 +206,14 @@ public interface BlockID {
     int HOPPER_BLOCK = 154;
     int QUARTZ_BLOCK = 155;
     int QUARTZ_STAIRS = 156;
-    int DOUBLE_WOOD_SLAB = 157;
-    int DOUBLE_WOODEN_SLAB = 157;
-    int DOUBLE_WOOD_SLABS = 157;
-    int DOUBLE_WOODEN_SLABS = 157;
-    int WOOD_SLAB = 158;
-    int WOODEN_SLAB = 158;
-    int WOOD_SLABS = 158;
-    int WOODEN_SLABS = 158;
+    int DOUBLE_WOOD_SLAB = 125;
+    int DOUBLE_WOODEN_SLAB = 125;
+    int DOUBLE_WOOD_SLABS = 125;
+    int DOUBLE_WOODEN_SLABS = 125;
+    int WOOD_SLAB = 126;
+    int WOODEN_SLAB = 126;
+    int WOOD_SLABS = 126;
+    int WOODEN_SLABS = 126;
     int STAINED_TERRACOTTA = 159;
     int STAINED_HARDENED_CLAY = 159;
     int STAINED_GLASS_PANE = 160;
