@@ -3,10 +3,14 @@ package cn.nukkit.server.network.minecraft.data;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.server.nbt.util.VarInt;
 import cn.nukkit.server.network.minecraft.MinecraftUtil;
+import cn.nukkit.server.util.bitset.BitUtil;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
+
+import java.util.StringJoiner;
 
 public enum MetadataConstants {
     FLAGS(Type.LONG),
@@ -95,6 +99,7 @@ public enum MetadataConstants {
         this.type = type;
     }
 
+    @Log4j2
     public enum Flag {
         ON_FIRE,
         SNEAKING,
@@ -146,7 +151,15 @@ public enum MetadataConstants {
         AFFECTED_BY_GRAVITY,
         FIRE_IMMUNE,
         DANCING,
-        ENCHANTED
+        ENCHANTED;
+
+        public static void logBitSet(long bitset) {
+            StringJoiner joiner = new StringJoiner(", ");
+            for (Flag flag : values()) {
+                joiner.add("(" + flag.name() + ":" + (BitUtil.getBit(bitset, flag.ordinal()) ? '1' : '0') + ")");
+            }
+            log.debug(joiner.toString());
+        }
     }
 
     public enum Type {

@@ -16,7 +16,6 @@ import cn.nukkit.server.network.minecraft.data.MetadataConstants;
 import cn.nukkit.server.network.minecraft.packet.AddEntityPacket;
 import cn.nukkit.server.network.minecraft.packet.SetEntityDataPacket;
 import cn.nukkit.server.network.minecraft.util.MetadataDictionary;
-import cn.nukkit.server.util.bitset.SyncLongBitSet;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
@@ -45,8 +44,7 @@ public class BaseEntity implements Entity {
     private boolean removed = false;
     private BoundingBox boundingBox;
     private boolean movementStale;
-    private boolean metadataStale;
-    protected final SyncLongBitSet metadataFlags = new SyncLongBitSet();
+    protected final BitSet metadataFlags = new BitSet(64);
 
     public BaseEntity(EntityType entityType, Vector3f position, NukkitLevel level, NukkitServer server) {
         this.level = level;
@@ -59,9 +57,9 @@ public class BaseEntity implements Entity {
         this.level.getEntityManager().registerEntity(this);
         this.tickCreated = level.getCurrentTick();
 
-        setFlag(HAS_COLLISION, true, false);
-        setFlag(AFFECTED_BY_GRAVITY, true, false);
-        setFlag(CAN_SHOW_NAMETAG, true, false);
+        setFlag(HAS_COLLISION, true);
+        setFlag(AFFECTED_BY_GRAVITY, true);
+        setFlag(CAN_SHOW_NAMETAG, true);
 
         refreshBoundingBox();
     }
@@ -361,15 +359,9 @@ public class BaseEntity implements Entity {
     }
 
     protected void setFlag(MetadataConstants.Flag flag, boolean value) {
-        setFlag(flag, value, true);
-    }
-
-    protected void setFlag(MetadataConstants.Flag flag, boolean value, boolean sendToPlayer) {
         if (value != metadataFlags.get(flag.ordinal())) {
-            metadataFlags.set(flag.ordinal(), value);
-            if (sendToPlayer) {
-                onMetadataUpdate(getMetadataFlags());
-            }
+            metadataFlags.flip(flag.ordinal());
+            onMetadataUpdate(getMetadataFlags());
         }
     }
 
@@ -394,13 +386,15 @@ public class BaseEntity implements Entity {
 
     protected MetadataDictionary getMetadataFlags() {
         MetadataDictionary dictionary = new MetadataDictionary();
-        dictionary.put(FLAGS, metadataFlags.get());
+        long[] array = metadataFlags.toLongArray();
+        dictionary.put(FLAGS, array.length > 0 ? array[0] : 0);
         return dictionary;
     }
 
     public MetadataDictionary getMetadata() {
         MetadataDictionary dictionary = new MetadataDictionary();
-        dictionary.put(MetadataConstants.FLAGS, metadataFlags.get());
+        long[] array = metadataFlags.toLongArray();
+        dictionary.put(FLAGS, array.length > 0 ? array[0] : 0);
         dictionary.put(NAMETAG, "");
         dictionary.put(ENTITY_AGE, 0);
         dictionary.put(SCALE, 1f);
@@ -424,15 +418,6 @@ public class BaseEntity implements Entity {
         checkIfAlive();
         movementStale = false;
         teleported = false;
-    }
-
-    public boolean isMetadataStale() {
-        return metadataStale;
-    }
-
-    public void resetStaleMetadata() {
-        checkIfAlive();
-        metadataStale = false;
     }
 
     public boolean onItemPickup(ItemInstance item) {

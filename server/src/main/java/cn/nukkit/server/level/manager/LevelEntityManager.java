@@ -147,7 +147,6 @@ public class LevelEntityManager {
             for (TLongObjectIterator<BaseEntity> it = entitiesCopy.iterator(); it.hasNext(); ) {
                 it.advance();
                 BaseEntity entity = it.value();
-                boolean isPlayer = entity instanceof PlayerSession;
                 try {
                     if (entity.isRemoved()) {
                         if (log.isDebugEnabled()) {

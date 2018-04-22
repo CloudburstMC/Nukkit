@@ -38,6 +38,6 @@ public class BitUtil {
     }
 
     public static long flipBit(long bitset, int index) {
-        return bitset ^= 1 << index;
+        return bitset ^ (1 << index);
     }
 }

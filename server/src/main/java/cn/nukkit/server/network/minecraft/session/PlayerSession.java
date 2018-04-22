@@ -249,6 +249,8 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         startGame.setEnchantmentSeed(enchantmentSeed);
         session.addToSendQueue(startGame);
 
+        sendCommandsEnabled();
+
         sendAttributes();
         sendAdventureSettings();
         sendPlayerInventory();
@@ -482,7 +484,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         if (this.commandsEnabled != commandsEnabled) {
             this.commandsEnabled = commandsEnabled;
             sendCommandsEnabled();
-            return;
         }
     }
 
@@ -864,12 +865,10 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     @Override
     protected void onMetadataUpdate(MetadataDictionary metadata) {
-        SetEntityDataPacket packet = new SetEntityDataPacket();
-        packet.setRuntimeEntityId(getEntityId());
-        packet.getMetadata().putAll(metadata);
-
-        getLevel().getPacketManager().queuePacketForViewers(this, packet);
-        session.addToSendQueue(packet);
+        if (!spawned) {
+            return;
+        }
+        super.onMetadataUpdate(metadata);
     }
 
     @Override
