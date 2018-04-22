@@ -79,7 +79,7 @@ public class FloatingTextParticle extends Particle {
         if (!this.invisible) {
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = UUID.randomUUID();
-            pk.username = "";
+            pk.username = this.title + (this.text.isEmpty() ? "\n" + this.text : "");
             pk.entityUniqueId = this.entityId;
             pk.entityRuntimeId = this.entityId;
             pk.x = (float) this.x;
@@ -91,19 +91,16 @@ public class FloatingTextParticle extends Particle {
             pk.yaw = 0;
             pk.pitch = 0;
             long flags = (
-                    (1L << Entity.DATA_FLAG_CAN_SHOW_NAMETAG) |
-                            (1L << Entity.DATA_FLAG_ALWAYS_SHOW_NAMETAG) |
-                            (1L << Entity.DATA_FLAG_IMMOBILE)
+                    1L << Entity.DATA_FLAG_IMMOBILE
             );
             pk.metadata = new EntityMetadata()
                     .putLong(Entity.DATA_FLAGS, flags)
-                    .putString(Entity.DATA_NAMETAG, this.title + (!this.text.isEmpty() ? "\n" + this.text : ""))
                     .putLong(Entity.DATA_LEAD_HOLDER_EID,-1)
                     .putFloat(Entity.DATA_SCALE, 0.01f); //zero causes problems on debug builds?
             pk.item = Item.get(Item.AIR);
             packets.add(pk);
         }
 
-        return packets.stream().toArray(DataPacket[]::new);
+        return packets.toArray(new DataPacket[0]);
     }
 }
