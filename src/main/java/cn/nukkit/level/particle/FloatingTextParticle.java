@@ -79,7 +79,7 @@ public class FloatingTextParticle extends Particle {
         if (!this.invisible) {
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = UUID.randomUUID();
-            pk.username = this.title + (this.text.isEmpty() ? "\n" + this.text : "");
+            pk.username = this.title + (this.text.isEmpty() ? "" : "\n" + this.text);
             pk.entityUniqueId = this.entityId;
             pk.entityRuntimeId = this.entityId;
             pk.x = (float) this.x;
