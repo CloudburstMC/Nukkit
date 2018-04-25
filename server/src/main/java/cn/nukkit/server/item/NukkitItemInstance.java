@@ -40,7 +40,7 @@ public class NukkitItemInstance implements ItemInstance {
         this.amount = amount;
         this.data = data;
         this.itemName = itemName;
-        this.itemLore = itemLore;
+        this.itemLore = itemLore == null ? new ArrayList<>() : itemLore;
         this.enchantments = enchantments == null ? ImmutableSet.of() : ImmutableSet.copyOf(enchantments);
     }
 
@@ -76,7 +76,7 @@ public class NukkitItemInstance implements ItemInstance {
 
     @Override
     public ItemInstanceBuilder toBuilder() {
-        return new NukkitItemInstanceBuilder().itemType(type).amount(amount).itemData(data).name(itemName);
+        return new NukkitItemInstanceBuilder(this);
     }
 
     @Override

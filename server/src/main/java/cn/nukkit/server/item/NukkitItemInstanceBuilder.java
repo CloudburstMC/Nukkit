@@ -25,6 +25,17 @@ public class NukkitItemInstanceBuilder implements ItemInstanceBuilder {
     private List<String> itemLore;
     private final Set<EnchantmentInstance> enchantments = new HashSet<>();
 
+    public NukkitItemInstanceBuilder() {
+    }
+
+    public NukkitItemInstanceBuilder(@Nonnull ItemInstance item) {
+        itemType = item.getItemType();
+        amount = item.getAmount();
+        data = item.getItemData().orElse(null);
+        itemLore = item.getLore();
+        enchantments.addAll(item.getEnchantments());
+    }
+
     @Override
     public ItemInstanceBuilder itemType(@Nonnull ItemType itemType) {
         Preconditions.checkNotNull(itemType, "itemType");
