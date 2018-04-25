@@ -79,17 +79,17 @@ public class NukkitLocaleManager {
         return new Locale(localStringParts[0], localStringParts[1]);
     }
 
-    public String replaceI18n(String i18n, Object... objects) throws RuntimeException {
+    public String replaceI18n(String i18n, Object... objects) {
         return replaceI18n(Locale.getDefault(), i18n, objects);
     }
 
-    public String replaceI18n(Locale locale, String string, Object... objects) throws RuntimeException {
+    public String replaceI18n(Locale locale, String string, Object... objects) {
         Properties properties = locales.get(locale);
 
         String i18n = TextFormat.removeFormatting(string);
 
         if (!properties.containsKey(i18n)) {
-            throw new IllegalArgumentException("i18n code is not registered");
+            return string;
         }
         String l10n = properties.getProperty(i18n);
 
