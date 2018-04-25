@@ -24,7 +24,6 @@ public class LevelPacketManager {
     private final int viewDistanceSquared;
     private final NukkitLevel level;
 
-
     public LevelPacketManager(NukkitLevel level, int viewDistance) {
         this.level = level;
         this.viewDistanceSquared = (int) Math.pow((viewDistance * 16), 2);
@@ -142,5 +141,33 @@ public class LevelPacketManager {
         packet.setRelativeVolumeDisabled(disableRelativeVolume);
 
         queuePacketForViewers(entity, packet);
+    }
+
+    public void sendImmediatePacketForViewers(Entity entity, MinecraftPacket packet) {
+        Preconditions.checkNotNull(entity, "entity");
+        Preconditions.checkNotNull(packet, "packet");
+
+        List<PlayerSession> playersInWorld = level.getEntityManager().getPlayers();
+
+        for (PlayerSession session : playersInWorld) {
+            if (session == entity) continue; // Don't move ourselves
+
+            if (session.getPosition().distanceSquared(entity.getPosition()) <= viewDistanceSquared && !session.isRemoved()) {
+                session.getMinecraftSession().addToSendQueue(packet);
+            }
+        }
+    }
+
+    public void sendImmediatePacketForViewers(Vector3f position, MinecraftPacket packet) {
+        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkNotNull(packet, "packet");
+
+        List<PlayerSession> playersInWorld = level.getEntityManager().getPlayers();
+
+        for (PlayerSession session : playersInWorld) {
+            if (session.getPosition().distanceSquared(position) <= viewDistanceSquared && !session.isRemoved()) {
+                session.getMinecraftSession().addToSendQueue(packet);
+            }
+        }
     }
 }

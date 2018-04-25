@@ -1,19 +1,21 @@
 package cn.nukkit.server.inventory.transaction;
 
 import cn.nukkit.api.block.Block;
+import cn.nukkit.api.block.BlockState;
 import cn.nukkit.api.entity.component.PlayerData;
 import cn.nukkit.api.event.block.BlockBreakEvent;
+import cn.nukkit.api.event.block.BlockPlaceEvent;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.level.chunk.Chunk;
 import cn.nukkit.api.metadata.item.GenericDamageValue;
 import cn.nukkit.api.util.GameMode;
+import cn.nukkit.api.util.data.BlockFace;
 import cn.nukkit.server.block.BlockUtil;
 import cn.nukkit.server.block.NukkitBlockState;
 import cn.nukkit.server.block.behavior.BlockBehavior;
 import cn.nukkit.server.block.behavior.BlockBehaviors;
 import cn.nukkit.server.level.NukkitLevel;
 import cn.nukkit.server.network.minecraft.packet.LevelEventPacket;
-import cn.nukkit.server.network.minecraft.packet.UpdateBlockPacket;
 import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
@@ -40,15 +42,14 @@ public class ItemUseTransaction extends ComplexTransaction {
     @Override
     public void execute(PlayerSession session) {
         ItemInstance serverItem = session.getInventory().getItemInHand().orElse(BlockUtil.AIR);
-        if (!serverItem.equals(getItem())) {
-            log.debug("{} interacted with block using {} but has {} in hand {}", session.getName(), getItem(), serverItem, getSlot());
-            session.sendPlayerInventory();
-            return;
-        }
         switch (action) {
             case BREAK:
                 breakBlock(session, serverItem);
                 break;
+            case PLACE:
+                placeBlock(session, serverItem);
+            case USE:
+                useBlock(session, serverItem);
         }
     }
 
@@ -68,6 +69,12 @@ public class ItemUseTransaction extends ComplexTransaction {
         int inChunkZ = position.getZ() & 0x0f;
 
         Block block = chunk.get().getBlock(inChunkX, position.getY(), inChunkZ);
+
+        if (!isHandValid(withItem, session)) {
+            resetBlock(block, session);
+            return;
+        }
+
         BlockBehavior blockBehavior = BlockBehaviors.getBlockBehavior(block.getBlockState().getBlockType());
 
         BlockBreakEvent event = new BlockBreakEvent(session, block, NukkitBlockState.AIR, withItem,
@@ -99,12 +106,54 @@ public class ItemUseTransaction extends ComplexTransaction {
             session.getLevel().broadcastBlockUpdate(session, position);
         } else {
             // Need to send block update to player only.
-            UpdateBlockPacket packet = new UpdateBlockPacket();
-            packet.setBlockPosition(position);
-            packet.setRuntimeId(NukkitLevel.getPaletteManager().getOrCreateRuntimeId(block.getBlockState()));
-            packet.setDataLayer(UpdateBlockPacket.DataLayer.NORMAL);
-            session.getMinecraftSession().addToSendQueue(packet);
+            resetBlock(block, session);
         }
+    }
+
+    private void placeBlock(PlayerSession session, ItemInstance withItem) {
+        if (!withItem.getItemType().isBlock()) {
+            log.debug("{} tried to place a non-block type");
+            return;
+        }
+        if (!session.ensureAndGet(PlayerData.class).getGameMode().canPlace()) {
+            log.debug("{} is in a gamemode which cannot place blocks");
+            return;
+        }
+
+        int chunkX = position.getX() >> 4;
+        int chunkZ = position.getZ() >> 4;
+
+        BlockFace face = BlockFace.getFace(getFace());
+        Vector3i blockPosition = position.add(face.getOffset());
+        Optional<Block> block = session.getLevel().getBlockIfChunkLoaded(position);
+        Optional<Block> optionalOld = session.getLevel().getBlockIfChunkLoaded(blockPosition);
+        if (!block.isPresent() || !optionalOld.isPresent()) {
+            log.debug("{} tried to place block at unloaded chunk ({}, {})", session.getName(), chunkX, chunkZ);
+            return;
+        }
+        Block against = block.get();
+        Block oldBlock = optionalOld.get();
+
+        if (!isHandValid(withItem, session)) {
+            resetBlock(oldBlock, session);
+            return;
+        }
+
+        BlockBehavior againstBehavior = BlockBehaviors.getBlockBehavior(against.getBlockState().getBlockType());
+        BlockState newBlockState = BlockUtil.createBlockState(against.getBlockPosition(), face, withItem);
+        BlockPlaceEvent event = new BlockPlaceEvent(session, oldBlock, against, newBlockState, withItem);
+        session.getServer().getEventManager().fire(event);
+        if (event.isCancelled() || !againstBehavior.onPlace(session, against, withItem) ||
+                !BlockUtil.setBlockState(session, blockPosition, newBlockState)) {
+            // Reset block
+            resetBlock(oldBlock, session);
+            // Reset inventory
+            session.sendPlayerInventory();
+        }
+    }
+
+    private void useBlock(PlayerSession session, ItemInstance withItem) {
+
     }
 
     public void read(ByteBuf buffer){

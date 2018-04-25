@@ -2,23 +2,24 @@ package cn.nukkit.api.event.block;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.api.block.Block;
+import cn.nukkit.api.block.BlockState;
 import cn.nukkit.api.event.Cancellable;
 import cn.nukkit.api.item.ItemInstance;
 
 public class BlockPlaceEvent implements BlockEvent, Cancellable {
     private final Player player;
     private final ItemInstance item;
-    private final Block blockPlace;
-    private final Block blockReplace;
-    private final Block blockAgainst;
+    private final Block oldBlock;
+    private final Block against;
+    private final BlockState newBlockState;
     private boolean cancelled;
 
-    public BlockPlaceEvent(Player player, Block blockPlace, Block blockReplace, Block blockAgainst, ItemInstance item) {
-        this.blockPlace = blockPlace;
-        this.blockReplace = blockReplace;
-        this.blockAgainst = blockAgainst;
-        this.item = item;
+    public BlockPlaceEvent(Player player, Block against, Block oldBlock, BlockState newBlockState, ItemInstance item) {
         this.player = player;
+        this.against = against;
+        this.oldBlock = oldBlock;
+        this.newBlockState = newBlockState;
+        this.item = item;
     }
 
     public Player getPlayer() {
@@ -29,12 +30,12 @@ public class BlockPlaceEvent implements BlockEvent, Cancellable {
         return item;
     }
 
-    public Block getBlockReplace() {
-        return blockReplace;
+    public BlockState getNewBlockState() {
+        return newBlockState;
     }
 
-    public Block getBlockAgainst() {
-        return blockAgainst;
+    public Block getAgainst() {
+        return against;
     }
 
     @Override
@@ -49,6 +50,6 @@ public class BlockPlaceEvent implements BlockEvent, Cancellable {
 
     @Override
     public Block getBlock() {
-        return blockPlace;
+        return oldBlock;
     }
 }

@@ -55,13 +55,14 @@ public enum EntityEvent {
     private final int id;
     private static final TIntObjectMap<EntityEvent> BY_ID = new TIntObjectHashMap<>();
 
-    EntityEvent(int id) {
-        this.id = id;
-        add();
+    static {
+        for (EntityEvent event : values()) {
+            BY_ID.put(event.id, event);
+        }
     }
 
-    private void add() {
-        BY_ID.put(id, this);
+    EntityEvent(int id) {
+        this.id = id;
     }
 
     @Nonnull

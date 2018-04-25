@@ -15,25 +15,25 @@ public enum GameMode {
     /**
      * Survival mode is the "normal" gameplay type, with no special features.
      */
-    SURVIVAL("gameMode.survival", "s", "0", "survival"),
+    SURVIVAL(true, "gameMode.survival", "s", "0", "survival"),
 
     /**
      * Creative mode may fly, build instantly, become invulnerable and create
      * free items.
      */
-    CREATIVE("gameMode.creative", "c", "1", "creative"),
+    CREATIVE(true, "gameMode.creative", "c", "1", "creative"),
 
     /**
      * Adventure mode cannot break blocks without the correct tools.
      */
-    ADVENTURE("gameMode.adventure", "a", "2", "adventure"),
+    ADVENTURE(false, "gameMode.adventure", "a", "2", "adventure"),
 
     /**
      * Spectator mode cannot interact with the world in anyway and is
      * invisible to normal players. This grants the player the
      * ability to no-clip through the world.
      */
-    SPECTATOR("gameMode.spectator", "sp", "3", "spectator");
+    SPECTATOR(false, "gameMode.spectator", "sp", "3", "spectator");
 
     private static final Map<String, GameMode> ALIASES = new HashMap<>();
 
@@ -45,10 +45,12 @@ public enum GameMode {
         }
     }
 
+    private final boolean canPlace;
     private final String i18n;
     private final String[] aliases;
 
-    GameMode(String i18n, String... aliases) {
+    GameMode(boolean canPlace, String i18n, String... aliases) {
+        this.canPlace = canPlace;
         this.i18n = i18n;
         this.aliases = aliases;
     }
@@ -75,5 +77,9 @@ public enum GameMode {
      */
     public int getId() {
         return ordinal();
+    }
+
+    public boolean canPlace() {
+        return canPlace;
     }
 }

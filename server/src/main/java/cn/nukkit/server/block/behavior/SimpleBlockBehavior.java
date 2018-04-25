@@ -16,7 +16,7 @@ public class SimpleBlockBehavior implements BlockBehavior {
 
     @Override
     public Collection<ItemInstance> getDrops(Player player, Block block, @Nullable ItemInstance item) {
-        if (!isToolCompatible(block, item)) {
+        if (!block.getBlockState().getBlockType().isDiggable()) {
             return ImmutableList.of();
         }
         // TODO: Fortune drops
@@ -34,7 +34,7 @@ public class SimpleBlockBehavior implements BlockBehavior {
     public float getBreakTime(Player player, Block block, @Nullable ItemInstance item) {
         float breakTime = block.getBlockState().getBlockType().hardness();
 
-        if (isToolCompatible(block, item)) {
+        if (isCorrectTool(item)) {
             breakTime *= 1.5;
             breakTime /= ItemBehaviorUtil.getMiningEfficiency(item);
         } else {
@@ -45,12 +45,17 @@ public class SimpleBlockBehavior implements BlockBehavior {
     }
 
     @Override
-    public boolean isToolCompatible(Block block, @Nullable ItemInstance item) {
-        return block.getBlockState().getBlockType().isDiggable();
+    public boolean isCorrectTool(@Nullable ItemInstance item) {
+        return true;
     }
 
     @Override
     public Result onBreak(PlayerSession session, Block block, ItemInstance withItem) {
         return Result.BREAK_BLOCK;
+    }
+
+    @Override
+    public boolean onPlace(PlayerSession session, Block against, ItemInstance withItem) {
+        return false;
     }
 }

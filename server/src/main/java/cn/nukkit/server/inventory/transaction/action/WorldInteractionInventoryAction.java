@@ -38,12 +38,7 @@ public class WorldInteractionInventoryAction extends InventoryAction {
         switch (action) {
             case DROP_ITEM:
                 ItemInstance serverItem = session.getInventory().getItemInHand().orElse(BlockUtil.AIR);
-                session.getLevel().dropItem(getNewItem(), session.getGamePosition()).whenComplete((droppedItem, throwable) -> {
-                    if (throwable != null) {
-                        return;
-                    }
-                    droppedItem.setMotion(session.getDirectionVector().mul(0.4f));
-                });
+                session.getLevel().dropItem(getNewItem(), session.getGamePosition()).setMotion(session.getDirectionVector().mul(0.4f));
                 break;
             case PICKUP_ITEM:
         }

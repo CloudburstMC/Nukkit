@@ -12,7 +12,6 @@ import cn.nukkit.api.entity.system.System;
 import cn.nukkit.api.entity.system.SystemRunner;
 import cn.nukkit.api.event.player.*;
 import cn.nukkit.api.inventory.Inventory;
-import cn.nukkit.api.inventory.PlayerInventory;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.level.chunk.Chunk;
 import cn.nukkit.api.message.ChatMessage;
@@ -178,7 +177,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
             toRemove.forEach(id -> {
                 RemoveEntityPacket packet = new RemoveEntityPacket();
-                packet.setRuntimeEntityId(id);
+                packet.setUniqueEntityId(id);
                 session.addToSendQueue(packet);
                 return true;
             });
@@ -353,7 +352,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         byte windowId;
         if (inventory == openInventory) {
             windowId = NukkitInventoryType.fromApi(openInventory.getInventoryType()).getId();
-        } else if (inventory instanceof PlayerInventory) {
+        } else if (inventory == this.inventory) {
             windowId = NukkitInventoryType.PLAYER.getId();
         } else {
             return OptionalInt.empty(); // Player shouldn't be observing this inventory.
@@ -741,6 +740,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     @Override
     public void onInventorySlotChange(int slot, @Nullable ItemInstance oldItem, @Nullable ItemInstance newItem, @Nonnull Inventory inventory, @Nullable PlayerSession session) {
+        log.debug("Adding item to inventory");
         OptionalInt optionalId = testInventoryChange(inventory);
         if (!optionalId.isPresent()) {
             return;
@@ -1049,15 +1049,24 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             if (!spawned || damageable.isDead()) {
                 return;
             }
+            int hotbarSlot = packet.getHotbarSlot();
+            if (hotbarSlot < 0 || hotbarSlot > 8) {
+                log.debug("{} sent hotbar slot {}. Expected 0-8", getName(), hotbarSlot);
+                return;
+            }
 
-            ItemInstance serverItem = inventory.getHotbarItem(packet.getHotbarSlot()).orElse(BlockUtil.AIR);
+            int inventorySlot = packet.getInventorySlot();
+            int slot = inventorySlot < 0 || inventorySlot >= inventory.getInventoryType().getSize() ? -1 : inventorySlot;
+
+            ItemInstance serverItem = inventory.getItem(slot).orElse(BlockUtil.AIR);
             if (!serverItem.equals(packet.getItem())) {
-                log.debug("{} tried to equip {} but has {} in slot {}", getName(), packet.getItem(), serverItem, packet.getHotbarSlot());
+                log.debug("{} tried to equip {} but has {} in slot {}", getName(), packet.getItem(), serverItem, hotbarSlot);
                 sendPlayerInventory();
                 return;
             }
 
-            inventory.setHeldHotbarSlot(packet.getHotbarSlot(), false);
+            inventory.setHotbarLink(hotbarSlot, slot);
+            inventory.setHeldHotbarSlot(hotbarSlot, false);
         }
 
         @Override

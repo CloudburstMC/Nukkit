@@ -3,7 +3,6 @@ package cn.nukkit.server.entity.system;
 import cn.nukkit.api.entity.Entity;
 import cn.nukkit.api.entity.component.ContainedItem;
 import cn.nukkit.api.entity.component.PickupDelay;
-import cn.nukkit.api.entity.misc.DroppedItem;
 import cn.nukkit.api.entity.system.System;
 import cn.nukkit.api.entity.system.SystemRunner;
 import cn.nukkit.api.item.ItemInstance;
@@ -21,10 +20,6 @@ public class ItemPickupSystem implements SystemRunner {
 
     @Override
     public void run(Entity entity) {
-        if (!(entity instanceof DroppedItem)) {
-            return;
-        }
-
         if (!entity.ensureAndGet(PickupDelay.class).canPickup()) {
             // Cannot be picked up yet
             return;
@@ -34,13 +29,14 @@ public class ItemPickupSystem implements SystemRunner {
         ItemInstance item = entity.ensureAndGet(ContainedItem.class).getItem();
 
         for (BaseEntity entityNear : ((NukkitLevel) entity.getLevel()).getEntityManager().getEntitiesInBounds(enlargedBB)) {
-            if (entityNear.onItemPickup(item)) {
+            if (entityNear != entity && entityNear.onItemPickup(item)) {
                 // Successfully picked up the item.
                 TakeItemEntityPacket packet = new TakeItemEntityPacket();
                 packet.setItemRuntimeEntityId(entity.getEntityId());
                 packet.setRuntimeEntityId(entityNear.getEntityId());
-                ((NukkitLevel) entity.getLevel()).getPacketManager().queuePacketForViewers(entity, packet);
+                ((NukkitLevel) entity.getLevel()).getPacketManager().sendImmediatePacketForViewers(entity.getPosition(), packet);
                 entity.remove();
+                break;
             }
         }
     }

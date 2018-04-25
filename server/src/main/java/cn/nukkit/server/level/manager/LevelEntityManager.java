@@ -205,6 +205,11 @@ public class LevelEntityManager {
         } finally {
             entitiesTicking.set(false);
         }
+
+        // Update viewable entities if something changed
+        if (entitiesChanged.compareAndSet(true, false)) {
+            getPlayers().forEach(PlayerSession::updateViewableEntities);
+        }
     }
 
     public boolean isTicking() {

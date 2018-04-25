@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Log4j2
 public class MinecraftSession {
     private static final ThreadLocal<VoxelwindHash> hashLocal = ThreadLocal.withInitial(NativeCodeFactory.hash::newInstance);
-    private static final InetSocketAddress LOOPBACK_MCPE = new InetSocketAddress(InetAddress.getLoopbackAddress(), 19132);
+    private static final InetSocketAddress LOOPBACK_MINECRAFT = new InetSocketAddress(InetAddress.getLoopbackAddress(), 19132);
     private static final int TIMEOUT_MS = 30000;
     private final AtomicLong lastKnownUpdate = new AtomicLong(System.currentTimeMillis());
     private final Queue<MinecraftPacket> currentlyQueued = new ConcurrentLinkedQueue<>();
@@ -116,7 +116,7 @@ public class MinecraftSession {
 
     private void internalSendPackage(NetworkPacket packet) {
         if (log.isTraceEnabled()) {
-            String to = connection.getRemoteAddress().orElse(LOOPBACK_MCPE).toString();
+            String to = connection.getRemoteAddress().orElse(LOOPBACK_MINECRAFT).toString();
             log.trace("Outbound {}: {}", to, packet);
         }
 
@@ -183,7 +183,7 @@ public class MinecraftSession {
         WrappedPacket wrapper = new WrappedPacket();
         while ((packet = currentlyQueued.poll()) != null) {
             if (packet.getClass().isAnnotationPresent(NoEncryption.class)) {
-                // We hit a un-batchable packet. Send the current batch and then send the un-batchable packet.
+                // We hit a wrappable packet. Send the current wrapper and then send the un-wrappable packet.
                 if (!wrapper.getPackets().isEmpty()) {
                     internalSendPackage(wrapper);
                     wrapper = new WrappedPacket();
@@ -199,7 +199,7 @@ public class MinecraftSession {
                 }
 
                 continue;
-            } else if (wrapper.getPackets().size() >= 3) {
+            } else if (wrapper.getPackets().size() >= 10) {
                 // Reached a per-batch limit on packages, send these packages now
                 internalSendPackage(wrapper);
                 wrapper = new WrappedPacket();
@@ -349,7 +349,7 @@ public class MinecraftSession {
 
         if (authData != null) {
             log.info("{} ({}) has been disconnected from the server: {}", authData.getDisplayName(),
-                    getRemoteAddress().map(Object::toString).orElse("UNKNOWN"), reason);
+                    getRemoteAddress().map(Object::toString).orElse("UNKNOWN"), server.getLocaleManager().replaceI18n(reason));
         } else {
             log.info("{} has lost connection to the server: {}", getRemoteAddress().map(Object::toString).orElse("UNKNOWN"),
                     reason);

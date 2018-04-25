@@ -32,6 +32,9 @@ public class MergeItemsSystem implements SystemRunner {
         BoundingBox enlargedBB = entity.getBoundingBox().grow(1f);
 
         for (BaseEntity bbEntity : ((NukkitLevel) entity.getLevel()).getEntityManager().getEntitiesInBounds(enlargedBB)) {
+            if (bbEntity == entity) {
+                continue;
+            }
             if (bbEntity instanceof DroppedItem) {
                 ContainedItem containedItem1 = bbEntity.ensureAndGet(ContainedItem.class);
                 if (itemInstance.isMergeable(containedItem1.getItem())) {
@@ -51,9 +54,11 @@ public class MergeItemsSystem implements SystemRunner {
                     entityEvent.setEvent(EntityEvent.ITEM_ENTITY_MERGE);
 
                     ((NukkitLevel) entity.getLevel()).getPacketManager().queuePacketForViewers(entity, entityEvent);
-
                     // Remove entity.
                     bbEntity.remove();
+                    // Set position to midpoint
+                    entity.setPositionFromSystem(entity.getPosition().add(bbEntity.getPosition()).div(2f).add(0,0.5f, 0));
+                    break;
                 }
             }
         }

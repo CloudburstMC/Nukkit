@@ -1,6 +1,5 @@
 package cn.nukkit.server.block.behavior;
 
-import cn.nukkit.api.block.Block;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.item.ItemTypes;
@@ -34,7 +33,7 @@ public class DroppableBySpecificToolsBlockBehavior extends SimpleBlockBehavior {
     }
 
     @Override
-    public boolean isToolCompatible(Block block, @Nullable ItemInstance item) {
+    public boolean isCorrectTool(@Nullable ItemInstance item) {
         return item != null && itemsAllowed.contains(item.getItemType());
     }
 }
