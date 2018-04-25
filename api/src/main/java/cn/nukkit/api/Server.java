@@ -5,6 +5,7 @@ import cn.nukkit.api.event.EventManager;
 import cn.nukkit.api.item.ItemInstanceBuilder;
 import cn.nukkit.api.level.Level;
 import cn.nukkit.api.level.LevelCreator;
+import cn.nukkit.api.locale.LocaleManager;
 import cn.nukkit.api.permission.Abilities;
 import cn.nukkit.api.permission.PermissionManager;
 import cn.nukkit.api.plugin.PluginManager;
@@ -46,6 +47,9 @@ public interface Server {
 
     @Nonnull
     PluginManager getPluginManager();
+
+    @Nonnull
+    LocaleManager getLocaleManager();
 
     NukkitScheduler getScheduler();
 

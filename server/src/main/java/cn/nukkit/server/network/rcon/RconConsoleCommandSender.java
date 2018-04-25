@@ -9,10 +9,7 @@ import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.server.NukkitServer;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class RconConsoleCommandSender implements RemoteConsoleCommandSender {
@@ -42,6 +39,11 @@ public class RconConsoleCommandSender implements RemoteConsoleCommandSender {
     @Override
     public NukkitServer getServer() {
         return server;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return server.getLanguage();
     }
 
     public List<String> getMessages() {

@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
+import java.util.Locale;
 import java.util.Map;
 
 @Log4j2
@@ -46,6 +47,11 @@ public class NukkitConsoleCommandSender implements ConsoleCommandSender {
     @Override
     public NukkitServer getServer() {
         return server;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return server.getLanguage();
     }
 
     @Override

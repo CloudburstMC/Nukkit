@@ -2,7 +2,7 @@ package cn.nukkit.api.command;
 
 import cn.nukkit.api.command.sender.CommandSender;
 
-public interface Command {
+public interface Command extends CommandExecutor {
     CommandExecutor getExecutor();
 
     String getName();
@@ -12,6 +12,4 @@ public interface Command {
     boolean testPermission(CommandSender sender);
 
     boolean testPermissionSilent(CommandSender sender);
-
-    void execute(CommandSender sender, String label, String[] args);
 }

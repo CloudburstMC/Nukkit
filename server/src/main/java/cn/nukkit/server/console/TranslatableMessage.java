@@ -1,7 +1,7 @@
 package cn.nukkit.server.console;
 
 import cn.nukkit.api.message.TranslationMessage;
-import cn.nukkit.server.lang.NukkitLocaleManager;
+import cn.nukkit.server.locale.NukkitLocaleManager;
 import com.google.common.base.Preconditions;
 import org.apache.logging.log4j.message.Message;
 

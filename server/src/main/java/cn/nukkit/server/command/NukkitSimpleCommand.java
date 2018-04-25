@@ -1,4 +1,4 @@
-package cn.nukkit.server.command.simple;
+package cn.nukkit.server.command;
 
 import cn.nukkit.api.command.CommandData;
 import cn.nukkit.api.command.MessageRecipient;
@@ -6,7 +6,6 @@ import cn.nukkit.api.command.sender.CommandSender;
 import cn.nukkit.api.command.sender.ConsoleCommandSender;
 import cn.nukkit.api.command.simple.SimpleCommand;
 import cn.nukkit.api.message.TranslationMessage;
-import cn.nukkit.server.command.NukkitCommand;
 import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Method;

@@ -1,5 +1,6 @@
-package cn.nukkit.server.lang;
+package cn.nukkit.server.locale;
 
+import cn.nukkit.api.locale.LocaleManager;
 import cn.nukkit.api.message.Message;
 import cn.nukkit.api.message.TranslationMessage;
 import cn.nukkit.api.util.TextFormat;
@@ -23,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 @Log4j2
-public class NukkitLocaleManager {
+public class NukkitLocaleManager implements LocaleManager {
     private static final Pattern colorPattern = Pattern.compile("((?>" + TextFormat.FORMAT_CHAR + "[0-9A-FK-OR])*?)(.+)");
     private static final ClassLoader LOADER = Bootstrap.class.getClassLoader();
     private static final String LANGUAGE_PATH = "lang/";
@@ -55,19 +56,20 @@ public class NukkitLocaleManager {
         }
     }
 
-    public void loadLocale(Path pathToLanguage, Locale locale) throws Exception {
+    public void loadLocale(Path pathToLanguage, Locale locale) throws IOException {
         Preconditions.checkNotNull(pathToLanguage, "pathToLangauge");
         Preconditions.checkArgument(Files.isRegularFile(pathToLanguage) && !Files.isDirectory(pathToLanguage), "path was not to a file");
         InputStream stream = Files.newInputStream(pathToLanguage);
         loadLocale(stream, locale);
     }
 
-    private void loadLocale(InputStream stream, Locale locale) throws IOException {
+    public void loadLocale(InputStream stream, Locale locale) throws IOException {
         Preconditions.checkNotNull(stream, "stream");
         Preconditions.checkNotNull(locale, "locale");
-        Properties properties = locales.putIfAbsent(locale, new Properties());
-        if (properties == null) {
-            properties = locales.get(locale);
+        Properties properties;
+        if ((properties = locales.get(locale)) == null) {
+            properties = new Properties();
+            locales.put(locale, properties);
         }
         properties.load(stream);
     }

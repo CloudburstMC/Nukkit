@@ -46,7 +46,7 @@ public class NukkitCommandAlias implements AliasCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String label, String[] args) {
-        command.execute(sender, label, args);
+    public boolean onCommand(CommandSender sender, String label, String[] args) {
+        return command.onCommand(sender, label, args);
     }
 }

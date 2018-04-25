@@ -21,9 +21,8 @@ public class NukkitCommand implements Command {
         this.data = Preconditions.checkNotNull(data, "data");
     }
 
-    protected NukkitCommand(String name, CommandData data) {
-        Preconditions.checkArgument(this instanceof CommandExecutor, "Command must implement CommandExecutor");
-        this.executor = (CommandExecutor) this;
+    NukkitCommand(String name, CommandData data) {
+        executor = null;
         this.name = Preconditions.checkNotNull(name, "name");
         this.data = Preconditions.checkNotNull(data, "data");
     }
@@ -72,13 +71,12 @@ public class NukkitCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String label, String[] args) {
-        executor.onCommand(sender, label, args);
-    }
-
-    @Override
     public String toString() {
         return this.name;
     }
 
+    @Override
+    public boolean onCommand(CommandSender sender, String label, String[] args) {
+        return executor.onCommand(sender, label, args);
+    }
 }

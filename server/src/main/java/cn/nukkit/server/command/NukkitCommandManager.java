@@ -109,7 +109,7 @@ public class NukkitCommandManager implements CommandManager {
         }
 
         try {
-            executor.execute(sender, args[0], Arrays.copyOfRange(args, 1, args.length));
+            executor.onCommand(sender, args[0], Arrays.copyOfRange(args, 1, args.length));
         } catch (Exception e) {
             throw new CommandException(e);
         }
