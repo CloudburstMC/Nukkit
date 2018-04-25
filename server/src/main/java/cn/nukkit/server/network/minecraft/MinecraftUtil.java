@@ -477,7 +477,7 @@ public final class MinecraftUtil {
         writeSignedInt(buffer, levelSettings.getGenerator().ordinal());
         writeSignedInt(buffer, levelSettings.getGameMode().ordinal());
         writeSignedInt(buffer, levelSettings.getDifficulty().ordinal());
-        writeVector3f(buffer, levelSettings.getDefaultSpawn());
+        writeVector3i(buffer, levelSettings.getDefaultSpawn().toInt());
         buffer.writeBoolean(levelSettings.isAchievementsDisabled());
         writeSignedInt(buffer, levelSettings.getTime());
         buffer.writeBoolean(levelSettings.isEduWorld());

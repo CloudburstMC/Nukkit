@@ -5,15 +5,15 @@ import cn.nukkit.server.network.minecraft.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeRuntimeEntityId;
+import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeUniqueEntityId;
 
 @Data
 public class RemoveEntityPacket implements MinecraftPacket {
-    private long runtimeEntityId;
+    private long uniqueEntityId;
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeRuntimeEntityId(buffer, runtimeEntityId);
+        writeUniqueEntityId(buffer, uniqueEntityId);
     }
 
     @Override

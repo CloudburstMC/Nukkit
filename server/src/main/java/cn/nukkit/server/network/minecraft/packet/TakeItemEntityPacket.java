@@ -11,6 +11,7 @@ import static cn.nukkit.server.network.minecraft.MinecraftUtil.writeRuntimeEntit
 public class TakeItemEntityPacket implements MinecraftPacket {
     private long itemRuntimeEntityId;
     private long runtimeEntityId;
+
     @Override
     public void encode(ByteBuf buffer) {
         writeRuntimeEntityId(buffer, itemRuntimeEntityId);

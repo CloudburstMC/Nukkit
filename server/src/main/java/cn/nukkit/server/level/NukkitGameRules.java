@@ -13,7 +13,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import static cn.nukkit.api.level.data.GameRule.*;
-import static cn.nukkit.server.nbt.util.VarInt.writeSignedInt;
+import static cn.nukkit.server.nbt.util.VarInt.writeUnsignedInt;
 
 @SuppressWarnings({"unchecked"})
 public class NukkitGameRules implements GameRules {
@@ -160,7 +160,7 @@ public class NukkitGameRules implements GameRules {
                     buffer.writeBoolean(getValueAsBoolean());
                     break;
                 case INTEGER:
-                    writeSignedInt(buffer, getValueAsInteger());
+                    writeUnsignedInt(buffer, getValueAsInteger());
                     break;
                 case FLOAT:
                     buffer.writeFloatLE(getValueAsFloat());
