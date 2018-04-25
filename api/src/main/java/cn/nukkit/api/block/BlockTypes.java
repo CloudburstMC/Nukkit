@@ -23,7 +23,7 @@ public class BlockTypes {
     private static final TIntObjectMap<BlockType> BY_ID = new TIntObjectHashMap<>(192);
     private static final Map<String, BlockType> BY_NAME = new HashMap<>();
 
-    public static final BlockType AIR = IntBlock.builder().name("air").id(0).maxStackSize(0).transparent(true).solid(true).build();
+    public static final BlockType AIR = IntBlock.builder().name("air").id(0).maxStackSize(0).transparent(true).solid(true).floodable(true).build();
     public static final BlockType STONE = IntBlock.builder().name("stone").id(1).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.5f).build();
     public static final BlockType GRASS_BLOCK = IntBlock.builder().name("grass").id(2).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.6f).build();
     public static final BlockType DIRT = IntBlock.builder().name("dirt").id(3).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.5f).metadataClass(Dirt.class).build();
