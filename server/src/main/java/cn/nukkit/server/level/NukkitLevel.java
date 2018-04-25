@@ -3,7 +3,6 @@ package cn.nukkit.server.level;
 import cn.nukkit.api.block.Block;
 import cn.nukkit.api.block.BlockState;
 import cn.nukkit.api.entity.Entity;
-import cn.nukkit.api.entity.misc.DroppedItem;
 import cn.nukkit.api.entity.system.System;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.level.Level;
@@ -22,6 +21,7 @@ import cn.nukkit.server.network.minecraft.packet.UpdateBlockPacket;
 import cn.nukkit.server.network.minecraft.session.PlayerSession;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
@@ -149,19 +149,11 @@ public class NukkitLevel implements Level {
     }
 
     @Override
-    public CompletableFuture<DroppedItem> dropItem(@Nonnull ItemInstance item, @Nonnull Vector3f position) {
-        CompletableFuture<DroppedItem> future = new CompletableFuture<>();
-
-        getChunk(position.getFloorX() >> 4, position.getFloorZ() >> 4).whenComplete((chunk, throwable) -> {
-            if (throwable != null) {
-                future.completeExceptionally(throwable);
-                return;
-            }
-
-            future.complete(new DroppedItemEntity(position, this, server, item));
-        });
-
-        return future;
+    public DroppedItemEntity dropItem(@Nonnull ItemInstance item, @Nonnull Vector3f position) {
+        Preconditions.checkNotNull(item, "item");
+        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkArgument(getBlockIfChunkLoaded(position.toInt()).isPresent(), "dropped item cannot be spawned in unloaded chunk");
+        return new DroppedItemEntity(position, this, server, item);
     }
 
     public void broadcastBlockUpdate(Entity entity, Vector3i position) {

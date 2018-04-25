@@ -57,7 +57,7 @@ public interface Level {
 
     <T extends Entity> CompletableFuture<T> spawn(Class<? extends Entity> clazz, Vector3f position);
 
-    CompletableFuture<DroppedItem> dropItem(ItemInstance item, Vector3f position);
+    DroppedItem dropItem(ItemInstance item, Vector3f position);
 
     void registerSystem(System system);
 
