@@ -19,4 +19,11 @@ public enum BlockFace {
     public Vector3i getOffset() {
         return offset;
     }
+
+    public static BlockFace getFace(int face) {
+        if (face >= 0 && face < 6) {
+            return values()[face];
+        }
+        return BOTTOM;
+    }
 }
