@@ -11,6 +11,7 @@ import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Log4j2
 public class NukkitInventory implements Inventory {
     private final ItemInstance[] contents;
     @Getter
@@ -109,7 +111,7 @@ public class NukkitInventory implements Inventory {
 
                 int addableAmount = maxStackSize - itemIter.value().getAmount();
 
-                int amountToAdd = Math.max(itemAmount, addableAmount);
+                int amountToAdd = Math.min(itemAmount, addableAmount);
                 setItem(itemIter.key(), itemIter.value().toBuilder().amount(itemIter.value().getAmount() + amountToAdd).build(),
                         session);
                 itemAmount -= amountToAdd;
@@ -133,6 +135,7 @@ public class NukkitInventory implements Inventory {
         for (int i = 0; i < contents.length; i++) {
             if (contents[i] == null) {
                 contents[i] = item;
+                log.debug("Slot {} set with item ", i, item);
                 for (InventoryObserver observer : observers) {
                     observer.onInventorySlotChange(i, null, item, this, session);
                 }
@@ -145,10 +148,8 @@ public class NukkitInventory implements Inventory {
     private TIntObjectMap<ItemInstance> findMergable(@Nonnull ItemInstance item) {
         TIntObjectMap<ItemInstance> mergable = new TIntObjectHashMap<>();
         for (int i = 0; i < contents.length; i++) {
-            if (contents[i] != null) {
-                if (contents[i].isMergeable(item)) {
-                    mergable.put(i, contents[i]);
-                }
+            if (contents[i] != null && contents[i].isMergeable(item)) {
+                mergable.put(i, contents[i]);
             }
         }
         return mergable;
@@ -224,7 +225,7 @@ public class NukkitInventory implements Inventory {
     }
 
     private void checkSlot(int slot) {
-        Preconditions.checkArgument(slot >= 0 && slot < contents.length);
+        Preconditions.checkArgument(slot >= 0 && slot < contents.length, "Slot not within inventory range");
     }
 
     private static boolean isItemNull(@Nullable ItemInstance item) {

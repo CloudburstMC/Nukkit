@@ -14,12 +14,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class NukkitPlayerInventory extends NukkitInventory implements PlayerInventory {
     private final PlayerSession session;
     private final int[] hotbarLinks = new int[9];
-    private int heldHotbarSlot = 1;
+    private int heldHotbarSlot = -1;
     private AtomicReference<ItemInstance> cursorItem = new AtomicReference<>(null);
 
     public NukkitPlayerInventory(PlayerSession session) {
         super(NukkitInventoryType.PLAYER);
         this.session = session;
+        getObservers().add(session);
+        Arrays.fill(hotbarLinks, -1);
     }
 
     @Override
@@ -47,6 +49,11 @@ public class NukkitPlayerInventory extends NukkitInventory implements PlayerInve
     }
 
     public Optional<ItemInstance> getHotbarItem(int hotbarSlot) {
+        checkHotbarSlot(hotbarSlot);
+        int slot = hotbarLinks[hotbarSlot];
+        if (slot == -1) {
+            return Optional.empty();
+        }
         return getItem(hotbarLinks[hotbarSlot]);
     }
 
