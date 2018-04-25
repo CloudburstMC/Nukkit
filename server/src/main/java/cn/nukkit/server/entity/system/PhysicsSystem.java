@@ -20,9 +20,7 @@ public class PhysicsSystem implements SystemRunner {
     public void run(Entity entity) {
         Physics physics = entity.ensureAndGet(Physics.class);
         if (entity.getMotion().equals(Vector3f.ZERO)) {
-            if (entity.isOnGround()) {
-                entity.setMotion(entity.getMotion().add(0, physics.getGravity(), 0));
-            } else {
+            if (!entity.isOnGround()) {
                 entity.setMotion(entity.getMotion().sub(0, physics.getGravity(), 0));
                 entity.setPositionFromSystem(entity.getPosition().add(entity.getMotion()));
             }
@@ -41,9 +39,6 @@ public class PhysicsSystem implements SystemRunner {
                     entity.setMotion(entity.getMotion().sub(0, physics.getGravity(), 0));
                 }
             }
-        } else if (!entity.getMotion().equals(Vector3f.ZERO)) {
-            entity.setPositionFromSystem(entity.getPosition().add(entity.getMotion()));
-            entity.setMotion(Vector3f.ZERO);
         }
     }
 }
