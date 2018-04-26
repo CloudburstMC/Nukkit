@@ -1,10 +1,15 @@
 package cn.nukkit.api.metadata.block;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Sand {
     private final boolean red;
+
+    public static Sand of(boolean isRed) {
+        return new Sand(isRed);
+    }
 
     public boolean isRed() {
         return red;
@@ -12,7 +17,7 @@ public class Sand {
 
     @Override
     public int hashCode() {
-        return red ? 1 : 0;
+        return Boolean.hashCode(red);
     }
 
     @Override

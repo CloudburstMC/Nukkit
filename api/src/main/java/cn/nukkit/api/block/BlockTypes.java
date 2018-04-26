@@ -1,6 +1,5 @@
 package cn.nukkit.api.block;
 
-import cn.nukkit.api.block.entity.*;
 import cn.nukkit.api.metadata.Dyed;
 import cn.nukkit.api.metadata.Log;
 import cn.nukkit.api.metadata.Metadata;

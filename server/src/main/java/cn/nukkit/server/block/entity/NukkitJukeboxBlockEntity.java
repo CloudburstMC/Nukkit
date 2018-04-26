@@ -1,8 +1,8 @@
 package cn.nukkit.server.block.entity;
 
-import cn.nukkit.api.block.entity.JukeboxBlockEntity;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.util.ItemTypeUtil;
+import cn.nukkit.api.metadata.blockentity.JukeboxBlockEntity;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nullable;

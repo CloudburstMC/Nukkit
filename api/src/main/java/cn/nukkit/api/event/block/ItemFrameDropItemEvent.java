@@ -2,9 +2,9 @@ package cn.nukkit.api.event.block;
 
 import cn.nukkit.api.Player;
 import cn.nukkit.api.block.Block;
-import cn.nukkit.api.block.entity.ItemFrameBlockEntity;
 import cn.nukkit.api.event.Cancellable;
 import cn.nukkit.api.item.ItemInstance;
+import cn.nukkit.api.metadata.blockentity.ItemFrameBlockEntity;
 
 public class ItemFrameDropItemEvent implements BlockEvent, Cancellable {
     private final Block block;

@@ -106,7 +106,7 @@ public class ItemTypes {
     public static final ItemType BONE = IntItem.builder().id(352).name("bone").maxStackSize(64).build();
     public static final ItemType SUGAR = IntItem.builder().id(353).name("sugar").maxStackSize(64).build();
     public static final ItemType CAKE = IntItem.builder().id(354).name("cake").maxStackSize(1).build();
-    public static final ItemType BED = IntItem.builder().id(355).name("bed").maxStackSize(1).build();
+    public static final ItemType BED = IntItem.builder().id(355).name("bed").maxStackSize(1).data(Dyed.class).build();
     public static final ItemType REDSTONE_REPEATER = IntItem.builder().id(356).name("repeater").maxStackSize(64).build();
     public static final ItemType COOKIE = IntItem.builder().id(357).name("cookie").maxStackSize(64).build();
     public static final ItemType FILLED_MAP = IntItem.builder().id(358).name("map_filled").maxStackSize(64).build();

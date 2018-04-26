@@ -1,6 +1,6 @@
 package cn.nukkit.server.block.entity;
 
-import cn.nukkit.api.block.entity.SignBlockEntity;
+import cn.nukkit.api.metadata.blockentity.SignBlockEntity;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;

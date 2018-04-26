@@ -2,16 +2,15 @@ package cn.nukkit.api.metadata.block;
 
 import cn.nukkit.api.metadata.Metadata;
 import com.google.common.base.Preconditions;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Cake implements Metadata {
     public static final Cake NEW = new Cake((byte) 0);
     public static final Cake ALMOST_EATEN = new Cake((byte) 6);
 
     private final byte level;
-
-    private Cake(byte level) {
-        this.level = level;
-    }
 
     public static Cake of(int data) {
         Preconditions.checkArgument(data >= 0 && data < 8, "data is not valid (wanted 0-7)");

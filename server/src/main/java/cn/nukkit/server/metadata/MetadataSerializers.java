@@ -1,10 +1,10 @@
 package cn.nukkit.server.metadata;
 
 import cn.nukkit.api.block.BlockState;
-import cn.nukkit.api.block.entity.BlockEntity;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
+import cn.nukkit.api.metadata.blockentity.BlockEntity;
 import cn.nukkit.server.metadata.serializer.MetadataSerializer;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import gnu.trove.map.hash.TIntObjectHashMap;

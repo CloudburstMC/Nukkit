@@ -2,11 +2,12 @@ package cn.nukkit.api.metadata;
 
 import cn.nukkit.api.metadata.data.TreeSpecies;
 import com.google.common.base.Preconditions;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 import java.util.Objects;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Wood implements Metadata {
     private final TreeSpecies species;
 
@@ -23,8 +24,8 @@ public class Wood implements Metadata {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Wood wood = (Wood) o;
-        return species == wood.species;
+        Wood that = (Wood) o;
+        return this.species == that.species;
     }
 
     @Override
@@ -34,8 +35,8 @@ public class Wood implements Metadata {
 
     @Override
     public String toString() {
-        return "Wood{" +
+        return "Wood(" +
                 "species=" + species +
-                '}';
+                ')';
     }
 }

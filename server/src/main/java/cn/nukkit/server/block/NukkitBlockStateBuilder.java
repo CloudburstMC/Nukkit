@@ -3,8 +3,8 @@ package cn.nukkit.server.block;
 import cn.nukkit.api.block.BlockState;
 import cn.nukkit.api.block.BlockStateBuilder;
 import cn.nukkit.api.block.BlockType;
-import cn.nukkit.api.block.entity.BlockEntity;
 import cn.nukkit.api.metadata.Metadata;
+import cn.nukkit.api.metadata.blockentity.BlockEntity;
 import cn.nukkit.server.metadata.MetadataSerializers;
 import com.google.common.base.Preconditions;
 

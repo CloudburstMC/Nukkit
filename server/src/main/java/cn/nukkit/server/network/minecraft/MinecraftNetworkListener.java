@@ -61,7 +61,7 @@ public class MinecraftNetworkListener extends ChannelInitializer<DatagramChannel
         int netThreads = server.getConfiguration().getAdvanced().getNetworkThreads();
         int threadCount;
         if (NativeUtil.isReusePortAvailable()) {
-            threadCount = netThreads < 0 ? Runtime.getRuntime().availableProcessors() : netThreads;
+            threadCount = netThreads < 1 ? Runtime.getRuntime().availableProcessors() : netThreads;
         } else {
             threadCount = 1;
         }

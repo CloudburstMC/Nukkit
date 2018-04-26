@@ -1,6 +1,6 @@
 package cn.nukkit.server.block.entity;
 
-import cn.nukkit.api.block.entity.BedBlockEntity;
+import cn.nukkit.api.metadata.blockentity.BedBlockEntity;
 import cn.nukkit.api.metadata.data.DyeColor;
 import lombok.AllArgsConstructor;
 

@@ -1,11 +1,16 @@
 package cn.nukkit.api.metadata.block;
 
 import cn.nukkit.api.metadata.Metadata;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Sponge implements Metadata {
     private final boolean wet;
+
+    public static Sponge of(boolean isWet) {
+        return new Sponge(isWet);
+    }
 
     public boolean isWet() {
         return wet;
@@ -13,7 +18,7 @@ public class Sponge implements Metadata {
 
     @Override
     public int hashCode() {
-        return wet ? 1 : 0;
+        return Boolean.hashCode(wet);
     }
 
     @Override

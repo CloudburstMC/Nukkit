@@ -1,7 +1,7 @@
 package cn.nukkit.api.metadata.block;
 
 import cn.nukkit.api.metadata.Metadata;
-import cn.nukkit.api.metadata.data.DirtType;
+import cn.nukkit.api.metadata.data.SandstoneType;
 import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -9,15 +9,15 @@ import lombok.AllArgsConstructor;
 import javax.annotation.Nonnull;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Dirt implements Metadata {
-    private final DirtType type;
+public class Sandstone implements Metadata {
+    private final SandstoneType type;
 
-    public static Dirt of(@Nonnull DirtType type) {
-        Preconditions.checkNotNull(type, "type");
-        return new Dirt(type);
+    public static Sandstone of(@Nonnull SandstoneType type) {
+        Preconditions.checkNotNull(type);
+        return new Sandstone(type);
     }
 
-    public DirtType getType() {
+    public SandstoneType getType() {
         return type;
     }
 
@@ -30,13 +30,13 @@ public class Dirt implements Metadata {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Dirt that = (Dirt) o;
+        Sandstone that = (Sandstone) o;
         return this.type == that.type;
     }
 
     @Override
     public String toString() {
-        return "Dirt(" +
+        return "Sandstone(" +
                 "type=" + type +
                 ')';
     }
