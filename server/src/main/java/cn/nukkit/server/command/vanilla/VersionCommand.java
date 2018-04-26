@@ -11,6 +11,9 @@ import java.util.Locale;
 import java.util.Optional;
 
 public class VersionCommand extends VanillaCommand {
+    private static final String SERVER_VERSION_I18N = "nukkit.command.version.server";
+    private static final String PLUGIN_VERSION_I18N = "nukkit.command.version.plugin";
+    private static final String PLUGIN_NOT_FOUND_I18N = "nukkit.command.version.noSuchPlugin";
     private static CommandData data = CommandData.builder()
             .alias("ver")
             .description("nukkit.command.version.description")
@@ -30,8 +33,8 @@ public class VersionCommand extends VanillaCommand {
         Locale locale = sender.getLocale();
 
         if (args.length == 0) {
-            sender.sendMessage(localeManager.replaceI18n(locale, "nukkit.command.version.server",
-                    NukkitServer.NUKKIT_VERSION, NukkitServer.MINECRAFT_VERSION, NukkitServer.API_VERSION));
+            sender.sendMessage(localeManager.replaceI18n(locale, SERVER_VERSION_I18N, NukkitServer.NUKKIT_VERSION,
+                    NukkitServer.MINECRAFT_VERSION, NukkitServer.API_VERSION));
             return true;
         }
 
@@ -39,10 +42,10 @@ public class VersionCommand extends VanillaCommand {
         Optional<Plugin> plugin = sender.getServer().getPluginManager().getPlugin(pluginName);
 
         if (plugin.isPresent()) {
-            sender.sendMessage(localeManager.replaceI18n(locale, "nukkit.command.version.plugin",
+            sender.sendMessage(localeManager.replaceI18n(locale, PLUGIN_VERSION_I18N,
                     plugin.get().getName(), plugin.get().getVersion()));
         } else {
-            sender.sendMessage(localeManager.replaceI18n(locale, "nukkit.command.version.noSuchPlugin"));
+            sender.sendMessage(localeManager.replaceI18n(locale, PLUGIN_NOT_FOUND_I18N));
         }
         return true;
     }

@@ -102,6 +102,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         this.session = session;
         this.server = session.getServer();
         Path playerDatPath = server.getPlayersPath().resolve(getXuid().isPresent() ? getUniqueId().toString() : getName());
+        locale.set(server.getLocaleManager().getLocaleByString(session.getClientData().getLanguageCode()));
 
         enchantmentSeed = ThreadLocalRandom.current().nextInt();
         viewDistance = server.getConfiguration().getMechanics().getViewDistance();
@@ -947,7 +948,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 return;
             }
 
-            executeCommand(packet.getCommand());
+            executeCommand(packet.getCommand().substring(1));
         }
 
         @Override
@@ -1238,9 +1239,10 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
                     spawned = true;
 
-                    log.info(TranslatableMessage.of("multiplayer.player.joined", getName()));
+                    TranslationMessage joinMessage = new TranslationMessage("multiplayer.player.joined", getName());
+                    log.info(TranslatableMessage.of(joinMessage));
 
-                    PlayerJoinEvent event = new PlayerJoinEvent(PlayerSession.this, new TranslationMessage("multiplayer.player.joined", getName()));
+                    PlayerJoinEvent event = new PlayerJoinEvent(PlayerSession.this, joinMessage);
                     server.getEventManager().fire(event);
 
                     event.getJoinMessage().ifPresent(PlayerSession.this::sendMessage);

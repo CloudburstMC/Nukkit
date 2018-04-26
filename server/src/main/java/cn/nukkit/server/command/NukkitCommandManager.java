@@ -3,7 +3,9 @@ package cn.nukkit.server.command;
 import cn.nukkit.api.Player;
 import cn.nukkit.api.command.*;
 import cn.nukkit.api.command.sender.CommandSender;
+import cn.nukkit.api.plugin.Plugin;
 import cn.nukkit.server.NukkitServer;
+import cn.nukkit.server.command.vanilla.VersionCommand;
 import cn.nukkit.server.network.minecraft.packet.AvailableCommandsPacket;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -25,6 +27,11 @@ public class NukkitCommandManager implements CommandManager {
     }
 
     private void setDefaultCommands() {
+        try {
+            register("minecraft", new VersionCommand(), true);
+        } catch (CommandException e) {
+            throw new RuntimeException("Unable to register default commands", e);
+        }
         /*try {
             register("nukkit", new VersionCommand(server));
             register("nukkit", new PluginsCommand());
@@ -69,22 +76,31 @@ public class NukkitCommandManager implements CommandManager {
         }*/
     }
 
-    public void register(@Nonnull String commandName, @Nonnull Command command, boolean override) throws CommandException {
-        Preconditions.checkNotNull(commandName, "commandName");
+    private void register(@Nonnull String fallbackPrefix, @Nonnull Command command, boolean override) throws CommandException {
+        Preconditions.checkNotNull(fallbackPrefix, "fallbackPrefix");
         Preconditions.checkNotNull(command, "command");
-        if (commandMap.putIfAbsent(commandName, command) != null) {
+        String fallbackCommand = fallbackPrefix + ":" + command.getName();
+        Command fallback = commandMap.get(fallbackCommand);
+        Command previousCommand = commandMap.get(command.getName());
+
+        if ((fallback != null || previousCommand != null) && !override) {
             throw new CommandRegisterException("Command already registered");
         }
+
+        commandMap.put(fallbackCommand, command);
+        commandMap.put(command.getName(), command);
+
         for (String alias : command.getData().getAliases()) {
-            if (commandMap.putIfAbsent(alias, command) != null) {
-                throw new CommandRegisterException("Alias already exists");
+            if (commandMap.putIfAbsent(alias, command) != null && override) {
+                commandMap.put(alias, command);
             }
         }
     }
 
     @Override
-    public void register(@Nonnull String commandName, @Nonnull Command command) throws CommandException {
-        register(commandName, command, false);
+    public void register(@Nonnull Plugin plugin, @Nonnull Command command) throws CommandException {
+        Preconditions.checkNotNull(plugin, "plugin");
+        register(plugin.getName(), command, false);
     }
 
     @Override

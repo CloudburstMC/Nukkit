@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import joptsimple.internal.Strings;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
@@ -86,7 +87,13 @@ public class NukkitLocaleManager implements LocaleManager {
     }
 
     public String replaceI18n(Locale locale, String string, Object... objects) {
+        Preconditions.checkNotNull(locale, "locale");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(string), "string is null or empty");
         Properties properties = locales.get(locale);
+
+        if (properties == null) {
+            properties = locales.get(Locale.US);
+        }
 
         String i18n = TextFormat.removeFormatting(string);
 
