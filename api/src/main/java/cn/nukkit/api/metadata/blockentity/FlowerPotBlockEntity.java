@@ -6,5 +6,5 @@ public interface FlowerPotBlockEntity extends BlockEntity {
 
     PlantType getPlantType();
 
-    void setFlowerType(PlantType flowerType);
+    void setPlantType(PlantType type);
 }

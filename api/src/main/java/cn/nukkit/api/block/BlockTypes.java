@@ -5,6 +5,7 @@ import cn.nukkit.api.metadata.Log;
 import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.api.metadata.Wood;
 import cn.nukkit.api.metadata.block.*;
+import cn.nukkit.api.metadata.blockentity.*;
 import com.google.common.base.Preconditions;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;

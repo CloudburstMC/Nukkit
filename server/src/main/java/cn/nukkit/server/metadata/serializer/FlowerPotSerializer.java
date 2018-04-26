@@ -5,7 +5,7 @@ import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.api.metadata.blockentity.BlockEntity;
-import cn.nukkit.api.metadata.data.FlowerType;
+import cn.nukkit.api.metadata.data.PlantType;
 import cn.nukkit.server.block.entity.NukkitFlowerPotBlockEntity;
 import cn.nukkit.server.nbt.CompoundTagBuilder;
 import cn.nukkit.server.nbt.tag.CompoundTag;
@@ -15,7 +15,7 @@ public class FlowerPotSerializer implements MetadataSerializer {
     public CompoundTag readNBT(BlockState block) {
         NukkitFlowerPotBlockEntity blockEntity = getBlockStateEntityOrNull(block);
         return CompoundTagBuilder.builder()
-                .stringTag("contents", blockEntity.getFlowerType().name().toLowerCase())
+                .stringTag("contents", blockEntity.getPlantType().name().toLowerCase())
                 .buildRootTag();
     }
 
@@ -28,7 +28,7 @@ public class FlowerPotSerializer implements MetadataSerializer {
     public CompoundTag readNBT(ItemInstance item) {
         NukkitFlowerPotBlockEntity blockEntity = getItemDataOrNull(item);
         return CompoundTagBuilder.builder()
-                .stringTag("contents", blockEntity.getFlowerType().name().toLowerCase())
+                .stringTag("contents", blockEntity.getPlantType().name().toLowerCase())
                 .buildRootTag();
     }
 
@@ -44,7 +44,7 @@ public class FlowerPotSerializer implements MetadataSerializer {
 
     @Override
     public BlockEntity writeNBT(ItemType block, CompoundTag nbtTag) {
-        FlowerType type = FlowerType.valueOf((String) nbtTag.get("contents").getValue());
+        PlantType type = PlantType.valueOf((String) nbtTag.get("contents").getValue());
         return new NukkitFlowerPotBlockEntity(type);
     }
 }
