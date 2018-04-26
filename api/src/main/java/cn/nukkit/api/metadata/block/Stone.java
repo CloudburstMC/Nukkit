@@ -1,40 +1,43 @@
 package cn.nukkit.api.metadata.block;
 
 import cn.nukkit.api.metadata.Metadata;
+import cn.nukkit.api.metadata.data.StoneType;
 import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Liquid implements Metadata {
-    private final byte level;
+import javax.annotation.Nonnull;
 
-    public static Liquid of(int level) {
-        Preconditions.checkArgument(level >= 0 && level < 8, "level is not valid (wanted 0-7)");
-        return new Liquid((byte) level);
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Stone implements Metadata {
+    private final StoneType type;
+
+    public static Stone of(@Nonnull StoneType type) {
+        Preconditions.checkNotNull(type, "type");
+        return new Stone(type);
     }
 
-    public byte getLevel() {
-        return level;
+    public StoneType getType() {
+        return type;
     }
 
     @Override
     public int hashCode() {
-        return level;
+        return type.hashCode();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Liquid that = (Liquid) o;
-        return this.level == that.level;
+        Stone that = (Stone) o;
+        return this.type == that.type;
     }
 
     @Override
     public String toString() {
-        return "Liquid(" +
-                "level=" + level +
+        return "Stone(" +
+                "type=" + type +
                 ')';
     }
 }
