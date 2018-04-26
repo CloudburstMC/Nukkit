@@ -29,7 +29,7 @@ public final class TipMessage implements Message {
      */
     @Override
     public String getMessage() {
-        return null;
+        return message;
     }
 
     @Override

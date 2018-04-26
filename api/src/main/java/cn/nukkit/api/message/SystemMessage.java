@@ -28,7 +28,7 @@ public final class SystemMessage implements Message {
      */
     @Override
     public String getMessage() {
-        return null;
+        return message;
     }
 
     @Override

@@ -29,7 +29,7 @@ public final class RawMessage implements Message {
      */
     @Override
     public String getMessage() {
-        return null;
+        return message;
     }
 
     @Override
