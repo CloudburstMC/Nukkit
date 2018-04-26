@@ -481,6 +481,7 @@ public final class MinecraftUtil {
         buffer.writeBoolean(levelSettings.isAchievementsDisabled());
         writeSignedInt(buffer, levelSettings.getTime());
         buffer.writeBoolean(levelSettings.isEduWorld());
+        buffer.writeBoolean(levelSettings.isEduFeaturesEnabled());
         buffer.writeFloatLE(levelSettings.getRainLevel());
         buffer.writeFloatLE(levelSettings.getLightningLevel());
         buffer.writeBoolean(levelSettings.isMultiplayerGame());
@@ -498,6 +499,9 @@ public final class MinecraftUtil {
         buffer.writeBoolean(levelSettings.isBroadcastingToPlatform());
         writeUnsignedInt(buffer, levelSettings.getPlatformBroadcastMode());
         buffer.writeBoolean(levelSettings.isIntentOnXBLBroadcast());
+        buffer.writeBoolean(levelSettings.isBehaviorPackLocked());
+        buffer.writeBoolean(levelSettings.isResourcePackLocked());
+        buffer.writeBoolean(levelSettings.isFromLockedWorldTemplate());
     }
 
     public static void writeStructureEditorData(ByteBuf buffer, StructureEditorData structureEditorData) {

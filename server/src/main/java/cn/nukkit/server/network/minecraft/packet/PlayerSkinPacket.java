@@ -18,6 +18,7 @@ public class PlayerSkinPacket implements MinecraftPacket {
     private String newSkinName;
     private String oldSkinName;
     private Skin skin;
+    private boolean premium;
 
     @Override
     public void encode(ByteBuf buffer) {
@@ -35,6 +36,7 @@ public class PlayerSkinPacket implements MinecraftPacket {
         writeString(buffer, skin.getGeometryName());
         writeUnsignedInt(buffer, geometryData.length);
         buffer.writeBytes(geometryData);
+        buffer.writeBoolean(premium);
     }
 
     @Override
@@ -50,6 +52,7 @@ public class PlayerSkinPacket implements MinecraftPacket {
         String geometryName = readString(buffer);
         byte[] geometryData = new byte[readUnsignedInt(buffer)];
         buffer.readBytes(geometryData);
+        premium = buffer.readBoolean();
     }
 
     @Override

@@ -28,6 +28,7 @@ public abstract class NukkitLevelData implements LevelData {
     private Vector3f defaultSpawn;
     private boolean achievementsDisabled = false;
     private boolean eduWorld = false;
+    private boolean eduFeaturesEnabled = true;
     private float rainLevel = 0;
     private float lightningLevel = 0;
     private boolean forceGameType = false;
@@ -46,6 +47,9 @@ public abstract class NukkitLevelData implements LevelData {
     private boolean broadcastingToPlatform = true;
     private int platformBroadcastMode = 0;
     private boolean intentOnXBLBroadcast = true;
+    private boolean behaviorPackLocked = false;
+    private boolean resourcePackLocked = false;
+    private boolean fromLockedWorldTemplate = false;
 
     // Level Data
     private String name;

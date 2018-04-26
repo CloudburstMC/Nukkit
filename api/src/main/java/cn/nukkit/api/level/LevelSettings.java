@@ -29,6 +29,8 @@ public interface LevelSettings {
 
     boolean isEduWorld();
 
+    boolean isEduFeaturesEnabled();
+
     float getRainLevel();
 
     float getLightningLevel();
@@ -62,4 +64,10 @@ public interface LevelSettings {
     int getPlatformBroadcastMode();
 
     boolean isIntentOnXBLBroadcast();
+
+    boolean isBehaviorPackLocked();
+
+    boolean isResourcePackLocked();
+
+    boolean isFromLockedWorldTemplate();
 }
