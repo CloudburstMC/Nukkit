@@ -185,6 +185,8 @@ public final class NukkitConfiguration implements Configuration {
         private boolean debugCommandsEnabled = false;
         @JsonProperty("chunk-threads")
         private int chunkLoadThreads = 2;
+        @JsonProperty("network-threads")
+        private int networkThreads = -1;
         @JsonProperty("log-level")
         private String logLevel = "INFO";
         @JsonProperty("netty-leak-detector-level")
