@@ -89,7 +89,7 @@ public class BlockAnvil extends BlockFallable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent()) {
+        if (!target.isTransparent()||target.getId()==Block.SNOW_LAYER) {
             int damage = this.getDamage();
             int[] faces = {1, 2, 3, 0};
             this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
