@@ -6,35 +6,26 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Cake implements Metadata {
-    public static final Cake NEW = new Cake((byte) 0);
-    public static final Cake ALMOST_EATEN = new Cake((byte) 6);
-
+public class Cauldron implements Metadata {
+    public static final Cauldron EMPTY = new Cauldron((byte) 0);
+    public static final Cauldron FULL = new Cauldron((byte) 3);
     private final byte level;
 
-    public static Cake of(int data) {
-        Preconditions.checkArgument(data >= 0 && data < 8, "data is not valid (wanted 0-7)");
-        return new Cake((byte) data);
+    public static Cauldron of(int level) {
+        Preconditions.checkArgument(level >= 0 && level < 4, "Invalid level. Expected 0-3");
+        return new Cauldron((byte) level);
     }
 
-    public int getSlicesEaten() {
-        return level;
+    public boolean isEmpty() {
+        return level == 0;
     }
 
-    public int getSlicesLeft() {
-        return 7 - level;
+    public boolean isFull() {
+        return level == 3;
     }
 
     public byte getLevel() {
         return level;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Cake that = (Cake) o;
-        return this.level == that.level;
     }
 
     @Override
@@ -43,8 +34,16 @@ public class Cake implements Metadata {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cauldron that = (Cauldron) o;
+        return this.level == that.level;
+    }
+
+    @Override
     public String toString() {
-        return "Cake(" +
+        return "Cauldron(" +
                 "level=" + level +
                 ')';
     }

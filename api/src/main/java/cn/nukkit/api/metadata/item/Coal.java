@@ -22,6 +22,8 @@ public enum Coal implements Metadata {
 
     @Override
     public final String toString() {
-        return "Coal{" + name() + '}';
+        return "Coal(" +
+                "type=" + name() +
+                ')';
     }
 }

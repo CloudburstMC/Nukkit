@@ -11,9 +11,17 @@ public interface BlockState {
 
     BlockType getBlockType();
 
-    Metadata getBlockData();
+    Optional<Metadata> getBlockData();
 
     Optional<BlockEntity> getBlockEntity();
 
     BlockStateBuilder toBuilder();
+
+    default <T extends Metadata> T ensureBlockData(Class<T> clazz) {
+        return (T) getBlockData().get();
+    }
+
+    default <T extends BlockEntity> T ensureBlockEntity(Class<T> clazz) {
+        return (T) getBlockEntity().get();
+    }
 }

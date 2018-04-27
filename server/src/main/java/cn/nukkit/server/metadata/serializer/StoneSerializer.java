@@ -4,20 +4,20 @@ import cn.nukkit.api.block.BlockState;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
+import cn.nukkit.api.metadata.block.Stone;
 import cn.nukkit.api.metadata.blockentity.BlockEntity;
-import cn.nukkit.api.metadata.item.GenericDamageValue;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 
-public class GernericDamageSerializer implements Serializer {
-
+public class StoneSerializer implements Serializer {
     @Override
-    public CompoundTag readNBT(BlockState state) {
+    public CompoundTag readNBT(BlockState block) {
         return null;
     }
 
     @Override
-    public short readMetadata(BlockState state) {
-        return 0;
+    public short readMetadata(BlockState block) {
+        Stone stone = getBlockData(block);
+        return (short) stone.ordinal();
     }
 
     @Override
@@ -27,13 +27,16 @@ public class GernericDamageSerializer implements Serializer {
 
     @Override
     public short readMetadata(ItemInstance item) {
-        GenericDamageValue damage = getItemData(item);
-        return damage.getDamage();
+        Stone stone = getItemData(item);
+        return (short) stone.ordinal();
     }
 
     @Override
     public Metadata writeMetadata(ItemType type, short metadata) {
-        return new GenericDamageValue(metadata);
+        if (metadata < 0 || metadata >= Stone.values().length) {
+            metadata = 0;
+        }
+        return Stone.values()[metadata];
     }
 
     @Override

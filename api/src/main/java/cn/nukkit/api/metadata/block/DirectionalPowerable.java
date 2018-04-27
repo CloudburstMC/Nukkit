@@ -7,17 +7,17 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class Dispenser extends Directional implements Powerable {
+public class DirectionalPowerable extends Directional implements Powerable {
     private final boolean powered;
 
-    private Dispenser(BlockFace face, boolean powered) {
+    private DirectionalPowerable(BlockFace face, boolean powered) {
         super(face);
         this.powered = powered;
     }
 
-    public static Dispenser of(@Nonnull BlockFace face, boolean powered) {
+    public static DirectionalPowerable of(@Nonnull BlockFace face, boolean powered) {
         Preconditions.checkNotNull(face, "face");
-        return new Dispenser(face, powered);
+        return new DirectionalPowerable(face, powered);
     }
 
     @Override
@@ -34,13 +34,13 @@ public class Dispenser extends Directional implements Powerable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Dispenser that = (Dispenser) o;
+        DirectionalPowerable that = (DirectionalPowerable) o;
         return this.getFace() == that.getFace() && this.powered == that.powered;
     }
 
     @Override
     public String toString() {
-        return "Dispenser(" +
+        return "DirectionalPowerable(" +
                 "face=" + getFace() +
                 ", isPowered=" + powered +
                 ')';

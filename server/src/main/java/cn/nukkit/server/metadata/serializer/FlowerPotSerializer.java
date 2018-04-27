@@ -10,23 +10,23 @@ import cn.nukkit.server.block.entity.NukkitFlowerPotBlockEntity;
 import cn.nukkit.server.nbt.CompoundTagBuilder;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 
-public class FlowerPotSerializer implements MetadataSerializer {
+public class FlowerPotSerializer implements Serializer {
     @Override
-    public CompoundTag readNBT(BlockState block) {
-        NukkitFlowerPotBlockEntity blockEntity = getBlockStateEntityOrNull(block);
+    public CompoundTag readNBT(BlockState state) {
+        NukkitFlowerPotBlockEntity blockEntity = getBlockEntity(state);
         return CompoundTagBuilder.builder()
                 .stringTag("contents", blockEntity.getPlantType().name().toLowerCase())
                 .buildRootTag();
     }
 
     @Override
-    public short readMetadata(BlockState block) {
+    public short readMetadata(BlockState state) {
         return 0;
     }
 
     @Override
     public CompoundTag readNBT(ItemInstance item) {
-        NukkitFlowerPotBlockEntity blockEntity = getItemDataOrNull(item);
+        NukkitFlowerPotBlockEntity blockEntity = getItemData(item);
         return CompoundTagBuilder.builder()
                 .stringTag("contents", blockEntity.getPlantType().name().toLowerCase())
                 .buildRootTag();

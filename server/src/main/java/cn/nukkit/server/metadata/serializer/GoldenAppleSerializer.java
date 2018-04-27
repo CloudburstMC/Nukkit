@@ -5,11 +5,13 @@ import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.api.metadata.blockentity.BlockEntity;
-import cn.nukkit.api.metadata.item.GenericDamageValue;
+import cn.nukkit.api.metadata.item.GoldenApple;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 
-public class GernericDamageSerializer implements Serializer {
+import static cn.nukkit.api.metadata.item.GoldenApple.ENCHANTED;
+import static cn.nukkit.api.metadata.item.GoldenApple.REGULAR;
 
+public class GoldenAppleSerializer implements Serializer {
     @Override
     public CompoundTag readNBT(BlockState state) {
         return null;
@@ -27,13 +29,13 @@ public class GernericDamageSerializer implements Serializer {
 
     @Override
     public short readMetadata(ItemInstance item) {
-        GenericDamageValue damage = getItemData(item);
-        return damage.getDamage();
+        GoldenApple goldenApple = getItemData(item);
+        return (short) (goldenApple.isEnchanted() ? 1 : 0);
     }
 
     @Override
     public Metadata writeMetadata(ItemType type, short metadata) {
-        return new GenericDamageValue(metadata);
+        return metadata != 0 ? ENCHANTED : REGULAR;
     }
 
     @Override

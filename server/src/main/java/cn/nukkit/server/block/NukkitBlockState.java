@@ -31,8 +31,8 @@ public class NukkitBlockState implements BlockState {
     }
 
     @Override
-    public Metadata getBlockData() {
-        return metadata;
+    public Optional<Metadata> getBlockData() {
+        return Optional.ofNullable(metadata);
     }
 
     @Override

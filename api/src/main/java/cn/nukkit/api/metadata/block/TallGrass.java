@@ -2,18 +2,14 @@ package cn.nukkit.api.metadata.block;
 
 import cn.nukkit.api.metadata.Metadata;
 
-public enum Stone implements Metadata {
-    REGULAR,
-    GRANITE,
-    POLISHED_GRANITE,
-    DIORITE,
-    POLISHED_DIORITE,
-    ANDESITE,
-    POLISHED_ANDESITE;
+public enum TallGrass implements Metadata {
+    SHRUB,
+    TALL_GRASS,
+    FERN;
 
     @Override
     public String toString() {
-        return "Stone(" +
+        return "TallGrass(" +
                 "type=" + name() +
                 ')';
     }

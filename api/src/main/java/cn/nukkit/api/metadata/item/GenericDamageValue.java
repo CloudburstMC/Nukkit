@@ -23,16 +23,16 @@ public final class GenericDamageValue implements Metadata {
 
     @Override
     public final String toString() {
-        return "GenericDamageValue{" +
+        return "GenericDamageValue(" +
                 "damage=" + damage +
-                '}';
+                ')';
     }
 
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GenericDamageValue damageValue = (GenericDamageValue) o;
-        return damage == damageValue.damage;
+        GenericDamageValue that = (GenericDamageValue) o;
+        return this.damage == that.damage;
     }
 }

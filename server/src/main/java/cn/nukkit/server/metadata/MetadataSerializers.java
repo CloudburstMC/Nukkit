@@ -5,20 +5,20 @@ import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.api.metadata.blockentity.BlockEntity;
-import cn.nukkit.server.metadata.serializer.MetadataSerializer;
+import cn.nukkit.server.metadata.serializer.Serializer;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class MetadataSerializers {
-    private static final TIntObjectHashMap<MetadataSerializer> SERIALIZERS = new TIntObjectHashMap<>();
+    private static final TIntObjectHashMap<Serializer> SERIALIZERS = new TIntObjectHashMap<>();
 
     static {
     }
 
     public static Metadata deserializeMetadata(ItemType type, short metadata) {
-        MetadataSerializer serializer = SERIALIZERS.get(type.getId());
+        Serializer serializer = SERIALIZERS.get(type.getId());
         if (serializer == null) {
             return null;
         }
@@ -27,7 +27,7 @@ public class MetadataSerializers {
     }
 
     public static BlockEntity deserializeNBT(ItemType type, CompoundTag tag) {
-        MetadataSerializer serializer = SERIALIZERS.get(type.getId());
+        Serializer serializer = SERIALIZERS.get(type.getId());
         if (serializer == null) {
             return null;
         }
@@ -36,7 +36,7 @@ public class MetadataSerializers {
     }
 
     public static short serializeMetadata(BlockState block) {
-        MetadataSerializer dataSerializer = SERIALIZERS.get(block.getBlockType().getId());
+        Serializer dataSerializer = SERIALIZERS.get(block.getBlockType().getId());
         if (dataSerializer == null) {
             return 0;
         }
@@ -45,7 +45,7 @@ public class MetadataSerializers {
     }
 
     public static short serializeMetadata(ItemInstance itemStack) {
-        MetadataSerializer dataSerializer = SERIALIZERS.get(itemStack.getItemType().getId());
+        Serializer dataSerializer = SERIALIZERS.get(itemStack.getItemType().getId());
         if (dataSerializer == null) {
             return 0;
         }
@@ -54,7 +54,7 @@ public class MetadataSerializers {
     }
 
     public static CompoundTag serializeNBT(BlockState block) {
-        MetadataSerializer dataSerializer = SERIALIZERS.get(block.getBlockType().getId());
+        Serializer dataSerializer = SERIALIZERS.get(block.getBlockType().getId());
         if (dataSerializer == null) {
             return null;
         }

@@ -23,9 +23,8 @@ public class SimpleBlockBehavior implements BlockBehavior {
         ItemInstanceBuilder builder = player.getServer().itemInstanceBuilder()
                 .itemType(block.getBlockState().getBlockType())
                 .amount(1);
-        if (block.getBlockState().getBlockData() != null) {
-            builder.itemData(block.getBlockState().getBlockData());
-        }
+
+        block.getBlockState().getBlockData().ifPresent(builder::itemData);
 
         return ImmutableList.of(builder.build());
     }

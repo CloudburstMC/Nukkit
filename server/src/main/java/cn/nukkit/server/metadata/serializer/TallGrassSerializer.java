@@ -4,12 +4,13 @@ import cn.nukkit.api.block.BlockState;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
+import cn.nukkit.api.metadata.block.TallGrass;
 import cn.nukkit.api.metadata.blockentity.BlockEntity;
-import cn.nukkit.api.metadata.item.GenericDamageValue;
 import cn.nukkit.server.nbt.tag.CompoundTag;
+import com.google.common.base.Preconditions;
 
-public class GernericDamageSerializer implements Serializer {
-
+public class TallGrassSerializer implements Serializer {
+    private static final TallGrass[] VALUES = TallGrass.values();
     @Override
     public CompoundTag readNBT(BlockState state) {
         return null;
@@ -17,7 +18,8 @@ public class GernericDamageSerializer implements Serializer {
 
     @Override
     public short readMetadata(BlockState state) {
-        return 0;
+        TallGrass grass = getBlockData(state);
+        return (short) grass.ordinal();
     }
 
     @Override
@@ -27,13 +29,14 @@ public class GernericDamageSerializer implements Serializer {
 
     @Override
     public short readMetadata(ItemInstance item) {
-        GenericDamageValue damage = getItemData(item);
-        return damage.getDamage();
+        TallGrass grass = getItemData(item);
+        return (short) grass.ordinal();
     }
 
     @Override
     public Metadata writeMetadata(ItemType type, short metadata) {
-        return new GenericDamageValue(metadata);
+        Preconditions.checkArgument(metadata >= 0 && metadata < VALUES.length);
+        return VALUES[metadata];
     }
 
     @Override

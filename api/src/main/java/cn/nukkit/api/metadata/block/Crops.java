@@ -10,19 +10,19 @@ public class Crops implements Metadata {
     public static final Crops NEW = new Crops((byte) 0);
     public static final Crops FULLY_GROWN = new Crops((byte) 7);
 
-    private final byte level;
+    private final byte stage;
 
-    public static Crops of(int data) {
-        Preconditions.checkArgument(data >= 0 && data < 8, "level is not valid (wanted 0-7)");
-        return new Crops((byte) data);
+    public static Crops of(int stage) {
+        Preconditions.checkArgument(stage >= 0 && stage < 8, "stage is not valid (wanted 0-7)");
+        return new Crops((byte) stage);
     }
 
-    public byte getLevel() {
-        return level;
+    public byte getStage() {
+        return stage;
     }
 
     public boolean isFullyGrown() {
-        return level == 7;
+        return stage == 7;
     }
 
     @Override
@@ -30,18 +30,18 @@ public class Crops implements Metadata {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Crops that = (Crops) o;
-        return this.level == that.level;
+        return this.stage == that.stage;
     }
 
     @Override
     public int hashCode() {
-        return 31 * level;
+        return stage;
     }
 
     @Override
     public String toString() {
         return "Crops(" +
-                "level=" + level +
+                "stage=" + stage +
                 ", fullyGrown=" + isFullyGrown() +
                 ')';
     }

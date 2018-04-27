@@ -5,19 +5,19 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class GoldenApple implements Metadata {
-    private final boolean enchanted;
+public enum GoldenApple implements Metadata {
 
-    public static GoldenApple of(boolean isEnchanted) {
-        return new GoldenApple(isEnchanted);
-    }
+    REGULAR,
+    ENCHANTED;
 
-    public boolean isEnchanted() {
-        return enchanted;
+    public final boolean isEnchanted() {
+        return this == ENCHANTED;
     }
 
     @Override
-    public int hashCode() {
-        return Boolean.hashCode(enchanted);
+    public String toString() {
+        return "GoldenApple(" +
+                "enchanted=" + isEnchanted() +
+                ')';
     }
 }

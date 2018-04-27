@@ -1,10 +1,11 @@
 package cn.nukkit.api.metadata.block;
 
+import cn.nukkit.api.metadata.Metadata;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Sand {
+public class Sand implements Metadata {
     private final boolean red;
 
     public static Sand of(boolean isRed) {

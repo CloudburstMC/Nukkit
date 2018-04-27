@@ -5,11 +5,13 @@ import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.api.item.ItemType;
 import cn.nukkit.api.metadata.Metadata;
 import cn.nukkit.api.metadata.blockentity.BlockEntity;
-import cn.nukkit.api.metadata.item.GenericDamageValue;
+import cn.nukkit.api.metadata.item.Coal;
 import cn.nukkit.server.nbt.tag.CompoundTag;
 
-public class GernericDamageSerializer implements Serializer {
+import static cn.nukkit.api.metadata.item.Coal.CHARCOAL;
+import static cn.nukkit.api.metadata.item.Coal.REGULAR;
 
+public class CoalSerializer implements Serializer {
     @Override
     public CompoundTag readNBT(BlockState state) {
         return null;
@@ -27,13 +29,13 @@ public class GernericDamageSerializer implements Serializer {
 
     @Override
     public short readMetadata(ItemInstance item) {
-        GenericDamageValue damage = getItemData(item);
-        return damage.getDamage();
+        Coal coal = getItemData(item);
+        return (short) coal.ordinal();
     }
 
     @Override
     public Metadata writeMetadata(ItemType type, short metadata) {
-        return new GenericDamageValue(metadata);
+        return metadata != 0 ? CHARCOAL : REGULAR;
     }
 
     @Override
