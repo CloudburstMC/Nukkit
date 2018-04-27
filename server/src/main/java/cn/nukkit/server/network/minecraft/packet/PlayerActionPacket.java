@@ -59,6 +59,8 @@ public class PlayerActionPacket implements MinecraftPacket {
         CHANGE_SKIN,
         SET_ENCHANTMENT_SEED,
         START_SWIMMING,
-        STOP_SWIMMING
+        STOP_SWIMMING,
+        START_SPIN_ATTACK,
+        STOP_SPIN_ATTACK
     }
 }

@@ -3,14 +3,11 @@ package cn.nukkit.server.network.minecraft.data;
 import cn.nukkit.api.item.ItemInstance;
 import cn.nukkit.server.nbt.util.VarInt;
 import cn.nukkit.server.network.minecraft.MinecraftUtil;
-import cn.nukkit.server.util.bitset.BitUtil;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-
-import java.util.StringJoiner;
 
 public enum MetadataConstants {
     FLAGS(Type.LONG),
@@ -57,9 +54,9 @@ public enum MetadataConstants {
     URL_TAG(Type.STRING),
     MAX_AIR(Type.SHORT),
     MAX_VARIANT(Type.INT),
-    UNKNOWN_44(null),
-    UNKNOWN_45(null),
-    UNKNOWN_46(null),
+    CONTAINER_TYPE(Type.BYTE),
+    CONTAINER_BASE_SIZE(Type.INT),
+    CONTAINER_EXTRA_SLOTS_PER_STRENGTH(Type.INT),
     BLOCK_TARGET(Type.VECTOR3I),
     WITHER_INVULNERABLE_TICKS(Type.INT),
     WITHER_TARGET_1(Type.LONG),
@@ -90,7 +87,15 @@ public enum MetadataConstants {
     STRENGTH(Type.INT),
     MAX_STRENGTH(Type.INT),
     UNKNOWN_76(Type.INT),
-    UNKNOWN_77(Type.INT);
+    LIMITED_LIFE(Type.INT),
+    ARMOR_STAND_POSE_INDEX(Type.INT),
+    ENDER_CRYSTAL_TIME_OFFSET(Type.INT),
+    UNKNOWN_80(null),
+    COLOR_2(Type.BYTE),
+    UNKNOWN_82(null),
+    SCORE_TAG(Type.STRING),
+    BALLOON_ATTACHED_ENTITY(Type.LONG),
+    PUFFERFISH_SIZE(Type.BYTE);
 
     @Getter
     private final Type type;
@@ -151,15 +156,13 @@ public enum MetadataConstants {
         AFFECTED_BY_GRAVITY,
         FIRE_IMMUNE,
         DANCING,
-        ENCHANTED;
-
-        public static void logBitSet(long bitset) {
-            StringJoiner joiner = new StringJoiner(", ");
-            for (Flag flag : values()) {
-                joiner.add("(" + flag.name() + ":" + (BitUtil.getBit(bitset, flag.ordinal()) ? '1' : '0') + ")");
-            }
-            log.debug(joiner.toString());
-        }
+        ENCHANTED,
+        UNKNOWN_TRIDENT,
+        CONTAINER_PRIVATE,
+        TRANSFORM,
+        SPIN_ATTACK,
+        SWIMMING,
+        BRIBED
     }
 
     public enum Type {
