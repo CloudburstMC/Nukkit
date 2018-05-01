@@ -1,7 +1,6 @@
 package cn.nukkit.network.protocol;
 
 import com.google.common.primitives.Ints;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import java.util.List;
 
@@ -14,12 +13,12 @@ public interface ProtocolInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    int CURRENT_PROTOCOL = Integer.valueOf("201"); //plugins can change it
+    int CURRENT_PROTOCOL = Integer.valueOf("223"); //plugins can change it
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.2.11";
-    String MINECRAFT_VERSION_NETWORK = "1.2.11";
+    String MINECRAFT_VERSION = "v1.2.13";
+    String MINECRAFT_VERSION_NETWORK = "1.2.13";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
