@@ -1,69 +1,36 @@
 package cn.nukkit.utils;
 
+import java.util.function.BiConsumer;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public enum LogLevel implements Comparable<LogLevel> {
-    NONE {
-        @Override
-        public void log(MainLogger logger, String message) {
-        }
-    },
-    EMERGENCY {
-        @Override
-        public void log(MainLogger logger, String message) {
-            logger.emergency(message);
-        }
-    },
-    ALERT {
-        @Override
-        public void log(MainLogger logger, String message) {
-            logger.alert(message);
-        }
-    },
-    CRITICAL {
-        @Override
-        public void log(MainLogger logger, String message) {
-            logger.critical(message);
-        }
-    },
-    ERROR {
-        @Override
-        public void log(MainLogger logger, String message) {
-            logger.error(message);
-        }
-    },
-    WARNING {
-        @Override
-        public void log(MainLogger logger, String message) {
-            logger.warning(message);
-        }
-    },
-    NOTICE {
-        @Override
-        public void log(MainLogger logger, String message) {
-            logger.notice(message);
-        }
-    },
-    INFO {
-        @Override
-        public void log(MainLogger logger, String message) {
-            logger.info(message);
-        }
-    },
-    DEBUG {
-        @Override
-        public void log(MainLogger logger, String message) {
-            logger.debug(message);
-        }
-    };
+    NONE((logger, message) -> {
+    }),
+    EMERGENCY(MainLogger::emergency),
+    ALERT(MainLogger::alert),
+    CRITICAL(MainLogger::critical),
+    ERROR(MainLogger::error),
+    WARNING(MainLogger::warning),
+    NOTICE(MainLogger::notice),
+    INFO(MainLogger::info),
+    DEBUG(MainLogger::debug);
 
     public static final LogLevel DEFAULT_LEVEL = INFO;
 
-    public abstract void log(MainLogger logger, String message);
+    private final BiConsumer<MainLogger, String> logTo;
 
-    int getLevel() {
+    LogLevel(BiConsumer<MainLogger, String> logTo) {
+        this.logTo = logTo;
+    }
+
+    public void log(MainLogger logger, String message) {
+        logTo.accept(logger, message);
+    }
+
+    public int getLevel() {
         return ordinal();
     }
 }
