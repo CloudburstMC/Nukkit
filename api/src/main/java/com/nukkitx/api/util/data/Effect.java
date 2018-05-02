@@ -1,0 +1,27 @@
+package com.nukkitx.api.util.data;
+
+public enum Effect {
+    SPEED,
+    SLOWNESS,
+    HASTE,
+    MINING_FATIGUE,
+    STRENGTH,
+    HEALING,
+    HARMING,
+    JUMP,
+    NAUSEA,
+    REGENERATION,
+    DAMAGE_RESISTANCE,
+    FIRE_RESISTANCE,
+    WATER_BREATHING,
+    INVISIBILITY,
+    BLINDNESS,
+    NIGHT_VISION,
+    HUNGER,
+    WEAKNESS,
+    POISON,
+    WITHER,
+    HEALTH_BOOST,
+    ABSORPTION,
+    SATURATION
+}

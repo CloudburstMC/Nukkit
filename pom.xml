@@ -6,10 +6,29 @@
     <groupId>com.nukkitx</groupId>
     <artifactId>nukkit-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <url>https://github.com/NukkitX/Nukkit</url>
+    <inceptionYear>2017</inceptionYear>
+
+    <organization>
+        <name>NukkitX</name>
+        <url>https://github.com/NukkitX</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3</name>
+            <url>https://opensource.org/licenses/LGPL-3.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <modules>
+        <module>nbt</module>
         <module>api</module>
+        <module>console</module>
+        <module>chat</module>
         <module>server</module>
+        <module>bootstrap</module>
     </modules>
 
     <repositories>
@@ -71,7 +90,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>cn.nukkit.server.Bootstrap</mainClass>
+                            <mainClass>com.nukkitx.Bootstrap</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

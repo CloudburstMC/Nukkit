@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <version>2.0.0-SNAPSHOT</version>
-    <name>NukkitX-API</name>
+    <name>Nukkit-API</name>
     <artifactId>nukkit-api</artifactId>
 
     <repositories>
@@ -21,6 +21,12 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>com.nukkitx</groupId>
+            <artifactId>nukkitx-chat</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

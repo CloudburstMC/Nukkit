@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nukkit-server</artifactId>
-    <name>NukkitX-Server</name>
+    <name>Nukkit-Server</name>
     <version>1.5.0-SNAPSHOT</version>
 
     <properties>
@@ -33,9 +33,21 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.nukkitx</groupId>
+            <artifactId>nukkitx-console</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>nukkit-natives</artifactId>
             <version>1.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx</groupId>
+            <artifactId>nukkitx-nbt</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -153,7 +165,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>cn.nukkit.server.Bootstrap</Main-Class>
+                            <Main-Class>com.nukkitx.Bootstrap</Main-Class>
                             <Implementation-Title>Nukkit</Implementation-Title>
                             <Implementation-Version>${project.version}</Implementation-Version>
                             <Implementation-Vendor>${nukkit.desc}</Implementation-Vendor>
