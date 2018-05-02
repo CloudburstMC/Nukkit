@@ -57,6 +57,8 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
                             <Main-Class>com.nukkitx.server.Bootstrap</Main-Class>
                             <Implementation-Title>Nukkit</Implementation-Title>
                             <Implementation-Version>${project.version}</Implementation-Version>

@@ -3,13 +3,13 @@ package com.nukkitx.server.locale;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.nukkitx.api.locale.LocaleManager;
 import com.nukkitx.api.message.Message;
 import com.nukkitx.api.message.TextFormat;
 import com.nukkitx.api.message.TranslationMessage;
 import com.nukkitx.server.NukkitServer;
-import joptsimple.internal.Strings;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;

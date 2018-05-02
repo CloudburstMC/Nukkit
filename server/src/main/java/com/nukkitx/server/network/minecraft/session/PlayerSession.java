@@ -3,6 +3,7 @@ package com.nukkitx.server.network.minecraft.session;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.nukkitx.api.Player;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.block.BlockState;
@@ -62,7 +63,6 @@ import com.spotify.futures.CompletableFutures;
 import gnu.trove.TCollections;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import joptsimple.internal.Strings;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
