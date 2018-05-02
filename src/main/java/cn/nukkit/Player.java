@@ -231,7 +231,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Map<Long, DummyBossBar> dummyBossBars = new HashMap<>();
 
     private AsyncTask preLoginEventTask = null;
-    private boolean shouldLogin = false;
+    protected boolean shouldLogin = false;
 
     public int getStartActionTick() {
         return startAction;
@@ -2139,6 +2139,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                         }
                     };
+
                     this.server.getScheduler().scheduleAsyncTask(this.preLoginEventTask);
 
                     this.processLogin();
