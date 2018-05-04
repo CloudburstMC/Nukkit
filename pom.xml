@@ -4,7 +4,7 @@
     <packaging>pom</packaging>
     <name>NukkitX-Parent</name>
     <groupId>com.nukkitx</groupId>
-    <artifactId>nukkit-parent</artifactId>
+    <artifactId>nukkitx-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <url>https://github.com/NukkitX/Nukkit</url>
     <inceptionYear>2017</inceptionYear>

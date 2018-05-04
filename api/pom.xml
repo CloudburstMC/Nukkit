@@ -11,7 +11,7 @@
 
     <version>2.0.0-SNAPSHOT</version>
     <name>Nukkit-API</name>
-    <artifactId>nukkit-api</artifactId>
+    <artifactId>nukkitx-api</artifactId>
 
     <repositories>
         <repository>

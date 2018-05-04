@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>nukkit-server</artifactId>
+    <artifactId>nukkitx-server</artifactId>
     <name>Nukkit-Server</name>
     <version>1.5.0-SNAPSHOT</version>
 
