@@ -3,20 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>nukkit-parent</artifactId>
+        <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.5.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nukkitx-server</artifactId>
-    <name>Nukkit-Server</name>
-    <version>1.5.0-SNAPSHOT</version>
-
-    <properties>
-        <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-        <nukkit.api.version>2.0.0-SNAPSHOT</nukkit.api.version>
-    </properties>
+    <name>NukkitX-Server</name>
+    <version>1.5.0.1-SNAPSHOT</version>
 
     <pluginRepositories>
         <pluginRepository>
@@ -28,14 +23,14 @@
     <dependencies>
         <dependency>
             <groupId>com.nukkitx</groupId>
-            <artifactId>nukkit-api</artifactId>
-            <version>${nukkit.api.version}</version>
+            <artifactId>nukkitx-api</artifactId>
+            <version>${api.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-console</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -47,7 +42,7 @@
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-nbt</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

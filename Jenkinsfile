@@ -14,7 +14,7 @@ pipeline {
             }
             post {
                 success {
-                    archiveArtifacts artifacts: '**/target/nukkit-*-SNAPSHOT.jar', fingerprint: true
+                    archiveArtifacts artifacts: '**/target/nukkit-*.jar', fingerprint: true
                 }
             }
         }

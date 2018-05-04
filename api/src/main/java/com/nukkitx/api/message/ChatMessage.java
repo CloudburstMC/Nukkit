@@ -1,5 +1,7 @@
 package com.nukkitx.api.message;
 
+import com.google.common.base.Preconditions;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.util.Objects;
@@ -25,8 +27,8 @@ public final class ChatMessage implements SourceMessage {
     }
 
     public ChatMessage(@Nonnull String sender, @Nonnull String message, boolean needsTranslating) {
-        this.sender = Objects.requireNonNull(sender, "sender");
-        this.message = Objects.requireNonNull(message, "message");
+        this.sender = Preconditions.checkNotNull(sender, "sender");
+        this.message = Preconditions.checkNotNull(message, "message");
         this.needsTranslating = needsTranslating;
     }
 

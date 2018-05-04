@@ -1,5 +1,7 @@
 package com.nukkitx.api.message;
 
+import com.google.common.base.Preconditions;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.util.Objects;
@@ -16,7 +18,7 @@ public final class TipMessage implements Message {
     }
 
     public TipMessage(@Nonnull String message, boolean needsTranslating) {
-        this.message = Objects.requireNonNull(message, "message");
+        this.message = Preconditions.checkNotNull(message, "message");
         this.needsTranslating = needsTranslating;
     }
 

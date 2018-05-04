@@ -1,5 +1,7 @@
 package com.nukkitx.api.message;
 
+import com.google.common.base.Preconditions;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.util.Arrays;
@@ -19,8 +21,8 @@ public final class TranslationMessage implements ParameterMessage {
      * @param replacements the replacements to use
      */
     public TranslationMessage(@Nonnull String name, @Nonnull Collection<String> replacements) {
-        this.name = Objects.requireNonNull(name, "name");
-        this.replacements = Objects.requireNonNull(replacements, "replacements").toArray(new String[0]);
+        this.name = Preconditions.checkNotNull(name, "name");
+        this.replacements = Preconditions.checkNotNull(replacements, "replacements").toArray(new String[0]);
     }
 
     /**
@@ -30,8 +32,8 @@ public final class TranslationMessage implements ParameterMessage {
      * @param replacements the replacements to use
      */
     public TranslationMessage(@Nonnull String name, @Nonnull Object... replacements) {
-        this.name = Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(replacements, "replacements");
+        this.name = Preconditions.checkNotNull(name, "name");
+        Preconditions.checkNotNull(replacements, "replacements");
         this.replacements = new String[replacements.length];
         for (int i = 0; i < replacements.length; i++) {
             this.replacements[i] = replacements[i].toString();
@@ -44,8 +46,8 @@ public final class TranslationMessage implements ParameterMessage {
      * @param replacements the replacements to use
      */
     public TranslationMessage(@Nonnull String name, @Nonnull String... replacements) {
-        this.name = Objects.requireNonNull(name, "name");
-        Objects.requireNonNull(replacements, "replacements");
+        this.name = Preconditions.checkNotNull(name, "name");
+        Preconditions.checkNotNull(replacements, "replacements");
         this.replacements = Arrays.copyOf(replacements, replacements.length);
     }
 

@@ -1,21 +1,26 @@
 package com.nukkitx.api.message;
 
+import com.google.common.base.Preconditions;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * A popup message, including a caption and message.
+ */
 @Nonnull
 @Immutable
-public final class JukeboxPopupMessage implements ParameterMessage {
-    private static final Type TYPE = Type.JUKEBOX_POPUP;
+public final class PopupMessage implements ParameterMessage {
+    private static final Type TYPE = Type.POPUP;
     /**
-     * The message.
+     * The caption of the message.
      */
     private final String message;
     /**
-     * The captions for the message.
+     * The message this popup is using.
      */
     private final String[] captions;
     /**
@@ -25,11 +30,10 @@ public final class JukeboxPopupMessage implements ParameterMessage {
 
     /**
      * Constructs a popup message.
-     *
-     * @param message  the message to display in the popup
+     * @param message the message to display in the popup
      * @param captions the captions to use for this popup
      */
-    public JukeboxPopupMessage(@Nonnull String message, @Nonnull String... captions) {
+    public PopupMessage(@Nonnull String message, @Nonnull String... captions) {
         this(message, false, captions);
     }
 
@@ -39,7 +43,7 @@ public final class JukeboxPopupMessage implements ParameterMessage {
      * @param message  the message to display in the popup
      * @param captions the captions to use for this popup
      */
-    public JukeboxPopupMessage(@Nonnull String message, @Nonnull Collection<String> captions) {
+    public PopupMessage(@Nonnull String message, @Nonnull Collection<String> captions) {
         this(message, false, captions);
     }
 
@@ -50,10 +54,10 @@ public final class JukeboxPopupMessage implements ParameterMessage {
      * @param needsTranslating needs translating client side
      * @param captions         the captions to use for this popup
      */
-    public JukeboxPopupMessage(@Nonnull String message, boolean needsTranslating, @Nonnull Collection<String> captions) {
-        this.message = Objects.requireNonNull(message, "message");
+    public PopupMessage(@Nonnull String message, boolean needsTranslating, @Nonnull Collection<String> captions) {
+        this.message = Preconditions.checkNotNull(message, "message");
         this.needsTranslating = needsTranslating;
-        this.captions = Objects.requireNonNull(captions, "captions").toArray(new String[0]);
+        this.captions = Preconditions.checkNotNull(captions, "captions").toArray(new String[0]);
     }
 
     /**
@@ -63,15 +67,14 @@ public final class JukeboxPopupMessage implements ParameterMessage {
      * @param needsTranslating needs translating client side
      * @param captions         the captions to use for this popup
      */
-    public JukeboxPopupMessage(@Nonnull String message, boolean needsTranslating, @Nonnull String... captions) {
-        this.message = Objects.requireNonNull(message, "message");
+    public PopupMessage(@Nonnull String message, boolean needsTranslating, @Nonnull String... captions) {
+        this.message = Preconditions.checkNotNull(message, "message");
         this.needsTranslating = needsTranslating;
-        this.captions = Objects.requireNonNull(captions, "captions");
+        this.captions = Preconditions.checkNotNull(captions, "captions");
     }
 
     /**
      * Returns this popup's message.
-     *
      * @return the message
      */
     @Override
@@ -92,8 +95,8 @@ public final class JukeboxPopupMessage implements ParameterMessage {
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || JukeboxPopupMessage.class != o.getClass()) return false;
-        JukeboxPopupMessage that = (JukeboxPopupMessage) o;
+        if (o == null || PopupMessage.class != o.getClass()) return false;
+        PopupMessage that = (PopupMessage) o;
         return Objects.equals(message, that.message) &&
                 Arrays.equals(captions, that.captions);
     }
@@ -105,7 +108,7 @@ public final class JukeboxPopupMessage implements ParameterMessage {
 
     @Override
     public final String toString() {
-        return "JukeboxPopupMessage{" +
+        return "PopupMessage{" +
                 "message='" + message + '\'' +
                 ", captions=" + Arrays.toString(captions) +
                 '}';

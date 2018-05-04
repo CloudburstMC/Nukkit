@@ -1,6 +1,7 @@
 package com.nukkitx.api.message;
 
-import java.util.Objects;
+import com.google.common.base.Preconditions;
+
 import java.util.regex.Pattern;
 
 /**
@@ -113,18 +114,18 @@ public enum TextFormat {
     }
 
     public static String removeFormatting(String string) {
-        Objects.requireNonNull(string, "string");
+        Preconditions.checkNotNull(string, "string");
         String removedColor =  CHAT_COLOR_MATCHER.matcher(string).replaceAll("");
         return AMPERSAND_MATCHER.matcher(removedColor).replaceAll("");
     }
 
     public static String colorize(String string) {
-        Objects.requireNonNull(string, "string");
+        Preconditions.checkNotNull(string, "string");
         return AMPERSAND_MATCHER.matcher(string).replaceAll( FORMAT_CHAR + "$1");
     }
 
     public static String decolorize(String string) {
-        Objects.requireNonNull(string, "string");
+        Preconditions.checkNotNull(string, "string");
         return CHAT_COLOR_MATCHER.matcher(string).replaceAll(AMPERSAND_CHAR + "$1");
     }
 

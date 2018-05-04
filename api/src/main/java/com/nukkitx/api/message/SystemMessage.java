@@ -1,28 +1,29 @@
 package com.nukkitx.api.message;
 
+import com.google.common.base.Preconditions;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.util.Objects;
 
 @Nonnull
 @Immutable
-public final class RawMessage implements Message {
-    private static final Type TYPE = Type.RAW;
+public final class SystemMessage implements Message {
+    private static final Type TYPE = Type.SYSTEM;
     private final String message;
     private final boolean needsTranslating;
 
-    public RawMessage(@Nonnull String message) {
+    public SystemMessage(@Nonnull String message) {
         this(message, false);
     }
 
-    public RawMessage(@Nonnull String message, boolean needsTranslating) {
-        this.message = Objects.requireNonNull(message, "message");
+    public SystemMessage(@Nonnull String message, boolean needsTranslating) {
+        this.message = Preconditions.checkNotNull(message, "message");
         this.needsTranslating = needsTranslating;
     }
 
     /**
      * Returns the message.
-     *
      * @return message
      */
     @Override
@@ -43,8 +44,8 @@ public final class RawMessage implements Message {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || RawMessage.class != o.getClass()) return false;
-        RawMessage that = (RawMessage) o;
+        if (o == null || SystemMessage.class != o.getClass()) return false;
+        SystemMessage that = (SystemMessage) o;
         return Objects.equals(message, that.message);
     }
 
@@ -55,7 +56,7 @@ public final class RawMessage implements Message {
 
     @Override
     public String toString() {
-        return "RawMessage{" +
+        return "SystemMessage{" +
                 "message='" + message + '\'' +
                 '}';
     }

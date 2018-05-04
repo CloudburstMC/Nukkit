@@ -3,14 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>nukkit-parent</artifactId>
+        <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.5.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <version>2.0.0-SNAPSHOT</version>
-    <name>Nukkit-API</name>
+    <name>NukkitX-API</name>
     <artifactId>nukkitx-api</artifactId>
 
     <repositories>
@@ -20,13 +20,11 @@
         </repository>
     </repositories>
 
+    <properties>
+        <jackson.version>2.9.4</jackson.version>
+    </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>com.nukkitx</groupId>
-            <artifactId>nukkitx-chat</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -48,25 +46,25 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.9.4</version>
+            <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.4</version>
+            <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.9.4</version>
+            <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-properties</artifactId>
-            <version>2.9.4</version>
+            <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

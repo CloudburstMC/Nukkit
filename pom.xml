@@ -5,7 +5,7 @@
     <name>NukkitX-Parent</name>
     <groupId>com.nukkitx</groupId>
     <artifactId>nukkitx-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.5.0.1-SNAPSHOT</version>
     <url>https://github.com/NukkitX/Nukkit</url>
     <inceptionYear>2017</inceptionYear>
 
@@ -26,21 +26,22 @@
         <module>nbt</module>
         <module>api</module>
         <module>console</module>
-        <module>chat</module>
         <module>server</module>
         <module>bootstrap</module>
     </modules>
 
-    <repositories>
-        <repository>
-            <id>nukkitx-repo</id>
-            <url>https://repo.nukkitx.com/main/</url>
-        </repository>
-    </repositories>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <netty.version>4.1.22.Final</netty.version>
+        <api.version>2.0.0-SNAPSHOT</api.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>HHmm-ddMMyyyy</maven.build.timestamp.format>
+    </properties>
 
     <distributionManagement>
         <repository>
-            <id>central</id>
+            <id>releases</id>
             <name>nukkitx-releases</name>
             <url>https://repo.nukkitx.com/release</url>
         </repository>
@@ -51,12 +52,12 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <netty.version>4.1.22.Final</netty.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <repositories>
+        <repository>
+            <id>nukkitx-repo</id>
+            <url>https://repo.nukkitx.com/main/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
