@@ -222,7 +222,7 @@ public class Binary {
     }
 
     public static int readLShort(byte[] bytes) {
-        return (bytes[1] & 0xFF << 8) + (bytes[0] & 0xFF);
+        return ((bytes[1] & 0xFF) << 8) + (bytes[0] & 0xFF);
     }
 
     public static short readSignedLShort(byte[] bytes) {
