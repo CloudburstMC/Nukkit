@@ -29,9 +29,10 @@
 
     <!-- Project modules -->
     <modules>
-        <module>nbt</module>
+        <module>message</module>
         <module>api</module>
         <module>console</module>
+        <module>nbt</module>
         <module>server</module>
         <module>bootstrap</module>
     </modules>
@@ -101,6 +102,12 @@
         </dependency>
         <!-- Unit testing -->
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
@@ -119,5 +126,23 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <!-- Common lifecycle plugins -->
+        <plugins>
+            <!-- JRebel report -->
+            <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>jrebel-maven-plugin</artifactId>
+                <version>1.1.8</version>
+                <executions>
+                    <execution>
+                        <id>generate-rebel-xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>

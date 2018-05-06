@@ -1,5 +1,6 @@
 package com.nukkitx.server.inventory.transaction;
 
+import com.nukkitx.server.inventory.transaction.action.InventoryAction;
 import com.nukkitx.server.network.minecraft.session.PlayerSession;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,7 +20,9 @@ public class NormalTransaction extends SimpleTransaction {
 
     @Override
     public void execute(PlayerSession session) {
-
+        for (InventoryAction action : getActions()) {
+            action.execute(session);
+        }
     }
 
     @Override

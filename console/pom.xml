@@ -26,7 +26,7 @@
     <dependencies>
         <dependency>
             <groupId>com.nukkitx</groupId>
-            <artifactId>nukkitx-api</artifactId>
+            <artifactId>nukkitx-message</artifactId>
             <version>${api.version}</version>
         </dependency>
         <dependency>

@@ -42,7 +42,7 @@ public class InteractPacket implements MinecraftPacket {
     public enum Action {
         NONE,
         UNKNOWN_1,
-        UNKNOWN_2,
+        DAMAGE,
         LEAVE_VEHICLE,
         MOUSEOVER,
         UNKNOWN_5,

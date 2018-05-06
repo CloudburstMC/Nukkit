@@ -39,7 +39,7 @@ public class ContainerInventoryAction extends InventoryAction {
         switch (inventoryId) {
             case ContainerIds.INVENTORY:
                 ItemInstance serverItem = session.getInventory().getItem(getSlot()).orElse(BlockUtil.AIR);
-                if (!testOldItem(serverItem)) {
+                if (invalidHand(serverItem)) {
                     session.sendPlayerInventory();
                     return;
                 }
@@ -49,7 +49,7 @@ public class ContainerInventoryAction extends InventoryAction {
             case ContainerIds.CURSOR:
                 ItemInstance cursorItem = session.getInventory().getCursorItem().orElse(BlockUtil.AIR);
 
-                if (!testOldItem(cursorItem)) {
+                if (invalidHand(cursorItem)) {
                     session.sendPlayerInventory();
                     return;
                 }

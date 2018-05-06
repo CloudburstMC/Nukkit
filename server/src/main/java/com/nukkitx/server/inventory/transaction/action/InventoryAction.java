@@ -43,17 +43,22 @@ public abstract class InventoryAction {
         CRAFT(99999);
 
         private static final TIntObjectMap<Type> BY_ID = new TIntObjectHashMap<>(5);
+
+        static {
+            for (Type type : values()) {
+                BY_ID.put(type.id, type);
+            }
+        }
+
         @Getter
         private final int id;
 
         Type() {
             id = ordinal();
-            add();
         }
 
         Type(int id) {
             this.id = id;
-            add();
         }
 
         @Nonnull
@@ -72,7 +77,7 @@ public abstract class InventoryAction {
 
     public abstract void execute(PlayerSession session);
 
-    public boolean testOldItem(ItemInstance serverItem) {
-        return oldItem.equals(serverItem);
+    public boolean invalidHand(ItemInstance serverItem) {
+        return !serverItem.equals(oldItem);
     }
 }

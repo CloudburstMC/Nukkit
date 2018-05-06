@@ -19,12 +19,7 @@ public class PhysicsSystem implements SystemRunner {
     @Override
     public void run(Entity entity) {
         Physics physics = entity.ensureAndGet(Physics.class);
-        if (entity.getMotion().equals(Vector3f.ZERO)) {
-            if (!entity.isOnGround()) {
-                entity.setMotion(entity.getMotion().sub(0, physics.getGravity(), 0));
-                entity.setPositionFromSystem(entity.getPosition().add(entity.getMotion()));
-            }
-        }
+
         if (entity.getMotion().lengthSquared() > 0) {
             boolean onGroundPreviously = entity.isOnGround();
             entity.setPositionFromSystem(entity.getPosition().add(entity.getMotion()));

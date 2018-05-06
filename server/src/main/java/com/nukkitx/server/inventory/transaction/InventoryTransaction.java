@@ -25,7 +25,7 @@ public interface InventoryTransaction {
 
     void execute(PlayerSession session);
 
-    Collection<InventoryAction> getRecords();
+    Collection<InventoryAction> getActions();
 
     void read(ByteBuf buffer);
 
