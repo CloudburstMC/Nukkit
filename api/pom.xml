@@ -20,7 +20,7 @@
     <!-- Module properties -->
     <properties>
         <!-- Library versions -->
-        <jackson.version>2.9.4</jackson.version>
+        <jackson.version>2.9.5</jackson.version>
     </properties>
 
     <!-- Module dependencies -->
