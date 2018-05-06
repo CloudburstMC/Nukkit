@@ -21,10 +21,10 @@ public class StopCommand extends VanillaCommand {
 
         if (args.length != 0) {
             sender.getServer().shutdown(String.join(" ", args));
-            sender.sendMessage(new TranslationMessage("commands.stop.start"));
         } else {
             sender.getServer().shutdown();
         }
+        sender.sendMessage(new TranslationMessage("commands.stop.start"));
         return true;
     }
 }
