@@ -15,10 +15,16 @@
 
     <!-- Module information -->
     <name>NukkitX Server</name>
+    <description>The server module for NukkitX, implements the API module.</description>
 
     <!-- Module dependencies -->
     <dependencies>
         <!-- NOTE: API already included in console -->
+        <dependency>
+            <groupId>com.nukkitx</groupId>
+            <artifactId>nukkitx-api</artifactId>
+            <version>${api.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-console</artifactId>

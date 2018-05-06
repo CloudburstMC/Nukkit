@@ -12,7 +12,10 @@
     </parent>
     <artifactId>nukkitx-api</artifactId>
     <version>2.0.0-SNAPSHOT</version>
+
+    <!-- Project information -->
     <name>NukkitX API</name>
+    <description>The public API module for NukkitX plugins.</description>
 
     <!-- Module properties -->
     <properties>
@@ -26,7 +29,6 @@
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-message</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
