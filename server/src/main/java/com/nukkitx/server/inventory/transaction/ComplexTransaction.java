@@ -25,7 +25,7 @@ import static com.nukkitx.server.network.minecraft.MinecraftUtil.*;
 @EqualsAndHashCode
 public abstract class ComplexTransaction implements InventoryTransaction {
     private final long creationTime;
-    private final List<InventoryAction> records = new ArrayList<>();
+    private final List<InventoryAction> actions = new ArrayList<>();
     private int slot;
     private ItemInstance item;
     private Vector3f fromPosition;
@@ -66,7 +66,7 @@ public abstract class ComplexTransaction implements InventoryTransaction {
     public String toString() {
         return "(" +
                 "type=" + getType() +
-                ", records=" + Arrays.toString(getRecords().toArray()) +
+                ", records=" + Arrays.toString(getActions().toArray()) +
                 ", creationTime=" + creationTime +
                 ", slot=" + slot +
                 ", item=" + item +

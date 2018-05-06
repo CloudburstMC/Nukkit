@@ -96,16 +96,12 @@ dist/
 nbdist/
 .nb-gradle/
 
-# Generated files
+### Nukkit ###
 banned-ips.json
 banned-players.json
 nukkit.yml
-ops.txt
-server.log
-server.properties
-white-list.txt
-worlds
-worlds/*
+levels
+levels/*
 plugins
 plugins/*
 players

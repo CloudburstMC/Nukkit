@@ -18,10 +18,7 @@ import com.nukkitx.api.event.player.*;
 import com.nukkitx.api.inventory.Inventory;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.level.chunk.Chunk;
-import com.nukkitx.api.message.ChatMessage;
-import com.nukkitx.api.message.Message;
-import com.nukkitx.api.message.RawMessage;
-import com.nukkitx.api.message.TranslationMessage;
+import com.nukkitx.api.message.*;
 import com.nukkitx.api.permission.Permission;
 import com.nukkitx.api.permission.PermissionAttachment;
 import com.nukkitx.api.permission.PermissionAttachmentInfo;
@@ -1239,7 +1236,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
                     spawned = true;
 
-                    TranslationMessage joinMessage = new TranslationMessage("multiplayer.player.joined", getName());
+                    TranslationMessage joinMessage = new TranslationMessage(TextFormat.YELLOW + "multiplayer.player.joined", getName());
                     log.info(TranslatableMessage.of(joinMessage));
 
                     PlayerJoinEvent event = new PlayerJoinEvent(PlayerSession.this, joinMessage);

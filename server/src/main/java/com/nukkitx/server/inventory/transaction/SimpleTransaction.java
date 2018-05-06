@@ -13,7 +13,7 @@ import java.util.List;
 @EqualsAndHashCode
 public abstract class SimpleTransaction implements InventoryTransaction {
     private final long creationTime;
-    private final List<InventoryAction> records = new ArrayList<>();
+    private final List<InventoryAction> actions = new ArrayList<>();
 
     public SimpleTransaction() {
         creationTime = System.currentTimeMillis();
@@ -31,7 +31,7 @@ public abstract class SimpleTransaction implements InventoryTransaction {
     public String toString() {
         return "(" +
                 "type=" + getType() +
-                ", records=" + Arrays.toString(getRecords().toArray()) +
+                ", records=" + Arrays.toString(getActions().toArray()) +
                 ", creationTime=" + creationTime +
                 ')';
     }

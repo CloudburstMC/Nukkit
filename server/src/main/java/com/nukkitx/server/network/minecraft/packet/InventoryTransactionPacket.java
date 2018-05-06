@@ -28,10 +28,10 @@ public class InventoryTransactionPacket implements MinecraftPacket {
     @Override
     public void encode(ByteBuf buffer) {
         writeUnsignedInt(buffer, transaction.getType().ordinal());
-        writeUnsignedInt(buffer, transaction.getRecords().size());
-        for (InventoryAction record : transaction.getRecords()) {
-            writeUnsignedInt(buffer, record.getType().getId());
-            record.write(buffer);
+        writeUnsignedInt(buffer, transaction.getActions().size());
+        for (InventoryAction action: transaction.getActions()) {
+            writeUnsignedInt(buffer, action.getType().getId());
+            action.write(buffer);
         }
         transaction.write(buffer);
     }
@@ -70,7 +70,7 @@ public class InventoryTransactionPacket implements MinecraftPacket {
                     break;
             }
             record.read(buffer);
-            transaction.getRecords().add(record);
+            transaction.getActions().add(record);
         }
         transaction.read(buffer);
     }
