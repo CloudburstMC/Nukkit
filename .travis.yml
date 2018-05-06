@@ -6,4 +6,4 @@ jdk:
   - oraclejdk10
 
 install:
-  - mvn clean package -B
+  - mvn clean package -B -U
