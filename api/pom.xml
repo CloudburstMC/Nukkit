@@ -29,6 +29,7 @@
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-message</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

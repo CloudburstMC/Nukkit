@@ -24,26 +24,31 @@
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-api</artifactId>
             <version>${api.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-console</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-nbt</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>nukkit-natives</artifactId>
             <version>1.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.iq80.leveldb</groupId>
             <artifactId>leveldb</artifactId>
             <version>0.10-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
