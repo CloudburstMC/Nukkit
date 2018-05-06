@@ -63,16 +63,18 @@
             <scope>compile</scope>
             <classifier>linux-x86_64</classifier>
         </dependency>
+        <!-- Newer versions are too large, keep outdated -->
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
-            <version>5.10</version>
+            <version>4.39.2</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Newer versions are too large, keep outdated -->
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>6.1.1</version>
+            <version>5.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
