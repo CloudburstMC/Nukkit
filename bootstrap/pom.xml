@@ -1,36 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Maven coordinates -->
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
         <version>1.5.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-
     <artifactId>nukkitx-bootstrap</artifactId>
-    <name>NukkitX-Bootstrap</name>
     <version>1.5.0.1-SNAPSHOT</version>
 
+    <!-- Module information -->
+    <name>NukkitX Bootstrap</name>
+
+    <!-- Module dependencies -->
     <dependencies>
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-server</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
             <version>5.0.4</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
+    <!-- Module build lifecycle -->
     <build>
+        <!-- Override the final name, this is the executable jar -->
         <finalName>nukkit-${project.version}</finalName>
+        <!-- Lifecycle plugins -->
         <plugins>
+            <!-- Describe the final jar -->
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>scriptus</artifactId>
@@ -53,7 +59,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -62,6 +67,7 @@
                             <Main-Class>com.nukkitx.server.Bootstrap</Main-Class>
                             <Implementation-Title>Nukkit</Implementation-Title>
                             <Implementation-Version>${project.version}</Implementation-Version>
+                            <!-- Will be defined by the scriptus plugin -->
                             <Implementation-Vendor>${nukkit.desc}</Implementation-Vendor>
                             <Specification-Title>NukkitX-API</Specification-Title>
                             <Specification-Version>${api.version}</Specification-Version>
@@ -70,24 +76,10 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!-- Shade compile/runtime dependencies into the final jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer
-                                        implementation="com.github.edwgiz.mavenShadePlugin.log4j2CacheTransformer.PluginsCacheFileTransformer">
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
                 <dependencies>
                     <dependency>
                         <groupId>com.github.edwgiz</groupId>
@@ -95,6 +87,20 @@
                         <version>2.8.1</version>
                     </dependency>
                 </dependencies>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <transformers>
+                        <transformer
+                                implementation="com.github.edwgiz.mavenShadePlugin.log4j2CacheTransformer.PluginsCacheFileTransformer">
+                        </transformer>
+                    </transformers>
+                </configuration>
             </plugin>
         </plugins>
     </build>

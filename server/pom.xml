@@ -1,71 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Maven coordinates -->
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
         <version>1.5.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-
     <artifactId>nukkitx-server</artifactId>
-    <name>NukkitX-Server</name>
     <version>1.5.0.1-SNAPSHOT</version>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spigotmc-public</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+    <!-- Module information -->
+    <name>NukkitX Server</name>
 
+    <!-- Module dependencies -->
     <dependencies>
-        <dependency>
-            <groupId>com.nukkitx</groupId>
-            <artifactId>nukkitx-api</artifactId>
-            <version>${api.version}</version>
-            <scope>compile</scope>
-        </dependency>
+        <!-- NOTE: API already included in console -->
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-console</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>cn.nukkit</groupId>
-            <artifactId>nukkit-natives</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>nukkitx-nbt</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.nukkit</groupId>
+            <artifactId>nukkit-natives</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.iq80.leveldb</groupId>
             <artifactId>leveldb</artifactId>
             <version>0.10-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.iq80.leveldb</groupId>
-            <artifactId>leveldb-api</artifactId>
-            <version>0.10-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
-            <version>${netty.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport</artifactId>
             <version>${netty.version}</version>
             <scope>compile</scope>
         </dependency>
