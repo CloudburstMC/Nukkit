@@ -318,6 +318,8 @@ public class BlockTypes {
     public static final BlockType JUNGLE_PRESSURE_PLATE = IntBlock.builder().name("acacia_pressure_plate").id(408).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
     public static final BlockType SPRUCE_PRESSURE_PLATE = IntBlock.builder().name("acacia_pressure_plate").id(409).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.5f).floodable(true).build();
     public static final BlockType CARVED_PUMPKIN = IntBlock.builder().name("carved_pumpkin").id(410).maxStackSize(64).diggable(true).transparent(true).solid(true).filterLight(15).hardness(1f).build();
+    public static final BlockType SEA_PICKLE = IntBlock.builder().name("sea_pickle").id(411).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).build();
+    public static final BlockType CONDUIT = IntBlock.builder().name("conduit").id(412).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).build();
 
     public static BlockType byName(@Nonnull String name) {
         Preconditions.checkNotNull(name, "name");
