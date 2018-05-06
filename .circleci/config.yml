@@ -1,0 +1,81 @@
+version: 2
+jobs:
+    build_and_test_jdk8:
+        working_directory: ~/nukkix-jdk8
+        docker:
+            - image: circleci/openjdk:8-jdk
+        environment:
+                MAVEN_OPTS: -Xmx2048m
+        steps:
+            - checkout
+            - run: git submodule sync
+            - run: git submodule update --init
+            - restore_cache:
+                keys:
+                    - nukkix-{{ checksum "pom.xml" }}
+                    - nukkix-
+            - run: mvn -T 2 -B dependency:go-offline
+            - save_cache:
+                paths:
+                    - ~/.m2
+                key: nukkix-{{ checksum "pom.xml" }}
+            - run: mvn -T 2 -B package
+            - store_test_results:
+                path: target/surefire-reports
+            - store_artifacts:
+                path: target/*.jar
+    build_and_test_jdk9:
+        working_directory: ~/nukkix-jdk9
+        docker:
+            - image: circleci/openjdk:9-jdk
+        environment:
+                MAVEN_OPTS: -Xmx2048m
+        steps:
+            - checkout
+            - run: git submodule sync
+            - run: git submodule update --init
+            - restore_cache:
+                keys:
+                    - nukkix-{{ checksum "pom.xml" }}
+                    - nukkix-
+            - run: mvn -T 2 -B dependency:go-offline
+            - save_cache:
+                paths:
+                    - ~/.m2
+                key: nukkix-{{ checksum "pom.xml" }}
+            - run: mvn -T 2 -B package
+            - store_test_results:
+                path: target/surefire-reports
+            - store_artifacts:
+                path: target/*.jar
+    build_and_test_jdk10:
+        working_directory: ~/nukkix-jdk10
+        docker:
+            - image: circleci/openjdk:10-jdk
+        environment:
+                MAVEN_OPTS: -Xmx2048m
+        steps:
+            - checkout
+            - run: git submodule sync
+            - run: git submodule update --init
+            - restore_cache:
+                keys:
+                    - nukkix-{{ checksum "pom.xml" }}
+                    - nukkix-
+            - run: mvn -T 2 -B dependency:go-offline
+            - save_cache:
+                paths:
+                    - ~/.m2
+                key: nukkix-{{ checksum "pom.xml" }}
+            - run: mvn -T 2 -B package
+            - store_test_results:
+                path: target/surefire-reports
+            - store_artifacts:
+                path: target/*.jar
+workflows:
+    version: 2
+    build_and_test:
+        jobs:
+            - build_and_test_jdk8
+            - build_and_test_jdk9
+            - build_and_test_jdk10

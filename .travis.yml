@@ -5,4 +5,4 @@ jdk:
   - oraclejdk9
 
 install:
-  - mvn clean package
+  - mvn clean package -B
