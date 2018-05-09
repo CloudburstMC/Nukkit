@@ -4053,18 +4053,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             to = event.getTo();
         }
 
-        boolean levelChange = from.getLevel() != to.getLevel();
-        if (levelChange) {
-            switchLevel(to.getLevel());
-        }
-
         //TODO Remove it! A hack to solve the client-side teleporting bug! (inside into the block)
         if (super.teleport(to.getY() == to.getFloorY() ? to.add(0, 0.00001, 0) : to, null)) { // null to prevent fire of duplicate EntityTeleportEvent
             this.removeAllWindows();
 
             this.teleportPosition = new Vector3(this.x, this.y, this.z);
             this.forceMovement = this.teleportPosition;
-            this.sendPosition(this, this.yaw, this.pitch, levelChange ? MovePlayerPacket.MODE_NORMAL : MovePlayerPacket.MODE_TELEPORT);
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_TELEPORT);
 
             this.checkTeleportPosition();
 
@@ -4087,8 +4082,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected void forceSendEmptyChunks() {
         int chunkPositionX = this.getFloorX() >> 4;
         int chunkPositionZ = this.getFloorZ() >> 4;
-        for (int x = -3; x < 3; x++) {
-            for (int z = -3; z < 3; z++) {
+        for (int x = -chunkRadius; x < chunkRadius; x++) {
+            for (int z = -chunkRadius; z < chunkRadius; z++) {
                 FullChunkDataPacket chunk = new FullChunkDataPacket();
                 chunk.chunkX = chunkPositionX + x;
                 chunk.chunkZ = chunkPositionZ + z;
@@ -4484,20 +4479,30 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public boolean switchLevel(Level level) {
         Level oldLevel = this.level;
         if (super.switchLevel(level)) {
+            SetSpawnPositionPacket spawnPosition = new SetSpawnPositionPacket();
+            spawnPosition.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+            Position spawn = level.getSpawnLocation();
+            spawnPosition.x = spawn.getFloorX();
+            spawnPosition.y = spawn.getFloorY();
+            spawnPosition.z = spawn.getFloorZ();
+            this.dataPacket(spawnPosition);
+
             // Remove old chunks
             for (long index : new ArrayList<>(this.usedChunks.keySet())) {
                 int chunkX = Level.getHashX(index);
                 int chunkZ = Level.getHashZ(index);
                 this.unloadChunk(chunkX, chunkZ, oldLevel);
             }
-
-            //TODO: Using the ChangeDimensionPacket causes stops the client from being able to move. This is because we do not know when the chunks will finish loading.
-
-            // Send empty chunks
-            forceSendEmptyChunks();
-
             this.usedChunks.clear();
 
+            forceSendEmptyChunks();
+
+            SetTimePacket pk = new SetTimePacket();
+            pk.time = level.getTime();
+            this.dataPacket(pk);
+
+            int distance = this.viewDistance * 2 * 16 * 2;
+            this.sendPosition(this.add(distance, 0, distance), this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
             return true;
         }
 
