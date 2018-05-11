@@ -192,7 +192,7 @@ public class CraftingManager {
 
     public FurnaceRecipe matchFurnaceRecipe(Item input) {
         FurnaceRecipe recipe = this.furnaceRecipes.get(getItemHash(input));
-        if (recipe == null) this.furnaceRecipes.get(getItemHash(input.getId(), 0));
+        if (recipe == null) recipe = this.furnaceRecipes.get(getItemHash(input.getId(), 0));
         return recipe;
     }
 
