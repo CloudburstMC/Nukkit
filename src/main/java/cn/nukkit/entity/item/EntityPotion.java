@@ -85,6 +85,64 @@ public class EntityPotion extends EntityProjectile {
         return 0.01f;
     }
 
+    private void splash() {
+        Potion potion = Potion.getPotion(this.potionId);
+        PotionCollideEvent event = new PotionCollideEvent(potion, this);
+        this.server.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return;
+        }
+        this.close();
+
+        potion = event.getPotion();
+        if (potion == null) {
+            return;
+        }
+
+        potion.setSplash(true);
+
+        Particle particle;
+        int r;
+        int g;
+        int b;
+
+        Effect effect = Potion.getEffect(potion.getId(), true);
+
+        if (effect == null) {
+            r = 40;
+            g = 40;
+            b = 255;
+        } else {
+            int[] colors = effect.getColor();
+            r = colors[0];
+            g = colors[1];
+            b = colors[2];
+        }
+
+        if (Potion.isInstant(potion.getId())) {
+            particle = new InstantSpellParticle(this, r, g, b);
+        } else {
+            particle = new SpellParticle(this, r, g, b);
+        }
+
+        this.getLevel().addParticle(particle);
+        Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(8.25, 4.24, 8.25));
+        for (Entity anEntity : entities) {
+            double distance = anEntity.distanceSquared(this);
+
+            if (distance < 16) {
+                double d = 1 - Math.sqrt(distance) / 4;
+
+                potion.applyPotion(anEntity, d);
+            }
+        }
+    }
+
+    @Override
+    public void onCollideWithEntity(Entity entity) {
+        this.splash();
+    }
 
     @Override
     public boolean onUpdate(int currentTick) {
@@ -100,65 +158,11 @@ public class EntityPotion extends EntityProjectile {
         if (this.age > 1200) {
             this.kill();
             hasUpdate = true;
-        }
-
-        if (this.isCollided) {
-            this.kill();
-
-            Potion potion = Potion.getPotion(this.potionId);
-
-            PotionCollideEvent event = new PotionCollideEvent(potion, this);
-            this.server.getPluginManager().callEvent(event);
-
-            if (event.isCancelled()) {
-                return false;
-            }
-
-            potion = event.getPotion();
-            if (potion == null) {
-                return false;
-            }
-
-            potion.setSplash(true);
-
-            Particle particle;
-            int r;
-            int g;
-            int b;
-
-            Effect effect = Potion.getEffect(potion.getId(), true);
-
-            if (effect == null) {
-                r = 40;
-                g = 40;
-                b = 255;
-            } else {
-                int[] colors = effect.getColor();
-                r = colors[0];
-                g = colors[1];
-                b = colors[2];
-            }
-
-            if (Potion.isInstant(potion.getId())) {
-                particle = new InstantSpellParticle(this, r, g, b);
-            } else {
-                particle = new SpellParticle(this, r, g, b);
-            }
-
-            this.getLevel().addParticle(particle);
-
+        } else if (this.isCollided) {
+            this.splash();
             hasUpdate = true;
-            Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(8.25, 4.24, 8.25));
-            for (Entity anEntity : entities) {
-                double distance = anEntity.distanceSquared(this);
-
-                if (distance < 16) {
-                    double d = 1 - Math.sqrt(distance) / 4;
-
-                    potion.applyPotion(anEntity, d);
-                }
-            }
         }
+
         this.timing.stopTiming();
         return hasUpdate;
     }
