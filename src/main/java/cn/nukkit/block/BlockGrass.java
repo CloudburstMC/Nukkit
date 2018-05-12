@@ -84,6 +84,14 @@ public class BlockGrass extends BlockDirt {
                         this.getLevel().setBlock(block, ev.getNewState());
                     }
                 }
+             } else if (block.getId() == Block.GRASS) {
+                if (block.up() instanceof BlockSolid) {
+                    BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockDirt());
+                    Server.getInstance().getPluginManager().callEvent(ev);
+                    if (!ev.isCancelled()) {
+                        this.getLevel().setBlock(block, ev.getNewState());
+                    }
+                }   
             }
         }
         return 0;
