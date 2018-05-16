@@ -1,4 +1,4 @@
-package com.nukkitx.server.level.generator;
+package com.nukkitx.server.level.generator.flat;
 
 import com.flowpowered.math.vector.Vector3f;
 import com.nukkitx.api.block.BlockState;

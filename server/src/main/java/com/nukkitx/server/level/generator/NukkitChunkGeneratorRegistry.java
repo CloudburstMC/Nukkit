@@ -6,6 +6,7 @@ import com.nukkitx.api.level.chunk.generator.ChunkGenerator;
 import com.nukkitx.api.level.chunk.generator.ChunkGeneratorFactory;
 import com.nukkitx.api.level.chunk.generator.ChunkGeneratorRegistry;
 import com.nukkitx.server.NukkitServer;
+import com.nukkitx.server.level.generator.flat.FlatChunkGeneratorFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
