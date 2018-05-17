@@ -97,9 +97,9 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_URL_TAG = 41; //string
     public static final int DATA_MAX_AIR = 42; //short
     public static final int DATA_MARK_VARIANT = 43; //int
-    /* 44 (byte) container stuff
-     * 45 (int) container stuff
-     * 46 (int) container stuff */
+    public static final int DATA_CONTAINER_TYPE = 44; //byte
+    public static final int DATA_CONTAINER_BASE_SIZE = 45; //int
+    public static final int DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH = 46; //int
     public static final int DATA_BLOCK_TARGET = 47; //block coords (ender crystal)
     public static final int DATA_WITHER_INVULNERABLE_TICKS = 48; //int
     public static final int DATA_WITHER_TARGET_1 = 49; //long
@@ -129,8 +129,18 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = 73; //byte
     public static final int DATA_STRENGTH = 74; //int
     public static final int DATA_MAX_STRENGTH = 75; //int
-    /* 77 (int)
-     * 78 (int) */
+    // 76 (int)
+    public static final int DATA_LIMITED_LIFE = 77;
+    public static final int DATA_ARMOR_STAND_POSE_INDEX = 78; // int
+    public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 79; // int
+    // 80 (byte) nametag
+    public static final int DATA_COLOR_2 = 81; // byte
+    // 82 unknown
+    public static final int DATA_SCORE_TAG = 83; //String
+    public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
+    public static final int DATA_PUFFERFISH_SIZE = 85;
+
+    // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
     public static final int DATA_FLAG_SNEAKING = 1;
     public static final int DATA_FLAG_RIDING = 2;
@@ -182,6 +192,12 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_FIRE_IMMUNE = 48;
     public static final int DATA_FLAG_DANCING = 49;
     public static final int DATA_FLAG_ENCHANTED = 50;
+    // 51 trident flag
+    public static final int DATA_FLAG_CONTAINER_PRIVATE = 52; //disable content drop when killed
+    // 53 TransformationComponent
+    public static final int DATA_FLAG_SPIN_ATTACK = 54;
+    public static final int DATA_FLAG_SWIMMING = 55;
+    public static final int DATA_FLAG_BRIBED = 56;
 
     public static long entityCount = 1;
 

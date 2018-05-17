@@ -22,6 +22,7 @@ public class UpdateBlockPacket extends DataPacket {
     public int y;
     public int blockRuntimeId;
     public int flags;
+    public int dataLayer = 0;
 
     @Override
     public byte pid() {
@@ -39,6 +40,7 @@ public class UpdateBlockPacket extends DataPacket {
         this.putBlockVector3(x, y, z);
         this.putUnsignedVarInt(blockRuntimeId);
         this.putUnsignedVarInt(flags);
+        this.putUnsignedVarInt(dataLayer);
     }
 
     public static class Entry {
