@@ -43,6 +43,7 @@ public class StartGamePacket extends DataPacket {
     public boolean isTexturePacksRequired = false;
     public GameRules gameRules;
     public boolean bonusChest = false;
+    public boolean hasStartWithMapEnabled = false;
     public boolean trustPlayers = false;
     public int permissionLevel = 1;
     public int gamePublish = 4;
@@ -56,7 +57,7 @@ public class StartGamePacket extends DataPacket {
     public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
-    public boolean unknown = false;
+    public boolean isTrial = false;
     public long currentTick;
 
     public int enchantmentSeed;
@@ -75,6 +76,7 @@ public class StartGamePacket extends DataPacket {
         this.putVector3f(this.x, this.y, this.z);
         this.putLFloat(this.yaw);
         this.putLFloat(this.pitch);
+
         this.putVarInt(this.seed);
         this.putVarInt(this.dimension);
         this.putVarInt(this.generator);
@@ -95,11 +97,12 @@ public class StartGamePacket extends DataPacket {
         this.putGameRules(gameRules);
         this.putBoolean(this.bonusChest);
         this.putBoolean(this.trustPlayers);
+        this.putBoolean(this.hasStartWithMapEnabled);
         this.putVarInt(this.permissionLevel);
         this.putVarInt(this.gamePublish);
         this.putLInt(this.serverChunkTickRange);
         this.putBoolean(this.broadcastToPlatform);
-        this.putUnsignedVarInt(this.platformBroadcastMode);
+        this.putVarInt(this.platformBroadcastMode);
         this.putBoolean(this.xblBroadcastIntent);
         this.putBoolean(this.hasLockedBehaviorPack);
         this.putBoolean(this.hasLockedResourcePack);
@@ -107,7 +110,7 @@ public class StartGamePacket extends DataPacket {
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
-        this.putBoolean(this.unknown);
+        this.putBoolean(this.isTrial);
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
     }
