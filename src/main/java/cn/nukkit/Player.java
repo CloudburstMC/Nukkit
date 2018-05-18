@@ -815,6 +815,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected void doFirstSpawn() {
         this.spawned = true;
 
+        this.setEnableClientCommand(true);
+
         this.getAdventureSettings().update();
 
         this.sendPotionEffects(this);
@@ -1999,8 +2001,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.isOp()) {
             this.setRemoveFormat(false);
         }
-
-        this.setEnableClientCommand(true);
 
         this.server.addOnlinePlayer(this);
         this.server.onPlayerCompleteLoginSequence(this);

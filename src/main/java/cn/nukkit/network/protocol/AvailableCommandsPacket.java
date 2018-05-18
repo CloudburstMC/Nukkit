@@ -32,7 +32,7 @@ public class AvailableCommandsPacket extends DataPacket {
     public static final int ARG_TYPE_COMMAND = 0x1f;
 
     public static final int ARG_FLAG_ENUM = 0x200000;
-    public static final int ARG_FLAG_TEMPLATE = 0x01000000;
+    public static final int ARG_FLAG_POSTFIX = 0x1000000;
 
     @Override
     public byte pid() {
