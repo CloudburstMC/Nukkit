@@ -68,6 +68,7 @@ import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -126,8 +127,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected Map<Inventory, Integer> windows;
 
-    protected final Map<Integer, Inventory> windowIndex = new HashMap<>();
-    protected final Set<Integer> permanentWindows = new HashSet<>();
+    protected final Map<Integer, Inventory> windowIndex = new Int2ObjectOpenHashMap<>();
+    protected final Set<Integer> permanentWindows = new IntOpenHashSet();
 
     protected int messageCounter = 2;
 
@@ -165,7 +166,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Vector3 sleeping = null;
     protected Long clientID = null;
 
-    private Integer loaderId = null;
+    private int loaderId;
 
     protected float stepHeight = 0.6f;
 
@@ -225,10 +226,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public int pickedXPOrb = 0;
 
     protected int formWindowCount = 0;
-    protected Map<Integer, FormWindow> formWindows = new HashMap<>();
-    protected Map<Integer, FormWindow> serverSettings = new HashMap<>();
+    protected Map<Integer, FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
+    protected Map<Integer, FormWindow> serverSettings = new Int2ObjectOpenHashMap<>();
 
-    protected Map<Long, DummyBossBar> dummyBossBars = new HashMap<>();
+    protected Map<Long, DummyBossBar> dummyBossBars = new Long2ObjectLinkedOpenHashMap<>();
 
     private AsyncTask preLoginEventTask = null;
     protected boolean shouldLogin = false;
@@ -4424,7 +4425,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public Integer getLoaderId() {
+    public int getLoaderId() {
         return this.loaderId;
     }
 
