@@ -532,7 +532,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this);
         }
 
-        if (this.isEnableClientCommand()) this.sendCommandData();
+        if (this.isEnableClientCommand() && spawned) this.sendCommandData();
     }
 
     public boolean isEnableClientCommand() {
@@ -548,6 +548,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendCommandData() {
+        if (!spawned) {
+            return;
+        }
         AvailableCommandsPacket pk = new AvailableCommandsPacket();
         Map<String, CommandDataVersions> data = new HashMap<>();
         int count = 0;
@@ -569,7 +572,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Boolean status = needACK.get(identifier);
                     if ((status == null || !status) && isOnline()) {
                         sendCommandData();
-                        return;
                     }
                 }
             }, 60, true);
@@ -814,6 +816,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected void doFirstSpawn() {
         this.spawned = true;
+
+        this.setEnableClientCommand(true);
 
         this.getAdventureSettings().update();
 
@@ -1999,8 +2003,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.isOp()) {
             this.setRemoveFormat(false);
         }
-
-        this.setEnableClientCommand(true);
 
         this.server.addOnlinePlayer(this);
         this.server.onPlayerCompleteLoginSequence(this);
