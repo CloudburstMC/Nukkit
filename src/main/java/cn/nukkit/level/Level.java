@@ -89,8 +89,10 @@ public class Level implements ChunkManager, Metadatable {
     public static final int BLOCK_UPDATE_TICK = 7;
 
     public static final int TIME_DAY = 0;
+    public static final int TIME_NOON = 6000;
     public static final int TIME_SUNSET = 12000;
     public static final int TIME_NIGHT = 14000;
+    public static final int TIME_MIDNIGHT = 18000;
     public static final int TIME_SUNRISE = 23000;
 
     public static final int TIME_FULL = 24000;
