@@ -498,6 +498,18 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SNEAKING, value);
     }
 
+    public boolean isSwimming() {
+        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SWIMMING);
+    }
+
+    public void setSwimming() {
+        this.setSwimming(true);
+    }
+
+    public void setSwimming(boolean value) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SWIMMING, value);
+    }
+
     public boolean isSprinting() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SPRINTING);
     }
