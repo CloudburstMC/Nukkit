@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class BlockEntitySign extends BlockEntitySpawnable {
 
-    private String[] text = new String[4];
+    private String[] text;
 
     public BlockEntitySign(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -23,6 +23,8 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     @Override
     protected void initBlockEntity() {
+        text = new String[4];
+
         if (!namedTag.contains("Text")) {
 
             for (int i = 1; i <= 4; i++) {
