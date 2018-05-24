@@ -151,9 +151,15 @@ public class NukkitServer implements Server {
     static {
         NAME = NukkitServer.class.getPackage().getImplementationTitle();
         Package mainPackage = NukkitServer.class.getPackage();
-        API_VERSION = SemVer.fromString(mainPackage.getSpecificationVersion().replace("-SNAPSHOT", ""));
-        MINECRAFT_VERSION = SemVer.fromString(mainPackage.getImplementationVersion().replace("-SNAPSHOT", ""));
-        NUKKIT_VERSION = mainPackage.getImplementationVendor();
+        if (mainPackage == null || mainPackage.getSpecificationVersion() == null)    {
+            API_VERSION = SemVer.fromString("1.0.0");
+            MINECRAFT_VERSION = SemVer.fromString("1.2.3");
+            NUKKIT_VERSION = "4.5.6";
+        } else {
+            API_VERSION = SemVer.fromString(mainPackage.getSpecificationVersion().replace("-SNAPSHOT", ""));
+            MINECRAFT_VERSION = SemVer.fromString(mainPackage.getImplementationVersion().replace("-SNAPSHOT", ""));
+            NUKKIT_VERSION = mainPackage.getImplementationVendor();
+        }
     }
 
     NukkitServer(final Path filePath, final Path dataPath, final Path pluginPath, final boolean ansiEnabled) throws Exception {

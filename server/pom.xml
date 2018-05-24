@@ -17,14 +17,6 @@
     <name>NukkitX Server</name>
     <description>The server module for NukkitX, implements the API module.</description>
 
-    <repositories>
-        <!-- Contains PorkLib noise -->
-        <repository>
-            <id>DaPorkchop_'s repo</id>
-            <url>http://maven.daporkchop.net/</url>
-        </repository>
-    </repositories>
-
     <!-- Module dependencies -->
     <dependencies>
         <!-- NOTE: API already included in console -->
