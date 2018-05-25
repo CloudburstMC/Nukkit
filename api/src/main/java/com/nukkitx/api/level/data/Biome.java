@@ -77,7 +77,7 @@ public enum Biome {
     MUTATED_MESA_ROCK(166),
     MUTATED_MESA_CLEAR_ROCK(167);
 
-    private static final TByteObjectHashMap<Biome> BY_ID = new TByteObjectHashMap<>();
+    private static TByteObjectHashMap<Biome> BY_ID;
 
     private final byte id;
 
@@ -90,7 +90,11 @@ public enum Biome {
         return BY_ID.containsKey(id) ? BY_ID.get(id) : PLAINS;
     }
 
-    private void add() {
+    private synchronized void add() {
+        if (BY_ID == null) {
+            BY_ID = new TByteObjectHashMap<>();
+        }
+
         BY_ID.put(id, this);
     }
 

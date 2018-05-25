@@ -1,6 +1,6 @@
 package com.nukkitx.server.level.biome.selector.overworld;
 
-import com.nukkitx.server.level.biome.NukkitBiome;
+import com.nukkitx.api.level.data.Biome;
 import com.nukkitx.server.level.biome.selector.BiomeSelector;
 import net.daporkchop.lib.noise.Noise;
 import net.daporkchop.lib.noise.NoiseEngineType;
@@ -21,22 +21,22 @@ public class OverworldBiomeSelector extends BiomeSelector {
     }
 
     @Override
-    public NukkitBiome[] getBiomes(int x, int z, int xWidth, int zWidth) {
-        NukkitBiome[] biomes = new NukkitBiome[xWidth * zWidth];
+    public Biome[] getBiomes(int x, int z, int xWidth, int zWidth) {
+        Biome[] biomes = new Biome[xWidth * zWidth];
         for (int xx = 0; xx < xWidth; xx++) {
             for (int zz = 0; zz < zWidth; zz++) {
-                biomes[xx * xWidth + zz * zWidth] = this.pick(x + xx, z + zz);
+                biomes[xx * zWidth + zz] = this.pick(x + xx, z + zz);
             }
         }
         return biomes;
     }
 
-    private NukkitBiome pick(int x, int z) {
+    private Biome pick(int x, int z) {
         if (oceanNoise.get(x, z) < -0.3d) {
-            return NukkitBiome.OCEAN;
+            return Biome.OCEAN;
         } else if (abs(riverNoise.get(x, z)) < 0.04d) {
-            return NukkitBiome.RIVER;
+            return Biome.RIVER;
         }
-        return NukkitBiome.PLAINS;
+        return Biome.PLAINS;
     }
 }

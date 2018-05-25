@@ -7,6 +7,7 @@ import com.nukkitx.api.level.chunk.generator.ChunkGeneratorFactory;
 import com.nukkitx.api.level.chunk.generator.ChunkGeneratorRegistry;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.level.generator.flat.FlatChunkGeneratorFactory;
+import com.nukkitx.server.level.generator.overworld.OverworldChunkGeneratorFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -21,6 +22,7 @@ public class NukkitChunkGeneratorRegistry implements ChunkGeneratorRegistry {
         this.server = server;
         // Register default chunk generators.
         register("FLAT", new FlatChunkGeneratorFactory());
+        register("DEFAULT", new OverworldChunkGeneratorFactory());
     }
 
     @Override

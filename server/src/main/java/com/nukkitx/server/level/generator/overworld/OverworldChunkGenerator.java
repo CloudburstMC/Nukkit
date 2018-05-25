@@ -5,8 +5,8 @@ import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.chunk.Chunk;
+import com.nukkitx.api.level.data.Biome;
 import com.nukkitx.server.block.NukkitBlockState;
-import com.nukkitx.server.level.biome.NukkitBiome;
 import com.nukkitx.server.level.biome.selector.BiomeSelector;
 import com.nukkitx.server.level.biome.selector.overworld.OverworldBiomeSelector;
 import com.nukkitx.server.level.generator.AbstractChunkGenerator;
@@ -17,8 +17,6 @@ import net.daporkchop.lib.noise.NoiseEngineType;
 import java.util.Random;
 
 /**
- * Ported from my from-scratch generator I made on the master branch, with some improvements
- *
  * @author DaPorkchop_
  */
 public class OverworldChunkGenerator extends AbstractChunkGenerator {
@@ -38,7 +36,8 @@ public class OverworldChunkGenerator extends AbstractChunkGenerator {
 
     @Override
     public void generateChunk(Level level, Chunk chunk, Random random) {
-        NukkitBiome[] biomes = this.selector.getBiomes(chunk.getX() << 4, chunk.getZ() << 4, 16, 16);
+        super.generateChunk(level, chunk, random);
+        Biome[] biomes = this.selector.getBiomes(chunk.getX() << 4, chunk.getZ() << 4, 16, 16);
         //set biomes
         for (int x = 0; x < 16; x++)     {
             for (int z = 0; z < 16; z++)    {

@@ -21,7 +21,11 @@ import lombok.extern.log4j.Log4j2;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Log4j2
@@ -166,7 +170,9 @@ public class LevelChunkManager {
                         log.trace("Generating chunk {},{} using {} with seed {}", x, z, chunkGenerator.getClass().getName(), seed);
                     }
                     SectionedChunk newChunk = new SectionedChunk(x, z, level);
-                    chunkGenerator.generateChunk(level, newChunk, new Random(seed));
+                    Random random;
+                    chunkGenerator.generateChunk(level, newChunk, random = new Random(seed));
+                    chunkGenerator.populateChunk(level, newChunk, random);
                     newChunk.recalculateLight();
                     chunk = newChunk;
                 }

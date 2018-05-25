@@ -1,6 +1,6 @@
 package com.nukkitx.server.level.biome.selector;
 
-import com.nukkitx.server.level.biome.NukkitBiome;
+import com.nukkitx.api.level.data.Biome;
 
 /**
  * @author DaPorkchop_
@@ -13,5 +13,5 @@ public abstract class BiomeSelector {
      *
      * [x * xWidth + z * zWidth]
      */
-    public abstract NukkitBiome[] getBiomes(int x, int z, int xWidth, int zWidth);
+    public abstract Biome[] getBiomes(int x, int z, int xWidth, int zWidth);
 }
