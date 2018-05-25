@@ -13,7 +13,6 @@ import com.nukkitx.api.metadata.blockentity.BlockEntity;
 import com.nukkitx.server.block.NukkitBlock;
 import com.nukkitx.server.block.NukkitBlockState;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.level.biome.NukkitBiome;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -103,7 +102,7 @@ public class SectionedChunkSnapshot implements ChunkSnapshot {
     @Override
     public Biome getBiome(int x, int z) {
         checkPosition(x, z);
-        return NukkitBiome.byIdApi(biomeId[(z << 4) | x]);
+        return Biome.byId(biomeId[(z << 4) | x]);
     }
 
     @Override

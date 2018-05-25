@@ -20,7 +20,6 @@ import com.nukkitx.nbt.tag.IntTag;
 import com.nukkitx.nbt.tag.Tag;
 import com.nukkitx.nbt.util.VarInt;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.level.biome.NukkitBiome;
 import com.nukkitx.server.metadata.MetadataSerializers;
 import com.nukkitx.server.network.minecraft.packet.FullChunkDataPacket;
 import com.nukkitx.server.network.minecraft.packet.WrappedPacket;
@@ -36,7 +35,11 @@ import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
 
 @Log4j2
 public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, FullChunkDataPacketCreator {
@@ -121,7 +124,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
     public void setBiome(int x, int z, Biome id) {
         checkPosition(x, z);
         Preconditions.checkNotNull(id, "id");
-        biomeId[(z << 4) | x] = NukkitBiome.idFromApi(id);
+        biomeId[(z << 4) | x] = id.id();
     }
 
     @Synchronized
