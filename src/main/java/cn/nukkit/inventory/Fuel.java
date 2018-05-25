@@ -40,5 +40,7 @@ public abstract class Fuel {
         duration.put(Item.BOOKSHELF, (short) 300);
         duration.put(Item.CHEST, (short) 300);
         duration.put(Item.BUCKET, (short) 20000);
+        duration.put(Item.SIGN, (short) 200);
+        duration.put(Item.LADDER, (short) 300);
     }
 }
