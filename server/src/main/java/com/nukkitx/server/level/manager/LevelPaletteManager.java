@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LevelPaletteManager {
     private static final int RUNTIMEID_TABLE_CAPACITY = 4467;
+    //private final List<BlockState> blockStates = new CopyOnWriteArrayList<>();
     private final TIntObjectMap<BlockState> runtimeId2BlockState = new TIntObjectHashMap<>(RUNTIMEID_TABLE_CAPACITY, 0.5f, -1);
     private final TObjectIntMap<BlockState> blockState2RuntimeId = new TObjectIntHashMap<>(RUNTIMEID_TABLE_CAPACITY, 0.5f, -1);
     private final TIntIntMap legacyId2RuntimeId = new TIntIntHashMap(RUNTIMEID_TABLE_CAPACITY, 0.5f, -1,-1);

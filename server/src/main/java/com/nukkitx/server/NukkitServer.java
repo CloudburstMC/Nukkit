@@ -25,6 +25,8 @@ import com.nukkitx.api.plugin.PluginLoadOrder;
 import com.nukkitx.api.util.Config;
 import com.nukkitx.api.util.ConfigBuilder;
 import com.nukkitx.api.util.SemVer;
+import com.nukkitx.network.NetworkListener;
+import com.nukkitx.network.raknet.RakNetServer;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
 import com.nukkitx.server.entity.EntitySpawner;
@@ -38,11 +40,12 @@ import com.nukkitx.server.level.provider.ChunkProvider;
 import com.nukkitx.server.level.provider.DefaultsLevelDataProvider;
 import com.nukkitx.server.level.provider.LevelDataProvider;
 import com.nukkitx.server.locale.NukkitLocaleManager;
-import com.nukkitx.server.network.NetworkListener;
-import com.nukkitx.server.network.SessionManager;
-import com.nukkitx.server.network.minecraft.MinecraftNetworkListener;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
-import com.nukkitx.server.network.rcon.RconNetworkListener;
+import com.nukkitx.server.network.NukkitRakNetEventListener;
+import com.nukkitx.server.network.NukkitSessionManager;
+import com.nukkitx.server.network.bedrock.packet.WrappedPacket;
+import com.nukkitx.server.network.bedrock.session.BedrockSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.util.EncryptionUtil;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
 import com.nukkitx.server.plugin.NukkitPluginManager;
@@ -72,7 +75,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -119,7 +121,7 @@ public class NukkitServer implements Server {
     @Getter
     private final ServiceManager serviceManager = new NKServiceManager();
     @Getter
-    private final SessionManager sessionManager = new SessionManager();
+    private final NukkitSessionManager sessionManager = new NukkitSessionManager();
     @Getter
     private final ServerScheduler scheduler = new ServerScheduler(this);
     private final List<NetworkListener> listeners = new CopyOnWriteArrayList<>();
@@ -156,7 +158,7 @@ public class NukkitServer implements Server {
         NUKKIT_VERSION = mainPackage.getImplementationVendor();
     }
 
-    NukkitServer(final Path filePath, final Path dataPath, final Path pluginPath, final boolean ansiEnabled) throws Exception {
+    public NukkitServer(final Path filePath, final Path dataPath, final Path pluginPath, final boolean ansiEnabled) throws Exception {
         this.jarPath = filePath;
         this.dataPath = dataPath;
         this.pluginPath = pluginPath;
@@ -326,11 +328,20 @@ public class NukkitServer implements Server {
         if (configuration.getNetwork().isQueryEnabled()) {
             log.info(TranslatableMessage.of("nukkit.server.query.start"));
         }
-        MinecraftNetworkListener minecraftListener = new MinecraftNetworkListener(this, configuration.getNetwork().getAddress(), configuration.getNetwork().getPort());
-        minecraftListener.bind();
-        listeners.add(minecraftListener);
+        int configNetThreads = configuration.getAdvanced().getNetworkThreads();
+        int maxThreads = configNetThreads < 1 ? Runtime.getRuntime().availableProcessors() : configNetThreads;
+        RakNetServer<BedrockSession> rakNetServer = RakNetServer.<BedrockSession>builder().address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
+                .listener(new NukkitRakNetEventListener(this))
+                .packet(WrappedPacket::new, 0xfe)
+                .maximumThreads(maxThreads)
+                .serverId(EncryptionUtil.generateServerId())
+                .sessionFactory((connection) -> new BedrockSession(this, connection))
+                .sessionManager(sessionManager)
+                .build();
+        rakNetServer.getRakNetNetworkListener().bind();
+        listeners.add(rakNetServer.getRakNetNetworkListener());
 
-        if (configuration.getRcon().isEnabled()) {
+        /*if (configuration.getRcon().isEnabled()) {
             RconNetworkListener rconListener = new RconNetworkListener(
                     this,
                     configuration.getRcon().getPassword().getBytes(StandardCharsets.UTF_8),
@@ -340,7 +351,7 @@ public class NukkitServer implements Server {
             configuration.getRcon().clearPassword();
             rconListener.bind();
             listeners.add(rconListener);
-        }
+        }*/
 
         timerService.scheduleAtFixedRate(sessionManager::onTick, 50, 50, TimeUnit.MILLISECONDS);
         if (configuration.getGeneral().isAutoSaving()) {
@@ -476,7 +487,7 @@ public class NukkitServer implements Server {
         // Disconnect all players
         getSessionManager().allPlayers().forEach(p -> p.disconnect(reason));
 
-        // Close network listeners so we don't get people rejoining.
+        // Close com.nukkitx.network listeners so we don't get people rejoining.
         listeners.forEach(NetworkListener::close);
 
         // Safely disable plugins.

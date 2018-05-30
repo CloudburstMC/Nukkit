@@ -54,9 +54,5 @@ public class ConnectionRequestEvent implements Event {
          * Connecting user will be sent no free connections packet.
          */
         SERVER_FULL,
-        /**
-         * Connecting user will be sent incompatible version packet.
-         */
-        INCOMPATIBLE_VERSION
     }
 }

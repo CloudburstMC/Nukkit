@@ -1,12 +1,12 @@
 package com.nukkitx.server.inventory.transaction;
 
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import static com.nukkitx.nbt.util.VarInt.readUnsignedInt;
-import static com.nukkitx.nbt.util.VarInt.writeUnsignedInt;
+import static com.nukkitx.server.network.util.VarInts.readUnsignedInt;
+import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -34,11 +34,6 @@ public class ItemReleaseTransaction extends ComplexTransaction {
     @Override
     public Type getType() {
         return type;
-    }
-
-    @Override
-    public void handle(PlayerSession.PlayerNetworkPacketHandler handler) {
-        handler.handle(this);
     }
 
     @Override

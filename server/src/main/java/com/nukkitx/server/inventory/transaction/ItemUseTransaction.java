@@ -12,15 +12,15 @@ import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.metadata.item.GenericDamageValue;
 import com.nukkitx.api.util.GameMode;
 import com.nukkitx.api.util.data.BlockFace;
-import com.nukkitx.nbt.util.VarInt;
 import com.nukkitx.server.block.BlockUtil;
 import com.nukkitx.server.block.NukkitBlockState;
 import com.nukkitx.server.block.behavior.BlockBehavior;
 import com.nukkitx.server.block.behavior.BlockBehaviors;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.minecraft.MinecraftUtil;
-import com.nukkitx.server.network.minecraft.packet.LevelEventPacket;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.BedrockUtil;
+import com.nukkitx.server.network.bedrock.packet.LevelEventPacket;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.util.VarInts;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -156,29 +156,24 @@ public class ItemUseTransaction extends ComplexTransaction {
     }
 
     public void read(ByteBuf buffer){
-        action = Action.values()[VarInt.readUnsignedInt(buffer)];
-        position = MinecraftUtil.readVector3i(buffer);
-        face = VarInt.readSignedInt(buffer);
+        action = Action.values()[VarInts.readUnsignedInt(buffer)];
+        position = BedrockUtil.readVector3i(buffer);
+        face = VarInts.readInt(buffer);
         super.read(buffer);
-        clickPosition = MinecraftUtil.readVector3f(buffer);
+        clickPosition = BedrockUtil.readVector3f(buffer);
     }
 
     public void write(ByteBuf buffer){
-        VarInt.writeUnsignedInt(buffer, action.ordinal());
-        MinecraftUtil.writeVector3i(buffer, position);
-        VarInt.writeSignedInt(buffer, face);
+        VarInts.writeUnsignedInt(buffer, action.ordinal());
+        BedrockUtil.writeVector3i(buffer, position);
+        VarInts.writeInt(buffer, face);
         super.write(buffer);
-        MinecraftUtil.writeVector3f(buffer, clickPosition);
+        BedrockUtil.writeVector3f(buffer, clickPosition);
     }
 
     @Override
     public Type getType() {
         return type;
-    }
-
-    @Override
-    public void handle(PlayerSession.PlayerNetworkPacketHandler handler) {
-        handler.handle(this);
     }
 
     @Override

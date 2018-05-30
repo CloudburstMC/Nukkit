@@ -1,7 +1,7 @@
 package com.nukkitx.server.level.util;
 
 import com.google.common.base.Preconditions;
-import com.nukkitx.nbt.util.VarInt;
+import com.nukkitx.server.network.util.VarInts;
 import gnu.trove.list.array.TIntArrayList;
 import io.netty.buffer.ByteBuf;
 
@@ -101,9 +101,9 @@ public class BlockStorage {
         buf.writeByte(paletteInfo);
         palette.writeIndexes(buf, indexes);
 
-        VarInt.writeSignedInt(buf, ids.length);
+        VarInts.writeInt(buf, ids.length);
         for (int runtimeId : ids) {
-            VarInt.writeSignedInt(buf, runtimeId);
+            VarInts.writeInt(buf, runtimeId);
         }
     }
 }

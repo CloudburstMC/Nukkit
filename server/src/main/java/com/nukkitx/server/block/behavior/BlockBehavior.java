@@ -10,7 +10,7 @@ import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.api.util.data.BlockFace;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.item.behavior.ItemBehavior;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

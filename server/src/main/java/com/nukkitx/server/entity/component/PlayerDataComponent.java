@@ -8,8 +8,8 @@ import com.nukkitx.api.permission.PlayerPermission;
 import com.nukkitx.api.util.GameMode;
 import com.nukkitx.api.util.Skin;
 import com.nukkitx.server.entity.Attribute;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
-import com.nukkitx.server.network.minecraft.session.data.ClientData;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.data.ClientData;
 import com.nukkitx.server.permission.NukkitAbilities;
 
 import javax.annotation.Nonnegative;

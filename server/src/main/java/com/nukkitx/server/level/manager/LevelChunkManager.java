@@ -9,7 +9,7 @@ import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.level.chunk.SectionedChunk;
 import com.nukkitx.server.level.provider.ChunkProvider;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import com.spotify.futures.CompletableFutures;
 import gnu.trove.TCollections;
 import gnu.trove.map.TLongLongMap;

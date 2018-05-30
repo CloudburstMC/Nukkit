@@ -3,8 +3,8 @@ package com.nukkitx.server.inventory;
 import com.google.common.base.Preconditions;
 import com.nukkitx.api.inventory.PlayerInventory;
 import com.nukkitx.api.item.ItemInstance;
-import com.nukkitx.server.network.minecraft.packet.MobEquipmentPacket;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.packet.MobEquipmentPacket;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

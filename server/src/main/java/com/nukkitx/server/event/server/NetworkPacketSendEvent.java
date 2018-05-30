@@ -3,14 +3,14 @@ package com.nukkitx.server.event.server;
 import com.nukkitx.api.Player;
 import com.nukkitx.api.event.Cancellable;
 import com.nukkitx.api.event.server.ServerEvent;
-import com.nukkitx.server.network.raknet.NetworkPacket;
+import com.nukkitx.server.network.bedrock.BedrockPacket;
 
 public class NetworkPacketSendEvent implements ServerEvent, Cancellable {
-    private final NetworkPacket packet;
+    private final BedrockPacket packet;
     private final Player player;
     private boolean cancelled;
 
-    public NetworkPacketSendEvent(Player player, NetworkPacket packet) {
+    public NetworkPacketSendEvent(Player player, BedrockPacket packet) {
         this.packet = packet;
         this.player = player;
     }
@@ -19,7 +19,7 @@ public class NetworkPacketSendEvent implements ServerEvent, Cancellable {
         return player;
     }
 
-    public NetworkPacket getPacket() {
+    public BedrockPacket getPacket() {
         return packet;
     }
 

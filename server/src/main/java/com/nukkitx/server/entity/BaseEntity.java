@@ -15,18 +15,18 @@ import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.api.util.Rotation;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.minecraft.MinecraftPacket;
-import com.nukkitx.server.network.minecraft.data.MetadataConstants;
-import com.nukkitx.server.network.minecraft.packet.AddEntityPacket;
-import com.nukkitx.server.network.minecraft.packet.SetEntityDataPacket;
-import com.nukkitx.server.network.minecraft.util.MetadataDictionary;
+import com.nukkitx.server.network.bedrock.BedrockPacket;
+import com.nukkitx.server.network.bedrock.data.MetadataConstants;
+import com.nukkitx.server.network.bedrock.packet.AddEntityPacket;
+import com.nukkitx.server.network.bedrock.packet.SetEntityDataPacket;
+import com.nukkitx.server.network.bedrock.util.MetadataDictionary;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import static com.nukkitx.server.network.minecraft.data.MetadataConstants.*;
-import static com.nukkitx.server.network.minecraft.data.MetadataConstants.Flag.*;
+import static com.nukkitx.server.network.bedrock.data.MetadataConstants.*;
+import static com.nukkitx.server.network.bedrock.data.MetadataConstants.Flag.*;
 
 @Log4j2
 public class BaseEntity implements Entity {
@@ -64,7 +64,7 @@ public class BaseEntity implements Entity {
         refreshBoundingBox();
     }
 
-    public MinecraftPacket createAddEntityPacket() {
+    public BedrockPacket createAddEntityPacket() {
         AddEntityPacket packet = new AddEntityPacket();
         packet.setUniqueEntityId(entityId);
         packet.setRuntimeEntityId(entityId);

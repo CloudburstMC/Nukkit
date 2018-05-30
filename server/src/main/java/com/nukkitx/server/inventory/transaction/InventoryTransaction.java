@@ -2,7 +2,7 @@ package com.nukkitx.server.inventory.transaction;
 
 
 import com.nukkitx.server.inventory.transaction.action.InventoryAction;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import io.netty.buffer.ByteBuf;
 
 import java.util.Collection;
@@ -32,8 +32,6 @@ public interface InventoryTransaction {
     void write(ByteBuf buffer);
 
     Type getType();
-
-    void handle(PlayerSession.PlayerNetworkPacketHandler session);
 
     enum Type {
         NORMAL,

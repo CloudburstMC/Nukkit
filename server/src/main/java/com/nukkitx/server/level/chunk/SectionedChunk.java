@@ -18,13 +18,14 @@ import com.nukkitx.nbt.stream.NBTOutputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.IntTag;
 import com.nukkitx.nbt.tag.Tag;
-import com.nukkitx.nbt.util.VarInt;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.level.biome.NukkitBiome;
 import com.nukkitx.server.metadata.MetadataSerializers;
-import com.nukkitx.server.network.minecraft.packet.FullChunkDataPacket;
-import com.nukkitx.server.network.minecraft.packet.WrappedPacket;
-import com.nukkitx.server.network.minecraft.wrapper.DefaultWrapperHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketCodec;
+import com.nukkitx.server.network.bedrock.packet.FullChunkDataPacket;
+import com.nukkitx.server.network.bedrock.packet.WrappedPacket;
+import com.nukkitx.server.network.bedrock.wrapper.DefaultWrapperHandler;
+import com.nukkitx.server.network.util.VarInts;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TLongSet;
@@ -371,8 +372,8 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         byteBuf.writeBytes(biomeId);
 
         // Extra data TODO: Implement
-        VarInt.writeSignedInt(byteBuf, 0);
-        VarInt.writeSignedInt(byteBuf, 0);
+        VarInts.writeInt(byteBuf, 0);
+        VarInts.writeInt(byteBuf, 0);
 
         if (blockEntitiesStream != null) {
             blockEntitiesStream.writeTo(byteBuf);
@@ -386,7 +387,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         packet.setData(chunkData);
 
         WrappedPacket wrappedPacket = new WrappedPacket();
-        wrappedPacket.setPayload(DefaultWrapperHandler.HIGH_COMPRESSION.compressPackets(packet));
+        wrappedPacket.setPayload(DefaultWrapperHandler.HIGH_COMPRESSION.compressPackets(BedrockPacketCodec.DEFAULT, packet));
 
         precompressed = new byte[wrappedPacket.getPayload().readableBytes()];
         wrappedPacket.getPayload().readBytes(precompressed);

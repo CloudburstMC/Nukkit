@@ -29,10 +29,7 @@
 
     <!-- Project modules -->
     <modules>
-        <module>message</module>
         <module>api</module>
-        <module>console</module>
-        <module>nbt</module>
         <module>server</module>
         <module>bootstrap</module>
     </modules>
@@ -42,15 +39,18 @@
         <system>GitHub</system>
         <url>https://github.com/NukkitX/Nukkit/issues</url>
     </issueManagement>
+
     <ciManagement>
         <system>Jenkins</system>
         <url>https://ci.nukkitx.com/job/NukkitX/</url>
     </ciManagement>
+
     <scm>
         <connection>scm:git:https://github.com/NukkitX/Nukkit.git</connection>
         <developerConnection>scm:git:git@github.com:NukkitX/Nukkit.git</developerConnection>
         <url>https://github.com/NukkitX/Nukkit</url>
     </scm>
+
     <distributionManagement>
         <repository>
             <id>releases</id>
@@ -115,6 +115,12 @@
             <artifactId>jsr305</artifactId>
             <version>3.0.2</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove</artifactId>
+            <version>3.1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <!-- Unit testing -->
         <dependency>

@@ -4,20 +4,16 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Maven coordinates -->
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
         <version>1.5.0.1-SNAPSHOT</version>
     </parent>
+
     <artifactId>nukkitx-bootstrap</artifactId>
     <version>1.5.0.1-SNAPSHOT</version>
-
-    <!-- Module information -->
     <name>NukkitX Bootstrap</name>
-    <description>The main bootstrap module for NukkitX.</description>
 
-    <!-- Module dependencies -->
     <dependencies>
         <dependency>
             <groupId>com.nukkitx</groupId>
@@ -33,13 +29,9 @@
         </dependency>
     </dependencies>
 
-    <!-- Module build lifecycle -->
     <build>
-        <!-- Override the final name, this is the executable jar -->
         <finalName>nukkit-${project.version}</finalName>
-        <!-- Lifecycle plugins -->
         <plugins>
-            <!-- Describe the final jar -->
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>scriptus</artifactId>

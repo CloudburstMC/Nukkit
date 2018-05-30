@@ -7,7 +7,7 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.nukkitx.server.network.minecraft.packet.ServerToClientHandshakePacket;
+import com.nukkitx.server.network.bedrock.packet.ServerToClientHandshakePacket;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 

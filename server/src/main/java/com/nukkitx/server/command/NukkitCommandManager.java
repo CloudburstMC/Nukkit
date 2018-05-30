@@ -9,7 +9,7 @@ import com.nukkitx.api.plugin.Plugin;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.command.vanilla.StopCommand;
 import com.nukkitx.server.command.vanilla.VersionCommand;
-import com.nukkitx.server.network.minecraft.packet.AvailableCommandsPacket;
+import com.nukkitx.server.network.bedrock.packet.AvailableCommandsPacket;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

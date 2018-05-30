@@ -8,10 +8,10 @@ import com.nukkitx.api.entity.system.System;
 import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.minecraft.packet.MoveEntityPacket;
-import com.nukkitx.server.network.minecraft.packet.SetEntityMotionPacket;
-import com.nukkitx.server.network.minecraft.session.MinecraftSession;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.packet.MoveEntityPacket;
+import com.nukkitx.server.network.bedrock.packet.SetEntityMotionPacket;
+import com.nukkitx.server.network.bedrock.session.BedrockSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
@@ -76,7 +76,7 @@ public class LevelEntityManager {
             entities.forEachValue(entity -> {
                 if (entity instanceof PlayerSession) {
                     PlayerSession session = (PlayerSession) entity;
-                    MinecraftSession mcpeSession = session.getMinecraftSession();
+                    BedrockSession mcpeSession = session.getMinecraftSession();
                     if (mcpeSession != null && !mcpeSession.isClosed() && session.isSpawned()) {
                         sessions.add((PlayerSession) entity);
                     }

@@ -9,7 +9,7 @@ import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.minecraft.packet.TakeItemEntityPacket;
+import com.nukkitx.server.network.bedrock.packet.TakeItemEntityPacket;
 
 public class ItemPickupSystem implements SystemRunner {
     public static final System SYSTEM = System.builder()

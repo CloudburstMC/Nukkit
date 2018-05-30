@@ -6,7 +6,7 @@ import com.nukkitx.api.inventory.Inventory;
 import com.nukkitx.api.inventory.InventoryType;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.server.item.NukkitItemInstance;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;

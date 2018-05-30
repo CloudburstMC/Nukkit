@@ -1,6 +1,6 @@
 package com.nukkitx.server.inventory.transaction.action;
 
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

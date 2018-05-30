@@ -6,8 +6,8 @@ import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.entity.EntityType;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.minecraft.MinecraftPacket;
-import com.nukkitx.server.network.minecraft.packet.AddPaintingPacket;
+import com.nukkitx.server.network.bedrock.BedrockPacket;
+import com.nukkitx.server.network.bedrock.packet.AddPaintingPacket;
 
 public class PaintingEntity extends BaseEntity implements Painting {
 
@@ -16,7 +16,7 @@ public class PaintingEntity extends BaseEntity implements Painting {
     }
 
     @Override
-    public MinecraftPacket createAddEntityPacket() {
+    public BedrockPacket createAddEntityPacket() {
         AddPaintingPacket packet = new AddPaintingPacket();
         packet.setUniqueEntityId(getEntityId());
         packet.setRuntimeEntityId(getEntityId());
