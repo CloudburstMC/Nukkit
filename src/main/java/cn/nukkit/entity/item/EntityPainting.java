@@ -39,7 +39,7 @@ public class EntityPainting extends EntityHanging {
             new Motive("Stage", 2, 2),
             new Motive("Void", 2, 2),
             new Motive("SkullAndRoses", 2, 2),
-            //new Motive("Wither", 2, 2),
+            new Motive("Wither", 2, 2),
             new Motive("Fighters", 4, 2),
             new Motive("Skeleton", 4, 3),
             new Motive("DonkeyKong", 4, 3),

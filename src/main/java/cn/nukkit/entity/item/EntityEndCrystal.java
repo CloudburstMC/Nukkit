@@ -31,6 +31,16 @@ public class EntityEndCrystal extends Entity {
         super.initEntity();
     }
 
+    @Override
+    public float getHeight() {
+        return 0.98f;
+    }
+
+    @Override
+    public float getWidth() {
+        return 0.98f;
+    }
+
     public boolean attack(EntityDamageEvent source){
         if (this.closed) return false;
         close();
@@ -66,4 +76,12 @@ public class EntityEndCrystal extends Entity {
 	public boolean canCollideWith(Entity entity) {
 		return false;
 	}
+
+    public boolean showBase() {
+        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SHOWBASE);
+    }
+
+    public void setShowBase(boolean value) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHOWBASE, value);
+    }
 }
