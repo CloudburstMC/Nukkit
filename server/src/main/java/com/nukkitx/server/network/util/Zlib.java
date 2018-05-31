@@ -24,7 +24,7 @@ public class Zlib {
 
         deflaterLocal = ThreadLocal.withInitial(() -> {
             BungeeZlib zlib = NativeCodeFactory.zlib.newInstance();
-            zlib.init(true, Deflater.DEFAULT_COMPRESSION);
+            zlib.init(true, compression);
             return zlib;
         });
     }
