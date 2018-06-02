@@ -35,7 +35,7 @@ public class AddEntityPacket implements BedrockPacket {
         writeUnsignedInt(buffer, entityType);
         writeVector3f(buffer, position);
         writeVector3f(buffer, motion);
-        writeVector2f(buffer, rotation.getBodyRotation());
+        writeRotation(buffer, rotation);
         writeEntityAttributes(buffer, entityAttributes);
         metadata.writeTo(buffer);
         writeEntityLinks(buffer, links);

@@ -15,7 +15,7 @@
     <name>NukkitX Server</name>
 
     <properties>
-        <network.version>1.0.11-SNAPSHOT</network.version>
+        <network.version>1.0.12-SNAPSHOT</network.version>
     </properties>
 
     <dependencies>

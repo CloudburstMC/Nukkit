@@ -230,12 +230,14 @@ public class BaseEntity implements Entity {
     @Override
     public void remove() {
         checkIfAlive();
+        // Unregister this entity.
+        level.getEntityManager().deregisterEntity(this);
         removed = true;
     }
 
     @Override
     public boolean isAlive() {
-        return false;
+        return !removed;
     }
 
     public final void checkIfAlive() {

@@ -5,12 +5,15 @@ import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.permission.CommandPermission;
 import com.nukkitx.api.permission.PlayerPermission;
 import com.nukkitx.api.util.Rotation;
+import com.nukkitx.server.entity.EntityLink;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
 import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
 import com.nukkitx.server.network.bedrock.util.MetadataDictionary;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.nukkitx.server.network.bedrock.BedrockUtil.*;
@@ -37,7 +40,7 @@ public class AddPlayerPacket implements BedrockPacket {
     private PlayerPermission playerPermission;
     private int customFlags;
     //private final AdventureSettings adventureSettings = new AdventureSettings;
-    //private final List<EntityLink> entityLinks = new ArrayList<>();
+    private final List<EntityLink> entityLinks = new ArrayList<>();
 
     @Override
     public void encode(ByteBuf buffer) {
@@ -59,7 +62,7 @@ public class AddPlayerPacket implements BedrockPacket {
         writeUnsignedInt(buffer, playerPermission.ordinal());
         writeUnsignedInt(buffer, customFlags);
         buffer.writeLongLE(uniqueEntityId);
-        writeUnsignedInt(buffer, 0);//writeEntityLinks(buffer, entityLinks);
+        writeEntityLinks(buffer, entityLinks);
     }
 
     @Override

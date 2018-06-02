@@ -8,7 +8,7 @@ import com.nukkitx.api.entity.system.System;
 import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.packet.MoveEntityPacket;
+import com.nukkitx.server.network.bedrock.packet.MoveEntityAbsolutePacket;
 import com.nukkitx.server.network.bedrock.packet.SetEntityMotionPacket;
 import com.nukkitx.server.network.bedrock.session.BedrockSession;
 import com.nukkitx.server.network.bedrock.session.PlayerSession;
@@ -181,9 +181,9 @@ public class LevelEntityManager {
                     if (entity.isMovementStale()) {
                         entity.resetStaleMovement();
 
-                        MoveEntityPacket moveEntity = new MoveEntityPacket();
+                        MoveEntityAbsolutePacket moveEntity = new MoveEntityAbsolutePacket();
                         moveEntity.setRuntimeEntityId(entity.getEntityId());
-                        moveEntity.setPosition(entity.getPosition());
+                        moveEntity.setPosition(entity.getGamePosition());
                         moveEntity.setRotation(entity.getRotation());
                         moveEntity.setOnGround(entity.isOnGround());
                         level.getPacketManager().queuePacketForViewers(entity, moveEntity);
@@ -208,7 +208,9 @@ public class LevelEntityManager {
 
         // Update viewable entities if something changed
         if (entitiesChanged.compareAndSet(true, false)) {
-            getPlayers().forEach(PlayerSession::updateViewableEntities);
+            List<PlayerSession> players = getPlayers();
+            players.forEach(PlayerSession::updateViewableEntities);
+            players.forEach(PlayerSession::updatePlayerList);
         }
     }
 

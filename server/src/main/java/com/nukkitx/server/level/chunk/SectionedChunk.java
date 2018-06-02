@@ -20,33 +20,25 @@ import com.nukkitx.nbt.tag.IntTag;
 import com.nukkitx.nbt.tag.Tag;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.metadata.MetadataSerializers;
-import com.nukkitx.server.network.bedrock.BedrockPacketCodec;
 import com.nukkitx.server.network.bedrock.packet.FullChunkDataPacket;
-import com.nukkitx.server.network.bedrock.packet.WrappedPacket;
-import com.nukkitx.server.network.bedrock.wrapper.DefaultWrapperHandler;
 import com.nukkitx.server.network.util.VarInts;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.*;
 
 @Log4j2
 public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, FullChunkDataPacketCreator {
     private final Level level;
     private final TIntObjectMap<CompoundTag> serializedBlockEntities = new TIntObjectHashMap<>();
-    private byte[] precompressed;
+    private ByteBuf precompressed;
 
     public SectionedChunk(int x, int z, Level level) {
         this(new ChunkSection[16], x, z, level);
@@ -116,7 +108,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
             blockEntities.remove(pos);
         }
 
-        precompressed = null;
+        refreshCache();
         return getBlock(x, y, z);
     }
 
@@ -213,7 +205,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
     public void recalculateLight() {
         recalculateHeightMap();
         populateSkyLight();
-        precompressed = null;
+        refreshCache();
     }
 
     @Synchronized
@@ -322,16 +314,25 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         }
     }
 
+    private void refreshCache() {
+        if (precompressed != null) {
+            precompressed.release();
+            precompressed = null;
+        }
+    }
+
     @Override
     @Synchronized
-    public WrappedPacket createFullChunkDataPacket() {
-        if (precompressed != null) {
-            ByteBuf payload = PooledByteBufAllocator.DEFAULT.directBuffer(precompressed.length);
-            payload.writeBytes(precompressed);
+    public FullChunkDataPacket createFullChunkDataPacket() {
+        /*if (precompressed != null) {
+            precompressed.readerIndex(0);
+            ByteBuf batched = PooledByteBufAllocator.DEFAULT.directBuffer(precompressed.readableBytes());
+
+            batched.writeBytes(precompressed);
             WrappedPacket packet = new WrappedPacket();
-            packet.setPayload(payload);
+            packet.setBatched(batched);
             return packet;
-        }
+        }*/
 
         // Block Entities
         int nbtSize = 0;
@@ -389,12 +390,16 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         byteBuf.readBytes(chunkData);
         packet.setData(chunkData);
 
-        WrappedPacket wrappedPacket = new WrappedPacket();
-        wrappedPacket.setPayload(DefaultWrapperHandler.HIGH_COMPRESSION.compressPackets(BedrockPacketCodec.DEFAULT, packet));
+        /*precompressed = DefaultWrapperHandler.HIGH_COMPRESSION.compressPackets(BedrockPacketCodec.DEFAULT, packet);
 
-        precompressed = new byte[wrappedPacket.getPayload().readableBytes()];
-        wrappedPacket.getPayload().readBytes(precompressed);
-        return wrappedPacket;
+        precompressed.readerIndex(0);
+        ByteBuf batched = PooledByteBufAllocator.DEFAULT.directBuffer(precompressed.readableBytes());
+
+        batched.writeBytes(precompressed);
+        WrappedPacket wrappedPacket = new WrappedPacket();
+        wrappedPacket.setBatched(batched);*/
+
+        return packet;
     }
 
     private static class CanWriteToBB extends FastByteArrayOutputStream {

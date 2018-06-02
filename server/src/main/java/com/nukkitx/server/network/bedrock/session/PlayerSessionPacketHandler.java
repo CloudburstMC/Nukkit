@@ -25,7 +25,6 @@ import com.nukkitx.server.console.TranslatableMessage;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.entity.component.PlayerDataComponent;
 import com.nukkitx.server.inventory.NukkitInventory;
-import com.nukkitx.server.inventory.transaction.*;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
 import com.nukkitx.server.network.bedrock.packet.*;
@@ -238,7 +237,7 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
     }
 
     @Override
-    public void handle(MoveEntityPacket packet) {
+    public void handle(MoveEntityAbsolutePacket packet) {
 
     }
 
@@ -335,9 +334,9 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
                 data.setSprinting(false);
                 break;
             case START_SNEAK:
-                //session.setFlag(MetadataConstants.Flag.SNEAKING, true); TODO
+                data.setSneaking(true);
             case STOP_SNEAK:
-                //session.setFlag(MetadataConstants.Flag.SNEAKING, false);
+                data.setSneaking(false);
             case DIMENSION_CHANGE_REQUEST:
             case DIMENSION_CHANGE_SUCCESS:
             case START_GLIDE:
@@ -439,7 +438,7 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
                 stackPacket.setForcedToAccept(forcePacks);
                     /*if (server.getResourcePackManager().getResourceStack().length == 0) {
                         // We can skip the rest and go straight to start game.
-                        startGame();
+                        session.startGame();
                         return;
                     }*/
                 for (UUID id: packet.getPackIds()) {
@@ -547,27 +546,5 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
         packet.setXuid(""); // Stop chat issues
         packet.setMessage(new ChatMessage(session.getName(), messageString, false)); // To stop any name forgery.
         session.getMinecraftSession().addToSendQueue(packet);
-    }
-
-    // Transactions (Not packets but here for convenience)
-
-    public void handle(NormalTransaction transaction) {
-
-    }
-
-    public void handle(InventoryMismatchTransaction transaction) {
-
-    }
-
-    public void handle(ItemUseTransaction transaction) {
-
-    }
-
-    public void handle(ItemUseOnEntityTransaction transaction) {
-
-    }
-
-    public void handle(ItemReleaseTransaction transaction) {
-
     }
 }

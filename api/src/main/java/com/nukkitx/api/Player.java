@@ -28,14 +28,6 @@ public interface Player extends Session, CommandSender, Entity, Permissible {
     @Nonnull
     Optional<UUID> getOfflineUuid();
 
-    boolean isSneaking();
-
-    void setSneaking(boolean sneaking);
-
-    boolean isSprinting();
-
-    void setSprinting(boolean sprinting);
-
     int getExperienceLevel();
 
     void disconnect();

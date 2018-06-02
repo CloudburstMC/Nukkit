@@ -82,7 +82,7 @@ public interface NetworkPacketHandler {
     default void handle(ModalFormResponsePacket packet) {
     }
 
-    default void handle(MoveEntityPacket packet) {
+    default void handle(MoveEntityAbsolutePacket packet) {
     }
 
     default void handle(MovePlayerPacket packet) {

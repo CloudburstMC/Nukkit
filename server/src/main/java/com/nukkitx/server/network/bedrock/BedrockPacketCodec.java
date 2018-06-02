@@ -34,8 +34,6 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
 
     static {
         DEFAULT = builder()
-                .addCompatibleVersion(270)
-                .addCompatibleVersion(271)
                 .addCompatibleVersion(273)
                 .registerPacket(LoginPacket::new, 1)
                 .registerPacket(PlayStatusPacket::new, 2)
@@ -54,7 +52,7 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
                 .registerPacket(AddItemEntityPacket::new, 15)
                 .registerPacket(AddHangingEntityPacket::new, 16)
                 .registerPacket(TakeItemEntityPacket::new, 17)
-                .registerPacket(MoveEntityPacket::new, 18)
+                .registerPacket(MoveEntityAbsolutePacket::new, 18)
                 .registerPacket(MovePlayerPacket::new, 19)
                 .registerPacket(RiderJumpPacket::new, 20)
                 .registerPacket(UpdateBlockPacket::new, 21)
@@ -147,6 +145,7 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
                 .registerPacket(SetScorePacket::new, 108)
                 .registerPacket(LabTablePacket::new, 109)
                 .registerPacket(UpdateBlockSyncedPacket::new, 110)
+                .registerPacket(MoveEntityDeltaPacket::new, 111)
                 .build();
 
     }

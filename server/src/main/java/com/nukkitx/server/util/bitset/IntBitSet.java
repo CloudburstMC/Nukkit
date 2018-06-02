@@ -28,6 +28,10 @@ public class IntBitSet implements BitSet {
         bitset = BitUtil.setBit(bitset, index, value);
     }
 
+    public void set(int bitset) {
+        this.bitset = bitset;
+    }
+
     @Override
     public boolean get(int index) {
         return BitUtil.getBit(bitset, index);
@@ -66,6 +70,12 @@ public class IntBitSet implements BitSet {
         return bitset;
     }
 
+    private static void checkIndex(int index) {
+        if (!(index >= 0 && index < 32)) {
+            throw new IndexOutOfBoundsException("Expected value 0-32");
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
@@ -74,9 +84,13 @@ public class IntBitSet implements BitSet {
         return this.bitset == that.get();
     }
 
-    private static void checkIndex(int index) {
-        if (!(index >= 0 && index < 32)) {
-            throw new IndexOutOfBoundsException("Expected value 0-32");
-        }
+    public int hashCode() {
+        return bitset;
+    }
+
+    public String toString() {
+        return "IntBitSet(" +
+                "bitset=" + Integer.toUnsignedString(bitset) +
+                ")";
     }
 }

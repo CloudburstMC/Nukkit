@@ -7,7 +7,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,11 +56,11 @@ public class PlayerListPacket implements BedrockPacket {
         REMOVE
     }
 
-    @Value
     @ToString(exclude = {"entityId", "name", "thirdPartyName", "platformId", "skin", "xuid", "platformChatId"})
     @EqualsAndHashCode(exclude = {"skin"})
+    @Data
     public final static class Entry {
-        private UUID uuid;
+        private final UUID uuid;
         private long entityId;
         private String name;
         private String thirdPartyName;

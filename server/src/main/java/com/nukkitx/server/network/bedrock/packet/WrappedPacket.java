@@ -13,11 +13,13 @@ import java.util.List;
 public class WrappedPacket implements CustomRakNetPacket<BedrockSession> {
     private final List<BedrockPacket> packets = new ArrayList<>();
     private boolean encrypted;
+    private ByteBuf batched;
     private ByteBuf payload;
 
     @Override
     public void encode(ByteBuf buffer) {
         buffer.writeBytes(payload);
+        payload.release();
     }
 
     @Override

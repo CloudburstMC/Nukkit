@@ -59,6 +59,7 @@ import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -71,6 +72,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     private final TLongSet hiddenEntities = TCollections.synchronizedSet(new TLongHashSet());
     private final TLongSet sentChunks = TCollections.synchronizedSet(new TLongHashSet());
     private final AtomicReference<Locale> locale = new AtomicReference<>();
+    private final Set<UUID> playersListed = new CopyOnWriteArraySet<>();
     private boolean commandsEnabled = true;
     private boolean hasMoved;
     @Getter
@@ -122,7 +124,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
             for (Chunk chunk : chunks) {
                 // Already wrapped so we can send immediately.
-                session.sendImmediatePackage(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
+                session.addToSendQueue(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
             }
         }));
     }
@@ -264,6 +266,58 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         this.openInventory = inventory;
     }
 
+    public void updatePlayerList() {
+        Set<Player> toAdd = new HashSet<>();
+        Set<UUID> toRemove = new HashSet<>();
+        Map<UUID, PlayerSession> availableSessions = new HashMap<>();
+
+        for (PlayerSession session : getLevel().getEntityManager().getPlayers()) {
+            if (session == this) continue;
+            availableSessions.put(session.getUniqueId(), session);
+        }
+
+        for (PlayerSession session : availableSessions.values()) {
+            if (playersListed.add(session.getUniqueId())) {
+                toAdd.add(session);
+            }
+        }
+
+        for (UUID uuid : playersListed) {
+            if (!availableSessions.containsKey(uuid)) {
+                toRemove.add(uuid);
+            }
+        }
+
+        if (!toAdd.isEmpty()) {
+            PlayerListPacket list = new PlayerListPacket();
+            list.setType(PlayerListPacket.Type.ADD);
+            for (Player player : toAdd) {
+                PlayerData data = player.ensureAndGet(PlayerData.class);
+                PlayerListPacket.Entry entry = new PlayerListPacket.Entry(player.getUniqueId());
+                entry.setEntityId(player.getEntityId());
+                entry.setSkin(data.getSkin());
+                entry.setName(player.getName());
+                entry.setThirdPartyName(getDisplayName().orElse(""));
+                entry.setPlatformId(0);
+                entry.setXuid(player.getXuid().orElse(""));
+                entry.setPlatformChatId("");
+                list.getEntries().add(entry);
+            }
+            session.addToSendQueue(list);
+        }
+
+        if (!toRemove.isEmpty()) {
+            playersListed.removeAll(toRemove);
+
+            PlayerListPacket list = new PlayerListPacket();
+            list.setType(PlayerListPacket.Type.REMOVE);
+            for (UUID uuid : toRemove) {
+                list.getEntries().add(new PlayerListPacket.Entry(uuid));
+            }
+            session.addToSendQueue(list);
+        }
+    }
+
     private void sendAttributes() {
         Damageable damageable = ensureAndGet(Damageable.class);
         PlayerDataComponent data = (PlayerDataComponent) ensureAndGet(PlayerData.class);
@@ -402,18 +456,21 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         AddPlayerPacket addPlayer = new AddPlayerPacket();
         addPlayer.setUuid(session.getAuthData().getIdentity());
         addPlayer.setUsername(session.getAuthData().getDisplayName());
+        addPlayer.setThirdPartyName(getDisplayName().orElse(""));
+        addPlayer.setPlatformId(0);
         addPlayer.setUniqueEntityId(getEntityId());
         addPlayer.setRuntimeEntityId(getEntityId());
-        addPlayer.setPosition(getPosition());
+        addPlayer.setPlatformChatId("");
+        addPlayer.setPosition(getGamePosition());
         addPlayer.setMotion(getMotion());
         addPlayer.setRotation(getRotation());
         addPlayer.setHand(inventory.getItemInHand().orElse(null));
         addPlayer.getMetadata().putAll(getMetadata());
         addPlayer.setFlags(data.getAbilities().getFlags());
-        addPlayer.setFlags2(data.getAbilities().getFlags2());
         addPlayer.setCommandPermission(data.getCommandPermission());
-        addPlayer.setCustomFlags(data.getAbilities().getCustomFlags());
+        addPlayer.setFlags2(data.getAbilities().getFlags2());
         addPlayer.setPlayerPermission(data.getPlayerPermission());
+        addPlayer.setCustomFlags(data.getAbilities().getCustomFlags());
         // TODO: Adventure settings
         return addPlayer;
     }
@@ -626,16 +683,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     @Override
     public Optional<String> getActiveDirectoryRole() {
         return Optional.ofNullable(session.getClientData().getActiveDirectoryRole());
-    }
-
-    @Override
-    public boolean isSprinting() {
-        return false;
-    }
-
-    @Override
-    public void setSprinting(boolean sprinting) {
-
     }
 
     @Override

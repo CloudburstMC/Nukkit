@@ -108,6 +108,10 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
     public void addToSendQueue(BedrockPacket packet) {
         checkForClosed();
         Preconditions.checkNotNull(packet, "packet");
+        if (log.isTraceEnabled()) {
+            String to = connection.getRemoteAddress().orElse(LOOPBACK_BEDROCK).toString();
+            log.trace("Outbound {}: {}", to, packet);
+        }
 
         // Verify that the packet ID exists.
         packetCodec.getId(packet);
@@ -123,6 +127,10 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
 
     private void internalSendPackage(NetworkPacket packet) {
         if (packet instanceof BedrockPacket) {
+            if (log.isTraceEnabled()) {
+                String to = connection.getRemoteAddress().orElse(LOOPBACK_BEDROCK).toString();
+                log.trace("Outbound {}: {}", to, packet);
+            }
             WrappedPacket wrappedPacket = new WrappedPacket();
             wrappedPacket.getPackets().add((BedrockPacket) packet);
             if (packet.getClass().isAnnotationPresent(NoEncryption.class)) {
@@ -134,15 +142,15 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
         if (packet instanceof WrappedPacket) {
             WrappedPacket wrappedPacket = (WrappedPacket) packet;
             ByteBuf compressed;
-            if (wrappedPacket.getPayload() == null) {
+            if (wrappedPacket.getBatched() == null) {
                 compressed = wrapperHandler.compressPackets(packetCodec, wrappedPacket.getPackets());
             } else {
-                compressed = wrappedPacket.getPayload();
+                compressed = wrappedPacket.getBatched();
             }
 
             ByteBuf finalPayload = PooledByteBufAllocator.DEFAULT.directBuffer();
             try {
-                if (encryptionCipher == null || ((WrappedPacket) packet).isEncrypted()) {
+                if (encryptionCipher == null || wrappedPacket.isEncrypted()) {
                     compressed.readerIndex(0);
                     finalPayload.writeBytes(compressed);
                 } else {
@@ -163,11 +171,6 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
         }
 
         if (packet instanceof RakNetPacket) {
-            if (log.isTraceEnabled()) {
-                String to = connection.getRemoteAddress().orElse(LOOPBACK_BEDROCK).toString();
-                log.trace("Outbound {}: {}", to, packet);
-            }
-
             connection.sendPacket((RakNetPacket) packet);
         } else {
             throw new UnsupportedOperationException("Unknown packet type sent");
@@ -209,7 +212,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
                 }
 
                 continue;
-            } else if (wrapper.getPackets().size() >= 10) {
+            } else if (wrapper.getPackets().size() >= 100) {
                 // Reached a per-batch limit on packages, send these packages now
                 internalSendPackage(wrapper);
                 wrapper = new WrappedPacket();
@@ -398,6 +401,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
                 pk.handle(handler);
             }
         } finally {
+            wrappedData.release();
             if (unwrappedData != null && unwrappedData != wrappedData) {
                 unwrappedData.release();
             }

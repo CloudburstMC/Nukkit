@@ -48,6 +48,10 @@ public interface PlayerData extends EntityComponent {
 
     void setSprinting(boolean sprinting);
 
+    boolean isSneaking();
+
+    void setSneaking(boolean sneaking);
+
     @Nonnull
     PlayerPermission getPlayerPermission();
 

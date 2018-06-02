@@ -56,7 +56,6 @@ import com.nukkitx.server.resourcepack.ResourcePackManager;
 import com.nukkitx.server.scheduler.ServerScheduler;
 import com.nukkitx.server.util.ServerKiller;
 import com.spotify.futures.CompletableFutures;
-import io.netty.util.ResourceLeakDetector;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
@@ -320,9 +319,9 @@ public class NukkitServer implements Server {
         pluginManager.enablePlugins(PluginLoadOrder.POSTWORLD);
 
         // Netty leak detection
-        ResourceLeakDetector.Level leakLevel = ResourceLeakDetector.Level.valueOf(configuration.getAdvanced().getResourceLeakDetectorLevel());
-        ResourceLeakDetector.setLevel(leakLevel);
-        configuration.getAdvanced().setResourceLeakDetectorLevel(leakLevel.name());
+        /*ResourceLeakDetector.Level leakLevel = ResourceLeakDetector.Level.valueOf(configuration.getAdvanced().getResourceLeakDetectorLevel());
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        configuration.getAdvanced().setResourceLeakDetectorLevel(leakLevel.name());*/
 
         log.info(TranslatableMessage.of("nukkit.server.networkStart", configuration.getNetwork().getAddress(), Integer.toString(configuration.getNetwork().getPort())));
         if (configuration.getNetwork().isQueryEnabled()) {
