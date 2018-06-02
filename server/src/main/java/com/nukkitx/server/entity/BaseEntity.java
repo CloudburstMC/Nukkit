@@ -86,7 +86,7 @@ public class BaseEntity implements Entity {
         Preconditions.checkNotNull(rotation, "rotation");
         checkIfAlive();
 
-        if (this.rotation.equals(rotation)) {
+        if (!this.rotation.equals(rotation)) {
             this.rotation = rotation;
             movementStale = true;
         }
