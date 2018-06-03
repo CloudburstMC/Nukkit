@@ -27,18 +27,19 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.PooledByteBufAllocator;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.util.*;
 
 @Log4j2
 public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, FullChunkDataPacketCreator {
     private final Level level;
     private final TIntObjectMap<CompoundTag> serializedBlockEntities = new TIntObjectHashMap<>();
-    private ByteBuf precompressed;
+    private SoftReference<byte[]> cached = null;
 
     public SectionedChunk(int x, int z, Level level) {
         this(new ChunkSection[16], x, z, level);
@@ -315,24 +316,21 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
     }
 
     private void refreshCache() {
-        if (precompressed != null) {
-            precompressed.release();
-            precompressed = null;
-        }
+        cached = null;
     }
 
     @Override
     @Synchronized
     public FullChunkDataPacket createFullChunkDataPacket() {
-        /*if (precompressed != null) {
-            precompressed.readerIndex(0);
-            ByteBuf batched = PooledByteBufAllocator.DEFAULT.directBuffer(precompressed.readableBytes());
+        FullChunkDataPacket packet = new FullChunkDataPacket();
+        packet.setChunkX(x);
+        packet.setChunkZ(z);
 
-            batched.writeBytes(precompressed);
-            WrappedPacket packet = new WrappedPacket();
-            packet.setBatched(batched);
+        if (cached != null && cached.get() != null) {
+            packet.setData(cached.get());
+
             return packet;
-        }*/
+        }
 
         // Block Entities
         int nbtSize = 0;
@@ -362,52 +360,45 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
 
         // Chunk sections
         int bufferSize = 1 + 4096 * topBlank + 768 + 2 + nbtSize;
-        ByteBuf byteBuf = Unpooled.buffer(bufferSize);
-        byteBuf.markReaderIndex();
-        byteBuf.writeByte((byte) topBlank);
+        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(bufferSize);
+        try {
+            byteBuf.markReaderIndex();
+            byteBuf.writeByte((byte) topBlank);
 
-        for (int i = 0; i < topBlank; i++) {
-            getOrCreateSection(i).writeTo(byteBuf);
+            for (int i = 0; i < topBlank; i++) {
+                getOrCreateSection(i).writeTo(byteBuf);
+            }
+
+            // Heightmap
+            byteBuf.writeBytes(height);
+            // Biomes
+            byteBuf.writeBytes(biomeId);
+
+            // Extra data TODO: Implement
+            VarInts.writeInt(byteBuf, 0);
+            VarInts.writeInt(byteBuf, 0);
+
+            if (blockEntitiesStream != null) {
+                blockEntitiesStream.writeTo(byteBuf);
+            }
+
+            byte[] chunkData = new byte[byteBuf.readableBytes()];
+            cached = new SoftReference<>(chunkData);
+            byteBuf.readBytes(chunkData);
+            packet.setData(chunkData);
+        } finally {
+            byteBuf.release();
         }
-
-        // Heightmap
-        byteBuf.writeBytes(height);
-        // Biomes
-        byteBuf.writeBytes(biomeId);
-
-        // Extra data TODO: Implement
-        VarInts.writeInt(byteBuf, 0);
-        VarInts.writeInt(byteBuf, 0);
-
-        if (blockEntitiesStream != null) {
-            blockEntitiesStream.writeTo(byteBuf);
-        }
-
-        FullChunkDataPacket packet = new FullChunkDataPacket();
-        packet.setChunkX(x);
-        packet.setChunkZ(z);
-        byte[] chunkData = new byte[byteBuf.readableBytes()];
-        byteBuf.readBytes(chunkData);
-        packet.setData(chunkData);
-
-        /*precompressed = DefaultWrapperHandler.HIGH_COMPRESSION.compressPackets(BedrockPacketCodec.DEFAULT, packet);
-
-        precompressed.readerIndex(0);
-        ByteBuf batched = PooledByteBufAllocator.DEFAULT.directBuffer(precompressed.readableBytes());
-
-        batched.writeBytes(precompressed);
-        WrappedPacket wrappedPacket = new WrappedPacket();
-        wrappedPacket.setBatched(batched);*/
 
         return packet;
     }
 
     private static class CanWriteToBB extends FastByteArrayOutputStream {
-        public CanWriteToBB() {
+        CanWriteToBB() {
             super(8192);
         }
 
-        public void writeTo(ByteBuf buf) {
+        void writeTo(ByteBuf buf) {
             buf.writeBytes(array, 0, position);
         }
     }
