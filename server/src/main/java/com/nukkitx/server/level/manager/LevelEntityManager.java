@@ -152,6 +152,7 @@ public class LevelEntityManager {
                         if (log.isDebugEnabled()) {
                             log.debug("{} was removed", entity);
                         }
+                        entitiesChanged.set(true);
                         synchronized (entities) {
                             entities.remove(entity.getEntityId());
                         }
@@ -179,8 +180,6 @@ public class LevelEntityManager {
 
                     // Check if we need to send movement updates
                     if (entity.isMovementStale()) {
-                        entity.resetStaleMovement();
-
                         MoveEntityAbsolutePacket moveEntity = new MoveEntityAbsolutePacket();
                         moveEntity.setRuntimeEntityId(entity.getEntityId());
                         moveEntity.setPosition(entity.getGamePosition());
@@ -192,13 +191,16 @@ public class LevelEntityManager {
                         entityMotion.setRuntimeEntityId(entity.getEntityId());
                         entityMotion.setMotion(entity.getMotion());
                         level.getPacketManager().queuePacketForViewers(entity, entityMotion);
+
+                        entity.resetStaleMovement();
                     }
 
                 } catch (Exception e) {
-                    entitiesChanged.set(true);
                     synchronized (entities) {
                         entities.remove(entity.getEntityId());
                     }
+                    entitiesChanged.set(true);
+                    entity.remove();
                     log.error("Unable to tick entity {}", entity, e);
                 }
             }
@@ -210,7 +212,6 @@ public class LevelEntityManager {
         if (entitiesChanged.compareAndSet(true, false)) {
             List<PlayerSession> players = getPlayers();
             players.forEach(PlayerSession::updateViewableEntities);
-            players.forEach(PlayerSession::updatePlayerList);
         }
     }
 

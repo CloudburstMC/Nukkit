@@ -192,7 +192,7 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
         if (!session.isSpawned() || damageable.isDead()) {
             return;
         }
-        session.getLevel().getPacketManager().queuePacketForViewers(session, packet);
+        session.getLevel().getPacketManager().queuePacketForViewers(packet.getPosition(), packet);
     }
 
     @Override
@@ -389,18 +389,15 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
                 playStatus.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
                 session.getMinecraftSession().sendImmediatePackage(playStatus);
 
-                SetTimePacket setTime = new SetTimePacket();
-                setTime.setTime(session.getLevel().getTime());
-                session.getMinecraftSession().sendImmediatePackage(setTime);
-
-                session.updateViewableEntities();
                 session.sendMovePlayer();
+                session.updateViewableEntities();
+                session.updatePlayerList();
 
                 //session.addToSendQueue(server.getCommandManager().createAvailableCommandsPacket(PlayerSession.this));
 
                 session.setSpawned(true);
 
-                TranslationMessage joinMessage = new TranslationMessage(TextFormat.YELLOW + "multiplayer.player.joined", session.getName());
+                TranslationMessage joinMessage = new TranslationMessage(TextFormat.YELLOW + "%multiplayer.player.joined", session.getName());
                 log.info(TranslatableMessage.of(joinMessage));
 
                 PlayerJoinEvent event = new PlayerJoinEvent(session, joinMessage);
@@ -543,8 +540,8 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
             return;
         }
 
-        packet.setXuid(""); // Stop chat issues
+        packet.setXuid(session.getXuid().orElse(""));
         packet.setMessage(new ChatMessage(session.getName(), messageString, false)); // To stop any name forgery.
-        session.getMinecraftSession().addToSendQueue(packet);
+        session.getLevel().getPacketManager().queuePacketForPlayers(packet);
     }
 }

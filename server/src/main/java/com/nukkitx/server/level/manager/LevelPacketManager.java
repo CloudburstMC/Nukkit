@@ -26,7 +26,7 @@ public class LevelPacketManager {
 
     public LevelPacketManager(NukkitLevel level, int viewDistance) {
         this.level = level;
-        this.viewDistanceSquared = (int) Math.pow((viewDistance * 16), 2);
+        this.viewDistanceSquared = (int) Math.pow((viewDistance << 4), 2);
     }
 
     public void onTick() {

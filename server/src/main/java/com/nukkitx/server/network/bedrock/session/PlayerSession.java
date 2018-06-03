@@ -131,7 +131,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     public void updateViewableEntities() {
         synchronized (viewableEntities) {
-            Collection<BaseEntity> inView = level.getEntityManager().getEntitiesInDistance(getPosition(), server.getConfiguration().getMechanics().getViewDistance());
+            Collection<BaseEntity> inView = level.getEntityManager().getEntitiesInDistance(getPosition(), server.getConfiguration().getMechanics().getViewDistance() << 4);
             TLongSet toRemove = new TLongHashSet();
             Collection<BaseEntity> toAdd = new ArrayList<>();
 
@@ -152,7 +152,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             });
 
             for (BaseEntity entity : inView) {
-                if (entity.getEntityId() == getEntityId()) {
+                if (entity == this || (entity instanceof PlayerSession && !playersListed.contains(((PlayerSession) entity).getUniqueId()))) {
                     continue; // Can't add our self.
                 }
 
@@ -172,7 +172,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             });
 
             for (BaseEntity entity : toAdd) {
-                session.addToSendQueue(entity.createAddEntityPacket());
+                session.sendImmediatePackage(entity.createAddEntityPacket());
             }
         }
     }
@@ -456,16 +456,16 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         AddPlayerPacket addPlayer = new AddPlayerPacket();
         addPlayer.setUuid(session.getAuthData().getIdentity());
         addPlayer.setUsername(session.getAuthData().getDisplayName());
-        addPlayer.setThirdPartyName(getDisplayName().orElse(""));
+        addPlayer.setThirdPartyName(session.getClientData().getThirdPartyName());
         addPlayer.setPlatformId(0);
         addPlayer.setUniqueEntityId(getEntityId());
         addPlayer.setRuntimeEntityId(getEntityId());
         addPlayer.setPlatformChatId("");
-        addPlayer.setPosition(getGamePosition());
+        addPlayer.setPosition(getPosition());
         addPlayer.setMotion(getMotion());
         addPlayer.setRotation(getRotation());
         addPlayer.setHand(inventory.getItemInHand().orElse(null));
-        addPlayer.getMetadata().putAll(getMetadata());
+        addPlayer.getMetadata().putAll(getMetadataFlags());
         addPlayer.setFlags(data.getAbilities().getFlags());
         addPlayer.setCommandPermission(data.getCommandPermission());
         addPlayer.setFlags2(data.getAbilities().getFlags2());
@@ -955,7 +955,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 });
             }
 
-
+            session.updatePlayerList();
         }
     }
 
