@@ -423,17 +423,17 @@ public class NukkitServer implements Server {
 
 
     public void broadcastMessage(Message message) {
-        broadcast(message, BROADCAST_CHANNEL_USERS);
+        broadcastMessage(message, getOnlinePlayers());
     }
 
-    public void broadcastMessage(String message, Collection<MessageRecipient> recipients) {
-        for (MessageRecipient recipient : recipients) {
+    public void broadcastMessage(String message, Collection<Player> recipients) {
+        for (Player recipient : recipients) {
             recipient.sendMessage(message);
         }
     }
 
-    public void broadcastMessage(Message message, Collection<MessageRecipient> recipients) {
-        for (MessageRecipient recipient : recipients) {
+    public void broadcastMessage(Message message, Collection<Player> recipients) {
+        for (Player recipient : recipients) {
             recipient.sendMessage(message);
         }
     }

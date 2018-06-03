@@ -403,7 +403,7 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
                 PlayerJoinEvent event = new PlayerJoinEvent(session, joinMessage);
                 server.getEventManager().fire(event);
 
-                event.getJoinMessage().ifPresent(session::sendMessage);
+                event.getJoinMessage().ifPresent(server::broadcastMessage);
             }
         });
 
