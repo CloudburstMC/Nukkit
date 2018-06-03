@@ -116,10 +116,10 @@ public final class Rotation {
 
     @Override
     public String toString() {
-        return "Rotation{" +
+        return "Rotation(" +
                 "pitch=" + pitch +
                 ", yaw=" + yaw +
                 ", roll=" + roll +
-                '}';
+                ')';
     }
 }
