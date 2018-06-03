@@ -24,20 +24,15 @@ public class MoveEntityAbsolutePacket implements BedrockPacket {
         writeRuntimeEntityId(buffer, runtimeEntityId);
         buffer.writeShortLE(flags.get());
         writeVector3f(buffer, position);
-        buffer.writeFloatLE(rotation.getYaw());
-        buffer.writeFloatLE(rotation.getHeadYaw());
-        buffer.writeFloatLE(rotation.getPitch());
+        writeByteRotation(buffer, rotation);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
         runtimeEntityId = readRuntimeEntityId(buffer);
+        flags.set(buffer.readShortLE());
         position = readVector3f(buffer);
-        Rotation.from(
-                buffer.readFloatLE(),
-                buffer.readFloatLE(),
-                buffer.readFloatLE()
-        );
+        rotation = readByteRotation(buffer);
     }
 
     @Override
