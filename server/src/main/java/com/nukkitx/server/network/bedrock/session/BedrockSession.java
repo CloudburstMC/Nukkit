@@ -211,8 +211,8 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
                     log.error("Interrupted", e);
                 }
 
-                continue;
-            } else if (wrapper.getPackets().size() >= 100) {
+                //continue;
+            }/* else if (wrapper.getPackets().size() >= 100) {
                 // Reached a per-batch limit on packages, send these packages now
                 internalSendPackage(wrapper);
                 wrapper = new WrappedPacket();
@@ -223,7 +223,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
                 } catch (InterruptedException e) {
                     log.error("Interrupted", e);
                 }
-            }
+            }*/
 
             wrapper.getPackets().add(packet);
         }
