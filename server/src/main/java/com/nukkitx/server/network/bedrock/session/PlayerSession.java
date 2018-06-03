@@ -461,11 +461,11 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         addPlayer.setUniqueEntityId(getEntityId());
         addPlayer.setRuntimeEntityId(getEntityId());
         addPlayer.setPlatformChatId("");
-        addPlayer.setPosition(getPosition());
+        addPlayer.setPosition(getGamePosition());
         addPlayer.setMotion(getMotion());
         addPlayer.setRotation(getRotation());
         addPlayer.setHand(inventory.getItemInHand().orElse(null));
-        addPlayer.getMetadata().putAll(getMetadataFlags());
+        addPlayer.getMetadata().putAll(getMetadata());
         addPlayer.setFlags(data.getAbilities().getFlags());
         addPlayer.setCommandPermission(data.getCommandPermission());
         addPlayer.setFlags2(data.getAbilities().getFlags2());
