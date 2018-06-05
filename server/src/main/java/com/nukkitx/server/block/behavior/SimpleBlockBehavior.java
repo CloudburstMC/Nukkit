@@ -57,6 +57,6 @@ public class SimpleBlockBehavior implements BlockBehavior {
 
     @Override
     public boolean onPlace(PlayerSession session, Block against, ItemInstance withItem) {
-        return false;
+        return true;
     }
 }

@@ -38,16 +38,13 @@ public class WorldInteractionInventoryAction extends InventoryAction {
     @Override
     public void execute(PlayerSession session) {
         ItemInstance serverItem = session.getInventory().getItemInHand().orElse(BlockUtil.AIR);
-        log.debug("ServerItem: {}   OldItem: {}   NewItem{}", serverItem, getOldItem(), getNewItem());
         if (!serverItem.isMergeable(getNewItem())) {
-            log.debug("ServerItem and OldItem didn't match");
+            log.debug("Item thrown by client didn't match");
             session.sendPlayerInventory();
             return;
         }
-        log.debug("Action: {}", action);
         switch (action) {
             case DROP_ITEM:
-                log.debug("Item dropped");
                 int amountLeft = serverItem.getAmount() - getNewItem().getAmount();
                 if (amountLeft < 0) {
                     session.sendPlayerInventory();

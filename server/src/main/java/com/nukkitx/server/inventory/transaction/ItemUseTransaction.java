@@ -47,6 +47,7 @@ public class ItemUseTransaction extends ComplexTransaction {
                 break;
             case PLACE:
                 placeBlock(session, serverItem);
+                break;
             case USE:
                 useBlock(session, serverItem);
         }
@@ -110,10 +111,6 @@ public class ItemUseTransaction extends ComplexTransaction {
     }
 
     private void placeBlock(PlayerSession session, ItemInstance withItem) {
-        if (!withItem.getItemType().isBlock()) {
-            log.debug("{} tried to place a non-block type");
-            return;
-        }
         if (!session.ensureAndGet(PlayerData.class).getGameMode().canPlace()) {
             log.debug("{} is in a gamemode which cannot place blocks");
             return;
@@ -148,6 +145,14 @@ public class ItemUseTransaction extends ComplexTransaction {
             resetBlock(oldBlock, session);
             // Reset inventory
             session.sendPlayerInventory();
+        } else {
+            int amountLeft = withItem.getAmount();
+            if (amountLeft == 1) {
+                withItem = null;
+            } else {
+                withItem = withItem.toBuilder().amount(amountLeft - 1).build();
+            }
+            session.getInventory().setItem(session.getInventory().getHeldHotbarSlot(), withItem);
         }
     }
 
