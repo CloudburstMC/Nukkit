@@ -288,6 +288,7 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
                 if (data.getGameMode() != GameMode.SURVIVAL) {
                     return;
                 }
+
                 Optional<Block> block = session.getLevel().getBlockIfChunkLoaded(packet.getBlockPosition());
                 if (!block.isPresent()) {
                     log.debug("{} attempted to break an unloaded block at {}", session.getName(), packet.getBlockPosition());
@@ -297,7 +298,7 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
                 ItemInstance inHand = session.getInventory().getItemInHand().orElse(BlockUtil.AIR);
 
                 BlockBehavior blockBehavior = BlockBehaviors.getBlockBehavior(block.get().getBlockState().getBlockType());
-                float breakTime = blockBehavior.getBreakTime(session, block.get(), inHand);
+                float breakTime = (float) Math.ceil(blockBehavior.getBreakTime(session, block.get(), inHand) * 20);
                 session.getLevel().getPacketManager().queueEventForViewers(packet.getBlockPosition().toFloat(), LevelEventPacket.Event.BLOCK_START_BREAK, (int) (65535 / breakTime));
                 return;
             case CONTINUE_BREAK:
