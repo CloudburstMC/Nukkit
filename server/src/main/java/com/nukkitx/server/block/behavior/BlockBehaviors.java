@@ -15,7 +15,7 @@ public class BlockBehaviors {
     static {
         BLOCK_BEHAVIORS = ImmutableMap.<BlockType, BlockBehavior>builder()
                 .put(BlockTypes.DIRT, DirtBlockBehavior.INSTANCE)
-                .put(BlockTypes.GRASS_BLOCK, GrassBlockBehavior.INSTANCE)
+                .put(BlockTypes.GRASS_BLOCK, DirtBlockBehavior.INSTANCE)
                 .build();
     }
 
