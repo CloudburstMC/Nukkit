@@ -14,6 +14,8 @@ import cn.nukkit.network.protocol.SetEntityLinkPacket;
 
 import java.util.Objects;
 
+import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -85,7 +87,7 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
             pk = new SetEntityLinkPacket();
             pk.rider = getId();         // To the?
             pk.riding = entity.getId(); // From who?
-            pk.type = 3;                // Byte for leave
+            pk.type = TYPE_REMOVE;      // Byte for leave
             Server.broadcastPacket(this.hasSpawned.values(), pk);
 
             // Broadcast to player
@@ -93,7 +95,7 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
                 pk = new SetEntityLinkPacket();
                 pk.rider = 0;               // To the place of?
                 pk.riding = entity.getId(); // From what
-                pk.type = 3;                // Another byte for leave
+                pk.type = TYPE_REMOVE;      // Another byte for leave
                 ((Player) entity).dataPacket(pk);
             }
 
@@ -116,7 +118,7 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
             pk = new SetEntityLinkPacket();
             pk.rider = getId();         // To the?
             pk.riding = entity.getId(); // From who?
-            pk.type = 2;                // Type
+            pk.type = TYPE_PASSENGER;   // Type
             Server.broadcastPacket(this.hasSpawned.values(), pk);
 
             // Broadcast to player
@@ -124,7 +126,7 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
                 pk = new SetEntityLinkPacket();
                 pk.rider = 0;               // To the place of?
                 pk.riding = entity.getId(); // From what
-                pk.type = 2;                // Byte
+                pk.type = TYPE_PASSENGER;   // Byte
                 ((Player) entity).dataPacket(pk);
             }
 
@@ -133,7 +135,6 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
             entity.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
             linkedEntity = entity;
             updateRiderPosition(getMountedYOffset());
-            
         }
         return true;
     }
