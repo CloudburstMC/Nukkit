@@ -90,7 +90,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     @Override
     public int getSize() {
-        return 3;
+        return 5;
     }
 
     protected int getSlotIndex(int index) {

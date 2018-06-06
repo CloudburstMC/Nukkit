@@ -9,7 +9,7 @@ import cn.nukkit.math.Vector3;
  */
 public interface ChunkLoader {
 
-    Integer getLoaderId();
+    int getLoaderId();
 
     boolean isLoaderActive();
 

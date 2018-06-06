@@ -103,6 +103,14 @@ public class TimeCommand extends VanillaCommand {
                 value = Level.TIME_DAY;
             } else if ("night".equals(args[1])) {
                 value = Level.TIME_NIGHT;
+            } else if ("midnight".equals(args[1])) {
+                value = Level.TIME_MIDNIGHT;
+            } else if ("noon".equals(args[1])) {
+                value = Level.TIME_NOON;
+            } else if ("sunrise".equals(args[1])) {
+                value = Level.TIME_SUNRISE;
+            } else if ("sunset".equals(args[1])) {
+                value = Level.TIME_SUNSET;
             } else {
                 try {
                     value = Math.max(0, Integer.parseInt(args[1]));

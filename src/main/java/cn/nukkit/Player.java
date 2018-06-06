@@ -68,6 +68,7 @@ import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -126,8 +127,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected Map<Inventory, Integer> windows;
 
-    protected final Map<Integer, Inventory> windowIndex = new HashMap<>();
-    protected final Set<Integer> permanentWindows = new HashSet<>();
+    protected final Map<Integer, Inventory> windowIndex = new Int2ObjectOpenHashMap<>();
+    protected final Set<Integer> permanentWindows = new IntOpenHashSet();
 
     protected int messageCounter = 2;
 
@@ -165,7 +166,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Vector3 sleeping = null;
     protected Long clientID = null;
 
-    private Integer loaderId = null;
+    private int loaderId;
 
     protected float stepHeight = 0.6f;
 
@@ -225,13 +226,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public int pickedXPOrb = 0;
 
     protected int formWindowCount = 0;
-    protected Map<Integer, FormWindow> formWindows = new HashMap<>();
-    protected Map<Integer, FormWindow> serverSettings = new HashMap<>();
+    protected Map<Integer, FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
+    protected Map<Integer, FormWindow> serverSettings = new Int2ObjectOpenHashMap<>();
 
-    protected Map<Long, DummyBossBar> dummyBossBars = new HashMap<>();
+    protected Map<Long, DummyBossBar> dummyBossBars = new Long2ObjectLinkedOpenHashMap<>();
 
     private AsyncTask preLoginEventTask = null;
-    private boolean shouldLogin = false;
+    protected boolean shouldLogin = false;
 
     public int getStartActionTick() {
         return startAction;
@@ -532,7 +533,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this);
         }
 
-        if (this.isEnableClientCommand()) this.sendCommandData();
+        if (this.isEnableClientCommand() && spawned) this.sendCommandData();
     }
 
     public boolean isEnableClientCommand() {
@@ -548,6 +549,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendCommandData() {
+        if (!spawned) {
+            return;
+        }
         AvailableCommandsPacket pk = new AvailableCommandsPacket();
         Map<String, CommandDataVersions> data = new HashMap<>();
         int count = 0;
@@ -569,7 +573,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Boolean status = needACK.get(identifier);
                     if ((status == null || !status) && isOnline()) {
                         sendCommandData();
-                        return;
                     }
                 }
             }, 60, true);
@@ -814,6 +817,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected void doFirstSpawn() {
         this.spawned = true;
+
+        this.setEnableClientCommand(true);
 
         this.getAdventureSettings().update();
 
@@ -2000,8 +2005,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.setRemoveFormat(false);
         }
 
-        this.setEnableClientCommand(true);
-
         this.server.addOnlinePlayer(this);
         this.server.onPlayerCompleteLoginSequence(this);
     }
@@ -2139,6 +2142,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                         }
                     };
+
                     this.server.getScheduler().scheduleAsyncTask(this.preLoginEventTask);
 
                     this.processLogin();
@@ -2463,6 +2467,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 block = this.level.getBlock(pos);
                                 this.level.addParticle(new PunchBlockParticle(pos, block, face));
                             }
+                            break;
+                        case PlayerActionPacket.ACTION_START_SWIMMING:
+                            this.setSwimming(true);
+                            break;
+                        case PlayerActionPacket.ACTION_STOP_SWIMMING:
+                            this.setSwimming(false);
                             break;
                     }
 
@@ -4052,18 +4062,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             to = event.getTo();
         }
 
-        boolean levelChange = from.getLevel() != to.getLevel();
-        if (levelChange) {
-            switchLevel(to.getLevel());
-        }
-
         //TODO Remove it! A hack to solve the client-side teleporting bug! (inside into the block)
         if (super.teleport(to.getY() == to.getFloorY() ? to.add(0, 0.00001, 0) : to, null)) { // null to prevent fire of duplicate EntityTeleportEvent
             this.removeAllWindows();
 
             this.teleportPosition = new Vector3(this.x, this.y, this.z);
             this.forceMovement = this.teleportPosition;
-            this.sendPosition(this, this.yaw, this.pitch, levelChange ? MovePlayerPacket.MODE_NORMAL : MovePlayerPacket.MODE_TELEPORT);
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_TELEPORT);
 
             this.checkTeleportPosition();
 
@@ -4086,8 +4091,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected void forceSendEmptyChunks() {
         int chunkPositionX = this.getFloorX() >> 4;
         int chunkPositionZ = this.getFloorZ() >> 4;
-        for (int x = -3; x < 3; x++) {
-            for (int z = -3; z < 3; z++) {
+        for (int x = -chunkRadius; x < chunkRadius; x++) {
+            for (int z = -chunkRadius; z < chunkRadius; z++) {
                 FullChunkDataPacket chunk = new FullChunkDataPacket();
                 chunk.chunkX = chunkPositionX + x;
                 chunk.chunkZ = chunkPositionZ + z;
@@ -4426,7 +4431,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
-    public Integer getLoaderId() {
+    public int getLoaderId() {
         return this.loaderId;
     }
 
@@ -4483,20 +4488,30 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public boolean switchLevel(Level level) {
         Level oldLevel = this.level;
         if (super.switchLevel(level)) {
+            SetSpawnPositionPacket spawnPosition = new SetSpawnPositionPacket();
+            spawnPosition.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+            Position spawn = level.getSpawnLocation();
+            spawnPosition.x = spawn.getFloorX();
+            spawnPosition.y = spawn.getFloorY();
+            spawnPosition.z = spawn.getFloorZ();
+            this.dataPacket(spawnPosition);
+
             // Remove old chunks
             for (long index : new ArrayList<>(this.usedChunks.keySet())) {
                 int chunkX = Level.getHashX(index);
                 int chunkZ = Level.getHashZ(index);
                 this.unloadChunk(chunkX, chunkZ, oldLevel);
             }
-
-            //TODO: Using the ChangeDimensionPacket causes stops the client from being able to move. This is because we do not know when the chunks will finish loading.
-
-            // Send empty chunks
-            forceSendEmptyChunks();
-
             this.usedChunks.clear();
 
+            forceSendEmptyChunks();
+
+            SetTimePacket pk = new SetTimePacket();
+            pk.time = level.getTime();
+            this.dataPacket(pk);
+
+            int distance = this.viewDistance * 2 * 16 * 2;
+            this.sendPosition(this.add(distance, 0, distance), this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
             return true;
         }
 
