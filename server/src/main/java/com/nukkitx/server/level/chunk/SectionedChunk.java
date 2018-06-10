@@ -168,7 +168,10 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         // From the top, however...
         boolean blocked = false;
         for (int y = maxHeight; y > 0; y--) {
-            BlockType type = BlockTypes.byId(sections[y >> 4].getBlockId(x, y & 15, z, 0));
+            BlockState state = NukkitLevel.getPaletteManager()
+                    .getBlockState(sections[y >> 4].getBlockId(x, y & 15, z, 0))
+                    .orElseThrow(() -> new IllegalStateException("Runtime ID is not registered"));
+            BlockType type = state.getBlockType();
             byte light = 15;
             if (!blocked) {
                 if (!type.isTransparent()) {
@@ -234,7 +237,9 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         TLongSet visitedRemove = new TLongHashSet();
 
         ChunkSection section = getOrCreateSection(y >> 4);
-        BlockType ourType = BlockTypes.byId(section.getBlockId(x, y & 15, z, 0));
+        BlockType ourType = NukkitLevel.getPaletteManager()
+                .getBlockState(section.getBlockId(x, y & 15, z, 0))
+                .orElseThrow(() -> new IllegalStateException("Runtime ID is not registered")).getBlockType();
         byte currentBlockLight = section.getBlockLight(x, y & 15, z);
         byte newBlockLight = (byte) ourType.emitsLight();
 
@@ -264,7 +269,8 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         while ((toSpread = spread.poll()) != null) {
             ChunkSection cs = getOrCreateSection(toSpread.getY() >> 4);
             byte adjustedLight = (byte) (cs.getBlockLight(toSpread.getX(), toSpread.getY() & 15, toSpread.getZ())
-                    - BlockTypes.byId(cs.getBlockId(toSpread.getX(), toSpread.getY() & 15, toSpread.getZ(), 0)).filtersLight());
+                    - NukkitLevel.getPaletteManager().getBlockState(cs.getBlockId(toSpread.getX(), toSpread.getY() & 15, toSpread.getZ(), 0))
+                    .orElseThrow(() -> new IllegalStateException("Runtime ID is not registered")).getBlockType().filtersLight());
 
             if (adjustedLight >= 1) {
                 computeSpreadBlockLight(toSpread.sub(1, 0, 0), adjustedLight, spread, visitedSpread);
