@@ -186,16 +186,16 @@ public class BlockVector3 implements Cloneable {
     }
 
     @Override
-    public boolean equals(Object ob) {
-        if (ob == null) return false;
-        if (ob == this) return true;
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (o == this) return true;
 
-        if (!(ob instanceof BlockVector3)) return false;
+        if (!(o instanceof BlockVector3)) return false;
+        BlockVector3 that = (BlockVector3) o;
 
-        return
-                this.x == ((BlockVector3) ob).x &&
-                        this.y == ((BlockVector3) ob).y &&
-                        this.z == ((BlockVector3) ob).z;
+        return this.x == that.x &&
+                this.y == that.y &&
+                this.z == that.z;
     }
 
     @Override
