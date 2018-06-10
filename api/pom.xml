@@ -20,9 +20,21 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove</artifactId>
+            <version>3.1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>25.0-jre</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>1.7.21</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

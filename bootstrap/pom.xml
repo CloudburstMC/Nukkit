@@ -84,6 +84,7 @@
                 </dependencies>
                 <executions>
                     <execution>
+                        <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
@@ -96,6 +97,32 @@
                         </transformer>
                     </transformers>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>jrebel-maven-plugin</artifactId>
+                <version>1.1.8</version>
+                <configuration>
+                    <classpath>
+                        <resources>
+                            <resource>
+                                <directory>../api/target/classes</directory>
+                            </resource>
+                            <resource>
+                                <directory>../server/target/classes</directory>
+                            </resource>
+                        </resources>
+                    </classpath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-rebel-xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
