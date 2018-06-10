@@ -51,7 +51,7 @@ public class LevelPaletteManager {
         }
 
         for (RuntimeEntry entry : entries) {
-            BlockType blockType = BlockTypes.byId(entry.id);
+            BlockType blockType = BlockTypes.byId(entry.id > 255 ? 255 - entry.id : entry.id);
             Metadata metadata = entry.data == 0 ? null : MetadataSerializers.deserializeMetadata(blockType, (short) entry.data);
             BlockState state = new NukkitBlockStateBuilder().setBlockType(blockType).setMetadata(metadata).build();
             registerRuntimeId(entry.runtimeId, state);

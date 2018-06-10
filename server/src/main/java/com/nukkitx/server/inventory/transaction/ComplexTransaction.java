@@ -48,7 +48,9 @@ public abstract class ComplexTransaction implements InventoryTransaction {
 
     protected boolean isHandValid(ItemInstance withItem, PlayerSession session) {
         if (!withItem.equals(getItem())) {
-            log.debug("{} interacted with an object using {} but has {} in hand {}", session.getName(), getItem(), withItem, getSlot());
+            if (log.isDebugEnabled()) {
+                log.debug("{} interacted with an object using {} but has {} in hand {}", session.getName(), getItem(), withItem, getSlot());
+            }
             session.sendPlayerInventory();
             return false;
         }

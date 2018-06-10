@@ -124,6 +124,9 @@ public interface NetworkPacketHandler {
     default void handle(SetDefaultGameTypePacket packet) {
     }
 
+    default void handle(SetLocalPlayerAsInitializedPacket packet) {
+    }
+
     default void handle(SetPlayerGameTypePacket packet) {
     }
 

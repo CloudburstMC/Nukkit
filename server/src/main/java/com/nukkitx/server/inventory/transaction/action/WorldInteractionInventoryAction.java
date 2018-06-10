@@ -39,7 +39,9 @@ public class WorldInteractionInventoryAction extends InventoryAction {
     public void execute(PlayerSession session) {
         ItemInstance serverItem = session.getInventory().getItemInHand().orElse(BlockUtil.AIR);
         if (!serverItem.isMergeable(getNewItem())) {
-            log.debug("Item thrown by client didn't match");
+            if (log.isDebugEnabled()) {
+                log.debug("Item thrown by client didn't match");
+            }
             session.sendPlayerInventory();
             return;
         }

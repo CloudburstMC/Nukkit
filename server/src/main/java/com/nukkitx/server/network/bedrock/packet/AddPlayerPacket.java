@@ -61,7 +61,7 @@ public class AddPlayerPacket implements BedrockPacket {
         writeUnsignedInt(buffer, flags2);
         writeUnsignedInt(buffer, playerPermission.ordinal());
         writeUnsignedInt(buffer, customFlags);
-        buffer.writeLongLE(uniqueEntityId);
+        buffer.writeLongLE(0);
         writeEntityLinks(buffer, entityLinks);
     }
 

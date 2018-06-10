@@ -20,6 +20,7 @@ import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.stream.NBTOutputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.Tag;
+import com.nukkitx.server.block.BlockUtil;
 import com.nukkitx.server.entity.Attribute;
 import com.nukkitx.server.entity.EntityLink;
 import com.nukkitx.server.item.ItemUtil;
@@ -280,8 +281,9 @@ public final class BedrockUtil {
     public static ItemInstance readItemInstance(ByteBuf buffer) {
         Preconditions.checkNotNull(buffer, "buffer");
         int id = readInt(buffer);
-        if (id <= 0) {
-            return new NukkitItemInstance(BlockTypes.AIR, 1, null);
+
+        if (id == 0) {
+            return BlockUtil.AIR;
         }
 
         int aux = readInt(buffer);

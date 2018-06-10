@@ -23,7 +23,19 @@ public interface BlockBehavior extends ItemBehavior {
 
     Collection<ItemInstance> getDrops(Player player, Block block, @Nullable ItemInstance item);
 
-    float getBreakTime(Player player, Block block, @Nullable ItemInstance item);
+    default float getBreakTime(Player player, Block block, @Nullable ItemInstance item) {
+        float breakTime = block.getBlockState().getBlockType().hardness();
+
+        if (isCorrectTool(item)) {
+            breakTime *= 1.5;
+        } else {
+            breakTime *= 5;
+        }
+
+        breakTime /= getMiningEfficiency(item);
+
+        return breakTime;
+    }
 
     boolean isCorrectTool(@Nullable ItemInstance item);
 

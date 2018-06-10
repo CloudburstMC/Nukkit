@@ -31,23 +31,8 @@ public class SimpleBlockBehavior implements BlockBehavior {
     }
 
     @Override
-    public float getBreakTime(Player player, Block block, @Nullable ItemInstance item) {
-        float breakTime = block.getBlockState().getBlockType().hardness();
-
-        if (isCorrectTool(item)) {
-            breakTime *= 5;
-        } else {
-            breakTime *= 1.5;
-        }
-
-        breakTime /= getMiningEfficiency(item);
-
-        return breakTime;
-    }
-
-    @Override
     public boolean isCorrectTool(@Nullable ItemInstance item) {
-        return item != null;
+        return false;
     }
 
     @Override

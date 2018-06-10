@@ -135,7 +135,9 @@ public class NukkitInventory implements Inventory {
         for (int i = 0; i < contents.length; i++) {
             if (contents[i] == null) {
                 contents[i] = item;
-                log.debug("Slot {} set with item ", i, item);
+                if (log.isDebugEnabled()) {
+                    log.debug("Slot {} set with item ", i, item);
+                }
                 for (InventoryObserver observer : observers) {
                     observer.onInventorySlotChange(i, null, item, this, session);
                 }

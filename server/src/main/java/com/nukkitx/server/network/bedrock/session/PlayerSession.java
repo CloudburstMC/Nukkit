@@ -37,6 +37,7 @@ import com.nukkitx.server.entity.component.PlayerDataComponent;
 import com.nukkitx.server.inventory.InventoryObserver;
 import com.nukkitx.server.inventory.NukkitInventoryType;
 import com.nukkitx.server.inventory.NukkitPlayerInventory;
+import com.nukkitx.server.item.NukkitItemInstance;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.level.chunk.FullChunkDataPacketCreator;
 import com.nukkitx.server.level.util.AroundPointChunkComparator;
@@ -152,7 +153,8 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             });
 
             for (BaseEntity entity : inView) {
-                if (entity == this || (entity instanceof PlayerSession && !playersListed.contains(((PlayerSession) entity).getUniqueId()))) {
+                if (entity == this || (entity instanceof PlayerSession &&
+                        (!playersListed.contains(((PlayerSession) entity).getUniqueId())))) {
                     continue; // Can't add our self.
                 }
 
@@ -297,7 +299,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 entry.setEntityId(player.getEntityId());
                 entry.setSkin(data.getSkin());
                 entry.setName(player.getName());
-                entry.setThirdPartyName(getDisplayName().orElse(""));
+                entry.setThirdPartyName(session.getClientData().getThirdPartyName());
                 entry.setPlatformId(0);
                 entry.setXuid(player.getXuid().orElse(""));
                 entry.setPlatformChatId("");
@@ -336,7 +338,24 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     }
 
     public void sendPlayerInventory() {
+        InventoryContentPacket initContents = new InventoryContentPacket();
+        initContents.setWindowId(0x7b);
+        initContents.setItems(new NukkitItemInstance[0]);
+        session.addToSendQueue(initContents);
 
+        // Because MCPE sends the hotbar as inventory, we have to add 9 more slots.
+        InventoryContentPacket inventoryContents = new InventoryContentPacket();
+        inventoryContents.setWindowId(0x00);
+        inventoryContents.setItems(Arrays.copyOf(inventory.getAllContents(), inventory.getInventoryType().getSize() + 9));
+
+        session.addToSendQueue(inventoryContents);
+
+        MobEquipmentPacket mobEquipment = new MobEquipmentPacket();
+        mobEquipment.setRuntimeEntityId(getEntityId());
+        mobEquipment.setItem(getInventory().getItemInHand().orElse(null));
+        mobEquipment.setInventorySlot((byte) getInventory().getHeldHotbarSlot());
+
+        session.addToSendQueue(mobEquipment);
     }
 
     void sendMovePlayer() {

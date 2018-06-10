@@ -146,6 +146,7 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
                 .registerPacket(LabTablePacket::new, 109)
                 .registerPacket(UpdateBlockSyncedPacket::new, 110)
                 .registerPacket(MoveEntityDeltaPacket::new, 111)
+                .registerPacket(SetLocalPlayerAsInitializedPacket::new, 112)
                 .build();
 
     }

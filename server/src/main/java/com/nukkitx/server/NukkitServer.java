@@ -318,11 +318,6 @@ public class NukkitServer implements Server {
 
         pluginManager.enablePlugins(PluginLoadOrder.POSTWORLD);
 
-        // Netty leak detection
-        /*ResourceLeakDetector.Level leakLevel = ResourceLeakDetector.Level.valueOf(configuration.getAdvanced().getResourceLeakDetectorLevel());
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-        configuration.getAdvanced().setResourceLeakDetectorLevel(leakLevel.name());*/
-
         log.info(TranslatableMessage.of("nukkit.server.networkStart", configuration.getNetwork().getAddress(), Integer.toString(configuration.getNetwork().getPort())));
         if (configuration.getNetwork().isQueryEnabled()) {
             log.info(TranslatableMessage.of("nukkit.server.query.start"));
@@ -490,7 +485,9 @@ public class NukkitServer implements Server {
         listeners.forEach(NetworkListener::close);
 
         // Safely disable plugins.
-        log.debug("Disabling plugins");
+        if (log.isDebugEnabled()) {
+            log.debug("Disabling plugins");
+        }
         this.pluginManager.disablePlugins();
 
         // Unload all levels.

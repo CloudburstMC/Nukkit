@@ -10,6 +10,7 @@ import com.nukkitx.api.event.block.BlockPlaceEvent;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.metadata.item.GenericDamageValue;
+import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.api.util.GameMode;
 import com.nukkitx.api.util.data.BlockFace;
 import com.nukkitx.server.block.BlockUtil;
@@ -61,7 +62,9 @@ public class ItemUseTransaction extends ComplexTransaction {
 
         Optional<Chunk> chunk = session.getLevel().getChunkIfLoaded(chunkX, chunkZ);
         if (!chunk.isPresent()) {
-            log.debug("{} tried to break block at unloaded chunk ({}, {})", session.getName(), chunkX, chunkZ);
+            if (log.isDebugEnabled()) {
+                log.debug("{} tried to break block at unloaded chunk ({}, {})", session.getName(), chunkX, chunkZ);
+            }
             return;
         }
 
@@ -112,7 +115,9 @@ public class ItemUseTransaction extends ComplexTransaction {
 
     private void placeBlock(PlayerSession session, ItemInstance withItem) {
         if (!session.ensureAndGet(PlayerData.class).getGameMode().canPlace()) {
-            log.debug("{} is in a gamemode which cannot place blocks");
+            if (log.isDebugEnabled()) {
+                log.debug("{} is in a gamemode which cannot place blocks");
+            }
             return;
         }
 
@@ -124,13 +129,23 @@ public class ItemUseTransaction extends ComplexTransaction {
         Optional<Block> block = session.getLevel().getBlockIfChunkLoaded(position);
         Optional<Block> optionalOld = session.getLevel().getBlockIfChunkLoaded(blockPosition);
         if (!block.isPresent() || !optionalOld.isPresent()) {
-            log.debug("{} tried to place block at unloaded chunk ({}, {})", session.getName(), chunkX, chunkZ);
+            if (log.isDebugEnabled()) {
+                log.debug("{} tried to place block at unloaded chunk ({}, {})", session.getName(), chunkX, chunkZ);
+            }
             return;
         }
         Block against = block.get();
         Block oldBlock = optionalOld.get();
 
-        if (!isHandValid(withItem, session)) {
+        if (!oldBlock.getBlockState().getBlockType().isFloodable()) {
+            //TODO: Create a separate property for this. Not all floodable items can be replaced.
+            return;
+        }
+
+        Vector3f min = oldBlock.getBlockPosition().toFloat();
+        BoundingBox boundingBlock = new BoundingBox(min.add(1, 1, 1), min);
+
+        if (!isHandValid(withItem, session) || session.getBoundingBox().intersectsWith(boundingBlock)) {
             resetBlock(oldBlock, session);
             return;
         }
@@ -147,12 +162,12 @@ public class ItemUseTransaction extends ComplexTransaction {
             session.sendPlayerInventory();
         } else {
             int amountLeft = withItem.getAmount();
-            if (amountLeft == 1) {
-                withItem = null;
+            if (amountLeft <= 1) {
+                session.getInventory().clearItem(session.getInventory().getHeldHotbarSlot());
             } else {
-                withItem = withItem.toBuilder().amount(amountLeft - 1).build();
+                session.getInventory().setItem(session.getInventory().getHeldHotbarSlot(),
+                        withItem.toBuilder().amount(amountLeft - 1).build());
             }
-            session.getInventory().setItem(session.getInventory().getHeldHotbarSlot(), withItem);
         }
     }
 

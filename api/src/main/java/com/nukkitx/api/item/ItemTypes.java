@@ -234,7 +234,7 @@ public class ItemTypes {
         public IntItem(int id, String name, int maxStackSize, Class<? extends Metadata> data, ToolType toolType, TierType tierType) {
             this.id = id;
             this.name = name.toUpperCase();
-            this.maxStackSize = maxStackSize;
+            this.maxStackSize = maxStackSize < 1 ? 64 : maxStackSize;
             this.data = data;
             this.toolType = Optional.ofNullable(toolType);
             this.tierType = Optional.ofNullable(tierType);

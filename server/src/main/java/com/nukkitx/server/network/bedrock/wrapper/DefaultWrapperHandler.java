@@ -55,7 +55,9 @@ public class DefaultWrapperHandler implements WrapperHandler {
             try {
                 decompressed = zlib.inflate(compressed);
             } catch (Exception e) {
-                log.debug("INFLATION ERROR \n{}", ByteBufUtil.prettyHexDump(compressed));
+                if (log.isDebugEnabled()) {
+                    log.debug("INFLATION ERROR \n{}", ByteBufUtil.prettyHexDump(compressed));
+                }
                 throw new RuntimeException("Unable to decompress packet", e);
             }
             while (decompressed.isReadable()) {

@@ -39,8 +39,10 @@ public class LevelEntityManager {
     }
 
     public void registerEntity(BaseEntity entity) {
-        entities.put(entity.getEntityId(), entity);
-        entitiesChanged.set(true);
+        synchronized (entities) {
+            entities.put(entity.getEntityId(), entity);
+            entitiesChanged.set(true);
+        }
     }
 
     public void deregisterEntity(BaseEntity entity) {

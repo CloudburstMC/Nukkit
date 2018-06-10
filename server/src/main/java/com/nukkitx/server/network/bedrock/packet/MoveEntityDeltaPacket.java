@@ -21,7 +21,7 @@ public class MoveEntityDeltaPacket implements BedrockPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        buffer.writeShortLE(flags.get());
+        buffer.writeByte(flags.get());
         writeInt(buffer, HAS_X, movementDelta.getX());
         writeInt(buffer, HAS_Y, movementDelta.getY());
         writeInt(buffer, HAS_Z, movementDelta.getZ());
@@ -32,7 +32,7 @@ public class MoveEntityDeltaPacket implements BedrockPacket {
 
     @Override
     public void decode(ByteBuf buffer) {
-        flags.set(buffer.readShortLE());
+        flags.set(buffer.readByte());
         movementDelta = Vector3i.from(
                 readInt(buffer, HAS_X),
                 readInt(buffer, HAS_Y),

@@ -213,7 +213,9 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
         }
         int hotbarSlot = packet.getHotbarSlot();
         if (hotbarSlot < 0 || hotbarSlot > 8) {
-            log.debug("{} sent hotbar slot {}. Expected 0-8", session.getName(), hotbarSlot);
+            if (log.isDebugEnabled()) {
+                log.debug("{} sent hotbar slot {}. Expected 0-8", session.getName(), hotbarSlot);
+            }
             return;
         }
 
@@ -222,7 +224,9 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
 
         ItemInstance serverItem = session.getInventory().getItem(slot).orElse(BlockUtil.AIR);
         if (!serverItem.equals(packet.getItem())) {
-            log.debug("{} tried to equip {} but has {} in slot {}", session.getName(), packet.getItem(), serverItem, hotbarSlot);
+            if (log.isDebugEnabled()) {
+                log.debug("{} tried to equip {} but has {} in slot {}", session.getName(), packet.getItem(), serverItem, hotbarSlot);
+            }
             session.sendPlayerInventory();
             return;
         }
@@ -291,15 +295,17 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
 
                 Optional<Block> block = session.getLevel().getBlockIfChunkLoaded(packet.getBlockPosition());
                 if (!block.isPresent()) {
-                    log.debug("{} attempted to break an unloaded block at {}", session.getName(), packet.getBlockPosition());
+                    if (log.isDebugEnabled()) {
+                        log.debug("{} attempted to break an unloaded block at {}", session.getName(), packet.getBlockPosition());
+                    }
                     return;
                 }
 
                 ItemInstance inHand = session.getInventory().getItemInHand().orElse(BlockUtil.AIR);
 
                 BlockBehavior blockBehavior = BlockBehaviors.getBlockBehavior(block.get().getBlockState().getBlockType());
-                float breakTime = (float) Math.ceil(blockBehavior.getBreakTime(session, block.get(), inHand) * 20);
-                session.getLevel().getPacketManager().queueEventForViewers(packet.getBlockPosition().toFloat(), LevelEventPacket.Event.BLOCK_START_BREAK, (int) (65535 / breakTime));
+                int breakTime = ((int) Math.ceil(blockBehavior.getBreakTime(session, block.get(), inHand))) * 5;
+                session.getLevel().getPacketManager().queueEventForViewers(packet.getBlockPosition().toFloat(), LevelEventPacket.Event.BLOCK_START_BREAK, (65534 + breakTime) / breakTime);
                 return;
             case CONTINUE_BREAK:
                 if (data.getGameMode() != GameMode.SURVIVAL) {
@@ -307,7 +313,9 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
                 }
                 Optional<Block> blockBreakingOptional = session.getLevel().getBlockIfChunkLoaded(packet.getBlockPosition());
                 if (!blockBreakingOptional.isPresent()) {
-                    log.debug("{} attempted to break an unloaded block at {}", session.getName(), packet.getBlockPosition());
+                    if (log.isDebugEnabled()) {
+                        log.debug("{} attempted to break an unloaded block at {}", session.getName(), packet.getBlockPosition());
+                    }
                     return;
                 }
                 BlockState blockBreakingState = blockBreakingOptional.get().getBlockState();
@@ -392,11 +400,8 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
 
                 session.sendMovePlayer();
                 session.updateViewableEntities();
-                session.updatePlayerList();
 
                 //session.addToSendQueue(server.getCommandManager().createAvailableCommandsPacket(PlayerSession.this));
-
-                session.setSpawned(true);
 
                 TranslationMessage joinMessage = new TranslationMessage(TextFormat.YELLOW + "%multiplayer.player.joined", session.getName());
                 log.info(TranslatableMessage.of(joinMessage));
@@ -494,6 +499,14 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
     @Override
     public void handle(ServerSettingsRequestPacket packet) {
 
+    }
+
+    @Override
+    public void handle(SetLocalPlayerAsInitializedPacket packet) {
+        //Player has spawned.
+        session.setSpawned(true);
+
+        session.updatePlayerList();
     }
 
     @Override

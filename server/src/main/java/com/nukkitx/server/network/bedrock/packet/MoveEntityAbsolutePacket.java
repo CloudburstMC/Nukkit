@@ -12,8 +12,8 @@ import static com.nukkitx.server.network.bedrock.BedrockUtil.*;
 
 @Data
 public class MoveEntityAbsolutePacket implements BedrockPacket {
-    private static final int FLAG_ON_GROUND = 0x01;
-    private static final int FLAG_TELEPORTED = 0x02;
+    private static final int FLAG_TELEPORTED = 0x01;
+    private static final int FLAG_ON_GROUND = 0x02;
     private long runtimeEntityId;
     private final IntBitSet flags = new IntBitSet();
     private Vector3f position;
@@ -22,7 +22,7 @@ public class MoveEntityAbsolutePacket implements BedrockPacket {
     @Override
     public void encode(ByteBuf buffer) {
         writeRuntimeEntityId(buffer, runtimeEntityId);
-        buffer.writeShortLE(flags.get());
+        buffer.writeByte(flags.get());
         writeVector3f(buffer, position);
         writeByteRotation(buffer, rotation);
     }
@@ -30,7 +30,7 @@ public class MoveEntityAbsolutePacket implements BedrockPacket {
     @Override
     public void decode(ByteBuf buffer) {
         runtimeEntityId = readRuntimeEntityId(buffer);
-        flags.set(buffer.readShortLE());
+        flags.set(buffer.readByte());
         position = readVector3f(buffer);
         rotation = readByteRotation(buffer);
     }

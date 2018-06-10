@@ -361,9 +361,12 @@ public class BlockTypes {
         public IntBlock(int id, String name, int maxStackSize, boolean diggable, boolean transparent, boolean flammable,
                         boolean floodable, boolean solid, int emitLight, int filterLight, float hardness, int burnChance,
                         int burnability, float resistance, Class<? extends Metadata> aClass, Class<? extends BlockEntity> blockEntityClass) {
+            if (id > 255) {
+                id = 255 - id;
+            }
             this.id = id;
             this.name = name;
-            this.maxStackSize = maxStackSize;
+            this.maxStackSize = maxStackSize < 1 ? 64 : maxStackSize;
             this.diggable = diggable;
             this.transparent = transparent;
             this.flammable = flammable;
