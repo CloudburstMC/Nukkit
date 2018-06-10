@@ -1394,7 +1394,8 @@ public abstract class Entity extends Location implements Metadatable {
             fallDistance = (float) (this.highestPosition - this.y);
 
             if (fallDistance > 0) {
-                if (this instanceof EntityLiving && !this.isInsideOfWater()) {
+                // check if we fell into at least 1 block of water
+                if (this instanceof EntityLiving && !(this.getLevelBlock() instanceof BlockWater)) {
                     this.fall(fallDistance);
                 }
                 this.resetFallDistance();
