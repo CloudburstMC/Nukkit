@@ -60,7 +60,7 @@ public class KillCommand extends VanillaCommand {
                         }
                     }
                 }
-                sender.sendMessage("\u00A76Killed all entities");
+                sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.entities.successful"));
             } else if (args[0].equals("@s")) {
                 if (!sender.hasPermission("nukkit.command.kill.self")) {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
@@ -86,7 +86,7 @@ public class KillCommand extends VanillaCommand {
                         }
                     }
                 }
-                sender.sendMessage("\u00A76Killed all players");
+                sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.all.successful"));
             } else {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             }
