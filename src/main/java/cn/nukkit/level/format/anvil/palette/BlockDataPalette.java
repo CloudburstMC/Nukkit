@@ -3,6 +3,7 @@ package cn.nukkit.level.format.anvil.palette;
 import cn.nukkit.Server;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.ThreadCache;
+
 import java.util.Arrays;
 
 /**
@@ -43,7 +44,11 @@ public final class BlockDataPalette implements Cloneable {
 
             char[] raw = rawData;
             if (raw == null) {
-                raw = encodedData.toRaw();
+                if (encodedData != null) {
+                    raw = encodedData.toRaw();
+                } else {
+                    raw = new char[4096];
+                }
                 for (int i = 0; i < 4096; i++) {
                     raw[i] = palette.getKey(raw[i]);
                 }

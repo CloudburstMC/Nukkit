@@ -205,7 +205,7 @@ public class CraftingManager {
     }
 
     private static int getFullItemHash(Item item) {
-        return getItemHash(item) + item.getCount() << 16;
+        return getItemHash(item) | item.getCount() << 16;
     }
 
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
