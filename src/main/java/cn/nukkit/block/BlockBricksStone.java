@@ -7,14 +7,18 @@ import cn.nukkit.item.ItemTool;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockBricksStone extends BlockSolid {
+public class BlockBricksStone extends BlockSolidMeta {
     public static final int NORMAL = 0;
     public static final int MOSSY = 1;
     public static final int CRACKED = 2;
     public static final int CHISELED = 3;
 
-
     public BlockBricksStone() {
+        this(0);
+    }
+
+    public BlockBricksStone(int meta) {
+        super(meta);
     }
 
     @Override
