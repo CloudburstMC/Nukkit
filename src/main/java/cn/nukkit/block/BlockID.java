@@ -99,7 +99,6 @@ public interface BlockID {
     int STONE_PRESSURE_PLATE = 70;
     int IRON_DOOR_BLOCK = 71;
     int WOODEN_PRESSURE_PLATE = 72;
-
     int REDSTONE_ORE = 73;
     int GLOWING_REDSTONE_ORE = 74;
     int LIT_REDSTONE_ORE = 74;
@@ -167,7 +166,6 @@ public interface BlockID {
     int DRAGON_EGG = 122;
     int REDSTONE_LAMP = 123;
     int LIT_REDSTONE_LAMP = 124;
-    //Note: dropper CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
     int DROPPER = 125;
     int ACTIVATOR_RAIL = 126;
     int COCOA = 127;
@@ -184,7 +182,7 @@ public interface BlockID {
     int BIRCH_WOODEN_STAIRS = 135;
     int JUNGLE_WOOD_STAIRS = 136;
     int JUNGLE_WOODEN_STAIRS = 136;
-
+    int COMMAND_BLOCK = 137;
     int BEACON = 138;
     int COBBLE_WALL = 139;
     int STONE_WALL = 139;
@@ -263,7 +261,6 @@ public interface BlockID {
     int DOUBLE_PURPUR_SLAB = 204;
     int PURPUR_SLAB = 205;
     int END_BRICKS = 206;
-    //Note: frosted ice CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
     int ICE_FROSTED = 207;
     int END_ROD = 208;
     int END_GATEWAY = 209;
@@ -299,9 +296,9 @@ public interface BlockID {
     int BEETROOT_BLOCK = 244;
     int STONECUTTER = 245;
     int GLOWING_OBSIDIAN = 246;
-    int NETHER_REACTOR = 247; //Should not be removed
+    int NETHER_REACTOR = 247;
 
     int PISTON_EXTENSION = 250;
-
     int OBSERVER = 251;
+    int STRUCTURE_BLOCK = 252;
 }
