@@ -27,12 +27,7 @@ public class LoginPacket implements BedrockPacket {
 
     @Override
     public void decode(ByteBuf buffer) {
-        buffer.markReaderIndex();
         protocolVersion = buffer.readInt();
-        if (protocolVersion > 65535) {
-            buffer.resetReaderIndex();
-            protocolVersion = buffer.readUnsignedShort();
-        }
 
         ByteBuf jwt = buffer.readSlice(readUnsignedInt(buffer)); // Get the JWT.
         chainData = readLEAsciiString(jwt);

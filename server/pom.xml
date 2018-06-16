@@ -7,15 +7,15 @@
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
-        <version>1.5.0.1-SNAPSHOT</version>
+        <version>1.6.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>nukkitx-server</artifactId>
-    <version>1.5.0.1-SNAPSHOT</version>
+    <version>1.6.0.1-SNAPSHOT</version>
     <name>NukkitX Server</name>
 
     <properties>
-        <network.version>1.0.12-SNAPSHOT</network.version>
+        <network.version>1.0.13-SNAPSHOT</network.version>
     </properties>
 
     <dependencies>

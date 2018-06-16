@@ -25,7 +25,7 @@ import java.util.Arrays;
 @Immutable
 @RequiredArgsConstructor
 public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
-    public static final int BROADCAST_PROTOCOL_VERSION = 274;
+    public static final int BROADCAST_PROTOCOL_VERSION = 280;
     public static final BedrockPacketCodec DEFAULT;
 
     private final int[] compatibleVersions;
@@ -35,6 +35,7 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
     static {
         DEFAULT = builder()
                 .addCompatibleVersion(273)
+                .addCompatibleVersion(280)
                 .registerPacket(LoginPacket::new, 1)
                 .registerPacket(PlayStatusPacket::new, 2)
                 .registerPacket(ServerToClientHandshakePacket::new, 3)
@@ -146,7 +147,10 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
                 .registerPacket(LabTablePacket::new, 109)
                 .registerPacket(UpdateBlockSyncedPacket::new, 110)
                 .registerPacket(MoveEntityDeltaPacket::new, 111)
-                .registerPacket(SetLocalPlayerAsInitializedPacket::new, 112)
+                .registerPacket(SetScoreboardIdentityPacket::new, 112)
+                .registerPacket(SetLocalPlayerAsInitializedPacket::new, 113)
+                .registerPacket(UpdateSoftEnumPacket::new, 114)
+                .registerPacket(NetworkStackLatencyPacket::new, 115)
                 .build();
 
     }
@@ -156,13 +160,12 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
     }
 
     @Override
-    public BedrockPacket tryDecode(ByteBuf byteBuf) {
-        short id = byteBuf.readUnsignedByte();
-        byteBuf.skipBytes(2); // This is for split-screen.
+    public BedrockPacket tryDecode(ByteBuf buf) {
+        int id = VarInts.readUnsignedInt(buf);
         BedrockPacket packet = factories[id].newInstance();
-        packet.decode(byteBuf);
-        if (log.isDebugEnabled() && byteBuf.isReadable()) {
-            log.debug(packet.getClass().getSimpleName() + " still has " + byteBuf.readableBytes() + " bytes to read!");
+        packet.decode(buf);
+        if (log.isDebugEnabled() && buf.isReadable()) {
+            log.debug(packet.getClass().getSimpleName() + " still has " + buf.readableBytes() + " bytes to read!");
         }
         return packet;
     }
@@ -171,7 +174,6 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
     public ByteBuf tryEncode(BedrockPacket packet) {
         ByteBuf buf = PooledByteBufAllocator.DEFAULT.directBuffer();
         VarInts.writeUnsignedInt(buf, getId(packet));
-        buf.writeBytes(new byte[]{0, 0}); //TODO: senderSubId, recipientSubId (for split-screen capabilities)
         packet.encode(buf);
         return buf;
     }

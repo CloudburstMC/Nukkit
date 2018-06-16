@@ -4,8 +4,8 @@ import com.flowpowered.math.vector.Vector3f;
 import com.nukkitx.api.level.LevelSettings;
 import com.nukkitx.api.util.GameMode;
 import com.nukkitx.api.util.Rotation;
+import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -41,15 +41,13 @@ public class StartGamePacket implements BedrockPacket {
         buffer.writeBoolean(trial);
         buffer.writeLongLE(currentTick);
         writeInt(buffer, enchantmentSeed);
+
+        ByteBuf cachedPallete = NukkitLevel.getPaletteManager().getCachedPallete();
+        buffer.writeBytes(cachedPallete);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void handle(NetworkPacketHandler handler) {
-        // Only client bound.
     }
 }

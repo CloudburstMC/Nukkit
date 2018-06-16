@@ -88,6 +88,9 @@ public interface NetworkPacketHandler {
     default void handle(MovePlayerPacket packet) {
     }
 
+    default void handle(NetworkStackLatencyPacket packet) {
+    }
+
     default void handle(PhotoTransferPacket packet) {
     }
 

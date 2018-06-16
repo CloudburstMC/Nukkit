@@ -321,6 +321,9 @@ public class BlockTypes {
     public static final BlockType SEA_PICKLE = IntBlock.builder().name("sea_pickle").id(411).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).build();
     public static final BlockType CONDUIT = IntBlock.builder().name("conduit").id(412).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).build();
 
+    public static final BlockType TURTLE_EGG = IntBlock.builder().name("turtle_egg").id(414).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).build();
+    public static final BlockType BUBBLE_COLUMN = IntBlock.builder().name("bubble_column").id(415).maxStackSize(64).diggable(false).transparent(true).solid(false).hardness(0f).build();
+
     public static BlockType byName(@Nonnull String name) {
         Preconditions.checkNotNull(name, "name");
         BlockType type = BY_NAME.get(name);
@@ -330,10 +333,10 @@ public class BlockTypes {
         return type;
     }
 
-    public static BlockType byId(int data) {
-        BlockType type = BY_ID.get(data);
+    public static BlockType byId(int id) {
+        BlockType type = BY_ID.get(id);
         if (type == null) {
-            throw new IllegalArgumentException("ID " + data + " is not valid.");
+            throw new IllegalArgumentException("ID " + (id < 0 ? 255 - id : id) + " is not valid.");
         }
         return type;
     }
