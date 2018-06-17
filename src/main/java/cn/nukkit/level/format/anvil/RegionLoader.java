@@ -72,7 +72,7 @@ public class RegionLoader extends BaseRegionLoader {
         if (chunk != null) {
             return chunk;
         } else {
-            MainLogger.getLogger().error("Corrupted chunk detected");
+            MainLogger.getLogger().error("Corrupted chunk detected at (" + x + ", " + z + ')');
             return null;
         }
         } catch (EOFException e) {
